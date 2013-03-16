@@ -2,6 +2,15 @@
 
 	* src/x86/ffi.c (ffi_prep_cif_machdep): Always align stack.
 
+2013-03-13  Markos Chandras <markos.chandras@imgtec.com>
+
+	* configure.ac: Add support for Imagination Technologies Meta.
+	* Makefile.am: Likewise.
+	* README: Add Imagination Technologies Meta details.
+	* src/metag/ffi.c: New.
+	* src/metag/ffitarget.h: Likewise.
+	* src/metag/sysv.S: Likewise.
+
 2013-02-11  Anthony Green <green@moxielogic.com>
 
 	* configure.ac: Update release number to 3.0.12.

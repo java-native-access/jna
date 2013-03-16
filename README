@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.12 was released on February 11, 2013.  Check the libffi web
+libffi-3.0.13 was released on March 16, 2013.  Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -63,6 +63,7 @@ tested:
 | M68K            | FreeMiNT         | GCC                     |
 | M68K            | Linux	     | GCC                     |
 | M68K            | RTEMS            | GCC                     |
+| Meta            | Linux            | GCC                     |
 | MicroBlaze      | Linux            | GCC                     |
 | MIPS            | IRIX             | GCC                     |
 | MIPS            | Linux            | GCC                     |
@@ -161,6 +162,11 @@ History
 =======
 
 See the ChangeLog files for details.
+
+3.0.13 Mar-16-13
+       
+	Add Meta support.
+	Fix stack alignment bug on 32-bit x86.
 
 3.0.12 Feb-11-13
         Add Moxie support.

@@ -38,6 +38,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	src/frv/ffitarget.h src/dlmalloc.c src/tile/ffi.c		\
 	src/tile/ffitarget.h src/tile/tile.S libtool-version		\
 	src/xtensa/ffitarget.h src/xtensa/ffi.c src/xtensa/sysv.S	\
+	src/metag/ffi.c src/metag/ffitarget.h src/metag/sysv.S		\
 	 ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4		\
 	 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
 	 m4/ltversion.m4 src/arm/gentramp.sh src/debug.c msvcc.sh	\
@@ -207,6 +208,9 @@ nodist_libffi_la_SOURCES += src/tile/tile.S src/tile/ffi.c
 endif
 if XTENSA
 nodist_libffi_la_SOURCES += src/xtensa/sysv.S src/xtensa/ffi.c
+endif
+if METAG
+nodist_libffi_la_SOURCES += src/metag/sysv.S src/metag/ffi.c
 endif
 
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)
