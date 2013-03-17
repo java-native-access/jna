@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.68)
 
-AC_INIT([libffi], [3.0.13rc1], [http://github.com/atgreen/libffi/issues])
+AC_INIT([libffi], [3.0.13-rc2], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -549,7 +549,7 @@ if test "x$GCC" = "xyes"; then
   multi_os_directory=`$CC -print-multi-os-directory`
   case $multi_os_directory in
     .) ;; # Avoid trailing /.
-    *) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
+    ../*) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
   esac
   AC_SUBST(toolexecdir)
 else

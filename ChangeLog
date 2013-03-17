@@ -1,3 +1,8 @@
+2013-03-17  Anthony Green  <green@moxielogic.com>
+
+	* configure.ac: Only modify toolexecdir in certain cases.
+	* configure: Rebuilt.
+
 2013-03-16  Gilles Talis  <gilles.talis@gmail.com>
 
 	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Don't use
