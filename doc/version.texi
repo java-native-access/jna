@@ -1,4 +1,4 @@
 @set UPDATED 16 March 2013
 @set UPDATED-MONTH March 2013
-@set EDITION 3.0.13-rc1
-@set VERSION 3.0.13-rc1
+@set EDITION 3.0.13-rc2
+@set VERSION 3.0.13-rc2
