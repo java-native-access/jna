@@ -169,6 +169,8 @@ See the ChangeLog files for details.
 	Fix stack alignment bug on 32-bit x86.
 	Build fix for m68000 targets.
 	Build fix for soft-float Power targets.
+	Fix the install dir location for some platforms when building
+	  with GCC (OS X, Solaris).
 
 3.0.12 Feb-11-13
         Add Moxie support.

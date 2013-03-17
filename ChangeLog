@@ -1,5 +1,18 @@
 2013-03-17  Anthony Green  <green@moxielogic.com>
 
+	* README: Update for 3.0.13.
+	* configure.ac: Ditto.
+	* configure: Rebuilt.
+	* doc/*: Update version.
+
+2013-03-17  Dave Korn  <dave.korn.cygwin@gmail.com>
+
+	* src/closures.c (is_emutramp_enabled
+	[!FFI_MMAP_EXEC_EMUTRAMP_PAX]): Move default definition outside
+	enclosing #if scope.
+
+2013-03-17  Anthony Green  <green@moxielogic.com>
+
 	* configure.ac: Only modify toolexecdir in certain cases.
 	* configure: Rebuilt.
 
