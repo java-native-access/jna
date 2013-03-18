@@ -14,13 +14,13 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Function;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.OaIdl.BINDPTR;
 import com.sun.jna.platform.win32.OaIdl.DESCKIND;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Wrapper class for the ITypeComp interface
@@ -28,10 +28,6 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class ITypeComp extends IUnknown {
-
-	public static class ByReference extends ITypeComp implements
-			Structure.ByReference {
-	}
 
 	public ITypeComp() {
 	}
@@ -45,7 +41,7 @@ public class ITypeComp extends IUnknown {
 	WString szName,
 	/* [in] */ULONG lHashVal,
 	/* [in] */WORD wFlags,
-	/* [out] */ITypeInfo.ByReference ppTInfo,
+	/* [out] */PointerByReference ppTInfo,
 	/* [out] */DESCKIND.ByReference pDescKind,
 	/* [out] */BINDPTR.ByReference pBindPtr) {
 
@@ -61,8 +57,8 @@ public class ITypeComp extends IUnknown {
 	/* [annotation][in] */
 	WString szName,
 	/* [in] */ULONG lHashVal,
-	/* [out] */ITypeInfo.ByReference ppTInfo,
-	/* [out] */ITypeComp.ByReference ppTComp) {
+	/* [out] */PointerByReference ppTInfo,
+	/* [out] */PointerByReference ppTComp) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(16));

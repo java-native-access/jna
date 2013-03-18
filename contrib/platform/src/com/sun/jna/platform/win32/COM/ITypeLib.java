@@ -31,10 +31,14 @@ import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Wrapper class for the ITypeLib interface
- *
+ * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class ITypeLib extends IUnknown {
+
+	public static class ByReference extends ITypeLib implements
+			Structure.ByReference {
+	}
 
 	public ITypeLib() {
 	}
@@ -43,25 +47,21 @@ public class ITypeLib extends IUnknown {
 		super(pvInstance);
 	}
 
-	public UINT GetTypeInfoCount() {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(12));
-		int count = func.invokeInt(new Object[] { this.getPointer() });
-
-		return new UINT(count);
-	}
-
 	public HRESULT GetTypeInfo(
 	/* [in] */UINT index,
 	/* [out] */ITypeInfo.ByReference pTInfo) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(16));
 		PointerByReference ppTInfo = new PointerByReference();
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index, ppTInfo });
+		int hr = this.invoke(12, new Object[] { this.getPointer(), index,
+				ppTInfo });
 		pTInfo.setPointer(ppTInfo.getValue());
 
 		return new HRESULT(hr);
+	}
+
+	public UINT GetTypeInfoCount() {
+		int count = this.invoke(16, new Object[] { this.getPointer() });
+		return new UINT(count);
 	}
 
 	public HRESULT GetTypeInfoType(
@@ -78,12 +78,13 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetTypeInfoOfGuid(
 	/* [in] */GUID guid,
-	/* [out] */ITypeInfo.ByReference pTinfo) {
+	/* [out] */ITypeInfo pTinfo) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(24));
 		PointerByReference ppTinfo = new PointerByReference();
-		int hr = func.invokeInt(new Object[] { this.getPointer(), guid, ppTinfo });
+		int hr = func
+				.invokeInt(new Object[] { this.getPointer(), guid, ppTinfo });
 		pTinfo.setPointer(ppTinfo.getPointer());
 
 		return new HRESULT(hr);
@@ -144,7 +145,7 @@ public class ITypeLib extends IUnknown {
 	/* [annotation][out][in] */
 	WString szNameBuf,
 	/* [in] */ULONG lHashVal,
-	/* [length_is][size_is][out] */ITypeInfo.ByReference ppTInfo,
+	/* [length_is][size_is][out] */PointerByReference ppTInfo,
 	/* [length_is][size_is][out] */MEMBERIDbyReference rgMemId,
 	/* [out][in] */USHORTbyReference pcFound) {
 

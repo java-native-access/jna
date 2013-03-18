@@ -23,13 +23,11 @@ import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -42,10 +40,14 @@ import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Wrapper class for the ITypeInfo interface
- *
+ * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class ITypeInfo extends IUnknown {
+
+	public static class ByReference extends ITypeInfo implements
+			Structure.ByReference {
+	}
 
 	public ITypeInfo() {
 	}

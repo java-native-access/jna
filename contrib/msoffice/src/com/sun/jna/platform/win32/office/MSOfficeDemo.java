@@ -32,6 +32,8 @@ public class MSOfficeDemo {
 			msWord.newDocument();
 			//msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
 			msWord.insertText("Hello from JNA!");
+			// wait 10sec. before closing
+			Thread.currentThread().sleep(10000);
 			// close and save the document
 			msWord.closeActiveDocument(Variant.VARIANT_TRUE);
 			// wait then close word
@@ -47,6 +49,8 @@ public class MSOfficeDemo {
 			
 			if(msWord != null)
 				msWord.quit();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -60,6 +64,8 @@ public class MSOfficeDemo {
 			//msExcel.newExcelBook();
 			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
 			msExcel.insertValue("A1", "Hello from JNA!");
+			// wait 10sec. before closing
+			Thread.currentThread().sleep(10000);
 			// close and save the active sheet
 			msExcel.closeActiveWorkbook(Variant.VARIANT_TRUE);
 			// wait then close excel
@@ -75,6 +81,8 @@ public class MSOfficeDemo {
 			
 			if(msExcel != null)
 				msExcel.quit();
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 }

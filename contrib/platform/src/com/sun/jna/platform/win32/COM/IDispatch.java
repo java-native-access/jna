@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -78,11 +77,8 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(12));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), iTInfo, lcid,
-				ppTInfo });
-		Pointer value = ppTInfo.getValue();
+		int hr = this.invoke(12, new Object[] { this.getPointer(), iTInfo,
+				lcid, ppTInfo });
 		return new HRESULT(hr);
 	}
 
@@ -94,9 +90,7 @@ public class IDispatch extends IUnknown {
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(16));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pctinfo });
+		int hr = this.invoke(16, new Object[] { pctinfo });
 		return new HRESULT(hr);
 	}
 
@@ -117,12 +111,8 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
 			LCID lcid, DISPIDbyReference rgDispId) {
-
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(20));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), riid,
+		int hr = this.invoke(20, new Object[] { this.getPointer(), riid,
 				rgszNames, cNames, lcid, rgDispId });
-
 		return new HRESULT(hr);
 	}
 
@@ -151,12 +141,9 @@ public class IDispatch extends IUnknown {
 			DISPID wFlags, DISPPARAMS pDispParams,
 			VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
-
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(24));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), dispIdMember,
-				riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo,
-				puArgErr });
+		int hr = this.invoke(24, new Object[] { this.getPointer(),
+				dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult,
+				pExcepInfo, puArgErr });
 
 		return new HRESULT(hr);
 	}

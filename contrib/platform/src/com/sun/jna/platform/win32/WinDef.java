@@ -71,7 +71,7 @@ public interface WinDef extends StdCallLibrary {
 		}
 
 		public void setValue(WORD value) {
-			getPointer().setInt(0, value.intValue());
+			getPointer().setShort(0, value.shortValue());
 		}
 
 		public WORD getValue() {

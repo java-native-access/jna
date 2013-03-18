@@ -22,7 +22,7 @@ import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- *
+ * 
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -68,7 +68,12 @@ public interface WTypes {
 		}
 
 		public String getValue() {
-			return this.getPointer().getString(0, true);
+			Pointer pointer = this.getPointer();
+			String str = null;
+			if (pointer != null)
+				str = pointer.getString(0, true);
+
+			return str;
 		}
 
 		@Override
