@@ -86,61 +86,15 @@ public class StructureFieldOrderInspectorTest extends TestCase {
         }
     }
 
-    private static final class MyStructStaticFieldOnlyStatic extends Structure {
-        public static long myStaticField = -1;
-
-        @Override
-        protected List getFieldOrder() {
-            return Arrays.asList();
-        }
-    }
-    /**
-     * //@todo Seems this may be a bug. Error below occurs if Structure has no instance field (and only a static field), like: MyStructStaticFieldOnlyStatic.
-    java.lang.RuntimeException: Could not instantiate Structure sub type: com.sun.jna.StructureFieldOrderInspectorTest$MyStructStaticFieldOnlyStatic
-        at com.sun.jna.StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureFieldOrderInspector.java:146)
-        at com.sun.jna.StructureFieldOrderInspectorTest.testCheckMethodGetFieldOrderStaticFieldOnlyStatic(StructureFieldOrderInspectorTest.java:111)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-        at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
-        at com.intellij.junit3.JUnit3IdeaTestRunner.doRun(JUnit3IdeaTestRunner.java:139)
-        at com.intellij.junit3.JUnit3IdeaTestRunner.startRunnerWithArgs(JUnit3IdeaTestRunner.java:52)
-        at com.intellij.rt.execution.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:195)
-        at com.intellij.rt.execution.junit.JUnitStarter.main(JUnitStarter.java:63)
-        at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
-        at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
-        at com.intellij.rt.execution.application.AppMain.main(AppMain.java:120)
-    Caused by: java.lang.reflect.InvocationTargetException
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
-        at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:57)
-        at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)
-        at java.lang.reflect.Constructor.newInstance(Constructor.java:532)
-        at com.sun.jna.StructureFieldOrderInspector.checkMethodGetFieldOrder(StructureFieldOrderInspector.java:131)
-        ... 22 more
-    Caused by: java.lang.IllegalArgumentException: Structure class com.sun.jna.StructureFieldOrderInspectorTest$MyStructStaticFieldOnlyStatic has unknown size (ensure all fields are public)
-        at com.sun.jna.Structure.deriveLayout(Structure.java:1108)
-        at com.sun.jna.Structure.calculateSize(Structure.java:908)
-        at com.sun.jna.Structure.calculateSize(Structure.java:896)
-        at com.sun.jna.Structure.allocateMemory(Structure.java:357)
-        at com.sun.jna.Structure.<init>(Structure.java:191)
-        at com.sun.jna.Structure.<init>(Structure.java:180)
-        at com.sun.jna.Structure.<init>(Structure.java:167)
-        at com.sun.jna.Structure.<init>(Structure.java:159)
-        at com.sun.jna.StructureFieldOrderInspectorTest$MyStructStaticFieldOnlyStatic.<init>(StructureFieldOrderInspectorTest.java:89)
-        ... 27 more
-     */
-/*
-    public void testCheckMethodGetFieldOrderStaticFieldOnlyStatic() throws Exception {
-        StructureFieldOrderInspector.checkMethodGetFieldOrder(MyStructStaticFieldOnlyStatic.class, null);
-    }
-//*/
 
     private static final class MyStructStaticField extends Structure {
-        public long instanceField;  // @todo Why error if at least one instance field does not exist? see above:MyStructStaticFieldOnlyStatic
+        @SuppressWarnings("UnusedDeclaration")
+        public long instanceField;
+        @SuppressWarnings("UnusedDeclaration")
         public static long myStaticField = -1;
 
         @Override
         protected List getFieldOrder() {
-            //return Arrays.asList();
             return Arrays.asList("instanceField");
         }
     }
@@ -150,11 +104,11 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
 
     private static class MyStructSuper extends Structure {
+        @SuppressWarnings("UnusedDeclaration")
         public long instanceField;
 
         @Override
         protected List getFieldOrder() {
-            //return Arrays.asList();
             return Arrays.asList("instanceField");
         }
     }
