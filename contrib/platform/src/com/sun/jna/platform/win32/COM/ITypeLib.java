@@ -12,19 +12,17 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -47,31 +45,29 @@ public class ITypeLib extends IUnknown {
 		super(pvInstance);
 	}
 
+	public UINT GetTypeInfoCount() {
+		int count = this.invoke(4, new Object[] { this.getPointer() });
+		return new UINT(count);
+	}
+
 	public HRESULT GetTypeInfo(
 	/* [in] */UINT index,
 	/* [out] */ITypeInfo.ByReference pTInfo) {
 
 		PointerByReference ppTInfo = new PointerByReference();
-		int hr = this.invoke(12, new Object[] { this.getPointer(), index,
+		int hr = this.invoke(5, new Object[] { this.getPointer(), index,
 				ppTInfo });
 		pTInfo.setPointer(ppTInfo.getValue());
 
 		return new HRESULT(hr);
 	}
 
-	public UINT GetTypeInfoCount() {
-		int count = this.invoke(16, new Object[] { this.getPointer() });
-		return new UINT(count);
-	}
-
 	public HRESULT GetTypeInfoType(
 	/* [in] */UINT index,
 	/* [out] */IntByReference pTKind) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(20));
-		int hr = func
-				.invokeInt(new Object[] { this.getPointer(), index, pTKind });
+		int hr = this.invoke(6,
+				new Object[] { this.getPointer(), index, pTKind });
 
 		return new HRESULT(hr);
 	}
@@ -80,11 +76,9 @@ public class ITypeLib extends IUnknown {
 	/* [in] */GUID guid,
 	/* [out] */ITypeInfo pTinfo) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(24));
 		PointerByReference ppTinfo = new PointerByReference();
-		int hr = func
-				.invokeInt(new Object[] { this.getPointer(), guid, ppTinfo });
+		int hr = this.invoke(7,
+				new Object[] { this.getPointer(), guid, ppTinfo });
 		pTinfo.setPointer(ppTinfo.getPointer());
 
 		return new HRESULT(hr);
@@ -93,20 +87,15 @@ public class ITypeLib extends IUnknown {
 	public HRESULT GetLibAttr(
 	/* [out] */TLIBATTR.ByReference ppTLibAttr) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(28));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTLibAttr });
-
+		int hr = this.invoke(8, new Object[] { this.getPointer(), ppTLibAttr });
 		return new HRESULT(hr);
 	}
 
 	public HRESULT GetTypeComp(
 	/* [out] */ITypeComp.ByReference pTComp) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(32));
 		PointerByReference ppTComp = new PointerByReference();
-		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTComp });
+		int hr = this.invoke(9, new Object[] { this.getPointer(), ppTComp });
 		pTComp.setPointer(ppTComp.getPointer());
 
 		return new HRESULT(hr);
@@ -119,9 +108,7 @@ public class ITypeLib extends IUnknown {
 	/* [out] */DWORDbyReference pdwHelpContext,
 	/* [out] */BSTR pBstrHelpFile) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(36));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index,
+		int hr = this.invoke(10, new Object[] { this.getPointer(), index,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
 
 		return new HRESULT(hr);
@@ -133,33 +120,27 @@ public class ITypeLib extends IUnknown {
 	/* [in] */ULONG lHashVal,
 	/* [out] */BOOLbyReference pfName) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(40));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), szNameBuf,
+		int hr = this.invoke(11, new Object[] { this.getPointer(), szNameBuf,
 				lHashVal, pfName });
 
 		return new HRESULT(hr);
 	}
 
 	public HRESULT FindName(
-	/* [annotation][out][in] */
+	/* [out][in] */
 	WString szNameBuf,
-	/* [in] */ULONG lHashVal,
-	/* [length_is][size_is][out] */PointerByReference ppTInfo,
-	/* [length_is][size_is][out] */MEMBERIDbyReference rgMemId,
-	/* [out][in] */USHORTbyReference pcFound) {
+	/* [in] */long lHashVal,
+	/* [out] */ITypeInfo[] ppTInfo,
+	/* [out] */MEMBERID[] rgMemId,
+	/* [out][in] */short pcFound) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(44));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), szNameBuf,
+		int hr = this.invoke(12, new Object[] { this.getPointer(), szNameBuf,
 				lHashVal, ppTInfo, rgMemId, pcFound });
 
 		return new HRESULT(hr);
 	}
 
 	public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(48));
-		func.invokeInt(new Object[] { this.getPointer(), pTLibAttr });
+		this.invoke(13, new Object[] { this.getPointer(), pTLibAttr });
 	}
 }

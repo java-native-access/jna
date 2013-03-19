@@ -1,21 +1,25 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- *
+/* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * Lesser General Public License for more details.  
  */
-package com.sun.jna.platform.win32;
+package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
 import com.sun.jna.Native;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.OaIdl;
+import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
@@ -23,6 +27,7 @@ import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
+import com.sun.jna.platform.win32.OaIdl.VARDESC.ByReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
@@ -57,7 +62,7 @@ public class ITypeInfoTest extends TestCase {
 	protected void setUp() throws Exception {
 		if (this.comObj == null) {
 			// create a shell COM object
-			this.comObj = new COMObject("Excel.Application", false);
+			this.comObj = new COMObject("Shell.Application", false);
 			this.getTypeInfoCount();
 		}
 	}

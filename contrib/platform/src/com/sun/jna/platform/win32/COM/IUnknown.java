@@ -20,6 +20,7 @@ import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
+// TODO: Auto-generated Javadoc
 /**
  * Wrapper class for the ITypeInfo interface
  * 
@@ -78,7 +79,7 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int AddRef() {
-		return this.invoke(4, new Object[] { this.getPointer() });
+		return this.invoke(1, new Object[] { this.getPointer() });
 	}
 
 	/**
@@ -87,12 +88,20 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int Release() {
-		return this.invoke(8, new Object[] { this.getPointer() });
+		return this.invoke(2, new Object[] { this.getPointer() });
 	}
 
+	/**
+	 * Invoke method as a base for all com related calls.
+	 *
+	 * @param vtableId the vtable id
+	 * @param args the args
+	 * @return the int
+	 */
 	protected int invoke(int vtableId, Object[] args) {
 		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(vtableId));
+		// we take the vtable id and multiply with the pointer size (usually 4 bytes)
+		Function func = Function.getFunction(vptr.getPointer(vtableId * Pointer.SIZE));
 		return func.invokeInt(args);
 	}
 }

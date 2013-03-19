@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -59,9 +58,7 @@ public class ITypeInfo extends IUnknown {
 	public HRESULT GetTypeAttr(
 	/* [out] */TYPEATTR.ByReference pTypeAttr) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(12));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pTypeAttr });
+		int hr = this.invoke(4, new Object[] { this.getPointer(), pTypeAttr });
 		pTypeAttr.read();
 
 		return new HRESULT(hr);
@@ -70,10 +67,8 @@ public class ITypeInfo extends IUnknown {
 	public HRESULT GetTypeComp(
 	/* [out] */ITypeComp.ByReference pTComp) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(16));
 		PointerByReference ppTComp = new PointerByReference();
-		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTComp });
+		int hr = this.invoke(5, new Object[] { this.getPointer(), ppTComp });
 		pTComp.setPointer(ppTComp.getValue());
 
 		return new HRESULT(hr);
@@ -83,9 +78,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */FUNCDESC.ByReference pFuncDesc) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(20));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index,
+		int hr = this.invoke(6, new Object[] { this.getPointer(), index,
 				pFuncDesc });
 
 		return new HRESULT(hr);
@@ -95,9 +88,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */VARDESC.ByReference pVarDesc) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(24));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index,
+		int hr = this.invoke(7, new Object[] { this.getPointer(), index,
 				pVarDesc });
 
 		return new HRESULT(hr);
@@ -109,9 +100,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT cMaxNames,
 	/* [out] */UINTbyReference pcNames) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(28));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+		int hr = this.invoke(8, new Object[] { this.getPointer(), memid,
 				rgBstrNames, cMaxNames, pcNames });
 
 		return new HRESULT(hr);
@@ -121,9 +110,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */HREFTYPEbyReference pRefType) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(32));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index,
+		int hr = this.invoke(9, new Object[] { this.getPointer(), index,
 				pRefType });
 
 		return new HRESULT(hr);
@@ -133,9 +120,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */IntByReference pImplTypeFlags) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(36));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), index,
+		int hr = this.invoke(10, new Object[] { this.getPointer(), index,
 				pImplTypeFlags });
 
 		return new HRESULT(hr);
@@ -146,9 +131,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT cNames,
 	/* [size_is][out] */MEMBERID[] pMemId) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(40));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), rgszNames,
+		int hr = this.invoke(11, new Object[] { this.getPointer(), rgszNames,
 				cNames, pMemId });
 
 		return new HRESULT(hr);
@@ -163,9 +146,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */EXCEPINFO.ByReference pExcepInfo,
 	/* [out] */UINTbyReference puArgErr) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(44));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pvInstance,
+		int hr = this.invoke(12, new Object[] { this.getPointer(), pvInstance,
 				memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr });
 
 		return new HRESULT(hr);
@@ -178,9 +159,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */DWORDbyReference pdwHelpContext,
 	/* [out] */BSTR pBstrHelpFile) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(48));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+		int hr = this.invoke(13, new Object[] { this.getPointer(), memid,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
 
 		return new HRESULT(hr);
@@ -193,9 +172,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */BSTR pBstrName,
 	/* [out] */WORDbyReference pwOrdinal) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(52));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+		int hr = this.invoke(14, new Object[] { this.getPointer(), memid,
 				invKind, pBstrDllName, pBstrName, pwOrdinal });
 
 		return new HRESULT(hr);
@@ -205,9 +182,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */HREFTYPE hRefType,
 	/* [out] */ITypeInfo.ByReference ppTInfo) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(56));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), hRefType,
+		int hr = this.invoke(15, new Object[] { this.getPointer(), hRefType,
 				ppTInfo });
 
 		return new HRESULT(hr);
@@ -218,9 +193,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */INVOKEKIND invKind,
 	/* [out] */PointerByReference ppv) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(60));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+		int hr = this.invoke(16, new Object[] { this.getPointer(), memid,
 				invKind, ppv });
 
 		return new HRESULT(hr);
@@ -231,9 +204,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */REFIID riid,
 	/* [iid_is][out] */PointerByReference ppvObj) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(64));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), pUnkOuter,
+		int hr = this.invoke(17, new Object[] { this.getPointer(), pUnkOuter,
 				riid, ppvObj });
 
 		return new HRESULT(hr);
@@ -243,9 +214,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */MEMBERID memid,
 	/* [out] */BSTR pBstrMops) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(68));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), memid,
+		int hr = this.invoke(18, new Object[] { this.getPointer(), memid,
 				pBstrMops });
 
 		return new HRESULT(hr);
@@ -255,10 +224,8 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */ITypeLib.ByReference pTLib,
 	/* [out] */UINTbyReference pIndex) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(72));
 		PointerByReference ppTLib = new PointerByReference();
-		int hr = func.invokeInt(new Object[] { this.getPointer(), ppTLib,
+		int hr = this.invoke(19, new Object[] { this.getPointer(), ppTLib,
 				pIndex });
 		pTLib.setPointer(ppTLib.getPointer());
 
@@ -268,24 +235,18 @@ public class ITypeInfo extends IUnknown {
 	public/* [local] */void ReleaseTypeAttr(
 	/* [in] */TYPEATTR pTypeAttr) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(76));
-		func.invokeInt(new Object[] { this.getPointer(), pTypeAttr });
+		this.invoke(20, new Object[] { this.getPointer(), pTypeAttr });
 	}
 
 	public/* [local] */void ReleaseFuncDesc(
 	/* [in] */FUNCDESC pFuncDesc) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(80));
-		func.invokeInt(new Object[] { this.getPointer(), pFuncDesc });
+		this.invoke(21, new Object[] { this.getPointer(), pFuncDesc });
 	}
 
 	public/* [local] */void ReleaseVarDesc(
 	/* [in] */VARDESC pVarDesc) {
 
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(84));
-		func.invokeInt(new Object[] { this.getPointer(), pVarDesc });
+		this.invoke(22, new Object[] { this.getPointer(), pVarDesc });
 	}
 }

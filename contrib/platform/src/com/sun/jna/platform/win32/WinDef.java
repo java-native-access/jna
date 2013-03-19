@@ -919,10 +919,15 @@ public interface WinDef extends StdCallLibrary {
 		public USHORTbyReference() {
 			this(new USHORT(0));
 		}
-
+		
 		public USHORTbyReference(USHORT value) {
 			super(USHORT.SIZE);
 			setValue(value);
+		}
+
+		public USHORTbyReference(short value) {
+			super(USHORT.SIZE);
+			setValue(new USHORT(value));
 		}
 
 		public void setValue(USHORT value) {
