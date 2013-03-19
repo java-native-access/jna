@@ -46,7 +46,7 @@ public class ITypeLib extends IUnknown {
 	}
 
 	public UINT GetTypeInfoCount() {
-		int count = this.invoke(4, new Object[] { this.getPointer() });
+		int count = this.invoke(3, new Object[] { this.getPointer() });
 		return new UINT(count);
 	}
 
@@ -55,7 +55,7 @@ public class ITypeLib extends IUnknown {
 	/* [out] */ITypeInfo.ByReference pTInfo) {
 
 		PointerByReference ppTInfo = new PointerByReference();
-		int hr = this.invoke(5, new Object[] { this.getPointer(), index,
+		int hr = this.invoke(4, new Object[] { this.getPointer(), index,
 				ppTInfo });
 		pTInfo.setPointer(ppTInfo.getValue());
 
@@ -66,7 +66,7 @@ public class ITypeLib extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */IntByReference pTKind) {
 
-		int hr = this.invoke(6,
+		int hr = this.invoke(5,
 				new Object[] { this.getPointer(), index, pTKind });
 
 		return new HRESULT(hr);
@@ -77,7 +77,7 @@ public class ITypeLib extends IUnknown {
 	/* [out] */ITypeInfo pTinfo) {
 
 		PointerByReference ppTinfo = new PointerByReference();
-		int hr = this.invoke(7,
+		int hr = this.invoke(6,
 				new Object[] { this.getPointer(), guid, ppTinfo });
 		pTinfo.setPointer(ppTinfo.getPointer());
 
@@ -87,7 +87,7 @@ public class ITypeLib extends IUnknown {
 	public HRESULT GetLibAttr(
 	/* [out] */TLIBATTR.ByReference ppTLibAttr) {
 
-		int hr = this.invoke(8, new Object[] { this.getPointer(), ppTLibAttr });
+		int hr = this.invoke(7, new Object[] { this.getPointer(), ppTLibAttr });
 		return new HRESULT(hr);
 	}
 
@@ -95,7 +95,7 @@ public class ITypeLib extends IUnknown {
 	/* [out] */ITypeComp.ByReference pTComp) {
 
 		PointerByReference ppTComp = new PointerByReference();
-		int hr = this.invoke(9, new Object[] { this.getPointer(), ppTComp });
+		int hr = this.invoke(8, new Object[] { this.getPointer(), ppTComp });
 		pTComp.setPointer(ppTComp.getPointer());
 
 		return new HRESULT(hr);
@@ -108,7 +108,7 @@ public class ITypeLib extends IUnknown {
 	/* [out] */DWORDbyReference pdwHelpContext,
 	/* [out] */BSTR pBstrHelpFile) {
 
-		int hr = this.invoke(10, new Object[] { this.getPointer(), index,
+		int hr = this.invoke(9, new Object[] { this.getPointer(), index,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
 
 		return new HRESULT(hr);
@@ -120,7 +120,7 @@ public class ITypeLib extends IUnknown {
 	/* [in] */ULONG lHashVal,
 	/* [out] */BOOLbyReference pfName) {
 
-		int hr = this.invoke(11, new Object[] { this.getPointer(), szNameBuf,
+		int hr = this.invoke(10, new Object[] { this.getPointer(), szNameBuf,
 				lHashVal, pfName });
 
 		return new HRESULT(hr);
@@ -134,13 +134,13 @@ public class ITypeLib extends IUnknown {
 	/* [out] */MEMBERID[] rgMemId,
 	/* [out][in] */short pcFound) {
 
-		int hr = this.invoke(12, new Object[] { this.getPointer(), szNameBuf,
+		int hr = this.invoke(11, new Object[] { this.getPointer(), szNameBuf,
 				lHashVal, ppTInfo, rgMemId, pcFound });
 
 		return new HRESULT(hr);
 	}
 
 	public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr) {
-		this.invoke(13, new Object[] { this.getPointer(), pTLibAttr });
+		this.invoke(12, new Object[] { this.getPointer(), pTLibAttr });
 	}
 }

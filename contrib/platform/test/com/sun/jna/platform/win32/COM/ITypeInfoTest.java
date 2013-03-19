@@ -16,6 +16,8 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Native;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.Guid;
+import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
@@ -49,6 +51,9 @@ import com.sun.jna.ptr.PointerByReference;
 public class ITypeInfoTest extends TestCase {
 
 	private COMObject comObj = null;
+	
+	// get user default lcid
+	LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
 
 	public static void main(String[] args) {
 		junit.textui.TestRunner.run(ITypeInfoTest.class);
@@ -63,7 +68,6 @@ public class ITypeInfoTest extends TestCase {
 		if (this.comObj == null) {
 			// create a shell COM object
 			this.comObj = new COMObject("Shell.Application", false);
-			this.getTypeInfoCount();
 		}
 	}
 
@@ -87,7 +91,7 @@ public class ITypeInfoTest extends TestCase {
 	public ITypeInfo getTypeInfo() {
 		// create a IUnknown pointer
 		PointerByReference ppTInfo = new PointerByReference();
-		comObj.getIDispatch().GetTypeInfo(new UINT(0), new LCID(0), ppTInfo);
+		comObj.getIDispatch().GetTypeInfo(null, lcid, ppTInfo);
 		return new ITypeInfo(ppTInfo.getValue());
 	}
 

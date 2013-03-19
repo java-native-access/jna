@@ -68,11 +68,6 @@ public class ITypeLibTest extends TestCase {
 	public void testGetTypeInfoCount() {
 		ITypeLib shellTypeLib = loadShellTypeLib();
 		UINT typeInfoCount = shellTypeLib.GetTypeInfoCount();
-		
-		if(typeInfoCount.intValue() < 0) {
-			HRESULT hr = new HRESULT(typeInfoCount.intValue());
-			COMUtils.checkTypeLibRC(hr);
-		}
 		System.out.println("GetTypeInfoCount: " + typeInfoCount);
 	}
 
@@ -146,6 +141,4 @@ public class ITypeLibTest extends TestCase {
 		COMUtils.checkTypeLibRC(hr);
 		System.out.println("szNameBuf: " + szNameBuf);
 	}
-
-	
 }

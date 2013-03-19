@@ -65,32 +65,28 @@ public class IDispatch extends IUnknown {
 	}
 
 	/**
+	 * Gets the type info count.
+	 *
+	 * @param pctinfo the pctinfo
+	 * @return the hresult
+	 */
+	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
+		int hr = this.invoke(3, new Object[] { pctinfo });
+		return new HRESULT(hr);
+	}
+	
+	/**
 	 * Gets the type info.
-	 * 
-	 * @param iTInfo
-	 *            the i t info
-	 * @param lcid
-	 *            the lcid
-	 * @param ppTInfo
-	 *            the pp t info
+	 *
+	 * @param iTInfo the i t info
+	 * @param lcid the lcid
+	 * @param ppTInfo the pp t info
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
-		int hr = this.invoke(3, new Object[] { this.getPointer(), iTInfo,
+		int hr = this.invoke(4, new Object[] { this.getPointer(), iTInfo,
 				lcid, ppTInfo });
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the type info count.
-	 * 
-	 * @param pctinfo
-	 *            the pctinfo
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		int hr = this.invoke(4, new Object[] { pctinfo });
 		return new HRESULT(hr);
 	}
 

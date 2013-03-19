@@ -575,6 +575,15 @@ public interface OaIdl {
 	public static class TLIBATTR extends Structure {
 		public static class ByReference extends TLIBATTR implements
 				Structure.ByReference {
+			
+			public ByReference() {
+			}
+			
+			public ByReference(Pointer pointer) {
+				super(pointer);
+				this.read();
+			}
+			
 		};
 
 		public GUID guid;
@@ -586,6 +595,7 @@ public interface OaIdl {
 
 		public TLIBATTR() {
 			super();
+			this.read();
 		}
 
 		public TLIBATTR(Pointer pointer) {
