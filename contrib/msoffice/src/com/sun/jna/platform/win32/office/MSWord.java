@@ -1,14 +1,8 @@
 package com.sun.jna.platform.win32.office;
 
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
-import com.sun.jna.platform.win32.OleAuto;
-import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMObject;
-import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.IDispatch;
 
 public class MSWord extends COMObject {
@@ -19,109 +13,61 @@ public class MSWord extends COMObject {
 
 	public MSWord(boolean visible) throws COMException {
 		this();
-		this.setVisible(Variant.VARIANT_TRUE);
+		this.setVisible(visible);
 	}
 
-	public void setVisible(VARIANT_BOOL bVisible) throws COMException {
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, result, this.iDispatch,
-				"Visible", new VARIANT(bVisible));
+	public void setVisible(boolean bVisible) throws COMException {
+		this.setProperty("Visible", bVisible);
 	}
 
 	public String getVersion() throws COMException {
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"Version");
-
-		return result.getValue().toString();
+		return this.getStringProperty("Version");
 	}
 
-	public HRESULT newDocument() throws COMException {
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null,
-				getDocuments().getIDispatch(), "Add");
-
-		return hr;
+	public void newDocument() throws COMException {
+		this.invokeNoReply("Add", getDocuments());
 	}
 
-	public HRESULT openDocument(String filename, boolean bVisible)
+	public void openDocument(String filename, boolean bVisible)
 			throws COMException {
 		// OpenDocument
-		BSTR bstrFilename = OleAuto.INSTANCE.SysAllocString(filename);
-		VARIANT varFilename = new VARIANT(bstrFilename);
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null,
-				getDocuments().getIDispatch(), "Open", varFilename);
-
-		return hr;
+		this.invokeNoReply("Open", getDocuments(), new VARIANT(filename));
 	}
 
-	public HRESULT closeActiveDocument(VARIANT_BOOL bSave)
-			throws COMException {
-
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_METHOD, null,
-				getActiveDocument().getIDispatch(), "Close", new VARIANT(bSave));
-
-		return hr;
+	public void closeActiveDocument(boolean bSave) throws COMException {
+		this.invokeNoReply("Close", getActiveDocument(), new VARIANT(bSave));
 	}
 
-	public HRESULT quit() throws COMException {
-		HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, null,
-				this.iDispatch, "Quit");
-
-		COMUtils.SUCCEEDED(hr);
-		return hr;
+	public void quit() throws COMException {
+		this.invokeNoReply("Quit");
 	}
 
-	public HRESULT insertText(String text) throws COMException {
-		HRESULT hr;
-
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
-				this.iDispatch, "Selection");
-		Selection pSelection = new Selection((IDispatch) result.getValue());
-
-		BSTR bstrText = OleAuto.INSTANCE.SysAllocString(text);
-		VARIANT varText = new VARIANT(bstrText);
-		hr = oleMethod(OleAuto.DISPATCH_METHOD, null,
-				pSelection.getIDispatch(), "TypeText", varText);
-
-		return hr;
+	public void insertText(String text) throws COMException {
+		Selection pSelection = new Selection(this.getAutomationProperty(
+				"Selection", this.iDispatch));
+		this.invokeNoReply("TypeText", pSelection, new VARIANT(text));
 	}
 
 	public ActiveDocument getActiveDocument() {
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"ActiveDocument");
-		
-		COMUtils.SUCCEEDED(hr);
-		return new ActiveDocument((IDispatch) result.getValue());
+		return new ActiveDocument(this.getAutomationProperty("ActiveDocument"));
 	}
-	
+
 	public Documents getDocuments() {
 		// GetDocuments
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"Documents");
-		
-		COMUtils.SUCCEEDED(hr);
-		return new Documents((IDispatch) result.getValue());
+		return new Documents(this.getAutomationProperty("Documents"));
 	}
-	
+
 	public Application getApplication() {
-		VARIANT.ByReference result = new VARIANT.ByReference();
-		HRESULT hr = oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.iDispatch,
-				"Application");
-		
-		COMUtils.SUCCEEDED(hr);
-		return new Application((IDispatch) result.getValue());
+		return new Application(this.getAutomationProperty("Application"));
 	}
-	
+
 	public class Application extends COMObject {
 
 		public Application(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
-	
+
 	public class Documents extends COMObject {
 
 		public Documents(IDispatch iDispatch) throws COMException {

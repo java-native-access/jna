@@ -1,6 +1,7 @@
 package com.sun.jna.platform.win32;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import com.sun.jna.Pointer;
@@ -8,7 +9,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.DATEbyReference;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
@@ -102,6 +102,9 @@ public interface Variant {
 	public static VARIANT_BOOL VARIANT_TRUE = new VARIANT_BOOL(0xFFFF);
 	public static VARIANT_BOOL VARIANT_FALSE = new VARIANT_BOOL(0x0000);
 
+	public final static long COM_DAYS_ADJUSTMENT = 25569L; 	//((1969 - 1899) * 365) +1 + Leap years = Days
+	public final static long MICRO_SECONDS_PER_DAY = 86400000L;   		//24L * 60L * 60L * 1000L;
+
 	public static class VARIANT extends Union {
 
 		public static class ByReference extends VARIANT implements
@@ -148,6 +151,56 @@ public interface Variant {
 			this.setValue(VT_DATE, value);
 		}
 
+		public VARIANT(short value) {
+			this();
+			this.setValue(VT_I2, value);
+		}
+
+		public VARIANT(int value) {
+			this();
+			this.setValue(VT_I4, value);
+		}
+
+		public VARIANT(long value) {
+			this();
+			this.setValue(VT_I8, value);
+		}
+
+		public VARIANT(float value) {
+			this();
+			this.setValue(VT_R4, value);
+		}
+
+		public VARIANT(double value) {
+			this();
+			this.setValue(VT_R8, value);
+		}
+
+		public VARIANT(String value) {
+			this();
+			BSTR bstrValue = OleAuto.INSTANCE.SysAllocString(value);
+			this.setValue(VT_BSTR, bstrValue);
+		}
+
+		public VARIANT(boolean value) {
+			this();
+			if(value)
+				this.setValue(VT_BOOL, VARIANT_TRUE);
+			else
+				this.setValue(VT_BOOL, VARIANT_FALSE);
+		}
+
+		public VARIANT(IDispatch value) {
+			this();
+			this.setValue(Variant.VT_DISPATCH, value);
+		}
+
+		public VARIANT(Date value) {
+			this();
+			DATE date = this.fromJavaDate(value);
+			this.setValue(VT_DATE, date);
+		}
+		
 		public VARTYPE getVarType() {
 			this.read();
 			return _variant.vt;
@@ -193,6 +246,9 @@ public interface Variant {
 			case VT_BSTR:
 				this._variant.__variant.writeField("bstrVal", value);
 				break;
+			case VT_UNKNOWN:
+				this._variant.__variant.writeField("punkVal", value);
+				break;
 			case VT_DISPATCH:
 				this._variant.__variant.writeField("pdispVal", value);
 				break;
@@ -201,6 +257,93 @@ public interface Variant {
 				break;
 			case VT_ARRAY:
 				this._variant.__variant.writeField("parray", value);
+				break;
+			case VT_BYREF | VT_UI1:
+				this._variant.__variant.writeField("pbVal", value);
+				break;
+			case VT_BYREF | VT_I2:
+				this._variant.__variant.writeField("piVal", value);
+				break;
+			case VT_BYREF | VT_I4:
+				this._variant.__variant.writeField("plVal", value);
+				break;
+			case VT_BYREF | VT_I8:
+				this._variant.__variant.writeField("pllVal", value);
+				break;
+			case VT_BYREF | VT_R4:
+				this._variant.__variant.writeField("pfltVal", value);
+				break;
+			case VT_BYREF | VT_R8:
+				this._variant.__variant.writeField("pdblVal", value);
+				break;
+			case VT_BYREF | VT_BOOL:
+				this._variant.__variant.writeField("pboolVal", value);
+				break;
+			case VT_BYREF | VT_ERROR:
+				this._variant.__variant.writeField("pscode", value);
+				break;
+			case VT_BYREF | VT_CY:
+				this._variant.__variant.writeField("pcyVal", value);
+				break;
+			case VT_BYREF | VT_DATE:
+				this._variant.__variant.writeField("pdate", value);
+				break;
+			case VT_BYREF | VT_BSTR:
+				this._variant.__variant.writeField("pbstrVal", value);
+				break;
+			case VT_BYREF | VT_UNKNOWN:
+				this._variant.__variant.writeField("ppunkVal", value);
+				break;
+			case VT_BYREF | VT_DISPATCH:
+				this._variant.__variant.writeField("ppdispVal", value);
+				break;
+			case VT_BYREF | VT_ARRAY:
+				this._variant.__variant.writeField("pparray", value);
+				break;
+			case VT_BYREF | VT_VARIANT:
+				this._variant.__variant.writeField("pvarVal", value);
+				break;
+			case VT_BYREF:
+				this._variant.__variant.writeField("byref", value);
+				break;
+			case VT_I1:
+				this._variant.__variant.writeField("cVal", value);
+				break;
+			case VT_UI2:
+				this._variant.__variant.writeField("uiVal", value);
+				break;
+			case VT_UI4:
+				this._variant.__variant.writeField("ulVal", value);
+				break;
+			case VT_UI8:
+				this._variant.__variant.writeField("ullVal", value);
+				break;
+			case VT_INT:
+				this._variant.__variant.writeField("intVal", value);
+				break;
+			case VT_UINT:
+				this._variant.__variant.writeField("uintVal", value);
+				break;
+			case VT_BYREF | VT_DECIMAL:
+				this._variant.__variant.writeField("pdecVal", value);
+				break;
+			case VT_BYREF | VT_I1:
+				this._variant.__variant.writeField("pcVal", value);
+				break;
+			case VT_BYREF | VT_UI2:
+				this._variant.__variant.writeField("puiVal", value);
+				break;
+			case VT_BYREF | VT_UI4:
+				this._variant.__variant.writeField("pulVal", value);
+				break;
+			case VT_BYREF | VT_UI8:
+				this._variant.__variant.writeField("pullVal", value);
+				break;
+			case VT_BYREF | VT_INT:
+				this._variant.__variant.writeField("pintVal", value);
+				break;
+			case VT_BYREF | VT_UINT:
+				this._variant.__variant.writeField("puintVal", value);
 				break;
 			}
 
@@ -231,17 +374,131 @@ public interface Variant {
 				return this._variant.__variant.readField("date");
 			case VT_BSTR:
 				return this._variant.__variant.readField("bstrVal");
+			case VT_UNKNOWN:
+				return this._variant.__variant.readField("punkVal");
 			case VT_DISPATCH:
 				return this._variant.__variant.readField("pdispVal");
 			case VT_SAFEARRAY:
 				return this._variant.__variant.readField("parray");
 			case VT_ARRAY:
 				return this._variant.__variant.readField("parray");
+			case VT_BYREF | VT_UI1:
+				return this._variant.__variant.readField("pbVal");
+			case VT_BYREF | VT_I2:
+				return this._variant.__variant.readField("piVal");
+			case VT_BYREF | VT_I4:
+				return this._variant.__variant.readField("plVal");
+			case VT_BYREF | VT_I8:
+				return this._variant.__variant.readField("pllVal");
+			case VT_BYREF | VT_R4:
+				return this._variant.__variant.readField("pfltVal");
+			case VT_BYREF | VT_R8:
+				return this._variant.__variant.readField("pdblVal");
+			case VT_BYREF | VT_BOOL:
+				return this._variant.__variant.readField("pboolVal");
+			case VT_BYREF | VT_ERROR:
+				return this._variant.__variant.readField("pscode");
+			case VT_BYREF | VT_CY:
+				return this._variant.__variant.readField("pcyVal");
+			case VT_BYREF | VT_DATE:
+				return this._variant.__variant.readField("pdate");
+			case VT_BYREF | VT_BSTR:
+				return this._variant.__variant.readField("pbstrVal");
+			case VT_BYREF | VT_UNKNOWN:
+				return this._variant.__variant.readField("ppunkVal");
+			case VT_BYREF | VT_DISPATCH:
+				return this._variant.__variant.readField("ppdispVal");
+			case VT_BYREF | VT_ARRAY:
+				return this._variant.__variant.readField("pparray");
+			case VT_BYREF | VT_VARIANT:
+				return this._variant.__variant.readField("pvarVal");
+			case VT_BYREF:
+				return this._variant.__variant.readField("byref");
+			case VT_I1:
+				return this._variant.__variant.readField("cVal");
+			case VT_UI2:
+				return this._variant.__variant.readField("uiVal");
+			case VT_UI4:
+				return this._variant.__variant.readField("ulVal");
+			case VT_UI8:
+				return this._variant.__variant.readField("ullVal");
+			case VT_INT:
+				return this._variant.__variant.readField("intVal");
+			case VT_UINT:
+				return this._variant.__variant.readField("uintVal");
+			case VT_BYREF | VT_DECIMAL:
+				return this._variant.__variant.readField("pdecVal");
+			case VT_BYREF | VT_I1:
+				return this._variant.__variant.readField("pcVal");
+			case VT_BYREF | VT_UI2:
+				return this._variant.__variant.readField("puiVal");
+			case VT_BYREF | VT_UI4:
+				return this._variant.__variant.readField("pulVal");
+			case VT_BYREF | VT_UI8:
+				return this._variant.__variant.readField("pullVal");
+			case VT_BYREF | VT_INT:
+				return this._variant.__variant.readField("pintVal");
+			case VT_BYREF | VT_UINT:
+				return this._variant.__variant.readField("puintVal");
 			default:
 				return null;
 			}
 		}
+		
+		public int shortValue() {
+			return (Short)this.getValue();
+		}
 
+		public int intValue() {
+			return (Integer)this.getValue();
+		}
+		
+		public long longValue() {
+			return (Long)this.getValue();
+		}
+
+		public float floatValue() {
+			return (Float)this.getValue();
+		}
+
+		public double doubleValue() {
+			return (Double)this.getValue();
+		}
+
+		public String stringValue() {
+			BSTR bstr = (BSTR)this.getValue();
+			return bstr.getValue();
+		}
+
+		public boolean booleanValue() {
+			return (Boolean)this.getValue();
+		}
+		
+		public Date dateValue() {
+			DATE varDate = (DATE)this.getValue();
+			return this.toJavaDate(varDate);
+		}
+		
+		protected Date toJavaDate(DATE varDate) {
+			
+			double doubleDate = varDate.date;
+			long longDate = (long) doubleDate;
+			
+			double doubleTime = doubleDate - longDate;
+			long longTime = (long) doubleTime * MICRO_SECONDS_PER_DAY;
+			
+			return new Date(((longDate  - COM_DAYS_ADJUSTMENT) * MICRO_SECONDS_PER_DAY) + longTime);
+		}
+		
+		protected DATE fromJavaDate(Date javaDate) {
+			long longTime = javaDate.getTime() % MICRO_SECONDS_PER_DAY;
+			long longDate = ((javaDate.getTime() - longTime) / MICRO_SECONDS_PER_DAY) + COM_DAYS_ADJUSTMENT;
+			
+			float floatTime = ((float) longTime) / ((float) MICRO_SECONDS_PER_DAY);
+			float floatDateTime = floatTime + longDate;
+			return new DATE(floatDateTime);
+		}
+		
 		public static class _VARIANT extends Structure {
 
 			public VARTYPE vt;
@@ -308,11 +565,11 @@ public interface Variant {
 				// CY * VT_BYREF|VT_CY
 				public CURRENCY.ByReference pcyVal;
 				// DATE * VT_BYREF|VT_DATE
-				public DATEbyReference pdate;
+				public DATE.ByReference pdate;
 				// BSTR * VT_BYREF|VT_BSTR
 				public BSTR pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
-				public IUnknown ppunkVal;
+				public IUnknown.ByReference ppunkVal;
 				// IDispatch ** VT_BYREF|VT_DISPATCH
 				public IDispatch.ByReference ppdispVal;
 				// SAFEARRAY ** VT_BYREF|VT_ARRAY

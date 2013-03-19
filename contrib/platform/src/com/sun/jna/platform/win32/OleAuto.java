@@ -27,11 +27,13 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.ITypeLib;
+import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -97,8 +99,8 @@ public interface OleAuto extends StdCallLibrary {
 	public final static int FADF_RESERVED = 0xF008;
 
 	/** The instance. */
-	OleAuto INSTANCE = (OleAuto) Native.loadLibrary("OleAut32",
-			OleAuto.class, W32APIOptions.UNICODE_OPTIONS);
+	OleAuto INSTANCE = (OleAuto) Native.loadLibrary("OleAut32", OleAuto.class,
+			W32APIOptions.UNICODE_OPTIONS);
 
 	/**
 	 * This function allocates a new string and copies the passed string into
@@ -469,5 +471,19 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
-	HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
+	public HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
+
+	/**
+	 * Converts a system time to a variant representation.
+	 * 
+	 * @param lpSystemTime
+	 *            [in] The system time.
+	 * 
+	 * @param pvtime
+	 *            [out] The variant time.
+	 * 
+	 * @return The function returns TRUE on success and FALSE otherwise.
+	 */
+	public int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
+			DoubleByReference pvtime);
 }

@@ -160,34 +160,28 @@ public interface OaIdl {
 		}
 	}
 
-	public static class DATE extends IntegerType {
-		public static final int SIZE = 8;
+	public static class DATE extends Structure {
+		public static class ByReference extends DATE implements
+				Structure.ByReference {
+		}
+
+		public double date;
 
 		public DATE() {
-			this(0);
 		}
 
-		public DATE(long value) {
-			super(8, value, true);
-		}
-	}
-
-	public class DATEbyReference extends ByReference {
-		public DATEbyReference() {
-			this(new DATE(0));
+		public DATE(double date) {
+			this.date = date;
 		}
 
-		public DATEbyReference(DATE value) {
-			super(DATE.SIZE);
-			setValue(value);
-		}
-
-		public void setValue(DATE value) {
-			getPointer().setLong(0, value.longValue());
-		}
-
-		public DATE getValue() {
-			return new DATE(getPointer().getLong(0));
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see com.sun.jna.Structure#getFieldOrder()
+		 */
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "date" });
 		}
 	}
 
@@ -595,7 +589,6 @@ public interface OaIdl {
 
 		public TLIBATTR() {
 			super();
-			this.read();
 		}
 
 		public TLIBATTR(Pointer pointer) {
@@ -1181,6 +1174,7 @@ public interface OaIdl {
 
 			public ByReference(Pointer memory) {
 				super(memory);
+				this.read();
 			}
 		};
 

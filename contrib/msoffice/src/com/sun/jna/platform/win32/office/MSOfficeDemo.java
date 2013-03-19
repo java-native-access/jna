@@ -18,8 +18,8 @@ public class MSOfficeDemo {
 			+ File.separator;
 
 	public MSOfficeDemo() {
-		//this.testMSWord();
-		this.testMSExcel();
+		this.testMSWord();
+		//this.testMSExcel();
 	}
 	
 	public void testMSWord() {
@@ -28,14 +28,14 @@ public class MSOfficeDemo {
 		try {
 			msWord = new MSWord();
 			System.out.println("MSWord version: " + msWord.getVersion());
-			msWord.setVisible(Variant.VARIANT_TRUE);
+			msWord.setVisible(true);
 			msWord.newDocument();
 			//msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
 			msWord.insertText("Hello from JNA!");
 			// wait 10sec. before closing
 			Thread.currentThread().sleep(10000);
 			// close and save the document
-			msWord.closeActiveDocument(Variant.VARIANT_TRUE);
+			msWord.closeActiveDocument(true);
 			// wait then close word
 			msWord.quit();
 		} catch (COMException e) {
@@ -60,14 +60,14 @@ public class MSOfficeDemo {
 		try {
 			msExcel = new MSExcel();
 			System.out.println("MSExcel version: " + msExcel.getVersion());
-			msExcel.setVisible(Variant.VARIANT_TRUE);
+			msExcel.setVisible(true);
 			//msExcel.newExcelBook();
 			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
 			msExcel.insertValue("A1", "Hello from JNA!");
 			// wait 10sec. before closing
 			Thread.currentThread().sleep(10000);
 			// close and save the active sheet
-			msExcel.closeActiveWorkbook(Variant.VARIANT_TRUE);
+			msExcel.closeActiveWorkbook(true);
 			// wait then close excel
 			msExcel.quit();
 		} catch (COMException e) {
