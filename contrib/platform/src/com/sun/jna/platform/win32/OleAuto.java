@@ -471,7 +471,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
-	public HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
+	public HRESULT LoadTypeLib(WString szFile, ITypeLib.ByReference pptlib);
 
 	/**
 	 * Converts a system time to a variant representation.

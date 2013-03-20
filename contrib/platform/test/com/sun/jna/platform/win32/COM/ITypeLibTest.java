@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
+import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.WinDef.LCID;
@@ -85,7 +86,7 @@ public class ITypeLibTest extends TestCase {
 	public void testGetTypeInfoType() {
 		ITypeLib shellTypeLib = loadShellTypeLib();
 
-		IntByReference pTKind = new IntByReference();
+		TYPEKIND.ByReference pTKind = new TYPEKIND.ByReference();
 		HRESULT hr = shellTypeLib.GetTypeInfoType(new UINT(0), pTKind);
 
 		COMUtils.checkTypeLibRC(hr);

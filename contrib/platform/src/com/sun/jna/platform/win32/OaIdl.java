@@ -38,9 +38,9 @@ import com.sun.jna.ptr.ByReference;
  * The Interface OaIdl.
  */
 public interface OaIdl {
-	
-	public final static MEMBERID MEMBERID_NIL = new MEMBERID(); 
-	
+
+	public final static MEMBERID MEMBERID_NIL = new MEMBERID();
+
 	/**
 	 * The Class EXCEPINFO.
 	 */
@@ -88,7 +88,7 @@ public interface OaIdl {
 
 		/**
 		 * Instantiates a new excepinfo.
-		 *
+		 * 
 		 * @param p
 		 *            the p
 		 */
@@ -98,7 +98,7 @@ public interface OaIdl {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		@Override
@@ -334,7 +334,25 @@ public interface OaIdl {
 	/** Bits reserved for future use. */
 	public final static int FADF_RESERVED = 0xF008;
 
-	public static class TYPEKIND extends IntegerType {
+	public static class TYPEKIND extends Structure {
+		public static class ByReference extends TYPEKIND implements
+				Structure.ByReference {
+		}
+		
+		public int value;
+		
+		public TYPEKIND() {
+		}
+
+		public TYPEKIND(int value) {
+			this.value = value;
+		}
+		
+		public TYPEKIND(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+		
 		// / <i>native declaration : line 4</i>
 		public static final int TKIND_ENUM = 0;
 		// / <i>native declaration : line 5</i>
@@ -353,15 +371,30 @@ public interface OaIdl {
 		public static final int TKIND_UNION = TYPEKIND.TKIND_ALIAS + 1;
 		// / <i>native declaration : line 12</i>
 		public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
-
-		public TYPEKIND() {
-			super(4);
+		
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
 		}
 	};
 
-	public static class DESCKIND {
+	public static class DESCKIND extends Structure {
 		public static class ByReference extends DESCKIND implements
 				Structure.ByReference {
+		}
+		
+		public int value;
+
+		public DESCKIND() {
+		}
+
+		public DESCKIND(int value) {
+			this.value = value;
+		}
+		
+		public DESCKIND(Pointer pointer) {
+			super(pointer);
+			this.read();
 		}
 
 		// / <i>native declaration : line 4</i>
@@ -376,6 +409,11 @@ public interface OaIdl {
 		public static final int DESCKIND_IMPLICITAPPOBJ = DESCKIND.DESCKIND_TYPECOMP + 1;
 		// / <i>native declaration : line 9</i>
 		public static final int DESCKIND_MAX = DESCKIND.DESCKIND_IMPLICITAPPOBJ + 1;
+		
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
 	};
 
 	public class SAFEARRAY extends Structure {
@@ -571,15 +609,15 @@ public interface OaIdl {
 	public static class TLIBATTR extends Structure {
 		public static class ByReference extends TLIBATTR implements
 				Structure.ByReference {
-			
+
 			public ByReference() {
 			}
-			
+
 			public ByReference(Pointer pointer) {
 				super(pointer);
 				this.read();
 			}
-			
+
 		};
 
 		public GUID guid;
@@ -767,8 +805,8 @@ public interface OaIdl {
 		 *            C type : DUMMYUNIONNAMEUnion<br>
 		 * @param elemdescVar
 		 *            C type : ELEMDESC<br>
-                 * @param wVarFlags
-                 *            C type : short
+		 * @param wVarFlags
+		 *            C type : short
 		 * @param varkind
 		 *            C type : VARKIND
 		 */

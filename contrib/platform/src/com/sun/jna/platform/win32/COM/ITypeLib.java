@@ -18,13 +18,13 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
-import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -64,7 +64,7 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetTypeInfoType(
 	/* [in] */UINT index,
-	/* [out] */IntByReference pTKind) {
+	/* [out] */TYPEKIND.ByReference pTKind) {
 
 		int hr = this.invoke(5,
 				new Object[] { this.getPointer(), index, pTKind });
@@ -103,10 +103,10 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT GetDocumentation(
 	/* [in] */int index,
-	/* [out] */BSTR pBstrName,
-	/* [out] */BSTR pBstrDocString,
+	/* [out] */BSTRByReference pBstrName,
+	/* [out] */BSTRByReference pBstrDocString,
 	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTR pBstrHelpFile) {
+	/* [out] */BSTRByReference pBstrHelpFile) {
 
 		int hr = this.invoke(9, new Object[] { this.getPointer(), index,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
