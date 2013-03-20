@@ -38,7 +38,9 @@ import com.sun.jna.ptr.ByReference;
  * The Interface OaIdl.
  */
 public interface OaIdl {
-
+	
+	public final static MEMBERID MEMBERID_NIL = new MEMBERID(); 
+	
 	/**
 	 * The Class EXCEPINFO.
 	 */

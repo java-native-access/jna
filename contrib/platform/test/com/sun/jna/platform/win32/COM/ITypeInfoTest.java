@@ -99,7 +99,7 @@ public class ITypeInfoTest extends TestCase {
 		ITypeInfo typeInfo = getTypeInfo();
 		TYPEATTR.ByReference pTypeAttr = new TYPEATTR.ByReference();
 		HRESULT hr = typeInfo.GetTypeAttr(pTypeAttr);
-
+				
 		COMUtils.checkTypeLibRC(hr);
 		assertEquals(0, hr.intValue());
 		System.out.println("GetTypeAttr: " + pTypeAttr.toString(true));
@@ -171,7 +171,7 @@ public class ITypeInfoTest extends TestCase {
 
 	public void testGetIDsOfNames() {
 		ITypeInfo typeInfo = getTypeInfo();
-		WString[] rgszNames = { new WString("Visible") };
+		WString[] rgszNames = { new WString("Help") };
 		UINT cNames = new UINT(1);
 		MEMBERID[] pMemId = new MEMBERID[1];
 		HRESULT hr = typeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
