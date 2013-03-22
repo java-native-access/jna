@@ -24,12 +24,13 @@ import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -127,18 +128,18 @@ public class ITypeLibTest extends TestCase {
 		assertEquals(0, hr.intValue());
 		System.out.println("pTComp: " + pTComp.toString());
 	}
-	
+
 	public void testFindName() {
 		ITypeLib shellTypeLib = loadShellTypeLib();
-		WString szNameBuf = new WString("Application");
-		long lHashVal = 0;
+		BSTRByReference szNameBuf = new BSTRByReference(new BSTR("Application"));
+		ULONG lHashVal = new ULONG(0);
 		MEMBERID[] rgMemIds = new MEMBERID[1000];
 		ITypeInfo[] ppTInfo = new ITypeInfo[1000];
-		short pcFound = 20;
+		USHORTbyReference pcFound = new USHORTbyReference((short)20);
 
 		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, ppTInfo,
 				rgMemIds, pcFound);
-		
+
 		COMUtils.checkTypeLibRC(hr);
 		System.out.println("szNameBuf: " + szNameBuf);
 	}

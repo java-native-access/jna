@@ -24,6 +24,7 @@ import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -127,12 +128,12 @@ public class ITypeLib extends IUnknown {
 	}
 
 	public HRESULT FindName(
-	/* [out][in] */
-	WString szNameBuf,
-	/* [in] */long lHashVal,
-	/* [out] */ITypeInfo[] ppTInfo,
-	/* [out] */MEMBERID[] rgMemId,
-	/* [out][in] */short pcFound) {
+	/* [annotation][out][in] */
+	BSTRByReference szNameBuf,
+	/* [in] */ULONG lHashVal,
+	/* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+	/* [length_is][size_is][out] */MEMBERID[] rgMemId,
+	/* [out][in] */USHORTbyReference pcFound) {
 
 		int hr = this.invoke(11, new Object[] { this.getPointer(), szNameBuf,
 				lHashVal, ppTInfo, rgMemId, pcFound });

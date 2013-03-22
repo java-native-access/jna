@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
@@ -27,6 +26,8 @@ import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -125,7 +126,7 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public/* [local] */HRESULT GetIDsOfNames(
-	/* [size_is][in] */WString[] rgszNames,
+	/* [size_is][in] */LPOLESTR[] rgszNames,
 	/* [in] */UINT cNames,
 	/* [size_is][out] */MEMBERID[] pMemId) {
 
@@ -152,10 +153,10 @@ public class ITypeInfo extends IUnknown {
 
 	public/* [local] */HRESULT GetDocumentation(
 	/* [in] */MEMBERID memid,
-	/* [out] */BSTR pBstrName,
-	/* [out] */BSTR pBstrDocString,
+	/* [out] */BSTRByReference pBstrName,
+	/* [out] */BSTRByReference pBstrDocString,
 	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTR pBstrHelpFile) {
+	/* [out] */BSTRByReference pBstrHelpFile) {
 
 		int hr = this.invoke(12, new Object[] { this.getPointer(), memid,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });

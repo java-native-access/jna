@@ -11,12 +11,12 @@ import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -39,12 +39,10 @@ import com.sun.jna.ptr.ByReference;
  */
 public interface OaIdl {
 
-	public final static MEMBERID MEMBERID_NIL = new MEMBERID();
-
 	/**
 	 * The Class EXCEPINFO.
 	 */
-	public class EXCEPINFO extends Structure {
+	public static class EXCEPINFO extends Structure {
 
 		/**
 		 * The Class ByReference.
@@ -133,7 +131,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class VARIANT_BOOLbyReference extends ByReference {
+	public static class VARIANT_BOOLbyReference extends ByReference {
 		public VARIANT_BOOLbyReference() {
 			this(new VARIANT_BOOL(0));
 		}
@@ -152,13 +150,22 @@ public interface OaIdl {
 		}
 	}
 
-	public class _VARIANT_BOOLbyReference extends VARIANT_BOOLbyReference {
+	public static class _VARIANT_BOOLbyReference extends ByReference {
 		public _VARIANT_BOOLbyReference() {
-			this(new _VARIANT_BOOL(0));
+			this(new VARIANT_BOOL(0));
 		}
 
-		public _VARIANT_BOOLbyReference(_VARIANT_BOOL value) {
-			super(value);
+		public _VARIANT_BOOLbyReference(VARIANT_BOOL value) {
+			super(VARIANT_BOOL.SIZE);
+			setValue(value);
+		}
+
+		public void setValue(VARIANT_BOOL value) {
+			getPointer().setShort(0, value.shortValue());
+		}
+
+		public VARIANT_BOOL getValue() {
+			return new VARIANT_BOOL(getPointer().getShort(0));
 		}
 	}
 
@@ -200,7 +207,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class DISPIDbyReference extends ByReference {
+	public static class DISPIDbyReference extends ByReference {
 		public DISPIDbyReference() {
 			this(new DISPID(0));
 		}
@@ -229,7 +236,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class MEMBERIDbyReference extends ByReference {
+	public static class MEMBERIDbyReference extends ByReference {
 		public MEMBERIDbyReference() {
 			this(new MEMBERID(0));
 		}
@@ -288,6 +295,9 @@ public interface OaIdl {
 	/** The Constant DISPID_VALUE. */
 	public final static DISPID DISPID_VALUE = new DISPID(0);
 
+	public final static MEMBERID MEMBERID_NIL = new MEMBERID(
+			DISPID_UNKNOWN.intValue());
+
 	/** An array that is allocated on the stack. */
 	public final static int FADF_AUTO = 0x0001;
 
@@ -338,21 +348,21 @@ public interface OaIdl {
 		public static class ByReference extends TYPEKIND implements
 				Structure.ByReference {
 		}
-		
+
 		public int value;
-		
+
 		public TYPEKIND() {
 		}
 
 		public TYPEKIND(int value) {
 			this.value = value;
 		}
-		
+
 		public TYPEKIND(Pointer pointer) {
 			super(pointer);
 			this.read();
 		}
-		
+
 		// / <i>native declaration : line 4</i>
 		public static final int TKIND_ENUM = 0;
 		// / <i>native declaration : line 5</i>
@@ -371,7 +381,7 @@ public interface OaIdl {
 		public static final int TKIND_UNION = TYPEKIND.TKIND_ALIAS + 1;
 		// / <i>native declaration : line 12</i>
 		public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "value" });
@@ -382,7 +392,7 @@ public interface OaIdl {
 		public static class ByReference extends DESCKIND implements
 				Structure.ByReference {
 		}
-		
+
 		public int value;
 
 		public DESCKIND() {
@@ -391,7 +401,7 @@ public interface OaIdl {
 		public DESCKIND(int value) {
 			this.value = value;
 		}
-		
+
 		public DESCKIND(Pointer pointer) {
 			super(pointer);
 			this.read();
@@ -409,14 +419,14 @@ public interface OaIdl {
 		public static final int DESCKIND_IMPLICITAPPOBJ = DESCKIND.DESCKIND_TYPECOMP + 1;
 		// / <i>native declaration : line 9</i>
 		public static final int DESCKIND_MAX = DESCKIND.DESCKIND_IMPLICITAPPOBJ + 1;
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "value" });
 		}
 	};
 
-	public class SAFEARRAY extends Structure {
+	public static class SAFEARRAY extends Structure {
 		public static class ByReference extends SAFEARRAY implements
 				Structure.ByReference {
 		}
@@ -446,7 +456,6 @@ public interface OaIdl {
 	}
 
 	public static class SAFEARRAYBOUND extends Structure {
-
 		public static class ByReference extends SAFEARRAYBOUND implements
 				Structure.ByReference {
 		}
@@ -606,6 +615,66 @@ public interface OaIdl {
 		}
 	}
 
+	public static class SYSKIND extends Structure {
+		public static class ByReference extends SYSKIND implements
+				Structure.ByReference {
+		}
+
+		public int value;
+
+		public SYSKIND() {
+		}
+
+		public SYSKIND(int value) {
+			this.value = value;
+		}
+
+		public SYSKIND(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+
+		public static final int SYS_WIN16 = 0;
+		public static final int SYS_WIN32 = SYSKIND.SYS_WIN16 + 1;
+		public static final int SYS_MAC = SYSKIND.SYS_WIN32 + 1;
+		public static final int SYS_WIN64 = SYSKIND.SYS_MAC + 1;
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
+	};
+
+	public static class LIBFLAGS extends Structure {
+		public static class ByReference extends LIBFLAGS implements
+				Structure.ByReference {
+		}
+
+		public int value;
+
+		public LIBFLAGS() {
+		}
+
+		public LIBFLAGS(int value) {
+			this.value = value;
+		}
+
+		public LIBFLAGS(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+
+		public static final int LIBFLAG_FRESTRICTED = 0x1;
+		public static final int LIBFLAG_FCONTROL = 0x2;
+		public static final int LIBFLAG_FHIDDEN = 0x4;
+		public static final int LIBFLAG_FHASDISKIMAGE = 0x8;
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
+		}
+	};
+
 	public static class TLIBATTR extends Structure {
 		public static class ByReference extends TLIBATTR implements
 				Structure.ByReference {
@@ -617,12 +686,11 @@ public interface OaIdl {
 				super(pointer);
 				this.read();
 			}
-
 		};
 
 		public GUID guid;
 		public LCID lcid;
-		public int syskind;
+		public SYSKIND syskind;
 		public WORD wMajorVerNum;
 		public WORD wMinorVerNum;
 		public WORD wLibFlags;
@@ -713,7 +781,10 @@ public interface OaIdl {
 		public short wFuncFlags;
 
 		public FUNCDESC() {
-			super();
+		}
+
+		public FUNCDESC(Pointer pointer) {
+			super(pointer);
 		}
 
 		@Override
@@ -734,7 +805,7 @@ public interface OaIdl {
 		// / C type : MEMBERID
 		public MEMBERID memid;
 		// / C type : LPOLESTR
-		public WString lpstrSchema;
+		public LPOLESTR lpstrSchema;
 		/**
 		 * [switch_is][switch_type]<br>
 		 * C type : DUMMYUNIONNAMEUnion
@@ -810,7 +881,7 @@ public interface OaIdl {
 		 * @param varkind
 		 *            C type : VARKIND
 		 */
-		public VARDESC(MEMBERID memid, WString lpstrSchema, _Union union,
+		public VARDESC(MEMBERID memid, LPOLESTR lpstrSchema, _Union union,
 				ELEMDESC elemdescVar, short wVarFlags, VARKIND varkind) {
 			super();
 			this.memid = memid;
@@ -822,7 +893,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class ELEMDESC extends Structure {
+	public static class ELEMDESC extends Structure {
 		public static class ByReference extends ELEMDESC implements
 				Structure.ByReference {
 		};
@@ -854,7 +925,11 @@ public interface OaIdl {
 			public PARAMDESC paramdesc;
 
 			public _Union() {
-				super();
+			}
+
+			public _Union(Pointer pointer) {
+				super(pointer);
+				this.read();
 			}
 
 			/**
@@ -863,7 +938,6 @@ public interface OaIdl {
 			 *            C type : PARAMDESC
 			 */
 			public _Union(PARAMDESC paramdesc) {
-				super();
 				this.paramdesc = paramdesc;
 				setType(PARAMDESC.class);
 			}
@@ -874,7 +948,6 @@ public interface OaIdl {
 			 *            C type : IDLDESC
 			 */
 			public _Union(IDLDESC idldesc) {
-				super();
 				this.idldesc = idldesc;
 				setType(IDLDESC.class);
 			}
@@ -1029,7 +1102,7 @@ public interface OaIdl {
 		}
 	};
 
-	public class TYPEDESC extends Structure {
+	public static class TYPEDESC extends Structure {
 		public static class ByReference extends TYPEDESC implements
 				Structure.ByReference {
 		};
@@ -1095,7 +1168,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class IDLDESC extends Structure {
+	public static class IDLDESC extends Structure {
 		public static class ByReference extends IDLDESC implements
 				Structure.ByReference {
 		};
@@ -1121,7 +1194,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class ARRAYDESC extends Structure {
+	public static class ARRAYDESC extends Structure {
 		public static class ByReference extends ARRAYDESC implements
 				Structure.ByReference {
 		};
@@ -1140,7 +1213,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class PARAMDESC extends Structure {
+	public static class PARAMDESC extends Structure {
 		public static class ByReference extends PARAMDESC implements
 				Structure.ByReference {
 		};
@@ -1159,7 +1232,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class PARAMDESCEX extends Structure {
+	public static class PARAMDESCEX extends Structure {
 		public static class ByReference extends PARAMDESCEX implements
 				Structure.ByReference {
 		};
@@ -1187,7 +1260,7 @@ public interface OaIdl {
 		}
 	}
 
-	public class HREFTYPEbyReference extends DWORDbyReference {
+	public static class HREFTYPEbyReference extends DWORDbyReference {
 		public HREFTYPEbyReference() {
 			this(new HREFTYPE(0));
 		}
@@ -1205,17 +1278,9 @@ public interface OaIdl {
 		}
 	}
 
-	public class TYPEATTR extends Structure {
+	public static class TYPEATTR extends Structure {
 		public static class ByReference extends TYPEATTR implements
 				Structure.ByReference {
-
-			public ByReference() {
-			}
-
-			public ByReference(Pointer memory) {
-				super(memory);
-				this.read();
-			}
 		};
 
 		public GUID guid;
@@ -1223,7 +1288,7 @@ public interface OaIdl {
 		public DWORD dwReserved;
 		public MEMBERID memidConstructor;
 		public MEMBERID memidDestructor;
-		public WString lpstrSchema;
+		public LPOLESTR lpstrSchema;
 		public ULONG cbSizeInstance;
 		public TYPEKIND typekind;
 		public WORD cFuncs;
@@ -1256,5 +1321,4 @@ public interface OaIdl {
 							"wMinorVerNum", "tdescAlias", "idldescType" });
 		}
 	}
-
 }

@@ -8,8 +8,6 @@ import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.platform.win32.W32Errors;
-import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -118,7 +116,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -129,7 +127,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Succeeded.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -143,7 +141,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -154,7 +152,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Failed.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 * @return true, if successful
@@ -168,7 +166,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Throw new exception.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 */
@@ -178,7 +176,7 @@ public abstract class COMUtils {
 
 	/**
 	 * Throw new exception.
-	 *
+	 * 
 	 * @param hr
 	 *            the hr
 	 * @param pExcepInfo
@@ -244,6 +242,8 @@ public abstract class COMUtils {
 		case CO_E_OBJNOTCONNECTED:
 			throw new COMException(
 					"The method is not connected to the Dispatch pointer!");
+		case DISP_E_BADINDEX:
+			throw new COMException("The given parameter was not 0!");
 		default:
 			throw new COMException("Unexpected COM error code : "
 					+ toHexStr(hr));
@@ -274,9 +274,10 @@ public abstract class COMUtils {
 		case WinError.TYPE_E_CANTLOADLIBRARY:
 			throw new COMException(
 					"The type library or DLL could not be loaded.");
+		case WinError.TYPE_E_LIBNOTREGISTERED:
+			throw new COMException("Library not registered.");
 		case WinError.TYPE_E_ELEMENTNOTFOUND:
-			throw new COMException(
-					"No type description was found in the library with the specified GUID.");
+			throw new COMException("Element not found.");
 		default:
 			throw new COMException("Unexpected Typelib error code : "
 					+ toHexStr(hr));
@@ -291,34 +292,49 @@ public abstract class COMUtils {
 
 		try {
 			// open root key
-			phkResult = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT, "CLSID", WinNT.KEY_ALL_ACCESS);
+			phkResult = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT,
+					"CLSID", WinNT.KEY_ALL_ACCESS);
 			// open subkey
-			InfoKey infoKey = Advapi32Util.registryQueryInfoKey(phkResult.getValue(), WinNT.KEY_ALL_ACCESS);
+			InfoKey infoKey = Advapi32Util.registryQueryInfoKey(
+					phkResult.getValue(), WinNT.KEY_ALL_ACCESS);
 
 			for (int i = 0; i < infoKey.lpcSubKeys.getValue(); i++) {
-				EnumKey enumKey = Advapi32Util.registryRegEnumKey(phkResult.getValue(), i);
+				EnumKey enumKey = Advapi32Util.registryRegEnumKey(
+						phkResult.getValue(), i);
 				subKey = Native.toString(enumKey.lpName);
 
 				COMInfo comInfo = new COMInfo(subKey);
 
-				phkResult2 = Advapi32Util.registryGetKey(phkResult.getValue(), subKey, WinNT.KEY_ALL_ACCESS);
-				InfoKey infoKey2 = Advapi32Util.registryQueryInfoKey(phkResult2.getValue(), WinNT.KEY_ALL_ACCESS);
+				phkResult2 = Advapi32Util.registryGetKey(phkResult.getValue(),
+						subKey, WinNT.KEY_ALL_ACCESS);
+				InfoKey infoKey2 = Advapi32Util.registryQueryInfoKey(
+						phkResult2.getValue(), WinNT.KEY_ALL_ACCESS);
 
-				for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++)
-				{
-					EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(phkResult2.getValue(), y);
+				for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++) {
+					EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(
+							phkResult2.getValue(), y);
 					String subKey2 = Native.toString(enumKey2.lpName);
 
-					if(subKey2.equals("InprocHandler32")) {
-						comInfo.inprocHandler32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
-					}else if(subKey2.equals("InprocServer32")) {
-						comInfo.inprocServer32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
-					}else if(subKey2.equals("LocalServer32")) {
-						comInfo.localServer32 = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
-					}else if(subKey2.equals("ProgID")) {
-						comInfo.progID = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
-					}else if(subKey2.equals("TypeLib")) {
-						comInfo.typeLib = (String)Advapi32Util.registryGetValue(phkResult2.getValue(), subKey2, null);
+					if (subKey2.equals("InprocHandler32")) {
+						comInfo.inprocHandler32 = (String) Advapi32Util
+								.registryGetValue(phkResult2.getValue(),
+										subKey2, null);
+					} else if (subKey2.equals("InprocServer32")) {
+						comInfo.inprocServer32 = (String) Advapi32Util
+								.registryGetValue(phkResult2.getValue(),
+										subKey2, null);
+					} else if (subKey2.equals("LocalServer32")) {
+						comInfo.localServer32 = (String) Advapi32Util
+								.registryGetValue(phkResult2.getValue(),
+										subKey2, null);
+					} else if (subKey2.equals("ProgID")) {
+						comInfo.progID = (String) Advapi32Util
+								.registryGetValue(phkResult2.getValue(),
+										subKey2, null);
+					} else if (subKey2.equals("TypeLib")) {
+						comInfo.typeLib = (String) Advapi32Util
+								.registryGetValue(phkResult2.getValue(),
+										subKey2, null);
 					}
 				}
 

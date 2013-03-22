@@ -16,12 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Native;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.OaIdl;
-import com.sun.jna.platform.win32.WTypes;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
@@ -29,19 +24,15 @@ import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
-import com.sun.jna.platform.win32.OaIdl.VARDESC.ByReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTbyReference;
 import com.sun.jna.platform.win32.WinDef.WORDbyReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.COMObject;
-import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.ITypeComp;
-import com.sun.jna.platform.win32.COM.ITypeInfo;
-import com.sun.jna.platform.win32.COM.ITypeLib;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -171,7 +162,7 @@ public class ITypeInfoTest extends TestCase {
 
 	public void testGetIDsOfNames() {
 		ITypeInfo typeInfo = getTypeInfo();
-		WString[] rgszNames = { new WString("Help") };
+		LPOLESTR[] rgszNames = { new LPOLESTR("Help") };
 		UINT cNames = new UINT(1);
 		MEMBERID[] pMemId = new MEMBERID[1];
 		HRESULT hr = typeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
@@ -188,10 +179,10 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetDocumentation() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR pBstrName = new BSTR();
-		BSTR pBstrDocString = new BSTR();
+		BSTRByReference pBstrName = new BSTRByReference();
+		BSTRByReference pBstrDocString = new BSTRByReference();
 		DWORDbyReference pdwHelpContext = new DWORDbyReference();
-		BSTR pBstrHelpFile = new BSTR();
+		BSTRByReference pBstrHelpFile = new BSTRByReference();
 		HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
 				pBstrDocString, pdwHelpContext, pBstrHelpFile);
 

@@ -17,6 +17,8 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
+import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
@@ -59,8 +61,21 @@ public interface WTypes {
 			| CLSCTX_LOCAL_SERVER;
 
 	public static class BSTR extends PointerType {
+		public static class ByReference extends BSTR implements
+				Structure.ByReference {
+		}
+
 		public BSTR() {
 			super(Pointer.NULL);
+		}
+
+		public BSTR(Pointer pointer) {
+			super(pointer);
+		}
+
+		public BSTR(String value) {
+			this();
+			this.setValue(value);
 		}
 
 		public void setValue(String value) {
@@ -88,17 +103,46 @@ public interface WTypes {
 			super(Pointer.SIZE);
 		}
 
-		public BSTRByReference(String value) {
+		public BSTRByReference(BSTR value) {
 			super(Pointer.SIZE);
 			setValue(value);
 		}
 
+		public void setValue(BSTR value) {
+			this.getPointer().setPointer(0, value.getPointer());
+		}
+
+		public BSTR getValue() {
+			return new BSTR(getPointer().getPointer(0));
+		}
+		
+		public String getString() {
+			return this.getValue().getValue();
+		}
+	}
+
+	public class LPOLESTR extends ByReference {
+
+		public LPOLESTR() {
+			super(Pointer.SIZE);
+		}
+
+		public LPOLESTR(String value) {
+			this();
+			setValue(value);
+		}
+
 		public void setValue(String value) {
-			getPointer().setString(0, value);
+			this.getPointer().setString(0, value, true);
 		}
 
 		public String getValue() {
-			return getPointer().getString(0);
+			return getPointer().getString(0, true);
+		}
+		
+		@Override
+		public String toString() {
+			return getValue();
 		}
 	}
 
