@@ -937,7 +937,7 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
 #include <jni.h>
 #include <math.h>
 JNIEXPORT jdouble JNICALL
-Java_com_sun_jna_DirectTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
+Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
   return cos(x);
 }
 
