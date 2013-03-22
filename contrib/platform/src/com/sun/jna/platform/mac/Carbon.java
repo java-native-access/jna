@@ -21,6 +21,7 @@ import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.jna.Library;
 import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -31,7 +32,7 @@ import com.sun.jna.ptr.PointerByReference;
  * Author: Denis Tulskiy
  * Date: 7/25/11
  */
-public interface Carbon {
+public interface Carbon extends Library {
     public static Carbon INSTANCE = (Carbon) Native.loadLibrary("Carbon", Carbon.class);
 
     public static final int cmdKey = 0x0100;
