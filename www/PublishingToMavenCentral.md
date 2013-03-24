@@ -53,7 +53,7 @@ see: https://maven.java.net/content/repositories/snapshots/net/java/dev/jna/ for
 To publish a development SNAPSHOT do the following:
 
         git checkout -- .
-        ant deploy -DskipNative=true
+        ant deploy -Dskip-native=true
 
 Note: Unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
 full release is performed).

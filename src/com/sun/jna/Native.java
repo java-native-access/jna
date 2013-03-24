@@ -996,9 +996,7 @@ public final class Native {
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
-            if (value == null)
-                value = Structure.newInstance(type);
-            return ((Structure)value).size();
+            return Structure.size(type, (Structure)value);
         }
         try {
             return getNativeSize(type);
@@ -1029,7 +1027,7 @@ public final class Native {
         if (cls == double.class || cls == Double.class) return 8;
         if (Structure.class.isAssignableFrom(cls)) {
             if (Structure.ByValue.class.isAssignableFrom(cls)) {
-                return Structure.newInstance(cls).size();
+                return Structure.size(cls);
             }
             return POINTER_SIZE;
         }

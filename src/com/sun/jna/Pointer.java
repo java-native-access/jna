@@ -24,8 +24,8 @@ import java.util.List;
  * be any <em>type</em> of native pointer.  Methods such as <code>write</code>, 
  * <code>read</code>, <code>getXXX</code>, and <code>setXXX</code>, provide 
  * means to access memory underlying the native pointer.<p>
- * The constructors are intentionally package-private, since it's not generally
- * a good idea to be creating C pointers de novo. 
+ * While a constructor exists to create a Pointer from an integer value, it's
+ * not generally a good idea to be creating pointers that way. 
  *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
@@ -467,7 +467,7 @@ public class Pointer {
             if (result == null) {
                 throw new IllegalStateException("Need an initialized array");
             }
-            getArrayValue(offset, result, type.getComponentType());
+            readArray(offset, result, type.getComponentType());
         }
         else {
             throw new IllegalArgumentException("Reading \""
@@ -476,8 +476,8 @@ public class Pointer {
         return result;
     }
 
-    /** Copy memory starting at offset into the array with element type cls. */
-    private void getArrayValue(long offset, Object o, Class cls) {
+    /** Read memory starting at offset into the array with element type cls. */
+    private void readArray(long offset, Object o, Class cls) {
         int length = 0;
         length = Array.getLength(o);
         Object result = o;
@@ -515,12 +515,26 @@ public class Pointer {
                 }
             }
             else {
-                for (int i=0;i < sarray.length;i++) {
+                Structure first = sarray[0];
+                if (first == null) {
+                    first = Structure.newInstance(cls, share(offset));
+                    first.conditionalAutoRead();
+                    sarray[0] = first;
+                }
+                else {
+                    first.useMemory(this, (int)offset);
+                    first.read();
+                }
+                Structure[] tmp = first.toArray(sarray.length);
+                for (int i=1;i < sarray.length;i++) {
                     if (sarray[i] == null) {
-                        sarray[i] = Structure.newInstance(cls);
+                        // Structure.toArray() takes care of read
+                        sarray[i] = tmp[i];
                     }
-                    sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()));
-                    sarray[i].read();
+                    else {
+                        sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()));
+                        sarray[i].read();
+                    }
                 }
             }
         }
@@ -910,14 +924,15 @@ v     * @param wide whether to convert from a wide or standard C string
             setValue(offset, tc.toNative(value, new ToNativeContext()), nativeType);
         }
         else if (type.isArray()) {
-            setArrayValue(offset, value, type.getComponentType());
+            writeArray(offset, value, type.getComponentType());
         }
         else {
             throw new IllegalArgumentException("Writing " + type + " to memory is not supported");
         }
     }
 
-    private void setArrayValue(long offset, Object value, Class cls) {
+    /** Write memory starting at offset from the array with element type cls. */
+    private void writeArray(long offset, Object value, Class cls) {
         if (cls == byte.class) {
             byte[] buf = (byte[])value;
             write(offset, buf, 0, buf.length);
@@ -966,11 +981,23 @@ v     * @param wide whether to convert from a wide or standard C string
                 write(offset, buf, 0, buf.length);
             }
             else {
-                for (int i=0;i < sbuf.length;i++) {
+                Structure first = sbuf[0];
+                if (first == null) {
+                    first = Structure.newInstance(cls, share(offset));
+                    sbuf[0] = first;
+                }
+                else {
+                    first.useMemory(this, (int)offset);
+                }
+                first.write();
+                Structure[] tmp = first.toArray(sbuf.length);
+                for (int i=1;i < sbuf.length;i++) {
                     if (sbuf[i] == null) {
-                        sbuf[i] = Structure.newInstance(cls);
+                        sbuf[i] = tmp[i];
                     }
-                    sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()));
+                    else {
+                        sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()));
+                    }
                     sbuf[i].write();
                 }
             }
