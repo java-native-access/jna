@@ -429,7 +429,7 @@ osname=macos
     </zip>
   </target>
 
-  <target name="platform-jar" depends="jar,javadoc">
+  <target name="platform-jar" depends="jar">
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
@@ -442,9 +442,6 @@ osname=macos
     <zip zipfile="${platform-sources-jar}">
       <zipfileset dir="${contrib}/platform/src" />
     </zip>
-    <jar jarfile="${platform-javadoc-jar}">
-        <fileset dir="${javadoc}" />
-    </jar>
   </target>
 
   <target name="contrib-jars" depends="platform-jar" description="Build contrib jars">
@@ -897,6 +894,9 @@ osname=macos
 
       <arg value="-notimestamp"/>
     </javadoc>
+    <jar jarfile="${platform-javadoc-jar}">
+      <fileset dir="${javadoc}" />
+    </jar>
   </target>
 
   <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
