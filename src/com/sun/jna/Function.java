@@ -375,9 +375,8 @@ public class Function extends Pointer {
             else {
                 result = invokePointer(callFlags, args);
                 if (result != null) {
-                    Structure s = Structure.newInstance(returnType);
-                    s.useMemory((Pointer)result);
-                    s.autoRead();
+                    Structure s = Structure.newInstance(returnType, (Pointer)result);
+                    s.conditionalAutoRead();
                     result = s;
                 }
             }

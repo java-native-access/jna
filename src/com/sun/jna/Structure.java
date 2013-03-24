@@ -13,7 +13,9 @@
 package com.sun.jna;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.nio.Buffer;
 import java.util.AbstractCollection;
@@ -157,7 +159,9 @@ public abstract class Structure {
 
     private boolean autoRead = true;
     private boolean autoWrite = true;
+    // Keep a reference when this structure is mapped to an array
     private Structure[] array;
+    private boolean readCalled;
 
     protected Structure() {
         this(ALIGN_DEFAULT);
@@ -212,17 +216,6 @@ public abstract class Structure {
         return typeMapper;
     }
 
-    /** Change the type mapping for this structure.  May cause the structure
-     * to be resized and any existing memory to be reallocated.
-     * If <code>null</code>, the default mapper for the
-     * defining class will be used.
-     * @deprecated You should use one of {@link #Structure(TypeMapper)}
-     * or {@link #Structure(Pointer,int,TypeMapper)} constructors instead.
-     */
-    protected void setTypeMapper(TypeMapper mapper) {
-        initializeTypeMapper(mapper);
-    }
-    
     /** Initialize the type mapper for this structure.  
      * If <code>null</code>, the default mapper for the
      * defining class will be used.
@@ -377,11 +370,13 @@ public abstract class Structure {
         }
     }
 
+    /** Returns the size in memory occupied by this Structure. */
     public int size() {
         ensureAllocated();
         return this.size;
     }
 
+    /** Clears the native memory associated with this Structure. */
     public void clear() {
         ensureAllocated();
         memory.clear(size());
@@ -487,10 +482,24 @@ public abstract class Structure {
         return (Map)reads.get();
     }
 
+    /** Performs auto-read only if uninitialized. */
+    void conditionalAutoRead() {
+        if (!readCalled) {
+            autoRead();
+        }
+    }
+
     /**
      * Reads the fields of the struct from native memory
      */
     public void read() {
+        readCalled = true;
+
+        // Avoid reading from a null pointer
+        if (memory == PLACEHOLDER_MEMORY) {
+            return;
+        }
+
         // convenience: allocate memory and/or calculate size if it hasn't
         // been already; this allows structures to do field-based
         // initialization of arrays and not have to explicitly call
@@ -597,8 +606,7 @@ public abstract class Structure {
                     s = s1;
                 }
                 else {
-                    s = newInstance(type);
-                    s.useMemory(address);
+                    s = newInstance(type, address);
                 }
             }
             s.autoRead();
@@ -653,6 +661,11 @@ public abstract class Structure {
      * Writes the fields of the struct to native memory
      */
     public void write() {
+        // Avoid writing to a null pointer
+        if (memory == PLACEHOLDER_MEMORY) {
+            return;
+        }
+
         // convenience: allocate memory if it hasn't been already; this
         // allows structures to do field-based initialization of arrays and not
         // have to explicitly call allocateMemory in a ctor
@@ -905,6 +918,27 @@ public abstract class Structure {
         return calculateSize(force, false);
     }
 
+    /** Efficiently calculate the size of the given Structure subclass. */
+    static int size(Class type) {
+        return size(type, null);
+    }
+
+    /** Efficiently calculate the size of the given Structure subclass. */
+    static int size(Class type, Structure value) {
+        LayoutInfo info;
+        synchronized(layoutInfo) {
+            info = (LayoutInfo)layoutInfo.get(type);
+        }
+        int sz = (info != null && !info.variable) ? info.size : CALCULATE_SIZE;
+        if (sz == CALCULATE_SIZE) {
+            if (value == null) {
+                value = newInstance(type, PLACEHOLDER_MEMORY);
+            }
+            sz = value.size();
+        }
+        return sz;
+    }
+
     int calculateSize(boolean force, boolean avoidFFIType) {
         int size = CALCULATE_SIZE;
         LayoutInfo info;
@@ -1147,7 +1181,7 @@ public abstract class Structure {
         if (Structure.class.isAssignableFrom(type)
             && !(ByReference.class.isAssignableFrom(type))) {
             try {
-                value = newInstance(type);
+                value = newInstance(type, PLACEHOLDER_MEMORY);
                 setFieldValue(field, value);
             }
             catch(IllegalArgumentException e) {
@@ -1218,7 +1252,7 @@ public abstract class Structure {
             }
             else {
                 if (value == null)
-                    value = newInstance(type);
+                    value = newInstance(type, PLACEHOLDER_MEMORY);
                 alignment = ((Structure)value).getStructAlignment();
             }
         }
@@ -1345,12 +1379,12 @@ public abstract class Structure {
                 useMemory(autoAllocate(requiredSize));
             }
         }
+        // TODO: optimize - check whether array already exists
         array[0] = this;
         int size = size();
         for (int i=1;i < array.length;i++) {
-            array[i] = Structure.newInstance(getClass());
-            array[i].useMemory(memory.share(i*size, size));
-            array[i].read();
+            array[i] = newInstance(getClass(), memory.share(i*size, size));
+            array[i].conditionalAutoRead();
         }
 
         if (!(this instanceof ByValue)) {
@@ -1451,6 +1485,18 @@ public abstract class Structure {
         setAutoRead(auto);
         setAutoWrite(auto);
         </code></pre>
+        For extremely large or complex structures where you only need to
+        access a small number of fields, you may see a significant performance
+        benefit by avoiding automatic structure reads and writes.  If
+        auto-read and -write are disabled, it is up to you to ensure that the
+        Java fields of interest are synched before and after native function
+        calls via {@link #readField(String)} and {@link
+        #writeField(String,Object)}.
+        <p/>
+        This is typically most effective when a native call populates a large
+        structure and you only need a few fields out of it.  After the native
+        call you can call {@link #readField(String)} on only the fields of
+        interest. 
     */
     public void setAutoSynch(boolean auto) {
         setAutoRead(auto);
@@ -1490,8 +1536,45 @@ public abstract class Structure {
         return FFIType.get(obj);
     }
 
+    /** Create a new Structure instance of the given type, initialized with
+     * the given memory.
+     * @param type desired Structure type
+     * @param init initial memory
+     * @return the new instance
+     * @throws IllegalArgumentException if the instantiation fails
+     */
+    public static Structure newInstance(Class type, Pointer init) throws IllegalArgumentException {
+        try {
+            Constructor ctor = type.getConstructor(new Class[] { Pointer.class });
+            return (Structure)ctor.newInstance(new Object[] { init });
+        }
+        catch(NoSuchMethodException e) {
+            // Not defined, fall back to the default
+        }
+        catch(SecurityException e) {
+            // Might as well try the fallback
+        }
+        catch(InstantiationException e) {
+            String msg = "Can't instantiate " + type + " (" + e + ")";
+            throw new IllegalArgumentException(msg);
+        }
+        catch(IllegalAccessException e) {
+            String msg = "Instantiation of " + type
+                + "(Pointer) not allowed, is it public? (" + e + ")";
+            throw new IllegalArgumentException(msg);
+        }
+        catch(InvocationTargetException e) {
+            String msg = "Exception thrown while instantiating an instance of " + type + " (" + e + ")";
+            e.printStackTrace();
+            throw new IllegalArgumentException(msg);
+        }
+        Structure s = newInstance(type);
+        s.useMemory(init);
+        return s;
+    }
+
     /** Create a new Structure instance of the given type
-     * @param type
+     * @param type desired Structure type
      * @return the new instance
      * @throws IllegalArgumentException if the instantiation fails
      */
@@ -1664,7 +1747,7 @@ public abstract class Structure {
                     return FFITypes.ffi_type_pointer;
                 }
                 if (Structure.class.isAssignableFrom(cls)) {
-                    if (obj == null) obj = newInstance(cls);
+                    if (obj == null) obj = newInstance(cls, PLACEHOLDER_MEMORY);
                     if (ByReference.class.isAssignableFrom(cls)) {
                         typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
                         return FFITypes.ffi_type_pointer;
@@ -1778,4 +1861,15 @@ public abstract class Structure {
         return Native.getNativeSize(nativeType, value);
     }
 
+    /** Placeholder pointer to help avoid auto-allocation of memory where a
+     * Structure needs a valid pointer but want to avoid actually reading from it.
+     */
+    private static final Pointer PLACEHOLDER_MEMORY = new Pointer(0) {
+        public Pointer share(long offset, long sz) { return this; }
+    };
+
+    /** Indicate whether the given Structure class can be created by JNA. */
+    static void validate(Class cls) {
+        Structure.newInstance(cls, PLACEHOLDER_MEMORY);
+    }
 }

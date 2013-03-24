@@ -2,6 +2,7 @@ build
 build-d64
 build.eclipse
 build.number
+build.clover
 .metadata
 .DS_Store
 bin

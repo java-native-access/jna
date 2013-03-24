@@ -327,8 +327,18 @@ public class StructureTest extends TestCase {
 
     // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
-        public static class ByReference extends PublicTestStructure implements Structure.ByReference { }
-        public int x, y;
+        public static class ByReference extends PublicTestStructure implements Structure.ByReference {
+            public ByReference() { }
+            public ByReference(Pointer p) { super(p); }
+        }
+        public int x = 1, y = 2;
+        public PublicTestStructure() { }
+        public PublicTestStructure(Pointer p) { super(p); read(); }
+        public static int allocations = 0;
+        protected void allocateMemory(int size) {
+            super.allocateMemory(size);
+            ++allocations;
+        }
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "x", "y" }); 
         }
@@ -362,6 +372,31 @@ public class StructureTest extends TestCase {
                      s.s2.getPointer());
     }
 
+    public static class NonAllocatingTestStructure extends PublicTestStructure {
+        public NonAllocatingTestStructure() { }
+        public NonAllocatingTestStructure(Pointer p) { super(p); read(); }
+        protected void allocateMemory(int size) {
+            throw new Error("Memory unexpectedly allocated");
+        }
+    }
+
+    // TODO: add'l newInstance(Pointer) tests: 
+    // DirectCallbacksTest.testCallStructureCallback
+    // DirectReturnTypesTest.testInvokeStructure
+    // getNativeAlignment
+    // native call (direct mode) (maybe not...)
+    public void testStructureFieldAvoidsSeparateMemoryAllocation() {
+        class TestStructure extends Structure {
+            public NonAllocatingTestStructure s1;
+            public TestStructure() { }
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "s1" }); 
+            }
+        }
+        TestStructure ts = new TestStructure();
+        assertNotNull("Inner structure should be initialized", ts.s1);
+    }
+
     public void testPrimitiveArrayField() {
         class TestStructure extends Structure {
             public byte[] buffer = new byte[1024];
@@ -381,7 +416,9 @@ public class StructureTest extends TestCase {
 
     public void testStructureArrayField() {
         class TestStructure extends Structure {
+            // uninitialized array elements
             public PublicTestStructure[] inner = new PublicTestStructure[2];
+            // initialized array elements
             public PublicTestStructure[] inner2 = (PublicTestStructure[])
                 new PublicTestStructure().toArray(2);
             protected List getFieldOrder() { 
@@ -393,15 +430,28 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong size for structure with nested array of struct",
                      s.inner.length * innerSize + s.inner2.length * innerSize,
                      s.size());
+        Structure s0 = s.inner2[0];
+        Structure s1 = s.inner2[1];
+
         s.write();
-        assertNotNull("Inner array elements should auto-initialize", s.inner[0]);
-        s.inner[0].x = s.inner[0].y = -1;
-        s.inner[1].x = s.inner[1].y = -1;
+        assertNotNull("Inner array elements should auto-initialize after write", s.inner[0]);
+        assertSame("Inner array (2) element 0 reference should not be changed after write", s0, s.inner2[0]);
+        assertSame("Inner array (2) element 1 reference should not be changed after write", s1, s.inner2[1]);
+
+        s.inner[0].x = s.inner[1].x = -1;
+        s.inner2[0].x = s.inner2[1].x = -1;
         s.read();
         assertEquals("Inner structure array element 0 not properly read",
                      0, s.inner[0].x);
         assertEquals("Inner structure array element 1 not properly read",
                      0, s.inner[1].x);
+        // First element (after toArray()) should preserve values from field initializers
+        assertEquals("Inner structure array (2) element 0 not properly read",
+                     1, s.inner2[0].x);
+        // Subsequent elements from toArray() are initialized from first's
+        // memory, which is zeroed
+        assertEquals("Inner structure array (2) element 1 not properly read",
+                     0, s.inner2[1].x);
 
         assertEquals("Wrong memory for uninitialized nested array",
                      s.getPointer(), s.inner[0].getPointer());
@@ -643,12 +693,18 @@ public class StructureTest extends TestCase {
     }
 
     public void testToArray() {
+        final int allocated[] = { 0 };
+        PublicTestStructure.allocations = 0;
         PublicTestStructure s = new PublicTestStructure();
         PublicTestStructure[] array = (PublicTestStructure[])s.toArray(1);
         assertEquals("Array should consist of a single element",
                      1, array.length);
         assertEquals("First element should be original", s, array[0]);
-        assertEquals("Structure memory should be expanded", 2, s.toArray(2).length);
+
+        array = (PublicTestStructure[])s.toArray(2);
+        assertEquals("Structure memory should be expanded", 2, array.length);
+        assertEquals("No memory should be allocated for new element", 1, PublicTestStructure.allocations);
+        assertEquals("Structure.read called on New element", 0, array[1].x);
     }
 
     public void testByReferenceArraySync() {
@@ -791,11 +847,13 @@ public class StructureTest extends TestCase {
         StructureWithPointers s = new StructureWithPointers();
         PublicTestStructure.ByReference inner =
             new PublicTestStructure.ByReference();
+        PublicTestStructure.allocations = 0;
         s.s1 = inner;
         s.write();
         s.s1 = null;
         s.read();
         assertEquals("Inner structure not regenerated on read", inner, s.s1);
+        assertEquals("Inner structure should not allocate memory", 0, PublicTestStructure.allocations);
     }
 
     public void testPreserveStructureByReferenceWithUnchangedPointerOnRead() {
@@ -1061,14 +1119,14 @@ public class StructureTest extends TestCase {
         final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS
             + "  int intField@0=0" + LS
             + "  .* inner@4=.*\\{" + LS
-            + "    int x@0=0" + LS
-            + "    int y@4=0" + LS
+            + "    int x@0=.*" + LS
+            + "    int y@4=.*" + LS
             + "  \\}" + LS
             + "\\}" + LS
             + "memory dump" + LS
-            + "\\[00000000\\]" + LS
-            + "\\[00000000\\]" + LS
-            + "\\[00000000\\]";
+            + "\\[[0-9a-f]+\\]" + LS
+            + "\\[[0-9a-f]+\\]" + LS
+            + "\\[[0-9a-f]+\\]";
         String actual = s.toString();
         assertTrue("Improperly formatted toString(): expected "
                    + EXPECTED + "\n" + actual,
