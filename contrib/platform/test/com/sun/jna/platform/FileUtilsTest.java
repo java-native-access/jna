@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform;
 
+import com.sun.jna.Platform;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,8 +25,8 @@ public class FileUtilsTest extends TestCase {
         if (!utils.hasTrash()) 
             return;
 
-        File home = new File(System.getProperty("user.home"));
-        File file = File.createTempFile(getName(), ".tmp", home);
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
         try {
             assertTrue("File should exist", file.exists());
             try {
@@ -37,6 +38,39 @@ public class FileUtilsTest extends TestCase {
             assertFalse("File still exists after move to trash: " + file, file.exists());
         }
         finally {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
+    
+    public void testMoveSymlinkToTrash() throws Exception {
+        if (Platform.isWindows()) {
+            return;
+        }
+        FileUtils utils = FileUtils.getInstance();
+        if (!utils.hasTrash()) 
+            return;
+
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
+        File file = File.createTempFile(getName(), ".tmp", tmpdir);
+        File symlink = new File(tmpdir, file.getName() + ".link");
+        Runtime.getRuntime().exec(new String[] { "ln", "-s", file.getAbsolutePath(), symlink.getAbsolutePath() });
+        try {
+            assertTrue("File should exist", symlink.exists());
+            try {
+                utils.moveToTrash(new File[] { symlink });
+            }
+            catch(IOException e) {
+                fail(e.toString());
+            }
+            assertFalse("Symlink still exists after move to trash: " + symlink, symlink.exists());
+            assertTrue("Original file should still exist after move to trash: " + file, file.exists());
+        }
+        finally {
+            if (symlink.exists()) {
+                symlink.delete();
+            }
             if (file.exists()) {
                 file.delete();
             }
