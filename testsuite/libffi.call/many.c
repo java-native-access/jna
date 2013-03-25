@@ -7,7 +7,9 @@
 /* { dg-do run } */
 #include "ffitest.h"
 
+#include <stdlib.h>
 #include <float.h>
+#include <math.h>
 
 static float many(float f1,
 		  float f2,
@@ -62,7 +64,7 @@ int main (void)
 	       fa[8], fa[9],
 	       fa[10],fa[11],fa[12]);
 
-    if (f - ff < FLT_EPSILON)
+    if (fabs(f - ff) < FLT_EPSILON)
       exit(0);
     else
       abort();
