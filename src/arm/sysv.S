@@ -187,7 +187,7 @@ ARM_FUNC_START ffi_call_SYSV
 	@     r1 already set
 
 	@ Call ffi_prep_args(stack, &ecif)
-	bl	CNAME(ffi_prep_args)
+	bl	CNAME(ffi_prep_args_SYSV)
 
 	@ move first 4 parameters in registers
 	ldmia	sp, {r0-r3}
@@ -364,7 +364,7 @@ ARM_FUNC_START ffi_call_VFP
 	sub	r2, fp, #64   @ VFP scratch space
 
 	@ Call ffi_prep_args(stack, &ecif, vfp_space)
-	bl	CNAME(ffi_prep_args)
+	bl	CNAME(ffi_prep_args_VFP)
 
 	@ Load VFP register args if needed
 	cmp	r0, #0

@@ -122,14 +122,14 @@ static size_t ffi_put_arg(ffi_type **arg_type, void **arg, char *stack)
    value is cif->vfp_used (word bitset of VFP regs used for passing
    arguments). These are only used for the VFP hard-float ABI.
 */
-int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
+int ffi_prep_args_SYSV(char *stack, extended_cif *ecif, float *vfp_space)
 {
-  register unsigned int i, vi = 0;
+  register unsigned int i;
   register void **p_argv;
   register char *argp;
   register ffi_type **p_arg;
-
   argp = stack;
+  
 
   if ( ecif->cif->flags == FFI_TYPE_STRUCT ) {
     *(void **) argp = ecif->rvalue;
@@ -140,23 +140,19 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
 
   for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
        (i != 0);
-       i--, p_arg++)
+       i--, p_arg++, p_argv++)
     {
-
-      /* Allocated in VFP registers. */
-      if (ecif->cif->abi == FFI_VFP
-	  && vi < ecif->cif->vfp_nargs && vfp_type_p (*p_arg))
-	{
-	  char *vfp_slot = (char *)(vfp_space + ecif->cif->vfp_args[vi++]);
-		ffi_put_arg(p_arg, p_argv, vfp_slot);
-	  p_argv++;
-	  continue;
-	}
     argp = ffi_align(p_arg, argp);
     argp += ffi_put_arg(p_arg, p_argv, argp);
-	  p_argv++;
     }
 
+  return 0;
+}
+
+int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space)
+{
+  // make sure we are using FFI_VFP
+  FFI_ASSERT(ecif->cif->abi == FFI_VFP);
   /* Indicate the VFP registers used. */
   return ecif->cif->vfp_used;
 }
