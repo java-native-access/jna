@@ -71,8 +71,8 @@ static size_t ffi_put_arg(ffi_type **arg_type, void **arg, char *stack)
 	register size_t z = (*p_arg)->size;
   if (z < sizeof(int))
     {
-	z = sizeof(int);
-	switch ((*p_arg)->type)
+		z = sizeof(int);
+		switch ((*p_arg)->type)
       {
       case FFI_TYPE_SINT8:
         *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
@@ -100,14 +100,20 @@ static size_t ffi_put_arg(ffi_type **arg_type, void **arg, char *stack)
     }
   else if (z == sizeof(int))
     {
-      *(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
+		if ((*p_arg)->type == FFI_TYPE_FLOAT)
+			*(float *) argp = *(float *)(* p_argv);
+		else
+			*(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
     }
+	else if (z == sizeof(double) && (*p_arg)->type == FFI_TYPE_DOUBLE)
+		{
+			*(double *) argp = *(double *)(* p_argv);
+		}
   else
     {
       memcpy(argp, *p_argv, z);
     }
   return z;
-
 }
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments
@@ -136,19 +142,13 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
        (i != 0);
        i--, p_arg++)
     {
-      size_t z;
 
       /* Allocated in VFP registers. */
       if (ecif->cif->abi == FFI_VFP
 	  && vi < ecif->cif->vfp_nargs && vfp_type_p (*p_arg))
 	{
-	  float* vfp_slot = vfp_space + ecif->cif->vfp_args[vi++];
-	  if ((*p_arg)->type == FFI_TYPE_FLOAT)
-	    *((float*)vfp_slot) = *((float*)*p_argv);
-	  else if ((*p_arg)->type == FFI_TYPE_DOUBLE)
-	    *((double*)vfp_slot) = *((double*)*p_argv);
-	  else
-	    memcpy(vfp_slot, *p_argv, (*p_arg)->size);
+	  char *vfp_slot = (char *)(vfp_space + ecif->cif->vfp_args[vi++]);
+		ffi_put_arg(p_arg, p_argv, vfp_slot);
 	  p_argv++;
 	  continue;
 	}
