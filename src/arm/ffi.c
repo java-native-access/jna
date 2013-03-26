@@ -153,6 +153,76 @@ int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space)
 {
   // make sure we are using FFI_VFP
   FFI_ASSERT(ecif->cif->abi == FFI_VFP);
+
+  register unsigned int i, vi = 0;
+  register void **p_argv;
+  register char *argp, *regp, *eo_regp;
+  register ffi_type **p_arg;
+  char stack_used = 0;
+  char done_with_regs = 0;
+  char is_vfp_type;
+
+  /* the first 4 words on the stack are used for values passed in core
+   * registers. */
+  regp = stack;
+  eo_regp = argp = regp + 16;
+  
+
+  /* if the function returns an FFI_TYPE_STRUCT in memory, that address is
+   * passed in r0 to the function */
+  if ( ecif->cif->flags == FFI_TYPE_STRUCT ) {
+    *(void **) regp = ecif->rvalue;
+    regp += 4;
+  }
+
+  p_argv = ecif->avalue;
+
+  for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
+       (i != 0);
+       i--, p_arg++, p_argv++)
+    {
+      is_vfp_type = vfp_type_p (*p_arg);
+
+      /* Allocated in VFP registers. */
+      if(vi < ecif->cif->vfp_nargs && is_vfp_type)
+        {
+          char *vfp_slot = (char *)(vfp_space + ecif->cif->vfp_args[vi++]);
+          ffi_put_arg(p_arg, p_argv, vfp_slot);
+          continue;
+        }
+      /* Try allocating in core registers. */
+      else if (!done_with_regs && !is_vfp_type)
+        {
+          char *tregp = ffi_align(p_arg, regp);
+          size_t size = (*p_arg)->size; 
+          size = (size < 4)? 4 : size; // pad
+          /* Check if there is space left in the aligned register area to place
+           * the argument */
+          if(tregp + size <= eo_regp)
+            {
+              regp = tregp + ffi_put_arg(p_arg, p_argv, tregp);
+              done_with_regs = (regp == argp);
+              // ensure we did not write into the stack area
+              FFI_ASSERT(regp <= argp);
+              continue;
+            }
+          /* In case there are no arguments in the stack area yet, 
+          the argument is passed in the remaining core registers and on the
+          stack. */
+          else if (!stack_used) 
+            {
+              stack_used = 1;
+              done_with_regs = 1;
+              argp = tregp + ffi_put_arg(p_arg, p_argv, tregp);
+              FFI_ASSERT(eo_regp < argp);
+              continue;
+            }
+        }
+      /* Base case, arguments are passed on the stack */
+      stack_used = 1;
+      argp = ffi_align(p_arg, argp);
+      argp += ffi_put_arg(p_arg, p_argv, argp);
+    }
   /* Indicate the VFP registers used. */
   return ecif->cif->vfp_used;
 }
