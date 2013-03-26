@@ -15,10 +15,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
@@ -98,13 +98,12 @@ public interface WTypes {
 	}
 
 	public class BSTRByReference extends ByReference {
-
 		public BSTRByReference() {
 			super(Pointer.SIZE);
 		}
 
 		public BSTRByReference(BSTR value) {
-			super(Pointer.SIZE);
+			this();
 			setValue(value);
 		}
 
@@ -115,21 +114,25 @@ public interface WTypes {
 		public BSTR getValue() {
 			return new BSTR(getPointer().getPointer(0));
 		}
-		
+
 		public String getString() {
 			return this.getValue().getValue();
 		}
 	}
 
-	public class LPOLESTR extends ByReference {
-
+	public class LPOLESTR extends PointerType {
 		public LPOLESTR() {
-			super(Pointer.SIZE);
+			super();
+			setPointer(new Memory(Pointer.SIZE));
+		}
+
+		public LPOLESTR(Pointer pointer) {
+			super(pointer);
 		}
 
 		public LPOLESTR(String value) {
 			this();
-			setValue(value);
+			this.setValue(value);
 		}
 
 		public void setValue(String value) {
@@ -137,12 +140,17 @@ public interface WTypes {
 		}
 
 		public String getValue() {
-			return getPointer().getString(0, true);
+			Pointer pointer = this.getPointer();
+			String str = null;
+			if (pointer != null)
+				str = pointer.getString(0, true);
+
+			return str;
 		}
-		
+
 		@Override
 		public String toString() {
-			return getValue();
+			return this.getValue();
 		}
 	}
 

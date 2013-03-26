@@ -58,12 +58,14 @@ public interface BaseTSD extends StdCallLibrary {
      * Unsigned LONG_PTR. 
      */
     public static class ULONG_PTR extends IntegerType {
+    	public static final int SIZE = 4;
+    	
         public ULONG_PTR() {
             this(0);
         }
 
         public ULONG_PTR(long value) {
-            super(Pointer.SIZE, value, true);
+            super(SIZE, value, true);
         }
 
         public Pointer toPointer() {

@@ -7,6 +7,7 @@ import java.io.PrintStream;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
+import com.sun.jna.platform.win32.OaIdl.TYPEDESC;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -43,17 +44,15 @@ public class TypeLibraryImporter {
 
 			for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
 				TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
-				ITypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(i);
-				Object[] typeLibDoc = this.typeLibUtil.getDocumentation(i);
 
 				if (typekind.value == TYPEKIND.TKIND_ENUM) {
-					this.createCOMEnum(typeLibDoc, typeInfoUtil);
+					this.createCOMEnum(i);
 				} else if (typekind.value == TYPEKIND.TKIND_RECORD) {
 
 				} else if (typekind.value == TYPEKIND.TKIND_MODULE) {
 
 				} else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
-
+					this.createCOMInterface(i);
 				} else if (typekind.value == TYPEKIND.TKIND_DISPATCH) {
 
 				} else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
@@ -108,9 +107,69 @@ public class TypeLibraryImporter {
 		this.out.println("*/");
 	}
 
-	private void createCOMEnum(Object[] typeLibDoc, ITypeInfoUtil typeInfoUtil) {
-		 String enumName = (String) typeLibDoc[0];
-		 System.out.println(enumName);
+	private void createCOMEnum(int index) {
+		Object[] typeLibDoc = this.typeLibUtil.getDocumentation(index);
+
+		String enumName = (String) typeLibDoc[0];
+		String helpString = (String) typeLibDoc[1];
+		System.out.println(enumName);
+		//
+		//
+		// this.logInfo("Type of kind 'enum' found: " + enumName);
+		// this.out.print("	public static class TYPEKIND extends Structure {"
+		// + CR
+		// +
+		// "	public static class ByReference extends TYPEKIND implements	Structure.ByReference {}"
+		// + CRCR + "			public int value;" + CRCR + "			public "
+		// + enumName + "() {}" + CRCR
+		// + "            public static final int " + enumName
+		// + "_ENUM = 0;" + CRCR);
+		//
+		// System.out.println(documentation[0]);
+
+		MEMBERID memberID;
+		FUNCDESC pFuncDesc;
+		VARDESC pVarDesc;
+		BSTR bstrMethod;
+		BSTR bstrProperty;
+
+		// Get the TypeAttributes
+		ITypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+		TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+		
+		System.out.println(typeAttr.toString());
+		
+		// Lets get all the methods for this Type Info
+		for (int i = 0; i < typeAttr.cFuncs.intValue(); i++) {
+			// Get the function description
+			FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(i);
+
+			// Get the member ID
+			memberID = funcDesc.memid;
+
+			// Get the name of the method
+			Object[] typeInfoDoc = typeInfoUtil.getDocumentation(memberID);
+		}
+
+		for (int i = 0; i < typeAttr.cVars.intValue(); i++) {
+			// Get the property description
+			VARDESC varDesc = typeInfoUtil.getVarDesc(i);
+
+			// Get the member ID
+			memberID = varDesc.memid;
+
+			// Get the name of the property
+			Object[] typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+		}
+
+	}
+
+	private void createCOMInterface(int index) {
+		ITypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+		Object[] typeLibDoc = this.typeLibUtil.getDocumentation(index);
+
+		String enumName = (String) typeLibDoc[0];
+		System.out.println(enumName);
 		//
 		//
 		// this.logInfo("Type of kind 'enum' found: " + enumName);

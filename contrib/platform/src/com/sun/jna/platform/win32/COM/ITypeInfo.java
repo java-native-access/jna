@@ -57,9 +57,10 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public HRESULT GetTypeAttr(
-	/* [out] */TYPEATTR.ByReference pTypeAttr) {
-
-		int hr = this.invoke(3, new Object[] { this.getPointer(), pTypeAttr });
+	/* [out] */TYPEATTR.ByReference ppTypeAttr) {
+		
+		
+		int hr = this.invoke(3, new Object[] { this.getPointer(), ppTypeAttr });
 		return new HRESULT(hr);
 	}
 

@@ -347,6 +347,18 @@ public interface OaIdl {
 	public static class TYPEKIND extends Structure {
 		public static class ByReference extends TYPEKIND implements
 				Structure.ByReference {
+			public ByReference() {
+				// TODO Auto-generated constructor stub
+			}
+
+			public ByReference(int value) {
+				super(value);
+			}
+
+			public ByReference(TYPEKIND typekind) {
+				super(typekind.getPointer());
+				value = typekind.value;
+			}
 		}
 
 		public int value;
@@ -1105,6 +1117,13 @@ public interface OaIdl {
 	public static class TYPEDESC extends Structure {
 		public static class ByReference extends TYPEDESC implements
 				Structure.ByReference {
+
+			public ByReference() {
+			}
+
+			public ByReference(TYPEDESC typedesc) {
+				super(typedesc.getPointer());
+			}
 		};
 
 		public _TYPEDESC _typeDesc;
@@ -1117,43 +1136,26 @@ public interface OaIdl {
 
 			public ARRAYDESC.ByReference lpadesc;
 
-			public HREFTYPEbyReference hreftype;
+			public HREFTYPE hreftype;
 
 			public _TYPEDESC() {
 				super();
-				setType("lptdesc");
-				this.read();
+				setType("hreftype");
 			}
 
 			public _TYPEDESC(Pointer pointer) {
 				super(pointer);
-				this.read();
-			}
-
-			public _TYPEDESC(ARRAYDESC.ByReference lpadesc) {
-				super();
-				this.lpadesc = lpadesc;
-				setType("lpadesc");
-			}
-
-			public _TYPEDESC(HREFTYPEbyReference hreftype) {
-				super();
-				this.hreftype = hreftype;
 				setType("hreftype");
-			}
-
-			public _TYPEDESC(TYPEDESC.ByReference lptdesc) {
-				super();
-				this.lptdesc = lptdesc;
-				setType("lptdesc");
 			}
 		};
 
 		public TYPEDESC() {
+			this.write();
 		}
 
 		public TYPEDESC(Pointer pointer) {
 			super(pointer);
+			this.write();
 		}
 
 		public TYPEDESC(_TYPEDESC _typeDesc, VARTYPE vt) {
@@ -1171,18 +1173,25 @@ public interface OaIdl {
 	public static class IDLDESC extends Structure {
 		public static class ByReference extends IDLDESC implements
 				Structure.ByReference {
+
+			public ByReference() {
+			}
+
+			public ByReference(IDLDESC idldesc) {
+				super(idldesc.dwReserved, idldesc.wIDLFlags);
+			}
 		};
 
 		// / C type : ULONG_PTR
 		public ULONG_PTR dwReserved;
-		public short wIDLFlags;
+		public USHORT wIDLFlags;
 
 		public IDLDESC() {
 			super();
 		}
 
 		// / @param dwReserved C type : ULONG_PTR
-		public IDLDESC(ULONG_PTR dwReserved, short wIDLFlags) {
+		public IDLDESC(ULONG_PTR dwReserved, USHORT wIDLFlags) {
 			super();
 			this.dwReserved = dwReserved;
 			this.wIDLFlags = wIDLFlags;
@@ -1281,16 +1290,16 @@ public interface OaIdl {
 	public static class TYPEATTR extends Structure {
 		public static class ByReference extends TYPEATTR implements
 				Structure.ByReference {
-		};
+		}
 
-		public GUID guid;
+		public GUID.ByReference guid;
 		public LCID lcid;
 		public DWORD dwReserved;
 		public MEMBERID memidConstructor;
 		public MEMBERID memidDestructor;
 		public LPOLESTR lpstrSchema;
 		public ULONG cbSizeInstance;
-		public TYPEKIND typekind;
+		public TYPEKIND.ByReference typekind;
 		public WORD cFuncs;
 		public WORD cVars;
 		public WORD cImplTypes;
@@ -1299,15 +1308,14 @@ public interface OaIdl {
 		public WORD wTypeFlags;
 		public WORD wMajorVerNum;
 		public WORD wMinorVerNum;
-		public TYPEDESC tdescAlias;
-		public IDLDESC idldescType;
+		public TYPEDESC.ByReference tdescAlias;
+		public IDLDESC.ByReference idldescType;
 
 		public TYPEATTR() {
 		}
 
 		public TYPEATTR(Pointer pointer) {
 			super(pointer);
-			this.read();
 		}
 
 		@Override
