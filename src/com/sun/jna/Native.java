@@ -218,17 +218,17 @@ public final class Native {
     /** Set whether the system last error result is captured after every
      * native invocation.  Defaults to <code>true</code> (<code>false</code>
      * for direct-mapped calls).<p>
-     * @deprecated The preferred method of obtaining the last error result is
+     * NOTE: The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * and set <code>jna.preserve_last_error</code> false.
      */
     public static synchronized native void setPreserveLastError(boolean enable);
 
     /** Indicates whether the system last error result is preserved
      * after every invocation.<p>
-     * @deprecated The preferred method of obtaining the last error result is
+     * NOTE: The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * and set <code>jna.preserve_last_error</code> false.
      */
     public static synchronized native boolean getPreserveLastError();
 
@@ -815,12 +815,6 @@ public final class Native {
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
-    private static final ThreadLocal lastError = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new Integer(0);
-        }
-    };
-
     /** Retrieve the last error set by the OS.  This corresponds to
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether
@@ -829,23 +823,14 @@ public final class Native {
      * <code>false</code>.<p>
      * The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * instead, and set <code>jna.preserve_last_error</code> false..
      */
-    public static int getLastError() {
-        return ((Integer)lastError.get()).intValue();
-    }
+    public static native int getLastError();
 
-    /** Set the OS last error code.  Whether the setting is per-thread
-     * or global depends on the underlying OS.
+    /** Set the OS last error code.  If <code>jna.preserve_last_error</code>
+     * is <code>true</code>, the value will be saved on a per-thread basis.
      */
     public static native void setLastError(int code);
-
-    /** Update the last error value (called from native code). */
-    // This has to be called immediately after a native call to ensure that
-    // subsequent VM operations don't overwrite the last error value
-    static void updateLastError(int e) {
-        lastError.set(new Integer(e));
-    }
 
     /**
      * Returns a synchronized (thread-safe) library backed by the specified

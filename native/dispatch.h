@@ -168,6 +168,8 @@ extern int get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
 extern const char* jnidispatch_callback_init(JNIEnv*);
+extern void jnidispatch_set_last_error(int);
+extern int jnidispatch_get_last_error();
 extern void jnidispatch_callback_dispose(JNIEnv*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,

@@ -18,13 +18,14 @@ Features
 * [#194](https://github.com/twall/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
 * [#196](https://github.com/twall/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
 * [#187](https://github.com/twall/jna/pull/187): Allow StructureFieldOrderTest unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
+* [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
 * [#183](https://github.com/twall/jna/pull/183): Fix `LMAccess.GROUP_INFO_3.getFieldOrder()` to return correct fields names - [@bhamail](https://github.com/bhamail).
 * [#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
 * Remove deprecated methods on Memory (getSize,isValid) and Structure (getSize) - [@twall](https://github.com/twall).
-* [#206](https://github.com/twall/jna/pull/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
 
 Release 3.5.1
 ====================
