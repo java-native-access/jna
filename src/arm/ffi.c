@@ -37,6 +37,31 @@
 static int vfp_type_p (ffi_type *);
 static void layout_vfp_args (ffi_cif *);
 
+static char* ffi_align(ffi_type **p_arg, char *argp)
+{
+  /* Align if necessary */
+  register size_t alignment = (*p_arg)->alignment;
+  if (alignment < 4)
+  {
+    alignment = 4;
+  }
+#ifdef _WIN32_WCE
+  if (alignment > 4)
+  {
+    alignment = 4;
+  }
+#endif
+  if ((alignment - 1) & (unsigned) argp)
+  {
+    argp = (char *) ALIGN(argp, alignment);
+  }
+
+  if ((*p_arg)->type == FFI_TYPE_STRUCT)
+  {
+    argp = (char *) ALIGN(argp, 4);
+  }
+  return argp;
+}
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments
    
@@ -65,7 +90,6 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
        i--, p_arg++)
     {
       size_t z;
-      size_t alignment;
 
       /* Allocated in VFP registers. */
       if (ecif->cif->abi == FFI_VFP
@@ -81,19 +105,7 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
 	  p_argv++;
 	  continue;
 	}
-
-      /* Align if necessary */
-      alignment = (*p_arg)->alignment;
-#ifdef _WIN32_WCE
-      if (alignment > 4)
-	alignment = 4;
-#endif
-      if ((alignment - 1) & (unsigned) argp) {
-	argp = (char *) ALIGN(argp, alignment);
-      }
-
-      if ((*p_arg)->type == FFI_TYPE_STRUCT)
-	argp = (char *) ALIGN(argp, 4);
+  argp = ffi_align(p_arg, argp);
 
 	  z = (*p_arg)->size;
 	  if (z < sizeof(int))
@@ -329,7 +341,6 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
   for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
     {
       size_t z;
-      size_t alignment;
   
       if (cif->abi == FFI_VFP
 	  && vi < cif->vfp_nargs && vfp_type_p (*p_arg))
@@ -337,19 +348,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 	  *p_argv++ = (void*)(vfp_stack + cif->vfp_args[vi++]);
 	  continue;
 	}
-
-      alignment = (*p_arg)->alignment;
-      if (alignment < 4)
-	alignment = 4;
-#ifdef _WIN32_WCE
-      else
-	if (alignment > 4)
-	  alignment = 4;
-#endif
-      /* Align if necessary */
-      if ((alignment - 1) & (unsigned) argp) {
-	argp = (char *) ALIGN(argp, alignment);
-      }
+      argp = ffi_align(p_arg, argp);
 
       z = (*p_arg)->size;
 
