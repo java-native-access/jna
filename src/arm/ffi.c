@@ -62,6 +62,53 @@ static char* ffi_align(ffi_type **p_arg, char *argp)
   }
   return argp;
 }
+
+static size_t ffi_put_arg(ffi_type **arg_type, void **arg, char *stack)
+{
+	register char* argp = stack;
+	register ffi_type **p_arg = arg_type;
+	register void **p_argv = arg;
+	register size_t z = (*p_arg)->size;
+  if (z < sizeof(int))
+    {
+	z = sizeof(int);
+	switch ((*p_arg)->type)
+      {
+      case FFI_TYPE_SINT8:
+        *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_UINT8:
+        *(unsigned int *) argp = (unsigned int)*(UINT8 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_SINT16:
+        *(signed int *) argp = (signed int)*(SINT16 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_UINT16:
+        *(unsigned int *) argp = (unsigned int)*(UINT16 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_STRUCT:
+        memcpy(argp, *p_argv, (*p_arg)->size);
+        break;
+
+      default:
+        FFI_ASSERT(0);
+      }
+    }
+  else if (z == sizeof(int))
+    {
+      *(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
+    }
+  else
+    {
+      memcpy(argp, *p_argv, z);
+    }
+  return z;
+
+}
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments
    
@@ -105,48 +152,9 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
 	  p_argv++;
 	  continue;
 	}
-  argp = ffi_align(p_arg, argp);
-
-	  z = (*p_arg)->size;
-	  if (z < sizeof(int))
-	    {
-	      z = sizeof(int);
-	      switch ((*p_arg)->type)
-		{
-		case FFI_TYPE_SINT8:
-		  *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_UINT8:
-		  *(unsigned int *) argp = (unsigned int)*(UINT8 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_SINT16:
-		  *(signed int *) argp = (signed int)*(SINT16 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_UINT16:
-		  *(unsigned int *) argp = (unsigned int)*(UINT16 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_STRUCT:
-		  memcpy(argp, *p_argv, (*p_arg)->size);
-		  break;
-
-		default:
-		  FFI_ASSERT(0);
-		}
-	    }
-	  else if (z == sizeof(int))
-	    {
-	      *(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
-	    }
-	  else
-	    {
-	      memcpy(argp, *p_argv, z);
-	    }
+    argp = ffi_align(p_arg, argp);
+    argp += ffi_put_arg(p_arg, p_argv, argp);
 	  p_argv++;
-	  argp += z;
     }
 
   /* Indicate the VFP registers used. */
