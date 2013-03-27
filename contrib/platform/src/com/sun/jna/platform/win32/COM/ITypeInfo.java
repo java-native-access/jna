@@ -57,39 +57,35 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public HRESULT GetTypeAttr(
-	/* [out] */TYPEATTR.ByReference ppTypeAttr) {
-		
-		
+	/* [out] */PointerByReference ppTypeAttr) {
+
 		int hr = this.invoke(3, new Object[] { this.getPointer(), ppTypeAttr });
 		return new HRESULT(hr);
 	}
 
 	public HRESULT GetTypeComp(
-	/* [out] */ITypeComp.ByReference pTComp) {
+	/* [out] */PointerByReference ppTComp) {
 
-		PointerByReference ppTComp = new PointerByReference();
 		int hr = this.invoke(4, new Object[] { this.getPointer(), ppTComp });
-		pTComp.setPointer(ppTComp.getValue());
-
 		return new HRESULT(hr);
 	}
 
 	public/* [local] */HRESULT GetFuncDesc(
 	/* [in] */UINT index,
-	/* [out] */FUNCDESC.ByReference pFuncDesc) {
+	/* [out] */PointerByReference ppFuncDesc) {
 
 		int hr = this.invoke(5, new Object[] { this.getPointer(), index,
-				pFuncDesc });
+				ppFuncDesc });
 
 		return new HRESULT(hr);
 	}
 
 	public/* [local] */HRESULT GetVarDesc(
 	/* [in] */UINT index,
-	/* [out] */VARDESC.ByReference pVarDesc) {
+	/* [out] */PointerByReference ppVarDesc) {
 
 		int hr = this.invoke(6, new Object[] { this.getPointer(), index,
-				pVarDesc });
+				ppVarDesc });
 
 		return new HRESULT(hr);
 	}
@@ -180,7 +176,7 @@ public class ITypeInfo extends IUnknown {
 
 	public HRESULT GetRefTypeInfo(
 	/* [in] */HREFTYPE hRefType,
-	/* [out] */ITypeInfo.ByReference ppTInfo) {
+	/* [out] */PointerByReference ppTInfo) {
 
 		int hr = this.invoke(14, new Object[] { this.getPointer(), hRefType,
 				ppTInfo });
@@ -221,13 +217,11 @@ public class ITypeInfo extends IUnknown {
 	}
 
 	public/* [local] */HRESULT GetContainingTypeLib(
-	/* [out] */ITypeLib.ByReference pTLib,
+	/* [out] */PointerByReference ppTLib,
 	/* [out] */UINTbyReference pIndex) {
 
-		PointerByReference ppTLib = new PointerByReference();
 		int hr = this.invoke(18, new Object[] { this.getPointer(), ppTLib,
 				pIndex });
-		pTLib.setPointer(ppTLib.getPointer());
 
 		return new HRESULT(hr);
 	}

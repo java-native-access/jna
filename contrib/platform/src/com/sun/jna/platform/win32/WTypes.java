@@ -15,10 +15,15 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.OaIdl.VARKIND;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
 
@@ -120,40 +125,30 @@ public interface WTypes {
 		}
 	}
 
-	public class LPOLESTR extends PointerType {
+	public static class LPOLESTR extends Structure {
+		public static class ByReference extends LPOLESTR implements
+				Structure.ByReference {
+		};
+
+		public WString value;
+
 		public LPOLESTR() {
-			super();
-			setPointer(new Memory(Pointer.SIZE));
 		}
 
-		public LPOLESTR(Pointer pointer) {
-			super(pointer);
+		public LPOLESTR(WString value) {
+			this.value = value;
 		}
 
-		public LPOLESTR(String value) {
-			this();
-			this.setValue(value);
-		}
-
-		public void setValue(String value) {
-			this.getPointer().setString(0, value, true);
-		}
-
-		public String getValue() {
-			Pointer pointer = this.getPointer();
-			String str = null;
-			if (pointer != null)
-				str = pointer.getString(0, true);
-
-			return str;
+		public LPOLESTR(String str) {
+			this.value = new WString(str);
 		}
 
 		@Override
-		public String toString() {
-			return this.getValue();
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "value" });
 		}
-	}
-
+	};
+	
 	public static class VARTYPE extends USHORT {
 		public VARTYPE() {
 			this(0);

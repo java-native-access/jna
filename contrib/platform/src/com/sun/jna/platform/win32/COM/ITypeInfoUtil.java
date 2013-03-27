@@ -33,35 +33,35 @@ public class ITypeInfoUtil {
 	}
 
 	public TYPEATTR getTypeAttr() {
-		TYPEATTR.ByReference pTypeAttr = new TYPEATTR.ByReference();
-		HRESULT hr = this.typeInfo.GetTypeAttr(pTypeAttr);
+		PointerByReference ppTypeAttr = new PointerByReference();
+		HRESULT hr = this.typeInfo.GetTypeAttr(ppTypeAttr);
 		COMUtils.checkAutoRC(hr);
 
-		return pTypeAttr;
+		return new TYPEATTR(ppTypeAttr.getValue());
 	}
 
-	public TYPEATTR getTypeComp() {
-		TYPEATTR.ByReference pTypeAttr = new TYPEATTR.ByReference();
-		HRESULT hr = this.typeInfo.GetTypeAttr(pTypeAttr);
+	public ITypeComp getTypeComp() {
+		PointerByReference ppTypeAttr = new PointerByReference();
+		HRESULT hr = this.typeInfo.GetTypeComp(ppTypeAttr);
 		COMUtils.checkAutoRC(hr);
 
-		return pTypeAttr;
+		return new ITypeComp(ppTypeAttr.getValue());
 	}
 
 	public FUNCDESC getFuncDesc(int index) {
-		FUNCDESC.ByReference pFuncDesc = new FUNCDESC.ByReference();
-		HRESULT hr = this.typeInfo.GetFuncDesc(new UINT(index), pFuncDesc);
+		PointerByReference ppFuncDesc = new PointerByReference();
+		HRESULT hr = this.typeInfo.GetFuncDesc(new UINT(index), ppFuncDesc);
 		COMUtils.checkAutoRC(hr);
 
-		return pFuncDesc;
+		return new FUNCDESC(ppFuncDesc.getValue());
 	}
 
 	public VARDESC getVarDesc(int index) {
-		VARDESC.ByReference pVarDesc = new VARDESC.ByReference();
-		HRESULT hr = this.typeInfo.GetVarDesc(new UINT(index), pVarDesc);
+		PointerByReference ppVarDesc = new PointerByReference();
+		HRESULT hr = this.typeInfo.GetVarDesc(new UINT(index), ppVarDesc);
 		COMUtils.checkAutoRC(hr);
 
-		return pVarDesc;
+		return new VARDESC(ppVarDesc.getValue());
 	}
 
 	public Object[] getNames(MEMBERID memid, int maxNames) {

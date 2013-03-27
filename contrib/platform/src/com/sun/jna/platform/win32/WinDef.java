@@ -147,7 +147,7 @@ public interface WinDef extends StdCallLibrary {
 			this(0);
 		}
 
-		public LONG(int value) {
+		public LONG(long value) {
 			super(SIZE, value);
 		}
 	}

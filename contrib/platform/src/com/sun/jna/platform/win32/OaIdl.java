@@ -847,6 +847,11 @@ public interface OaIdl {
 
 			public _Union() {
 				super();
+				this.setType("oInst");
+			}
+
+			public _Union(Pointer pointer) {
+				super(pointer);
 			}
 
 			/**
@@ -857,19 +862,25 @@ public interface OaIdl {
 			public _Union(VARIANT lpvarValue) {
 				super();
 				this.lpvarValue = lpvarValue;
-				setType(VARIANT.class);
+				setType("lpvarValue");
 			}
 
 			// / @param oInst [case()]
 			public _Union(NativeLong oInst) {
 				super();
 				this.oInst = oInst;
-				setType(NativeLong.class);
+				setType("oInst");
 			}
 		};
 
 		public VARDESC() {
 			super();
+		}
+		
+		public VARDESC(Pointer pointer) {
+			super(pointer);
+			this.union.setType("lpvarValue");
+			this.read();
 		}
 
 		@Override
@@ -1114,60 +1125,102 @@ public interface OaIdl {
 		}
 	};
 
-	public static class TYPEDESC extends Structure {
-		public static class ByReference extends TYPEDESC implements
-				Structure.ByReference {
-
-			public ByReference() {
-			}
-
-			public ByReference(TYPEDESC typedesc) {
-				super(typedesc.getPointer());
-			}
-		};
-
-		public _TYPEDESC _typeDesc;
-
+	public class TYPEDESC extends Structure {
+		/**
+		 * [switch_is][switch_type]<br>
+		 * C type : DUMMYUNIONNAME_union
+		 */
+		public _TYPEDESC _typedesc;
+		// / C type : VARTYPE
 		public VARTYPE vt;
 
+		// / <i>native declaration : line 4</i>
+		// / <i>native declaration : line 4</i>
 		public static class _TYPEDESC extends Union {
-
+			/**
+			 * [case()]<br>
+			 * C type : tagTYPEDESC*
+			 */
 			public TYPEDESC.ByReference lptdesc;
-
+			/**
+			 * [case()]<br>
+			 * C type : tagARRAYDESC*
+			 */
 			public ARRAYDESC.ByReference lpadesc;
-
+			/**
+			 * [case()]<br>
+			 * C type : HREFTYPE
+			 */
 			public HREFTYPE hreftype;
 
 			public _TYPEDESC() {
 				super();
-				setType("hreftype");
 			}
 
-			public _TYPEDESC(Pointer pointer) {
-				super(pointer);
-				setType("hreftype");
+			/**
+			 * @param lpadesc
+			 *            [case()]<br>
+			 *            C type : tagARRAYDESC*
+			 */
+			public _TYPEDESC(ARRAYDESC.ByReference lpadesc) {
+				super();
+				this.lpadesc = lpadesc;
+				setType(ARRAYDESC.class);
 			}
+
+			/**
+			 * @param hreftype
+			 *            [case()]<br>
+			 *            C type : HREFTYPE
+			 */
+			public _TYPEDESC(HREFTYPE hreftype) {
+				super();
+				this.hreftype = hreftype;
+				setType(HREFTYPE.class);
+			}
+
+			/**
+			 * @param lptdesc
+			 *            [case()]<br>
+			 *            C type : tagTYPEDESC*
+			 */
+			public _TYPEDESC(TYPEDESC.ByReference lptdesc) {
+				super();
+				this.lptdesc = lptdesc;
+				setType(TYPEDESC.ByReference.class);
+			}
+
+			public static class ByReference extends _TYPEDESC implements
+					Structure.ByReference {
+
+			};
 		};
 
 		public TYPEDESC() {
-			this.write();
-		}
-
-		public TYPEDESC(Pointer pointer) {
-			super(pointer);
-			this.write();
-		}
-
-		public TYPEDESC(_TYPEDESC _typeDesc, VARTYPE vt) {
 			super();
-			this._typeDesc = _typeDesc;
+		}
+
+		protected List getFieldOrder() {
+			return Arrays.asList("_typedesc", "vt");
+		}
+
+		/**
+		 * @param DUMMYUNIONNAME
+		 *            [switch_is][switch_type]<br>
+		 *            C type : DUMMYUNIONNAME_union<br>
+		 * @param vt
+		 *            C type : VARTYPE
+		 */
+		public TYPEDESC(_TYPEDESC _typedesc, VARTYPE vt) {
+			super();
+			this._typedesc = _typedesc;
 			this.vt = vt;
 		}
 
-		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "_typeDesc", "vt" });
-		}
+		public static class ByReference extends TYPEDESC implements
+				Structure.ByReference {
+
+		};
 	}
 
 	public static class IDLDESC extends Structure {
@@ -1203,23 +1256,45 @@ public interface OaIdl {
 		}
 	}
 
-	public static class ARRAYDESC extends Structure {
-		public static class ByReference extends ARRAYDESC implements
-				Structure.ByReference {
-		};
-
-		public TYPEDESC.ByReference tdescElem;
-
-		public USHORT cDims;
+	public class ARRAYDESC extends Structure {
+		// / C type : TYPEDESC
+		public TYPEDESC tdescElem;
+		public short cDims;
+		/**
+		 * [size_is]<br>
+		 * C type : SAFEARRAYBOUND[1]
+		 */
+		public SAFEARRAYBOUND[] rgbounds = new SAFEARRAYBOUND[1];
 
 		public ARRAYDESC() {
 			super();
 		}
 
-		@Override
 		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "tdescElem", "cDims" });
+			return Arrays.asList("tdescElem", "cDims", "rgbounds");
 		}
+
+		/**
+		 * @param tdescElem
+		 *            C type : TYPEDESC<br>
+		 * @param rgbounds
+		 *            [size_is]<br>
+		 *            C type : SAFEARRAYBOUND[1]
+		 */
+		public ARRAYDESC(TYPEDESC tdescElem, short cDims,
+				SAFEARRAYBOUND rgbounds[]) {
+			super();
+			this.tdescElem = tdescElem;
+			this.cDims = cDims;
+			if (rgbounds.length != this.rgbounds.length)
+				throw new IllegalArgumentException("Wrong array size !");
+			this.rgbounds = rgbounds;
+		}
+
+		public static class ByReference extends ARRAYDESC implements
+				Structure.ByReference {
+
+		};
 	}
 
 	public static class PARAMDESC extends Structure {
@@ -1287,19 +1362,25 @@ public interface OaIdl {
 		}
 	}
 
-	public static class TYPEATTR extends Structure {
+	public class TYPEATTR extends Structure {
 		public static class ByReference extends TYPEATTR implements
 				Structure.ByReference {
-		}
+		};
 
-		public GUID.ByReference guid;
+		// / C type : GUID
+		public GUID guid;
+		// / C type : LCID
 		public LCID lcid;
 		public DWORD dwReserved;
+		// / C type : MEMBERID
 		public MEMBERID memidConstructor;
+		// / C type : MEMBERID
 		public MEMBERID memidDestructor;
+		// / C type : LPOLESTR
 		public LPOLESTR lpstrSchema;
 		public ULONG cbSizeInstance;
-		public TYPEKIND.ByReference typekind;
+		// / C type : TYPEKIND
+		public TYPEKIND typekind;
 		public WORD cFuncs;
 		public WORD cVars;
 		public WORD cImplTypes;
@@ -1308,25 +1389,28 @@ public interface OaIdl {
 		public WORD wTypeFlags;
 		public WORD wMajorVerNum;
 		public WORD wMinorVerNum;
-		public TYPEDESC.ByReference tdescAlias;
-		public IDLDESC.ByReference idldescType;
+		// / C type : TYPEDESC
+		public TYPEDESC tdescAlias;
+		// / C type : IDLDESC
+		public IDLDESC idldescType;
 
 		public TYPEATTR() {
+			super();
 		}
 
 		public TYPEATTR(Pointer pointer) {
 			super(pointer);
+			this.read();
 		}
 
-		@Override
 		protected List getFieldOrder() {
 			return Arrays
-					.asList(new String[] { "guid", "lcid", "dwReserved",
-							"memidConstructor", "memidDestructor",
-							"lpstrSchema", "cbSizeInstance", "typekind",
-							"cFuncs", "cVars", "cImplTypes", "cbSizeVft",
-							"cbAlignment", "wTypeFlags", "wMajorVerNum",
-							"wMinorVerNum", "tdescAlias", "idldescType" });
+					.asList("guid", "lcid", "dwReserved", "memidConstructor",
+							"memidDestructor", "lpstrSchema", "cbSizeInstance",
+							"typekind", "cFuncs", "cVars", "cImplTypes",
+							"cbSizeVft", "cbAlignment", "wTypeFlags",
+							"wMajorVerNum", "wMinorVerNum", "tdescAlias",
+							"idldescType");
 		}
 	}
 }
