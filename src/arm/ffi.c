@@ -446,38 +446,75 @@ ffi_prep_incoming_args_VFP(char *stack, void **rvalue,
 {
   register unsigned int i, vi = 0;
   register void **p_argv;
-  register char *argp;
+  register char *argp, *regp, *eo_regp;
   register ffi_type **p_arg;
+  char done_with_regs = 0;
+  char stack_used = 0;
+  char is_vfp_type;
 
-  argp = stack;
+  FFI_ASSERT(cif->abi == FFI_VFP);
+  regp = stack;
+  eo_regp = argp = regp + 16;
 
   if ( cif->flags == FFI_TYPE_STRUCT ) {
-    *rvalue = *(void **) argp;
-    argp += 4;
+    *rvalue = *(void **) regp;
+    regp += 4;
   }
 
   p_argv = avalue;
 
   for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
     {
-      size_t z;
-  
-      if (cif->abi == FFI_VFP
-	  && vi < cif->vfp_nargs && vfp_type_p (*p_arg))
-	{
-	  *p_argv++ = (void*)(vfp_stack + cif->vfp_args[vi++]);
-	  continue;
-	}
-      argp = ffi_align(p_arg, argp);
+    size_t z;
+    is_vfp_type = vfp_type_p (*p_arg); 
 
-      z = (*p_arg)->size;
+    if(vi < cif->vfp_nargs && is_vfp_type)
+      {
+        *p_argv++ = (void*)(vfp_stack + cif->vfp_args[vi++]);
+        continue;
+      }
+    else if (!done_with_regs && !is_vfp_type)
+      {
+        char* tregp = ffi_align(p_arg, regp);
 
-      /* because we're little endian, this is what it turns into.   */
+        z = (*p_arg)->size; 
+        z = (z < 4)? 4 : z; // pad
+        
+        /* if the arguments either fits into the registers or uses registers
+         * and stack, while we haven't read other things from the stack */
+        if(tregp + z <= eo_regp || !stack_used) 
+          {
+          /* because we're little endian, this is what it turns into. */
+          *p_argv = (void*) tregp;
 
-      *p_argv = (void*) argp;
+          p_argv++;
+          regp = tregp + z;
+          /* if regp points above the end of the register area */
+          if(regp >= eo_regp)
+            {
+              /* sanity check that we haven't read from the stack area before
+               * reaching this point */
+              FFI_ASSERT(argp <= regp);
+              FFI_ASSERT(argp == stack + 16);
+              argp = regp;
+              done_with_regs = 1;
+              stack_used = 1;
+            }
+            continue;
+          }
+      }
+    stack_used = 1;
 
-      p_argv++;
-      argp += z;
+    argp = ffi_align(p_arg, argp);
+
+    z = (*p_arg)->size;
+
+    /* because we're little endian, this is what it turns into.   */
+
+    *p_argv = (void*) argp;
+
+    p_argv++;
+    argp += z;
     }
   
   return;
