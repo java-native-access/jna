@@ -35,6 +35,7 @@ import com.sun.jna.win32.DLLCallback;
 class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
+    static final Map directCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
     private static final Method PROXY_CALLBACK_METHOD;
     
@@ -102,8 +103,8 @@ class CallbackReference extends WeakReference {
 
         if (!type.isInterface())
             throw new IllegalArgumentException("Callback type must be an interface");
-        Map map = callbackMap;
-        synchronized(map) {
+        Map map = direct ? directCallbackMap : callbackMap;
+        synchronized(callbackMap) {
             for (Iterator i=map.keySet().iterator();i.hasNext();) {
                 Callback cb = (Callback)i.next();
                 if (type.isAssignableFrom(cb.getClass())) {
@@ -379,8 +380,8 @@ class CallbackReference extends WeakReference {
         }
         int callingConvention = cb instanceof AltCallingConvention
             ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-        Map map = callbackMap;
-        synchronized(map) {
+        Map map = direct ? directCallbackMap : callbackMap;
+        synchronized(callbackMap) {
             CallbackReference cbref = (CallbackReference)map.get(cb);
             if (cbref == null) {
                 cbref = new CallbackReference(cb, callingConvention, direct);
