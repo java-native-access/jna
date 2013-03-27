@@ -357,6 +357,9 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 static void ffi_prep_incoming_args_SYSV (char *stack, void **ret,
 					 void** args, ffi_cif* cif, float *vfp_stack);
 
+static void ffi_prep_incoming_args_VFP (char *stack, void **ret,
+					 void** args, ffi_cif* cif, float *vfp_stack);
+
 void ffi_closure_SYSV (ffi_closure *);
 
 void ffi_closure_VFP (ffi_closure *);
@@ -364,7 +367,7 @@ void ffi_closure_VFP (ffi_closure *);
 /* This function is jumped to by the trampoline */
 
 unsigned int
-ffi_closure_SYSV_inner (closure, respp, args, vfp_args)
+ffi_closure_inner (closure, respp, args, vfp_args)
      ffi_closure *closure;
      void **respp;
      void *args;
@@ -382,8 +385,10 @@ ffi_closure_SYSV_inner (closure, respp, args, vfp_args)
    * value on the stack; and if the function returns
    * a structure, it will re-set RESP to point to the
    * structure return address.  */
-
-  ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif, vfp_args);
+  if (cif->abi == FFI_VFP)
+    ffi_prep_incoming_args_VFP(args, respp, arg_area, cif, vfp_args);
+  else
+    ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif, vfp_args);
 
   (closure->fun) (cif, *respp, arg_area, closure->user_data);
 
@@ -393,6 +398,47 @@ ffi_closure_SYSV_inner (closure, respp, args, vfp_args)
 /*@-exportheader@*/
 static void 
 ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
+			    void **avalue, ffi_cif *cif,
+			    /* Used only under VFP hard-float ABI. */
+			    float *vfp_stack)
+/*@=exportheader@*/
+{
+  register unsigned int i;
+  register void **p_argv;
+  register char *argp;
+  register ffi_type **p_arg;
+
+  argp = stack;
+
+  if ( cif->flags == FFI_TYPE_STRUCT ) {
+    *rvalue = *(void **) argp;
+    argp += 4;
+  }
+
+  p_argv = avalue;
+
+  for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
+    {
+      size_t z;
+
+      argp = ffi_align(p_arg, argp);
+
+      z = (*p_arg)->size;
+
+      /* because we're little endian, this is what it turns into.   */
+
+      *p_argv = (void*) argp;
+
+      p_argv++;
+      argp += z;
+    }
+  
+  return;
+}
+
+/*@-exportheader@*/
+static void 
+ffi_prep_incoming_args_VFP(char *stack, void **rvalue,
 			    void **avalue, ffi_cif *cif,
 			    /* Used only under VFP hard-float ABI. */
 			    float *vfp_stack)

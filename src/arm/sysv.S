@@ -260,7 +260,7 @@ LSYM(Lepilogue):
 
 /*
 	unsigned int FFI_HIDDEN
-	ffi_closure_SYSV_inner (closure, respp, args)
+	ffi_closure_inner (closure, respp, args)
 	     ffi_closure *closure;
 	     void **respp;
   	     void *args;
@@ -276,7 +276,7 @@ ARM_FUNC_START ffi_closure_SYSV
 	sub	sp, sp, #16
 	str	sp, [sp, #8]
 	add	r1, sp, #8
-	bl	CNAME(ffi_closure_SYSV_inner)
+	bl	CNAME(ffi_closure_inner)
 	cmp	r0, #FFI_TYPE_INT
 	beq	.Lretint
 
@@ -446,7 +446,7 @@ ARM_FUNC_START ffi_closure_VFP
 	sub	sp, sp, #72
 	str	sp, [sp, #64]
 	add	r1, sp, #64
-	bl	CNAME(ffi_closure_SYSV_inner)
+	bl	CNAME(ffi_closure_inner)
 
 	cmp	r0, #FFI_TYPE_INT
 	beq	.Lretint_vfp
