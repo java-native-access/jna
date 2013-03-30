@@ -493,12 +493,11 @@ public abstract class Structure {
      * Reads the fields of the struct from native memory
      */
     public void read() {
-        readCalled = true;
-
         // Avoid reading from a null pointer
         if (memory == PLACEHOLDER_MEMORY) {
             return;
         }
+        readCalled = true;
 
         // convenience: allocate memory and/or calculate size if it hasn't
         // been already; this allows structures to do field-based
@@ -1534,6 +1533,18 @@ public abstract class Structure {
     /** Exposed for testing purposes only. */
     static Pointer getTypeInfo(Object obj) {
         return FFIType.get(obj);
+    }
+
+    /** Called from native code only; same as {@link 
+     * #newInstance(Class,Pointer)}, except that it additionally performs
+     * {@link #conditionalAutoRead()}.
+     */
+    private static Structure newInstance(Class type, long init) throws IllegalArgumentException {
+        Structure s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
+        if (init != 0) {
+            s.conditionalAutoRead();
+        }
+        return s;
     }
 
     /** Create a new Structure instance of the given type, initialized with

@@ -262,7 +262,6 @@ static jmethodID MID_Native_toNativeTypeMapped;
 static jmethodID MID_Native_fromNativeTypeMapped;
 static jmethodID MID_Structure_getTypeInfo;
 static jmethodID MID_Structure_newInstance;
-static jmethodID MID_Structure_useMemory;
 static jmethodID MID_Structure_read;
 static jmethodID MID_Structure_write;
 static jmethodID MID_CallbackReference_getCallback;
@@ -816,25 +815,11 @@ newJavaPointer(JNIEnv *env, void *p)
 }
 
 jobject
-newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
+newJavaStructure(JNIEnv *env, void *data, jclass type)
 {
   if (data != NULL) {
-    volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
-    if (obj != NULL) {
-      ffi_type* rtype = getStructureType(env, obj);
-      if (rtype) {
-        if (new_memory) {
-          MEMCPY(getStructureAddress(env, obj), data, rtype->size);
-        }
-        else {
-          (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
-        }
-        if (!(*env)->ExceptionCheck(env)) {
-          (*env)->CallVoidMethod(env, obj, MID_Structure_read);
-        }
-      }
-    }
-    else {
+    volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type, A2L(data));
+    if (obj == NULL) {
       fprintf(stderr, "JNA: failed to create structure\n");
     }
     return obj;
@@ -1016,7 +1001,7 @@ initializeThread(callback* cb, AttachOptions* args) {
   {
     jobject cbobj = (*env)->NewLocalRef(env, cb->object);
     if (!(*env)->IsSameObject(env, cbobj, NULL)) {
-      jobject argsobj = newJavaStructure(env, args, classAttachOptions, JNI_FALSE);
+      jobject argsobj = newJavaStructure(env, args, classAttachOptions);
       group = (*env)->CallStaticObjectMethod(env, classCallbackReference,
                                              MID_CallbackReference_initializeThread,
                                              cbobj, argsobj);
@@ -1530,8 +1515,9 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   case 'V':
     return &ffi_type_void;
   case 's': {
+#define PLACEHOLDER_MEMORY 0
     jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
-                                               MID_Structure_newInstance, cls);
+                                               MID_Structure_newInstance, cls, PLACEHOLDER_MEMORY);
     if (s) {
       return getStructureType(env, s);
     }
@@ -1767,10 +1753,10 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     *(void **)resp = newJavaWString(env, *(void **)resp);
     break;
   case CVT_STRUCTURE:
-    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass, JNI_FALSE);
+    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass);
     break;
   case CVT_STRUCTURE_BYVAL:
-    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass, JNI_TRUE);
+    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass);
     break;
   case CVT_CALLBACK:
     *(void **)resp = newJavaCallback(env, *(void **)resp, data->closure_rclass);
@@ -2626,14 +2612,9 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
   else if (!(MID_Structure_newInstance
              = (*env)->GetStaticMethodID(env, classStructure,
-                                         "newInstance", "(Ljava/lang/Class;)Lcom/sun/jna/Structure;"))) {
+                                         "newInstance", "(Ljava/lang/Class;J)Lcom/sun/jna/Structure;"))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static newInstance method for class com.sun.jna.Structure");
-  }
-  else if (!LOAD_MID(env, MID_Structure_useMemory, classStructure,
-                     "useMemory", "(Lcom/sun/jna/Pointer;)V")) {
-    throwByName(env, EUnsatisfiedLink,
-                "Can't obtain useMemory method for class com.sun.jna.Structure");
   }
   else if (!LOAD_MID(env, MID_Structure_read, classStructure,
                      "autoRead", "()V")) {

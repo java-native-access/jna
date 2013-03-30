@@ -381,10 +381,9 @@ public class StructureTest extends TestCase {
     }
 
     // TODO: add'l newInstance(Pointer) tests: 
-    // DirectCallbacksTest.testCallStructureCallback
-    // DirectReturnTypesTest.testInvokeStructure
+    // NOTE: ensure structure-by-value respected (no more flag on newjavastructure)
+    // native call (direct mode) 
     // getNativeAlignment
-    // native call (direct mode) (maybe not...)
     public void testStructureFieldAvoidsSeparateMemoryAllocation() {
         class TestStructure extends Structure {
             public NonAllocatingTestStructure s1;
