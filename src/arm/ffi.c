@@ -37,6 +37,84 @@
 static int vfp_type_p (ffi_type *);
 static void layout_vfp_args (ffi_cif *);
 
+static char* ffi_align(ffi_type **p_arg, char *argp)
+{
+  /* Align if necessary */
+  register size_t alignment = (*p_arg)->alignment;
+  if (alignment < 4)
+  {
+    alignment = 4;
+  }
+#ifdef _WIN32_WCE
+  if (alignment > 4)
+  {
+    alignment = 4;
+  }
+#endif
+  if ((alignment - 1) & (unsigned) argp)
+  {
+    argp = (char *) ALIGN(argp, alignment);
+  }
+
+  if ((*p_arg)->type == FFI_TYPE_STRUCT)
+  {
+    argp = (char *) ALIGN(argp, 4);
+  }
+  return argp;
+}
+
+static size_t ffi_put_arg(ffi_type **arg_type, void **arg, char *stack)
+{
+	register char* argp = stack;
+	register ffi_type **p_arg = arg_type;
+	register void **p_argv = arg;
+	register size_t z = (*p_arg)->size;
+  if (z < sizeof(int))
+    {
+		z = sizeof(int);
+		switch ((*p_arg)->type)
+      {
+      case FFI_TYPE_SINT8:
+        *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_UINT8:
+        *(unsigned int *) argp = (unsigned int)*(UINT8 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_SINT16:
+        *(signed int *) argp = (signed int)*(SINT16 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_UINT16:
+        *(unsigned int *) argp = (unsigned int)*(UINT16 *)(* p_argv);
+        break;
+        
+      case FFI_TYPE_STRUCT:
+        memcpy(argp, *p_argv, (*p_arg)->size);
+        break;
+
+      default:
+        FFI_ASSERT(0);
+      }
+    }
+  else if (z == sizeof(int))
+    {
+		if ((*p_arg)->type == FFI_TYPE_FLOAT)
+			*(float *) argp = *(float *)(* p_argv);
+		else
+			*(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
+    }
+	else if (z == sizeof(double) && (*p_arg)->type == FFI_TYPE_DOUBLE)
+		{
+			*(double *) argp = *(double *)(* p_argv);
+		}
+  else
+    {
+      memcpy(argp, *p_argv, z);
+    }
+  return z;
+}
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments
    
@@ -44,14 +122,14 @@ static void layout_vfp_args (ffi_cif *);
    value is cif->vfp_used (word bitset of VFP regs used for passing
    arguments). These are only used for the VFP hard-float ABI.
 */
-int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
+int ffi_prep_args_SYSV(char *stack, extended_cif *ecif, float *vfp_space)
 {
-  register unsigned int i, vi = 0;
+  register unsigned int i;
   register void **p_argv;
   register char *argp;
   register ffi_type **p_arg;
-
   argp = stack;
+  
 
   if ( ecif->cif->flags == FFI_TYPE_STRUCT ) {
     *(void **) argp = ecif->rvalue;
@@ -62,81 +140,89 @@ int ffi_prep_args(char *stack, extended_cif *ecif, float *vfp_space)
 
   for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
        (i != 0);
-       i--, p_arg++)
+       i--, p_arg++, p_argv++)
     {
-      size_t z;
-      size_t alignment;
-
-      /* Allocated in VFP registers. */
-      if (ecif->cif->abi == FFI_VFP
-	  && vi < ecif->cif->vfp_nargs && vfp_type_p (*p_arg))
-	{
-	  float* vfp_slot = vfp_space + ecif->cif->vfp_args[vi++];
-	  if ((*p_arg)->type == FFI_TYPE_FLOAT)
-	    *((float*)vfp_slot) = *((float*)*p_argv);
-	  else if ((*p_arg)->type == FFI_TYPE_DOUBLE)
-	    *((double*)vfp_slot) = *((double*)*p_argv);
-	  else
-	    memcpy(vfp_slot, *p_argv, (*p_arg)->size);
-	  p_argv++;
-	  continue;
-	}
-
-      /* Align if necessary */
-      alignment = (*p_arg)->alignment;
-#ifdef _WIN32_WCE
-      if (alignment > 4)
-	alignment = 4;
-#endif
-      if ((alignment - 1) & (unsigned) argp) {
-	argp = (char *) ALIGN(argp, alignment);
-      }
-
-      if ((*p_arg)->type == FFI_TYPE_STRUCT)
-	argp = (char *) ALIGN(argp, 4);
-
-	  z = (*p_arg)->size;
-	  if (z < sizeof(int))
-	    {
-	      z = sizeof(int);
-	      switch ((*p_arg)->type)
-		{
-		case FFI_TYPE_SINT8:
-		  *(signed int *) argp = (signed int)*(SINT8 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_UINT8:
-		  *(unsigned int *) argp = (unsigned int)*(UINT8 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_SINT16:
-		  *(signed int *) argp = (signed int)*(SINT16 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_UINT16:
-		  *(unsigned int *) argp = (unsigned int)*(UINT16 *)(* p_argv);
-		  break;
-		  
-		case FFI_TYPE_STRUCT:
-		  memcpy(argp, *p_argv, (*p_arg)->size);
-		  break;
-
-		default:
-		  FFI_ASSERT(0);
-		}
-	    }
-	  else if (z == sizeof(int))
-	    {
-	      *(unsigned int *) argp = (unsigned int)*(UINT32 *)(* p_argv);
-	    }
-	  else
-	    {
-	      memcpy(argp, *p_argv, z);
-	    }
-	  p_argv++;
-	  argp += z;
+    argp = ffi_align(p_arg, argp);
+    argp += ffi_put_arg(p_arg, p_argv, argp);
     }
 
+  return 0;
+}
+
+int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space)
+{
+  // make sure we are using FFI_VFP
+  FFI_ASSERT(ecif->cif->abi == FFI_VFP);
+
+  register unsigned int i, vi = 0;
+  register void **p_argv;
+  register char *argp, *regp, *eo_regp;
+  register ffi_type **p_arg;
+  char stack_used = 0;
+  char done_with_regs = 0;
+  char is_vfp_type;
+
+  /* the first 4 words on the stack are used for values passed in core
+   * registers. */
+  regp = stack;
+  eo_regp = argp = regp + 16;
+  
+
+  /* if the function returns an FFI_TYPE_STRUCT in memory, that address is
+   * passed in r0 to the function */
+  if ( ecif->cif->flags == FFI_TYPE_STRUCT ) {
+    *(void **) regp = ecif->rvalue;
+    regp += 4;
+  }
+
+  p_argv = ecif->avalue;
+
+  for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
+       (i != 0);
+       i--, p_arg++, p_argv++)
+    {
+      is_vfp_type = vfp_type_p (*p_arg);
+
+      /* Allocated in VFP registers. */
+      if(vi < ecif->cif->vfp_nargs && is_vfp_type)
+        {
+          char *vfp_slot = (char *)(vfp_space + ecif->cif->vfp_args[vi++]);
+          ffi_put_arg(p_arg, p_argv, vfp_slot);
+          continue;
+        }
+      /* Try allocating in core registers. */
+      else if (!done_with_regs && !is_vfp_type)
+        {
+          char *tregp = ffi_align(p_arg, regp);
+          size_t size = (*p_arg)->size; 
+          size = (size < 4)? 4 : size; // pad
+          /* Check if there is space left in the aligned register area to place
+           * the argument */
+          if(tregp + size <= eo_regp)
+            {
+              regp = tregp + ffi_put_arg(p_arg, p_argv, tregp);
+              done_with_regs = (regp == argp);
+              // ensure we did not write into the stack area
+              FFI_ASSERT(regp <= argp);
+              continue;
+            }
+          /* In case there are no arguments in the stack area yet, 
+          the argument is passed in the remaining core registers and on the
+          stack. */
+          else if (!stack_used) 
+            {
+              stack_used = 1;
+              done_with_regs = 1;
+              argp = tregp + ffi_put_arg(p_arg, p_argv, tregp);
+              FFI_ASSERT(eo_regp < argp);
+              continue;
+            }
+        }
+      /* Base case, arguments are passed on the stack */
+      stack_used = 1;
+      argp = ffi_align(p_arg, argp);
+      argp += ffi_put_arg(p_arg, p_argv, argp);
+    }
   /* Indicate the VFP registers used. */
   return ecif->cif->vfp_used;
 }
@@ -271,6 +357,9 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 static void ffi_prep_incoming_args_SYSV (char *stack, void **ret,
 					 void** args, ffi_cif* cif, float *vfp_stack);
 
+static void ffi_prep_incoming_args_VFP (char *stack, void **ret,
+					 void** args, ffi_cif* cif, float *vfp_stack);
+
 void ffi_closure_SYSV (ffi_closure *);
 
 void ffi_closure_VFP (ffi_closure *);
@@ -278,7 +367,7 @@ void ffi_closure_VFP (ffi_closure *);
 /* This function is jumped to by the trampoline */
 
 unsigned int
-ffi_closure_SYSV_inner (closure, respp, args, vfp_args)
+ffi_closure_inner (closure, respp, args, vfp_args)
      ffi_closure *closure;
      void **respp;
      void *args;
@@ -296,8 +385,10 @@ ffi_closure_SYSV_inner (closure, respp, args, vfp_args)
    * value on the stack; and if the function returns
    * a structure, it will re-set RESP to point to the
    * structure return address.  */
-
-  ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif, vfp_args);
+  if (cif->abi == FFI_VFP)
+    ffi_prep_incoming_args_VFP(args, respp, arg_area, cif, vfp_args);
+  else
+    ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif, vfp_args);
 
   (closure->fun) (cif, *respp, arg_area, closure->user_data);
 
@@ -312,7 +403,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 			    float *vfp_stack)
 /*@=exportheader@*/
 {
-  register unsigned int i, vi = 0;
+  register unsigned int i;
   register void **p_argv;
   register char *argp;
   register ffi_type **p_arg;
@@ -329,27 +420,8 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
   for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
     {
       size_t z;
-      size_t alignment;
-  
-      if (cif->abi == FFI_VFP
-	  && vi < cif->vfp_nargs && vfp_type_p (*p_arg))
-	{
-	  *p_argv++ = (void*)(vfp_stack + cif->vfp_args[vi++]);
-	  continue;
-	}
 
-      alignment = (*p_arg)->alignment;
-      if (alignment < 4)
-	alignment = 4;
-#ifdef _WIN32_WCE
-      else
-	if (alignment > 4)
-	  alignment = 4;
-#endif
-      /* Align if necessary */
-      if ((alignment - 1) & (unsigned) argp) {
-	argp = (char *) ALIGN(argp, alignment);
-      }
+      argp = ffi_align(p_arg, argp);
 
       z = (*p_arg)->size;
 
@@ -359,6 +431,90 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue,
 
       p_argv++;
       argp += z;
+    }
+  
+  return;
+}
+
+/*@-exportheader@*/
+static void 
+ffi_prep_incoming_args_VFP(char *stack, void **rvalue,
+			    void **avalue, ffi_cif *cif,
+			    /* Used only under VFP hard-float ABI. */
+			    float *vfp_stack)
+/*@=exportheader@*/
+{
+  register unsigned int i, vi = 0;
+  register void **p_argv;
+  register char *argp, *regp, *eo_regp;
+  register ffi_type **p_arg;
+  char done_with_regs = 0;
+  char stack_used = 0;
+  char is_vfp_type;
+
+  FFI_ASSERT(cif->abi == FFI_VFP);
+  regp = stack;
+  eo_regp = argp = regp + 16;
+
+  if ( cif->flags == FFI_TYPE_STRUCT ) {
+    *rvalue = *(void **) regp;
+    regp += 4;
+  }
+
+  p_argv = avalue;
+
+  for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
+    {
+    size_t z;
+    is_vfp_type = vfp_type_p (*p_arg); 
+
+    if(vi < cif->vfp_nargs && is_vfp_type)
+      {
+        *p_argv++ = (void*)(vfp_stack + cif->vfp_args[vi++]);
+        continue;
+      }
+    else if (!done_with_regs && !is_vfp_type)
+      {
+        char* tregp = ffi_align(p_arg, regp);
+
+        z = (*p_arg)->size; 
+        z = (z < 4)? 4 : z; // pad
+        
+        /* if the arguments either fits into the registers or uses registers
+         * and stack, while we haven't read other things from the stack */
+        if(tregp + z <= eo_regp || !stack_used) 
+          {
+          /* because we're little endian, this is what it turns into. */
+          *p_argv = (void*) tregp;
+
+          p_argv++;
+          regp = tregp + z;
+          /* if regp points above the end of the register area */
+          if(regp >= eo_regp)
+            {
+              /* sanity check that we haven't read from the stack area before
+               * reaching this point */
+              FFI_ASSERT(argp <= regp);
+              FFI_ASSERT(argp == stack + 16);
+              argp = regp;
+              done_with_regs = 1;
+              stack_used = 1;
+            }
+            continue;
+          }
+      }
+    stack_used = 1;
+
+    argp = ffi_align(p_arg, argp);
+
+    z = (*p_arg)->size;
+
+    /* because we're little endian, this is what it turns into.   */
+
+    *p_argv = (void*) argp;
+
+    p_argv++;
+    argp += z;
     }
   
   return;

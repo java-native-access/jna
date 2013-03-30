@@ -1,5 +1,5 @@
 /* Area:	ffi_call
-   Purpose:	Check return value float, with many arguments
+   Purpose:	Check return value double, with many arguments
    Limitations:	none.
    PR:		none.
    Originator:	From the original ffitest.c  */
@@ -11,19 +11,19 @@
 #include <float.h>
 #include <math.h>
 
-static float many(float f1,
-		  float f2,
-		  float f3,
-		  float f4,
-		  float f5,
-		  float f6,
-		  float f7,
-		  float f8,
-		  float f9,
-		  float f10,
-		  float f11,
-		  float f12,
-		  float f13)
+static double many(double f1,
+		  double f2,
+		  double f3,
+		  double f4,
+		  double f5,
+		  double f6,
+		  double f7,
+		  double f8,
+		  double f9,
+		  double f10,
+		  double f11,
+		  double f12,
+		  double f13)
 {
 #if 0
   printf("%f %f %f %f %f %f %f %f %f %f %f %f %f\n",
@@ -40,20 +40,20 @@ int main (void)
   ffi_cif cif;
   ffi_type *args[13];
   void *values[13];
-  float fa[13];
-  float f, ff;
+  double fa[13];
+  double f, ff;
   int i;
 
   for (i = 0; i < 13; i++)
     {
-      args[i] = &ffi_type_float;
+      args[i] = &ffi_type_double;
       values[i] = &fa[i];
-      fa[i] = (float) i;
+      fa[i] = (double) i;
     }
 
     /* Initialize the cif */
     CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 13, 
-		       &ffi_type_float, args) == FFI_OK);
+		       &ffi_type_double, args) == FFI_OK);
 
     ffi_call(&cif, FFI_FN(many), &f, values);
 
@@ -63,7 +63,6 @@ int main (void)
 	       fa[6], fa[7],
 	       fa[8], fa[9],
 	       fa[10],fa[11],fa[12]);
-
     if (fabs(f - ff) < FLT_EPSILON)
       exit(0);
     else

@@ -1,3 +1,14 @@
+2013-03-28  David Schneider  <david.schneider@bivab.de>
+
+	 * src/arm/ffi.c: Fix support for ARM hard-float calling convention.
+	 * src/arm/sysv.S: call different methods for SYSV and VFP ABIs.
+	 * testsuite/libffi.call/cls_many_mixed_args.c: testcase for a closure with
+	 mixed arguments, many doubles.
+	 * testsuite/libffi.call/many_double.c: testcase for calling a function using
+	 more than 8 doubles.
+	 * testcase/libffi.call/many.c: use absolute value to check result against an
+	 epsilon
+
 2013-03-17  Anthony Green  <green@moxielogic.com>
 
 	* README: Update for 3.0.13.
