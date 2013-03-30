@@ -128,6 +128,30 @@ public class NativeLibraryTest extends TestCase {
         }
     }
     
+    public void testLoadFrameworkLibraryAbsolute() {
+        if (Platform.isMac()) {
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance("/System/Library/Frameworks/CoreServices");
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should try FRAMEWORK.framework/FRAMEWORK if absolute and exists");
+            }
+        }
+    }
+
+    public void testLoadFrameworkLibraryAbsoluteFull() {
+        if (Platform.isMac()) {
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance("/System/Library/Frameworks/CoreServices.framework/CoreServices");
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should try FRAMEWORK if absolute and exists");
+            }
+        }
+    }
+
     public void testLookupGlobalVariable() {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         Pointer global = lib.getGlobalVariableAddress("test_global");

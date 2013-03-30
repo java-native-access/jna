@@ -44,7 +44,10 @@ import java.util.StringTokenizer;
  * <li>On OSX, <code>~/Library/Frameworks</code>,
  * <code>/Library/Frameworks</code>, and
  * <code>/System/Library/Frameworks</code> will be searched for a framework
- * with a name corresponding to that requested.
+ * with a name corresponding to that requested.  Absolute paths to frameworks
+ * are also accepted, either ending at the framework name (sans ".framework")
+ * or the full path to the framework shared library
+ * (e.g. CoreServices.framework/CoreServices). 
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall
@@ -200,13 +203,26 @@ public class NativeLibrary {
 
     /** Look for a matching framework (OSX) */
     static String matchFramework(String libraryName) {
-        final String[] PREFIXES = { System.getProperty("user.home"), "", "/System" };
-        String suffix = libraryName.indexOf(".framework") == -1
-            ? libraryName + ".framework/" + libraryName : libraryName;
-        for (int i=0;i < PREFIXES.length;i++) {
-            String libraryPath = PREFIXES[i] + "/Library/Frameworks/" + suffix;
-            if (new File(libraryPath).exists()) {
-                return libraryPath;
+        File framework = new File(libraryName);
+        if (framework.isAbsolute()) {
+            if (libraryName.indexOf(".framework") != -1
+                && framework.exists()) {
+                return framework.getAbsolutePath();
+            }
+            framework = new File(new File(framework.getParentFile(), framework.getName() + ".framework"), framework.getName());
+            if (framework.exists()) {
+                return framework.getAbsolutePath();
+            }
+        }
+        else {
+            final String[] PREFIXES = { System.getProperty("user.home"), "", "/System" };
+            String suffix = libraryName.indexOf(".framework") == -1
+                ? libraryName + ".framework/" + libraryName : libraryName;
+            for (int i=0;i < PREFIXES.length;i++) {
+                String libraryPath = PREFIXES[i] + "/Library/Frameworks/" + suffix;
+                if (new File(libraryPath).exists()) {
+                    return libraryPath;
+                }
             }
         }
         return null;
