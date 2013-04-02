@@ -14,12 +14,12 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
 import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -117,7 +117,7 @@ public class ITypeLib extends IUnknown {
 
 	public HRESULT IsName(
 	/* [annotation][out][in] */
-	WString szNameBuf,
+	LPOLESTR szNameBuf,
 	/* [in] */ULONG lHashVal,
 	/* [out] */BOOLbyReference pfName) {
 

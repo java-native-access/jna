@@ -125,29 +125,42 @@ public interface WTypes {
 		}
 	}
 
-	public static class LPOLESTR extends Structure {
-		public static class ByReference extends LPOLESTR implements
+	public static class LPOLESTR extends PointerType {
+		public static class ByReference extends BSTR implements
 				Structure.ByReference {
-		};
-
-		public WString value;
+		}
 
 		public LPOLESTR() {
+			super(Pointer.NULL);
 		}
 
-		public LPOLESTR(WString value) {
-			this.value = value;
+		public LPOLESTR(Pointer pointer) {
+			super(pointer);
 		}
 
-		public LPOLESTR(String str) {
-			this.value = new WString(str);
+		public LPOLESTR(String value) {
+			this();
+			this.setValue(value);
+		}
+
+		public void setValue(String value) {
+			this.getPointer().setString(0, value, true);
+		}
+
+		public String getValue() {
+			Pointer pointer = this.getPointer();
+			String str = null;
+			if (pointer != null)
+				str = pointer.getString(0, true);
+
+			return str;
 		}
 
 		@Override
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "value" });
+		public String toString() {
+			return this.getValue();
 		}
-	};
+	}
 	
 	public static class VARTYPE extends USHORT {
 		public VARTYPE() {

@@ -149,8 +149,8 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetDllEntry() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR pBstrDllName = new BSTR();
-		BSTR pBstrName = new BSTR();
+		BSTRByReference pBstrDllName = new BSTRByReference();
+		BSTRByReference pBstrName = new BSTRByReference();
 		WORDbyReference pwOrdinal = new WORDbyReference();
 		HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
 				pBstrDllName, pBstrName, pwOrdinal);
@@ -185,7 +185,7 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetMops() {
 		ITypeInfo typeInfo = getTypeInfo();
 		MEMBERID memid = new MEMBERID(0);
-		BSTR pBstrMops = new BSTR();
+		BSTRByReference pBstrMops = new BSTRByReference();
 		HRESULT hr = typeInfo.GetMops(memid, pBstrMops);
 
 		COMUtils.checkTypeLibRC(hr);

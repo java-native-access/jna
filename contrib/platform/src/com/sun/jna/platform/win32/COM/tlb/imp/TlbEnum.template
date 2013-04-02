@@ -22,10 +22,10 @@
 			this.read();
 		}
 
-${variables}
+${content}
 		
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "value" });
 		}
 	};

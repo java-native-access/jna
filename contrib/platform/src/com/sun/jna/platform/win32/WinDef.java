@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -40,6 +41,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 16-bit unsigned integer.
 	 */
 	public static class WORD extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 2;
 
 		/**
@@ -60,20 +63,42 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class WORDbyReference.
+	 */
 	public class WORDbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new wOR dby reference.
+		 */
 		public WORDbyReference() {
 			this(new WORD(0));
 		}
 
+		/**
+		 * Instantiates a new wOR dby reference.
+		 *
+		 * @param value the value
+		 */
 		public WORDbyReference(WORD value) {
 			super(WORD.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(WORD value) {
 			getPointer().setShort(0, value.shortValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public WORD getValue() {
 			return new WORD(getPointer().getInt(0));
 		}
@@ -83,6 +108,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit unsigned integer.
 	 */
 	public static class DWORD extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 4;
 
 		/**
@@ -121,82 +148,174 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class DWORDbyReference.
+	 */
 	public class DWORDbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new dWOR dby reference.
+		 */
 		public DWORDbyReference() {
 			this(new DWORD(0));
 		}
 
+		/**
+		 * Instantiates a new dWOR dby reference.
+		 *
+		 * @param value the value
+		 */
 		public DWORDbyReference(DWORD value) {
 			super(DWORD.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(DWORD value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public DWORD getValue() {
 			return new DWORD(getPointer().getInt(0));
 		}
 	}
 
+	/**
+	 * The Class LONG.
+	 */
 	public static class LONG extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 4;
 
+		/**
+		 * Instantiates a new long.
+		 */
 		public LONG() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new long.
+		 *
+		 * @param value the value
+		 */
 		public LONG(long value) {
 			super(SIZE, value);
 		}
 	}
 
+	/**
+	 * The Class LONGbyReference.
+	 */
 	public class LONGbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new lON gby reference.
+		 */
 		public LONGbyReference() {
 			this(new LONG(0));
 		}
 
+		/**
+		 * Instantiates a new lON gby reference.
+		 *
+		 * @param value the value
+		 */
 		public LONGbyReference(LONG value) {
 			super(LONG.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(LONG value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public LONG getValue() {
 			return new LONG(getPointer().getInt(0));
 		}
 	}
 
+	/**
+	 * The Class LONGLONG.
+	 */
 	public static class LONGLONG extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 8;
 
+		/**
+		 * Instantiates a new longlong.
+		 */
 		public LONGLONG() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new longlong.
+		 *
+		 * @param value the value
+		 */
 		public LONGLONG(long value) {
 			super(8, value, false);
 		}
 	}
 
+	/**
+	 * The Class LONGLONGbyReference.
+	 */
 	public class LONGLONGbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new lONGLON gby reference.
+		 */
 		public LONGLONGbyReference() {
 			this(new LONGLONG(0));
 		}
 
+		/**
+		 * Instantiates a new lONGLON gby reference.
+		 *
+		 * @param value the value
+		 */
 		public LONGLONGbyReference(LONGLONG value) {
 			super(LONGLONG.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(LONGLONG value) {
 			getPointer().setLong(0, value.longValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public LONGLONG getValue() {
 			return new LONGLONG(getPointer().getLong(0));
 		}
@@ -650,6 +769,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit unsigned integer.
 	 */
 	public static class ULONG extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 4;
 
 		/**
@@ -670,51 +791,108 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class ULONGbyReference.
+	 */
 	public class ULONGbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new uLON gby reference.
+		 */
 		public ULONGbyReference() {
 			this(new ULONG(0));
 		}
 
+		/**
+		 * Instantiates a new uLON gby reference.
+		 *
+		 * @param value the value
+		 */
 		public ULONGbyReference(ULONG value) {
 			super(ULONG.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(ULONG value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public ULONG getValue() {
 			return new ULONG(getPointer().getInt(0));
 		}
 	}
 
+	/**
+	 * The Class ULONGLONG.
+	 */
 	public static class ULONGLONG extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 8;
 
+		/**
+		 * Instantiates a new ulonglong.
+		 */
 		public ULONGLONG() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new ulonglong.
+		 *
+		 * @param value the value
+		 */
 		public ULONGLONG(long value) {
 			super(SIZE, value, true);
 		}
 	}
 
+	/**
+	 * The Class ULONGLONGbyReference.
+	 */
 	public class ULONGLONGbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new uLONGLON gby reference.
+		 */
 		public ULONGLONGbyReference() {
 			this(new ULONGLONG(0));
 		}
 
+		/**
+		 * Instantiates a new uLONGLON gby reference.
+		 *
+		 * @param value the value
+		 */
 		public ULONGLONGbyReference(ULONGLONG value) {
 			super(ULONGLONG.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(ULONGLONG value) {
 			getPointer().setLong(0, value.longValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public ULONGLONG getValue() {
 			return new ULONGLONG(getPointer().getLong(0));
 		}
@@ -724,6 +902,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 64-bit unsigned integer.
 	 */
 	public static class DWORDLONG extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 8;
 
 		/**
@@ -793,23 +973,19 @@ public interface WinDef extends StdCallLibrary {
 	/**
 	 * The Class PVOID.
 	 */
-	public static class PVOID extends HANDLE {
-
-		/**
-		 * Instantiates a new pvoid.
-		 */
+	public static class PVOID extends PointerType {
+		
 		public PVOID() {
-
+			// TODO Auto-generated constructor stub
 		}
-
+		
 		/**
 		 * Instantiates a new pvoid.
 		 *
-		 * @param p
-		 *            the p
+		 * @param pointer the pointer
 		 */
-		public PVOID(Pointer p) {
-			super(p);
+		public PVOID(Pointer pointer) {
+			super(pointer);
 		}
 	}
 
@@ -895,6 +1071,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 16-bit unsigned short.
 	 */
 	public static class USHORT extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 2;
 
 		/**
@@ -915,25 +1093,52 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class USHORTbyReference.
+	 */
 	public class USHORTbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new uSHOR tby reference.
+		 */
 		public USHORTbyReference() {
 			this(new USHORT(0));
 		}
 		
+		/**
+		 * Instantiates a new uSHOR tby reference.
+		 *
+		 * @param value the value
+		 */
 		public USHORTbyReference(USHORT value) {
 			super(USHORT.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Instantiates a new uSHOR tby reference.
+		 *
+		 * @param value the value
+		 */
 		public USHORTbyReference(short value) {
 			super(USHORT.SIZE);
 			setValue(new USHORT(value));
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(USHORT value) {
 			getPointer().setShort(0, value.shortValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public USHORT getValue() {
 			return new USHORT(getPointer().getShort(0));
 		}
@@ -943,6 +1148,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 16-bit short.
 	 */
 	public static class SHORT extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 2;
 
 		/**
@@ -967,6 +1174,8 @@ public interface WinDef extends StdCallLibrary {
 	 * 32-bit unsigned int.
 	 */
 	public static class UINT extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 4;
 
 		/**
@@ -987,20 +1196,42 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class UINTbyReference.
+	 */
 	public class UINTbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new uIN tby reference.
+		 */
 		public UINTbyReference() {
 			this(new UINT(0));
 		}
 
+		/**
+		 * Instantiates a new uIN tby reference.
+		 *
+		 * @param value the value
+		 */
 		public UINTbyReference(UINT value) {
 			super(UINT.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(UINT value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public UINT getValue() {
 			return new UINT(getPointer().getInt(0));
 		}
@@ -1029,116 +1260,250 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
+	/**
+	 * The Class SCODEbyReference.
+	 */
 	public static class SCODEbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new sCOD eby reference.
+		 */
 		public SCODEbyReference() {
 			this(new SCODE(0));
 		}
 
+		/**
+		 * Instantiates a new sCOD eby reference.
+		 *
+		 * @param value the value
+		 */
 		public SCODEbyReference(SCODE value) {
 			super(SCODE.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(SCODE value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public SCODE getValue() {
 			return new SCODE(getPointer().getInt(0));
 		}
 	}
 
+	/**
+	 * The Class LCID.
+	 */
 	public static class LCID extends DWORD {
 
+		/**
+		 * Instantiates a new lcid.
+		 */
 		public LCID() {
 			super(0);
 		}
 
+		/**
+		 * Instantiates a new lcid.
+		 *
+		 * @param value the value
+		 */
 		public LCID(long value) {
 			super(value);
 		}
 	}
 
+	/**
+	 * The Class BOOL.
+	 */
 	public static class BOOL extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 4;
 
+		/**
+		 * Instantiates a new bool.
+		 */
 		public BOOL() {
 			super(0);
 		}
 
+		/**
+		 * Instantiates a new bool.
+		 *
+		 * @param value the value
+		 */
 		public BOOL(long value) {
 			super(SIZE, value, false);
 		}
+		
+		public boolean booleanValue() {
+			if(this.intValue() > 0)
+				return true;
+			else
+				return false;
+		}
 	}
 
+	/**
+	 * The Class BOOLbyReference.
+	 */
 	public static class BOOLbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new bOO lby reference.
+		 */
 		public BOOLbyReference() {
 			this(new BOOL(0));
 		}
 
+		/**
+		 * Instantiates a new bOO lby reference.
+		 *
+		 * @param value the value
+		 */
 		public BOOLbyReference(BOOL value) {
 			super(BOOL.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(BOOL value) {
 			getPointer().setInt(0, value.intValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public BOOL getValue() {
 			return new BOOL(getPointer().getInt(0));
 		}
 	}
 
+	/**
+	 * The Class UCHAR.
+	 */
 	public static class UCHAR extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 1;
 
+		/**
+		 * Instantiates a new uchar.
+		 */
 		public UCHAR() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new uchar.
+		 *
+		 * @param value the value
+		 */
 		public UCHAR(long value) {
 			super(SIZE, value, true);
 		}
 	}
 
+	/**
+	 * The Class BYTE.
+	 */
 	public static class BYTE extends UCHAR {
 
+		/**
+		 * Instantiates a new byte.
+		 */
 		public BYTE() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new byte.
+		 *
+		 * @param value the value
+		 */
 		public BYTE(long value) {
 			super(value);
 		}
 	}
 
+	/**
+	 * The Class CHAR.
+	 */
 	public static class CHAR extends IntegerType {
+		
+		/** The Constant SIZE. */
 		public static final int SIZE = 1;
 
+		/**
+		 * Instantiates a new char.
+		 */
 		public CHAR() {
 			this(0);
 		}
 
+		/**
+		 * Instantiates a new char.
+		 *
+		 * @param value the value
+		 */
 		public CHAR(long value) {
 			super(1, value, false);
 		}
 	}
 
+	/**
+	 * The Class CHARbyReference.
+	 */
 	public static class CHARbyReference extends ByReference {
+		
+		/**
+		 * Instantiates a new cHA rby reference.
+		 */
 		public CHARbyReference() {
 			this(new CHAR(0));
 		}
 
+		/**
+		 * Instantiates a new cHA rby reference.
+		 *
+		 * @param value the value
+		 */
 		public CHARbyReference(CHAR value) {
 			super(CHAR.SIZE);
 			setValue(value);
 		}
 
+		/**
+		 * Sets the value.
+		 *
+		 * @param value the new value
+		 */
 		public void setValue(CHAR value) {
 			getPointer().setByte(0, value.byteValue());
 		}
 
+		/**
+		 * Gets the value.
+		 *
+		 * @return the value
+		 */
 		public CHAR getValue() {
 			return new CHAR(getPointer().getChar(0));
 		}

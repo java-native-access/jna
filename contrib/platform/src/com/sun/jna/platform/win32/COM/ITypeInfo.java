@@ -164,8 +164,8 @@ public class ITypeInfo extends IUnknown {
 	public/* [local] */HRESULT GetDllEntry(
 	/* [in] */MEMBERID memid,
 	/* [in] */INVOKEKIND invKind,
-	/* [out] */BSTR pBstrDllName,
-	/* [out] */BSTR pBstrName,
+	/* [out] */BSTRByReference pBstrDllName,
+	/* [out] */BSTRByReference pBstrName,
 	/* [out] */WORDbyReference pwOrdinal) {
 
 		int hr = this.invoke(13, new Object[] { this.getPointer(), memid,
@@ -208,7 +208,7 @@ public class ITypeInfo extends IUnknown {
 
 	public HRESULT GetMops(
 	/* [in] */MEMBERID memid,
-	/* [out] */BSTR pBstrMops) {
+	/* [out] */BSTRByReference pBstrMops) {
 
 		int hr = this.invoke(17, new Object[] { this.getPointer(), memid,
 				pBstrMops });

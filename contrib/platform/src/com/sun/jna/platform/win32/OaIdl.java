@@ -808,10 +808,9 @@ public interface OaIdl {
 		}
 	}
 
-	public static class VARDESC extends Structure {
+	public class VARDESC extends Structure {
 		public static class ByReference extends VARDESC implements
 				Structure.ByReference {
-
 		};
 
 		// / C type : MEMBERID
@@ -820,20 +819,19 @@ public interface OaIdl {
 		public LPOLESTR lpstrSchema;
 		/**
 		 * [switch_is][switch_type]<br>
-		 * C type : DUMMYUNIONNAMEUnion
+		 * C type : _VARDESC_union
 		 */
-		public _Union union;
+		public _VARDESC _vardesc;
 		// / C type : ELEMDESC
 		public ELEMDESC elemdescVar;
-		public short wVarFlags;
+		public WORD wVarFlags;
 		// / C type : VARKIND
 		public VARKIND varkind;
 
 		// / <i>native declaration : line 6</i>
 		// / <i>native declaration : line 6</i>
-		public static class _Union extends Union {
-
-			public static class ByReference extends _Union implements
+		public static class _VARDESC extends Union {
+			public static class ByReference extends _VARDESC implements
 					Structure.ByReference {
 			};
 
@@ -843,15 +841,18 @@ public interface OaIdl {
 			 * [case()]<br>
 			 * C type : VARIANT*
 			 */
-			public VARIANT lpvarValue;
+			public VARIANT.ByReference lpvarValue;
 
-			public _Union() {
+			public _VARDESC() {
 				super();
-				this.setType("oInst");
+				setType("lpvarValue");
+				this.read();
 			}
 
-			public _Union(Pointer pointer) {
+			public _VARDESC(Pointer pointer) {
 				super(pointer);
+				setType("lpvarValue");
+				this.read();
 			}
 
 			/**
@@ -859,14 +860,14 @@ public interface OaIdl {
 			 *            [case()]<br>
 			 *            C type : VARIANT*
 			 */
-			public _Union(VARIANT lpvarValue) {
+			public _VARDESC(VARIANT.ByReference lpvarValue) {
 				super();
 				this.lpvarValue = lpvarValue;
 				setType("lpvarValue");
 			}
 
 			// / @param oInst [case()]
-			public _Union(NativeLong oInst) {
+			public _VARDESC(NativeLong oInst) {
 				super();
 				this.oInst = oInst;
 				setType("oInst");
@@ -876,43 +877,17 @@ public interface OaIdl {
 		public VARDESC() {
 			super();
 		}
-		
+
 		public VARDESC(Pointer pointer) {
 			super(pointer);
-			this.union.setType("lpvarValue");
+			this._vardesc.setType("lpvarValue");
 			this.read();
 		}
-
+		
 		@Override
 		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "memid", "lpstrSchema",
-					"union", "elemdescVar", "wVarFlags", "varkind" });
-		}
-
-		/**
-		 * @param memid
-		 *            C type : MEMBERID<br>
-		 * @param lpstrSchema
-		 *            C type : LPOLESTR<br>
-		 * @param union
-		 *            [switch_is][switch_type]<br>
-		 *            C type : DUMMYUNIONNAMEUnion<br>
-		 * @param elemdescVar
-		 *            C type : ELEMDESC<br>
-		 * @param wVarFlags
-		 *            C type : short
-		 * @param varkind
-		 *            C type : VARKIND
-		 */
-		public VARDESC(MEMBERID memid, LPOLESTR lpstrSchema, _Union union,
-				ELEMDESC elemdescVar, short wVarFlags, VARKIND varkind) {
-			super();
-			this.memid = memid;
-			this.lpstrSchema = lpstrSchema;
-			this.union = union;
-			this.elemdescVar = elemdescVar;
-			this.wVarFlags = wVarFlags;
-			this.varkind = varkind;
+			return Arrays.asList("memid", "lpstrSchema", "_vardesc",
+					"elemdescVar", "wVarFlags", "varkind");
 		}
 	}
 
@@ -927,12 +902,12 @@ public interface OaIdl {
 		 */
 		public TYPEDESC tdesc;
 		// / C type : DUMMYUNIONNAMEUnion
-		public _Union union;
+		public _ELEMDESC _elemdesc;
 
 		// / <i>native declaration : line 4</i>
 		// / <i>native declaration : line 4</i>
-		public static class _Union extends Union {
-			public static class ByReference extends _Union implements
+		public static class _ELEMDESC extends Union {
+			public static class ByReference extends _ELEMDESC implements
 					Structure.ByReference {
 			};
 
@@ -947,10 +922,10 @@ public interface OaIdl {
 			 */
 			public PARAMDESC paramdesc;
 
-			public _Union() {
+			public _ELEMDESC() {
 			}
 
-			public _Union(Pointer pointer) {
+			public _ELEMDESC(Pointer pointer) {
 				super(pointer);
 				this.read();
 			}
@@ -960,9 +935,9 @@ public interface OaIdl {
 			 *            info about the parameter<br>
 			 *            C type : PARAMDESC
 			 */
-			public _Union(PARAMDESC paramdesc) {
+			public _ELEMDESC(PARAMDESC paramdesc) {
 				this.paramdesc = paramdesc;
-				setType(PARAMDESC.class);
+				setType("paramdesc");
 			}
 
 			/**
@@ -970,24 +945,18 @@ public interface OaIdl {
 			 *            info for remoting the element<br>
 			 *            C type : IDLDESC
 			 */
-			public _Union(IDLDESC idldesc) {
+			public _ELEMDESC(IDLDESC idldesc) {
 				this.idldesc = idldesc;
-				setType(IDLDESC.class);
+				setType("idldesc");
 			}
 		};
 
 		@Override
 		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "tdesc", "union" });
+			return Arrays.asList(new String[] { "tdesc", "_elemdesc" });
 		}
 
 		public ELEMDESC() {
-		}
-
-		public ELEMDESC(TYPEDESC tdesc, _Union union) {
-			super();
-			this.tdesc = tdesc;
-			this.union = union;
 		}
 	}
 

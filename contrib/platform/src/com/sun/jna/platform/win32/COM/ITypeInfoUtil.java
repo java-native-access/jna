@@ -9,6 +9,7 @@ import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -25,6 +26,8 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class ITypeInfoUtil {
+	
+	public final static OleAuto OLEAUTO = OleAuto.INSTANCE; 
 
 	private ITypeInfo typeInfo;
 
@@ -64,14 +67,16 @@ public class ITypeInfoUtil {
 		return new VARDESC(ppVarDesc.getValue());
 	}
 
-	public Object[] getNames(MEMBERID memid, int maxNames) {
-		BSTR[] rgBstrNames = new BSTR[0];
+	public BSTR[] getNames(MEMBERID memid, int maxNames) {
 		UINTbyReference pcNames = new UINTbyReference();
-		HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(
-				maxNames), pcNames);
+		HRESULT hr = this.typeInfo.GetNames(memid, null, new UINT(maxNames), pcNames);
 		COMUtils.checkAutoRC(hr);
 
-		return new Object[] { rgBstrNames, pcNames };
+		BSTR[] rgBstrNames = new BSTR[pcNames.getValue().intValue()];
+		hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(maxNames), pcNames);
+		COMUtils.checkAutoRC(hr);
+		
+		return rgBstrNames;
 	}
 
 	public HREFTYPE getRefTypeOfImplType(int index) {
@@ -93,31 +98,54 @@ public class ITypeInfoUtil {
 	}
 
 	public MEMBERID[] getIDsOfNames(LPOLESTR[] rgszNames, int cNames) {
-		MEMBERID[] pMemId = new MEMBERID[0];
-		HRESULT hr = this.typeInfo.GetIDsOfNames(rgszNames, new UINT(cNames),
-				pMemId);
+		MEMBERID[] pMemId = new MEMBERID[cNames];
+		HRESULT hr = this.typeInfo.GetIDsOfNames(rgszNames, new UINT(cNames), pMemId);
 		COMUtils.checkAutoRC(hr);
 
 		return pMemId;
 	}
-/*
-	public HRESULT Invoke(
-	 [in] PVOID pvInstance,
-	 [in] MEMBERID memid,
-	 [in] WORD wFlags,
-	 [out][in] DISPPARAMS.ByReference pDispParams,
-	 [out] VARIANT.ByReference pVarResult,
-	 [out] EXCEPINFO.ByReference pExcepInfo,
-	 [out] UINTbyReference puArgErr) {
 
-		int hr = this.invoke(11, new Object[] { this.getPointer(), pvInstance,
-				memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr });
+	public Invoke Invoke(PVOID pvInstance, MEMBERID memid, WORD wFlags,
+			DISPPARAMS.ByReference pDispParams) {
 
-		return new HRESULT(hr);
+		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
+		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+		UINTbyReference puArgErr = new UINTbyReference();
+
+		HRESULT hr = this.typeInfo.Invoke(pvInstance, memid, wFlags,
+				pDispParams, pVarResult, pExcepInfo, puArgErr);
+		COMUtils.checkAutoRC(hr);
+
+		return new Invoke(pVarResult, pExcepInfo, puArgErr.getValue()
+				.intValue());
 	}
-*/
-	public Object[] getDocumentation(MEMBERID memid) {
-		Object[] result = new Object[4];
+
+	public static class Invoke {
+		private VARIANT.ByReference pVarResult;
+		private EXCEPINFO.ByReference pExcepInfo;
+		private int puArgErr;
+
+		public Invoke(VARIANT.ByReference pVarResult,
+				EXCEPINFO.ByReference pExcepInfo, int puArgErr) {
+			this.pVarResult = pVarResult;
+			this.pExcepInfo = pExcepInfo;
+			this.puArgErr = puArgErr;
+		}
+
+		public VARIANT.ByReference getpVarResult() {
+			return pVarResult;
+		}
+
+		public EXCEPINFO.ByReference getpExcepInfo() {
+			return pExcepInfo;
+		}
+
+		public int getPuArgErr() {
+			return puArgErr;
+		}
+	}
+
+	public TypeInfoDoc getDocumentation(MEMBERID memid) {
 		BSTRByReference pBstrName = new BSTRByReference();
 		BSTRByReference pBstrDocString = new BSTRByReference();
 		DWORDbyReference pdwHelpContext = new DWORDbyReference();
@@ -127,76 +155,169 @@ public class ITypeInfoUtil {
 				pBstrDocString, pdwHelpContext, pBstrHelpFile);
 		COMUtils.checkTypeLibRC(hr);
 
-		result[0] = pBstrName.getString();
-		result[1] = pBstrDocString.getString();
-		result[2] = pdwHelpContext.getValue().longValue();
-		result[3] = pBstrHelpFile.getString();
-		return result;
+		TypeInfoDoc TypeInfoDoc = new TypeInfoDoc(pBstrName.getString(),
+				pBstrDocString.getString(), pdwHelpContext.getValue()
+						.intValue(), pBstrHelpFile.getString());
+		
+		OLEAUTO.SysFreeString(pBstrName.getValue());
+		OLEAUTO.SysFreeString(pBstrDocString.getValue());
+		OLEAUTO.SysFreeString(pBstrHelpFile.getValue());
+		
+		return TypeInfoDoc;
 	}
-/*
-	public [local] HRESULT GetDllEntry(
-	 [in] MEMBERID memid,
-	 [in] INVOKEKIND invKind,
-	 [out] BSTR pBstrDllName,
-	 [out] BSTR pBstrName,
-	 [out] WORDbyReference pwOrdinal) {
 
-		int hr = this.invoke(13, new Object[] { this.getPointer(), memid,
-				invKind, pBstrDllName, pBstrName, pwOrdinal });
+	public static class TypeInfoDoc {
+		private String name;
+		private String docString;
+		private int helpContext;
+		private String helpFile;
 
-		return new HRESULT(hr);
+		public TypeInfoDoc(String name, String docString, int helpContext,
+				String helpFile) {
+			this.name = name;
+			this.docString = docString;
+			this.helpContext = helpContext;
+			this.helpFile = helpFile;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public String getDocString() {
+			return docString;
+		}
+
+		public int getHelpContext() {
+			return helpContext;
+		}
+
+		public String getHelpFile() {
+			return helpFile;
+		}
+	}
+
+	public DllEntry GetDllEntry(MEMBERID memid, INVOKEKIND invKind) {
+		BSTRByReference pBstrDllName = new BSTRByReference();
+		BSTRByReference pBstrName = new BSTRByReference();
+		WORDbyReference pwOrdinal = new WORDbyReference();
+
+		HRESULT hr = this.typeInfo.GetDllEntry(memid, invKind, pBstrDllName,
+				pBstrName, pwOrdinal);
+		COMUtils.checkTypeLibRC(hr);
+
+		OLEAUTO.SysFreeString(pBstrDllName.getValue());
+		OLEAUTO.SysFreeString(pBstrName.getValue());
+		
+		return new DllEntry(pBstrDllName.getString(), pBstrName.getString(),
+				pwOrdinal.getValue().intValue());
+	}
+
+	public static class DllEntry {
+		private String dllName;
+		private String name;
+		private int ordinal;
+
+		public DllEntry(String dllName, String name, int ordinal) {
+			this.dllName = dllName;
+			this.name = name;
+			this.ordinal = ordinal;
+		}
+
+		public String getDllName() {
+			return dllName;
+		}
+
+		public void setDllName(String dllName) {
+			this.dllName = dllName;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public int getOrdinal() {
+			return ordinal;
+		}
+
+		public void setOrdinal(int ordinal) {
+			this.ordinal = ordinal;
+		}
 	}
 
 	public ITypeInfo getRefTypeInfo(HREFTYPE hreftype) {
-		ITypeInfo.ByReference typeinfo = new ITypeInfo.ByReference();
-		HRESULT hr = this.typeInfo.GetRefTypeInfo(hreftype, typeinfo);
+		PointerByReference ppTInfo = new PointerByReference();
+		HRESULT hr = this.typeInfo.GetRefTypeInfo(hreftype, ppTInfo);
 		COMUtils.checkAutoRC(hr);
 
-		return typeinfo;
+		return new ITypeInfo(ppTInfo.getValue());
 	}
 
-	public [local] HRESULT AddressOfMember(
-	 [in] MEMBERID memid,
-	 [in] INVOKEKIND invKind,
-	 [out] PointerByReference ppv) {
+	public PointerByReference AddressOfMember(MEMBERID memid, INVOKEKIND invKind) {
+		PointerByReference ppv = new PointerByReference();
+		HRESULT hr = this.typeInfo.AddressOfMember(memid, invKind, ppv);
+		COMUtils.checkAutoRC(hr);
 
-		int hr = this.invoke(15, new Object[] { this.getPointer(), memid,
-				invKind, ppv });
-
-		return new HRESULT(hr);
+		return ppv;
 	}
 
-	public [local] HRESULT CreateInstance(
-	 [in] IUnknown pUnkOuter,
-	 [in] REFIID riid,
-	 [iid_is][out] PointerByReference ppvObj) {
+	public PointerByReference CreateInstance(IUnknown pUnkOuter, REFIID riid) {
+		PointerByReference ppvObj = new PointerByReference();
+		HRESULT hr = this.typeInfo.CreateInstance(pUnkOuter, riid, ppvObj);
+		COMUtils.checkAutoRC(hr);
 
-		int hr = this.invoke(16, new Object[] { this.getPointer(), pUnkOuter,
-				riid, ppvObj });
-
-		return new HRESULT(hr);
+		return ppvObj;
 	}
 
-	public HRESULT GetMops(
-	 [in] MEMBERID memid,
-	 [out] BSTR pBstrMops) {
+	public String GetMops(MEMBERID memid) {
 
-		int hr = this.invoke(17, new Object[] { this.getPointer(), memid,
-				pBstrMops });
+		BSTRByReference pBstrMops = new BSTRByReference();
+		HRESULT hr = this.typeInfo.GetMops(memid, pBstrMops);
+		COMUtils.checkAutoRC(hr);
 
-		return new HRESULT(hr);
+		return pBstrMops.getString();
 	}
 
-	public [local] HRESULT GetContainingTypeLib(
-	 [out] ITypeLib.ByReference pTLib,
-	 [out] UINTbyReference pIndex) {
+	public ContainingTypeLib GetContainingTypeLib() {
 
 		PointerByReference ppTLib = new PointerByReference();
-		int hr = this.invoke(18, new Object[] { this.getPointer(), ppTLib,
-				pIndex });
-		pTLib.setPointer(ppTLib.getPointer());
+		UINTbyReference pIndex = new UINTbyReference();
 
-		return new HRESULT(hr);
+		HRESULT hr = this.typeInfo.GetContainingTypeLib(ppTLib, pIndex);
+		COMUtils.checkAutoRC(hr);
+
+		return new ContainingTypeLib(new ITypeLib(ppTLib.getValue()), pIndex
+				.getValue().intValue());
+	}
+
+	public static class ContainingTypeLib {
+		private ITypeLib typeLib;
+		private int index;
+
+		public ContainingTypeLib(ITypeLib typeLib, int index) {
+			this.typeLib = typeLib;
+			this.index = index;
+		}
+
+		public ITypeLib getTypeLib() {
+			return typeLib;
+		}
+
+		public void setTypeLib(ITypeLib typeLib) {
+			this.typeLib = typeLib;
+		}
+
+		public int getIndex() {
+			return index;
+		}
+
+		public void setIndex(int index) {
+			this.index = index;
+		}
 	}
 
 	public void ReleaseTypeAttr(TYPEATTR pTypeAttr) {
@@ -209,6 +330,5 @@ public class ITypeInfoUtil {
 
 	public void ReleaseVarDesc(VARDESC pVarDesc) {
 		this.typeInfo.ReleaseVarDesc(pVarDesc);
-	}*/
-
+	}
 }

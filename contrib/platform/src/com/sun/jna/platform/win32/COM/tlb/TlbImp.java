@@ -6,7 +6,8 @@ import java.io.PrintStream;
 
 import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
-import com.sun.jna.platform.win32.COM.tlb.imp.TlbEnumImp;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbClass;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbEnum;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
@@ -39,17 +40,17 @@ public class TlbImp {
 			// ITypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
 			// MS Word
 			this.typeLibUtil = new ITypeLibUtil(
-					"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
-
+					"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
+			
 			this.initPrintStream();
-			this.createJavaFileHeader();
-			this.createJavaDocHeader();
-
+			StringBuffer contentBuffer = new StringBuffer();
+			
 			for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
 				TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
 
 				if (typekind.value == TYPEKIND.TKIND_ENUM) {
-					this.createCOMEnum(i, out, typeLibUtil);
+					StringBuffer enumBuffer = this.createCOMEnum(i, out, typeLibUtil);
+					contentBuffer.append(enumBuffer + CR);
 				} else if (typekind.value == TYPEKIND.TKIND_RECORD) {
 
 				} else if (typekind.value == TYPEKIND.TKIND_MODULE) {
@@ -65,6 +66,12 @@ public class TlbImp {
 
 				}
 			}
+			
+			String packageName = "myPackage." + this.typeLibUtil.getName().toLowerCase();			
+			TlbClass tlbClass = new TlbClass(-1, typeLibUtil);
+			tlbClass.createPackage(packageName);
+			tlbClass.createContent(contentBuffer.toString());
+			this.out.print(tlbClass.getClassBuffer());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -73,7 +80,7 @@ public class TlbImp {
 	private void initPrintStream() throws FileNotFoundException {
 		String tmp = System.getProperty("java.io.tmpdir");
 		File javaDir = new File(tmp + "_jnaCOM_" + System.currentTimeMillis()
-				+ "\\" + this.typeLibUtil.getName().toLowerCase() + "\\");
+				+ "\\myPackage\\" + this.typeLibUtil.getName().toLowerCase() + "\\");
 
 		if (javaDir.exists())
 			javaDir.delete();
@@ -90,28 +97,9 @@ public class TlbImp {
 		}
 	}
 
-	private void createJavaFileHeader() {
-		this.out.println("package myPackage." + this.typeLibUtil.getName()
-				+ ";" + CR);
-		this.out.println("import com.sun.jna.platform.win32.*;");
-		this.out.println("import com.sun.jna.platform.win32.COM.*;" + CR);
-	}
-
-	private void createJavaDocHeader() {
-		String guidStr = this.typeLibUtil.getLibAttr().guid.toGuidString();
-		int majorVerNum = this.typeLibUtil.getLibAttr().wMajorVerNum.intValue();
-		int minorVerNum = this.typeLibUtil.getLibAttr().wMinorVerNum.intValue();
-
-		this.out.println("/**");
-		this.out.println("* uuid(" + guidStr + ")");
-		this.out.println("* version(" + majorVerNum + "." + minorVerNum + ");");
-		this.out.println("* helpstring(" + this.typeLibUtil.getDocString()
-				+ ")");
-		this.out.println("*/");
-	}
-
-	private void createCOMEnum(int index, PrintStream out, ITypeLibUtil typeLibUtil) {
-		new TlbEnumImp(index, out, typeLibUtil);
+	private StringBuffer createCOMEnum(int index, PrintStream out, ITypeLibUtil typeLibUtil) {
+		TlbEnum tlbEnum = new TlbEnum(index, typeLibUtil);
+		return tlbEnum.getClassBuffer();
 	}
 
 	private void createCOMInterface(int index) {
