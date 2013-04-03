@@ -79,15 +79,6 @@ public final class Platform {
         else {
             osType = UNSPECIFIED;
         }
-        boolean hasAWT = false;
-        try {
-            Class.forName("java.awt.Component");
-            hasAWT = true;
-        }
-        catch(Throwable t) {
-            // Don't care why
-        }
-        HAS_AWT = hasAWT;
         boolean hasBuffers = false;
         try {
             Class.forName("java.nio.Buffer");
@@ -95,6 +86,10 @@ public final class Platform {
         }
         catch(ClassNotFoundException e) {
         }
+        // NOTE: we used to do Class.forName("java.awt.Component"), but that
+        // has the unintended side effect of actually loading AWT native libs,
+        // which can be problematic
+        HAS_AWT = osType != WINDOWSCE && osType != ANDROID && osType != AIX;
         HAS_BUFFERS = hasBuffers;
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
