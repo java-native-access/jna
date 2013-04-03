@@ -59,14 +59,14 @@ public class ITypeInfo extends IUnknown {
 	public HRESULT GetTypeAttr(
 	/* [out] */PointerByReference ppTypeAttr) {
 
-		int hr = this.invoke(3, new Object[] { this.getPointer(), ppTypeAttr });
+		int hr = this._invoke(3, new Object[] { this.getPointer(), ppTypeAttr });
 		return new HRESULT(hr);
 	}
 
 	public HRESULT GetTypeComp(
 	/* [out] */PointerByReference ppTComp) {
 
-		int hr = this.invoke(4, new Object[] { this.getPointer(), ppTComp });
+		int hr = this._invoke(4, new Object[] { this.getPointer(), ppTComp });
 		return new HRESULT(hr);
 	}
 
@@ -74,7 +74,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */PointerByReference ppFuncDesc) {
 
-		int hr = this.invoke(5, new Object[] { this.getPointer(), index,
+		int hr = this._invoke(5, new Object[] { this.getPointer(), index,
 				ppFuncDesc });
 
 		return new HRESULT(hr);
@@ -84,7 +84,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */PointerByReference ppVarDesc) {
 
-		int hr = this.invoke(6, new Object[] { this.getPointer(), index,
+		int hr = this._invoke(6, new Object[] { this.getPointer(), index,
 				ppVarDesc });
 
 		return new HRESULT(hr);
@@ -96,7 +96,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT cMaxNames,
 	/* [out] */UINTbyReference pcNames) {
 
-		int hr = this.invoke(7, new Object[] { this.getPointer(), memid,
+		int hr = this._invoke(7, new Object[] { this.getPointer(), memid,
 				rgBstrNames, cMaxNames, pcNames });
 
 		return new HRESULT(hr);
@@ -106,7 +106,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */HREFTYPEbyReference pRefType) {
 
-		int hr = this.invoke(8, new Object[] { this.getPointer(), index,
+		int hr = this._invoke(8, new Object[] { this.getPointer(), index,
 				pRefType });
 
 		return new HRESULT(hr);
@@ -116,7 +116,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT index,
 	/* [out] */IntByReference pImplTypeFlags) {
 
-		int hr = this.invoke(9, new Object[] { this.getPointer(), index,
+		int hr = this._invoke(9, new Object[] { this.getPointer(), index,
 				pImplTypeFlags });
 
 		return new HRESULT(hr);
@@ -127,7 +127,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */UINT cNames,
 	/* [size_is][out] */MEMBERID[] pMemId) {
 
-		int hr = this.invoke(10, new Object[] { this.getPointer(), rgszNames,
+		int hr = this._invoke(10, new Object[] { this.getPointer(), rgszNames,
 				cNames, pMemId });
 
 		return new HRESULT(hr);
@@ -142,7 +142,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */EXCEPINFO.ByReference pExcepInfo,
 	/* [out] */UINTbyReference puArgErr) {
 
-		int hr = this.invoke(11, new Object[] { this.getPointer(), pvInstance,
+		int hr = this._invoke(11, new Object[] { this.getPointer(), pvInstance,
 				memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr });
 
 		return new HRESULT(hr);
@@ -155,7 +155,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */DWORDbyReference pdwHelpContext,
 	/* [out] */BSTRByReference pBstrHelpFile) {
 
-		int hr = this.invoke(12, new Object[] { this.getPointer(), memid,
+		int hr = this._invoke(12, new Object[] { this.getPointer(), memid,
 				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
 
 		return new HRESULT(hr);
@@ -168,7 +168,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */BSTRByReference pBstrName,
 	/* [out] */WORDbyReference pwOrdinal) {
 
-		int hr = this.invoke(13, new Object[] { this.getPointer(), memid,
+		int hr = this._invoke(13, new Object[] { this.getPointer(), memid,
 				invKind, pBstrDllName, pBstrName, pwOrdinal });
 
 		return new HRESULT(hr);
@@ -178,7 +178,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */HREFTYPE hRefType,
 	/* [out] */PointerByReference ppTInfo) {
 
-		int hr = this.invoke(14, new Object[] { this.getPointer(), hRefType,
+		int hr = this._invoke(14, new Object[] { this.getPointer(), hRefType,
 				ppTInfo });
 
 		return new HRESULT(hr);
@@ -189,7 +189,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */INVOKEKIND invKind,
 	/* [out] */PointerByReference ppv) {
 
-		int hr = this.invoke(15, new Object[] { this.getPointer(), memid,
+		int hr = this._invoke(15, new Object[] { this.getPointer(), memid,
 				invKind, ppv });
 
 		return new HRESULT(hr);
@@ -200,7 +200,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */REFIID riid,
 	/* [iid_is][out] */PointerByReference ppvObj) {
 
-		int hr = this.invoke(16, new Object[] { this.getPointer(), pUnkOuter,
+		int hr = this._invoke(16, new Object[] { this.getPointer(), pUnkOuter,
 				riid, ppvObj });
 
 		return new HRESULT(hr);
@@ -210,7 +210,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */MEMBERID memid,
 	/* [out] */BSTRByReference pBstrMops) {
 
-		int hr = this.invoke(17, new Object[] { this.getPointer(), memid,
+		int hr = this._invoke(17, new Object[] { this.getPointer(), memid,
 				pBstrMops });
 
 		return new HRESULT(hr);
@@ -220,7 +220,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out] */PointerByReference ppTLib,
 	/* [out] */UINTbyReference pIndex) {
 
-		int hr = this.invoke(18, new Object[] { this.getPointer(), ppTLib,
+		int hr = this._invoke(18, new Object[] { this.getPointer(), ppTLib,
 				pIndex });
 
 		return new HRESULT(hr);
@@ -229,18 +229,18 @@ public class ITypeInfo extends IUnknown {
 	public/* [local] */void ReleaseTypeAttr(
 	/* [in] */TYPEATTR pTypeAttr) {
 
-		this.invoke(19, new Object[] { this.getPointer(), pTypeAttr });
+		this._invoke(19, new Object[] { this.getPointer(), pTypeAttr });
 	}
 
 	public/* [local] */void ReleaseFuncDesc(
 	/* [in] */FUNCDESC pFuncDesc) {
 
-		this.invoke(20, new Object[] { this.getPointer(), pFuncDesc });
+		this._invoke(20, new Object[] { this.getPointer(), pFuncDesc });
 	}
 
 	public/* [local] */void ReleaseVarDesc(
 	/* [in] */VARDESC pVarDesc) {
 
-		this.invoke(21, new Object[] { this.getPointer(), pVarDesc });
+		this._invoke(21, new Object[] { this.getPointer(), pVarDesc });
 	}
 }

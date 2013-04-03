@@ -68,7 +68,7 @@ public class IUnknown extends PointerType {
 	 * @return the hresult
 	 */
 	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		int hr = this.invoke(0, new Object[] { this.getPointer(), riid,
+		int hr = this._invoke(0, new Object[] { this.getPointer(), riid,
 				ppvObject });
 		return new HRESULT(hr);
 	}
@@ -79,7 +79,7 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int AddRef() {
-		return this.invoke(1, new Object[] { this.getPointer() });
+		return this._invoke(1, new Object[] { this.getPointer() });
 	}
 
 	/**
@@ -88,7 +88,7 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int Release() {
-		return this.invoke(2, new Object[] { this.getPointer() });
+		return this._invoke(2, new Object[] { this.getPointer() });
 	}
 
 	/**
@@ -98,7 +98,7 @@ public class IUnknown extends PointerType {
 	 * @param args the args
 	 * @return the int
 	 */
-	protected int invoke(int vtableId, Object[] args) {
+	protected int _invoke(int vtableId, Object[] args) {
 		Pointer vptr = this.getPointer().getPointer(0);
 		// we take the vtable id and multiply with the pointer size (usually 4 bytes)
 		Function func = Function.getFunction(vptr.getPointer(vtableId * Pointer.SIZE));

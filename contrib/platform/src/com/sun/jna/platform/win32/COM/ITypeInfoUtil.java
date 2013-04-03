@@ -63,20 +63,26 @@ public class ITypeInfoUtil {
 		PointerByReference ppVarDesc = new PointerByReference();
 		HRESULT hr = this.typeInfo.GetVarDesc(new UINT(index), ppVarDesc);
 		COMUtils.checkAutoRC(hr);
-
+		
 		return new VARDESC(ppVarDesc.getValue());
 	}
 
-	public BSTR[] getNames(MEMBERID memid, int maxNames) {
+	public String[] getNames(MEMBERID memid, int maxNames) {
+		String[] result = new String[maxNames];
+		BSTR[] rgBstrNames = new BSTR[maxNames];
 		UINTbyReference pcNames = new UINTbyReference();
-		HRESULT hr = this.typeInfo.GetNames(memid, null, new UINT(maxNames), pcNames);
-		COMUtils.checkAutoRC(hr);
-
-		BSTR[] rgBstrNames = new BSTR[pcNames.getValue().intValue()];
-		hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(maxNames), pcNames);
+		HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(maxNames), pcNames);
 		COMUtils.checkAutoRC(hr);
 		
-		return rgBstrNames;
+		for (int i = 0; i < rgBstrNames.length; i++) {
+			if(rgBstrNames[i] != null)
+			{
+				result[i] = rgBstrNames[i].getValue();
+				OLEAUTO.SysFreeString(rgBstrNames[i]);
+			}
+		}
+		
+		return result;
 	}
 
 	public HREFTYPE getRefTypeOfImplType(int index) {

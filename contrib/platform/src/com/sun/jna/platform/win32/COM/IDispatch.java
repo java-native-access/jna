@@ -71,7 +71,7 @@ public class IDispatch extends IUnknown {
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		int hr = this.invoke(3, new Object[] { pctinfo });
+		int hr = this._invoke(3, new Object[] { pctinfo });
 		return new HRESULT(hr);
 	}
 	
@@ -85,7 +85,7 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
-		int hr = this.invoke(4, new Object[] { this.getPointer(), iTInfo,
+		int hr = this._invoke(4, new Object[] { this.getPointer(), iTInfo,
 				lcid, ppTInfo });
 		return new HRESULT(hr);
 	}
@@ -107,7 +107,7 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
 			LCID lcid, DISPIDbyReference rgDispId) {
-		int hr = this.invoke(5, new Object[] { this.getPointer(), riid,
+		int hr = this._invoke(5, new Object[] { this.getPointer(), riid,
 				rgszNames, cNames, lcid, rgDispId });
 		return new HRESULT(hr);
 	}
@@ -137,7 +137,7 @@ public class IDispatch extends IUnknown {
 			DISPID wFlags, DISPPARAMS pDispParams,
 			VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
-		int hr = this.invoke(6, new Object[] { this.getPointer(),
+		int hr = this._invoke(6, new Object[] { this.getPointer(),
 				dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult,
 				pExcepInfo, puArgErr });
 

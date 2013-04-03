@@ -772,12 +772,12 @@ public interface OaIdl {
 		 * [size_is]<br>
 		 * C type : SCODE*
 		 */
-		public SCODE lprgscode;
+		public ScodeArg.ByReference lprgscode;
 		/**
 		 * [size_is]<br>
 		 * C type : ELEMDESC*
 		 */
-		public ELEMDESC lprgelemdescParam;
+		public ElemDescArg.ByReference lprgelemdescParam;
 		// / C type : FUNCKIND
 		public FUNCKIND funckind;
 		// / C type : INVOKEKIND
@@ -797,14 +797,52 @@ public interface OaIdl {
 
 		public FUNCDESC(Pointer pointer) {
 			super(pointer);
+			this.read();
+			
+			if(this.cParams > 1) {
+				this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams];
+				this.lprgelemdescParam.read();
+			}
 		}
-
+		
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "memid", "lprgscode",
 					"lprgelemdescParam", "funckind", "invkind", "callconv",
 					"cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
 					"wFuncFlags" });
+		}
+	}
+
+	public static class ElemDescArg extends Structure {
+		public static class ByReference extends ElemDescArg implements
+				Structure.ByReference {
+		}
+
+		public ELEMDESC[] elemDescArg = new ELEMDESC[1];
+
+		public ElemDescArg() {
+		}
+		
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "elemDescArg" });
+		}
+	}
+
+	public static class ScodeArg extends Structure {
+		public static class ByReference extends ScodeArg implements
+				Structure.ByReference {
+		}
+
+		public SCODE[] scodeArg = new SCODE[1];
+
+		public ScodeArg() {
+		}
+
+		@Override
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "scodeArg" });
 		}
 	}
 
@@ -883,7 +921,7 @@ public interface OaIdl {
 			this._vardesc.setType("lpvarValue");
 			this.read();
 		}
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList("memid", "lpstrSchema", "_vardesc",
@@ -927,6 +965,7 @@ public interface OaIdl {
 
 			public _ELEMDESC(Pointer pointer) {
 				super(pointer);
+				setType("paramdesc");
 				this.read();
 			}
 
@@ -957,6 +996,11 @@ public interface OaIdl {
 		}
 
 		public ELEMDESC() {
+		}
+		
+		public ELEMDESC(Pointer pointer) {
+			super(pointer);
+			this.read();
 		}
 	}
 
@@ -1212,6 +1256,11 @@ public interface OaIdl {
 			super();
 		}
 
+		public IDLDESC(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+
 		// / @param dwReserved C type : ULONG_PTR
 		public IDLDESC(ULONG_PTR dwReserved, USHORT wIDLFlags) {
 			super();
@@ -1237,6 +1286,11 @@ public interface OaIdl {
 
 		public ARRAYDESC() {
 			super();
+		}
+		
+		public ARRAYDESC(Pointer pointer) {
+			super(pointer);
+			this.read();
 		}
 
 		protected List getFieldOrder() {
@@ -1278,6 +1332,11 @@ public interface OaIdl {
 			super();
 		}
 
+		public PARAMDESC(Pointer pointer) {
+			super(pointer);
+			this.read();
+		}
+		
 		@Override
 		protected List getFieldOrder() {
 			return Arrays
@@ -1295,6 +1354,11 @@ public interface OaIdl {
 
 		public PARAMDESCEX() {
 			super();
+		}
+
+		public PARAMDESCEX(Pointer pointer) {
+			super(pointer);
+			this.read();
 		}
 
 		@Override

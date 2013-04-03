@@ -648,7 +648,6 @@ public interface Variant {
 	}
 
 	public static class VariantArg extends Structure {
-
 		public static class ByReference extends VariantArg implements
 				Structure.ByReference {
 		}

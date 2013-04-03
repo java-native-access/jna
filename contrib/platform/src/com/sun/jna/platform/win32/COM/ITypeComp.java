@@ -45,7 +45,7 @@ public class ITypeComp extends IUnknown {
 	/* [out] */DESCKIND.ByReference pDescKind,
 	/* [out] */BINDPTR.ByReference pBindPtr) {
 
-		int hr = this.invoke(4, new Object[] { this.getPointer(), szName,
+		int hr = this._invoke(4, new Object[] { this.getPointer(), szName,
 				lHashVal, wFlags, ppTInfo, pDescKind, pBindPtr });
 
 		return new HRESULT(hr);
@@ -58,7 +58,7 @@ public class ITypeComp extends IUnknown {
 	/* [out] */PointerByReference ppTInfo,
 	/* [out] */PointerByReference ppTComp) {
 
-		int hr = this.invoke(5, new Object[] { this.getPointer(), szName,
+		int hr = this._invoke(5, new Object[] { this.getPointer(), szName,
 				lHashVal, ppTInfo, ppTComp });
 
 		return new HRESULT(hr);

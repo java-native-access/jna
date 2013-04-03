@@ -11,16 +11,16 @@ import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
 
-public class TlbEnum extends TlbBase {
+public class TlbInterface extends TlbBase {
 
-	public TlbEnum(int index, ITypeLibUtil typeLibUtil) {
+	public TlbInterface(int index, ITypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
 		String enumName = typeLibDoc.getName();
 		String docString = typeLibDoc.getDocString();
 				
-		this.logInfo("Type of kind 'enum' found: " + enumName);
+		this.logInfo("Type of kind 'Interface' found: " + enumName);
 		this.createClassName(enumName);
 
 		// Get the TypeAttributes
@@ -47,9 +47,6 @@ public class TlbEnum extends TlbBase {
 
 			if (i < cVars - 1)
 				this.content += CR;
-			
-			// release the pointer
-			typeInfoUtil.ReleaseVarDesc(varDesc);
 		}
 
 		this.createContent(this.content);
@@ -62,6 +59,6 @@ public class TlbEnum extends TlbBase {
 
 	@Override
 	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";
+		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbInterface.template";
 	}
 }

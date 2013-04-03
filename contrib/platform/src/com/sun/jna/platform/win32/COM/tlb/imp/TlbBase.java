@@ -89,6 +89,9 @@ public abstract class TlbBase {
 	}
 
 	protected void replaceVariable(String name, String value) {
+		if(value == null)
+			value = "";
+		
 		Pattern pattern = Pattern.compile("\\$\\{" + name + "\\}");
 		Matcher matcher = pattern.matcher(this.classBuffer);
 		String replacement = value;

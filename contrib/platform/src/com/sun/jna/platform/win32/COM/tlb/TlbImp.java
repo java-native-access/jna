@@ -7,7 +7,9 @@ import java.io.PrintStream;
 import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbClass;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbDispatch;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbEnum;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbInterface;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
@@ -22,10 +24,16 @@ public class TlbImp {
 
 	public final static String CRCR = "\n\n";
 
+	public final static String TYPELIB_ID_SHELL = "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}";
+	
+	public final static String TYPELIB_ID_WORD = "{00020905-0000-0000-C000-000000000046}";
+	
 	private ITypeLibUtil typeLibUtil;
 
 	private PrintStream out;
-
+	
+	private StringBuffer contentBuffer = new StringBuffer();
+	
 	/**
 	 * @param args
 	 */
@@ -35,33 +43,31 @@ public class TlbImp {
 
 	public void startCOM2Java() {
 		try {
-			// Microsoft Shell Controls And Automation
-			// this.typeLibUtil = new
-			// ITypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
-			// MS Word
 			this.typeLibUtil = new ITypeLibUtil(
-					"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
+					TYPELIB_ID_SHELL, 1, 0);
 			
 			this.initPrintStream();
-			StringBuffer contentBuffer = new StringBuffer();
 			
 			for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
 				TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
 
 				if (typekind.value == TYPEKIND.TKIND_ENUM) {
-					StringBuffer enumBuffer = this.createCOMEnum(i, out, typeLibUtil);
-					contentBuffer.append(enumBuffer + CR);
+					StringBuffer buffer = this.createCOMEnum(i, typeLibUtil);
+					contentBuffer.append(buffer + CR);
 				} else if (typekind.value == TYPEKIND.TKIND_RECORD) {
-
+					System.out.println("TKIND_RECORD");
 				} else if (typekind.value == TYPEKIND.TKIND_MODULE) {
-
+					System.out.println("TKIND_MODULE");
 				} else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
-					this.createCOMInterface(i);
+					StringBuffer buffer = this.createCOMInterface(i, typeLibUtil);
+					contentBuffer.append(buffer + CR);
 				} else if (typekind.value == TYPEKIND.TKIND_DISPATCH) {
-
+					StringBuffer buffer = this.createCOMDispatch(i, typeLibUtil);
+					contentBuffer.append(buffer + CR);
 				} else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
+					System.out.println("TKIND_COCLASS");					
 				} else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
-
+					System.out.println("TKIND_ALIAS");
 				} else if (typekind.value == TYPEKIND.TKIND_UNION) {
 
 				}
@@ -97,13 +103,19 @@ public class TlbImp {
 		}
 	}
 
-	private StringBuffer createCOMEnum(int index, PrintStream out, ITypeLibUtil typeLibUtil) {
+	private StringBuffer createCOMEnum(int index, ITypeLibUtil typeLibUtil) {
 		TlbEnum tlbEnum = new TlbEnum(index, typeLibUtil);
 		return tlbEnum.getClassBuffer();
 	}
 
-	private void createCOMInterface(int index) {
-		
+	private StringBuffer createCOMInterface(int index, ITypeLibUtil typeLibUtil) {
+		TlbInterface tlbInterface = new TlbInterface(index, typeLibUtil);
+		return tlbInterface.getClassBuffer();
+	}
+
+	private StringBuffer createCOMDispatch(int index, ITypeLibUtil typeLibUtil) {
+		TlbDispatch tlbDispatch = new TlbDispatch(index, typeLibUtil);
+		return tlbDispatch.getClassBuffer();
 	}
 
 	public static void logInfo(String msg) {

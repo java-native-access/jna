@@ -1,0 +1,6 @@
+		/**
+		 * ${helpstring}
+		 */
+		public ${returntype} ${methodname}(${methodparams}) {
+			this._invoke(${vtableid}, new Object[] { this.getPointer(), ${methodvariables}});
+		}

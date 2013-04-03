@@ -40,7 +40,7 @@ public class ITypeLibUtil {
 
 		// load typelib
 		PointerByReference pTypeLib = new PointerByReference();
-		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pTypeLib);
+		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, wVerMajor, wVerMinor, lcid, pTypeLib);
 		COMUtils.checkTypeLibRC(hr);
 
 		// init type lib class

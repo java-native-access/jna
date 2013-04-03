@@ -5,7 +5,8 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.COM.COMObject;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.COM.*;
 
 /**
 * uuid(${uuid})
@@ -20,5 +21,4 @@ public class ${classname} extends COMObject {
 	}
 
 ${content}
-
 }
