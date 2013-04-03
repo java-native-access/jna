@@ -1,5 +1,5 @@
-Next Release (3.5.2)
-====================
+Release 3.5.2
+=============
 
 Features
 --------
@@ -25,9 +25,10 @@ Bug Fixes
 * [#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
 * Remove deprecated methods on Memory (getSize,isValid) and Structure (getSize) - [@twall](https://github.com/twall).
 * [#206](https://github.com/twall/jna/pull/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* Remove problematic AWT check via `Class.forName("java.awt.Component")` (see [here](https://bugs.eclipse.org/bugs/show_bug.cgi?id=388170)) - [@twall](https://github.com/twall).
 
 Release 3.5.1
-====================
+=============
 
 Bug Fixes
 ---------
