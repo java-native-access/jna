@@ -1190,7 +1190,7 @@ v     * @param wide whether to convert from a wide or standard C string
     
     /** Read the native peer value.  Use with caution. */
     public static long nativeValue(Pointer p) {
-        return p.peer;
+        return p == null ? 0 : p.peer;
     }
 
     /** Set the native peer value.  Use with caution. */
