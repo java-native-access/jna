@@ -1,3 +1,15 @@
+/* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
@@ -9,14 +21,30 @@ import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TlbDispatch.
+ * 
+ * @author Tobias Wolf, wolf.tobias@gmx.net
+ */
 public class TlbDispatch extends TlbBase {
 
+	/** The iunknown methods. */
 	public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
 			"Release" };
 
+	/** The idispatch methods. */
 	public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
 			"GetTypeInfo", "GetIDsOfNames", "Invoke" };
 
+	/**
+	 * Instantiates a new tlb dispatch.
+	 * 
+	 * @param index
+	 *            the index
+	 * @param typeLibUtil
+	 *            the type lib util
+	 */
 	public TlbDispatch(int index, ITypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
@@ -44,22 +72,26 @@ public class TlbDispatch extends TlbBase {
 			// Get the name of the method
 			TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
 			String methodName = typeInfoDoc2.getName();
+			TlbAbstractMethod method = null;
 
 			if (!isReservedMethod(methodName)) {
 				if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-					TlbMethod tlbMethod = new TlbMethod(index, typeLibUtil,
-							funcDesc, typeInfoUtil);
-					this.content += tlbMethod.getClassBuffer();
+					method = new TlbFunction(index, typeLibUtil, funcDesc,
+							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-
+					method = new TlbPropertyGet(index, typeLibUtil, funcDesc,
+							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-
+					method = new TlbPropertyPut(index, typeLibUtil, funcDesc,
+							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
 
 				}
+
+				this.content += method.getClassBuffer();
 
 				if (i < cFuncs - 1)
 					this.content += CR;
@@ -72,11 +104,26 @@ public class TlbDispatch extends TlbBase {
 		this.createContent(this.content);
 	}
 
+	/**
+	 * Creates the java doc header.
+	 * 
+	 * @param guid
+	 *            the guid
+	 * @param helpstring
+	 *            the helpstring
+	 */
 	protected void createJavaDocHeader(String guid, String helpstring) {
 		this.replaceVariable("uuid", guid);
 		this.replaceVariable("helpstring", helpstring);
 	}
 
+	/**
+	 * Checks if is reserved method.
+	 * 
+	 * @param method
+	 *            the method
+	 * @return true, if is reserved method
+	 */
 	protected boolean isReservedMethod(String method) {
 		for (int i = 0; i < IUNKNOWN_METHODS.length; i++) {
 			if (IUNKNOWN_METHODS[i].equalsIgnoreCase(method))
@@ -91,6 +138,11 @@ public class TlbDispatch extends TlbBase {
 		return false;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
+	 */
 	@Override
 	protected String getClassTemplate() {
 		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispatch.template";

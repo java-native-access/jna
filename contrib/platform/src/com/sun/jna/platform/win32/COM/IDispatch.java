@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+// TODO: Auto-generated Javadoc
 /**
  * Wrapper class for the IDispatch interface
  * 
@@ -39,6 +40,8 @@ public class IDispatch extends IUnknown {
 
 	/**
 	 * The Class ByReference.
+	 * 
+	 * @author wolf.tobias@gmx.net The Class ByReference.
 	 */
 	public static class ByReference extends IDispatch implements
 			Structure.ByReference {
@@ -66,26 +69,30 @@ public class IDispatch extends IUnknown {
 
 	/**
 	 * Gets the type info count.
-	 *
-	 * @param pctinfo the pctinfo
+	 * 
+	 * @param pctinfo
+	 *            the pctinfo
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfoCount(IntByReference pctinfo) {
-		int hr = this._invoke(3, new Object[] { pctinfo });
+		int hr = this._invokeInt(3, new Object[] { pctinfo });
 		return new HRESULT(hr);
 	}
-	
+
 	/**
 	 * Gets the type info.
-	 *
-	 * @param iTInfo the i t info
-	 * @param lcid the lcid
-	 * @param ppTInfo the pp t info
+	 * 
+	 * @param iTInfo
+	 *            the i t info
+	 * @param lcid
+	 *            the lcid
+	 * @param ppTInfo
+	 *            the pp t info
 	 * @return the hresult
 	 */
 	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
 			PointerByReference ppTInfo) {
-		int hr = this._invoke(4, new Object[] { this.getPointer(), iTInfo,
+		int hr = this._invokeInt(4, new Object[] { this.getPointer(), iTInfo,
 				lcid, ppTInfo });
 		return new HRESULT(hr);
 	}
@@ -107,7 +114,7 @@ public class IDispatch extends IUnknown {
 	 */
 	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
 			LCID lcid, DISPIDbyReference rgDispId) {
-		int hr = this._invoke(5, new Object[] { this.getPointer(), riid,
+		int hr = this._invokeInt(5, new Object[] { this.getPointer(), riid,
 				rgszNames, cNames, lcid, rgDispId });
 		return new HRESULT(hr);
 	}
@@ -137,7 +144,7 @@ public class IDispatch extends IUnknown {
 			DISPID wFlags, DISPPARAMS pDispParams,
 			VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
-		int hr = this._invoke(6, new Object[] { this.getPointer(),
+		int hr = this._invokeInt(6, new Object[] { this.getPointer(),
 				dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult,
 				pExcepInfo, puArgErr });
 

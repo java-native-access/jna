@@ -2,5 +2,5 @@
 		 * ${helpstring}
 		 */
 		public ${returntype} ${methodname}(${methodparams}) {
-			this._invoke(${vtableid}, new Object[] { this.getPointer(), ${methodvariables}});
+			this._invokeInt(${vtableid}, new Object[] { this.getPointer()${methodvariables}});
 		}

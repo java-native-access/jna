@@ -23,8 +23,9 @@ import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
+// TODO: Auto-generated Javadoc
 /**
- * Wrapper class for the IRecordInfo interface
+ * Wrapper class for the IRecordInfo interface.
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */

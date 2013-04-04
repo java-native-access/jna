@@ -41,6 +41,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+// TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
  * 
@@ -48,19 +49,32 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class COMBaseObject {
 
+	/** The Constant LOCALE_USER_DEFAULT. */
 	public final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE
 			.GetUserDefaultLCID();
+
+	/** The Constant LOCALE_SYSTEM_DEFAULT. */
 	public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
 			.GetSystemDefaultLCID();
 
+	/** The i unknown. */
 	protected IUnknown iUnknown;
 
+	/** The i dispatch. */
 	protected IDispatch iDispatch;
 
+	/** The p dispatch. */
 	private PointerByReference pDispatch = new PointerByReference();
 
+	/** The p unknown. */
 	private PointerByReference pUnknown = new PointerByReference();
 
+	/**
+	 * Instantiates a new cOM base object.
+	 * 
+	 * @param iDispatch
+	 *            the i dispatch
+	 */
 	public COMBaseObject(IDispatch iDispatch) {
 		this.iDispatch = iDispatch;
 	}
@@ -124,6 +138,23 @@ public class COMBaseObject {
 		this.iDispatch = new IDispatch(this.pDispatch.getValue());
 	}
 
+	/**
+	 * Ole method.
+	 * 
+	 * @param nType
+	 *            the n type
+	 * @param pvResult
+	 *            the pv result
+	 * @param pDisp
+	 *            the disp
+	 * @param name
+	 *            the name
+	 * @param pArgs
+	 *            the args
+	 * @return the hresult
+	 * @throws COMException
+	 *             the cOM exception
+	 */
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
 
@@ -169,6 +200,23 @@ public class COMBaseObject {
 		return hr;
 	}
 
+	/**
+	 * Ole method.
+	 * 
+	 * @param nType
+	 *            the n type
+	 * @param pvResult
+	 *            the pv result
+	 * @param pDisp
+	 *            the disp
+	 * @param name
+	 *            the name
+	 * @param pArg
+	 *            the arg
+	 * @return the hresult
+	 * @throws COMException
+	 *             the cOM exception
+	 */
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name, VARIANT pArg) throws COMException {
 
@@ -176,32 +224,80 @@ public class COMBaseObject {
 				new VARIANT[] { pArg });
 	}
 
+	/**
+	 * Ole method.
+	 * 
+	 * @param nType
+	 *            the n type
+	 * @param pvResult
+	 *            the pv result
+	 * @param pDisp
+	 *            the disp
+	 * @param name
+	 *            the name
+	 * @return the hresult
+	 * @throws COMException
+	 *             the cOM exception
+	 */
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name) throws COMException {
 
 		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
 	}
 
+	/**
+	 * Check failed.
+	 * 
+	 * @param hr
+	 *            the hr
+	 */
 	protected void checkFailed(HRESULT hr) {
 		COMUtils.checkAutoRC(hr, null, null);
 	}
-
+	
+	protected int _invokeInt(int vtableId, Object[] args) {
+		return this.iDispatch._invokeInt(vtableId, args);
+	}
+	
+	/**
+	 * Gets the i dispatch.
+	 * 
+	 * @return the i dispatch
+	 */
 	public IDispatch getIDispatch() {
 		return iDispatch;
 	}
 
+	/**
+	 * Gets the i dispatch pointer.
+	 * 
+	 * @return the i dispatch pointer
+	 */
 	public PointerByReference getIDispatchPointer() {
 		return pDispatch;
 	}
 
+	/**
+	 * Gets the i unknown.
+	 * 
+	 * @return the i unknown
+	 */
 	public IUnknown getIUnknown() {
 		return iUnknown;
 	}
 
+	/**
+	 * Gets the i unknown pointer.
+	 * 
+	 * @return the i unknown pointer
+	 */
 	public PointerByReference getIUnknownPointer() {
 		return pUnknown;
 	}
 
+	/**
+	 * Release.
+	 */
 	public void release() {
 		if (this.iDispatch != null)
 			this.iDispatch.Release();

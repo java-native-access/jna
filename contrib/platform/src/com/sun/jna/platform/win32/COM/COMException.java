@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.ptr.IntByReference;
 
+// TODO: Auto-generated Javadoc
 /**
  * Exception class for all COM related classes.
  * 

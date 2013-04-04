@@ -1,3 +1,15 @@
+/* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import java.io.PrintStream;
@@ -11,15 +23,29 @@ import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
 import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TlbEnum.
+ * 
+ * @author Tobias Wolf, wolf.tobias@gmx.net
+ */
 public class TlbEnum extends TlbBase {
 
+	/**
+	 * Instantiates a new tlb enum.
+	 * 
+	 * @param index
+	 *            the index
+	 * @param typeLibUtil
+	 *            the type lib util
+	 */
 	public TlbEnum(int index, ITypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
 		String enumName = typeLibDoc.getName();
 		String docString = typeLibDoc.getDocString();
-				
+
 		this.logInfo("Type of kind 'enum' found: " + enumName);
 		this.createClassName(enumName);
 
@@ -47,7 +73,7 @@ public class TlbEnum extends TlbBase {
 
 			if (i < cVars - 1)
 				this.content += CR;
-			
+
 			// release the pointer
 			typeInfoUtil.ReleaseVarDesc(varDesc);
 		}
@@ -55,11 +81,24 @@ public class TlbEnum extends TlbBase {
 		this.createContent(this.content);
 	}
 
+	/**
+	 * Creates the java doc header.
+	 * 
+	 * @param guid
+	 *            the guid
+	 * @param helpstring
+	 *            the helpstring
+	 */
 	protected void createJavaDocHeader(String guid, String helpstring) {
 		this.replaceVariable("uuid", guid);
 		this.replaceVariable("helpstring", helpstring);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
+	 */
 	@Override
 	protected String getClassTemplate() {
 		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";

@@ -1,3 +1,15 @@
+/* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
 package com.sun.jna.platform.win32.COM;
 
 import java.util.ArrayList;
@@ -18,6 +30,8 @@ import com.sun.jna.ptr.IntByReference;
 // TODO: Auto-generated Javadoc
 /**
  * The Class COMUtils.
+ * 
+ * @author wolf.tobias@gmx.net The Class COMUtils.
  */
 public abstract class COMUtils {
 
@@ -250,6 +264,12 @@ public abstract class COMUtils {
 		}
 	}
 
+	/**
+	 * Check type lib rc.
+	 * 
+	 * @param hr
+	 *            the hr
+	 */
 	public static void checkTypeLibRC(HRESULT hr) {
 		switch (hr.intValue()) {
 		case S_OK:
@@ -284,6 +304,11 @@ public abstract class COMUtils {
 		}
 	}
 
+	/**
+	 * Gets the all com info on system.
+	 * 
+	 * @return the all com info on system
+	 */
 	public static ArrayList<COMInfo> getAllCOMInfoOnSystem() {
 		HKEYByReference phkResult = new HKEYByReference();
 		HKEYByReference phkResult2 = new HKEYByReference();
@@ -349,22 +374,55 @@ public abstract class COMUtils {
 		return comInfos;
 	}
 
+	/**
+	 * The Class COMInfo.
+	 * 
+	 * @author wolf.tobias@gmx.net The Class COMInfo.
+	 */
 	public static class COMInfo {
+
+		/** The clsid. */
 		public String clsid;
+
+		/** The inproc handler32. */
 		public String inprocHandler32;
+
+		/** The inproc server32. */
 		public String inprocServer32;
+
+		/** The local server32. */
 		public String localServer32;
+
+		/** The prog id. */
 		public String progID;
+
+		/** The type lib. */
 		public String typeLib;
 
+		/**
+		 * Instantiates a new cOM info.
+		 */
 		public COMInfo() {
 		}
 
+		/**
+		 * Instantiates a new cOM info.
+		 * 
+		 * @param clsid
+		 *            the clsid
+		 */
 		public COMInfo(String clsid) {
 			this.clsid = clsid;
 		}
 	}
 
+	/**
+	 * To hex str.
+	 * 
+	 * @param hr
+	 *            the hr
+	 * @return the string
+	 */
 	private static String toHexStr(HRESULT hr) {
 		return "0x" + Integer.toHexString(hr.intValue()).toUpperCase();
 	}

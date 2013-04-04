@@ -20,6 +20,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.SHORT;
 
+// TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
  * 
@@ -27,6 +28,12 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
  */
 public class COMObject extends COMBaseObject {
 
+	/**
+	 * Instantiates a new cOM object.
+	 * 
+	 * @param iDispatch
+	 *            the i dispatch
+	 */
 	public COMObject(IDispatch iDispatch) {
 		super(iDispatch);
 	}
@@ -46,6 +53,13 @@ public class COMObject extends COMBaseObject {
 		super(progId, useActiveInstance);
 	}
 
+	/**
+	 * Gets the automation property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the automation property
+	 */
 	protected IDispatch getAutomationProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -55,6 +69,15 @@ public class COMObject extends COMBaseObject {
 		return ((IDispatch) result.getValue());
 	}
 
+	/**
+	 * Gets the automation property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param comObject
+	 *            the com object
+	 * @return the automation property
+	 */
 	protected IDispatch getAutomationProperty(String propertyName,
 			COMObject comObject) {
 
@@ -65,6 +88,17 @@ public class COMObject extends COMBaseObject {
 		return ((IDispatch) result.getValue());
 	}
 
+	/**
+	 * Gets the automation property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param comObject
+	 *            the com object
+	 * @param value
+	 *            the value
+	 * @return the automation property
+	 */
 	protected IDispatch getAutomationProperty(String propertyName,
 			COMObject comObject, VARIANT value) {
 
@@ -75,6 +109,15 @@ public class COMObject extends COMBaseObject {
 		return ((IDispatch) result.getValue());
 	}
 
+	/**
+	 * Gets the automation property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param iDispatch
+	 *            the i dispatch
+	 * @return the automation property
+	 */
 	protected IDispatch getAutomationProperty(String propertyName,
 			IDispatch iDispatch) {
 
@@ -85,6 +128,13 @@ public class COMObject extends COMBaseObject {
 		return ((IDispatch) result.getValue());
 	}
 
+	/**
+	 * Gets the boolean property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the boolean property
+	 */
 	protected boolean getBooleanProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -94,6 +144,13 @@ public class COMObject extends COMBaseObject {
 		return (((VARIANT_BOOL) result.getValue()).intValue() != 0);
 	}
 
+	/**
+	 * Gets the date property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the date property
+	 */
 	protected Date getDateProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -103,6 +160,13 @@ public class COMObject extends COMBaseObject {
 		return result.dateValue();
 	}
 
+	/**
+	 * Gets the int property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the int property
+	 */
 	protected int getIntProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -112,6 +176,13 @@ public class COMObject extends COMBaseObject {
 		return ((LONG) result.getValue()).intValue();
 	}
 
+	/**
+	 * Gets the short property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the short property
+	 */
 	protected short getShortProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -121,6 +192,13 @@ public class COMObject extends COMBaseObject {
 		return ((SHORT) result.getValue()).shortValue();
 	}
 
+	/**
+	 * Gets the string property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @return the string property
+	 */
 	protected String getStringProperty(String propertyName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -130,6 +208,13 @@ public class COMObject extends COMBaseObject {
 		return result.getValue().toString();
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -139,6 +224,15 @@ public class COMObject extends COMBaseObject {
 		return result;
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg
+	 *            the arg
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName, VARIANT arg) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -148,6 +242,15 @@ public class COMObject extends COMBaseObject {
 		return result;
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param args
+	 *            the args
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName, VARIANT[] args) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -157,40 +260,115 @@ public class COMObject extends COMBaseObject {
 		return result;
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName, VARIANT arg1, VARIANT arg2) {
 
 		return invoke(methodName, new VARIANT[] { arg1, arg2 });
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 * @param arg3
+	 *            the arg3
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName, VARIANT arg1, VARIANT arg2,
 			VARIANT arg3) {
 
 		return invoke(methodName, new VARIANT[] { arg1, arg2, arg3 });
 	}
 
+	/**
+	 * Invoke.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 * @param arg3
+	 *            the arg3
+	 * @param arg4
+	 *            the arg4
+	 * @return the variant
+	 */
 	protected VARIANT invoke(String methodName, VARIANT arg1, VARIANT arg2,
 			VARIANT arg3, VARIANT arg4) {
 
 		return invoke(methodName, new VARIANT[] { arg1, arg2, arg3, arg4 });
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param dispatch
+	 *            the dispatch
+	 */
 	protected void invokeNoReply(String methodName, IDispatch dispatch) {
 
 		this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, methodName);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param comObject
+	 *            the com object
+	 */
 	protected void invokeNoReply(String methodName, COMObject comObject) {
 
 		this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
 				methodName);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param dispatch
+	 *            the dispatch
+	 * @param arg
+	 *            the arg
+	 */
 	protected void invokeNoReply(String methodName, IDispatch dispatch,
 			VARIANT arg) {
 
 		this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, methodName, arg);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param comObject
+	 *            the com object
+	 * @param arg
+	 *            the arg
+	 */
 	protected void invokeNoReply(String methodName, COMObject comObject,
 			VARIANT arg) {
 
@@ -198,6 +376,16 @@ public class COMObject extends COMBaseObject {
 				methodName, arg);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param dispatch
+	 *            the dispatch
+	 * @param args
+	 *            the args
+	 */
 	protected void invokeNoReply(String methodName, IDispatch dispatch,
 			VARIANT[] args) {
 
@@ -205,6 +393,12 @@ public class COMObject extends COMBaseObject {
 				args);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 */
 	protected void invokeNoReply(String methodName) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -212,6 +406,14 @@ public class COMObject extends COMBaseObject {
 				methodName);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg
+	 *            the arg
+	 */
 	protected void invokeNoReply(String methodName, VARIANT arg) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -219,6 +421,14 @@ public class COMObject extends COMBaseObject {
 				methodName, arg);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param args
+	 *            the args
+	 */
 	protected void invokeNoReply(String methodName, VARIANT[] args) {
 
 		VARIANT.ByReference result = new VARIANT.ByReference();
@@ -226,71 +436,180 @@ public class COMObject extends COMBaseObject {
 				methodName, args);
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 */
 	protected void invokeNoReply(String methodName, VARIANT arg1, VARIANT arg2) {
 
 		invokeNoReply(methodName, new VARIANT[] { arg1, arg2 });
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 * @param arg3
+	 *            the arg3
+	 */
 	protected void invokeNoReply(String methodName, VARIANT arg1, VARIANT arg2,
 			VARIANT arg3) {
 
 		invokeNoReply(methodName, new VARIANT[] { arg1, arg2, arg3 });
 	}
 
+	/**
+	 * Invoke no reply.
+	 * 
+	 * @param methodName
+	 *            the method name
+	 * @param arg1
+	 *            the arg1
+	 * @param arg2
+	 *            the arg2
+	 * @param arg3
+	 *            the arg3
+	 * @param arg4
+	 *            the arg4
+	 */
 	protected void invokeNoReply(String methodName, VARIANT arg1, VARIANT arg2,
 			VARIANT arg3, VARIANT arg4) {
 
 		invokeNoReply(methodName, new VARIANT[] { arg1, arg2, arg3, arg4 });
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, boolean value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, Date value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, IDispatch value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, int value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, short value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, String value) {
 
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.iDispatch,
 				propertyName, new VARIANT(value));
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param iDispatch
+	 *            the i dispatch
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, IDispatch iDispatch,
 			VARIANT value) {
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, iDispatch,
 				propertyName, value);
 	}
 
+	/**
+	 * Sets the property.
+	 * 
+	 * @param propertyName
+	 *            the property name
+	 * @param comObject
+	 *            the com object
+	 * @param value
+	 *            the value
+	 */
 	protected void setProperty(String propertyName, COMObject comObject,
 			VARIANT value) {
 		this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null,
 				comObject.getIDispatch(), propertyName, value);
 	}
 
+	/**
+	 * To variant.
+	 * 
+	 * @return the variant
+	 */
 	public VARIANT toVariant() {
 		return new VARIANT(this.iDispatch);
 	}

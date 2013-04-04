@@ -125,6 +125,80 @@ public interface WTypes {
 		}
 	}
 
+	public static class LPSTR extends PointerType {
+		public static class ByReference extends BSTR implements
+				Structure.ByReference {
+		}
+
+		public LPSTR() {
+			super(Pointer.NULL);
+		}
+
+		public LPSTR(Pointer pointer) {
+			super(pointer);
+		}
+
+		public LPSTR(String value) {
+			this();
+			this.setValue(value);
+		}
+
+		public void setValue(String value) {
+			this.getPointer().setString(0, value, false);
+		}
+
+		public String getValue() {
+			Pointer pointer = this.getPointer();
+			String str = null;
+			if (pointer != null)
+				str = pointer.getString(0, false);
+
+			return str;
+		}
+
+		@Override
+		public String toString() {
+			return this.getValue();
+		}
+	}		
+	
+	public static class LPWSTR extends PointerType {
+		public static class ByReference extends BSTR implements
+				Structure.ByReference {
+		}
+
+		public LPWSTR() {
+			super(Pointer.NULL);
+		}
+
+		public LPWSTR(Pointer pointer) {
+			super(pointer);
+		}
+
+		public LPWSTR(String value) {
+			this();
+			this.setValue(value);
+		}
+
+		public void setValue(String value) {
+			this.getPointer().setString(0, value, true);
+		}
+
+		public String getValue() {
+			Pointer pointer = this.getPointer();
+			String str = null;
+			if (pointer != null)
+				str = pointer.getString(0, true);
+
+			return str;
+		}
+
+		@Override
+		public String toString() {
+			return this.getValue();
+		}
+	}	
+	
 	public static class LPOLESTR extends PointerType {
 		public static class ByReference extends BSTR implements
 				Structure.ByReference {

@@ -33,6 +33,8 @@ public class IUnknown extends PointerType {
 
 	/**
 	 * The Class ByReference.
+	 * 
+	 * @author wolf.tobias@gmx.net The Class ByReference.
 	 */
 	public static class ByReference extends IUnknown implements
 			Structure.ByReference {
@@ -68,7 +70,7 @@ public class IUnknown extends PointerType {
 	 * @return the hresult
 	 */
 	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		int hr = this._invoke(0, new Object[] { this.getPointer(), riid,
+		int hr = this._invokeInt(0, new Object[] { this.getPointer(), riid,
 				ppvObject });
 		return new HRESULT(hr);
 	}
@@ -79,7 +81,7 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int AddRef() {
-		return this._invoke(1, new Object[] { this.getPointer() });
+		return this._invokeInt(1, new Object[] { this.getPointer() });
 	}
 
 	/**
@@ -88,20 +90,23 @@ public class IUnknown extends PointerType {
 	 * @return the ulong
 	 */
 	public int Release() {
-		return this._invoke(2, new Object[] { this.getPointer() });
+		return this._invokeInt(2, new Object[] { this.getPointer() });
 	}
 
 	/**
 	 * Invoke method as a base for all com related calls.
-	 *
-	 * @param vtableId the vtable id
-	 * @param args the args
+	 * 
+	 * @param vtableId
+	 *            the vtable id
+	 * @param args
+	 *            the args
 	 * @return the int
 	 */
-	protected int _invoke(int vtableId, Object[] args) {
+	protected int _invokeInt(int vtableId, Object[] args) {
 		Pointer vptr = this.getPointer().getPointer(0);
-		// we take the vtable id and multiply with the pointer size (usually 4 bytes)
-		Function func = Function.getFunction(vptr.getPointer(vtableId * Pointer.SIZE));
+		// we take the vtable id and multiply with the pointer size (4 bytes on 32bit OS)
+		Function func = Function.getFunction(vptr.getPointer(vtableId
+				* Pointer.SIZE));
 		return func.invokeInt(args);
 	}
 }

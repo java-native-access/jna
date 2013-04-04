@@ -1,3 +1,15 @@
+/* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import java.io.BufferedReader;
@@ -11,26 +23,49 @@ import java.util.regex.Pattern;
 
 import com.sun.jna.platform.win32.COM.ITypeLibUtil;
 
+// TODO: Auto-generated Javadoc
+/**
+ * The Class TlbBase.
+ * 
+ * @author Tobias Wolf, wolf.tobias@gmx.net
+ */
 public abstract class TlbBase {
 
+	/** The Constant CR. */
 	public final static String CR = "\n";
 
+	/** The Constant CRCR. */
 	public final static String CRCR = "\n\n";
 
+	/** The Constant TAB. */
 	public final static String TAB = "\t";
 
+	/** The Constant TABTAB. */
 	public final static String TABTAB = "\t\t";
 
+	/** The type lib util. */
 	protected ITypeLibUtil typeLibUtil;
 
+	/** The index. */
 	protected int index;
 
+	/** The template buffer. */
 	protected StringBuffer templateBuffer;
 
+	/** The class buffer. */
 	protected StringBuffer classBuffer;
 
+	/** The content. */
 	protected String content = "";
 
+	/**
+	 * Instantiates a new tlb base.
+	 * 
+	 * @param index
+	 *            the index
+	 * @param typeLibUtil
+	 *            the type lib util
+	 */
 	public TlbBase(int index, ITypeLibUtil typeLibUtil) {
 		this.index = index;
 		this.typeLibUtil = typeLibUtil;
@@ -44,34 +79,83 @@ public abstract class TlbBase {
 		}
 	}
 
+	/**
+	 * Log error.
+	 * 
+	 * @param msg
+	 *            the msg
+	 */
 	public void logError(String msg) {
 		this.log("ERROR", msg);
 	}
 
+	/**
+	 * Log info.
+	 * 
+	 * @param msg
+	 *            the msg
+	 */
 	public void logInfo(String msg) {
 		this.log("INFO", msg);
 	}
 
+	/**
+	 * Gets the class buffer.
+	 * 
+	 * @return the class buffer
+	 */
 	public StringBuffer getClassBuffer() {
 		return classBuffer;
 	}
 
+	/**
+	 * Creates the content.
+	 * 
+	 * @param content
+	 *            the content
+	 */
 	public void createContent(String content) {
 		this.replaceVariable("content", content);
 	}
-	
+
+	/**
+	 * Log.
+	 * 
+	 * @param level
+	 *            the level
+	 * @param msg
+	 *            the msg
+	 */
 	protected void log(String level, String msg) {
 		String _msg = level + " " + this.getTime() + " : " + msg;
 		System.out.println(_msg);
 	}
 
+	/**
+	 * Gets the time.
+	 * 
+	 * @return the time
+	 */
 	private String getTime() {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		return sdf.format(new Date());
 	}
 
+	/**
+	 * Gets the class template.
+	 * 
+	 * @return the class template
+	 */
 	abstract protected String getClassTemplate();
 
+	/**
+	 * Read template file.
+	 * 
+	 * @param filename
+	 *            the filename
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
 	protected void readTemplateFile(String filename) throws IOException {
 		this.templateBuffer = new StringBuffer();
 		BufferedReader reader = null;
@@ -88,10 +172,18 @@ public abstract class TlbBase {
 		}
 	}
 
+	/**
+	 * Replace variable.
+	 * 
+	 * @param name
+	 *            the name
+	 * @param value
+	 *            the value
+	 */
 	protected void replaceVariable(String name, String value) {
-		if(value == null)
+		if (value == null)
 			value = "";
-		
+
 		Pattern pattern = Pattern.compile("\\$\\{" + name + "\\}");
 		Matcher matcher = pattern.matcher(this.classBuffer);
 		String replacement = value;
@@ -104,6 +196,12 @@ public abstract class TlbBase {
 		this.classBuffer = new StringBuffer(result);
 	}
 
+	/**
+	 * Creates the class name.
+	 * 
+	 * @param name
+	 *            the name
+	 */
 	protected void createClassName(String name) {
 		this.replaceVariable("classname", name);
 	}
