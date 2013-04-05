@@ -249,6 +249,10 @@ public class NativeLibraryTest extends TestCase {
         Native.loadLibrary("testlib", TestLibrary.class, options);
     }
 
+    public void testEmbeddedLibrary() {
+        Native.loadLibrary("embedded-testlib", TestLibrary.class);
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(NativeLibraryTest.class);
     }

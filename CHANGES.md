@@ -5,6 +5,7 @@ Features
 --------
 * Basic [COM support](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md) for w32 - [@wolftobias](https://github.com/wolftobias).
 * Avoid superfluous Structure memory allocation by using Structure(Pointer) ctors if available - [@twall](https://github.com/twall).
+* [PR#120](https://github.com/twall/jna/pull/120): Provide methods for extracting native libraries from the class path for use by JNA - [@Zlika](https://github.com/Zlika).
 * [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
 * [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification()` and `WTSUnRegisterSessionNotification()` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).

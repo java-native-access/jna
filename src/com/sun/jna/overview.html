@@ -715,7 +715,8 @@ NOTE: When protected mode is enabled, you should make use of the jsig library, i
 Using <a href="#direct-mapping">direct mapping</a> of methods makes native
 calls more efficiently than does interface mapping.  Direct mapping does not
 support varargs calls or arrays of Pointer, String, or WString as an argument
-or return value.
+or return value.  For optimium results, use only primitive arguments and
+return values; you'll have to convert to and from objects yourself explicitly.
 <h3>Avoid type mapping</h3>
 Type mapping incurs additional overhead on each function call.  You can avoid
 this by ensuring that your arguments and/or return types are already primitive

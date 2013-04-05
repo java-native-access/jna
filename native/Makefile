@@ -67,6 +67,7 @@ FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
+TESTLIB_EMBEDDED=$(BUILD)/$(LIBPFX)embedded-testlib$(LIBSFX)
 TESTLIB2=$(BUILD)/$(LIBPFX)testlib2$(LIBSFX)
 
 # Reasonable defaults based on GCC
@@ -308,6 +309,7 @@ LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(JNA_JNI_VERSION) \
   -mmacosx-version-min=10.3 \
+  -framework Foundation \
   -install_name ${@F} \
   $(SYSLIBROOT)
 # JAWT linkage handled by -framework JavaVM
@@ -329,7 +331,7 @@ else
 	$(CC) $(CFLAGS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB) $(TESTLIB2)
+all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_EMBEDDED)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -347,6 +349,9 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(STRIP) $@
 
 $(TESTLIB): $(BUILD)/testlib.o
+	$(LD) $(LDFLAGS) $< $(LIBS)
+
+$(TESTLIB_EMBEDDED): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
 
 ifeq ($(ARSFX),.lib)

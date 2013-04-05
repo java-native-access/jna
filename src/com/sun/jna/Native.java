@@ -16,13 +16,9 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Window;
-
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -36,6 +32,8 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -173,14 +171,13 @@ public final class Native {
         that introduces issues with cleaning up any extant JNA bits
         (e.g. Memory) which may still need use of the library before shutdown.
      */
-    private static boolean deleteNativeLibrary(String path) {
-        File flib = new File(path);
-        if (flib.delete()) {
+    static boolean deleteLibrary(File lib) {
+        if (lib.delete()) {
             return true;
         }
 
         // Couldn't delete it, mark for later deletion
-        markTemporaryFile(flib);
+        markTemporaryFile(lib);
 
         return false;
     }
@@ -594,10 +591,20 @@ public final class Native {
         return buf;
     }
 
-    /** Generate a canonical String prefix based on the given OS
+    /** Generate a canonical String prefix based on the current OS 
         type/arch/name.
     */
-    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
+    public static String getNativeLibraryResourcePrefix() {
+        return getNativeLibraryResourcePrefix(Platform.getOSType(), System.getProperty("os.arch"), System.getProperty("os.name"));
+    }
+
+    /** Generate a canonical String prefix based on the given OS
+        type/arch/name.
+        @param osType from {@link Platform}
+        @param arch from <code>os.arch</code> System property
+        @param name from <code>os.name</code> System property
+    */
+    public static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
         String osPrefix;
         arch = arch.toLowerCase();
         if ("powerpc".equals(arch)) {
@@ -652,7 +659,7 @@ public final class Native {
             osPrefix += "-" + arch;
             break;
         }
-        return "/com/sun/jna/" + osPrefix;
+        return osPrefix;
     }
 
     /**
@@ -727,28 +734,76 @@ public final class Native {
         throw new UnsatisfiedLinkError("Native jnidispatch library not found");
     }
 
+    static final String JNA_TMPLIB_PREFIX = "jna";
     /**
      * Attempts to load the native library resource from the filesystem,
      * extracting the JNA stub library from jna.jar if not already available.
      */
     private static void loadNativeLibraryFromJar() {
-        String libname = System.mapLibraryName("jnidispatch");
-        String arch = System.getProperty("os.arch");
-        String name = System.getProperty("os.name");
-        String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
-        URL url = Native.class.getResource(resourceName);
-        boolean unpacked = false;
+        try {
+            String prefix = "com/sun/jna/" + getNativeLibraryResourcePrefix();
+            File lib = extractFromResourcePath("jnidispatch", prefix, Native.class.getClassLoader());
+            System.load(lib.getAbsolutePath());
+            nativeLibraryPath = lib.getAbsolutePath();
+            // Attempt to delete immediately once jnidispatch is successfully
+            // loaded.  This avoids the complexity of trying to do so on "exit",
+            // which point can vary under different circumstances (native
+            // compilation, dynamically loaded modules, normal application, etc).
+            if (isUnpacked(lib)) {
+                deleteLibrary(lib);
+            }
+        }
+        catch(IOException e) {
+            throw new UnsatisfiedLinkError(e.getMessage());
+        }
+    }
 
-        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual
-        // .dylib extension
-        if (url == null && Platform.isMac()
-            && resourceName.endsWith(".dylib")) {
-            resourceName = resourceName.substring(0, resourceName.lastIndexOf(".dylib")) + ".jnilib";
-            url = Native.class.getResource(resourceName);
+    /** Identify temporary files unpacked from classpath jar files. */
+    static boolean isUnpacked(File file) {
+        return file.getName().startsWith(JNA_TMPLIB_PREFIX);
+    }
+
+    /** Attempt to extract a native library from the current resource path. 
+     * Expects native libraries to be stored under
+     * the path returned by {@link #getNativeLibraryResourcePrefix()},
+     * and reachable by the current thread context class loader.
+     * @param name Base name of native library to extract
+     * @return File indicating extracted resource on disk
+     * @throws IOException if resource not found
+     */
+    static File extractFromResourcePath(String name) throws IOException {
+        return extractFromResourcePath(name, getNativeLibraryResourcePrefix(), Thread.currentThread().getContextClassLoader());
+    }
+
+    /** Attempt to extract a native library from the current resource path. 
+     * Expects native libraries to be stored under
+     * the path returned by {@link #getNativeLibraryResourcePath(int, String,
+     * String)}.
+     * @param name Base name of native library to extract
+     * @param loader Class loader to use to load resources
+     * @param resourcePrefix prefix to use when looking for the resource
+     * @return File indicating extracted resource on disk
+     * @throws IOException if resource not found
+     */
+    static File extractFromResourcePath(String name, String resourcePrefix, ClassLoader loader) throws IOException {
+        String libname = System.mapLibraryName(name);
+        String resourcePath = resourcePrefix + "/" + libname;
+        URL url = loader.getResource(resourcePath);
+
+        // User libraries will have '.dylib'
+        if (url == null && Platform.isMac()) {
+            if (resourcePath.endsWith(".jnilib")) {
+                resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf(".jnilib")) + ".dylib";
+            }
+            // Ugly hack for OpenJDK (soylatte) - JNI libs use the usual
+            // .dylib extension
+            else if (resourcePath.endsWith(".dylib")) {
+                resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf(".dylib")) + ".jnilib";
+            }
+            url = loader.getResource(resourcePath);
         }
         if (url == null) {
-            throw new UnsatisfiedLinkError("JNA native support (" + resourceName
-                                           + ") not found in resource path");
+            throw new IOException("JNA native support (" + resourcePath + ") not found in resource path (" + System.getProperty("java.class.path") + ")");
         }
 
         File lib = null;
@@ -760,13 +815,13 @@ public final class Native {
                 lib = new File(url.getPath());
             }
             if (!lib.exists()) {
-                throw new Error("File URL " + url + " could not be properly decoded");
+                throw new IOException("File URL " + url + " could not be properly decoded");
             }
         }
         else {
-            InputStream is = Native.class.getResourceAsStream(resourceName);
+            InputStream is = loader.getResourceAsStream(resourcePath);
             if (is == null) {
-                throw new Error("Can't obtain jnidispatch InputStream");
+                throw new IOException("Can't obtain InputStream for " + resourcePath);
             }
 
             FileOutputStream fos = null;
@@ -775,7 +830,7 @@ public final class Native {
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
                 File dir = getTempDir();
-                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
+                lib = File.createTempFile(JNA_TMPLIB_PREFIX, Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
                 int count;
@@ -783,10 +838,9 @@ public final class Native {
                 while ((count = is.read(buf, 0, buf.length)) > 0) {
                     fos.write(buf, 0, count);
                 }
-                unpacked = true;
             }
             catch(IOException e) {
-                throw new Error("Failed to create temporary file for jnidispatch library", e);
+                throw new IOException("Failed to create temporary file for " + name + " library", e);
             }
             finally {
                 try { is.close(); } catch(IOException e) { }
@@ -795,15 +849,7 @@ public final class Native {
                 }
             }
         }
-        System.load(lib.getAbsolutePath());
-        nativeLibraryPath = lib.getAbsolutePath();
-        // Attempt to delete immediately once jnidispatch is successfully
-        // loaded.  This avoids the complexity of trying to do so on "exit",
-        // which point can vary under different circumstances (native
-        // compilation, dynamically loaded modules, normal application, etc).
-        if (unpacked) {
-            deleteNativeLibrary(lib.getAbsolutePath());
-        }
+        return lib;
     }
 
     /**
@@ -966,7 +1012,7 @@ public final class Native {
         File dir = getTempDir();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".x") && name.indexOf("jna") != -1;
+                return name.endsWith(".x") && name.startsWith(JNA_TMPLIB_PREFIX);
             }
         };
         File[] files = dir.listFiles(filter);

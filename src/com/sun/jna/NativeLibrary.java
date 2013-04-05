@@ -16,6 +16,7 @@ package com.sun.jna;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
@@ -193,6 +194,20 @@ public class NativeLibrary {
                 try { handle = Native.open(libraryPath, openFlags); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
+            // As a last resort, try to extract the library from the class
+            // path, using the current context class loader.
+            if (handle == 0) {
+                try {
+                    File embedded = Native.extractFromResourcePath(libraryName);
+                    handle = Native.open(embedded.getAbsolutePath());
+                    // Don't leave temporary files around
+                    if (Native.isUnpacked(embedded)) {
+                        Native.deleteLibrary(embedded);
+                    }
+                }
+                catch(IOException e2) { e = new UnsatisfiedLinkError(e2.getMessage()); }
+            }
+
             if (handle == 0) {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': "
                                                + e.getMessage());
