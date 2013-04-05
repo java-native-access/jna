@@ -705,11 +705,11 @@ osname=macos
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
+  	<!-- Move testlibjar.so to test class folder so that it will be packaged into the test JAR -->
+  	<move file="${build.native}/libtestlibjar.so" todir="${test.classes}/${os.name}-${os.arch}"/>
     <!-- Create a jar for easy movement of tests -->
     <jar jarfile="${build}/${testjar}">
-      <fileset dir="${test.classes}">
-        <patternset refid="jar-compiled"/>
-      </fileset>
+      <fileset dir="${test.classes}"/>
     </jar>
     <mkdir dir="${build}/jws"/>
     <copy todir="${build}/jws" file="${build}/${jar}"/>
