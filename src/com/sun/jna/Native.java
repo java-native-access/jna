@@ -840,7 +840,7 @@ public final class Native {
                 }
             }
             catch(IOException e) {
-                throw new IOException("Failed to create temporary file for " + name + " library", e);
+                throw new IOException("Failed to create temporary file for " + name + " library: " + e.getMessage());
             }
             finally {
                 try { is.close(); } catch(IOException e) { }
