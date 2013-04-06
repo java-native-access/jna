@@ -530,7 +530,7 @@ static void make_errno_key() {
 void
 jnidispatch_set_last_error(int err) {
 #ifdef _WIN32
-  if (!TlsSetValue(tls_errno_key, L2A(err))) {
+  if (!TlsSetValue(tls_errno_key, L2A((jlong)err))) {
     fprintf(stderr, "JNA: unable to set thread-local errno value\n");
   }
 #else
@@ -544,7 +544,7 @@ jnidispatch_set_last_error(int err) {
 int
 jnidispatch_get_last_error() {
 #ifdef _WIN32
-  return A2L(TlsGetValue(tls_errno_key));
+  return (int)A2L(TlsGetValue(tls_errno_key));
 #else
   return A2L(pthread_getspecific(tls_errno_key));
 #endif  
@@ -557,7 +557,7 @@ static void
 jvm_detach_on_exit(JavaVM* jvm) {
 #ifdef _WIN32
   if (!TlsSetValue(tls_thread_key, (void *)jvm)) {
-    fprintf(stderr, "JNA: unable to set therad-local JVM value\n");
+    fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
   }
 #else
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
