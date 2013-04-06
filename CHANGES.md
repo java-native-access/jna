@@ -3,6 +3,8 @@ Next Release
 
 Features
 --------
+* [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
+* Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
@@ -21,9 +23,6 @@ Features
 * [PR#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification()` and `WTSUnRegisterSessionNotification()` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
 * [PR#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
 * [PR#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
-* [PR#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
-* [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
-* [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
 * [PR#192](https://github.com/twall/jna/pull/192): Added Win32 `SHGetSpecialFolderPath()` and initialization file (.ini) API functions from `kernel32.dll` - [@headcrashing](https://github.com/headcrashing).
 * [PR#194](https://github.com/twall/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
 * [PR#196](https://github.com/twall/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
@@ -35,9 +34,12 @@ Bug Fixes
 * [PR#183](https://github.com/twall/jna/pull/183): Fix `LMAccess.GROUP_INFO_3.getFieldOrder()` to return correct fields names - [@bhamail](https://github.com/bhamail).
 * [PR#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
 * Remove deprecated methods on Memory (getSize,isValid) and Structure (getSize) - [@twall](https://github.com/twall).
-* [PR#206](https://github.com/twall/jna/pull/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
 * Remove problematic AWT check via `Class.forName("java.awt.Component")` (see [here](https://bugs.eclipse.org/bugs/show_bug.cgi?id=388170)) - [@twall](https://github.com/twall).
 * [PR#210](https://github.com/twall/jna/pull/210) Add OSGI processor specs for Mac OS X - [@bertfrees](https://github.com/bertfrees).
+* [PR#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
+* [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
+* [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
+* [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
 
 Release 3.5.1
 =============

@@ -481,22 +481,28 @@ static void detach_thread(void* data) {
 
 #ifdef _WIN32
 
-static DWORD dwTlsIndex;
+static DWORD tls_thread_key;
+static DWORD tls_errno_key;
 BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   switch (fdwReason) {
   case DLL_PROCESS_ATTACH:
-    dwTlsIndex = TlsAlloc();
-    if (dwTlsIndex == TLS_OUT_OF_INDEXES) {
+    tls_thread_key = TlsAlloc();
+    if (tls_thread_key == TLS_OUT_OF_INDEXES) {
+      return FALSE;
+    }
+    tls_errno_key = TlsAlloc();
+    if (tls_errno_key == TLS_OUT_OF_INDEXES) {
       return FALSE;
     }
     break;
   case DLL_PROCESS_DETACH:
-    TlsFree(dwTlsIndex);
+    TlsFree(tls_thread_key);
+    TlsFree(tls_errno_key);
     break;
   case DLL_THREAD_ATTACH:
     break;
   case DLL_THREAD_DETACH: {
-    detach_thread(TlsGetValue(dwTlsIndex));
+    detach_thread(TlsGetValue(tls_thread_key));
     break;
   }
   default:
@@ -509,12 +515,40 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
 
 #include <pthread.h>
 
-static pthread_key_t key;
-static void make_key() {
-  pthread_key_create(&key, detach_thread);
+static pthread_key_t tls_thread_key;
+static void make_thread_key() {
+  pthread_key_create(&tls_thread_key, detach_thread);
+}
+static pthread_key_t tls_errno_key;
+static void make_errno_key() {
+  pthread_key_create(&tls_errno_key, NULL);
 }
 
 #endif
+
+/** Store the value of errno/GetLastError in TLS */
+void
+jnidispatch_set_last_error(int err) {
+#ifdef _WIN32
+  if (!TlsSetValue(tls_errno_key, L2A(err))) {
+    fprintf(stderr, "JNA: unable to set thread-local errno value\n");
+  }
+#else
+  if (pthread_setspecific(tls_errno_key, L2A(err))) {
+    fprintf(stderr, "JNA: unable to set thread-local errno value\n");
+  }
+#endif  
+}
+
+/** Store the value of errno/GetLastError in TLS */
+int
+jnidispatch_get_last_error() {
+#ifdef _WIN32
+  return A2L(TlsGetValue(tls_errno_key));
+#else
+  return A2L(pthread_getspecific(tls_errno_key));
+#endif  
+}
 
 /** Set up to detach the thread when it exits, or clear any handlers if the
     argument is NULL.
@@ -522,12 +556,16 @@ static void make_key() {
 static void 
 jvm_detach_on_exit(JavaVM* jvm) {
 #ifdef _WIN32
-  TlsSetValue(dwTlsIndex, (void *)jvm);
+  if (!TlsSetValue(tls_thread_key, (void *)jvm)) {
+    fprintf(stderr, "JNA: unable to set therad-local JVM value\n");
+  }
 #else
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-  pthread_once(&key_once, make_key);
-  if (!jvm || pthread_getspecific(key) == NULL) {
-    pthread_setspecific(key, jvm);
+  pthread_once(&key_once, make_thread_key);
+  if (!jvm || pthread_getspecific(tls_thread_key) == NULL) {
+    if (pthread_setspecific(tls_thread_key, jvm)) {
+      fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
+    }
   }
 #endif
 }
@@ -576,7 +614,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   // Give the callback glue its own local frame to ensure all local references
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
-    fprintf(stderr, "JNA: Out of memory: Can't allocate local frame");
+    fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
     // Kind of a hack, use last error value rather than setting up our own TLS
@@ -603,6 +641,10 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
 
 const char* 
 jnidispatch_callback_init(JNIEnv* env) {
+#ifndef _WIN32
+  static pthread_once_t key_once = PTHREAD_ONCE_INIT;
+  pthread_once(&key_once, make_errno_key);
+#endif
 
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
 
@@ -615,6 +657,10 @@ jnidispatch_callback_dispose(JNIEnv* env) {
     (*env)->DeleteWeakGlobalRef(env, classObject);
     classObject = NULL;
   }
+#ifndef _WIN32
+  pthread_key_delete(tls_errno_key);
+  pthread_key_delete(tls_thread_key);
+#endif
 }
 
 #ifdef __cplusplus
