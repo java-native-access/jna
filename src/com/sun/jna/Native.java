@@ -87,8 +87,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.5.2";
-    private static final String VERSION_NATIVE = "3.5.0";
+    private static final String VERSION = "3.6.0-SNAPSHOT";
+    private static final String VERSION_NATIVE = "3.6.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -142,11 +142,15 @@ public final class Native {
         if (!VERSION_NATIVE.equals(version)) {
             String LS = System.getProperty("line.separator");
             throw new Error(LS + LS
-                            + "There is an incompatible JNA native library installed on this system." + LS
+                            + "There is an incompatible JNA native library installed on this system" + LS
+                            + (nativeLibraryPath != null
+                               ? "(at " + nativeLibraryPath + ")" : System.getProperty("java.library.path"))
+                            + "." + LS
                             + "To resolve this issue you may do one of the following:" + LS
                             + " - remove or uninstall the offending library" + LS
                             + " - set the system property jna.nosys=true" + LS
-                            + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS
+                            + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
     }
@@ -219,17 +223,17 @@ public final class Native {
     /** Set whether the system last error result is captured after every
      * native invocation.  Defaults to <code>true</code> (<code>false</code>
      * for direct-mapped calls).<p>
-     * @deprecated The preferred method of obtaining the last error result is
+     * NOTE: The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * and set <code>jna.preserve_last_error</code> false.
      */
     public static synchronized native void setPreserveLastError(boolean enable);
 
     /** Indicates whether the system last error result is preserved
      * after every invocation.<p>
-     * @deprecated The preferred method of obtaining the last error result is
+     * NOTE: The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * and set <code>jna.preserve_last_error</code> false.
      */
     public static synchronized native boolean getPreserveLastError();
 
@@ -619,6 +623,12 @@ public final class Native {
         else if ("powerpc64".equals(arch)) {
             arch = "ppc64";
         }
+        else if ("i386".equals(arch)) {
+            arch = "x86";
+        }
+        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
+            arch = "x86-64";
+        }
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {
@@ -627,9 +637,6 @@ public final class Native {
             osPrefix = "android-" + arch;
             break;
         case Platform.WINDOWS:
-            if ("i386".equals(arch)) {
-                arch = "x86";
-            }
             osPrefix = "win32-" + arch;
             break;
         case Platform.WINDOWSCE:
@@ -639,12 +646,6 @@ public final class Native {
             osPrefix = "darwin";
             break;
         case Platform.LINUX:
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            else if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
             osPrefix = "linux-" + arch;
             break;
         case Platform.SOLARIS:
@@ -652,12 +653,6 @@ public final class Native {
             break;
         default:
             osPrefix = name.toLowerCase();
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {
                 osPrefix = osPrefix.substring(0, space);
@@ -867,12 +862,6 @@ public final class Native {
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
-    private static final ThreadLocal lastError = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new Integer(0);
-        }
-    };
-
     /** Retrieve the last error set by the OS.  This corresponds to
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether
@@ -881,23 +870,14 @@ public final class Native {
      * <code>false</code>.<p>
      * The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * instead, and set <code>jna.preserve_last_error</code> false..
      */
-    public static int getLastError() {
-        return ((Integer)lastError.get()).intValue();
-    }
+    public static native int getLastError();
 
-    /** Set the OS last error code.  Whether the setting is per-thread
-     * or global depends on the underlying OS.
+    /** Set the OS last error code.  If <code>jna.preserve_last_error</code>
+     * is <code>true</code>, the value will be saved on a per-thread basis.
      */
     public static native void setLastError(int code);
-
-    /** Update the last error value (called from native code). */
-    // This has to be called immediately after a native call to ensure that
-    // subsequent VM operations don't overwrite the last error value
-    static void updateLastError(int e) {
-        lastError.set(new Integer(e));
-    }
 
     /**
      * Returns a synchronized (thread-safe) library backed by the specified

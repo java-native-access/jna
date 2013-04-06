@@ -256,7 +256,6 @@ static jmethodID MID_DoubleBuffer_arrayOffset;
 #endif /* NO_NIO_BUFFERS */
 
 static jmethodID MID_Pointer_init;
-static jmethodID MID_Native_updateLastError;
 static jmethodID MID_Native_fromNative;
 static jmethodID MID_Native_nativeType;
 static jmethodID MID_Native_toNativeTypeMapped;
@@ -305,7 +304,6 @@ static void* getDirectBufferAddress(JNIEnv*, jobject);
 #endif
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
-static void update_last_error(JNIEnv*, int);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
@@ -576,7 +574,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       }
     }
     else if (preserve_last_error) {
-      update_last_error(env, GET_LAST_ERROR());
+      jnidispatch_set_last_error(GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
@@ -747,13 +745,6 @@ newWideCString(JNIEnv *env, jstring str)
     }
     (*env)->DeleteLocalRef(env, chars);
     return result;
-}
-
-/** Update the per-thread last error setting. */
-static void
-update_last_error(JNIEnv* env, int err) {
-  (*env)->CallStaticVoidMethod(env, classNative,
-                               MID_Native_updateLastError, err);
 }
 
 jobject
@@ -1752,7 +1743,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       }
     }
     else if (preserve_last_error) {
-      update_last_error(env, GET_LAST_ERROR());
+      jnidispatch_set_last_error(GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
@@ -2600,12 +2591,6 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain global reference for class com.sun.jna.Native");
   }
-  else if (!(MID_Native_updateLastError
-             = (*env)->GetStaticMethodID(env, classNative,
-                                         "updateLastError", "(I)V"))) {
-    throwByName(env, EUnsatisfiedLink,
-                "Can't obtain updateLastError method for class com.sun.jna.Native");
-  }
   else if (!(MID_Native_fromNative
              = (*env)->GetStaticMethodID(env, classNative,
                                          "fromNative", "(Ljava/lang/Class;Ljava/lang/Object;)Lcom/sun/jna/NativeMapped;"))) {
@@ -2984,8 +2969,13 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  update_last_error(env, code);
+  jnidispatch_set_last_error(code);
   SET_LAST_ERROR(code);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_sun_jna_Native_getLastError(JNIEnv *env, jclass UNUSED(classp)) {
+  return jnidispatch_get_last_error();
 }
 
 JNIEXPORT jstring JNICALL
