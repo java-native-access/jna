@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
+/* copyright (c) 2012 Tobias Wolf, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -272,7 +272,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param rgIndices
 	 *            [in] A vector of indexes for each dimension of the array. The
 	 *            right-most (least significant) dimension is rgIndices[0]. The
-	 *            left-most dimension is stored at rgIndices[psa->cDims – 1].
+	 *            left-most dimension is stored at rgIndices[psa->cDims - 1].
 	 * @param pv
 	 *            [out] The element of the array.
 	 * 
