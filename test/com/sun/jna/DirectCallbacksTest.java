@@ -56,6 +56,10 @@ public class DirectCallbacksTest extends CallbacksTest {
         lib = new DirectTestLibrary();
     }
     
+    protected Map callbackCache() {
+        return CallbackReference.directCallbackMap;
+    }
+
     public static class DirectCallbackTestLibrary implements CallbackTestLibrary {
         public native double callInt32Callback(DoubleCallback c, double arg, double arg2);
         public native float callInt64Callback(FloatCallback c, float arg, float arg2);

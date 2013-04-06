@@ -103,7 +103,7 @@ typedef struct _callback {
   ffi_type** arg_types;
   ffi_type** java_arg_types;
   jobject* arg_classes;
-  int* flags;
+  int* conversion_flags;
   int rflag;
   JavaVM* vm;
   jobject object;
@@ -184,7 +184,7 @@ extern jboolean ffi_error(JNIEnv*,const char*,ffi_status);
 extern jobject newJavaPointer(JNIEnv*, void*);
 extern jstring newJavaString(JNIEnv*, const char*, jboolean);
 extern jobject newJavaWString(JNIEnv*, const wchar_t*);
-extern jobject newJavaStructure(JNIEnv*, void*, jclass, jboolean);
+extern jobject newJavaStructure(JNIEnv*, void*, jclass);
 extern jobject newJavaCallback(JNIEnv*, void*, jclass);
 extern void* getNativeString(JNIEnv*, jstring, jboolean);
 extern void* getNativeAddress(JNIEnv*, jobject);
