@@ -299,6 +299,7 @@ public abstract class Structure {
                 this.memory = m.share(offset, size);
             }
             this.array = null;
+            this.readCalled = false;
         }
         catch(IndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Structure exceeds provided memory bounds");

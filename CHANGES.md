@@ -5,6 +5,7 @@ Features
 --------
 * [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
 * Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
+* Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
