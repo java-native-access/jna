@@ -1590,7 +1590,7 @@ public final class Native {
         System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
-        System.exit(0);
+        System.out.println(" Prefix: " + getNativeLibraryResourcePrefix());
     }
 
     /** Free the given callback trampoline. */

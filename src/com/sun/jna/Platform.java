@@ -36,6 +36,10 @@ public final class Platform {
     public static final String C_LIBRARY_NAME;
     /** Whether in-DLL callbacks are supported. */
     public static final boolean HAS_DLL_CALLBACKS;
+    /** Canonical resource prefix for the current platform.  This value is
+     * used to load bundled native libraries from the class path.
+     */
+    public static final String RESOURCE_PREFIX;
 
     private static final int osType;
 
@@ -95,6 +99,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
+        RESOURCE_PREFIX = Native.getNativeLibraryResourcePrefix();
     }
     private Platform() { }
     public static final int getOSType() {
