@@ -109,7 +109,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   cb->arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * argc);
   cb->java_arg_types = (ffi_type**)malloc(sizeof(ffi_type*) * (argc + 3));
   cb->arg_jtypes = (char*)malloc(sizeof(char) * argc);
-  cb->flags = (int *)malloc(sizeof(int) * argc);
+  cb->conversion_flags = (int *)malloc(sizeof(int) * argc);
   cb->rflag = CVT_DEFAULT;
   cb->arg_classes = (jobject*)malloc(sizeof(jobject) * argc);
  
@@ -119,7 +119,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   for (i=0;i < argc;i++) {
     int jtype;
     jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
-    if ((cb->flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
+    if ((cb->conversion_flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
       cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
       cvt = 1;
     }
@@ -139,9 +139,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     if (!cb->java_arg_types[i+3]) {
       goto failure_cleanup;
     }
-    if (cb->flags[i] == CVT_NATIVE_MAPPED
-        || cb->flags[i] == CVT_POINTER_TYPE
-        || cb->flags[i] == CVT_INTEGER_TYPE) {
+    if (cb->conversion_flags[i] == CVT_NATIVE_MAPPED
+        || cb->conversion_flags[i] == CVT_POINTER_TYPE
+        || cb->conversion_flags[i] == CVT_INTEGER_TYPE) {
       jclass ncls;
       ncls = getNativeType(env, cls);
       jtype = get_jtype(env, ncls);
@@ -162,7 +162,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
       // Java method is varargs, so promote floats to double
       cb->java_arg_types[i+3] = &ffi_type_double;
-      cb->flags[i] = CVT_FLOAT;
+      cb->conversion_flags[i] = CVT_FLOAT;
       cvt = 1;
     }
     else if (cb->java_arg_types[i+3]->type == FFI_TYPE_STRUCT) {
@@ -171,8 +171,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
   if (!direct || !cvt) {
-    free(cb->flags);
-    cb->flags = NULL;
+    free(cb->conversion_flags);
+    cb->conversion_flags = NULL;
     free(cb->arg_classes);
     cb->arg_classes = NULL;
   }
@@ -279,8 +279,8 @@ free_callback(JNIEnv* env, callback *cb) {
     free(cb->arg_classes);
   }
   free(cb->java_arg_types);
-  if (cb->flags) {
-    free(cb->flags);
+  if (cb->conversion_flags) {
+    free(cb->conversion_flags);
   }
   free(cb->arg_jtypes);
 #ifdef DLL_FPTRS
@@ -344,9 +344,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     args[2] = &cb->methodID;
     memcpy(&args[3], cbargs, cif->nargs * sizeof(void *));
 
-    if (cb->flags) {
+    if (cb->conversion_flags) {
       for (i=0;i < cif->nargs;i++) {
-        switch(cb->flags[i]) {
+        switch(cb->conversion_flags[i]) {
         case CVT_INTEGER_TYPE:
         case CVT_POINTER_TYPE:
         case CVT_NATIVE_MAPPED:
@@ -364,11 +364,11 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
           *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
           break;
         case CVT_STRUCTURE:
-          *((void **)args[i+3]) = newJavaStructure(env, *(void **)cbargs[i], cb->arg_classes[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaStructure(env, *(void **)cbargs[i], cb->arg_classes[i]);
           break;
         case CVT_STRUCTURE_BYVAL:
 	  args[i+3] = alloca(sizeof(void *));
-	  *((void **)args[i+3]) = newJavaStructure(env, cbargs[i], cb->arg_classes[i], JNI_TRUE);
+	  *((void **)args[i+3]) = newJavaStructure(env, cbargs[i], cb->arg_classes[i]);
           break;
         case CVT_CALLBACK:
           *((void **)args[i+3]) = newJavaCallback(env, *(void **)cbargs[i], cb->arg_classes[i]);
@@ -437,9 +437,9 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       break;
     default: break;
     }
-    if (cb->flags) {
+    if (cb->conversion_flags) {
       for (i=0;i < cif->nargs;i++) {
-        if (cb->flags[i] == CVT_STRUCTURE) {
+        if (cb->conversion_flags[i] == CVT_STRUCTURE) {
           writeStructure(env, *(void **)cbargs[i]);
         }
       }
