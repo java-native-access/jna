@@ -14,7 +14,7 @@
 
        Use ANT_OPTS=-Dskip-native to skip building native parts.
        Use ANT_OPTS=-Dheadless to run tests headless
-       Use ANT_OPTS=-Dmaven-release to stage a final, non-snapshot version
+       Use ANT_OPTS=-Drelease to stage a final, non-snapshot version
     -->
 
   <!--
@@ -59,7 +59,10 @@
   <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
   <condition property="version.suffix" value="" else="-SNAPSHOT">
-    <isset property="maven-release"/>
+    <or>
+      <isset property="release"/>
+      <isset property="maven-release"/>
+    </or>
   </condition>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
@@ -183,6 +186,12 @@
     <condition property="jre.arch" value="x86-64">
       <matches pattern="(x86_64|amd64|em64t)" string="${os.arch}"/>
     </condition>
+    <condition property="jre.arch" value="ppc">
+      <matches pattern="(powerpc|power)" string="${os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc64">
+      <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
+    </condition>
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
       <os name="Linux"/>
@@ -190,23 +199,23 @@
     <condition property="os.prefix" value="aix-${jre.arch}">
       <os name="AIX"/>
     </condition>
-    <condition property="os.prefix" value="win32-${os.arch}">
+    <condition property="os.prefix" value="win32-${jre.arch}">
       <os family="windows"/>
     </condition>
     <!-- Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
       <os family="mac"/>
     </condition>
-    <condition property="os.prefix" value="sunos-${os.arch}">
+    <condition property="os.prefix" value="sunos-${jre.arch}">
       <os name="SunOS"/>
     </condition>
-    <condition property="os.prefix" value="freebsd-${os.arch}">
+    <condition property="os.prefix" value="freebsd-${jre.arch}">
       <os name="FreeBSD"/>
     </condition>
-    <condition property="os.prefix" value="openbsd-${os.arch}">
+    <condition property="os.prefix" value="openbsd-${jre.arch}">
       <os name="OpenBSD"/>
     </condition>
-    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch}), edit build.xml and native/Makefile to add it."/>
+    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>
