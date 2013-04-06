@@ -37,6 +37,7 @@ import java.util.StringTokenizer;
  * class corresponds to a single loaded native library.  May also be used
  * to map to the current process (see {@link NativeLibrary#getProcess()}).
  * <p>
+ * <a name=library_search_paths></a>
  * <b>Library Search Paths</b>
  * A search for a given library will scan the following locations:
  * <ol>
@@ -49,6 +50,13 @@ import java.util.StringTokenizer;
  * are also accepted, either ending at the framework name (sans ".framework")
  * or the full path to the framework shared library
  * (e.g. CoreServices.framework/CoreServices). 
+ * <li>Context class loader classpath.  Deployed native libraries may be
+ * installed on the classpath under
+ * <code>${os-prefix}/LIBRARY_FILENAME</code>, where <code>${os-prefix}</code>
+ * is the OS/Arch prefix returned by {@link
+ * Native#getNativeLibraryResourcePrefix()}.  If bundled in a jar file, the
+ * resource will be extracted to <code>jna.tmpdir</code> for loading, and
+ * later removed.
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall

@@ -77,6 +77,10 @@ import com.sun.jna.Structure.FFIType;
  * finalized/disposed before this class is disposed and/or removed from
  * memory (most notably Memory and any other class which by default frees its
  * resources in a finalizer).<p/>
+ * <a name=native_library_loading</a>
+ * <h2>Native Library Loading</h2>
+ * Native libraries loaded via {@link #loadLibrary(Class)} may be found in
+ * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
@@ -367,6 +371,8 @@ public final class Native {
      * If no library options are detected the map is interpreted as a map
      * of Java method names to native function names.<p>
      * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param name
      * @param interfaceClass
      * @param options Map of library options
@@ -777,7 +783,7 @@ public final class Native {
 
     /** Attempt to extract a native library from the current resource path. 
      * Expects native libraries to be stored under
-     * the path returned by {@link #getNativeLibraryResourcePath(int, String,
+     * the path returned by {@link #getNativeLibraryResourcePrefix(int, String,
      * String)}.
      * @param name Base name of native library to extract
      * @param loader Class loader to use to load resources

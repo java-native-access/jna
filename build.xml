@@ -368,7 +368,7 @@ com/sun/jna/freebsd-amd64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
-osname=macosx;processor=x86;processor=x86_64;processor=ppc
+osname=macosx;processor=x86;processor=x86-64;processor=ppc
 "/>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">

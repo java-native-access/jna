@@ -27,6 +27,7 @@ Bug Fixes
 * Remove deprecated methods on Memory (getSize,isValid) and Structure (getSize) - [@twall](https://github.com/twall).
 * [#206](https://github.com/twall/jna/pull/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
 * Remove problematic AWT check via `Class.forName("java.awt.Component")` (see [here](https://bugs.eclipse.org/bugs/show_bug.cgi?id=388170)) - [@twall](https://github.com/twall).
+* [PR#210](https://github.com/twall/jna/pull/210) Add OSGI processor specs for Mac OS X - [@bertfrees](https://github.com/bertfrees).
 
 Release 3.5.1
 =============
