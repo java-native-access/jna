@@ -87,8 +87,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native {
 
-    private static final String VERSION = "3.5.2";
-    private static final String VERSION_NATIVE = "3.5.0";
+    private static final String VERSION = "3.6.0-SNAPSHOT";
+    private static final String VERSION_NATIVE = "3.6.0";
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -142,11 +142,15 @@ public final class Native {
         if (!VERSION_NATIVE.equals(version)) {
             String LS = System.getProperty("line.separator");
             throw new Error(LS + LS
-                            + "There is an incompatible JNA native library installed on this system." + LS
+                            + "There is an incompatible JNA native library installed on this system" + LS
+                            + (nativeLibraryPath != null
+                               ? "(at " + nativeLibraryPath + ")" : System.getProperty("java.library.path"))
+                            + "." + LS
                             + "To resolve this issue you may do one of the following:" + LS
                             + " - remove or uninstall the offending library" + LS
                             + " - set the system property jna.nosys=true" + LS
-                            + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS
+                            + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
     }
@@ -619,6 +623,12 @@ public final class Native {
         else if ("powerpc64".equals(arch)) {
             arch = "ppc64";
         }
+        else if ("i386".equals(arch)) {
+            arch = "x86";
+        }
+        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
+            arch = "x86-64";
+        }
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {
@@ -627,9 +637,6 @@ public final class Native {
             osPrefix = "android-" + arch;
             break;
         case Platform.WINDOWS:
-            if ("i386".equals(arch)) {
-                arch = "x86";
-            }
             osPrefix = "win32-" + arch;
             break;
         case Platform.WINDOWSCE:
@@ -639,12 +646,6 @@ public final class Native {
             osPrefix = "darwin";
             break;
         case Platform.LINUX:
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            else if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
             osPrefix = "linux-" + arch;
             break;
         case Platform.SOLARIS:
@@ -652,12 +653,6 @@ public final class Native {
             break;
         default:
             osPrefix = name.toLowerCase();
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
             int space = osPrefix.indexOf(" ");
             if (space != -1) {
                 osPrefix = osPrefix.substring(0, space);

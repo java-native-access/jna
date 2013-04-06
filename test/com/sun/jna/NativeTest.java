@@ -257,6 +257,9 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path Mac/x86", "darwin",
                      Native.getNativeLibraryResourcePrefix(Platform.MAC,
                                                            "x86", "Darwin"));
+        assertEquals("Wrong resource path Mac/x86", "darwin",
+                     Native.getNativeLibraryResourcePrefix(Platform.MAC,
+                                                           "i386", "Darwin"));
         assertEquals("Wrong resource path Mac/x86_64", "darwin",
                      Native.getNativeLibraryResourcePrefix(Platform.MAC,
                                                            "x86_64", "Mac"));
@@ -266,19 +269,25 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong resource path SunOS/sparcv9", "sunos-sparcv9",
                      Native.getNativeLibraryResourcePrefix(Platform.SOLARIS,
                                                            "sparcv9", "SunOS"));
-        assertEquals("Wrong resource path Linux/i386", "linux-i386",
+        assertEquals("Wrong resource path Linux/i386", "linux-x86",
                      Native.getNativeLibraryResourcePrefix(Platform.LINUX,
                                                            "i386", "Linux/Gnu"));
-        assertEquals("Wrong resource path Linux/x86", "linux-i386",
+        assertEquals("Wrong resource path Linux/x86", "linux-x86",
                      Native.getNativeLibraryResourcePrefix(Platform.LINUX,
                                                            "x86", "Linux"));
+        assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
+                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
+                                                           "x86_64", "Linux"));
+        assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
+                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
+                                                           "amd64", "Linux"));
         assertEquals("Wrong resource path Linux/ppc", "linux-ppc",
                      Native.getNativeLibraryResourcePrefix(Platform.LINUX,
                                                            "powerpc", "Linux"));
-        assertEquals("Wrong resource path OpenBSD/x86", "openbsd-i386",
+        assertEquals("Wrong resource path OpenBSD/x86", "openbsd-x86",
                      Native.getNativeLibraryResourcePrefix(Platform.OPENBSD,
                                                            "x86", "OpenBSD"));
-        assertEquals("Wrong resource path FreeBSD/x86", "freebsd-i386",
+        assertEquals("Wrong resource path FreeBSD/x86", "freebsd-x86",
                      Native.getNativeLibraryResourcePrefix(Platform.FREEBSD,
                                                            "x86", "FreeBSD"));
         assertEquals("Wrong resource path Linux/armv7l (android)", "android-arm",

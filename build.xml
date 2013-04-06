@@ -55,8 +55,8 @@
   <buildnumber/>
   <!-- JNA library release version -->
   <property name="jna.major" value="3"/>
-  <property name="jna.minor" value="5"/>
-  <property name="jna.revision" value="2"/>
+  <property name="jna.minor" value="6"/>
+  <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <isset property="maven-release"/>
@@ -64,7 +64,7 @@
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
-  <property name="jni.minor" value="5"/>
+  <property name="jni.minor" value="6"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
@@ -157,6 +157,7 @@
           <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
           <os arch="x86_64"/>
           <os arch="amd64"/>
+          <os arch="em64t"/>
           <os arch="sparcv9"/>
           <os arch="ppc64"/>
           <os arch="ia64"/>
@@ -176,11 +177,11 @@
     <property name="reports" value="${build}/reports"/>
 
     <!-- Add other supported platforms here -->
-    <condition property="jre.arch" value="i386">
-      <equals arg1="x86" arg2="${os.arch}"/>
+    <condition property="jre.arch" value="x86">
+      <matches pattern="(i[3456]86|pentium)" string="${os.arch}"/>
     </condition>
-    <condition property="jre.arch" value="amd64">
-      <equals arg1="x86_64" arg2="${os.arch}"/>
+    <condition property="jre.arch" value="x86-64">
+      <matches pattern="(x86_64|amd64|em64t)" string="${os.arch}"/>
     </condition>
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
@@ -328,14 +329,14 @@
                    value="
 com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
-com/sun/jna/win32-amd64/jnidispatch.dll;
+com/sun/jna/win32-x86-64/jnidispatch.dll;
 processor=x86-64;osname=win32,
 com/sun/jna/w32ce-arm/jnidispatch.dll;
 processor=arm;osname=wince,
 
 com/sun/jna/sunos-x86/libjnidispatch.so;
 processor=x86;osname=sunos,
-com/sun/jna/sunos-amd64/libjnidispatch.so;
+com/sun/jna/sunos-x86-64/libjnidispatch.so;
 processor=x86-64;osname=sunos,
 com/sun/jna/sunos-sparc/libjnidispatch.so;
 processor=sparc;osname=sunos,
@@ -351,20 +352,20 @@ com/sun/jna/linux-ppc/libjnidispatch.so;
 processor=ppc;osname=linux,
 com/sun/jna/linux-ppc64/libjnidispatch.so;
 processor=ppc64;osname=linux,
-com/sun/jna/linux-i386/libjnidispatch.so;
+com/sun/jna/linux-x86/libjnidispatch.so;
 processor=x86;osname=linux,
-com/sun/jna/linux-amd64/libjnidispatch.so;
+com/sun/jna/linux-x86-64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
-com/sun/jna/openbsd-i386/libjnidispatch.so;
+com/sun/jna/openbsd-x86/libjnidispatch.so;
 processor=x86;osname=openbsd,
-com/sun/jna/freebsd-i386/libjnidispatch.so;
+com/sun/jna/freebsd-x86/libjnidispatch.so;
 processor=x86;osname=freebsd,
-com/sun/jna/freebsd-amd64/libjnidispatch.so;
+com/sun/jna/freebsd-x86-64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
@@ -386,12 +387,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/darwin.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/darwin"/>
-      <zipfileset src="${lib.native}/linux-i386.jar"
+      <zipfileset src="${lib.native}/linux-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/linux-i386"/>
-      <zipfileset src="${lib.native}/linux-amd64.jar"
+                  prefix="com/sun/jna/linux-x86"/>
+      <zipfileset src="${lib.native}/linux-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/linux-amd64"/>
+                  prefix="com/sun/jna/linux-x86-64"/>
       <zipfileset src="${lib.native}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
@@ -407,27 +408,27 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
-      <zipfileset src="${lib.native}/sunos-amd64.jar"
+      <zipfileset src="${lib.native}/sunos-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/sunos-amd64"/>
+                  prefix="com/sun/jna/sunos-x86-64"/>
       <zipfileset src="${lib.native}/sunos-sparc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparc"/>
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${lib.native}/freebsd-i386.jar"
+      <zipfileset src="${lib.native}/freebsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-i386"/>
-      <zipfileset src="${lib.native}/freebsd-amd64.jar"
+                  prefix="com/sun/jna/freebsd-x86"/>
+      <zipfileset src="${lib.native}/freebsd-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-amd64"/>
-      <zipfileset src="${lib.native}/openbsd-i386.jar"
+                  prefix="com/sun/jna/freebsd-x86-64"/>
+      <zipfileset src="${lib.native}/openbsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/openbsd-i386"/>
-      <zipfileset src="${lib.native}/win32-amd64.jar"
+                  prefix="com/sun/jna/openbsd-x86"/>
+      <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/win32-amd64"/>
+                  prefix="com/sun/jna/win32-x86-64"/>
       <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
@@ -510,19 +511,19 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <echo>Invalidating native code, new checksum is ${md5}</echo>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/w32ce-arm.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-i386.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-arm.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-i386.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-amd64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-arm.jar" overwrite="true"/>
