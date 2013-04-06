@@ -14,6 +14,7 @@
 
        Use ANT_OPTS=-Dskip-native to skip building native parts.
        Use ANT_OPTS=-Dheadless to run tests headless
+       Use ANT_OPTS=-Dmaven-release to stage a final, non-snapshot version
     -->
 
   <!--
@@ -46,15 +47,21 @@
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
+  <tstamp>
+    <format property="year" pattern="yyyy" locale="en,US"/>
+  </tstamp>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007-2012 Timothy Wall. All Rights Reserved."/>
+            value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->
   <property name="jna.major" value="3"/>
   <property name="jna.minor" value="5"/>
   <property name="jna.revision" value="2"/>
   <property name="jna.build" value="${build.number}"/>
-  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}-SNAPSHOT"/>
+  <condition property="version.suffix" value="" else="-SNAPSHOT">
+    <isset property="maven-release"/>
+  </condition>
+  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="3"/>
   <property name="jni.minor" value="5"/>
@@ -257,6 +264,7 @@
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${test.classes}"/>
+      <pathelement path="${build}/${testjar}"/>
       <pathelement path="lib/clover.jar"/>
       <path refid="test.libs"/>
     </path>
@@ -360,7 +368,7 @@ com/sun/jna/freebsd-amd64/libjnidispatch.so;
 processor=x86-64;osname=freebsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
-osname=macos
+osname=macosx;processor=x86;processor=x86-64;processor=ppc
 "/>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">
@@ -701,12 +709,28 @@ osname=macos
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
-    <!-- Create a jar for easy movement of tests -->
+    <!-- Move (not copy) embedded testlib to test class folder so that it will be -->
+    <!-- packaged into the test jar and NOT available in the FS-based class path -->
+    <move todir="${test.classes}/${os.prefix}">
+      <fileset dir="${build.native}">
+        <patternset id="embedded-testlib">
+          <include name="**/*embedded-testlib*"/>
+        </patternset>
+      </fileset>
+    </move>
+    <!-- Create a jar for easy movement of tests, and embedded load test -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
+        <include name="**/*embedded-testlib*"/>
       </fileset>
     </jar>
+    <!-- Ensure embedded library unavailable on FS-based class path -->
+    <delete>
+      <fileset dir="${test.classes}">
+        <include name="**/*embedded-testlib*"/>
+      </fileset>
+    </delete>
     <mkdir dir="${build}/jws"/>
     <copy todir="${build}/jws" file="${build}/${jar}"/>
     <copy todir="${build}/jws" file="${build}/${testjar}"/>

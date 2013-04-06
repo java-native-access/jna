@@ -21,6 +21,9 @@
 
 # TODO
 
+* use consistent cpu references (x86->i386, x86_64->amd64)
+* osgi for osx
+
 * make native dll extraction from jar public, to use with user dlls packaged
   in a jar
 

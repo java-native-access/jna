@@ -16,6 +16,7 @@ package com.sun.jna;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import java.lang.reflect.Method;
@@ -36,6 +37,7 @@ import java.util.StringTokenizer;
  * class corresponds to a single loaded native library.  May also be used
  * to map to the current process (see {@link NativeLibrary#getProcess()}).
  * <p>
+ * <a name=library_search_paths></a>
  * <b>Library Search Paths</b>
  * A search for a given library will scan the following locations:
  * <ol>
@@ -44,7 +46,17 @@ import java.util.StringTokenizer;
  * <li>On OSX, <code>~/Library/Frameworks</code>,
  * <code>/Library/Frameworks</code>, and
  * <code>/System/Library/Frameworks</code> will be searched for a framework
- * with a name corresponding to that requested.
+ * with a name corresponding to that requested.  Absolute paths to frameworks
+ * are also accepted, either ending at the framework name (sans ".framework")
+ * or the full path to the framework shared library
+ * (e.g. CoreServices.framework/CoreServices). 
+ * <li>Context class loader classpath.  Deployed native libraries may be
+ * installed on the classpath under
+ * <code>${os-prefix}/LIBRARY_FILENAME</code>, where <code>${os-prefix}</code>
+ * is the OS/Arch prefix returned by {@link
+ * Native#getNativeLibraryResourcePrefix()}.  If bundled in a jar file, the
+ * resource will be extracted to <code>jna.tmpdir</code> for loading, and
+ * later removed.
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall
@@ -190,6 +202,20 @@ public class NativeLibrary {
                 try { handle = Native.open(libraryPath, openFlags); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
+            // As a last resort, try to extract the library from the class
+            // path, using the current context class loader.
+            if (handle == 0) {
+                try {
+                    File embedded = Native.extractFromResourcePath(libraryName);
+                    handle = Native.open(embedded.getAbsolutePath());
+                    // Don't leave temporary files around
+                    if (Native.isUnpacked(embedded)) {
+                        Native.deleteLibrary(embedded);
+                    }
+                }
+                catch(IOException e2) { e = new UnsatisfiedLinkError(e2.getMessage()); }
+            }
+
             if (handle == 0) {
                 throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': "
                                                + e.getMessage());
@@ -200,13 +226,26 @@ public class NativeLibrary {
 
     /** Look for a matching framework (OSX) */
     static String matchFramework(String libraryName) {
-        final String[] PREFIXES = { System.getProperty("user.home"), "", "/System" };
-        String suffix = libraryName.indexOf(".framework") == -1
-            ? libraryName + ".framework/" + libraryName : libraryName;
-        for (int i=0;i < PREFIXES.length;i++) {
-            String libraryPath = PREFIXES[i] + "/Library/Frameworks/" + suffix;
-            if (new File(libraryPath).exists()) {
-                return libraryPath;
+        File framework = new File(libraryName);
+        if (framework.isAbsolute()) {
+            if (libraryName.indexOf(".framework") != -1
+                && framework.exists()) {
+                return framework.getAbsolutePath();
+            }
+            framework = new File(new File(framework.getParentFile(), framework.getName() + ".framework"), framework.getName());
+            if (framework.exists()) {
+                return framework.getAbsolutePath();
+            }
+        }
+        else {
+            final String[] PREFIXES = { System.getProperty("user.home"), "", "/System" };
+            String suffix = libraryName.indexOf(".framework") == -1
+                ? libraryName + ".framework/" + libraryName : libraryName;
+            for (int i=0;i < PREFIXES.length;i++) {
+                String libraryPath = PREFIXES[i] + "/Library/Frameworks/" + suffix;
+                if (new File(libraryPath).exists()) {
+                    return libraryPath;
+                }
             }
         }
         return null;

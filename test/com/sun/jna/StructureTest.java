@@ -66,6 +66,20 @@ public class StructureTest extends TestCase {
         assertNotSame("Initial pointer should not be used directly: " + p, p, p1);
     }
 
+    public void testInitializeWithTypeMapper() {
+        class TestStructure extends Structure {
+            public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+            public TestStructure(TypeMapper m) {
+                super(ALIGN_DEFAULT, m);
+            }
+        }
+        TypeMapper m = new DefaultTypeMapper();
+        TestStructure s = new TestStructure(m);
+        assertEquals("Type mapper not installed", m, s.getTypeMapper());
+    }
 
     // must be public to populate array
     public static class TestAllocStructure extends Structure {
