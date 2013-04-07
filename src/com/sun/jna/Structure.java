@@ -1287,7 +1287,7 @@ public abstract class Structure {
     }
 
     public String toString(boolean debug) {
-        return toString(0, true, true);
+        return toString(0, true, debug);
     }
 
     private String format(Class type) {

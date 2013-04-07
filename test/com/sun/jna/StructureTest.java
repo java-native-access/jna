@@ -1144,6 +1144,10 @@ public class StructureTest extends TestCase {
         assertTrue("Improperly formatted toString(): expected "
                    + EXPECTED + "\n" + actual,
                    actual.matches(EXPECTED));
+
+        System.setProperty("jna.dump_memory", "false");
+        assertFalse("Doesn't dump memory when jna.dump_memory is false",
+                   s.toString().contains("memory dump"));
     }
 
     public void testNativeMappedWrite() {
