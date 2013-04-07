@@ -46,6 +46,7 @@ public class DirectCallbacksTest extends CallbacksTest {
 
         public native int callInt32Callback(CustomCallback cb, int arg1, int arg2);
         public native void callCallbackInStruct(CbStruct s);
+        public native TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
 
         static {
             Native.register("testlib");

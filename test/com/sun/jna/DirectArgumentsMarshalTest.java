@@ -79,7 +79,6 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native Pointer testStructurePointerArgument(MinTestStructure s);
         public native String returnStringFromVariableSizedStructure(VariableSizedStructure s);
         public native void setCallbackInStruct(CbStruct s);
-        public native TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
 
         static {
             Native.register("testlib");

@@ -289,14 +289,22 @@ public abstract class Structure {
             // Clear any local cache
             nativeStrings.clear();
 
-            // Ensure our memory pointer is initialized, even if we can't
-            // yet figure out a proper size/layout
-            this.memory = m.share(offset);
-            if (size == CALCULATE_SIZE) {
-                size = calculateSize(false);
+            if (this instanceof ByValue) {
+                // ByValue always uses own memory
+                byte[] buf = new byte[size()];
+                m.read(0, buf, 0, buf.length);
+                this.memory.write(0, buf, 0, buf.length);
             }
-            if (size != CALCULATE_SIZE) {
-                this.memory = m.share(offset, size);
+            else {
+                // Ensure our memory pointer is initialized, even if we can't
+                // yet figure out a proper size/layout
+                this.memory = m.share(offset);
+                if (size == CALCULATE_SIZE) {
+                    size = calculateSize(false);
+                }
+                if (size != CALCULATE_SIZE) {
+                    this.memory = m.share(offset, size);
+                }
             }
             this.array = null;
             this.readCalled = false;
@@ -1581,7 +1589,9 @@ public abstract class Structure {
             throw new IllegalArgumentException(msg);
         }
         Structure s = newInstance(type);
-        s.useMemory(init);
+        if (init != PLACEHOLDER_MEMORY) {
+            s.useMemory(init);
+        }
         return s;
     }
 

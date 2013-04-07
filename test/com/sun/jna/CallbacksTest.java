@@ -169,6 +169,16 @@ public class CallbacksTest extends TestCase {
             }
         }
         void callCallbackInStruct(CbStruct cbstruct);
+
+        // Union (by value)
+        class TestUnion extends Union implements Structure.ByValue {
+            public String f1;
+            public int f2;
+        }
+        interface UnionCallback extends Callback {
+            TestUnion invoke(TestUnion arg);
+        }
+        TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
     }
 
     TestLibrary lib;
@@ -664,17 +674,14 @@ public class CallbacksTest extends TestCase {
     }
     
     public void testCallCallbackWithStructByValue() {
+        final boolean[] called = { false };
+        final TestStructure.ByValue[] arg = { null };
         final TestStructure.ByValue s = new TestStructure.ByValue();
-        final TestStructure innerResult = new TestStructure();
         TestStructure.TestCallback cb = new TestStructure.TestCallback() {
             public TestStructure.ByValue callback(TestStructure.ByValue s) {
                 // Copy the argument value for later comparison
-                Pointer old = innerResult.getPointer();
-                innerResult.useMemory(s.getPointer());
-                innerResult.read();
-                innerResult.useMemory(old);
-                innerResult.write();
-                return s;
+                called[0] = true;
+                return arg[0] = s;
             }
         };
         s.c = (byte)0x11;
@@ -684,10 +691,39 @@ public class CallbacksTest extends TestCase {
         s.inner.value = 5;
         
         TestStructure result = lib.callCallbackWithStructByValue(cb, s);
-        assertEquals("Wrong value passed to callback", s, innerResult);
-        assertEquals("Wrong value for result", s, result);
+        assertTrue("Callback not called", called[0]);
+        assertTrue("ByValue argument should own its own memory, instead was "
+                   + arg[0].getPointer(), arg[0].getPointer() instanceof Memory);
+        assertTrue("ByValue result should own its own memory, instead was "
+                   + result.getPointer(), result.getPointer() instanceof Memory);
+        assertEquals("Wrong value for callback argument", s, arg[0]);
+        assertEquals("Wrong value for callback result", s, result);
     }
     
+    public void testUnionByValueCallbackArgument() throws Exception{ 
+        TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
+        arg.setType(String.class);
+        final String VALUE = getName();
+        arg.f1 = VALUE;
+        final boolean[] called = { false };
+        final TestLibrary.TestUnion[] cbvalue = { null };
+        TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
+            public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
+                called[0] = true;
+                v.setType(String.class);
+                v.read();
+                cbvalue[0] = v;
+                return v;
+            }
+        }, arg);
+        assertTrue("Callback not called", called[0]);
+        assertTrue("ByValue argument should have its own allocated memory, instead was "
+                   + cbvalue[0].getPointer(),
+                   cbvalue[0].getPointer() instanceof Memory);
+        assertEquals("Wrong value for callback argument", VALUE, cbvalue[0].f1);
+        assertEquals("Wrong value for callback result", VALUE, result.getTypedValue(String.class));
+    }
+
     public void testCallCallbackWithCallbackArgumentAndResult() {
         TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
             public CbCallback callback(CbCallback arg) {
