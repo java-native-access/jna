@@ -121,10 +121,6 @@ public final class Native {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
-    private static final int THREAD_NOCHANGE = 0;
-    private static final int THREAD_DETACH = -1;
-    private static final int THREAD_LEAVE_ATTACHED = -2;
-
     static {
         loadNativeLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
@@ -1807,19 +1803,11 @@ public final class Native {
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
     /** Indicate the desired attachment state for the current thread.
-        This method should only be called from a callback context, and then
-        only just prior to returning to native code.  Executing Java or native
-        code after the invocation of this method may interfere with the
-        intended detach state.<p/>
-        Note: errno/SetLastError is used to signal the desired state; this is
-        a hack to make use of built-in thread-local storage to avoid having to
-        re-implement it on certain platforms.<p/>
-        Warning: avoid calling {@link #detach detach(true)} on threads
-        spawned by the JVM; the resulting behavior is not defined.<p/>
+        <p/>
+        <em>Warning</em>: avoid calling {@link #detach detach(true)} on threads
+        spawned by the JVM; the resulting behavior is not defined.
      */
-    public static void detach(boolean detach) {
-        setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);
-    }
+    public static native void detach(boolean detach);
 
     private static class Buffers {
         static boolean isBuffer(Class cls) {

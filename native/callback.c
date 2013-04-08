@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2011 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  * Copyright (c) 2007 Wayne Meissner, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
@@ -21,9 +21,13 @@
 #if defined(_WIN32)
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
+#  define TLS_SET(KEY,VALUE) TlsSetValue(KEY,VALUE)
+#  define TLS_GET(KEY) TLSGetValue(KEY)
 #else
 #  include <sys/types.h>
 #  include <sys/param.h>
+#  define TLS_SET(KEY,VALUE) (pthread_setspecific(KEY,VALUE)==0)
+#  define TLS_GET(KEY) pthread_getspecific(KEY)
 #endif
 #include "dispatch.h"
 
@@ -481,13 +485,17 @@ static void detach_thread(void* data) {
 
 #ifdef _WIN32
 
-static DWORD tls_thread_key;
+static DWORD tls_thread_key, tls_detach_key;
 static DWORD tls_errno_key;
 BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   switch (fdwReason) {
   case DLL_PROCESS_ATTACH:
     tls_thread_key = TlsAlloc();
     if (tls_thread_key == TLS_OUT_OF_INDEXES) {
+      return FALSE;
+    }
+    tls_detach_key = TlsAlloc();
+    if (tls_detach_key == TLS_OUT_OF_INDEXES) {
       return FALSE;
     }
     tls_errno_key = TlsAlloc();
@@ -497,6 +505,7 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
     break;
   case DLL_PROCESS_DETACH:
     TlsFree(tls_thread_key);
+    TlsFree(tls_detach_key);
     TlsFree(tls_errno_key);
     break;
   case DLL_THREAD_ATTACH:
@@ -515,9 +524,10 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
 
 #include <pthread.h>
 
-static pthread_key_t tls_thread_key;
+static pthread_key_t tls_thread_key, tls_detach_key;
 static void make_thread_key() {
   pthread_key_create(&tls_thread_key, detach_thread);
+  pthread_key_create(&tls_detach_key, NULL);
 }
 static pthread_key_t tls_errno_key;
 static void make_errno_key() {
@@ -526,28 +536,26 @@ static void make_errno_key() {
 
 #endif
 
+/** Store the requested detach state for the current thread. */
+void
+jnidispatch_detach(jboolean d) {
+  if (!TLS_SET(tls_detach_key, L2A((jlong)(d?THREAD_DETACH:THREAD_LEAVE_ATTACHED)))) {
+    fprintf(stderr, "JNA: unable to set thread-local detach value\n");
+  }
+}
+
 /** Store the value of errno/GetLastError in TLS */
 void
 jnidispatch_set_last_error(int err) {
-#ifdef _WIN32
-  if (!TlsSetValue(tls_errno_key, L2A((jlong)err))) {
+  if (!TLS_SET(tls_errno_key, L2A((jlong)err))) {
     fprintf(stderr, "JNA: unable to set thread-local errno value\n");
   }
-#else
-  if (pthread_setspecific(tls_errno_key, L2A(err))) {
-    fprintf(stderr, "JNA: unable to set thread-local errno value\n");
-  }
-#endif  
 }
 
 /** Store the value of errno/GetLastError in TLS */
 int
 jnidispatch_get_last_error() {
-#ifdef _WIN32
-  return (int)A2L(TlsGetValue(tls_errno_key));
-#else
-  return A2L(pthread_getspecific(tls_errno_key));
-#endif  
+  return (int)A2L(TLS_GET(tls_errno_key));
 }
 
 /** Set up to detach the thread when it exits, or clear any handlers if the
@@ -617,12 +625,9 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
-    // Kind of a hack, use last error value rather than setting up our own TLS
-    setLastError(0);
+    TLS_SET(tls_detach_key, THREAD_NOCHANGE);
     callback_invoke(env, cb, cif, resp, cbargs);
-    // Must be invoked immediately after return to avoid anything
-    // stepping on errno/GetLastError
-    switch(lastError()) {
+    switch((int)A2L(TLS_GET(tls_detach_key))) {
     case THREAD_LEAVE_ATTACHED: detach = JNI_FALSE; break;
     case THREAD_DETACH: detach = JNI_TRUE; break;
     default: break; /* use default detach behavior */
@@ -660,6 +665,7 @@ jnidispatch_callback_dispose(JNIEnv* env) {
 #ifndef _WIN32
   pthread_key_delete(tls_errno_key);
   pthread_key_delete(tls_thread_key);
+  pthread_key_delete(tls_detach_key);
 #endif
 }
 

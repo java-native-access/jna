@@ -48,8 +48,6 @@
 #define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) w32_find_entry(env, HANDLE, NAME)
-#define GET_LAST_ERROR() GetLastError()
-#define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
 #include <dlfcn.h>
 #include <errno.h>
@@ -65,8 +63,6 @@
 #define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)
-#define GET_LAST_ERROR() errno
-#define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif
 
 #ifdef _AIX
@@ -1205,15 +1201,6 @@ getBufferArray(JNIEnv* env, jobject buf,
   return ptr;
 }
 #endif /* NO_NIO_BUFFERS */
-
-/** Returns the last error code. */
-int lastError() {
-  return GET_LAST_ERROR();
-}
-/** Set the last error code. */
-void setLastError(int err) {
-  SET_LAST_ERROR(err);
-}
 
 static const void*
 get_system_property(JNIEnv* env, const char* name, jboolean wide) {
@@ -3256,6 +3243,11 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
     return 0;
   }
   return (jint)type->size;
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_detach(JNIEnv* env, jclass UNUSED(cls), jboolean d) {
+  jnidispatch_detach(d);
 }
 
 #ifdef __cplusplus

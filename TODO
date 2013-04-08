@@ -21,8 +21,7 @@
 
 # TODO
 
-* use consistent cpu references (x86->i386, x86_64->amd64)
-* osgi for osx
+# DOCS: how to properly use W32API_DEFAULT_OPTIONS (A/W, String/WString)
 
 * make native dll extraction from jar public, to use with user dlls packaged
   in a jar
@@ -35,28 +34,14 @@
   and forth multiple times).  This also makes it easer to perform conversions
   (no native changes required).  
 
-* use libffi java raw?
-
+* GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
 * direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
 * ppc64 direct/raw failures (multiple)
 * direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
   now 
 * combine direct and interface mapping calling code where possible
 * Callback.PostCallWrite.write() cf PostCallRead
-* GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
-* MethodArgument/ReturnMapper: per method mapping of arguments/return type.
-  Can use annotations as shorthand to initialize a map, but basically set up a
-  per-NativeLibrary (or per-Function?) map of methods to mappers.
-
-  Requires separate compilation of annotation handling.
-* ditch type conversion context (?)  
-* packaging: 'types', 'convert/marshal' subpackages?
-  note: marshal/unmarshal vs to/fromnative: to/fromnative is more
-  explicit, since marshal/unmarshal doesn't indicate src/dst.
-  o moving conversion contexts to subpackage cleans up top level
-  substantially, but we probably don't want to move things like Structure and
-  Pointer into a types subpackage (which would leave just a few top-level
-  classes).  Javadoc is cluttered by example classes anyway.
+* eliminate type conversion contexts; these are almost entirely unused
 
 * support annotations of parameters and return values w/o breaking
   1.4 compatibility (retroweaver?), e.g.
@@ -82,12 +67,6 @@
    Maybe make function return "Memory", which can then be converted to a
    Structure or some other type.  Then memory will free itself when no longer
    referenced. 
-* make Pointer free-able (system allocates memory, client frees it); actually,
-  this should probably be automatic so the user doesn't have to think about it.
-  Maybe a custom type representing "function-allocated-pointer" or
-  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
-  the user to manage the pointer, since they have to define the free method
-  anyway.  use could always put a finalizer on a PointerType-derived type.
 * universal GCC build w/cross-compile (needs cross compilers...)
 * return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
   Long.SIZE, Integer.SIZE, et al.
@@ -97,6 +76,28 @@
 
 
 # DONE
+* use consistent cpu references (x86->i386, x86_64->amd64)
+* osgi for osx
+* NO: make Pointer free-able (system allocates memory, client frees it); actually,
+  this should probably be automatic so the user doesn't have to think about it.
+  Maybe a custom type representing "function-allocated-pointer" or
+  "pointer-requiring-free" (which is just Memory).  For now, leave it up to
+  the user to manage the pointer, since they have to define the free method
+  anyway.  use could always put a finalizer on a PointerType-derived type.
+  - user can do this explicitly if needed
+* NO: use libffi java raw? (deprecated)
+* NO: MethodArgument/ReturnMapper: per method mapping of arguments/return type.
+  Can use annotations as shorthand to initialize a map, but basically set up a
+  per-NativeLibrary (or per-Function?) map of methods to mappers.
+
+  Requires separate compilation of annotation handling.
+* NO: packaging: 'types', 'convert/marshal' subpackages?
+  note: marshal/unmarshal vs to/fromnative: to/fromnative is more
+  explicit, since marshal/unmarshal doesn't indicate src/dst.
+  o moving conversion contexts to subpackage cleans up top level
+  substantially, but we probably don't want to move things like Structure and
+  Pointer into a types subpackage (which would leave just a few top-level
+  classes).  Javadoc is cluttered by example classes anyway.
 * cache structure information per-class
 * fix setFieldOrder to *always* apply if used
 * Make a separate jar file for all OS-specific headers

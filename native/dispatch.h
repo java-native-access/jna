@@ -30,6 +30,11 @@
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
+#define GET_LAST_ERROR() GetLastError()
+#define SET_LAST_ERROR(CODE) SetLastError(CODE)
+#else
+#define GET_LAST_ERROR() errno
+#define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif /* _WIN32 */
 
 #if !defined(UNUSED)
@@ -88,8 +93,10 @@ enum {
 /* callback behavior flags */
 enum {
   CB_HAS_INITIALIZER = com_sun_jna_Native_CB_HAS_INITIALIZER,
-  THREAD_LEAVE_ATTACHED = com_sun_jna_Native_THREAD_LEAVE_ATTACHED,
-  THREAD_DETACH = com_sun_jna_Native_THREAD_DETACH,
+  // detach options
+  THREAD_NOCHANGE,
+  THREAD_DETACH,
+  THREAD_LEAVE_ATTACHED,
 };
 
 typedef struct _callback {
@@ -171,6 +178,7 @@ extern const char* jnidispatch_callback_init(JNIEnv*);
 extern void jnidispatch_set_last_error(int);
 extern int jnidispatch_get_last_error();
 extern void jnidispatch_callback_dispose(JNIEnv*);
+extern void jnidispatch_detach(jboolean);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
                                  callconv_t, jint);
@@ -203,8 +211,6 @@ typedef struct _AttachOptions {
   char* name;
 } AttachOptions;
 extern jobject initializeThread(callback*,AttachOptions*);
-extern int lastError();
-extern void setLastError(int err);
 
 #ifdef NO_WEAK_GLOBALS
 #define NewWeakGlobalRef NewGlobalRef
