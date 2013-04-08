@@ -9,7 +9,7 @@ Features
 
 Bug Fixes
 ---------
-
+* Use TLS to indicate callback detach state, to avoid any potential conflicts with last error storage - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============
