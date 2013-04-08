@@ -73,6 +73,8 @@
 #endif
 
 #include <stdlib.h>
+// Force XSI-compliant strerror_r (http://unixhelp.ed.ac.uk/CGI/man-cgi?strerror)
+#define _XOPEN_SOURCE 600
 #include <string.h>
 #include <wchar.h>
 #include <jni.h>

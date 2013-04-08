@@ -87,6 +87,7 @@ public class LastErrorTest extends TestCase {
         }
         catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
+            assertTrue("Exception should include error message: " + e.getMessage(), e.getMessage().length() > 10);
         }
     }
 
@@ -102,6 +103,7 @@ public class LastErrorTest extends TestCase {
         }
         catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
+            assertTrue("Exception should include error message: " + e.getMessage(), e.getMessage().length() > 10);
         }
     }
 
