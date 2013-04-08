@@ -304,6 +304,10 @@ public class WebStartTest extends TestCase {
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
         File deployment;
+        String vendor = System.getProperty("java.vm.vendor");
+        if (vendor.indexOf(" ") != -1) {
+            vendor = vendor.substring(0, vendor.indexOf(" "));
+        }
         if (Platform.isWindows()) {
             FolderInfo info = (FolderInfo)
                 Native.loadLibrary("shell32", FolderInfo.class);
@@ -313,10 +317,6 @@ public class WebStartTest extends TestCase {
             path = Native.toString(buf);
 
             // NOTE: works for Sun(Oracle) and IBM, may not work for others
-            String vendor = System.getProperty("java.vm.vendor");
-            if (vendor.indexOf(" ") != -1) {
-                vendor = vendor.substring(0, vendor.indexOf(" "));
-            }
             if ("Oracle".equals(vendor)) {
                 vendor = "Sun";
             }
@@ -327,10 +327,15 @@ public class WebStartTest extends TestCase {
                 // TODO: Use SHGetKnownFolderPath to look it up
                 deployment = new File(deployment.getAbsolutePath().replace("Local", "LocalLow").replace("Roaming", "LocalLow"));
             }
-
         }
         else if (Platform.isMac()) {
-            deployment = new File(path + "/Library/Caches/Java");
+            if ("Oracle".equals(vendor)) {
+                deployment = new File(path + "/Library/Application Support/Oracle/Java/Deployment");
+            }
+            else {
+                // Older Apple path
+                deployment = new File(path + "/Library/Caches/Java");
+            }
         }
         else {
             deployment = new File(path + "/.java/deployment");
