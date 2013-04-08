@@ -9,7 +9,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [PR#213](https://github.com/twall/jna/pull/213): Fix `Structure.toString()` not to dump memory when `jna.dump_memory` is false. - [@tomohiron](https://github.com/tomohiron).
 
 Release 3.5.2
 =============
