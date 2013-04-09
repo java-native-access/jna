@@ -485,13 +485,13 @@ static void detach_thread(void* data) {
 
 #ifdef _WIN32
 
-static DWORD tls_thread_key, tls_detach_key;
-static DWORD tls_errno_key;
+static DWORD tls_thread_cleanup_key;
+static DWORD tls_errno_key, tls_detach_key;
 BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   switch (fdwReason) {
   case DLL_PROCESS_ATTACH:
-    tls_thread_key = TlsAlloc();
-    if (tls_thread_key == TLS_OUT_OF_INDEXES) {
+    tls_thread_cleanup_key = TlsAlloc();
+    if (tls_thread_cleanup_key == TLS_OUT_OF_INDEXES) {
       return FALSE;
     }
     tls_detach_key = TlsAlloc();
@@ -504,14 +504,14 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
     }
     break;
   case DLL_PROCESS_DETACH:
-    TlsFree(tls_thread_key);
+    TlsFree(tls_thread_cleanup_key);
     TlsFree(tls_detach_key);
     TlsFree(tls_errno_key);
     break;
   case DLL_THREAD_ATTACH:
     break;
   case DLL_THREAD_DETACH: {
-    detach_thread(TlsGetValue(tls_thread_key));
+    detach_thread(TlsGetValue(tls_thread_cleanup_key));
     break;
   }
   default:
@@ -524,14 +524,14 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
 
 #include <pthread.h>
 
-static pthread_key_t tls_thread_key, tls_detach_key;
-static void make_thread_key() {
-  pthread_key_create(&tls_thread_key, detach_thread);
-  pthread_key_create(&tls_detach_key, NULL);
+static pthread_key_t tls_thread_cleanup_key, tls_detach_key;
+static void make_thread_cleanup_key() {
+  pthread_key_create(&tls_thread_cleanup_key, detach_thread);
 }
 static pthread_key_t tls_errno_key;
-static void make_errno_key() {
+static void make_thread_keys() {
   pthread_key_create(&tls_errno_key, NULL);
+  pthread_key_create(&tls_detach_key, NULL);
 }
 
 #endif
@@ -564,14 +564,14 @@ jnidispatch_get_last_error() {
 static void 
 jvm_detach_on_exit(JavaVM* jvm) {
 #ifdef _WIN32
-  if (!TlsSetValue(tls_thread_key, (void *)jvm)) {
+  if (!TlsSetValue(tls_thread_cleanup_key, (void *)jvm)) {
     fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
   }
 #else
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-  pthread_once(&key_once, make_thread_key);
-  if (!jvm || pthread_getspecific(tls_thread_key) == NULL) {
-    if (pthread_setspecific(tls_thread_key, jvm)) {
+  pthread_once(&key_once, make_thread_cleanup_key);
+  if (!jvm || pthread_getspecific(tls_thread_cleanup_key) == NULL) {
+    if (pthread_setspecific(tls_thread_cleanup_key, jvm)) {
       fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
     }
   }
@@ -648,7 +648,7 @@ const char*
 jnidispatch_callback_init(JNIEnv* env) {
 #ifndef _WIN32
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-  pthread_once(&key_once, make_errno_key);
+  pthread_once(&key_once, make_thread_keys);
 #endif
 
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
@@ -664,7 +664,7 @@ jnidispatch_callback_dispose(JNIEnv* env) {
   }
 #ifndef _WIN32
   pthread_key_delete(tls_errno_key);
-  pthread_key_delete(tls_thread_key);
+  pthread_key_delete(tls_thread_cleanup_key);
   pthread_key_delete(tls_detach_key);
 #endif
 }
