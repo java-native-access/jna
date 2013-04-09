@@ -350,7 +350,9 @@ $(DLLCB): dll-callback.c
 $(RSRC): $(BUILD)/jnidispatch.rc $(BUILD)/$(JNA_JNI_VERSION).stamp
 	$(WINDRES) -i $< -o $@ \
           || (echo > $@.c && $(CC) $(CFLAGS) -c $@.c $(COUT))
-	@touch $(BUILD)/$(JNA_JNI_VERSION).stamp
+
+$(BUILD)/$(JNA_JNI_VERSION).stamp:
+	@touch $@
 
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)
