@@ -12,12 +12,17 @@ JNA contains work from many developers. You're encouraged to contribute to both 
 
 Build Environment
 =================
-Most non-windows environments should work out of the box if you have make, gcc, autotools (for libffi), ant, a JDK, and a few other typical command-line utilities available.  Feel free to report any issues, we'll generally pull build fixes immediately.
+Most non-windows environments should work out of the box if you have make,
+gcc, autotools (for libffi), ant (1.8+), a JDK (1.4+), and a few other typical
+command-line utilities available.  Feel free to report any issues, we'll
+generally pull build fixes immediately. 
 
 For Windows, see [Windows Development Environment](WindowsDevelopmentEnvironment.md).
 
 For windows CE/Mobile 6.x, you'll need cegcc (http://gitorious.org/cegcc) for
 cross-compiling and a JavaME implementation (phoneME (http://davy.preuveneers.be/phoneme) works well).
+
+Native builds may be skipped by passing `-Dskip-native=true` to `ant`.
 
 Required Testing
 ================
