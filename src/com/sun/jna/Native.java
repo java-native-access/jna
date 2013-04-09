@@ -85,10 +85,7 @@ import com.sun.jna.Structure.FFIType;
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
-public final class Native {
-
-    private static final String VERSION = "3.6.0-SNAPSHOT";
-    private static final String VERSION_NATIVE = "3.6.0";
+public final class Native implements Version {
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;

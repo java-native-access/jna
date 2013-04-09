@@ -347,9 +347,10 @@ install:
 $(DLLCB): dll-callback.c 
 	$(MINGW) -DDEFINE_CALLBACKS -c $< $(COUT)
 
-$(RSRC): $(BUILD)/jnidispatch.rc
+$(RSRC): $(BUILD)/jnidispatch.rc $(BUILD)/$(JNA_JNI_VERSION).stamp
 	$(WINDRES) -i $< -o $@ \
           || (echo > $@.c && $(CC) $(CFLAGS) -c $@.c $(COUT))
+	@touch $(BUILD)/$(JNA_JNI_VERSION).stamp
 
 $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 	$(LD) $(LDFLAGS) $(JNIDISPATCH_OBJS) $(FFI_LIB) $(LIBS)

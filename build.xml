@@ -137,10 +137,10 @@
 
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
-                   file="src/com/sun/jna/Native.java"/>
+                   file="src/com/sun/jna/Version.java"/>
     <replaceregexp match='VERSION_NATIVE = ".*";'
                    replace='VERSION_NATIVE = "${jni.version}";'
-                   file="src/com/sun/jna/Native.java"/>
+                   file="src/com/sun/jna/Version.java"/>
 
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
@@ -556,18 +556,23 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy todir="${build.native}" file="${native}/jnidispatch.rc"/>
     <replaceregexp match="FILEVERSION.*"
                    replace="FILEVERSION ${jni.major},${jni.minor},${jni.revision},${jni.build}"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="PRODUCTVERSION.*"
                    replace="PRODUCTVERSION ${jna.major},${jna.minor},${jna.revision},${jna.build}"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="FileVersion.*"
                    replace="FileVersion&quot;,&quot;${jni.version}&quot;"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="Full Version.*"
                    replace="Full Version&quot;,&quot;${jni.version} b${jni.build}&quot;"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="ProductVersion.*"
                    replace="ProductVersion&quot;,&quot;${spec.version}&quot;"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
   </target>
 
@@ -978,6 +983,13 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   </target>
 
   <target name="clean" depends="-dynamic-properties">
+    <exec executable="git" failonerror="false">
+      <arg value="checkout"/>
+      <arg value="--"/>
+      <arg value="src/com/sun/jna/Version.java"/>
+      <arg value="${pom}"/>
+      <arg value="${pom-platform}"/>
+    </exec>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build}"/>
     </delete>
