@@ -72,6 +72,7 @@ import com.sun.jna.Structure.FFIType;
  * To avoid the automatic unpacking (in situations where you want to force a
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
+ * <p/>
  * NOTE: all native functions are provided within this class to ensure that
  * all other JNA-provided classes and objects are GC'd and/or
  * finalized/disposed before this class is disposed and/or removed from
@@ -326,6 +327,8 @@ public final class Native implements Version {
 
     /** Map a library interface to the current process, providing
      * the explicit interface class.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the current
      * process. 
@@ -338,6 +341,8 @@ public final class Native implements Version {
 
     /** Map a library interface to the current process, providing
      * the explicit interface class.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the current
@@ -352,6 +357,8 @@ public final class Native implements Version {
     /** Map a library interface to the given shared library, providing
      * the explicit interface class.
      * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param name
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the indicated
@@ -662,7 +669,15 @@ public final class Native implements Version {
      * jar file.
      */
     private static void loadNativeLibrary() {
-        removeTemporaryFiles();
+
+        if (!Boolean.getBoolean("jna.nounpack")) {
+            try {
+                removeTemporaryFiles();
+            }
+            catch(IOException e) {
+                System.err.println("JNA Warning: IOException removing temporary files: " + e.getMessage());
+            }
+        }
 
         String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
@@ -706,10 +721,6 @@ public final class Native implements Version {
                 }
             }
         }
-        if (Platform.isAndroid()) {
-            // Native libraries on android must be bundled with the APK
-            System.setProperty("jna.nounpack", "true");
-        }
         try {
             if (!Boolean.getBoolean("jna.nosys")) {
                 System.loadLibrary(libName);
@@ -717,15 +728,9 @@ public final class Native implements Version {
             }
         }
         catch(UnsatisfiedLinkError e) {
-            if (Boolean.getBoolean("jna.nounpack")) {
-                throw e;
-            }
+            System.err.println("File found on system path, but not loadable: " + e.getMessage());
         }
-        if (!Boolean.getBoolean("jna.nounpack")) {
-            loadNativeLibraryFromJar();
-            return;
-        }
-        throw new UnsatisfiedLinkError("Native jnidispatch library not found");
+        loadNativeLibraryFromClasspath();
     }
 
     static final String JNA_TMPLIB_PREFIX = "jna";
@@ -733,7 +738,7 @@ public final class Native implements Version {
      * Attempts to load the native library resource from the filesystem,
      * extracting the JNA stub library from jna.jar if not already available.
      */
-    private static void loadNativeLibraryFromJar() {
+    private static void loadNativeLibraryFromClasspath() {
         try {
             String prefix = "com/sun/jna/" + getNativeLibraryResourcePrefix();
             File lib = extractFromResourcePath("jnidispatch", prefix, Native.class.getClassLoader());
@@ -812,7 +817,7 @@ public final class Native implements Version {
                 throw new IOException("File URL " + url + " could not be properly decoded");
             }
         }
-        else {
+        else if (!Boolean.getBoolean("jna.nounpack")) {
             InputStream is = loader.getResourceAsStream(resourcePath);
             if (is == null) {
                 throw new IOException("Can't obtain InputStream for " + resourcePath);
@@ -963,11 +968,12 @@ public final class Native implements Version {
     /** Obtain a directory suitable for writing JNA-specific temporary files.
         Override with <code>jna.tmpdir</code>
     */
-    static File getTempDir() {
+    static File getTempDir() throws IOException {
         File jnatmp;
         String prop = System.getProperty("jna.tmpdir");
         if (prop != null) {
             jnatmp = new File(prop);
+            jnatmp.mkdirs();
         }
         else {
             File tmp = new File(System.getProperty("java.io.tmpdir"));
@@ -978,16 +984,16 @@ public final class Native implements Version {
             }
         }
         if (!jnatmp.exists()) {
-            throw new Error("JNA temporary directory " + jnatmp + " does not exist");
+            throw new IOException("JNA temporary directory '" + jnatmp + "' does not exist");
         }
         if (!jnatmp.canWrite()) {
-            throw new Error("JNA temporary directory " + jnatmp + " is not writable");
+            throw new IOException("JNA temporary directory '" + jnatmp + "' is not writable");
         }
         return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
-    static void removeTemporaryFiles() {
+    static void removeTemporaryFiles() throws IOException {
         File dir = getTempDir();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {

@@ -56,7 +56,7 @@ import java.util.StringTokenizer;
  * is the OS/Arch prefix returned by {@link
  * Native#getNativeLibraryResourcePrefix()}.  If bundled in a jar file, the
  * resource will be extracted to <code>jna.tmpdir</code> for loading, and
- * later removed.
+ * later removed (but only if <code>jna.nounpack</code> is false or not set).
  * </ol>
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall

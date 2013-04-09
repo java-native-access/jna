@@ -50,6 +50,8 @@ public final class Platform {
         if (osName.startsWith("Linux")) {
             if ("dalvik".equals(System.getProperty("java.vm.name").toLowerCase())) {
                 osType = ANDROID;
+                // Native libraries on android must be bundled with the APK
+                System.setProperty("jna.nounpack", "true");
             }
             else {
                 osType = LINUX;
