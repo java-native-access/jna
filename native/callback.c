@@ -22,7 +22,7 @@
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #  define TLS_SET(KEY,VALUE) TlsSetValue(KEY,VALUE)
-#  define TLS_GET(KEY) TLSGetValue(KEY)
+#  define TLS_GET(KEY) TlsGetValue(KEY)
 #else
 #  include <sys/types.h>
 #  include <sys/param.h>
@@ -625,7 +625,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
-    TLS_SET(tls_detach_key, THREAD_NOCHANGE);
+    TLS_SET(tls_detach_key, L2A((jlong)THREAD_NOCHANGE));
     callback_invoke(env, cb, cif, resp, cbargs);
     switch((int)A2L(TLS_GET(tls_detach_key))) {
     case THREAD_LEAVE_ATTACHED: detach = JNI_FALSE; break;
