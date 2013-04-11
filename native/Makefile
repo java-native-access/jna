@@ -316,7 +316,7 @@ LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -current_version $(JNA_JNI_VERSION) \
   -mmacosx-version-min=10.3 \
   -framework Foundation \
-  -Wl,-no_compact_unwind \
+  -Wl \
   -install_name ${@F} \
   $(SYSLIBROOT)
 # JAWT linkage handled by -framework JavaVM
