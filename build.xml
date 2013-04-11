@@ -984,7 +984,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 
   <target name="clean" depends="-dynamic-properties">
     <!-- ensure version-stamped files don't interfere with checkouts -->
-    <exec executable="git" failonerror="false" failifexecutionfails="false">
+    <exec executable="git" failonerror="false" searchpath="true">
       <arg value="checkout"/>
       <arg value="--"/>
       <arg value="src/com/sun/jna/Version.java"/>
