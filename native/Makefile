@@ -293,9 +293,14 @@ ifneq ($(ARCH),x86_64)
 ALT_ARCHS+=x86_64
 endif
 ifneq ($(ARCH),ppc)
-# not supported on XCode 4+
 ifeq ($(XCODE_VERSION),3)
+# Xcode 3 options
+# not supported on XCode 4+
 ALT_ARCHS+=ppc
+else
+# Xcode 4+ options
+NO_COMPACT_UNWIND=-Wl,-no_compact_unwind
+endif
 endif
 endif
 LIBSFX=.dylib
@@ -316,7 +321,7 @@ LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -current_version $(JNA_JNI_VERSION) \
   -mmacosx-version-min=10.3 \
   -framework Foundation \
-  -Wl \
+  $(NO_COMPACT_UNWIND) \
   -install_name ${@F} \
   $(SYSLIBROOT)
 # JAWT linkage handled by -framework JavaVM
