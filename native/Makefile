@@ -302,7 +302,6 @@ else
 NO_COMPACT_UNWIND=-Wl,-no_compact_unwind
 endif
 endif
-endif
 LIBSFX=.dylib
 JNISFX=.jnilib
 ifneq ($(SDKROOT),)
