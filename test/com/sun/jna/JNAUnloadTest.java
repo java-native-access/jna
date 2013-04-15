@@ -21,19 +21,28 @@ import java.net.URLClassLoader;
 
 import junit.framework.TestCase;
 
+/** Test loading and unloading native support from various locations.  Note
+ * that no JNI classes are directly referenced in these tests.
+ */
 public class JNAUnloadTest extends TestCase {
     
     private static final String BUILDDIR =
         System.getProperty("jna.builddir", "build"
                            + (Platform.is64Bit() ? "-d64" : ""));
 
-    private static class TestLoader extends URLClassLoader {
+    private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
                     Platform.isWindowsCE() 
                     ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
                     : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
             }, null);
+            if (fromJar) {
+                assertJarExists();
+            }
+            else {
+                assertLibraryExists();
+            }
         }
         protected Class findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
@@ -48,15 +57,26 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    public void testLoadFromJar() throws Exception {
-        Class.forName("com.sun.jna.Native", true, new TestLoader(true));
+    protected void assertJarExists() {
+        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
+        if (!jar.exists()) {
+            throw new Error("Expected JNA jar file at " + jar + " is missing");
+        }
+    }
+    
+    protected void assertLibraryExists() {
+        String osPrefix = Platform.getNativeLibraryResourcePrefix();
+        String name = System.mapLibraryName("jnidispatch");
+        File lib = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR + "/classes") + "/com/sun/jna/" + osPrefix + "/" + name);
+        if (!lib.exists()) {
+            throw new Error("Expected JNA library at " + lib + " is missing");
+        }
     }
 
     public void testAvoidJarUnpacking() throws Exception {
         System.setProperty("jna.nounpack", "true");
-        ClassLoader loader = new TestLoader(true);
         try {
-            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(true));
 
             fail("Class com.sun.jna.Native should not be loadable if jna.nounpack=true: "
                  + cls.getClassLoader());
@@ -68,13 +88,23 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails under clover
-    public void testUnloadFromJar() throws Exception {
-        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
-        if (!jar.exists()) {
-            throw new Error("Expected JNA jar file at " + jar + " is missing");
-        }
+    public void testAvoidResourcePathLoading() throws Exception {
+        System.setProperty("jna.noclasspath", "true");
+        try {
+            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(false));
 
+            fail("Class com.sun.jna.Native should not be loadable if jna.noclasspath=true: "
+                 + cls.getClassLoader());
+        }
+        catch(UnsatisfiedLinkError e) {
+        }
+        finally {
+            System.setProperty("jna.noclasspath", "false");
+        }
+    }
+
+    // Fails under clover
+    public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
@@ -128,7 +158,7 @@ public class JNAUnloadTest extends TestCase {
     }
 
     // Fails under clover and OpenJDK(linux/ppc)
-    public void testUnload() throws Exception {
+    public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());

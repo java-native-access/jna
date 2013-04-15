@@ -120,7 +120,7 @@ public final class Native implements Version {
     private static final int TYPE_SIZE_T = 3;
 
     static {
-        loadNativeLibrary();
+        loadNativeDispatchLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
@@ -615,52 +615,7 @@ public final class Native implements Version {
         @param name from <code>os.name</code> System property
     */
     public static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
-        String osPrefix;
-        arch = arch.toLowerCase();
-        if ("powerpc".equals(arch)) {
-            arch = "ppc";
-        }
-        else if ("powerpc64".equals(arch)) {
-            arch = "ppc64";
-        }
-        else if ("i386".equals(arch)) {
-            arch = "x86";
-        }
-        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
-            arch = "x86-64";
-        }
-        switch(osType) {
-        case Platform.ANDROID:
-            if (arch.startsWith("arm")) {
-                arch = "arm";
-            }
-            osPrefix = "android-" + arch;
-            break;
-        case Platform.WINDOWS:
-            osPrefix = "win32-" + arch;
-            break;
-        case Platform.WINDOWSCE:
-            osPrefix = "w32ce-" + arch;
-            break;
-        case Platform.MAC:
-            osPrefix = "darwin";
-            break;
-        case Platform.LINUX:
-            osPrefix = "linux-" + arch;
-            break;
-        case Platform.SOLARIS:
-            osPrefix = "sunos-" + arch;
-            break;
-        default:
-            osPrefix = name.toLowerCase();
-            int space = osPrefix.indexOf(" ");
-            if (space != -1) {
-                osPrefix = osPrefix.substring(0, space);
-            }
-            osPrefix += "-" + arch;
-            break;
-        }
-        return osPrefix;
+        return Platform.getNativeLibraryResourcePrefix(osType, arch, name);
     }
 
     /**
@@ -668,7 +623,7 @@ public final class Native implements Version {
      * First tries jna.boot.library.path, then the system path, then from the
      * jar file.
      */
-    private static void loadNativeLibrary() {
+    private static void loadNativeDispatchLibrary() {
 
         if (!Boolean.getBoolean("jna.nounpack")) {
             try {
@@ -721,16 +676,20 @@ public final class Native implements Version {
                 }
             }
         }
-        try {
-            if (!Boolean.getBoolean("jna.nosys")) {
+        if (!Boolean.getBoolean("jna.nosys")) {
+            try {
                 System.loadLibrary(libName);
                 return;
             }
+            catch(UnsatisfiedLinkError e) {
+            }
         }
-        catch(UnsatisfiedLinkError e) {
-            System.err.println("File found on system path, but not loadable: " + e.getMessage());
+        if (!Boolean.getBoolean("jna.noclasspath")) {
+            loadNativeDispatchLibraryFromClasspath();
         }
-        loadNativeLibraryFromClasspath();
+        else {
+            throw new UnsatisfiedLinkError("Unable to locate JNA native support library");
+        }
     }
 
     static final String JNA_TMPLIB_PREFIX = "jna";
@@ -738,10 +697,13 @@ public final class Native implements Version {
      * Attempts to load the native library resource from the filesystem,
      * extracting the JNA stub library from jna.jar if not already available.
      */
-    private static void loadNativeLibraryFromClasspath() {
+    private static void loadNativeDispatchLibraryFromClasspath() {
         try {
             String prefix = "com/sun/jna/" + getNativeLibraryResourcePrefix();
             File lib = extractFromResourcePath("jnidispatch", prefix, Native.class.getClassLoader());
+            if (lib == null) {
+                throw new UnsatisfiedLinkError("Could not find JNA native support");
+            }
             System.load(lib.getAbsolutePath());
             nativeLibraryPath = lib.getAbsolutePath();
             // Attempt to delete immediately once jnidispatch is successfully

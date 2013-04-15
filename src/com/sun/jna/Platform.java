@@ -103,7 +103,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
-        RESOURCE_PREFIX = Native.getNativeLibraryResourcePrefix();
+        RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }
     public static final int getOSType() {
@@ -198,5 +198,67 @@ public final class Platform {
         String arch =
             System.getProperty("os.arch").toLowerCase().trim();
         return arch.startsWith("arm");
+    }
+
+    /** Generate a canonical String prefix based on the current OS 
+        type/arch/name.
+    */
+    static String getNativeLibraryResourcePrefix() {
+        return getNativeLibraryResourcePrefix(getOSType(), System.getProperty("os.arch"), System.getProperty("os.name"));
+    }
+
+    /** Generate a canonical String prefix based on the given OS
+        type/arch/name.
+        @param osType from {@link #getOSType()}
+        @param arch from <code>os.arch</code> System property
+        @param name from <code>os.name</code> System property
+    */
+    static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
+        String osPrefix;
+        arch = arch.toLowerCase();
+        if ("powerpc".equals(arch)) {
+            arch = "ppc";
+        }
+        else if ("powerpc64".equals(arch)) {
+            arch = "ppc64";
+        }
+        else if ("i386".equals(arch)) {
+            arch = "x86";
+        }
+        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
+            arch = "x86-64";
+        }
+        switch(osType) {
+        case Platform.ANDROID:
+            if (arch.startsWith("arm")) {
+                arch = "arm";
+            }
+            osPrefix = "android-" + arch;
+            break;
+        case Platform.WINDOWS:
+            osPrefix = "win32-" + arch;
+            break;
+        case Platform.WINDOWSCE:
+            osPrefix = "w32ce-" + arch;
+            break;
+        case Platform.MAC:
+            osPrefix = "darwin";
+            break;
+        case Platform.LINUX:
+            osPrefix = "linux-" + arch;
+            break;
+        case Platform.SOLARIS:
+            osPrefix = "sunos-" + arch;
+            break;
+        default:
+            osPrefix = name.toLowerCase();
+            int space = osPrefix.indexOf(" ");
+            if (space != -1) {
+                osPrefix = osPrefix.substring(0, space);
+            }
+            osPrefix += "-" + arch;
+            break;
+        }
+        return osPrefix;
     }
 }
