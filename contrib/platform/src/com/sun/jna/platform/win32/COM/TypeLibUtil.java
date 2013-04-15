@@ -37,7 +37,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author wolf.tobias@gmx.net The Class ITypeLibUtil.
  */
-public class ITypeLibUtil {
+public class TypeLibUtil {
 
 	/** The Constant OLEAUTO. */
 	public final static OleAuto OLEAUTO = OleAuto.INSTANCE;
@@ -70,7 +70,7 @@ public class ITypeLibUtil {
 	 * @param wVerMinor
 	 *            the w ver minor
 	 */
-	public ITypeLibUtil(String clsidStr, int wVerMajor, int wVerMinor) {
+	public TypeLibUtil(String clsidStr, int wVerMajor, int wVerMinor) {
 		CLSID.ByReference clsid = new CLSID.ByReference();
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(clsidStr),
@@ -84,7 +84,7 @@ public class ITypeLibUtil {
 		COMUtils.checkTypeLibRC(hr);
 
 		// init type lib class
-		typelib = new ITypeLib(pTypeLib.getValue());
+		this.typelib = new TypeLib(pTypeLib.getValue());
 
 		this.initTypeLibInfo();
 	}
@@ -131,10 +131,10 @@ public class ITypeLibUtil {
 	 * @return the type info
 	 */
 	public ITypeInfo getTypeInfo(int index) {
-		ITypeInfo.ByReference typeinfo = new ITypeInfo.ByReference();
-		HRESULT hr = this.typelib.GetTypeInfo(new UINT(index), typeinfo);
+		PointerByReference ppTInfo = new PointerByReference();
+		HRESULT hr = this.typelib.GetTypeInfo(new UINT(index), ppTInfo);
 		COMUtils.checkTypeLibRC(hr);
-		return typeinfo;
+		return new TypeInfo(ppTInfo.getValue());
 	}
 
 	/**
@@ -144,8 +144,8 @@ public class ITypeLibUtil {
 	 *            the index
 	 * @return the type info util
 	 */
-	public ITypeInfoUtil getTypeInfoUtil(int index) {
-		return new ITypeInfoUtil(this.getTypeInfo(index));
+	public TypeInfoUtil getTypeInfoUtil(int index) {
+		return new TypeInfoUtil(this.getTypeInfo(index));
 	}
 
 	/**
@@ -154,11 +154,11 @@ public class ITypeLibUtil {
 	 * @return the lib attr
 	 */
 	public TLIBATTR getLibAttr() {
-		TLIBATTR.ByReference ppTLibAttr = new TLIBATTR.ByReference();
+		PointerByReference ppTLibAttr = new PointerByReference();
 		HRESULT hr = typelib.GetLibAttr(ppTLibAttr);
 		COMUtils.checkTypeLibRC(hr);
 
-		return ppTLibAttr;
+		return new TLIBATTR(ppTLibAttr.getValue());
 	}
 
 	/**
@@ -166,12 +166,12 @@ public class ITypeLibUtil {
 	 * 
 	 * @return the i type comp. by reference
 	 */
-	public ITypeComp.ByReference GetTypeComp() {
-		ITypeComp.ByReference pTComp = new ITypeComp.ByReference();
-		HRESULT hr = this.typelib.GetTypeComp(pTComp);
+	public TypeComp GetTypeComp() {
+		PointerByReference ppTComp = new PointerByReference();
+		HRESULT hr = this.typelib.GetTypeComp(ppTComp);
 		COMUtils.checkTypeLibRC(hr);
 
-		return pTComp;
+		return new TypeComp(ppTComp.getValue());
 	}
 
 	/**

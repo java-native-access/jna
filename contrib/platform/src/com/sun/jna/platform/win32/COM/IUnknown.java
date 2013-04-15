@@ -12,9 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -29,84 +26,18 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class IUnknown extends PointerType {
-
-	/**
-	 * The Class ByReference.
-	 * 
-	 * @author wolf.tobias@gmx.net The Class ByReference.
-	 */
-	public static class ByReference extends IUnknown implements
-			Structure.ByReference {
-	}
+public interface IUnknown {
 
 	/** The Constant IID_IDispatch. */
-	public final static IID IID_IDispatch = new IID(
+	public final static IID IID_UNKNOWN = new IID(
 			"{00000000-0000-0000-C000-000000000046}");
 
-	/**
-	 * Instantiates a new i unknown.
-	 */
-	public IUnknown() {
-	}
+	@VTABLE_ID(0)
+	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject);
 
-	/**
-	 * Instantiates a new i unknown.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public IUnknown(Pointer pvInstance) {
-		this.setPointer(pvInstance);
-	}
+	@VTABLE_ID(1)
+	public int AddRef();
 
-	/**
-	 * Query interface.
-	 * 
-	 * @param riid
-	 *            the riid
-	 * @param ppvObject
-	 *            the ppv object
-	 * @return the hresult
-	 */
-	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		int hr = this._invokeInt(0, new Object[] { this.getPointer(), riid,
-				ppvObject });
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Adds the ref.
-	 * 
-	 * @return the ulong
-	 */
-	public int AddRef() {
-		return this._invokeInt(1, new Object[] { this.getPointer() });
-	}
-
-	/**
-	 * Release.
-	 * 
-	 * @return the ulong
-	 */
-	public int Release() {
-		return this._invokeInt(2, new Object[] { this.getPointer() });
-	}
-
-	/**
-	 * Invoke method as a base for all com related calls.
-	 * 
-	 * @param vtableId
-	 *            the vtable id
-	 * @param args
-	 *            the args
-	 * @return the int
-	 */
-	protected int _invokeInt(int vtableId, Object[] args) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		// we take the vtable id and multiply with the pointer size (4 bytes on 32bit OS)
-		Function func = Function.getFunction(vptr.getPointer(vtableId
-				* Pointer.SIZE));
-		return func.invokeInt(args);
-	}
+	@VTABLE_ID(2)
+	public int Release();
 }

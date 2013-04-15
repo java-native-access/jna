@@ -35,9 +35,10 @@ import com.sun.jna.platform.win32.WinDef.ULONGLONGbyReference;
 import com.sun.jna.platform.win32.WinDef.ULONGbyReference;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
+import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IRecordInfo;
-import com.sun.jna.platform.win32.COM.IUnknown;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.FloatByReference;
@@ -539,9 +540,9 @@ public interface Variant {
 				// BSTR VT_BSTR
 				public BSTR bstrVal;
 				// IUnknown * VT_UNKNOWN
-				public IUnknown punkVal;
+				public Unknown punkVal;
 				// IDispatch * VT_DISPATCH
-				public IDispatch pdispVal;
+				public Dispatch pdispVal;
 				// SAFEARRAY * VT_ARRAY
 				public SAFEARRAY.ByReference parray;
 				// BYTE * VT_BYREF|VT_UI1
@@ -569,9 +570,9 @@ public interface Variant {
 				// BSTR * VT_BYREF|VT_BSTR
 				public BSTR pbstrVal;
 				// IUnknown ** VT_BYREF|VT_UNKNOWN
-				public IUnknown.ByReference ppunkVal;
+				public Unknown.ByReference ppunkVal;
 				// IDispatch ** VT_BYREF|VT_DISPATCH
-				public IDispatch.ByReference ppdispVal;
+				public Dispatch.ByReference ppdispVal;
 				// SAFEARRAY ** VT_BYREF|VT_ARRAY
 				public SAFEARRAY.ByReference pparray;
 				// VARIANT * VT_BYREF|VT_VARIANT

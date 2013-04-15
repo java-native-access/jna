@@ -15,7 +15,7 @@ import com.sun.jna.platform.win32.COM.*;
 * helpstring(${helpstring})
 *
 */
-public interface ${classname} extends IUnknown {	
+public interface ${classname} extends IDispatch {	
 
 ${content}
 }

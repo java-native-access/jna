@@ -36,8 +36,8 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import com.sun.jna.platform.win32.COM.IUnknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 
@@ -61,8 +61,8 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 	 * @param typeInfoUtil
 	 *            the type info util
 	 */
-	public TlbAbstractMethod(int index, ITypeLibUtil typeLibUtil,
-			FUNCDESC funcDesc, ITypeInfoUtil typeInfoUtil) {
+	public TlbAbstractMethod(int index, TypeLibUtil typeLibUtil,
+			FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
 		super(index, typeLibUtil);
 	}
 

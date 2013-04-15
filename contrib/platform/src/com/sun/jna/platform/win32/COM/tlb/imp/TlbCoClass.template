@@ -1,0 +1,19 @@
+package ${packagename};
+
+import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.COM.COMObject;
+
+/**
+* uuid(${uuid})
+* version(${version})
+* helpstring(${helpstring})
+*
+*/
+public class ${classname} extends COMObject {	
+
+	public ${classname}() {
+		super(new CLSID("${clsid}"), false);
+	}
+
+${content}
+}

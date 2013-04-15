@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32.COM;
 
 import java.util.Date;
 
+import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -36,6 +37,10 @@ public class COMObject extends COMBaseObject {
 	 */
 	public COMObject(IDispatch iDispatch) {
 		super(iDispatch);
+	}
+
+	public COMObject(CLSID clsid, boolean useActiveInstance) {
+		super(clsid, useActiveInstance);
 	}
 
 	/**

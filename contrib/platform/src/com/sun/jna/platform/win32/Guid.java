@@ -22,13 +22,13 @@ import com.sun.jna.Structure;
 // TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
- *
+ * 
  * @author dblock[at]dblock.org
  */
 public interface Guid {
-	
+
 	public final static IID IID_NULL = new IID();
-	
+
 	/**
 	 * The Class GUID.
 	 */
@@ -48,7 +48,7 @@ public interface Guid {
 
 			/**
 			 * Instantiates a new by reference.
-			 *
+			 * 
 			 * @param guid
 			 *            the guid
 			 */
@@ -63,7 +63,7 @@ public interface Guid {
 
 			/**
 			 * Instantiates a new by reference.
-			 *
+			 * 
 			 * @param memory
 			 *            the memory
 			 */
@@ -92,7 +92,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 *
+		 * 
 		 * @param guid
 		 *            the guid
 		 */
@@ -107,7 +107,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 *
+		 * 
 		 * @param guid
 		 *            the guid
 		 */
@@ -117,7 +117,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 *
+		 * 
 		 * @param data
 		 *            the data
 		 */
@@ -127,7 +127,7 @@ public interface Guid {
 
 		/**
 		 * Instantiates a new guid.
-		 *
+		 * 
 		 * @param memory
 		 *            the memory
 		 */
@@ -138,7 +138,7 @@ public interface Guid {
 
 		/**
 		 * From binary.
-		 *
+		 * 
 		 * @param data
 		 *            the data
 		 * @return the guid
@@ -185,7 +185,7 @@ public interface Guid {
 
 		/**
 		 * From string.
-		 *
+		 * 
 		 * @param guid
 		 *            the guid
 		 * @return the guid
@@ -255,9 +255,9 @@ public interface Guid {
 		}
 
 		/**
-		 * Generates a new guid. Code taken from the standard jdk
-		 * implementation (see UUID class).
-		 *
+		 * Generates a new guid. Code taken from the standard jdk implementation
+		 * (see UUID class).
+		 * 
 		 * @return the guid
 		 */
 		public static GUID newGuid() {
@@ -310,7 +310,7 @@ public interface Guid {
 		/**
 		 * The value of this Guid, formatted as follows:
 		 * xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
-		 *
+		 * 
 		 * @return the string
 		 */
 		public String toGuidString() {
@@ -345,7 +345,7 @@ public interface Guid {
 
 		/*
 		 * (non-Javadoc)
-		 *
+		 * 
 		 * @see com.sun.jna.Structure#getFieldOrder()
 		 */
 		protected List getFieldOrder() {
@@ -395,6 +395,10 @@ public interface Guid {
 		 * Instantiates a new clsid.
 		 */
 		public CLSID() {
+		}
+
+		public CLSID(String clsid) {
+			super(clsid);
 		}
 	}
 

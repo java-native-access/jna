@@ -8,7 +8,7 @@ import com.sun.jna.platform.win32.COM.IDispatch;
 public class MSExcel extends COMObject {
 
 	public MSExcel() throws COMException {
-		super("Excel.Application", false);
+		super("Excel.Application", true);
 	}
 
 	public MSExcel(boolean visible) throws COMException {

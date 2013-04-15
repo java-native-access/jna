@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
@@ -44,204 +42,50 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class ITypeInfo extends IUnknown {
+public interface ITypeInfo extends IUnknown {
 
-	/**
-	 * The Class ByReference.
-	 * 
-	 * @author wolf.tobias@gmx.net The Class ByReference.
-	 */
-	public static class ByReference extends ITypeInfo implements
-			Structure.ByReference {
-	}
-
-	/**
-	 * Instantiates a new i type info.
-	 */
-	public ITypeInfo() {
-	}
-
-	/**
-	 * Instantiates a new i type info.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public ITypeInfo(Pointer pvInstance) {
-		super(pvInstance);
-	}
-
-	/**
-	 * Gets the type attr.
-	 * 
-	 * @param ppTypeAttr
-	 *            the pp type attr
-	 * @return the hresult
-	 */
+	@VTABLE_ID(3)
 	public HRESULT GetTypeAttr(
-	/* [out] */PointerByReference ppTypeAttr) {
+	/* [out] */PointerByReference ppTypeAttr);
 
-		int hr = this
-				._invokeInt(3, new Object[] { this.getPointer(), ppTypeAttr });
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the type comp.
-	 * 
-	 * @param ppTComp
-	 *            the pp t comp
-	 * @return the hresult
-	 */
+	@VTABLE_ID(4)
 	public HRESULT GetTypeComp(
-	/* [out] */PointerByReference ppTComp) {
+	/* [out] */PointerByReference ppTComp);
 
-		int hr = this._invokeInt(4, new Object[] { this.getPointer(), ppTComp });
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the func desc.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param ppFuncDesc
-	 *            the pp func desc
-	 * @return the hresult
-	 */
+	@VTABLE_ID(5)
 	public/* [local] */HRESULT GetFuncDesc(
 	/* [in] */UINT index,
-	/* [out] */PointerByReference ppFuncDesc) {
+	/* [out] */PointerByReference ppFuncDesc);
 
-		int hr = this._invokeInt(5, new Object[] { this.getPointer(), index,
-				ppFuncDesc });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the var desc.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param ppVarDesc
-	 *            the pp var desc
-	 * @return the hresult
-	 */
+	@VTABLE_ID(6)
 	public/* [local] */HRESULT GetVarDesc(
 	/* [in] */UINT index,
-	/* [out] */PointerByReference ppVarDesc) {
+	/* [out] */PointerByReference ppVarDesc);
 
-		int hr = this._invokeInt(6, new Object[] { this.getPointer(), index,
-				ppVarDesc });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the names.
-	 * 
-	 * @param memid
-	 *            the memid
-	 * @param rgBstrNames
-	 *            the rg bstr names
-	 * @param cMaxNames
-	 *            the c max names
-	 * @param pcNames
-	 *            the pc names
-	 * @return the hresult
-	 */
+	@VTABLE_ID(7)
 	public/* [local] */HRESULT GetNames(
 	/* [in] */MEMBERID memid,
 	/* [length_is][size_is][out] */BSTR[] rgBstrNames,
 	/* [in] */UINT cMaxNames,
-	/* [out] */UINTbyReference pcNames) {
+	/* [out] */UINTbyReference pcNames);
 
-		int hr = this._invokeInt(7, new Object[] { this.getPointer(), memid,
-				rgBstrNames, cMaxNames, pcNames });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the ref type of impl type.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param pRefType
-	 *            the ref type
-	 * @return the hresult
-	 */
+	@VTABLE_ID(8)
 	public HRESULT GetRefTypeOfImplType(
 	/* [in] */UINT index,
-	/* [out] */HREFTYPEbyReference pRefType) {
+	/* [out] */HREFTYPEbyReference pRefType);
 
-		int hr = this._invokeInt(8, new Object[] { this.getPointer(), index,
-				pRefType });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the impl type flags.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param pImplTypeFlags
-	 *            the impl type flags
-	 * @return the hresult
-	 */
+	@VTABLE_ID(9)
 	public HRESULT GetImplTypeFlags(
 	/* [in] */UINT index,
-	/* [out] */IntByReference pImplTypeFlags) {
+	/* [out] */IntByReference pImplTypeFlags);
 
-		int hr = this._invokeInt(9, new Object[] { this.getPointer(), index,
-				pImplTypeFlags });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the i ds of names.
-	 * 
-	 * @param rgszNames
-	 *            the rgsz names
-	 * @param cNames
-	 *            the c names
-	 * @param pMemId
-	 *            the mem id
-	 * @return the hresult
-	 */
+	@VTABLE_ID(10)
 	public/* [local] */HRESULT GetIDsOfNames(
 	/* [size_is][in] */LPOLESTR[] rgszNames,
 	/* [in] */UINT cNames,
-	/* [size_is][out] */MEMBERID[] pMemId) {
-
-		int hr = this._invokeInt(10, new Object[] { this.getPointer(), rgszNames,
-				cNames, pMemId });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Invoke.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 * @param memid
-	 *            the memid
-	 * @param wFlags
-	 *            the w flags
-	 * @param pDispParams
-	 *            the disp params
-	 * @param pVarResult
-	 *            the var result
-	 * @param pExcepInfo
-	 *            the excep info
-	 * @param puArgErr
-	 *            the pu arg err
-	 * @return the hresult
-	 */
+	/* [size_is][out] */MEMBERID[] pMemId);
+	
+	@VTABLE_ID(11)
 	public/* [local] */HRESULT Invoke(
 	/* [in] */PVOID pvInstance,
 	/* [in] */MEMBERID memid,
@@ -249,204 +93,60 @@ public class ITypeInfo extends IUnknown {
 	/* [out][in] */DISPPARAMS.ByReference pDispParams,
 	/* [out] */VARIANT.ByReference pVarResult,
 	/* [out] */EXCEPINFO.ByReference pExcepInfo,
-	/* [out] */UINTbyReference puArgErr) {
-
-		int hr = this._invokeInt(11, new Object[] { this.getPointer(), pvInstance,
-				memid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the documentation.
-	 * 
-	 * @param memid
-	 *            the memid
-	 * @param pBstrName
-	 *            the bstr name
-	 * @param pBstrDocString
-	 *            the bstr doc string
-	 * @param pdwHelpContext
-	 *            the pdw help context
-	 * @param pBstrHelpFile
-	 *            the bstr help file
-	 * @return the hresult
-	 */
+	/* [out] */UINTbyReference puArgErr);
+	
+	@VTABLE_ID(12)
 	public/* [local] */HRESULT GetDocumentation(
 	/* [in] */MEMBERID memid,
 	/* [out] */BSTRByReference pBstrName,
 	/* [out] */BSTRByReference pBstrDocString,
 	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTRByReference pBstrHelpFile) {
+	/* [out] */BSTRByReference pBstrHelpFile);
 
-		int hr = this._invokeInt(12, new Object[] { this.getPointer(), memid,
-				pBstrName, pBstrDocString, pdwHelpContext, pBstrHelpFile });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the dll entry.
-	 * 
-	 * @param memid
-	 *            the memid
-	 * @param invKind
-	 *            the inv kind
-	 * @param pBstrDllName
-	 *            the bstr dll name
-	 * @param pBstrName
-	 *            the bstr name
-	 * @param pwOrdinal
-	 *            the pw ordinal
-	 * @return the hresult
-	 */
+	@VTABLE_ID(13)
 	public/* [local] */HRESULT GetDllEntry(
 	/* [in] */MEMBERID memid,
 	/* [in] */INVOKEKIND invKind,
 	/* [out] */BSTRByReference pBstrDllName,
 	/* [out] */BSTRByReference pBstrName,
-	/* [out] */WORDbyReference pwOrdinal) {
+	/* [out] */WORDbyReference pwOrdinal);
 
-		int hr = this._invokeInt(13, new Object[] { this.getPointer(), memid,
-				invKind, pBstrDllName, pBstrName, pwOrdinal });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the ref type info.
-	 * 
-	 * @param hRefType
-	 *            the h ref type
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @return the hresult
-	 */
+	@VTABLE_ID(14)
 	public HRESULT GetRefTypeInfo(
 	/* [in] */HREFTYPE hRefType,
-	/* [out] */PointerByReference ppTInfo) {
+	/* [out] */PointerByReference ppTInfo);
 
-		int hr = this._invokeInt(14, new Object[] { this.getPointer(), hRefType,
-				ppTInfo });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Address of member.
-	 * 
-	 * @param memid
-	 *            the memid
-	 * @param invKind
-	 *            the inv kind
-	 * @param ppv
-	 *            the ppv
-	 * @return the hresult
-	 */
+	@VTABLE_ID(15)
 	public/* [local] */HRESULT AddressOfMember(
 	/* [in] */MEMBERID memid,
 	/* [in] */INVOKEKIND invKind,
-	/* [out] */PointerByReference ppv) {
+	/* [out] */PointerByReference ppv);
 
-		int hr = this._invokeInt(15, new Object[] { this.getPointer(), memid,
-				invKind, ppv });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Creates the instance.
-	 * 
-	 * @param pUnkOuter
-	 *            the unk outer
-	 * @param riid
-	 *            the riid
-	 * @param ppvObj
-	 *            the ppv obj
-	 * @return the hresult
-	 */
+	@VTABLE_ID(16)
 	public/* [local] */HRESULT CreateInstance(
 	/* [in] */IUnknown pUnkOuter,
 	/* [in] */REFIID riid,
-	/* [iid_is][out] */PointerByReference ppvObj) {
+	/* [iid_is][out] */PointerByReference ppvObj);
 
-		int hr = this._invokeInt(16, new Object[] { this.getPointer(), pUnkOuter,
-				riid, ppvObj });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the mops.
-	 * 
-	 * @param memid
-	 *            the memid
-	 * @param pBstrMops
-	 *            the bstr mops
-	 * @return the hresult
-	 */
+	@VTABLE_ID(17)
 	public HRESULT GetMops(
 	/* [in] */MEMBERID memid,
-	/* [out] */BSTRByReference pBstrMops) {
+	/* [out] */BSTRByReference pBstrMops);
 
-		int hr = this._invokeInt(17, new Object[] { this.getPointer(), memid,
-				pBstrMops });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Gets the containing type lib.
-	 * 
-	 * @param ppTLib
-	 *            the pp t lib
-	 * @param pIndex
-	 *            the index
-	 * @return the hresult
-	 */
+	@VTABLE_ID(18)
 	public/* [local] */HRESULT GetContainingTypeLib(
 	/* [out] */PointerByReference ppTLib,
-	/* [out] */UINTbyReference pIndex) {
+	/* [out] */UINTbyReference pIndex);
 
-		int hr = this._invokeInt(18, new Object[] { this.getPointer(), ppTLib,
-				pIndex });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Release type attr.
-	 * 
-	 * @param pTypeAttr
-	 *            the type attr
-	 */
+	@VTABLE_ID(19)
 	public/* [local] */void ReleaseTypeAttr(
-	/* [in] */TYPEATTR pTypeAttr) {
+	/* [in] */TYPEATTR pTypeAttr);
 
-		this._invokeInt(19, new Object[] { this.getPointer(), pTypeAttr });
-	}
-
-	/**
-	 * Release func desc.
-	 * 
-	 * @param pFuncDesc
-	 *            the func desc
-	 */
+	@VTABLE_ID(20)
 	public/* [local] */void ReleaseFuncDesc(
-	/* [in] */FUNCDESC pFuncDesc) {
-
-		this._invokeInt(20, new Object[] { this.getPointer(), pFuncDesc });
-	}
-
-	/**
-	 * Release var desc.
-	 * 
-	 * @param pVarDesc
-	 *            the var desc
-	 */
+	/* [in] */FUNCDESC pFuncDesc);
+	
+	@VTABLE_ID(21)
 	public/* [local] */void ReleaseVarDesc(
-	/* [in] */VARDESC pVarDesc) {
-
-		this._invokeInt(21, new Object[] { this.getPointer(), pVarDesc });
-	}
+	/* [in] */VARDESC pVarDesc);
 }

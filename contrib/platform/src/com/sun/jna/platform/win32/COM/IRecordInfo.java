@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -29,255 +28,67 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class IRecordInfo extends IUnknown {
+public interface IRecordInfo extends IUnknown {
 
-	/** The Constant IID_IRecordInfo. */
 	public final static IID IID_IRecordInfo = new IID(
 			"{0000002F-0000-0000-C000-000000000046}");
 
-	/**
-	 * Instantiates a new i record info.
-	 */
-	public IRecordInfo() {
-	}
+	public HRESULT RecordInit(/* [out] */PVOID pvNew);
 
-	/**
-	 * Instantiates a new i record info.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public IRecordInfo(Pointer pvInstance) {
-		super(pvInstance);
-	}
-
-	/**
-	 * Record init.
-	 * 
-	 * @param pvNew
-	 *            the pv new
-	 * @return the hresult
-	 */
-	public HRESULT RecordInit(/* [out] */PVOID pvNew) {
-		return null;
-	}
-
-	/**
-	 * Record clear.
-	 * 
-	 * @param pvExisting
-	 *            the pv existing
-	 * @return the hresult
-	 */
 	public HRESULT RecordClear(
-	/* [in] */PVOID pvExisting) {
-		return null;
-	}
+	/* [in] */PVOID pvExisting);
 
-	/**
-	 * Record copy.
-	 * 
-	 * @param pvExisting
-	 *            the pv existing
-	 * @param pvNew
-	 *            the pv new
-	 * @return the hresult
-	 */
-	public HRESULT RecordCopy(
-	/* [in] */PVOID pvExisting,
-	/* [out] */PVOID pvNew) {
-		return null;
-	}
+	public HRESULT RecordCopy(/* [in] */PVOID pvExisting,
+	/* [out] */PVOID pvNew);
 
-	/**
-	 * Gets the guid.
-	 * 
-	 * @param pguid
-	 *            the pguid
-	 * @return the hresult
-	 */
 	public HRESULT GetGuid(
-	/* [out] */GUID pguid) {
-		return null;
-	}
+	/* [out] */GUID pguid);
 
-	/**
-	 * Gets the name.
-	 * 
-	 * @param pbstrName
-	 *            the pbstr name
-	 * @return the hresult
-	 */
 	public HRESULT GetName(
-	/* [out] */BSTR pbstrName) {
-		return null;
-	}
+	/* [out] */BSTR pbstrName);
 
-	/**
-	 * Gets the size.
-	 * 
-	 * @param pcbSize
-	 *            the pcb size
-	 * @return the hresult
-	 */
 	public HRESULT GetSize(
-	/* [out] */ULONG pcbSize) {
-		return null;
-	}
+	/* [out] */ULONG pcbSize);
 
-	/**
-	 * Gets the type info.
-	 * 
-	 * @param ppTypeInfo
-	 *            the pp type info
-	 * @return the hresult
-	 */
 	public HRESULT GetTypeInfo(
-	/* [out] */ITypeInfo ppTypeInfo) {
-		return null;
-	}
+	/* [out] */ITypeInfo ppTypeInfo);
 
-	/**
-	 * Gets the field.
-	 * 
-	 * @param pvData
-	 *            the pv data
-	 * @param szFieldName
-	 *            the sz field name
-	 * @param pvarField
-	 *            the pvar field
-	 * @return the hresult
-	 */
 	public HRESULT GetField(
 	/* [in] */PVOID pvData,
 	/* [in] */WString szFieldName,
-	/* [out] */VARIANT pvarField) {
-		return null;
-	}
+	/* [out] */VARIANT pvarField);
 
-	/**
-	 * Gets the field no copy.
-	 * 
-	 * @param pvData
-	 *            the pv data
-	 * @param szFieldName
-	 *            the sz field name
-	 * @param pvarField
-	 *            the pvar field
-	 * @param ppvDataCArray
-	 *            the ppv data c array
-	 * @return the hresult
-	 */
 	public HRESULT GetFieldNoCopy(
 	/* [in] */PVOID pvData,
 	/* [in] */WString szFieldName,
 	/* [out] */VARIANT pvarField,
-	/* [out] */PVOID ppvDataCArray) {
-		return null;
-	}
+	/* [out] */PVOID ppvDataCArray);
 
-	/**
-	 * Put field.
-	 * 
-	 * @param wFlags
-	 *            the w flags
-	 * @param pvData
-	 *            the pv data
-	 * @param szFieldName
-	 *            the sz field name
-	 * @param pvarField
-	 *            the pvar field
-	 * @return the hresult
-	 */
 	public HRESULT PutField(
 	/* [in] */ULONG wFlags,
 	/* [out][in] */PVOID pvData,
 	/* [in] */WString szFieldName,
-	/* [in] */VARIANT pvarField) {
-		return null;
-	}
+	/* [in] */VARIANT pvarField);
 
-	/**
-	 * Put field no copy.
-	 * 
-	 * @param wFlags
-	 *            the w flags
-	 * @param pvData
-	 *            the pv data
-	 * @param szFieldName
-	 *            the sz field name
-	 * @param pvarField
-	 *            the pvar field
-	 * @return the hresult
-	 */
 	public HRESULT PutFieldNoCopy(
 	/* [in] */ULONG wFlags,
 	/* [out][in] */PVOID pvData,
 	/* [in] */WString szFieldName,
-	/* [in] */VARIANT pvarField) {
-		return null;
-	}
+	/* [in] */VARIANT pvarField);
 
-	/**
-	 * Gets the field names.
-	 * 
-	 * @param pcNames
-	 *            the pc names
-	 * @param rgBstrNames
-	 *            the rg bstr names
-	 * @return the hresult
-	 */
 	public HRESULT GetFieldNames(
 	/* [out][in] */ULONG pcNames,
-	/* [length_is][size_is][out] */BSTR rgBstrNames) {
-		return null;
-	}
+	/* [length_is][size_is][out] */BSTR rgBstrNames);
 
-	/**
-	 * Checks if is matching type.
-	 * 
-	 * @param pRecordInfo
-	 *            the record info
-	 * @return the bool
-	 */
 	public BOOL IsMatchingType(
-	/* [in] */IRecordInfo pRecordInfo) {
-		return null;
-	}
+	/* [in] */IRecordInfo pRecordInfo);
 
-	/**
-	 * Record create.
-	 * 
-	 * @return the pvoid
-	 */
-	public PVOID RecordCreate() {
-		return null;
-	}
+	public PVOID RecordCreate();
 
-	/**
-	 * Record create copy.
-	 * 
-	 * @param pvSource
-	 *            the pv source
-	 * @param ppvDest
-	 *            the ppv dest
-	 * @return the hresult
-	 */
 	public HRESULT RecordCreateCopy(
 	/* [in] */PVOID pvSource,
-	/* [out] */PVOID ppvDest) {
-		return null;
-	}
+	/* [out] */PVOID ppvDest);
 
-	/**
-	 * Record destroy.
-	 * 
-	 * @param pvRecord
-	 *            the pv record
-	 * @return the hresult
-	 */
 	public HRESULT RecordDestroy(
-	/* [in] */PVOID pvRecord) {
-		return null;
-	}
+	/* [in] */PVOID pvRecord);
 }

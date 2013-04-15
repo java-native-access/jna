@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -44,7 +44,7 @@ public abstract class TlbBase {
 	public final static String TABTAB = "\t\t";
 
 	/** The type lib util. */
-	protected ITypeLibUtil typeLibUtil;
+	protected TypeLibUtil typeLibUtil;
 
 	/** The index. */
 	protected int index;
@@ -58,6 +58,8 @@ public abstract class TlbBase {
 	/** The content. */
 	protected String content = "";
 
+	protected String filename = "";
+
 	/**
 	 * Instantiates a new tlb base.
 	 * 
@@ -66,7 +68,7 @@ public abstract class TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbBase(int index, ITypeLibUtil typeLibUtil) {
+	public TlbBase(int index, TypeLibUtil typeLibUtil) {
 		this.index = index;
 		this.typeLibUtil = typeLibUtil;
 
@@ -116,6 +118,16 @@ public abstract class TlbBase {
 	 */
 	public void createContent(String content) {
 		this.replaceVariable("content", content);
+	}
+
+	public void setFilename(String filename) {
+		if (!filename.endsWith("java"))
+			filename += ".java";
+		this.filename = filename;
+	}
+
+	public String getFilename() {
+		return this.filename;
 	}
 
 	/**

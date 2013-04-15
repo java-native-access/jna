@@ -32,7 +32,7 @@ import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.ITypeLib;
+import com.sun.jna.platform.win32.COM.TypeLib;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -471,7 +471,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
-	public HRESULT LoadTypeLib(WString szFile, ITypeLib.ByReference pptlib);
+	public HRESULT LoadTypeLib(WString szFile, TypeLib.ByReference pptlib);
 
 	/**
 	 * Converts a system time to a variant representation.

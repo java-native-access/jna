@@ -12,30 +12,22 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.Date;
-
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
-import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
-import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
-import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
@@ -69,14 +61,54 @@ public class COMBaseObject {
 	/** The p unknown. */
 	private PointerByReference pUnknown = new PointerByReference();
 
-	/**
-	 * Instantiates a new cOM base object.
-	 * 
-	 * @param iDispatch
-	 *            the i dispatch
-	 */
-	public COMBaseObject(IDispatch iDispatch) {
-		this.iDispatch = iDispatch;
+	public COMBaseObject(IDispatch dispatch) {
+		// enable JNA protected mode
+		Native.setProtected(true);
+		// transfer the value
+		this.iDispatch = dispatch;
+	}
+
+	public COMBaseObject(CLSID clsid, boolean useActiveInstance) {
+		// enable JNA protected mode
+		Native.setProtected(true);
+
+		// Initialize COM for this thread...
+		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+
+		if (COMUtils.FAILED(hr)) {
+			this.release();
+			throw new COMException("CoInitialize() failed!");
+		}
+
+		if (COMUtils.FAILED(hr)) {
+			Ole32.INSTANCE.CoUninitialize();
+			throw new COMException("CLSIDFromProgID() failed!");
+		}
+
+		if (useActiveInstance) {
+			hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
+
+			if (COMUtils.SUCCEEDED(hr)) {
+				this.iUnknown = new Unknown(this.pUnknown.getValue());
+				hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
+						this.pDispatch);
+			} else {
+				hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
+						WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
+						this.pDispatch);
+			}
+		} else {
+			hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
+					WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
+					this.pDispatch);
+		}
+
+		if (COMUtils.FAILED(hr)) {
+			throw new COMException("COM object with CLSID "
+					+ clsid.toGuidString() + " not registered properly!");
+		}
+
+		this.iDispatch = new Dispatch(this.pDispatch.getValue());
 	}
 
 	/**
@@ -115,7 +147,7 @@ public class COMBaseObject {
 			hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
 			if (COMUtils.SUCCEEDED(hr)) {
-				this.iUnknown = new IUnknown(this.pUnknown.getValue());
+				this.iUnknown = new Unknown(this.pUnknown.getValue());
 				hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
 						this.pDispatch);
 			} else {
@@ -135,26 +167,9 @@ public class COMBaseObject {
 					+ " not registered properly!");
 		}
 
-		this.iDispatch = new IDispatch(this.pDispatch.getValue());
+		this.iDispatch = new Dispatch(this.pDispatch.getValue());
 	}
 
-	/**
-	 * Ole method.
-	 * 
-	 * @param nType
-	 *            the n type
-	 * @param pvResult
-	 *            the pv result
-	 * @param pDisp
-	 *            the disp
-	 * @param name
-	 *            the name
-	 * @param pArgs
-	 *            the args
-	 * @return the hresult
-	 * @throws COMException
-	 *             the cOM exception
-	 */
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
 			IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
 
@@ -254,11 +269,7 @@ public class COMBaseObject {
 	protected void checkFailed(HRESULT hr) {
 		COMUtils.checkAutoRC(hr, null, null);
 	}
-	
-	protected int _invokeInt(int vtableId, Object[] args) {
-		return this.iDispatch._invokeInt(vtableId, args);
-	}
-	
+
 	/**
 	 * Gets the i dispatch.
 	 * 

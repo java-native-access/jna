@@ -21,9 +21,9 @@ import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.SCODE;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import com.sun.jna.platform.win32.COM.IUnknown;
 
 // TODO: Auto-generated Javadoc
@@ -46,8 +46,8 @@ public class TlbFunction extends TlbAbstractMethod implements Variant {
 	 * @param typeInfoUtil
 	 *            the type info util
 	 */
-	public TlbFunction(int index, ITypeLibUtil typeLibUtil, FUNCDESC funcDesc,
-			ITypeInfoUtil typeInfoUtil) {
+	public TlbFunction(int index, TypeLibUtil typeLibUtil, FUNCDESC funcDesc,
+			TypeInfoUtil typeInfoUtil) {
 		super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
 		TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);

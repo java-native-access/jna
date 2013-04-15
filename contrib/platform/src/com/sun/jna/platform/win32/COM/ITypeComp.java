@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
-import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.OaIdl.BINDPTR;
 import com.sun.jna.platform.win32.OaIdl.DESCKIND;
@@ -28,41 +26,9 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class ITypeComp extends IUnknown {
+public interface ITypeComp extends IUnknown {
 
-	/**
-	 * Instantiates a new i type comp.
-	 */
-	public ITypeComp() {
-	}
-
-	/**
-	 * Instantiates a new i type comp.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public ITypeComp(Pointer pvInstance) {
-		super(pvInstance);
-	}
-
-	/**
-	 * Bind.
-	 * 
-	 * @param szName
-	 *            the sz name
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param wFlags
-	 *            the w flags
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @param pDescKind
-	 *            the desc kind
-	 * @param pBindPtr
-	 *            the bind ptr
-	 * @return the hresult
-	 */
+	@VTABLE_ID(3)
 	public HRESULT Bind(
 	/* [annotation][in] */
 	WString szName,
@@ -70,37 +36,13 @@ public class ITypeComp extends IUnknown {
 	/* [in] */WORD wFlags,
 	/* [out] */PointerByReference ppTInfo,
 	/* [out] */DESCKIND.ByReference pDescKind,
-	/* [out] */BINDPTR.ByReference pBindPtr) {
+	/* [out] */BINDPTR.ByReference pBindPtr);
 
-		int hr = this._invokeInt(4, new Object[] { this.getPointer(), szName,
-				lHashVal, wFlags, ppTInfo, pDescKind, pBindPtr });
-
-		return new HRESULT(hr);
-	}
-
-	/**
-	 * Bind type.
-	 * 
-	 * @param szName
-	 *            the sz name
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @param ppTComp
-	 *            the pp t comp
-	 * @return the hresult
-	 */
+	@VTABLE_ID(4)
 	public HRESULT BindType(
 	/* [annotation][in] */
 	WString szName,
 	/* [in] */ULONG lHashVal,
 	/* [out] */PointerByReference ppTInfo,
-	/* [out] */PointerByReference ppTComp) {
-
-		int hr = this._invokeInt(5, new Object[] { this.getPointer(), szName,
-				lHashVal, ppTInfo, ppTComp });
-
-		return new HRESULT(hr);
-	}
+	/* [out] */PointerByReference ppTComp);
 }

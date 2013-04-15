@@ -26,7 +26,7 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class IUnknownTest extends TestCase {
 
-	private IDispatch iDispatch = new IDispatch();
+	private Dispatch iDispatch = new Dispatch();
 
 	private PointerByReference pDispatch = new PointerByReference();
 
@@ -63,7 +63,7 @@ public class IUnknownTest extends TestCase {
 			throw new COMException("Internet Explorer not registered properly!");
 		}
 
-		this.iDispatch = new IDispatch(pDispatch.getPointer());
+		this.iDispatch = new Dispatch(pDispatch.getPointer());
 	}
 
 	public void testQueryInterface() {

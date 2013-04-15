@@ -14,8 +14,8 @@ package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import java.io.PrintStream;
 
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -23,7 +23,7 @@ import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbClass extends TlbBase {
+public class TlbCoClass extends TlbBase {
 
 	/**
 	 * Instantiates a new tlb class.
@@ -33,21 +33,23 @@ public class TlbClass extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbClass(int index, ITypeLibUtil typeLibUtil) {
+	public TlbCoClass(int index, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-		String enumName = typeLibDoc.getName();
+		String coClassName = typeLibDoc.getName();
 		String docString = typeLibDoc.getDocString();
 
-		this.createClassName(enumName);
-
+		this.createClassName(coClassName);
+		this.setFilename(coClassName);
+		
 		String guidStr = this.typeLibUtil.getLibAttr().guid.toGuidString();
 		int majorVerNum = this.typeLibUtil.getLibAttr().wMajorVerNum.intValue();
 		int minorVerNum = this.typeLibUtil.getLibAttr().wMinorVerNum.intValue();
 		String version = majorVerNum + "." + minorVerNum;
 
 		this.createJavaDocHeader(guidStr, version, docString);
+		this.createCLSID(guidStr);
 	}
 
 	/**
@@ -67,6 +69,10 @@ public class TlbClass extends TlbBase {
 		this.replaceVariable("helpstring", helpstring);
 	}
 
+	protected void createCLSID(String clsid) {
+		this.replaceVariable("clsid", clsid);
+	}
+
 	/**
 	 * Creates the package.
 	 * 
@@ -84,6 +90,6 @@ public class TlbClass extends TlbBase {
 	 */
 	@Override
 	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbClass.template";
+		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbCoClass.template";
 	}
 }

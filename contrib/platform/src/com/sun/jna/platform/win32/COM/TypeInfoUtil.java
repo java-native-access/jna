@@ -43,7 +43,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author wolf.tobias@gmx.net The Class ITypeInfoUtil.
  */
-public class ITypeInfoUtil {
+public class TypeInfoUtil {
 
 	/** The Constant OLEAUTO. */
 	public final static OleAuto OLEAUTO = OleAuto.INSTANCE;
@@ -57,7 +57,7 @@ public class ITypeInfoUtil {
 	 * @param typeInfo
 	 *            the type info
 	 */
-	public ITypeInfoUtil(ITypeInfo typeInfo) {
+	public TypeInfoUtil(ITypeInfo typeInfo) {
 		this.typeInfo = typeInfo;
 	}
 
@@ -79,12 +79,12 @@ public class ITypeInfoUtil {
 	 * 
 	 * @return the type comp
 	 */
-	public ITypeComp getTypeComp() {
+	public TypeComp getTypeComp() {
 		PointerByReference ppTypeAttr = new PointerByReference();
 		HRESULT hr = this.typeInfo.GetTypeComp(ppTypeAttr);
 		COMUtils.checkAutoRC(hr);
 
-		return new ITypeComp(ppTypeAttr.getValue());
+		return new TypeComp(ppTypeAttr.getValue());
 	}
 
 	/**
@@ -129,12 +129,13 @@ public class ITypeInfoUtil {
 	public String[] getNames(MEMBERID memid, int maxNames) {
 		BSTR[] rgBstrNames = new BSTR[maxNames];
 		UINTbyReference pcNames = new UINTbyReference();
-		HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(maxNames), pcNames);
+		HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(
+				maxNames), pcNames);
 		COMUtils.checkAutoRC(hr);
 
 		int cNames = pcNames.getValue().intValue();
 		String[] result = new String[cNames];
-		
+
 		for (int i = 0; i < result.length; i++) {
 			result[i] = rgBstrNames[i].getValue();
 			OLEAUTO.SysFreeString(rgBstrNames[i]);
@@ -513,7 +514,7 @@ public class ITypeInfoUtil {
 		HRESULT hr = this.typeInfo.GetRefTypeInfo(hreftype, ppTInfo);
 		COMUtils.checkAutoRC(hr);
 
-		return new ITypeInfo(ppTInfo.getValue());
+		return new TypeInfo(ppTInfo.getValue());
 	}
 
 	/**
@@ -579,7 +580,7 @@ public class ITypeInfoUtil {
 		HRESULT hr = this.typeInfo.GetContainingTypeLib(ppTLib, pIndex);
 		COMUtils.checkAutoRC(hr);
 
-		return new ContainingTypeLib(new ITypeLib(ppTLib.getValue()), pIndex
+		return new ContainingTypeLib(new TypeLib(ppTLib.getValue()), pIndex
 				.getValue().intValue());
 	}
 

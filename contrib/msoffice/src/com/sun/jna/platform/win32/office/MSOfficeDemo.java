@@ -2,7 +2,6 @@ package com.sun.jna.platform.win32.office;
 
 import java.io.File;
 
-import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.COM.COMException;
 
 public class MSOfficeDemo {
@@ -18,10 +17,10 @@ public class MSOfficeDemo {
 			+ File.separator;
 
 	public MSOfficeDemo() {
-		this.testMSWord();
-		//this.testMSExcel();
+		// this.testMSWord();
+		this.testMSExcel();
 	}
-	
+
 	public void testMSWord() {
 		MSWord msWord = null;
 
@@ -30,7 +29,7 @@ public class MSOfficeDemo {
 			System.out.println("MSWord version: " + msWord.getVersion());
 			msWord.setVisible(true);
 			msWord.newDocument();
-			//msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
+			// msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
 			msWord.insertText("Hello from JNA!");
 			// wait 10sec. before closing
 			Thread.currentThread().sleep(10000);
@@ -46,14 +45,14 @@ public class MSOfficeDemo {
 						+ e.getExcepInfo().bstrDescription);
 			} else
 				e.printStackTrace();
-			
-			if(msWord != null)
+
+			if (msWord != null)
 				msWord.quit();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void testMSExcel() {
 		MSExcel msExcel = null;
 
@@ -61,7 +60,7 @@ public class MSOfficeDemo {
 			msExcel = new MSExcel();
 			System.out.println("MSExcel version: " + msExcel.getVersion());
 			msExcel.setVisible(true);
-			//msExcel.newExcelBook();
+			// msExcel.newExcelBook();
 			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
 			msExcel.insertValue("A1", "Hello from JNA!");
 			// wait 10sec. before closing
@@ -78,10 +77,10 @@ public class MSOfficeDemo {
 						+ e.getExcepInfo().bstrDescription);
 			} else
 				e.printStackTrace();
-			
-			if(msExcel != null)
+
+			if (msExcel != null)
 				msExcel.quit();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

@@ -16,10 +16,10 @@ import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -27,7 +27,7 @@ import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbDispatch extends TlbBase {
+public class TlbDispatchInterface extends TlbBase {
 
 	/** The iunknown methods. */
 	public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
@@ -45,7 +45,7 @@ public class TlbDispatch extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbDispatch(int index, ITypeLibUtil typeLibUtil) {
+	public TlbDispatchInterface(int index, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
@@ -54,9 +54,10 @@ public class TlbDispatch extends TlbBase {
 
 		this.logInfo("Type of kind 'Dispatch' found: " + dispName);
 		this.createClassName(dispName);
-
+		this.setFilename(dispName);
+		
 		// Get the TypeAttributes
-		ITypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+		TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
 		TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
 
 		this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
@@ -145,6 +146,6 @@ public class TlbDispatch extends TlbBase {
 	 */
 	@Override
 	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispatch.template";
+		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispatchInterface.template";
 	}
 }

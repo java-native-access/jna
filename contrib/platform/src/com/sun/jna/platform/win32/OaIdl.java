@@ -30,7 +30,7 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.COM.ITypeComp;
+import com.sun.jna.platform.win32.COM.TypeComp;
 import com.sun.jna.ptr.ByReference;
 
 // TODO: Auto-generated Javadoc
@@ -733,7 +733,7 @@ public interface OaIdl {
 		// / C type : VARDESC*
 		public VARDESC lpvardesc;
 		// / C type : ITypeComp*
-		public ITypeComp lptcomp;
+		public TypeComp lptcomp;
 
 		public BINDPTR() {
 			super();
@@ -747,10 +747,10 @@ public interface OaIdl {
 		}
 
 		// / @param lptcomp C type : ITypeComp*
-		public BINDPTR(ITypeComp lptcomp) {
+		public BINDPTR(TypeComp lptcomp) {
 			super();
 			this.lptcomp = lptcomp;
-			setType(ITypeComp.class);
+			setType(TypeComp.class);
 		}
 
 		// / @param lpfuncdesc C type : FUNCDESC*
@@ -798,13 +798,13 @@ public interface OaIdl {
 		public FUNCDESC(Pointer pointer) {
 			super(pointer);
 			this.read();
-			
-			if(this.cParams > 1) {
+
+			if (this.cParams > 1) {
 				this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams];
 				this.lprgelemdescParam.read();
 			}
 		}
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "memid", "lprgscode",
@@ -823,7 +823,7 @@ public interface OaIdl {
 
 		public ElemDescArg() {
 		}
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "elemDescArg" });
@@ -997,7 +997,7 @@ public interface OaIdl {
 
 		public ELEMDESC() {
 		}
-		
+
 		public ELEMDESC(Pointer pointer) {
 			super(pointer);
 			this.read();
@@ -1287,7 +1287,7 @@ public interface OaIdl {
 		public ARRAYDESC() {
 			super();
 		}
-		
+
 		public ARRAYDESC(Pointer pointer) {
 			super(pointer);
 			this.read();
@@ -1336,7 +1336,7 @@ public interface OaIdl {
 			super(pointer);
 			this.read();
 		}
-		
+
 		@Override
 		protected List getFieldOrder() {
 			return Arrays

@@ -18,10 +18,10 @@ import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil;
-import com.sun.jna.platform.win32.COM.ITypeInfoUtil.TypeInfoDoc;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil;
-import com.sun.jna.platform.win32.COM.ITypeLibUtil.TypeLibDoc;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -39,7 +39,7 @@ public class TlbInterface extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbInterface(int index, ITypeLibUtil typeLibUtil) {
+	public TlbInterface(int index, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
@@ -50,7 +50,7 @@ public class TlbInterface extends TlbBase {
 		this.createClassName(enumName);
 
 		// Get the TypeAttributes
-		ITypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+		TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
 		TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
 
 		this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
