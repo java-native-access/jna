@@ -856,7 +856,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   </target>
 
   <target name="contrib-test" depends="contrib-jars,compile-tests">
-    <subant target="test" failonerror="true">
+    <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
