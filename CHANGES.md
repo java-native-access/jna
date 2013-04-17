@@ -1,5 +1,7 @@
-Next Release
-============
+Next Release (3.6)
+==================
+
+NOTE: JNI native support is typically incompatible between minor versions
 
 Features
 --------
