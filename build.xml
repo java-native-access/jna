@@ -226,9 +226,10 @@
       <available file="/System/Library/Frameworks/JavaVM.framework/Headers"/>
     </condition>
     <fail unless="jdk.home" message="Can't find JNI headers (java.home=${java.home})"/>
+    <property name="libarch" value="${os.arch}"/>
     <condition property="libjsig"
-               value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
-      <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
+               value="${java.home}/lib/${libarch}/libjsig.so" else="">
+      <available file="${java.home}/lib/${libarch}/libjsig.so"/>
     </condition>
     <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
