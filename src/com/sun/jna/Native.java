@@ -1072,8 +1072,7 @@ public final class Native implements Version {
      * @param libName library name to which functions should be bound
      */
     public static void register(String libName) {
-        register(getNativeClass(getCallingClass()),
-                 NativeLibrary.getInstance(libName));
+        register(getNativeClass(getCallingClass()), libName);
     }
 
     /** When called from a class static initializer, maps all native methods
@@ -1110,6 +1109,9 @@ public final class Native implements Version {
                 return super.getClassContext();
             }
         }.getClassContext();
+        if (context == null) {
+            throw new IllegalStateException("The SecurityManager implementation on this platform is broken; you must explicitly provide the class to register");
+        }
         if (context.length < 4) {
             throw new IllegalStateException("This method must be called from the static initializer of a class");
         }
@@ -1297,6 +1299,18 @@ public final class Native implements Version {
     /** When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
      * interface.
+     * @param cls Class with native methods to register
+     * @param libName name of or path to native library to which functions
+     * should be bound 
+     */
+    public static void register(Class cls, String libName) {
+        register(cls, NativeLibrary.getInstance(libName));
+    }
+
+    /** When called from a class static initializer, maps all native methods
+     * found within that class to native libraries via the JNA raw calling
+     * interface.
+     * @param cls Class with native methods to register
      * @param lib library to which functions should be bound
      */
     // TODO: derive options from annotations (per-class or per-method)

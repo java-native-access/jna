@@ -16,6 +16,7 @@ Bug Fixes
 * [#173](https://github.com/twall/jna/issues/173): Fix OSX 10.8/Xcode 4+ builds, web start path with Oracle 1.7 JDK - [@mkjellman](https://github.com/mkjellman).
 * [#215](https://github.com/twall/jna/issues/215): Force use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
 * [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
+* [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============
