@@ -67,7 +67,9 @@ FFI_CONFIG=--enable-static --disable-shared --with-pic=yes
 endif
 LIBRARY=$(BUILD)/$(LIBPFX)jnidispatch$(JNISFX)
 TESTLIB=$(BUILD)/$(LIBPFX)testlib$(LIBSFX)
-TESTLIB_EMBEDDED=$(BUILD)/$(LIBPFX)embedded-testlib$(LIBSFX)
+TESTLIB_JAR=$(BUILD)/$(LIBPFX)testlib-jar$(LIBSFX)
+TESTLIB_PATH=$(BUILD)/$(LIBPFX)testlib-path$(LIBSFX)
+TESTLIB_TRUNC=$(BUILD)/testlib-truncated
 TESTLIB2=$(BUILD)/$(LIBPFX)testlib2$(LIBSFX)
 
 # Reasonable defaults based on GCC
@@ -342,7 +344,7 @@ else
 	$(CC) $(CFLAGS) -c $< $(COUT)
 endif
 
-all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_EMBEDDED)
+all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)
 
 install:
 	mkdir $(INSTALLDIR)
@@ -365,8 +367,8 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
 
-$(TESTLIB_EMBEDDED): $(BUILD)/testlib.o
-	$(LD) $(LDFLAGS) $< $(LIBS)
+$(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC): $(TESTLIB)
+	@cp $< $@
 
 ifeq ($(ARSFX),.lib)
 TESTDEP=$(TESTLIB:.dll=.lib)

@@ -52,6 +52,35 @@ public class LibraryLoadTest extends TestCase {
         }
     }
     
+    public interface TestLibrary extends Library {
+    }
+
+    public void testLoadFromJNALibraryPath() {
+        NativeLibrary.getInstance("testlib");
+    }
+
+    public void testLoadFromClasspath() {
+        NativeLibrary.getInstance("testlib-path");
+    }
+
+    public void testLoadFromClasspathAbsolute() {
+        String name = System.mapLibraryName("testlib-path").replace(".jnilib", ".dylib");
+        NativeLibrary.getInstance("/" + Platform.RESOURCE_PREFIX + "/" + name);
+    }
+
+    public void testLoadFromJar() {
+        NativeLibrary.getInstance("testlib-jar");
+    }
+
+    public void testLoadFromJarAbsolute() {
+        String name = System.mapLibraryName("testlib-jar").replace(".jnilib", ".dylib");
+        NativeLibrary.getInstance("/" + Platform.RESOURCE_PREFIX + "/" + name);
+    }
+
+    public void testLoadExplicitAbsolutePath() {
+        NativeLibrary.getInstance(new File(BUILDDIR + "/native/testlib-truncated").getAbsolutePath());
+    }
+
     public static interface CLibrary extends Library {
         int wcslen(WString wstr);
         int strlen(String str);

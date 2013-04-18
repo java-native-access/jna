@@ -725,26 +725,26 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
-    <!-- Move (not copy) embedded testlib to test class folder so that it will be -->
-    <!-- packaged into the test jar and NOT available in the FS-based class path -->
-    <move todir="${test.classes}/${os.prefix}">
+    <!-- Set up versions of test library for resource path loading -->
+    <copy todir="${test.classes}/${os.prefix}">
       <fileset dir="${build.native}">
-        <patternset id="embedded-testlib">
-          <include name="**/*embedded-testlib*"/>
+        <patternset>
+          <include name="**/*testlib-jar*"/>
+          <include name="**/*testlib-path*"/>
         </patternset>
       </fileset>
-    </move>
-    <!-- Create a jar for easy movement of tests, and embedded load test -->
+    </copy>
+    <!-- Create a jar for easy movement of tests, and jar load test -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
-        <include name="**/*embedded-testlib*"/>
+        <include name="**/*testlib-jar*"/>
       </fileset>
     </jar>
-    <!-- Ensure embedded library unavailable on FS-based class path -->
+    <!-- Ensure jar-based library unavailable on FS-based class path -->
     <delete>
       <fileset dir="${test.classes}">
-        <include name="**/*embedded-testlib*"/>
+        <include name="**/*testlib-jar*"/>
       </fileset>
     </delete>
     <mkdir dir="${build}/jws"/>

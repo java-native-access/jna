@@ -699,7 +699,7 @@ public final class Native implements Version {
      */
     private static void loadNativeDispatchLibraryFromClasspath() {
         try {
-            String prefix = "com/sun/jna/" + getNativeLibraryResourcePrefix();
+            String prefix = "/com/sun/jna/" + getNativeLibraryResourcePrefix();
             File lib = extractFromResourcePath("jnidispatch", prefix, Native.class.getClassLoader());
             if (lib == null) {
                 throw new UnsatisfiedLinkError("Could not find JNA native support");
@@ -733,7 +733,7 @@ public final class Native implements Version {
      * @throws IOException if resource not found
      */
     static File extractFromResourcePath(String name) throws IOException {
-        return extractFromResourcePath(name, getNativeLibraryResourcePrefix(), Thread.currentThread().getContextClassLoader());
+        return extractFromResourcePath(name, "/" + getNativeLibraryResourcePrefix(), Thread.currentThread().getContextClassLoader());
     }
 
     /** Attempt to extract a native library from the current resource path. 
@@ -747,8 +747,11 @@ public final class Native implements Version {
      * @throws IOException if resource not found
      */
     static File extractFromResourcePath(String name, String resourcePrefix, ClassLoader loader) throws IOException {
-        String libname = System.mapLibraryName(name);
-        String resourcePath = resourcePrefix + "/" + libname;
+        String libname = name.startsWith("/") ? name : System.mapLibraryName(name);
+        String resourcePath = name.startsWith("/") ? name : resourcePrefix + "/" + libname;
+        if (resourcePath.startsWith("/")) {
+            resourcePath = resourcePath.substring(1);
+        }
         URL url = loader.getResource(resourcePath);
 
         // User libraries will have '.dylib'
@@ -764,7 +767,7 @@ public final class Native implements Version {
             url = loader.getResource(resourcePath);
         }
         if (url == null) {
-            throw new IOException("JNA native support (" + resourcePath + ") not found in resource path (" + System.getProperty("java.class.path") + ")");
+            throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + System.getProperty("java.class.path") + ")");
         }
 
         File lib = null;
