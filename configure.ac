@@ -33,7 +33,6 @@ AC_SUBST(CFLAGS)
 
 AM_PROG_AS
 AM_PROG_CC_C_O
-AC_PROG_LIBTOOL
 AC_CONFIG_MACRO_DIR([m4])
 
 # Test for 64-bit build.
@@ -534,6 +533,14 @@ AC_ARG_ENABLE(purify-safety,
   if test "$enable_purify_safety" = "yes"; then
     AC_DEFINE(USING_PURIFY, 1, [Define this if you are using Purify and want to suppress spurious messages.])
   fi)
+  
+AC_ARG_ENABLE(libtool,
+[  --disable-libtool  do not use libtool to handle libraries])
+AM_CONDITIONAL(USE_LIBTOOL, !test "x$enable_libtool" = "xno")
+
+if test "x$enable_libtool" = "xyes"; then
+AC_PROG_LIBTOOL
+fi
 
 # These variables are only ever used when we cross-build to X86_WIN32.
 # And we only support this with GCC, so...
