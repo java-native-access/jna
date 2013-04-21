@@ -716,7 +716,7 @@ public final class Native implements Version {
      * no transformations of the library name are performed.  If only the base
      * name is given, the resource path is attempted both with and without
      * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
-     * {@link NativeLibrary#mapSharedLibraryName()}.
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
      * @return File indicating extracted resource on disk
      * @throws IOException if resource not found
      */
@@ -731,7 +731,7 @@ public final class Native implements Version {
      * no transformations of the library name are performed.  If only the base
      * name is given, the resource path is attempted both with and without
      * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
-     * {@link NativeLibrary#mapSharedLibraryName()}.
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
      * @param loader Class loader to use to load resources
      * @return File indicating extracted resource on disk
      * @throws IOException if resource not found
@@ -747,6 +747,7 @@ public final class Native implements Version {
         }
         URL url = loader.getResource(resourcePath);
         if (url == null && resourcePath.startsWith(Platform.RESOURCE_PREFIX)) {
+            // If not found with the standard resource prefix, try without it
             url = loader.getResource(libname);
         }
         if (url == null) {
