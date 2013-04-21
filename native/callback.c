@@ -538,7 +538,7 @@ static void make_thread_keys() {
 
 /** Store the requested detach state for the current thread. */
 void
-jnidispatch_detach(jboolean d) {
+JNA_detach(jboolean d) {
   if (!TLS_SET(tls_detach_key, L2A((jlong)(d?THREAD_DETACH:THREAD_LEAVE_ATTACHED)))) {
     fprintf(stderr, "JNA: unable to set thread-local detach value\n");
   }
@@ -546,7 +546,7 @@ jnidispatch_detach(jboolean d) {
 
 /** Store the value of errno/GetLastError in TLS */
 void
-jnidispatch_set_last_error(int err) {
+JNA_set_last_error(int err) {
   if (!TLS_SET(tls_errno_key, L2A((jlong)err))) {
     fprintf(stderr, "JNA: unable to set thread-local errno value\n");
   }
@@ -554,7 +554,7 @@ jnidispatch_set_last_error(int err) {
 
 /** Store the value of errno/GetLastError in TLS */
 int
-jnidispatch_get_last_error() {
+JNA_get_last_error() {
   return (int)A2L(TLS_GET(tls_errno_key));
 }
 
@@ -645,7 +645,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
 }
 
 const char* 
-jnidispatch_callback_init(JNIEnv* env) {
+JNA_callback_init(JNIEnv* env) {
 #ifndef _WIN32
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
   pthread_once(&key_once, make_thread_keys);
@@ -657,7 +657,7 @@ jnidispatch_callback_init(JNIEnv* env) {
 }
   
 void
-jnidispatch_callback_dispose(JNIEnv* env) {
+JNA_callback_dispose(JNIEnv* env) {
   if (classObject) {
     (*env)->DeleteWeakGlobalRef(env, classObject);
     classObject = NULL;

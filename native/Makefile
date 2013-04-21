@@ -367,6 +367,8 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
 
+# These targets provide for different shared library loading methods
+# without getting into native library load conflicts
 $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC): $(TESTLIB)
 	@cp $< $@
 
