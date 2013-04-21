@@ -24,12 +24,8 @@ import junit.framework.TestCase;
 /** Test loading and unloading native support from various locations.  Note
  * that no JNI classes are directly referenced in these tests.
  */
-public class JNAUnloadTest extends TestCase {
+public class JNAUnloadTest extends TestCase implements Paths {
     
-    private static final String BUILDDIR =
-        System.getProperty("jna.builddir", "build"
-                           + (Platform.is64Bit() ? "-d64" : ""));
-
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
@@ -58,7 +54,7 @@ public class JNAUnloadTest extends TestCase {
     }
 
     protected void assertJarExists() {
-        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
+        File jar = new File(JNAJAR);
         if (!jar.exists()) {
             throw new Error("Expected JNA jar file at " + jar + " is missing");
         }
@@ -67,7 +63,7 @@ public class JNAUnloadTest extends TestCase {
     protected void assertLibraryExists() {
         String osPrefix = Platform.getNativeLibraryResourcePrefix();
         String name = System.mapLibraryName("jnidispatch");
-        File lib = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR + "/classes") + "/com/sun/jna/" + osPrefix + "/" + name);
+        File lib = new File(CLASSES + "/com/sun/jna/" + osPrefix + "/" + name);
         if (!lib.exists()) {
             throw new Error("Expected JNA library at " + lib + " is missing");
         }

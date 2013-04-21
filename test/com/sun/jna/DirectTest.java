@@ -22,20 +22,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 //@SuppressWarnings("unused")
-public class DirectTest extends TestCase {
-
-    private static final String BUILDDIR = 
-        System.getProperty("jna.builddir",
-                           "build" + (Platform.is64Bit() ? "-d64" : "")); 
+public class DirectTest extends TestCase implements Paths {
 
     private static class JNI {
         static {
-            String path = BUILDDIR + "/native/" + System.mapLibraryName("testlib");;
+            String path = TESTPATH + NativeLibrary.mapSharedLibraryName("testlib");
             if (!new File(path).isAbsolute()) {
-                path = System.getProperty("user.dir") + "/" + path;
-            }
-            if (path.endsWith(".jnilib")) {
-                path = path.replace(".jnilib", ".dylib");
+                path = new File(path).getAbsolutePath();
             }
             System.load(path);
         }

@@ -8,6 +8,7 @@ Features
 * [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
 * Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
 * Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
+* Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------

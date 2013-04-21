@@ -118,8 +118,12 @@ public final class Platform {
     public static final boolean isLinux() {
         return osType == LINUX;
     }
-    public static final boolean isAix() {
+    public static final boolean isAIX() {
         return osType == AIX;
+    }
+    /** @deprecated */
+    public static final boolean isAix() {
+        return isAIX();
     }
     public static final boolean isWindowsCE() {
         return osType == WINDOWSCE;

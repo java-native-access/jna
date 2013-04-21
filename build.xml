@@ -725,13 +725,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
-    <!-- Set up versions of test library for resource path loading -->
-    <copy todir="${test.classes}/${os.prefix}">
+    <copy todir="${test.classes}">
       <fileset dir="${build.native}">
-        <patternset>
-          <include name="**/*testlib-jar*"/>
-          <include name="**/*testlib-path*"/>
-        </patternset>
+        <include name="*testlib-jar*"/>
       </fileset>
     </copy>
     <!-- Create a jar for easy movement of tests, and jar load test -->
@@ -741,7 +737,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <include name="**/*testlib-jar*"/>
       </fileset>
     </jar>
-    <!-- Ensure jar-based library unavailable on FS-based class path -->
+    <!-- Ensure jar-based library is unavailable on FS-based class path -->
     <delete>
       <fileset dir="${test.classes}">
         <include name="**/*testlib-jar*"/>
@@ -781,6 +777,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy todir="${shared}" file="${build.native}/jnidispatch.dll"/>
     <copy todir="${shared}" file="${build.native}/testlib.dll"/>
     <copy todir="${shared}" file="${build.native}/testlib2.dll"/>
+    <copy todir="${shared}" file="${build.native}/test-path.dll"/>
+    <copy todir="${shared}" file="${build.native}/testlib-truncated"/>
     <copy todir="${shared}" file="w32ce-test.lnk"/>
     <chmod file="${shared}/*.dll" perm="+x"/>
   </target>

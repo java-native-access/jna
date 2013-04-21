@@ -83,6 +83,15 @@ public interface Library {
     String OPTION_CALLING_CONVENTION = "calling-convention";
     /** Flags to use when opening the native library (see {@link Native#open(String,int)}) */
     String OPTION_OPEN_FLAGS = "open-flags";
+    /** Class loader to use when searching for native libraries on the
+     * resource path (classpath).  If not provided the current thread's
+     * context class loader is used.<p/>
+     * If extracted from the resource path (i.e. bundled in a jar file), the
+     * loaded library's lifespan will mirror that of the class loader, which
+     * means you can use the same library in isolated contexts without
+     * conflict.
+     */
+    String OPTION_CLASSLOADER = "classloader";
 
     static class Handler implements InvocationHandler {
         

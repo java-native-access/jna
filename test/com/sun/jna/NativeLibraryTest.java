@@ -26,6 +26,31 @@ public class NativeLibraryTest extends TestCase {
     public static interface TestLibrary extends Library {
         int callCount();
     }
+
+    public void testMapSharedLibraryName() {
+        final Object[][] MAPPINGS = {
+            { Platform.MAC, "lib", ".dylib" },
+            { Platform.LINUX, "lib", ".so" },
+            { Platform.WINDOWS, "", ".dll" },
+            { Platform.SOLARIS, "lib", ".so" },
+            { Platform.FREEBSD, "lib", ".so" },
+            { Platform.OPENBSD, "lib", ".so" },
+            { Platform.WINDOWSCE, "", ".dll" },
+            { Platform.AIX, "lib", ".a" },
+            { Platform.ANDROID, "lib", ".so" },
+            { Platform.GNU, "lib", ".so" },
+            { Platform.KFREEBSD, "lib", ".so" },
+        };
+        for (int i=0;i < MAPPINGS.length;i++) {
+            int osType = ((Integer)MAPPINGS[i][0]).intValue();
+            if (osType == Platform.getOSType()) {
+                assertEquals("Wrong shared library name mapping",
+                             MAPPINGS[i][1] + "testlib" + MAPPINGS[i][2],
+                             NativeLibrary.mapSharedLibraryName("testlib"));
+            }
+        }
+    }
+
     public void testGCNativeLibrary() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);

@@ -40,7 +40,7 @@ import junit.framework.TestResult;
  * Run tests under web start
  * Works under OSX, windows, and linux.
  */
-public class WebStartTest extends TestCase {
+public class WebStartTest extends TestCase implements Paths {
     
     // Provide a policy file for unsigned jars
     // Unfortunately this does not allow native libraries
@@ -123,11 +123,8 @@ public class WebStartTest extends TestCase {
     }
 
     private void runTestUnderWebStart(String testClass, String testMethod) throws Exception {
-        String BUILDDIR = System.getProperty("jna.builddir",
-                                             "build"
-                                             + (Platform.is64Bit()
-                                                ? "-d64" : ""));
-        String codebase = new File(BUILDDIR, "jws").toURI().toURL().toString();
+        String dir = System.getProperty("jna.builddir", BUILDDIR);
+        String codebase = new File(dir, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
         s.setSoTimeout(120000);

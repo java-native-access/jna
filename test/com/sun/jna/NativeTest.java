@@ -244,62 +244,6 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong char array contents: " + new String(buf), VALUE, new String(buf, 0, buf.length-1));
     }
 
-    public void testOSPrefix() {
-        assertEquals("Wrong resource path", "win32-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.WINDOWS,
-                                                           "x86", "Windows"));
-        assertEquals("Wrong resource path Windows/i386", "win32-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.WINDOWS,
-                                                           "i386", "Windows"));
-        assertEquals("Wrong resource path Windows CE/arm", "w32ce-arm",
-                     Native.getNativeLibraryResourcePrefix(Platform.WINDOWSCE,
-                                                           "arm", "Windows CE"));
-        assertEquals("Wrong resource path Mac/x86", "darwin",
-                     Native.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                           "x86", "Darwin"));
-        assertEquals("Wrong resource path Mac/x86", "darwin",
-                     Native.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                           "i386", "Darwin"));
-        assertEquals("Wrong resource path Mac/x86_64", "darwin",
-                     Native.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                           "x86_64", "Mac"));
-        assertEquals("Wrong resource path Solaris/sparc", "sunos-sparc",
-                     Native.getNativeLibraryResourcePrefix(Platform.SOLARIS,
-                                                           "sparc", "Solaris"));
-        assertEquals("Wrong resource path SunOS/sparcv9", "sunos-sparcv9",
-                     Native.getNativeLibraryResourcePrefix(Platform.SOLARIS,
-                                                           "sparcv9", "SunOS"));
-        assertEquals("Wrong resource path Linux/i386", "linux-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                           "i386", "Linux/Gnu"));
-        assertEquals("Wrong resource path Linux/x86", "linux-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                           "x86", "Linux"));
-        assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
-                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                           "x86_64", "Linux"));
-        assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
-                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                           "amd64", "Linux"));
-        assertEquals("Wrong resource path Linux/ppc", "linux-ppc",
-                     Native.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                           "powerpc", "Linux"));
-        assertEquals("Wrong resource path OpenBSD/x86", "openbsd-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.OPENBSD,
-                                                           "x86", "OpenBSD"));
-        assertEquals("Wrong resource path FreeBSD/x86", "freebsd-x86",
-                     Native.getNativeLibraryResourcePrefix(Platform.FREEBSD,
-                                                           "x86", "FreeBSD"));
-        assertEquals("Wrong resource path Linux/armv7l (android)", "android-arm",
-                     Native.getNativeLibraryResourcePrefix(Platform.ANDROID,
-                                                           "armv7l", "Linux"));
-        
-        assertEquals("Wrong resource path other/other", "name-ppc",
-                     Native.getNativeLibraryResourcePrefix(Platform.UNSPECIFIED,
-                                                           "PowerPC", "Name Of System"));
-        
-    }
-
     public static class DirectMapping {
         public static class DirectStructure extends Structure {
             public int field;

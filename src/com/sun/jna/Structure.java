@@ -137,7 +137,7 @@ public abstract class Structure {
         isSPARC
         || ((isPPC || isARM)
             && (Platform.isLinux() || Platform.isAndroid()))
-        || Platform.isAix()
+        || Platform.isAIX()
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
