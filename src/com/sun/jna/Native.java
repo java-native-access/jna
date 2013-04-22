@@ -626,7 +626,7 @@ public final class Native implements Version {
             StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
             while (dirs.hasMoreTokens()) {
                 String dir = dirs.nextToken();
-                File file = new File(new File(dir), System.mapLibraryName(libName));
+                File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
                 if (file.exists()) {
                     try {
@@ -684,10 +684,12 @@ public final class Native implements Version {
      */
     private static void loadNativeDispatchLibraryFromClasspath() {
         try {
-            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + System.mapLibraryName("jnidispatch");
+            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
             File lib = extractFromResourcePath(libName, Native.class.getClassLoader());
             if (lib == null) {
-                throw new UnsatisfiedLinkError("Could not find JNA native support");
+                if (lib == null) {
+                    throw new UnsatisfiedLinkError("Could not find JNA native support");
+                }
             }
             System.load(lib.getAbsolutePath());
             nativeLibraryPath = lib.getAbsolutePath();

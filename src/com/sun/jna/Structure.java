@@ -1283,9 +1283,9 @@ public abstract class Structure {
             if (!isFirstElement || !(Platform.isMac() && isPPC)) {
                 alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
             }
-            if (!isFirstElement && Platform.isAix() && (type.getName().equals("double"))) {
+            if (!isFirstElement && Platform.isAIX() && (type.getName().equals("double"))) {
                 alignment = 4;
-			}
+            }
         }
         return alignment;
     }

@@ -62,7 +62,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
     
     protected void assertLibraryExists() {
         String osPrefix = Platform.getNativeLibraryResourcePrefix();
-        String name = System.mapLibraryName("jnidispatch");
+        String name = System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
         File lib = new File(CLASSES + "/com/sun/jna/" + osPrefix + "/" + name);
         if (!lib.exists()) {
             throw new Error("Expected JNA library at " + lib + " is missing");
