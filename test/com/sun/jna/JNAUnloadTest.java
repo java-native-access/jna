@@ -32,7 +32,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
                     Platform.isWindowsCE() 
                     ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
                     : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
-            }, null);
+                  }, new CloverLoader());
             if (fromJar) {
                 assertJarExists();
             }

@@ -136,10 +136,8 @@ public class WebStartTest extends TestCase implements Paths {
         contents = contents.replace("{CODEBASE}", codebase);
         contents = contents.replace("{JNLP_FILE}", jnlp.toURI().toURL().toString());
         contents = contents.replace("{PORT}", String.valueOf(port));
-        boolean clover =
-            System.getProperty("java.class.path").indexOf("clover") != -1;
         contents = contents.replace("{CLOVER}",
-                                    clover ? "<jar href='clover.jar'/>" : "");
+                                    USING_CLOVER ? "<jar href='clover.jar'/>" : "");
 
         try {
             OutputStream os = new FileOutputStream(jnlp);

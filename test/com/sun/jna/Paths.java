@@ -12,11 +12,27 @@
  */
 package com.sun.jna;
 
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 public interface Paths {
+    boolean USING_CLOVER = System.getProperty("java.class.path").indexOf("clover") != -1;
+    /** Use this as a parent class loader to ensure clover can be loaded. */
+    class CloverLoader extends URLClassLoader {
+        public CloverLoader() throws MalformedURLException{
+            super(new URL[] {
+                    new File(USING_CLOVER ? "lib/clover.jar" : "/dev/null").toURI().toURL()
+                  }, null);
+        }
+    }
     String BUILDDIR = Platform.isWindowsCE() 
         ? "/Storage Card"
         : System.getProperty("jna.builddir",
-                             "build" + (Platform.is64Bit() ? "-d64" : "")); 
+                             USING_CLOVER
+                             ? "build.clover"
+                             : "build" + (Platform.is64Bit() ? "-d64" : "")); 
     String CLASSES = BUILDDIR + (Platform.isWindowsCE() ? "" : "/classes");
     String JNAJAR = BUILDDIR + "/jna.jar";
     

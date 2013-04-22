@@ -110,7 +110,7 @@ public class DirectTest extends TestCase implements Paths {
                   : new URL[] {
                       new File(BUILDDIR + "/classes").toURI().toURL(),
                       new File(BUILDDIR + "/test-classes").toURI().toURL(),
-                  }, null);
+                  }, new CloverLoader());
         }
         protected Class findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
@@ -125,6 +125,7 @@ public class DirectTest extends TestCase implements Paths {
         }
     }
 
+    // Fails under clover
     public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
         String name = "com.sun.jna.DirectTest$MathLibrary";

@@ -29,7 +29,8 @@ public class LibraryLoadTest extends TestCase implements Paths {
     
     private class TestLoader extends URLClassLoader {
         public TestLoader(File path) throws MalformedURLException {
-            super(new URL[] { path.toURI().toURL() }, null);
+            super(new URL[] { path.toURI().toURL(), },
+                  new CloverLoader());
         }
     }
 
