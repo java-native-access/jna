@@ -119,6 +119,7 @@ public class NativeLibrary {
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
+        boolean isAbsolutePath = new File(libraryName).isAbsolute();
         List searchPath = new LinkedList();
         int openFlags = openFlags(options);
 
@@ -187,7 +188,9 @@ public class NativeLibrary {
                 }
             }
             // Search framework libraries on OS X
-            else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
+            else if (Platform.isMac()
+                     && !libraryName.endsWith(".dylib")
+                     && !isAbsolutePath) {
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
@@ -197,7 +200,7 @@ public class NativeLibrary {
                 }
             }
             // Try the same library with a "lib" prefix
-            else if (Platform.isWindows()) {
+            else if (Platform.isWindows() && !isAbsolutePath) {
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
                 try { handle = Native.open(libraryPath, openFlags); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }

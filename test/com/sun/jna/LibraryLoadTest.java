@@ -82,7 +82,9 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
 
     public void testLoadExplicitAbsolutePath() throws MalformedURLException {
-        NativeLibrary.getInstance(new File(TESTPATH, "testlib-truncated").getAbsolutePath());
+        // windows requires ".dll" suffix
+        String name = "testlib-truncated" + (Platform.isWindows() ? ".dll" : "");
+        NativeLibrary.getInstance(new File(TESTPATH, name).getAbsolutePath());
     }
 
     public static interface CLibrary extends Library {
