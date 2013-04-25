@@ -189,8 +189,7 @@ public class NativeLibrary {
             }
             // Search framework libraries on OS X
             else if (Platform.isMac()
-                     && !libraryName.endsWith(".dylib")
-                     && !isAbsolutePath) {
+                     && !libraryName.endsWith(".dylib")) {
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
