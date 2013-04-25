@@ -17,9 +17,6 @@
  */
 
 #if defined(_WIN32)
-#ifdef _MSC_VER
-#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
-#endif
 #ifndef UNICODE
 #define UNICODE
 #endif

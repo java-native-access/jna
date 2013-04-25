@@ -27,6 +27,7 @@
 #pragma warning( disable : 4055 ) /* cast data pointer to function pointer */
 #pragma warning( disable : 4204 ) /* structure initializer */
 #pragma warning( disable : 4710 ) /* swprintf not inlined */
+#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
