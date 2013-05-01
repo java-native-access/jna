@@ -18,6 +18,7 @@ Bug Fixes
 * [#215](https://github.com/twall/jna/issues/215): Force use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
 * [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
 * [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
+* [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============

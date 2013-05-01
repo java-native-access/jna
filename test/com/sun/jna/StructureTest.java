@@ -88,7 +88,7 @@ public class StructureTest extends TestCase {
         public int f2;
         public int f3;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "f0", "f1", "f2", "f3" }); 
+            return Arrays.asList(new String[] { "f0", "f1", "f2", "f3" });
         }
     }
 
@@ -151,7 +151,7 @@ public class StructureTest extends TestCase {
             public float f;
             public double d;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "b", "s", "i", "l", "f", "d" }); 
+                return Arrays.asList(new String[] { "b", "s", "i", "l", "f", "d" });
             }
         }
         Structure s = new TestStructure();
@@ -170,7 +170,7 @@ public class StructureTest extends TestCase {
             public float f;
             public double d;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "b", "s", "i", "l", "f", "d" }); 
+                return Arrays.asList(new String[] { "b", "s", "i", "l", "f", "d" });
             }
         }
         Structure s = new TestStructure();
@@ -195,21 +195,21 @@ public class StructureTest extends TestCase {
         public byte field0 = 0x01;
         public short field1 = 0x0202;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1" }); 
+            return Arrays.asList(new String[] { "field0", "field1" });
         }
     }
     public static class TestStructure1 extends FilledStructure {
         public byte field0 = 0x01;
         public int field1 = 0x02020202;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1" }); 
+            return Arrays.asList(new String[] { "field0", "field1" });
         }
     }
     public static class TestStructure2 extends FilledStructure {
         public short field0 = 0x0101;
         public int field1 = 0x02020202;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1" }); 
+            return Arrays.asList(new String[] { "field0", "field1" });
         }
     }
     public static class TestStructure3 extends FilledStructure {
@@ -217,7 +217,7 @@ public class StructureTest extends TestCase {
         public short field1 = 0x0202;
         public int field2 = 0x03030303;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1", "field2" }); 
+            return Arrays.asList(new String[] { "field0", "field1", "field2" });
         }
     }
     public static class TestStructure4 extends FilledStructure {
@@ -226,14 +226,14 @@ public class StructureTest extends TestCase {
         public int field2 = 0x03030303;
         public long field3 = 0x0404040404040404L;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1", "field2", "field3" }); 
+            return Arrays.asList(new String[] { "field0", "field1", "field2", "field3" });
         }
     }
     public static class TestStructure5 extends FilledStructure {
         public long field0 = 0x0101010101010101L;
         public byte field1 = 0x02;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field0", "field1" }); 
+            return Arrays.asList(new String[] { "field0", "field1" });
         }
     }
     public interface SizeTest extends Library {
@@ -354,7 +354,7 @@ public class StructureTest extends TestCase {
             ++allocations;
         }
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "x", "y" }); 
+            return Arrays.asList(new String[] { "x", "y" });
         }
     }
     public void testStructureField() {
@@ -362,7 +362,7 @@ public class StructureTest extends TestCase {
             public PublicTestStructure s1, s2;
             public int after;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "s1", "s2", "after" }); 
+                return Arrays.asList(new String[] { "s1", "s2", "after" });
             }
         }
         TestStructure s = new TestStructure();
@@ -386,6 +386,25 @@ public class StructureTest extends TestCase {
                      s.s2.getPointer());
     }
 
+    static class TestUnion extends Union {
+        public int u_int;
+        public float u_float;
+        public double u_double;
+    }
+    public void testUnionField() {
+        class TestStructure extends Structure {
+            public long s_long;
+            public TestUnion s_union;
+            public int s_int;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "s_long", "s_union", "s_int" });
+            }
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong structure size", 24, s.size());
+        assertEquals("Wrong union size", 8, s.s_union.size());
+    }
+
     public static class NonAllocatingTestStructure extends PublicTestStructure {
         public NonAllocatingTestStructure() { }
         public NonAllocatingTestStructure(Pointer p) { super(p); read(); }
@@ -394,16 +413,16 @@ public class StructureTest extends TestCase {
         }
     }
 
-    // TODO: add'l newInstance(Pointer) tests: 
+    // TODO: add'l newInstance(Pointer) tests:
     // NOTE: ensure structure-by-value respected (no more flag on newjavastructure)
-    // native call (direct mode) 
+    // native call (direct mode)
     // getNativeAlignment
     public void testStructureFieldAvoidsSeparateMemoryAllocation() {
         class TestStructure extends Structure {
             public NonAllocatingTestStructure s1;
             public TestStructure() { }
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "s1" }); 
+                return Arrays.asList(new String[] { "s1" });
             }
         }
         TestStructure ts = new TestStructure();
@@ -434,8 +453,8 @@ public class StructureTest extends TestCase {
             // initialized array elements
             public PublicTestStructure[] inner2 = (PublicTestStructure[])
                 new PublicTestStructure().toArray(2);
-            protected List getFieldOrder() { 
-                return Arrays.asList(new String[] { "inner", "inner2" }); 
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "inner", "inner2" });
             }
         }
         TestStructure s = new TestStructure();
@@ -530,7 +549,7 @@ public class StructureTest extends TestCase {
             public double[] da = new double[3];
             public PublicTestStructure nested;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "z", "b", "c", "s", "i", "l", "f", "d", "ba", "ca", "sa", "ia", "la", "fa", "da", "nested" }); 
+                return Arrays.asList(new String[] { "z", "b", "c", "s", "i", "l", "f", "d", "ba", "ca", "sa", "ia", "la", "fa", "da", "nested" });
             }
         }
         TestStructure s = new TestStructure();
@@ -624,8 +643,8 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int i;
             public NativeLong l;
-            protected List getFieldOrder() { 
-                return Arrays.asList(new String[] { "i", "l" }); 
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "i", "l" });
             }
         }
         TestStructure s = new TestStructure();
@@ -672,14 +691,14 @@ public class StructureTest extends TestCase {
 
     public static class BadFieldStructure extends Structure {
         public Object badField;
-        protected List getFieldOrder() { 
+        protected List getFieldOrder() {
             return Arrays.asList(new String[] { "badField" });
         }
     }
     public void testUnsupportedField() {
         class BadNestedStructure extends Structure {
             public BadFieldStructure badStruct = new BadFieldStructure();
-            protected List getFieldOrder() { 
+            protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "badStruct" });
             }
         }
@@ -881,7 +900,7 @@ public class StructureTest extends TestCase {
         assertTrue("Read should preserve structure memory",
                    inner.getPointer() instanceof Memory);
     }
-    
+
     public static class TestPointer extends PointerType { }
     public void testPreservePointerFields() {
         class TestStructure extends Structure {
@@ -925,7 +944,7 @@ public class StructureTest extends TestCase {
         assertEquals("String field should not be overwritten", m2, s.getPointer().getPointer(Pointer.SIZE));
     }
 
-    // Ensure string cacheing doesn't interfere with wrapped structure writes. 
+    // Ensure string cacheing doesn't interfere with wrapped structure writes.
     public static class StructureFromNative extends Structure {
         public String s;
         protected List getFieldOrder() {
@@ -938,7 +957,7 @@ public class StructureTest extends TestCase {
         public StructureFromNative() {
         }
     }
-    
+
     public void testInitializeStructureFieldWithStrings() {
         class ContainingStructure extends Structure {
             public StructureFromNative inner;
@@ -1021,7 +1040,7 @@ public class StructureTest extends TestCase {
         }
         TestStructure s = new TestStructure();
         s.field = new PublicTestStructure.ByReference();
-        PublicTestStructure.ByReference[] array = 
+        PublicTestStructure.ByReference[] array =
             (PublicTestStructure.ByReference[])s.field.toArray(2);
         final int VALUE = -1;
         array[1].x = VALUE;
@@ -1066,13 +1085,13 @@ public class StructureTest extends TestCase {
             return Arrays.asList(new String[] { "size", "alignment", "type", "elements" });
         }
         public TestFFIType(Pointer p) {
-            super(p); 
+            super(p);
             read();
             assertTrue("Test FFIType type not initialized: " + this, this.type != 0);
 
             // Force libffi to explicitly calculate the size field of
             // this FFIType object
-            int size = Native.initialize_ffi_type(p.peer); 
+            int size = Native.initialize_ffi_type(p.peer);
             read();
             assertEquals("Test FFIType size improperly initialized: " + TestFFIType.this, size, TestFFIType.this.size.intValue());
         }
@@ -1123,7 +1142,7 @@ public class StructureTest extends TestCase {
             public int intField;
             public PublicTestStructure inner;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "intField", "inner" }); 
+                return Arrays.asList(new String[] { "intField", "inner" });
             }
         }
         TestStructure s = new TestStructure();
@@ -1154,7 +1173,7 @@ public class StructureTest extends TestCase {
     	class TestStructure extends Structure {
             public ByteByReference ref;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "ref" }); 
+                return Arrays.asList(new String[] { "ref" });
             }
     	}
     	TestStructure s = new TestStructure();
@@ -1171,7 +1190,7 @@ public class StructureTest extends TestCase {
     	class TestStructure extends Structure {
             public ByteByReference ref;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "ref" }); 
+                return Arrays.asList(new String[] { "ref" });
             }
     	}
     	TestStructure s = new TestStructure();
@@ -1191,7 +1210,7 @@ public class StructureTest extends TestCase {
     public static class ROStructure extends Structure {
         public final int field;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field" }); 
+            return Arrays.asList(new String[] { "field" });
         }
         {
             // Initialize in ctor to avoid compiler replacing
@@ -1241,7 +1260,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public NativeLong[] longs = new NativeLong[SIZE];
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "longs" }); 
+                return Arrays.asList(new String[] { "longs" });
             }
         }
         TestStructure s = new TestStructure();
@@ -1277,7 +1296,7 @@ public class StructureTest extends TestCase {
             public NativeLong nl = INITIAL;
             public NativeLong uninitialized;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "nl", "uninitialized" }); 
+                return Arrays.asList(new String[] { "nl", "uninitialized" });
             }
         }
         TestStructure ts = new TestStructure();
@@ -1300,7 +1319,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int f1, f2;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "f1", "f2" }); 
+                return Arrays.asList(new String[] { "f1", "f2" });
             }
         }
         class TestStructure2 extends TestStructure {
@@ -1333,7 +1352,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int f1, f2;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "f1", "f2", "f3" }); 
+                return Arrays.asList(new String[] { "f1", "f2", "f3" });
             }
         }
         try {
@@ -1387,7 +1406,7 @@ public class StructureTest extends TestCase {
                 return list;
             }
         }
-        
+
         TestStructure s = new TestStructure();
         assertEquals("Wrong field order",
                      Arrays.asList(ORDER), s.getFieldOrder());
@@ -1444,13 +1463,13 @@ public class StructureTest extends TestCase {
         Structure s = new TestStructure();
         assertEquals("Wrong type mapper: " + s, mapper, s.getTypeMapper());
     }
-    
+
     public void testWriteWithNullBoxedPrimitives() {
         class TestStructure extends Structure {
             public Boolean zfield;
             public Integer field;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "zfield", "field" }); 
+                return Arrays.asList(new String[] { "zfield", "field" });
             }
         }
         TestStructure s = new TestStructure();
@@ -1465,7 +1484,7 @@ public class StructureTest extends TestCase {
             public int[] second = new int[4];
             public Pointer[] third = new Pointer[4];
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first", "second", "third" }); 
+                return Arrays.asList(new String[] { "first", "second", "third" });
             }
         }
         class TestStructure extends Structure {
@@ -1492,7 +1511,7 @@ public class StructureTest extends TestCase {
         assertTrue("Equals is not symmetric", s2.equals(s1));
         assertTrue("Equals is not transitive", s1.equals(s2) && s2.equals(s3) && s1.equals(s3));
 
-        
+
     }
 
     public void testStructureEqualsByValueByReference() {
@@ -1501,7 +1520,7 @@ public class StructureTest extends TestCase {
             public int[] second = new int[4];
             public Pointer[] third = new Pointer[4];
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first", "second", "third" }); 
+                return Arrays.asList(new String[] { "first", "second", "third" });
             }
         }
         class ByReference extends TestStructure implements Structure.ByReference { }
@@ -1518,14 +1537,14 @@ public class StructureTest extends TestCase {
         assertTrue("Equals is not symmetric (ByValue)", s3.equals(s1));
         assertTrue("Equals is not transitive (ByReference/ByValue)", s1.equals(s2) && s2.equals(s3) && s1.equals(s3));
 
-        
+
     }
 
     public void testStructureHashCodeMatchesEqualsTrue() {
         class TestStructure extends Structure {
             public int first;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first" }); 
+                return Arrays.asList(new String[] { "first" });
             }
         }
         TestStructure s1 = new TestStructure();
@@ -1540,7 +1559,7 @@ public class StructureTest extends TestCase {
             public byte first;
             public int second;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first", "second" }); 
+                return Arrays.asList(new String[] { "first", "second" });
             }
         }
         TestStructure s1 = new TestStructure();
@@ -1559,7 +1578,7 @@ public class StructureTest extends TestCase {
             public int unique;
             public TestStructureByRef s;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "unique", "s" }); 
+                return Arrays.asList(new String[] { "unique", "s" });
             }
         }
         TestStructureByRef s = new TestStructureByRef();
@@ -1592,7 +1611,7 @@ public class StructureTest extends TestCase {
         public CyclicTestStructure() { }
         public CyclicTestStructure.ByReference next;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "next" }); 
+            return Arrays.asList(new String[] { "next" });
         }
     }
     public void testCyclicRead() {
@@ -1618,7 +1637,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int field;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" }); 
+                return Arrays.asList(new String[] { "field" });
             }
             public TestStructure(Pointer p) {
                 super(p);
@@ -1637,7 +1656,7 @@ public class StructureTest extends TestCase {
             public int intField;
             public byte[] arrayField = new byte[256];
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "intField", "arrayField" }); 
+                return Arrays.asList(new String[] { "intField", "arrayField" });
             }
             public TestStructure(Pointer p) {
                 super(p);
@@ -1676,7 +1695,7 @@ public class StructureTest extends TestCase {
         public ByReference[] array = new ByReference[13];
         public int value2;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value1", "array", "value2" }); 
+            return Arrays.asList(new String[] { "value1", "array", "value2" });
         }
 
         public static class ByReference extends TestByReferenceArrayField implements Structure.ByReference { }
@@ -1703,7 +1722,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int field;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" }); 
+                return Arrays.asList(new String[] { "field" });
             }
             public TestStructure() { }
             public TestStructure(Pointer p) { super(p); read(); }
@@ -1720,7 +1739,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public int field;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" }); 
+                return Arrays.asList(new String[] { "field" });
             }
         }
         Structure ts = new TestStructure(); ts.ensureAllocated();
@@ -1728,12 +1747,12 @@ public class StructureTest extends TestCase {
 
         assertSame("Structure layout not cached", ts.fields(), ts2.fields());
     }
-    
+
     public void testStructureLayoutVariableNoCache() {
         class TestStructure extends Structure {
             public byte[] variable;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "variable" }); 
+                return Arrays.asList(new String[] { "variable" });
             }
             public TestStructure(int size) {
                 this.variable = new byte[size];
@@ -1767,7 +1786,7 @@ public class StructureTest extends TestCase {
         class TestStructure extends Structure {
             public boolean field;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" }); 
+                return Arrays.asList(new String[] { "field" });
             }
             public TestStructure() {
                 super(m);
@@ -1788,7 +1807,7 @@ public class StructureTest extends TestCase {
             public byte first;
             public int second;
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first", "second" }); 
+                return Arrays.asList(new String[] { "first", "second" });
             }
             public TestStructure() {
                 setAlignType(ALIGN_NONE);
@@ -1851,7 +1870,7 @@ public class StructureTest extends TestCase {
                 super(mapper);
             }
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "b", "s", "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7" }); 
+                return Arrays.asList(new String[] { "b", "s", "p0", "p1", "p2", "p3", "p4", "p5", "p6", "p7" });
             }
         }
         Structure s = new TestStructure();
