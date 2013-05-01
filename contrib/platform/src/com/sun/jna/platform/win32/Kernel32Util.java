@@ -1,14 +1,14 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jna.LastErrorException;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -31,10 +32,10 @@ import com.sun.jna.ptr.PointerByReference;
  * @author markus[at]headcrashing[dot]eu
  */
 public abstract class Kernel32Util implements WinDef {
-	
+
 	/**
 	 * Get current computer NetBIOS name.
-	 * @return 
+	 * @return
 	 *  Netbios name.
 	 */
 	public static String getComputerName() {
@@ -45,7 +46,7 @@ public abstract class Kernel32Util implements WinDef {
     	}
     	return Native.toString(buffer);
 	}
-	
+
 	/**
 	 * Format a message from an HRESULT.
 	 * @param code
@@ -54,24 +55,24 @@ public abstract class Kernel32Util implements WinDef {
 	 *  Formatted message.
 	 */
 	public static String formatMessageFromHR(HRESULT code) {
-		PointerByReference buffer = new PointerByReference();        
+		PointerByReference buffer = new PointerByReference();
         if (0 == Kernel32.INSTANCE.FormatMessage(
         		WinBase.FORMAT_MESSAGE_ALLOCATE_BUFFER
-        		| WinBase.FORMAT_MESSAGE_FROM_SYSTEM 
-        		| WinBase.FORMAT_MESSAGE_IGNORE_INSERTS, 
+        		| WinBase.FORMAT_MESSAGE_FROM_SYSTEM
+        		| WinBase.FORMAT_MESSAGE_IGNORE_INSERTS,
                 null,
-                code.intValue(), 
+                code.intValue(),
                 0, // TODO: MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT)
-                buffer, 
-                0, 
+                buffer,
+                0,
                 null)) {
         	throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
-        }	       
+        }
     	String s = buffer.getValue().getString(0, ! Boolean.getBoolean("w32.ascii"));
     	Kernel32.INSTANCE.LocalFree(buffer.getValue());
-    	return s.trim();		
+    	return s.trim();
 	}
-	
+
 	/**
 	 * Format a system message from an error code.
 	 * @param code
@@ -82,7 +83,7 @@ public abstract class Kernel32Util implements WinDef {
 	public static String formatMessageFromLastErrorCode(int code) {
 		return formatMessageFromHR(W32Errors.HRESULT_FROM_WIN32(code));
 	}
-	
+
 	/**
 	 * Return the path designated for temporary files.
 	 * @return
@@ -90,19 +91,19 @@ public abstract class Kernel32Util implements WinDef {
 	 */
 	public static String getTempPath() {
 		DWORD nBufferLength = new DWORD(WinDef.MAX_PATH);
-    	char[] buffer = new char[nBufferLength.intValue()]; 
+    	char[] buffer = new char[nBufferLength.intValue()];
     	if (Kernel32.INSTANCE.GetTempPath(nBufferLength, buffer).intValue() == 0) {
     		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     	}
     	return Native.toString(buffer);
 	}
-	
+
 	public static void deleteFile(String filename) {
     	if (! Kernel32.INSTANCE.DeleteFile(filename)) {
     		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     	}
 	}
-	
+
 	/**
 	 * Returns valid drives in the system.
 	 * @return
@@ -113,14 +114,14 @@ public abstract class Kernel32Util implements WinDef {
     	if (dwSize.intValue() <= 0) {
     		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     	}
-    	
+
     	char buf[] = new char[dwSize.intValue()];
     	dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf);
     	if (dwSize.intValue() <= 0) {
     		throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     	}
 
-    	List<String> drives = new ArrayList<String>();    	
+    	List<String> drives = new ArrayList<String>();
     	String drive = "";
     	// the buffer is double-null-terminated
     	for(int i = 0; i < buf.length - 1; i++) {
@@ -132,8 +133,8 @@ public abstract class Kernel32Util implements WinDef {
     		}
     	}
     	return drives.toArray(new String[0]);
-	}	
-	
+	}
+
 	/**
 	 * Retrieves file system attributes for a specified file or directory.
 	 * @param fileName
@@ -202,12 +203,12 @@ public abstract class Kernel32Util implements WinDef {
 	public static int getDriveType(String rootName) {
 	    return Kernel32.INSTANCE.GetDriveType(rootName);
 	}
-	
+
 	/**
 	 * Get the value of an environment variable.
 	 * @param name
 	 * 	Name of the environment variable.
-	 * @return 
+	 * @return
 	 *  Value of an environment variable.
 	 */
 	public static String getEnvironmentVariable(String name) {
@@ -248,7 +249,7 @@ public abstract class Kernel32Util implements WinDef {
 
     /**
      * Retrieves a string from the specified section in an initialization file.
-     * 
+     *
      * @param lpAppName
      *            The name of the section containing the key name. If this parameter is {@code null}, the {@link Kernel32#GetPrivateProfileString} function copies all
      *            section names in the file to the supplied buffer.
@@ -287,5 +288,42 @@ public abstract class Kernel32Util implements WinDef {
     public static final void writePrivateProfileString(final String appName, final String keyName, final String string, final String fileName) {
         if (!Kernel32.INSTANCE.WritePrivateProfileString(appName, keyName, string, fileName))
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    }
+
+    /**
+     * Convenience method to get the processor information. Takes care of auto-growing the array.
+     *
+     * @return the array of processor information.
+     */
+    public static final WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] getLogicalProcessorInformation()
+    {
+        int sizePerStruct = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION().size();
+        WinDef.DWORDbyReference bufferSize = new WinDef.DWORDbyReference(new WinDef.DWORD(sizePerStruct));
+        Memory memory;
+        while (true)
+        {
+            memory = new Memory(bufferSize.getValue().intValue());
+            if (!Kernel32.INSTANCE.GetLogicalProcessorInformation(memory, bufferSize))
+            {
+                int lastError = Kernel32.INSTANCE.GetLastError();
+                if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER)
+                {
+                    // Back around - will reallocate a buffer with the new size we were told to use.
+                }
+                else
+                {
+                    throw new LastErrorException(lastError);
+                }
+            }
+            else
+            {
+                // Success exit.
+                break;
+            }
+        }
+
+        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION firstInformation = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION(memory);
+        int returnedStructCount = bufferSize.getValue().intValue() / sizePerStruct;
+        return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation.toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[returnedStructCount]);
     }
 }

@@ -1,14 +1,14 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -20,6 +20,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.Kernel32Util;
+import com.sun.jna.platform.win32.WinNT;
 import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
@@ -29,7 +32,7 @@ import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
  * @author markus[at]headcrashing[dot]eu
  */
 public class Kernel32UtilTest extends TestCase {
-	
+
     public static void main(String[] args) throws Exception {
         System.out.println("Computer name: " + Kernel32Util.getComputerName());
         System.out.println("Temp path: " + Kernel32Util.getTempPath());
@@ -38,12 +41,12 @@ public class Kernel32UtilTest extends TestCase {
 		String[] logicalDrives = Kernel32Util.getLogicalDriveStrings();
 		for(String logicalDrive : logicalDrives) {
 			// drive type
-			System.out.println(" " + logicalDrive + " (" 
+			System.out.println(" " + logicalDrive + " ("
 					+ Kernel32.INSTANCE.GetDriveType(logicalDrive) + ")");
 			// free space
-	    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference(); 
-	    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference(); 
-	    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference(); 
+	    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference();
+	    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference();
+	    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference();
 	    	if (Kernel32.INSTANCE.GetDiskFreeSpaceEx(logicalDrive, lpFreeBytesAvailable, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes)) {
 		    	System.out.println("  Total: " + formatBytes(lpTotalNumberOfBytes.getValue()));
 		    	System.out.println("   Free: " + formatBytes(lpTotalNumberOfFreeBytes.getValue()));
@@ -85,25 +88,25 @@ public class Kernel32UtilTest extends TestCase {
 			return String.format("%d bytes", bytes);
 		}
     }
-    
+
 	public void testGetComputerName() {
 		assertTrue(Kernel32Util.getComputerName().length() > 0);
 	}
-	
+
 	public void testFormatMessageFromLastErrorCode() {
 	    assertEquals("The remote server has been paused or is in the process of being started.",
-	    		Kernel32Util.formatMessageFromLastErrorCode(W32Errors.ERROR_SHARING_PAUSED));	
+	    		Kernel32Util.formatMessageFromLastErrorCode(W32Errors.ERROR_SHARING_PAUSED));
 	}
 
 	public void testFormatMessageFromHR() {
 		assertEquals("The operation completed successfully.",
 				Kernel32Util.formatMessageFromHR(W32Errors.S_OK));
 	}
-	
+
 	public void testGetTempPath() {
 		assertTrue(Kernel32Util.getTempPath().length() > 0);
 	}
-	
+
 	public void testGetLogicalDriveStrings() {
 		String[] logicalDrives = Kernel32Util.getLogicalDriveStrings();
 		assertTrue(logicalDrives.length > 0);
@@ -111,14 +114,14 @@ public class Kernel32UtilTest extends TestCase {
 			assertTrue(logicalDrive.length() > 0);
 		}
 	}
-	
+
 	public void testDeleteFile() throws IOException {
 		String filename = Kernel32Util.getTempPath() + "\\FileDoesNotExist.jna";
 		File f = new File(filename);
 		f.createNewFile();
 		Kernel32Util.deleteFile(filename);
 	}
-	
+
 	public void testGetFileAttributes() throws IOException {
 		String filename = Kernel32Util.getTempPath();
 		int fileAttributes = Kernel32Util.getFileAttributes(filename);
@@ -129,7 +132,7 @@ public class Kernel32UtilTest extends TestCase {
 		tempFile.delete();
 		assertEquals(0, fileAttributes2 & WinNT.FILE_ATTRIBUTE_DIRECTORY);
 	}
-	
+
     public void testGetEnvironmentVariable() {
     	assertEquals(null, Kernel32Util.getEnvironmentVariable("jna-getenvironment-test"));
     	Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42");
@@ -172,12 +175,21 @@ public class Kernel32UtilTest extends TestCase {
         Kernel32Util.writePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath());
         Kernel32Util.writePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath());
         Kernel32Util.writePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath());
-        
+
         final BufferedReader reader = new BufferedReader(new FileReader(tmp));
         assertEquals(reader.readLine(), "[Section]");
         assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
         assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
         assertEquals(reader.readLine(), null);
         reader.close();
+    }
+
+    public final void testGetLogicalProcessorInformation() {
+        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION informationArray = Kernel32Util.getLogicalProcessorInformation();
+        assertTrue(informationArray >= 1); // docs say so
+        for (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION information : informationArray) {
+            //TODO: What can we check? Java itself has no way to get physical processor info (if it did,
+            // I wouldn't be writing in JNA support for it.)
+        }
     }
 }

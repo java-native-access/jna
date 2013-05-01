@@ -1,14 +1,14 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -30,7 +30,7 @@ import com.sun.jna.ptr.ByReference;
  * by NT, but exposed through the Win32 API. Ported from WinNT.h Microsoft
  * Windows SDK 6.0A. Avoid including any NIO Buffer mappings here; put them in a
  * DLL-derived interface (e.g. kernel32, user32, etc) instead.
- * 
+ *
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
@@ -251,7 +251,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Luid", "Attributes" });
         }
-        
+
         public LUID_AND_ATTRIBUTES() {
         }
 
@@ -266,11 +266,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * and its attributes. SIDs are used to uniquely identify users or groups.
      */
     public static class SID_AND_ATTRIBUTES extends Structure {
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Sid", "Attributes" });
         }
-        
+
         public SID_AND_ATTRIBUTES() {
             super();
         }
@@ -296,11 +296,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * (SID) that will be applied to newly created objects.
      */
     public static class TOKEN_OWNER extends Structure {
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Owner" });
         }
-        
+
         public TOKEN_OWNER() {
             super();
         }
@@ -324,9 +324,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     public static class PSID extends Structure {
         public static class ByReference extends PSID implements Structure.ByReference { }
-        
-        protected List getFieldOrder() { 
-            return Arrays.asList(new String[] { "sid" }); 
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "sid" });
         }
 
         public PSID() {
@@ -386,11 +386,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * token.
      */
     public static class TOKEN_USER extends Structure {
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "User" });
         }
-        
+
         public TOKEN_USER() {
             super();
         }
@@ -417,11 +417,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * identifiers (SIDs) in an access token.
      */
     public static class TOKEN_GROUPS extends Structure {
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "GroupCount", "Group0" });
         }
-        
+
         public TOKEN_GROUPS() {
             super();
         }
@@ -465,7 +465,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * contains the LUID and attributes of a privilege.
          */
         public LUID_AND_ATTRIBUTES Privileges[];
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "PrivilegeCount", "Privileges" });
         }
@@ -679,7 +679,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * The FILE_NOTIFY_INFORMATION structure describes the changes found by the
      * ReadDirectoryChangesW function.
-     * 
+     *
      * This structure is non-trivial since it is a pattern stamped into a large
      * block of result memory rather than something that stands alone or is used
      * for input.
@@ -690,7 +690,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public int FileNameLength;
         // filename is not nul-terminated, so we can't use a String/WString
         public char[] FileName = new char[1];
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "NextEntryOffset", "Action", "FileNameLength", "FileName" });
         }
@@ -946,7 +946,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int REG_FULL_RESOURCE_DESCRIPTOR = 9;
 
     /**
-     * 
+     *
      */
     int REG_RESOURCE_REQUIREMENTS_LIST = 10;
 
@@ -994,14 +994,14 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public UNION u;
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "u" });
         }
 
         /**
          * Low DWORD.
-         * 
+         *
          * @return DWORD.
          */
         public DWORD getLow() {
@@ -1010,7 +1010,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * High DWORD.
-         * 
+         *
          * @return DWORD.
          */
         public DWORD getHigh() {
@@ -1019,7 +1019,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * 64-bit value.
-         * 
+         *
          * @return 64-bit value.
          */
         public long getValue() {
@@ -1435,72 +1435,72 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinBuiltinDCOMUsersSid = 61;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinBuiltinIUsersSid = 62;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinIUserSid = 63;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinBuiltinCryptoOperatorsSid = 64;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinUntrustedLabelSid = 65;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinLowLabelSid = 66;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinMediumLabelSid = 67;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinHighLabelSid = 68;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinSystemLabelSid = 69;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinWriteRestrictedCodeSid = 70;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinCreatorOwnerRightsSid = 71;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinCacheablePrincipalsGroupSid = 72;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinNonCacheablePrincipalsGroupSid = 73;
 
         /**
-	 * 
+	 *
 	 */
         public static final int WinEnterpriseReadonlyControllersSid = 74;
 
@@ -1572,7 +1572,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion" });
         }
-        
+
         public OSVERSIONINFO() {
             szCSDVersion = new char[128];
             dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFO)
@@ -1657,7 +1657,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion", "wServicePackMajor", "wServicePackMinor", "wSuiteMask", "wProductType", "wReserved"});
         }
-        
+
         public OSVERSIONINFOEX() {
             szCSDVersion = new char[128];
             dwOSVersionInfoSize = new DWORD(size()); // sizeof(OSVERSIONINFOEX)
@@ -1862,7 +1862,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Length", "Reserved", "RecordNumber", "TimeGenerated", "TimeWritten", "EventID", "EventType", "NumStrings", "EventCategory", "ReservedFlags", "ClosingRecordNumber", "StringOffset", "UserSidLength", "UserSidOffset", "DataLength", "DataOffset"});
         }
-        
+
         public EVENTLOGRECORD() {
         }
 
@@ -1960,18 +1960,18 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public byte[] data;
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "data" });
         }
     }
 
     public static class ACL extends Structure {
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2" });
         }
-        
+
         public ACL() {
         }
 
@@ -2030,7 +2030,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Revision", "Sbz1", "Control", "Owner", "Group", "Sacl", "Dacl" });
         }
-        
+
         private ACL DACL;
 
         public SECURITY_DESCRIPTOR_RELATIVE() {
@@ -2070,7 +2070,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public ACEStructure(Pointer p) {
             super(p);
         }
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AceType", "AceFlags", "AceSize" });
         }
@@ -2171,5 +2171,217 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred,
                 WinBase.OVERLAPPED overlapped);
+    }
+
+    /**
+     * Describes the relationship between the specified processor set. This structure is used with the
+     * {@link Kernel32#GetLogicalProcessorInformation} function.
+     */
+    public static class SYSTEM_LOGICAL_PROCESSOR_INFORMATION extends Structure {
+        /**
+         * The processor mask identifying the processors described by this structure. A processor mask is a bit
+         * vector in which each set bit represents an active processor in the relationship.
+         */
+        public ULONG_PTR processorMask;
+
+        /**
+         * The relationship between the processors identified by the value of the {@link #processorMask} member.
+         * This member can be one of
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore} or
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationPackage}.
+         *
+         * @see LOGICAL_PROCESSOR_RELATIONSHIP
+         */
+        public int /* LOGICAL_PROCESSOR_RELATIONSHIP */ relationship;
+
+        /**
+         * A union of fields which differs depending on {@link #relationship}.
+         */
+        public AnonymousUnionPayload payload;
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION() {
+            super(ALIGN_MSVC);
+        }
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Pointer memory) {
+            super(memory, ALIGN_MSVC);
+        }
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "processorMask", "relationship", "payload" });
+        }
+
+        public static class AnonymousUnionPayload extends Union {
+            /**
+             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore}.
+             */
+            public AnonymousStructProcessorCore processorCore;
+
+            /**
+             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode}.
+             */
+            public AnonymousStructNumaNode numaNode;
+
+            /**
+             * <p>Identifies the characteristics of a particular cache. There is one record returned for each cache
+             *    reported. Some or all caches may not be reported, depending on how caches are identified. Therefore,
+             *    do not assume the absence of any particular caches. Caches are not necessarily shared among
+             *    logical processors.</p>
+             *
+             * <p>Contains valid data only if {@link #relationship} is
+             *    {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache}.</p>
+             *
+             * <p>This member was not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
+             */
+            public CACHE_DESCRIPTOR cache;
+
+            /**
+             * Reserved. Do not use.
+             */
+            public ULONGLONG[] reserved = new ULONGLONG[2];
+        }
+
+        public static class AnonymousStructProcessorCore extends Structure {
+            /**
+             * <p>If the value of this mmeber is {@code 1}, the logical processors identified by the value of the
+             *    {@link #processorMask} member share functional units, as in Hyperthreading or SMT. Otherwise, the
+             *    identified logical processors do not share functional units.</p>
+             *
+             * <p>Note: Prior to Windows Vista, this member is also {@code 1} for cores that share a physical
+             *    package.</p>
+             */
+            public BYTE flags;
+
+            @Override
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "flags" });
+            }
+        }
+
+        public static class AnonymousStructNumaNode extends Structure {
+            /**
+             * Identifies the NUMA node. Valid values are {@code 0} to the highest NUMA node number inclusive.
+             * A non-NUMA multiprocessor system will report that all processors belong to one NUMA node.
+             */
+            public DWORD nodeNumber;
+
+            @Override
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "nodeNumber" });
+            }
+        }
+    }
+
+    /**
+     * Represents the relationship between the processor set identified in the corresponding
+     * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure.
+     */
+    public static abstract class LOGICAL_PROCESSOR_RELATIONSHIP {
+        /**
+         * The specified logical processors share a single processor core.
+         */
+        public static final int RelationProcessorCore = 0;
+
+        /**
+         * The specified logical processors are part of the same NUMA node.
+         */
+        public static final int RelationNumaNode = 1;
+
+        /**
+         * <p>The specified logical processors share a cache.</p>
+         *
+         * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
+         */
+        public static final int RelationCache = 2;
+
+        /**
+         * <p>The specified logical processors share a physical package (a single package socketed or soldered onto a
+         *    motherboard may contain multiple processor cores or threads, each of which is treated as a separate
+         *    processor by the operating system.)</p>
+         *
+         * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
+         */
+        public static final int RelationProcessorPackage = 3;
+
+        /**
+         * <p>The specified logical processors share a single processor group.</p>
+         *
+         * <p>Not supported until Windows Server 2008 R2.</p>
+         */
+        public static final int RelationGroup = 4;
+
+        /**
+         * <p>On input, retrieves information about all possible relation types. This value is not used on output.</p>
+         *
+         * <p>Not supported until Windows Server 2008 R2.</p>
+         */
+        public static final int RelationAll = 0xFFFF;
+    }
+
+    /**
+     * Describes the cache attributes.
+     */
+    public static class CACHE_DESCRIPTOR extends Structure {
+        /**
+         * The cache level. This member can be 1, 2 or 3, corresponding to L1, L2 or L3 cache, respectively (other
+         * values may be supported in the future.)
+         */
+        public BYTE level;
+
+        /**
+         * The cache associativity. If this member is {@link #CACHE_FULLY_ASSOCIATIVE}, the cache is fully
+         * associative.
+         */
+        public BYTE associativity;
+
+        /**
+         * The cache line size, in bytes.
+         */
+        public WORD lineSize;
+
+        /**
+         * The cache size, in bytes.
+         */
+        public DWORD size;
+
+        /**
+         * The cache type.
+         *
+         * @see PROCESSOR_CACHE_TYPE
+         */
+        public int /* PROCESSOR_CACHE_TYPE */ type;
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "level", "associativity", "lineSize", "size", "type" });
+        }
+    }
+
+    /**
+     * Represents the type of processor cache identifier in the corresponding {@link CACHE_DESCRIPTOR} structure.
+     */
+    public static abstract class PROCESSOR_CACHE_TYPE {
+        /**
+         * The cache is unified.
+         */
+        public static int CacheUnified = 0;
+
+        /**
+         * The cache is for processor instructions.
+         */
+        public static int CacheInstruction = 1;
+
+        /**
+         * The cache is for data.
+         */
+        public static int CacheData = 2;
+
+        /**
+         * The cache is for traces.
+         */
+        public static int CacheTrace = 3;
     }
 }
