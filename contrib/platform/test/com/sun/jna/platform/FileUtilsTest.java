@@ -28,7 +28,7 @@ public class FileUtilsTest extends TestCase {
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         try {
-            assertTrue("File should exist", file.exists());
+            assertTrue("Original source file missing: " + file, file.exists());
             try {
                 utils.moveToTrash(new File[] { file });
             }
@@ -38,9 +38,7 @@ public class FileUtilsTest extends TestCase {
             assertFalse("File still exists after move to trash: " + file, file.exists());
         }
         finally {
-            if (file.exists()) {
-                file.delete();
-            }
+            file.delete();
         }
     }
     
@@ -55,9 +53,10 @@ public class FileUtilsTest extends TestCase {
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         File symlink = new File(tmpdir, file.getName() + ".link");
-        Runtime.getRuntime().exec(new String[] { "ln", "-s", file.getAbsolutePath(), symlink.getAbsolutePath() });
         try {
-            assertTrue("File should exist", symlink.exists());
+            Runtime.getRuntime().exec(new String[] { "ln", "-s", file.getAbsolutePath(), symlink.getAbsolutePath() });
+            assertTrue("Original source file missing: " + file, file.exists());
+            assertTrue("Symlink creation failed (missing): " + symlink, symlink.exists());
             try {
                 utils.moveToTrash(new File[] { symlink });
             }
@@ -68,12 +67,8 @@ public class FileUtilsTest extends TestCase {
             assertTrue("Original file should still exist after move to trash: " + file, file.exists());
         }
         finally {
-            if (symlink.exists()) {
-                symlink.delete();
-            }
-            if (file.exists()) {
-                file.delete();
-            }
+            symlink.delete();
+            file.delete();
         }
     }
     
