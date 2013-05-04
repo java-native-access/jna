@@ -301,17 +301,29 @@ static ffi_type* getStructureType(JNIEnv *, jobject);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
-#if 0
+#if 1
 /** Invokes System.err.println (for debugging only). */
-static void
+void
 println(JNIEnv* env, const char* msg) {
   jclass cls = (*env)->FindClass(env, "java/lang/System");
+  if (!cls) {
+    fprintf(stderr, "JNA: failed to find java.lang.System\n");
+    return;
+  }
   jfieldID fid = (*env)->GetStaticFieldID(env, cls, "err",
-                                          "Ljava/io/PrintStream;");
+					  "Ljava/io/PrintStream;");
   jobject err = (*env)->GetStaticObjectField(env, cls, fid);
+  if (!err) {
+    fprintf(stderr, "JNA: failed to find System.err\n");
+    return;
+  }
   jclass pscls = (*env)->FindClass(env, "java/io/PrintStream");
+  if (!pscls) {
+    fprintf(stderr, "JNA: failed to find java.io.PrintStream\n");
+    return;
+  }
   jmethodID mid = (*env)->GetMethodID(env, pscls, "println",
-                                      "(Ljava/lang/String;)V");
+				      "(Ljava/lang/String;)V");
   jstring str = newJavaString(env, msg, JNI_FALSE);
   (*env)->CallObjectMethod(env, err, mid, str);
 }
@@ -568,7 +580,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       }
     }
     else if (preserve_last_error) {
-      JNA_set_last_error(GET_LAST_ERROR());
+      JNA_set_last_error(env, GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
@@ -987,10 +999,13 @@ initializeThread(callback* cb, AttachOptions* args) {
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   jobject group = NULL;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
 
-  if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-    fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
-    return NULL;
+  if (!attached) {
+    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
+      return NULL;
+    }
   }
   (*env)->PushLocalFrame(env, 16);
   {
@@ -1006,7 +1021,11 @@ initializeThread(callback* cb, AttachOptions* args) {
     }
   }
   (*env)->PopLocalFrame(env, NULL);
-  (*jvm)->DetachCurrentThread(jvm);
+  if (!attached) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread after callback init\n");
+    }
+  }
 
   return group;
 }
@@ -1715,7 +1734,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       }
     }
     else if (preserve_last_error) {
-      JNA_set_last_error(GET_LAST_ERROR());
+      JNA_set_last_error(env, GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
@@ -1792,9 +1811,8 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   jobject obj;
-  int attached;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
 
-  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for closure handler\n");
@@ -1823,7 +1841,9 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
   }
 
   if (!attached) {
-    (*jvm)->DetachCurrentThread(jvm);
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread after callback handling\n");
+    }
   }
 }
 
@@ -2936,13 +2956,13 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  JNA_set_last_error(code);
+  JNA_set_last_error(env, code);
   SET_LAST_ERROR(code);
 }
 
 JNIEXPORT jint JNICALL
 Java_com_sun_jna_Native_getLastError(JNIEnv *env, jclass UNUSED(classp)) {
-  return JNA_get_last_error();
+  return JNA_get_last_error(env);
 }
 
 JNIEXPORT jstring JNICALL
@@ -2984,7 +3004,9 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     result = 0;
   }
   if (!attached) {
-    (*jvm)->DetachCurrentThread(jvm);
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread on initial load\n");
+    }
   }
 
   return result;
@@ -3046,7 +3068,9 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
   }
 
   if (!attached) {
-    (*vm)->DetachCurrentThread(vm);
+    if ((*vm)->DetachCurrentThread(vm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread on unload\n");
+    }
   }
 }
 
@@ -3246,7 +3270,7 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_detach(JNIEnv* env, jclass UNUSED(cls), jboolean d) {
-  JNA_detach(d);
+  JNA_detach(env, d);
 }
 
 #ifdef __cplusplus

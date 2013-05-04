@@ -19,6 +19,7 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #if !defined(_WIN32_WCE)
 #include <errno.h>
 #endif
@@ -635,29 +636,33 @@ typedef struct thread_data {
   int repeat_count;
   int sleep_time;
   void (*func)(void);
+  char name[256];
 } thread_data;
 static THREAD_FUNC(thread_function, arg) {
-  // make a local copy
   thread_data td = *(thread_data*)arg;
   void (*func)(void) = td.func;
   int i;
+  fprintf(stderr, "thread start 0x%p (%s)\n", THREAD_CURRENT(), td.name);
 
   for (i=0;i < td.repeat_count;i++) {
     func();
     SLEEP(td.sleep_time);
   }
+  fprintf(stderr, "thread exiting 0x%p (%s)\n", THREAD_CURRENT(), td.name);
+  free((void*)arg);
   THREAD_EXIT();
   THREAD_RETURN;
 }
 
-static thread_data data;
 EXPORT void
-callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
+callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   THREAD_T thread;
-  data.repeat_count = n;
-  data.sleep_time = ms;
-  data.func = func;
-  THREAD_CREATE(&thread, &thread_function, &data);
+  thread_data* data = (thread_data*)malloc(sizeof(thread_data));
+  data->repeat_count = n;
+  data->sleep_time = ms;
+  data->func = func;
+  snprintf(data->name, sizeof(data->name), "%s", name);
+  THREAD_CREATE(&thread, &thread_function, data);
 }
 
 EXPORT int 

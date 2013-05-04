@@ -94,10 +94,6 @@ enum {
 /* callback behavior flags */
 enum {
   CB_HAS_INITIALIZER = com_sun_jna_Native_CB_HAS_INITIALIZER,
-  // detach options
-  THREAD_NOCHANGE,
-  THREAD_DETACH,
-  THREAD_LEAVE_ATTACHED,
 };
 
 typedef struct _callback {
@@ -176,10 +172,10 @@ extern int get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
 extern const char* JNA_callback_init(JNIEnv*);
-extern void JNA_set_last_error(int);
-extern int JNA_get_last_error();
+extern void JNA_set_last_error(JNIEnv*,int);
+extern int JNA_get_last_error(JNIEnv*);
 extern void JNA_callback_dispose(JNIEnv*);
-extern void JNA_detach(jboolean);
+extern void JNA_detach(JNIEnv*,jboolean);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
                                  callconv_t, jint);

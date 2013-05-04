@@ -84,7 +84,7 @@ public class CallbacksTest extends TestCase {
             void callback();
         }
         void callVoidCallback(VoidCallback c);
-        void callVoidCallbackThreaded(VoidCallback c, int count, int ms);
+        void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name);
         interface VoidCallbackCustom extends Callback {
             void customMethodName();
         }
@@ -184,6 +184,7 @@ public class CallbacksTest extends TestCase {
     TestLibrary lib;
     protected void setUp() {
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+	System.out.println("Run " + getName());
     }
     
     protected void tearDown() {
@@ -985,13 +986,20 @@ public class CallbacksTest extends TestCase {
                                         CallbackThreadInitializer cti,
                                         int repeat, int sleepms,
                                         int[] called) throws Exception {
+	callThreadedCallback(cb, cti, repeat, sleepms, called, repeat);
+    }
+
+    protected void callThreadedCallback(TestLibrary.VoidCallback cb,
+                                        CallbackThreadInitializer cti,
+                                        int repeat, int sleepms,
+                                        int[] called, int returnAfter) throws Exception {
         if (cti != null) {
             Native.setCallbackThreadInitializer(cb, cti);
         }
-        lib.callVoidCallbackThreaded(cb, repeat, sleepms);
+        lib.callVoidCallbackThreaded(cb, repeat, sleepms, getName());
 
         long start = System.currentTimeMillis();
-        while (called[0] < repeat) {
+        while (called[0] < returnAfter) {
             Thread.sleep(10);
             if (System.currentTimeMillis() - start > 5000) {
                 fail("Timed out waiting for callback, invoked " + called[0] + " times so far");
@@ -1029,10 +1037,10 @@ public class CallbacksTest extends TestCase {
         final String[] name = { null };
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
-        final String tname = getName() + " thread";
+        final String tname = "Test thread for " + getName();
         final boolean[] alive = {false};
 
-        ThreadGroup testGroup = new ThreadGroup(getName() + " thread group");
+        ThreadGroup testGroup = new ThreadGroup("Thread group for " + getName());
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false, tname, testGroup);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
@@ -1042,7 +1050,7 @@ public class CallbacksTest extends TestCase {
                 group[0] = thread.getThreadGroup();
                 t[0] = thread;
                 if (thread.isAlive()) {
-                    // NOTE: phoneME incorrectly reports thread "alive" status
+                    // NOTE: older phoneME incorrectly reports thread "alive" status
                     alive[0] = true;
                 }
 
@@ -1052,16 +1060,32 @@ public class CallbacksTest extends TestCase {
                 }
             }
         };
-        callThreadedCallback(cb, init, 1, 5000, called);
+        callThreadedCallback(cb, init, 2, 2000, called, 1);
 
         assertTrue("Callback thread not attached as daemon", daemon[0]);
         assertEquals("Wrong thread name", tname, name[0]);
         assertEquals("Wrong thread group", testGroup, group[0]);
-        // NOTE: phoneME incorrectly reports thread "alive" status
+        // NOTE: older phoneME incorrectly reports thread "alive" status
         if (!alive[0]) {
             throw new Error("VM incorrectly reports Thread.isAlive() == false within callback");
         }
         assertTrue("Thread should still be alive", t[0].isAlive());
+
+        long start = System.currentTimeMillis();
+	while (called[0] < 2) {
+	    Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > 5000) {
+		fail("Timed out waiting for second callback invocation, which indicates detach");
+	    }
+	}
+
+        start = System.currentTimeMillis();
+	while (t[0].isAlive()) {
+	    Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > 5000) {
+		fail("Timed out waiting for thread to detach and die");
+	    }
+	}
     }
 
     // Detach preference is indicated by the initializer.  Thread is attached
@@ -1073,7 +1097,7 @@ public class CallbacksTest extends TestCase {
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
             public String getName(Callback cb) {
-                return CallbacksTest.this.getName() + " thread " + called[0];
+                return "Test thread for " + CallbacksTest.this.getName() + " (call count: " + called[0] + ")";
             }
         };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -1096,24 +1120,32 @@ public class CallbacksTest extends TestCase {
             public void callback() {
                 threads.add(new WeakReference(Thread.currentThread()));
                 if (++called[0] == 1) {
-                    Thread.currentThread().setName("Thread to be cleaned up");
+                    Thread.currentThread().setName(getName() + " (Thread to be cleaned up)");
                 }
-                Native.detach(false);
+		Native.detach(false);
             }
         };
-        CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true);
-        callThreadedCallback(cb, asDaemon, 1, 0, called);
-        while (threads.size() == 0) {
+	// Always attach as daemon to ensure tests will exit
+        CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
+	    public String getName(Callback cb) {
+		return "Test thread for " + CallbacksTest.this.getName();
+	    }
+	};
+        callThreadedCallback(cb, asDaemon, 2, 100, called);
+	// Wait for it to start up
+        while (threads.size() == 0 && called[0] == 0) {
             Thread.sleep(10);
         }
         long start = System.currentTimeMillis();
         WeakReference ref = (WeakReference)threads.iterator().next();
         while (ref.get() != null) {
             System.gc();
-            Thread.sleep(10);
+            Thread.sleep(1000);
+	    Thread[] remaining = new Thread[Thread.activeCount()];
+	    Thread.enumerate(remaining);
             if (System.currentTimeMillis() - start > 10000) {
                 Thread t = (Thread)ref.get();
-                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + t + " alive: " + t.isAlive() + " daemon " + t.isDaemon());
+                fail("Timed out waiting for native attached thread to be GC'd: " + t + " alive: " + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
             }
         }
     }
