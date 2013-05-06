@@ -18,6 +18,7 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
@@ -99,7 +100,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // Fails under clover
+    // GC Fails under clover
     public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -153,7 +154,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // Fails under clover and OpenJDK(linux/ppc)
+    // GC Fails under clover and OpenJDK(linux/ppc)
     public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -202,6 +203,23 @@ public class JNAUnloadTest extends TestCase implements Paths {
             loader = null;
             cls = null;
             System.gc();
+        }
+    }
+
+    public void testLoadFromUnicodePath() throws Exception {
+        final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
+        File tmpdir = Native.getTempDir();
+        File unicodeDir = new File(tmpdir, UNICODE);
+        unicodeDir.mkdirs();
+        Properties props = System.getProperties();
+        try {
+            System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
+            ClassLoader loader = new TestLoader(true);
+            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+            assertEquals("Wrong class loader", loader, cls.getClassLoader());
+        }
+        finally {
+            System.setProperties(props);
         }
     }
 
