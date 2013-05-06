@@ -149,6 +149,7 @@ public class WebStartTest extends TestCase implements Paths {
             String path = findJWS();
             String[] cmd = {
                 path,
+                Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
                 "-Xnosplash", 
                 "-wait", 
                 jnlp.toURI().toURL().toString(),
