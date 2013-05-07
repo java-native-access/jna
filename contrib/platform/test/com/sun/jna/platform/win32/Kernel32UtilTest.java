@@ -185,8 +185,8 @@ public class Kernel32UtilTest extends TestCase {
     }
 
     public final void testGetLogicalProcessorInformation() {
-        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION informationArray = Kernel32Util.getLogicalProcessorInformation();
-        assertTrue(informationArray >= 1); // docs say so
+        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] informationArray = Kernel32Util.getLogicalProcessorInformation();
+        assertTrue(informationArray.length >= 1); // docs say so
         for (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION information : informationArray) {
             //TODO: What can we check? Java itself has no way to get physical processor info (if it did,
             // I wouldn't be writing in JNA support for it.)
