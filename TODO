@@ -10,21 +10,51 @@
   o arrays are treated as pointers, except within a struct
     - in structure (inline; otherwise pointer-to-X should be used)
     - as function argument (auto-convert to pointer via Memory)
-  o pointer to type in struct should use Pointer or ByReference
+  o pointer to type in struct should use PointerType or Structure.ByReference
   o "free" should be invisible wherever possible
 
 # FUTURE DEMOS:
-* test keyboard keys' state (needs OSX)
+* test keyboard keys' state (needs OSX impl)
 * get system process information, basic process control
 * additional file utilities (meta info, free space, etc)
 * enforce window minimum/maximum size (workaround java bug)
 
 # TODO
 
-# DOCS: how to properly use W32API_DEFAULT_OPTIONS (A/W, String/WString)
+* annotations/generics:
+  o GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
+  o per-arg/return type marshalling
+  o avoid casts in loadLibrary
+  o wrap global variables w/type (set/get)
+  o support annotations of parameters and return values w/o breaking
+    1.4 compatibility (retroweaver?), e.g.
+    -- retroweaver (requires retroweaver runtime classes to provide annotation
+    features) not yet worth doing
 
-* make native dll extraction from jar public, to use with user dlls packaged
-  in a jar
+    void my_function(@MarshalAs(off_t)long arg);
+
+    trading off cruft in the interface def to avoid cruft in the usage:
+
+    my_function(0) versus my_function(new off_t(0))
+  
+    this only really applies to NativeLong/IntegerType types that want to use a
+    primitive value instead of creating an object instance.
+  o flag string(/wstring)-returning methods which need to free their result
+   to avoid leaking memory whan auto-creating strings from the result
+   (since normally we don't take explicit ownership of any returned pointers)
+   this is a special case for returned strings only, since other returned
+   pointers are available to the user for later "freeing"
+   Use a map on library creation, an iface for the library, or annotation
+   NOTE: how many methods actually do this? strdup...
+   Maybe make function return "Memory", which can then be converted to a
+   Structure or some other type.  Then memory will free itself when no longer
+   referenced. (not really common)
+
+
+
+* auto-generate direct mappings/bindings on a per-method basis (perform a
+  method register on first call to an interface-mapped function) with
+  sufficient pre-processing to convert to primitives.
 
 * dispose memory/callbacks in Native finalizer to ensure they run first
   (use referencequeue to run them when they become unreachable)
@@ -34,39 +64,13 @@
   and forth multiple times).  This also makes it easer to perform conversions
   (no native changes required).  
 
-* GetPrimitiveArrayCritical: use this if flagged (by annotation? method name?)
 * direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
 * ppc64 direct/raw failures (multiple)
 * direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
   now 
-* combine direct and interface mapping calling code where possible
 * Callback.PostCallWrite.write() cf PostCallRead
 * eliminate type conversion contexts; these are almost entirely unused
 
-* support annotations of parameters and return values w/o breaking
-  1.4 compatibility (retroweaver?), e.g.
-  -- retroweaver (requires retroweaver runtime classes to provide annotation
-  features) not yet worth doing
-
-  void my_function(@MarshalAs(off_t)long arg);
-
-  trading off cruft in the interface def to avoid cruft in the usage:
-
-  my_function(0) versus my_function(new off_t(0))
-  
-  this only really applies to NativeLong/IntegerType types that want to use a
-  primitive value instead of creating an object instance.
-
-* flag string(/wstring)-returning methods which need to free their result
-   to avoid leaking memory whan auto-creating strings from the result
-   (since normally we don't take explicit ownership of any returned pointers)
-   this is a special case for returned strings only, since other returned
-   pointers are available to the user for later "freeing"
-   Use a map on library creation, an iface for the library, or annotation
-   NOTE: how many methods actually do this? strdup...
-   Maybe make function return "Memory", which can then be converted to a
-   Structure or some other type.  Then memory will free itself when no longer
-   referenced. 
 * universal GCC build w/cross-compile (needs cross compilers...)
 * return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
   Long.SIZE, Integer.SIZE, et al.
@@ -76,6 +80,10 @@
 
 
 # DONE
+* combine direct and interface mapping calling code where possible
+* DOCS: how to properly use W32API_DEFAULT_OPTIONS (A/W, String/WString)
+* make native dll extraction from jar public, to use with user dlls packaged
+  in a jar
 * use consistent cpu references (x86->i386, x86_64->amd64)
 * osgi for osx
 * NO: make Pointer free-able (system allocates memory, client frees it); actually,

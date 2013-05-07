@@ -1088,7 +1088,7 @@ public class CallbacksTest extends TestCase {
                      1, threads.size());
     }
 
-    // Thread object is never GC'd on linux-amd64 and (sometimes) win32-amd64
+    // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
     public void testAttachedThreadCleanupOnExit() throws Exception {
         final Set threads = new HashSet();
         final int[] called = { 0 };

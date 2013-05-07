@@ -27,6 +27,7 @@
 #pragma warning( disable : 4055 ) /* cast data pointer to function pointer */
 #pragma warning( disable : 4204 ) /* structure initializer */
 #pragma warning( disable : 4710 ) /* swprintf not inlined */
+#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
@@ -174,11 +175,11 @@ extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern int get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
-extern const char* jnidispatch_callback_init(JNIEnv*);
-extern void jnidispatch_set_last_error(int);
-extern int jnidispatch_get_last_error();
-extern void jnidispatch_callback_dispose(JNIEnv*);
-extern void jnidispatch_detach(jboolean);
+extern const char* JNA_callback_init(JNIEnv*);
+extern void JNA_set_last_error(int);
+extern int JNA_get_last_error();
+extern void JNA_callback_dispose(JNIEnv*);
+extern void JNA_detach(jboolean);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
                                  callconv_t, jint);

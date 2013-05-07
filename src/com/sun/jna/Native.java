@@ -32,11 +32,13 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -601,23 +603,6 @@ public final class Native implements Version {
         return buf;
     }
 
-    /** Generate a canonical String prefix based on the current OS 
-        type/arch/name.
-    */
-    public static String getNativeLibraryResourcePrefix() {
-        return getNativeLibraryResourcePrefix(Platform.getOSType(), System.getProperty("os.arch"), System.getProperty("os.name"));
-    }
-
-    /** Generate a canonical String prefix based on the given OS
-        type/arch/name.
-        @param osType from {@link Platform}
-        @param arch from <code>os.arch</code> System property
-        @param name from <code>os.name</code> System property
-    */
-    public static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
-        return Platform.getNativeLibraryResourcePrefix(osType, arch, name);
-    }
-
     /**
      * Loads the JNA stub library.
      * First tries jna.boot.library.path, then the system path, then from the
@@ -641,7 +626,7 @@ public final class Native implements Version {
             StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
             while (dirs.hasMoreTokens()) {
                 String dir = dirs.nextToken();
-                File file = new File(new File(dir), System.mapLibraryName(libName));
+                File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
                 if (file.exists()) {
                     try {
@@ -699,10 +684,12 @@ public final class Native implements Version {
      */
     private static void loadNativeDispatchLibraryFromClasspath() {
         try {
-            String prefix = "/com/sun/jna/" + getNativeLibraryResourcePrefix();
-            File lib = extractFromResourcePath("jnidispatch", prefix, Native.class.getClassLoader());
+            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+            File lib = extractFromResourcePath(libName, Native.class.getClassLoader());
             if (lib == null) {
-                throw new UnsatisfiedLinkError("Could not find JNA native support");
+                if (lib == null) {
+                    throw new UnsatisfiedLinkError("Could not find JNA native support");
+                }
             }
             System.load(lib.getAbsolutePath());
             nativeLibraryPath = lib.getAbsolutePath();
@@ -724,50 +711,53 @@ public final class Native implements Version {
         return file.getName().startsWith(JNA_TMPLIB_PREFIX);
     }
 
-    /** Attempt to extract a native library from the current resource path. 
-     * Expects native libraries to be stored under
-     * the path returned by {@link #getNativeLibraryResourcePrefix()},
-     * and reachable by the current thread context class loader.
-     * @param name Base name of native library to extract
+    /** Attempt to extract a native library from the current resource path,
+     * using the current thread context class loader.
+     * @param name Base name of native library to extract.  May also be an
+     * absolute resource path (i.e. starts with "/"), in which case the
+     * no transformations of the library name are performed.  If only the base
+     * name is given, the resource path is attempted both with and without
+     * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
      * @return File indicating extracted resource on disk
      * @throws IOException if resource not found
      */
-    static File extractFromResourcePath(String name) throws IOException {
-        return extractFromResourcePath(name, "/" + getNativeLibraryResourcePrefix(), Thread.currentThread().getContextClassLoader());
+    public static File extractFromResourcePath(String name) throws IOException {
+        return extractFromResourcePath(name, null);
     }
 
-    /** Attempt to extract a native library from the current resource path. 
-     * Expects native libraries to be stored under
-     * the path returned by {@link #getNativeLibraryResourcePrefix(int, String,
-     * String)}.
-     * @param name Base name of native library to extract
+    /** Attempt to extract a native library from the resource path using the
+     * given class loader.  
+     * @param name Base name of native library to extract.  May also be an
+     * absolute resource path (i.e. starts with "/"), in which case the
+     * no transformations of the library name are performed.  If only the base
+     * name is given, the resource path is attempted both with and without
+     * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
      * @param loader Class loader to use to load resources
-     * @param resourcePrefix prefix to use when looking for the resource
      * @return File indicating extracted resource on disk
      * @throws IOException if resource not found
      */
-    static File extractFromResourcePath(String name, String resourcePrefix, ClassLoader loader) throws IOException {
-        String libname = name.startsWith("/") ? name : System.mapLibraryName(name);
-        String resourcePath = name.startsWith("/") ? name : resourcePrefix + "/" + libname;
+    public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
+        if (loader == null) {
+            loader = Thread.currentThread().getContextClassLoader();
+        }
+        String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
+        String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
         if (resourcePath.startsWith("/")) {
             resourcePath = resourcePath.substring(1);
         }
         URL url = loader.getResource(resourcePath);
-
-        // User libraries will have '.dylib'
-        if (url == null && Platform.isMac()) {
-            if (resourcePath.endsWith(".jnilib")) {
-                resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf(".jnilib")) + ".dylib";
-            }
-            // Ugly hack for OpenJDK (soylatte) - JNI libs use the usual
-            // .dylib extension
-            else if (resourcePath.endsWith(".dylib")) {
-                resourcePath = resourcePath.substring(0, resourcePath.lastIndexOf(".dylib")) + ".jnilib";
-            }
-            url = loader.getResource(resourcePath);
+        if (url == null && resourcePath.startsWith(Platform.RESOURCE_PREFIX)) {
+            // If not found with the standard resource prefix, try without it
+            url = loader.getResource(libname);
         }
         if (url == null) {
-            throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + System.getProperty("java.class.path") + ")");
+            String path = System.getProperty("java.class.path");
+            if (loader instanceof URLClassLoader) {
+                path = Arrays.asList(((URLClassLoader)loader).getURLs()).toString();
+            }
+            throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
         }
 
         File lib = null;
@@ -1298,13 +1288,17 @@ public final class Native implements Version {
 
     /** When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
-     * interface.
+     * interface.  Uses the class loader of the given class to search for the
+     * native library in the resource path if it is not found in the system
+     * library load path or <code>jna.library.path</code>.
      * @param cls Class with native methods to register
      * @param libName name of or path to native library to which functions
      * should be bound 
      */
     public static void register(Class cls, String libName) {
-        register(cls, NativeLibrary.getInstance(libName));
+        Map options = new HashMap();
+        options.put(Library.OPTION_CLASSLOADER, cls.getClassLoader());
+        register(cls, NativeLibrary.getInstance(libName, options));
     }
 
     /** When called from a class static initializer, maps all native methods
@@ -1548,7 +1542,7 @@ public final class Native implements Version {
         System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
-        System.out.println(" Prefix: " + getNativeLibraryResourcePrefix());
+        System.out.println(" Prefix: " + Platform.RESOURCE_PREFIX);
     }
 
     /** Free the given callback trampoline. */

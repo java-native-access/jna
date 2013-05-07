@@ -1,5 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
- * Copyright (c) 2007, 2008, 2009 Timothy Wall, All Rights Reserved
+ * Copyright (c) 2007-20013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -54,7 +54,7 @@ import java.util.StringTokenizer;
  * installed on the classpath under
  * <code>${os-prefix}/LIBRARY_FILENAME</code>, where <code>${os-prefix}</code>
  * is the OS/Arch prefix returned by {@link
- * Native#getNativeLibraryResourcePrefix()}.  If bundled in a jar file, the
+ * Platform#getNativeLibraryResourcePrefix()}.  If bundled in a jar file, the
  * resource will be extracted to <code>jna.tmpdir</code> for loading, and
  * later removed (but only if <code>jna.nounpack</code> is false or not set).
  * </ol>
@@ -119,6 +119,7 @@ public class NativeLibrary {
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
+        boolean isAbsolutePath = new File(libraryName).isAbsolute();
         List searchPath = new LinkedList();
         int openFlags = openFlags(options);
 
@@ -187,7 +188,8 @@ public class NativeLibrary {
                 }
             }
             // Search framework libraries on OS X
-            else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
+            else if (Platform.isMac()
+                     && !libraryName.endsWith(".dylib")) {
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
@@ -197,7 +199,7 @@ public class NativeLibrary {
                 }
             }
             // Try the same library with a "lib" prefix
-            else if (Platform.isWindows()) {
+            else if (Platform.isWindows() && !isAbsolutePath) {
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
                 try { handle = Native.open(libraryPath, openFlags); }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
@@ -206,7 +208,7 @@ public class NativeLibrary {
             // path, using the current context class loader.
             if (handle == 0) {
                 try {
-                    File embedded = Native.extractFromResourcePath(libraryName);
+                    File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
                     handle = Native.open(embedded.getAbsolutePath());
                     // Don't leave temporary files around
                     if (Native.isUnpacked(embedded)) {
@@ -254,7 +256,7 @@ public class NativeLibrary {
     private String getLibraryName(String libraryName) {
         String simplified = libraryName;
         final String BASE = "---";
-        String template = mapLibraryName(BASE);
+        String template = mapSharedLibraryName(BASE);
         int prefixEnd = template.indexOf(BASE);
         if (prefixEnd > 0 && simplified.startsWith(template.substring(0, prefixEnd))) {
             simplified = simplified.substring(prefixEnd);
@@ -292,6 +294,28 @@ public class NativeLibrary {
      *
      * @param libraryName The library name to load.
      *      This can be short form (e.g. "c"),
+     *      an explicit version (e.g. "libc.so.6"), or
+     *      the full path to the library (e.g. "/lib/libc.so.6").
+     * @param classLoader The class loader to use to load the native library.
+     *      This only affects library loading when the native library is
+     *      included somewhere in the classpath, either bundled in a jar file
+     *      or as a plain file within the classpath.
+     */
+    public static final NativeLibrary getInstance(String libraryName, ClassLoader classLoader) {
+        Map map = new HashMap();
+        map.put(Library.OPTION_CLASSLOADER, classLoader);
+        return getInstance(libraryName, map);
+    }
+
+    /**
+     * Returns an instance of NativeLibrary for the specified name.
+     * The library is loaded if not already loaded.  If already loaded, the
+     * existing instance is returned.<p>
+     * More than one name may map to the same NativeLibrary instance; only
+     * a single instance will be provided for any given unique file path.
+     *
+     * @param libraryName The library name to load.
+     *      This can be short form (e.g. "c"),
      *      an explicit version (e.g. "libc.so.6" or
      *      "QuickTime.framework/Versions/Current/QuickTime"), or 
      *      the full (absolute) path to the library (e.g. "/lib/libc.so.6"). 
@@ -306,7 +330,7 @@ public class NativeLibrary {
 
         // Use current process to load libraries we know are already
         // loaded by the VM to ensure we get the correct version
-        if ((Platform.isLinux() || Platform.isAix())
+        if ((Platform.isLinux() || Platform.isAIX())
             && Platform.C_LIBRARY_NAME.equals(libraryName)) {
             libraryName = null;
         }
@@ -548,7 +572,7 @@ public class NativeLibrary {
         //
         // Get the system name for the library (e.g. libfoo.so)
         //
-        String name = mapLibraryName(libName);
+        String name = mapSharedLibraryName(libName);
 
         // Search in the JNA paths for it
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
@@ -575,8 +599,12 @@ public class NativeLibrary {
         //
         return name;
     }
-    private static String mapLibraryName(String libName) {
 
+    /** Similar to {@link System#mapLibraryName}, except that it maps to
+        standard shared library formats rather than specifically JNI formats.
+        @param libName base (undecorated) name of library
+    */
+    static String mapSharedLibraryName(String libName) {
         if (Platform.isMac()) {
             if (libName.startsWith("lib")
                 && (libName.endsWith(".dylib")
@@ -598,7 +626,7 @@ public class NativeLibrary {
                 return libName;
             }
         }
-        else if (Platform.isAix()) {	// can be libx.a, libx.a(shr.o), libx.so
+        else if (Platform.isAIX()) {	// can be libx.a, libx.a(shr.o), libx.so
             if (libName.startsWith("lib")) {
                 return libName;
             }

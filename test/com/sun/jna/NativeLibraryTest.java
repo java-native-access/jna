@@ -26,6 +26,31 @@ public class NativeLibraryTest extends TestCase {
     public static interface TestLibrary extends Library {
         int callCount();
     }
+
+    public void testMapSharedLibraryName() {
+        final Object[][] MAPPINGS = {
+            { Platform.MAC, "lib", ".dylib" },
+            { Platform.LINUX, "lib", ".so" },
+            { Platform.WINDOWS, "", ".dll" },
+            { Platform.SOLARIS, "lib", ".so" },
+            { Platform.FREEBSD, "lib", ".so" },
+            { Platform.OPENBSD, "lib", ".so" },
+            { Platform.WINDOWSCE, "", ".dll" },
+            { Platform.AIX, "lib", ".a" },
+            { Platform.ANDROID, "lib", ".so" },
+            { Platform.GNU, "lib", ".so" },
+            { Platform.KFREEBSD, "lib", ".so" },
+        };
+        for (int i=0;i < MAPPINGS.length;i++) {
+            int osType = ((Integer)MAPPINGS[i][0]).intValue();
+            if (osType == Platform.getOSType()) {
+                assertEquals("Wrong shared library name mapping",
+                             MAPPINGS[i][1] + "testlib" + MAPPINGS[i][2],
+                             NativeLibrary.mapSharedLibraryName("testlib"));
+            }
+        }
+    }
+
     public void testGCNativeLibrary() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);
@@ -116,42 +141,6 @@ public class NativeLibraryTest extends TestCase {
         assertNull("Library not GC'd", ref.get());
     }
     
-    public void testLoadFrameworkLibrary() {
-        if (Platform.isMac()) {
-            try {
-                NativeLibrary lib = NativeLibrary.getInstance("CoreServices");
-                assertNotNull("CoreServices not found", lib);
-            }
-            catch(UnsatisfiedLinkError e) {
-                fail("Should search /System/Library/Frameworks");
-            }
-        }
-    }
-    
-    public void testLoadFrameworkLibraryAbsolute() {
-        if (Platform.isMac()) {
-            try {
-                NativeLibrary lib = NativeLibrary.getInstance("/System/Library/Frameworks/CoreServices");
-                assertNotNull("CoreServices not found", lib);
-            }
-            catch(UnsatisfiedLinkError e) {
-                fail("Should try FRAMEWORK.framework/FRAMEWORK if absolute and exists");
-            }
-        }
-    }
-
-    public void testLoadFrameworkLibraryAbsoluteFull() {
-        if (Platform.isMac()) {
-            try {
-                NativeLibrary lib = NativeLibrary.getInstance("/System/Library/Frameworks/CoreServices.framework/CoreServices");
-                assertNotNull("CoreServices not found", lib);
-            }
-            catch(UnsatisfiedLinkError e) {
-                fail("Should try FRAMEWORK if absolute and exists");
-            }
-        }
-    }
-
     public void testLookupGlobalVariable() {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         Pointer global = lib.getGlobalVariableAddress("test_global");

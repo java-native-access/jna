@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2012 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2013 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,9 +17,6 @@
  */
 
 #if defined(_WIN32)
-#ifdef _MSC_VER
-#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
-#endif
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -28,6 +25,12 @@
 #include <psapi.h>
 #define STRTYPE wchar_t*
 #define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
+#ifdef _WIN32_WCE
+#include <tlhelp32.h>
+#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
+#undef GetProcAddress
+#define GetProcAddress GetProcAddressA
+#else
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
  * "Note that the standard search strategy and the alternate search strategy
  * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in
@@ -35,12 +38,6 @@
  * directory, and the alternate search begins in the directory of the
  * executable module that LoadLibraryEx is loading."
  */
-#ifdef _WIN32_WCE
-#include <tlhelp32.h>
-#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
-#undef GetProcAddress
-#define GetProcAddress GetProcAddressA
-#else
 #define DEFAULT_LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
 #define LOAD_LIBRARY(NAME,OPTS) (NAME ? LoadLibraryExW(NAME, NULL, OPTS) : GetModuleHandleW(NULL))
@@ -571,7 +568,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       }
     }
     else if (preserve_last_error) {
-      jnidispatch_set_last_error(GET_LAST_ERROR());
+      JNA_set_last_error(GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
@@ -1226,7 +1223,7 @@ get_system_property(JNIEnv* env, const char* name, jboolean wide) {
 }
 
 static const char*
-jnidispatch_init(JNIEnv* env) {
+JNA_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
   if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
   if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
@@ -1718,7 +1715,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       }
     }
     else if (preserve_last_error) {
-      jnidispatch_set_last_error(GET_LAST_ERROR());
+      JNA_set_last_error(GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
@@ -2939,13 +2936,13 @@ Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  jnidispatch_set_last_error(code);
+  JNA_set_last_error(code);
   SET_LAST_ERROR(code);
 }
 
 JNIEXPORT jint JNICALL
 Java_com_sun_jna_Native_getLastError(JNIEnv *env, jclass UNUSED(classp)) {
-  return jnidispatch_get_last_error();
+  return JNA_get_last_error();
 }
 
 JNIEXPORT jstring JNICALL
@@ -2978,11 +2975,11 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     }
   }
 
-  if ((err = jnidispatch_init(env)) != NULL) {
+  if ((err = JNA_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
     result = 0;
   }
-  else if ((err = jnidispatch_callback_init(env)) != NULL) {
+  else if ((err = JNA_callback_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
@@ -3034,7 +3031,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
 
-  jnidispatch_callback_dispose(env);
+  JNA_callback_dispose(env);
 
 #ifdef JAWT_HEADLESS_HACK
   if (jawt_handle != NULL) {
@@ -3249,7 +3246,7 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
 
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_detach(JNIEnv* env, jclass UNUSED(cls), jboolean d) {
-  jnidispatch_detach(d);
+  JNA_detach(d);
 }
 
 #ifdef __cplusplus

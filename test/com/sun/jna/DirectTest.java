@@ -22,20 +22,13 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 //@SuppressWarnings("unused")
-public class DirectTest extends TestCase {
-
-    private static final String BUILDDIR = 
-        System.getProperty("jna.builddir",
-                           "build" + (Platform.is64Bit() ? "-d64" : "")); 
+public class DirectTest extends TestCase implements Paths {
 
     private static class JNI {
         static {
-            String path = BUILDDIR + "/native/" + System.mapLibraryName("testlib");;
+            String path = TESTPATH + NativeLibrary.mapSharedLibraryName("testlib");
             if (!new File(path).isAbsolute()) {
-                path = System.getProperty("user.dir") + "/" + path;
-            }
-            if (path.endsWith(".jnilib")) {
-                path = path.replace(".jnilib", ".dylib");
+                path = new File(path).getAbsolutePath();
             }
             System.load(path);
         }
@@ -117,7 +110,7 @@ public class DirectTest extends TestCase {
                   : new URL[] {
                       new File(BUILDDIR + "/classes").toURI().toURL(),
                       new File(BUILDDIR + "/test-classes").toURI().toURL(),
-                  }, null);
+                  }, new CloverLoader());
         }
         protected Class findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
@@ -132,6 +125,7 @@ public class DirectTest extends TestCase {
         }
     }
 
+    // Fails under clover
     public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
         String name = "com.sun.jna.DirectTest$MathLibrary";

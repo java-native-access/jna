@@ -147,6 +147,7 @@ HOST_CONFIG=--host=arm-mingw32ce
 FFI_ENV+=LD=arm-mingw32ce-ld CPP=cpp CFLAGS="$(CDEFINES)"
 PHONEME=../phoneme/cdc/src
 JAVA_INCLUDES=-I$(PHONEME)/share/javavm/export -I$(PHONEME)/share -I$(PHONEME)/win32 -I$(PHONEME)/win32-arm
+TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 endif
 
 ifeq ($(OS),win32)
@@ -158,6 +159,7 @@ EXTRAOBJS=$(RSRC)
 STRIP=@echo
 LIBPFX=
 LIBSFX=.dll
+TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
 ifneq ($(ARCH),amd64)
 ifeq ($(CC),gcc)
@@ -367,6 +369,8 @@ $(LIBRARY): $(JNIDISPATCH_OBJS) $(FFI_LIB)
 $(TESTLIB): $(BUILD)/testlib.o
 	$(LD) $(LDFLAGS) $< $(LIBS)
 
+# These targets provide for different shared library loading methods
+# without getting into native library load conflicts
 $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC): $(TESTLIB)
 	@cp $< $@
 

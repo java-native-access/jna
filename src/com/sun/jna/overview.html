@@ -128,8 +128,9 @@ current process instead of a separately loaded library.  This may help avoid
 conflicts if there are several incompatible versions of a library available.
 <p>
 The search path for loaded native libraries may be modified by
-setting <code>jna.library.path</code> and a few other properties.  See {@link
-com.sun.jna.NativeLibrary} for details. 
+setting <code>jna.library.path</code> and a few other properties.  You may
+also bundle native libraries in a jar file and have JNA automatically extract
+them for loading.  See {@link com.sun.jna.NativeLibrary} for details. 
 <p>
 <a href="#toc">Table of Contents</a>
 <a name="function-mapping"></a>

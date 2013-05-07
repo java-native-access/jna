@@ -8,6 +8,7 @@ Features
 * [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
 * Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
 * Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
+* Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
@@ -17,6 +18,7 @@ Bug Fixes
 * [#215](https://github.com/twall/jna/issues/215): Force use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
 * [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
 * [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
+* [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============

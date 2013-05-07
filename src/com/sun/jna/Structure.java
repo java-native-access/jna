@@ -114,7 +114,7 @@ public abstract class Structure {
         String arch = System.getProperty("os.arch").toLowerCase();
         isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
         isSPARC = "sparc".equals(arch);
-	isARM = arch.startsWith("arm");
+        isARM = arch.startsWith("arm");
     }
 
     /** Use the platform default alignment. */
@@ -137,7 +137,7 @@ public abstract class Structure {
         isSPARC
         || ((isPPC || isARM)
             && (Platform.isLinux() || Platform.isAndroid()))
-        || Platform.isAix()
+        || Platform.isAIX()
         ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
@@ -216,7 +216,7 @@ public abstract class Structure {
         return typeMapper;
     }
 
-    /** Initialize the type mapper for this structure.  
+    /** Initialize the type mapper for this structure.
      * If <code>null</code>, the default mapper for the
      * defining class will be used.
      */
@@ -871,7 +871,7 @@ public abstract class Structure {
         return list;
     }
 
-    /** Returns all field names (sorted) provided so far by 
+    /** Returns all field names (sorted) provided so far by
         {@link #getFieldOrder}
         @param force set if results are required immediately
         @return null if not yet able to provide fields, and force is false.
@@ -899,7 +899,7 @@ public abstract class Structure {
 
         Set orderedNames = new HashSet(fieldOrder);
         if (!orderedNames.equals(names)) {
-            throw new Error("Structure.getFieldOrder() on " + getClass() 
+            throw new Error("Structure.getFieldOrder() on " + getClass()
                             + " returns names ("
                             + sort(fieldOrder)
                             + ") which do not match declared field names ("
@@ -991,6 +991,8 @@ public abstract class Structure {
         private int alignType = ALIGN_DEFAULT;
         private TypeMapper typeMapper;
         private boolean variable;
+        // For unions only, field on which the union FFI type info is based
+        private StructField typeInfoField;
     }
 
     private void validateField(String name, Class type) {
@@ -1029,7 +1031,6 @@ public abstract class Structure {
         members.
      */
     private LayoutInfo deriveLayout(boolean force, boolean avoidFFIType) {
-
         int calculatedSize = 0;
         List fields = getFields(force);
         if (fields == null) {
@@ -1139,11 +1140,24 @@ public abstract class Structure {
             if ((calculatedSize % fieldAlignment) != 0) {
                 calculatedSize += fieldAlignment - (calculatedSize % fieldAlignment);
             }
-            structField.offset = calculatedSize;
-            calculatedSize += structField.size;
+            if (this instanceof Union) {
+                structField.offset = 0;
+                calculatedSize = Math.max(calculatedSize, structField.size);
+            }
+            else {
+                structField.offset = calculatedSize;
+                calculatedSize += structField.size;
+            }
 
             // Save the field in our list
             info.fields.put(structField.name, structField);
+
+            if (info.typeInfoField == null
+                || info.typeInfoField.size < structField.size
+                || (info.typeInfoField.size == structField.size
+                    && Structure.class.isAssignableFrom(structField.type))) {
+                info.typeInfoField = structField;
+            }
         }
 
         if (calculatedSize > 0) {
@@ -1283,9 +1297,9 @@ public abstract class Structure {
             if (!isFirstElement || !(Platform.isMac() && isPPC)) {
                 alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
             }
-            if (!isFirstElement && Platform.isAix() && (type.getName().equals("double"))) {
+            if (!isFirstElement && Platform.isAIX() && (type.getName().equals("double"))) {
                 alignment = 4;
-			}
+            }
         }
         return alignment;
     }
@@ -1504,7 +1518,7 @@ public abstract class Structure {
         This is typically most effective when a native call populates a large
         structure and you only need a few fields out of it.  After the native
         call you can call {@link #readField(String)} on only the fields of
-        interest. 
+        interest.
     */
     public void setAutoSynch(boolean auto) {
         setAutoRead(auto);
@@ -1544,7 +1558,7 @@ public abstract class Structure {
         return FFIType.get(obj);
     }
 
-    /** Called from native code only; same as {@link 
+    /** Called from native code only; same as {@link
      * #newInstance(Class,Pointer)}, except that it additionally performs
      * {@link #conditionalAutoRead()}.
      */
@@ -1617,6 +1631,20 @@ public abstract class Structure {
                 + " not allowed, is it public? (" + e + ")";
             throw new IllegalArgumentException(msg);
         }
+    }
+
+    /** Keep track of the largest aggregate field of the union to use for
+     * FFI type information.
+     */
+    StructField typeInfoField() {
+        LayoutInfo info;
+        synchronized(layoutInfo) {
+            info = (LayoutInfo)layoutInfo.get(getClass());
+        }
+        if (info != null) {
+            return info.typeInfoField;
+        }
+        return null;
     }
 
     static class StructField extends Object {
@@ -1704,7 +1732,7 @@ public abstract class Structure {
             ref.ensureAllocated(true);
 
             if (ref instanceof Union) {
-                StructField sf = ((Union)ref).biggestField;
+                StructField sf = ((Union)ref).typeInfoField();
                 els = new Pointer[] {
                     get(ref.getFieldValue(sf.field), sf.type),
                     null,
