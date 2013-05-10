@@ -1,10 +1,13 @@
 Next Release (3.6)
 ==================
 
+NOTE: as of JNA 3.6, JNA is now dual-licensed under LGPL and ASL (see LICENSE)
 NOTE: JNI native support is typically incompatible between minor versions
 
 Features
 --------
+* Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
+* [#109](https://github.com/twall/jna/issues/109): Set default compatibility level to 1.6 - [@twall](https://github.com/twall).
 * [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
 * Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
 * Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
@@ -19,6 +22,7 @@ Bug Fixes
 * [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
 * [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
 * [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
+* [#229](https://github.com/twall/jna/issues/229): Add `CreateProcessW` (unicode version) - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============

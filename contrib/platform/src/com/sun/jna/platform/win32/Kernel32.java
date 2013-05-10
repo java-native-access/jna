@@ -1130,6 +1130,117 @@ public interface Kernel32 extends WinNT {
 			WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
 
 	/**
+	 * Creates a new process and its primary thread. The new process runs in the
+	 * security context of the calling process.
+	 * 
+	 * @param lpApplicationName
+	 *            The name of the module to be executed.
+	 * @param lpCommandLine
+	 *            The command line to be executed. The maximum length of
+	 *            this string is 32,768 characters, including the Unicode
+	 *            terminating null character. If <i>lpApplicationName</i> is
+	 *            NULL, the module name portion of <i>lpCommandLine</i> is
+	 *            limited to MAX_PATH characters.
+         *            <p/>
+         *            The Unicode version of this function, {@link #CreateProcessW()},
+	 *            can modify the contents of this string. Therefore, this
+	 *            parameter cannot be a pointer to read-only memory (such
+	 *            as a const variable or a literal string). If this
+	 *            parameter is a constant string, the function may cause
+	 *            an access violation.
+         *            <p/>
+         *            The <i>lpCommandLine</i> parameter can be NULL. In that case,
+	 *            the function uses the string pointed to by
+	 *            <i>lpApplicationName</i> as the command line.
+         *            <p/>
+         *            If both <i>lpApplicationName</i> and <i>lpCommandLine</i> are
+	 *            non-NULL, the null-terminated string pointed to by
+	 *            <i>lpApplicationName</i> specifies the module to execute, and
+	 *            the null-terminated string pointed to by <i>lpCommandLine</i>
+	 *            specifies the command line. The new process can use
+	 *            GetCommandLine to retrieve the entire command
+	 *            line. Console processes written in C can use the argc
+	 *            and argv arguments to parse the command line. Because
+	 *            argv[0] is the module name, C programmers generally
+	 *            repeat the module name as the first token in the command
+	 *            line. 
+         *            <p/>
+         *            If <i>lpApplicationName</i> is NULL, the first white
+	 *            spaceÐdelimited token of the command line specifies the
+	 *            module name. If you are using a long file name that
+	 *            contains a space, use quoted strings to indicate where
+	 *            the file name ends and the arguments begin (see the
+	 *            explanation for the <i>lpApplicationName</i> parameter). If the
+	 *            file name does not contain an extension, .exe is
+	 *            appended. Therefore, if the file name extension is .com,
+	 *            this parameter must include the .com extension. If the
+	 *            file name ends in a period (.) with no extension, or if
+	 *            the file name contains a path, .exe is not appended. If
+	 *            the file name does not contain a directory path, the
+	 *            system searches for the executable file in the following
+	 *            sequence: 
+         *            <ul>
+         *            <li>The directory from which the application loaded.
+         *            <li>The current directory for the parent process.
+         *            <li>The 32-bit Windows system directory. Use the
+	 *            GetSystemDirectory function to get the path of this
+	 *            directory. 
+         *            <li>The 16-bit Windows system directory. There is no
+	 *            function that obtains the path of this directory, but it
+	 *            is searched. The name of this directory is System. 
+         *            <li>The Windows directory. Use the GetWindowsDirectory
+	 *            function to get the path of this directory. 
+         *            <li>The directories that are listed in the PATH
+	 *            environment variable. Note that this function does not
+	 *            search the per-application path specified by the App
+	 *            Paths registry key. To include this per-application path
+	 *            in the search sequence, use the ShellExecute function. 
+         *            </ul>
+         *            The system adds a terminating null character to the
+	 *            command-line string to separate the file name from the
+	 *            arguments. This divides the original string into two
+	 *            strings for internal processing. 
+	 * @param lpProcessAttributes
+	 *            A pointer to a SECURITY_ATTRIBUTES structure that determines
+	 *            whether the returned handle to the new process object can be
+	 *            inherited by child processes. If lpProcessAttributes is NULL,
+	 *            the handle cannot be inherited.
+	 * @param lpThreadAttributes
+	 *            A pointer to a SECURITY_ATTRIBUTES structure that determines
+	 *            whether the returned handle to the new thread object can be
+	 *            inherited by child processes. If lpThreadAttributes is NULL,
+	 *            the handle cannot be inherited.
+	 * @param bInheritHandles
+	 *            If this parameter TRUE, each inheritable handle in the calling
+	 *            process is inherited by the new process. If the parameter is
+	 *            FALSE, the handles are not inherited. Note that inherited
+	 *            handles have the same value and access rights as the original
+	 *            handles.
+	 * @param dwCreationFlags
+	 *            The flags that control the priority class and the creation of
+	 *            the process.
+	 * @param lpEnvironment
+	 *            A pointer to the environment block for the new process. If
+	 *            this parameter is NULL, the new process uses the environment
+	 *            of the calling process.
+	 * @param lpCurrentDirectory
+	 *            The full path to the current directory for the process.
+	 * @param lpStartupInfo
+	 *            A pointer to a STARTUPINFO or STARTUPINFOEX structure.
+	 * @param lpProcessInformation
+	 *            A pointer to a PROCESS_INFORMATION structure that receives
+	 *            identification information about the new process.
+	 * @return If the function succeeds, the return value is nonzero.
+	 */
+	boolean CreateProcessW(String lpApplicationName, char[] lpCommandLine,
+			WinBase.SECURITY_ATTRIBUTES lpProcessAttributes,
+			WinBase.SECURITY_ATTRIBUTES lpThreadAttributes,
+			boolean bInheritHandles, DWORD dwCreationFlags,
+			Pointer lpEnvironment, String lpCurrentDirectory,
+			WinBase.STARTUPINFO lpStartupInfo,
+			WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
+
+	/**
 	 * This function returns a handle to an existing process object.
 	 * 
 	 * @param fdwAccess
