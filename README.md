@@ -107,9 +107,9 @@ If you are interested in paid support, feel free to say so on the [jna-users mai
 License
 =======
 
-This library is dual-licensed under the LGPL, version 2.1 or later, and the                        |
-Apache Software License, version 2.0.  Commercial license arrangements are                         |
-negotiable.
+This library is licensed under the LGPL, version 2.1 or later, and (from
+version 3.6 onward) the Apache Software License, version 2.0.  Commercial
+license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
 
