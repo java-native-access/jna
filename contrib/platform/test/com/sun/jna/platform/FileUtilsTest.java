@@ -55,6 +55,14 @@ public class FileUtilsTest extends TestCase {
         File symlink = new File(tmpdir, file.getName() + ".link");
         try {
             Runtime.getRuntime().exec(new String[] { "ln", "-s", file.getAbsolutePath(), symlink.getAbsolutePath() });
+            // OSX 10.8 needs a little time for the symlink to register
+            long start = System.currentTimeMillis();
+            while (!file.exists() || !symlink.exists()) {
+                Thread.sleep(100);
+                if (System.currentTimeMillis() - start > 5000) {
+                    break;
+                }
+            }
             assertTrue("Original source file missing: " + file, file.exists());
             assertTrue("Symlink creation failed (missing): " + symlink, symlink.exists());
             try {
