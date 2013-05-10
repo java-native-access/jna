@@ -1166,7 +1166,7 @@ public interface Kernel32 extends WinNT {
 	 *            line. 
          *            <p/>
          *            If <i>lpApplicationName</i> is NULL, the first white
-	 *            spaceÐdelimited token of the command line specifies the
+	 *            space-delimited token of the command line specifies the
 	 *            module name. If you are using a long file name that
 	 *            contains a space, use quoted strings to indicate where
 	 *            the file name ends and the arguments begin (see the
