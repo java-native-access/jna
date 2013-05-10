@@ -89,8 +89,10 @@
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
-  <!-- Default compatibility, 1.6 -->
-  <property name="compatibility" value="1.6"/>
+  <!-- Default compatibility, 1.6, or whatever version is running -->
+  <condition property="compatibility" value="${ant.java.version}" else="1.6">
+    <matches pattern="^1.[345]$" string="${ant.java.version}"/>
+  </condition>
   <!-- Platform default compatibility, 1.5+ -->
   <condition property="platform.compatibility" value="1.5" else="${compatibility}">
     <equals arg1="${compatibility}" arg2="1.4"/>
