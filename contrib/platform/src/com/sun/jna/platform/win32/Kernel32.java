@@ -1142,7 +1142,7 @@ public interface Kernel32 extends WinNT {
 	 *            NULL, the module name portion of <i>lpCommandLine</i> is
 	 *            limited to MAX_PATH characters.
          *            <p/>
-         *            The Unicode version of this function, {@link #CreateProcessW()},
+         *            The Unicode version of this function, {@link #CreateProcessW},
 	 *            can modify the contents of this string. Therefore, this
 	 *            parameter cannot be a pointer to read-only memory (such
 	 *            as a const variable or a literal string). If this
