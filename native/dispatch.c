@@ -1501,7 +1501,7 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   case 'V':
     return &ffi_type_void;
   case 's': {
-#define PLACEHOLDER_MEMORY 0
+#define PLACEHOLDER_MEMORY ((jlong)0)
     jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
                                                MID_Structure_newInstance, cls, PLACEHOLDER_MEMORY);
     if (s) {
