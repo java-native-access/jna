@@ -152,7 +152,8 @@ public final class Native implements Version {
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
-	MAX_PADDING = Platform.isSPARC() ? 8 : LONG_SIZE;
+	MAX_PADDING = Platform.isSPARC() || Platform.isWindows()
+            ? 8 : LONG_SIZE;
     }
 
     /** Force a dispose when this class is GC'd. */
