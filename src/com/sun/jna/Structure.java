@@ -1161,7 +1161,7 @@ public abstract class Structure {
         }
 
         if (calculatedSize > 0) {
-            int size = calculateAlignedSize(calculatedSize, info.alignment);
+            int size = addPadding(calculatedSize, info.alignment);
             // Update native FFI type information, if needed
             if (this instanceof ByValue && !avoidFFIType) {
                 getTypeInfo();
@@ -1220,11 +1220,11 @@ public abstract class Structure {
         return value;
     }
 
-    int calculateAlignedSize(int calculatedSize) {
-        return calculateAlignedSize(calculatedSize, structAlignment);
+    private int addPadding(int calculatedSize) {
+        return addPadding(calculatedSize, structAlignment);
     }
 
-    private int calculateAlignedSize(int calculatedSize, int alignment) {
+    private int addPadding(int calculatedSize, int alignment) {
         // Structure size must be an integral multiple of its alignment,
         // add padding if necessary.
         if (actualAlignType != ALIGN_NONE) {

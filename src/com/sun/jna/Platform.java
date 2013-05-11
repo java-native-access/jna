@@ -45,6 +45,7 @@ public final class Platform {
     public static final String RESOURCE_PREFIX;
 
     private static final int osType;
+    static final int MAX_PADDING;
 
     static {
         String osName = System.getProperty("os.name");
@@ -108,6 +109,8 @@ public final class Platform {
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
+	String arch = System.getProperty("os.arch").toLowerCase();
+	MAX_PADDING = "sparc".equals(arch) ? 8 : Native.LONG_SIZE;
     }
     private Platform() { }
     public static final int getOSType() {

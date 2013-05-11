@@ -401,7 +401,7 @@ public class StructureTest extends TestCase {
             }
         }
         TestStructure s = new TestStructure();
-        assertEquals("Wrong structure size", Pointer.SIZE == 4 ? 20 : 24, s.size());
+        assertEquals("Wrong structure size",Platform.MAX_PADDING == 4 ? 20 : 24, s.size());
         assertEquals("Wrong union size", 8, s.s_union.size());
     }
 
