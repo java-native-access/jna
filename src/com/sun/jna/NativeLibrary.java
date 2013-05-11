@@ -793,7 +793,7 @@ public class NativeLibrary {
     }
 
     private static String getMultiArchPath() {
-        String cpu = System.getProperty("os.arch").toLowerCase().trim();
+        String cpu = Platform.ARCH;
         String kernel = Platform.iskFreeBSD()
             ? "-kfreebsd"
             : (Platform.isGNU() ? "" : "-linux");

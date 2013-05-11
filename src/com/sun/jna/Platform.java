@@ -45,7 +45,8 @@ public final class Platform {
     public static final String RESOURCE_PREFIX;
 
     private static final int osType;
-    static final int MAX_PADDING;
+    /** Current platform architecture. */
+    public static final String ARCH;
 
     static {
         String osName = System.getProperty("os.name");
@@ -109,8 +110,7 @@ public final class Platform {
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
-	String arch = System.getProperty("os.arch").toLowerCase();
-	MAX_PADDING = "sparc".equals(arch) ? 8 : Native.LONG_SIZE;
+        ARCH = System.getProperty("os.arch").toLowerCase().trim();
     }
     private Platform() { }
     public static final int getOSType() {
@@ -172,46 +172,43 @@ public final class Platform {
         if (model != null) {
             return "64".equals(model);
         }
-        String arch = System.getProperty("os.arch").toLowerCase();
-        if ("x86_64".equals(arch)
-            || "ia64".equals(arch)
-            || "ppc64".equals(arch)
-            || "sparcv9".equals(arch)
-            || "amd64".equals(arch)) {
+        if ("x86_64".equals(ARCH)
+            || "ia64".equals(ARCH)
+            || "ppc64".equals(ARCH)
+            || "sparcv9".equals(ARCH)
+            || "amd64".equals(ARCH)) {
             return true;
         }
         return Native.POINTER_SIZE == 8;
     }
 
     public static final boolean isIntel() {
-        String arch =
-            System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("i386")
-            || arch.startsWith("i686")
-            || arch.equals("x86")
-            || arch.equals("x86_64")
-            || arch.equals("amd64")) {
+        if (ARCH.equals("i386")
+            || ARCH.startsWith("i686")
+            || ARCH.equals("x86")
+            || ARCH.equals("x86_64")
+            || ARCH.equals("amd64")) {
             return true;
         } 
         return false;
     }
 
     public static final boolean isPPC() {
-        String arch =
-            System.getProperty("os.arch").toLowerCase().trim();
-        if (arch.equals("ppc")
-            || arch.equals("ppc64")
-            || arch.equals("powerpc")
-            || arch.equals("powerpc64")) {
+        if (ARCH.equals("ppc")
+            || ARCH.equals("ppc64")
+            || ARCH.equals("powerpc")
+            || ARCH.equals("powerpc64")) {
             return true;
         } 
         return false;
     }
 
     public static final boolean isARM() {
-        String arch =
-            System.getProperty("os.arch").toLowerCase().trim();
-        return arch.startsWith("arm");
+        return ARCH.startsWith("arm");
+    }
+
+    public static final boolean isSPARC() {
+        return ARCH.startsWith("sparc");
     }
 
     /** Generate a canonical String prefix based on the current OS 
@@ -229,7 +226,7 @@ public final class Platform {
     */
     static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
         String osPrefix;
-        arch = arch.toLowerCase();
+        arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
         }

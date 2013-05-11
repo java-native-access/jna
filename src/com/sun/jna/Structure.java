@@ -106,16 +106,9 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
-    static final boolean isPPC;
-    static final boolean isSPARC;
-    static final boolean isARM;
-
-    static {
-        String arch = System.getProperty("os.arch").toLowerCase();
-        isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
-        isSPARC = "sparc".equals(arch);
-        isARM = arch.startsWith("arm");
-    }
+    static final boolean isPPC = Platform.isPPC();
+    static final boolean isSPARC = Platform.isSPARC();
+    static final boolean isARM = Platform.isARM();
 
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;

@@ -122,6 +122,8 @@ public final class Native implements Version {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    static final int MAX_PADDING;
+
     static {
         loadNativeDispatchLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
@@ -150,6 +152,7 @@ public final class Native implements Version {
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
+	MAX_PADDING = Platform.isSPARC() ? 8 : LONG_SIZE;
     }
 
     /** Force a dispose when this class is GC'd. */

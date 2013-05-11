@@ -143,8 +143,7 @@ class CallbackReference extends WeakReference {
 
         // Check whether direct mapping may be used, or whether
         // we need to fall back to conventional mapping
-        String arch = System.getProperty("os.arch").toLowerCase();
-        boolean ppc = "ppc".equals(arch) || "powerpc".equals(arch);
+        boolean ppc = Platform.isPPC();
         if (direct) {
             Method m = getCallbackMethod(callback);
             Class[] ptypes = m.getParameterTypes();
