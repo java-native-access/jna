@@ -221,12 +221,12 @@
     <condition property="os.prefix" value="sunos-${jre.arch}">
       <os name="SunOS"/>
     </condition>
-    <!-- TODO: are unique *BSD builds really required? -->
-    <condition property="os.prefix" value="freebsd-${jre.arch}">
-      <os name="FreeBSD"/>
-    </condition>
-    <condition property="os.prefix" value="openbsd-${jre.arch}">
-      <os name="OpenBSD"/>
+    <condition property="os.prefix" value="bsd-${jre.arch}">
+      <or>
+	<os name="FreeBSD"/>
+	<os name="OpenBSD"/>
+	<os name="NetBSD"/>
+      </or>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <condition property="jdk.home" value="${java.home}">
@@ -384,12 +384,10 @@ processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
-com/sun/jna/openbsd-x86/libjnidispatch.so;
-processor=x86;osname=openbsd,
-com/sun/jna/freebsd-x86/libjnidispatch.so;
-processor=x86;osname=freebsd,
-com/sun/jna/freebsd-x86-64/libjnidispatch.so;
-processor=x86-64;osname=freebsd,
+com/sun/jna/bsd-x86/libjnidispatch.so;
+processor=x86;osname=openbsd;osname=freebsd;osname=netbsd,
+com/sun/jna/bsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=openbsd;osname=freebsd;osname=netbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macosx;processor=x86;processor=x86-64;processor=ppc
@@ -440,15 +438,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${lib.native}/freebsd-x86.jar"
+      <zipfileset src="${lib.native}/bsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-x86"/>
-      <zipfileset src="${lib.native}/freebsd-x86-64.jar"
+                  prefix="com/sun/jna/bsd-x86"/>
+      <zipfileset src="${lib.native}/bsd-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-x86-64"/>
-      <zipfileset src="${lib.native}/openbsd-x86.jar"
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/openbsd-x86"/>
+                  prefix="com/sun/jna/bsd-x86-64"/>
       <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86-64"/>
@@ -542,9 +537,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
@@ -671,6 +665,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <or>
         <os name="FreeBSD"/>
         <os name="OpenBSD"/>
+        <os name="NetBSD"/>
         <os name="SunOS"/>
         <os name="AIX"/>
       </or>

@@ -23,6 +23,7 @@ public final class Platform {
     public static final int ANDROID = 8;
     public static final int GNU = 9;
     public static final int KFREEBSD = 10;
+    public static final int NETBSD = 11;
 
     /** Whether read-only (final) fields within Structures are supported. */
     public static final boolean RO_FIELDS;
@@ -84,6 +85,9 @@ public final class Platform {
         else if (osName.equalsIgnoreCase("gnu/kfreebsd")) {
             osType = KFREEBSD;
         }
+        else if (osName.equalsIgnoreCase("netbsd")) {
+            osType = NETBSD;
+        }
         else {
             osType = UNSPECIFIED;
         }
@@ -140,6 +144,9 @@ public final class Platform {
     }
     public static final boolean isOpenBSD() {
         return osType == OPENBSD;
+    }
+    public static final boolean isNetBSD() {
+        return osType == NETBSD;
     }
     public static final boolean isGNU() {
         return osType == GNU;
@@ -253,6 +260,12 @@ public final class Platform {
             break;
         case Platform.SOLARIS:
             osPrefix = "sunos-" + arch;
+            break;
+        case Platform.FREEBSD:
+        case Platform.OPENBSD:
+        case Platform.NETBSD:
+        case Platform.KFREEBSD:
+            osPrefix = "bsd-" + arch;
             break;
         default:
             osPrefix = name.toLowerCase();
