@@ -23,6 +23,7 @@ Bug Fixes
 * [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
 * [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
 * [#229](https://github.com/twall/jna/issues/229): Add `CreateProcessW` (unicode version) - [@twall](https://github.com/twall).
+* Avoid solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============
