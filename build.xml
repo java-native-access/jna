@@ -804,7 +804,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="tests.platform" value="**/win32/**/*Test.java">
       <os family="windows"/>
     </condition>
-    <condition property="tests.exclude" value="**/win32/*StdCallTest.java">
+    <condition property="tests.exclude" value="${tests.stdcall}">
       <and><os family="windows"/><not><os arch="x86"/></not></and>
     </condition>
     <condition property="tests.platform" value="**/unix/*Test.java">
