@@ -582,6 +582,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
                    replace="ProductVersion&quot;,&quot;${spec.version}&quot;"
                    preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
+    <replaceregexp match="(Copyright.*-)2..."
+                   replace="\1${year}"
+                   preserveLastModified="true"
+                   file="${rsrc}" byline="true"/>
   </target>
 
   <target name="native" depends="-setup,javah,-native-api-check,rsrc" unless="skip-native"
