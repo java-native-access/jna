@@ -66,7 +66,8 @@ import com.sun.jna.Structure.FFIType;
  * in <code>jna.boot.library.path</code> (if defined), then the system library
  * path using {@link System#loadLibrary}, unless <code>jna.nosys=true</code>.
  * If not found, the appropriate library will be extracted from the class path
- * into a temporary directory and loaded from there.  If your system has
+ * (into a temporary directory if found within a jar file) and loaded from
+ * there, unless <code>jna.noclasspath=true</code>.  If your system has
  * additional security constraints regarding execution or load of files
  * (SELinux, for example), you should  probably install the native library in
  * an accessible location and configure  your system accordingly, rather than
@@ -121,6 +122,8 @@ public final class Native implements Version {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    static final int MAX_PADDING;
+
     static {
         loadNativeDispatchLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
@@ -149,6 +152,8 @@ public final class Native implements Version {
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
+	MAX_PADDING = Platform.isSPARC() || Platform.isWindows()
+            ? 8 : LONG_SIZE;
     }
 
     /** Force a dispose when this class is GC'd. */
@@ -932,7 +937,10 @@ public final class Native implements Version {
         }
         else {
             File tmp = new File(System.getProperty("java.io.tmpdir"));
-            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+            // Loading DLLs via System.load() under a directory with a unicode
+            // name will fail on windows, so use a hash code of the user's
+            // name in case the user's name contains non-ASCII characters
+            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name").hashCode());
             jnatmp.mkdirs();
             if (!jnatmp.exists() || !jnatmp.canWrite()) {
                 jnatmp = tmp;

@@ -83,15 +83,27 @@
   </condition>
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
-  <property name="compatibility" value="1.4"/>
-  <property name="platform.compatibility" value="1.5"/>
+  <condition property="compatibility" value="1.4">
+    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
+  <!-- Default compatibility, 1.6, or whatever version is running -->
+  <condition property="compatibility" value="${ant.java.version}" else="1.6">
+    <matches pattern="^1.[345]$" string="${ant.java.version}"/>
+  </condition>
+  <!-- Platform default compatibility, 1.5+ -->
+  <condition property="platform.compatibility" value="1.5" else="${compatibility}">
+    <equals arg1="${compatibility}" arg2="1.4"/>
+  </condition>
+  <!-- Test default compatibility, 1.5+ -->
+  <condition property="test.compatibility" value="1.5" else="${compatibility}">
+    <equals arg1="${compatibility}" arg2="1.4"/>
   </condition>
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
-  <property name="test.compatibility" value="1.5"/>
   <property name="dist-jar" value="${dist}/${jar}"/>
 
   <!-- Maven -->
@@ -209,11 +221,12 @@
     <condition property="os.prefix" value="sunos-${jre.arch}">
       <os name="SunOS"/>
     </condition>
-    <condition property="os.prefix" value="freebsd-${jre.arch}">
-      <os name="FreeBSD"/>
-    </condition>
-    <condition property="os.prefix" value="openbsd-${jre.arch}">
-      <os name="OpenBSD"/>
+    <condition property="os.prefix" value="bsd-${jre.arch}">
+      <or>
+	<os name="FreeBSD"/>
+	<os name="OpenBSD"/>
+	<os name="NetBSD"/>
+      </or>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <condition property="jdk.home" value="${java.home}">
@@ -371,12 +384,10 @@ processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
-com/sun/jna/openbsd-x86/libjnidispatch.so;
-processor=x86;osname=openbsd,
-com/sun/jna/freebsd-x86/libjnidispatch.so;
-processor=x86;osname=freebsd,
-com/sun/jna/freebsd-x86-64/libjnidispatch.so;
-processor=x86-64;osname=freebsd,
+com/sun/jna/bsd-x86/libjnidispatch.so;
+processor=x86;osname=openbsd;osname=freebsd;osname=netbsd,
+com/sun/jna/bsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=openbsd;osname=freebsd;osname=netbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macosx;processor=x86;processor=x86-64;processor=ppc
@@ -427,15 +438,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${lib.native}/freebsd-x86.jar"
+      <zipfileset src="${lib.native}/bsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-x86"/>
-      <zipfileset src="${lib.native}/freebsd-x86-64.jar"
+                  prefix="com/sun/jna/bsd-x86"/>
+      <zipfileset src="${lib.native}/bsd-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-x86-64"/>
-      <zipfileset src="${lib.native}/openbsd-x86.jar"
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/openbsd-x86"/>
+                  prefix="com/sun/jna/bsd-x86-64"/>
       <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86-64"/>
@@ -529,9 +537,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
@@ -573,6 +580,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="ProductVersion.*"
                    replace="ProductVersion&quot;,&quot;${spec.version}&quot;"
+                   preserveLastModified="true"
+                   file="${rsrc}" byline="true"/>
+    <replaceregexp match="(Copyright.*-)2..."
+                   replace="\1${year}"
                    preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
   </target>
@@ -658,6 +669,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <or>
         <os name="FreeBSD"/>
         <os name="OpenBSD"/>
+        <os name="NetBSD"/>
         <os name="SunOS"/>
         <os name="AIX"/>
       </or>
@@ -796,7 +808,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="tests.platform" value="**/win32/**/*Test.java">
       <os family="windows"/>
     </condition>
-    <condition property="tests.exclude" value="**/win32/*StdCallTest.java">
+    <condition property="tests.exclude" value="${tests.stdcall}">
       <and><os family="windows"/><not><os arch="x86"/></not></and>
     </condition>
     <condition property="tests.platform" value="**/unix/*Test.java">
@@ -962,7 +974,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- Javadoc -->
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,${pom},LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,${pom},LICENSE,LGPL2.1,ASL2.0"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
@@ -982,21 +994,13 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   </target>
 
   <target name="clean" depends="-dynamic-properties">
-    <!-- ensure version-stamped files don't interfere with checkouts -->
-    <exec executable="git" failonerror="false" failifexecutionfails="false">
-      <arg value="checkout"/>
-      <arg value="--"/>
-      <arg value="src/com/sun/jna/Version.java"/>
-      <arg value="${pom}"/>
-      <arg value="${pom-platform}"/>
-    </exec>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build}"/>
     </delete>
     <delete quiet="true" includeEmptyDirs="true">
       <fileset dir=".clover"/>
       <fileset dir="${javadoc}"/>
-      <fileset dir="." includes="*~,**/*~"/>
+      <fileset dir="." includes="*~,**/*~,build.number"/>
     </delete>
     <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>

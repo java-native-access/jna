@@ -106,16 +106,9 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
-    static final boolean isPPC;
-    static final boolean isSPARC;
-    static final boolean isARM;
-
-    static {
-        String arch = System.getProperty("os.arch").toLowerCase();
-        isPPC = "ppc".equals(arch) || "powerpc".equals(arch);
-        isSPARC = "sparc".equals(arch);
-        isARM = arch.startsWith("arm");
-    }
+    static final boolean isPPC = Platform.isPPC();
+    static final boolean isSPARC = Platform.isSPARC();
+    static final boolean isARM = Platform.isARM();
 
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
@@ -1161,7 +1154,7 @@ public abstract class Structure {
         }
 
         if (calculatedSize > 0) {
-            int size = calculateAlignedSize(calculatedSize, info.alignment);
+            int size = addPadding(calculatedSize, info.alignment);
             // Update native FFI type information, if needed
             if (this instanceof ByValue && !avoidFFIType) {
                 getTypeInfo();
@@ -1220,11 +1213,11 @@ public abstract class Structure {
         return value;
     }
 
-    int calculateAlignedSize(int calculatedSize) {
-        return calculateAlignedSize(calculatedSize, structAlignment);
+    private int addPadding(int calculatedSize) {
+        return addPadding(calculatedSize, structAlignment);
     }
 
-    private int calculateAlignedSize(int calculatedSize, int alignment) {
+    private int addPadding(int calculatedSize, int alignment) {
         // Structure size must be an integral multiple of its alignment,
         // add padding if necessary.
         if (actualAlignType != ALIGN_NONE) {

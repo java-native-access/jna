@@ -1,5 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
- * Copyright (c) 2007-20013 Timothy Wall, All Rights Reserved
+ * Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -110,12 +110,11 @@ public class NativeLibrary {
 
     private static final int DEFAULT_OPEN_OPTIONS = -1;
     private static int openFlags(Map options) {
-        try {
-            return ((Integer)options.get(Library.OPTION_OPEN_FLAGS)).intValue();
+        Object opt = options.get(Library.OPTION_OPEN_FLAGS);
+        if (opt instanceof Number) {
+            return ((Number)opt).intValue();
         }
-        catch(Throwable t) {
-            return DEFAULT_OPEN_OPTIONS;
-        }
+        return DEFAULT_OPEN_OPTIONS;
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
@@ -794,7 +793,7 @@ public class NativeLibrary {
     }
 
     private static String getMultiArchPath() {
-        String cpu = System.getProperty("os.arch").toLowerCase().trim();
+        String cpu = Platform.ARCH;
         String kernel = Platform.iskFreeBSD()
             ? "-kfreebsd"
             : (Platform.isGNU() ? "" : "-linux");

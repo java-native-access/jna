@@ -125,12 +125,13 @@ public class WebStartTest extends TestCase implements Paths {
         }
     }
 
+    private static final int SOCKET_TIMEOUT = 30000;
     private void runTestUnderWebStart(String testClass, String testMethod) throws Exception {
         String dir = System.getProperty("jna.builddir", BUILDDIR);
         String codebase = new File(dir, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
-        s.setSoTimeout(120000);
+        s.setSoTimeout(SOCKET_TIMEOUT);
         int port = s.getLocalPort();
 
         File jnlp = File.createTempFile(getName(), ".jnlp");
@@ -149,6 +150,7 @@ public class WebStartTest extends TestCase implements Paths {
             String path = findJWS();
             String[] cmd = {
                 path,
+                Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
                 "-Xnosplash", 
                 "-wait", 
                 jnlp.toURI().toURL().toString(),
@@ -382,35 +384,26 @@ public class WebStartTest extends TestCase implements Paths {
     private static void sendResults(Throwable t, int port) throws IOException {
         Socket s = new Socket(InetAddress.getLocalHost(), port);
         OutputStream os = s.getOutputStream();
-        t.printStackTrace(new PrintStream(os));
+        if (t != null) {
+            t.printStackTrace(new PrintStream(os));
+        }
         s.close();
     }
 
-    private static void runTestCaseTest(String testClass, String method, int port) {
-        try {
-            TestCase test = (TestCase)Class.forName(testClass).newInstance();
-            test.setName(method);
-            TestResult result = new TestResult();
-            test.run(result);
-            if (result.failureCount() != 0) {
-                Enumeration e = result.failures();
-                Throwable t = ((TestFailure)e.nextElement()).thrownException();
-                sendResults(t, port);
-            }
-            else if (result.errorCount() != 0) {
-                Enumeration e = result.errors();
-                Throwable t = ((TestFailure)e.nextElement()).thrownException();
-                sendResults(t, port);
-            }
-            // NOTE: System.exit with non-zero status causes an error dialog
-            // on w32 sun "1.6.0_14" (build 1.6.0_14-b08)
-            System.exit(0);
+    private static Throwable runTestCaseTest(String testClass, String method, int port) throws Exception {
+        TestCase test = (TestCase)Class.forName(testClass).newInstance();
+        test.setName(method);
+        TestResult result = new TestResult();
+        test.run(result);
+        if (result.failureCount() != 0) {
+            Enumeration e = result.failures();
+            return ((TestFailure)e.nextElement()).thrownException();
         }
-        catch(Throwable e) {
-            // Can't communicate back to launching process
-            showMessage("ERROR: " + e.getMessage());
-            System.exit(0);
+        else if (result.errorCount() != 0) {
+            Enumeration e = result.errors();
+            return ((TestFailure)e.nextElement()).thrownException();
         }
+        return null;
     }
 
     private static void showMessage(String msg) {
@@ -437,7 +430,6 @@ public class WebStartTest extends TestCase implements Paths {
                 System.setProperty("javawebstart.version", "fake");
             }
             if (runningWebStart()) {
-                
                 String testClass = args.length > 0
                     ? args[0] : WebStartTest.class.getName();
                 String testMethod = args.length > 1
@@ -445,14 +437,26 @@ public class WebStartTest extends TestCase implements Paths {
                 int port = args.length > 2
                     ? Integer.parseInt(args[2]) : 8080;
 
-                if (args.length >=5
-                    && "arch64=true".equals(args[4])) {
-                    if (!Platform.is64Bit()) {
-                        sendResults(new Error("Cannot run 64-bit test on 32-bit javaws"), port);
-                        System.exit(0);
+                try {
+                    if (args.length >=5
+                        && "arch64=true".equals(args[4])
+                        && !Platform.is64Bit()) {
+                        throw new Error("Cannot run 64-bit test on 32-bit javaws");
+                    }
+                    else {
+                        Throwable t = runTestCaseTest(testClass, testMethod, port);
+                        sendResults(t, port);
                     }
                 }
-                runTestCaseTest(testClass, testMethod, port);
+                catch(Throwable t) {
+                    try {
+                        sendResults(t, port);
+                    }
+                    catch(Throwable e) {
+                        // Can't communicate back to launching process
+                        showMessage("ERROR: " + e.getMessage());
+                    }
+                }
             }
             else {
                 junit.textui.TestRunner.run(WebStartTest.class);
@@ -461,5 +465,8 @@ public class WebStartTest extends TestCase implements Paths {
         catch(Throwable t) {
             showMessage("ERROR: " + t.getMessage());
         }
+        // NOTE: System.exit with non-zero status causes an error dialog
+        // on w32 sun "1.6.0_14" (build 1.6.0_14-b08)
+        System.exit(0);
     }
 }
