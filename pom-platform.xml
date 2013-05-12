@@ -16,7 +16,12 @@
   <licenses>
       <license>
           <name>LGPL, version 2.1</name>
-          <url>http://creativecommons.org/licenses/LGPL/2.1/</url>
+          <url>http://www.gnu.org/licenses/licenses.html</url>
+          <distribution>repo</distribution>
+      </license>
+      <license>
+          <name>ASL, version 2</name>
+          <url>http://www.apache.org/licenses/</url>
           <distribution>repo</distribution>
       </license>
   </licenses>
