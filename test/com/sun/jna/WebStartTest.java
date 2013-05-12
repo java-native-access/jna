@@ -152,7 +152,6 @@ public class WebStartTest extends TestCase implements Paths {
                 path,
                 Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
                 "-Xnosplash", 
-                "-verbose",
                 "-wait", 
                 jnlp.toURI().toURL().toString(),
             };
