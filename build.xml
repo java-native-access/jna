@@ -160,11 +160,14 @@
     <condition property="cross-compile" value="true">
       <isset property="os.prefix"/>
     </condition>
-    <!-- Keep cross-compiled natives separate from normal builds -->
-    <condition property="native.subdir" value="native-${os.prefix}" else="native">
-      <isset property="cross-compile"/>
+    <!-- Sun 1.6 VM for windows doesn't support -d32/-d64 switch -->
+    <condition property="vm.64" value="-d64" else="-Ddummy">
+      <not><os family="windows"/></not>
     </condition>
-    <condition property="vm.arch" value="-d64" else="">
+    <condition property="vm.32" value="-d32" else="-Ddummy">
+      <not><os family="windows"/></not>
+    </condition>
+    <condition property="vm.arch" value="${vm.64}" else="${vm.32}">
       <and>
         <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
         <or>
@@ -182,10 +185,10 @@
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
       <and>
         <os name="SunOS"/>
-        <equals arg1="${vm.arch}" arg2="-d64"/>
+        <equals arg1="${vm.arch}" arg2="${vm.64}"/>
       </and>
     </condition>
-    <property name="build" value="build${vm.arch}"/>
+    <property name="build" value="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
@@ -229,6 +232,8 @@
       </or>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
+    <!-- Keep all natives separate -->
+    <property name="native.subdir" value="native-${os.prefix}"/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>
@@ -619,7 +624,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
-    <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
+    <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
@@ -817,13 +822,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <condition property="vmopt.arch" value="-d64" else="-Dignore">
-      <and>
-        <!-- Sun 64-bit VM for windows doesn't support the -d64 switch -->
-        <not><os family="windows"/></not>
-        <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
-      </and>
-    </condition>
+    <property name="vmopt.arch" value="${vm.64}" else="${vm.32}"/>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
@@ -844,6 +843,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <!-- Avoid VM crashes, if possible -->
       <sysproperty key="jna.protected" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
+      <sysproperty key="jna.nativedir" file="${build.native}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="brief" usefile="false"/>
