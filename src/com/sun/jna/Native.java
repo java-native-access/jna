@@ -746,6 +746,10 @@ public final class Native implements Version {
     public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
         if (loader == null) {
             loader = Thread.currentThread().getContextClassLoader();
+            // Context class loader is not guaranteed to be set
+            if (loader == null) {
+                loader = Native.class.getClassLoader();
+            }
         }
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
