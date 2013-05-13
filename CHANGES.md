@@ -55,6 +55,7 @@ Bug Fixes
 * [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
 * [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
 * [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* Fix NPE if `Thread.getContextClassLoader()` returns `null`  - [@twall](https://github.com/twall).
 
 Release 3.5.1
 =============
