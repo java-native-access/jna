@@ -154,9 +154,14 @@ public class LibraryLoadTest extends TestCase implements Paths {
 
         String newLibName = libName.replace("testlib", UNICODE);
         File dst = new File(tmpdir, newLibName);
-        dst.deleteOnExit();
         copy(src, dst);
-        NativeLibrary.getInstance(UNICODE, new TestLoader(tmpdir));
+        try {
+            NativeLibrary.getInstance(UNICODE, new TestLoader(tmpdir));
+            dst.deleteOnExit();
+        }
+        catch(UnsatisfiedLinkError e) {
+            fail("Library '" + newLibName + "' at " + dst + " could not be loaded: " + e);
+        }
     }
     
     public void testLoadFrameworkLibrary() {
