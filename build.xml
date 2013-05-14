@@ -822,7 +822,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <property name="vmopt.arch" value="${vm.64}" else="${vm.32}"/>
+    <property name="vmopt.arch" value="${vm.arch}"/>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
