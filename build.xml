@@ -167,7 +167,7 @@
     <condition property="vm.32" value="-d32" else="-Ddummy">
       <not><os family="windows"/></not>
     </condition>
-    <condition property="vm.arch" value="${vm.64}" else="${vm.32}">
+    <condition property="vmopt.arch" value="${vm.64}" else="${vm.32}">
       <and>
         <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
         <or>
@@ -185,7 +185,7 @@
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
       <and>
         <os name="SunOS"/>
-        <equals arg1="${vm.arch}" arg2="${vm.64}"/>
+        <equals arg1="${vmopt.arch}" arg2="${vm.64}"/>
       </and>
     </condition>
     <property name="build" value="build"/>
@@ -822,7 +822,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <property name="vmopt.arch" value="${vm.arch}"/>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
