@@ -109,7 +109,7 @@ public interface SetupApi extends StdCallLibrary {
      *   installed devices that matched the supplied parameters. If the operation fails, the function returns
      *   INVALID_HANDLE_VALUE. To get extended error information, call GetLastError.
      */
-    WinNT.HANDLE SetupDiGetClassDevs(Guid.GUID.ByReference classGuid, Pointer enumerator, Pointer hwndParent, int flags);
+    WinNT.HANDLE SetupDiGetClassDevs(Guid.GUID classGuid, Pointer enumerator, Pointer hwndParent, int flags);
 
     /**
      * The SetupDiDestroyDeviceInfoList function deletes a device information set and frees all associated memory.
@@ -157,8 +157,8 @@ public interface SetupApi extends StdCallLibrary {
      *   with an error, FALSE is returned and the error code for the failure can be retrieved by calling GetLastError.
      */
     boolean SetupDiEnumDeviceInterfaces(WinNT.HANDLE hDevInfo, Pointer devInfo,
-           Guid.GUID.ByReference interfaceClassGuid, int memberIndex,
-           SP_DEVICE_INTERFACE_DATA.ByReference deviceInterfaceData);
+           Guid.GUID interfaceClassGuid, int memberIndex,
+           SP_DEVICE_INTERFACE_DATA deviceInterfaceData);
 
     /**
      * The SetupDiGetDeviceInterfaceDetail function returns details about a device interface.
@@ -199,8 +199,8 @@ public interface SetupApi extends StdCallLibrary {
      *   with an error, FALSE is returned and the error code for the failure can be retrieved by calling GetLastError.
      */
     boolean SetupDiGetDeviceInterfaceDetail(WinNT.HANDLE hDevInfo,
-           SP_DEVICE_INTERFACE_DATA.ByReference deviceInterfaceData, Pointer deviceInterfaceDetailData,
-           int deviceInterfaceDetailDataSize, IntByReference requiredSize, SP_DEVINFO_DATA.ByReference deviceInfoData);
+           SP_DEVICE_INTERFACE_DATA deviceInterfaceData, Pointer deviceInterfaceDetailData,
+           int deviceInterfaceDetailDataSize, IntByReference requiredSize, SP_DEVINFO_DATA deviceInfoData);
 
     /**
      * The SetupDiGetDeviceRegistryProperty function retrieves a specified Plug and Play device property.
@@ -236,7 +236,7 @@ public interface SetupApi extends StdCallLibrary {
      *   ERROR_INVALID_DATA error code if the requested property does not exist for a device or if the property data is
      *   not valid.
      */
-    boolean SetupDiGetDeviceRegistryProperty(WinNT.HANDLE DeviceInfoSet, SP_DEVINFO_DATA.ByReference DeviceInfoData,
+    boolean SetupDiGetDeviceRegistryProperty(WinNT.HANDLE DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData,
             int Property, IntByReference PropertyRegDataType, Pointer PropertyBuffer, int PropertyBufferSize,
             IntByReference RequiredSize);
 

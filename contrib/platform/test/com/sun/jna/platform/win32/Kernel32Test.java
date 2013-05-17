@@ -411,6 +411,27 @@ public class Kernel32Test extends TestCase {
         assertTrue(processInformation.dwProcessId.longValue() > 0);
     }
 
+    // TODO
+    public void testCreateProcessW() {
+        WinBase.STARTUPINFO startupInfo = new WinBase.STARTUPINFO();
+        WinBase.PROCESS_INFORMATION.ByReference processInformation = new WinBase.PROCESS_INFORMATION.ByReference();
+
+        boolean status = Kernel32.INSTANCE.CreateProcessW(
+            null,
+            Native.toCharArray("cmd.exe /c echo hi"),
+            null,
+            null,
+            true,
+            new WinDef.DWORD(0),
+            Pointer.NULL,
+            System.getProperty("java.io.tmpdir"),
+            startupInfo,
+            processInformation);
+
+        assertTrue(status);
+        assertTrue(processInformation.dwProcessId.longValue() > 0);
+    }
+
     public void testGetEnvironmentVariable() {
     	assertTrue(Kernel32.INSTANCE.SetEnvironmentVariable("jna-getenvironment-test", "42"));
     	int size = Kernel32.INSTANCE.GetEnvironmentVariable("jna-getenvironment-test", null, 0);

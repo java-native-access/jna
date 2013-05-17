@@ -30,7 +30,7 @@ public abstract class Ole32Util {
 	 *  A GUID.
 	 */
 	public static GUID getGUIDFromString(String guidString) {
-		GUID.ByReference lpiid = new GUID.ByReference();
+		GUID lpiid = new GUID();
     	HRESULT hr = Ole32.INSTANCE.IIDFromString(guidString, lpiid);
     	if (! hr.equals(W32Errors.S_OK)) {
     		throw new RuntimeException(hr.toString());
@@ -46,7 +46,7 @@ public abstract class Ole32Util {
 	 *  String representation of a GUID.
 	 */
 	public static String getStringFromGUID(GUID guid) {
-		GUID.ByReference pguid = new GUID.ByReference(guid.getPointer());
+		GUID pguid = new GUID(guid.getPointer());
     	int max = 39;
     	char[] lpsz = new char[max];
     	int len = Ole32.INSTANCE.StringFromGUID2(pguid, lpsz, max);
@@ -63,7 +63,7 @@ public abstract class Ole32Util {
 	 *  New GUID.
 	 */
 	public static GUID generateGUID() {
-		GUID.ByReference pguid = new GUID.ByReference();
+		GUID pguid = new GUID();
     	HRESULT hr = Ole32.INSTANCE.CoCreateGuid(pguid);
     	if (! hr.equals(W32Errors.S_OK)) {
     		throw new RuntimeException(hr.toString());

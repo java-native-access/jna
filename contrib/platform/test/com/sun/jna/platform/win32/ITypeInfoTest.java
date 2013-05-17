@@ -18,19 +18,19 @@ import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.MEMBERIDByReference;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
-import com.sun.jna.platform.win32.WinDef.WORDbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMObject;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -126,7 +126,7 @@ public class ITypeInfoTest extends TestCase {
 		MEMBERID memid = new MEMBERID(1);
 		BSTR[] rgBstrNames = new BSTR[1];
 		UINT cMaxNames = new UINT(1);
-		UINTbyReference pcNames = new UINTbyReference();
+		UINTByReference pcNames = new UINTByReference();
 		HRESULT hr = typeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
 
 		COMUtils.checkTypeLibRC(hr);
@@ -137,7 +137,7 @@ public class ITypeInfoTest extends TestCase {
 
 	public void testGetRefTypeOfImplType() {
 		ITypeInfo typeInfo = getTypeInfo();
-		HREFTYPEbyReference pRefType = new HREFTYPEbyReference();
+		HREFTYPEByReference pRefType = new HREFTYPEByReference();
 		HRESULT hr = typeInfo.GetRefTypeOfImplType(new UINT(0), pRefType);
 
 		COMUtils.checkTypeLibRC(hr);
@@ -176,7 +176,7 @@ public class ITypeInfoTest extends TestCase {
 		MEMBERID memid = new MEMBERID(0);
 		BSTR pBstrName = new BSTR();
 		BSTR pBstrDocString = new BSTR();
-		DWORDbyReference pdwHelpContext = new DWORDbyReference();
+		DWORDByReference pdwHelpContext = new DWORDByReference();
 		BSTR pBstrHelpFile = new BSTR();
 		HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
 				pBstrDocString, pdwHelpContext, pBstrHelpFile);
@@ -195,7 +195,7 @@ public class ITypeInfoTest extends TestCase {
 		MEMBERID memid = new MEMBERID(0);
 		BSTR pBstrDllName = new BSTR();
 		BSTR pBstrName = new BSTR();
-		WORDbyReference pwOrdinal = new WORDbyReference();
+		WORDByReference pwOrdinal = new WORDByReference();
 		HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
 				pBstrDllName, pBstrName, pwOrdinal);
 
@@ -248,7 +248,7 @@ public class ITypeInfoTest extends TestCase {
 	public void testGetContainingTypeLib() {
 		ITypeInfo typeInfo = getTypeInfo();
 		ITypeLib.ByReference pTLib = new ITypeLib.ByReference();
-		UINTbyReference pIndex = new UINTbyReference();
+		UINTByReference pIndex = new UINTByReference();
 		HRESULT hr = typeInfo.GetContainingTypeLib(pTLib, pIndex);
 
 		COMUtils.checkTypeLibRC(hr);

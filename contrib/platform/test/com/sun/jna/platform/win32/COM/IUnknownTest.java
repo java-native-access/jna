@@ -46,7 +46,7 @@ public class IUnknownTest extends TestCase {
 		}
 
 		// Get CLSID for Word.Application...
-		CLSID.ByReference clsid = new CLSID.ByReference();
+		CLSID clsid = new CLSID();
 		hr = Ole32.INSTANCE.CLSIDFromProgID("InternetExplorer.Application",
 				clsid);
 

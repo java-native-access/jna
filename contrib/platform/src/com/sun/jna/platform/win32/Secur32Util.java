@@ -80,7 +80,7 @@ public abstract class Secur32Util {
 	 */
 	public static SecurityPackage[] getSecurityPackages() {
     	IntByReference pcPackages = new IntByReference();
-    	PSecPkgInfo.ByReference pPackageInfo = new PSecPkgInfo.ByReference();
+    	PSecPkgInfo pPackageInfo = new PSecPkgInfo();
     	int rc = Secur32.INSTANCE.EnumerateSecurityPackages(pcPackages, pPackageInfo);
     	if(W32Errors.SEC_E_OK != rc) {
     		throw new Win32Exception(rc);

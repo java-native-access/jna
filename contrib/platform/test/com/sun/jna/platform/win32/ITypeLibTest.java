@@ -44,7 +44,7 @@ public class ITypeLibTest extends TestCase {
 
 	public ITypeLib loadShellTypeLib() {
 		// Microsoft Shell Controls And Automation
-		CLSID.ByReference clsid = new CLSID.ByReference();
+		CLSID clsid = new CLSID();
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
 				"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);

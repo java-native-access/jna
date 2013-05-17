@@ -254,7 +254,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, it returns a nonzero error code.
      */
     public int EnumerateSecurityPackages(IntByReference pcPackages, 
-                                         PSecPkgInfo.ByReference ppPackageInfo);
+                                         PSecPkgInfo ppPackageInfo);
 	
     /**
      * The FreeContextBuffer function enables callers of security package functions to free a memory 

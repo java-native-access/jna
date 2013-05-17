@@ -20,22 +20,22 @@ import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.MEMBERIDByReference;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.WinDef.WORDbyReference;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -109,7 +109,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */MEMBERID memid,
 	/* [length_is][size_is][out] */BSTR[] rgBstrNames,
 	/* [in] */UINT cMaxNames,
-	/* [out] */UINTbyReference pcNames) {
+	/* [out] */UINTByReference pcNames) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(28));
@@ -121,7 +121,7 @@ public class ITypeInfo extends IUnknown {
 
 	public HRESULT GetRefTypeOfImplType(
 	/* [in] */UINT index,
-	/* [out] */HREFTYPEbyReference pRefType) {
+	/* [out] */HREFTYPEByReference pRefType) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(32));
@@ -163,7 +163,7 @@ public class ITypeInfo extends IUnknown {
 	/* [out][in] */DISPPARAMS.ByReference pDispParams,
 	/* [out] */VARIANT.ByReference pVarResult,
 	/* [out] */EXCEPINFO.ByReference pExcepInfo,
-	/* [out] */UINTbyReference puArgErr) {
+	/* [out] */UINTByReference puArgErr) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(44));
@@ -177,7 +177,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */MEMBERID memid,
 	/* [out] */BSTR pBstrName,
 	/* [out] */BSTR pBstrDocString,
-	/* [out] */DWORDbyReference pdwHelpContext,
+	/* [out] */DWORDByReference pdwHelpContext,
 	/* [out] */BSTR pBstrHelpFile) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
@@ -193,7 +193,7 @@ public class ITypeInfo extends IUnknown {
 	/* [in] */INVOKEKIND invKind,
 	/* [out] */BSTR pBstrDllName,
 	/* [out] */BSTR pBstrName,
-	/* [out] */WORDbyReference pwOrdinal) {
+	/* [out] */WORDByReference pwOrdinal) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(52));
@@ -255,7 +255,7 @@ public class ITypeInfo extends IUnknown {
 
 	public/* [local] */HRESULT GetContainingTypeLib(
 	/* [out] */ITypeLib.ByReference pTLib,
-	/* [out] */UINTbyReference pIndex) {
+	/* [out] */UINTByReference pIndex) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(72));

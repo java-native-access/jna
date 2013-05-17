@@ -17,14 +17,14 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.MEMBERIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.MEMBERIDByReference;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
+import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -119,7 +119,7 @@ public class ITypeLib extends IUnknown {
 	/* [in] */int index,
 	/* [out] */BSTR pBstrName,
 	/* [out] */BSTR pBstrDocString,
-	/* [out] */DWORDbyReference pdwHelpContext,
+	/* [out] */DWORDByReference pdwHelpContext,
 	/* [out] */BSTR pBstrHelpFile) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
@@ -134,7 +134,7 @@ public class ITypeLib extends IUnknown {
 	/* [annotation][out][in] */
 	WString szNameBuf,
 	/* [in] */ULONG lHashVal,
-	/* [out] */BOOLbyReference pfName) {
+	/* [out] */BOOLByReference pfName) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(40));
@@ -149,8 +149,8 @@ public class ITypeLib extends IUnknown {
 	WString szNameBuf,
 	/* [in] */ULONG lHashVal,
 	/* [length_is][size_is][out] */ITypeInfo.ByReference ppTInfo,
-	/* [length_is][size_is][out] */MEMBERIDbyReference rgMemId,
-	/* [out][in] */USHORTbyReference pcFound) {
+	/* [length_is][size_is][out] */MEMBERIDByReference rgMemId,
+	/* [out][in] */USHORTByReference pcFound) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(44));

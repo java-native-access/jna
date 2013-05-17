@@ -52,7 +52,7 @@ public class OleAutoTest extends TestCase {
 
 	public void testDISPPARAMS() {
 		// Build DISPPARAMS
-		SAFEARRAY.ByReference safeArg = OleAutoUtil.createVarArray(1);
+		SAFEARRAY safeArg = OleAutoUtil.createVarArray(1);
 		OleAutoUtil.SafeArrayPutElement(safeArg, 0, new VARIANT(
 				Variant.VARIANT_TRUE));
 		System.out.println(safeArg.toString(true));
@@ -60,7 +60,7 @@ public class OleAutoTest extends TestCase {
 
 	public void testLoadRegTypeLib() {
 		// MS Word typelib guid
-		CLSID.ByReference clsid = new CLSID.ByReference();
+		CLSID clsid = new CLSID();
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
 				"{00020905-0000-0000-C000-000000000046}"), clsid);

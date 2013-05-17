@@ -18,7 +18,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -117,7 +117,7 @@ public class IDispatch extends IUnknown {
 	 * @return the hresult
 	 */
 	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-			LCID lcid, DISPIDbyReference rgDispId) {
+			LCID lcid, DISPIDByReference rgDispId) {
 
 		Pointer vptr = this.getPointer().getPointer(0);
 		Function func = Function.getFunction(vptr.getPointer(20));

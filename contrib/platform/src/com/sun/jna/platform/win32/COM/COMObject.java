@@ -19,7 +19,7 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
@@ -81,7 +81,7 @@ public class COMObject {
 		}
 
 		// Get CLSID for Word.Application...
-		CLSID.ByReference clsid = new CLSID.ByReference();
+		CLSID clsid = new CLSID();
 		hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
 
 		if (COMUtils.FAILED(hr)) {
@@ -123,7 +123,7 @@ public class COMObject {
 
 		WString[] ptName = new WString[] { new WString(name) };
 		DISPPARAMS dp = new DISPPARAMS();
-		DISPIDbyReference pdispID = new DISPIDbyReference();
+		DISPIDByReference pdispID = new DISPIDByReference();
 		VariantArg.ByReference variantArg = new VariantArg.ByReference();
 		variantArg.variantArg = pArgs;
 		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
@@ -138,7 +138,7 @@ public class COMObject {
 		// Handle special-case for property-puts!
 		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
 			dp.cNamedArgs = new UINT(pArgs.length);
-			dp.rgdispidNamedArgs = new DISPIDbyReference(
+			dp.rgdispidNamedArgs = new DISPIDByReference(
 					OaIdl.DISPID_PROPERTYPUT);
 		}
 

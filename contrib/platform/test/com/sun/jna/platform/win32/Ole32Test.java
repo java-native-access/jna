@@ -31,14 +31,14 @@ public class Ole32Test extends TestCase {
 	}
 
 	public void testCoCreateGUID() {
-		GUID.ByReference pguid = new GUID.ByReference();
+		GUID pguid = new GUID();
 		assertEquals(W32Errors.S_OK, Ole32.INSTANCE.CoCreateGuid(pguid));
 		assertTrue(pguid.Data1 != 0 || pguid.Data2 != 0 || pguid.Data3 != 0
 				&& pguid.Data4 != null);
 	}
 
 	public void testIIDFromString() {
-		GUID.ByReference lpiid = new GUID.ByReference();
+		GUID lpiid = new GUID();
 		assertEquals(W32Errors.S_OK, Ole32.INSTANCE.IIDFromString(
 				"{13709620-C279-11CE-A49E-444553540000}", lpiid)); // Shell.Application.1
 		assertEquals(0x13709620, lpiid.Data1);
@@ -55,7 +55,7 @@ public class Ole32Test extends TestCase {
 	}
 
 	public void testStringFromGUID2() {
-		GUID.ByReference pguid = new GUID.ByReference();
+		GUID pguid = new GUID();
 		pguid.Data1 = 0;
 		pguid.Data2 = 0;
 		pguid.Data3 = 0;
@@ -103,7 +103,7 @@ public class Ole32Test extends TestCase {
 	}
 
 	public final void testCLSIDFromProgID() {
-	    final Guid.CLSID.ByReference clsid = new Guid.CLSID.ByReference();  
+	    final Guid.CLSID clsid = new Guid.CLSID();  
 	    assertEquals(WinError.S_OK, Ole32.INSTANCE.CLSIDFromProgID("jpegfile", clsid));
 	    assertEquals("{25336920-03F9-11CF-8FD0-00AA00686F13}", clsid.toGuidString());
 	}
