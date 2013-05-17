@@ -16,7 +16,7 @@
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
-#   Android (arm)
+#   Android (arm/x86)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
@@ -28,7 +28,7 @@
 #
 # The android build requires the android SDK+NDK for cross-compilation;
 # make the tools available on the path and compile with
-# "ant -Dos.prefix=android-arm".  Put the NDK tools in the path and adjust
+# "ant -Dos.prefix=android-arm(-x86)".  Put the NDK tools in the path and adjust
 # NDK_PLATFORM below or set it in your environment.
 #
 
@@ -111,20 +111,29 @@ STRIP=strip -x
 # Android build (cross-compile) requires the android SDK+NDK.
 # Ensure the following tools are in your path and adjust NDK_PLATFORM as needed
 ifeq ($(OS),android)
-CC=arm-linux-androideabi-gcc
-CPP=arm-linux-androideabi-cpp
-LD=arm-linux-androideabi-gcc
-RANLIB=arm-linux-androideabi-ranlib
-STRIP=arm-linux-androideabi-strip -x
+ifeq ($(ARCH),arm)
+PREFIX=arm-linux-androideabi-
+COPT+= -mthumb-interwork -march=armv5te -mtune=xscale -msoft-float -fstack-protector 
+HOST=arm-linux-eabi
+else
+PREFIX=i686-android-linux-
+COPT+= -march=i686
+HOST=i686-linux
+endif
+CC=$(PREFIX)gcc
+CPP=$(PREFIX)cpp
+LD=$(PREFIX)gcc
+RANLIB=$(PREFIX)ranlib
+STRIP=$(PREFIX)strip -x
 CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
-COPT+=-fpic -mthumb-interwork -ffunction-sections -funwind-tables -fstack-protector -fno-short-enums -march=armv5te -mtune=xscale -msoft-float
+COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
 NDK_PLATFORM?=/Developer/Applications/android-ndk-r7c/platforms/android-14
 JAVA_INCLUDES=
-CINCLUDES+=-I"$(NDK_PLATFORM)/arch-arm/usr/include" # -I/usr/include
-LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-arm/usr/lib/" -lgcc -lc -ldl -lm
+CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(ARCH)/usr/include" # -I/usr/include
+LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-$(ARCH)/usr/lib/" -lgcc -lc -ldl -lm
 LDFLAGS+=-Wl,-shared,-Bsymbolic
 FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
-FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=arm-linux-eabi
+FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=$(HOST)
 endif
 
 # W32CE build requires cegcc cross-compiler and phoneME JavaME implementation
