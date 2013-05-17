@@ -1214,5 +1214,4 @@ public interface OaIdl {
 							"wMinorVerNum", "tdescAlias", "idldescType" });
 		}
 	}
-
 }

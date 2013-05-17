@@ -562,7 +562,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
       int error = GET_LAST_ERROR();
       if (error) {
         char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+        snprintf(msg, sizeof(msg), "[%d] %s", error, STR_ERROR(error, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }

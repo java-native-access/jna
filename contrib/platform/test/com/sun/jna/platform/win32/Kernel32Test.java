@@ -411,7 +411,6 @@ public class Kernel32Test extends TestCase {
         assertTrue(processInformation.dwProcessId.longValue() > 0);
     }
 
-    // TODO
     public void testCreateProcessW() {
         WinBase.STARTUPINFO startupInfo = new WinBase.STARTUPINFO();
         WinBase.PROCESS_INFORMATION.ByReference processInformation = new WinBase.PROCESS_INFORMATION.ByReference();
