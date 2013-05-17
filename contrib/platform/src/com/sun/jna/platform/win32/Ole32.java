@@ -46,7 +46,7 @@ public interface Ole32 extends StdCallLibrary {
      */
     HRESULT CoCreateGuid(GUID pguid);
 
-    /** @deprecated use {@link #CoCreateGuid(GUID)}. */
+    /** @deprecated use {@link #CoCreateGuid(Guid.GUID)}. */
     HRESULT CoCreateGuid(GUID.ByReference pguid);
 
     /**
