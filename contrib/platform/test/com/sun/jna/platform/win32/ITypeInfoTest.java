@@ -51,10 +51,6 @@ public class ITypeInfoTest extends TestCase {
 		junit.textui.TestRunner.run(ITypeInfoTest.class);
 	}
 
-	public ITypeInfoTest() {
-		Native.setProtected(true);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		if (this.comObj == null) {

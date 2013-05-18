@@ -24,7 +24,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
  *

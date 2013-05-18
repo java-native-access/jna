@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
-// TODO: Auto-generated Javadoc
 /**
  * Utility class for some common error functions.
  */

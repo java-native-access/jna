@@ -38,10 +38,6 @@ public class ITypeLibTest extends TestCase {
 		junit.textui.TestRunner.run(ITypeLibTest.class);
 	}
 
-	public ITypeLibTest() {
-		Native.setProtected(true);
-	}
-
 	public ITypeLib loadShellTypeLib() {
 		// Microsoft Shell Controls And Automation
 		CLSID clsid = new CLSID();

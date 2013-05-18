@@ -33,7 +33,6 @@ import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.COM.ITypeComp;
 import com.sun.jna.ptr.ByReference;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface OaIdl.
  */

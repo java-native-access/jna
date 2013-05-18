@@ -31,12 +31,7 @@ import com.sun.jna.ptr.PointerByReference;
 public class OleAutoTest extends TestCase {
 
 	public static void main(String[] args) {
-		Native.setProtected(true);
 		junit.textui.TestRunner.run(OleAutoTest.class);
-	}
-
-	public OleAutoTest() {
-		Native.setProtected(true);
 	}
 
 	public void testSysAllocString() {

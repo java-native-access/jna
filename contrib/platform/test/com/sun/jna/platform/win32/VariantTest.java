@@ -16,10 +16,6 @@ public class VariantTest extends TestCase {
 		junit.textui.TestRunner.run(VariantTest.class);
 	}
 
-	public VariantTest() {
-		Native.setProtected(true);
-	}
-
 	public void testVariantClear() {
 		System.out.println("------------------------------------------");
 

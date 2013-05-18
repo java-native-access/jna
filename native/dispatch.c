@@ -76,12 +76,12 @@
 #include <wchar.h>
 #include <jni.h>
 
+#include "dispatch.h"
+
 #ifndef NO_JAWT
 #include <jawt.h>
 #include <jawt_md.h>
 #endif
-
-#include "dispatch.h"
 
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION
@@ -93,7 +93,12 @@
 #define PEND() PROTECTED_END(ON_ERROR())
 
 #ifdef HAVE_PROTECTION
+// When we have SEH, default to protection on
+#if defined(_WIN32) && !(defined(_WIN64) && defined(__GNUC__))
+static int _protect = 1;
+#else
 static int _protect;
+#endif
 #undef PROTECT
 #define PROTECT _protect
 #endif

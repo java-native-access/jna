@@ -38,7 +38,6 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
  * 

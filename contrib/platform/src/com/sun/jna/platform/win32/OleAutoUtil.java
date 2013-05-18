@@ -19,7 +19,6 @@ import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class OleAut32Util.
  *

@@ -23,7 +23,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Provides access to the w32 user32 library. Incomplete implementation to
  * support demos.

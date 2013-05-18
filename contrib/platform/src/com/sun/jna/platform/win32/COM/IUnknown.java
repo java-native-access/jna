@@ -67,12 +67,15 @@ public class IUnknown extends PointerType {
 	 * @return the hresult
 	 */
 	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		Pointer vptr = this.getPointer().getPointer(0);
-		Function func = Function.getFunction(vptr.getPointer(0));
-		int hr = func.invokeInt(new Object[] { this.getPointer(), riid,
-				ppvObject });
-
-		return new HRESULT(hr);
+            Pointer base = this.getPointer();
+            Pointer vptr = base.getPointer(0);
+            System.out.println("vptr: " + vptr);
+            Pointer root = vptr.getPointer(0);
+            System.out.println("root: " + root);
+            Function func = Function.getFunction(root);
+            int hr = func.invokeInt(new Object[] { base, riid, ppvObject });
+            System.out.println("returned: " + ppvObject.getValue());
+            return new HRESULT(hr);
 	}
 
 	/**

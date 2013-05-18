@@ -20,7 +20,6 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
  * alternate mappings from {@link WinNT} which make use of NIO buffers.

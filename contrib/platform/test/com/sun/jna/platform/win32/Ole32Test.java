@@ -72,7 +72,7 @@ public class Ole32Test extends TestCase {
 	}
 
 	public void testCoInitializeEx() {
-		HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, 0);
+		HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 		assertTrue(W32Errors.SUCCEEDED(hr.intValue())
 				|| hr.intValue() == W32Errors.RPC_E_CHANGED_MODE);
 		if (W32Errors.SUCCEEDED(hr.intValue()))
@@ -80,7 +80,7 @@ public class Ole32Test extends TestCase {
 	}
 
 	public void testCoCreateInstance() {
-		HRESULT hrCI = Ole32.INSTANCE.CoInitializeEx(null, 0);
+		HRESULT hrCI = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 
 		GUID guid = Ole32Util
 				.getGUIDFromString("{13709620-C279-11CE-A49E-444553540000}"); // Shell
@@ -94,8 +94,8 @@ public class Ole32Test extends TestCase {
 																	// null, no
 																	// aggregation
 				WTypes.CLSCTX_LOCAL_SERVER, riid, pDispatch);
-		assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
-		assertTrue(!pDispatch.equals(Pointer.NULL));
+		assertTrue(Kernel32Util.formatMessage(hr), W32Errors.SUCCEEDED(hr.intValue()));
+		assertNotNull("Returned dispatch pointer should be non-null", pDispatch.getValue());
 		// We leak this iUnknown reference because we don't have the JNACOM lib
 		// here to wrap the native iUnknown pointer and call iUnknown.release()
 		if (W32Errors.SUCCEEDED(hrCI.intValue()))
