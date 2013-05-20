@@ -120,6 +120,7 @@ typedef struct _callback {
   jboolean direct;
   size_t fptr_offset;
   void* saved_x_closure;
+  const char* encoding;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
@@ -182,7 +183,7 @@ extern void JNA_callback_dispose(JNIEnv*);
 extern void JNA_detach(jboolean);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
-                                 callconv_t, jint);
+                                 callconv_t, jint, jstring);
 extern void free_callback(JNIEnv*, callback*);
 extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);
 extern jobject new_object(JNIEnv*, char, void*, jboolean);
@@ -190,8 +191,9 @@ extern jboolean is_protected();
 extern int get_conversion_flag(JNIEnv*, jclass);
 extern jboolean ffi_error(JNIEnv*,const char*,ffi_status);
 
+extern const char* newCStringUTF8(JNIEnv*, jstring);
 extern jobject newJavaPointer(JNIEnv*, void*);
-extern jstring newJavaString(JNIEnv*, const char*, jboolean);
+extern jstring newJavaString(JNIEnv*, const char*, const char*);
 extern jobject newJavaWString(JNIEnv*, const wchar_t*);
 extern jobject newJavaStructure(JNIEnv*, void*, jclass);
 extern jobject newJavaCallback(JNIEnv*, void*, jclass);

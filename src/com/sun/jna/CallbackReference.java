@@ -64,6 +64,8 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
+        // Thread name must be UTF8-encoded
+        { setStringEncoding("utf8"); }
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "daemon", "detach", "name" });
         }
@@ -118,11 +120,7 @@ class CallbackReference extends WeakReference {
             }
             int ctype = AltCallingConvention.class.isAssignableFrom(type)
                 ? Function.ALT_CONVENTION : Function.C_CONVENTION;
-            Map foptions = new HashMap();
-            Map options = Native.getLibraryOptions(type);
-            if (options != null) {
-                foptions.putAll(options);
-            }
+            Map foptions = new HashMap(Native.getLibraryOptions(type));
             foptions.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(type));
             NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, foptions);
             Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
@@ -167,6 +165,7 @@ class CallbackReference extends WeakReference {
             }
         }
 
+        String encoding = Native.getStringEncoding(callback.getClass());
         if (direct) {
             method = getCallbackMethod(callback);
             nativeParamTypes = method.getParameterTypes();
@@ -177,7 +176,8 @@ class CallbackReference extends WeakReference {
             }
             long peer = Native.createNativeCallback(callback, method,
                                                     nativeParamTypes, returnType,
-                                                    callingConvention, flags);
+                                                    callingConvention, flags,
+                                                    encoding);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
         else {
@@ -185,7 +185,7 @@ class CallbackReference extends WeakReference {
                 proxy = (CallbackProxy)callback;
             }
             else {
-                proxy = new DefaultCallbackProxy(getCallbackMethod(callback), mapper);
+                proxy = new DefaultCallbackProxy(getCallbackMethod(callback), mapper, encoding);
             }
             nativeParamTypes = proxy.getParameterTypes();
             returnType = proxy.getReturnType();
@@ -223,7 +223,8 @@ class CallbackReference extends WeakReference {
                 ? Native.CB_OPTION_IN_DLL : 0;
             long peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
                                                     nativeParamTypes, returnType,
-                                                    callingConvention, flags);
+                                                    callingConvention, flags,
+                                                    encoding);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
         }
     }
@@ -397,8 +398,10 @@ class CallbackReference extends WeakReference {
         private final Method callbackMethod;
         private ToNativeConverter toNative;
         private final FromNativeConverter[] fromNative;
-        public DefaultCallbackProxy(Method callbackMethod, TypeMapper mapper) {
+        private final String encoding;
+        public DefaultCallbackProxy(Method callbackMethod, TypeMapper mapper, String encoding) {
             this.callbackMethod = callbackMethod;
+            this.encoding = encoding;
             Class[] argTypes = callbackMethod.getParameterTypes();
             Class returnType = callbackMethod.getReturnType();
             fromNative = new FromNativeConverter[argTypes.length];
@@ -496,14 +499,16 @@ class CallbackReference extends WeakReference {
         private Object convertArgument(Object value, Class dstType) {
             if (value instanceof Pointer) {
                 if (dstType == String.class) {
-                    value = ((Pointer)value).getString(0);
+                    value = ((Pointer)value).getString(0, encoding);
                 }
                 else if (dstType == WString.class) {
-                    value = new WString(((Pointer)value).getString(0, true));
+                    value = new WString(((Pointer)value).getWideString(0));
                 }
-                else if (dstType == String[].class
-                         || dstType == WString[].class) {
-                    value = ((Pointer)value).getStringArray(0, dstType == WString[].class);
+                else if (dstType == String[].class) {
+                    value = ((Pointer)value).getStringArray(0, encoding);
+                }
+                else if (dstType == WString[].class) {
+                    value = ((Pointer)value).getWideStringArray(0);
                 }
                 else if (Callback.class.isAssignableFrom(dstType)) {
                     value = CallbackReference.this.getCallback(dstType, (Pointer)value);
@@ -555,7 +560,7 @@ class CallbackReference extends WeakReference {
             }
             else if (cls == String[].class || cls == WString.class) {
                 StringArray sa = cls == String[].class
-                    ? new StringArray((String[])value)
+                    ? new StringArray((String[])value, encoding)
                     : new StringArray((WString[])value);
                 // Delay GC until array itself is GC'd.
                 allocations.put(value, sa);
@@ -583,7 +588,8 @@ class CallbackReference extends WeakReference {
         private final Map options;
         
         public NativeFunctionHandler(Pointer address, int callingConvention, Map options) {
-            this.function = new Function(address, callingConvention);
+            String encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+            this.function = new Function(address, callingConvention, encoding);
             this.options = options;
         }
         

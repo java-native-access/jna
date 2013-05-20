@@ -206,12 +206,13 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
+    // Fails on windows (32 and 64-bit)
     public void testLoadFromUnicodePath() throws Exception {
         final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
         File tmpdir = Native.getTempDir();
         File unicodeDir = new File(tmpdir, UNICODE);
         unicodeDir.mkdirs();
-        Properties props = System.getProperties();
+        Properties props = (Properties)System.getProperties().clone();
         try {
             System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
             ClassLoader loader = new TestLoader(true);

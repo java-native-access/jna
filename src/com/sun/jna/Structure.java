@@ -140,6 +140,7 @@ public abstract class Structure {
     private Pointer memory;
     private int size = CALCULATE_SIZE;
     private int alignType;
+    private String encoding;
     private int actualAlignType;
     private int structAlignment;
     private Map structFields;
@@ -183,6 +184,7 @@ public abstract class Structure {
 
     protected Structure(Pointer p, int alignType, TypeMapper mapper) {
         setAlignType(alignType);
+        setStringEncoding(Native.getStringEncoding(getClass()));
         initializeTypeMapper(mapper);
         validateFields();
         if (p != null) {
@@ -236,6 +238,20 @@ public abstract class Structure {
             // recalculate layout, since it was done once already
             ensureAllocated();
         }
+    }
+
+    /** Set the desired encoding to use when writing String fields to native
+        memory.
+    */
+    protected void setStringEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    /** Encoding to use to convert {@link String} to native <code>const
+        char*</code>.  Defaults to {@link Native#getDefaultStringEncoding()}.
+    */
+    protected String getStringEncoding() {
+        return this.encoding;
     }
 
     /** Change the alignment of this structure.  Re-allocates memory if
@@ -639,7 +655,14 @@ public abstract class Structure {
                                || fieldType.isArray())
             ? getFieldValue(structField.field) : null;
 
-        Object result = memory.getValue(offset, fieldType, currentValue);
+        Object result;
+        if (fieldType == String.class) {
+            Pointer p = memory.getPointer(offset);
+            result = p == null ? null : p.getString(0, encoding);
+        }
+        else {
+            result = memory.getValue(offset, fieldType, currentValue);
+        }
         if (readConverter != null) {
             result = readConverter.fromNative(result, structField.context);
             if (currentValue != null && currentValue.equals(result)) {
@@ -753,7 +776,9 @@ public abstract class Structure {
                     && value.equals(nativeStrings.get(structField.name + ".val"))) {
                     return;
                 }
-                NativeString nativeString = new NativeString(value.toString(), wide);
+                NativeString nativeString = wide
+                    ? new NativeString(value.toString(), true) 
+                    : new NativeString(value.toString(), encoding);
                 // Keep track of allocated C strings to avoid
                 // premature garbage collection of the memory.
                 nativeStrings.put(structField.name, nativeString);

@@ -80,7 +80,8 @@ static jclass classObject;
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jint options) {
+                callconv_t calling_convention, jint options,
+                jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
@@ -119,6 +120,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
  
   cb->direct = direct;
   cb->java_arg_types[0] = cb->java_arg_types[1] = cb->java_arg_types[2] = &ffi_type_pointer;
+  cb->encoding = newCStringUTF8(env, encoding);
 
   for (i=0;i < argc;i++) {
     int jtype;
@@ -294,6 +296,7 @@ free_callback(JNIEnv* env, callback *cb) {
     }
   }
 #endif
+  free((void *)cb->encoding);
   free(cb);
 }
 
@@ -362,7 +365,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
           break;
         case CVT_STRING:
-          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], cb->encoding);
           break;
         case CVT_WSTRING:
           *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
@@ -610,6 +613,8 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     else {
       attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
     }
+    // Dispose of allocated memory
+    free(args.name);
     if (attach_status != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;
