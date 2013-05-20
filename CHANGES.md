@@ -13,6 +13,7 @@ Features
 * Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
 * Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
 * Use per-library String encoding settings (see [`Native.getDefaultStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Native#getDefaultStringEncoding()) and [`Structure.getStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Structure.html#getStringEncoding())) - [@twall](https://github.com/twall).
+* Added [memory dump for debugging](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Memory.html#dump())) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
