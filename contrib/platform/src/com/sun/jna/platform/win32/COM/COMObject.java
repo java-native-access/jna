@@ -39,6 +39,12 @@ public class COMObject extends COMBaseObject {
 		super(iDispatch);
 	}
 
+	/**
+	 * Instantiates a new cOM object.
+	 *
+	 * @param clsid the clsid
+	 * @param useActiveInstance the use active instance
+	 */
 	public COMObject(CLSID clsid, boolean useActiveInstance) {
 		super(clsid, useActiveInstance);
 	}
@@ -362,6 +368,21 @@ public class COMObject extends COMBaseObject {
 			VARIANT arg) {
 
 		this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, methodName, arg);
+	}
+
+	/**
+	 * Invoke no reply.
+	 *
+	 * @param methodName the method name
+	 * @param dispatch the dispatch
+	 * @param arg1 the arg1
+	 * @param arg2 the arg2
+	 */
+	protected void invokeNoReply(String methodName, IDispatch dispatch,
+			VARIANT arg1, VARIANT arg2) {
+
+		this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, methodName,
+				new VARIANT[] { arg1, arg2 });
 	}
 
 	/**

@@ -2,6 +2,7 @@ package com.sun.jna.platform.win32.office;
 
 import java.io.File;
 
+import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.COM.COMException;
 
 public class MSOfficeDemo {
@@ -17,24 +18,30 @@ public class MSOfficeDemo {
 			+ File.separator;
 
 	public MSOfficeDemo() {
-		// this.testMSWord();
-		this.testMSExcel();
+		this.testMSWord();
+		//this.testMSExcel();
 	}
 
 	public void testMSWord() {
 		MSWord msWord = null;
-
+		LONG wdFormatPDF = new LONG(17); // PDF format.
+		LONG wdFormatRTF = new LONG(6); // Rich text format (RTF). 
+		LONG wdFormatHTML = new LONG(8); // Standard HTML format. 
+		
+		
 		try {
 			msWord = new MSWord();
 			System.out.println("MSWord version: " + msWord.getVersion());
 			msWord.setVisible(true);
-			msWord.newDocument();
-			// msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
+			//msWord.newDocument();
+			msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
 			msWord.insertText("Hello from JNA!");
 			// wait 10sec. before closing
-			Thread.currentThread().sleep(10000);
+			// Thread.currentThread().sleep(10000);
 			// close and save the document
-			msWord.closeActiveDocument(true);
+			msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", wdFormatRTF);
+			msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.html", wdFormatHTML);
+			//msWord.closeActiveDocument(true);
 			// wait then close word
 			msWord.quit();
 		} catch (COMException e) {
@@ -43,8 +50,10 @@ public class MSOfficeDemo {
 						.println("bstrSource: " + e.getExcepInfo().bstrSource);
 				System.out.println("bstrDescription: "
 						+ e.getExcepInfo().bstrDescription);
-			} else
-				e.printStackTrace();
+			} 
+			
+			// print stack trace
+			e.printStackTrace();
 
 			if (msWord != null)
 				msWord.quit();
