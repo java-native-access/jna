@@ -50,12 +50,11 @@ public class MSWord extends COMObject {
 	}
 
 	public void SaveAs(String FileName, LONG FileFormat) throws COMException {
-		VARIANT[] args = new VARIANT[2];
-		args[0] = new VARIANT(FileFormat);
-		args[1] = new VARIANT(FileName);
+		VARIANT vtFileName = new VARIANT(FileName);
+		VARIANT vtFileFormat = new VARIANT(FileFormat);
 		
 		this.invokeNoReply("SaveAs", this.getActiveDocument().getIDispatch(),
-				args);
+				vtFileName, vtFileFormat);
 	}
 
 	public ActiveDocument getActiveDocument() {

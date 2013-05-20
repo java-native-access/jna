@@ -176,13 +176,25 @@ public class COMBaseObject {
 		if (pDisp == null)
 			throw new COMException("pDisp (IDispatch) parameter is null!");
 
+		// variable declaration
+		int _argsLen = 0;
+		VARIANT[] _args = null;
 		WString[] ptName = new WString[] { new WString(name) };
 		DISPPARAMS dp = new DISPPARAMS();
 		DISPIDbyReference pdispID = new DISPIDbyReference();
-		VariantArg.ByReference variantArg = new VariantArg.ByReference();
-		variantArg.variantArg = pArgs;
 		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
 		IntByReference puArgErr = new IntByReference();
+
+		// make parameter reverse ordering as expected by COM runtime
+		if ((pArgs != null) && (pArgs.length > 0)) {
+			_argsLen = pArgs.length;
+			_args = new VARIANT[_argsLen];
+
+			int revCount = _argsLen;
+			for (int i = 0; i < _argsLen; i++) {
+				_args[i] = pArgs[--revCount];
+			}
+		}
 
 		// Get DISPID for name passed...
 		HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
@@ -192,15 +204,16 @@ public class COMBaseObject {
 
 		// Handle special-case for property-puts!
 		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
-			dp.cNamedArgs = new UINT(pArgs.length);
+			dp.cNamedArgs = new UINT(_argsLen);
 			dp.rgdispidNamedArgs = new DISPIDbyReference(
 					OaIdl.DISPID_PROPERTYPUT);
 		}
 
 		// Build DISPPARAMS
-		if ((pArgs != null) && (pArgs.length > 0)) {
-			dp.cArgs = new UINT(pArgs.length);
-			dp.rgvarg = variantArg;
+		if (_argsLen > 0) {
+			dp.cArgs = new UINT(_args.length);
+			// make pointer of variant array
+			dp.rgvarg = new VariantArg.ByReference(_args);
 
 			// write 'DISPPARAMS' structure to memory
 			dp.write();

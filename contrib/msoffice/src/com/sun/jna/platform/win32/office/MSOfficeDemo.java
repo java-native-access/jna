@@ -27,8 +27,7 @@ public class MSOfficeDemo {
 		LONG wdFormatPDF = new LONG(17); // PDF format.
 		LONG wdFormatRTF = new LONG(6); // Rich text format (RTF). 
 		LONG wdFormatHTML = new LONG(8); // Standard HTML format. 
-		
-		
+
 		try {
 			msWord = new MSWord();
 			System.out.println("MSWord version: " + msWord.getVersion());
@@ -37,11 +36,14 @@ public class MSOfficeDemo {
 			msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
 			msWord.insertText("Hello from JNA!");
 			// wait 10sec. before closing
-			// Thread.currentThread().sleep(10000);
-			// close and save the document
+			Thread.currentThread().sleep(10000);
+			// save in different formats
+			// pdf format is only supported in MSWord 2007 and above
+			//msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", wdFormatPDF);
 			msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", wdFormatRTF);
 			msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.html", wdFormatHTML);
-			//msWord.closeActiveDocument(true);
+			// close and save the document
+			msWord.closeActiveDocument(true);
 			// wait then close word
 			msWord.quit();
 		} catch (COMException e) {
