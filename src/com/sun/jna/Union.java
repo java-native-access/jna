@@ -209,8 +209,9 @@ public abstract class Union extends Structure {
             return super.readField(field);
         }
         // Field not accessible
-        // TODO: read structure, to the extent possible; need a "recursive"
-        // flag to "read" to indicate we want to avoid pointer-based fields
+        // TODO: read by-value structures, to the extent possible; need a
+        // "read cautiously" method to "read" to indicate we want to avoid
+        // pointer-based fields 
         return null;
     }
 

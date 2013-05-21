@@ -122,7 +122,6 @@ public abstract class Structure {
     /** Align to an 8-byte boundary. */
     //public static final int ALIGN_8 = 6;
 
-    static final int MAX_GNUC_ALIGNMENT = Native.MAX_PADDING;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
     static final Map fieldOrder = new WeakHashMap();
@@ -1145,6 +1144,9 @@ public abstract class Structure {
             }
 
             // Align fields as appropriate
+            if (fieldAlignment == 0) {
+                throw new Error("Field alignment is zero for field '" + structField.name + "' within " + getClass());
+            }
             info.alignment = Math.max(info.alignment, fieldAlignment);
             if ((calculatedSize % fieldAlignment) != 0) {
                 calculatedSize += fieldAlignment - (calculatedSize % fieldAlignment);
@@ -1304,7 +1306,7 @@ public abstract class Structure {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
             if (!isFirstElement || !(Platform.isMac() && Platform.isPPC())) {
-                alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
+                alignment = Math.min(Native.MAX_PADDING, alignment);
             }
             if (!isFirstElement && Platform.isAIX() && (type == double.class || type == Double.class)) {
                 alignment = 4;

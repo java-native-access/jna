@@ -151,7 +151,6 @@ public final class Native implements Version {
                             + " - set jna.boot.library.path to include the path to the version of the " + LS
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-        setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
 	MAX_PADDING = Platform.isSPARC() || Platform.isWindows() || Platform.isARM()
             || Platform.isAIX() || Platform.isAndroid()
             || (Platform.isPPC() && Platform.isLinux())
