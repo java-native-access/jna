@@ -47,10 +47,7 @@ public abstract class W32Errors implements WinError {
 	 * @return true, if successful
 	 */
 	public static final boolean SUCCEEDED(HRESULT hr) {
-		if (hr != null)
-			return SUCCEEDED(hr.intValue());
-		else
-			return false;
+            return hr == null || SUCCEEDED(hr.intValue());
 	}
 
 	/**
@@ -60,10 +57,7 @@ public abstract class W32Errors implements WinError {
 	 * @return true, if successful
 	 */
 	public static final boolean FAILED(HRESULT hr) {
-		if (hr != null)
-			return FAILED(hr.intValue());
-		else
-			return false;
+            return hr != null && FAILED(hr.intValue());
 	}
 
 	/**
