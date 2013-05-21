@@ -106,10 +106,6 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
-    static final boolean isPPC = Platform.isPPC();
-    static final boolean isSPARC = Platform.isSPARC();
-    static final boolean isARM = Platform.isARM();
-
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
     /** No alignment, place all fields on nearest 1-byte boundary */
@@ -126,12 +122,7 @@ public abstract class Structure {
     /** Align to an 8-byte boundary. */
     //public static final int ALIGN_8 = 6;
 
-    static final int MAX_GNUC_ALIGNMENT =
-        isSPARC
-        || ((isPPC || isARM)
-            && (Platform.isLinux() || Platform.isAndroid()))
-        || Platform.isAIX()
-        ? 8 : Native.LONG_SIZE;
+    static final int MAX_GNUC_ALIGNMENT = Native.MAX_PADDING;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
     static final Map fieldOrder = new WeakHashMap();
@@ -1312,10 +1303,10 @@ public abstract class Structure {
         else if (actualAlignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!isFirstElement || !(Platform.isMac() && isPPC)) {
+            if (!isFirstElement || !(Platform.isMac() && Platfomr.isPPC())) {
                 alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
             }
-            if (!isFirstElement && Platform.isAIX() && (type.getName().equals("double"))) {
+            if (!isFirstElement && Platform.isAIX() && (type == double.class || type == Double.class)) {
                 alignment = 4;
             }
         }
