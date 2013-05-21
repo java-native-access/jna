@@ -51,28 +51,21 @@ public class LastErrorTest extends TestCase {
     public void testLastErrorPerThreadStorage() throws Exception {
         final TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
         final int[] errors = new int[2];
-        boolean last = Native.getPreserveLastError();
-        try {
-            Native.setPreserveLastError(true);
-            Thread t1 = new Thread() { public void run() {
-                lib.setLastError(-1);
-                errors[0] = Native.getLastError();
-            }};
-            Thread t2 = new Thread() { public void run() {
-                lib.setLastError(-2);
-                errors[1] = Native.getLastError();
-            }};
-            lib.setLastError(-3);
-                
-            t1.start(); t2.start();
-            t1.join(); t2.join();
-            assertEquals("Wrong error on main thread", -3, Native.getLastError());
-            assertEquals("Wrong error on first thread", -1, errors[0]);
-            assertEquals("Wrong error on second thread", -2, errors[1]);
-        }
-        finally {
-            Native.setPreserveLastError(last);
-        }
+        Thread t1 = new Thread() { public void run() {
+            lib.setLastError(-1);
+            errors[0] = Native.getLastError();
+        }};
+        Thread t2 = new Thread() { public void run() {
+            lib.setLastError(-2);
+            errors[1] = Native.getLastError();
+        }};
+        lib.setLastError(-3);
+        
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        assertEquals("Wrong error on main thread", -3, Native.getLastError());
+        assertEquals("Wrong error on first thread", -1, errors[0]);
+        assertEquals("Wrong error on second thread", -2, errors[1]);
     }
 
     private final int ERROR = Platform.isWindows() ? 1 : -1;
