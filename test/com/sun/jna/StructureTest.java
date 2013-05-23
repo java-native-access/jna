@@ -1376,21 +1376,21 @@ public class StructureTest extends TestCase {
         }
     }
 
+    class XTestStructure extends Structure {
+	public int first = 1;
+	protected List getFieldOrder() {
+	    return Arrays.asList(new String[] { "first" }); }
+    }
+    class XTestStructureSub extends XTestStructure {
+	public int second = 2;
+	protected List getFieldOrder() {
+	    List list = new ArrayList(super.getFieldOrder());
+	    list.addAll(Arrays.asList(new String[] { "second" }));
+	    return list;
+	}
+    }
     public void testInheritedStructureFieldOrder() {
-        class TestStructure extends Structure {
-            public int first = 1;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first" }); }
-        }
-        class TestStructureSub extends TestStructure {
-            public int second = 2;
-            protected List getFieldOrder() {
-                List list = new ArrayList(super.getFieldOrder());
-                list.addAll(Arrays.asList(new String[] { "second" }));
-                return list;
-            }
-        }
-        TestStructureSub s = new TestStructureSub();
+        XTestStructureSub s = new XTestStructureSub();
         assertEquals("Wrong size", 8, s.size());
         s.write();
         assertEquals("Wrong first field: " + s,
