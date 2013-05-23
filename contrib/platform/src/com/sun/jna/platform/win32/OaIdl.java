@@ -20,7 +20,7 @@ import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
@@ -33,7 +33,6 @@ import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.COM.ITypeComp;
 import com.sun.jna.ptr.ByReference;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface OaIdl.
  */
@@ -131,12 +130,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class VARIANT_BOOLbyReference extends ByReference {
-		public VARIANT_BOOLbyReference() {
+	public class VARIANT_BOOLByReference extends ByReference {
+		public VARIANT_BOOLByReference() {
 			this(new VARIANT_BOOL(0));
 		}
 
-		public VARIANT_BOOLbyReference(VARIANT_BOOL value) {
+		public VARIANT_BOOLByReference(VARIANT_BOOL value) {
 			super(VARIANT_BOOL.SIZE);
 			setValue(value);
 		}
@@ -150,12 +149,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class _VARIANT_BOOLbyReference extends VARIANT_BOOLbyReference {
-		public _VARIANT_BOOLbyReference() {
+	public class _VARIANT_BOOLByReference extends VARIANT_BOOLByReference {
+		public _VARIANT_BOOLByReference() {
 			this(new _VARIANT_BOOL(0));
 		}
 
-		public _VARIANT_BOOLbyReference(_VARIANT_BOOL value) {
+		public _VARIANT_BOOLByReference(_VARIANT_BOOL value) {
 			super(value);
 		}
 	}
@@ -198,12 +197,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class DISPIDbyReference extends ByReference {
-		public DISPIDbyReference() {
+	public class DISPIDByReference extends ByReference {
+		public DISPIDByReference() {
 			this(new DISPID(0));
 		}
 
-		public DISPIDbyReference(DISPID value) {
+		public DISPIDByReference(DISPID value) {
 			super(DISPID.SIZE);
 			setValue(value);
 		}
@@ -227,12 +226,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class MEMBERIDbyReference extends ByReference {
-		public MEMBERIDbyReference() {
+	public class MEMBERIDByReference extends ByReference {
+		public MEMBERIDByReference() {
 			this(new MEMBERID(0));
 		}
 
-		public MEMBERIDbyReference(MEMBERID value) {
+		public MEMBERIDByReference(MEMBERID value) {
 			super(MEMBERID.SIZE);
 			setValue(value);
 		}
@@ -983,6 +982,8 @@ public interface OaIdl {
 	public class TYPEDESC extends Structure {
 		public static class ByReference extends TYPEDESC implements
 				Structure.ByReference {
+                    public ByReference(TYPEDESC d) { super(d.getPointer()); }
+                    public ByReference() { }
 		};
 
 		public _TYPEDESC _typeDesc;
@@ -995,7 +996,7 @@ public interface OaIdl {
 
 			public ARRAYDESC.ByReference lpadesc;
 
-			public HREFTYPEbyReference hreftype;
+			public HREFTYPEByReference hreftype;
 
 			public _TYPEDESC() {
 				super();
@@ -1008,21 +1009,21 @@ public interface OaIdl {
 				this.read();
 			}
 
-			public _TYPEDESC(ARRAYDESC.ByReference lpadesc) {
+			public _TYPEDESC(ARRAYDESC lpadesc) {
 				super();
-				this.lpadesc = lpadesc;
+				this.lpadesc = new ARRAYDESC.ByReference(lpadesc);
 				setType("lpadesc");
 			}
 
-			public _TYPEDESC(HREFTYPEbyReference hreftype) {
+			public _TYPEDESC(HREFTYPEByReference hreftype) {
 				super();
 				this.hreftype = hreftype;
 				setType("hreftype");
 			}
 
-			public _TYPEDESC(TYPEDESC.ByReference lptdesc) {
+			public _TYPEDESC(TYPEDESC lptdesc) {
 				super();
-				this.lptdesc = lptdesc;
+				this.lptdesc = new TYPEDESC.ByReference(lptdesc);
 				setType("lptdesc");
 			}
 		};
@@ -1075,6 +1076,8 @@ public interface OaIdl {
 	public class ARRAYDESC extends Structure {
 		public static class ByReference extends ARRAYDESC implements
 				Structure.ByReference {
+                    public ByReference(ARRAYDESC o) { super(o.getPointer()); }
+                    public ByReference() { }
 		};
 
 		public TYPEDESC.ByReference tdescElem;
@@ -1083,6 +1086,10 @@ public interface OaIdl {
 
 		public ARRAYDESC() {
 			super();
+		}
+
+		public ARRAYDESC(Pointer p) {
+			super(p);
 		}
 
 		@Override
@@ -1138,12 +1145,12 @@ public interface OaIdl {
 		}
 	}
 
-	public class HREFTYPEbyReference extends DWORDbyReference {
-		public HREFTYPEbyReference() {
+	public class HREFTYPEByReference extends DWORDByReference {
+		public HREFTYPEByReference() {
 			this(new HREFTYPE(0));
 		}
 
-		public HREFTYPEbyReference(DWORD value) {
+		public HREFTYPEByReference(DWORD value) {
 			super(value);
 		}
 
@@ -1206,5 +1213,4 @@ public interface OaIdl {
 							"wMinorVerNum", "tdescAlias", "idldescType" });
 		}
 	}
-
 }

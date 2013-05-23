@@ -80,8 +80,8 @@ public class NativeLibrary {
             throw new Error("Native library not initialized");
     }
 
-    private static String functionKey(String name, int flags) {
-        return name + "|" + flags;
+    private static String functionKey(String name, int flags, String encoding) {
+        return name + "|" + flags + "|" + encoding;
     }
 
     private NativeLibrary(String libraryName, String libraryPath, long handle, Map options) {
@@ -93,17 +93,21 @@ public class NativeLibrary {
             ? ((Integer)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
+        String encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        if (encoding == null) {
+            encoding = Native.getDefaultStringEncoding();
+        }
 
         // Special workaround for w32 kernel32.GetLastError
         // Short-circuit the function to use built-in GetLastError access
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
-                Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION) {
+                Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION, encoding) {
                     Object invoke(Object[] args, Class returnType, boolean b) {
                         return new Integer(Native.getLastError());
                     }
                 };
-                functions.put(functionKey("GetLastError", callFlags), f);
+                functions.put(functionKey("GetLastError", callFlags, encoding), f);
             }
         }
     }
@@ -444,13 +448,30 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName, int callFlags) {
+        return getFunction(functionName, callFlags, Native.getDefaultStringEncoding());
+    }
+
+    /**
+     * Create a new  @{link Function} that is linked with a native
+     * function that follows a given calling flags.
+     *
+     * @param	functionName
+     *			Name of the native function to be linked with
+     * @param	callFlags
+     *			Flags affecting the function invocation
+     * @param   encoding
+     *                  Encoding to use to convert between Java and native
+     *                  strings. 
+     * @throws   UnsatisfiedLinkError if the function is not found
+     */
+    public Function getFunction(String functionName, int callFlags, String encoding) {
         if (functionName == null)
             throw new NullPointerException("Function name may not be null");
         synchronized (functions) {
-            String key = functionKey(functionName, callFlags);
+            String key = functionKey(functionName, callFlags, encoding);
             Function function = (Function) functions.get(key);
             if (function == null) {
-                function = new Function(this, functionName, callFlags);
+                function = new Function(this, functionName, callFlags, encoding);
                 functions.put(key, function);
             }
             return function;

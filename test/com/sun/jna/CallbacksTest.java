@@ -36,6 +36,8 @@ import com.sun.jna.ptr.IntByReference;
 //@SuppressWarnings("unused")
 public class CallbacksTest extends TestCase {
 
+    private static final String UNICODE = "[\u0444]";
+
     private static final double DOUBLE_MAGIC = -118.625d;
     private static final float FLOAT_MAGIC = -118.625f;
 
@@ -588,10 +590,10 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final String VALUE = "value";
+        final String VALUE = "value" + UNICODE;
         String value = lib.callStringCallback(cb, VALUE);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
+        assertEquals("Wrong String callback argument", VALUE, cbargs[0]);
         assertEquals("Wrong String return", VALUE, value);
     }
     
@@ -606,7 +608,7 @@ public class CallbacksTest extends TestCase {
         Map m = CallbackReference.allocations;
         m.clear();
 
-        String arg = getName() + "1";
+        String arg = getName() + "1" + UNICODE;
         String value = lib.callStringCallback(cb, arg);
         WeakReference ref = new WeakReference(value);
         
@@ -633,7 +635,7 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final WString VALUE = new WString("value");
+        final WString VALUE = new WString("value" + UNICODE);
         WString value = lib.callWideStringCallback(cb, VALUE);
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
@@ -650,12 +652,20 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final String[] VALUE = { "value", null };
-        Pointer value = lib.callStringArrayCallback(cb, VALUE);
+        final String VALUE = "value" + UNICODE;
+        final String[] VALUE_ARRAY = { VALUE, null };
+        Pointer value = lib.callStringArrayCallback(cb, VALUE_ARRAY);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", VALUE[0], cbargs[0][0]);
+        assertEquals("String[] array should not be modified",
+                     VALUE, VALUE_ARRAY[0]);
+        assertEquals("Terminating null should be removed from incoming arg",
+                     VALUE_ARRAY.length-1, cbargs[0].length);
+        assertEquals("String[] argument index 0 mismatch",
+                     VALUE_ARRAY[0], cbargs[0][0]);
         String[] result = value.getStringArray(0);
-        assertEquals("Wrong String return", VALUE[0], result[0]);
+        assertEquals("Wrong String[] return", VALUE_ARRAY[0], result[0]);
+        assertEquals("Terminating null should be removed from return value",
+                     VALUE_ARRAY.length-1, result.length);
     }
     
     public void testCallCallbackWithByReferenceArgument() {
@@ -704,7 +714,7 @@ public class CallbacksTest extends TestCase {
     public void testUnionByValueCallbackArgument() throws Exception{ 
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
-        final String VALUE = getName();
+        final String VALUE = getName() + UNICODE;
         arg.f1 = VALUE;
         final boolean[] called = { false };
         final TestLibrary.TestUnion[] cbvalue = { null };
@@ -1014,7 +1024,7 @@ public class CallbacksTest extends TestCase {
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
 
-        ThreadGroup testGroup = new ThreadGroup(getName());
+        ThreadGroup testGroup = new ThreadGroup(getName() + UNICODE);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 Thread thread = Thread.currentThread();
@@ -1037,7 +1047,8 @@ public class CallbacksTest extends TestCase {
         final String[] name = { null };
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
-        final String tname = "Test thread for " + getName();
+        // Ensure unicode is properly handled
+        final String tname = "NAME: " + getName() + UNICODE;
         final boolean[] alive = {false};
 
         ThreadGroup testGroup = new ThreadGroup("Thread group for " + getName());
@@ -1063,8 +1074,8 @@ public class CallbacksTest extends TestCase {
         callThreadedCallback(cb, init, 2, 2000, called, 1);
 
         assertTrue("Callback thread not attached as daemon", daemon[0]);
-        assertEquals("Wrong thread name", tname, name[0]);
-        assertEquals("Wrong thread group", testGroup, group[0]);
+        assertEquals("Callback thread name not applied", tname, name[0]);
+        assertEquals("Callback thread group not applied", testGroup, group[0]);
         // NOTE: older phoneME incorrectly reports thread "alive" status
         if (!alive[0]) {
             throw new Error("VM incorrectly reports Thread.isAlive() == false within callback");

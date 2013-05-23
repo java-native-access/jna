@@ -350,7 +350,7 @@ public interface Netapi32 extends StdCallLibrary {
 	 *  If the function fails, the return code is one of ERROR_* values.
 	 */
 	public int DsGetDcName(String ComputerName, String DomainName, GUID DomainGuid,
-            String SiteName, int Flags, PDOMAIN_CONTROLLER_INFO.ByReference DomainControllerInfo);
+            String SiteName, int Flags, PDOMAIN_CONTROLLER_INFO DomainControllerInfo);
 	
 	/**
 	 * The DsGetForestTrustInformationW function obtains forest trust data for a specified domain.
@@ -375,7 +375,7 @@ public interface Netapi32 extends StdCallLibrary {
 	 *  Returns NO_ERROR if successful or a Win32 error code otherwise. 
 	 */
 	public int DsGetForestTrustInformation(String serverName, String trustedDomainName, int Flags, 
-			PLSA_FOREST_TRUST_INFORMATION.ByReference ForestTrustInfo);
+			PLSA_FOREST_TRUST_INFORMATION ForestTrustInfo);
 	
 	/**
 	 * The DsEnumerateDomainTrusts function obtains domain trust data for a specified domain.

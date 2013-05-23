@@ -1,8 +1,8 @@
 ## Setting up a Windows Development Environment
 
-Windows builds require cygwin.  MSYS may work, but is not supported.
-When installing cygwin, include ssh, git, make, and either gcc3 or mingw64, 
-depending on whether you're targeting win32 or win64, respectively (it's 
+Windows builds require cygwin.  MSYS will probably work, but is not supported.
+When installing cygwin, include ssh, git, make, autotools, and either gcc3 or
+mingw64, depending on whether you're targeting win32 or win64, respectively (it's 
 possible to build both from the same host).
  
 To build on Win64, you'll need mingw64 (available with cygwin or separately),

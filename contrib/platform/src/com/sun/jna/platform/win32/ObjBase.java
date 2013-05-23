@@ -22,7 +22,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.platform.win32.WTypes;
 
 
-// TODO: Auto-generated Javadoc
 /**
  * Definitions from ObjBase.h
  * @author scott.palmer

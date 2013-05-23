@@ -94,7 +94,8 @@ extern void println(JNIEnv*, const char*);
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jint options) {
+                callconv_t calling_convention, jint options,
+                jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
@@ -133,6 +134,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
  
   cb->direct = direct;
   cb->java_arg_types[0] = cb->java_arg_types[1] = cb->java_arg_types[2] = &ffi_type_pointer;
+  cb->encoding = newCStringUTF8(env, encoding);
 
   for (i=0;i < argc;i++) {
     int jtype;
@@ -177,8 +179,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       }
     }
 
+    // Java callback method is called using varargs, so promote floats to 
+    // double where appropriate for the platform
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
-      // Java method is varargs, so promote floats to double
       cb->java_arg_types[i+3] = &ffi_type_double;
       cb->conversion_flags[i] = CVT_FLOAT;
       cvt = 1;
@@ -248,7 +251,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
     default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
-    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
+    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
@@ -308,6 +311,7 @@ free_callback(JNIEnv* env, callback *cb) {
     }
   }
 #endif
+  free((void *)cb->encoding);
   free(cb);
 }
 
@@ -376,7 +380,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
           break;
         case CVT_STRING:
-          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], cb->encoding);
           break;
         case CVT_WSTRING:
           *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
@@ -639,6 +643,8 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       snprintf(tls->name, sizeof(tls->name),
                args.name ? args.name : "<unconfigured thread>");
     }
+    // Dispose of allocated memory
+    free(args.name);
     if (attach_status != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;

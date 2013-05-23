@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,8 @@ import com.sun.jna.Structure;
 
 public class W32APIMapperTest extends TestCase {
 
-    final String MAGIC = "magic";
+    final String UNICODE = "[\u0444]";
+    final String MAGIC = "magic" + UNICODE;
     
     public static void main(String[] args) {
         junit.textui.TestRunner.run(W32APIMapperTest.class);
@@ -158,7 +159,7 @@ public class W32APIMapperTest extends TestCase {
         s.string2 = MAGIC;
         s.write();
         assertEquals("Improper null write", null, s.getPointer().getPointer(0));
-        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getString(0, true));
+        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getWideString(0));
     }
     public void testASCIIStructureWriteString() {
         ASCIILibrary.TestStructure s = new ASCIILibrary.TestStructure();
@@ -166,7 +167,7 @@ public class W32APIMapperTest extends TestCase {
         s.string2 = MAGIC;
         s.write();
         assertEquals("Improper null write", null, s.getPointer().getPointer(0));
-        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getString(0, false));
+        assertEquals("Improper string write", MAGIC, s.getPointer().getPointer(Pointer.SIZE).getString(0));
     }
     public void testUnicodeStructureReadString() {
         UnicodeLibrary.TestStructure s = new UnicodeLibrary.TestStructure();
@@ -184,6 +185,6 @@ public class W32APIMapperTest extends TestCase {
         s.write();
         s.read();
         assertEquals("Improper string read", MAGIC, s.string);
-        assertEquals("Improper null string read", null, s.string2);
+        assertEquals("Improper null string read: " + s, null, s.string2);
     }
 }

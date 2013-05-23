@@ -5,6 +5,7 @@ import junit.framework.TestCase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -25,7 +26,9 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
     protected void tearDown() {
         if (origPropJNANoSys == null) {
-            System.getProperties().remove("jna.nosys");
+            Properties props = (Properties)System.getProperties().clone();
+            props.remove("jna.nosys");
+            System.setProperties(props);
         } else {
             System.setProperty("jna.nosys", origPropJNANoSys);
         }

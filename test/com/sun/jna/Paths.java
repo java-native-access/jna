@@ -31,11 +31,13 @@ public interface Paths {
         ? "/Storage Card"
         : System.getProperty("jna.builddir",
                              USING_CLOVER
-                             ? "build.clover"
-                             : "build" + (Platform.is64Bit() ? "-d64" : "")); 
+                             ? "build.clover" : "build");
     String CLASSES = BUILDDIR + (Platform.isWindowsCE() ? "" : "/classes");
     String JNAJAR = BUILDDIR + "/jna.jar";
     
-    String TESTPATH = Platform.isWindowsCE() ? "/Storage Card/" : BUILDDIR + "/native/";
+    String TESTPATH = Platform.isWindowsCE()
+        ? "/Storage Card/"
+        : System.getProperty("jna.nativedir",
+                             BUILDDIR + "/native-" + Platform.RESOURCE_PREFIX + "/");
     String TESTJAR = BUILDDIR + "/jna-test.jar";
 }

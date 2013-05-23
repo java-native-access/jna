@@ -24,6 +24,8 @@ import junit.framework.TestCase;
 
 public class PointerTest extends TestCase {
     
+    private static final String UNICODE = "[\u0444]";
+
     public void testGetNativeLong() {
         Memory m = new Memory(8);
         if (NativeLong.SIZE == 4) {
@@ -38,6 +40,7 @@ public class PointerTest extends TestCase {
             assertEquals("Native long mismatch", MAGIC, l.longValue());
         }
     }
+
     public void testSetNativeLong() {
         Memory m = new Memory(8);
         if (NativeLong.SIZE == 4) {
@@ -50,35 +53,25 @@ public class PointerTest extends TestCase {
             assertEquals("Native long mismatch", MAGIC, m.getLong(0));
         }
     }
-    public void testSetStringWithEncoding() throws Exception {
-        String old = System.getProperty("jna.encoding");
-        String VALUE = "\u0444\u0438\u0441\u0432\u0443";
-        System.setProperty("jna.encoding", "UTF8");
-        try {
-            int size = VALUE.getBytes("UTF8").length+1;
-            Memory m = new Memory(size);
-            m.setString(0, VALUE);
-            assertEquals("UTF8 encoding should be double", 
-                         VALUE.length() * 2 + 1, size);
-            assertEquals("Wrong decoded value", VALUE, m.getString(0));
-        }
-        finally {
-            if (old != null) {
-                System.setProperty("jna.encoding", old);
-            }
-            else {
-                Map props = System.getProperties();
-                props.remove("jna.encoding");
-                Properties newProps = new Properties();
-                for (Iterator i = props.entrySet().iterator();i.hasNext();) {
-                    Entry e = (Entry)i.next();
-                    newProps.setProperty(e.getKey().toString(), e.getValue().toString());
-                }
-                System.setProperties(newProps);
-            }
-        }
+
+    public void testGetSetStringWithDefaultEncoding() throws Exception {
+        final String ENCODING = Native.DEFAULT_ENCODING;
+        String VALUE = getName();
+        int size = VALUE.getBytes(ENCODING).length+1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE);
+        assertEquals("Wrong decoded value", VALUE, m.getString(0));
     }
-    
+
+    public void testGetSetStringWithCustomEncoding() throws Exception {
+        final String ENCODING = "utf8";
+        String VALUE = getName() + UNICODE;
+        int size = VALUE.getBytes(ENCODING).length+1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE, ENCODING);
+        assertEquals("Wrong decoded value", VALUE, m.getString(0, ENCODING));
+    }
+
     public static class TestPointerType extends PointerType {
         public TestPointerType() { }
         public TestPointerType(Pointer p) { super(p); }
@@ -105,23 +98,24 @@ public class PointerTest extends TestCase {
 
     public void testGetStringArray() {
         Pointer p = new Memory(Pointer.SIZE*3);
-        String VALUE1 = getName();
-        String VALUE2 = getName() + "2";
+        final String VALUE1 = getName() + UNICODE;
+        final String VALUE2 = getName() + "2" + UNICODE;
+        final String ENCODING = "utf8";
 
-        p.setPointer(0, new NativeString(VALUE1).getPointer());
-        p.setPointer(Pointer.SIZE, new NativeString(VALUE2).getPointer());
+        p.setPointer(0, new NativeString(VALUE1, ENCODING).getPointer());
+        p.setPointer(Pointer.SIZE, new NativeString(VALUE2, ENCODING).getPointer());
         p.setPointer(Pointer.SIZE*2, null);
 
         assertEquals("Wrong null-terminated String array",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
-                     Arrays.asList(p.getStringArray(0)));
+                     Arrays.asList(p.getStringArray(0, ENCODING)));
 
         assertEquals("Wrong length-specified String array (1)",
                      Arrays.asList(new String[] { VALUE1 }),
-                     Arrays.asList(p.getStringArray(0, 1)));
+                     Arrays.asList(p.getStringArray(0, 1, ENCODING)));
         assertEquals("Wrong length-specified String array (2)",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
-                     Arrays.asList(p.getStringArray(0, 2)));
+                     Arrays.asList(p.getStringArray(0, 2, ENCODING)));
     }
 
     public void testReadPointerArray() {

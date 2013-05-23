@@ -10,7 +10,7 @@
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm and
-       android-arm) 
+       android-arm/-x86) 
 
        Use ANT_OPTS=-Dskip-native to skip building native parts.
        Use ANT_OPTS=-Dheadless to run tests headless
@@ -54,8 +54,8 @@
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->
-  <property name="jna.major" value="3"/>
-  <property name="jna.minor" value="6"/>
+  <property name="jna.major" value="4"/>
+  <property name="jna.minor" value="0"/>
   <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
   <condition property="version.suffix" value="" else="-SNAPSHOT">
@@ -66,12 +66,12 @@
   </condition>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
-  <property name="jni.major" value="3"/>
-  <property name="jni.minor" value="6"/>
+  <property name="jni.major" value="4"/>
+  <property name="jni.minor" value="0"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="e1ef1f9431f659b9adfbf981f169c5d5"/>
+  <property name="jni.md5" value="059b6e5f0534df9b7f28dd7a87485721"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
@@ -160,13 +160,17 @@
     <condition property="cross-compile" value="true">
       <isset property="os.prefix"/>
     </condition>
-    <!-- Keep cross-compiled natives separate from normal builds -->
-    <condition property="native.subdir" value="native-${os.prefix}" else="native">
-      <isset property="cross-compile"/>
+    <!-- Sun 1.6 VM for windows doesn't support -d32/-d64 switch -->
+    <condition property="vm.64" value="-d64" else="-Ddummy">
+      <not><os family="windows"/></not>
     </condition>
-    <condition property="vm.arch" value="-d64" else="">
+    <condition property="vm.32" value="-d32" else="-Ddummy">
+      <not><os family="windows"/></not>
+    </condition>
+    <condition property="vmopt.arch" value="${vm.64}" else="${vm.32}">
       <and>
         <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
+        <not><equals arg1="${os.prefix}" arg2="android-x86" trim="true"/></not>
         <or>
           <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
           <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
@@ -182,10 +186,10 @@
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
       <and>
         <os name="SunOS"/>
-        <equals arg1="${vm.arch}" arg2="-d64"/>
+        <equals arg1="${vmopt.arch}" arg2="${vm.64}"/>
       </and>
     </condition>
-    <property name="build" value="build${vm.arch}"/>
+    <property name="build" value="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
@@ -229,6 +233,8 @@
       </or>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
+    <!-- Keep all natives separate -->
+    <property name="native.subdir" value="native-${os.prefix}"/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>
@@ -544,6 +550,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-x86.jar" overwrite="true"/>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
@@ -602,7 +609,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
     <condition property="make.OS" value="OS=android">
-      <equals arg1="${os.prefix}" arg2="android-arm"/>
+      <or>
+        <equals arg1="${os.prefix}" arg2="android-arm"/>
+        <equals arg1="${os.prefix}" arg2="android-x86"/>
+      </or>
     </condition>
     <property name="make.OS" value="IGNORE="/>
     <!-- Ensure Makefile ARCH property properly set -->
@@ -612,6 +622,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="android-arm"/>
     </condition>
+    <condition property="ARCH" value="x86">
+      <equals arg1="${os.prefix}" arg2="android-x86"/>
+    </condition>
     <condition property="ARCH" value="ppc">
       <equals arg1="${os.prefix}" arg2="aix-ppc"/>
     </condition>
@@ -619,7 +632,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
-    <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
+    <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
@@ -817,13 +830,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <not><os family="mac"/></not>
       </and>
     </condition>
-    <condition property="vmopt.arch" value="-d64" else="-Dignore">
-      <and>
-        <!-- Sun 64-bit VM for windows doesn't support the -d64 switch -->
-        <not><os family="windows"/></not>
-        <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
-      </and>
-    </condition>
     <property name="tests.platform" value=""/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
@@ -844,6 +850,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <!-- Avoid VM crashes, if possible -->
       <sysproperty key="jna.protected" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
+      <sysproperty key="jna.nativedir" file="${build.native}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="brief" usefile="false"/>
@@ -866,7 +873,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
-  <target name="contrib-test" depends="contrib-jars,compile-tests">
+  <target name="test-platform" depends="compile-tests,platform-jar">
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>

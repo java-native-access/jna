@@ -231,15 +231,6 @@ public interface Sspi extends StdCallLibrary {
             public ByReference(int type, byte[] token) {
                 super(type, token);
             }
-			
-            /**
-             * Get buffer bytes.
-             * @return
-             *  Raw buffer bytes.
-             */
-            public byte[] getBytes() {
-                return super.getBytes();
-            }
     	}
 		
         /**
@@ -308,15 +299,17 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Version number.
          */
-        public int ulVersion;
+        public int ulVersion = SECBUFFER_VERSION;
         /**
          * Number of buffers.
          */
-        public int cBuffers;
+        public int cBuffers = 1;
         /**
          * Pointer to array of buffers.
          */
-        public SecBuffer.ByReference[] pBuffers;
+        public SecBuffer.ByReference[] pBuffers = new SecBuffer.ByReference[] {
+            new SecBuffer.ByReference()
+        };
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "ulVersion", "cBuffers", "pBuffers" });
@@ -326,11 +319,6 @@ public interface Sspi extends StdCallLibrary {
          * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
          */
         public SecBufferDesc() {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
-            SecBuffer.ByReference secBuffer = new SecBuffer.ByReference();
-            pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
-            allocateMemory();
         }
 	    
         /**
@@ -341,11 +329,7 @@ public interface Sspi extends StdCallLibrary {
          *  Initial token data.
          */
         public SecBufferDesc(int type, byte[] token) {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
-            SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, token);
-            pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
-            allocateMemory();	    	
+            pBuffers[0] = new SecBuffer.ByReference(type, token);
         }
 	    
         /**
@@ -354,21 +338,11 @@ public interface Sspi extends StdCallLibrary {
          * @param tokenSize
          */
         public SecBufferDesc(int type, int tokenSize) {
-            ulVersion = SECBUFFER_VERSION;
-            cBuffers = 1;
-            SecBuffer.ByReference secBuffer = new SecBuffer.ByReference(type, tokenSize);
-            pBuffers = (SecBuffer.ByReference[]) secBuffer.toArray(1);
-            allocateMemory();
+            pBuffers[0] = new SecBuffer.ByReference(type, tokenSize);
         }	    	
 	    
         public byte[] getBytes() {
-            if (pBuffers == null || cBuffers == 0) {
-                throw new RuntimeException("pBuffers | cBuffers");
-            }
-            if (cBuffers == 1) {
-                return pBuffers[0].getBytes();
-            }	    	
-            throw new RuntimeException("cBuffers > 1");
+            return pBuffers[0].getBytes();
         }
     }
 	

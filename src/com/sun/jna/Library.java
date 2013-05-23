@@ -72,6 +72,13 @@ public interface Library {
      * be one of the predefined alignment types in {@link Structure}. 
      */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
+    /** Option key for per-library String encoding.  This affects conversions
+     * between Java unicode and native (<code>const char*</code>) strings (as
+     * arguments or Structure fields).
+     * <p/>
+     * Defaults to {@link Native#getDefaultStringEncoding()}.
+     */
+    String OPTION_STRING_ENCODING = "string-encoding";
     /** Option key for a boolean flag to allow any Java class instance as a
         parameter.  If no type mapper is found, the object is passed as a
         pointer.

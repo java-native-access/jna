@@ -30,13 +30,16 @@ import junit.framework.TestCase;
 
 public class PointerBufferTest extends TestCase {
     
-    public void testByteBufferPutString() {
-        final String MAGIC = "magic";
+    private static final String UNICODE = "[\u0444]";
+
+    public void testByteBufferPutString() throws Exception {
+        final String MAGIC = "magic" + UNICODE;
+        final String ENCODING = "utf8";
         Memory m = new Memory(1024);
         ByteBuffer buf = m.getByteBuffer(0, m.size()).order(ByteOrder.nativeOrder());
-        buf.put(MAGIC.getBytes()).put((byte) 0).flip();
+        buf.put(MAGIC.getBytes(ENCODING)).put((byte) 0).flip();
         assertEquals("String not written to memory", MAGIC, 
-                m.getString(0, false));
+                     m.getString(0, ENCODING));
     }
     public void testByteBufferPutByte() {
         final byte MAGIC = (byte)0xED;

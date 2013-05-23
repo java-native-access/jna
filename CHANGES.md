@@ -1,8 +1,8 @@
-Next Release (3.6)
+Next Release (4.0)
 ==================
 
-NOTE: as of JNA 3.6, JNA is now dual-licensed under LGPL and ASL (see LICENSE)
-NOTE: JNI native support is typically incompatible between minor versions
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE)
+NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
 Features
 --------
@@ -12,6 +12,8 @@ Features
 * Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
 * Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
 * Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
+* Use per-library String encoding settings (see [`Native.getDefaultStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Native#getDefaultStringEncoding()) and [`Structure.getStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Structure.html#getStringEncoding())) - [@twall](https://github.com/twall).
+* Added [memory dump for debugging](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Memory.html#dump())) - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
@@ -24,6 +26,7 @@ Bug Fixes
 * [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
 * [#229](https://github.com/twall/jna/issues/229): Add `CreateProcessW` (unicode version) - [@twall](https://github.com/twall).
 * Avoid solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
+* Fix NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
 
 Release 3.5.2
 =============
@@ -55,6 +58,7 @@ Bug Fixes
 * [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
 * [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
 * [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* Fix NPE if `Thread.getContextClassLoader()` returns `null`  - [@twall](https://github.com/twall).
 
 Release 3.5.1
 =============

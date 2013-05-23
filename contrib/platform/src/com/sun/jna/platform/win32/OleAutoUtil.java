@@ -19,7 +19,6 @@ import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class OleAut32Util.
  *
@@ -33,8 +32,8 @@ public abstract class OleAutoUtil {
 	 * @param size the size
 	 * @return the sAFEARRA y. by reference
 	 */
-	public static SAFEARRAY.ByReference createVarArray(int size) {
-		SAFEARRAY.ByReference psa;
+	public static SAFEARRAY createVarArray(int size) {
+		SAFEARRAY psa;
 		SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
 		rgsabound[0] = new SAFEARRAYBOUND(size, 0);
 

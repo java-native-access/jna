@@ -58,6 +58,16 @@ public class LibraryLoadTest extends TestCase implements Paths {
         }
     }
     
+    public void testExtractFromResourcePath() throws Exception {
+        // doesn't actually load the resource
+        assertNotNull(Native.extractFromResourcePath("testlib-path", new TestLoader(new File(TESTPATH))));
+    }
+
+    public void testExtractFromResourcePathWithNullClassLoader() throws Exception {
+        // doesn't actually load the resource
+        assertNotNull(Native.extractFromResourcePath("/com/sun/jna/LibraryLoadTest.class", null));
+    }
+
     public void testLoadFromJNALibraryPath() {
         // Tests are already configured to load from this path
         NativeLibrary.getInstance("testlib");

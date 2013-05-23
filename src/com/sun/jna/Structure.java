@@ -106,10 +106,6 @@ public abstract class Structure {
      */
     public interface ByReference { }
 
-    static final boolean isPPC = Platform.isPPC();
-    static final boolean isSPARC = Platform.isSPARC();
-    static final boolean isARM = Platform.isARM();
-
     /** Use the platform default alignment. */
     public static final int ALIGN_DEFAULT = 0;
     /** No alignment, place all fields on nearest 1-byte boundary */
@@ -126,12 +122,6 @@ public abstract class Structure {
     /** Align to an 8-byte boundary. */
     //public static final int ALIGN_8 = 6;
 
-    static final int MAX_GNUC_ALIGNMENT =
-        isSPARC
-        || ((isPPC || isARM)
-            && (Platform.isLinux() || Platform.isAndroid()))
-        || Platform.isAIX()
-        ? 8 : Native.LONG_SIZE;
     protected static final int CALCULATE_SIZE = -1;
     static final Map layoutInfo = new WeakHashMap();
     static final Map fieldOrder = new WeakHashMap();
@@ -140,6 +130,7 @@ public abstract class Structure {
     private Pointer memory;
     private int size = CALCULATE_SIZE;
     private int alignType;
+    private String encoding;
     private int actualAlignType;
     private int structAlignment;
     private Map structFields;
@@ -183,6 +174,7 @@ public abstract class Structure {
 
     protected Structure(Pointer p, int alignType, TypeMapper mapper) {
         setAlignType(alignType);
+        setStringEncoding(Native.getStringEncoding(getClass()));
         initializeTypeMapper(mapper);
         validateFields();
         if (p != null) {
@@ -236,6 +228,20 @@ public abstract class Structure {
             // recalculate layout, since it was done once already
             ensureAllocated();
         }
+    }
+
+    /** Set the desired encoding to use when writing String fields to native
+        memory.
+    */
+    protected void setStringEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    /** Encoding to use to convert {@link String} to native <code>const
+        char*</code>.  Defaults to {@link Native#getDefaultStringEncoding()}.
+    */
+    protected String getStringEncoding() {
+        return this.encoding;
     }
 
     /** Change the alignment of this structure.  Re-allocates memory if
@@ -639,7 +645,14 @@ public abstract class Structure {
                                || fieldType.isArray())
             ? getFieldValue(structField.field) : null;
 
-        Object result = memory.getValue(offset, fieldType, currentValue);
+        Object result;
+        if (fieldType == String.class) {
+            Pointer p = memory.getPointer(offset);
+            result = p == null ? null : p.getString(0, encoding);
+        }
+        else {
+            result = memory.getValue(offset, fieldType, currentValue);
+        }
         if (readConverter != null) {
             result = readConverter.fromNative(result, structField.context);
             if (currentValue != null && currentValue.equals(result)) {
@@ -753,7 +766,9 @@ public abstract class Structure {
                     && value.equals(nativeStrings.get(structField.name + ".val"))) {
                     return;
                 }
-                NativeString nativeString = new NativeString(value.toString(), wide);
+                NativeString nativeString = wide
+                    ? new NativeString(value.toString(), true) 
+                    : new NativeString(value.toString(), encoding);
                 // Keep track of allocated C strings to avoid
                 // premature garbage collection of the memory.
                 nativeStrings.put(structField.name, nativeString);
@@ -1129,6 +1144,9 @@ public abstract class Structure {
             }
 
             // Align fields as appropriate
+            if (fieldAlignment == 0) {
+                throw new Error("Field alignment is zero for field '" + structField.name + "' within " + getClass());
+            }
             info.alignment = Math.max(info.alignment, fieldAlignment);
             if ((calculatedSize % fieldAlignment) != 0) {
                 calculatedSize += fieldAlignment - (calculatedSize % fieldAlignment);
@@ -1287,10 +1305,10 @@ public abstract class Structure {
         else if (actualAlignType == ALIGN_GNUC) {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
-            if (!isFirstElement || !(Platform.isMac() && isPPC)) {
-                alignment = Math.min(MAX_GNUC_ALIGNMENT, alignment);
+            if (!isFirstElement || !(Platform.isMac() && Platform.isPPC())) {
+                alignment = Math.min(Native.MAX_PADDING, alignment);
             }
-            if (!isFirstElement && Platform.isAIX() && (type.getName().equals("double"))) {
+            if (!isFirstElement && Platform.isAIX() && (type == double.class || type == Double.class)) {
                 alignment = 4;
             }
         }

@@ -29,6 +29,8 @@ import com.sun.jna.ptr.LongByReference;
 //@SuppressWarnings("unused")
 public class StructureTest extends TestCase {
 
+    private static final String UNICODE = "[\u0444]";
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(StructureTest.class);
     }
@@ -156,7 +158,7 @@ public class StructureTest extends TestCase {
         }
         Structure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_GNUC);
-        final int SIZE = Structure.MAX_GNUC_ALIGNMENT == 8 ? 32 : 28;
+        final int SIZE = Native.MAX_PADDING == 8 ? 32 : 28;
         assertEquals("Wrong structure size", SIZE, s.size());
     }
 
@@ -922,6 +924,8 @@ public class StructureTest extends TestCase {
     }
 
     public void testPreserveStringFields() {
+        final String VALUE = getName();
+        final WString WVALUE = new WString(getName() + UNICODE);
         class TestStructure extends Structure {
             public String s;
             public WString ws;
@@ -930,53 +934,62 @@ public class StructureTest extends TestCase {
             }
         }
         TestStructure s = new TestStructure();
-        Memory m = new Memory(getName().length()+1);
-        m.setString(0, getName());
-        Memory m2 = new Memory((getName().length()+1)*Native.WCHAR_SIZE);
-        m2.setString(0, getName(), true);
+        Memory m = new Memory(VALUE.length()+1);
+        m.setString(0, VALUE);
+        Memory m2 = new Memory((WVALUE.length()+1)*Native.WCHAR_SIZE);
+        m2.setString(0, WVALUE);
+
         s.getPointer().setPointer(0, m);
         s.getPointer().setPointer(Pointer.SIZE, m2);
         s.read();
-        assertEquals("Wrong String field value", getName(), s.s);
-        assertEquals("Wrong WString field value", new WString(getName()), s.ws);
+        assertEquals("Wrong String field value", VALUE, s.s);
+        assertEquals("Wrong WString field value", WVALUE, s.ws);
+
         s.write();
-        assertEquals("String field should not be overwritten", m, s.getPointer().getPointer(0));
-        assertEquals("String field should not be overwritten", m2, s.getPointer().getPointer(Pointer.SIZE));
+        assertEquals("String field should not be overwritten: " + s, m, s.getPointer().getPointer(0));
+        assertEquals("WString field should not be overwritten: " + s, m2, s.getPointer().getPointer(Pointer.SIZE));
     }
 
     // Ensure string cacheing doesn't interfere with wrapped structure writes.
-    public static class StructureFromNative extends Structure {
+    public static class StructureFromPointer extends Structure {
         public String s;
+        public WString ws;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "s" });
+            return Arrays.asList(new String[] { "s", "ws" });
         }
-        public StructureFromNative(Pointer p) {
+        public StructureFromPointer(Pointer p) {
             super(p);
             read();
         }
-        public StructureFromNative() {
+        public StructureFromPointer() {
         }
     }
 
     public void testInitializeStructureFieldWithStrings() {
         class ContainingStructure extends Structure {
-            public StructureFromNative inner;
+            public StructureFromPointer inner;
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "inner" });
             }
         }
-        StructureFromNative o = new StructureFromNative();
-        o.s = getName();
+        final String VALUE = getName() + UNICODE;
+        final WString WVALUE = new WString(VALUE);
+        StructureFromPointer o = new StructureFromPointer();
+        o.s = VALUE;
+        o.ws = WVALUE;
         o.write();
-        StructureFromNative t = new StructureFromNative(o.getPointer());
-        assertEquals("String field not initialized", getName(), t.s);
+        StructureFromPointer t = new StructureFromPointer(o.getPointer());
+        assertEquals("String field not initialized", VALUE, t.s);
+        assertEquals("WString field not initialized", WVALUE, t.ws);
 
         ContainingStructure outer = new ContainingStructure();
         outer.inner = t;
         outer.write();
-        assertEquals("Inner String field corrupted", getName(), outer.inner.s);
+        assertEquals("Inner String field corrupted", VALUE, outer.inner.s);
+        assertEquals("Inner WString field corrupted", WVALUE, outer.inner.ws);
         outer.inner.read();
-        assertEquals("Native memory behind Inner String field not updated", getName(), outer.inner.s);
+        assertEquals("Native memory behind Inner String field not updated", VALUE, outer.inner.s);
+        assertEquals("Native memory behind Inner WString field not updated", WVALUE, outer.inner.ws);
     }
 
     public void testOverwriteStructureByReferenceFieldOnRead() {
@@ -1363,21 +1376,21 @@ public class StructureTest extends TestCase {
         }
     }
 
+    class XTestStructure extends Structure {
+	public int first = 1;
+	protected List getFieldOrder() {
+	    return Arrays.asList(new String[] { "first" }); }
+    }
+    class XTestStructureSub extends XTestStructure {
+	public int second = 2;
+	protected List getFieldOrder() {
+	    List list = new ArrayList(super.getFieldOrder());
+	    list.addAll(Arrays.asList(new String[] { "second" }));
+	    return list;
+	}
+    }
     public void testInheritedStructureFieldOrder() {
-        class TestStructure extends Structure {
-            public int first = 1;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "first" }); }
-        }
-        class TestStructureSub extends TestStructure {
-            public int second = 2;
-            protected List getFieldOrder() {
-                List list = new ArrayList(super.getFieldOrder());
-                list.addAll(Arrays.asList(new String[] { "second" }));
-                return list;
-            }
-        }
-        TestStructureSub s = new TestStructureSub();
+        XTestStructureSub s = new XTestStructureSub();
         assertEquals("Wrong size", 8, s.size());
         s.write();
         assertEquals("Wrong first field: " + s,
@@ -1879,5 +1892,47 @@ public class StructureTest extends TestCase {
         TestFFIType ffi_type = new TestFFIType(Structure.getTypeInfo(s));
         assertEquals("Java Structure size does not match FFIType size",
                      s.size(), ffi_type.size.intValue());
+    }
+
+    public void testDefaultStringEncoding() {
+        class TestStructure extends Structure {
+            public String field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        TestStructure s = new TestStructure();
+        assertEquals("Wrong default structure encoding",
+                     Native.getDefaultStringEncoding(),
+                     s.getStringEncoding());
+    }
+
+    public void testStringFieldEncoding() throws Exception {
+        class TestStructure extends Structure {
+            public String field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        TestStructure s = new TestStructure();
+        final String ENCODING = "utf8";
+        s.setStringEncoding(ENCODING);
+        assertEquals("Manual customization of string encoding failed", ENCODING, s.getStringEncoding());
+
+        final String VALUE = "\u0444\u043b\u0441\u0432\u0443";
+        s.field = VALUE;
+        s.write();
+        byte[] expected = VALUE.getBytes("utf8");
+        byte[] actual = s.getPointer().getPointer(0).getByteArray(0, expected.length);
+        for (int i=0;i < Math.min(expected.length, actual.length);i++) {
+            assertEquals("Improperly encoded (" + ENCODING
+                         + ") on structure write at " + i,
+                         expected[i], actual[i]);
+        }
+        assertEquals("Encoding length mismatch", expected.length, actual.length);
+
+        s.field = null;
+        s.read();
+        assertEquals("String not decoded properly on read", VALUE, s.field);
     }
 }

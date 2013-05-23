@@ -8,7 +8,7 @@ JNA contains work from many developers. You're encouraged to contribute to both 
 - Check out the code with `git clone git@github.com:username/jna.git`
 - Ensure you can build the project with `ant dist test`
 - Make your code changes, write tests, build
-- Submit pull requests, topical branches are encouraged.
+- Submit pull requests, forks and/or topical branches are encouraged.
 
 Build Environment
 =================
@@ -17,12 +17,25 @@ gcc, autotools (for libffi), ant (1.8+), a JDK (1.4+), and a few other typical
 command-line utilities available.  Feel free to report any issues, we'll
 generally pull build fixes immediately. 
 
+Native builds may be skipped by passing `-Dskip-native=true` to `ant`.  It's
+save to skip the native build as long as your modifications are restricted to
+Java code.
+
+For debian-style installs,
+
+    % apt-get install git ant openjdk-6-jdk make autotools gcc
+
+For most unix-like systems:
+
+    % git clone git@github.com:twall/jna
+    % ant dist test
+
 For Windows, see [Windows Development Environment](WindowsDevelopmentEnvironment.md).
 
 For windows CE/Mobile 6.x, you'll need cegcc (http://gitorious.org/cegcc) for
 cross-compiling and a JavaME implementation (phoneME (http://davy.preuveneers.be/phoneme) works well).
 
-Native builds may be skipped by passing `-Dskip-native=true` to `ant`.
+For Android, see [Android Development Environment)(AndroidDevelopmentEnvironment.md).
 
 Required Testing
 ================

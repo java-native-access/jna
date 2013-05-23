@@ -20,7 +20,6 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
  * alternate mappings from {@link WinNT} which make use of NIO buffers.
@@ -1127,7 +1126,7 @@ public interface Kernel32 extends WinNT {
 			boolean bInheritHandles, DWORD dwCreationFlags,
 			Pointer lpEnvironment, String lpCurrentDirectory,
 			WinBase.STARTUPINFO lpStartupInfo,
-			WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
+			WinBase.PROCESS_INFORMATION lpProcessInformation);
 
 	/**
 	 * Creates a new process and its primary thread. The new process runs in the
@@ -1238,7 +1237,7 @@ public interface Kernel32 extends WinNT {
 			boolean bInheritHandles, DWORD dwCreationFlags,
 			Pointer lpEnvironment, String lpCurrentDirectory,
 			WinBase.STARTUPINFO lpStartupInfo,
-			WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
+			WinBase.PROCESS_INFORMATION lpProcessInformation);
 
 	/**
 	 * This function returns a handle to an existing process object.
@@ -1401,9 +1400,9 @@ public interface Kernel32 extends WinNT {
 	 *         information, call GetLastError.
 	 */
 	boolean GetFileTime(HANDLE hFile,
-			WinBase.FILETIME.ByReference lpCreationTime,
-			WinBase.FILETIME.ByReference lpLastAccessTime,
-			WinBase.FILETIME.ByReference lpLastWriteTime);
+			WinBase.FILETIME lpCreationTime,
+			WinBase.FILETIME lpLastAccessTime,
+			WinBase.FILETIME lpLastWriteTime);
 
 	/**
 	 * Sets the date and time that the specified file or directory was created,
@@ -1520,9 +1519,9 @@ public interface Kernel32 extends WinNT {
 	 *         error information, call GetLastError.
 	 */
 	boolean GetDiskFreeSpaceEx(String lpDirectoryName,
-			LARGE_INTEGER.ByReference lpFreeBytesAvailable,
-			LARGE_INTEGER.ByReference lpTotalNumberOfBytes,
-			LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes);
+			LARGE_INTEGER lpFreeBytesAvailable,
+			LARGE_INTEGER lpTotalNumberOfBytes,
+			LARGE_INTEGER lpTotalNumberOfFreeBytes);
 
 	/**
 	 * Deletes an existing file.
@@ -1764,7 +1763,7 @@ public interface Kernel32 extends WinNT {
 	 *         information.
 	 */
 	boolean Process32First(HANDLE hSnapshot,
-			Tlhelp32.PROCESSENTRY32.ByReference lppe);
+			Tlhelp32.PROCESSENTRY32 lppe);
 
 	/**
 	 * Retrieves information about the next process recorded in a system
@@ -1782,7 +1781,7 @@ public interface Kernel32 extends WinNT {
 	 *         information.
 	 */
 	boolean Process32Next(HANDLE hSnapshot,
-			Tlhelp32.PROCESSENTRY32.ByReference lppe);
+			Tlhelp32.PROCESSENTRY32 lppe);
 
 	/**
 	 * The SetEnvironmentVariable function sets the contents of the specified

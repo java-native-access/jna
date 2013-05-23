@@ -24,7 +24,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
  *
@@ -60,22 +59,22 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class WORDbyReference extends ByReference {
-		public WORDbyReference() {
+	public class WORDByReference extends ByReference {
+		public WORDByReference() {
 			this(new WORD(0));
 		}
 
-		public WORDbyReference(WORD value) {
+		public WORDByReference(WORD value) {
 			super(WORD.SIZE);
 			setValue(value);
 		}
 
 		public void setValue(WORD value) {
-			getPointer().setInt(0, value.intValue());
+			getPointer().setShort(0, value.shortValue());
 		}
 
 		public WORD getValue() {
-			return new WORD(getPointer().getInt(0));
+			return new WORD(getPointer().getShort(0));
 		}
 	}
 
@@ -121,12 +120,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class DWORDbyReference extends ByReference {
-		public DWORDbyReference() {
+	public class DWORDByReference extends ByReference {
+		public DWORDByReference() {
 			this(new DWORD(0));
 		}
 
-		public DWORDbyReference(DWORD value) {
+		public DWORDByReference(DWORD value) {
 			super(DWORD.SIZE);
 			setValue(value);
 		}
@@ -152,12 +151,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class LONGbyReference extends ByReference {
-		public LONGbyReference() {
+	public class LONGByReference extends ByReference {
+		public LONGByReference() {
 			this(new LONG(0));
 		}
 
-		public LONGbyReference(LONG value) {
+		public LONGByReference(LONG value) {
 			super(LONG.SIZE);
 			setValue(value);
 		}
@@ -183,12 +182,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class LONGLONGbyReference extends ByReference {
-		public LONGLONGbyReference() {
+	public class LONGLONGByReference extends ByReference {
+		public LONGLONGByReference() {
 			this(new LONGLONG(0));
 		}
 
-		public LONGLONGbyReference(LONGLONG value) {
+		public LONGLONGByReference(LONGLONG value) {
 			super(LONGLONG.SIZE);
 			setValue(value);
 		}
@@ -670,12 +669,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class ULONGbyReference extends ByReference {
-		public ULONGbyReference() {
+	public class ULONGByReference extends ByReference {
+		public ULONGByReference() {
 			this(new ULONG(0));
 		}
 
-		public ULONGbyReference(ULONG value) {
+		public ULONGByReference(ULONG value) {
 			super(ULONG.SIZE);
 			setValue(value);
 		}
@@ -701,12 +700,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class ULONGLONGbyReference extends ByReference {
-		public ULONGLONGbyReference() {
+	public class ULONGLONGByReference extends ByReference {
+		public ULONGLONGByReference() {
 			this(new ULONGLONG(0));
 		}
 
-		public ULONGLONGbyReference(ULONGLONG value) {
+		public ULONGLONGByReference(ULONGLONG value) {
 			super(ULONGLONG.SIZE);
 			setValue(value);
 		}
@@ -915,12 +914,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class USHORTbyReference extends ByReference {
-		public USHORTbyReference() {
+	public class USHORTByReference extends ByReference {
+		public USHORTByReference() {
 			this(new USHORT(0));
 		}
 
-		public USHORTbyReference(USHORT value) {
+		public USHORTByReference(USHORT value) {
 			super(USHORT.SIZE);
 			setValue(value);
 		}
@@ -982,12 +981,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public class UINTbyReference extends ByReference {
-		public UINTbyReference() {
+	public class UINTByReference extends ByReference {
+		public UINTByReference() {
 			this(new UINT(0));
 		}
 
-		public UINTbyReference(UINT value) {
+		public UINTByReference(UINT value) {
 			super(UINT.SIZE);
 			setValue(value);
 		}
@@ -1024,12 +1023,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public static class SCODEbyReference extends ByReference {
-		public SCODEbyReference() {
+	public static class SCODEByReference extends ByReference {
+		public SCODEByReference() {
 			this(new SCODE(0));
 		}
 
-		public SCODEbyReference(SCODE value) {
+		public SCODEByReference(SCODE value) {
 			super(SCODE.SIZE);
 			setValue(value);
 		}
@@ -1066,12 +1065,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public static class BOOLbyReference extends ByReference {
-		public BOOLbyReference() {
+	public static class BOOLByReference extends ByReference {
+		public BOOLByReference() {
 			this(new BOOL(0));
 		}
 
-		public BOOLbyReference(BOOL value) {
+		public BOOLByReference(BOOL value) {
 			super(BOOL.SIZE);
 			setValue(value);
 		}
@@ -1120,12 +1119,12 @@ public interface WinDef extends StdCallLibrary {
 		}
 	}
 
-	public static class CHARbyReference extends ByReference {
-		public CHARbyReference() {
+	public static class CHARByReference extends ByReference {
+		public CHARByReference() {
 			this(new CHAR(0));
 		}
 
-		public CHARbyReference(CHAR value) {
+		public CHARByReference(CHAR value) {
 			super(CHAR.SIZE);
 			setValue(value);
 		}

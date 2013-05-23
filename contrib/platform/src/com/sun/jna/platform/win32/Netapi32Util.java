@@ -468,7 +468,7 @@ public abstract class Netapi32Util {
      *  Domain controller information.
      */
     public static DomainController getDC() {
-        PDOMAIN_CONTROLLER_INFO.ByReference pdci = new PDOMAIN_CONTROLLER_INFO.ByReference();
+        PDOMAIN_CONTROLLER_INFO pdci = new PDOMAIN_CONTROLLER_INFO();
         int rc = Netapi32.INSTANCE.DsGetDcName(null, null, null, null, 0, pdci);
     	if (W32Errors.ERROR_SUCCESS != rc) {
             throw new Win32Exception(rc);

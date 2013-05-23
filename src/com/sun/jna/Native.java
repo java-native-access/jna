@@ -91,10 +91,10 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native implements Version {
 
+    public static final String DEFAULT_ENCODING = "utf8";
+
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
-    private static Map typeMappers = new WeakHashMap();
-    private static Map alignments = new WeakHashMap();
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
@@ -151,8 +151,9 @@ public final class Native implements Version {
                             + " - set jna.boot.library.path to include the path to the version of the " + LS
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-        setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
-	MAX_PADDING = Platform.isSPARC() || Platform.isWindows()
+	MAX_PADDING = Platform.isSPARC() || Platform.isWindows() || Platform.isARM()
+            || Platform.isAIX() || Platform.isAndroid()
+            || (Platform.isPPC() && Platform.isLinux())
             ? 8 : LONG_SIZE;
     }
 
@@ -221,22 +222,23 @@ public final class Native implements Version {
      */
     public static synchronized native boolean isProtected();
 
-    /** Set whether the system last error result is captured after every
-     * native invocation.  Defaults to <code>true</code> (<code>false</code>
-     * for direct-mapped calls).<p>
+    /** This method is obsolete.  The last error value is always preserved.
+     * <p/>
      * NOTE: The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}
-     * and set <code>jna.preserve_last_error</code> false.
+     * to declare your mapped method to throw {@link LastErrorException}.
+     *
+     * @deprecated Last error is always preserved
      */
-    public static synchronized native void setPreserveLastError(boolean enable);
+    public static void setPreserveLastError(boolean enable) { }
 
     /** Indicates whether the system last error result is preserved
-     * after every invocation.<p>
+     * after every invocation.  Always returns <code>true</code><p>
      * NOTE: The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}
-     * and set <code>jna.preserve_last_error</code> false.
+     * to declare your mapped method to throw {@link LastErrorException}.
+     *
+     * @deprecated Last error is always preserved
      */
-    public static synchronized native boolean getPreserveLastError();
+    public static boolean getPreserveLastError() { return true; }
 
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -291,12 +293,11 @@ public final class Native implements Version {
     private static native long _getDirectBufferPointer(Buffer b);
 
     /** Obtain a Java String from the given native byte array.  If there is
-     * no NUL terminator, the String will comprise the entire array.  If the
-     * system property <code>jna.encoding</code> is set, its value will
-     * override the platform default encoding (if supported).
+     * no NUL terminator, the String will comprise the entire array.  The
+     * encoding is obtained from {@link #getDefaultStringEncoding()}.
      */
     public static String toString(byte[] buf) {
-        return toString(buf, System.getProperty("jna.encoding"));
+        return toString(buf, getDefaultStringEncoding());
     }
 
     /** Obtain a Java String from the given native byte array, using the given
@@ -310,25 +311,31 @@ public final class Native implements Version {
             try {
                 s = new String(buf, encoding);
             }
-            catch(UnsupportedEncodingException e) { }
+            catch(UnsupportedEncodingException e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported");
+            }
         }
         if (s == null) {
+            System.err.println("JNA Warning: Decoding with fallback " + System.getProperty("file.encoding"));
             s = new String(buf);
         }
         int term = s.indexOf(0);
-        if (term != -1)
+        if (term != -1) {
             s = s.substring(0, term);
+        }
         return s;
     }
 
     /** Obtain a Java String from the given native wchar_t array.  If there is
-     * no NUL terminator, the String will comprise the entire array.
+     * no NUL terminator, the String will comprise the entire array.  
      */
     public static String toString(char[] buf) {
         String s = new String(buf);
         int term = s.indexOf(0);
-        if (term != -1)
+        if (term != -1) {
             s = s.substring(0, term);
+        }
         return s;
     }
 
@@ -347,7 +354,9 @@ public final class Native implements Version {
     }
 
     /** Map a library interface to the current process, providing
-     * the explicit interface class.
+     * the explicit interface class.  Any options provided for the library are
+     * cached and associated with the library and any of its defined
+     * structures and/or functions.
      * Native libraries loaded via this method may be found in
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
@@ -460,30 +469,68 @@ public final class Native implements Version {
 
 
     /** Return the preferred native library configuration options for the given
-     * class.
+     * class.  First attempts to load any field of the interface type within
+     * the interface mapping, then checks the cache for any specified library
+     * options.  If none found, a set of library options will be generated
+     * from the fields (by order of precedence) <code>OPTIONS</code> (a {@link
+     * Map}), <code>TYPE_MAPPER</code> (a {@link TypeMapper}),
+     * <code>STRUCTURE_ALIGNMENT</code> (an {@link Integer}), and
+     * <code>STRING_ENCODING</code> (a {@link String}).
      * @see Library
      */
     public static Map getLibraryOptions(Class type) {
         synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(type);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = type;
-            if (!options.containsKey(interfaceClass)) {
+            Class mappingClass = findEnclosingLibraryClass(type);
+            if (mappingClass != null) {
+                loadLibraryInstance(mappingClass);
+            }
+            else {
+                mappingClass = type;
+            }
+            if (!options.containsKey(mappingClass)) {
+                Map libraryOptions = null;
                 try {
-                    Field field = interfaceClass.getField("OPTIONS");
+                    Field field = mappingClass.getField("OPTIONS");
                     field.setAccessible(true);
-                    options.put(interfaceClass, field.get(null));
+                    libraryOptions = (Map)field.get(null);
                 }
                 catch (NoSuchFieldException e) {
+                    libraryOptions = Collections.EMPTY_MAP;
                 }
                 catch (Exception e) {
                     throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map ("
-                                                       + e + "): " + interfaceClass);
+                                                       + e + "): " + mappingClass);
                 }
+                // Make a clone of the original
+                libraryOptions = new HashMap(libraryOptions);
+                if (!libraryOptions.containsKey(Library.OPTION_TYPE_MAPPER)) {
+                    libraryOptions.put(Library.OPTION_TYPE_MAPPER, lookupField(mappingClass, "TYPE_MAPPER", TypeMapper.class));
+                }
+                if (!libraryOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
+                    libraryOptions.put(Library.OPTION_STRUCTURE_ALIGNMENT, lookupField(mappingClass, "STRUCTURE_ALIGNMENT", Integer.class));
+                }
+                if (!libraryOptions.containsKey(Library.OPTION_STRING_ENCODING)) {
+                    libraryOptions.put(Library.OPTION_STRING_ENCODING, lookupField(mappingClass, "STRING_ENCODING", String.class));
+                }
+                options.put(mappingClass, libraryOptions);
             }
-            return (Map)options.get(interfaceClass);
+            return (Map)options.get(mappingClass);
+        }
+    }
+
+    private static Object lookupField(Class mappingClass, String fieldName, Class resultClass) {
+        try {
+            Field field = mappingClass.getField(fieldName);
+            field.setAccessible(true);
+            return field.get(null);
+        }
+        catch (NoSuchFieldException e) {
+            return null;
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException(fieldName + " must be a public field of type " 
+                                               + resultClass.getName() + " ("
+                                               + e + "): " + mappingClass);
         }
     }
 
@@ -491,107 +538,71 @@ public final class Native implements Version {
      * See {@link com.sun.jna.Library#OPTION_TYPE_MAPPER}.
      */
     public static TypeMapper getTypeMapper(Class cls) {
-        synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(cls);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = cls;
+        return (TypeMapper)getLibraryOptions(cls).get(Library.OPTION_TYPE_MAPPER);
+    }
 
-            if (!typeMappers.containsKey(interfaceClass)) {
-                try {
-                    Field field = interfaceClass.getField("TYPE_MAPPER");
-                    field.setAccessible(true);
-                    typeMappers.put(interfaceClass, field.get(null));
-                }
-                catch (NoSuchFieldException e) {
-                    Map options = getLibraryOptions(cls);
-                    if (options != null
-                        && options.containsKey(Library.OPTION_TYPE_MAPPER)) {
-                        typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
-                    }
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("TYPE_MAPPER must be a public field of type "
-                                                       + TypeMapper.class.getName() + " ("
-                                                       + e + "): " + interfaceClass);
-                }
-            }
-            return (TypeMapper)typeMappers.get(interfaceClass);
-        }
+    /** Return the preferred Strring encoding for the given native interface. 
+     * If there is no setting, defaults to the {@link
+     * #getDefaultStringEncoding()}. 
+     * See {@link com.sun.jna.Library#OPTION_STRING_ENCODING}.
+     */
+    public static String getStringEncoding(Class cls) {
+        String encoding = (String)getLibraryOptions(cls).get(Library.OPTION_STRING_ENCODING);
+        return encoding != null ? encoding : getDefaultStringEncoding();
+    }
+
+    /** Return the default string encoding.  Returns the value of the system
+     * property <code>jna.encoding</code> or {@link Native#DEFAULT_ENCODING}.
+     */
+    public static String getDefaultStringEncoding() {
+        return System.getProperty("jna.encoding", DEFAULT_ENCODING);
     }
 
     /** Return the preferred structure alignment for the given native interface.
      * See {@link com.sun.jna.Library#OPTION_STRUCTURE_ALIGNMENT}.
      */
     public static int getStructureAlignment(Class cls) {
-        synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(cls);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = cls;
-            if (!alignments.containsKey(interfaceClass)) {
-                try {
-                    Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
-                    field.setAccessible(true);
-                    alignments.put(interfaceClass, field.get(null));
-                }
-                catch(NoSuchFieldException e) {
-                    Map options = getLibraryOptions(interfaceClass);
-                    if (options != null
-                        && options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
-                        alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
-                    }
-                }
-                catch(Exception e) {
-                    throw new IllegalArgumentException("STRUCTURE_ALIGNMENT must be a public field of type int ("
-                                                       + e + "): " + interfaceClass);
-                }
-            }
-            Integer value = (Integer)alignments.get(interfaceClass);
-            return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
-        }
+        Integer alignment = (Integer)getLibraryOptions(cls).get(Library.OPTION_STRUCTURE_ALIGNMENT);
+        return alignment == null ? Structure.ALIGN_DEFAULT : alignment.intValue();
     }
 
-    /** Return a byte array corresponding to the given String.  If the
-     * system property <code>jna.encoding</code> is set, its value will override
-     * the default platform encoding (if supported).
+    /** Return a byte array corresponding to the given String.  The encoding
+     * used is obtained from {@link #getDefaultStringEncoding()}.
      */
     static byte[] getBytes(String s) {
-        try {
-            return getBytes(s, System.getProperty("jna.encoding"));
-        }
-        catch (UnsupportedEncodingException e) {
-            return s.getBytes();
-        }
+        return getBytes(s, getDefaultStringEncoding());
     }
 
     /** Return a byte array corresponding to the given String, using the given
-        encoding.
+        encoding.  If the encoding is not found default to the platform native
+        encoding. 
     */
-    static byte[] getBytes(String s, String encoding) throws UnsupportedEncodingException {
+    static byte[] getBytes(String s, String encoding) {
         if (encoding != null) {
-            return s.getBytes(encoding);
+            try {
+                return s.getBytes(encoding);
+            }
+            catch(UnsupportedEncodingException e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported");
+            }
         }
+        System.err.println("JNA Warning: Encoding with fallback "
+                           + System.getProperty("file.encoding"));
         return s.getBytes();
     }
 
     /** Obtain a NUL-terminated byte buffer equivalent to the given String,
-        using <code>jna.encoding</code> or the default platform encoding if
-        that property is not set.
+        using the encoding returned by {@link #getDefaultStringEncoding()}.
     */
     public static byte[] toByteArray(String s) {
-        byte[] bytes = getBytes(s);
-        byte[] buf = new byte[bytes.length+1];
-        System.arraycopy(bytes, 0, buf, 0, bytes.length);
-        return buf;
+        return toByteArray(s, getDefaultStringEncoding());
     }
 
     /** Obtain a NUL-terminated byte buffer equivalent to the given String,
         using the given encoding.
      */
-    public static byte[] toByteArray(String s, String encoding) throws UnsupportedEncodingException {
+    public static byte[] toByteArray(String s, String encoding) {
         byte[] bytes = getBytes(s, encoding);
         byte[] buf = new byte[bytes.length+1];
         System.arraycopy(bytes, 0, buf, 0, bytes.length);
@@ -746,6 +757,10 @@ public final class Native implements Version {
     public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
         if (loader == null) {
             loader = Thread.currentThread().getContextClassLoader();
+            // Context class loader is not guaranteed to be set
+            if (loader == null) {
+                loader = Native.class.getClassLoader();
+            }
         }
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
@@ -828,12 +843,12 @@ public final class Native implements Version {
      * <code>false</code>.<p>
      * The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead, and set <code>jna.preserve_last_error</code> false..
+     * instead.
      */
     public static native int getLastError();
 
-    /** Set the OS last error code.  If <code>jna.preserve_last_error</code>
-     * is <code>true</code>, the value will be saved on a per-thread basis.
+    /** Set the OS last error code.  The value will be saved on a per-thread
+     * basis. 
      */
     public static native void setLastError(int code);
 
@@ -1433,7 +1448,8 @@ public final class Native implements Version {
                                             rclass,
                                             f.peer, f.getCallingConvention(),
                                             throwLastError,
-                                            toNative, fromNative);
+                                            toNative, fromNative,
+                                            f.encoding);
             }
             catch(NoSuchMethodError e) {
                 throw new UnsatisfiedLinkError("No method " + method.getName() + " with signature " + sig + " in " + cls);
@@ -1451,12 +1467,7 @@ public final class Native implements Version {
     */
     private static void cacheOptions(Class cls, Map libOptions, Object proxy) {
         synchronized(libraries) {
-            if (!libOptions.isEmpty())
-                options.put(cls, libOptions);
-            if (libOptions.containsKey(Library.OPTION_TYPE_MAPPER))
-                typeMappers.put(cls, libOptions.get(Library.OPTION_TYPE_MAPPER));
-            if (libOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
-                alignments.put(cls, libOptions.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+            options.put(cls, libOptions);
             if (proxy != null) {
                 libraries.put(cls, new WeakReference(proxy));
             }
@@ -1491,7 +1502,8 @@ public final class Native implements Version {
                                               int callingConvention,
                                               boolean throwLastError,
                                               ToNativeConverter[] toNative,
-                                              FromNativeConverter fromNative);
+                                              FromNativeConverter fromNative,
+                                              String encoding);
 
 
     // Called from native code
@@ -1568,7 +1580,8 @@ public final class Native implements Version {
                                                          Class[] parameterTypes,
                                                          Class returnType,
                                                          int callingConvention,
-                                                         int flags);
+                                                         int flags,
+                                                         String encoding);
 
     /**
      * Call the native function being represented by this object
@@ -1739,7 +1752,25 @@ public final class Native implements Version {
 
     private static native long _getPointer(long addr);
 
-    static native String getString(long addr, boolean wide);
+    static native String getWideString(long addr);
+
+    static String getString(long addr) {
+        return getString(addr, getDefaultStringEncoding());
+    }
+
+    static String getString(long addr, String encoding) {
+        byte[] data = getStringBytes(addr);
+        if (encoding != null) {
+            try {
+                return new String(data, encoding);
+            }
+            catch(UnsupportedEncodingException e) {
+            }
+        }
+        return new String(data);
+    }
+
+    static native byte[] getStringBytes(long addr);
 
     static native void setMemory(long addr, long length, byte value);
 
@@ -1759,7 +1790,7 @@ public final class Native implements Version {
 
     static native void setPointer(long addr, long value);
 
-    static native void setString(long addr, String value, boolean wide);
+    static native void setWideString(long addr, String value);
 
     /**
      * Call the real native malloc
