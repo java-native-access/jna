@@ -165,8 +165,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       }
     }
 
+    // Java callback method is called using varargs, so promote floats to 
+    // double where appropriate for the platform
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
-      // Java method is varargs, so promote floats to double
       cb->java_arg_types[i+3] = &ffi_type_double;
       cb->conversion_flags[i] = CVT_FLOAT;
       cvt = 1;
@@ -236,7 +237,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
     default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
-    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
+    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
