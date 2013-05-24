@@ -315,17 +315,69 @@ public class NativeTest extends TestCase {
         }
     }
 
-    public void testGetTypeMapperForDirectMapping() {
+    public void testGetOptionsForDirectMapping() {
+        Class[] classes = {
+            DirectMapping.class,
+            DirectMapping.DirectStructure.class,
+            DirectMapping.DirectCallback.class,
+        };
         final TypeMapper mapper = new DefaultTypeMapper();
+        final int alignment = Structure.ALIGN_NONE;
+        final String encoding = System.getProperty("file.encoding");
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
+        options.put(Library.OPTION_STRING_ENCODING, encoding);
         DirectMapping lib = new DirectMapping(options);
-        assertEquals("Wrong type mapper for direct mapping",
-                     mapper, Native.getTypeMapper(DirectMapping.class));
-        assertEquals("Wrong type mapper for direct mapping nested structure",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectStructure.class));
-        assertEquals("Wrong type mapper for direct mapping nested callback",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectCallback.class));
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping " + classes[i],
+                         mapper, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping " + classes[i],
+                         alignment, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping " + classes[i],
+                         encoding, Native.getStringEncoding(classes[i]));
+        }
+    }
+
+    public static class DirectMappingStatic {
+        final static TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        final static int TEST_ALIGNMENT = Structure.ALIGN_DEFAULT;
+        final static String TEST_ENCODING = System.getProperty("file.encoding");
+        final static Map TEST_OPTIONS = new HashMap() {
+            {
+                put(Library.OPTION_TYPE_MAPPER, TEST_MAPPER);
+                put(Library.OPTION_STRUCTURE_ALIGNMENT, TEST_ALIGNMENT);
+                put(Library.OPTION_STRING_ENCODING, TEST_ENCODING);
+            }
+        };
+        static {
+            Native.register(DirectMappingStatic.class, NativeLibrary.getInstance("testlib", TEST_OPTIONS));
+        }
+        public static class DirectStructure extends Structure {
+            public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        public static interface DirectCallback extends Callback {
+            void invoke();
+        }
+    }
+
+    public void testGetOptionsForDirectMappingStatic() {
+        Class[] classes = {
+            DirectMappingStatic.class,
+            DirectMappingStatic.DirectStructure.class,
+            DirectMappingStatic.DirectCallback.class,
+        };
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping (static) " + classes[i],
+                         DirectMappingStatic.TEST_MAPPER, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping (static) " + classes[i],
+                         DirectMappingStatic.TEST_ALIGNMENT, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping (static) " + classes[i],
+                         DirectMappingStatic.TEST_ENCODING, Native.getStringEncoding(classes[i]));
+        }
     }
 
     private static class TestCallback implements Callback {

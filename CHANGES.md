@@ -1,7 +1,7 @@
 Next Release (4.0)
 ==================
 
-NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE)
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
 Features
@@ -14,6 +14,7 @@ Features
 * Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
 * Use per-library String encoding settings (see [`Native.getDefaultStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Native#getDefaultStringEncoding()) and [`Structure.getStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Structure.html#getStringEncoding())) - [@twall](https://github.com/twall).
 * Added [memory dump for debugging](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Memory.html#dump())) - [@twall](https://github.com/twall).
+* Improve caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------

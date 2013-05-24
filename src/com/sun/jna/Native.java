@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -420,22 +420,24 @@ public final class Native implements Version {
      * Expects that lock on libraries is already held
      */
     private static void loadLibraryInstance(Class cls) {
-        if (cls != null && !libraries.containsKey(cls)) {
-            try {
-                Field[] fields = cls.getFields();
-                for (int i=0;i < fields.length;i++) {
-                    Field field = fields[i];
-                    if (field.getType() == cls
-                        && Modifier.isStatic(field.getModifiers())) {
-                        // Ensure the field gets initialized by reading it
-                        libraries.put(cls, new WeakReference(field.get(null)));
-                        break;
+        synchronized(libraries) {
+            if (cls != null && !libraries.containsKey(cls)) {
+                try {
+                    Field[] fields = cls.getFields();
+                    for (int i=0;i < fields.length;i++) {
+                        Field field = fields[i];
+                        if (field.getType() == cls
+                            && Modifier.isStatic(field.getModifiers())) {
+                            // Ensure the field gets initialized by reading it
+                            libraries.put(cls, new WeakReference(field.get(null)));
+                            break;
+                        }
                     }
                 }
-            }
-            catch (Exception e) {
-                throw new IllegalArgumentException("Could not access instance of "
-                                                   + cls + " (" + e + ")");
+                catch (Exception e) {
+                    throw new IllegalArgumentException("Could not access instance of "
+                                                       + cls + " (" + e + ")");
+                }
             }
         }
     }
@@ -448,6 +450,8 @@ public final class Native implements Version {
         if (cls == null) {
             return null;
         }
+        // Check for direct-mapped libraries, which won't necessarily
+        // implement com.sun.jna.Library.
         synchronized(libraries) {
             if (options.containsKey(cls)) {
                 return cls;
@@ -480,41 +484,53 @@ public final class Native implements Version {
      */
     public static Map getLibraryOptions(Class type) {
         synchronized(libraries) {
-            Class mappingClass = findEnclosingLibraryClass(type);
-            if (mappingClass != null) {
-                loadLibraryInstance(mappingClass);
+            if (options.containsKey(type)) {
+                return (Map)options.get(type);
             }
-            else {
-                mappingClass = type;
+        }
+        Class mappingClass = findEnclosingLibraryClass(type);
+        if (mappingClass != null) {
+            loadLibraryInstance(mappingClass);
+        }
+        else {
+            mappingClass = type;
+        }
+        synchronized(libraries) {
+            if (options.containsKey(mappingClass)) {
+                Map libraryOptions = (Map)options.get(mappingClass);
+                options.put(type, libraryOptions);
+                return libraryOptions;
             }
-            if (!options.containsKey(mappingClass)) {
-                Map libraryOptions = null;
-                try {
-                    Field field = mappingClass.getField("OPTIONS");
-                    field.setAccessible(true);
-                    libraryOptions = (Map)field.get(null);
-                }
-                catch (NoSuchFieldException e) {
-                    libraryOptions = Collections.EMPTY_MAP;
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map ("
-                                                       + e + "): " + mappingClass);
-                }
-                // Make a clone of the original
-                libraryOptions = new HashMap(libraryOptions);
-                if (!libraryOptions.containsKey(Library.OPTION_TYPE_MAPPER)) {
-                    libraryOptions.put(Library.OPTION_TYPE_MAPPER, lookupField(mappingClass, "TYPE_MAPPER", TypeMapper.class));
-                }
-                if (!libraryOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
-                    libraryOptions.put(Library.OPTION_STRUCTURE_ALIGNMENT, lookupField(mappingClass, "STRUCTURE_ALIGNMENT", Integer.class));
-                }
-                if (!libraryOptions.containsKey(Library.OPTION_STRING_ENCODING)) {
-                    libraryOptions.put(Library.OPTION_STRING_ENCODING, lookupField(mappingClass, "STRING_ENCODING", String.class));
-                }
-                options.put(mappingClass, libraryOptions);
+            Map libraryOptions = null;
+            try {
+                Field field = mappingClass.getField("OPTIONS");
+                field.setAccessible(true);
+                libraryOptions = (Map)field.get(null);
             }
-            return (Map)options.get(mappingClass);
+            catch (NoSuchFieldException e) {
+                libraryOptions = Collections.EMPTY_MAP;
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map ("
+                                                   + e + "): " + mappingClass);
+            }
+            // Make a clone of the original options
+            libraryOptions = new HashMap(libraryOptions);
+            if (!libraryOptions.containsKey(Library.OPTION_TYPE_MAPPER)) {
+                libraryOptions.put(Library.OPTION_TYPE_MAPPER, lookupField(mappingClass, "TYPE_MAPPER", TypeMapper.class));
+            }
+            if (!libraryOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
+                libraryOptions.put(Library.OPTION_STRUCTURE_ALIGNMENT, lookupField(mappingClass, "STRUCTURE_ALIGNMENT", Integer.class));
+            }
+            if (!libraryOptions.containsKey(Library.OPTION_STRING_ENCODING)) {
+                libraryOptions.put(Library.OPTION_STRING_ENCODING, lookupField(mappingClass, "STRING_ENCODING", String.class));
+            }
+            options.put(mappingClass, libraryOptions);
+            // Store the original lookup class, if different from the mapping class
+            if (type != mappingClass) {
+                options.put(type, libraryOptions);
+            }
+            return libraryOptions;
         }
     }
 
@@ -1097,6 +1113,7 @@ public final class Native implements Version {
         register(getNativeClass(getCallingClass()), lib);
     }
 
+    /** Find the nearest enclosing class with native methods. */
     static Class getNativeClass(Class cls) {
         Method[] methods = cls.getDeclaredMethods();
         for (int i=0;i < methods.length;i++) {
@@ -1116,6 +1133,9 @@ public final class Native implements Version {
         throw new IllegalArgumentException("Can't determine class with native methods from the current context (" + cls + ")");
     }
 
+    /** Try to determine the class context in which a {@link #register(String)} call
+        was made.
+    */
     static Class getCallingClass() {
         Class[] context = new SecurityManager() {
             public Class[] getClassContext() {
