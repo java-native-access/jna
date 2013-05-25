@@ -20,6 +20,9 @@ To build with the mingw64, uncomment the line assigning `CC` to `$(MINGW)` in
 `native/Makefile` and make sure the cross-compiling mingw64 tools are in your
 path.
 
+If you get errors such as `'\r': command not found`, run `dos2unix -f [filename]`
+for each file that it's complaining about.
+
 To use the MS compiler, ensure that the 64-bit versions of
 cl.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and LIB
 environment variables are set properly (as in VCVARS.BAT). 
