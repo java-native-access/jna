@@ -1239,7 +1239,7 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param value  <code>WString</code> value to set
      */
     public void setString(long offset, WString value) {
-        setWideString(offset, value.toString());
+        setWideString(offset, value == null ? null : value.toString());
     }
 
     /**
@@ -1308,6 +1308,12 @@ v     * @param wide whether to convert from a wide or standard C string
     private static class Opaque extends Pointer {
         private Opaque(long peer) { super(peer); }
         private final String MSG = "This pointer is opaque: " + this;
+        public Pointer share(long offset, long size) {
+            throw new UnsupportedOperationException(MSG);
+        }
+        public void clear(long size) {
+            throw new UnsupportedOperationException(MSG);
+        }
         public long indexOf(long offset, byte value) {
             throw new UnsupportedOperationException(MSG);
         }
@@ -1332,6 +1338,9 @@ v     * @param wide whether to convert from a wide or standard C string
         public void read(long bOff, double[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
+        public void read(long bOff, Pointer[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
         public void write(long bOff, byte[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
@@ -1351,6 +1360,12 @@ v     * @param wide whether to convert from a wide or standard C string
             throw new UnsupportedOperationException(MSG); 
         }
         public void write(long bOff, double[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(long bOff, Pointer[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public ByteBuffer getByteBuffer(long offset, long length) {
             throw new UnsupportedOperationException(MSG); 
         }
         public byte getByte(long bOff) {
@@ -1413,8 +1428,11 @@ v     * @param wide whether to convert from a wide or standard C string
         public void setWideString(long offset, String value) {
             throw new UnsupportedOperationException(MSG); 
         }
+        public void setMemory(long offset, long size, byte value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
         public String toString() {
-            return "opaque@0x" + Long.toHexString(peer);
+            return "const@0x" + Long.toHexString(peer);
         }
     }
 }
