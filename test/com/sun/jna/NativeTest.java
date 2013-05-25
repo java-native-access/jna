@@ -337,7 +337,7 @@ public class NativeTest extends TestCase {
             assertEquals("Wrong encoding for direct mapping " + classes[i],
                          encoding, Native.getStringEncoding(classes[i]));
             Object last = Native.getLibraryOptions(classes[i]);;
-            assertSame("Options not cached", last, Native.getStringEncoding(classes[i]));
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
         }
     }
 
@@ -380,7 +380,7 @@ public class NativeTest extends TestCase {
             assertEquals("Wrong encoding for direct mapping " + classes[i],
                          DirectMappingStatic.TEST_ENCODING, Native.getStringEncoding(classes[i]));
             Object last = Native.getLibraryOptions(classes[i]);;
-            assertSame("Options not cached", last, Native.getStringEncoding(classes[i]));
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
         }
     }
 
