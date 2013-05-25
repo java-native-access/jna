@@ -15,6 +15,7 @@ Features
 * Use per-library String encoding settings (see [`Native.getDefaultStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Native#getDefaultStringEncoding()) and [`Structure.getStringEncoding()`](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Structure.html#getStringEncoding())) - [@twall](https://github.com/twall).
 * Added [memory dump for debugging](http://twall.github.com/jna/4.0.0/javadoc/com/sun/jna/Memory.html#dump())) - [@twall](https://github.com/twall).
 * Improve caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
+* [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
 
 Bug Fixes
 ---------
