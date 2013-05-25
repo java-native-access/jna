@@ -48,7 +48,7 @@ public abstract class Kernel32Util implements WinDef {
 	
     /**
      * Format a message from the value obtained from {@link
-     * Kernel32.GetLastError} or {@link Native.getLastError}.
+     * Kernel32#GetLastError} or {@link Native#getLastError}.
      * @param code
      *  int
      * @return
@@ -84,7 +84,7 @@ public abstract class Kernel32Util implements WinDef {
         return formatMessage(code.intValue());
     }
 
-    /** @deprecated use {@link formatMessage(HRESULT)} instead. */
+    /** @deprecated use {@link #formatMessage(WinNT.HRESULT)} instead. */
     public static String formatMessageFromHR(HRESULT code) {
         return formatMessage(code.intValue());
     }

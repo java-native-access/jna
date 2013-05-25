@@ -1207,7 +1207,7 @@ v     * @param wide whether to convert from a wide or standard C string
      * <code>char</code> using the encoding indicated by {@link
      * Native#getDefaultStringEncoding()}. 
      * 
-     * @deprecated use {@link setWideString(long,String)} instead.
+     * @deprecated use {@link #setWideString(long,String)} instead.
      */
     public void setString(long offset, String value, boolean wide) {
         if (wide) {
