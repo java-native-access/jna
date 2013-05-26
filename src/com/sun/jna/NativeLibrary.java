@@ -89,8 +89,8 @@ public class NativeLibrary {
         this.libraryPath = libraryPath;
         this.handle = handle;
         Object option = options.get(Library.OPTION_CALLING_CONVENTION);
-        int callingConvention = option instanceof Integer
-            ? ((Integer)option).intValue() : Function.C_CONVENTION;
+        int callingConvention = option instanceof Number
+            ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
         String encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
