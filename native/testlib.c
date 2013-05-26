@@ -45,7 +45,11 @@ typedef __int64 int64_t;
 #define THREAD_EXIT() ExitThread(0)
 #define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
 #define THREAD_CURRENT() GetCurrentThreadId()
+#ifdef _WIN64
+#define THREAD_RETURN
+#else
 #define THREAD_RETURN return 0
+#endif
 #else
 #define EXPORT
 #include <unistd.h>
