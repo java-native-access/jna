@@ -1101,7 +1101,7 @@ public final class Native implements Version {
      * @param libName library name to which functions should be bound
      */
     public static void register(String libName) {
-        register(getNativeClass(getCallingClass()), libName);
+        register(findDirectMappedClass(getCallingClass()), libName);
     }
 
     /** When called from a class static initializer, maps all native methods
@@ -1110,11 +1110,11 @@ public final class Native implements Version {
      * @param lib native library to which functions should be bound
      */
     public static void register(NativeLibrary lib) {
-        register(getNativeClass(getCallingClass()), lib);
+        register(findDirectMappedClass(getCallingClass()), lib);
     }
 
     /** Find the nearest enclosing class with native methods. */
-    static Class getNativeClass(Class cls) {
+    static Class findDirectMappedClass(Class cls) {
         Method[] methods = cls.getDeclaredMethods();
         for (int i=0;i < methods.length;i++) {
             if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
@@ -1125,7 +1125,7 @@ public final class Native implements Version {
         if (idx != -1) {
             String name = cls.getName().substring(0, idx);
             try {
-                return getNativeClass(Class.forName(name, true, cls.getClassLoader()));
+                return findDirectMappedClass(Class.forName(name, true, cls.getClassLoader()));
             }
             catch(ClassNotFoundException e) {
             }
@@ -1180,7 +1180,7 @@ public final class Native implements Version {
         to be garbage collected.
      */
     public static void unregister() {
-        unregister(getNativeClass(getCallingClass()));
+        unregister(findDirectMappedClass(getCallingClass()));
     }
 
     /** Remove all native mappings for the given class.

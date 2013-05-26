@@ -100,7 +100,6 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // GC Fails under clover
     public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
@@ -154,7 +153,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // GC Fails under clover and OpenJDK(linux/ppc)
+    // GC Fails under OpenJDK(linux/ppc)
     public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);

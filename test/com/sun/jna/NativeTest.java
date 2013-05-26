@@ -417,6 +417,45 @@ public class NativeTest extends TestCase {
         }
     }
 
+    private static final String NUL = "\0";
+    public void testStringConversion() {
+        byte[] buf = (getName() + NUL).getBytes();
+        assertEquals("C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testStringConversionWithEncoding() throws Exception {
+        byte[] buf = (getName() + UNICODE + NUL).getBytes("utf8");
+        assertEquals("Encoded C string improperly converted", getName() + UNICODE, Native.toString(buf, "utf8"));
+    }
+
+    public void testWideStringConversion() {
+        char[] buf = (getName() + NUL).toCharArray();
+        assertEquals("Wide C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testGetBytes() throws Exception {
+        byte[] buf = Native.getBytes(getName() + UNICODE, "utf8");
+        assertEquals("Incorrect native bytes from Java String", getName() + UNICODE, new String(buf, "utf8"));
+    }
+
+    public void testGetBytesBadEncoding() throws Exception {
+        byte[] buf = Native.getBytes(getName(), "unsupported");
+        assertEquals("Incorrect fallback bytes with bad encoding",
+                     getName(), new String(buf, System.getProperty("file.encoding")));
+    }
+
+    public void testFindDirectMappedClassFailure() {
+        try {
+            Native.findDirectMappedClass(NativeTest.class);
+            fail("Expect an exception if native-mapped class can't be found");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    /** This method facilitates running tests from a single entry point
+        outside of ant (i.e. for androide, WCE, etc.).
+    */
     public static void main(String[] args) {
         if (args.length == 0) {
             junit.textui.TestRunner.run(NativeTest.class);
