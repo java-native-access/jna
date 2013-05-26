@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jna.LastErrorException;
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -304,5 +305,34 @@ public abstract class Kernel32Util implements WinDef {
     public static final void writePrivateProfileString(final String appName, final String keyName, final String string, final String fileName) {
         if (!Kernel32.INSTANCE.WritePrivateProfileString(appName, keyName, string, fileName))
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    }
+
+    /**
+     * Convenience method to get the processor information. Takes care of auto-growing the array.
+     *
+     * @return the array of processor information.
+     */
+    public static final WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] getLogicalProcessorInformation()
+    {
+        int sizePerStruct = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION().size();
+        WinDef.DWORDByReference bufferSize = new WinDef.DWORDByReference(new WinDef.DWORD(sizePerStruct));
+        Memory memory;
+        while (true)
+        {
+            memory = new Memory(bufferSize.getValue().intValue());
+            if (! Kernel32.INSTANCE.GetLogicalProcessorInformation(memory, bufferSize))
+            {
+                int err = Kernel32.INSTANCE.GetLastError();
+                if (err != WinError.ERROR_INSUFFICIENT_BUFFER)
+                	throw new Win32Exception(err);
+            }
+            else
+            {
+                break;
+            }
+        }
+        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION firstInformation = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION(memory);
+        int returnedStructCount = bufferSize.getValue().intValue() / sizePerStruct;
+        return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation.toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[returnedStructCount]);
     }
 }
