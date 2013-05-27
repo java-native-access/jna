@@ -28,6 +28,8 @@ import junit.framework.TestCase;
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32APIOptions;
 
 /** Exercise callback-related functionality.
  *
@@ -1191,6 +1193,21 @@ public class CallbacksTest extends TestCase {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
 
+        // Check module information
+        Pointer fp = CallbackReference.getFunctionPointer(cb);
+        NativeLibrary kernel32 = NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
+        Function f = kernel32.getFunction("GetModuleHandleEx");
+        final int GET_MODULE_HANDLE_FROM_ADDRESS = 0x4;
+        PointerByReference pref = new PointerByReference();
+        int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
+        assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
+
+        f = kernel32.getFunction("GetModuleHandle");
+        Pointer handle = f.invokePointer(new Object[] { "jnidispatch" });
+        assertTrue("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), result != 0);
+        assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
+
+        // Check slot re-use
         Map refs = new WeakHashMap(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
@@ -1226,7 +1243,8 @@ public class CallbacksTest extends TestCase {
         cbstruct = ref.cbstruct;
 
         assertTrue("Callback not called", called[0]);
-        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks", first_fptr, cbstruct.getPointer(0));
+        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks after callback is GCd",
+                     first_fptr, cbstruct.getPointer(0));
     }
 
     public void testThrowOutOfMemoryWhenDLLCallbacksExhausted() throws Exception {
