@@ -1,4 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
+ * Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,6 +14,9 @@
 
 package com.sun.jna;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -155,6 +159,53 @@ public class PointerTest extends TestCase {
         String[] arr = m.getStringArray(0, 1);
         assertEquals("Wrong array size", 1, arr.length);
         assertNull("Array element should be null", arr[0]);
+    }
+
+    private Object defaultArg(Class type) {
+        if (type == boolean.class || type == Boolean.class) return Boolean.FALSE;
+        if (type == byte.class || type == Byte.class) return new Byte((byte)0);
+        if (type == char.class || type == Character.class) return new Character((char)0);
+        if (type == short.class || type == Short.class) return new Short((short)0);
+        if (type == int.class || type == Integer.class) return new Integer(0);
+        if (type == long.class || type == Long.class) return new Long(0);
+        if (type == float.class || type == Float.class) return new Float(0);
+        if (type == double.class || type == Double.class) return new Double(0);
+        if (type == NativeLong.class) return new NativeLong(0);
+        return null;
+    }
+
+    public void testOpaquePointer() throws Exception {
+        Pointer p = Pointer.createConstant(0);
+        Class cls = p.getClass();
+        Method[] methods = cls.getMethods();
+        for (int i=0;i < methods.length;i++) {
+            Method m = methods[i];
+            Class[] argTypes = m.getParameterTypes();
+            try {
+                Object[] args = new Object[argTypes.length];
+                for (int arg=0;arg < args.length;arg++) {
+                    args[arg] = defaultArg(argTypes[arg]);
+                }
+                if ("hashCode".equals(m.getName())
+                    || "equals".equals(m.getName())
+                    || m.getDeclaringClass() == Object.class
+                    || (m.getModifiers() & Modifier.STATIC) != 0) {
+                    continue;
+                }
+                Object result = m.invoke(p, args);
+                if ("toString".equals(m.getName())) {
+                    assertTrue("toString() should indicate const-ness", ((String)result).indexOf("const") != -1);
+                    continue;
+                }
+                fail("Method '" + m.getName() + "(" + Arrays.asList(argTypes) + ")' should throw UnsupportedOperationException");
+            }
+            catch(InvocationTargetException e) {
+                assertEquals("Wrong exception type thrown by '" + m.getName() + "(" + Arrays.asList(argTypes) + ")", UnsupportedOperationException.class, e.getTargetException().getClass());
+            }
+            catch(IllegalArgumentException e) {
+                fail("Need to fix test of method '" + m.getName() + "(" + Arrays.asList(argTypes) + ")'");
+            }
+        }
     }
 
     public static void main(String[] args) {

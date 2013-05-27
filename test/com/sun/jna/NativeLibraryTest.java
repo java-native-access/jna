@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.sun.jna.win32.W32APIOptions;
 
 import junit.framework.TestCase;
 
@@ -236,6 +237,25 @@ public class NativeLibraryTest extends TestCase {
         Map options = new HashMap();
         options.put(Library.OPTION_OPEN_FLAGS, new Integer(-1));
         Native.loadLibrary("testlib", TestLibrary.class, options);
+    }
+
+    public interface Kernel32 {
+        int GetLastError();
+        void SetLastError(int code);
+    }
+    public void testInterceptLastError() {
+        if (!Platform.isWindows()) {
+            return;
+        }
+        NativeLibrary kernel32 = (NativeLibrary)NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
+        Function get = kernel32.getFunction("GetLastError");
+        Function set = kernel32.getFunction("SetLastError");
+        assertEquals("SetLastError should not be customized", Function.class, set.getClass()); 
+        assertTrue("GetLastError should be a Function", Function.class.isAssignableFrom(get.getClass()));
+        assertTrue("GetLastError should be a customized Function", get.getClass() != Function.class);
+        final int EXPECTED = 42;
+        set.invokeVoid(new Object[] { new Integer(EXPECTED) });
+        assertEquals("Wrong error", EXPECTED, get.invokeInt(null));
     }
 
     public static void main(String[] args) {

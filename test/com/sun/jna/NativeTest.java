@@ -315,17 +315,73 @@ public class NativeTest extends TestCase {
         }
     }
 
-    public void testGetTypeMapperForDirectMapping() {
+    public void testGetOptionsForDirectMapping() {
+        Class[] classes = {
+            DirectMapping.class,
+            DirectMapping.DirectStructure.class,
+            DirectMapping.DirectCallback.class,
+        };
         final TypeMapper mapper = new DefaultTypeMapper();
+        final int alignment = Structure.ALIGN_NONE;
+        final String encoding = System.getProperty("file.encoding");
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
+        options.put(Library.OPTION_STRING_ENCODING, encoding);
         DirectMapping lib = new DirectMapping(options);
-        assertEquals("Wrong type mapper for direct mapping",
-                     mapper, Native.getTypeMapper(DirectMapping.class));
-        assertEquals("Wrong type mapper for direct mapping nested structure",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectStructure.class));
-        assertEquals("Wrong type mapper for direct mapping nested callback",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectCallback.class));
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping " + classes[i],
+                         mapper, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping " + classes[i],
+                         alignment, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping " + classes[i],
+                         encoding, Native.getStringEncoding(classes[i]));
+            Object last = Native.getLibraryOptions(classes[i]);;
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
+        }
+    }
+
+    public static class DirectMappingStatic {
+        final static TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        final static int TEST_ALIGNMENT = Structure.ALIGN_DEFAULT;
+        final static String TEST_ENCODING = System.getProperty("file.encoding");
+        final static Map TEST_OPTIONS = new HashMap() {
+            {
+                put(Library.OPTION_TYPE_MAPPER, TEST_MAPPER);
+                put(Library.OPTION_STRUCTURE_ALIGNMENT, TEST_ALIGNMENT);
+                put(Library.OPTION_STRING_ENCODING, TEST_ENCODING);
+            }
+        };
+        static {
+            Native.register(DirectMappingStatic.class, NativeLibrary.getInstance("testlib", TEST_OPTIONS));
+        }
+        public static class DirectStructure extends Structure {
+            public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        public static interface DirectCallback extends Callback {
+            void invoke();
+        }
+    }
+
+    public void testGetOptionsForDirectMappingStatic() {
+        Class[] classes = {
+            DirectMappingStatic.class,
+            DirectMappingStatic.DirectStructure.class,
+            DirectMappingStatic.DirectCallback.class,
+        };
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_MAPPER, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_ALIGNMENT, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_ENCODING, Native.getStringEncoding(classes[i]));
+            Object last = Native.getLibraryOptions(classes[i]);;
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
+        }
     }
 
     private static class TestCallback implements Callback {
@@ -361,6 +417,45 @@ public class NativeTest extends TestCase {
         }
     }
 
+    private static final String NUL = "\0";
+    public void testStringConversion() {
+        byte[] buf = (getName() + NUL).getBytes();
+        assertEquals("C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testStringConversionWithEncoding() throws Exception {
+        byte[] buf = (getName() + UNICODE + NUL).getBytes("utf8");
+        assertEquals("Encoded C string improperly converted", getName() + UNICODE, Native.toString(buf, "utf8"));
+    }
+
+    public void testWideStringConversion() {
+        char[] buf = (getName() + NUL).toCharArray();
+        assertEquals("Wide C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testGetBytes() throws Exception {
+        byte[] buf = Native.getBytes(getName() + UNICODE, "utf8");
+        assertEquals("Incorrect native bytes from Java String", getName() + UNICODE, new String(buf, "utf8"));
+    }
+
+    public void testGetBytesBadEncoding() throws Exception {
+        byte[] buf = Native.getBytes(getName(), "unsupported");
+        assertEquals("Incorrect fallback bytes with bad encoding",
+                     getName(), new String(buf, System.getProperty("file.encoding")));
+    }
+
+    public void testFindDirectMappedClassFailure() {
+        try {
+            Native.findDirectMappedClass(NativeTest.class);
+            fail("Expect an exception if native-mapped class can't be found");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    /** This method facilitates running tests from a single entry point
+        outside of ant (i.e. for androide, WCE, etc.).
+    */
     public static void main(String[] args) {
         if (args.length == 0) {
             junit.textui.TestRunner.run(NativeTest.class);

@@ -207,10 +207,7 @@ public abstract class Structure {
      */
     private void initializeTypeMapper(TypeMapper mapper) {
         if (mapper == null) {
-            Class declaring = getClass().getDeclaringClass();
-            if (declaring != null) {
-                mapper = Native.getTypeMapper(declaring);
-            }
+            mapper = Native.getTypeMapper(getClass());
         }
         this.typeMapper = mapper;
         layoutChanged();
@@ -251,9 +248,7 @@ public abstract class Structure {
     protected void setAlignType(int alignType) {
         this.alignType = alignType;
         if (alignType == ALIGN_DEFAULT) {
-            Class declaring = getClass().getDeclaringClass();
-            if (declaring != null)
-                alignType = Native.getStructureAlignment(declaring);
+            alignType = Native.getStructureAlignment(getClass());
             if (alignType == ALIGN_DEFAULT) {
                 if (Platform.isWindows())
                     alignType = ALIGN_MSVC;

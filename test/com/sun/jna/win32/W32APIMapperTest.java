@@ -77,12 +77,13 @@ public class W32APIMapperTest extends TestCase {
     }
 
     public void testInvalidHandleValue() {
-        String expected = "opaque@0xffffffff";
+        String EXPECTED = "@0xffffffff";
         if (Pointer.SIZE == 8) {
-            expected += "ffffffff";
+            EXPECTED += "ffffffff";
         }
-        assertEquals("Wrong value", expected,
-        		Pointer.createConstant(Pointer.SIZE == 8 ? -1 : 0xFFFFFFFFL).toString());
+        Pointer p = Pointer.createConstant(Pointer.SIZE == 8 ? -1 : 0xFFFFFFFFL);
+        assertTrue("Wrong value: " + p, p.toString().endsWith(EXPECTED));
+                     
     }
 
     public void testBooleanArgumentConversion() {

@@ -89,8 +89,8 @@ public class NativeLibrary {
         this.libraryPath = libraryPath;
         this.handle = handle;
         Object option = options.get(Library.OPTION_CALLING_CONVENTION);
-        int callingConvention = option instanceof Integer
-            ? ((Integer)option).intValue() : Function.C_CONVENTION;
+        int callingConvention = option instanceof Number
+            ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
         String encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
@@ -382,7 +382,8 @@ public class NativeLibrary {
 
     /**
      * Add a path to search for the specified library, ahead of any system
-     * paths.
+     * paths.  This is similar to setting <code>jna.library.path</code>, but
+     * only extends the search path for a single library.
      *
      * @param libraryName The name of the library to use the path for
      * @param path The path to use when trying to load the library

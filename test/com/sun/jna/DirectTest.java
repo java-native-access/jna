@@ -125,7 +125,6 @@ public class DirectTest extends TestCase implements Paths {
         }
     }
 
-    // Fails under clover
     public void testRegisterMethods() throws Exception {
         // Use a dedicated class loader to ensure the class can be gc'd
         String name = "com.sun.jna.DirectTest$MathLibrary";
@@ -159,20 +158,20 @@ public class DirectTest extends TestCase implements Paths {
     public void testFindNativeClass() {
         class UnregisterLibrary {
             class Inner {
-                public Class getNativeClass() {
-                    return getNativeClassInner();
+                public Class findDirectMappedClass() {
+                    return findDirectMappedClassInner();
                 }
-                public Class getNativeClassInner() {
-                    return Native.getNativeClass(Native.getCallingClass());
+                public Class findDirectMappedClassInner() {
+                    return Native.findDirectMappedClass(Native.getCallingClass());
                 };
             }
             public native double cos(double x);
-            public Class getNativeClass() {
-                return new Inner().getNativeClass();
+            public Class findDirectMappedClass() {
+                return new Inner().findDirectMappedClass();
             };
         }
         assertEquals("Wrong native class found",
-                     UnregisterLibrary.class, new UnregisterLibrary().getNativeClass());
+                     UnregisterLibrary.class, new UnregisterLibrary().findDirectMappedClass());
     }
 }
 

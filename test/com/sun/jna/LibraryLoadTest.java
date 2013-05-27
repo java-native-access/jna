@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
@@ -108,6 +109,14 @@ public class LibraryLoadTest extends TestCase implements Paths {
 
     private Object load() {
         return Native.loadLibrary(Platform.C_LIBRARY_NAME, CLibrary.class);
+    }
+    
+    public void testLoadProcess() {
+        Native.loadLibrary(CLibrary.class);
+    }
+    
+    public void testLoadProcessWithOptions() {
+        Native.loadLibrary(CLibrary.class, Collections.EMPTY_MAP);
     }
     
     public void testLoadCLibrary() {

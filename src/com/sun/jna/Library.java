@@ -51,11 +51,12 @@ import java.util.WeakHashMap;
  * <code>loadLibrary</code> result.
  * <p>
  * <b>OPTIONS</b> (an instance of {@link Map}),
- * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}) and 
+ * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}),
  * <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
- * {@link Structure}) may also be defined.  If no instance of the interface
- * has been instantiated, these fields will be used to determine customization
- * settings for structures and methods defined within the interface.
+ * {@link Structure}), and <b>STRING_ENCODING</b> (a {@link String}) may also
+ * be defined.  If no instance of the interface has been instantiated, these
+ * fields will be used to determine customization settings for structures and
+ * methods defined within the interface. 
  * <p>
  * 
  * @author  Todd Fast, todd.fast@sun.com
