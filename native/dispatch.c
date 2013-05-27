@@ -168,8 +168,7 @@ w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
   }
   return func;
 }
-
-#endif
+#endif /* _WIN32 */
 
 #define MEMCPY(D,S,L) do { \
   PSTART(); memcpy(D,S,L); PEND(); \

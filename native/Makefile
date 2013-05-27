@@ -163,7 +163,13 @@ endif
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
+ifeq ($(CC),$(MINGW))
 LIBS=-lpsapi
+else
+ARSFX=.lib
+COPT=
+LIBS=psapi.lib
+endif
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
 STRIP=@echo
@@ -172,6 +178,11 @@ LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
 ifneq ($(ARCH),amd64)
+CC=$(FFI_SRC)/../cc.sh -m32
+CPP=$(FFI_SRC)/../cc.sh -m32 -E
+LD=$(FFI_SRC)/../ld.sh -m32
+FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
 ifeq ($(CC),gcc)
 # -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
 # installation
@@ -209,9 +220,6 @@ else
 CC=$(FFI_SRC)/../cc.sh -m64
 CPP=$(FFI_SRC)/../cc.sh -m64 -E
 LD=$(FFI_SRC)/../ld.sh -m64
-COPT=
-LIBS=psapi.lib
-ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-w64-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
 EXTRAOBJS+=$(DLLCB)

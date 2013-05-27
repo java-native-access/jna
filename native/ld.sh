@@ -15,7 +15,7 @@ do
   case $1
   in
     -m32)
-      if echo $PATH | grep amd64; then
+      if type link | grep amd64; then
           echo "Wrong LINK.EXE in path; use 32-bit version"
           exit 1
       fi
@@ -26,7 +26,7 @@ do
       shift 1
     ;;
     -m64)
-      if ! echo $PATH | grep amd64; then
+      if ! type link | grep amd64; then
           echo "Wrong LINK.EXE in path; use 64-bit version"
           exit 1
       fi
