@@ -1196,15 +1196,16 @@ public class CallbacksTest extends TestCase {
         // Check module information
         Pointer fp = CallbackReference.getFunctionPointer(cb);
         NativeLibrary kernel32 = NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
-        Function f = kernel32.getFunction("GetModuleHandleEx");
+        Function f = kernel32.getFunction("GetModuleHandleExW");
         final int GET_MODULE_HANDLE_FROM_ADDRESS = 0x4;
         PointerByReference pref = new PointerByReference();
         int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
         assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
 
-        f = kernel32.getFunction("GetModuleHandle");
+        f = kernel32.getFunction("GetModuleHandleW");
         Pointer handle = f.invokePointer(new Object[] { "jnidispatch" });
         assertTrue("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), result != 0);
+        assertNotNull("Could not object module handle for jnidispatch.dll", handle);
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use
