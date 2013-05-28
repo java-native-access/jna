@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -28,13 +29,15 @@ import junit.framework.TestCase;
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32APIOptions;
 
 /** Exercise callback-related functionality.
  *
  * @author twall@users.sf.net
  */
 //@SuppressWarnings("unused")
-public class CallbacksTest extends TestCase {
+public class CallbacksTest extends TestCase implements Paths {
 
     private static final String UNICODE = "[\u0444]";
 
@@ -1223,6 +1226,30 @@ public class CallbacksTest extends TestCase {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
 
+        // Check module information
+        Pointer fp = CallbackReference.getFunctionPointer(cb);
+        NativeLibrary kernel32 = NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
+        Function f = kernel32.getFunction("GetModuleHandleExW");
+        final int GET_MODULE_HANDLE_FROM_ADDRESS = 0x4;
+        PointerByReference pref = new PointerByReference();
+        int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
+        assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
+        f = kernel32.getFunction("GetModuleFileNameW");
+        char[] buf = new char[1024];
+        result = f.invokeInt(new Object[] { pref.getValue(), buf, buf.length });
+        assertTrue("GetModuleFileName(fptr) failed: " + Native.getLastError(), result != 0);
+
+
+        f = kernel32.getFunction("GetModuleHandleW");
+        // XP needs full path to DLL; win7 only needs "jnidispatch"
+        File dispatch = new File(CLASSES, "com/sun/jna/" + Platform.RESOURCE_PREFIX + "/jnidispatch");
+        String path = dispatch.getAbsolutePath();
+        Pointer handle = f.invokePointer(new Object[] { path });
+        assertTrue("GetModuleHandle(\"" + path + "\") failed: " + Native.getLastError(), result != 0);
+        assertNotNull("Could not get module handle for " + path + ": " + Native.getLastError(), handle);
+        assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
+
+        // Check slot re-use
         Map refs = new WeakHashMap(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
@@ -1258,7 +1285,8 @@ public class CallbacksTest extends TestCase {
         cbstruct = ref.cbstruct;
 
         assertTrue("Callback not called", called[0]);
-        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks", first_fptr, cbstruct.getPointer(0));
+        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks after callback is GCd",
+                     first_fptr, cbstruct.getPointer(0));
     }
 
     public void testThrowOutOfMemoryWhenDLLCallbacksExhausted() throws Exception {

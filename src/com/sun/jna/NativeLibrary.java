@@ -68,6 +68,7 @@ public class NativeLibrary {
     private final String libraryPath;
     private final Map functions = new HashMap();
     final int callFlags;
+    private String encoding;
     final Map options;
 
     private static final Map libraries = new HashMap();
@@ -93,9 +94,9 @@ public class NativeLibrary {
             ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
-        String encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
-        if (encoding == null) {
-            encoding = Native.getDefaultStringEncoding();
+        this.encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        if (this.encoding == null) {
+            this.encoding = Native.getDefaultStringEncoding();
         }
 
         // Special workaround for w32 kernel32.GetLastError
@@ -422,12 +423,19 @@ public class NativeLibrary {
      * function from the library.
      *
      * @param	name
-     *			Name of the native function to be linked with
+     *			Name of the native function to be linked with.  Uses a
+     *			function mapper option if one was provided to
+     *			transform the name.
      * @param	method
      *			Method to which the native function is to be mapped
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     Function getFunction(String name, Method method) {
+        FunctionMapper mapper = (FunctionMapper)
+            options.get(Library.OPTION_FUNCTION_MAPPER);
+        if (mapper != null) {
+            name = mapper.getFunctionName(this, method);
+        }
         int flags = this.callFlags;
         Class[] etypes = method.getExceptionTypes();
         for (int i=0;i < etypes.length;i++) {
@@ -449,7 +457,7 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName, int callFlags) {
-        return getFunction(functionName, callFlags, Native.getDefaultStringEncoding());
+        return getFunction(functionName, callFlags, encoding);
     }
 
     /**

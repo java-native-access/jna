@@ -162,8 +162,21 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
+ifeq ($(ARCH),amd64)
+# To build entirely with mingw64, comment out this line (default is MSVC)
+USE_MSVC=true
+else
+# To build 32-bit under MSVC, set USE_MSVC to non-empty (default is gcc)
+endif
+
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
+ifndef USE_MSVC
 LIBS=-lpsapi
+else
+ARSFX=.lib
+COPT=
+LIBS=psapi.lib
+endif
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
 STRIP=@echo
@@ -172,6 +185,14 @@ LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
 ifneq ($(ARCH),amd64)
+ifdef USE_MSVC
+CC=$(FFI_SRC)/../cc.sh -m32
+CPP=$(FFI_SRC)/../cc.sh -m32 -E
+LD=$(FFI_SRC)/../ld.sh -m32
+FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
+endif
+
 ifeq ($(CC),gcc)
 # -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
 # installation
@@ -187,18 +208,19 @@ endif
 
 else 
 
-# Set CC to $(MINGW) to enable mingw64 cross compiler; ensure $(MINGW) is in
+# Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
 MINGW_PREFIX?=x86_64-w64-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
-# Still need windres from mingw distribution
+# Still need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
-# To build entirely with mingw64, uncomment this line
-#CC=$(MINGW)
+ifndef USE_MSVC
+CC=$(MINGW)
+endif
 
 ifeq ($(CC),$(MINGW))
-# No SEH under mingw64
+# No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1
 LD = $(CC)
 LDFLAGS=-o $@ -shared
@@ -209,9 +231,6 @@ else
 CC=$(FFI_SRC)/../cc.sh -m64
 CPP=$(FFI_SRC)/../cc.sh -m64 -E
 LD=$(FFI_SRC)/../ld.sh -m64
-COPT=
-LIBS=psapi.lib
-ARSFX=.lib
 FFI_CONFIG+=--host=x86_64-w64-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
 EXTRAOBJS+=$(DLLCB)

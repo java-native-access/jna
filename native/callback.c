@@ -54,10 +54,9 @@ extern "C" {
 #endif
 #else /* _WIN64 */
 #ifdef _MSC_VER
-// FIXME is "PROC NEAR" correct?
-#define ASMFN(X) extern void asmfn ## X(); \
-__asm asmfn ## X PROC NEAR \
-__asm jmp fn[X]
+#define ASMFN(X) void __declspec(naked) asmfn ## X () { \
+  __asm jmp DWORD PTR fn[4*X]                                     \
+}
 #else
 #define ASMFN(X) extern void asmfn ## X (); asm(".globl _asmfn" #X "\n\
 _asmfn" #X ":\n\
