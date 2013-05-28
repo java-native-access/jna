@@ -1203,9 +1203,9 @@ public class CallbacksTest extends TestCase {
         assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
 
         f = kernel32.getFunction("GetModuleHandleW");
-        Pointer handle = f.invokePointer(new Object[] { "jnidispatch" });
+        Pointer handle = f.invokePointer(new Object[] { "jnidispatch.dll" });
         assertTrue("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), result != 0);
-        assertNotNull("Could not object module handle for jnidispatch.dll", handle);
+        assertNotNull("Could not get module handle for jnidispatch.dll", handle);
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use
