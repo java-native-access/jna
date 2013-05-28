@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -36,7 +37,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author twall@users.sf.net
  */
 //@SuppressWarnings("unused")
-public class CallbacksTest extends TestCase {
+public class CallbacksTest extends TestCase implements Paths {
 
     private static final String UNICODE = "[\u0444]";
 
@@ -1201,11 +1202,19 @@ public class CallbacksTest extends TestCase {
         PointerByReference pref = new PointerByReference();
         int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
         assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
+        f = kernel32.getFunction("GetModuleFileNameW");
+        char[] buf = new char[1024];
+        result = f.invokeInt(new Object[] { pref.getValue(), buf, buf.length });
+        assertTrue("GetModuleFileName(fptr) failed: " + Native.getLastError(), result != 0);
+
 
         f = kernel32.getFunction("GetModuleHandleW");
-        Pointer handle = f.invokePointer(new Object[] { "jnidispatch.dll" });
-        assertTrue("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), result != 0);
-        assertNotNull("Could not get module handle for jnidispatch.dll", handle);
+        // XP needs full path to DLL; win7 only needs "jnidispatch"
+        File dispatch = new File(CLASSES, "com/sun/jna/" + Platform.RESOURCE_PREFIX + "/jnidispatch");
+        String path = dispatch.getAbsolutePath();
+        Pointer handle = f.invokePointer(new Object[] { path });
+        assertTrue("GetModuleHandle(\"" + path + "\") failed: " + Native.getLastError(), result != 0);
+        assertNotNull("Could not get module handle for " + path + ": " + Native.getLastError(), handle);
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use

@@ -136,7 +136,6 @@ public interface Library {
         private final Class interfaceClass;
         // Library invocation options
         private final Map options;
-        private FunctionMapper functionMapper;
         private final InvocationMapper invocationMapper;
         private final Map functions = new WeakHashMap();
         public Handler(String libname, Class interfaceClass, Map options) {
@@ -155,13 +154,12 @@ public interface Library {
                 options.put(OPTION_CALLING_CONVENTION,
                             new Integer(callingConvention));
             }
+            if (!options.containsKey(OPTION_FUNCTION_MAPPER)) {
+                // Passed-in map is itself the name map
+                options.put(OPTION_FUNCTION_MAPPER, new FunctionNameMap(options));
+            }
             this.options = options;
             this.nativeLibrary = NativeLibrary.getInstance(libname, options);
-            functionMapper = (FunctionMapper)options.get(OPTION_FUNCTION_MAPPER);
-            if (functionMapper == null) {
-                // backward compatibility; passed-in map is itself the name map
-                functionMapper = new FunctionNameMap(options);
-            }
             invocationMapper = (InvocationMapper)options.get(OPTION_INVOCATION_MAPPER);
         }
 
@@ -213,13 +211,7 @@ public interface Library {
                     }
                     if (f.handler == null) {
                         // Find the function to invoke
-                        String methodName = 
-                            functionMapper.getFunctionName(nativeLibrary, method);
-                        if (methodName == null) {
-                            // Just in case the function mapper screwed up
-                            methodName = method.getName();
-                        }
-                        f.function = nativeLibrary.getFunction(methodName, method);
+                        f.function = nativeLibrary.getFunction(method.getName(), method);
                         f.options = new HashMap(this.options);
                         f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }
