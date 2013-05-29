@@ -1454,12 +1454,7 @@ public final class Native implements Version {
                 }
             }
 
-            String name = method.getName();
-            FunctionMapper fmapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
-            if (fmapper != null) {
-                name = fmapper.getFunctionName(lib, method);
-            }
-            Function f = lib.getFunction(name, method);
+            Function f = lib.getFunction(method.getName(), method);
             try {
                 handles[i] = registerMethod(cls, method.getName(),
                                             sig, cvt,
@@ -1842,6 +1837,8 @@ public final class Native implements Version {
         <em>Warning</em>: avoid calling {@link #detach detach(true)} on threads
         spawned by the JVM; the resulting behavior is not defined.
      */
+    // TODO: keep references to Java non-detached threads, and clear them when
+    // native side sets a flag saying they're detached (cleanup)
     public static native void detach(boolean detach);
 
     private static class Buffers {

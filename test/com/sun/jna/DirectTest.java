@@ -264,6 +264,7 @@ public class DirectTest extends TestCase implements Paths {
     }
 
     static class RemappedCLibrary {
+        public static native int $$YJP$$strlen(String s);
         public static native int _prefixed_strlen(String s);
     }
 
@@ -283,7 +284,12 @@ public class DirectTest extends TestCase implements Paths {
             Native.register(RemappedCLibrary.class,
                             NativeLibrary.getInstance(Platform.C_LIBRARY_NAME, options));
             final String VALUE = getName();
-            int len = RemappedCLibrary._prefixed_strlen(VALUE);
+            int len;
+
+            len = RemappedCLibrary.$$YJP$$strlen(VALUE);
+            assertEquals(VALUE.length(), len);
+
+            len = RemappedCLibrary._prefixed_strlen(VALUE);
             assertEquals(VALUE.length(), len);
         }
         catch(Exception e) {
