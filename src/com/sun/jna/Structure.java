@@ -1565,15 +1565,21 @@ public abstract class Structure {
     }
 
     /** Called from native code only; same as {@link
-     * #newInstance(Class,Pointer)}, except that it additionally performs
+     * #newInstance(Class,Pointer)}, except that it additionally calls
      * {@link #conditionalAutoRead()}.
      */
-    private static Structure newInstance(Class type, long init) throws IllegalArgumentException {
-        Structure s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
-        if (init != 0) {
-            s.conditionalAutoRead();
+    private static Structure newInstance(Class type, long init) {
+        try {
+            Structure s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
+            if (init != 0) {
+                s.conditionalAutoRead();
+            }
+            return s;
         }
-        return s;
+        catch(Throwable e) {
+            System.err.println("JNA: Error creating structure: " + e);
+            return null;
+        }
     }
 
     /** Create a new Structure instance of the given type, initialized with

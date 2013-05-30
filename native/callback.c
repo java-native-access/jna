@@ -81,6 +81,7 @@ static void * const dll_fptrs[] = {
 typedef struct _tls {
   JavaVM* jvm;
   jint last_error;
+  int* termination_flag;
   jboolean detach;
   char name[256];
 } thread_storage;
@@ -512,9 +513,6 @@ static thread_storage* get_thread_storage(JNIEnv* env) {
         throwByName(env, EOutOfMemory, "JNA: Internal TLS error");
         tls = NULL;
       }
-      else {
-        fprintf(stderr, "Created thread storage for %p (%s)\n", pthread_self(), tls->name);
-      }
     }
   }
   return tls;
@@ -529,13 +527,9 @@ static void dispose_thread_data(void* data) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach native thread (automatic)\n");
     }
-    else {
-      fprintf(stderr, "Thread detached: %p (%s)\n", pthread_self(), tls->name);
-    }
-    fprintf(stderr, "Dispose thread data %p (%s)\n", pthread_self(), tls->name);
   }
-  else {
-    fprintf(stderr, "Thread already detached %p (%s)\n", pthread_self(), tls->name);
+  if (tls->termination_flag) {
+    *(tls->termination_flag) = JNI_TRUE;
   }
   free(data);
 }
@@ -617,6 +611,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     int attach_status = 0;
     JavaVMAttachArgs args;
     int daemon = JNI_FALSE;
+    int* termination_flag = NULL;
 
     args.version = JNI_VERSION_1_2;
     args.name = NULL;
@@ -630,6 +625,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       daemon = options.daemon ? JNI_TRUE : JNI_FALSE;
       detach = options.detach ? JNI_TRUE : JNI_FALSE;
       args.name = options.name;
+      termination_flag = options.termination_flag;
     }
     if (daemon) {
       attach_status = (*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args);
@@ -639,8 +635,8 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
     tls = get_thread_storage(env);
     if (tls) {
-      snprintf(tls->name, sizeof(tls->name),
-               args.name ? args.name : "<unconfigured thread>");
+      strncpy(tls->name, args.name ? args.name : "<unconfigured thread>", sizeof(tls->name));
+      tls->termination_flag = termination_flag;
     }
     // Dispose of allocated memory
     free(args.name);
@@ -658,8 +654,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     return;
   }
 
-  fprintf(stderr, "%p (%s) was attached: %d\n", pthread_self(), tls->name, was_attached);
-
   // Give the callback glue its own local frame to ensure all local references
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
@@ -676,9 +670,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach thread\n");
     }
-  }
-  else {
-    fprintf(stderr, "Thread will detach automatically %p (%s)\n", pthread_self(), tls->name);
   }
 }
 

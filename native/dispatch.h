@@ -214,6 +214,7 @@ typedef struct _AttachOptions {
   int daemon;
   int detach;
   char* name;
+  int* termination_flag;
 } AttachOptions;
 extern jobject initializeThread(callback*,AttachOptions*);
 

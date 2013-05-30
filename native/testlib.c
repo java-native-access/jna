@@ -646,13 +646,11 @@ static THREAD_FUNC(thread_function, arg) {
   thread_data td = *(thread_data*)arg;
   void (*func)(void) = td.func;
   int i;
-  fprintf(stderr, "thread start 0x%p (%s)\n", THREAD_CURRENT(), td.name);
 
   for (i=0;i < td.repeat_count;i++) {
     func();
     SLEEP(td.sleep_time);
   }
-  fprintf(stderr, "thread exiting 0x%p (%s)\n", THREAD_CURRENT(), td.name);
   free((void*)arg);
   THREAD_EXIT();
   THREAD_RETURN;

@@ -189,7 +189,6 @@ public class CallbacksTest extends TestCase implements Paths {
     TestLibrary lib;
     protected void setUp() {
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
-	System.out.println("Run " + getName());
     }
     
     protected void tearDown() {
@@ -1152,14 +1151,20 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         long start = System.currentTimeMillis();
         WeakReference ref = (WeakReference)threads.iterator().next();
+
         while (ref.get() != null) {
             System.gc();
-            Thread.sleep(1000);
+            Thread.sleep(100);
 	    Thread[] remaining = new Thread[Thread.activeCount()];
 	    Thread.enumerate(remaining);
             if (System.currentTimeMillis() - start > 10000) {
                 Thread t = (Thread)ref.get();
-                fail("Timed out waiting for native attached thread to be GC'd: " + t + " alive: " + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
+                Pointer terminationFlag = CallbackReference.getTerminationFlag(t);
+                if (terminationFlag.getInt(0) == 0) {
+                    fail("Timed out waiting for native attached thread to be GC'd: " + t + " alive: "
+                         + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
+                }
+                System.err.println("Warning: JVM did not GC Thread mapping after native thread terminated");
             }
         }
     }
