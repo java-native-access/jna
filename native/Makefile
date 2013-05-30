@@ -272,7 +272,7 @@ endif
 ifeq ($(OS),aix)
 LIBSFX=.a
 PCFLAGS+=-fPIC
-CDEFINES+=-DHAVE_PROTECTION -DNO_JAWT -Wall -D_AIX -DPOWERPC_AIX
+CDEFINES+=-DHAVE_PROTECTION -DNO_JAWT -Wall -D_AIX -DPOWERPC_AIX -D_THREAD_SAFE_ERRNO
 COPT+=-D_AIX -DPOWERPC_AIX -mxl-compat
 LDFLAGS+=-Wl,-lc128,-lc,-lm,-lpthread
 FFI_ENV+=AR_FLAGS="-X32_64 cru"
@@ -306,6 +306,10 @@ ifeq ($(ARCH),ppc)
   CC += -m32
   LD += -m32
   HOST_CONFIG=--host=ppc-linux
+endif
+ifeq ($(ARCH),i386)
+  CC += -m32
+  LD += -m32
 endif
 endif
 endif

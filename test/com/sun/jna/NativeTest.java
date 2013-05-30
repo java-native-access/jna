@@ -111,7 +111,7 @@ public class NativeTest extends TestCase {
     }
     public void testSynchronizedAccess() throws Exception {
         final boolean[] lockHeld = { false };
-        final NativeLibrary nlib = NativeLibrary.getInstance("testlib");
+        final NativeLibrary nlib = NativeLibrary.getInstance("testlib", TestLib.class.getClassLoader());
         final TestLib lib = (TestLib)Native.loadLibrary("testlib", TestLib.class);
         final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib); 
         final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
@@ -168,6 +168,7 @@ public class NativeTest extends TestCase {
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         String TEST_ENCODING = "test-encoding";
         Map TEST_OPTS = new HashMap() { {
+            put(OPTION_CLASSLOADER, TestInterfaceWithInstance.class.getClassLoader());
             put(OPTION_TYPE_MAPPER, TEST_MAPPER);
             put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
             put(OPTION_STRING_ENCODING, TEST_ENCODING);
@@ -298,90 +299,6 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong char array length", VALUE.length()+1, buf.length);
         assertEquals("Missing NUL terminator", (char)0, buf[buf.length-1]);
         assertEquals("Wrong char array contents: " + new String(buf), VALUE, new String(buf, 0, buf.length-1));
-    }
-
-    public static class DirectMapping {
-        public static class DirectStructure extends Structure {
-            public int field;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
-            }
-        }
-        public static interface DirectCallback extends Callback {
-            void invoke();
-        }
-        public DirectMapping(Map options) {
-            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
-        }
-    }
-
-    public void testGetOptionsForDirectMapping() {
-        Class[] classes = {
-            DirectMapping.class,
-            DirectMapping.DirectStructure.class,
-            DirectMapping.DirectCallback.class,
-        };
-        final TypeMapper mapper = new DefaultTypeMapper();
-        final int alignment = Structure.ALIGN_NONE;
-        final String encoding = System.getProperty("file.encoding");
-        Map options = new HashMap();
-        options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
-        options.put(Library.OPTION_STRING_ENCODING, encoding);
-        DirectMapping lib = new DirectMapping(options);
-        for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong type mapper for direct mapping " + classes[i],
-                         mapper, Native.getTypeMapper(classes[i]));
-            assertEquals("Wrong alignment for direct mapping " + classes[i],
-                         alignment, Native.getStructureAlignment(classes[i]));
-            assertEquals("Wrong encoding for direct mapping " + classes[i],
-                         encoding, Native.getStringEncoding(classes[i]));
-            Object last = Native.getLibraryOptions(classes[i]);;
-            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
-        }
-    }
-
-    public static class DirectMappingStatic {
-        final static TypeMapper TEST_MAPPER = new DefaultTypeMapper();
-        final static int TEST_ALIGNMENT = Structure.ALIGN_DEFAULT;
-        final static String TEST_ENCODING = System.getProperty("file.encoding");
-        final static Map TEST_OPTIONS = new HashMap() {
-            {
-                put(Library.OPTION_TYPE_MAPPER, TEST_MAPPER);
-                put(Library.OPTION_STRUCTURE_ALIGNMENT, TEST_ALIGNMENT);
-                put(Library.OPTION_STRING_ENCODING, TEST_ENCODING);
-            }
-        };
-        static {
-            Native.register(DirectMappingStatic.class, NativeLibrary.getInstance("testlib", TEST_OPTIONS));
-        }
-        public static class DirectStructure extends Structure {
-            public int field;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
-            }
-        }
-        public static interface DirectCallback extends Callback {
-            void invoke();
-        }
-    }
-
-    public void testGetOptionsForDirectMappingStatic() {
-        Class[] classes = {
-            DirectMappingStatic.class,
-            DirectMappingStatic.DirectStructure.class,
-            DirectMappingStatic.DirectCallback.class,
-        };
-        for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong type mapper for direct mapping " + classes[i],
-                         DirectMappingStatic.TEST_MAPPER, Native.getTypeMapper(classes[i]));
-            assertEquals("Wrong alignment for direct mapping " + classes[i],
-                         DirectMappingStatic.TEST_ALIGNMENT, Native.getStructureAlignment(classes[i]));
-            assertEquals("Wrong encoding for direct mapping " + classes[i],
-                         DirectMappingStatic.TEST_ENCODING, Native.getStringEncoding(classes[i]));
-            Object last = Native.getLibraryOptions(classes[i]);;
-            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
-        }
     }
 
     private static class TestCallback implements Callback {

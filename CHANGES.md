@@ -16,6 +16,7 @@ Features
 * Added memory dump for debugging (see `com.sun.jna.Memory`) - [@twall](https://github.com/twall).
 * Improved caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
 * [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
+* [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
@@ -29,6 +30,7 @@ Bug Fixes
 * [#229](https://github.com/twall/jna/issues/229): Added `CreateProcessW` (Unicode version) - [@twall](https://github.com/twall).
 * Avoided solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
 * Fixed NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
+* [#237](https://github.com/twall/jna/issues/237): Fix LastErrorException/getLastError on AIX - [@skissane](https://github.com/skissane).
 
 Release 3.5.2
 =============

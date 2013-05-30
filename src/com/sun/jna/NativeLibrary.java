@@ -436,6 +436,11 @@ public class NativeLibrary {
         if (mapper != null) {
             name = mapper.getFunctionName(this, method);
         }
+        // If there's native method profiler prefix, strip it
+        String prefix = System.getProperty("jna.profiler.prefix", "$$YJP$$");
+        if (name.startsWith(prefix)) {
+            name = name.substring(prefix.length());
+        }
         int flags = this.callFlags;
         Class[] etypes = method.getExceptionTypes();
         for (int i=0;i < etypes.length;i++) {
