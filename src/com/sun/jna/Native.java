@@ -153,7 +153,7 @@ public final class Native implements Version {
         }
 	MAX_PADDING = Platform.isSPARC() || Platform.isWindows() || Platform.isARM()
             || Platform.isAIX() || Platform.isAndroid()
-            || (Platform.isPPC() && Platform.isLinux())
+            || Platform.isPPC()
             ? 8 : LONG_SIZE;
     }
 
