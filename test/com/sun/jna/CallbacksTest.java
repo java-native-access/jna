@@ -44,6 +44,8 @@ public class CallbacksTest extends TestCase implements Paths {
     private static final double DOUBLE_MAGIC = -118.625d;
     private static final float FLOAT_MAGIC = -118.625f;
 
+    private static final int THREAD_TIMEOUT = 5000;
+
     public static class SmallTestStructure extends Structure {
         public double value;
         public static int allocations = 0;
@@ -187,6 +189,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     TestLibrary lib;
+
     protected void setUp() {
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
@@ -886,6 +889,24 @@ public class CallbacksTest extends TestCase implements Paths {
         assertTrue("Callback with custom method name not called", called[0]);
     }
 
+    public void testDisallowDetachFromJVMThread() {
+    	final boolean[] called = {false};
+        final boolean[] exceptionThrown = {true};
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                called[0] = true;
+                try {
+                    Native.detach(true);
+                }
+                catch(IllegalStateException e) {
+                }
+            }
+        };
+        lib.callVoidCallback(cb);
+        assertTrue("Callback not called", called[0]);
+        assertTrue("Native.detach(true) should throw IllegalStateException when called from JVM thread", exceptionThrown[0]);
+    }
+
     public void testCustomCallbackVariedInheritance() {
     	final boolean[] called = {false};
         TestLibrary.VoidCallbackCustom cb =
@@ -1013,7 +1034,7 @@ public class CallbacksTest extends TestCase implements Paths {
         long start = System.currentTimeMillis();
         while (called[0] < returnAfter) {
             Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 5000) {
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
                 fail("Timed out waiting for callback, invoked " + called[0] + " times so far");
             }
         }
@@ -1087,7 +1108,7 @@ public class CallbacksTest extends TestCase implements Paths {
         long start = System.currentTimeMillis();
 	while (called[0] < 2) {
 	    Thread.sleep(10);
-	    if (System.currentTimeMillis() - start > 5000) {
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
 		fail("Timed out waiting for second callback invocation, which indicates detach");
 	    }
 	}
@@ -1095,8 +1116,8 @@ public class CallbacksTest extends TestCase implements Paths {
         start = System.currentTimeMillis();
 	while (t[0].isAlive()) {
 	    Thread.sleep(10);
-	    if (System.currentTimeMillis() - start > 5000) {
-		fail("Timed out waiting for thread to detach and die");
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+		fail("Timed out waiting for thread to detach and terminate");
 	    }
 	}
     }
@@ -1110,7 +1131,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
             public String getName(Callback cb) {
-                return "Test thread for " + CallbacksTest.this.getName() + " (call count: " + called[0] + ")";
+                return "Test thread (native) for " + CallbacksTest.this.getName() + " (call count: " + called[0] + ")";
             }
         };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -1126,7 +1147,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
-    public void testAttachedThreadCleanupOnExit() throws Exception {
+    public void testCleanupUndetachedThreadOnThreadExit() throws Exception {
         final Set threads = new HashSet();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -1141,7 +1162,7 @@ public class CallbacksTest extends TestCase implements Paths {
 	// Always attach as daemon to ensure tests will exit
         CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
 	    public String getName(Callback cb) {
-		return "Test thread for " + CallbacksTest.this.getName();
+		return "Test thread (native) for " + CallbacksTest.this.getName();
 	    }
 	};
         callThreadedCallback(cb, asDaemon, 2, 100, called);
@@ -1157,7 +1178,7 @@ public class CallbacksTest extends TestCase implements Paths {
             Thread.sleep(100);
 	    Thread[] remaining = new Thread[Thread.activeCount()];
 	    Thread.enumerate(remaining);
-            if (System.currentTimeMillis() - start > 10000) {
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
                 Thread t = (Thread)ref.get();
                 Pointer terminationFlag = Native.getTerminationFlag(t);
                 assertNotNull("Native thread termination flag is missing", terminationFlag);
@@ -1166,6 +1187,7 @@ public class CallbacksTest extends TestCase implements Paths {
                          + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
                 }
                 System.err.println("Warning: JVM did not GC Thread mapping after native thread terminated");
+                break;
             }
         }
     }
@@ -1183,6 +1205,7 @@ public class CallbacksTest extends TestCase implements Paths {
                 // detach on final invocation
                 int count = called[0] + 1;
                 if (count == 1) {
+                    Thread.currentThread().setName("Native thread for " + getName());
                     Native.detach(false);
                 }
                 else if (count == COUNT) {
@@ -1193,25 +1216,16 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         callThreadedCallback(cb, null, COUNT, 100, called);
 
-        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: " + threads,
-                     1, threads.size());
+        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: "
+                     + threads, 1, threads.size());
         Thread thread = (Thread)threads.iterator().next();
         long start = System.currentTimeMillis();
 
         while (thread.isAlive()) {
             System.gc();
             Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 5000) {
-                PrintStream ps = System.err;
-                ByteArrayOutputStream s = new ByteArrayOutputStream();
-                System.setErr(new PrintStream(s));
-                try {
-                    thread.dumpStack();
-                }
-                finally {
-                    System.setErr(ps);
-                }
-                fail("Timed out waiting for callback thread " + thread + " to die: " + s);
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+                fail("Timed out waiting for native thread " + thread + " to finish");
             }
         }
     }

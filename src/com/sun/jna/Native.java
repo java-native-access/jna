@@ -1833,15 +1833,37 @@ public final class Native implements Version {
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
-    /** Indicate the desired attachment state for the current thread.
+    /** Indicate whether the JVM should detach the current native thread when
+        the current Java code finishes execution.  Generally this is used to
+        avoid detaching native threads when it is known that a given thread
+        will be relatively long-lived and call back to Java code frequently.
         <p/>
-        <em>Warning</em>: avoid calling {@link #detach detach(true)} on threads
-        spawned by the JVM; the resulting behavior is not defined.
+        This call is lightweight; it only results in an additional JNI
+        crossing if the desired state changes from its last setting.
+
+        @throws IllegalStateException if {@link #detach detach(true)} is
+        called on a thread created by the JVM.
      */
     public static void detach(boolean detach) {
-        Pointer p = (Pointer)nativeThreadTerminationFlag.get();
-        nativeThreads.put(Thread.currentThread(), p);
-        setDetachState(detach, p.peer);
+        Thread thread = Thread.currentThread();
+        if (detach) {
+            // If a CallbackThreadInitializer was used to avoid detach,
+            // we won't have put that thread into the nativeThreads map.
+            // Performance is not as critical in that case, and since
+            // detach is the default behavior, force an update of the detach
+            // state every time.  Clear the termination flag, since it's not
+            // needed when the native thread is detached normally.
+            nativeThreads.remove(thread);
+            Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+            setDetachState(true, 0);
+        }
+        else {
+            if (!nativeThreads.containsKey(thread)) {
+                Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+                nativeThreads.put(thread, p);
+                setDetachState(false, p.peer);
+            }
+        }
     }
 
     static Pointer getTerminationFlag(Thread t) {

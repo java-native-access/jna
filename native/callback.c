@@ -83,6 +83,7 @@ typedef struct _tls {
   jint last_error;
   // Contents set to JNI_TRUE if thread has terminated and detached properly
   int* termination_flag;
+  jboolean jvm_thread;
   jboolean detach;
   char name[256];
 } thread_storage;
@@ -504,6 +505,7 @@ static thread_storage* get_thread_storage(JNIEnv* env) {
     }
     else {
       snprintf(tls->name, sizeof(tls->name), "<uninitialized thread name>");
+      tls->jvm_thread = JNI_TRUE;
       tls->last_error = 0;
       tls->termination_flag = NULL;
       if ((*env)->GetJavaVM(env, &tls->jvm) != JNI_OK) {
@@ -577,11 +579,14 @@ static void make_thread_data_key() {
 
 /** Store the requested detach state for the current thread. */
 void
-JNA_detach(JNIEnv* env, jboolean d, void* termination_flag) {
+JNA_detach(JNIEnv* env, jboolean detach, void* termination_flag) {
   thread_storage* tls = get_thread_storage(env);
   if (tls) {
-    tls->detach = d;
+    tls->detach = detach;
     tls->termination_flag = (int *)termination_flag;
+    if (detach && tls->jvm_thread) {
+      throwByName(env, EIllegalState, "Can not detach from a JVM thread");
+    }
   }
 }
 
@@ -641,6 +646,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     if (tls) {
       strncpy(tls->name, args.name ? args.name : "<unconfigured native thread>", sizeof(tls->name));
       tls->detach = detach;
+      tls->jvm_thread = JNI_FALSE;
     }
     // Dispose of allocated memory
     free(args.name);
@@ -666,9 +672,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   else {
     callback_invoke(env, cb, cif, resp, cbargs);
     // Make note of whether the callback wants to avoid detach
-    if (!tls->detach) {
-      detach = JNI_FALSE;
-    }
+    detach = tls->detach && !tls->jvm_thread;
     (*env)->PopLocalFrame(env, NULL);
   }
   

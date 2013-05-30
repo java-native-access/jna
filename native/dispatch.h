@@ -227,9 +227,9 @@ extern jobject initializeThread(callback*,AttachOptions*);
 #define PROTECT is_protected()
 #endif
 #include "protect.h"
-#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define ON_ERROR(ENV) throwByName(ENV, EError, "Invalid memory access")
 #define PSTART() PROTECTED_START()
-#define PEND() PROTECTED_END(ON_ERROR())
+#define PEND(ENV) PROTECTED_END(ON_ERROR(ENV))
 
 #ifdef __cplusplus
 }
