@@ -307,6 +307,10 @@ ifeq ($(ARCH),ppc)
   LD += -m32
   HOST_CONFIG=--host=ppc-linux
 endif
+ifeq ($(ARCH),i386)
+  CC += -m32
+  LD += -m32
+endif
 endif
 endif
 
