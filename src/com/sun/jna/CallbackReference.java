@@ -38,7 +38,6 @@ class CallbackReference extends WeakReference {
     static final Map callbackMap = new WeakHashMap();
     static final Map directCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
-    static final Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
 
     private static final Method PROXY_CALLBACK_METHOD;
     
@@ -67,23 +66,11 @@ class CallbackReference extends WeakReference {
         public boolean daemon;
         public boolean detach;
         public String name;
-        public Pointer termination_flag;
         // Thread name must be UTF8-encoded
         { setStringEncoding("utf8"); }
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "daemon", "detach", "name", "termination_flag" });
+            return Arrays.asList(new String[] { "daemon", "detach", "name", });
         }
-    }
-
-    private static ThreadLocal terminationFlag = new ThreadLocal() {
-        protected Object initialValue() {
-            return new Memory(4);
-        }
-    };
-
-    /** Returns the termination flag associated with the given thread. */
-    static Pointer getTerminationFlag(Thread t) {
-        return (Pointer)nativeThreads.get(t);
     }
 
     /** Called from native code to initialize a callback thread. */
@@ -92,7 +79,7 @@ class CallbackReference extends WeakReference {
         if (cb instanceof DefaultCallbackProxy) {
             cb = ((DefaultCallbackProxy)cb).getCallback();
         }
-        synchronized(initializers) {
+        synchronized(callbackMap) {
             init = (CallbackThreadInitializer)initializers.get(cb);
         }
         ThreadGroup group = null;
@@ -101,11 +88,8 @@ class CallbackReference extends WeakReference {
             args.name = init.getName(cb);
             args.daemon = init.isDaemon(cb);
             args.detach = init.detach(cb);
+            args.write();
         }
-        args.termination_flag = (Pointer)terminationFlag.get();
-        args.termination_flag.setInt(0, 0);
-        args.write();
-        nativeThreads.put(Thread.currentThread(), args.termination_flag);
         return group;
     }
 

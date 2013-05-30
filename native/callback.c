@@ -81,6 +81,7 @@ static void * const dll_fptrs[] = {
 typedef struct _tls {
   JavaVM* jvm;
   jint last_error;
+  // Contents set to JNI_TRUE if thread has terminated and detached properly
   int* termination_flag;
   jboolean detach;
   char name[256];
@@ -503,6 +504,8 @@ static thread_storage* get_thread_storage(JNIEnv* env) {
     }
     else {
       snprintf(tls->name, sizeof(tls->name), "<uninitialized thread name>");
+      tls->last_error = 0;
+      tls->termination_flag = NULL;
       if ((*env)->GetJavaVM(env, &tls->jvm) != JNI_OK) {
         free(tls);
         throwByName(env, EIllegalState, "JNA: Could not get JavaVM");
@@ -523,12 +526,14 @@ static void dispose_thread_data(void* data) {
   JavaVM* jvm = tls->jvm;
   JNIEnv* env;
   int is_attached = (*jvm)->GetEnv(jvm, (void*)&env, JNI_VERSION_1_4) == JNI_OK;
+  jboolean detached = JNI_TRUE;
   if (is_attached) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach native thread (automatic)\n");
+      detached = JNI_FALSE;
     }
   }
-  if (tls->termination_flag) {
+  if (tls->termination_flag && detached) {
     *(tls->termination_flag) = JNI_TRUE;
   }
   free(data);
@@ -572,10 +577,11 @@ static void make_thread_data_key() {
 
 /** Store the requested detach state for the current thread. */
 void
-JNA_detach(JNIEnv* env, jboolean d) {
+JNA_detach(JNIEnv* env, jboolean d, void* termination_flag) {
   thread_storage* tls = get_thread_storage(env);
   if (tls) {
     tls->detach = d;
+    tls->termination_flag = (int *)termination_flag;
   }
 }
 
@@ -611,7 +617,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     int attach_status = 0;
     JavaVMAttachArgs args;
     int daemon = JNI_FALSE;
-    int* termination_flag = NULL;
 
     args.version = JNI_VERSION_1_2;
     args.name = NULL;
@@ -625,7 +630,6 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       daemon = options.daemon ? JNI_TRUE : JNI_FALSE;
       detach = options.detach ? JNI_TRUE : JNI_FALSE;
       args.name = options.name;
-      termination_flag = options.termination_flag;
     }
     if (daemon) {
       attach_status = (*jvm)->AttachCurrentThreadAsDaemon(jvm, (void*)&env, &args);
@@ -635,8 +639,8 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
     tls = get_thread_storage(env);
     if (tls) {
-      strncpy(tls->name, args.name ? args.name : "<unconfigured thread>", sizeof(tls->name));
-      tls->termination_flag = termination_flag;
+      strncpy(tls->name, args.name ? args.name : "<unconfigured native thread>", sizeof(tls->name));
+      tls->detach = detach;
     }
     // Dispose of allocated memory
     free(args.name);
@@ -660,9 +664,11 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
-    tls->detach = detach;
     callback_invoke(env, cb, cif, resp, cbargs);
-    detach = tls->detach;
+    // Make note of whether the callback wants to avoid detach
+    if (!tls->detach) {
+      detach = JNI_FALSE;
+    }
     (*env)->PopLocalFrame(env, NULL);
   }
   

@@ -182,7 +182,7 @@ extern const char* JNA_callback_init(JNIEnv*);
 extern void JNA_set_last_error(JNIEnv*,int);
 extern int JNA_get_last_error(JNIEnv*);
 extern void JNA_callback_dispose(JNIEnv*);
-extern void JNA_detach(JNIEnv*,jboolean);
+extern void JNA_detach(JNIEnv*,jboolean,void*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
                                  callconv_t, jint, jstring);
@@ -214,7 +214,6 @@ typedef struct _AttachOptions {
   int daemon;
   int detach;
   char* name;
-  int* termination_flag;
 } AttachOptions;
 extern jobject initializeThread(callback*,AttachOptions*);
 

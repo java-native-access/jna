@@ -3298,8 +3298,8 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
 }
 
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_detach(JNIEnv* env, jclass UNUSED(cls), jboolean d) {
-  JNA_detach(env, d);
+Java_com_sun_jna_Native_setDetachState(JNIEnv* env, jclass UNUSED(cls), jboolean d, jlong flag) {
+  JNA_detach(env, d, L2A(flag));
 }
 
 #ifdef __cplusplus

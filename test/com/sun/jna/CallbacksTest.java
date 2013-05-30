@@ -1159,7 +1159,8 @@ public class CallbacksTest extends TestCase implements Paths {
 	    Thread.enumerate(remaining);
             if (System.currentTimeMillis() - start > 10000) {
                 Thread t = (Thread)ref.get();
-                Pointer terminationFlag = CallbackReference.getTerminationFlag(t);
+                Pointer terminationFlag = Native.getTerminationFlag(t);
+                assertNotNull("Native thread termination flag is missing", terminationFlag);
                 if (terminationFlag.getInt(0) == 0) {
                     fail("Timed out waiting for native attached thread to be GC'd: " + t + " alive: "
                          + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
