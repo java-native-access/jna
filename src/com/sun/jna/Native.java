@@ -1838,9 +1838,28 @@ public final class Native implements Version {
         <em>Warning</em>: avoid calling {@link #detach detach(true)} on threads
         spawned by the JVM; the resulting behavior is not defined.
      */
-    // TODO: keep references to Java non-detached threads, and clear them when
-    // native side sets a flag saying they're detached (cleanup)
-    public static native void detach(boolean detach);
+    public static void detach(boolean detach) {
+        Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+        nativeThreads.put(Thread.currentThread(), p);
+        setDetachState(detach, p.peer);
+    }
+
+    static Pointer getTerminationFlag(Thread t) {
+        return (Pointer)nativeThreads.get(t);
+    }
+
+    private static Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
+
+    private static ThreadLocal nativeThreadTerminationFlag = 
+        new ThreadLocal() {
+            protected Object initialValue() {
+                Memory m = new Memory(4);
+                m.clear();
+                return m;
+            }
+        };
+
+    private static native void setDetachState(boolean detach, long terminationFlag);
 
     private static class Buffers {
         static boolean isBuffer(Class cls) {
