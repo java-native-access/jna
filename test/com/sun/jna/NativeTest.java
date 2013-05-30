@@ -111,7 +111,7 @@ public class NativeTest extends TestCase {
     }
     public void testSynchronizedAccess() throws Exception {
         final boolean[] lockHeld = { false };
-        final NativeLibrary nlib = NativeLibrary.getInstance("testlib");
+        final NativeLibrary nlib = NativeLibrary.getInstance("testlib", TestLib.class.getClassLoader());
         final TestLib lib = (TestLib)Native.loadLibrary("testlib", TestLib.class);
         final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib); 
         final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
@@ -168,6 +168,7 @@ public class NativeTest extends TestCase {
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         String TEST_ENCODING = "test-encoding";
         Map TEST_OPTS = new HashMap() { {
+            put(OPTION_CLASSLOADER, TestInterfaceWithInstance.class.getClassLoader());
             put(OPTION_TYPE_MAPPER, TEST_MAPPER);
             put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
             put(OPTION_STRING_ENCODING, TEST_ENCODING);

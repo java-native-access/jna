@@ -1481,6 +1481,7 @@ public final class Native implements Version {
         looking them up later.
     */
     private static void cacheOptions(Class cls, Map libOptions, Object proxy) {
+        libOptions = new HashMap(libOptions);
         synchronized(libraries) {
             options.put(cls, libOptions);
             if (proxy != null) {
