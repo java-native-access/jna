@@ -30,6 +30,7 @@ Bug Fixes
 * [#229](https://github.com/twall/jna/issues/229): Added `CreateProcessW` (Unicode version) - [@twall](https://github.com/twall).
 * Avoided solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
 * Fixed NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
+* [#237](https://github.com/twall/jna/issues/237): Fix LastErrorException/getLastError on AIX - [@skissane](https://github.com/skissane).
 
 Release 3.5.2
 =============
