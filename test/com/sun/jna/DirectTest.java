@@ -16,10 +16,15 @@ import junit.framework.*;
 import com.sun.jna.*;
 import com.sun.jna.ptr.PointerByReference;
 import java.lang.ref.*;
+import java.lang.reflect.Method;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 //@SuppressWarnings("unused")
 public class DirectTest extends TestCase implements Paths {
@@ -172,6 +177,124 @@ public class DirectTest extends TestCase implements Paths {
         }
         assertEquals("Wrong native class found",
                      UnregisterLibrary.class, new UnregisterLibrary().findDirectMappedClass());
+    }
+
+    public static class DirectMapping {
+        public static class DirectStructure extends Structure {
+            public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        public static interface DirectCallback extends Callback {
+            void invoke();
+        }
+        public DirectMapping(Map options) {
+            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        }
+    }
+
+    public void testGetOptionsForDirectMappingWithMemberInitializer() {
+        Class[] classes = {
+            DirectMapping.class,
+            DirectMapping.DirectStructure.class,
+            DirectMapping.DirectCallback.class,
+        };
+        final TypeMapper mapper = new DefaultTypeMapper();
+        final int alignment = Structure.ALIGN_NONE;
+        final String encoding = System.getProperty("file.encoding");
+        Map options = new HashMap();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        options.put(Library.OPTION_STRUCTURE_ALIGNMENT, alignment);
+        options.put(Library.OPTION_STRING_ENCODING, encoding);
+        DirectMapping lib = new DirectMapping(options);
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping " + classes[i],
+                         mapper, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping " + classes[i],
+                         alignment, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping " + classes[i],
+                         encoding, Native.getStringEncoding(classes[i]));
+            Object last = Native.getLibraryOptions(classes[i]);;
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
+        }
+    }
+
+    public static class DirectMappingStatic {
+        final static TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        final static int TEST_ALIGNMENT = Structure.ALIGN_DEFAULT;
+        final static String TEST_ENCODING = System.getProperty("file.encoding");
+        final static Map TEST_OPTIONS = new HashMap() {
+            {
+                put(Library.OPTION_TYPE_MAPPER, TEST_MAPPER);
+                put(Library.OPTION_STRUCTURE_ALIGNMENT, TEST_ALIGNMENT);
+                put(Library.OPTION_STRING_ENCODING, TEST_ENCODING);
+            }
+        };
+        static {
+            Native.register(DirectMappingStatic.class, NativeLibrary.getInstance("testlib", TEST_OPTIONS));
+        }
+        public static class DirectStructure extends Structure {
+            public int field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+        public static interface DirectCallback extends Callback {
+            void invoke();
+        }
+    }
+
+    public void testGetOptionsForDirectMappingWithStaticInitializer() {
+        Class[] classes = {
+            DirectMappingStatic.class,
+            DirectMappingStatic.DirectStructure.class,
+            DirectMappingStatic.DirectCallback.class,
+        };
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong type mapper for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_MAPPER, Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_ALIGNMENT, Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding for direct mapping " + classes[i],
+                         DirectMappingStatic.TEST_ENCODING, Native.getStringEncoding(classes[i]));
+            Object last = Native.getLibraryOptions(classes[i]);;
+            assertSame("Options not cached", last, Native.getLibraryOptions(classes[i]));
+        }
+    }
+
+    static class RemappedCLibrary {
+        public static native int $$YJP$$strlen(String s);
+        public static native int _prefixed_strlen(String s);
+    }
+
+    public void testDirectMappingFunctionMapper() {
+        FunctionMapper MAPPER = new FunctionMapper() {
+            public String getFunctionName(NativeLibrary lib, Method method) {
+                String name = method.getName();
+                if (name.startsWith("_prefixed_")) {
+                    return name.substring(10);
+                }
+                return name;
+            }
+        };
+        Map options = new HashMap();
+        options.put(Library.OPTION_FUNCTION_MAPPER, MAPPER);
+        try {
+            Native.register(RemappedCLibrary.class,
+                            NativeLibrary.getInstance(Platform.C_LIBRARY_NAME, options));
+            final String VALUE = getName();
+            int len;
+
+            len = RemappedCLibrary.$$YJP$$strlen(VALUE);
+            assertEquals(VALUE.length(), len);
+
+            len = RemappedCLibrary._prefixed_strlen(VALUE);
+            assertEquals(VALUE.length(), len);
+        }
+        catch(Exception e) {
+            fail("Native method was not properly mapped: " + e);
+        }
     }
 }
 

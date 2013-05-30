@@ -16,6 +16,7 @@ Features
 * Added memory dump for debugging (see `com.sun.jna.Memory`) - [@twall](https://github.com/twall).
 * Improved caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
 * [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
+* [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------

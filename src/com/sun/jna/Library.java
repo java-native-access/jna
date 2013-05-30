@@ -118,20 +118,6 @@ public interface Library {
             }
         }
 
-        private static class FunctionNameMap implements FunctionMapper {
-            private final Map map;
-            public FunctionNameMap(Map map) {
-                this.map = new HashMap(map);
-            }
-            public String getFunctionName(NativeLibrary library, Method method) {
-                String name = method.getName();
-                if (map.containsKey(name)) {
-                    return (String)map.get(name);
-                }
-                return name;
-            }
-        }
-
         private final NativeLibrary nativeLibrary;
         private final Class interfaceClass;
         // Library invocation options
@@ -154,9 +140,8 @@ public interface Library {
                 options.put(OPTION_CALLING_CONVENTION,
                             new Integer(callingConvention));
             }
-            if (!options.containsKey(OPTION_FUNCTION_MAPPER)) {
-                // Passed-in map is itself the name map
-                options.put(OPTION_FUNCTION_MAPPER, new FunctionNameMap(options));
+            if (options.get(OPTION_CLASSLOADER) == null) {
+                options.put(OPTION_CLASSLOADER, interfaceClass.getClassLoader());
             }
             this.options = options;
             this.nativeLibrary = NativeLibrary.getInstance(libname, options);
