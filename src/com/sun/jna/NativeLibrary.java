@@ -256,6 +256,7 @@ public class NativeLibrary {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
                     handle = Native.open(embedded.getAbsolutePath());
+                    libraryPath = embedded.getAbsolutePath();
                     // Don't leave temporary files around
                     if (Native.isUnpacked(embedded)) {
                         Native.deleteLibrary(embedded);

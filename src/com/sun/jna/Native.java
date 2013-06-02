@@ -818,6 +818,9 @@ public final class Native implements Version {
             }
             throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
         }
+        if (DEBUG_LOAD) {
+            System.out.println("Found library resource at " + url);
+        }
 
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
@@ -835,10 +838,6 @@ public final class Native implements Version {
             }
         }
         else if (!Boolean.getBoolean("jna.nounpack")) {
-	    if (Native.DEBUG_LOAD) {
-		System.out.println("Looking in " + resourcePath);
-	    }
-	    
             InputStream is = loader.getResourceAsStream(resourcePath);
             if (is == null) {
                 throw new IOException("Can't obtain InputStream for " + resourcePath);
