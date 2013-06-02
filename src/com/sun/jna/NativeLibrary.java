@@ -58,6 +58,8 @@ import java.util.StringTokenizer;
  * resource will be extracted to <code>jna.tmpdir</code> for loading, and
  * later removed (but only if <code>jna.nounpack</code> is false or not set).
  * </ol>
+ * You may set the system property <code>jna.debug_load=true</code> to make
+ * JNA print the steps of its library search to the console.
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall
  */
