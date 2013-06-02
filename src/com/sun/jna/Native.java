@@ -96,7 +96,7 @@ public final class Native implements Version {
     static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
     // Used by tests, do not remove
-    private static String nativeLibraryPath = null;
+    static String jnidispatchPath = null;
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
@@ -144,8 +144,8 @@ public final class Native implements Version {
             String LS = System.getProperty("line.separator");
             throw new Error(LS + LS
                             + "There is an incompatible JNA native library installed on this system" + LS
-                            + (nativeLibraryPath != null
-                               ? "(at " + nativeLibraryPath + ")" : System.getProperty("java.library.path"))
+                            + (jnidispatchPath != null
+                               ? "(at " + jnidispatchPath + ")" : System.getProperty("java.library.path"))
                             + "." + LS
                             + "To resolve this issue you may do one of the following:" + LS
                             + " - remove or uninstall the offending library" + LS
@@ -169,7 +169,7 @@ public final class Native implements Version {
     /** Properly dispose of JNA functionality. */
     private static void dispose() {
         NativeLibrary.disposeAll();
-        nativeLibraryPath = null;
+        jnidispatchPath = null;
     }
 
     /** Remove any automatically unpacked native library.
@@ -671,7 +671,10 @@ public final class Native implements Version {
 			    System.out.println("Trying " + path);
 			}
                         System.load(path);
-                        nativeLibraryPath = path;
+                        jnidispatchPath = path;
+			if (DEBUG_JNA_LOAD) {
+			    System.out.println("Found jnidispatch at " + path);
+			}
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                         // Not a problem if already loaded in anoteher class loader
@@ -698,7 +701,10 @@ public final class Native implements Version {
 				System.out.println("Trying " + path);
 			    }
                             System.load(path);
-                            nativeLibraryPath = path;
+                            jnidispatchPath = path;
+                            if (DEBUG_JNA_LOAD) {
+                                System.out.println("Found jnidispatch at " + path);
+                            }
                             return;
                         } catch (UnsatisfiedLinkError ex) {
                             System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
@@ -713,6 +719,9 @@ public final class Native implements Version {
 		    System.out.println("Trying (via loadLibrary) " + libName);
 		}
                 System.loadLibrary(libName);
+                if (DEBUG_JNA_LOAD) {
+                    System.out.println("Found jnidispatch on system path");
+                }
                 return;
             }
             catch(UnsatisfiedLinkError e) {
@@ -744,7 +753,10 @@ public final class Native implements Version {
 		System.out.println("Trying " + lib.getAbsolutePath());
 	    }
 	    System.load(lib.getAbsolutePath());
-            nativeLibraryPath = lib.getAbsolutePath();
+            jnidispatchPath = lib.getAbsolutePath();
+            if (DEBUG_JNA_LOAD) {
+                System.out.println("Found jnidispatch at " + jnidispatchPath);
+            }
             // Attempt to delete immediately once jnidispatch is successfully
             // loaded.  This avoids the complexity of trying to do so on "exit",
             // which point can vary under different circumstances (native
@@ -791,6 +803,8 @@ public final class Native implements Version {
      * @throws IOException if resource not found
      */
     public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
+        final boolean DEBUG = DEBUG_LOAD
+            || (DEBUG_JNA_LOAD && name.indexOf("jnidispatch") != -1);
         if (loader == null) {
             loader = Thread.currentThread().getContextClassLoader();
             // Context class loader is not guaranteed to be set
@@ -798,7 +812,7 @@ public final class Native implements Version {
                 loader = Native.class.getClassLoader();
             }
         }
-	if (Native.DEBUG_LOAD) {
+	if (DEBUG) {
 	    System.out.println("Looking in classpath from " + loader + " for " + name);
 	}
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
@@ -818,7 +832,7 @@ public final class Native implements Version {
             }
             throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
         }
-        if (DEBUG_LOAD) {
+        if (DEBUG) {
             System.out.println("Found library resource at " + url);
         }
 
@@ -830,7 +844,7 @@ public final class Native implements Version {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
-	    if (DEBUG_LOAD) {
+	    if (DEBUG) {
 		System.out.println("Looking in " + lib.getAbsolutePath());
 	    }
             if (!lib.exists()) {

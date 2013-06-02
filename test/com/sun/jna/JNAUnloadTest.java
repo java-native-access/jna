@@ -105,7 +105,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library path unavailable", path);
@@ -159,7 +159,7 @@ public class JNAUnloadTest extends TestCase implements Paths {
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library not found", path);

@@ -1254,19 +1254,15 @@ public class CallbacksTest extends TestCase implements Paths {
         PointerByReference pref = new PointerByReference();
         int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
         assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
+
         f = kernel32.getFunction("GetModuleFileNameW");
         char[] buf = new char[1024];
         result = f.invokeInt(new Object[] { pref.getValue(), buf, buf.length });
         assertTrue("GetModuleFileName(fptr) failed: " + Native.getLastError(), result != 0);
 
-
         f = kernel32.getFunction("GetModuleHandleW");
-        // XP needs full path to DLL; win7 only needs "jnidispatch"
-        File dispatch = new File(CLASSES, "com/sun/jna/" + Platform.RESOURCE_PREFIX + "/jnidispatch");
-        String path = dispatch.getAbsolutePath();
-        Pointer handle = f.invokePointer(new Object[] { path });
-        assertTrue("GetModuleHandle(\"" + path + "\") failed: " + Native.getLastError(), result != 0);
-        assertNotNull("Could not get module handle for " + path + ": " + Native.getLastError(), handle);
+        Pointer handle = f.invokePointer(new Object[] { Native.jnidispatchPath != null ? Native.jnidispatchPath : "jnidispatch" });
+        assertNotNull("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), handle);
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use
