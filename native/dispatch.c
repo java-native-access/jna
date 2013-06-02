@@ -2841,9 +2841,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     // Use Unicode strings in case the path to the library includes non-ASCII
     // characters.
     wchar_t* path = L"jawt.dll";
-    jstring jprop = (wchar_t*)get_system_property(env, "java.home");
+    jstring jprop = get_system_property(env, "java.home");
     if (jprop != NULL) {
-      const wchar_t* prop = newWideCString(env, value);
+      const wchar_t* prop = newWideCString(env, jprop);
       const wchar_t* suffix = L"/bin/jawt.dll";
       size_t len = wcslen(prop) + wcslen(suffix) + 1;
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
