@@ -764,7 +764,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </jar>
     <!-- Ensure jar-based library is unavailable on FS-based class path -->
     <delete>
-      <fileset dir="${test.classes}">
+      <fileset dir="${build}">
         <include name="**/*testlib-jar*"/>
       </fileset>
     </delete>

@@ -92,6 +92,8 @@ import com.sun.jna.Structure.FFIType;
 public final class Native implements Version {
 
     public static final String DEFAULT_ENCODING = "utf8";
+    static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
+    static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -660,8 +662,14 @@ public final class Native implements Version {
                 String dir = dirs.nextToken();
                 File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Looking in " + path);
+		}
                 if (file.exists()) {
                     try {
+			if (DEBUG_JNA_LOAD) {
+			    System.out.println("Trying " + path);
+			}
                         System.load(path);
                         nativeLibraryPath = path;
                         return;
@@ -681,8 +689,14 @@ public final class Native implements Version {
                         ext = "dylib";
                     }
                     path = path.substring(0, path.lastIndexOf(orig)) + ext;
+		    if (DEBUG_JNA_LOAD) {
+			System.out.println("Looking in " + path);
+		    }
                     if (new File(path).exists()) {
                         try {
+			    if (DEBUG_JNA_LOAD) {
+				System.out.println("Trying " + path);
+			    }
                             System.load(path);
                             nativeLibraryPath = path;
                             return;
@@ -695,6 +709,9 @@ public final class Native implements Version {
         }
         if (!Boolean.getBoolean("jna.nosys")) {
             try {
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Trying (via loadLibrary) " + libName);
+		}
                 System.loadLibrary(libName);
                 return;
             }
@@ -723,7 +740,10 @@ public final class Native implements Version {
                     throw new UnsatisfiedLinkError("Could not find JNA native support");
                 }
             }
-            System.load(lib.getAbsolutePath());
+	    if (DEBUG_JNA_LOAD) {
+		System.out.println("Trying " + lib.getAbsolutePath());
+	    }
+	    System.load(lib.getAbsolutePath());
             nativeLibraryPath = lib.getAbsolutePath();
             // Attempt to delete immediately once jnidispatch is successfully
             // loaded.  This avoids the complexity of trying to do so on "exit",
@@ -778,6 +798,9 @@ public final class Native implements Version {
                 loader = Native.class.getClassLoader();
             }
         }
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Looking in classpath from " + loader + " for " + name);
+	}
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
         if (resourcePath.startsWith("/")) {
@@ -804,11 +827,18 @@ public final class Native implements Version {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
+	    if (DEBUG_LOAD) {
+		System.out.println("Looking in " + lib.getAbsolutePath());
+	    }
             if (!lib.exists()) {
                 throw new IOException("File URL " + url + " could not be properly decoded");
             }
         }
         else if (!Boolean.getBoolean("jna.nounpack")) {
+	    if (Native.DEBUG_LOAD) {
+		System.out.println("Looking in " + resourcePath);
+	    }
+	    
             InputStream is = loader.getResourceAsStream(resourcePath);
             if (is == null) {
                 throw new IOException("Can't obtain InputStream for " + resourcePath);

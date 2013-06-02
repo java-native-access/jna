@@ -49,7 +49,7 @@
 #include <dlfcn.h>
 #include <errno.h>
 #define STRTYPE char*
-#define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
+#define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
@@ -276,6 +276,8 @@ static jfieldID FID_Structure_typeInfo;
 static jfieldID FID_IntegerType_value;
 static jfieldID FID_PointerType_pointer;
 
+jstring fileEncoding;
+
 /* Forward declarations */
 static char* newCString(JNIEnv *env, jstring jstr);
 static char* newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding);
@@ -290,7 +292,7 @@ static ffi_type* getStructureType(JNIEnv *, jobject);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
-#if 1
+#if 0
 /** Invokes System.err.println (for debugging only). */
 void
 println(JNIEnv* env, const char* msg) {
@@ -1233,22 +1235,15 @@ getBufferArray(JNIEnv* env, jobject buf,
 }
 #endif /* NO_NIO_BUFFERS */
 
-static const void*
-get_system_property(JNIEnv* env, const char* name, jboolean wide) {
+static jstring
+get_system_property(JNIEnv* env, const char* name) {
   jclass classSystem = (*env)->FindClass(env, "java/lang/System");
   if (classSystem != NULL) {
     jmethodID mid = (*env)->GetStaticMethodID(env, classSystem, "getProperty",
                                               "(Ljava/lang/String;)Ljava/lang/String;");
     if (mid != NULL) {
       jstring propname = newJavaString(env, name, CHARSET_UTF8);
-      jstring value = (*env)->CallStaticObjectMethod(env, classSystem,
-                                                     mid, propname);
-      if (value) {
-        if (wide) {
-          return newWideCString(env, value);
-        }
-        return newCStringUTF8(env, value);
-      }
+      return (*env)->CallStaticObjectMethod(env, classSystem, mid, propname);
     }
   }
   return NULL;
@@ -1382,6 +1377,11 @@ JNA_init(JNIEnv* env) {
     return "Float.value";
   if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
     return "Double.value";
+
+  fileEncoding = get_system_property(env, "file.encoding");
+  if (fileEncoding) {
+    fileEncoding = (*env)->NewGlobalRef(env, fileEncoding);
+  }
 
   return NULL;
 }
@@ -2837,8 +2837,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     // Use Unicode strings in case the path to the library includes non-ASCII
     // characters.
     wchar_t* path = L"jawt.dll";
-    wchar_t* prop = (wchar_t*)get_system_property(env, "java.home", JNI_TRUE);
-    if (prop != NULL) {
+    jstring jprop = (wchar_t*)get_system_property(env, "java.home");
+    if (jprop != NULL) {
+      const wchar_t* prop = newWideCString(env, value);
       const wchar_t* suffix = L"/bin/jawt.dll";
       size_t len = wcslen(prop) + wcslen(suffix) + 1;
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
@@ -3065,6 +3066,11 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
       fprintf(stderr, "JNA: Can't attach native thread to VM on unload\n");
       return;
     }
+  }
+
+  if (fileEncoding) {
+    (*env)->DeleteGlobalRef(env, fileEncoding);
+    fileEncoding = NULL;
   }
 
   for (i=0;i < sizeof(refs)/sizeof(refs[0]);i++) {
