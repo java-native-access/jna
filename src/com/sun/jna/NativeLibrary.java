@@ -123,6 +123,10 @@ public class NativeLibrary {
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Looking for library '" + libraryName + "'");
+	}
+
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
         List searchPath = new LinkedList();
         int openFlags = openFlags(options);
@@ -131,6 +135,9 @@ public class NativeLibrary {
         // attempt any library name variations
         String webstartPath = Native.getWebStartLibraryPath(libraryName);
         if (webstartPath != null) {
+	    if (Native.DEBUG_LOAD) {
+		System.out.println("Adding web start path " + webstartPath);
+	    }
             searchPath.add(webstartPath);
         }
 
@@ -144,6 +151,9 @@ public class NativeLibrary {
             }
         }
 
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
+	}
         searchPath.addAll(initPaths("jna.library.path"));
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
@@ -153,15 +163,24 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
+ 	    if (Native.DEBUG_LOAD) {
+		System.out.println("Trying " + libraryPath);
+	    }
             handle = Native.open(libraryPath, openFlags);
         }
         catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
+	    if (Native.DEBUG_LOAD) {
+		System.out.println("Adding system paths: " + librarySearchPath);
+	    }
             searchPath.addAll(librarySearchPath);
         }
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Trying " + libraryPath);
+		}
                 handle = Native.open(libraryPath, openFlags);
                 if (handle == 0) {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
@@ -174,6 +193,9 @@ public class NativeLibrary {
             // path, not found in any properties
             if (Platform.isAndroid()) {
                 try {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Preload (via System.loadLibrary) " + libraryName);
+		    }
                     System.loadLibrary(libraryName);
                     handle = Native.open(libraryPath, openFlags);
                 }
@@ -183,9 +205,15 @@ public class NativeLibrary {
                 //
                 // Failed to load the library normally - try to match libfoo.so.*
                 //
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for version variants");
+		}
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
-                    try {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Trying " + libraryPath);
+		    }
+		    try {
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
@@ -194,9 +222,15 @@ public class NativeLibrary {
             // Search framework libraries on OS X
             else if (Platform.isMac()
                      && !libraryName.endsWith(".dylib")) {
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for matching frameworks");
+		}
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
+			if (Native.DEBUG_LOAD) {
+			    System.out.println("Trying " + libraryPath);
+			}
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
@@ -204,9 +238,17 @@ public class NativeLibrary {
             }
             // Try the same library with a "lib" prefix
             else if (Platform.isWindows() && !isAbsolutePath) {
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for lib- prefix");
+		}
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
-                try { handle = Native.open(libraryPath, openFlags); }
-                catch(UnsatisfiedLinkError e2) { e = e2; }
+		if (libraryPath != null) {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Trying " + libraryPath);
+		    }
+		    try { handle = Native.open(libraryPath, openFlags); }
+		    catch(UnsatisfiedLinkError e2) { e = e2; }
+		}
             }
             // As a last resort, try to extract the library from the class
             // path, using the current context class loader.
@@ -214,6 +256,7 @@ public class NativeLibrary {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
                     handle = Native.open(embedded.getAbsolutePath());
+                    libraryPath = embedded.getAbsolutePath();
                     // Don't leave temporary files around
                     if (Native.isUnpacked(embedded)) {
                         Native.deleteLibrary(embedded);
@@ -227,6 +270,9 @@ public class NativeLibrary {
                                                + e.getMessage());
             }
         }
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Found library '" + libraryName + "' at " + libraryPath);
+	}
         return new NativeLibrary(libraryName, libraryPath, handle, options);
     }
 

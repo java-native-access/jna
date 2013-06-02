@@ -92,6 +92,8 @@ import com.sun.jna.Structure.FFIType;
 public final class Native implements Version {
 
     public static final String DEFAULT_ENCODING = "utf8";
+    static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
+    static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
     // Used by tests, do not remove
     private static String nativeLibraryPath = null;
@@ -660,8 +662,14 @@ public final class Native implements Version {
                 String dir = dirs.nextToken();
                 File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Looking in " + path);
+		}
                 if (file.exists()) {
                     try {
+			if (DEBUG_JNA_LOAD) {
+			    System.out.println("Trying " + path);
+			}
                         System.load(path);
                         nativeLibraryPath = path;
                         return;
@@ -681,8 +689,14 @@ public final class Native implements Version {
                         ext = "dylib";
                     }
                     path = path.substring(0, path.lastIndexOf(orig)) + ext;
+		    if (DEBUG_JNA_LOAD) {
+			System.out.println("Looking in " + path);
+		    }
                     if (new File(path).exists()) {
                         try {
+			    if (DEBUG_JNA_LOAD) {
+				System.out.println("Trying " + path);
+			    }
                             System.load(path);
                             nativeLibraryPath = path;
                             return;
@@ -695,6 +709,9 @@ public final class Native implements Version {
         }
         if (!Boolean.getBoolean("jna.nosys")) {
             try {
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Trying (via loadLibrary) " + libName);
+		}
                 System.loadLibrary(libName);
                 return;
             }
@@ -723,7 +740,10 @@ public final class Native implements Version {
                     throw new UnsatisfiedLinkError("Could not find JNA native support");
                 }
             }
-            System.load(lib.getAbsolutePath());
+	    if (DEBUG_JNA_LOAD) {
+		System.out.println("Trying " + lib.getAbsolutePath());
+	    }
+	    System.load(lib.getAbsolutePath());
             nativeLibraryPath = lib.getAbsolutePath();
             // Attempt to delete immediately once jnidispatch is successfully
             // loaded.  This avoids the complexity of trying to do so on "exit",
@@ -778,6 +798,9 @@ public final class Native implements Version {
                 loader = Native.class.getClassLoader();
             }
         }
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Looking in classpath from " + loader + " for " + name);
+	}
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
         if (resourcePath.startsWith("/")) {
@@ -795,6 +818,9 @@ public final class Native implements Version {
             }
             throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
         }
+        if (DEBUG_LOAD) {
+            System.out.println("Found library resource at " + url);
+        }
 
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
@@ -804,6 +830,9 @@ public final class Native implements Version {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
+	    if (DEBUG_LOAD) {
+		System.out.println("Looking in " + lib.getAbsolutePath());
+	    }
             if (!lib.exists()) {
                 throw new IOException("File URL " + url + " could not be properly decoded");
             }
@@ -1833,14 +1862,55 @@ public final class Native implements Version {
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
-    /** Indicate the desired attachment state for the current thread.
+    /** Indicate whether the JVM should detach the current native thread when
+        the current Java code finishes execution.  Generally this is used to
+        avoid detaching native threads when it is known that a given thread
+        will be relatively long-lived and call back to Java code frequently.
         <p/>
-        <em>Warning</em>: avoid calling {@link #detach detach(true)} on threads
-        spawned by the JVM; the resulting behavior is not defined.
+        This call is lightweight; it only results in an additional JNI
+        crossing if the desired state changes from its last setting.
+
+        @throws IllegalStateException if {@link #detach detach(true)} is
+        called on a thread created by the JVM.
      */
-    // TODO: keep references to Java non-detached threads, and clear them when
-    // native side sets a flag saying they're detached (cleanup)
-    public static native void detach(boolean detach);
+    public static void detach(boolean detach) {
+        Thread thread = Thread.currentThread();
+        if (detach) {
+            // If a CallbackThreadInitializer was used to avoid detach,
+            // we won't have put that thread into the nativeThreads map.
+            // Performance is not as critical in that case, and since
+            // detach is the default behavior, force an update of the detach
+            // state every time.  Clear the termination flag, since it's not
+            // needed when the native thread is detached normally.
+            nativeThreads.remove(thread);
+            Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+            setDetachState(true, 0);
+        }
+        else {
+            if (!nativeThreads.containsKey(thread)) {
+                Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+                nativeThreads.put(thread, p);
+                setDetachState(false, p.peer);
+            }
+        }
+    }
+
+    static Pointer getTerminationFlag(Thread t) {
+        return (Pointer)nativeThreads.get(t);
+    }
+
+    private static Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
+
+    private static ThreadLocal nativeThreadTerminationFlag = 
+        new ThreadLocal() {
+            protected Object initialValue() {
+                Memory m = new Memory(4);
+                m.clear();
+                return m;
+            }
+        };
+
+    private static native void setDetachState(boolean detach, long terminationFlag);
 
     private static class Buffers {
         static boolean isBuffer(Class cls) {

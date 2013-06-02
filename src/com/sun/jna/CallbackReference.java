@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,6 +38,7 @@ class CallbackReference extends WeakReference {
     static final Map callbackMap = new WeakHashMap();
     static final Map directCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
+
     private static final Method PROXY_CALLBACK_METHOD;
     
     static {
@@ -67,16 +69,17 @@ class CallbackReference extends WeakReference {
         // Thread name must be UTF8-encoded
         { setStringEncoding("utf8"); }
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "daemon", "detach", "name" });
+            return Arrays.asList(new String[] { "daemon", "detach", "name", });
         }
     }
+
     /** Called from native code to initialize a callback thread. */
     private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
         CallbackThreadInitializer init = null;
         if (cb instanceof DefaultCallbackProxy) {
             cb = ((DefaultCallbackProxy)cb).getCallback();
         }
-        synchronized(initializers) {
+        synchronized(callbackMap) {
             init = (CallbackThreadInitializer)initializers.get(cb);
         }
         ThreadGroup group = null;

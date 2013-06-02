@@ -143,9 +143,6 @@ public class LibraryLoadTest extends TestCase implements Paths {
         File tmpdir = Native.getTempDir();
         String libName = NativeLibrary.mapSharedLibraryName("testlib");
         File src = new File(TESTPATH, libName);
-        if (Platform.isWindowsCE()) {
-            src = new File("/Storage Card", libName);
-        }
         assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
 
         final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";

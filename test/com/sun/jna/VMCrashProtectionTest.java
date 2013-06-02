@@ -14,15 +14,15 @@ package com.sun.jna;
 
 import junit.framework.TestCase;
 
-// TODO: add more platforms
 public class VMCrashProtectionTest extends TestCase {
     
+    private boolean savedProtected = Boolean.getBoolean("jna.protected");
     protected void setUp() {
         Native.setProtected(true);
     }
     
     protected void tearDown() {
-        Native.setProtected(false);
+        Native.setProtected(savedProtected);
     }
     
     public void testAccessViolation() {
