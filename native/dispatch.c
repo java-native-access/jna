@@ -49,7 +49,11 @@
 #include <dlfcn.h>
 #include <errno.h>
 #define STRTYPE char*
+#ifdef __sparc__ // TODO: check solaris/x86
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
+#else
+#define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
+#endif
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)

@@ -750,7 +750,14 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
+    <!-- Embed testlib-jar at root and at default resource path -->
+    <mkdir dir="${test.classes}/${os.prefix}"/>
     <copy todir="${test.classes}">
+      <fileset dir="${build.native}">
+        <include name="*testlib-jar*"/>
+      </fileset>
+    </copy>
+    <copy todir="${test.classes}/${os.prefix}">
       <fileset dir="${build.native}">
         <include name="*testlib-jar*"/>
       </fileset>
