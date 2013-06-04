@@ -665,7 +665,7 @@ callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   data->repeat_count = n;
   data->sleep_time = ms;
   data->func = func;
-  snprintf(data->name, sizeof(data->name), name);
+  snprintf(data->name, sizeof(data->name), "%s", name);
   THREAD_CREATE(&thread, &thread_function, data);
 }
 
