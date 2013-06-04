@@ -106,12 +106,22 @@ static char*
 w32_format_error(int error, char* buf, int len) {
   wchar_t* wbuf = NULL;
   int wlen =
-    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_ALLOCATE_BUFFER,
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
+                   |FORMAT_MESSAGE_IGNORE_INSERTS
+                   |FORMAT_MESSAGE_ALLOCATE_BUFFER,
                    NULL, error, 0, (LPWSTR)&wbuf, 0, NULL);
   if (wlen > 0) {
-    WideCharToMultiByte(CP_UTF8, 0, wbuf, wlen+1, buf, len, NULL, NULL);
+    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
+    if (result == 0) {
+      fprintf(stderr, "JNA: error converting error message: %d\n", GET_LAST_ERROR());
+      *buf = 0;
+    }
+    else {
+      buf[len-1] = 0;
+    }
   }
   else {
+    // Error retrieving message
     *buf = 0;
   }
   if (wbuf) {
@@ -561,20 +571,20 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   status = ffi_prep_cif(&cif, abi, nargs, ffi_return_type, ffi_types);
   if (!ffi_error(env, "Native call setup", status)) {
     PSTART();
-    if (flags & THROW_LAST_ERROR) {
+    if ((flags & THROW_LAST_ERROR) != 0) {
       SET_LAST_ERROR(0);
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
-    if (flags & THROW_LAST_ERROR) {
+    {
       int error = GET_LAST_ERROR();
-      if (error) {
+      JNA_set_last_error(env, error);
+      if ((flags & THROW_LAST_ERROR) && error) {
         char emsg[1024];
         snprintf(msg, sizeof(msg), "[%d] %s", error, STR_ERROR(error, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
     }
-    JNA_set_last_error(env, GET_LAST_ERROR());
 
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
@@ -1742,16 +1752,16 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       SET_LAST_ERROR(0);
     }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
-    if (data->throw_last_error) {
+    {
       int error = GET_LAST_ERROR();
-      if (error) {
+      JNA_set_last_error(env, error);
+      if (data->throw_last_error && error) {
         char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+        snprintf(msg, sizeof(msg), "[%d] %s", error, STR_ERROR(error, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
     }
-    JNA_set_last_error(env, GET_LAST_ERROR());
 
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
