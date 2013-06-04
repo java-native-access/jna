@@ -29,6 +29,7 @@ typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;
 typedef __int64 int64_t;
+#include "snprintf.h"
 #else 
 #include <stdint.h>
 #endif
@@ -660,12 +661,11 @@ EXPORT void
 callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   THREAD_T thread;
   thread_data* data = (thread_data*)malloc(sizeof(thread_data));
-  size_t len = strlen(name);
+
   data->repeat_count = n;
   data->sleep_time = ms;
   data->func = func;
-  memcpy(data->name, name, len < sizeof(data->name) ? len + 1 : sizeof(data->name));
-  data->name[sizeof(data->name)-1] = 0;
+  snprintf(data->name, sizeof(data->name), name);
   THREAD_CREATE(&thread, &thread_function, data);
 }
 
