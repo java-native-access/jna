@@ -2,6 +2,7 @@ Next Release (4.0)
 ==================
 
 NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
 Features
@@ -32,6 +33,7 @@ Bug Fixes
 * Avoid solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
 * Fixed NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
 * [#237](https://github.com/twall/jna/issues/237): Fix LastErrorException/getLastError on AIX - [@skissane](https://github.com/skissane).
+* [#228](https://github.com/twall/jna/issues/228): Fix win32/win64 crashes due to LastErrorException buffer overruns (`snprintf` on windows is broken) - [@davidhoyt](https://github.com/davidhoyt).
 
 Release 3.5.2
 =============

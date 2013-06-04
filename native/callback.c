@@ -108,7 +108,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   jsize argc;
   JavaVM* vm;
   int rtype;
-  char msg[64];
+  char msg[MSG_SIZE];
   int i;
   int cvt = 0;
   const char* throw_type = NULL;
@@ -644,8 +644,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
     tls = get_thread_storage(env);
     if (tls) {
-      strncpy(tls->name, args.name ? args.name : "<unconfigured native thread>", sizeof(tls->name));
-      tls->name[sizeof(tls->name)-1] = 0;
+      snprintf(tls->name, sizeof(tls->name), "%s", args.name ? args.name : "<unconfigured native thread>");
       tls->detach = detach;
       tls->jvm_thread = JNI_FALSE;
     }

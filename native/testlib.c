@@ -660,10 +660,12 @@ EXPORT void
 callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   THREAD_T thread;
   thread_data* data = (thread_data*)malloc(sizeof(thread_data));
+  size_t len = strlen(name);
   data->repeat_count = n;
   data->sleep_time = ms;
   data->func = func;
-  snprintf(data->name, sizeof(data->name), "%s", name);
+  memcpy(data->name, name, len < sizeof(data->name) ? len + 1 : sizeof(data->name));
+  data->name[sizeof(data->name)-1] = 0;
   THREAD_CREATE(&thread, &thread_function, data);
 }
 

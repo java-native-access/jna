@@ -103,13 +103,13 @@ extern "C" {
 
 #ifdef _WIN32
 static char*
-w32_format_error(int error, char* buf, int len) {
+w32_format_error(int err, char* buf, int len) {
   wchar_t* wbuf = NULL;
   int wlen =
     FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
                    |FORMAT_MESSAGE_IGNORE_INSERTS
                    |FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                   NULL, error, 0, (LPWSTR)&wbuf, 0, NULL);
+                   NULL, err, 0, (LPWSTR)&wbuf, 0, NULL);
   if (wlen > 0) {
     int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
     if (result == 0) {
@@ -127,6 +127,7 @@ w32_format_error(int error, char* buf, int len) {
   if (wbuf) {
     LocalFree(wbuf);
   }
+
   return buf;
 }
 static HANDLE
@@ -355,7 +356,7 @@ throwByName(JNIEnv *env, const char *name, const char *msg)
 /** Translate FFI errors into exceptions. */
 jboolean
 ffi_error(JNIEnv* env, const char* op, ffi_status status) {
-  char msg[256];
+  char msg[MSG_SIZE];
   switch(status) {
   case FFI_BAD_ABI:
     snprintf(msg, sizeof(msg), "%s: Invalid calling convention", op);
@@ -394,7 +395,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   void** ffi_values;
   ffi_abi abi;
   ffi_status status;
-  char msg[128];
+  char msg[MSG_SIZE];
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
@@ -576,11 +577,11 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
     {
-      int error = GET_LAST_ERROR();
-      JNA_set_last_error(env, error);
-      if ((flags & THROW_LAST_ERROR) && error) {
-        char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d] %s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+      int err = GET_LAST_ERROR();
+      JNA_set_last_error(env, err);
+      if ((flags & THROW_LAST_ERROR) && err) {
+        char emsg[MSG_SIZE];
+        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
@@ -1614,7 +1615,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   void* oldresp = resp;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
-  char msg[64];
+  char msg[MSG_SIZE];
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
@@ -1753,16 +1754,15 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
     {
-      int error = GET_LAST_ERROR();
-      JNA_set_last_error(env, error);
-      if (data->throw_last_error && error) {
-        char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d] %s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+      int err = GET_LAST_ERROR();
+      JNA_set_last_error(env, err);
+      if (data->throw_last_error && err) {
+        char emsg[MSG_SIZE];
+        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
     }
-
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
 
@@ -2598,7 +2598,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
   case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
   default:
     {
-      char msg[1024];
+      char msg[MSG_SIZE];
       snprintf(msg, sizeof(msg), "Invalid sizeof type %d", (int)type);
       throwByName(env, EIllegalArgument, msg);
       return -1;
@@ -2868,12 +2868,12 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #define JAWT_NAME path
 #endif
     if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME, DEFAULT_LOAD_OPTS)) == NULL) {
-      char msg[1024];
+      char msg[MSG_SIZE];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
       return -1;
     }
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
-      char msg[1024], buf[1024];
+      char msg[MSG_SIZE], buf[MSG_SIZE];
       snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
                METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
       throwByName(env, EUnsatisfiedLink, msg);

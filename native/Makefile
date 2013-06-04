@@ -167,7 +167,7 @@ ifeq ($(ARCH),amd64)
 USE_MSVC=true
 else
 # To build 32-bit under MSVC, un-comment this line (default is gcc)
-#USE_MSVC=true
+USE_MSVC=true
 endif
 
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
