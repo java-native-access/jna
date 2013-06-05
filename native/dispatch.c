@@ -113,7 +113,7 @@ w32_format_error(int err, char* buf, int len) {
   if (wlen > 0) {
     int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
     if (result == 0) {
-      fprintf(stderr, "JNA: error converting error message: %d\n", GET_LAST_ERROR());
+      fprintf(stderr, "JNA: error converting error message: %d\n", (int)GET_LAST_ERROR());
       *buf = 0;
     }
     else {
