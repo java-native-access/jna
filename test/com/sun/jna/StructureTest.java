@@ -158,7 +158,7 @@ public class StructureTest extends TestCase {
         }
         Structure s = new TestStructure();
         s.setAlignType(Structure.ALIGN_GNUC);
-        final int SIZE = Native.MAX_PADDING == 8 ? 32 : 28;
+        final int SIZE = Native.MAX_ALIGNMENT == 8 ? 32 : 28;
         assertEquals("Wrong structure size", SIZE, s.size());
     }
 

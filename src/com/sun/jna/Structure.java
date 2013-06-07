@@ -1301,7 +1301,7 @@ public abstract class Structure {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
             if (!isFirstElement || !(Platform.isMac() && Platform.isPPC())) {
-                alignment = Math.min(Native.MAX_PADDING, alignment);
+                alignment = Math.min(Native.MAX_ALIGNMENT, alignment);
             }
             if (!isFirstElement && Platform.isAIX() && (type == double.class || type == Double.class)) {
                 alignment = 4;

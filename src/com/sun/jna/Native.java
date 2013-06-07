@@ -124,6 +124,7 @@ public final class Native implements Version {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
+    static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
 
     static {
@@ -153,10 +154,12 @@ public final class Native implements Version {
                             + " - set jna.boot.library.path to include the path to the version of the " + LS
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-	MAX_PADDING = Platform.isSPARC() || Platform.isWindows() || Platform.isARM()
-            || Platform.isAIX() || Platform.isAndroid()
-            || Platform.isPPC()
+	MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
+            || (Platform.isLinux() && (Platform.isARM() || Platform.isPPC()))
+            || Platform.isAIX()
+            || Platform.isAndroid()
             ? 8 : LONG_SIZE;
+        MAX_PADDING = (Platform.isMac() && Platform.isPPC()) ? 8 : MAX_ALIGNMENT;
     }
 
     /** Force a dispose when this class is GC'd. */
