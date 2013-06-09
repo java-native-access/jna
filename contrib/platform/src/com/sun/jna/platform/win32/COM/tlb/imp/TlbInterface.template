@@ -8,6 +8,7 @@ import com.sun.jna.platform.win32.WinDef.*;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.*;
 import com.sun.jna.platform.win32.COM.*;
+import com.sun.jna.platform.win32.Guid.*;
 
 /**
 * uuid(${uuid})

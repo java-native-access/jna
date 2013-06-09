@@ -34,40 +34,42 @@ import com.sun.jna.platform.win32.COM.IUnknown;
  */
 public class TlbPropertyGetStub extends TlbAbstractMethod implements Variant {
 
-	/**
-	 * Instantiates a new tlb property get.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param typeLibUtil
-	 *            the type lib util
-	 * @param funcDesc
-	 *            the func desc
-	 * @param typeInfoUtil
-	 *            the type info util
-	 */
-	public TlbPropertyGetStub(int index, TypeLibUtil typeLibUtil,
-			FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
-		super(index, typeLibUtil, funcDesc, typeInfoUtil);
+    /**
+     * Instantiates a new tlb property get.
+     * 
+     * @param index
+     *            the index
+     * @param typeLibUtil
+     *            the type lib util
+     * @param funcDesc
+     *            the func desc
+     * @param typeInfoUtil
+     *            the type info util
+     */
+    public TlbPropertyGetStub(int index, TypeLibUtil typeLibUtil,
+	    FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
+	super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
-		TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
-		String docStr = typeInfoDoc.getDocString();
-		String methodname = "get" + typeInfoDoc.getName();
-		ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
-		String returnType = this.getVarType(elemDesdRetType.tdesc.vt);
+	TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
+	String docStr = typeInfoDoc.getDocString();
+	String methodname = "get" + typeInfoDoc.getName();
+	short vtableId = funcDesc.oVft;
+	ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
+	String returnType = this.getVarType(elemDesdRetType.tdesc.vt);
 
-		this.replaceVariable("helpstring", docStr);
-		this.replaceVariable("returntype", returnType);
-		this.replaceVariable("methodname", methodname);
-	}
+	this.replaceVariable("helpstring", docStr);
+	this.replaceVariable("returntype", returnType);
+	this.replaceVariable("methodname", methodname);
+	this.replaceVariable("vtableid", String.valueOf(vtableId));
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
-	 */
-	@Override
-	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbPropertyGetStub.template";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
+     */
+    @Override
+    protected String getClassTemplate() {
+	return "com/sun/jna/platform/win32/COM/tlb/imp/TlbPropertyGetStub.template";
+    }
 }

@@ -77,7 +77,7 @@ public class IUnknownTest extends TestCase {
 
 	public void testAddRef() {
 		System.out.println("start 'testAddRef'");
-		int addRef = this.iDispatch.AddRef();
+		int addRef = this.iDispatch.AddRef().intValue();
 
 		System.out.println("addRef:" + addRef);
 		System.out.println("end 'testAddRef'");
@@ -85,7 +85,7 @@ public class IUnknownTest extends TestCase {
 
 	public void testRelease() {
 		System.out.println("start 'testQueryInterface'");
-		int release = this.iDispatch.Release();
+		int release = this.iDispatch.Release().intValue();
 
 		System.out.println("release:" + release);
 		System.out.println("end 'testRelease'");

@@ -1,6 +1,7 @@
-		/**
-		 * ${helpstring}
-		 */
-		public ${returntype} ${methodname}(${methodparams}) {
-			this._invokeInt(${vtableid}, new Object[] { this.getPointer()${methodvariables}});
-		}
+	/**
+	 * ${helpstring}
+	 */
+	@VTABLE_ID(${vtableid})
+	public ${returntype} ${methodname}(${methodparams}) {
+		this._invokeNativeInt(${vtableid}, new Object[] { this.getPointer()${methodvariables}});
+	}

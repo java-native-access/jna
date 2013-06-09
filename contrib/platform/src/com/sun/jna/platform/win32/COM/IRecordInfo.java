@@ -30,65 +30,65 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  */
 public interface IRecordInfo extends IUnknown {
 
-	public final static IID IID_IRecordInfo = new IID(
-			"{0000002F-0000-0000-C000-000000000046}");
+    public final static IID IID_IRecordInfo = new IID(
+	    "{0000002F-0000-0000-C000-000000000046}");
 
-	public HRESULT RecordInit(/* [out] */PVOID pvNew);
+    public HRESULT RecordInit(/* [out] */PVOID pvNew);
 
-	public HRESULT RecordClear(
-	/* [in] */PVOID pvExisting);
+    public HRESULT RecordClear(
+    /* [in] */PVOID pvExisting);
 
-	public HRESULT RecordCopy(/* [in] */PVOID pvExisting,
-	/* [out] */PVOID pvNew);
+    public HRESULT RecordCopy(/* [in] */PVOID pvExisting,
+    /* [out] */PVOID pvNew);
 
-	public HRESULT GetGuid(
-	/* [out] */GUID pguid);
+    public HRESULT GetGuid(
+    /* [out] */GUID pguid);
 
-	public HRESULT GetName(
-	/* [out] */BSTR pbstrName);
+    public HRESULT GetName(
+    /* [out] */BSTR pbstrName);
 
-	public HRESULT GetSize(
-	/* [out] */ULONG pcbSize);
+    public HRESULT GetSize(
+    /* [out] */ULONG pcbSize);
 
-	public HRESULT GetTypeInfo(
-	/* [out] */ITypeInfo ppTypeInfo);
+    public HRESULT GetTypeInfo(
+    /* [out] */ITypeInfo ppTypeInfo);
 
-	public HRESULT GetField(
-	/* [in] */PVOID pvData,
-	/* [in] */WString szFieldName,
-	/* [out] */VARIANT pvarField);
+    public HRESULT GetField(
+    /* [in] */PVOID pvData,
+    /* [in] */WString szFieldName,
+    /* [out] */VARIANT pvarField);
 
-	public HRESULT GetFieldNoCopy(
-	/* [in] */PVOID pvData,
-	/* [in] */WString szFieldName,
-	/* [out] */VARIANT pvarField,
-	/* [out] */PVOID ppvDataCArray);
+    public HRESULT GetFieldNoCopy(
+    /* [in] */PVOID pvData,
+    /* [in] */WString szFieldName,
+    /* [out] */VARIANT pvarField,
+    /* [out] */PVOID ppvDataCArray);
 
-	public HRESULT PutField(
-	/* [in] */ULONG wFlags,
-	/* [out][in] */PVOID pvData,
-	/* [in] */WString szFieldName,
-	/* [in] */VARIANT pvarField);
+    public HRESULT PutField(
+    /* [in] */ULONG wFlags,
+    /* [out][in] */PVOID pvData,
+    /* [in] */WString szFieldName,
+    /* [in] */VARIANT pvarField);
 
-	public HRESULT PutFieldNoCopy(
-	/* [in] */ULONG wFlags,
-	/* [out][in] */PVOID pvData,
-	/* [in] */WString szFieldName,
-	/* [in] */VARIANT pvarField);
+    public HRESULT PutFieldNoCopy(
+    /* [in] */ULONG wFlags,
+    /* [out][in] */PVOID pvData,
+    /* [in] */WString szFieldName,
+    /* [in] */VARIANT pvarField);
 
-	public HRESULT GetFieldNames(
-	/* [out][in] */ULONG pcNames,
-	/* [length_is][size_is][out] */BSTR rgBstrNames);
+    public HRESULT GetFieldNames(
+    /* [out][in] */ULONG pcNames,
+    /* [length_is][size_is][out] */BSTR rgBstrNames);
 
-	public BOOL IsMatchingType(
-	/* [in] */IRecordInfo pRecordInfo);
+    public BOOL IsMatchingType(
+    /* [in] */IRecordInfo pRecordInfo);
 
-	public PVOID RecordCreate();
+    public PVOID RecordCreate();
 
-	public HRESULT RecordCreateCopy(
-	/* [in] */PVOID pvSource,
-	/* [out] */PVOID ppvDest);
+    public HRESULT RecordCreateCopy(
+    /* [in] */PVOID pvSource,
+    /* [out] */PVOID ppvDest);
 
-	public HRESULT RecordDestroy(
-	/* [in] */PVOID pvRecord);
+    public HRESULT RecordDestroy(
+    /* [in] */PVOID pvRecord);
 }

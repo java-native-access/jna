@@ -31,78 +31,79 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
  */
 public class TlbEnum extends TlbBase {
 
-	/**
-	 * Instantiates a new tlb enum.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param typeLibUtil
-	 *            the type lib util
-	 */
-	public TlbEnum(int index, String packagename, TypeLibUtil typeLibUtil) {
-		super(index, typeLibUtil);
+    /**
+     * Instantiates a new tlb enum.
+     * 
+     * @param index
+     *            the index
+     * @param typeLibUtil
+     *            the type lib util
+     */
+    public TlbEnum(int index, String packagename, TypeLibUtil typeLibUtil) {
+	super(index, typeLibUtil);
 
-		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-		String enumName = typeLibDoc.getName();
-		String docString = typeLibDoc.getDocString();
-		
-		this.logInfo("Type of kind 'enum' found: " + enumName);
-		this.createPackageName(packagename);
-		this.createClassName(enumName);
-		this.setFilename(enumName);
-		
-		// Get the TypeAttributes
-		TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
-		TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+	TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
+	String enumName = typeLibDoc.getName();
+	String docString = typeLibDoc.getDocString();
 
-		this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
+	this.logInfo("Type of kind 'Enum' found: " + enumName);
 
-		int cVars = typeAttr.cVars.intValue();
-		for (int i = 0; i < cVars; i++) {
-			// Get the property description
-			VARDESC varDesc = typeInfoUtil.getVarDesc(i);
-			VARIANT constValue = varDesc._vardesc.lpvarValue;
-			Object value = constValue.getValue();
+	this.createPackageName(packagename);
+	this.createClassName(enumName);
+	this.setFilename(enumName);
 
-			// Get the member ID
-			MEMBERID memberID = varDesc.memid;
+	// Get the TypeAttributes
+	TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+	TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
 
-			// Get the name of the property
-			TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
-			this.content += TABTAB + "//" + typeInfoDoc2.getName() + CR;
-			this.content += TABTAB + "public static final int "
-					+ typeInfoDoc2.getName() + " = " + value.toString() + ";";
+	this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
 
-			if (i < cVars - 1)
-				this.content += CR;
+	int cVars = typeAttr.cVars.intValue();
+	for (int i = 0; i < cVars; i++) {
+	    // Get the property description
+	    VARDESC varDesc = typeInfoUtil.getVarDesc(i);
+	    VARIANT constValue = varDesc._vardesc.lpvarValue;
+	    Object value = constValue.getValue();
 
-			// release the pointer
-			typeInfoUtil.ReleaseVarDesc(varDesc);
-		}
+	    // Get the member ID
+	    MEMBERID memberID = varDesc.memid;
 
-		this.createContent(this.content);
+	    // Get the name of the property
+	    TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+	    this.content += TABTAB + "//" + typeInfoDoc2.getName() + CR;
+	    this.content += TABTAB + "public static final int "
+		    + typeInfoDoc2.getName() + " = " + value.toString() + ";";
+
+	    if (i < cVars - 1)
+		this.content += CR;
+
+	    // release the pointer
+	    typeInfoUtil.ReleaseVarDesc(varDesc);
 	}
 
-	/**
-	 * Creates the java doc header.
-	 * 
-	 * @param guid
-	 *            the guid
-	 * @param helpstring
-	 *            the helpstring
-	 */
-	protected void createJavaDocHeader(String guid, String helpstring) {
-		this.replaceVariable("uuid", guid);
-		this.replaceVariable("helpstring", helpstring);
-	}
+	this.createContent(this.content);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
-	 */
-	@Override
-	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";
-	}
+    /**
+     * Creates the java doc header.
+     * 
+     * @param guid
+     *            the guid
+     * @param helpstring
+     *            the helpstring
+     */
+    protected void createJavaDocHeader(String guid, String helpstring) {
+	this.replaceVariable("uuid", guid);
+	this.replaceVariable("helpstring", helpstring);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
+     */
+    @Override
+    protected String getClassTemplate() {
+	return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";
+    }
 }

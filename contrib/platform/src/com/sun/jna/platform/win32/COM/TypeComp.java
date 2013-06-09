@@ -30,80 +30,80 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class TypeComp extends Unknown {
 
-	public static class ByReference extends TypeComp implements
-			Structure.ByReference {
-	}
+    public static class ByReference extends TypeComp implements
+	    Structure.ByReference {
+    }
 
-	private ITypeComp iTypeComp;
+    private ITypeComp iTypeComp;
 
-	/**
-	 * Instantiates a new i type comp.
-	 */
-	public TypeComp() {
-		this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
-	}
+    /**
+     * Instantiates a new i type comp.
+     */
+    public TypeComp() {
+	this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
+    }
 
-	/**
-	 * Instantiates a new i type comp.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public TypeComp(Pointer pvInstance) {
-		super(pvInstance);
-		this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
-	}
+    /**
+     * Instantiates a new i type comp.
+     * 
+     * @param pvInstance
+     *            the pv instance
+     */
+    public TypeComp(Pointer pvInstance) {
+	super(pvInstance);
+	this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
+    }
 
-	/**
-	 * Bind.
-	 * 
-	 * @param szName
-	 *            the sz name
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param wFlags
-	 *            the w flags
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @param pDescKind
-	 *            the desc kind
-	 * @param pBindPtr
-	 *            the bind ptr
-	 * @return the hresult
-	 */
-	public HRESULT Bind(
-	/* [annotation][in] */
-	WString szName,
-	/* [in] */ULONG lHashVal,
-	/* [in] */WORD wFlags,
-	/* [out] */PointerByReference ppTInfo,
-	/* [out] */DESCKIND.ByReference pDescKind,
-	/* [out] */BINDPTR.ByReference pBindPtr) {
+    /**
+     * Bind.
+     * 
+     * @param szName
+     *            the sz name
+     * @param lHashVal
+     *            the l hash val
+     * @param wFlags
+     *            the w flags
+     * @param ppTInfo
+     *            the pp t info
+     * @param pDescKind
+     *            the desc kind
+     * @param pBindPtr
+     *            the bind ptr
+     * @return the hresult
+     */
+    public HRESULT Bind(
+    /* [annotation][in] */
+    WString szName,
+    /* [in] */ULONG lHashVal,
+    /* [in] */WORD wFlags,
+    /* [out] */PointerByReference ppTInfo,
+    /* [out] */DESCKIND.ByReference pDescKind,
+    /* [out] */BINDPTR.ByReference pBindPtr) {
 
-		return this.iTypeComp.Bind(szName, lHashVal, wFlags, ppTInfo,
-				pDescKind, pBindPtr);
-	}
+	return this.iTypeComp.Bind(szName, lHashVal, wFlags, ppTInfo,
+		pDescKind, pBindPtr);
+    }
 
-	/**
-	 * Bind type.
-	 * 
-	 * @param szName
-	 *            the sz name
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @param ppTComp
-	 *            the pp t comp
-	 * @return the hresult
-	 */
-	public HRESULT BindType(
-	/* [annotation][in] */
-	WString szName,
-	/* [in] */ULONG lHashVal,
-	/* [out] */PointerByReference ppTInfo,
-	/* [out] */PointerByReference ppTComp) {
+    /**
+     * Bind type.
+     * 
+     * @param szName
+     *            the sz name
+     * @param lHashVal
+     *            the l hash val
+     * @param ppTInfo
+     *            the pp t info
+     * @param ppTComp
+     *            the pp t comp
+     * @return the hresult
+     */
+    public HRESULT BindType(
+    /* [annotation][in] */
+    WString szName,
+    /* [in] */ULONG lHashVal,
+    /* [out] */PointerByReference ppTInfo,
+    /* [out] */PointerByReference ppTComp) {
 
-		return this.iTypeComp.BindType(szName, lHashVal, ppTInfo, ppTComp);
-	}
+	return this.iTypeComp.BindType(szName, lHashVal, ppTInfo, ppTComp);
+    }
 }

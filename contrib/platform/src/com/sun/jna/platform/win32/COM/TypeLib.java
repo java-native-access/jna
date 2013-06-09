@@ -36,193 +36,193 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class TypeLib extends Unknown implements ITypeLib {
 
-	public static class ByReference extends TypeLib implements
-			Structure.ByReference {
-	}
+    public static class ByReference extends TypeLib implements
+	    Structure.ByReference {
+    }
 
-	private ITypeLib iTypeLib;
+    private ITypeLib iTypeLib;
 
-	/**
-	 * Instantiates a new i type lib.
-	 */
-	public TypeLib() {
-		this.iTypeLib = (ITypeLib) this.createCOMClass(ITypeLib.class);
-	}
+    /**
+     * Instantiates a new i type lib.
+     */
+    public TypeLib() {
+	this.iTypeLib = (ITypeLib) this.createCOMClass(ITypeLib.class);
+    }
 
-	/**
-	 * Instantiates a new i type lib.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public TypeLib(Pointer pvInstance) {
-		super(pvInstance);
-		this.iTypeLib = (ITypeLib) this.createCOMClass(ITypeLib.class);
-	}
+    /**
+     * Instantiates a new i type lib.
+     * 
+     * @param pvInstance
+     *            the pv instance
+     */
+    public TypeLib(Pointer pvInstance) {
+	super(pvInstance);
+	this.iTypeLib = (ITypeLib) this.createCOMClass(ITypeLib.class);
+    }
 
-	/**
-	 * Gets the type info count.
-	 * 
-	 * @return the uint
-	 */
-	public UINT GetTypeInfoCount() {
-		return this.iTypeLib.GetTypeInfoCount();
-	}
+    /**
+     * Gets the type info count.
+     * 
+     * @return the uint
+     */
+    public UINT GetTypeInfoCount() {
+	return this.iTypeLib.GetTypeInfoCount();
+    }
 
-	/**
-	 * Gets the type info.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param pTInfo
-	 *            the t info
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfo(
-	/* [in] */UINT index,
-	/* [out] */PointerByReference pTInfo) {
+    /**
+     * Gets the type info.
+     * 
+     * @param index
+     *            the index
+     * @param pTInfo
+     *            the t info
+     * @return the hresult
+     */
+    public HRESULT GetTypeInfo(
+    /* [in] */UINT index,
+    /* [out] */PointerByReference pTInfo) {
 
-		return this.iTypeLib.GetTypeInfo(index, pTInfo);
-	}
+	return this.iTypeLib.GetTypeInfo(index, pTInfo);
+    }
 
-	/**
-	 * Gets the type info type.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param pTKind
-	 *            the t kind
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfoType(
-	/* [in] */UINT index,
-	/* [out] */TYPEKIND.ByReference pTKind) {
+    /**
+     * Gets the type info type.
+     * 
+     * @param index
+     *            the index
+     * @param pTKind
+     *            the t kind
+     * @return the hresult
+     */
+    public HRESULT GetTypeInfoType(
+    /* [in] */UINT index,
+    /* [out] */TYPEKIND.ByReference pTKind) {
 
-		return this.iTypeLib.GetTypeInfoType(index, pTKind);
-	}
+	return this.iTypeLib.GetTypeInfoType(index, pTKind);
+    }
 
-	/**
-	 * Gets the type info of guid.
-	 * 
-	 * @param guid
-	 *            the guid
-	 * @param pTinfo
-	 *            the tinfo
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfoOfGuid(
-	/* [in] */GUID guid,
-	/* [out] */PointerByReference pTinfo) {
+    /**
+     * Gets the type info of guid.
+     * 
+     * @param guid
+     *            the guid
+     * @param pTinfo
+     *            the tinfo
+     * @return the hresult
+     */
+    public HRESULT GetTypeInfoOfGuid(
+    /* [in] */GUID guid,
+    /* [out] */PointerByReference pTinfo) {
 
-		return this.iTypeLib.GetTypeInfoOfGuid(guid, pTinfo);
-	}
+	return this.iTypeLib.GetTypeInfoOfGuid(guid, pTinfo);
+    }
 
-	/**
-	 * Gets the lib attr.
-	 * 
-	 * @param ppTLibAttr
-	 *            the pp t lib attr
-	 * @return the hresult
-	 */
-	public HRESULT GetLibAttr(
-	/* [out] */PointerByReference ppTLibAttr) {
+    /**
+     * Gets the lib attr.
+     * 
+     * @param ppTLibAttr
+     *            the pp t lib attr
+     * @return the hresult
+     */
+    public HRESULT GetLibAttr(
+    /* [out] */PointerByReference ppTLibAttr) {
 
-		return this.iTypeLib.GetLibAttr(ppTLibAttr);
-	}
+	return this.iTypeLib.GetLibAttr(ppTLibAttr);
+    }
 
-	/**
-	 * Gets the type comp.
-	 * 
-	 * @param pTComp
-	 *            the t comp
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeComp(
-	/* [out] */PointerByReference pTComp) {
+    /**
+     * Gets the type comp.
+     * 
+     * @param pTComp
+     *            the t comp
+     * @return the hresult
+     */
+    public HRESULT GetTypeComp(
+    /* [out] */PointerByReference pTComp) {
 
-		return this.iTypeLib.GetTypeComp(pTComp);
-	}
+	return this.iTypeLib.GetTypeComp(pTComp);
+    }
 
-	/**
-	 * Gets the documentation.
-	 * 
-	 * @param index
-	 *            the index
-	 * @param pBstrName
-	 *            the bstr name
-	 * @param pBstrDocString
-	 *            the bstr doc string
-	 * @param pdwHelpContext
-	 *            the pdw help context
-	 * @param pBstrHelpFile
-	 *            the bstr help file
-	 * @return the hresult
-	 */
-	public HRESULT GetDocumentation(
-	/* [in] */int index,
-	/* [out] */BSTRByReference pBstrName,
-	/* [out] */BSTRByReference pBstrDocString,
-	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTRByReference pBstrHelpFile) {
+    /**
+     * Gets the documentation.
+     * 
+     * @param index
+     *            the index
+     * @param pBstrName
+     *            the bstr name
+     * @param pBstrDocString
+     *            the bstr doc string
+     * @param pdwHelpContext
+     *            the pdw help context
+     * @param pBstrHelpFile
+     *            the bstr help file
+     * @return the hresult
+     */
+    public HRESULT GetDocumentation(
+    /* [in] */int index,
+    /* [out] */BSTRByReference pBstrName,
+    /* [out] */BSTRByReference pBstrDocString,
+    /* [out] */DWORDbyReference pdwHelpContext,
+    /* [out] */BSTRByReference pBstrHelpFile) {
 
-		return this.iTypeLib.GetDocumentation(index, pBstrName, pBstrDocString,
-				pdwHelpContext, pBstrHelpFile);
-	}
+	return this.iTypeLib.GetDocumentation(index, pBstrName, pBstrDocString,
+		pdwHelpContext, pBstrHelpFile);
+    }
 
-	/**
-	 * Checks if is name.
-	 * 
-	 * @param szNameBuf
-	 *            the sz name buf
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param pfName
-	 *            the pf name
-	 * @return the hresult
-	 */
-	public HRESULT IsName(
-	/* [annotation][out][in] */
-	LPOLESTR szNameBuf,
-	/* [in] */ULONG lHashVal,
-	/* [out] */BOOLbyReference pfName) {
+    /**
+     * Checks if is name.
+     * 
+     * @param szNameBuf
+     *            the sz name buf
+     * @param lHashVal
+     *            the l hash val
+     * @param pfName
+     *            the pf name
+     * @return the hresult
+     */
+    public HRESULT IsName(
+    /* [annotation][out][in] */
+    LPOLESTR szNameBuf,
+    /* [in] */ULONG lHashVal,
+    /* [out] */BOOLbyReference pfName) {
 
-		return this.iTypeLib.IsName(szNameBuf, lHashVal, pfName);
-	}
+	return this.iTypeLib.IsName(szNameBuf, lHashVal, pfName);
+    }
 
-	/**
-	 * Find name.
-	 * 
-	 * @param szNameBuf
-	 *            the sz name buf
-	 * @param lHashVal
-	 *            the l hash val
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @param rgMemId
-	 *            the rg mem id
-	 * @param pcFound
-	 *            the pc found
-	 * @return the hresult
-	 */
-	public HRESULT FindName(
-	/* [annotation][out][in] */
-	BSTRByReference szNameBuf,
-	/* [in] */ULONG lHashVal,
-	/* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
-	/* [length_is][size_is][out] */MEMBERID[] rgMemId,
-	/* [out][in] */USHORTbyReference pcFound) {
+    /**
+     * Find name.
+     * 
+     * @param szNameBuf
+     *            the sz name buf
+     * @param lHashVal
+     *            the l hash val
+     * @param ppTInfo
+     *            the pp t info
+     * @param rgMemId
+     *            the rg mem id
+     * @param pcFound
+     *            the pc found
+     * @return the hresult
+     */
+    public HRESULT FindName(
+    /* [annotation][out][in] */
+    BSTRByReference szNameBuf,
+    /* [in] */ULONG lHashVal,
+    /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+    /* [length_is][size_is][out] */MEMBERID[] rgMemId,
+    /* [out][in] */USHORTbyReference pcFound) {
 
-		return this.iTypeLib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId,
-				pcFound);
-	}
+	return this.iTypeLib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId,
+		pcFound);
+    }
 
-	/**
-	 * Release t lib attr.
-	 * 
-	 * @param pTLibAttr
-	 *            the t lib attr
-	 */
-	public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr) {
-		this.iTypeLib.ReleaseTLibAttr(pTLibAttr);
-	}
+    /**
+     * Release t lib attr.
+     * 
+     * @param pTLibAttr
+     *            the t lib attr
+     */
+    public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr) {
+	this.iTypeLib.ReleaseTLibAttr(pTLibAttr);
+    }
 }

@@ -28,21 +28,21 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface ITypeComp extends IUnknown {
 
-	@VTABLE_ID(3)
-	public HRESULT Bind(
-	/* [annotation][in] */
-	WString szName,
-	/* [in] */ULONG lHashVal,
-	/* [in] */WORD wFlags,
-	/* [out] */PointerByReference ppTInfo,
-	/* [out] */DESCKIND.ByReference pDescKind,
-	/* [out] */BINDPTR.ByReference pBindPtr);
+    @VTABLE_ID(3)
+    public HRESULT Bind(
+    /* [annotation][in] */
+    WString szName,
+    /* [in] */ULONG lHashVal,
+    /* [in] */WORD wFlags,
+    /* [out] */PointerByReference ppTInfo,
+    /* [out] */DESCKIND.ByReference pDescKind,
+    /* [out] */BINDPTR.ByReference pBindPtr);
 
-	@VTABLE_ID(4)
-	public HRESULT BindType(
-	/* [annotation][in] */
-	WString szName,
-	/* [in] */ULONG lHashVal,
-	/* [out] */PointerByReference ppTInfo,
-	/* [out] */PointerByReference ppTComp);
+    @VTABLE_ID(4)
+    public HRESULT BindType(
+    /* [annotation][in] */
+    WString szName,
+    /* [in] */ULONG lHashVal,
+    /* [out] */PointerByReference ppTInfo,
+    /* [out] */PointerByReference ppTComp);
 }

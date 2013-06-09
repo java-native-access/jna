@@ -34,56 +34,56 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface ITypeLib extends IUnknown {
 
-	@VTABLE_ID(3)
-	public UINT GetTypeInfoCount();
+    @VTABLE_ID(3)
+    public UINT GetTypeInfoCount();
 
-	@VTABLE_ID(4)
-	public HRESULT GetTypeInfo(
-	/* [in] */UINT index,
-	/* [out] */PointerByReference pTInfo);
+    @VTABLE_ID(4)
+    public HRESULT GetTypeInfo(
+    /* [in] */UINT index,
+    /* [out] */PointerByReference pTInfo);
 
-	@VTABLE_ID(5)
-	public HRESULT GetTypeInfoType(
-	/* [in] */UINT index,
-	/* [out] */TYPEKIND.ByReference pTKind);
+    @VTABLE_ID(5)
+    public HRESULT GetTypeInfoType(
+    /* [in] */UINT index,
+    /* [out] */TYPEKIND.ByReference pTKind);
 
-	@VTABLE_ID(6)
-	public HRESULT GetTypeInfoOfGuid(
-	/* [in] */GUID guid,
-	/* [out] */PointerByReference pTinfo);
+    @VTABLE_ID(6)
+    public HRESULT GetTypeInfoOfGuid(
+    /* [in] */GUID guid,
+    /* [out] */PointerByReference pTinfo);
 
-	@VTABLE_ID(7)
-	public HRESULT GetLibAttr(
-	/* [out] */PointerByReference ppTLibAttr);
+    @VTABLE_ID(7)
+    public HRESULT GetLibAttr(
+    /* [out] */PointerByReference ppTLibAttr);
 
-	@VTABLE_ID(8)
-	public HRESULT GetTypeComp(
-	/* [out] */PointerByReference ppTComp);
+    @VTABLE_ID(8)
+    public HRESULT GetTypeComp(
+    /* [out] */PointerByReference ppTComp);
 
-	@VTABLE_ID(9)
-	public HRESULT GetDocumentation(
-	/* [in] */int index,
-	/* [out] */BSTRByReference pBstrName,
-	/* [out] */BSTRByReference pBstrDocString,
-	/* [out] */DWORDbyReference pdwHelpContext,
-	/* [out] */BSTRByReference pBstrHelpFile);
+    @VTABLE_ID(9)
+    public HRESULT GetDocumentation(
+    /* [in] */int index,
+    /* [out] */BSTRByReference pBstrName,
+    /* [out] */BSTRByReference pBstrDocString,
+    /* [out] */DWORDbyReference pdwHelpContext,
+    /* [out] */BSTRByReference pBstrHelpFile);
 
-	@VTABLE_ID(10)
-	public HRESULT IsName(
-	/* [annotation][out][in] */
-	LPOLESTR szNameBuf,
-	/* [in] */ULONG lHashVal,
-	/* [out] */BOOLbyReference pfName);
+    @VTABLE_ID(10)
+    public HRESULT IsName(
+    /* [annotation][out][in] */
+    LPOLESTR szNameBuf,
+    /* [in] */ULONG lHashVal,
+    /* [out] */BOOLbyReference pfName);
 
-	@VTABLE_ID(11)
-	public HRESULT FindName(
-	/* [annotation][out][in] */
-	BSTRByReference szNameBuf,
-	/* [in] */ULONG lHashVal,
-	/* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
-	/* [length_is][size_is][out] */MEMBERID[] rgMemId,
-	/* [out][in] */USHORTbyReference pcFound);
+    @VTABLE_ID(11)
+    public HRESULT FindName(
+    /* [annotation][out][in] */
+    BSTRByReference szNameBuf,
+    /* [in] */ULONG lHashVal,
+    /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+    /* [length_is][size_is][out] */MEMBERID[] rgMemId,
+    /* [out][in] */USHORTbyReference pcFound);
 
-	@VTABLE_ID(12)
-	public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr);
+    @VTABLE_ID(12)
+    public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr);
 }

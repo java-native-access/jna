@@ -39,95 +39,95 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class Dispatch extends Unknown implements IDispatch {
 
-	public static class ByReference extends Dispatch implements
-			Structure.ByReference {
-	}
+    public static class ByReference extends Dispatch implements
+	    Structure.ByReference {
+    }
 
-	private IDispatch iDispatch;
+    private IDispatch iDispatch;
 
-	public Dispatch() {
-		this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
-	}
+    public Dispatch() {
+	this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
+    }
 
-	public Dispatch(Pointer pvInstance) {
-		super(pvInstance);
-		this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
-	}
+    public Dispatch(Pointer pvInstance) {
+	super(pvInstance);
+	this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
+    }
 
-	/**
-	 * Gets the type info count.
-	 * 
-	 * @param pctinfo
-	 *            the pctinfo
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfoCount(UINTbyReference pctinfo) {
-		return this.iDispatch.GetTypeInfoCount(pctinfo);
-	}
+    /**
+     * Gets the type info count.
+     * 
+     * @param pctinfo
+     *            the pctinfo
+     * @return the hresult
+     */
+    public HRESULT GetTypeInfoCount(UINTbyReference pctinfo) {
+	return this.iDispatch.GetTypeInfoCount(pctinfo);
+    }
 
-	/**
-	 * Gets the type info.
-	 * 
-	 * @param iTInfo
-	 *            the i t info
-	 * @param lcid
-	 *            the lcid
-	 * @param ppTInfo
-	 *            the pp t info
-	 * @return the hresult
-	 */
-	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
-			PointerByReference ppTInfo) {
-		return this.iDispatch.GetTypeInfo(iTInfo, lcid, ppTInfo);
-	}
+    /**
+     * Gets the type info.
+     * 
+     * @param iTInfo
+     *            the i t info
+     * @param lcid
+     *            the lcid
+     * @param ppTInfo
+     *            the pp t info
+     * @return the hresult
+     */
+    public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
+	    PointerByReference ppTInfo) {
+	return this.iDispatch.GetTypeInfo(iTInfo, lcid, ppTInfo);
+    }
 
-	/**
-	 * Gets the ids of names.
-	 * 
-	 * @param riid
-	 *            the riid
-	 * @param rgszNames
-	 *            the rgsz names
-	 * @param cNames
-	 *            the c names
-	 * @param lcid
-	 *            the lcid
-	 * @param rgDispId
-	 *            the rg disp id
-	 * @return the hresult
-	 */
-	public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-			LCID lcid, DISPIDbyReference rgDispId) {
-		return this.iDispatch.GetIDsOfNames(riid, rgszNames, cNames, lcid,
-				rgDispId);
-	}
+    /**
+     * Gets the ids of names.
+     * 
+     * @param riid
+     *            the riid
+     * @param rgszNames
+     *            the rgsz names
+     * @param cNames
+     *            the c names
+     * @param lcid
+     *            the lcid
+     * @param rgDispId
+     *            the rg disp id
+     * @return the hresult
+     */
+    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+	    LCID lcid, DISPIDbyReference rgDispId) {
+	return this.iDispatch.GetIDsOfNames(riid, rgszNames, cNames, lcid,
+		rgDispId);
+    }
 
-	/**
-	 * Invoke.
-	 * 
-	 * @param dispIdMember
-	 *            the disp id member
-	 * @param riid
-	 *            the riid
-	 * @param lcid
-	 *            the lcid
-	 * @param wFlags
-	 *            the w flags
-	 * @param pDispParams
-	 *            the disp params
-	 * @param pVarResult
-	 *            the var result
-	 * @param pExcepInfo
-	 *            the excep info
-	 * @param puArgErr
-	 *            the pu arg err
-	 * @return the hresult
-	 */
-	public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-			DISPID wFlags, DISPPARAMS pDispParams,
-			VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-			IntByReference puArgErr) {
-		return this.iDispatch.Invoke(dispIdMember, riid, lcid, wFlags,
-				pDispParams, pVarResult, pExcepInfo, puArgErr);
-	}
+    /**
+     * Invoke.
+     * 
+     * @param dispIdMember
+     *            the disp id member
+     * @param riid
+     *            the riid
+     * @param lcid
+     *            the lcid
+     * @param wFlags
+     *            the w flags
+     * @param pDispParams
+     *            the disp params
+     * @param pVarResult
+     *            the var result
+     * @param pExcepInfo
+     *            the excep info
+     * @param puArgErr
+     *            the pu arg err
+     * @return the hresult
+     */
+    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
+	    DISPID wFlags, DISPPARAMS pDispParams,
+	    VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+	    IntByReference puArgErr) {
+	return this.iDispatch.Invoke(dispIdMember, riid, lcid, wFlags,
+		pDispParams, pVarResult, pExcepInfo, puArgErr);
+    }
 }

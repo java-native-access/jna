@@ -16,6 +16,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -30,56 +31,46 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class Unknown extends COMClass implements IUnknown {
 
-	public static class ByReference extends Unknown implements
-			Structure.ByReference {
-	}
+    public static class ByReference extends Unknown implements
+	    Structure.ByReference {
+    }
 
-	private IUnknown iUnknown;
+    private IUnknown iUnknown;
 
-	public Unknown() {
-		this.setPointer(new Memory(Pointer.SIZE));
-		this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);
-	}
+    public Unknown() {
+	this.setPointer(new Memory(Pointer.SIZE));
+	this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);
+    }
 
-	/**
-	 * Instantiates a new i unknown.
-	 * 
-	 * @param pvInstance
-	 *            the pv instance
-	 */
-	public Unknown(Pointer pvInstance) {
-		this.setPointer(pvInstance);
-		this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);		
-	}
+    /**
+     * Instantiates a new i unknown.
+     * 
+     * @param pvInstance
+     *            the pv instance
+     */
+    public Unknown(Pointer pvInstance) {
+	this.setPointer(pvInstance);
+	this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);
+    }
 
-	/**
-	 * Query interface.
-	 * 
-	 * @param riid
-	 *            the riid
-	 * @param ppvObject
-	 *            the ppv object
-	 * @return the hresult
-	 */
-	public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-		return this.iUnknown.QueryInterface(riid, ppvObject);
-	}
+    /**
+     * Query interface.
+     * 
+     * @param riid
+     *            the riid
+     * @param ppvObject
+     *            the ppv object
+     * @return the hresult
+     */
+    public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
+	return this.iUnknown.QueryInterface(riid, ppvObject);
+    }
 
-	/**
-	 * Adds the ref.
-	 * 
-	 * @return the ulong
-	 */
-	public int AddRef() {
-		return this.iUnknown.AddRef();
-	}
+    public UINT AddRef() {
+	return this.iUnknown.AddRef();
+    }
 
-	/**
-	 * Release.
-	 * 
-	 * @return the ulong
-	 */
-	public int Release() {
-		return this.iUnknown.Release();
-	}
+    public UINT Release() {
+	return this.iUnknown.Release();
+    }
 }

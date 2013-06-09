@@ -1,4 +1,5 @@
-		/**
-		 * ${helpstring}
-		 */
-		public ${returntype} ${methodname}();
+	/**
+	 * ${helpstring}
+	 */
+	@VTABLE_ID(${vtableid})	 
+	public ${returntype} ${methodname}();
