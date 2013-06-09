@@ -22,7 +22,7 @@ import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbBase;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCoClass;
-import com.sun.jna.platform.win32.COM.tlb.imp.TlbDispatchInterface;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbDispInterface;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbEnum;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbInterface;
 
@@ -52,11 +52,6 @@ public class TlbImp {
 	/** The out. */
 	private File comRootDir;
 
-	private String packageName;
-
-	/** The content buffer. */
-	private StringBuffer contentBuffer = new StringBuffer();
-
 	/**
 	 * The main method.
 	 * 
@@ -70,22 +65,21 @@ public class TlbImp {
 	public TlbImp() {
 		Native.setProtected(true);
 	}
-	
+
 	/**
 	 * Start co m2 java.
 	 */
 	public void startCOM2Java() {
 		try {
 			this.typeLibUtil = new TypeLibUtil(TYPELIB_ID_SHELL, 1, 0);
-
+			// create output Dir
 			this.createDir();
-			this.createMainClass();
 
 			for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
 				TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
 
 				if (typekind.value == TYPEKIND.TKIND_ENUM) {
-					this.createCOMEnum(i, typeLibUtil);
+					this.createCOMEnum(i, this.getPackageName(), typeLibUtil);
 				} else if (typekind.value == TYPEKIND.TKIND_RECORD) {
 					System.out
 							.println("'TKIND_RECORD' objects are currently not supported!");
@@ -93,17 +87,19 @@ public class TlbImp {
 					System.out
 							.println("'TKIND_MODULE' objects are currently not supported!");
 				} else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
-					this.createCOMInterface(i, typeLibUtil);
+					this.createCOMInterface(i, this.getPackageName(),
+							typeLibUtil);
 				} else if (typekind.value == TYPEKIND.TKIND_DISPATCH) {
-					this.createCOMDispatch(i, typeLibUtil);
+					this.createCOMDispInterface(i, this.getPackageName(),
+							typeLibUtil);
 				} else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
-					System.out.println("TKIND_COCLASS");
+					this.createCOMCoClass(i, this.getPackageName(), typeLibUtil);
 				} else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
 					System.out
 							.println("'TKIND_ALIAS' objects are currently not supported!");
 				} else if (typekind.value == TYPEKIND.TKIND_UNION) {
 					System.out
-							.println("'TKIND_ALIAS' objects are currently not supported!");
+							.println("'TKIND_UNION' objects are currently not supported!");
 				}
 			}
 		} catch (Exception e) {
@@ -130,15 +126,8 @@ public class TlbImp {
 		}
 	}
 
-	private void createMainClass() throws IOException {
-		this.packageName = "myPackage."
-				+ this.typeLibUtil.getName().toLowerCase();
-		TlbCoClass tlbClass = new TlbCoClass(-1, typeLibUtil);
-		tlbClass.createPackage(packageName);
-		tlbClass.createContent(contentBuffer.toString());
-		String mainClassStr = tlbClass.getClassBuffer().toString();
-
-		this.writeTextFile(this.typeLibUtil.getName() + ".java", mainClassStr);
+	private String getPackageName() {
+		return "myPackage."	+ this.typeLibUtil.getName().toLowerCase();
 	}
 
 	private void writeTextFile(String filename, String str) throws IOException {
@@ -162,9 +151,9 @@ public class TlbImp {
 	 *            the type lib util
 	 * @return the string buffer
 	 */
-	private void createCOMEnum(int index, TypeLibUtil typeLibUtil)
-			throws IOException {
-		TlbEnum tlbEnum = new TlbEnum(index, typeLibUtil);
+	private void createCOMEnum(int index, String packagename,
+			TypeLibUtil typeLibUtil) throws IOException {
+		TlbEnum tlbEnum = new TlbEnum(index, packagename, typeLibUtil);
 		this.writeTlbClass(tlbEnum);
 	}
 
@@ -177,9 +166,10 @@ public class TlbImp {
 	 *            the type lib util
 	 * @return the string buffer
 	 */
-	private void createCOMInterface(int index, TypeLibUtil typeLibUtil)
-			throws IOException {
-		TlbInterface tlbInterface = new TlbInterface(index, typeLibUtil);
+	private void createCOMInterface(int index, String packagename,
+			TypeLibUtil typeLibUtil) throws IOException {
+		TlbInterface tlbInterface = new TlbInterface(index, packagename,
+				typeLibUtil);
 		this.writeTlbClass(tlbInterface);
 	}
 
@@ -192,11 +182,18 @@ public class TlbImp {
 	 *            the type lib util
 	 * @return the string buffer
 	 */
-	private void createCOMDispatch(int index, TypeLibUtil typeLibUtil)
-			throws IOException {
-		TlbDispatchInterface tlbDispatch = new TlbDispatchInterface(index,
-				typeLibUtil);
+	private void createCOMDispInterface(int index, String packagename,
+			TypeLibUtil typeLibUtil) throws IOException {
+		TlbDispInterface tlbDispatch = new TlbDispInterface(index,
+				packagename, typeLibUtil);
 		this.writeTlbClass(tlbDispatch);
+	}
+
+	private void createCOMCoClass(int index, String packagename,
+			TypeLibUtil typeLibUtil) throws IOException {
+		TlbCoClass tlbCoClass = new TlbCoClass(index, this.getPackageName(),
+				typeLibUtil);
+		this.writeTlbClass(tlbCoClass);
 	}
 
 	/**

@@ -1,0 +1,4 @@
+		/**
+		 * ${helpstring}
+		 */
+		public void ${methodname}(${methodparams});

@@ -60,6 +60,14 @@ public abstract class TlbBase {
 
 	protected String filename = "";
 
+	/** The iunknown methods. */
+	public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
+			"Release" };
+
+	/** The idispatch methods. */
+	public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
+			"GetTypeInfo", "GetIDsOfNames", "Invoke" };
+
 	/**
 	 * Instantiates a new tlb base.
 	 * 
@@ -208,6 +216,10 @@ public abstract class TlbBase {
 		this.classBuffer = new StringBuffer(result);
 	}
 
+	protected void createPackageName(String packagename) {
+		this.replaceVariable("packagename", packagename);
+	}
+
 	/**
 	 * Creates the class name.
 	 * 
@@ -216,5 +228,26 @@ public abstract class TlbBase {
 	 */
 	protected void createClassName(String name) {
 		this.replaceVariable("classname", name);
+	}
+
+	/**
+	 * Checks if is reserved method.
+	 * 
+	 * @param method
+	 *            the method
+	 * @return true, if is reserved method
+	 */
+	protected boolean isReservedMethod(String method) {
+		for (int i = 0; i < IUNKNOWN_METHODS.length; i++) {
+			if (IUNKNOWN_METHODS[i].equalsIgnoreCase(method))
+				return true;
+		}
+
+		for (int i = 0; i < IDISPATCH_METHODS.length; i++) {
+			if (IDISPATCH_METHODS[i].equalsIgnoreCase(method))
+				return true;
+		}
+
+		return false;
 	}
 }

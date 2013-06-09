@@ -27,15 +27,7 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbDispatchInterface extends TlbBase {
-
-	/** The iunknown methods. */
-	public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
-			"Release" };
-
-	/** The idispatch methods. */
-	public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
-			"GetTypeInfo", "GetIDsOfNames", "Invoke" };
+public class TlbDispInterface extends TlbBase {
 
 	/**
 	 * Instantiates a new tlb dispatch.
@@ -45,14 +37,15 @@ public class TlbDispatchInterface extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbDispatchInterface(int index, TypeLibUtil typeLibUtil) {
+	public TlbDispInterface(int index, String packagename, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
 		String dispName = typeLibDoc.getName();
 		String docString = typeLibDoc.getDocString();
 
-		this.logInfo("Type of kind 'Dispatch' found: " + dispName);
+		this.logInfo("Type of kind 'DispInterface' found: " + dispName);
+		this.createPackageName(packagename);
 		this.createClassName(dispName);
 		this.setFilename(dispName);
 		
@@ -77,15 +70,15 @@ public class TlbDispatchInterface extends TlbBase {
 
 			if (!isReservedMethod(methodName)) {
 				if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-					method = new TlbFunction(index, typeLibUtil, funcDesc,
+					method = new TlbFunctionStub(index, typeLibUtil, funcDesc,
 							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-					method = new TlbPropertyGet(index, typeLibUtil, funcDesc,
+					method = new TlbPropertyGetStub(index, typeLibUtil, funcDesc,
 							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-					method = new TlbPropertyPut(index, typeLibUtil, funcDesc,
+					method = new TlbPropertyPutStub(index, typeLibUtil, funcDesc,
 							typeInfoUtil);
 				} else if (funcDesc.invkind
 						.equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
@@ -118,27 +111,6 @@ public class TlbDispatchInterface extends TlbBase {
 		this.replaceVariable("helpstring", helpstring);
 	}
 
-	/**
-	 * Checks if is reserved method.
-	 * 
-	 * @param method
-	 *            the method
-	 * @return true, if is reserved method
-	 */
-	protected boolean isReservedMethod(String method) {
-		for (int i = 0; i < IUNKNOWN_METHODS.length; i++) {
-			if (IUNKNOWN_METHODS[i].equalsIgnoreCase(method))
-				return true;
-		}
-
-		for (int i = 0; i < IDISPATCH_METHODS.length; i++) {
-			if (IDISPATCH_METHODS[i].equalsIgnoreCase(method))
-				return true;
-		}
-
-		return false;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -146,6 +118,6 @@ public class TlbDispatchInterface extends TlbBase {
 	 */
 	@Override
 	protected String getClassTemplate() {
-		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispatchInterface.template";
+		return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispInterface.template";
 	}
 }

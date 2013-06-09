@@ -39,7 +39,7 @@ public class TlbEnum extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbEnum(int index, TypeLibUtil typeLibUtil) {
+	public TlbEnum(int index, String packagename, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
@@ -47,6 +47,7 @@ public class TlbEnum extends TlbBase {
 		String docString = typeLibDoc.getDocString();
 		
 		this.logInfo("Type of kind 'enum' found: " + enumName);
+		this.createPackageName(packagename);
 		this.createClassName(enumName);
 		this.setFilename(enumName);
 		

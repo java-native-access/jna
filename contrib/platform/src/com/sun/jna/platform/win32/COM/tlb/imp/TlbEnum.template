@@ -1,9 +1,15 @@
+package ${packagename};
+
+import java.util.*;
+
+import com.sun.jna.*;
+
 /**
  * uuid(${uuid})
  * helpstring(${helpstring})
  *
  */
-public static class ${classname} extends Structure {
+public class ${classname} extends Structure {
 	public static class ByReference extends ${classname} implements
 			Structure.ByReference {
 	}

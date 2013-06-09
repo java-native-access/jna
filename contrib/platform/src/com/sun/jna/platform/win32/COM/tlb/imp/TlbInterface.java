@@ -39,7 +39,7 @@ public class TlbInterface extends TlbBase {
 	 * @param typeLibUtil
 	 *            the type lib util
 	 */
-	public TlbInterface(int index, TypeLibUtil typeLibUtil) {
+	public TlbInterface(int index, String packagename, TypeLibUtil typeLibUtil) {
 		super(index, typeLibUtil);
 
 		TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
@@ -47,6 +47,7 @@ public class TlbInterface extends TlbBase {
 		String docString = typeLibDoc.getDocString();
 
 		this.logInfo("Type of kind 'Interface' found: " + enumName);
+		this.createPackageName(packagename);
 		this.createClassName(enumName);
 
 		// Get the TypeAttributes
