@@ -54,6 +54,7 @@ tested:
 | AArch64         | Linux            | GCC                     |
 | Alpha           | Linux            | GCC                     |
 | Alpha           | Tru64            | GCC                     |
+| ARC             | Linux            | GCC                     |
 | ARM             | Linux            | GCC                     |
 | ARM             | iOS              | GCC                     |
 | AVR32           | Linux            | GCC                     |
