@@ -124,6 +124,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testWriteStructureArrayArgumentMemory() { }
     public void testUninitializedStructureArrayArgument() { }
     public void testRejectNoncontiguousStructureArrayArgument() { }
+    public void testRejectIncompatibleStructureArrayArgument() { }
     public void testWideStringArrayArgument() { }
     public void testPointerArrayArgument() { }
     public void testNativeMappedArrayArgument() { }

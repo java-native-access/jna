@@ -606,12 +606,16 @@ public abstract class Structure {
                 Structure s1 = (Structure)reading().get(address);
                 if (s1 != null && type.equals(s1.getClass())) {
                     s = s1;
+                    s.autoRead();
                 }
                 else {
                     s = newInstance(type, address);
+                    s.conditionalAutoRead();
                 }
             }
-            s.autoRead();
+            else {
+                s.autoRead();
+            }
         }
         return s;
     }

@@ -406,6 +406,29 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    public void testRejectIncompatibleStructureArrayArgument() {
+        TestLibrary.CheckFieldAlignment s1 = new TestLibrary.CheckFieldAlignment.ByReference();
+        TestLibrary.CheckFieldAlignment[] autoArray = (TestLibrary.CheckFieldAlignment[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(autoArray, autoArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment.ByReference[] byRefArray =
+            (TestLibrary.CheckFieldAlignment.ByReference[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(byRefArray, byRefArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment[] arrayWithRefElements = { autoArray[0], autoArray[1], autoArray[2] };
+        try {
+            lib.modifyStructureArray(arrayWithRefElements, arrayWithRefElements.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
     /** When passing an array of <code>struct*</code> to native, be sure to
         invoke <code>Structure.write()</code> on each of the elements. */
     public void testWriteStructureByReferenceArrayArgumentMemory() {
