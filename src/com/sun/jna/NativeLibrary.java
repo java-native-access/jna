@@ -106,10 +106,10 @@ public class NativeLibrary {
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
                 Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION, encoding) {
-                    Object invoke(Object[] args, Class returnType, boolean b) {
-                        return new Integer(Native.getLastError());
-                    }
-                };
+                        Object invoke(Object[] args, Class returnType, boolean b) {
+                            return new Integer(Native.getLastError());
+                        }
+                    };
                 functions.put(functionKey("GetLastError", callFlags, encoding), f);
             }
         }
@@ -749,13 +749,13 @@ public class NativeLibrary {
             searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String filename) {
-                return (filename.startsWith("lib" + libName + ".so")
-                        || (filename.startsWith(libName + ".so")
-                            && libName.startsWith("lib")))
-                    && isVersionedName(filename);
-            }
-        };
+                public boolean accept(File dir, String filename) {
+                    return (filename.startsWith("lib" + libName + ".so")
+                            || (filename.startsWith(libName + ".so")
+                                && libName.startsWith("lib")))
+                        && isVersionedName(filename);
+                }
+            };
 
         List matches = new LinkedList();
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
