@@ -74,6 +74,11 @@ public class LibraryLoadTest extends TestCase implements Paths {
         NativeLibrary.getInstance("testlib");
     }
 
+    public void testLoadFromCustomPath() throws MalformedURLException {
+        NativeLibrary.addSearchPath("testlib-path", TESTPATH);
+        NativeLibrary.getInstance("testlib-path", new TestLoader(new File(".")));
+    }
+
     public void testLoadFromClasspath() throws MalformedURLException {
         NativeLibrary.getInstance("testlib-path", new TestLoader(new File(TESTPATH)));
     }

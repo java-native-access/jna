@@ -122,6 +122,28 @@ public class NativeLibraryTest extends TestCase {
         int count2 = lib2.callCount();
         assertEquals("Simple library name not aliased", count + 1, count2);
     }
+
+    public void testRejectNullFunctionName() {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        try {
+            Function f = lib.getFunction(null);
+            fail("Function must have a name");
+        }
+        catch(NullPointerException e) {
+        }
+    }
+
+    public void testIncludeSymbolNameInLookupError() {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        try {
+            lib.getGlobalVariableAddress(getName());
+            fail("Non-existent global variable lookup should fail");
+        }
+        catch(UnsatisfiedLinkError e) {
+            assertTrue("Expect symbol name in error message: " + e.getMessage(), e.getMessage().indexOf(getName()) != -1);
+        }
+    }
+
     public void testFunctionHoldsLibraryReference() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);
