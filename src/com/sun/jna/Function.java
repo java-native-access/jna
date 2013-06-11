@@ -289,8 +289,13 @@ public class Function extends Pointer {
         Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
         for (int i=0; i < args.length; i++) {
+            Class paramType = invokingMethod != null
+                ? (isVarArgs(invokingMethod) && i >= paramTypes.length-1
+                   ? paramTypes[paramTypes.length-1].getComponentType()
+                   : paramTypes[i])
+                : null;
             args[i] = convertArgument(args, i, invokingMethod,
-                                      mapper, allowObjects, paramTypes != null ? paramTypes[i] : null);
+                                      mapper, allowObjects, paramType);
         }
         
         Class nativeType = returnType;
