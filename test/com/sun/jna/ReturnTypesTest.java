@@ -278,6 +278,8 @@ public class ReturnTypesTest extends TestCase {
         Pointer[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
         assertEquals("Wrong array element value", value, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((Pointer[])null));
     }
 
     public void testReturnStringArray() {
@@ -288,6 +290,8 @@ public class ReturnTypesTest extends TestCase {
         String[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
         assertEquals("Wrong array element value", VALUE, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((String[])null));
     }
 
     public void testReturnWStringArray() {
@@ -298,6 +302,8 @@ public class ReturnTypesTest extends TestCase {
         WString[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
         assertEquals("Wrong array element value", VALUE, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((WString[])null));
     }
 
     public static void main(java.lang.String[] argList) {

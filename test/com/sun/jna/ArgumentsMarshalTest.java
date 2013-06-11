@@ -505,7 +505,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    public void testInvalidArgument() {
+    public void testUnsupportedJavaObjectArgument() {
         try {
             lib.returnBooleanArgument(this);
             fail("Unsupported Java objects should be rejected");
