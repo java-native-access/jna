@@ -262,10 +262,16 @@ public final class Platform {
             osPrefix = "sunos-" + arch;
             break;
         case Platform.FREEBSD:
+            osPrefix = "freebsd-" + arch;
+            break;
         case Platform.OPENBSD:
+            osPrefix = "openbsd-" + arch;
+            break;
         case Platform.NETBSD:
+            osPrefix = "netbsd-" + arch;
+            break;
         case Platform.KFREEBSD:
-            osPrefix = "bsd-" + arch;
+            osPrefix = "kfreebsd-" + arch;
             break;
         default:
             osPrefix = name.toLowerCase();

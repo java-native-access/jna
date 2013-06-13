@@ -41,6 +41,7 @@ public class NativeLibraryTest extends TestCase {
             { Platform.ANDROID, "lib", ".so" },
             { Platform.GNU, "lib", ".so" },
             { Platform.KFREEBSD, "lib", ".so" },
+            { Platform.NETBSD, "lib", ".so" },
         };
         for (int i=0;i < MAPPINGS.length;i++) {
             int osType = ((Integer)MAPPINGS[i][0]).intValue();
