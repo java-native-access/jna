@@ -49,7 +49,7 @@
 #include <dlfcn.h>
 #include <errno.h>
 #define STRTYPE char*
-#ifdef __sun__ // solaris sparc and x86/amd64 use default (file.encoding)
+#ifdef USE_DEFAULT_LIBNAME_ENCODING
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #else
 #define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)

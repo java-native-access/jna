@@ -251,7 +251,7 @@ ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared
-CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEAFULT_LIBNAME_ENCODING
 endif
 
 ifeq ($(OS),solaris)
@@ -259,7 +259,7 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -p)
 endif
 PCFLAGS+=-fPIC
-CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEFAULT_LIBNAME_ENCODING
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi
   # configure and some of the other settings in PCFLAGS might make the build
