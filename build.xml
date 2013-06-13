@@ -114,12 +114,12 @@
   <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${jna.version}-javadoc.jar" />
   <property name="maven-sources-jar" value="${dist}/${artifactId}-${jna.version}-sources.jar" />
 
-  <property name="platform-jar" value="${dist}/platform.jar"/>
+  <property name="platform-jar" value="${dist}/jna-platform.jar"/>
   <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
   <property name="platform-sources-jar" value="${dist}/platform-${jna.version}-sources.jar" />
 
   <property name="pom" value="pom-jna.xml" />
-  <property name="pom-platform" value="pom-platform.xml" />
+  <property name="pom-platform" value="pom-jna-platform.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
   <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
@@ -967,7 +967,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
           description="Build distribution files">
     <copy todir="${dist}">
       <fileset dir="${build}" includes="${jar},${minjar}"/>
-      <fileset dir="${contrib}/platform/dist" includes="platform.jar"/>
+      <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
         <exclude name="out-of-date.jar"/>
