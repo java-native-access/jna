@@ -25,6 +25,9 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
 
+import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
+import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
+
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
  * by NT, but exposed through the Win32 API. Ported from WinNT.h Microsoft
@@ -2189,8 +2192,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * This member can be one of
          * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
          * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
-         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore} or
-         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationPackage}.
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore} or
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}.
          *
          * @see LOGICAL_PROCESSOR_RELATIONSHIP
          */
@@ -2202,11 +2205,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public AnonymousUnionPayload payload;
 
         public SYSTEM_LOGICAL_PROCESSOR_INFORMATION() {
-            super(ALIGN_MSVC);
         }
 
         public SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Pointer memory) {
-            super(memory, ALIGN_MSVC);
+            super(memory);
+            read();
         }
 
         @Override
@@ -2216,7 +2219,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public static class AnonymousUnionPayload extends Union {
             /**
-             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore}.
+             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}.
              */
             public AnonymousStructProcessorCore processorCore;
 
@@ -2277,25 +2280,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     /**
      * Represents the relationship between the processor set identified in the corresponding
-     * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure.
+     * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or <code>SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX</code> structure.
      */
-    public static abstract class LOGICAL_PROCESSOR_RELATIONSHIP {
+    public interface LOGICAL_PROCESSOR_RELATIONSHIP {
         /**
          * The specified logical processors share a single processor core.
          */
-        public static final int RelationProcessorCore = 0;
+        int RelationProcessorCore = 0;
 
         /**
          * The specified logical processors are part of the same NUMA node.
          */
-        public static final int RelationNumaNode = 1;
+        int RelationNumaNode = 1;
 
         /**
          * <p>The specified logical processors share a cache.</p>
          *
          * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
          */
-        public static final int RelationCache = 2;
+        int RelationCache = 2;
 
         /**
          * <p>The specified logical processors share a physical package (a single package socketed or soldered onto a
@@ -2304,22 +2307,24 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          *
          * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
          */
-        public static final int RelationProcessorPackage = 3;
+        int RelationProcessorPackage = 3;
 
         /**
          * <p>The specified logical processors share a single processor group.</p>
          *
          * <p>Not supported until Windows Server 2008 R2.</p>
          */
-        public static final int RelationGroup = 4;
+        int RelationGroup = 4;
 
         /**
          * <p>On input, retrieves information about all possible relation types. This value is not used on output.</p>
          *
          * <p>Not supported until Windows Server 2008 R2.</p>
          */
-        public static final int RelationAll = 0xFFFF;
+        int RelationAll = 0xFFFF;
     }
+
+    byte CACHE_FULLY_ASSOCIATIVE = (byte)0xFF;
 
     /**
      * Describes the cache attributes.
