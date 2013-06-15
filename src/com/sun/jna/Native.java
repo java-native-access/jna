@@ -673,6 +673,7 @@ public final class Native implements Version {
 			if (DEBUG_JNA_LOAD) {
 			    System.out.println("Trying " + path);
 			}
+                        System.setProperty("jnidispatch.path", path);
                         System.load(path);
                         jnidispatchPath = path;
 			if (DEBUG_JNA_LOAD) {
@@ -703,6 +704,7 @@ public final class Native implements Version {
 			    if (DEBUG_JNA_LOAD) {
 				System.out.println("Trying " + path);
 			    }
+                            System.setProperty("jnidispatch.path", path);
                             System.load(path);
                             jnidispatchPath = path;
                             if (DEBUG_JNA_LOAD) {
@@ -755,6 +757,7 @@ public final class Native implements Version {
 	    if (DEBUG_JNA_LOAD) {
 		System.out.println("Trying " + lib.getAbsolutePath());
 	    }
+            System.setProperty("jnidispatch.path", lib.getAbsolutePath());
 	    System.load(lib.getAbsolutePath());
             jnidispatchPath = lib.getAbsolutePath();
             if (DEBUG_JNA_LOAD) {
@@ -764,7 +767,8 @@ public final class Native implements Version {
             // loaded.  This avoids the complexity of trying to do so on "exit",
             // which point can vary under different circumstances (native
             // compilation, dynamically loaded modules, normal application, etc).
-            if (isUnpacked(lib)) {
+            if (isUnpacked(lib)
+                && !Boolean.getBoolean("jnidispatch.preserve")) {
                 deleteLibrary(lib);
             }
         }
@@ -867,7 +871,9 @@ public final class Native implements Version {
                 // problems with Web Start.
                 File dir = getTempDir();
                 lib = File.createTempFile(JNA_TMPLIB_PREFIX, Platform.isWindows()?".dll":null, dir);
-                lib.deleteOnExit();
+                if (!Boolean.getBoolean("jnidispatch.preserve")) {
+                    lib.deleteOnExit();
+                }
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];

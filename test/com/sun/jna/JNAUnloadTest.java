@@ -213,10 +213,27 @@ public class JNAUnloadTest extends TestCase implements Paths {
         unicodeDir.mkdirs();
         Properties props = (Properties)System.getProperties().clone();
         try {
+            System.setProperty("jnidispatch.preserve", "true");
             System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
             ClassLoader loader = new TestLoader(true);
             Class cls = Class.forName("com.sun.jna.Native", true, loader);
             assertEquals("Wrong class loader", loader, cls.getClassLoader());
+            String path = System.getProperty("jnidispatch.path");
+            if (path != null) {
+                File lib = new File(path);
+                Native.deleteLibrary(lib);
+                lib.deleteOnExit();
+            }
+        }
+        catch(UnsatisfiedLinkError e) {
+            try {
+                File lib = new File(System.getProperty("jnidispatch.path"));
+                NativeLibrary.getInstance(lib.getAbsolutePath());
+                throw new Error("JVM error: System.load() failed to load JNA native library from " + lib + "): " + e);
+            }
+            catch(UnsatisfiedLinkError ex) {
+                fail("Failed to load jnidispatch from a unicode path (" + System.getProperty("jnidispatch.path") + "): " + ex);
+            }
         }
         finally {
             System.setProperties(props);
