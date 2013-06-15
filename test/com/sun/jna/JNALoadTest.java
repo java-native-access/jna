@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 /** Test loading and unloading native support from various locations.  Note
  * that no JNI classes are directly referenced in these tests.
  */
-public class JNAUnloadTest extends TestCase implements Paths {
+public class JNALoadTest extends TestCase implements Paths {
     
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
@@ -205,10 +205,11 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // Fails on windows (32 and 64-bit)
+    // Fails on Sun JVM windows (32 and 64-bit) 
+    // Works with IBM J9 (jdk6)
     public void testLoadFromUnicodePath() throws Exception {
         final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
-        File tmpdir = Native.getTempDir();
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File unicodeDir = new File(tmpdir, UNICODE);
         unicodeDir.mkdirs();
         Properties props = (Properties)System.getProperties().clone();
@@ -221,19 +222,11 @@ public class JNAUnloadTest extends TestCase implements Paths {
             String path = System.getProperty("jnidispatch.path");
             if (path != null) {
                 File lib = new File(path);
-                Native.deleteLibrary(lib);
                 lib.deleteOnExit();
             }
         }
         catch(UnsatisfiedLinkError e) {
-            try {
-                File lib = new File(System.getProperty("jnidispatch.path"));
-                NativeLibrary.getInstance(lib.getAbsolutePath());
-                throw new Error("JVM error: System.load() failed to load JNA native library from " + lib + "): " + e);
-            }
-            catch(UnsatisfiedLinkError ex) {
-                fail("Failed to load jnidispatch from a unicode path (" + System.getProperty("jnidispatch.path") + "): " + ex);
-            }
+            throw new Error("JVM error: System.load() failed to load JNA native library from " + System.getProperty("jnidispatch.path") + "): " + e);
         }
         finally {
             System.setProperties(props);
@@ -241,6 +234,6 @@ public class JNAUnloadTest extends TestCase implements Paths {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(JNAUnloadTest.class);
+        junit.textui.TestRunner.run(JNALoadTest.class);
     }
 }
