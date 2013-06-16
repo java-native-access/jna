@@ -20,6 +20,7 @@ Features
 * [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
 * Added `jna.debug_load` property to diagnose library loading issues - [@twall](https://github.com/twall).
 * Throw explicit `IllegalArgumentException` when `Structure.ByReference` is used where it shouldn't be (can result in multiply freed memory or other unexpected behavior) - [@twall](https://github.com/twall).
+* [#243](https://github.com/twall/jna/issues/243): Automatically accommodate long library paths on Windows which would otherwise fail - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------
