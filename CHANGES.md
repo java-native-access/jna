@@ -7,6 +7,7 @@ NOTE: JNI native support is typically incompatible between minor versions, and a
 
 Features
 --------
+* [##241](https://github.com/twall/jna/issues/241) - Add support function SHAppBarMessage from ShellApi
 * Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
 * [#109](https://github.com/twall/jna/issues/109): Set default Java compatibility level to 1.6 - [@twall](https://github.com/twall).
 * [#209](https://github.com/twall/jna/issues/209): Improved default performance saving last error results - [@twall](https://github.com/twall).
