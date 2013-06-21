@@ -18,7 +18,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.ptr.PointerByReference;
 
 
@@ -35,12 +35,6 @@ public class Shell32Test extends TestCase {
         junit.textui.TestRunner.run(Shell32Test.class);
     }
 
-	public void setup() {
-		
-		APPBARDATA ABData = new APPBARDATA();
-		
-		
-	}
     public void testSHGetFolderPath() {
     	char[] pszPath = new char[WinDef.MAX_PATH];
     	assertEquals(W32Errors.S_OK, Shell32.INSTANCE.SHGetFolderPath(null, 
@@ -62,8 +56,9 @@ public class Shell32Test extends TestCase {
         assertTrue(Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, ShlObj.CSIDL_APPDATA, false));
         assertFalse(Native.toString(pszPath).isEmpty());
     }
+
     
-    private boolean AppBar_Register() {
+    private void newAppBar() {
 		DWORD dwABM = new DWORD();
 	    
 		APPBARDATA ABData = new APPBARDATA.ByReference();
@@ -71,83 +66,79 @@ public class Shell32Test extends TestCase {
         ABData.cbSize.setValue( ABData.size() );
     	dwABM.setValue(ShellAPI.ABM_NEW);
 
-        return (null!=Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData));
+    	UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData);
+        assertNotNull(result );
     }
 
-    private boolean AppBar_Unregister() {
+    private void removeAppBar()  {
+    	
 		DWORD dwABM = new DWORD();
     	APPBARDATA ABData = new APPBARDATA.ByReference();
     	ABData.cbSize.setValue( ABData.size() );
     	dwABM.setValue(ShellAPI.ABM_REMOVE);
-        return (null!=Shell32.INSTANCE.SHAppBarMessage(dwABM, ABData));
+    	UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData);
+        assertNotNull(result );
+
     }
 
-    public void queryPos( APPBARDATA ABData ) {
+    private void queryPos( APPBARDATA ABData ) {
 		DWORD dwABM = new DWORD();
 		
 		dwABM.setValue(ShellAPI.ABM_QUERYPOS);
-		HANDLE h = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData );
+		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData );
 
 		assertNotNull(h);
+		assertTrue(h.intValue()>0);
 			
-		System.out.printf( "ABData.rc[%d,%d,%d,%d]\n", 
-								ABData.rc.top, 
-								ABData.rc.left, 
-								ABData.rc.bottom, 
-								ABData.rc.right);
-    	
     }
     
 	public void testResizeDesktopFromBottom() throws InterruptedException {
 
+		newAppBar();
+		
 		DWORD dwABM = new DWORD();
 		
-		assertTrue( AppBar_Register() );
 		
-		APPBARDATA ABData = new APPBARDATA.ByReference(); 
-		System.out.printf( "APPBARDATA sizeof [%d]\n", ABData.size());
+		APPBARDATA data = new APPBARDATA.ByReference(); 
 
-		ABData.uEdge.setValue(ShellAPI.ABE_BOTTOM);
-		ABData.rc.top		= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_HEIGHT;
-		ABData.rc.left		= 0;
-		ABData.rc.bottom	= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN);
-		ABData.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
+		data.uEdge.setValue(ShellAPI.ABE_BOTTOM);
+		data.rc.top		= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_HEIGHT;
+		data.rc.left		= 0;
+		data.rc.bottom	= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN);
+		data.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
 
-		queryPos(ABData);
+		queryPos(data);
 
 		dwABM.setValue(ShellAPI.ABM_SETPOS);
-		HANDLE h = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData );
+		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, data );
 
 		assertNotNull(h);
-		
-		
-		Thread.sleep( 5 * 1000 );
-		assertTrue( AppBar_Unregister() );
-		
+		assertTrue(h.intValue()>=0);
+	
+		removeAppBar();		
 	}
 	
 	public void testResizeDesktopFromTop() throws InterruptedException {
+		newAppBar();
 
 		DWORD dwABM = new DWORD();
 		
-		assertTrue( AppBar_Register() );
-		
-		APPBARDATA ABData = new APPBARDATA.ByReference();
-		ABData.uEdge.setValue(ShellAPI.ABE_TOP);
-		ABData.rc.top		= 0;
-		ABData.rc.left		= 0;
-		ABData.rc.bottom	= RESIZE_HEIGHT;
-		ABData.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
+		APPBARDATA data = new APPBARDATA.ByReference();
+		data.uEdge.setValue(ShellAPI.ABE_TOP);
+		data.rc.top	= 0;
+		data.rc.left = 0;
+		data.rc.bottom	= RESIZE_HEIGHT;
+		data.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
 
-		queryPos(ABData);
+		queryPos(data);
 		
 		dwABM.setValue(ShellAPI.ABM_SETPOS);
-		HANDLE h = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData );
+		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, data );
 
 		assertNotNull(h);
+		assertTrue(h.intValue()>=0);
 		
-		Thread.sleep( 5 * 1000 );
-		assertTrue( AppBar_Unregister() );
+		removeAppBar();		
 		
 	}
 

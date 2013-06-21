@@ -16,6 +16,7 @@ import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.INT_PTR;
+import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
@@ -172,61 +173,39 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
     
     /**
      * SHAppBarMessage function
-4 out of 8 rated this helpful - Rate this topic
-Sends an appbar message to the system.
-Syntax
-C++
-
-UINT_PTR SHAppBarMessage(
-  _In_     DWORD dwMessage,
-  _Inout_  PAPPBARDATA pData
-);
-
-Parameters
-dwMessage [in]
-Type: DWORD
-Appbar message value to send. This parameter can be one of the following values.
-ABM_NEW (0x00000000)
-Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
-ABM_REMOVE (0x00000001)
-Unregisters an appbar, removing the bar from the system's internal list.
-ABM_QUERYPOS (0x00000002)
-Requests a size and screen position for an appbar.
-ABM_SETPOS (0x00000003)
-Sets the size and screen position of an appbar.
-ABM_GETSTATE (0x00000004)
-Retrieves the autohide and always-on-top states of the Windows taskbar.
-ABM_GETTASKBARPOS (0x00000005)
-Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars—the working area available to your application—, use the GetMonitorInfo function.
-ABM_ACTIVATE (0x00000006)
-Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
-ABM_GETAUTOHIDEBAR (0x00000007)
-Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
-ABM_SETAUTOHIDEBAR (0x00000008)
-Registers or unregisters an autohide appbar for an edge of the screen.
-ABM_WINDOWPOSCHANGED (0x00000009)
-Notifies the system when an appbar's position has changed.
-ABM_SETSTATE (0x0000000A)
-Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
-pData [in, out]
-Type: PAPPBARDATA
-A pointer to an APPBARDATA structure. The content of the structure on entry and on exit depends on the value set in the dwMessage parameter. See the individual message pages for specifics.
-Return value
-Type: UINT_PTR
-This function returns a message-dependent value. For more information, see the Windows SDK documentation for the specific appbar message sent. Links to those documents are given in the See Also section.
-Requirements
-Minimum supported client
-Windows XP [desktop apps only]
-Minimum supported server
-Windows 2000 Server [desktop apps only]
-Header
-Shellapi.h
-Library
-Shell32.lib
-DLL
-Shell32.dll (version 4.0 or later)
-
+     * 
+     * @param dwMessage 
+	 *   Appbar message value to send. This parameter can be one of the following values.
+	 *    {@link ShellAPI#ABM_NEW} Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
+	 * 	  {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
+	 * 	  {@link ShellAPI#ABM_QUERYPOS} Requests a size and screen position for an appbar.
+	 *    {@link ShellAPI#ABM_SETPOS} Sets the size and screen position of an appbar.
+	 * 	  {@link ShellAPI#ABM_GETSTATE} Retrieves the autohide and always-on-top states of the Windows taskbar.
+	 * 	  {@link ShellAPI#ABM_GETTASKBARPOS} Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars—the working area available to your application—, use the GetMonitorInfo function.
+	 * 	  {@link ShellAPI#ABM_ACTIVATE} Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
+	 * 	  {@link ShellAPI#ABM_GETAUTOHIDEBAR} Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
+	 * 	  {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
+	 * 	  {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
+	 *    {@link ShellAPI#ABM_SETSTATE} Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
+     * 
+     * @param pData
+	 *   A pointer to an APPBARDATA structure. The content of the structure on entry and on exit depends on the value set in the dwMessage parameter. See the individual message pages for specifics.
+	 *
+	 * @return This function returns a message-dependent value. For more information, see the Windows SDK documentation for the specific appbar message sent.
+     *
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787951(v=vs.85).aspx">ABM_NEW</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787955(v=vs.85).aspx">ABM_REMOVE</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787953(v=vs.85).aspx">ABM_QUERYPOS</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787959(v=vs.85).aspx">ABM_SETPOS</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787947(v=vs.85).aspx">ABM_GETSTATE</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787949(v=vs.85).aspx">ABM_GETTASKBARPOS</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787943(v=vs.85).aspx">ABM_ACTIVATE</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787945(v=vs.85).aspx">ABM_GETAUTOHIDEBAR</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787957(v=vs.85).aspx">ABM_SETAUTOHIDEBAR</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787963(v=vs.85).aspx">ABM_WINDOWPOSCHANGED</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787961(v=vs.85).aspx">ABM_SETSTATE</a>
+     * 
      */
 
-    HANDLE SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
+    UINT_PTR SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
 }
