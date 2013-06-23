@@ -7,7 +7,7 @@ NOTE: JNI native support is typically incompatible between minor versions, and a
 
 Features
 --------
-* [#241](https://github.com/twall/jna/issues/241) - Added  `com.sun.jna.platform.win32.Shell32.SHAppBarMessage` - [@bsorrentinoJ](https://github.com/bsorrentino).
+* [#241](https://github.com/twall/jna/issues/241) - Added  `com.sun.jna.platform.win32.Shell32.SHAppBarMessage` - [@bsorrentino](https://github.com/bsorrentino).
 * Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
 * [#109](https://github.com/twall/jna/issues/109): Set default Java compatibility level to 1.6 - [@twall](https://github.com/twall).
 * [#209](https://github.com/twall/jna/issues/209): Improved default performance saving last error results - [@twall](https://github.com/twall).
