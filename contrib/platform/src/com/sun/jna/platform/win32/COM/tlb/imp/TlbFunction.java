@@ -76,8 +76,8 @@ public class TlbFunction extends TlbAbstractMethod implements Variant {
 
 	    // if there is more than 1 param
 	    if (i < (paramCount - 1)) {
-		methodparams += ", ";
-		methodvariables += ", ";
+			methodparams += ", ";
+			methodvariables += ", ";
 	    }
 	}
 

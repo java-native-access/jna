@@ -3,5 +3,5 @@
 	 */
 	@VTABLE_ID(${vtableid})	 
 	public ${returntype} ${methodname}() {
-		return this._invokeNativeInt(${vtableid}, new Object[] { this.getPointer() });
+		return (${returntype})this._invokeNativeObject(${vtableid}, new Object[] { this.getPointer() }, ${returntype}.class);
 	}

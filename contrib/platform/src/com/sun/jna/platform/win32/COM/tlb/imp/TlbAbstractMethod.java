@@ -118,9 +118,9 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 	case VT_UI8:
 	    return ULONG.class.getSimpleName();
 	case VT_INT:
-	    return "";
+	    return "int";
 	case VT_UINT:
-	    return "";
+	    return UINT.class.getSimpleName();
 	case VT_VOID:
 	    return PVOID.class.getSimpleName();
 	case VT_HRESULT:
@@ -128,17 +128,17 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 	case VT_PTR:
 	    return Pointer.class.getSimpleName();
 	case VT_SAFEARRAY:
-	    return "";
+	    return "safearray";
 	case VT_CARRAY:
-	    return "";
+	    return "carray";
 	case VT_USERDEFINED:
-	    return "";
+	    return "userdefined";
 	case VT_LPSTR:
 	    return LPSTR.class.getSimpleName();
 	case VT_LPWSTR:
 	    return LPWSTR.class.getSimpleName();
 	case VT_RECORD:
-	    return "";
+	    return "record";
 	case VT_INT_PTR:
 	    return INT_PTR.class.getSimpleName();
 	case VT_UINT_PTR:
@@ -146,17 +146,17 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 	case VT_FILETIME:
 	    return FILETIME.class.getSimpleName();
 	case VT_STREAM:
-	    return "";
+	    return "steam";
 	case VT_STORAGE:
-	    return "";
+	    return "storage";
 	case VT_STREAMED_OBJECT:
-	    return "";
+	    return "steamed_object";
 	case VT_STORED_OBJECT:
-	    return "";
+	    return "stored_object";
 	case VT_BLOB_OBJECT:
-	    return "";
+	    return "blob_object";
 	case VT_CF:
-	    return "";
+	    return "cf";
 	case VT_CLSID:
 	    return CLSID.class.getSimpleName();
 	case VT_VERSIONED_STREAM:
