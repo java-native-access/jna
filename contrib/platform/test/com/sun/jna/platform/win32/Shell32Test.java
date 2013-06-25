@@ -29,9 +29,9 @@ import com.sun.jna.ptr.PointerByReference;
 public class Shell32Test extends TestCase {
 
     private static final int RESIZE_HEIGHT = 500;
-	private static final int WM_USER = 0x0400;
+    private static final int WM_USER = 0x0400;
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         junit.textui.TestRunner.run(Shell32Test.class);
     }
 
@@ -59,87 +59,72 @@ public class Shell32Test extends TestCase {
 
     
     private void newAppBar() {
-		DWORD dwABM = new DWORD();
-	    
-		APPBARDATA ABData = new APPBARDATA.ByReference();
-        ABData.uCallbackMessage.setValue( WM_USER + 1);
-        ABData.cbSize.setValue( ABData.size() );
-    	dwABM.setValue(ShellAPI.ABM_NEW);
+        APPBARDATA data = new APPBARDATA.ByReference();
+        data.cbSize.setValue(data.size());
+        data.uCallbackMessage.setValue(WM_USER + 1);
 
-    	UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData);
-        assertNotNull(result );
+        UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage(new DWORD(ShellAPI.ABM_NEW), data);
+        assertNotNull(result);
     }
 
-    private void removeAppBar()  {
-    	
-		DWORD dwABM = new DWORD();
-    	APPBARDATA ABData = new APPBARDATA.ByReference();
-    	ABData.cbSize.setValue( ABData.size() );
-    	dwABM.setValue(ShellAPI.ABM_REMOVE);
-    	UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData);
-        assertNotNull(result );
+    private void removeAppBar() {
+        APPBARDATA data = new APPBARDATA.ByReference();
+        data.cbSize.setValue(data.size());
+        UINT_PTR result = Shell32.INSTANCE.SHAppBarMessage(new DWORD(ShellAPI.ABM_REMOVE), data);
+        assertNotNull(result);
 
     }
 
-    private void queryPos( APPBARDATA ABData ) {
-		DWORD dwABM = new DWORD();
-		
-		dwABM.setValue(ShellAPI.ABM_QUERYPOS);
-		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, ABData );
+    private void queryPos(APPBARDATA data) {
+        UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage(new DWORD(ShellAPI.ABM_QUERYPOS), data);
 
-		assertNotNull(h);
-		assertTrue(h.intValue()>0);
-			
+        assertNotNull(h);
+        assertTrue(h.intValue() > 0);
+
     }
-    
-	public void testResizeDesktopFromBottom() throws InterruptedException {
 
-		newAppBar();
-		
-		DWORD dwABM = new DWORD();
-		
-		
-		APPBARDATA data = new APPBARDATA.ByReference(); 
+    public void testResizeDesktopFromBottom() throws InterruptedException {
 
-		data.uEdge.setValue(ShellAPI.ABE_BOTTOM);
-		data.rc.top		= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_HEIGHT;
-		data.rc.left		= 0;
-		data.rc.bottom	= User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN);
-		data.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
+        newAppBar();
 
-		queryPos(data);
+        APPBARDATA data = new APPBARDATA.ByReference();
 
-		dwABM.setValue(ShellAPI.ABM_SETPOS);
-		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, data );
+        data.uEdge.setValue(ShellAPI.ABE_BOTTOM);
+        data.rc.top = User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_HEIGHT;
+        data.rc.left = 0;
+        data.rc.bottom = User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN);
+        data.rc.right = User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
 
-		assertNotNull(h);
-		assertTrue(h.intValue()>=0);
-	
-		removeAppBar();		
-	}
-	
-	public void testResizeDesktopFromTop() throws InterruptedException {
-		newAppBar();
+        queryPos(data);
 
-		DWORD dwABM = new DWORD();
-		
-		APPBARDATA data = new APPBARDATA.ByReference();
-		data.uEdge.setValue(ShellAPI.ABE_TOP);
-		data.rc.top	= 0;
-		data.rc.left = 0;
-		data.rc.bottom	= RESIZE_HEIGHT;
-		data.rc.right		= User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
+        UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage(new DWORD(ShellAPI.ABM_SETPOS), data);
 
-		queryPos(data);
-		
-		dwABM.setValue(ShellAPI.ABM_SETPOS);
-		UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage( dwABM, data );
+        assertNotNull(h);
+        assertTrue(h.intValue() >= 0);
 
-		assertNotNull(h);
-		assertTrue(h.intValue()>=0);
-		
-		removeAppBar();		
-		
-	}
+        removeAppBar();
+    }
+
+    public void testResizeDesktopFromTop() throws InterruptedException {
+        
+        newAppBar();
+
+        APPBARDATA data = new APPBARDATA.ByReference();
+        data.uEdge.setValue(ShellAPI.ABE_TOP);
+        data.rc.top = 0;
+        data.rc.left = 0;
+        data.rc.bottom = RESIZE_HEIGHT;
+        data.rc.right = User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
+
+        queryPos(data);
+
+        UINT_PTR h = Shell32.INSTANCE.SHAppBarMessage(new DWORD(ShellAPI.ABM_SETPOS), data);
+
+        assertNotNull(h);
+        assertTrue(h.intValue() >= 0);
+
+        removeAppBar();
+
+    }
 
 }

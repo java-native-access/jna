@@ -7,7 +7,7 @@ NOTE: JNI native support is typically incompatible between minor versions, and a
 
 Features
 --------
-* [#241](https://github.com/twall/jna/issues/241) - Add support function SHAppBarMessage from ShellApi
+* [#241](https://github.com/twall/jna/issues/241) - Added  `com.sun.jna.platform.win32.Shell32.SHAppBarMessage` - [@bsorrentino](https://github.com/bsorrentino).
 * Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
 * [#109](https://github.com/twall/jna/issues/109): Set default Java compatibility level to 1.6 - [@twall](https://github.com/twall).
 * [#209](https://github.com/twall/jna/issues/209): Improved default performance saving last error results - [@twall](https://github.com/twall).
@@ -20,6 +20,8 @@ Features
 * [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
 * [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
 * Added `jna.debug_load` property to diagnose library loading issues - [@twall](https://github.com/twall).
+* Throw explicit `IllegalArgumentException` when `Structure.ByReference` is used where it shouldn't be (can result in multiply freed memory or other unexpected behavior) - [@twall](https://github.com/twall).
+* [#243](https://github.com/twall/jna/issues/243): Automatically accommodate long library paths on Windows which would otherwise fail - [@twall](https://github.com/twall).
 
 Bug Fixes
 ---------

@@ -175,23 +175,23 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * SHAppBarMessage function
      * 
      * @param dwMessage 
-	 *   Appbar message value to send. This parameter can be one of the following values.
-	 *    {@link ShellAPI#ABM_NEW} Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
-	 * 	  {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
-	 * 	  {@link ShellAPI#ABM_QUERYPOS} Requests a size and screen position for an appbar.
-	 *    {@link ShellAPI#ABM_SETPOS} Sets the size and screen position of an appbar.
-	 * 	  {@link ShellAPI#ABM_GETSTATE} Retrieves the autohide and always-on-top states of the Windows taskbar.
-	 * 	  {@link ShellAPI#ABM_GETTASKBARPOS} Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars—the working area available to your application—, use the GetMonitorInfo function.
-	 * 	  {@link ShellAPI#ABM_ACTIVATE} Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
-	 * 	  {@link ShellAPI#ABM_GETAUTOHIDEBAR} Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
-	 * 	  {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
-	 * 	  {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
-	 *    {@link ShellAPI#ABM_SETSTATE} Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
+     *   Appbar message value to send. This parameter can be one of the following values.
+     *    {@link ShellAPI#ABM_NEW} Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
+     * 	  {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
+     * 	  {@link ShellAPI#ABM_QUERYPOS} Requests a size and screen position for an appbar.
+     *    {@link ShellAPI#ABM_SETPOS} Sets the size and screen position of an appbar.
+     * 	  {@link ShellAPI#ABM_GETSTATE} Retrieves the autohide and always-on-top states of the Windows taskbar.
+     * 	  {@link ShellAPI#ABM_GETTASKBARPOS} Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars—the working area available to your application—, use the GetMonitorInfo function.
+     * 	  {@link ShellAPI#ABM_ACTIVATE} Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
+     * 	  {@link ShellAPI#ABM_GETAUTOHIDEBAR} Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
+     * 	  {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
+     * 	  {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
+     *    {@link ShellAPI#ABM_SETSTATE} Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
      * 
      * @param pData
-	 *   A pointer to an APPBARDATA structure. The content of the structure on entry and on exit depends on the value set in the dwMessage parameter. See the individual message pages for specifics.
-	 *
-	 * @return This function returns a message-dependent value. For more information, see the Windows SDK documentation for the specific appbar message sent.
+     *   A pointer to an APPBARDATA structure. The content of the structure on entry and on exit depends on the value set in the dwMessage parameter. See the individual message pages for specifics.
+     *
+     * @return This function returns a message-dependent value. For more information, see the Windows SDK documentation for the specific appbar message sent.
      *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787951(v=vs.85).aspx">ABM_NEW</a>
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787955(v=vs.85).aspx">ABM_REMOVE</a>
@@ -206,6 +206,5 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787961(v=vs.85).aspx">ABM_SETSTATE</a>
      * 
      */
-
     UINT_PTR SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
 }
