@@ -624,7 +624,7 @@ public abstract class Structure {
      * updated from the contents of native memory.
      */
     // TODO: make overridable method with calculated native type, offset, etc
-    Object readField(StructField structField) {
+    protected Object readField(StructField structField) {
 
         // Get the offset of the field
         int offset = structField.offset;
@@ -734,7 +734,7 @@ public abstract class Structure {
         writeField(structField);
     }
 
-    void writeField(StructField structField) {
+    protected void writeField(StructField structField) {
 
         if (structField.isReadOnly)
             return;
@@ -1663,7 +1663,7 @@ public abstract class Structure {
         return null;
     }
 
-    static class StructField extends Object {
+    protected static class StructField extends Object {
         public String name;
         public Class type;
         public Field field;

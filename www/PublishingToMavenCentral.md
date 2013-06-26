@@ -34,7 +34,7 @@ Every Time
 
 * Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/twall/jna/blob/master/build.xml).
-* Run `ant -Dmaven-release=true -Dskip-native=true stage`. This uploads current checkout to [maven.java.net](https://maven.java.net).
+* Run `ant -Dmaven-release=true stage`. This uploads current checkout to [maven.java.net](https://maven.java.net).
 * Follow steps from [release
   it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt).
   Note that the releases are managed from [maven.java.net](https://maven.java.net).
@@ -55,7 +55,7 @@ see: https://maven.java.net/content/repositories/snapshots/net/java/dev/jna/ for
 To publish a development SNAPSHOT do the following:
 
         git checkout -- .
-        ant deploy -Dskip-native=true
+        ant deploy
 
 Note: Unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
 full release is performed).
