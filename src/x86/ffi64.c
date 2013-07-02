@@ -3,8 +3,8 @@
              Copyright (c) 2011  Anthony Green
              Copyright (c) 2008, 2010  Red Hat, Inc.
              Copyright (c) 2002, 2007  Bo Thorsen <bo@suse.de>
-             
-   x86-64 Foreign Function Interface 
+
+   x86-64 Foreign Function Interface
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -39,6 +39,7 @@
 #define MAX_SSE_REGS 8
 
 #if defined(__INTEL_COMPILER)
+#include "xmmintrin.h"
 #define UINT128 __m128
 #else
 #if defined(__SUNPRO_C)
@@ -60,7 +61,7 @@ struct register_args
 {
   /* Registers for argument passing.  */
   UINT64 gpr[MAX_GPR_REGS];
-  union big_int_union sse[MAX_SSE_REGS]; 
+  union big_int_union sse[MAX_SSE_REGS];
 };
 
 extern void ffi_call_unix64 (void *args, unsigned long bytes, unsigned flags,
@@ -210,7 +211,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
       {
 	const int UNITS_PER_WORD = 8;
 	int words = (type->size + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
-	ffi_type **ptr; 
+	ffi_type **ptr;
 	int i;
 	enum x86_64_reg_class subclasses[MAX_CLASSES];
 
@@ -606,7 +607,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
 
   avn = cif->nargs;
   arg_types = cif->arg_types;
-  
+
   for (i = 0; i < avn; ++i)
     {
       enum x86_64_reg_class classes[MAX_CLASSES];
