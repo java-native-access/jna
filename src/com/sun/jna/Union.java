@@ -191,7 +191,7 @@ public abstract class Union extends Structure {
     }
 
     /** Only the currently selected field will be written. */
-    void writeField(StructField field) {
+    protected void writeField(StructField field) {
         if (field == activeField) {
             super.writeField(field);
         }
@@ -201,7 +201,7 @@ public abstract class Union extends Structure {
      * selected.  Structures may contain pointer-based fields which can
      * crash the VM if not properly initialized.
      */
-    Object readField(StructField field) {
+    protected Object readField(StructField field) {
         if (field == activeField
             || (!Structure.class.isAssignableFrom(field.type)
                 && !String.class.isAssignableFrom(field.type)
