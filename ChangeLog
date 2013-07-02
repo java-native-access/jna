@@ -1,3 +1,12 @@
+2013-06-12  Mischa Jonker  <mjonker@synopsys.com>
+
+	 * configure.ac: Add support for ARC.
+	 * Makefile.am: Likewise.
+	 * README: Add ARC details.
+	 * src/arc/arcompact.S: New.
+	 * src/arc/ffi.c: Likewise.
+	 * src/arc/ffitarget.h: Likewise.
+
 2013-03-28  David Schneider  <david.schneider@bivab.de>
 
 	 * src/arm/ffi.c: Fix support for ARM hard-float calling convention.
