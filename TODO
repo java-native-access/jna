@@ -51,6 +51,9 @@
    referenced. (not really common)
 
 
+* eliminate type conversion contexts; these are almost entirely unused and
+  more complicated than just wrapping a native mapping in a utility function
+* direct non-primitive array arguments (String[], Pointer[], NativeMapped[])
 
 * auto-generate direct mappings/bindings on a per-method basis (perform a
   method register on first call to an interface-mapped function) with
@@ -64,12 +67,10 @@
   and forth multiple times).  This also makes it easer to perform conversions
   (no native changes required).  
 
-* direct/raw non-primitive array arguments (String[], Pointer[], NativeMapped[])
 * ppc64 direct/raw failures (multiple)
 * direct calls on ppc to varargs (callbacks) with FP args fail; avoid them for
   now 
 * Callback.PostCallWrite.write() cf PostCallRead
-* eliminate type conversion contexts; these are almost entirely unused
 
 * universal GCC build w/cross-compile (needs cross compilers...)
 * return Pointer.SIZE/LONG_SIZE/WCHAR_SIZE in bits (for consistency with 1.5)
