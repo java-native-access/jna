@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -238,9 +238,20 @@ public class CallbacksTest extends TestCase implements Paths {
         }
     }
 
+    public void testThrowOnMultiplyMappedCallback() {
+        try {
+            Pointer p = new Pointer(getName().hashCode());
+            CallbackReference.getCallback(TestLibrary.VoidCallback.class, p);
+            CallbackReference.getCallback(TestLibrary.ByteCallback.class, p);
+            fail("Multiply-mapped callback should fail");
+        }
+        catch(IllegalStateException e) {
+        }
+    }
+
     public void testNoMethodCallback() {
         try {
-            CallbackReference.getCallback(TestLibrary.NoMethodCallback.class, new Pointer(1));
+            CallbackReference.getCallback(TestLibrary.NoMethodCallback.class, new Pointer(getName().hashCode()));
             fail("Callback with no callback method should fail");
         }
         catch(IllegalArgumentException e) {
@@ -248,12 +259,12 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCustomMethodCallback() {
-        CallbackReference.getCallback(TestLibrary.CustomMethodCallback.class, new Pointer(1));
+        CallbackReference.getCallback(TestLibrary.CustomMethodCallback.class, new Pointer(getName().hashCode()));
     }
 
     public void testTooManyMethodsCallback() {
         try {
-            CallbackReference.getCallback(TestLibrary.TooManyMethodsCallback.class, new Pointer(1));
+            CallbackReference.getCallback(TestLibrary.TooManyMethodsCallback.class, new Pointer(getName().hashCode()));
             fail("Callback lookup with too many methods should fail");
         }
         catch(IllegalArgumentException e) {
@@ -261,19 +272,19 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testMultipleMethodsCallback() {
-        CallbackReference.getCallback(TestLibrary.MultipleMethodsCallback.class, new Pointer(1));
+        CallbackReference.getCallback(TestLibrary.MultipleMethodsCallback.class, new Pointer(getName().hashCode()));
     }
 
     public void testNativeFunctionPointerStringValue() {
-        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
         Class cls = CallbackReference.findCallbackClass(cb.getClass());
         assertTrue("toString should include Java Callback type: " + cb + " ("
                    + cls + ")", cb.toString().indexOf(cls.getName()) != -1);
     }
 
     public void testLookupSameCallback() {
-        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
-        Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
+        Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
         
         assertEquals("Callback lookups for same pointer should return same Callback object", cb, cb2);
     }
