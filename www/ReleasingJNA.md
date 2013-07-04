@@ -5,11 +5,11 @@ JNA Release Process
   JNA's native API has been changed (i.e. md5 changed).  Bump JNA minor version if its Java API
   has changed significantly or incompatibly.
 
-* If native changes have been made, run `ant dist` target on each target
-  platform, pushing the resulting target-specific jar file to master.
+* If native changes have been made, run `ant native` target on each target
+  platform, pushing the resulting target-specific jar (in lib/native) file to master.
 
-* Run `ant clean dist` target.  Commit and push generated files in dist, except for a platform specific jar: "&lt;os>-&lt;arch>.jar".
-  You will also see differences in the pom-*.xml files and src/.../Native.java. Commit and push these also. Do not commit the altered platform specific jar "&lt;os>-&lt;arch>.jar" in lib/native/.
+* Run `ant clean dist` target on a fully up-to-date checkout with no modifications.  Commit and push generated files in dist, except for a platform specific jar: "&lt;os>-&lt;arch>.jar".
+  You will also see differences in the pom-*.xml files and src/.../Native.java. Commit and push these also.
 
 * Update Javadoc
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
@@ -19,6 +19,7 @@ JNA Release Process
   * download links
   * javadoc links
 
+* [Release to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
+
 * Tag as &lt;version>, push new tag to origin
 
-* [Release to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
