@@ -9,7 +9,7 @@ JNA Release Process
   platform, pushing the resulting target-specific jar (in lib/native) file to master.
 
 * Run `ant -Drelease=true clean dist` target on a fully up-to-date checkout with no modifications.  Commit and push generated files in dist.
-  You will also see differences in the pom-*.xml files and src/.../Native.java. Commit and push these also.
+  You will also see differences in the pom-*.xml files and src/.../Native.java.  Do not commit these files.
 
 * Update Javadoc
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
