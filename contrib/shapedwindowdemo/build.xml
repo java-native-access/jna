@@ -13,7 +13,7 @@
 
     <path id="classpath">
         <fileset file="${file.reference.jna.jar}"/>
-        <fileset dir="../platform/dist" includes="platform.jar"/>
+        <fileset dir="../platform/dist" includes="jna-platform.jar"/>
     </path>
 
     <!-- Run Demo. -->
