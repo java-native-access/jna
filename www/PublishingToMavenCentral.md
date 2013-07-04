@@ -29,8 +29,10 @@ One Time
 
   Because we are still deploying to maven repositories via java.net, see [Java.net Maven Repository Usage Guide](http://java.net/projects/maven2-repository/pages/MigrationAndCleanupRelatedDocumentation) for more info.
 
-Publish Snapshot - at any time and in preparation for a release
----------------------------------------------------------------
+Publish Snapshot
+----------------
+
+*At any time and in preparation for a release*
 
 Before doing a full jna release, we can publish a development SNAPSHOT of the "next" release for people to test. The
 SNAPSHOT will be published in the staging repository:
