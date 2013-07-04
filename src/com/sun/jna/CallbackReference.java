@@ -99,7 +99,7 @@ class CallbackReference extends WeakReference {
      * If the pointer refers to a Java callback trampoline, return the original
      * Java Callback.  Otherwise, return a proxy to the native function
      * pointer.
-     * @throw IllegalStateException if the given pointer has already been
+     * @throws IllegalStateException if the given pointer has already been
      * mapped to a callback of a different type.
      */
     public static Callback getCallback(Class type, Pointer p) {

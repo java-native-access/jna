@@ -1,5 +1,5 @@
-Next Release (4.0)
-==================
+Release 4.0
+===========
 
 NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
