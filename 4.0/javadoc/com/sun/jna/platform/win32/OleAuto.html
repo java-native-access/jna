@@ -1,0 +1,1149 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+OleAuto (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="OleAuto (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Ole32Util.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/OleAuto.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="OleAuto.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32</FONT>
+<BR>
+Interface OleAuto</H2>
+<DL>
+<DT><B>All Superinterfaces:</B> <DD><A HREF="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</A>, <A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A>, <A HREF="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public interface <B>OleAuto</B><DT>extends <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></DL>
+</PRE>
+
+<P>
+Oleaut32.dll Interface.
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>scott.palmer</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.html" title="class in com.sun.jna.platform.win32">OleAuto.DISPPARAMS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Class DISPPARAMS.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<A NAME="nested_classes_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#DISPATCH_METHOD">DISPATCH_METHOD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISPATCH_METHOD.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#DISPATCH_PROPERTYGET">DISPATCH_PROPERTYGET</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISPATCH_PROPERTYGET.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#DISPATCH_PROPERTYPUT">DISPATCH_PROPERTYPUT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISPATCH_PROPERTYPUT.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#DISPATCH_PROPERTYPUTREF">DISPATCH_PROPERTYPUTREF</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISPATCH_PROPERTYPUTREF.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_AUTO">FADF_AUTO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is allocated on the stac.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_BSTR">FADF_BSTR</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array of BSTRs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_DISPATCH">FADF_DISPATCH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array of IDispatch*.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_EMBEDDED">FADF_EMBEDDED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is embedded in a structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_FIXEDSIZE">FADF_FIXEDSIZE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is embedded in a structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_HAVEIID">FADF_HAVEIID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is embedded in a structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_HAVEVARTYPE">FADF_HAVEVARTYPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that has a variant type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_RECORD">FADF_RECORD</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is embedded in a structure.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_RESERVED">FADF_RESERVED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Bits reserved for future use.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_STATIC">FADF_STATIC</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array that is statically allocated.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_UNKNOWN">FADF_UNKNOWN</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array of IUnknown*.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#FADF_VARIANT">FADF_VARIANT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An array of VARIANTs.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html" title="interface in com.sun.jna.platform.win32">OleAuto</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#INSTANCE">INSTANCE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The instance.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.win32.<A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.Library"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from interface com.sun.jna.<A HREF="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_CLASSLOADER">OPTION_CLASSLOADER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_OPEN_FLAGS">OPTION_OPEN_FLAGS</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRING_ENCODING">OPTION_STRING_ENCODING</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</A>, <A HREF="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#GetActiveObject(com.sun.jna.platform.win32.Guid.GUID, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.ptr.PointerByReference)">GetActiveObject</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;rclsid,
+                <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvReserved,
+                <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppunk)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a pointer to a running object that has been registered with
+ OLE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#LoadRegTypeLib(com.sun.jna.platform.win32.Guid.GUID, int, int, com.sun.jna.platform.win32.WinDef.LCID, com.sun.jna.ptr.PointerByReference)">LoadRegTypeLib</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;rguid,
+               int&nbsp;wVerMajor,
+               int&nbsp;wVerMinor,
+               <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LCID.html" title="class in com.sun.jna.platform.win32">WinDef.LCID</A>&nbsp;lcid,
+               <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;pptlib)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Uses registry information to load a type library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#LoadTypeLib(com.sun.jna.WString, com.sun.jna.platform.win32.COM.ITypeLib)">LoadTypeLib</A></B>(<A HREF="../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFile,
+            <A HREF="../../../../../com/sun/jna/platform/win32/COM/ITypeLib.html" title="class in com.sun.jna.platform.win32.COM">ITypeLib</A>&nbsp;pptlib)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Loads and registers a type library.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SafeArrayCreate(com.sun.jna.platform.win32.WTypes.VARTYPE, int, com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND[])">SafeArrayCreate</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.VARTYPE.html" title="class in com.sun.jna.platform.win32">WTypes.VARTYPE</A>&nbsp;vt,
+                int&nbsp;cDims,
+                <A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAYBOUND.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAYBOUND</A>[]&nbsp;rgsabound)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Creates a new array descriptor, allocates and initializes the data for
+ the array, and returns a pointer to the new array descriptor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SafeArrayGetElement(com.sun.jna.platform.win32.OaIdl.SAFEARRAY, long[], com.sun.jna.Pointer)">SafeArrayGetElement</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa,
+                    long[]&nbsp;rgIndices,
+                    <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Retrieves a single element of the array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SafeArrayLock(com.sun.jna.platform.win32.OaIdl.SAFEARRAY)">SafeArrayLock</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Increments the lock count of an array, and places a pointer to the array
+ data in pvData of the array descriptor.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SafeArrayPutElement(com.sun.jna.platform.win32.OaIdl.SAFEARRAY, long[], com.sun.jna.platform.win32.Variant.VARIANT)">SafeArrayPutElement</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa,
+                    long[]&nbsp;idx,
+                    <A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Stores the data element at the specified location in the array.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SafeArrayUnLock(com.sun.jna.platform.win32.OaIdl.SAFEARRAY)">SafeArrayUnLock</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Decrements the lock count of an array so it can be freed or resized.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SysAllocString(java.lang.String)">SysAllocString</A></B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;sz)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function allocates a new string and copies the passed string into
+ it.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SysFreeString(com.sun.jna.platform.win32.WTypes.BSTR)">SysFreeString</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;bstr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;This function frees a string allocated previously by SysAllocString,
+ SysAllocStringByteLen, SysReAllocString, SysAllocStringLen, or
+ SysReAllocStringLen.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#SystemTimeToVariantTime(com.sun.jna.platform.win32.WinBase.SYSTEMTIME, com.sun.jna.ptr.DoubleByReference)">SystemTimeToVariantTime</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</A>&nbsp;lpSystemTime,
+                        <A HREF="../../../../../com/sun/jna/ptr/DoubleByReference.html" title="class in com.sun.jna.ptr">DoubleByReference</A>&nbsp;pvtime)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Converts a system time to a variant representation.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#VariantClear(com.sun.jna.Pointer)">VariantClear</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvarg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use this function to clear variables of type VARIANTARG (or VARIANT)
+ before the memory containing the VARIANTARG is freed (as when a local
+ variable goes out of scope).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#VariantCopy(com.sun.jna.Pointer, com.sun.jna.platform.win32.Variant.VARIANT)">VariantCopy</A></B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvargDest,
+            <A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvargSrc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, free any memory that is owned by pvargDest, such as VariantClear
+ (pvargDest must point to a valid initialized variant, and not simply to
+ an uninitialized memory location).</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html#VariantInit(com.sun.jna.platform.win32.Variant.VARIANT)">VariantInit</A></B>(<A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarg)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The VariantInit function initializes the VARIANTARG by setting the vt
+ field to VT_EMPTY.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="DISPATCH_METHOD"><!-- --></A><H3>
+DISPATCH_METHOD</H3>
+<PRE>
+static final int <B>DISPATCH_METHOD</B></PRE>
+<DL>
+<DD>The Constant DISPATCH_METHOD.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.DISPATCH_METHOD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISPATCH_PROPERTYGET"><!-- --></A><H3>
+DISPATCH_PROPERTYGET</H3>
+<PRE>
+static final int <B>DISPATCH_PROPERTYGET</B></PRE>
+<DL>
+<DD>The Constant DISPATCH_PROPERTYGET.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.DISPATCH_PROPERTYGET">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISPATCH_PROPERTYPUT"><!-- --></A><H3>
+DISPATCH_PROPERTYPUT</H3>
+<PRE>
+static final int <B>DISPATCH_PROPERTYPUT</B></PRE>
+<DL>
+<DD>The Constant DISPATCH_PROPERTYPUT.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.DISPATCH_PROPERTYPUT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISPATCH_PROPERTYPUTREF"><!-- --></A><H3>
+DISPATCH_PROPERTYPUTREF</H3>
+<PRE>
+static final int <B>DISPATCH_PROPERTYPUTREF</B></PRE>
+<DL>
+<DD>The Constant DISPATCH_PROPERTYPUTREF.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.DISPATCH_PROPERTYPUTREF">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_AUTO"><!-- --></A><H3>
+FADF_AUTO</H3>
+<PRE>
+static final int <B>FADF_AUTO</B></PRE>
+<DL>
+<DD>An array that is allocated on the stac.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_AUTO">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_STATIC"><!-- --></A><H3>
+FADF_STATIC</H3>
+<PRE>
+static final int <B>FADF_STATIC</B></PRE>
+<DL>
+<DD>An array that is statically allocated.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_STATIC">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_EMBEDDED"><!-- --></A><H3>
+FADF_EMBEDDED</H3>
+<PRE>
+static final int <B>FADF_EMBEDDED</B></PRE>
+<DL>
+<DD>An array that is embedded in a structure.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_EMBEDDED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_FIXEDSIZE"><!-- --></A><H3>
+FADF_FIXEDSIZE</H3>
+<PRE>
+static final int <B>FADF_FIXEDSIZE</B></PRE>
+<DL>
+<DD>An array that is embedded in a structure.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_FIXEDSIZE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_RECORD"><!-- --></A><H3>
+FADF_RECORD</H3>
+<PRE>
+static final int <B>FADF_RECORD</B></PRE>
+<DL>
+<DD>An array that is embedded in a structure.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_RECORD">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_HAVEIID"><!-- --></A><H3>
+FADF_HAVEIID</H3>
+<PRE>
+static final int <B>FADF_HAVEIID</B></PRE>
+<DL>
+<DD>An array that is embedded in a structure.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_HAVEIID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_HAVEVARTYPE"><!-- --></A><H3>
+FADF_HAVEVARTYPE</H3>
+<PRE>
+static final int <B>FADF_HAVEVARTYPE</B></PRE>
+<DL>
+<DD>An array that has a variant type. The variant type can be retrieved with
+ SafeArrayGetVartype.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_HAVEVARTYPE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_BSTR"><!-- --></A><H3>
+FADF_BSTR</H3>
+<PRE>
+static final int <B>FADF_BSTR</B></PRE>
+<DL>
+<DD>An array of BSTRs.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_BSTR">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_UNKNOWN"><!-- --></A><H3>
+FADF_UNKNOWN</H3>
+<PRE>
+static final int <B>FADF_UNKNOWN</B></PRE>
+<DL>
+<DD>An array of IUnknown*.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_UNKNOWN">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_DISPATCH"><!-- --></A><H3>
+FADF_DISPATCH</H3>
+<PRE>
+static final int <B>FADF_DISPATCH</B></PRE>
+<DL>
+<DD>An array of IDispatch*.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_DISPATCH">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_VARIANT"><!-- --></A><H3>
+FADF_VARIANT</H3>
+<PRE>
+static final int <B>FADF_VARIANT</B></PRE>
+<DL>
+<DD>An array of VARIANTs.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_VARIANT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="FADF_RESERVED"><!-- --></A><H3>
+FADF_RESERVED</H3>
+<PRE>
+static final int <B>FADF_RESERVED</B></PRE>
+<DL>
+<DD>Bits reserved for future use.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../constant-values.html#com.sun.jna.platform.win32.OleAuto.FADF_RESERVED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="INSTANCE"><!-- --></A><H3>
+INSTANCE</H3>
+<PRE>
+static final <A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.html" title="interface in com.sun.jna.platform.win32">OleAuto</A> <B>INSTANCE</B></PRE>
+<DL>
+<DD>The instance.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SysAllocString(java.lang.String)"><!-- --></A><H3>
+SysAllocString</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A> <B>SysAllocString</B>(<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</A>&nbsp;sz)</PRE>
+<DL>
+<DD>This function allocates a new string and copies the passed string into
+ it.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>sz</CODE> - Null-terminated UNICODE string to copy.
+<DT><B>Returns:</B><DD>Null if there is insufficient memory or if a null pointer is
+         passed in.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SysFreeString(com.sun.jna.platform.win32.WTypes.BSTR)"><!-- --></A><H3>
+SysFreeString</H3>
+<PRE>
+void <B>SysFreeString</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;bstr)</PRE>
+<DL>
+<DD>This function frees a string allocated previously by SysAllocString,
+ SysAllocStringByteLen, SysReAllocString, SysAllocStringLen, or
+ SysReAllocStringLen.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>bstr</CODE> - Unicode string that was allocated previously, or NULL. Setting
+            this parameter to NULL causes the function to simply return.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="VariantInit(com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+VariantInit</H3>
+<PRE>
+void <B>VariantInit</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarg)</PRE>
+<DL>
+<DD>The VariantInit function initializes the VARIANTARG by setting the vt
+ field to VT_EMPTY. Unlike VariantClear, this function does not interpret
+ the current contents of the VARIANTARG. Use VariantInit to initialize new
+ local variables of type VARIANTARG (or VARIANT).
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvarg</CODE> - The variant to initialize.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="VariantCopy(com.sun.jna.Pointer, com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+VariantCopy</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>VariantCopy</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvargDest,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvargSrc)</PRE>
+<DL>
+<DD>First, free any memory that is owned by pvargDest, such as VariantClear
+ (pvargDest must point to a valid initialized variant, and not simply to
+ an uninitialized memory location). Then pvargDest receives an exact copy
+ of the contents of pvargSrc.
+ 
+ If pvargSrc is a VT_BSTR, a copy of the string is made. If pvargSrcis a
+ VT_ARRAY, the entire array is copied. If pvargSrc is a VT_DISPATCH or
+ VT_UNKNOWN, AddRef is called to increment the object's reference count.
+ 
+ If the variant to be copied is a COM object that is passed by reference,
+ the vtfield of the pvargSrcparameter is VT_DISPATCH | VT_BYREF or
+ VT_UNKNOWN | VT_BYREF. In this case, VariantCopy does not increment the
+ reference count on the referenced object. Because the variant being
+ copied is a pointer to a reference to an object, VariantCopy has no way
+ to determine if it is necessary to increment the reference count of the
+ object. It is therefore the responsibility of the caller to call
+ IUnknown::AddRef on the object or not, as appropriate.
+ 
+ Note The VariantCopy method is not threadsafe.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvargDest</CODE> - [out] The destination variant.<DD><CODE>pvargSrc</CODE> - [in] The source variant.
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="VariantClear(com.sun.jna.Pointer)"><!-- --></A><H3>
+VariantClear</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>VariantClear</B>(<A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvarg)</PRE>
+<DL>
+<DD>Use this function to clear variables of type VARIANTARG (or VARIANT)
+ before the memory containing the VARIANTARG is freed (as when a local
+ variable goes out of scope).
+ 
+ The function clears a VARIANTARG by setting the vt field to VT_EMPTY. The
+ current contents of the VARIANTARG are released first. If the vtfield is
+ VT_BSTR, the string is freed. If the vtfield is VT_DISPATCH, the object
+ is released. If the vt field has the VT_ARRAY bit set, the array is
+ freed.
+ 
+ If the variant to be cleared is a COM object that is passed by reference,
+ the vtfield of the pvargparameter is VT_DISPATCH | VT_BYREF or VT_UNKNOWN
+ | VT_BYREF. In this case, VariantClear does not release the object.
+ Because the variant being cleared is a pointer to a reference to an
+ object, VariantClear has no way to determine if it is necessary to
+ release the object. It is therefore the responsibility of the caller to
+ release the object or not, as appropriate.
+ 
+ In certain cases, it may be preferable to clear a variant in code without
+ calling VariantClear. For example, you can change the type of a VT_I4
+ variant to another type without calling this function. Safearrays of BSTR
+ will have SysFreeString called on each element not VariantClear. However,
+ you must call VariantClear if a VT_type is received but cannot be
+ handled. Safearrays of variant will also have VariantClear called on each
+ member. Using VariantClear in these cases ensures that code will continue
+ to work if Automation adds new variant types in the future.
+ 
+ Do not use VariantClear on unitialized variants; use VariantInit to
+ initialize a new VARIANTARG or VARIANT.
+ 
+ Variants containing arrays with outstanding references cannot be cleared.
+ Attempts to do so will return an HRESULT containing DISP_E_ARRAYISLOCKED.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvarg</CODE> - [in, out] The variant to clear.
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SafeArrayCreate(com.sun.jna.platform.win32.WTypes.VARTYPE, int, com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND[])"><!-- --></A><H3>
+SafeArrayCreate</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A> <B>SafeArrayCreate</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WTypes.VARTYPE.html" title="class in com.sun.jna.platform.win32">WTypes.VARTYPE</A>&nbsp;vt,
+                                int&nbsp;cDims,
+                                <A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAYBOUND.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAYBOUND</A>[]&nbsp;rgsabound)</PRE>
+<DL>
+<DD>Creates a new array descriptor, allocates and initializes the data for
+ the array, and returns a pointer to the new array descriptor.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>vt</CODE> - [in] The base type of the array (the VARTYPE of each element
+            of the array). The VARTYPE is restricted to a subset of the
+            variant types. Neither the VT_ARRAY nor the VT_BYREF flag can
+            be set. VT_EMPTY and VT_NULL are not valid base types for the
+            array. All other types are legal. cDims<DD><CODE>cDims</CODE> - the c dims<DD><CODE>rgsabound</CODE> - the rgsabound
+<DT><B>Returns:</B><DD>Return value
+ 
+         A safe array descriptor, or null if the array could not be
+         created.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SafeArrayPutElement(com.sun.jna.platform.win32.OaIdl.SAFEARRAY, long[], com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+SafeArrayPutElement</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>SafeArrayPutElement</B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa,
+                                  long[]&nbsp;idx,
+                                  <A HREF="../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pv)</PRE>
+<DL>
+<DD>Stores the data element at the specified location in the array.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>psa</CODE> - [in] An array descriptor created by SafeArrayCreate.<DD><CODE>idx</CODE> - the idx<DD><CODE>pv</CODE> - [in] The data to assign to the array. The variant types
+            VT_DISPATCH, VT_UNKNOWN, and VT_BSTR are pointers, and do not
+            require another level of indirection.
+<DT><B>Returns:</B><DD>Return value
+ 
+         This function can return one of these values.
+ 
+         S_OK Success.
+ 
+         DISP_E_BADINDEX The specified index is not valid.
+ 
+         E_INVALIDARG One of the arguments is not valid.
+ 
+         E_OUTOFMEMORY Memory could not be allocated for the element.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SafeArrayGetElement(com.sun.jna.platform.win32.OaIdl.SAFEARRAY, long[], com.sun.jna.Pointer)"><!-- --></A><H3>
+SafeArrayGetElement</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>SafeArrayGetElement</B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa,
+                                  long[]&nbsp;rgIndices,
+                                  <A HREF="../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pv)</PRE>
+<DL>
+<DD>Retrieves a single element of the array.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>psa</CODE> - [in] An array descriptor created by SafeArrayCreate.<DD><CODE>rgIndices</CODE> - [in] A vector of indexes for each dimension of the array. The
+            right-most (least significant) dimension is rgIndices[0]. The
+            left-most dimension is stored at rgIndices[psa->cDims - 1].<DD><CODE>pv</CODE> - [out] The element of the array.
+<DT><B>Returns:</B><DD>Return value
+ 
+         This function can return one of these values.
+ 
+         S_OK Success.
+ 
+         DISP_E_BADINDEX The specified index is not valid.
+ 
+         E_INVALIDARG One of the arguments is not valid.
+ 
+         E_OUTOFMEMORY Memory could not be allocated for the element.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SafeArrayLock(com.sun.jna.platform.win32.OaIdl.SAFEARRAY)"><!-- --></A><H3>
+SafeArrayLock</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>SafeArrayLock</B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa)</PRE>
+<DL>
+<DD>Increments the lock count of an array, and places a pointer to the array
+ data in pvData of the array descriptor.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>psa</CODE> - [in] An array descriptor created by SafeArrayCreate.
+<DT><B>Returns:</B><DD>Return value
+ 
+         This function can return one of these values.
+ 
+         S_OK Success.
+ 
+         E_INVALIDARG The argument psa is not valid.
+ 
+         E_UNEXPECTED The array could not be locked.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SafeArrayUnLock(com.sun.jna.platform.win32.OaIdl.SAFEARRAY)"><!-- --></A><H3>
+SafeArrayUnLock</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>SafeArrayUnLock</B>(<A HREF="../../../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</A>&nbsp;psa)</PRE>
+<DL>
+<DD>Decrements the lock count of an array so it can be freed or resized.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>psa</CODE> - [in] An array descriptor created by SafeArrayCreate.
+<DT><B>Returns:</B><DD>Return value
+ 
+         This function can return one of these values.
+ 
+         S_OK Success.
+ 
+         E_INVALIDARG The argument psa is not valid.
+ 
+         E_UNEXPECTED The array could not be locked.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetActiveObject(com.sun.jna.platform.win32.Guid.GUID, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+GetActiveObject</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetActiveObject</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;rclsid,
+                              <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvReserved,
+                              <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppunk)</PRE>
+<DL>
+<DD>Retrieves a pointer to a running object that has been registered with
+ OLE.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rclsid</CODE> - [in] The class identifier (CLSID) of the active object from
+            the OLE registration database.<DD><CODE>pvReserved</CODE> - Reserved for future use. Must be null.<DD><CODE>ppunk</CODE> - [out] The requested active object.
+<DT><B>Returns:</B><DD>Return value
+ 
+         If this function succeeds, it returns S_OK. Otherwise, it returns
+         an HRESULT error code.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LoadRegTypeLib(com.sun.jna.platform.win32.Guid.GUID, int, int, com.sun.jna.platform.win32.WinDef.LCID, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+LoadRegTypeLib</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>LoadRegTypeLib</B>(<A HREF="../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;rguid,
+                             int&nbsp;wVerMajor,
+                             int&nbsp;wVerMinor,
+                             <A HREF="../../../../../com/sun/jna/platform/win32/WinDef.LCID.html" title="class in com.sun.jna.platform.win32">WinDef.LCID</A>&nbsp;lcid,
+                             <A HREF="../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;pptlib)</PRE>
+<DL>
+<DD>Uses registry information to load a type library.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>rguid</CODE> - The GUID of the library.<DD><CODE>wVerMajor</CODE> - The major version of the library.<DD><CODE>wVerMinor</CODE> - The minor version of the library.<DD><CODE>lcid</CODE> - The national language code of the library.<DD><CODE>pptlib</CODE> - The loaded type library.
+ 
+            This function can return one of these values: S_OK Success.
+ 
+            E_INVALIDARG One or more of the arguments is not valid.
+ 
+            E_OUTOFMEMORY Insufficient memory to complete the operation.
+ 
+            TYPE_E_IOERROR The function could not write to the file.
+ 
+            TYPE_E_INVALIDSTATE The type library could not be opened.
+ 
+            TYPE_E_INVDATAREAD The function could not read from the file.
+ 
+            TYPE_E_UNSUPFORMAT The type library has an older format.
+ 
+            TYPE_E_UNKNOWNLCID The LCID could not be found in the
+            OLE-supported DLLs.
+ 
+            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
+            loaded.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="LoadTypeLib(com.sun.jna.WString, com.sun.jna.platform.win32.COM.ITypeLib)"><!-- --></A><H3>
+LoadTypeLib</H3>
+<PRE>
+<A HREF="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>LoadTypeLib</B>(<A HREF="../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFile,
+                          <A HREF="../../../../../com/sun/jna/platform/win32/COM/ITypeLib.html" title="class in com.sun.jna.platform.win32.COM">ITypeLib</A>&nbsp;pptlib)</PRE>
+<DL>
+<DD>Loads and registers a type library.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>szFile</CODE> - The name of the file from which the method should attempt to
+            load a type library.<DD><CODE>pptlib</CODE> - The loaded type library. Return value
+ 
+            This function can return one of these values.
+ 
+            S_OK Success.
+ 
+            E_INVALIDARG One or more of the arguments is not valid.
+ 
+            E_OUTOFMEMORY Insufficient memory to complete the operation.
+ 
+            TYPE_E_IOERROR The function could not write to the file.
+ 
+            TYPE_E_INVALIDSTATE The type library could not be opened.
+ 
+            TYPE_E_INVDATAREAD The function could not read from the file.
+ 
+            TYPE_E_UNSUPFORMAT The type library has an older format.
+ 
+            TYPE_E_UNKNOWNLCID The LCID could not be found in the
+            OLE-supported DLLs.
+ 
+            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
+            loaded.</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SystemTimeToVariantTime(com.sun.jna.platform.win32.WinBase.SYSTEMTIME, com.sun.jna.ptr.DoubleByReference)"><!-- --></A><H3>
+SystemTimeToVariantTime</H3>
+<PRE>
+int <B>SystemTimeToVariantTime</B>(<A HREF="../../../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</A>&nbsp;lpSystemTime,
+                            <A HREF="../../../../../com/sun/jna/ptr/DoubleByReference.html" title="class in com.sun.jna.ptr">DoubleByReference</A>&nbsp;pvtime)</PRE>
+<DL>
+<DD>Converts a system time to a variant representation.
+<P>
+<DD><DL>
+</DL>
+</DD>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>lpSystemTime</CODE> - [in] The system time.<DD><CODE>pvtime</CODE> - [out] The variant time.
+<DT><B>Returns:</B><DD>The function returns TRUE on success and FALSE otherwise.</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/Ole32Util.html" title="class in com.sun.jna.platform.win32"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.html" title="class in com.sun.jna.platform.win32"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../index.html?com/sun/jna/platform/win32/OleAuto.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="OleAuto.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;CONSTR&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2013 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

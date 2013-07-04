@@ -1,0 +1,1120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+COMUtils (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="COMUtils (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMObject.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.COMInfo.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/COMUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="COMUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32.COM</FONT>
+<BR>
+Class COMUtils</H2>
+<PRE>
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.COM.COMUtils</B>
+</PRE>
+<HR>
+<DL>
+<DT><PRE>public abstract class <B>COMUtils</B><DT>extends <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></DL>
+</PRE>
+
+<P>
+The Class COMUtils.
+<P>
+
+<P>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.COMInfo.html" title="class in com.sun.jna.platform.win32.COM">COMUtils.COMInfo</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#CLASS_E_NOAGGREGATION">CLASS_E_NOAGGREGATION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_NOTINITIALIZED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#CO_E_NOTINITIALIZED">CO_E_NOTINITIALIZED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_NOTINITIALIZED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#CO_E_OBJNOTCONNECTED">CO_E_OBJNOTCONNECTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_OBJNOTCONNECTED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_ARRAYISLOCKED">DISP_E_ARRAYISLOCKED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_ARRAYISLOCKED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_BADCALLEE">DISP_E_BADCALLEE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_BADCALLEE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_BADINDEX">DISP_E_BADINDEX</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_BADINDEX.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_BADPARAMCOUNT">DISP_E_BADPARAMCOUNT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_BADPARAMCOUNT.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_BADVARTYPE">DISP_E_BADVARTYPE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_BADVARTYPE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_BUFFERTOOSMALL">DISP_E_BUFFERTOOSMALL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_BUFFERTOOSMALL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_DIVBYZERO">DISP_E_DIVBYZERO</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_DIVBYZERO.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_EXCEPTION">DISP_E_EXCEPTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_EXCEPTION.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_MEMBERNOTFOUND">DISP_E_MEMBERNOTFOUND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_MEMBERNOTFOUND.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_NONAMEDARGS">DISP_E_NONAMEDARGS</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_NONAMEDARGS.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_NOTACOLLECTION">DISP_E_NOTACOLLECTION</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_NOTACOLLECTION.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_OVERFLOW">DISP_E_OVERFLOW</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_OVERFLOW.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_PARAMNOTFOUND">DISP_E_PARAMNOTFOUND</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_PARAMNOTFOUND.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_PARAMNOTOPTIONAL">DISP_E_PARAMNOTOPTIONAL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_PARAMNOTOPTIONAL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_TYPEMISMATCH">DISP_E_TYPEMISMATCH</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_TYPEMISMATCH.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_UNKNOWNINTERFACE">DISP_E_UNKNOWNINTERFACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_UNKNOWNINTERFACE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_UNKNOWNLCID">DISP_E_UNKNOWNLCID</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_UNKNOWNLCID.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#DISP_E_UNKNOWNNAME">DISP_E_UNKNOWNNAME</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant DISP_E_UNKNOWNNAME.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_ABORT">E_ABORT</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_ABORT.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_ACCESSDENIED">E_ACCESSDENIED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_ACCESSDENIED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_FAIL">E_FAIL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_FAIL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_HANDLE">E_HANDLE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_HANDLE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_INVALIDARG">E_INVALIDARG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_INVALIDARG.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_NOINTERFACE">E_NOINTERFACE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_NOINTERFACE.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_NOTIMPL">E_NOTIMPL</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_NOTIMPL.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_OUTOFMEMORY">E_OUTOFMEMORY</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_OUTOFMEMORY.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_POINTER">E_POINTER</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_POINTER.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#E_UNEXPECTED">E_UNEXPECTED</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant E_UNEXPECTED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#REGDB_E_CLASSNOTREG">REGDB_E_CLASSNOTREG</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_NOTINITIALIZED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#S_FALSE">S_FALSE</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_NOTINITIALIZED.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;int</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#S_OK">S_OK</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant CO_E_NOTINITIALIZED.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#COMUtils()">COMUtils</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#checkAutoRC(com.sun.jna.platform.win32.WinNT.HRESULT)">checkAutoRC</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Throw new exception.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#checkAutoRC(com.sun.jna.platform.win32.WinNT.HRESULT, com.sun.jna.platform.win32.OaIdl.EXCEPINFO, com.sun.jna.ptr.IntByReference)">checkAutoRC</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.EXCEPINFO.html" title="class in com.sun.jna.platform.win32">OaIdl.EXCEPINFO</A>&nbsp;pExcepInfo,
+            <A HREF="../../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;puArgErr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Throw new exception.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#checkTypeLibRC(com.sun.jna.platform.win32.WinNT.HRESULT)">checkTypeLibRC</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#FAILED(int)">FAILED</A></B>(int&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#FAILED(com.sun.jna.platform.win32.WinNT.HRESULT)">FAILED</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Failed.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</A>&lt;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.COMInfo.html" title="class in com.sun.jna.platform.win32.COM">COMUtils.COMInfo</A>&gt;</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#getAllCOMInfoOnSystem()">getAllCOMInfoOnSystem</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#SUCCEEDED(int)">SUCCEEDED</A></B>(int&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Succeeded.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;boolean</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.html#SUCCEEDED(com.sun.jna.platform.win32.WinNT.HRESULT)">SUCCEEDED</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Succeeded.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#equals(java.lang.Object)" title="class or interface in java.lang">equals</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#hashCode()" title="class or interface in java.lang">hashCode</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#toString()" title="class or interface in java.lang">toString</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="S_OK"><!-- --></A><H3>
+S_OK</H3>
+<PRE>
+public static final int <B>S_OK</B></PRE>
+<DL>
+<DD>The Constant CO_E_NOTINITIALIZED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.S_OK">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="S_FALSE"><!-- --></A><H3>
+S_FALSE</H3>
+<PRE>
+public static final int <B>S_FALSE</B></PRE>
+<DL>
+<DD>The Constant CO_E_NOTINITIALIZED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.S_FALSE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="REGDB_E_CLASSNOTREG"><!-- --></A><H3>
+REGDB_E_CLASSNOTREG</H3>
+<PRE>
+public static final int <B>REGDB_E_CLASSNOTREG</B></PRE>
+<DL>
+<DD>The Constant CO_E_NOTINITIALIZED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.REGDB_E_CLASSNOTREG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CLASS_E_NOAGGREGATION"><!-- --></A><H3>
+CLASS_E_NOAGGREGATION</H3>
+<PRE>
+public static final int <B>CLASS_E_NOAGGREGATION</B></PRE>
+<DL>
+<DD>The Constant CO_E_NOTINITIALIZED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.CLASS_E_NOAGGREGATION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CO_E_NOTINITIALIZED"><!-- --></A><H3>
+CO_E_NOTINITIALIZED</H3>
+<PRE>
+public static final int <B>CO_E_NOTINITIALIZED</B></PRE>
+<DL>
+<DD>The Constant CO_E_NOTINITIALIZED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.CO_E_NOTINITIALIZED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_UNEXPECTED"><!-- --></A><H3>
+E_UNEXPECTED</H3>
+<PRE>
+public static final int <B>E_UNEXPECTED</B></PRE>
+<DL>
+<DD>The Constant E_UNEXPECTED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_UNEXPECTED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_NOTIMPL"><!-- --></A><H3>
+E_NOTIMPL</H3>
+<PRE>
+public static final int <B>E_NOTIMPL</B></PRE>
+<DL>
+<DD>The Constant E_NOTIMPL.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_NOTIMPL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_OUTOFMEMORY"><!-- --></A><H3>
+E_OUTOFMEMORY</H3>
+<PRE>
+public static final int <B>E_OUTOFMEMORY</B></PRE>
+<DL>
+<DD>The Constant E_OUTOFMEMORY.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_OUTOFMEMORY">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_INVALIDARG"><!-- --></A><H3>
+E_INVALIDARG</H3>
+<PRE>
+public static final int <B>E_INVALIDARG</B></PRE>
+<DL>
+<DD>The Constant E_INVALIDARG.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_INVALIDARG">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_NOINTERFACE"><!-- --></A><H3>
+E_NOINTERFACE</H3>
+<PRE>
+public static final int <B>E_NOINTERFACE</B></PRE>
+<DL>
+<DD>The Constant E_NOINTERFACE.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_NOINTERFACE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_POINTER"><!-- --></A><H3>
+E_POINTER</H3>
+<PRE>
+public static final int <B>E_POINTER</B></PRE>
+<DL>
+<DD>The Constant E_POINTER.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_POINTER">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_HANDLE"><!-- --></A><H3>
+E_HANDLE</H3>
+<PRE>
+public static final int <B>E_HANDLE</B></PRE>
+<DL>
+<DD>The Constant E_HANDLE.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_HANDLE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_ABORT"><!-- --></A><H3>
+E_ABORT</H3>
+<PRE>
+public static final int <B>E_ABORT</B></PRE>
+<DL>
+<DD>The Constant E_ABORT.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_ABORT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_FAIL"><!-- --></A><H3>
+E_FAIL</H3>
+<PRE>
+public static final int <B>E_FAIL</B></PRE>
+<DL>
+<DD>The Constant E_FAIL.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_FAIL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="E_ACCESSDENIED"><!-- --></A><H3>
+E_ACCESSDENIED</H3>
+<PRE>
+public static final int <B>E_ACCESSDENIED</B></PRE>
+<DL>
+<DD>The Constant E_ACCESSDENIED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.E_ACCESSDENIED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_BADVARTYPE"><!-- --></A><H3>
+DISP_E_BADVARTYPE</H3>
+<PRE>
+public static final int <B>DISP_E_BADVARTYPE</B></PRE>
+<DL>
+<DD>The Constant DISP_E_BADVARTYPE.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_BADVARTYPE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_NOTACOLLECTION"><!-- --></A><H3>
+DISP_E_NOTACOLLECTION</H3>
+<PRE>
+public static final int <B>DISP_E_NOTACOLLECTION</B></PRE>
+<DL>
+<DD>The Constant DISP_E_NOTACOLLECTION.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_NOTACOLLECTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_MEMBERNOTFOUND"><!-- --></A><H3>
+DISP_E_MEMBERNOTFOUND</H3>
+<PRE>
+public static final int <B>DISP_E_MEMBERNOTFOUND</B></PRE>
+<DL>
+<DD>The Constant DISP_E_MEMBERNOTFOUND.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_MEMBERNOTFOUND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_ARRAYISLOCKED"><!-- --></A><H3>
+DISP_E_ARRAYISLOCKED</H3>
+<PRE>
+public static final int <B>DISP_E_ARRAYISLOCKED</B></PRE>
+<DL>
+<DD>The Constant DISP_E_ARRAYISLOCKED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_ARRAYISLOCKED">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_EXCEPTION"><!-- --></A><H3>
+DISP_E_EXCEPTION</H3>
+<PRE>
+public static final int <B>DISP_E_EXCEPTION</B></PRE>
+<DL>
+<DD>The Constant DISP_E_EXCEPTION.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_EXCEPTION">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_TYPEMISMATCH"><!-- --></A><H3>
+DISP_E_TYPEMISMATCH</H3>
+<PRE>
+public static final int <B>DISP_E_TYPEMISMATCH</B></PRE>
+<DL>
+<DD>The Constant DISP_E_TYPEMISMATCH.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_TYPEMISMATCH">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_BADINDEX"><!-- --></A><H3>
+DISP_E_BADINDEX</H3>
+<PRE>
+public static final int <B>DISP_E_BADINDEX</B></PRE>
+<DL>
+<DD>The Constant DISP_E_BADINDEX.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_BADINDEX">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_BADCALLEE"><!-- --></A><H3>
+DISP_E_BADCALLEE</H3>
+<PRE>
+public static final int <B>DISP_E_BADCALLEE</B></PRE>
+<DL>
+<DD>The Constant DISP_E_BADCALLEE.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_BADCALLEE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_OVERFLOW"><!-- --></A><H3>
+DISP_E_OVERFLOW</H3>
+<PRE>
+public static final int <B>DISP_E_OVERFLOW</B></PRE>
+<DL>
+<DD>The Constant DISP_E_OVERFLOW.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_OVERFLOW">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_UNKNOWNINTERFACE"><!-- --></A><H3>
+DISP_E_UNKNOWNINTERFACE</H3>
+<PRE>
+public static final int <B>DISP_E_UNKNOWNINTERFACE</B></PRE>
+<DL>
+<DD>The Constant DISP_E_UNKNOWNINTERFACE.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_UNKNOWNINTERFACE">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_DIVBYZERO"><!-- --></A><H3>
+DISP_E_DIVBYZERO</H3>
+<PRE>
+public static final int <B>DISP_E_DIVBYZERO</B></PRE>
+<DL>
+<DD>The Constant DISP_E_DIVBYZERO.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_DIVBYZERO">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_UNKNOWNLCID"><!-- --></A><H3>
+DISP_E_UNKNOWNLCID</H3>
+<PRE>
+public static final int <B>DISP_E_UNKNOWNLCID</B></PRE>
+<DL>
+<DD>The Constant DISP_E_UNKNOWNLCID.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_UNKNOWNLCID">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_PARAMNOTOPTIONAL"><!-- --></A><H3>
+DISP_E_PARAMNOTOPTIONAL</H3>
+<PRE>
+public static final int <B>DISP_E_PARAMNOTOPTIONAL</B></PRE>
+<DL>
+<DD>The Constant DISP_E_PARAMNOTOPTIONAL.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_PARAMNOTOPTIONAL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_PARAMNOTFOUND"><!-- --></A><H3>
+DISP_E_PARAMNOTFOUND</H3>
+<PRE>
+public static final int <B>DISP_E_PARAMNOTFOUND</B></PRE>
+<DL>
+<DD>The Constant DISP_E_PARAMNOTFOUND.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_PARAMNOTFOUND">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_BADPARAMCOUNT"><!-- --></A><H3>
+DISP_E_BADPARAMCOUNT</H3>
+<PRE>
+public static final int <B>DISP_E_BADPARAMCOUNT</B></PRE>
+<DL>
+<DD>The Constant DISP_E_BADPARAMCOUNT.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_BADPARAMCOUNT">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_BUFFERTOOSMALL"><!-- --></A><H3>
+DISP_E_BUFFERTOOSMALL</H3>
+<PRE>
+public static final int <B>DISP_E_BUFFERTOOSMALL</B></PRE>
+<DL>
+<DD>The Constant DISP_E_BUFFERTOOSMALL.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_BUFFERTOOSMALL">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_UNKNOWNNAME"><!-- --></A><H3>
+DISP_E_UNKNOWNNAME</H3>
+<PRE>
+public static final int <B>DISP_E_UNKNOWNNAME</B></PRE>
+<DL>
+<DD>The Constant DISP_E_UNKNOWNNAME.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_UNKNOWNNAME">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="DISP_E_NONAMEDARGS"><!-- --></A><H3>
+DISP_E_NONAMEDARGS</H3>
+<PRE>
+public static final int <B>DISP_E_NONAMEDARGS</B></PRE>
+<DL>
+<DD>The Constant DISP_E_NONAMEDARGS.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.DISP_E_NONAMEDARGS">Constant Field Values</A></DL>
+</DL>
+<HR>
+
+<A NAME="CO_E_OBJNOTCONNECTED"><!-- --></A><H3>
+CO_E_OBJNOTCONNECTED</H3>
+<PRE>
+public static final int <B>CO_E_OBJNOTCONNECTED</B></PRE>
+<DL>
+<DD>The Constant CO_E_OBJNOTCONNECTED.
+<P>
+<DL>
+<DT><B>See Also:</B><DD><A HREF="../../../../../../constant-values.html#com.sun.jna.platform.win32.COM.COMUtils.CO_E_OBJNOTCONNECTED">Constant Field Values</A></DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="COMUtils()"><!-- --></A><H3>
+COMUtils</H3>
+<PRE>
+public <B>COMUtils</B>()</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="SUCCEEDED(com.sun.jna.platform.win32.WinNT.HRESULT)"><!-- --></A><H3>
+SUCCEEDED</H3>
+<PRE>
+public static boolean <B>SUCCEEDED</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</PRE>
+<DL>
+<DD>Succeeded.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr
+<DT><B>Returns:</B><DD>true, if successful</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="SUCCEEDED(int)"><!-- --></A><H3>
+SUCCEEDED</H3>
+<PRE>
+public static boolean <B>SUCCEEDED</B>(int&nbsp;hr)</PRE>
+<DL>
+<DD>Succeeded.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr
+<DT><B>Returns:</B><DD>true, if successful</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FAILED(com.sun.jna.platform.win32.WinNT.HRESULT)"><!-- --></A><H3>
+FAILED</H3>
+<PRE>
+public static boolean <B>FAILED</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</PRE>
+<DL>
+<DD>Failed.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr
+<DT><B>Returns:</B><DD>true, if successful</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="FAILED(int)"><!-- --></A><H3>
+FAILED</H3>
+<PRE>
+public static boolean <B>FAILED</B>(int&nbsp;hr)</PRE>
+<DL>
+<DD>Failed.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr
+<DT><B>Returns:</B><DD>true, if successful</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkAutoRC(com.sun.jna.platform.win32.WinNT.HRESULT)"><!-- --></A><H3>
+checkAutoRC</H3>
+<PRE>
+public static void <B>checkAutoRC</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</PRE>
+<DL>
+<DD>Throw new exception.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkAutoRC(com.sun.jna.platform.win32.WinNT.HRESULT, com.sun.jna.platform.win32.OaIdl.EXCEPINFO, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+checkAutoRC</H3>
+<PRE>
+public static void <B>checkAutoRC</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr,
+                               <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.EXCEPINFO.html" title="class in com.sun.jna.platform.win32">OaIdl.EXCEPINFO</A>&nbsp;pExcepInfo,
+                               <A HREF="../../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;puArgErr)</PRE>
+<DL>
+<DD>Throw new exception.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>hr</CODE> - the hr<DD><CODE>pExcepInfo</CODE> - the excep info<DD><CODE>puArgErr</CODE> - the pu arg err</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="checkTypeLibRC(com.sun.jna.platform.win32.WinNT.HRESULT)"><!-- --></A><H3>
+checkTypeLibRC</H3>
+<PRE>
+public static void <B>checkTypeLibRC</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A>&nbsp;hr)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="getAllCOMInfoOnSystem()"><!-- --></A><H3>
+getAllCOMInfoOnSystem</H3>
+<PRE>
+public static <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/util/ArrayList.html?is-external=true" title="class or interface in java.util">ArrayList</A>&lt;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.COMInfo.html" title="class in com.sun.jna.platform.win32.COM">COMUtils.COMInfo</A>&gt; <B>getAllCOMInfoOnSystem</B>()</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMObject.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/COMUtils.COMInfo.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/COMUtils.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="COMUtils.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2013 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
