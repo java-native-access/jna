@@ -172,7 +172,7 @@ if AARCH64
 nodist_libffi_la_SOURCES += src/aarch64/sysv.S src/aarch64/ffi.c
 endif
 if ARC
-nodist_libffi_la_SOURCES += src/arc/sysv.S src/arc/ffi.c
+nodist_libffi_la_SOURCES += src/arc/arcompact.S src/arc/ffi.c
 endif
 if ARM
 nodist_libffi_la_SOURCES += src/arm/sysv.S src/arm/ffi.c
