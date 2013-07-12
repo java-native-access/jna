@@ -21,7 +21,7 @@ Download
 Version 4.0
 
 * [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.0.0/jna-4.0.0.jar)
-* [jna-platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/4.0.0/jna-platform-4.0.0.jar)
+* [jna-platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.0.0/jna-platform-4.0.0.jar)
 
 Features
 ========
