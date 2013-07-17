@@ -1,0 +1,733 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+ITypeInfo (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="ITypeInfo (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/ITypeInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ITypeInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32.COM</FONT>
+<BR>
+Class ITypeInfo</H2>
+<PRE>
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../com/sun/jna/PointerType.html" title="class in com.sun.jna">com.sun.jna.PointerType</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">com.sun.jna.platform.win32.COM.IUnknown</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.COM.ITypeInfo</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></DD>
+</DL>
+<DL>
+<DT><B>Direct Known Subclasses:</B> <DD><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo.ByReference</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>ITypeInfo</B><DT>extends <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></DL>
+</PRE>
+
+<P>
+Wrapper class for the ITypeInfo interface
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Tobias Wolf, wolf.tobias@gmx.net</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;class</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo.ByReference</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.platform.win32.COM.<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#IID_IDispatch">IID_IDispatch</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#ITypeInfo()">ITypeInfo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#ITypeInfo(com.sun.jna.Pointer)">ITypeInfo</A></B>(<A HREF="../../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvInstance)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#AddressOfMember(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.OaIdl.INVOKEKIND, com.sun.jna.ptr.PointerByReference)">AddressOfMember</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.INVOKEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.INVOKEKIND</A>&nbsp;invKind,
+                <A HREF="../../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppv)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#CreateInstance(com.sun.jna.platform.win32.COM.IUnknown, com.sun.jna.platform.win32.Guid.REFIID, com.sun.jna.ptr.PointerByReference)">CreateInstance</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A>&nbsp;pUnkOuter,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/Guid.REFIID.html" title="class in com.sun.jna.platform.win32">Guid.REFIID</A>&nbsp;riid,
+               <A HREF="../../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppvObj)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetContainingTypeLib(com.sun.jna.platform.win32.COM.ITypeLib.ByReference, com.sun.jna.platform.win32.WinDef.UINTByReference)">GetContainingTypeLib</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeLib.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeLib.ByReference</A>&nbsp;pTLib,
+                     <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;pIndex)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetDllEntry(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.OaIdl.INVOKEKIND, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WinDef.WORDByReference)">GetDllEntry</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.INVOKEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.INVOKEKIND</A>&nbsp;invKind,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrDllName,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrName,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.WORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.WORDByReference</A>&nbsp;pwOrdinal)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetDocumentation(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WinDef.DWORDByReference, com.sun.jna.platform.win32.WTypes.BSTR)">GetDocumentation</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                 <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrName,
+                 <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrDocString,
+                 <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.DWORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDByReference</A>&nbsp;pdwHelpContext,
+                 <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrHelpFile)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetFuncDesc(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.FUNCDESC.ByReference)">GetFuncDesc</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+            <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.FUNCDESC.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCDESC.ByReference</A>&nbsp;pFuncDesc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetIDsOfNames(com.sun.jna.WString[], com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.MEMBERID[])">GetIDsOfNames</A></B>(<A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>[]&nbsp;rgszNames,
+              <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;cNames,
+              <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>[]&nbsp;pMemId)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetImplTypeFlags(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.ptr.IntByReference)">GetImplTypeFlags</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                 <A HREF="../../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pImplTypeFlags)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetMops(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR)">GetMops</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+        <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrMops)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetNames(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR[], com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINTByReference)">GetNames</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>[]&nbsp;rgBstrNames,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;cMaxNames,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;pcNames)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetRefTypeInfo(com.sun.jna.platform.win32.OaIdl.HREFTYPE, com.sun.jna.platform.win32.COM.ITypeInfo.ByReference)">GetRefTypeInfo</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.HREFTYPE.html" title="class in com.sun.jna.platform.win32">OaIdl.HREFTYPE</A>&nbsp;hRefType,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo.ByReference</A>&nbsp;ppTInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetRefTypeOfImplType(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference)">GetRefTypeOfImplType</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                     <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.HREFTYPEByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.HREFTYPEByReference</A>&nbsp;pRefType)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetTypeAttr(com.sun.jna.platform.win32.OaIdl.TYPEATTR.ByReference)">GetTypeAttr</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.TYPEATTR.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEATTR.ByReference</A>&nbsp;pTypeAttr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetTypeComp(com.sun.jna.platform.win32.COM.ITypeComp.ByReference)">GetTypeComp</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeComp.ByReference</A>&nbsp;pTComp)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#GetVarDesc(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.VARDESC.ByReference)">GetVarDesc</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+           <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.VARDESC.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.VARDESC.ByReference</A>&nbsp;pVarDesc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#Invoke(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WinDef.WORD, com.sun.jna.platform.win32.OleAuto.DISPPARAMS.ByReference, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference, com.sun.jna.platform.win32.WinDef.UINTByReference)">Invoke</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvInstance,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A>&nbsp;wFlags,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.ByReference.html" title="class in com.sun.jna.platform.win32">OleAuto.DISPPARAMS.ByReference</A>&nbsp;pDispParams,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.ByReference.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT.ByReference</A>&nbsp;pVarResult,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.EXCEPINFO.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.EXCEPINFO.ByReference</A>&nbsp;pExcepInfo,
+       <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;puArgErr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#ReleaseFuncDesc(com.sun.jna.platform.win32.OaIdl.FUNCDESC)">ReleaseFuncDesc</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.FUNCDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCDESC</A>&nbsp;pFuncDesc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#ReleaseTypeAttr(com.sun.jna.platform.win32.OaIdl.TYPEATTR)">ReleaseTypeAttr</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.TYPEATTR.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEATTR</A>&nbsp;pTypeAttr)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;void</CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html#ReleaseVarDesc(com.sun.jna.platform.win32.OaIdl.VARDESC)">ReleaseVarDesc</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.VARDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.VARDESC</A>&nbsp;pVarDesc)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.platform.win32.COM.<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#AddRef()">AddRef</A>, <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#QueryInterface(com.sun.jna.platform.win32.Guid.IID, com.sun.jna.ptr.PointerByReference)">QueryInterface</A>, <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#Release()">Release</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.PointerType"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../../../../com/sun/jna/PointerType.html" title="class in com.sun.jna">PointerType</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/PointerType.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#getPointer()">getPointer</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#hashCode()">hashCode</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#nativeType()">nativeType</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#setPointer(com.sun.jna.Pointer)">setPointer</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#toNative()">toNative</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#toString()">toString</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="ITypeInfo()"><!-- --></A><H3>
+ITypeInfo</H3>
+<PRE>
+public <B>ITypeInfo</B>()</PRE>
+<DL>
+</DL>
+<HR>
+
+<A NAME="ITypeInfo(com.sun.jna.Pointer)"><!-- --></A><H3>
+ITypeInfo</H3>
+<PRE>
+public <B>ITypeInfo</B>(<A HREF="../../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvInstance)</PRE>
+<DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="GetTypeAttr(com.sun.jna.platform.win32.OaIdl.TYPEATTR.ByReference)"><!-- --></A><H3>
+GetTypeAttr</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetTypeAttr</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.TYPEATTR.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEATTR.ByReference</A>&nbsp;pTypeAttr)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetTypeComp(com.sun.jna.platform.win32.COM.ITypeComp.ByReference)"><!-- --></A><H3>
+GetTypeComp</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetTypeComp</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeComp.ByReference</A>&nbsp;pTComp)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetFuncDesc(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.FUNCDESC.ByReference)"><!-- --></A><H3>
+GetFuncDesc</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetFuncDesc</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                                 <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.FUNCDESC.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCDESC.ByReference</A>&nbsp;pFuncDesc)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetVarDesc(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.VARDESC.ByReference)"><!-- --></A><H3>
+GetVarDesc</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetVarDesc</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                                <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.VARDESC.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.VARDESC.ByReference</A>&nbsp;pVarDesc)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetNames(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR[], com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINTByReference)"><!-- --></A><H3>
+GetNames</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetNames</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>[]&nbsp;rgBstrNames,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;cMaxNames,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;pcNames)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetRefTypeOfImplType(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference)"><!-- --></A><H3>
+GetRefTypeOfImplType</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetRefTypeOfImplType</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                                          <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.HREFTYPEByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.HREFTYPEByReference</A>&nbsp;pRefType)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetImplTypeFlags(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.ptr.IntByReference)"><!-- --></A><H3>
+GetImplTypeFlags</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetImplTypeFlags</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;index,
+                                      <A HREF="../../../../../../com/sun/jna/ptr/IntByReference.html" title="class in com.sun.jna.ptr">IntByReference</A>&nbsp;pImplTypeFlags)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetIDsOfNames(com.sun.jna.WString[], com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.OaIdl.MEMBERID[])"><!-- --></A><H3>
+GetIDsOfNames</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetIDsOfNames</B>(<A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>[]&nbsp;rgszNames,
+                                   <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</A>&nbsp;cNames,
+                                   <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>[]&nbsp;pMemId)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="Invoke(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WinDef.WORD, com.sun.jna.platform.win32.OleAuto.DISPPARAMS.ByReference, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference, com.sun.jna.platform.win32.WinDef.UINTByReference)"><!-- --></A><H3>
+Invoke</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>Invoke</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvInstance,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</A>&nbsp;wFlags,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.ByReference.html" title="class in com.sun.jna.platform.win32">OleAuto.DISPPARAMS.ByReference</A>&nbsp;pDispParams,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.ByReference.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT.ByReference</A>&nbsp;pVarResult,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.EXCEPINFO.ByReference.html" title="class in com.sun.jna.platform.win32">OaIdl.EXCEPINFO.ByReference</A>&nbsp;pExcepInfo,
+                            <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;puArgErr)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetDocumentation(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WinDef.DWORDByReference, com.sun.jna.platform.win32.WTypes.BSTR)"><!-- --></A><H3>
+GetDocumentation</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetDocumentation</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                                      <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrName,
+                                      <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrDocString,
+                                      <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.DWORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDByReference</A>&nbsp;pdwHelpContext,
+                                      <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrHelpFile)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetDllEntry(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.OaIdl.INVOKEKIND, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WTypes.BSTR, com.sun.jna.platform.win32.WinDef.WORDByReference)"><!-- --></A><H3>
+GetDllEntry</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetDllEntry</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                                 <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.INVOKEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.INVOKEKIND</A>&nbsp;invKind,
+                                 <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrDllName,
+                                 <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrName,
+                                 <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.WORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.WORDByReference</A>&nbsp;pwOrdinal)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetRefTypeInfo(com.sun.jna.platform.win32.OaIdl.HREFTYPE, com.sun.jna.platform.win32.COM.ITypeInfo.ByReference)"><!-- --></A><H3>
+GetRefTypeInfo</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetRefTypeInfo</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.HREFTYPE.html" title="class in com.sun.jna.platform.win32">OaIdl.HREFTYPE</A>&nbsp;hRefType,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo.ByReference</A>&nbsp;ppTInfo)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="AddressOfMember(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.OaIdl.INVOKEKIND, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+AddressOfMember</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>AddressOfMember</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                                     <A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.INVOKEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.INVOKEKIND</A>&nbsp;invKind,
+                                     <A HREF="../../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppv)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="CreateInstance(com.sun.jna.platform.win32.COM.IUnknown, com.sun.jna.platform.win32.Guid.REFIID, com.sun.jna.ptr.PointerByReference)"><!-- --></A><H3>
+CreateInstance</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>CreateInstance</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A>&nbsp;pUnkOuter,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/Guid.REFIID.html" title="class in com.sun.jna.platform.win32">Guid.REFIID</A>&nbsp;riid,
+                                    <A HREF="../../../../../../com/sun/jna/ptr/PointerByReference.html" title="class in com.sun.jna.ptr">PointerByReference</A>&nbsp;ppvObj)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetMops(com.sun.jna.platform.win32.OaIdl.MEMBERID, com.sun.jna.platform.win32.WTypes.BSTR)"><!-- --></A><H3>
+GetMops</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetMops</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.MEMBERID.html" title="class in com.sun.jna.platform.win32">OaIdl.MEMBERID</A>&nbsp;memid,
+                             <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pBstrMops)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetContainingTypeLib(com.sun.jna.platform.win32.COM.ITypeLib.ByReference, com.sun.jna.platform.win32.WinDef.UINTByReference)"><!-- --></A><H3>
+GetContainingTypeLib</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetContainingTypeLib</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeLib.ByReference.html" title="class in com.sun.jna.platform.win32.COM">ITypeLib.ByReference</A>&nbsp;pTLib,
+                                          <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</A>&nbsp;pIndex)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReleaseTypeAttr(com.sun.jna.platform.win32.OaIdl.TYPEATTR)"><!-- --></A><H3>
+ReleaseTypeAttr</H3>
+<PRE>
+public void <B>ReleaseTypeAttr</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.TYPEATTR.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEATTR</A>&nbsp;pTypeAttr)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReleaseFuncDesc(com.sun.jna.platform.win32.OaIdl.FUNCDESC)"><!-- --></A><H3>
+ReleaseFuncDesc</H3>
+<PRE>
+public void <B>ReleaseFuncDesc</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.FUNCDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCDESC</A>&nbsp;pFuncDesc)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="ReleaseVarDesc(com.sun.jna.platform.win32.OaIdl.VARDESC)"><!-- --></A><H3>
+ReleaseVarDesc</H3>
+<PRE>
+public void <B>ReleaseVarDesc</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/OaIdl.VARDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.VARDESC</A>&nbsp;pVarDesc)</PRE>
+<DL>
+<DD><DL>
+</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/ITypeInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="ITypeInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_class_summary">NESTED</A>&nbsp;|&nbsp;<A HREF="#fields_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;FIELD&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2013 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>

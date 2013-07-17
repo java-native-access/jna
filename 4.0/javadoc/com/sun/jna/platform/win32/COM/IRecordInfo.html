@@ -1,0 +1,726 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!--NewPage-->
+<HTML>
+<HEAD>
+<TITLE>
+IRecordInfo (JNA API)
+</TITLE>
+
+
+<LINK REL ="stylesheet" TYPE="text/css" HREF="../../../../../../stylesheet.css" TITLE="Style">
+
+<SCRIPT type="text/javascript">
+function windowTitle()
+{
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="IRecordInfo (JNA API)";
+    }
+}
+</SCRIPT>
+<NOSCRIPT>
+</NOSCRIPT>
+
+</HEAD>
+
+<BODY BGCOLOR="white" onload="windowTitle();">
+<HR>
+
+
+<!-- ========= START OF TOP NAVBAR ======= -->
+<A NAME="navbar_top"><!-- --></A>
+<A HREF="#skip-navbar_top" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_top_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IDispatch.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/IRecordInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IRecordInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_top"></A>
+<!-- ========= END OF TOP NAVBAR ========= -->
+
+<HR>
+<!-- ======== START OF CLASS DATA ======== -->
+<H2>
+<FONT SIZE="-1">
+com.sun.jna.platform.win32.COM</FONT>
+<BR>
+Class IRecordInfo</H2>
+<PRE>
+<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">java.lang.Object</A>
+  <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../com/sun/jna/PointerType.html" title="class in com.sun.jna">com.sun.jna.PointerType</A>
+      <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">com.sun.jna.platform.win32.COM.IUnknown</A>
+          <IMG SRC="../../../../../../resources/inherit.gif" ALT="extended by "><B>com.sun.jna.platform.win32.COM.IRecordInfo</B>
+</PRE>
+<DL>
+<DT><B>All Implemented Interfaces:</B> <DD><A HREF="../../../../../../com/sun/jna/NativeMapped.html" title="interface in com.sun.jna">NativeMapped</A></DD>
+</DL>
+<HR>
+<DL>
+<DT><PRE>public class <B>IRecordInfo</B><DT>extends <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></DL>
+</PRE>
+
+<P>
+Wrapper class for the IRecordInfo interface
+<P>
+
+<P>
+<DL>
+<DT><B>Author:</B></DT>
+  <DD>Tobias Wolf, wolf.tobias@gmx.net</DD>
+</DL>
+<HR>
+
+<P>
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+
+<A NAME="nested_class_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Nested Class Summary</B></FONT></TH>
+</TR>
+</TABLE>
+&nbsp;<A NAME="nested_classes_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Nested classes/interfaces inherited from class com.sun.jna.platform.win32.COM.<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.ByReference.html" title="class in com.sun.jna.platform.win32.COM">IUnknown.ByReference</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- =========== FIELD SUMMARY =========== -->
+
+<A NAME="field_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Field Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>static&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/Guid.IID.html" title="class in com.sun.jna.platform.win32">Guid.IID</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#IID_IRecordInfo">IID_IRecordInfo</A></B></CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The Constant IID_IRecordInfo.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="fields_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Fields inherited from class com.sun.jna.platform.win32.COM.<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#IID_IDispatch">IID_IDispatch</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+
+<A NAME="constructor_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Constructor Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#IRecordInfo()">IRecordInfo</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instantiates a new i record info.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#IRecordInfo(com.sun.jna.Pointer)">IRecordInfo</A></B>(<A HREF="../../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvInstance)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Instantiates a new i record info.</TD>
+</TR>
+</TABLE>
+&nbsp;
+<!-- ========== METHOD SUMMARY =========== -->
+
+<A NAME="method_summary"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="2"><FONT SIZE="+2">
+<B>Method Summary</B></FONT></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetField(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)">GetField</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+         <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetFieldNames(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WTypes.BSTR)">GetFieldNames</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;pcNames,
+              <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;rgBstrNames)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the field names.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetFieldNoCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT, com.sun.jna.platform.win32.WinDef.PVOID)">GetFieldNoCopy</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+               <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;ppvDataCArray)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the field no copy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetGuid(com.sun.jna.platform.win32.Guid.GUID)">GetGuid</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;pguid)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the guid.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetName(com.sun.jna.platform.win32.WTypes.BSTR)">GetName</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pbstrName)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the name.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetSize(com.sun.jna.platform.win32.WinDef.ULONG)">GetSize</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;pcbSize)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the size.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#GetTypeInfo(com.sun.jna.platform.win32.COM.ITypeInfo)">GetTypeInfo</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo</A>&nbsp;ppTypeInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Gets the type info.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.BOOL.html" title="class in com.sun.jna.platform.win32">WinDef.BOOL</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#IsMatchingType(com.sun.jna.platform.win32.COM.IRecordInfo)">IsMatchingType</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html" title="class in com.sun.jna.platform.win32.COM">IRecordInfo</A>&nbsp;pRecordInfo)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Checks if is matching type.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#PutField(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)">PutField</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;wFlags,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+         <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+         <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put field.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#PutFieldNoCopy(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)">PutFieldNoCopy</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;wFlags,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+               <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+               <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Put field no copy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordClear(com.sun.jna.platform.win32.WinDef.PVOID)">RecordClear</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvExisting)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record clear.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.WinDef.PVOID)">RecordCopy</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvExisting,
+           <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvNew)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record copy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordCreate()">RecordCreate</A></B>()</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record create.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordCreateCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.WinDef.PVOID)">RecordCreateCopy</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvSource,
+                 <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;ppvDest)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record create copy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordDestroy(com.sun.jna.platform.win32.WinDef.PVOID)">RecordDestroy</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvRecord)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record destroy.</TD>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD ALIGN="right" VALIGN="top" WIDTH="1%"><FONT SIZE="-1">
+<CODE>&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A></CODE></FONT></TD>
+<TD><CODE><B><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html#RecordInit(com.sun.jna.platform.win32.WinDef.PVOID)">RecordInit</A></B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvNew)</CODE>
+
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Record init.</TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.platform.win32.COM.<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html" title="class in com.sun.jna.platform.win32.COM">IUnknown</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#AddRef()">AddRef</A>, <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#QueryInterface(com.sun.jna.platform.win32.Guid.IID, com.sun.jna.ptr.PointerByReference)">QueryInterface</A>, <A HREF="../../../../../../com/sun/jna/platform/win32/COM/IUnknown.html#Release()">Release</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_com.sun.jna.PointerType"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class com.sun.jna.<A HREF="../../../../../../com/sun/jna/PointerType.html" title="class in com.sun.jna">PointerType</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="../../../../../../com/sun/jna/PointerType.html#equals(java.lang.Object)">equals</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#fromNative(java.lang.Object, com.sun.jna.FromNativeContext)">fromNative</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#getPointer()">getPointer</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#hashCode()">hashCode</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#nativeType()">nativeType</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#setPointer(com.sun.jna.Pointer)">setPointer</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#toNative()">toNative</A>, <A HREF="../../../../../../com/sun/jna/PointerType.html#toString()">toString</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;<A NAME="methods_inherited_from_class_java.lang.Object"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#EEEEFF" CLASS="TableSubHeadingColor">
+<TH ALIGN="left"><B>Methods inherited from class java.lang.<A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true" title="class or interface in java.lang">Object</A></B></TH>
+</TR>
+<TR BGCOLOR="white" CLASS="TableRowColor">
+<TD><CODE><A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#clone()" title="class or interface in java.lang">clone</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#finalize()" title="class or interface in java.lang">finalize</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#getClass()" title="class or interface in java.lang">getClass</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notify()" title="class or interface in java.lang">notify</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#notifyAll()" title="class or interface in java.lang">notifyAll</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait()" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long)" title="class or interface in java.lang">wait</A>, <A HREF="http://download.oracle.com/javase/1.4.2/docs/api/java/lang/Object.html?is-external=true#wait(long, int)" title="class or interface in java.lang">wait</A></CODE></TD>
+</TR>
+</TABLE>
+&nbsp;
+<P>
+
+<!-- ============ FIELD DETAIL =========== -->
+
+<A NAME="field_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Field Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="IID_IRecordInfo"><!-- --></A><H3>
+IID_IRecordInfo</H3>
+<PRE>
+public static final <A HREF="../../../../../../com/sun/jna/platform/win32/Guid.IID.html" title="class in com.sun.jna.platform.win32">Guid.IID</A> <B>IID_IRecordInfo</B></PRE>
+<DL>
+<DD>The Constant IID_IRecordInfo.
+<P>
+<DL>
+</DL>
+</DL>
+
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+
+<A NAME="constructor_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Constructor Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="IRecordInfo()"><!-- --></A><H3>
+IRecordInfo</H3>
+<PRE>
+public <B>IRecordInfo</B>()</PRE>
+<DL>
+<DD>Instantiates a new i record info.
+<P>
+</DL>
+<HR>
+
+<A NAME="IRecordInfo(com.sun.jna.Pointer)"><!-- --></A><H3>
+IRecordInfo</H3>
+<PRE>
+public <B>IRecordInfo</B>(<A HREF="../../../../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</A>&nbsp;pvInstance)</PRE>
+<DL>
+<DD>Instantiates a new i record info.
+<P>
+<DL>
+<DT><B>Parameters:</B><DD><CODE>pvInstance</CODE> - the pv instance</DL>
+</DL>
+
+<!-- ============ METHOD DETAIL ========== -->
+
+<A NAME="method_detail"><!-- --></A>
+<TABLE BORDER="1" WIDTH="100%" CELLPADDING="3" CELLSPACING="0" SUMMARY="">
+<TR BGCOLOR="#CCCCFF" CLASS="TableHeadingColor">
+<TH ALIGN="left" COLSPAN="1"><FONT SIZE="+2">
+<B>Method Detail</B></FONT></TH>
+</TR>
+</TABLE>
+
+<A NAME="RecordInit(com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+RecordInit</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>RecordInit</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvNew)</PRE>
+<DL>
+<DD>Record init.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvNew</CODE> - the pv new
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RecordClear(com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+RecordClear</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>RecordClear</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvExisting)</PRE>
+<DL>
+<DD>Record clear.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvExisting</CODE> - the pv existing
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RecordCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+RecordCopy</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>RecordCopy</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvExisting,
+                                <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvNew)</PRE>
+<DL>
+<DD>Record copy.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvExisting</CODE> - the pv existing<DD><CODE>pvNew</CODE> - the pv new
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetGuid(com.sun.jna.platform.win32.Guid.GUID)"><!-- --></A><H3>
+GetGuid</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetGuid</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</A>&nbsp;pguid)</PRE>
+<DL>
+<DD>Gets the guid.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pguid</CODE> - the pguid
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetName(com.sun.jna.platform.win32.WTypes.BSTR)"><!-- --></A><H3>
+GetName</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetName</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;pbstrName)</PRE>
+<DL>
+<DD>Gets the name.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pbstrName</CODE> - the pbstr name
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetSize(com.sun.jna.platform.win32.WinDef.ULONG)"><!-- --></A><H3>
+GetSize</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetSize</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;pcbSize)</PRE>
+<DL>
+<DD>Gets the size.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pcbSize</CODE> - the pcb size
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetTypeInfo(com.sun.jna.platform.win32.COM.ITypeInfo)"><!-- --></A><H3>
+GetTypeInfo</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetTypeInfo</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeInfo.html" title="class in com.sun.jna.platform.win32.COM">ITypeInfo</A>&nbsp;ppTypeInfo)</PRE>
+<DL>
+<DD>Gets the type info.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>ppTypeInfo</CODE> - the pp type info
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetField(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+GetField</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetField</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+                              <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</PRE>
+<DL>
+<DD>Gets the field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvData</CODE> - the pv data<DD><CODE>szFieldName</CODE> - the sz field name<DD><CODE>pvarField</CODE> - the pvar field
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetFieldNoCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT, com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+GetFieldNoCopy</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetFieldNoCopy</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+                                    <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;ppvDataCArray)</PRE>
+<DL>
+<DD>Gets the field no copy.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvData</CODE> - the pv data<DD><CODE>szFieldName</CODE> - the sz field name<DD><CODE>pvarField</CODE> - the pvar field<DD><CODE>ppvDataCArray</CODE> - the ppv data c array
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PutField(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+PutField</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>PutField</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;wFlags,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+                              <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+                              <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</PRE>
+<DL>
+<DD>Put field.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wFlags</CODE> - the w flags<DD><CODE>pvData</CODE> - the pv data<DD><CODE>szFieldName</CODE> - the sz field name<DD><CODE>pvarField</CODE> - the pvar field
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="PutFieldNoCopy(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.WString, com.sun.jna.platform.win32.Variant.VARIANT)"><!-- --></A><H3>
+PutFieldNoCopy</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>PutFieldNoCopy</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;wFlags,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvData,
+                                    <A HREF="../../../../../../com/sun/jna/WString.html" title="class in com.sun.jna">WString</A>&nbsp;szFieldName,
+                                    <A HREF="../../../../../../com/sun/jna/platform/win32/Variant.VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT</A>&nbsp;pvarField)</PRE>
+<DL>
+<DD>Put field no copy.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>wFlags</CODE> - the w flags<DD><CODE>pvData</CODE> - the pv data<DD><CODE>szFieldName</CODE> - the sz field name<DD><CODE>pvarField</CODE> - the pvar field
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="GetFieldNames(com.sun.jna.platform.win32.WinDef.ULONG, com.sun.jna.platform.win32.WTypes.BSTR)"><!-- --></A><H3>
+GetFieldNames</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>GetFieldNames</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</A>&nbsp;pcNames,
+                                   <A HREF="../../../../../../com/sun/jna/platform/win32/WTypes.BSTR.html" title="class in com.sun.jna.platform.win32">WTypes.BSTR</A>&nbsp;rgBstrNames)</PRE>
+<DL>
+<DD>Gets the field names.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pcNames</CODE> - the pc names<DD><CODE>rgBstrNames</CODE> - the rg bstr names
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="IsMatchingType(com.sun.jna.platform.win32.COM.IRecordInfo)"><!-- --></A><H3>
+IsMatchingType</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.BOOL.html" title="class in com.sun.jna.platform.win32">WinDef.BOOL</A> <B>IsMatchingType</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IRecordInfo.html" title="class in com.sun.jna.platform.win32.COM">IRecordInfo</A>&nbsp;pRecordInfo)</PRE>
+<DL>
+<DD>Checks if is matching type.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pRecordInfo</CODE> - the record info
+<DT><B>Returns:</B><DD>the bool</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RecordCreate()"><!-- --></A><H3>
+RecordCreate</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A> <B>RecordCreate</B>()</PRE>
+<DL>
+<DD>Record create.
+<P>
+<DD><DL>
+
+<DT><B>Returns:</B><DD>the pvoid</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RecordCreateCopy(com.sun.jna.platform.win32.WinDef.PVOID, com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+RecordCreateCopy</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>RecordCreateCopy</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvSource,
+                                      <A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;ppvDest)</PRE>
+<DL>
+<DD>Record create copy.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvSource</CODE> - the pv source<DD><CODE>ppvDest</CODE> - the ppv dest
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<HR>
+
+<A NAME="RecordDestroy(com.sun.jna.platform.win32.WinDef.PVOID)"><!-- --></A><H3>
+RecordDestroy</H3>
+<PRE>
+public <A HREF="../../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</A> <B>RecordDestroy</B>(<A HREF="../../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</A>&nbsp;pvRecord)</PRE>
+<DL>
+<DD>Record destroy.
+<P>
+<DD><DL>
+<DT><B>Parameters:</B><DD><CODE>pvRecord</CODE> - the pv record
+<DT><B>Returns:</B><DD>the hresult</DL>
+</DD>
+</DL>
+<!-- ========= END OF CLASS DATA ========= -->
+<HR>
+
+
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<A NAME="navbar_bottom"><!-- --></A>
+<A HREF="#skip-navbar_bottom" title="Skip navigation links"></A>
+<TABLE BORDER="0" WIDTH="100%" CELLPADDING="1" CELLSPACING="0" SUMMARY="">
+<TR>
+<TD COLSPAN=2 BGCOLOR="#EEEEFF" CLASS="NavBarCell1">
+<A NAME="navbar_bottom_firstrow"><!-- --></A>
+<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3" SUMMARY="">
+  <TR ALIGN="center" VALIGN="top">
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../overview-summary.html"><FONT CLASS="NavBarFont1"><B>Overview</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-summary.html"><FONT CLASS="NavBarFont1"><B>Package</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#FFFFFF" CLASS="NavBarCell1Rev"> &nbsp;<FONT CLASS="NavBarFont1Rev"><B>Class</B></FONT>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="package-tree.html"><FONT CLASS="NavBarFont1"><B>Tree</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../deprecated-list.html"><FONT CLASS="NavBarFont1"><B>Deprecated</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../index-all.html"><FONT CLASS="NavBarFont1"><B>Index</B></FONT></A>&nbsp;</TD>
+  <TD BGCOLOR="#EEEEFF" CLASS="NavBarCell1">    <A HREF="../../../../../../help-doc.html"><FONT CLASS="NavBarFont1"><B>Help</B></FONT></A>&nbsp;</TD>
+  </TR>
+</TABLE>
+</TD>
+<TD ALIGN="right" VALIGN="top" ROWSPAN=3><EM>
+<b>JNA API</><font size="-1"> 4.0.0</font></EM>
+</TD>
+</TR>
+
+<TR>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/IDispatch.ByReference.html" title="class in com.sun.jna.platform.win32.COM"><B>PREV CLASS</B></A>&nbsp;
+&nbsp;<A HREF="../../../../../../com/sun/jna/platform/win32/COM/ITypeComp.html" title="class in com.sun.jna.platform.win32.COM"><B>NEXT CLASS</B></A></FONT></TD>
+<TD BGCOLOR="white" CLASS="NavBarCell2"><FONT SIZE="-2">
+  <A HREF="../../../../../../index.html?com/sun/jna/platform/win32/COM/IRecordInfo.html" target="_top"><B>FRAMES</B></A>  &nbsp;
+&nbsp;<A HREF="IRecordInfo.html" target="_top"><B>NO FRAMES</B></A>  &nbsp;
+&nbsp;<SCRIPT type="text/javascript">
+  <!--
+  if(window==top) {
+    document.writeln('<A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>');
+  }
+  //-->
+</SCRIPT>
+<NOSCRIPT>
+  <A HREF="../../../../../../allclasses-noframe.html"><B>All Classes</B></A>
+</NOSCRIPT>
+
+
+</FONT></TD>
+</TR>
+<TR>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+  SUMMARY:&nbsp;<A HREF="#nested_classes_inherited_from_class_com.sun.jna.platform.win32.COM.IUnknown">NESTED</A>&nbsp;|&nbsp;<A HREF="#field_summary">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_summary">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_summary">METHOD</A></FONT></TD>
+<TD VALIGN="top" CLASS="NavBarCell3"><FONT SIZE="-2">
+DETAIL:&nbsp;<A HREF="#field_detail">FIELD</A>&nbsp;|&nbsp;<A HREF="#constructor_detail">CONSTR</A>&nbsp;|&nbsp;<A HREF="#method_detail">METHOD</A></FONT></TD>
+</TR>
+</TABLE>
+<A NAME="skip-navbar_bottom"></A>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+
+<HR>
+<center><i>Copyright &copy; 2007-2013 Timothy Wall. All Rights Reserved.</i></center>
+</BODY>
+</HTML>
