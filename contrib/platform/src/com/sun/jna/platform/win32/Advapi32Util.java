@@ -1420,6 +1420,19 @@ public abstract class Advapi32Util {
 
 		return phkKey;
 	}
+	
+	/**
+	 * Close the registry key
+	 *
+	 * @param hKey
+	 *            Registry key.
+	 */
+	public static void registryCloseKey(HKEY hKey) {
+		int rc = Advapi32.INSTANCE.RegCloseKey(hKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+	}
 
 	/**
 	 * Get a table of registry values.

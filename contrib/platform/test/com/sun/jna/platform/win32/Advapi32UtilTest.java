@@ -1,4 +1,4 @@
-/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
+﻿/* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -287,6 +287,21 @@ public class Advapi32UtilTest extends TestCase {
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
 		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");				
+	}
+	
+	public void testRegistryGetCloseKey() {
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
+		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
+		HKEYByReference phkKey = Advapi32Util.registryGetKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", WinNT.KEY_READ);
+		String[] subKeys = Advapi32Util.registryGetKeys(phkKey.getValue());
+		assertEquals(2, subKeys.length);
+		assertEquals(subKeys[0], "Key1");
+		assertEquals(subKeys[1], "Key2");
+		Advapi32Util.registryCloseKey(phkKey.getValue());
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key1");
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "Key2");
+		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
 	}
 	
 	public void testRegistryGetValues() {
