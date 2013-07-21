@@ -369,7 +369,7 @@ public class Pointer {
                 s = Structure.updateStructureByReference(type, s, getPointer(offset));
             }
             else {
-                s.useMemory(this, (int)offset);
+                s.useMemory(this, (int)offset, true);
                 s.read();
             }
             result = s;
@@ -522,7 +522,7 @@ public class Pointer {
                     sarray[0] = first;
                 }
                 else {
-                    first.useMemory(this, (int)offset);
+                    first.useMemory(this, (int)offset, true);
                     first.read();
                 }
                 Structure[] tmp = first.toArray(sarray.length);
@@ -532,7 +532,7 @@ public class Pointer {
                         sarray[i] = tmp[i];
                     }
                     else {
-                        sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()));
+                        sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()), true);
                         sarray[i].read();
                     }
                 }
@@ -952,7 +952,7 @@ v     * @param wide whether to convert from a wide or standard C string
                 }
             }
             else {
-                s.useMemory(this, (int)offset);
+                s.useMemory(this, (int)offset, true);
                 s.write();
             }
         }
@@ -1033,7 +1033,7 @@ v     * @param wide whether to convert from a wide or standard C string
                     sbuf[0] = first;
                 }
                 else {
-                    first.useMemory(this, (int)offset);
+                    first.useMemory(this, (int)offset, true);
                 }
                 first.write();
                 Structure[] tmp = first.toArray(sbuf.length);
@@ -1042,7 +1042,7 @@ v     * @param wide whether to convert from a wide or standard C string
                         sbuf[i] = tmp[i];
                     }
                     else {
-                        sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()));
+                        sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()), true);
                     }
                     sbuf[i].write();
                 }
