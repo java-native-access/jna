@@ -12,6 +12,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.RegexMatcher.matches;
+import static java.util.Arrays.asList;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -19,8 +26,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
@@ -180,6 +190,98 @@ public class Kernel32UtilTest extends TestCase {
         assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
         assertEquals(reader.readLine(), null);
         reader.close();
+    }
+
+    @Test
+    public final void testGetPrivateProfileSection() throws IOException {
+        // given
+        final File tmp = File.createTempFile("testGetPrivateProfileSection"(), "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[X]");
+                writer.println("A=1");
+                writer.println("B=X");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            final List<String> section = Kernel32Util.getPrivateProfileSection("X", tmp.getCanonicalPath());
+
+            // then
+            assertThat(section, hasItems("A=1", "B=X"));
+        } finally {
+            tmp.delete();
+        }
+    }
+
+    @Test
+    public final void testGetPrivateProfileSectionNames() throws IOException {
+        // given
+        final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[S1]");
+                writer.println("A=1");
+                writer.println("B=X");
+                writer.println("[S2]");
+                writer.println("C=2");
+                writer.println("D=Y");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            final List<String> section = Kernel32Util.getPrivateProfileSectionNames(tmp.getCanonicalPath());
+
+            // then
+            assertThat(section, hasItems("S1", "S2"));
+        } finally {
+            tmp.delete();
+        }
+    }
+
+    @Test
+    public final void testWritePrivateProfileSection() throws IOException {
+        // given
+        final File tmp = File.createTempFile("testWritePrivateProfileSecion", "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[S1]");
+                writer.println("A=1");
+                writer.println("B=X");
+                writer.println("[S2]");
+                writer.println("C=2");
+                writer.println("D=Y");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            Kernel32Util.writePrivateProfileSection("S1", asList("A=3", "E=Z"), tmp.getCanonicalPath());
+
+            // then
+            final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+            try {
+                assertThat(reader.readLine(), is("[S1]"));
+                assertThat(reader.readLine(), matches("A\\s*=\\s*3"));
+                assertThat(reader.readLine(), matches("E\\s*=\\s*Z"));
+                assertThat(reader.readLine(), is("[S2]"));
+                assertThat(reader.readLine(), matches("C\\s*=\\s*2"));
+                assertThat(reader.readLine(), matches("D\\s*=\\s*Y"));
+                assertThat(reader.readLine(), is(nullValue()));
+            } finally {
+                reader.close();
+            }
+        } finally {
+            tmp.delete();
+        }
     }
 
     public final void testGetLogicalProcessorInformation() {

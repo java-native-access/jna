@@ -1940,4 +1940,65 @@ public interface Kernel32 extends WinNT {
      *         </p>
      */
     boolean WritePrivateProfileString(String lpAppName, String lpKeyName, String lpString, String lpFileName);
+
+    /**
+     * Retrieves all the keys and values for the specified section of an initialization file.
+     *
+     * <p>
+     * Each string has the following format: {@code key=string}.
+     * </p>
+     * <p>
+     * This operation is atomic; no updates to the specified initialization file are allowed while the key name and value pairs for the section are being copied
+     * to the buffer pointed to by the {@code lpReturnedString} parameter.
+     * </p>
+     *
+     * @param lpAppName
+     *            The name of the section in the initialization file.
+     * @param lpReturnedString
+     *            A buffer that receives the key name and value pairs associated with the named section. The buffer is filled with one or more {@code null}
+     *            -terminated strings; the last string is followed by a second {@code null} character.
+     * @param nSize
+     *            The size of the buffer pointed to by the {@code lpReturnedString} parameter, in characters. The maximum profile section size is 32,767
+     *            characters.
+     * @param lpFileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return The number of characters copied to the buffer, not including the terminating null character. If the buffer is not large enough to contain all the
+     *         key name and value pairs associated with the named section, the return value is equal to {@code nSize} minus two.
+     */
+    DWORD GetPrivateProfileSection(String lpAppName, char[] lpReturnedString, DWORD nSize, String lpFileName);
+
+    /**
+     * Retrieves the names of all sections in an initialization file.
+     * <p>
+     * This operation is atomic; no updates to the initialization file are allowed while the section names are being copied to the buffer.
+     * </p>
+     *
+     * @param lpszReturnBuffer
+     *            A pointer to a buffer that receives the section names associated with the named file. The buffer is filled with one or more {@code null}
+     *            -terminated strings; the last string is followed by a second {@code null} character.
+     * @param nSize
+     *            size of the buffer pointed to by the {@code lpszReturnBuffer} parameter, in characters.
+     * @param lpFileName
+     *            The name of the initialization file. If this parameter is {@code NULL}, the function searches the Win.ini file. If this parameter does not
+     *            contain a full path to the file, the system searches for the file in the Windows directory.
+     * @return The return value specifies the number of characters copied to the specified buffer, not including the terminating {@code null} character. If the
+     *         buffer is not large enough to contain all the section names associated with the specified initialization file, the return value is equal to the
+     *         size specified by {@code nSize} minus two.
+     */
+    DWORD GetPrivateProfileSectionNames(char[] lpszReturnBuffer, DWORD nSize, String lpFileName);
+
+    /**
+     * @param lpAppName
+     *            The name of the section in which data is written. This section name is typically the name of the calling application.
+     * @param lpString
+     *            The new key names and associated values that are to be written to the named section. This string is limited to 65,535 bytes. Must be filled
+     *            with zero or many {@code null}-terminated strings of the form {@code key=value}, appended by an additional {@code null} byte to terminate the
+     *            list.
+     * @param lpFileName
+     *            The name of the initialization file. If this parameter does not contain a full path for the file, the function searches the Windows directory
+     *            for the file. If the file does not exist and lpFileName does not contain a full path, the function creates the file in the Windows directory.
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     */
+    boolean WritePrivateProfileSection(String lpAppName, String lpString, String lpFileName);
 }
