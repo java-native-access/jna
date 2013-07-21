@@ -344,6 +344,17 @@ public final class Native implements Version {
         return s;
     }
 
+    /**
+     * Converts a null-terminated sequence of null-terminated strings into an array of Java {@link String}s.
+     * 
+     * @param buffer
+     *            Contains a null-terminated sequence of null-terminated strings.
+     * @return {@code buffer}'s content converted to Java {@link String}s.
+     */
+    public static final String[] toStrings(final char[] buffer) {
+        return new String(buffer).split("\0");
+    }
+
     /** Map a library interface to the current process, providing
      * the explicit interface class.
      * Native libraries loaded via this method may be found in

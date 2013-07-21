@@ -12,6 +12,9 @@
  */
 package com.sun.jna;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
@@ -274,6 +277,18 @@ public class NativeTest extends TestCase {
     public void testByteArrayToString() {
         byte[] buf = { 'a', 'b', 'c', '\0', 'd', 'e' };
         assertEquals("Wrong String generated", "abc", Native.toString(buf));
+    }
+    
+    @Test
+    public final void shouldConvertSequenceToStrings() {
+        // given
+        final char[] buffer = "ABC\0DEF\0GHI\0\0".toCharArray();
+
+        // when
+        final String[] strings = /* Native */N.toStrings(buffer);
+
+        // then
+        assertThat(strings, is(new String[] { "ABC", "DEF", "GHI" }));
     }
 
     public void testToByteArray() {

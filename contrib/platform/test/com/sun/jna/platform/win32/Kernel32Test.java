@@ -12,6 +12,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.RegexMatcher.matches;
+import static org.hamcrest.CoreMatchers.anyOf;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -22,11 +29,14 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.TimeZone;
 
 import junit.framework.TestCase;
+
+import org.junit.Test;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
@@ -605,5 +615,97 @@ public class Kernel32Test extends TestCase {
         finally {
             tmp.delete();
         }
+    }
+
+    @Test
+    public final void testGetPrivateProfileSection() throws IOException {
+        // given
+        final File tmp = File.createTempFile(getName(), "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[X]");
+                writer.println("A=1");
+                writer.println("B=X");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            final char[] buffer = new char[9];
+            final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSection("X", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+
+            // then
+            assertThat("Wrong length", len, is(new DWORD(7)));
+            assertThat("Wrong content", buffer, is(anyOf(equalTo("A=1\0B=X\0\0".toCharArray()), equalTo("B=X\0A=1\0\0".toCharArray()))));
+        } finally {
+            tmp.delete();
+        }
+    }
+
+    @Test
+    public final void testGetPrivateProfileSectionNames() throws IOException {
+        // given
+        final File tmp = File.createTempFile(getName(), "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[S1]");
+                writer.println("[S2]");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            final char[] buffer = new char[7];
+            final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+
+            // then
+            assertThat("Wrong length", len, is(new DWORD(5)));
+            assertThat("Wrong content", buffer, is(anyOf(equalTo("S1\0S2\0\0".toCharArray()), equalTo("S2\0S1\0\0".toCharArray()))));
+        } finally {
+            tmp.delete();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public final void testWritePrivateProfileSection() throws IOException {
+        // given
+        final File tmp = File.createTempFile(getName(), "ini");
+        tmp.deleteOnExit();
+        try {
+            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+            try {
+                writer.println("[S1]");
+                writer.println("A=1");
+                writer.println("B=X");
+            } finally {
+                writer.close();
+            }
+
+            // when
+            final boolean result = Kernel32.INSTANCE.WritePrivateProfileSection("S1", "A=3\0E=Z\0\0", tmp.getCanonicalPath());
+
+            // then
+            assertThat("Wrong result", result, is(true));
+            assertThat(readAllLines(tmp), hasItems(is("[S1]"), matches("A\\s*=\\s*3"), matches("E\\s*=\\s*Z")));
+        } finally {
+            tmp.delete();
+        }
+    }
+
+    private static final List<String> readAllLines(final File file) throws IOException {
+        final List<String> lines = new LinkedList<String>();
+        final BufferedReader reader = new BufferedReader(new FileReader(file));
+        try {
+            for (String line = reader.readLine(); line != null; line = reader.readLine())
+                lines.add(line);
+        } finally {
+            reader.close();
+        }
+        return lines;
     }
 }
