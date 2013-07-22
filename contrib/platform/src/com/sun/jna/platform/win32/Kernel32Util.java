@@ -327,7 +327,7 @@ public abstract class Kernel32Util implements WinDef {
      * @return The key name and value pairs associated with the named section.
      */
     public static final List<String> getPrivateProfileSection(final String appName, final String fileName) {
-        final char buffer[] = new char[32768];
+        final char buffer[] = new char[32768]; // Maximum section size according to MSDN (http://msdn.microsoft.com/en-us/library/windows/desktop/ms724348(v=vs.85).aspx)
         if (Kernel32.INSTANCE.GetPrivateProfileSection(appName, buffer, new DWORD(buffer.length), fileName).intValue() == 0)
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         return asList(Native.toStrings(buffer));
@@ -345,7 +345,7 @@ public abstract class Kernel32Util implements WinDef {
      * @return the section names associated with the named file.
      */
     public static final List<String> getPrivateProfileSectionNames(final String fileName) {
-        final char buffer[] = new char[32768];
+        final char buffer[] = new char[65536]; // Maximum INI file size according to MSDN (http://support.microsoft.com/kb/78346)
         if (Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), fileName).intValue() == 0)
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         return asList(Native.toStrings(buffer));
