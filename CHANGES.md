@@ -1,6 +1,10 @@
 Next Release (4.0.1)
 ====================
 
+Features
+--------
+* More win32 initialization file APIs - [@quipsy](https://github.com/quipsy).
+
 Release 4.0
 ===========
 
