@@ -760,6 +760,20 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </copy>
   </target>
 
+  <target name="compile-some-tests" depends="compile,jar"
+          description="Compile test code which does not have additional native
+                       dependencies">
+    <javac classpathref="compile-test.path"
+           source="${test.compatibility}"
+           target="${test.compatibility}"
+           destdir="${test.classes}"
+           includeantruntime="false"
+           includes="**/StructureFieldOrderInspector.java"
+           deprecation="on" debug="${debug}">
+      <src path="${test.src}"/>
+    </javac>
+  </target>
+
   <target name="compile-tests" depends="compile,native,jar"
   	description="Compile all test code">
     <javac classpathref="compile-test.path"
@@ -906,7 +920,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
-  <target name="test-platform" depends="compile-tests,platform-jar">
+  <target name="test-platform" depends="compile-some-tests,platform-jar">
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>

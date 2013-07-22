@@ -7,6 +7,8 @@ Next Release (4.0.1)
 
 Features
 --------
+* Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
+* Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
 
 Bug Fixes
 ---------
@@ -34,7 +36,6 @@ Features
 * [#241](https://github.com/twall/jna/issues/241) - Added  `com.sun.jna.platform.win32.Shell32.SHAppBarMessage` - [@bsorrentino](https://github.com/bsorrentino).
 * Make `Structure.read/writeField()` protected to facilitate per-field overrides - [@twall](https://github.com/twall).
 * Speed up callback lookup where large numbers of native function pointers are in use - [@twall](https://github.com/twall).
-* Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
 
 Bug Fixes
 ---------
