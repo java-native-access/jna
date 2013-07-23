@@ -1989,8 +1989,8 @@ public interface Kernel32 extends WinNT {
      * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
      *  To get extended error information, call GetLastError.
      */
-    boolean WriteConsole(HANDLE hConsoleOutput, LPVOID lpBuffer, DWORD nNumberOfCharsToWrite,
-                      DWORD_PTR lpNumberOfCharsWritten, LPVOID lpReserved);
+    boolean WriteConsole(HANDLE hConsoleOutput, String lpBuffer, DWORD nNumberOfCharsToWrite,
+                         DWORD_PTR lpNumberOfCharsWritten, LPVOID lpReserved);
 
     /**
      * Retrieves information about the current console font.

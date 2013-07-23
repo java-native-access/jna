@@ -606,4 +606,30 @@ public class Kernel32Test extends TestCase {
             tmp.delete();
         }
     }
+
+    public void testGetStdHandle() throws IOException {
+        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
+        assertNotNull(stdOut);
+        assertNotSame(WinBase.INVALID_HANDLE_VALUE, stdOut);
+    }
+
+    public void testWriteConsole() throws IOException {
+        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
+
+        String data = "hello console :p";
+        BaseTSD.DWORD_PTR charactersWritten = new BaseTSD.DWORD_PTR();
+        boolean result = Kernel32.INSTANCE.WriteConsole(stdOut, data, new DWORD(data.length()), charactersWritten, null);
+
+        assertTrue(result);
+        assertSame(data.length(), charactersWritten.intValue());
+    }
+
+    public void testGetConsoleFont() throws IOException {
+        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
+        Wincon.CONSOLE_FONT_INFO.ByReference fontInfo = new Wincon.CONSOLE_FONT_INFO.ByReference();
+
+        boolean result = Kernel32.INSTANCE.GetCurrentConsoleFont(stdOut, false, fontInfo);
+
+        assertTrue(result);
+    }
 }
