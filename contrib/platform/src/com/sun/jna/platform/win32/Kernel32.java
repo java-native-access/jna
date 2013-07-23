@@ -1940,4 +1940,74 @@ public interface Kernel32 extends WinNT {
      *         </p>
      */
     boolean WritePrivateProfileString(String lpAppName, String lpKeyName, String lpString, String lpFileName);
+
+    /**
+     * Retrieves a handle to the specified standard device (standard input, standard output, or standard error).
+     *
+     * @param nStdHandle
+     *          The standard device. This parameter can be one of the following values.
+     *          <ul>
+     *              <li>STD_INPUT_HANDLE (DWORD)-10 The standard input device. Initially, this is the console input
+     *                buffer, CONIN$.</li>
+     *              <li>STD_OUTPUT_HANDLE (DWORD)-11 The standard output device. Initially, this is the active console
+     *                screen buffer, CONOUT$.</li>
+     *              <li>STD_ERROR_HANDLE (DWORD)-12 The standard error device. Initially, this is the active console
+     *                screen buffer, CONOUT$.</li>
+     *          </ul>
+     *
+     * @return If the function succeeds, the return value is a handle to the specified device, or a redirected handle
+     *   set by a previous call to SetStdHandle. The handle has GENERIC_READ and GENERIC_WRITE access rights, unless
+     *   the application has used SetStdHandle to set a standard handle with lesser access.
+     *
+     *   If the function fails, the return value is INVALID_HANDLE_VALUE. To get extended error information, call
+     *   GetLastError.
+     *
+     *   If an application does not have associated standard handles, such as a service running on an interactive
+     *   desktop, and has not redirected them, the return value is NULL.
+     */
+    HANDLE GetStdHandle(DWORD nStdHandle);
+
+    /**
+     * Writes a character string to a console screen buffer beginning at the current cursor location.
+     *
+     * @param hConsoleOutput
+     *              A handle to the console screen buffer. The handle must have the GENERIC_WRITE access right.
+     *
+     * @param lpBuffer
+     *              A pointer to a buffer that contains characters to be written to the console screen buffer.
+     *
+     * @param nNumberOfCharsToWrite
+     *              The number of characters to be written. If the total size of the specified number of characters
+     *              exceeds the available heap, the function fails with ERROR_NOT_ENOUGH_MEMORY.
+     *
+     * @param lpNumberOfCharsWritten
+     *              A pointer to a variable that receives the number of characters actually written.
+     *
+     * @param lpReserved
+     *              Reserved; must be NULL.
+     *
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     *  To get extended error information, call GetLastError.
+     */
+    boolean WriteConsole(HANDLE hConsoleOutput, LPVOID lpBuffer, DWORD nNumberOfCharsToWrite,
+                      DWORD_PTR lpNumberOfCharsWritten, LPVOID lpReserved);
+
+    /**
+     * Retrieves information about the current console font.
+     *
+     * @param hConsoleOutput
+     *              A handle to the console screen buffer. The handle must have the GENERIC_READ access right.
+     *
+     * @param bMaximumWindow
+     *              If this parameter is TRUE, font information is retrieved for the maximum window size. If this
+     *              parameter is FALSE, font information is retrieved for the current window size.
+     *
+     * @param lpConsoleCurrentFont
+     *              A pointer to a CONSOLE_FONT_INFO structure that receives the requested font information.
+     *
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     *  To get extended error information, call GetLastError.
+     */
+    boolean GetCurrentConsoleFont(HANDLE hConsoleOutput, boolean bMaximumWindow,
+                                  Wincon.CONSOLE_FONT_INFO.ByReference lpConsoleCurrentFont);
 }
