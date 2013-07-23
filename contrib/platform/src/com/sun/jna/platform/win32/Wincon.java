@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Interface for the Wincon.h header file.
  */
-public interface Wincon extends StdCallLibrary {
+public interface Wincon extends StdCallLibrary, WinDef {
 
     /**
      * Contains information for a console font.
@@ -37,7 +37,7 @@ public interface Wincon extends StdCallLibrary {
         /**
          * The index of the font in the system's console font table.
          */
-        public WinDef.DWORD nFont;
+        public DWORD nFont;
 
         /**
          * A COORD structure that contains the width and height of each character in the font, in logical units. The X
@@ -67,12 +67,12 @@ public interface Wincon extends StdCallLibrary {
         /**
          * The horizontal coordinate or column value. The units depend on the function call.
          */
-        public WinDef.SHORT x;
+        public SHORT x;
 
         /**
          * The vertical coordinate or row value. The units depend on the function call.
          */
-        public WinDef.SHORT y;
+        public SHORT y;
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[]{"x", "y"});
