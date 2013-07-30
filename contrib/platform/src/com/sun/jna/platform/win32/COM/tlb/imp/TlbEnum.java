@@ -40,48 +40,48 @@ public class TlbEnum extends TlbBase {
      *            the type lib util
      */
     public TlbEnum(int index, String packagename, TypeLibUtil typeLibUtil) {
-	super(index, typeLibUtil);
+        super(index, typeLibUtil);
 
-	TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-	String enumName = typeLibDoc.getName();
-	String docString = typeLibDoc.getDocString();
+        TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
+        String enumName = typeLibDoc.getName();
+        String docString = typeLibDoc.getDocString();
 
-	this.logInfo("Type of kind 'Enum' found: " + enumName);
+        this.logInfo("Type of kind 'Enum' found: " + enumName);
 
-	this.createPackageName(packagename);
-	this.createClassName(enumName);
-	this.setFilename(enumName);
+        this.createPackageName(packagename);
+        this.createClassName(enumName);
+        this.setFilename(enumName);
 
-	// Get the TypeAttributes
-	TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
-	TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+        // Get the TypeAttributes
+        TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+        TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
 
-	this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
+        this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
 
-	int cVars = typeAttr.cVars.intValue();
-	for (int i = 0; i < cVars; i++) {
-	    // Get the property description
-	    VARDESC varDesc = typeInfoUtil.getVarDesc(i);
-	    VARIANT constValue = varDesc._vardesc.lpvarValue;
-	    Object value = constValue.getValue();
+        int cVars = typeAttr.cVars.intValue();
+        for (int i = 0; i < cVars; i++) {
+            // Get the property description
+            VARDESC varDesc = typeInfoUtil.getVarDesc(i);
+            VARIANT constValue = varDesc._vardesc.lpvarValue;
+            Object value = constValue.getValue();
 
-	    // Get the member ID
-	    MEMBERID memberID = varDesc.memid;
+            // Get the member ID
+            MEMBERID memberID = varDesc.memid;
 
-	    // Get the name of the property
-	    TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
-	    this.content += TABTAB + "//" + typeInfoDoc2.getName() + CR;
-	    this.content += TABTAB + "public static final int "
-		    + typeInfoDoc2.getName() + " = " + value.toString() + ";";
+            // Get the name of the property
+            TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+            this.content += TABTAB + "//" + typeInfoDoc2.getName() + CR;
+            this.content += TABTAB + "public static final int "
+                    + typeInfoDoc2.getName() + " = " + value.toString() + ";";
 
-	    if (i < cVars - 1)
-		this.content += CR;
+            if (i < cVars - 1)
+                this.content += CR;
 
-	    // release the pointer
-	    typeInfoUtil.ReleaseVarDesc(varDesc);
-	}
+            // release the pointer
+            typeInfoUtil.ReleaseVarDesc(varDesc);
+        }
 
-	this.createContent(this.content);
+        this.createContent(this.content);
     }
 
     /**
@@ -93,8 +93,8 @@ public class TlbEnum extends TlbBase {
      *            the helpstring
      */
     protected void createJavaDocHeader(String guid, String helpstring) {
-	this.replaceVariable("uuid", guid);
-	this.replaceVariable("helpstring", helpstring);
+        this.replaceVariable("uuid", guid);
+        this.replaceVariable("helpstring", helpstring);
     }
 
     /*
@@ -104,6 +104,6 @@ public class TlbEnum extends TlbBase {
      */
     @Override
     protected String getClassTemplate() {
-	return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";
+        return "com/sun/jna/platform/win32/COM/tlb/imp/TlbEnum.template";
     }
 }

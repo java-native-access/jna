@@ -32,16 +32,13 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 public class RecordInfo extends Unknown implements IRecordInfo {
 
     public static class ByReference extends RecordInfo implements
-	    Structure.ByReference {
+            Structure.ByReference {
     }
-
-    private IRecordInfo iRecordInfo;
 
     /**
      * Instantiates a new i record info.
      */
     public RecordInfo() {
-	this.iRecordInfo = (IRecordInfo) this.createCOMClass(IRecordInfo.class);
     }
 
     /**
@@ -51,8 +48,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      *            the pv instance
      */
     public RecordInfo(Pointer pvInstance) {
-	super(pvInstance);
-	this.iRecordInfo = (IRecordInfo) this.createCOMClass(IRecordInfo.class);
+        super(pvInstance);
     }
 
     /**
@@ -63,7 +59,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      * @return the hresult
      */
     public HRESULT RecordInit(/* [out] */PVOID pvNew) {
-	return null;
+        return null;
     }
 
     /**
@@ -75,7 +71,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT RecordClear(
     /* [in] */PVOID pvExisting) {
-	return null;
+        return null;
     }
 
     /**
@@ -90,7 +86,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     public HRESULT RecordCopy(
     /* [in] */PVOID pvExisting,
     /* [out] */PVOID pvNew) {
-	return null;
+        return null;
     }
 
     /**
@@ -102,7 +98,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT GetGuid(
     /* [out] */GUID pguid) {
-	return null;
+        return null;
     }
 
     /**
@@ -114,7 +110,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT GetName(
     /* [out] */BSTR pbstrName) {
-	return null;
+        return null;
     }
 
     /**
@@ -126,7 +122,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT GetSize(
     /* [out] */ULONG pcbSize) {
-	return null;
+        return null;
     }
 
     /**
@@ -138,7 +134,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT GetTypeInfo(
     /* [out] */ITypeInfo ppTypeInfo) {
-	return null;
+        return null;
     }
 
     /**
@@ -156,7 +152,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     /* [in] */PVOID pvData,
     /* [in] */WString szFieldName,
     /* [out] */VARIANT pvarField) {
-	return null;
+        return null;
     }
 
     /**
@@ -177,7 +173,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     /* [in] */WString szFieldName,
     /* [out] */VARIANT pvarField,
     /* [out] */PVOID ppvDataCArray) {
-	return null;
+        return null;
     }
 
     /**
@@ -198,7 +194,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     /* [out][in] */PVOID pvData,
     /* [in] */WString szFieldName,
     /* [in] */VARIANT pvarField) {
-	return null;
+        return null;
     }
 
     /**
@@ -219,7 +215,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     /* [out][in] */PVOID pvData,
     /* [in] */WString szFieldName,
     /* [in] */VARIANT pvarField) {
-	return null;
+        return null;
     }
 
     /**
@@ -234,7 +230,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     public HRESULT GetFieldNames(
     /* [out][in] */ULONG pcNames,
     /* [length_is][size_is][out] */BSTR rgBstrNames) {
-	return null;
+        return null;
     }
 
     /**
@@ -246,7 +242,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public BOOL IsMatchingType(
     /* [in] */IRecordInfo pRecordInfo) {
-	return null;
+        return null;
     }
 
     /**
@@ -255,7 +251,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      * @return the pvoid
      */
     public PVOID RecordCreate() {
-	return null;
+        return null;
     }
 
     /**
@@ -270,7 +266,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
     public HRESULT RecordCreateCopy(
     /* [in] */PVOID pvSource,
     /* [out] */PVOID ppvDest) {
-	return null;
+        return null;
     }
 
     /**
@@ -282,6 +278,6 @@ public class RecordInfo extends Unknown implements IRecordInfo {
      */
     public HRESULT RecordDestroy(
     /* [in] */PVOID pvRecord) {
-	return null;
+        return null;
     }
 }

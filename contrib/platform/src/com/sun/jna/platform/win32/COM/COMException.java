@@ -33,7 +33,7 @@ public class COMException extends RuntimeException {
      * Instantiates a new automation exception.
      */
     public COMException() {
-	super();
+        super();
     }
 
     /**
@@ -45,7 +45,7 @@ public class COMException extends RuntimeException {
      *            the cause
      */
     public COMException(String message, Throwable cause) {
-	super(message, cause);
+        super(message, cause);
     }
 
     /**
@@ -55,7 +55,7 @@ public class COMException extends RuntimeException {
      *            the message
      */
     public COMException(String message) {
-	super(message);
+        super(message);
     }
 
     /**
@@ -69,10 +69,10 @@ public class COMException extends RuntimeException {
      *            the pu arg err
      */
     public COMException(String message, EXCEPINFO pExcepInfo,
-	    IntByReference puArgErr) {
-	super(message);
-	this.pExcepInfo = pExcepInfo;
-	this.puArgErr = puArgErr;
+            IntByReference puArgErr) {
+        super(message);
+        this.pExcepInfo = pExcepInfo;
+        this.puArgErr = puArgErr;
     }
 
     /**
@@ -82,7 +82,7 @@ public class COMException extends RuntimeException {
      *            the cause
      */
     public COMException(Throwable cause) {
-	super(cause);
+        super(cause);
     }
 
     /**
@@ -91,7 +91,7 @@ public class COMException extends RuntimeException {
      * @return the excep info
      */
     public EXCEPINFO getExcepInfo() {
-	return pExcepInfo;
+        return pExcepInfo;
     }
 
     /**
@@ -100,6 +100,6 @@ public class COMException extends RuntimeException {
      * @return the arg err
      */
     public IntByReference getArgErr() {
-	return puArgErr;
+        return puArgErr;
     }
 }

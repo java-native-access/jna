@@ -1,5 +1,5 @@
 	/**
 	 * ${helpstring}
+	 * Virtual table id: ${vtableid}	 
 	 */
-	@VTABLE_ID(${vtableid})	 
 	public void ${methodname}(${methodparams});

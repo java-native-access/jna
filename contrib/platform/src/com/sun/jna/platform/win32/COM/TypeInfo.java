@@ -47,16 +47,13 @@ import com.sun.jna.ptr.PointerByReference;
 public class TypeInfo extends Unknown implements ITypeInfo {
 
     public static class ByReference extends TypeInfo implements
-	    Structure.ByReference {
+            Structure.ByReference {
     }
-
-    private ITypeInfo iTypeInfo;
 
     /**
      * Instantiates a new i type info.
      */
     public TypeInfo() {
-	this.iTypeInfo = (ITypeInfo) this.createCOMClass(ITypeInfo.class);
     }
 
     /**
@@ -66,8 +63,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pv instance
      */
     public TypeInfo(Pointer pvInstance) {
-	super(pvInstance);
-	this.iTypeInfo = (ITypeInfo) this.createCOMClass(ITypeInfo.class);
+        super(pvInstance);
     }
 
     /**
@@ -80,7 +76,8 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     public HRESULT GetTypeAttr(
     /* [out] */PointerByReference ppTypeAttr) {
 
-	return this.iTypeInfo.GetTypeAttr(ppTypeAttr);
+        return (HRESULT) this._invokeNativeObject(3,
+                new Object[] { this.getPointer(), ppTypeAttr }, HRESULT.class);
     }
 
     /**
@@ -93,7 +90,8 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     public HRESULT GetTypeComp(
     /* [out] */PointerByReference ppTComp) {
 
-	return this.iTypeInfo.GetTypeComp(ppTComp);
+        return (HRESULT) this._invokeNativeObject(4,
+                new Object[] { this.getPointer(), ppTComp }, HRESULT.class);
     }
 
     /**
@@ -109,7 +107,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT index,
     /* [out] */PointerByReference ppFuncDesc) {
 
-	return this.iTypeInfo.GetFuncDesc(index, ppFuncDesc);
+        return (HRESULT) this._invokeNativeObject(5,
+                new Object[] { this.getPointer(), index, ppFuncDesc },
+                HRESULT.class);
     }
 
     /**
@@ -125,7 +125,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT index,
     /* [out] */PointerByReference ppVarDesc) {
 
-	return this.iTypeInfo.GetVarDesc(index, ppVarDesc);
+        return (HRESULT) this._invokeNativeObject(6,
+                new Object[] { this.getPointer(), index, ppVarDesc },
+                HRESULT.class);
     }
 
     /**
@@ -147,7 +149,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT cMaxNames,
     /* [out] */UINTbyReference pcNames) {
 
-	return this.iTypeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
+        return (HRESULT) this._invokeNativeObject(7,
+                new Object[] { this.getPointer(), memid, rgBstrNames,
+                        cMaxNames, pcNames }, HRESULT.class);
     }
 
     /**
@@ -163,7 +167,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT index,
     /* [out] */HREFTYPEbyReference pRefType) {
 
-	return this.iTypeInfo.GetRefTypeOfImplType(index, pRefType);
+        return (HRESULT) this._invokeNativeObject(8,
+                new Object[] { this.getPointer(), index, pRefType },
+                HRESULT.class);
     }
 
     /**
@@ -179,7 +185,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT index,
     /* [out] */IntByReference pImplTypeFlags) {
 
-	return this.iTypeInfo.GetImplTypeFlags(index, pImplTypeFlags);
+        return (HRESULT) this._invokeNativeObject(9,
+                new Object[] { this.getPointer(), index, pImplTypeFlags },
+                HRESULT.class);
     }
 
     /**
@@ -198,7 +206,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */UINT cNames,
     /* [size_is][out] */MEMBERID[] pMemId) {
 
-	return this.iTypeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
+        return (HRESULT) this._invokeNativeObject(10,
+                new Object[] { this.getPointer(), rgszNames, cNames, pMemId },
+                HRESULT.class);
     }
 
     /**
@@ -229,8 +239,10 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [out] */EXCEPINFO.ByReference pExcepInfo,
     /* [out] */UINTbyReference puArgErr) {
 
-	return this.iTypeInfo.Invoke(pvInstance, memid, wFlags, pDispParams,
-		pVarResult, pExcepInfo, puArgErr);
+        return (HRESULT) this._invokeNativeObject(11,
+                new Object[] { this.getPointer(), pvInstance, memid, wFlags,
+                        pDispParams, pVarResult, pExcepInfo, puArgErr },
+                HRESULT.class);
     }
 
     /**
@@ -255,8 +267,10 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [out] */DWORDbyReference pdwHelpContext,
     /* [out] */BSTRByReference pBstrHelpFile) {
 
-	return this.iTypeInfo.GetDocumentation(memid, pBstrName,
-		pBstrDocString, pdwHelpContext, pBstrHelpFile);
+        return (HRESULT) this._invokeNativeObject(12,
+                new Object[] { this.getPointer(), memid, pBstrName,
+                        pBstrDocString, pdwHelpContext, pBstrHelpFile },
+                HRESULT.class);
     }
 
     /**
@@ -281,8 +295,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [out] */BSTRByReference pBstrName,
     /* [out] */WORDbyReference pwOrdinal) {
 
-	return this.iTypeInfo.GetDllEntry(memid, invKind, pBstrDllName,
-		pBstrName, pwOrdinal);
+        return (HRESULT) this._invokeNativeObject(13,
+                new Object[] { this.getPointer(), memid, invKind, pBstrDllName,
+                        pBstrName, pwOrdinal }, HRESULT.class);
     }
 
     /**
@@ -298,7 +313,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */HREFTYPE hRefType,
     /* [out] */PointerByReference ppTInfo) {
 
-	return this.iTypeInfo.GetRefTypeInfo(hRefType, ppTInfo);
+        return (HRESULT) this._invokeNativeObject(14,
+                new Object[] { this.getPointer(), hRefType, ppTInfo },
+                HRESULT.class);
     }
 
     /**
@@ -317,7 +334,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */INVOKEKIND invKind,
     /* [out] */PointerByReference ppv) {
 
-	return this.iTypeInfo.AddressOfMember(memid, invKind, ppv);
+        return (HRESULT) this._invokeNativeObject(15,
+                new Object[] { this.getPointer(), memid, invKind, ppv },
+                HRESULT.class);
     }
 
     /**
@@ -336,7 +355,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */REFIID riid,
     /* [iid_is][out] */PointerByReference ppvObj) {
 
-	return this.iTypeInfo.CreateInstance(pUnkOuter, riid, ppvObj);
+        return (HRESULT) this._invokeNativeObject(16,
+                new Object[] { this.getPointer(), pUnkOuter, riid, ppvObj },
+                HRESULT.class);
     }
 
     /**
@@ -352,7 +373,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [in] */MEMBERID memid,
     /* [out] */BSTRByReference pBstrMops) {
 
-	return this.iTypeInfo.GetMops(memid, pBstrMops);
+        return (HRESULT) this._invokeNativeObject(17,
+                new Object[] { this.getPointer(), memid, pBstrMops },
+                HRESULT.class);
     }
 
     /**
@@ -368,7 +391,9 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     /* [out] */PointerByReference ppTLib,
     /* [out] */UINTbyReference pIndex) {
 
-	return this.iTypeInfo.GetContainingTypeLib(ppTLib, pIndex);
+        return (HRESULT) this._invokeNativeObject(18,
+                new Object[] { this.getPointer(), ppTLib, pIndex },
+                HRESULT.class);
     }
 
     /**
@@ -380,7 +405,8 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     public/* [local] */void ReleaseTypeAttr(
     /* [in] */TYPEATTR pTypeAttr) {
 
-	this.iTypeInfo.ReleaseTypeAttr(pTypeAttr);
+        this._invokeNativeObject(19, new Object[] { this.getPointer(),
+                pTypeAttr }, HRESULT.class);
     }
 
     /**
@@ -392,7 +418,8 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     public/* [local] */void ReleaseFuncDesc(
     /* [in] */FUNCDESC pFuncDesc) {
 
-	this.iTypeInfo.ReleaseFuncDesc(pFuncDesc);
+        this._invokeNativeObject(20, new Object[] { this.getPointer(),
+                pFuncDesc }, HRESULT.class);
     }
 
     /**
@@ -404,6 +431,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
     public/* [local] */void ReleaseVarDesc(
     /* [in] */VARDESC pVarDesc) {
 
-	this.iTypeInfo.ReleaseVarDesc(pVarDesc);
+        this._invokeNativeObject(21,
+                new Object[] { this.getPointer(), pVarDesc }, HRESULT.class);
     }
 }

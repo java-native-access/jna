@@ -62,11 +62,11 @@ public abstract class TlbBase {
 
     /** The iunknown methods. */
     public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
-	    "Release" };
+            "Release" };
 
     /** The idispatch methods. */
     public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
-	    "GetTypeInfo", "GetIDsOfNames", "Invoke" };
+            "GetTypeInfo", "GetIDsOfNames", "Invoke" };
 
     /**
      * Instantiates a new tlb base.
@@ -77,16 +77,16 @@ public abstract class TlbBase {
      *            the type lib util
      */
     public TlbBase(int index, TypeLibUtil typeLibUtil) {
-	this.index = index;
-	this.typeLibUtil = typeLibUtil;
+        this.index = index;
+        this.typeLibUtil = typeLibUtil;
 
-	String filename = this.getClassTemplate();
-	try {
-	    this.readTemplateFile(filename);
-	    this.classBuffer = templateBuffer;
-	} catch (IOException e) {
-	    e.printStackTrace();
-	}
+        String filename = this.getClassTemplate();
+        try {
+            this.readTemplateFile(filename);
+            this.classBuffer = templateBuffer;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -96,7 +96,7 @@ public abstract class TlbBase {
      *            the msg
      */
     public void logError(String msg) {
-	this.log("ERROR", msg);
+        this.log("ERROR", msg);
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class TlbBase {
      *            the msg
      */
     public void logInfo(String msg) {
-	this.log("INFO", msg);
+        this.log("INFO", msg);
     }
 
     /**
@@ -115,7 +115,7 @@ public abstract class TlbBase {
      * @return the class buffer
      */
     public StringBuffer getClassBuffer() {
-	return classBuffer;
+        return classBuffer;
     }
 
     /**
@@ -125,17 +125,17 @@ public abstract class TlbBase {
      *            the content
      */
     public void createContent(String content) {
-	this.replaceVariable("content", content);
+        this.replaceVariable("content", content);
     }
 
     public void setFilename(String filename) {
-	if (!filename.endsWith("java"))
-	    filename += ".java";
-	this.filename = filename;
+        if (!filename.endsWith("java"))
+            filename += ".java";
+        this.filename = filename;
     }
 
     public String getFilename() {
-	return this.filename;
+        return this.filename;
     }
 
     /**
@@ -147,8 +147,8 @@ public abstract class TlbBase {
      *            the msg
      */
     protected void log(String level, String msg) {
-	String _msg = level + " " + this.getTime() + " : " + msg;
-	System.out.println(_msg);
+        String _msg = level + " " + this.getTime() + " : " + msg;
+        System.out.println(_msg);
     }
 
     /**
@@ -157,8 +157,8 @@ public abstract class TlbBase {
      * @return the time
      */
     private String getTime() {
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-	return sdf.format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.format(new Date());
     }
 
     /**
@@ -177,19 +177,19 @@ public abstract class TlbBase {
      *             Signals that an I/O exception has occurred.
      */
     protected void readTemplateFile(String filename) throws IOException {
-	this.templateBuffer = new StringBuffer();
-	BufferedReader reader = null;
-	try {
-	    InputStream is = this.getClass().getClassLoader()
-		    .getResourceAsStream(filename);
-	    reader = new BufferedReader(new InputStreamReader(is));
-	    String line = null;
-	    while ((line = reader.readLine()) != null)
-		this.templateBuffer.append(line + "\n");
-	} finally {
-	    if (reader != null)
-		reader.close();
-	}
+        this.templateBuffer = new StringBuffer();
+        BufferedReader reader = null;
+        try {
+            InputStream is = this.getClass().getClassLoader()
+                    .getResourceAsStream(filename);
+            reader = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+            while ((line = reader.readLine()) != null)
+                this.templateBuffer.append(line + "\n");
+        } finally {
+            if (reader != null)
+                reader.close();
+        }
     }
 
     /**
@@ -201,23 +201,24 @@ public abstract class TlbBase {
      *            the value
      */
     protected void replaceVariable(String name, String value) {
-	if (value == null)
-	    value = "";
+        if (value == null)
+            value = "";
 
-	Pattern pattern = Pattern.compile("\\$\\{" + name + "\\}");
-	Matcher matcher = pattern.matcher(this.classBuffer);
-	String replacement = value;
-	String result = "";
+        Pattern pattern = Pattern.compile("\\$\\{" + name + "\\}");
+        Matcher matcher = pattern.matcher(this.classBuffer);
+        String replacement = value;
+        String result = "";
 
-	while (matcher.find()) {
-	    result = matcher.replaceAll(replacement);
-	}
+        while (matcher.find()) {
+            result = matcher.replaceAll(replacement);
+        }
 
-	this.classBuffer = new StringBuffer(result);
+        if(result.length() > 0)
+            this.classBuffer = new StringBuffer(result);
     }
 
     protected void createPackageName(String packagename) {
-	this.replaceVariable("packagename", packagename);
+        this.replaceVariable("packagename", packagename);
     }
 
     /**
@@ -227,7 +228,7 @@ public abstract class TlbBase {
      *            the name
      */
     protected void createClassName(String name) {
-	this.replaceVariable("classname", name);
+        this.replaceVariable("classname", name);
     }
 
     /**
@@ -238,16 +239,16 @@ public abstract class TlbBase {
      * @return true, if is reserved method
      */
     protected boolean isReservedMethod(String method) {
-	for (int i = 0; i < IUNKNOWN_METHODS.length; i++) {
-	    if (IUNKNOWN_METHODS[i].equalsIgnoreCase(method))
-		return true;
-	}
+        for (int i = 0; i < IUNKNOWN_METHODS.length; i++) {
+            if (IUNKNOWN_METHODS[i].equalsIgnoreCase(method))
+                return true;
+        }
 
-	for (int i = 0; i < IDISPATCH_METHODS.length; i++) {
-	    if (IDISPATCH_METHODS[i].equalsIgnoreCase(method))
-		return true;
-	}
+        for (int i = 0; i < IDISPATCH_METHODS.length; i++) {
+            if (IDISPATCH_METHODS[i].equalsIgnoreCase(method))
+                return true;
+        }
 
-	return false;
+        return false;
     }
 }

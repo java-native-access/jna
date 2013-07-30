@@ -39,22 +39,18 @@ import com.sun.jna.ptr.PointerByReference;
 public interface IDispatch extends IUnknown {
 
     public final static IID IID_IDispatch = new IID(
-	    "00020400-0000-0000-C000-000000000046");
+            "00020400-0000-0000-C000-000000000046");
 
-    @VTABLE_ID(3)
     public HRESULT GetTypeInfoCount(UINTbyReference pctinfo);
 
-    @VTABLE_ID(4)
     public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
-	    PointerByReference ppTInfo);
+            PointerByReference ppTInfo);
 
-    @VTABLE_ID(5)
     public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-	    LCID lcid, DISPIDbyReference rgDispId);
+            LCID lcid, DISPIDbyReference rgDispId);
 
-    @VTABLE_ID(6)
     public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-	    DISPID wFlags, DISPPARAMS pDispParams,
-	    VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-	    IntByReference puArgErr);
+            DISPID wFlags, DISPPARAMS pDispParams,
+            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+            IntByReference puArgErr);
 }

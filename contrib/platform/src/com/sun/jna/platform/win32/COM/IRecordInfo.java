@@ -31,7 +31,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 public interface IRecordInfo extends IUnknown {
 
     public final static IID IID_IRecordInfo = new IID(
-	    "{0000002F-0000-0000-C000-000000000046}");
+            "{0000002F-0000-0000-C000-000000000046}");
 
     public HRESULT RecordInit(/* [out] */PVOID pvNew);
 

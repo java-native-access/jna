@@ -31,16 +31,13 @@ import com.sun.jna.ptr.PointerByReference;
 public class TypeComp extends Unknown {
 
     public static class ByReference extends TypeComp implements
-	    Structure.ByReference {
+            Structure.ByReference {
     }
-
-    private ITypeComp iTypeComp;
 
     /**
      * Instantiates a new i type comp.
      */
     public TypeComp() {
-	this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
     }
 
     /**
@@ -50,8 +47,7 @@ public class TypeComp extends Unknown {
      *            the pv instance
      */
     public TypeComp(Pointer pvInstance) {
-	super(pvInstance);
-	this.iTypeComp = (ITypeComp) this.createCOMClass(ITypeComp.class);
+        super(pvInstance);
     }
 
     /**
@@ -80,8 +76,9 @@ public class TypeComp extends Unknown {
     /* [out] */DESCKIND.ByReference pDescKind,
     /* [out] */BINDPTR.ByReference pBindPtr) {
 
-	return this.iTypeComp.Bind(szName, lHashVal, wFlags, ppTInfo,
-		pDescKind, pBindPtr);
+        return (HRESULT) this._invokeNativeObject(3,
+                new Object[] { this.getPointer(), szName, lHashVal, wFlags,
+                        ppTInfo, pDescKind, pBindPtr }, HRESULT.class);
     }
 
     /**
@@ -104,6 +101,8 @@ public class TypeComp extends Unknown {
     /* [out] */PointerByReference ppTInfo,
     /* [out] */PointerByReference ppTComp) {
 
-	return this.iTypeComp.BindType(szName, lHashVal, ppTInfo, ppTComp);
+        return (HRESULT) this._invokeNativeObject(4,
+                new Object[] { this.getPointer(), szName, lHashVal, ppTInfo,
+                        ppTComp }, HRESULT.class);
     }
 }

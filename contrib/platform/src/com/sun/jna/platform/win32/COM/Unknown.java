@@ -32,14 +32,11 @@ import com.sun.jna.ptr.PointerByReference;
 public class Unknown extends COMClass implements IUnknown {
 
     public static class ByReference extends Unknown implements
-	    Structure.ByReference {
+            Structure.ByReference {
     }
 
-    private IUnknown iUnknown;
-
     public Unknown() {
-	this.setPointer(new Memory(Pointer.SIZE));
-	this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);
+        this.setPointer(new Memory(Pointer.SIZE));
     }
 
     /**
@@ -49,8 +46,7 @@ public class Unknown extends COMClass implements IUnknown {
      *            the pv instance
      */
     public Unknown(Pointer pvInstance) {
-	this.setPointer(pvInstance);
-	this.iUnknown = (IUnknown) this.createCOMClass(IUnknown.class);
+        this.setPointer(pvInstance);
     }
 
     /**
@@ -63,14 +59,18 @@ public class Unknown extends COMClass implements IUnknown {
      * @return the hresult
      */
     public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
-	return this.iUnknown.QueryInterface(riid, ppvObject);
+        return (HRESULT) this._invokeNativeObject(0,
+                new Object[] { this.getPointer(), riid, ppvObject },
+                HRESULT.class);
     }
 
     public UINT AddRef() {
-	return this.iUnknown.AddRef();
+        return (UINT) this._invokeNativeObject(1,
+                new Object[] { this.getPointer() }, UINT.class);
     }
 
     public UINT Release() {
-	return this.iUnknown.Release();
+        return (UINT) this._invokeNativeObject(2,
+                new Object[] { this.getPointer() }, UINT.class);
     }
 }

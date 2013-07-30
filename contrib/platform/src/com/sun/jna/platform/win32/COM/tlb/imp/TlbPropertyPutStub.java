@@ -47,34 +47,34 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
      *            the type info util
      */
     public TlbPropertyPutStub(int index, TypeLibUtil typeLibUtil,
-	    FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
-	super(index, typeLibUtil, funcDesc, typeInfoUtil);
+            FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
+        super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
-	TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
-	String docStr = typeInfoDoc.getDocString();
-	String methodname = "set" + typeInfoDoc.getName();
-	String methodparams = "";
-	short vtableId = funcDesc.oVft;
-	short paramCount = funcDesc.cParams;
-	String varType;
-	String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
-	
-	for (int i = 0; i < paramCount; i++) {
-	    ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
-	    VARTYPE vt = elemdesc.tdesc.vt;
-	    varType = this.getVarType(vt);
-	    methodparams += varType + " " + names[i].toLowerCase();
-	    
-	    // if there is more than 1 param
-	    if (i < (paramCount - 1)) {
-			methodparams += ", ";
-	    }
-	}
+        TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
+        String docStr = typeInfoDoc.getDocString();
+        String methodname = "set" + typeInfoDoc.getName();
+        String methodparams = "";
+        short vtableId = funcDesc.oVft;
+        short paramCount = funcDesc.cParams;
+        String varType;
+        String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 
-	this.replaceVariable("helpstring", docStr);
-	this.replaceVariable("methodname", methodname);
-	this.replaceVariable("methodparams", methodparams);
-	this.replaceVariable("vtableid", String.valueOf(vtableId));
+        for (int i = 0; i < paramCount; i++) {
+            ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
+            VARTYPE vt = elemdesc.tdesc.vt;
+            varType = this.getVarType(vt);
+            methodparams += varType + " " + names[i].toLowerCase();
+
+            // if there is more than 1 param
+            if (i < (paramCount - 1)) {
+                methodparams += ", ";
+            }
+        }
+
+        this.replaceVariable("helpstring", docStr);
+        this.replaceVariable("methodname", methodname);
+        this.replaceVariable("methodparams", methodparams);
+        this.replaceVariable("vtableid", String.valueOf(vtableId));
     }
 
     /*
@@ -84,6 +84,6 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
      */
     @Override
     protected String getClassTemplate() {
-	return "com/sun/jna/platform/win32/COM/tlb/imp/TlbPropertyPutStub.template";
+        return "com/sun/jna/platform/win32/COM/tlb/imp/TlbPropertyPutStub.template";
     }
 }

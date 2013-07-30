@@ -40,18 +40,14 @@ import com.sun.jna.ptr.PointerByReference;
 public class Dispatch extends Unknown implements IDispatch {
 
     public static class ByReference extends Dispatch implements
-	    Structure.ByReference {
+            Structure.ByReference {
     }
 
-    private IDispatch iDispatch;
-
     public Dispatch() {
-	this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
     }
 
     public Dispatch(Pointer pvInstance) {
-	super(pvInstance);
-	this.iDispatch = (IDispatch) this.createCOMClass(IDispatch.class);
+        super(pvInstance);
     }
 
     /**
@@ -60,9 +56,12 @@ public class Dispatch extends Unknown implements IDispatch {
      * @param pctinfo
      *            the pctinfo
      * @return the hresult
+     * 
+     *         Virtual
      */
     public HRESULT GetTypeInfoCount(UINTbyReference pctinfo) {
-	return this.iDispatch.GetTypeInfoCount(pctinfo);
+        return (HRESULT) this._invokeNativeObject(3,
+                new Object[] { this.getPointer(), pctinfo }, HRESULT.class);
     }
 
     /**
@@ -77,8 +76,10 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
-	    PointerByReference ppTInfo) {
-	return this.iDispatch.GetTypeInfo(iTInfo, lcid, ppTInfo);
+            PointerByReference ppTInfo) {
+        return (HRESULT) this._invokeNativeObject(4,
+                new Object[] { this.getPointer(), iTInfo, lcid, ppTInfo },
+                HRESULT.class);
     }
 
     /**
@@ -97,9 +98,10 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-	    LCID lcid, DISPIDbyReference rgDispId) {
-	return this.iDispatch.GetIDsOfNames(riid, rgszNames, cNames, lcid,
-		rgDispId);
+            LCID lcid, DISPIDbyReference rgDispId) {
+        return (HRESULT) this._invokeNativeObject(5,
+                new Object[] { this.getPointer(), riid, rgszNames, cNames,
+                        lcid, rgDispId }, HRESULT.class);
     }
 
     /**
@@ -124,10 +126,12 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-	    DISPID wFlags, DISPPARAMS pDispParams,
-	    VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-	    IntByReference puArgErr) {
-	return this.iDispatch.Invoke(dispIdMember, riid, lcid, wFlags,
-		pDispParams, pVarResult, pExcepInfo, puArgErr);
+            DISPID wFlags, DISPPARAMS pDispParams,
+            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+            IntByReference puArgErr) {
+        return (HRESULT) this
+                ._invokeNativeObject(6, new Object[] { this.getPointer(),
+                        dispIdMember, riid, lcid, wFlags, pDispParams,
+                        pVarResult, pExcepInfo, puArgErr }, HRESULT.class);
     }
 }

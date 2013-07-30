@@ -18,10 +18,9 @@ import com.sun.jna.platform.win32.Guid.*;
 * helpstring(${helpstring})
 *
 */
-public class ${classname} extends COMObject implements ${interfaces} {	
+public class ${classname} extends Dispatch implements ${interfaces} {	
 
 	public ${classname}() {
-		super(new CLSID("${clsid}"), false);
 	}
 
 ${content}

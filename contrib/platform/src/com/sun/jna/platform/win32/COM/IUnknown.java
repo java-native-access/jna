@@ -30,14 +30,11 @@ public interface IUnknown {
 
     /** The Constant IID_IDispatch. */
     public final static IID IID_UNKNOWN = new IID(
-	    "{00000000-0000-0000-C000-000000000046}");
+            "{00000000-0000-0000-C000-000000000046}");
 
-    @VTABLE_ID(0)
     public HRESULT QueryInterface(IID riid, PointerByReference ppvObject);
 
-    @VTABLE_ID(1)
     public UINT AddRef();
 
-    @VTABLE_ID(2)
     public UINT Release();
 }

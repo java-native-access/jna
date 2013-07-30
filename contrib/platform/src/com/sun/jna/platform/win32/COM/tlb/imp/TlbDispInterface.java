@@ -41,66 +41,66 @@ public class TlbDispInterface extends TlbBase {
      *            the type lib util
      */
     public TlbDispInterface(int index, String packagename,
-	    TypeLibUtil typeLibUtil) {
-	super(index, typeLibUtil);
+            TypeLibUtil typeLibUtil) {
+        super(index, typeLibUtil);
 
-	TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-	String dispName = typeLibDoc.getName();
-	String docString = typeLibDoc.getDocString();
+        TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
+        String dispName = typeLibDoc.getName();
+        String docString = typeLibDoc.getDocString();
 
-	this.logInfo("Type of kind 'DispInterface' found: " + dispName);
+        this.logInfo("Type of kind 'DispInterface' found: " + dispName);
 
-	this.createPackageName(packagename);
-	this.createClassName(dispName);
-	this.setFilename(dispName);
+        this.createPackageName(packagename);
+        this.createClassName(dispName);
+        this.setFilename(dispName);
 
-	// Get the TypeAttributes
-	TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
-	TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+        // Get the TypeAttributes
+        TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+        TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
 
-	this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
+        this.createJavaDocHeader(typeAttr.guid.toGuidString(), docString);
 
-	int cFuncs = typeAttr.cFuncs.intValue();
-	for (int i = 0; i < cFuncs; i++) {
-	    // Get the function description
-	    FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(i);
+        int cFuncs = typeAttr.cFuncs.intValue();
+        for (int i = 0; i < cFuncs; i++) {
+            // Get the function description
+            FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(i);
 
-	    // Get the member ID
-	    MEMBERID memberID = funcDesc.memid;
+            // Get the member ID
+            MEMBERID memberID = funcDesc.memid;
 
-	    // Get the name of the method
-	    TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
-	    String methodName = typeInfoDoc2.getName();
-	    TlbAbstractMethod method = null;
+            // Get the name of the method
+            TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+            String methodName = typeInfoDoc2.getName();
+            TlbAbstractMethod method = null;
 
-	    if (!isReservedMethod(methodName)) {
-		if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-		    method = new TlbFunctionStub(index, typeLibUtil, funcDesc,
-			    typeInfoUtil);
-		} else if (funcDesc.invkind
-			.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-		    method = new TlbPropertyGetStub(index, typeLibUtil,
-			    funcDesc, typeInfoUtil);
-		} else if (funcDesc.invkind
-			.equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-		    method = new TlbPropertyPutStub(index, typeLibUtil,
-			    funcDesc, typeInfoUtil);
-		} else if (funcDesc.invkind
-			.equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
+            if (!isReservedMethod(methodName)) {
+                if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
+                    method = new TlbFunctionStub(index, typeLibUtil, funcDesc,
+                            typeInfoUtil);
+                } else if (funcDesc.invkind
+                        .equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
+                    method = new TlbPropertyGetStub(index, typeLibUtil,
+                            funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind
+                        .equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
+                    method = new TlbPropertyPutStub(index, typeLibUtil,
+                            funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind
+                        .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
 
-		}
+                }
 
-		this.content += method.getClassBuffer();
+                this.content += method.getClassBuffer();
 
-		if (i < cFuncs - 1)
-		    this.content += CR;
-	    }
+                if (i < cFuncs - 1)
+                    this.content += CR;
+            }
 
-	    // Release our function description stuff
-	    typeInfoUtil.ReleaseFuncDesc(funcDesc);
-	}
+            // Release our function description stuff
+            typeInfoUtil.ReleaseFuncDesc(funcDesc);
+        }
 
-	this.createContent(this.content);
+        this.createContent(this.content);
     }
 
     /**
@@ -112,8 +112,8 @@ public class TlbDispInterface extends TlbBase {
      *            the helpstring
      */
     protected void createJavaDocHeader(String guid, String helpstring) {
-	this.replaceVariable("uuid", guid);
-	this.replaceVariable("helpstring", helpstring);
+        this.replaceVariable("uuid", guid);
+        this.replaceVariable("helpstring", helpstring);
     }
 
     /*
@@ -123,6 +123,6 @@ public class TlbDispInterface extends TlbBase {
      */
     @Override
     protected String getClassTemplate() {
-	return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispInterface.template";
+        return "com/sun/jna/platform/win32/COM/tlb/imp/TlbDispInterface.template";
     }
 }

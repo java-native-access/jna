@@ -59,87 +59,87 @@ public class TlbImp {
      *            the arguments
      */
     public static void main(String[] args) {
-	new TlbImp().startCOM2Java();
+        new TlbImp().startCOM2Java();
     }
 
     public TlbImp() {
-	Native.setProtected(true);
+        Native.setProtected(true);
     }
 
     /**
      * Start co m2 java.
      */
     public void startCOM2Java() {
-	try {
-	    this.typeLibUtil = new TypeLibUtil(TYPELIB_ID_SHELL, 1, 0);
-	    // create output Dir
-	    this.createDir();
+        try {
+            this.typeLibUtil = new TypeLibUtil(TYPELIB_ID_SHELL, 1, 0);
+            // create output Dir
+            this.createDir();
 
-	    for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
-		TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
+            for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
+                TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
 
-		if (typekind.value == TYPEKIND.TKIND_ENUM) {
-		    this.createCOMEnum(i, this.getPackageName(), typeLibUtil);
-		} else if (typekind.value == TYPEKIND.TKIND_RECORD) {
-		    System.out
-			    .println("'TKIND_RECORD' objects are currently not supported!");
-		} else if (typekind.value == TYPEKIND.TKIND_MODULE) {
-		    System.out
-			    .println("'TKIND_MODULE' objects are currently not supported!");
-		} else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
-		    this.createCOMInterface(i, this.getPackageName(),
-			    typeLibUtil);
-		} else if (typekind.value == TYPEKIND.TKIND_DISPATCH) {
-		    this.createCOMDispInterface(i, this.getPackageName(),
-			    typeLibUtil);
-		} else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
-		    this.createCOMCoClass(i, this.getPackageName(), typeLibUtil);
-		} else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
-		    System.out
-			    .println("'TKIND_ALIAS' objects are currently not supported!");
-		} else if (typekind.value == TYPEKIND.TKIND_UNION) {
-		    System.out
-			    .println("'TKIND_UNION' objects are currently not supported!");
-		}
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
-	}
+                if (typekind.value == TYPEKIND.TKIND_ENUM) {
+                    this.createCOMEnum(i, this.getPackageName(), typeLibUtil);
+                } else if (typekind.value == TYPEKIND.TKIND_RECORD) {
+                    System.out
+                            .println("'TKIND_RECORD' objects are currently not supported!");
+                } else if (typekind.value == TYPEKIND.TKIND_MODULE) {
+                    System.out
+                            .println("'TKIND_MODULE' objects are currently not supported!");
+                } else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
+                    this.createCOMInterface(i, this.getPackageName(),
+                            typeLibUtil);
+                } else if (typekind.value == TYPEKIND.TKIND_DISPATCH) {
+                    this.createCOMDispInterface(i, this.getPackageName(),
+                            typeLibUtil);
+                } else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
+                    this.createCOMCoClass(i, this.getPackageName(), typeLibUtil);
+                } else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
+                    System.out
+                            .println("'TKIND_ALIAS' objects are currently not supported!");
+                } else if (typekind.value == TYPEKIND.TKIND_UNION) {
+                    System.out
+                            .println("'TKIND_UNION' objects are currently not supported!");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createDir() throws FileNotFoundException {
-	String tmp = System.getProperty("java.io.tmpdir");
-	this.comRootDir = new File(tmp + "_jnaCOM_"
-		+ System.currentTimeMillis() + "\\myPackage\\"
-		+ this.typeLibUtil.getName().toLowerCase() + "\\");
+        String tmp = System.getProperty("java.io.tmpdir");
+        this.comRootDir = new File(tmp + "_jnaCOM_"
+                + System.currentTimeMillis() + "\\myPackage\\"
+                + this.typeLibUtil.getName().toLowerCase() + "\\");
 
-	if (this.comRootDir.exists())
-	    this.comRootDir.delete();
+        if (this.comRootDir.exists())
+            this.comRootDir.delete();
 
-	if (this.comRootDir.mkdirs()) {
-	    logInfo("Output directory sucessfully created to: "
-		    + this.comRootDir.toString());
-	} else {
-	    throw new FileNotFoundException(
-		    "Output directory NOT sucessfully created to: "
-			    + this.comRootDir.toString());
-	}
+        if (this.comRootDir.mkdirs()) {
+            logInfo("Output directory sucessfully created to: "
+                    + this.comRootDir.toString());
+        } else {
+            throw new FileNotFoundException(
+                    "Output directory NOT sucessfully created to: "
+                            + this.comRootDir.toString());
+        }
     }
 
     private String getPackageName() {
-	return "myPackage." + this.typeLibUtil.getName().toLowerCase();
+        return "myPackage." + this.typeLibUtil.getName().toLowerCase();
     }
 
     private void writeTextFile(String filename, String str) throws IOException {
-	File classFile = new File(this.comRootDir, filename);
-	FileWriter fileWriter = new FileWriter(classFile);
-	fileWriter.write(str);
-	fileWriter.close();
+        File classFile = new File(this.comRootDir, filename);
+        FileWriter fileWriter = new FileWriter(classFile);
+        fileWriter.write(str);
+        fileWriter.close();
     }
 
     private void writeTlbClass(TlbBase tlbBase) throws IOException {
-	StringBuffer classBuffer = tlbBase.getClassBuffer();
-	this.writeTextFile(tlbBase.getFilename(), classBuffer.toString());
+        StringBuffer classBuffer = tlbBase.getClassBuffer();
+        this.writeTextFile(tlbBase.getFilename(), classBuffer.toString());
     }
 
     /**
@@ -152,9 +152,9 @@ public class TlbImp {
      * @return the string buffer
      */
     private void createCOMEnum(int index, String packagename,
-	    TypeLibUtil typeLibUtil) throws IOException {
-	TlbEnum tlbEnum = new TlbEnum(index, packagename, typeLibUtil);
-	this.writeTlbClass(tlbEnum);
+            TypeLibUtil typeLibUtil) throws IOException {
+        TlbEnum tlbEnum = new TlbEnum(index, packagename, typeLibUtil);
+        this.writeTlbClass(tlbEnum);
     }
 
     /**
@@ -167,10 +167,10 @@ public class TlbImp {
      * @return the string buffer
      */
     private void createCOMInterface(int index, String packagename,
-	    TypeLibUtil typeLibUtil) throws IOException {
-	TlbInterface tlbInterface = new TlbInterface(index, packagename,
-		typeLibUtil);
-	this.writeTlbClass(tlbInterface);
+            TypeLibUtil typeLibUtil) throws IOException {
+        TlbInterface tlbInterface = new TlbInterface(index, packagename,
+                typeLibUtil);
+        this.writeTlbClass(tlbInterface);
     }
 
     /**
@@ -183,17 +183,17 @@ public class TlbImp {
      * @return the string buffer
      */
     private void createCOMDispInterface(int index, String packagename,
-	    TypeLibUtil typeLibUtil) throws IOException {
-	TlbDispInterface tlbDispatch = new TlbDispInterface(index, packagename,
-		typeLibUtil);
-	this.writeTlbClass(tlbDispatch);
+            TypeLibUtil typeLibUtil) throws IOException {
+        TlbDispInterface tlbDispatch = new TlbDispInterface(index, packagename,
+                typeLibUtil);
+        this.writeTlbClass(tlbDispatch);
     }
 
     private void createCOMCoClass(int index, String packagename,
-	    TypeLibUtil typeLibUtil) throws IOException {
-	TlbCoClass tlbCoClass = new TlbCoClass(index, this.getPackageName(),
-		typeLibUtil);
-	this.writeTlbClass(tlbCoClass);
+            TypeLibUtil typeLibUtil) throws IOException {
+        TlbCoClass tlbCoClass = new TlbCoClass(index, this.getPackageName(),
+                typeLibUtil);
+        this.writeTlbClass(tlbCoClass);
     }
 
     /**
@@ -203,6 +203,6 @@ public class TlbImp {
      *            the msg
      */
     public static void logInfo(String msg) {
-	System.out.println(msg);
+        System.out.println(msg);
     }
 }
