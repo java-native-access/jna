@@ -2,10 +2,10 @@ package com.sun.jna.platform.win32.office;
 
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.COMObject;
+import com.sun.jna.platform.win32.COM.COMLateBindingObject;
 import com.sun.jna.platform.win32.COM.IDispatch;
 
-public class MSExcel extends COMObject {
+public class MSExcel extends COMLateBindingObject {
 
 	public MSExcel() throws COMException {
 		super("Excel.Application", true);
@@ -64,35 +64,35 @@ public class MSExcel extends COMObject {
 		return new ActiveSheet(this.getAutomationProperty("ActiveSheet"));
 	}
 
-	public class Application extends COMObject {
+	public class Application extends COMLateBindingObject {
 
 		public Application(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class Workbooks extends COMObject {
+	public class Workbooks extends COMLateBindingObject {
 
 		public Workbooks(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class ActiveWorkbook extends COMObject {
+	public class ActiveWorkbook extends COMLateBindingObject {
 
 		public ActiveWorkbook(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class ActiveSheet extends COMObject {
+	public class ActiveSheet extends COMLateBindingObject {
 
 		public ActiveSheet(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class Range extends COMObject {
+	public class Range extends COMLateBindingObject {
 
 		public Range(IDispatch iDispatch) throws COMException {
 			super(iDispatch);

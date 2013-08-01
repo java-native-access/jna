@@ -46,7 +46,7 @@ public class TlbPropertyPut extends TlbAbstractMethod implements Variant {
      * @param typeInfoUtil
      *            the type info util
      */
-    public TlbPropertyPut(int index, TypeLibUtil typeLibUtil,
+    public TlbPropertyPut(int count, int index, TypeLibUtil typeLibUtil,
             FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
         super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
@@ -60,8 +60,7 @@ public class TlbPropertyPut extends TlbAbstractMethod implements Variant {
 
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
-            VARTYPE vt = elemdesc.tdesc.vt;
-            varType = this.getVarType(vt);
+            varType = this.getType(elemdesc);
             methodparams += varType + " " + names[i].toLowerCase();
             methodvariables += names[i].toLowerCase();
 
@@ -77,6 +76,7 @@ public class TlbPropertyPut extends TlbAbstractMethod implements Variant {
         this.replaceVariable("methodparams", methodparams);
         this.replaceVariable("methodvariables", methodvariables);
         this.replaceVariable("vtableid", String.valueOf(vtableId));
+        this.replaceVariable("functionCount", String.valueOf(count));        
     }
 
     /*

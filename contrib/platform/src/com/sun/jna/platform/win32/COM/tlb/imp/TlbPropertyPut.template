@@ -3,5 +3,5 @@
 	 * Virtual table id: ${vtableid}	 
 	 */
 	public void ${methodname}(${methodparams}) {
-		this._invokeNativeInt(${vtableid}, new Object[] { this.getPointer()${methodvariables}});
+		this._invokeNativeInt(${functionCount}, new Object[] { this.getPointer()${methodvariables}});
 	}

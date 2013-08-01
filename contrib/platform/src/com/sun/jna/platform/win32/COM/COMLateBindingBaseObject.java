@@ -12,10 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Function;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
@@ -42,7 +39,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class COMBaseObject extends COMClass {
+public class COMLateBindingBaseObject extends COMInvoker {
 
     /** The Constant LOCALE_USER_DEFAULT. */
     public final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE
@@ -58,20 +55,25 @@ public class COMBaseObject extends COMClass {
     /** The i dispatch. */
     protected IDispatch iDispatch;
 
-    /** The p dispatch. */
+    /** IDispatch interface reference. */
     private PointerByReference pDispatch = new PointerByReference();
 
-    /** The p unknown. */
+    /** IUnknown interface reference. */
     private PointerByReference pUnknown = new PointerByReference();
 
-    public COMBaseObject(IDispatch dispatch) {
+    public COMLateBindingBaseObject(IDispatch dispatch) {
         // enable JNA protected mode
         Native.setProtected(true);
         // transfer the value
         this.iDispatch = dispatch;
     }
 
-    public COMBaseObject(CLSID clsid, boolean useActiveInstance) {
+    public COMLateBindingBaseObject(CLSID clsid, boolean useActiveInstance) {
+        this(clsid, useActiveInstance, WTypes.CLSCTX_SERVER);
+    }
+
+    public COMLateBindingBaseObject(CLSID clsid, boolean useActiveInstance,
+            int dwClsContext) {
         // enable JNA protected mode
         Native.setProtected(true);
 
@@ -96,14 +98,12 @@ public class COMBaseObject extends COMClass {
                 hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
                         this.pDispatch);
             } else {
-                hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-                        WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
-                        this.pDispatch);
+                hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
+                        IDispatch.IID_IDispatch, this.pDispatch);
             }
         } else {
-            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-                    WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
-                    this.pDispatch);
+            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
+                    IDispatch.IID_IDispatch, this.pDispatch);
         }
 
         if (COMUtils.FAILED(hr)) {
@@ -114,7 +114,7 @@ public class COMBaseObject extends COMClass {
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
 
-    public COMBaseObject(String progId, boolean useActiveInstance,
+    public COMLateBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
         // enable JNA protected mode
         Native.setProtected(true);
@@ -161,9 +161,9 @@ public class COMBaseObject extends COMClass {
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
 
-    public COMBaseObject(String progId, boolean useActiveInstance)
+    public COMLateBindingBaseObject(String progId, boolean useActiveInstance)
             throws COMException {
-        this(progId, useActiveInstance, WTypes.CLSCTX_ALL);
+        this(progId, useActiveInstance, WTypes.CLSCTX_SERVER);
     }
 
     /**

@@ -40,17 +40,20 @@ public class TlbInterface extends TlbBase {
      *            the type lib util
      */
     public TlbInterface(int index, String packagename, TypeLibUtil typeLibUtil) {
-        super(index, typeLibUtil);
+        super(index, typeLibUtil, null);
 
         TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-        String enumName = typeLibDoc.getName();
         String docString = typeLibDoc.getDocString();
-
-        this.logInfo("Type of kind 'Interface' found: " + enumName);
+        
+        if(typeLibDoc.getName().length() > 0)
+            this.name = typeLibDoc.getName();
+        
+        this.logInfo("Type of kind 'Interface' found: " + this.name);
 
         this.createPackageName(packagename);
-        this.createClassName(enumName);
-
+        this.createClassName(this.name);
+        this.setFilename(this.name);
+        
         // Get the TypeAttributes
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
         TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();

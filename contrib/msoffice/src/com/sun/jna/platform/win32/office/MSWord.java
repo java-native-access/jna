@@ -3,10 +3,10 @@ package com.sun.jna.platform.win32.office;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.COMObject;
+import com.sun.jna.platform.win32.COM.COMLateBindingObject;
 import com.sun.jna.platform.win32.COM.IDispatch;
 
-public class MSWord extends COMObject {
+public class MSWord extends COMLateBindingObject {
 
 	public MSWord() throws COMException {
 		super("Word.Application", false);
@@ -70,28 +70,28 @@ public class MSWord extends COMObject {
 		return new Application(this.getAutomationProperty("Application"));
 	}
 
-	public class Application extends COMObject {
+	public class Application extends COMLateBindingObject {
 
 		public Application(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class Documents extends COMObject {
+	public class Documents extends COMLateBindingObject {
 
 		public Documents(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class ActiveDocument extends COMObject {
+	public class ActiveDocument extends COMLateBindingObject {
 
 		public ActiveDocument(IDispatch iDispatch) throws COMException {
 			super(iDispatch);
 		}
 	}
 
-	public class Selection extends COMObject {
+	public class Selection extends COMLateBindingObject {
 
 		public Selection(IDispatch iDispatch) throws COMException {
 			super(iDispatch);

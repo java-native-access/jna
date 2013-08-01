@@ -54,9 +54,8 @@ public class TlbPropertyGetStub extends TlbAbstractMethod implements Variant {
         String docStr = typeInfoDoc.getDocString();
         String methodname = "get" + typeInfoDoc.getName();
         short vtableId = funcDesc.oVft;
-        ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
-        String returnType = this.getVarType(elemDesdRetType.tdesc.vt);
-
+        String returnType = this.getType(funcDesc);        
+        
         this.replaceVariable("helpstring", docStr);
         this.replaceVariable("returntype", returnType);
         this.replaceVariable("methodname", methodname);

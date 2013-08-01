@@ -14,14 +14,19 @@ package com.sun.jna.platform.win32.COM.tlb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbBase;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbCmdlineArgs;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCoClass;
+import com.sun.jna.platform.win32.COM.tlb.imp.TlbConst;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbDispInterface;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbEnum;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbInterface;
@@ -32,25 +37,15 @@ import com.sun.jna.platform.win32.COM.tlb.imp.TlbInterface;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbImp {
-
-    /** The Constant CR. */
-    public final static String CR = "\n";
-
-    /** The Constant CRCR. */
-    public final static String CRCR = "\n\n";
-
-    /** The Constant TYPELIB_ID_SHELL. */
-    public final static String TYPELIB_ID_SHELL = "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}";
-
-    /** The Constant TYPELIB_ID_WORD. */
-    public final static String TYPELIB_ID_WORD = "{00020905-0000-0000-C000-000000000046}";
+public class TlbImp implements TlbConst {
 
     /** The type lib util. */
     private TypeLibUtil typeLibUtil;
 
     /** The out. */
     private File comRootDir;
+
+    private TlbCmdlineArgs cmdlineArgs;
 
     /**
      * The main method.
@@ -59,33 +54,44 @@ public class TlbImp {
      *            the arguments
      */
     public static void main(String[] args) {
-        new TlbImp().startCOM2Java();
+        new TlbImp(args);
     }
 
-    public TlbImp() {
+    public TlbImp(String[] args) {
+        this.cmdlineArgs = new TlbCmdlineArgs(args);
+
+        String clsid = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_ID);
+        int majorVersion = this.cmdlineArgs
+                .getIntParam(CMD_ARG_TYPELIB_MAJOR_VERSION);
+        int minorVersion = this.cmdlineArgs
+                .getIntParam(CMD_ARG_TYPELIB_MINOR_VERSION);
+
+        this.startCOM2Java(clsid, majorVersion, minorVersion);
         Native.setProtected(true);
     }
 
     /**
-     * Start co m2 java.
+     * Start startCOM2Java.
      */
-    public void startCOM2Java() {
+    public void startCOM2Java(String clsid, int majorVersion, int minorVersion) {
         try {
-            this.typeLibUtil = new TypeLibUtil(TYPELIB_ID_SHELL, 1, 0);
+            // initialize typelib
+            // check version numbers with registry entries!!!
+            this.typeLibUtil = new TypeLibUtil(clsid, majorVersion,
+                    minorVersion);
             // create output Dir
             this.createDir();
 
-            for (int i = 0; i < typeLibUtil.getTypeInfoCount(); ++i) {
+            int typeInfoCount = typeLibUtil.getTypeInfoCount();
+            for (int i = 0; i < typeInfoCount; ++i) {
                 TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
 
                 if (typekind.value == TYPEKIND.TKIND_ENUM) {
                     this.createCOMEnum(i, this.getPackageName(), typeLibUtil);
                 } else if (typekind.value == TYPEKIND.TKIND_RECORD) {
-                    System.out
-                            .println("'TKIND_RECORD' objects are currently not supported!");
+                    this.logInfo("'TKIND_RECORD' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_MODULE) {
-                    System.out
-                            .println("'TKIND_MODULE' objects are currently not supported!");
+                    this.logInfo("'TKIND_MODULE' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
                     this.createCOMInterface(i, this.getPackageName(),
                             typeLibUtil);
@@ -95,13 +101,14 @@ public class TlbImp {
                 } else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
                     this.createCOMCoClass(i, this.getPackageName(), typeLibUtil);
                 } else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
-                    System.out
-                            .println("'TKIND_ALIAS' objects are currently not supported!");
+                    this.logInfo("'TKIND_ALIAS' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_UNION) {
-                    System.out
-                            .println("'TKIND_UNION' objects are currently not supported!");
+                    this.logInfo("'TKIND_UNION' objects are currently not supported!");
                 }
             }
+
+            logInfo(typeInfoCount + " files sucessfully written to: "
+                    + this.comRootDir.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,8 +124,7 @@ public class TlbImp {
             this.comRootDir.delete();
 
         if (this.comRootDir.mkdirs()) {
-            logInfo("Output directory sucessfully created to: "
-                    + this.comRootDir.toString());
+            logInfo("Output directory sucessfully created.");
         } else {
             throw new FileNotFoundException(
                     "Output directory NOT sucessfully created to: "
@@ -131,10 +137,13 @@ public class TlbImp {
     }
 
     private void writeTextFile(String filename, String str) throws IOException {
-        File classFile = new File(this.comRootDir, filename);
-        FileWriter fileWriter = new FileWriter(classFile);
-        fileWriter.write(str);
-        fileWriter.close();
+        String file = this.comRootDir + File.separator + filename;
+        FileChannel rwChannel = new RandomAccessFile(file, "rw").getChannel();
+        ByteBuffer wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, str.length());
+
+        wrBuf.put(str.getBytes());
+
+        rwChannel.close();        
     }
 
     private void writeTlbClass(TlbBase tlbBase) throws IOException {

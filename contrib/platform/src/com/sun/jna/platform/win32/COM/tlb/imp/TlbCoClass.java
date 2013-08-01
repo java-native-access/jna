@@ -40,30 +40,34 @@ public class TlbCoClass extends TlbBase {
      *            the type lib util
      */
     public TlbCoClass(int index, String packagename, TypeLibUtil typeLibUtil) {
-        super(index, typeLibUtil);
+        super(index, typeLibUtil, null);
+        
+        TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
 
         TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-        String coClassName = typeLibDoc.getName();
         String docString = typeLibDoc.getDocString();
 
-        this.logInfo("Type of kind 'CoClass' found: " + coClassName);
+        if(typeLibDoc.getName().length() > 0)
+            this.name = typeLibDoc.getName();
+        
+        this.logInfo("Type of kind 'CoClass' found: " + this.name);
 
         this.createPackageName(packagename);
-        this.createClassName(coClassName);
-        this.setFilename(coClassName);
+        this.createClassName(this.name);
+        this.setFilename(this.name);
 
         String guidStr = this.typeLibUtil.getLibAttr().guid.toGuidString();
         int majorVerNum = this.typeLibUtil.getLibAttr().wMajorVerNum.intValue();
         int minorVerNum = this.typeLibUtil.getLibAttr().wMinorVerNum.intValue();
         String version = majorVerNum + "." + minorVerNum;
-
+        String clsid = typeInfoUtil.getTypeAttr().guid.toGuidString();
+        
         this.createJavaDocHeader(guidStr, version, docString);
-        this.createCLSID(guidStr);
-
-        // Get the TypeAttributes
-        TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
+        this.createCLSID(clsid);
+        this.createCLSIDName(this.name);
+        
+     // Get the TypeAttributes
         TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
-
         int cImplTypes = typeAttr.cImplTypes.intValue();
         String interfaces = "";
 
@@ -94,16 +98,18 @@ public class TlbCoClass extends TlbBase {
             
             TlbAbstractMethod method = null;
             if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                method = new TlbFunction(index, typeLibUtil, funcDesc,
+                method = new TlbFunction(i, index, typeLibUtil, funcDesc,
                         typeInfoUtil);
             } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-                method = new TlbPropertyGet(index, typeLibUtil, funcDesc,
+                method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc,
                         typeInfoUtil);
             } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-                method = new TlbPropertyPut(index, typeLibUtil, funcDesc,
+                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc,
                         typeInfoUtil);
             } else if (funcDesc.invkind
                     .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
+                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc,
+                        typeInfoUtil);
             }
                 
             if(!isReservedMethod(method.getMethodName()))
@@ -124,6 +130,10 @@ public class TlbCoClass extends TlbBase {
         this.replaceVariable("uuid", guid);
         this.replaceVariable("version", version);
         this.replaceVariable("helpstring", helpstring);
+    }
+
+    protected void createCLSIDName(String clsidName) {
+        this.replaceVariable("clsidname", clsidName.toUpperCase());
     }
 
     protected void createCLSID(String clsid) {

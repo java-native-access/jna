@@ -16,7 +16,7 @@ import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
-public abstract class COMClass extends PointerType {
+public abstract class COMInvoker extends PointerType {
 
     protected int _invokeNativeInt(int vtableId, Object[] args) {
         Pointer vptr = this.getPointer().getPointer(0);

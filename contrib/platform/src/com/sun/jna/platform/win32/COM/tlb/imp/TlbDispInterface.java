@@ -42,17 +42,19 @@ public class TlbDispInterface extends TlbBase {
      */
     public TlbDispInterface(int index, String packagename,
             TypeLibUtil typeLibUtil) {
-        super(index, typeLibUtil);
+        super(index, typeLibUtil, null);
 
         TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-        String dispName = typeLibDoc.getName();
         String docString = typeLibDoc.getDocString();
 
-        this.logInfo("Type of kind 'DispInterface' found: " + dispName);
+        if(typeLibDoc.getName().length() > 0)
+            this.name = typeLibDoc.getName();
+        
+        this.logInfo("Type of kind 'DispInterface' found: " + this.name);
 
         this.createPackageName(packagename);
-        this.createClassName(dispName);
-        this.setFilename(dispName);
+        this.createClassName(this.name);
+        this.setFilename(this.name);
 
         // Get the TypeAttributes
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
@@ -87,7 +89,8 @@ public class TlbDispInterface extends TlbBase {
                             funcDesc, typeInfoUtil);
                 } else if (funcDesc.invkind
                         .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
-
+                    method = new TlbPropertyPutStub(index, typeLibUtil,
+                            funcDesc, typeInfoUtil);
                 }
 
                 this.content += method.getClassBuffer();

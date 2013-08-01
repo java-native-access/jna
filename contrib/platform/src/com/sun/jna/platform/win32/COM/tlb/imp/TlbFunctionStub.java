@@ -59,7 +59,7 @@ public class TlbFunctionStub extends TlbAbstractMethod implements Variant {
         short vtableId = funcDesc.oVft;
         short paramCount = funcDesc.cParams;
         ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
-        String returnType = this.getVarType(elemDesdRetType.tdesc.vt);
+        String returnType = this.getType(elemDesdRetType.tdesc);
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 
         // if there is at least one param we need a comma
@@ -68,10 +68,8 @@ public class TlbFunctionStub extends TlbAbstractMethod implements Variant {
 
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
-            VARTYPE vt = elemdesc.tdesc.vt;
-
             String methodName = names[i + 1].toLowerCase();
-            methodparams += this.getVarType(vt) + " " + methodName;
+            methodparams += this.getType(elemdesc.tdesc) + " " + this.validateMethodName(methodName);
             methodvariables += methodName;
 
             // if there is more than 1 param

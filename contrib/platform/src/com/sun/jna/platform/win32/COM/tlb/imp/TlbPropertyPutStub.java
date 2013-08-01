@@ -61,8 +61,7 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
 
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
-            VARTYPE vt = elemdesc.tdesc.vt;
-            varType = this.getVarType(vt);
+            varType =  this.getType(elemdesc);
             methodparams += varType + " " + names[i].toLowerCase();
 
             // if there is more than 1 param

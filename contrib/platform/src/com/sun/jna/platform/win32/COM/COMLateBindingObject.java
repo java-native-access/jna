@@ -27,7 +27,7 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class COMObject extends COMBaseObject {
+public class COMLateBindingObject extends COMLateBindingBaseObject {
 
     /**
      * Instantiates a new cOM object.
@@ -35,7 +35,7 @@ public class COMObject extends COMBaseObject {
      * @param iDispatch
      *            the i dispatch
      */
-    public COMObject(IDispatch iDispatch) {
+    public COMLateBindingObject(IDispatch iDispatch) {
         super(iDispatch);
     }
 
@@ -47,7 +47,7 @@ public class COMObject extends COMBaseObject {
      * @param useActiveInstance
      *            the use active instance
      */
-    public COMObject(CLSID clsid, boolean useActiveInstance) {
+    public COMLateBindingObject(CLSID clsid, boolean useActiveInstance) {
         super(clsid, useActiveInstance);
     }
 
@@ -61,7 +61,7 @@ public class COMObject extends COMBaseObject {
      * @throws COMException
      *             the automation exception
      */
-    public COMObject(String progId, boolean useActiveInstance)
+    public COMLateBindingObject(String progId, boolean useActiveInstance)
             throws COMException {
         super(progId, useActiveInstance);
     }
@@ -92,7 +92,7 @@ public class COMObject extends COMBaseObject {
      * @return the automation property
      */
     protected IDispatch getAutomationProperty(String propertyName,
-            COMObject comObject) {
+            COMLateBindingObject comObject) {
 
         VARIANT.ByReference result = new VARIANT.ByReference();
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
@@ -113,7 +113,7 @@ public class COMObject extends COMBaseObject {
      * @return the automation property
      */
     protected IDispatch getAutomationProperty(String propertyName,
-            COMObject comObject, VARIANT value) {
+            COMLateBindingObject comObject, VARIANT value) {
 
         VARIANT.ByReference result = new VARIANT.ByReference();
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
@@ -350,7 +350,7 @@ public class COMObject extends COMBaseObject {
      * @param comObject
      *            the com object
      */
-    protected void invokeNoReply(String methodName, COMObject comObject) {
+    protected void invokeNoReply(String methodName, COMLateBindingObject comObject) {
 
         this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
                 methodName);
@@ -401,7 +401,7 @@ public class COMObject extends COMBaseObject {
      * @param arg
      *            the arg
      */
-    protected void invokeNoReply(String methodName, COMObject comObject,
+    protected void invokeNoReply(String methodName, COMLateBindingObject comObject,
             VARIANT arg) {
 
         this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
@@ -631,7 +631,7 @@ public class COMObject extends COMBaseObject {
      * @param value
      *            the value
      */
-    protected void setProperty(String propertyName, COMObject comObject,
+    protected void setProperty(String propertyName, COMLateBindingObject comObject,
             VARIANT value) {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null,
                 comObject.getIDispatch(), propertyName, value);

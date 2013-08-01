@@ -29,7 +29,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class Unknown extends COMClass implements IUnknown {
+public class Unknown extends COMInvoker implements IUnknown {
 
     public static class ByReference extends Unknown implements
             Structure.ByReference {

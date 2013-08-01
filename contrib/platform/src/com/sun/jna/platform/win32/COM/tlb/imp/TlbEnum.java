@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
-import java.io.PrintStream;
-
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
@@ -40,17 +38,19 @@ public class TlbEnum extends TlbBase {
      *            the type lib util
      */
     public TlbEnum(int index, String packagename, TypeLibUtil typeLibUtil) {
-        super(index, typeLibUtil);
+        super(index, typeLibUtil, null);
 
         TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
-        String enumName = typeLibDoc.getName();
         String docString = typeLibDoc.getDocString();
 
-        this.logInfo("Type of kind 'Enum' found: " + enumName);
+        if (typeLibDoc.getName().length() > 0)
+            this.name = typeLibDoc.getName();
+
+        this.logInfo("Type of kind 'Enum' found: " + this.name);
 
         this.createPackageName(packagename);
-        this.createClassName(enumName);
-        this.setFilename(enumName);
+        this.createClassName(this.name);
+        this.setFilename(this.name);
 
         // Get the TypeAttributes
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);

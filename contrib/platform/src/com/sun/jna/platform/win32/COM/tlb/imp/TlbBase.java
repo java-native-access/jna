@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
 
 // TODO: Auto-generated Javadoc
@@ -46,6 +47,8 @@ public abstract class TlbBase {
     /** The type lib util. */
     protected TypeLibUtil typeLibUtil;
 
+    protected TypeInfoUtil typeInfoUtil;
+    
     /** The index. */
     protected int index;
 
@@ -58,7 +61,9 @@ public abstract class TlbBase {
     /** The content. */
     protected String content = "";
 
-    protected String filename = "";
+    protected String filename = "DefaultFilename";
+
+    protected String name = "DefaultName";
 
     /** The iunknown methods. */
     public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
@@ -76,10 +81,11 @@ public abstract class TlbBase {
      * @param typeLibUtil
      *            the type lib util
      */
-    public TlbBase(int index, TypeLibUtil typeLibUtil) {
+    public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil) {
         this.index = index;
         this.typeLibUtil = typeLibUtil;
-
+        this.typeInfoUtil = typeInfoUtil;
+        
         String filename = this.getClassTemplate();
         try {
             this.readTemplateFile(filename);
@@ -136,6 +142,14 @@ public abstract class TlbBase {
 
     public String getFilename() {
         return this.filename;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
@@ -213,7 +227,7 @@ public abstract class TlbBase {
             result = matcher.replaceAll(replacement);
         }
 
-        if(result.length() > 0)
+        if (result.length() > 0)
             this.classBuffer = new StringBuffer(result);
     }
 

@@ -16,12 +16,20 @@ import com.sun.jna.platform.win32.Guid.*;
 * uuid(${uuid})
 * version(${version})
 * helpstring(${helpstring})
+* clsid(${clsid})
 *
 */
-public class ${classname} extends Dispatch implements ${interfaces} {	
+public class ${classname} extends COMEarlyBindingObject implements ${interfaces} {	
+	
+    public static final CLSID ${clsidname}_CLSID = new CLSID("${clsid}");
 
-	public ${classname}() {
-	}
+    public ${classname}() {
+        super(${clsidname}_CLSID, false, WTypes.CLSCTX_SERVER);
+    }
+    
+    public ${classname}(CLSID clsid, boolean useActiveInstance, int dwClsContext) {
+    	super(clsid, useActiveInstance, dwClsContext);
+    }
 
 ${content}
 }

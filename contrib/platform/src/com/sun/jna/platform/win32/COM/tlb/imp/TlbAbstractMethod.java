@@ -13,10 +13,15 @@
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.DECIMAL;
+import com.sun.jna.platform.win32.OaIdl.ELEMDESC;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
+import com.sun.jna.platform.win32.OaIdl.TYPEDESC;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
@@ -36,11 +41,11 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.TypeInfoUtil;
-import com.sun.jna.platform.win32.COM.TypeLibUtil;
+import com.sun.jna.platform.win32.COM.ITypeInfo;
 import com.sun.jna.platform.win32.COM.IUnknown;
+import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
-import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.COM.TypeLibUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -51,11 +56,11 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 
     protected TypeInfoDoc typeInfoDoc;
-    
+
     protected String methodName;
-    
+
     protected String docStr;
-    
+
     /**
      * Instantiates a new tlb function.
      * 
@@ -70,7 +75,7 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
      */
     public TlbAbstractMethod(int index, TypeLibUtil typeLibUtil,
             FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
-        super(index, typeLibUtil);
+        super(index, typeLibUtil, typeInfoUtil);
         this.typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
         this.methodName = typeInfoDoc.getName();
         this.docStr = typeInfoDoc.getDocString();
@@ -194,13 +199,59 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
         case VT_RESERVED:
             return "";
         case VT_ILLEGAL:
-            return "";
-            // case VT_ILLEGALMASKED:
-            // return "";
-            // case VT_TYPEMASK:
-            // return "";
-        default:
+            return "illegal";
+/*        case VT_ILLEGALMASKED:
+            return "illegal_masked";
+        case VT_TYPEMASK:
+            return "typemask";
+*/        default:
             return null;
         }
+    }
+
+    protected String getUserdefinedType(HREFTYPE hreftype) {
+        ITypeInfo refTypeInfo = this.typeInfoUtil.getRefTypeInfo(hreftype);
+        TypeInfoUtil typeInfoUtil = new TypeInfoUtil(refTypeInfo);
+        TypeInfoDoc documentation = typeInfoUtil
+                .getDocumentation(OaIdl.MEMBERID_NIL);
+        return documentation.getName();
+    }
+
+    protected String getType(FUNCDESC funcDesc) {
+        ELEMDESC elemDesc = funcDesc.elemdescFunc;
+        return this.getType(elemDesc);
+    }
+
+    protected String getType(ELEMDESC elemDesc) {
+        TYPEDESC _typeDesc = elemDesc.tdesc;
+        return this.getType(_typeDesc);
+    }
+    
+    protected String getType(TYPEDESC typeDesc) {
+        VARTYPE vt = typeDesc.vt;
+        String type = "not_defined";
+
+        if (vt.intValue() == Variant.VT_PTR) {
+            TYPEDESC lptdesc = typeDesc._typedesc.getLptdesc();
+            type = this.getType(lptdesc);
+        } else if (vt.intValue() == Variant.VT_SAFEARRAY
+                || vt.intValue() == Variant.VT_CARRAY) {
+            TYPEDESC tdescElem = typeDesc._typedesc.getLpadesc().tdescElem;
+            type = this.getType(tdescElem);
+        } else if (vt.intValue() == Variant.VT_USERDEFINED) {
+            HREFTYPE hreftype = typeDesc._typedesc.hreftype;
+            type = this.getUserdefinedType(hreftype);
+        } else {
+            type = this.getVarType(vt);
+        }
+
+        return type;
+    }
+    
+    protected String validateMethodName(String methodName) {
+        if(methodName.equals("final"))
+            return "_" + methodName;
+        else
+            return methodName;
     }
 }
