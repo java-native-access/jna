@@ -1,4 +1,4 @@
-NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+﻿NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
@@ -9,6 +9,7 @@ Features
 --------
 * Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
 * Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
+* [#101](https://github.com/twall/jna/issues/101): Modify Advapi32Util registryGet*() API for support specific KEY_WOW64 - [@falldog] (https://github.com/falldog).
 
 Bug Fixes
 ---------

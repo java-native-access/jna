@@ -544,28 +544,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_SZ
-					&& lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue()
-						+ ", expected REG_SZ or REG_EXPAND_SZ");
-			}
-			char[] data = new char[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return Native.toString(data);
+			return registryGetStringValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -574,6 +553,40 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String registryGetStringValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_SZ
+				&& lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue()
+					+ ", expected REG_SZ or REG_EXPAND_SZ");
+		}
+		char[] data = new char[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return Native.toString(data);		
+	}
+	
 	/**
 	 * Get a registry REG_EXPAND_SZ value.
 	 *
@@ -594,26 +607,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_SZ");
-			}
-			char[] data = new char[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return Native.toString(data);
+			return registryGetExpandableStringValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -622,6 +616,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_EXPAND_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String registryGetExpandableStringValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_SZ");
+		}
+		char[] data = new char[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return Native.toString(data);
+	}
+	
 	/**
 	 * Get a registry REG_MULTI_SZ value.
 	 *
@@ -642,38 +668,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_SZ");
-			}
-			Memory data = new Memory(lpcbData.getValue());
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			ArrayList<String> result = new ArrayList<String>();
-			int offset = 0;
-			while (offset < data.size()) {
-				String s = data.getString(offset, true);
-				offset += s.length() * Native.WCHAR_SIZE;
-				offset += Native.WCHAR_SIZE;
-				if (s.length() == 0 && offset == data.size()) {
-					// skip the final NULL
-				} else {
-					result.add(s);
-				}
-			}
-			return result.toArray(new String[0]);
+			return registryGetStringArray(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -682,6 +677,50 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_MULTI_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String[] registryGetStringArray(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_SZ");
+		}
+		Memory data = new Memory(lpcbData.getValue());
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		ArrayList<String> result = new ArrayList<String>();
+		int offset = 0;
+		while (offset < data.size()) {
+			String s = data.getString(offset, true);
+			offset += s.length() * Native.WCHAR_SIZE;
+			offset += Native.WCHAR_SIZE;
+			if (s.length() == 0 && offset == data.size()) {
+				// skip the final NULL
+			} else {
+				result.add(s);
+			}
+		}
+		return result.toArray(new String[0]);
+	}
+	
 	/**
 	 * Get a registry REG_BINARY value.
 	 *
@@ -702,26 +741,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_BINARY) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_BINARY");
-			}
-			byte[] data = new byte[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data;
+			return registryGetBinaryValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -730,6 +750,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_BINARY value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static byte[] registryGetBinaryValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_BINARY) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_BINARY");
+		}
+		byte[] data = new byte[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data;
+	}
+	
 	/**
 	 * Get a registry DWORD value.
 	 *
@@ -749,26 +801,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_DWORD) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_DWORD");
-			}
-			IntByReference data = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data.getValue();
+			return registryGetIntValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -777,6 +810,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry DWORD value.
+	 *
+	 * @param hKey
+	 *            Parent key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return Integer value.
+	 */
+	public static int registryGetIntValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_DWORD) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_DWORD");
+		}
+		IntByReference data = new IntByReference();
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data.getValue();
+	}
+	
 	/**
 	 * Get a registry QWORD value.
 	 *
@@ -796,32 +861,45 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_QWORD) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_QWORD");
-			}
-			LongByReference data = new LongByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data.getValue();
+			return registryGetLongValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
 				throw new Win32Exception(rc);
 			}
 		}
+	}
+	
+	/**
+	 * Get a registry QWORD value.
+	 *
+	 * @param hKey
+	 *            Parent key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return Integer value.
+	 */
+	public static long registryGetLongValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_QWORD) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_QWORD");
+		}
+		LongByReference data = new LongByReference();
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data.getValue();
 	}
 
 	/**
