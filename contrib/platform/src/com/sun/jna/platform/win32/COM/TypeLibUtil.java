@@ -89,6 +89,18 @@ public class TypeLibUtil {
         this.initTypeLibInfo();
     }
 
+    public TypeLibUtil(String file) {
+        // load typelib
+        PointerByReference pTypeLib = new PointerByReference();
+        HRESULT hr = OleAuto.INSTANCE.LoadTypeLib(new WString(file), pTypeLib);
+        COMUtils.checkTypeLibRC(hr);
+
+        // init type lib class
+        this.typelib = new TypeLib(pTypeLib.getValue());
+
+        this.initTypeLibInfo();
+    }
+
     /**
      * Inits the type lib info.
      */

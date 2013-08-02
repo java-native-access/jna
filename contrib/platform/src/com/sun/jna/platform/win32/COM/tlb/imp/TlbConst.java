@@ -8,6 +8,10 @@ public interface TlbConst {
 
     public final static String TYPELIB_ID_SHELL = "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}";
 
+    public final static String TYPELIB_MAJOR_VERSION_SHELL = "1";
+    
+    public final static String TYPELIB_MINOR_VERSION_SHELL = "0";
+
     public final static String TYPELIB_ID_WORD = "{00020905-0000-0000-C000-000000000046}";
 
     public final static String TYPELIB_MAJOR_VERSION_WORD = "8";
@@ -26,4 +30,5 @@ public interface TlbConst {
     
     public final static String CMD_ARG_TYPELIB_MINOR_VERSION = "tlb.minor.version";
     
+    public final static String CMD_ARG_TYPELIB_FILE = "tlb.file";
 }

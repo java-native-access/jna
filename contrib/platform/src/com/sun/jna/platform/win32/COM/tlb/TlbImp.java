@@ -14,11 +14,12 @@ package com.sun.jna.platform.win32.COM.tlb;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.Enumeration;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
@@ -58,27 +59,36 @@ public class TlbImp implements TlbConst {
     }
 
     public TlbImp(String[] args) {
+        Native.setProtected(true);
         this.cmdlineArgs = new TlbCmdlineArgs(args);
 
-        String clsid = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_ID);
-        int majorVersion = this.cmdlineArgs
-                .getIntParam(CMD_ARG_TYPELIB_MAJOR_VERSION);
-        int minorVersion = this.cmdlineArgs
-                .getIntParam(CMD_ARG_TYPELIB_MINOR_VERSION);
+        if (this.cmdlineArgs.isTlbId()) {
+            String clsid = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_ID);
+            int majorVersion = this.cmdlineArgs
+                    .getIntParam(CMD_ARG_TYPELIB_MAJOR_VERSION);
+            int minorVersion = this.cmdlineArgs
+                    .getIntParam(CMD_ARG_TYPELIB_MINOR_VERSION);
 
-        this.startCOM2Java(clsid, majorVersion, minorVersion);
-        Native.setProtected(true);
+            // initialize typelib
+            // check version numbers with registry entries!!!
+            this.typeLibUtil = new TypeLibUtil(clsid, majorVersion,
+                    minorVersion);
+            this.startCOM2Java();
+        }else if (this.cmdlineArgs.isTlbFile()) {
+            String file = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_FILE);
+            // initialize typelib
+            // check version numbers with registry entries!!!
+            this.typeLibUtil = new TypeLibUtil(file);
+            this.startCOM2Java();
+        }else
+            this.cmdlineArgs.showCmdHelp();
     }
 
     /**
      * Start startCOM2Java.
      */
-    public void startCOM2Java(String clsid, int majorVersion, int minorVersion) {
+    public void startCOM2Java() {
         try {
-            // initialize typelib
-            // check version numbers with registry entries!!!
-            this.typeLibUtil = new TypeLibUtil(clsid, majorVersion,
-                    minorVersion);
             // create output Dir
             this.createDir();
 
@@ -139,11 +149,12 @@ public class TlbImp implements TlbConst {
     private void writeTextFile(String filename, String str) throws IOException {
         String file = this.comRootDir + File.separator + filename;
         FileChannel rwChannel = new RandomAccessFile(file, "rw").getChannel();
-        ByteBuffer wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0, str.length());
+        ByteBuffer wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0,
+                str.length());
 
         wrBuf.put(str.getBytes());
 
-        rwChannel.close();        
+        rwChannel.close();
     }
 
     private void writeTlbClass(TlbBase tlbBase) throws IOException {
