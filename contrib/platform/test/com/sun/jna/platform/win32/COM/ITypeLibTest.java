@@ -52,7 +52,7 @@ public class ITypeLibTest extends TestCase {
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
 				"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 
 		// get user default lcid
@@ -61,7 +61,7 @@ public class ITypeLibTest extends TestCase {
 		PointerByReference pShellTypeLib = new PointerByReference();
 		// load typelib
 		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pShellTypeLib);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 
 		return new TypeLib(pShellTypeLib.getValue());
@@ -79,7 +79,7 @@ public class ITypeLibTest extends TestCase {
 //		TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
 //		HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), pTInfo);
 //
-//		COMUtils.checkTypeLibRC(hr);
+//		COMUtils.checkRC(hr);
 //		assertEquals(0, hr.intValue());
 //		System.out.println("ITypeInfo: " + pTInfo.toString());
 	}
@@ -90,7 +90,7 @@ public class ITypeLibTest extends TestCase {
 		TYPEKIND.ByReference pTKind = new TYPEKIND.ByReference();
 		HRESULT hr = shellTypeLib.GetTypeInfoType(new UINT(0), pTKind);
 
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 		System.out.println("TYPEKIND: " + pTKind);
 	}
@@ -102,7 +102,7 @@ public class ITypeLibTest extends TestCase {
 //		TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
 //		HRESULT hr = shellTypeLib.GetTypeInfoOfGuid(shellGuid, pTInfo);
 //
-//		COMUtils.checkTypeLibRC(hr);
+//		COMUtils.checkRC(hr);
 //		assertEquals(0, hr.intValue());
 //		System.out.println("ITypeInfo: " + pTInfo.toString());
 	}
@@ -113,7 +113,7 @@ public class ITypeLibTest extends TestCase {
 //		TLIBATTR.ByReference ppTLibAttr = new TLIBATTR.ByReference();
 //		HRESULT hr = shellTypeLib.GetLibAttr(ppTLibAttr);
 //
-//		COMUtils.checkTypeLibRC(hr);
+//		COMUtils.checkRC(hr);
 //		assertEquals(0, hr.intValue());
 //		System.out.println("ppTLibAttr: " + ppTLibAttr.toString());
 	}
@@ -124,7 +124,7 @@ public class ITypeLibTest extends TestCase {
 //		TypeComp.ByReference pTComp = new TypeComp.ByReference();
 //		HRESULT hr = shellTypeLib.GetTypeComp(pTComp);
 //
-//		COMUtils.checkTypeLibRC(hr);
+//		COMUtils.checkRC(hr);
 //		assertEquals(0, hr.intValue());
 //		System.out.println("pTComp: " + pTComp.toString());
 	}
@@ -140,7 +140,7 @@ public class ITypeLibTest extends TestCase {
 		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, ppTInfo,
 				rgMemIds, pcFound);
 
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		System.out.println("szNameBuf: " + szNameBuf);
 	}
 }

@@ -69,7 +69,7 @@ public class TypeInfoUtil {
     public TYPEATTR getTypeAttr() {
         PointerByReference ppTypeAttr = new PointerByReference();
         HRESULT hr = this.typeInfo.GetTypeAttr(ppTypeAttr);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new TYPEATTR(ppTypeAttr.getValue());
     }
@@ -82,7 +82,7 @@ public class TypeInfoUtil {
     public TypeComp getTypeComp() {
         PointerByReference ppTypeAttr = new PointerByReference();
         HRESULT hr = this.typeInfo.GetTypeComp(ppTypeAttr);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new TypeComp(ppTypeAttr.getValue());
     }
@@ -97,7 +97,7 @@ public class TypeInfoUtil {
     public FUNCDESC getFuncDesc(int index) {
         PointerByReference ppFuncDesc = new PointerByReference();
         HRESULT hr = this.typeInfo.GetFuncDesc(new UINT(index), ppFuncDesc);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new FUNCDESC(ppFuncDesc.getValue());
     }
@@ -112,7 +112,7 @@ public class TypeInfoUtil {
     public VARDESC getVarDesc(int index) {
         PointerByReference ppVarDesc = new PointerByReference();
         HRESULT hr = this.typeInfo.GetVarDesc(new UINT(index), ppVarDesc);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new VARDESC(ppVarDesc.getValue());
     }
@@ -131,7 +131,7 @@ public class TypeInfoUtil {
         UINTbyReference pcNames = new UINTbyReference();
         HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(
                 maxNames), pcNames);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         int cNames = pcNames.getValue().intValue();
         String[] result = new String[cNames];
@@ -155,7 +155,7 @@ public class TypeInfoUtil {
         HREFTYPEbyReference ppTInfo = new HREFTYPEbyReference();
         HRESULT hr = this.typeInfo.GetRefTypeOfImplType(new UINT(index),
                 ppTInfo);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return ppTInfo.getValue();
     }
@@ -171,7 +171,7 @@ public class TypeInfoUtil {
         IntByReference pImplTypeFlags = new IntByReference();
         HRESULT hr = this.typeInfo.GetImplTypeFlags(new UINT(index),
                 pImplTypeFlags);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return pImplTypeFlags.getValue();
     }
@@ -189,7 +189,7 @@ public class TypeInfoUtil {
         MEMBERID[] pMemId = new MEMBERID[cNames];
         HRESULT hr = this.typeInfo.GetIDsOfNames(rgszNames, new UINT(cNames),
                 pMemId);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return pMemId;
     }
@@ -216,7 +216,7 @@ public class TypeInfoUtil {
 
         HRESULT hr = this.typeInfo.Invoke(pvInstance, memid, wFlags,
                 pDispParams, pVarResult, pExcepInfo, puArgErr);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new Invoke(pVarResult, pExcepInfo, puArgErr.getValue()
                 .intValue());
@@ -298,7 +298,7 @@ public class TypeInfoUtil {
 
         HRESULT hr = this.typeInfo.GetDocumentation(memid, pBstrName,
                 pBstrDocString, pdwHelpContext, pBstrHelpFile);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         TypeInfoDoc TypeInfoDoc = new TypeInfoDoc(pBstrName.getString(),
                 pBstrDocString.getString(), pdwHelpContext.getValue()
@@ -403,7 +403,7 @@ public class TypeInfoUtil {
 
         HRESULT hr = this.typeInfo.GetDllEntry(memid, invKind, pBstrDllName,
                 pBstrName, pwOrdinal);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         OLEAUTO.SysFreeString(pBstrDllName.getValue());
         OLEAUTO.SysFreeString(pBstrName.getValue());
@@ -512,7 +512,7 @@ public class TypeInfoUtil {
     public ITypeInfo getRefTypeInfo(HREFTYPE hreftype) {
         PointerByReference ppTInfo = new PointerByReference();
         HRESULT hr = this.typeInfo.GetRefTypeInfo(hreftype, ppTInfo);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new TypeInfo(ppTInfo.getValue());
     }
@@ -529,7 +529,7 @@ public class TypeInfoUtil {
     public PointerByReference AddressOfMember(MEMBERID memid, INVOKEKIND invKind) {
         PointerByReference ppv = new PointerByReference();
         HRESULT hr = this.typeInfo.AddressOfMember(memid, invKind, ppv);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return ppv;
     }
@@ -546,7 +546,7 @@ public class TypeInfoUtil {
     public PointerByReference CreateInstance(IUnknown pUnkOuter, REFIID riid) {
         PointerByReference ppvObj = new PointerByReference();
         HRESULT hr = this.typeInfo.CreateInstance(pUnkOuter, riid, ppvObj);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return ppvObj;
     }
@@ -562,7 +562,7 @@ public class TypeInfoUtil {
 
         BSTRByReference pBstrMops = new BSTRByReference();
         HRESULT hr = this.typeInfo.GetMops(memid, pBstrMops);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return pBstrMops.getString();
     }
@@ -578,7 +578,7 @@ public class TypeInfoUtil {
         UINTbyReference pIndex = new UINTbyReference();
 
         HRESULT hr = this.typeInfo.GetContainingTypeLib(ppTLib, pIndex);
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         return new ContainingTypeLib(new TypeLib(ppTLib.getValue()), pIndex
                 .getValue().intValue());

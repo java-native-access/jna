@@ -242,7 +242,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
         HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
-        COMUtils.checkAutoRC(hr);
+        COMUtils.checkRC(hr);
 
         // Handle special-case for property-puts!
         if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
@@ -266,7 +266,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
                 LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
                 pExcepInfo, puArgErr);
 
-        COMUtils.checkAutoRC(hr, pExcepInfo, puArgErr);
+        COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;
     }
 
@@ -322,6 +322,6 @@ public class COMLateBindingBaseObject extends COMInvoker {
      *            the hr
      */
     protected void checkFailed(HRESULT hr) {
-        COMUtils.checkAutoRC(hr, null, null);
+        COMUtils.checkRC(hr, null, null);
     }
 }

@@ -64,7 +64,7 @@ public class OleAutoTest extends TestCase {
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
 				"{00020905-0000-0000-C000-000000000046}"), clsid);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 
 		// get user default lcid
@@ -72,7 +72,7 @@ public class OleAutoTest extends TestCase {
 		PointerByReference pWordTypeLib = new PointerByReference();
 		// get typelib based on Word 8.3 (v11)
 		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 8, 3, lcid, pWordTypeLib);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 	}
 

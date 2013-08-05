@@ -75,13 +75,13 @@ public class TypeLibUtil {
         // get CLSID from string
         HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(clsidStr),
                 clsid);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         // load typelib
         PointerByReference pTypeLib = new PointerByReference();
         hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, wVerMajor, wVerMinor, lcid,
                 pTypeLib);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         // init type lib class
         this.typelib = new TypeLib(pTypeLib.getValue());
@@ -93,7 +93,7 @@ public class TypeLibUtil {
         // load typelib
         PointerByReference pTypeLib = new PointerByReference();
         HRESULT hr = OleAuto.INSTANCE.LoadTypeLib(new WString(file), pTypeLib);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         // init type lib class
         this.typelib = new TypeLib(pTypeLib.getValue());
@@ -131,7 +131,7 @@ public class TypeLibUtil {
     public TYPEKIND getTypeInfoType(int index) {
         TYPEKIND.ByReference typekind = new TYPEKIND.ByReference();
         HRESULT hr = this.typelib.GetTypeInfoType(new UINT(index), typekind);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
         return typekind;
     }
 
@@ -145,7 +145,7 @@ public class TypeLibUtil {
     public ITypeInfo getTypeInfo(int index) {
         PointerByReference ppTInfo = new PointerByReference();
         HRESULT hr = this.typelib.GetTypeInfo(new UINT(index), ppTInfo);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
         return new TypeInfo(ppTInfo.getValue());
     }
 
@@ -168,7 +168,7 @@ public class TypeLibUtil {
     public TLIBATTR getLibAttr() {
         PointerByReference ppTLibAttr = new PointerByReference();
         HRESULT hr = typelib.GetLibAttr(ppTLibAttr);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         return new TLIBATTR(ppTLibAttr.getValue());
     }
@@ -181,7 +181,7 @@ public class TypeLibUtil {
     public TypeComp GetTypeComp() {
         PointerByReference ppTComp = new PointerByReference();
         HRESULT hr = this.typelib.GetTypeComp(ppTComp);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         return new TypeComp(ppTComp.getValue());
     }
@@ -201,7 +201,7 @@ public class TypeLibUtil {
 
         HRESULT hr = typelib.GetDocumentation(index, pBstrName, pBstrDocString,
                 pdwHelpContext, pBstrHelpFile);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         TypeLibDoc typeLibDoc = new TypeLibDoc(pBstrName.getString(),
                 pBstrDocString.getString(), pdwHelpContext.getValue()
@@ -306,7 +306,7 @@ public class TypeLibUtil {
         BOOLbyReference pfName = new BOOLbyReference();
 
         HRESULT hr = this.typelib.IsName(szNameBuf, lHashVal, pfName);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         return new IsName(szNameBuf.getValue(), pfName.getValue()
                 .booleanValue());
@@ -377,14 +377,14 @@ public class TypeLibUtil {
 
         HRESULT hr = this.typelib.FindName(szNameBuf, lHashVal, null, null,
                 pcFound);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         found = pcFound.getValue().shortValue();
         /* [length_is][size_is][out] */ITypeInfo[] ppTInfo = new ITypeInfo[found];
         /* [length_is][size_is][out] */MEMBERID[] rgMemId = new MEMBERID[found];
         hr = this.typelib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId,
                 pcFound);
-        COMUtils.checkTypeLibRC(hr);
+        COMUtils.checkRC(hr);
 
         FindName findName = new FindName(szNameBuf.getString(), ppTInfo,
                 rgMemId, found);

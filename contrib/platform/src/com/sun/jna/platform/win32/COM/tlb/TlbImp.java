@@ -12,8 +12,10 @@
  */
 package com.sun.jna.platform.win32.COM.tlb;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URL;
@@ -148,13 +150,9 @@ public class TlbImp implements TlbConst {
 
     private void writeTextFile(String filename, String str) throws IOException {
         String file = this.comRootDir + File.separator + filename;
-        FileChannel rwChannel = new RandomAccessFile(file, "rw").getChannel();
-        ByteBuffer wrBuf = rwChannel.map(FileChannel.MapMode.READ_WRITE, 0,
-                str.length());
-
-        wrBuf.put(str.getBytes());
-
-        rwChannel.close();
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+        bos.write(str.getBytes());
+        bos.close();
     }
 
     private void writeTlbClass(TlbBase tlbBase) throws IOException {
