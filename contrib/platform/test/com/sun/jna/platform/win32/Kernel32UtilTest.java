@@ -23,7 +23,6 @@ import java.io.PrintWriter;
 import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
-import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -180,14 +179,5 @@ public class Kernel32UtilTest extends TestCase {
         assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
         assertEquals(reader.readLine(), null);
         reader.close();
-    }
-
-    public final void testGetLogicalProcessorInformation() {
-        WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] informationArray = Kernel32Util.getLogicalProcessorInformation();
-        assertTrue(informationArray.length >= 1); // docs say so
-        for (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION info : informationArray) {
-            assertTrue(info.processorMask.intValue() >= 0);
-            assertTrue(info.relationship >= LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore && info.relationship <= LOGICAL_PROCESSOR_RELATIONSHIP.RelationAll);
-        }
     }
 }

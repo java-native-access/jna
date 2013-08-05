@@ -350,7 +350,8 @@ public class COMLateBindingObject extends COMLateBindingBaseObject {
      * @param comObject
      *            the com object
      */
-    protected void invokeNoReply(String methodName, COMLateBindingObject comObject) {
+    protected void invokeNoReply(String methodName,
+            COMLateBindingObject comObject) {
 
         this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
                 methodName);
@@ -401,8 +402,8 @@ public class COMLateBindingObject extends COMLateBindingBaseObject {
      * @param arg
      *            the arg
      */
-    protected void invokeNoReply(String methodName, COMLateBindingObject comObject,
-            VARIANT arg) {
+    protected void invokeNoReply(String methodName,
+            COMLateBindingObject comObject, VARIANT arg) {
 
         this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(),
                 methodName, arg);
@@ -631,8 +632,8 @@ public class COMLateBindingObject extends COMLateBindingBaseObject {
      * @param value
      *            the value
      */
-    protected void setProperty(String propertyName, COMLateBindingObject comObject,
-            VARIANT value) {
+    protected void setProperty(String propertyName,
+            COMLateBindingObject comObject, VARIANT value) {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null,
                 comObject.getIDispatch(), propertyName, value);
     }

@@ -28,6 +28,7 @@ import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class COMUtils.
  * 
