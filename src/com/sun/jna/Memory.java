@@ -101,7 +101,7 @@ public class Memory extends Pointer {
      * the allocated bounds. 
      */
     public Pointer share(long offset) {
-        return share(offset, getSize() - offset);
+        return share(offset, size() - offset);
     }
     
     /** Provide a view of this memory using the given offset as the base
@@ -162,11 +162,6 @@ public class Memory extends Pointer {
         clear(size);
     }
 
-    /** @deprecated use {@link #valid()} instead. */
-    public boolean isValid() {
-        return valid();
-    }
-
     /** Returns false if the memory has been freed. */
     public boolean valid() {
         return peer != 0;
@@ -175,12 +170,6 @@ public class Memory extends Pointer {
     public long size() {
         return size;
     }
-
-    /** @deprecated use {@link #size()} instead. */
-    public long getSize() {
-        return size();
-    }
-
 
     /**
      * Check that indirection won't cause us to write outside the 
@@ -543,18 +532,16 @@ public class Memory extends Pointer {
         return b;
     }
 
-    /**
-     * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getString</code>.  But this method performs a 
-     * bounds checks to ensure that the indirection does not cause memory 
-     * outside the <code>malloc</code>ed space to be accessed.
-     *
-     * @see Pointer#getString(long, boolean)
-     */
-    public String getString(long offset, boolean wide) {
+    public String getString(long offset, String encoding) {
         // NOTE: we only make sure the start of the string is within bounds
-        boundsCheck(offset, 0); 
-        return super.getString(offset, wide);
+        boundsCheck(offset, 0);
+        return super.getString(offset, encoding);
+    }
+
+    public String getWideString(long offset) {
+        // NOTE: we only make sure the start of the string is within bounds
+        boundsCheck(offset, 0);
+        return super.getWideString(offset);
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -672,21 +659,14 @@ public class Memory extends Pointer {
         super.setPointer(offset, value);
     }
 
+    public void setString(long offset, String value, String encoding) {
+        boundsCheck(offset, Native.getBytes(value, encoding).length + 1L);
+        super.setString(offset, value, encoding);
+    }
 
-    /**
-     * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setString</code>.  But this method performs a 
-     * bounds checks to ensure that the indirection does not cause memory 
-     * outside the <code>malloc</code>ed space to be accessed.
-     *
-     * @see Pointer#setString(long,String,boolean)
-     */
-    public void setString(long offset, String value, boolean wide) {
-        if (wide)
-            boundsCheck(offset, (value.length() + 1L) * Native.WCHAR_SIZE);
-        else
-            boundsCheck(offset, value.getBytes().length + 1L);
-        super.setString(offset, value, wide);
+    public void setWideString(long offset, String value) {
+        boundsCheck(offset, (value.length() + 1L) * Native.WCHAR_SIZE);
+        super.setWideString(offset, value);
     }
 
     public String toString() {
@@ -701,6 +681,9 @@ public class Memory extends Pointer {
     protected static long malloc(long size) {
         return Native.malloc(size);
     }
+
+    /** Dumps the contents of this memory object. */
+    public String dump() {
+        return dump(0, (int)size());
+    }
 }
-
-

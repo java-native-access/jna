@@ -23,7 +23,6 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Provides access to the w32 user32 library. Incomplete implementation to
  * support demos.
@@ -31,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Todd Fast, todd.fast@sun.com
  * @author twalljava@dev.java.net
  * @author Tobias Wolf, wolf.tobias@gmx.net
- * @auhtor Markus KARG (markus[at]headcrashing[dot]eu)
+ * @author Markus KARG (markus[at]headcrashing[dot]eu)
  */
 public interface User32 extends StdCallLibrary, WinUser {
 
@@ -1146,7 +1145,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 * @return If the function succeeds, the return value is nonzero. If the
 	 *         function fails, the return value is zero.
 	 */
-	boolean InvalidateRect(HWND hWnd, RECT.ByReference lpRect, boolean bErase);
+	boolean InvalidateRect(HWND hWnd, RECT lpRect, boolean bErase);
 
 	/**
 	 * The RedrawWindow function updates the specified rectangle or region in a
@@ -1174,7 +1173,7 @@ public interface User32 extends StdCallLibrary, WinUser {
 	 * @return If the function succeeds, the return value is nonzero. If the
 	 *         function fails, the return value is zero.
 	 */
-	boolean RedrawWindow(HWND hWnd, RECT.ByReference lprcUpdate,
+	boolean RedrawWindow(HWND hWnd, RECT lprcUpdate,
 			HRGN hrgnUpdate, DWORD flags);
 
 	/**

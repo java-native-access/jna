@@ -22,43 +22,55 @@ import java.nio.CharBuffer;
  */
 class NativeString implements CharSequence, Comparable {
 
+    static final String WIDE_STRING = "--WIDE-STRING--";
+
     private Pointer pointer;
-    private boolean wide;
+    private String encoding;
 
     /** Create a native string (NUL-terminated array of <code>char</code>).<p>
-     * If the system property <code>jna.encoding</code> is set, its value will
-     * be used to encode the native string.  If not set or if the encoding
-     * is unavailable, the default platform encoding will be used. 
+     * Uses the encoding returned by {@link Native#getDefaultStringEncoding()}.
      */
     public NativeString(String string) {
-        this(string, false);
+        this(string, Native.getDefaultStringEncoding());
     }
 
     /** Create a native string as a NUL-terminated array of <code>wchar_t</code>
      * (if <code>wide</code> is true) or <code>char</code>.<p>
-     * If the system property <code>jna.encoding</code> is set, its value will
-     * be used to encode the native <code>char</code>string.  
-     * If not set or if the encoding is unavailable, the default platform 
-     * encoding will be used. 
+     * If not <code>wide</code>, the encoding is obtained from {@link
+     * Native#getDefaultStringEncoding()}. 
      * 
      * @param string value to write to native memory
      * @param wide whether to store the String as <code>wchar_t</code>
      */
     public NativeString(String string, boolean wide) {
+        this(string, wide ? WIDE_STRING : Native.getDefaultStringEncoding());
+    }
+
+    /** Create a native string as a NUL-terminated array of
+     * <code>wchar_t</code>. 
+     */
+    public NativeString(WString string) {
+        this(string.toString(), WIDE_STRING);
+    }
+
+    /** Create a native string (NUL-terminated array of <code>char</code>),
+     * using the requested encoding.
+     */
+    public NativeString(String string, String encoding) {
         if (string == null) {
             throw new NullPointerException("String must not be null");
         }
         // Allocate the memory to hold the string.  Note, we have to
         // make this 1 element longer in order to accommodate the terminating 
         // NUL (which is generated in Pointer.setString()).
-        this.wide = wide;
-        if (wide) {
+        this.encoding = encoding;
+        if (this.encoding == WIDE_STRING) {
             int len = (string.length() + 1 ) * Native.WCHAR_SIZE;
             pointer = new Memory(len);
-            pointer.setString(0, string, true);
+            pointer.setWideString(0, string);
         }
         else {
-            byte[] data = Native.getBytes(string);
+            byte[] data = Native.getBytes(string, encoding);
             pointer = new Memory(data.length + 1);
             pointer.write(0, data, 0, data.length);
             pointer.setByte(data.length, (byte)0);
@@ -78,8 +90,9 @@ class NativeString implements CharSequence, Comparable {
     }
 
     public String toString() {
+        boolean wide = encoding == WIDE_STRING;
         String s = wide ? "const wchar_t*" : "const char*";
-        s += "(" + pointer.getString(0, wide) + ")";
+        s += "(" + (wide ? pointer.getWideString(0) : pointer.getString(0, encoding)) + ")";
         return s;
     }
 

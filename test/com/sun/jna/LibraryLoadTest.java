@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2009 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-20013 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,14 +19,21 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.Collections;
 
 import junit.framework.TestCase;
 
-public class LibraryLoadTest extends TestCase {
+public class LibraryLoadTest extends TestCase implements Paths {
     
-    private static final String BUILDDIR =
-        System.getProperty("jna.builddir", "build"
-                           + (Platform.is64Bit() ? "-d64" : ""));
+    private class TestLoader extends URLClassLoader {
+        public TestLoader(File path) throws MalformedURLException {
+            super(new URL[] { path.toURI().toURL(), },
+                  new CloverLoader());
+        }
+    }
 
     public void testLoadJNALibrary() {
         assertTrue("Pointer size should never be zero", Pointer.SIZE > 0);
@@ -52,6 +59,50 @@ public class LibraryLoadTest extends TestCase {
         }
     }
     
+    public void testExtractFromResourcePath() throws Exception {
+        // doesn't actually load the resource
+        assertNotNull(Native.extractFromResourcePath("testlib-path", new TestLoader(new File(TESTPATH))));
+    }
+
+    public void testExtractFromResourcePathWithNullClassLoader() throws Exception {
+        // doesn't actually load the resource
+        assertNotNull(Native.extractFromResourcePath("/com/sun/jna/LibraryLoadTest.class", null));
+    }
+
+    public void testLoadFromJNALibraryPath() {
+        // Tests are already configured to load from this path
+        NativeLibrary.getInstance("testlib");
+    }
+
+    public void testLoadFromCustomPath() throws MalformedURLException {
+        NativeLibrary.addSearchPath("testlib-path", TESTPATH);
+        NativeLibrary.getInstance("testlib-path", new TestLoader(new File(".")));
+    }
+
+    public void testLoadFromClasspath() throws MalformedURLException {
+        NativeLibrary.getInstance("testlib-path", new TestLoader(new File(TESTPATH)));
+    }
+
+    public void testLoadFromClasspathAbsolute() throws MalformedURLException {
+        String name = NativeLibrary.mapSharedLibraryName("testlib-path");
+        NativeLibrary.getInstance("/" + name, new TestLoader(new File(TESTPATH)));
+    }
+
+    public void testLoadFromJar() throws MalformedURLException {
+        NativeLibrary.getInstance("testlib-jar", new TestLoader(new File(TESTJAR)));
+    }
+
+    public void testLoadFromJarAbsolute() throws MalformedURLException {
+        String name = NativeLibrary.mapSharedLibraryName("testlib-jar");
+        NativeLibrary.getInstance("/" + name, new TestLoader(new File(TESTJAR)));
+    }
+
+    public void testLoadExplicitAbsolutePath() throws MalformedURLException {
+        // windows requires ".dll" suffix
+        String name = "testlib-truncated" + (Platform.isWindows() ? ".dll" : "");
+        NativeLibrary.getInstance(new File(TESTPATH, name).getAbsolutePath());
+    }
+
     public static interface CLibrary extends Library {
         int wcslen(WString wstr);
         int strlen(String str);
@@ -65,11 +116,18 @@ public class LibraryLoadTest extends TestCase {
         return Native.loadLibrary(Platform.C_LIBRARY_NAME, CLibrary.class);
     }
     
+    public void testLoadProcess() {
+        Native.loadLibrary(CLibrary.class);
+    }
+    
+    public void testLoadProcessWithOptions() {
+        Native.loadLibrary(CLibrary.class, Collections.EMPTY_MAP);
+    }
+    
     public void testLoadCLibrary() {
         load();
     }
     
-    private static final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
     private void copy(File src, File dst) throws Exception {
         FileInputStream is = new FileInputStream(src);
         FileOutputStream os = new FileOutputStream(dst);
@@ -87,34 +145,63 @@ public class LibraryLoadTest extends TestCase {
     }
 
     public void testLoadLibraryWithUnicodeName() throws Exception {
-        String tmp = System.getProperty("java.io.tmpdir");
-        String libName = System.mapLibraryName("jnidispatch");
-        File src = new File(BUILDDIR + "/native", libName);
-        if (Platform.isWindowsCE()) {
-            src = new File("/Storage Card", libName);
-        }
+        File tmpdir = Native.getTempDir();
+        String libName = NativeLibrary.mapSharedLibraryName("testlib");
+        File src = new File(TESTPATH, libName);
         assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
 
-        String newLibName = UNICODE;
-        if (libName.startsWith("lib"))
-            newLibName = "lib" + newLibName;
-        int dot = libName.lastIndexOf(".");
-        if (dot != -1) {
-            if (Platform.isMac()) {
-                newLibName += ".dylib";
-            }
-            else {
-                newLibName += libName.substring(dot, libName.length());
-            }
-        }
-        File dst = new File(tmp, newLibName);
+        final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
+
+        String newLibName = libName.replace("testlib", UNICODE);
+        File dst = new File(tmpdir, newLibName);
         dst.deleteOnExit();
         copy(src, dst);
-        NativeLibrary.addSearchPath(UNICODE, tmp);
-        NativeLibrary nl = NativeLibrary.getInstance(UNICODE);
-        nl.dispose();
+        NativeLibrary.getInstance(UNICODE, new TestLoader(tmpdir));
     }
     
+    public void testLoadFrameworkLibrary() {
+        if (Platform.isMac()) {
+            final String PATH = "/System/Library/Frameworks/CoreServices.framework";
+            assertTrue("CoreServices not present on this setup, expected at " + PATH, new File(PATH).exists());
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance("CoreServices");
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should search /System/Library/Frameworks");
+            }
+        }
+    }
+    
+    public void testLoadFrameworkLibraryAbsolute() {
+        if (Platform.isMac()) {
+            final String PATH = "/System/Library/Frameworks/CoreServices";
+            final String FRAMEWORK = PATH + ".framework";
+            assertTrue("CoreServices not present on this setup, expected at " + FRAMEWORK, new File(FRAMEWORK).exists());
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance(PATH);
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should try FRAMEWORK.framework/FRAMEWORK if the absolute framework (truncated) path given exists: " + e);
+            }
+        }
+    }
+
+    public void testLoadFrameworkLibraryAbsoluteFull() {
+        if (Platform.isMac()) {
+            final String PATH = "/System/Library/Frameworks/CoreServices.framework/CoreServices";
+            assertTrue("CoreServices not present on this setup, expected at " + PATH, new File(PATH).exists());
+            try {
+                NativeLibrary lib = NativeLibrary.getInstance(PATH);
+                assertNotNull("CoreServices not found", lib);
+            }
+            catch(UnsatisfiedLinkError e) {
+                fail("Should try FRAMEWORK verbatim if the absolute path given exists: " + e);
+            }
+        }
+    }
+
     public void testHandleObjectMethods() {
         CLibrary lib = (CLibrary)load();
         String method = "toString";

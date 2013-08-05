@@ -3,9 +3,9 @@
 Java Native Access (JNA)
 ========================
 
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.5.1/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.5.1/javadoc/overview-summary.html#overview_description).
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/3.5.2/javadoc/).  Please read the [overview](http://twall.github.com/jna/3.5.2/javadoc/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
 
-JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code—no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
+JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
 
 JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like it does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
 
@@ -18,10 +18,10 @@ JNA includes a platform library with many native functions already mapped as wel
 Download
 ========
 
-Version 3.5.1
+Version 3.5.2
 
-* [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.1/jna-3.5.1.jar)
-* [platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.1/platform-3.5.1.jar)
+* [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/3.5.2/jna-3.5.2.jar)
+* [platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/platform/3.5.2/platform-3.5.2.jar)
 
 Features
 ========
@@ -79,12 +79,12 @@ Using the Library
 * [Platform Library](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/twall/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/twall/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://twall.github.com/jna/3.5.1/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://twall.github.com/jna/3.5.2/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.5.1/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/3.5.2/javadoc/).
 
 Developers
 ==========
@@ -107,6 +107,9 @@ If you are interested in paid support, feel free to say so on the [jna-users mai
 License
 =======
 
-This library is provided under the LGPL, version 2.1 or later.  Alternative license arrangements are negotiable.
+This library is licensed under the LGPL, version 2.1 or later, and (from
+version 4.0 onward) the Apache Software License, version 2.0.  Commercial
+license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
+

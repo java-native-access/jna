@@ -34,11 +34,13 @@ public class LastErrorTest extends TestCase {
     }};
 
     public interface TestLibrary extends Library {
+        void setLastError(int code);
         void noThrowLastError(int code);
         void throwLastError(int code) throws LastErrorException;
     }
 
     public static class DirectTestLibrary implements TestLibrary {
+        public native void setLastError(int code);
         public native void noThrowLastError(int code);
         public native void throwLastError(int code) throws LastErrorException;
         static {
@@ -46,11 +48,30 @@ public class LastErrorTest extends TestCase {
         }
     }
 
+    public void testLastErrorPerThreadStorage() throws Exception {
+        final TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+        final int[] errors = new int[2];
+        Thread t1 = new Thread() { public void run() {
+            lib.setLastError(-1);
+            errors[0] = Native.getLastError();
+        }};
+        Thread t2 = new Thread() { public void run() {
+            lib.setLastError(-2);
+            errors[1] = Native.getLastError();
+        }};
+        lib.setLastError(-3);
+        
+        t1.start(); t2.start();
+        t1.join(); t2.join();
+        assertEquals("Wrong error on main thread", -3, Native.getLastError());
+        assertEquals("Wrong error on first thread", -1, errors[0]);
+        assertEquals("Wrong error on second thread", -2, errors[1]);
+    }
+
+    private final int ERROR = Platform.isWindows() ? 1 : -1;
     public void testThrowLastError() {
-        Map options = new HashMap();
         TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class, OPTIONS);
 
-        final int ERROR = -1;
         lib.noThrowLastError(ERROR);
         assertEquals("Last error not preserved", ERROR, Native.getLastError());
         try {
@@ -59,13 +80,13 @@ public class LastErrorTest extends TestCase {
         }
         catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
+            assertTrue("Exception should include error message: '" + e.getMessage() + "'", e.getMessage().length() > 0);
         }
     }
 
     public void testThrowLastErrorDirect() {
         TestLibrary lib = new DirectTestLibrary();
 
-        final int ERROR = -1;
         lib.noThrowLastError(ERROR);
         assertEquals("Last error not preserved", ERROR, Native.getLastError());
         try {
@@ -74,6 +95,7 @@ public class LastErrorTest extends TestCase {
         }
         catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
+            assertTrue("Exception should include error message: " + e.getMessage(), e.getMessage().length() > 0);
         }
     }
 

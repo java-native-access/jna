@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2012 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -16,13 +16,9 @@ import java.awt.Component;
 import java.awt.GraphicsEnvironment;
 import java.awt.HeadlessException;
 import java.awt.Window;
-
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -36,9 +32,13 @@ import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -66,7 +66,8 @@ import com.sun.jna.Structure.FFIType;
  * in <code>jna.boot.library.path</code> (if defined), then the system library
  * path using {@link System#loadLibrary}, unless <code>jna.nosys=true</code>.
  * If not found, the appropriate library will be extracted from the class path
- * into a temporary directory and loaded from there.  If your system has
+ * (into a temporary directory if found within a jar file) and loaded from
+ * there, unless <code>jna.noclasspath=true</code>.  If your system has
  * additional security constraints regarding execution or load of files
  * (SELinux, for example), you should  probably install the native library in
  * an accessible location and configure  your system accordingly, rather than
@@ -74,24 +75,28 @@ import com.sun.jna.Structure.FFIType;
  * To avoid the automatic unpacking (in situations where you want to force a
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
+ * <p/>
  * NOTE: all native functions are provided within this class to ensure that
  * all other JNA-provided classes and objects are GC'd and/or
  * finalized/disposed before this class is disposed and/or removed from
  * memory (most notably Memory and any other class which by default frees its
  * resources in a finalizer).<p/>
+ * <a name=native_library_loading</a>
+ * <h2>Native Library Loading</h2>
+ * Native libraries loaded via {@link #loadLibrary(Class)} may be found in
+ * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
-public final class Native {
+public final class Native implements Version {
 
-    private static final String VERSION = "3.5.2-SNAPSHOT";
-    private static final String VERSION_NATIVE = "3.5.0";
+    public static final String DEFAULT_ENCODING = "utf8";
+    static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
+    static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
     // Used by tests, do not remove
-    private static String nativeLibraryPath = null;
-    private static Map typeMappers = new WeakHashMap();
-    private static Map alignments = new WeakHashMap();
+    static String jnidispatchPath = null;
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
@@ -119,12 +124,11 @@ public final class Native {
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
 
-    private static final int THREAD_NOCHANGE = 0;
-    private static final int THREAD_DETACH = -1;
-    private static final int THREAD_LEAVE_ATTACHED = -2;
+    static final int MAX_ALIGNMENT;
+    static final int MAX_PADDING;
 
     static {
-        loadNativeLibrary();
+        loadNativeDispatchLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
@@ -140,13 +144,22 @@ public final class Native {
         if (!VERSION_NATIVE.equals(version)) {
             String LS = System.getProperty("line.separator");
             throw new Error(LS + LS
-                            + "There is an incompatible JNA native library installed on this system." + LS
+                            + "There is an incompatible JNA native library installed on this system" + LS
+                            + (jnidispatchPath != null
+                               ? "(at " + jnidispatchPath + ")" : System.getProperty("java.library.path"))
+                            + "." + LS
                             + "To resolve this issue you may do one of the following:" + LS
                             + " - remove or uninstall the offending library" + LS
                             + " - set the system property jna.nosys=true" + LS
-                            + " - set jna.boot.library.path to include the path to the version of the " + LS + "   jnidispatch library included with the JNA jar file you are using" + LS);
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS
+                            + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-        setPreserveLastError("true".equalsIgnoreCase(System.getProperty("jna.preserve_last_error", "true")));
+	MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
+            || (Platform.isLinux() && (Platform.isARM() || Platform.isPPC()))
+            || Platform.isAIX()
+            || Platform.isAndroid()
+            ? 8 : LONG_SIZE;
+        MAX_PADDING = (Platform.isMac() && Platform.isPPC()) ? 8 : MAX_ALIGNMENT;
     }
 
     /** Force a dispose when this class is GC'd. */
@@ -159,7 +172,7 @@ public final class Native {
     /** Properly dispose of JNA functionality. */
     private static void dispose() {
         NativeLibrary.disposeAll();
-        nativeLibraryPath = null;
+        jnidispatchPath = null;
     }
 
     /** Remove any automatically unpacked native library.
@@ -173,14 +186,13 @@ public final class Native {
         that introduces issues with cleaning up any extant JNA bits
         (e.g. Memory) which may still need use of the library before shutdown.
      */
-    private static boolean deleteNativeLibrary(String path) {
-        File flib = new File(path);
-        if (flib.delete()) {
+    static boolean deleteLibrary(File lib) {
+        if (lib.delete()) {
             return true;
         }
 
         // Couldn't delete it, mark for later deletion
-        markTemporaryFile(flib);
+        markTemporaryFile(lib);
 
         return false;
     }
@@ -215,22 +227,23 @@ public final class Native {
      */
     public static synchronized native boolean isProtected();
 
-    /** Set whether the system last error result is captured after every
-     * native invocation.  Defaults to <code>true</code> (<code>false</code>
-     * for direct-mapped calls).<p>
-     * @deprecated The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+    /** This method is obsolete.  The last error value is always preserved.
+     * <p/>
+     * NOTE: The preferred method of obtaining the last error result is
+     * to declare your mapped method to throw {@link LastErrorException}.
+     *
+     * @deprecated Last error is always preserved
      */
-    public static synchronized native void setPreserveLastError(boolean enable);
+    public static void setPreserveLastError(boolean enable) { }
 
     /** Indicates whether the system last error result is preserved
-     * after every invocation.<p>
-     * @deprecated The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * after every invocation.  Always returns <code>true</code><p>
+     * NOTE: The preferred method of obtaining the last error result is
+     * to declare your mapped method to throw {@link LastErrorException}.
+     *
+     * @deprecated Last error is always preserved
      */
-    public static synchronized native boolean getPreserveLastError();
+    public static boolean getPreserveLastError() { return true; }
 
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -285,12 +298,11 @@ public final class Native {
     private static native long _getDirectBufferPointer(Buffer b);
 
     /** Obtain a Java String from the given native byte array.  If there is
-     * no NUL terminator, the String will comprise the entire array.  If the
-     * system property <code>jna.encoding</code> is set, its value will
-     * override the platform default encoding (if supported).
+     * no NUL terminator, the String will comprise the entire array.  The
+     * encoding is obtained from {@link #getDefaultStringEncoding()}.
      */
     public static String toString(byte[] buf) {
-        return toString(buf, System.getProperty("jna.encoding"));
+        return toString(buf, getDefaultStringEncoding());
     }
 
     /** Obtain a Java String from the given native byte array, using the given
@@ -304,30 +316,38 @@ public final class Native {
             try {
                 s = new String(buf, encoding);
             }
-            catch(UnsupportedEncodingException e) { }
+            catch(UnsupportedEncodingException e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported");
+            }
         }
         if (s == null) {
+            System.err.println("JNA Warning: Decoding with fallback " + System.getProperty("file.encoding"));
             s = new String(buf);
         }
         int term = s.indexOf(0);
-        if (term != -1)
+        if (term != -1) {
             s = s.substring(0, term);
+        }
         return s;
     }
 
     /** Obtain a Java String from the given native wchar_t array.  If there is
-     * no NUL terminator, the String will comprise the entire array.
+     * no NUL terminator, the String will comprise the entire array.  
      */
     public static String toString(char[] buf) {
         String s = new String(buf);
         int term = s.indexOf(0);
-        if (term != -1)
+        if (term != -1) {
             s = s.substring(0, term);
+        }
         return s;
     }
 
     /** Map a library interface to the current process, providing
      * the explicit interface class.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the current
      * process. 
@@ -339,7 +359,11 @@ public final class Native {
     }
 
     /** Map a library interface to the current process, providing
-     * the explicit interface class.
+     * the explicit interface class.  Any options provided for the library are
+     * cached and associated with the library and any of its defined
+     * structures and/or functions.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the current
@@ -354,6 +378,8 @@ public final class Native {
     /** Map a library interface to the given shared library, providing
      * the explicit interface class.
      * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param name
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the indicated
@@ -370,6 +396,8 @@ public final class Native {
      * If no library options are detected the map is interpreted as a map
      * of Java method names to native function names.<p>
      * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param name
      * @param interfaceClass
      * @param options Map of library options
@@ -397,22 +425,24 @@ public final class Native {
      * Expects that lock on libraries is already held
      */
     private static void loadLibraryInstance(Class cls) {
-        if (cls != null && !libraries.containsKey(cls)) {
-            try {
-                Field[] fields = cls.getFields();
-                for (int i=0;i < fields.length;i++) {
-                    Field field = fields[i];
-                    if (field.getType() == cls
-                        && Modifier.isStatic(field.getModifiers())) {
-                        // Ensure the field gets initialized by reading it
-                        libraries.put(cls, new WeakReference(field.get(null)));
-                        break;
+        synchronized(libraries) {
+            if (cls != null && !libraries.containsKey(cls)) {
+                try {
+                    Field[] fields = cls.getFields();
+                    for (int i=0;i < fields.length;i++) {
+                        Field field = fields[i];
+                        if (field.getType() == cls
+                            && Modifier.isStatic(field.getModifiers())) {
+                            // Ensure the field gets initialized by reading it
+                            libraries.put(cls, new WeakReference(field.get(null)));
+                            break;
+                        }
                     }
                 }
-            }
-            catch (Exception e) {
-                throw new IllegalArgumentException("Could not access instance of "
-                                                   + cls + " (" + e + ")");
+                catch (Exception e) {
+                    throw new IllegalArgumentException("Could not access instance of "
+                                                       + cls + " (" + e + ")");
+                }
             }
         }
     }
@@ -425,6 +455,8 @@ public final class Native {
         if (cls == null) {
             return null;
         }
+        // Check for direct-mapped libraries, which won't necessarily
+        // implement com.sun.jna.Library.
         synchronized(libraries) {
             if (options.containsKey(cls)) {
                 return cls;
@@ -446,30 +478,80 @@ public final class Native {
 
 
     /** Return the preferred native library configuration options for the given
-     * class.
+     * class.  First attempts to load any field of the interface type within
+     * the interface mapping, then checks the cache for any specified library
+     * options.  If none found, a set of library options will be generated
+     * from the fields (by order of precedence) <code>OPTIONS</code> (a {@link
+     * Map}), <code>TYPE_MAPPER</code> (a {@link TypeMapper}),
+     * <code>STRUCTURE_ALIGNMENT</code> (an {@link Integer}), and
+     * <code>STRING_ENCODING</code> (a {@link String}).
      * @see Library
      */
     public static Map getLibraryOptions(Class type) {
         synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(type);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = type;
-            if (!options.containsKey(interfaceClass)) {
-                try {
-                    Field field = interfaceClass.getField("OPTIONS");
-                    field.setAccessible(true);
-                    options.put(interfaceClass, field.get(null));
-                }
-                catch (NoSuchFieldException e) {
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map ("
-                                                       + e + "): " + interfaceClass);
-                }
+            if (options.containsKey(type)) {
+                return (Map)options.get(type);
             }
-            return (Map)options.get(interfaceClass);
+        }
+        Class mappingClass = findEnclosingLibraryClass(type);
+        if (mappingClass != null) {
+            loadLibraryInstance(mappingClass);
+        }
+        else {
+            mappingClass = type;
+        }
+        synchronized(libraries) {
+            if (options.containsKey(mappingClass)) {
+                Map libraryOptions = (Map)options.get(mappingClass);
+                options.put(type, libraryOptions);
+                return libraryOptions;
+            }
+            Map libraryOptions = null;
+            try {
+                Field field = mappingClass.getField("OPTIONS");
+                field.setAccessible(true);
+                libraryOptions = (Map)field.get(null);
+            }
+            catch (NoSuchFieldException e) {
+                libraryOptions = Collections.EMPTY_MAP;
+            }
+            catch (Exception e) {
+                throw new IllegalArgumentException("OPTIONS must be a public field of type java.util.Map ("
+                                                   + e + "): " + mappingClass);
+            }
+            // Make a clone of the original options
+            libraryOptions = new HashMap(libraryOptions);
+            if (!libraryOptions.containsKey(Library.OPTION_TYPE_MAPPER)) {
+                libraryOptions.put(Library.OPTION_TYPE_MAPPER, lookupField(mappingClass, "TYPE_MAPPER", TypeMapper.class));
+            }
+            if (!libraryOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
+                libraryOptions.put(Library.OPTION_STRUCTURE_ALIGNMENT, lookupField(mappingClass, "STRUCTURE_ALIGNMENT", Integer.class));
+            }
+            if (!libraryOptions.containsKey(Library.OPTION_STRING_ENCODING)) {
+                libraryOptions.put(Library.OPTION_STRING_ENCODING, lookupField(mappingClass, "STRING_ENCODING", String.class));
+            }
+            options.put(mappingClass, libraryOptions);
+            // Store the original lookup class, if different from the mapping class
+            if (type != mappingClass) {
+                options.put(type, libraryOptions);
+            }
+            return libraryOptions;
+        }
+    }
+
+    private static Object lookupField(Class mappingClass, String fieldName, Class resultClass) {
+        try {
+            Field field = mappingClass.getField(fieldName);
+            field.setAccessible(true);
+            return field.get(null);
+        }
+        catch (NoSuchFieldException e) {
+            return null;
+        }
+        catch (Exception e) {
+            throw new IllegalArgumentException(fieldName + " must be a public field of type " 
+                                               + resultClass.getName() + " ("
+                                               + e + "): " + mappingClass);
         }
     }
 
@@ -477,107 +559,71 @@ public final class Native {
      * See {@link com.sun.jna.Library#OPTION_TYPE_MAPPER}.
      */
     public static TypeMapper getTypeMapper(Class cls) {
-        synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(cls);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = cls;
+        return (TypeMapper)getLibraryOptions(cls).get(Library.OPTION_TYPE_MAPPER);
+    }
 
-            if (!typeMappers.containsKey(interfaceClass)) {
-                try {
-                    Field field = interfaceClass.getField("TYPE_MAPPER");
-                    field.setAccessible(true);
-                    typeMappers.put(interfaceClass, field.get(null));
-                }
-                catch (NoSuchFieldException e) {
-                    Map options = getLibraryOptions(cls);
-                    if (options != null
-                        && options.containsKey(Library.OPTION_TYPE_MAPPER)) {
-                        typeMappers.put(interfaceClass, options.get(Library.OPTION_TYPE_MAPPER));
-                    }
-                }
-                catch (Exception e) {
-                    throw new IllegalArgumentException("TYPE_MAPPER must be a public field of type "
-                                                       + TypeMapper.class.getName() + " ("
-                                                       + e + "): " + interfaceClass);
-                }
-            }
-            return (TypeMapper)typeMappers.get(interfaceClass);
-        }
+    /** Return the preferred Strring encoding for the given native interface. 
+     * If there is no setting, defaults to the {@link
+     * #getDefaultStringEncoding()}. 
+     * See {@link com.sun.jna.Library#OPTION_STRING_ENCODING}.
+     */
+    public static String getStringEncoding(Class cls) {
+        String encoding = (String)getLibraryOptions(cls).get(Library.OPTION_STRING_ENCODING);
+        return encoding != null ? encoding : getDefaultStringEncoding();
+    }
+
+    /** Return the default string encoding.  Returns the value of the system
+     * property <code>jna.encoding</code> or {@link Native#DEFAULT_ENCODING}.
+     */
+    public static String getDefaultStringEncoding() {
+        return System.getProperty("jna.encoding", DEFAULT_ENCODING);
     }
 
     /** Return the preferred structure alignment for the given native interface.
      * See {@link com.sun.jna.Library#OPTION_STRUCTURE_ALIGNMENT}.
      */
     public static int getStructureAlignment(Class cls) {
-        synchronized(libraries) {
-            Class interfaceClass = findEnclosingLibraryClass(cls);
-            if (interfaceClass != null)
-                loadLibraryInstance(interfaceClass);
-            else
-                interfaceClass = cls;
-            if (!alignments.containsKey(interfaceClass)) {
-                try {
-                    Field field = interfaceClass.getField("STRUCTURE_ALIGNMENT");
-                    field.setAccessible(true);
-                    alignments.put(interfaceClass, field.get(null));
-                }
-                catch(NoSuchFieldException e) {
-                    Map options = getLibraryOptions(interfaceClass);
-                    if (options != null
-                        && options.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT)) {
-                        alignments.put(interfaceClass, options.get(Library.OPTION_STRUCTURE_ALIGNMENT));
-                    }
-                }
-                catch(Exception e) {
-                    throw new IllegalArgumentException("STRUCTURE_ALIGNMENT must be a public field of type int ("
-                                                       + e + "): " + interfaceClass);
-                }
-            }
-            Integer value = (Integer)alignments.get(interfaceClass);
-            return value != null ? value.intValue() : Structure.ALIGN_DEFAULT;
-        }
+        Integer alignment = (Integer)getLibraryOptions(cls).get(Library.OPTION_STRUCTURE_ALIGNMENT);
+        return alignment == null ? Structure.ALIGN_DEFAULT : alignment.intValue();
     }
 
-    /** Return a byte array corresponding to the given String.  If the
-     * system property <code>jna.encoding</code> is set, its value will override
-     * the default platform encoding (if supported).
+    /** Return a byte array corresponding to the given String.  The encoding
+     * used is obtained from {@link #getDefaultStringEncoding()}.
      */
     static byte[] getBytes(String s) {
-        try {
-            return getBytes(s, System.getProperty("jna.encoding"));
-        }
-        catch (UnsupportedEncodingException e) {
-            return s.getBytes();
-        }
+        return getBytes(s, getDefaultStringEncoding());
     }
 
     /** Return a byte array corresponding to the given String, using the given
-        encoding.
+        encoding.  If the encoding is not found default to the platform native
+        encoding. 
     */
-    static byte[] getBytes(String s, String encoding) throws UnsupportedEncodingException {
+    static byte[] getBytes(String s, String encoding) {
         if (encoding != null) {
-            return s.getBytes(encoding);
+            try {
+                return s.getBytes(encoding);
+            }
+            catch(UnsupportedEncodingException e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported");
+            }
         }
+        System.err.println("JNA Warning: Encoding with fallback "
+                           + System.getProperty("file.encoding"));
         return s.getBytes();
     }
 
     /** Obtain a NUL-terminated byte buffer equivalent to the given String,
-        using <code>jna.encoding</code> or the default platform encoding if
-        that property is not set.
+        using the encoding returned by {@link #getDefaultStringEncoding()}.
     */
     public static byte[] toByteArray(String s) {
-        byte[] bytes = getBytes(s);
-        byte[] buf = new byte[bytes.length+1];
-        System.arraycopy(bytes, 0, buf, 0, bytes.length);
-        return buf;
+        return toByteArray(s, getDefaultStringEncoding());
     }
 
     /** Obtain a NUL-terminated byte buffer equivalent to the given String,
         using the given encoding.
      */
-    public static byte[] toByteArray(String s, String encoding) throws UnsupportedEncodingException {
+    public static byte[] toByteArray(String s, String encoding) {
         byte[] bytes = getBytes(s, encoding);
         byte[] buf = new byte[bytes.length+1];
         System.arraycopy(bytes, 0, buf, 0, bytes.length);
@@ -594,74 +640,21 @@ public final class Native {
         return buf;
     }
 
-    /** Generate a canonical String prefix based on the given OS
-        type/arch/name.
-    */
-    static String getNativeLibraryResourcePath(int osType, String arch, String name) {
-        String osPrefix;
-        arch = arch.toLowerCase();
-        if ("powerpc".equals(arch)) {
-            arch = "ppc";
-        }
-        else if ("powerpc64".equals(arch)) {
-            arch = "ppc64";
-        }
-        switch(osType) {
-        case Platform.ANDROID:
-            if (arch.startsWith("arm")) {
-                arch = "arm";
-            }
-            osPrefix = "android-" + arch;
-            break;
-        case Platform.WINDOWS:
-            if ("i386".equals(arch)) {
-                arch = "x86";
-            }
-            osPrefix = "win32-" + arch;
-            break;
-        case Platform.WINDOWSCE:
-            osPrefix = "w32ce-" + arch;
-            break;
-        case Platform.MAC:
-            osPrefix = "darwin";
-            break;
-        case Platform.LINUX:
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            else if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
-            osPrefix = "linux-" + arch;
-            break;
-        case Platform.SOLARIS:
-            osPrefix = "sunos-" + arch;
-            break;
-        default:
-            osPrefix = name.toLowerCase();
-            if ("x86".equals(arch)) {
-                arch = "i386";
-            }
-            if ("x86_64".equals(arch)) {
-                arch = "amd64";
-            }
-            int space = osPrefix.indexOf(" ");
-            if (space != -1) {
-                osPrefix = osPrefix.substring(0, space);
-            }
-            osPrefix += "-" + arch;
-            break;
-        }
-        return "/com/sun/jna/" + osPrefix;
-    }
-
     /**
      * Loads the JNA stub library.
      * First tries jna.boot.library.path, then the system path, then from the
      * jar file.
      */
-    private static void loadNativeLibrary() {
-        removeTemporaryFiles();
+    private static void loadNativeDispatchLibrary() {
+
+        if (!Boolean.getBoolean("jna.nounpack")) {
+            try {
+                removeTemporaryFiles();
+            }
+            catch(IOException e) {
+                System.err.println("JNA Warning: IOException removing temporary files: " + e.getMessage());
+            }
+        }
 
         String libName = System.getProperty("jna.boot.library.name", "jnidispatch");
         String bootPath = System.getProperty("jna.boot.library.path");
@@ -670,12 +663,21 @@ public final class Native {
             StringTokenizer dirs = new StringTokenizer(bootPath, File.pathSeparator);
             while (dirs.hasMoreTokens()) {
                 String dir = dirs.nextToken();
-                File file = new File(new File(dir), System.mapLibraryName(libName));
+                File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Looking in " + path);
+		}
                 if (file.exists()) {
                     try {
+			if (DEBUG_JNA_LOAD) {
+			    System.out.println("Trying " + path);
+			}
                         System.load(path);
-                        nativeLibraryPath = path;
+                        jnidispatchPath = path;
+			if (DEBUG_JNA_LOAD) {
+			    System.out.println("Found jnidispatch at " + path);
+			}
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                         // Not a problem if already loaded in anoteher class loader
@@ -693,10 +695,19 @@ public final class Native {
                         ext = "dylib";
                     }
                     path = path.substring(0, path.lastIndexOf(orig)) + ext;
+		    if (DEBUG_JNA_LOAD) {
+			System.out.println("Looking in " + path);
+		    }
                     if (new File(path).exists()) {
                         try {
+			    if (DEBUG_JNA_LOAD) {
+				System.out.println("Trying " + path);
+			    }
                             System.load(path);
-                            nativeLibraryPath = path;
+                            jnidispatchPath = path;
+                            if (DEBUG_JNA_LOAD) {
+                                System.out.println("Found jnidispatch at " + path);
+                            }
                             return;
                         } catch (UnsatisfiedLinkError ex) {
                             System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
@@ -705,50 +716,127 @@ public final class Native {
                 }
             }
         }
-        if (Platform.isAndroid()) {
-            // Native libraries on android must be bundled with the APK
-            System.setProperty("jna.nounpack", "true");
-        }
-        try {
-            if (!Boolean.getBoolean("jna.nosys")) {
+        if (!Boolean.getBoolean("jna.nosys")) {
+            try {
+		if (DEBUG_JNA_LOAD) {
+		    System.out.println("Trying (via loadLibrary) " + libName);
+		}
                 System.loadLibrary(libName);
+                if (DEBUG_JNA_LOAD) {
+                    System.out.println("Found jnidispatch on system path");
+                }
                 return;
             }
-        }
-        catch(UnsatisfiedLinkError e) {
-            if (Boolean.getBoolean("jna.nounpack")) {
-                throw e;
+            catch(UnsatisfiedLinkError e) {
             }
         }
-        if (!Boolean.getBoolean("jna.nounpack")) {
-            loadNativeLibraryFromJar();
-            return;
+        if (!Boolean.getBoolean("jna.noclasspath")) {
+            loadNativeDispatchLibraryFromClasspath();
         }
-        throw new UnsatisfiedLinkError("Native jnidispatch library not found");
+        else {
+            throw new UnsatisfiedLinkError("Unable to locate JNA native support library");
+        }
     }
 
+    static final String JNA_TMPLIB_PREFIX = "jna";
     /**
      * Attempts to load the native library resource from the filesystem,
      * extracting the JNA stub library from jna.jar if not already available.
      */
-    private static void loadNativeLibraryFromJar() {
-        String libname = System.mapLibraryName("jnidispatch");
-        String arch = System.getProperty("os.arch");
-        String name = System.getProperty("os.name");
-        String resourceName = getNativeLibraryResourcePath(Platform.getOSType(), arch, name) + "/" + libname;
-        URL url = Native.class.getResource(resourceName);
-        boolean unpacked = false;
+    private static void loadNativeDispatchLibraryFromClasspath() {
+        try {
+            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+            File lib = extractFromResourcePath(libName, Native.class.getClassLoader());
+            if (lib == null) {
+                if (lib == null) {
+                    throw new UnsatisfiedLinkError("Could not find JNA native support");
+                }
+            }
+	    if (DEBUG_JNA_LOAD) {
+		System.out.println("Trying " + lib.getAbsolutePath());
+	    }
+	    System.load(lib.getAbsolutePath());
+            jnidispatchPath = lib.getAbsolutePath();
+            if (DEBUG_JNA_LOAD) {
+                System.out.println("Found jnidispatch at " + jnidispatchPath);
+            }
+            // Attempt to delete immediately once jnidispatch is successfully
+            // loaded.  This avoids the complexity of trying to do so on "exit",
+            // which point can vary under different circumstances (native
+            // compilation, dynamically loaded modules, normal application, etc).
+            if (isUnpacked(lib)) {
+                deleteLibrary(lib);
+            }
+        }
+        catch(IOException e) {
+            throw new UnsatisfiedLinkError(e.getMessage());
+        }
+    }
 
-        // Add an ugly hack for OpenJDK (soylatte) - JNI libs use the usual
-        // .dylib extension
-        if (url == null && Platform.isMac()
-            && resourceName.endsWith(".dylib")) {
-            resourceName = resourceName.substring(0, resourceName.lastIndexOf(".dylib")) + ".jnilib";
-            url = Native.class.getResource(resourceName);
+    /** Identify temporary files unpacked from classpath jar files. */
+    static boolean isUnpacked(File file) {
+        return file.getName().startsWith(JNA_TMPLIB_PREFIX);
+    }
+
+    /** Attempt to extract a native library from the current resource path,
+     * using the current thread context class loader.
+     * @param name Base name of native library to extract.  May also be an
+     * absolute resource path (i.e. starts with "/"), in which case the
+     * no transformations of the library name are performed.  If only the base
+     * name is given, the resource path is attempted both with and without
+     * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
+     * @return File indicating extracted resource on disk
+     * @throws IOException if resource not found
+     */
+    public static File extractFromResourcePath(String name) throws IOException {
+        return extractFromResourcePath(name, null);
+    }
+
+    /** Attempt to extract a native library from the resource path using the
+     * given class loader.  
+     * @param name Base name of native library to extract.  May also be an
+     * absolute resource path (i.e. starts with "/"), in which case the
+     * no transformations of the library name are performed.  If only the base
+     * name is given, the resource path is attempted both with and without
+     * {@link Platform#RESOURCE_PREFIX}, after mapping the library name via
+     * {@link NativeLibrary#mapSharedLibraryName(String)}.
+     * @param loader Class loader to use to load resources
+     * @return File indicating extracted resource on disk
+     * @throws IOException if resource not found
+     */
+    public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
+        final boolean DEBUG = DEBUG_LOAD
+            || (DEBUG_JNA_LOAD && name.indexOf("jnidispatch") != -1);
+        if (loader == null) {
+            loader = Thread.currentThread().getContextClassLoader();
+            // Context class loader is not guaranteed to be set
+            if (loader == null) {
+                loader = Native.class.getClassLoader();
+            }
+        }
+	if (DEBUG) {
+	    System.out.println("Looking in classpath from " + loader + " for " + name);
+	}
+        String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
+        String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
+        if (resourcePath.startsWith("/")) {
+            resourcePath = resourcePath.substring(1);
+        }
+        URL url = loader.getResource(resourcePath);
+        if (url == null && resourcePath.startsWith(Platform.RESOURCE_PREFIX)) {
+            // If not found with the standard resource prefix, try without it
+            url = loader.getResource(libname);
         }
         if (url == null) {
-            throw new UnsatisfiedLinkError("JNA native support (" + resourceName
-                                           + ") not found in resource path");
+            String path = System.getProperty("java.class.path");
+            if (loader instanceof URLClassLoader) {
+                path = Arrays.asList(((URLClassLoader)loader).getURLs()).toString();
+            }
+            throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
+        }
+        if (DEBUG) {
+            System.out.println("Found library resource at " + url);
         }
 
         File lib = null;
@@ -759,14 +847,17 @@ public final class Native {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
+	    if (DEBUG) {
+		System.out.println("Looking in " + lib.getAbsolutePath());
+	    }
             if (!lib.exists()) {
-                throw new Error("File URL " + url + " could not be properly decoded");
+                throw new IOException("File URL " + url + " could not be properly decoded");
             }
         }
-        else {
-            InputStream is = Native.class.getResourceAsStream(resourceName);
+        else if (!Boolean.getBoolean("jna.nounpack")) {
+            InputStream is = loader.getResourceAsStream(resourcePath);
             if (is == null) {
-                throw new Error("Can't obtain jnidispatch InputStream");
+                throw new IOException("Can't obtain InputStream for " + resourcePath);
             }
 
             FileOutputStream fos = null;
@@ -775,7 +866,7 @@ public final class Native {
                 // Let Java pick the suffix, except on windows, to avoid
                 // problems with Web Start.
                 File dir = getTempDir();
-                lib = File.createTempFile("jna", Platform.isWindows()?".dll":null, dir);
+                lib = File.createTempFile(JNA_TMPLIB_PREFIX, Platform.isWindows()?".dll":null, dir);
                 lib.deleteOnExit();
                 fos = new FileOutputStream(lib);
                 int count;
@@ -783,10 +874,9 @@ public final class Native {
                 while ((count = is.read(buf, 0, buf.length)) > 0) {
                     fos.write(buf, 0, count);
                 }
-                unpacked = true;
             }
             catch(IOException e) {
-                throw new Error("Failed to create temporary file for jnidispatch library", e);
+                throw new IOException("Failed to create temporary file for " + name + " library: " + e.getMessage());
             }
             finally {
                 try { is.close(); } catch(IOException e) { }
@@ -795,15 +885,7 @@ public final class Native {
                 }
             }
         }
-        System.load(lib.getAbsolutePath());
-        nativeLibraryPath = lib.getAbsolutePath();
-        // Attempt to delete immediately once jnidispatch is successfully
-        // loaded.  This avoids the complexity of trying to do so on "exit",
-        // which point can vary under different circumstances (native
-        // compilation, dynamically loaded modules, normal application, etc).
-        if (unpacked) {
-            deleteNativeLibrary(lib.getAbsolutePath());
-        }
+        return lib;
     }
 
     /**
@@ -815,12 +897,6 @@ public final class Native {
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
-    private static final ThreadLocal lastError = new ThreadLocal() {
-        protected synchronized Object initialValue() {
-            return new Integer(0);
-        }
-    };
-
     /** Retrieve the last error set by the OS.  This corresponds to
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether
@@ -831,21 +907,12 @@ public final class Native {
      * to declare your mapped method to throw {@link LastErrorException}
      * instead.
      */
-    public static int getLastError() {
-        return ((Integer)lastError.get()).intValue();
-    }
+    public static native int getLastError();
 
-    /** Set the OS last error code.  Whether the setting is per-thread
-     * or global depends on the underlying OS.
+    /** Set the OS last error code.  The value will be saved on a per-thread
+     * basis. 
      */
     public static native void setLastError(int code);
-
-    /** Update the last error value (called from native code). */
-    // This has to be called immediately after a native call to ensure that
-    // subsequent VM operations don't overwrite the last error value
-    static void updateLastError(int e) {
-        lastError.set(new Integer(e));
-    }
 
     /**
      * Returns a synchronized (thread-safe) library backed by the specified
@@ -938,35 +1005,39 @@ public final class Native {
     /** Obtain a directory suitable for writing JNA-specific temporary files.
         Override with <code>jna.tmpdir</code>
     */
-    static File getTempDir() {
+    static File getTempDir() throws IOException {
         File jnatmp;
         String prop = System.getProperty("jna.tmpdir");
         if (prop != null) {
             jnatmp = new File(prop);
+            jnatmp.mkdirs();
         }
         else {
             File tmp = new File(System.getProperty("java.io.tmpdir"));
-            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name"));
+            // Loading DLLs via System.load() under a directory with a unicode
+            // name will fail on windows, so use a hash code of the user's
+            // name in case the user's name contains non-ASCII characters
+            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name").hashCode());
             jnatmp.mkdirs();
             if (!jnatmp.exists() || !jnatmp.canWrite()) {
                 jnatmp = tmp;
             }
         }
         if (!jnatmp.exists()) {
-            throw new Error("JNA temporary directory " + jnatmp + " does not exist");
+            throw new IOException("JNA temporary directory '" + jnatmp + "' does not exist");
         }
         if (!jnatmp.canWrite()) {
-            throw new Error("JNA temporary directory " + jnatmp + " is not writable");
+            throw new IOException("JNA temporary directory '" + jnatmp + "' is not writable");
         }
         return jnatmp;
     }
 
     /** Remove all marked temporary files in the given directory. */
-    static void removeTemporaryFiles() {
+    static void removeTemporaryFiles() throws IOException {
         File dir = getTempDir();
         FilenameFilter filter = new FilenameFilter() {
             public boolean accept(File dir, String name) {
-                return name.endsWith(".x") && name.indexOf("jna") != -1;
+                return name.endsWith(".x") && name.startsWith(JNA_TMPLIB_PREFIX);
             }
         };
         File[] files = dir.listFiles(filter);
@@ -996,9 +1067,7 @@ public final class Native {
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
-            if (value == null)
-                value = Structure.newInstance(type);
-            return ((Structure)value).size();
+            return Structure.size(type, (Structure)value);
         }
         try {
             return getNativeSize(type);
@@ -1029,7 +1098,7 @@ public final class Native {
         if (cls == double.class || cls == Double.class) return 8;
         if (Structure.class.isAssignableFrom(cls)) {
             if (Structure.ByValue.class.isAssignableFrom(cls)) {
-                return Structure.newInstance(cls).size();
+                return Structure.size(cls);
             }
             return POINTER_SIZE;
         }
@@ -1078,8 +1147,7 @@ public final class Native {
      * @param libName library name to which functions should be bound
      */
     public static void register(String libName) {
-        register(getNativeClass(getCallingClass()),
-                 NativeLibrary.getInstance(libName));
+        register(findDirectMappedClass(getCallingClass()), libName);
     }
 
     /** When called from a class static initializer, maps all native methods
@@ -1088,10 +1156,11 @@ public final class Native {
      * @param lib native library to which functions should be bound
      */
     public static void register(NativeLibrary lib) {
-        register(getNativeClass(getCallingClass()), lib);
+        register(findDirectMappedClass(getCallingClass()), lib);
     }
 
-    static Class getNativeClass(Class cls) {
+    /** Find the nearest enclosing class with native methods. */
+    static Class findDirectMappedClass(Class cls) {
         Method[] methods = cls.getDeclaredMethods();
         for (int i=0;i < methods.length;i++) {
             if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
@@ -1102,7 +1171,7 @@ public final class Native {
         if (idx != -1) {
             String name = cls.getName().substring(0, idx);
             try {
-                return getNativeClass(Class.forName(name, true, cls.getClassLoader()));
+                return findDirectMappedClass(Class.forName(name, true, cls.getClassLoader()));
             }
             catch(ClassNotFoundException e) {
             }
@@ -1110,12 +1179,18 @@ public final class Native {
         throw new IllegalArgumentException("Can't determine class with native methods from the current context (" + cls + ")");
     }
 
+    /** Try to determine the class context in which a {@link #register(String)} call
+        was made.
+    */
     static Class getCallingClass() {
         Class[] context = new SecurityManager() {
             public Class[] getClassContext() {
                 return super.getClassContext();
             }
         }.getClassContext();
+        if (context == null) {
+            throw new IllegalStateException("The SecurityManager implementation on this platform is broken; you must explicitly provide the class to register");
+        }
         if (context.length < 4) {
             throw new IllegalStateException("This method must be called from the static initializer of a class");
         }
@@ -1151,7 +1226,7 @@ public final class Native {
         to be garbage collected.
      */
     public static void unregister() {
-        unregister(getNativeClass(getCallingClass()));
+        unregister(findDirectMappedClass(getCallingClass()));
     }
 
     /** Remove all native mappings for the given class.
@@ -1302,7 +1377,23 @@ public final class Native {
 
     /** When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
+     * interface.  Uses the class loader of the given class to search for the
+     * native library in the resource path if it is not found in the system
+     * library load path or <code>jna.library.path</code>.
+     * @param cls Class with native methods to register
+     * @param libName name of or path to native library to which functions
+     * should be bound 
+     */
+    public static void register(Class cls, String libName) {
+        Map options = new HashMap();
+        options.put(Library.OPTION_CLASSLOADER, cls.getClassLoader());
+        register(cls, NativeLibrary.getInstance(libName, options));
+    }
+
+    /** When called from a class static initializer, maps all native methods
+     * found within that class to native libraries via the JNA raw calling
      * interface.
+     * @param cls Class with native methods to register
      * @param lib library to which functions should be bound
      */
     // TODO: derive options from annotations (per-class or per-method)
@@ -1409,12 +1500,7 @@ public final class Native {
                 }
             }
 
-            String name = method.getName();
-            FunctionMapper fmapper = (FunctionMapper)lib.getOptions().get(Library.OPTION_FUNCTION_MAPPER);
-            if (fmapper != null) {
-                name = fmapper.getFunctionName(lib, method);
-            }
-            Function f = lib.getFunction(name, method);
+            Function f = lib.getFunction(method.getName(), method);
             try {
                 handles[i] = registerMethod(cls, method.getName(),
                                             sig, cvt,
@@ -1423,7 +1509,8 @@ public final class Native {
                                             rclass,
                                             f.peer, f.getCallingConvention(),
                                             throwLastError,
-                                            toNative, fromNative);
+                                            toNative, fromNative,
+                                            f.encoding);
             }
             catch(NoSuchMethodError e) {
                 throw new UnsatisfiedLinkError("No method " + method.getName() + " with signature " + sig + " in " + cls);
@@ -1440,13 +1527,9 @@ public final class Native {
         looking them up later.
     */
     private static void cacheOptions(Class cls, Map libOptions, Object proxy) {
+        libOptions = new HashMap(libOptions);
         synchronized(libraries) {
-            if (!libOptions.isEmpty())
-                options.put(cls, libOptions);
-            if (libOptions.containsKey(Library.OPTION_TYPE_MAPPER))
-                typeMappers.put(cls, libOptions.get(Library.OPTION_TYPE_MAPPER));
-            if (libOptions.containsKey(Library.OPTION_STRUCTURE_ALIGNMENT))
-                alignments.put(cls, libOptions.get(Library.OPTION_STRUCTURE_ALIGNMENT));
+            options.put(cls, libOptions);
             if (proxy != null) {
                 libraries.put(cls, new WeakReference(proxy));
             }
@@ -1481,7 +1564,8 @@ public final class Native {
                                               int callingConvention,
                                               boolean throwLastError,
                                               ToNativeConverter[] toNative,
-                                              FromNativeConverter fromNative);
+                                              FromNativeConverter fromNative,
+                                              String encoding);
 
 
     // Called from native code
@@ -1540,7 +1624,7 @@ public final class Native {
         System.out.println("Version: " + version);
         System.out.println(" Native: " + getNativeVersion() + " ("
                            + getAPIChecksum() + ")");
-        System.exit(0);
+        System.out.println(" Prefix: " + Platform.RESOURCE_PREFIX);
     }
 
     /** Free the given callback trampoline. */
@@ -1558,7 +1642,8 @@ public final class Native {
                                                          Class[] parameterTypes,
                                                          Class returnType,
                                                          int callingConvention,
-                                                         int flags);
+                                                         int flags,
+                                                         String encoding);
 
     /**
      * Call the native function being represented by this object
@@ -1729,7 +1814,25 @@ public final class Native {
 
     private static native long _getPointer(long addr);
 
-    static native String getString(long addr, boolean wide);
+    static native String getWideString(long addr);
+
+    static String getString(long addr) {
+        return getString(addr, getDefaultStringEncoding());
+    }
+
+    static String getString(long addr, String encoding) {
+        byte[] data = getStringBytes(addr);
+        if (encoding != null) {
+            try {
+                return new String(data, encoding);
+            }
+            catch(UnsupportedEncodingException e) {
+            }
+        }
+        return new String(data);
+    }
+
+    static native byte[] getStringBytes(long addr);
 
     static native void setMemory(long addr, long length, byte value);
 
@@ -1749,7 +1852,7 @@ public final class Native {
 
     static native void setPointer(long addr, long value);
 
-    static native void setString(long addr, String value, boolean wide);
+    static native void setWideString(long addr, String value);
 
     /**
      * Call the real native malloc
@@ -1776,20 +1879,55 @@ public final class Native {
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
-    /** Indicate the desired attachment state for the current thread.
-        This method should only be called from a callback context, and then
-        only just prior to returning to native code.  Executing Java or native
-        code after the invocation of this method may interfere with the
-        intended detach state.<p/>
-        Note: errno/SetLastError is used to signal the desired state; this is
-        a hack to make use of built-in thread-local storage to avoid having to
-        re-implement it on certain platforms.<p/>
-        Warning: avoid calling {@link #detach detach(true)} on threads
-        spawned by the JVM; the resulting behavior is not defined.<p/>
+    /** Indicate whether the JVM should detach the current native thread when
+        the current Java code finishes execution.  Generally this is used to
+        avoid detaching native threads when it is known that a given thread
+        will be relatively long-lived and call back to Java code frequently.
+        <p/>
+        This call is lightweight; it only results in an additional JNI
+        crossing if the desired state changes from its last setting.
+
+        @throws IllegalStateException if {@link #detach detach(true)} is
+        called on a thread created by the JVM.
      */
     public static void detach(boolean detach) {
-        setLastError(detach ? THREAD_DETACH : THREAD_LEAVE_ATTACHED);
+        Thread thread = Thread.currentThread();
+        if (detach) {
+            // If a CallbackThreadInitializer was used to avoid detach,
+            // we won't have put that thread into the nativeThreads map.
+            // Performance is not as critical in that case, and since
+            // detach is the default behavior, force an update of the detach
+            // state every time.  Clear the termination flag, since it's not
+            // needed when the native thread is detached normally.
+            nativeThreads.remove(thread);
+            Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+            setDetachState(true, 0);
+        }
+        else {
+            if (!nativeThreads.containsKey(thread)) {
+                Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+                nativeThreads.put(thread, p);
+                setDetachState(false, p.peer);
+            }
+        }
     }
+
+    static Pointer getTerminationFlag(Thread t) {
+        return (Pointer)nativeThreads.get(t);
+    }
+
+    private static Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
+
+    private static ThreadLocal nativeThreadTerminationFlag = 
+        new ThreadLocal() {
+            protected Object initialValue() {
+                Memory m = new Memory(4);
+                m.clear();
+                return m;
+            }
+        };
+
+    private static native void setDetachState(boolean detach, long terminationFlag);
 
     private static class Buffers {
         static boolean isBuffer(Class cls) {

@@ -36,7 +36,7 @@ do
       shift 1
     ;;
     -m32)
-      if echo $PATH | grep amd64 >& /dev/null; then
+      if type cl | grep amd64 >& /dev/null; then
           echo "Wrong CL.EXE in path; use 32-bit version"
           exit 1
       fi
@@ -48,7 +48,7 @@ do
       shift 1
     ;;
     -m64)
-      if ! echo $PATH | grep amd64 >& /dev/null; then
+      if ! type cl | grep amd64 >& /dev/null; then
           echo "Wrong CL.EXE in path; use 64-bit version"
           exit 1
       fi

@@ -79,7 +79,6 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native Pointer testStructurePointerArgument(MinTestStructure s);
         public native String returnStringFromVariableSizedStructure(VariableSizedStructure s);
         public native void setCallbackInStruct(CbStruct s);
-        public native TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
 
         static {
             Native.register("testlib");
@@ -125,6 +124,7 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
     public void testWriteStructureArrayArgumentMemory() { }
     public void testUninitializedStructureArrayArgument() { }
     public void testRejectNoncontiguousStructureArrayArgument() { }
+    public void testRejectIncompatibleStructureArrayArgument() { }
     public void testWideStringArrayArgument() { }
     public void testPointerArrayArgument() { }
     public void testNativeMappedArrayArgument() { }

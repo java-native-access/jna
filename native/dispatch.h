@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,10 +13,12 @@
 #ifndef DISPATCH_H
 #define DISPATCH_H
 
+#define MSG_SIZE 1024
+
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
-#if defined(sun) || defined(_AIX)
+#if defined(__sun__) || defined(_AIX)
 #  include <alloca.h>
 #endif
 #ifdef _WIN32
@@ -27,9 +29,15 @@
 #pragma warning( disable : 4055 ) /* cast data pointer to function pointer */
 #pragma warning( disable : 4204 ) /* structure initializer */
 #pragma warning( disable : 4710 ) /* swprintf not inlined */
+#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
+#define GET_LAST_ERROR() GetLastError()
+#define SET_LAST_ERROR(CODE) SetLastError(CODE)
+#else
+#define GET_LAST_ERROR() errno
+#define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif /* _WIN32 */
 
 #if !defined(UNUSED)
@@ -88,8 +96,6 @@ enum {
 /* callback behavior flags */
 enum {
   CB_HAS_INITIALIZER = com_sun_jna_Native_CB_HAS_INITIALIZER,
-  THREAD_LEAVE_ATTACHED = com_sun_jna_Native_THREAD_LEAVE_ATTACHED,
-  THREAD_DETACH = com_sun_jna_Native_THREAD_DETACH,
 };
 
 typedef struct _callback {
@@ -103,7 +109,7 @@ typedef struct _callback {
   ffi_type** arg_types;
   ffi_type** java_arg_types;
   jobject* arg_classes;
-  int* flags;
+  int* conversion_flags;
   int rflag;
   JavaVM* vm;
   jobject object;
@@ -112,6 +118,7 @@ typedef struct _callback {
   jboolean direct;
   size_t fptr_offset;
   void* saved_x_closure;
+  const char* encoding;
 } callback;
 
 #if defined(SOLARIS2) || defined(__GNUC__)
@@ -125,12 +132,14 @@ typedef struct _callback {
 #endif
 
 #if defined(_MSC_VER)
+#include "snprintf.h"
+#define strdup _strdup
+#if defined(_WIN64)
 #define L2A(X) ((void *)(X))
 #define A2L(X) ((jlong)(X))
-#define snprintf sprintf_s
 #else
-#if defined(_WIN32_WCE)
-#define snprintf _snprintf
+#define L2A(X) ((void *)(unsigned long)(X))
+#define A2L(X) ((jlong)(unsigned long)(X))
 #endif
 #endif
 
@@ -167,11 +176,14 @@ extern void throwByName(JNIEnv *env, const char *name, const char *msg);
 extern int get_jtype(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
 extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
-extern const char* jnidispatch_callback_init(JNIEnv*);
-extern void jnidispatch_callback_dispose(JNIEnv*);
+extern const char* JNA_callback_init(JNIEnv*);
+extern void JNA_set_last_error(JNIEnv*,int);
+extern int JNA_get_last_error(JNIEnv*);
+extern void JNA_callback_dispose(JNIEnv*);
+extern void JNA_detach(JNIEnv*,jboolean,void*);
 extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
-                                 callconv_t, jint);
+                                 callconv_t, jint, jstring);
 extern void free_callback(JNIEnv*, callback*);
 extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);
 extern jobject new_object(JNIEnv*, char, void*, jboolean);
@@ -179,10 +191,11 @@ extern jboolean is_protected();
 extern int get_conversion_flag(JNIEnv*, jclass);
 extern jboolean ffi_error(JNIEnv*,const char*,ffi_status);
 
+extern const char* newCStringUTF8(JNIEnv*, jstring);
 extern jobject newJavaPointer(JNIEnv*, void*);
-extern jstring newJavaString(JNIEnv*, const char*, jboolean);
+extern jstring newJavaString(JNIEnv*, const char*, const char*);
 extern jobject newJavaWString(JNIEnv*, const wchar_t*);
-extern jobject newJavaStructure(JNIEnv*, void*, jclass, jboolean);
+extern jobject newJavaStructure(JNIEnv*, void*, jclass);
 extern jobject newJavaCallback(JNIEnv*, void*, jclass);
 extern void* getNativeString(JNIEnv*, jstring, jboolean);
 extern void* getNativeAddress(JNIEnv*, jobject);
@@ -201,8 +214,6 @@ typedef struct _AttachOptions {
   char* name;
 } AttachOptions;
 extern jobject initializeThread(callback*,AttachOptions*);
-extern int lastError();
-extern void setLastError(int err);
 
 #ifdef NO_WEAK_GLOBALS
 #define NewWeakGlobalRef NewGlobalRef
@@ -214,9 +225,9 @@ extern void setLastError(int err);
 #define PROTECT is_protected()
 #endif
 #include "protect.h"
-#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
+#define ON_ERROR(ENV) throwByName(ENV, EError, "Invalid memory access")
 #define PSTART() PROTECTED_START()
-#define PEND() PROTECTED_END(ON_ERROR())
+#define PEND(ENV) PROTECTED_END(ON_ERROR(ENV))
 
 #ifdef __cplusplus
 }

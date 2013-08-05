@@ -26,6 +26,8 @@ import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
 //@SuppressWarnings("unused")
 public class ArgumentsMarshalTest extends TestCase {
 
+    private static final String UNICODE = "[\0444]";
+
     public static interface TestLibrary extends Library {
         
         class CheckFieldAlignment extends Structure {
@@ -130,16 +132,6 @@ public class ArgumentsMarshalTest extends TestCase {
             }
         }
         void setCallbackInStruct(CbStruct cbstruct);
-
-        // Union (by value)
-        class TestUnion extends Union implements Structure.ByValue {
-            public String f1;
-            public int f2;
-        }
-        interface UnionCallback extends Callback {
-            TestUnion invoke(TestUnion arg);
-        }
-        TestUnion testUnionByValueCallbackArgument(UnionCallback cb, TestUnion arg);
     }
 
     TestLibrary lib;
@@ -299,15 +291,16 @@ public class ArgumentsMarshalTest extends TestCase {
                      lib.returnPointerArgument(s.getPointer()));
     }
 
-    static final String MAGIC = "magic";
+    static final String MAGIC = "magic" + UNICODE;
     public void testStringArgumentReturn() {
         assertEquals("Expect null pointer", null, lib.returnStringArgument(null));
         assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC));
     }
 
+    static final WString WMAGIC = new WString("magic" + UNICODE);
     public void testWStringArgumentReturn() {
-        assertEquals("Expect null pointer", null, lib.returnStringArgument(null));
-        assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC).toString());
+        assertEquals("Expect null pointer", null, lib.returnWStringArgument(null));
+        assertEquals("Expect string magic", WMAGIC.toString(), lib.returnWStringArgument(WMAGIC).toString());
     }
     
     public void testInt64ArgumentAlignment() {
@@ -413,6 +406,29 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    public void testRejectIncompatibleStructureArrayArgument() {
+        TestLibrary.CheckFieldAlignment s1 = new TestLibrary.CheckFieldAlignment.ByReference();
+        TestLibrary.CheckFieldAlignment[] autoArray = (TestLibrary.CheckFieldAlignment[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(autoArray, autoArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment.ByReference[] byRefArray =
+            (TestLibrary.CheckFieldAlignment.ByReference[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(byRefArray, byRefArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment[] arrayWithRefElements = { autoArray[0], autoArray[1], autoArray[2] };
+        try {
+            lib.modifyStructureArray(arrayWithRefElements, arrayWithRefElements.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
     /** When passing an array of <code>struct*</code> to native, be sure to
         invoke <code>Structure.write()</code> on each of the elements. */
     public void testWriteStructureByReferenceArrayArgumentMemory() {
@@ -489,7 +505,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    public void testInvalidArgument() {
+    public void testUnsupportedJavaObjectArgument() {
         try {
             lib.returnBooleanArgument(this);
             fail("Unsupported Java objects should be rejected");
@@ -499,14 +515,14 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     
     public void testStringArrayArgument() {
-        String[] args = { "one", "two", "three" };
+        String[] args = { "one"+UNICODE, "two"+UNICODE, "three"+UNICODE };
         assertEquals("Wrong value returned", args[0], lib.returnStringArrayElement(args, 0));
         assertNull("Native String array should be null terminated", 
                    lib.returnStringArrayElement(args, args.length));
     }
     
     public void testWideStringArrayArgument() {
-        WString[] args = { new WString("one"), new WString("two"), new WString("three") };
+        WString[] args = { new WString("one"+UNICODE), new WString("two"+UNICODE), new WString("three"+UNICODE) };
         assertEquals("Wrong value returned", args[0], lib.returnWideStringArrayElement(args, 0));
         assertNull("Native WString array should be null terminated",
                    lib.returnWideStringArrayElement(args, args.length));
@@ -598,27 +614,6 @@ public class ArgumentsMarshalTest extends TestCase {
         s.setAutoRead(false);
         lib.testStructurePointerArgument(s);
         assertEquals("Auto read should be disabled", EXPECTED, s.field);
-    }
-
-    public void testUnionByValueCallbackArgument() throws Exception{ 
-        TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
-        arg.setType(String.class);
-        final String VALUE = getName();
-        arg.f1 = VALUE;
-        final boolean[] called = { false };
-        final String[] cbvalue = { null };
-        TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
-            public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
-                called[0] = true;
-                v.setType(String.class);
-                v.read();
-                cbvalue[0] = v.f1;
-                return v;
-            }
-        }, arg);
-        assertTrue("Callback not called", called[0]);
-        assertEquals("Incorrect callback union argument", VALUE, cbvalue[0]);
-        assertEquals("Union value not propagated", VALUE, result.getTypedValue(String.class));
     }
 
     public static void main(java.lang.String[] argList) {

@@ -828,11 +828,11 @@ public abstract class Advapi32Util {
 	 * Get a registry value and returns a java object depending on the value
 	 * type.
 	 *
-	 * @param root
+	 * @param hkKey
 	 *            Root key.
-	 * @param key
+	 * @param subKey
 	 *            Registry key path.
-	 * @param value
+	 * @param lpValueName
 	 *            Name of the value to retrieve or null for the default value.
 	 * @return Object value.
 	 */

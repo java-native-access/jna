@@ -16,10 +16,13 @@ public class VariantTest extends TestCase {
 		junit.textui.TestRunner.run(VariantTest.class);
 	}
 
+<<<<<<< HEAD
 	public VariantTest() {
 		Native.setProtected(true);
 	}
 
+=======
+>>>>>>> master
 	public void testVariantClear() {
 		System.out.println("------------------------------------------");
 

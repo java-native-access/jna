@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="platform" default="default" basedir=".">
-    <description>Builds, tests, and runs the project platform.</description>
+    <description>Builds and tests platform-specific code.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
 
@@ -63,46 +63,78 @@
     nbproject/build-impl.xml file. 
 
     -->
-    <condition property="tests.platform" value="test-win32">
-      <os family="windows"/>
-    </condition>
-    <condition property="tests.platform" value="test-osx">
-      <os family="mac"/>
-    </condition>
-    <condition property="tests.platform" value="test-linux">
-      <os family="unix"/>
-    </condition>
-    <target name="test" depends="init,compile-test" description="Run unit tests." if="tests.platform">
-    	<antcall target="${tests.platform}" />
-    </target>
-    <target name="test-report">
+    <target name="test" depends="init,compile,compile-test,-pre-test-run" description="Run platform unit tests.">
+      <echo>Running platform tests: ${test.src.dir}</echo>
+      <property name="test.fork" value="yes"/>
+      <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
+      <mkdir dir="${build.test.results.dir.abs}"/>
+      <echo>Saving test results in ${build.test.results.dir.abs}</echo>
+      <condition property="tests.platform" value="**/mac/**">
+        <os family="mac"/>
+      </condition>
+      <condition property="tests.platform" value="**/win32/**">
+        <os family="windows"/>
+      </condition>
+      <condition property="tests.platform" value="**/unix/**">
+        <os family="unix"/>
+      </condition>
+      <property name="tests.platform" value=""/>
+      <property name="tests.exclude" value=""/>
+      <property name="tests.exclude-patterns" value=""/>
+      <condition property="java.awt.headless" value="true">
+        <isset property="headless"/>
+      </condition>
+      <condition property="vmopt.arch" value="-d64" else="-Dignore">
+        <and>
+          <!-- Sun 64-bit VM for windows doesn't support the -d64 switch -->
+          <not><os family="windows"/></not>
+          <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
+        </and>
+      </condition>
+      <propertyset id="headless">
+        <propertyref prefix="java.awt.headless"/>
+      </propertyset>
+      <echo>tests.platform=${tests.platform}</echo>
+      <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build.dir}">
+        <!-- optionally run headless -->
+        <syspropertyset refid="headless"/>
+        <!-- avoid VM conflicts with JNA protected mode -->
+        <env key="${ld.preload.name}" file="${libjsig}"/>
+        <!-- Ignore any system install of JNA -->
+        <sysproperty key="jna.nosys" value="true"/>
+        <!-- Avoid VM crashes, if possible -->
+        <sysproperty key="jna.protected" value="true"/>
+        <sysproperty key="jna.builddir" file="${file.reference.jna.build}"/>
+        <jvmarg value="${vmopt.arch}"/>
+        <classpath><path path="${run.test.classpath}"/></classpath>
+        <formatter type="brief" usefile="false"/>
+        <formatter type="xml"/>
+        <batchtest todir="${build.test.results.dir}">
+          <fileset dir="${test.src.dir}" excludes="${tests.exclude-patterns}">
+            <!-- Until StructureFieldOrderTest gets fixed up a little -->
+            <exclude name="**/StructureFieldOrderTest.java"/>
+            <include name="com/sun/jna/platform/*Test.java"/>
+            <include name="${tests.platform}"/>
+            <exclude name="${tests.exclude}"/>
+          </fileset>
+        </batchtest>
+      </junit>
       <junitreport todir="${build.test.results.dir}">
 	<fileset dir="${build.test.results.dir}">
 	  <include name="TEST-*.xml"/>
 	</fileset>
 	<report todir="${build.test.results.dir}"/>
       </junitreport>
-      <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
       <echo message="View test report in file://${build.test.results.dir.abs}/index.html" />
+      <fail if="testfailure">One or more tests failed</fail>
     </target>
-    <target name="test-osx">
-      <echo>No platform tests yet for OSX</echo>
-    </target>
-    <target name="test-win32" depends="-pre-test-run,-do-test-run,test-report,-post-test-run,-test-browse" />
 
-    <target name="test-linux" depends="-pre-test-run-single" >
+    <!-- One-off test to check field order definitions -->
+    <target name="test-field-order" depends="-pre-test-run-single" >
         <!-- @todo How to ensure sys prop: jna.nosys=true is seen in tests? -->
         <!--<property name="test.includes" value="com/sun/jna/platform/**/*.java"/>-->
         <property name="test.includes" value="com/sun/jna/platform/StructureFieldOrderTest.java"/>
-
         <property name="javac.includes" value="**/*"/>
-
         <antcall target="test-single"/>
-
-        <!--
-        <antcall target="test-report"/>
-        <antcall target="-post-test-run"/>
-        <antcall target="-test-browse"/>
-        -->
     </target>
 </project>

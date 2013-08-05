@@ -40,7 +40,7 @@ import junit.framework.TestResult;
  * Run tests under web start
  * Works under OSX, windows, and linux.
  */
-public class WebStartTest extends TestCase {
+public class WebStartTest extends TestCase implements Paths {
     
     // Provide a policy file for unsigned jars
     // Unfortunately this does not allow native libraries
@@ -79,6 +79,9 @@ public class WebStartTest extends TestCase {
         + "    <argument>{PORT}</argument>\n"
         // NetX doesn't set javawebstart.version, so explicitly flag it
         + "    <argument>javawebstart</argument>\n"
+        // Explicitly indicate the architecture we want to skip the test
+        // if we somehow got the wrong architecture javaws
+        + "    <argument>arch64=" + Platform.is64Bit() + "</argument"
         + "  </application-desc>\n"
         + "</jnlp>";
 
@@ -122,15 +125,13 @@ public class WebStartTest extends TestCase {
         }
     }
 
+    private static final int SOCKET_TIMEOUT = 30000;
     private void runTestUnderWebStart(String testClass, String testMethod) throws Exception {
-        String BUILDDIR = System.getProperty("jna.builddir",
-                                             "build"
-                                             + (Platform.is64Bit()
-                                                ? "-d64" : ""));
-        String codebase = new File(BUILDDIR, "jws").toURI().toURL().toString();
+        String dir = System.getProperty("jna.builddir", BUILDDIR);
+        String codebase = new File(dir, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
-        s.setSoTimeout(120000);
+        s.setSoTimeout(SOCKET_TIMEOUT);
         int port = s.getLocalPort();
 
         File jnlp = File.createTempFile(getName(), ".jnlp");
@@ -139,10 +140,8 @@ public class WebStartTest extends TestCase {
         contents = contents.replace("{CODEBASE}", codebase);
         contents = contents.replace("{JNLP_FILE}", jnlp.toURI().toURL().toString());
         contents = contents.replace("{PORT}", String.valueOf(port));
-        boolean clover =
-            System.getProperty("java.class.path").indexOf("clover") != -1;
         contents = contents.replace("{CLOVER}",
-                                    clover ? "<jar href='clover.jar'/>" : "");
+                                    USING_CLOVER ? "<jar href='clover.jar'/>" : "");
 
         try {
             OutputStream os = new FileOutputStream(jnlp);
@@ -151,6 +150,7 @@ public class WebStartTest extends TestCase {
             String path = findJWS();
             String[] cmd = {
                 path,
+                Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
                 "-Xnosplash", 
                 "-wait", 
                 jnlp.toURI().toURL().toString(),
@@ -304,6 +304,10 @@ public class WebStartTest extends TestCase {
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
         File deployment;
+        String vendor = System.getProperty("java.vm.vendor");
+        if (vendor.indexOf(" ") != -1) {
+            vendor = vendor.substring(0, vendor.indexOf(" "));
+        }
         if (Platform.isWindows()) {
             FolderInfo info = (FolderInfo)
                 Native.loadLibrary("shell32", FolderInfo.class);
@@ -313,10 +317,6 @@ public class WebStartTest extends TestCase {
             path = Native.toString(buf);
 
             // NOTE: works for Sun(Oracle) and IBM, may not work for others
-            String vendor = System.getProperty("java.vm.vendor");
-            if (vendor.indexOf(" ") != -1) {
-                vendor = vendor.substring(0, vendor.indexOf(" "));
-            }
             if ("Oracle".equals(vendor)) {
                 vendor = "Sun";
             }
@@ -327,10 +327,15 @@ public class WebStartTest extends TestCase {
                 // TODO: Use SHGetKnownFolderPath to look it up
                 deployment = new File(deployment.getAbsolutePath().replace("Local", "LocalLow").replace("Roaming", "LocalLow"));
             }
-
         }
         else if (Platform.isMac()) {
-            deployment = new File(path + "/Library/Caches/Java");
+            if ("Oracle".equals(vendor)) {
+                deployment = new File(path + "/Library/Application Support/Oracle/Java/Deployment");
+            }
+            else {
+                // Older Apple path
+                deployment = new File(path + "/Library/Caches/Java");
+            }
         }
         else {
             deployment = new File(path + "/.java/deployment");
@@ -376,34 +381,29 @@ public class WebStartTest extends TestCase {
         }
     }
 
-    private static void runTestCaseTest(String testClass, String method, int port) {
-        try {
-            TestCase test = (TestCase)Class.forName(testClass).newInstance();
-            test.setName(method);
-            TestResult result = new TestResult();
-            test.run(result);
-            Socket s = new Socket(InetAddress.getLocalHost(), port);
-            OutputStream os = s.getOutputStream();
-            if (result.failureCount() != 0) {
-                Enumeration e = result.failures();
-                Throwable t = ((TestFailure)e.nextElement()).thrownException();
-                t.printStackTrace(new PrintStream(os));
-            }
-            else if (result.errorCount() != 0) {
-                Enumeration e = result.errors();
-                Throwable t = ((TestFailure)e.nextElement()).thrownException();
-                t.printStackTrace(new PrintStream(os));
-            }
-            // NOTE: System.exit with non-zero status causes an error dialog
-            // on w32 sun "1.6.0_14" (build 1.6.0_14-b08)
-            s.close();
-            System.exit(0);
+    private static void sendResults(Throwable t, int port) throws IOException {
+        Socket s = new Socket(InetAddress.getLocalHost(), port);
+        OutputStream os = s.getOutputStream();
+        if (t != null) {
+            t.printStackTrace(new PrintStream(os));
         }
-        catch(Throwable e) {
-            // Can't communicate back to launching process
-            showMessage("ERROR: " + e.getMessage());
-            System.exit(0);
+        s.close();
+    }
+
+    private static Throwable runTestCaseTest(String testClass, String method, int port) throws Exception {
+        TestCase test = (TestCase)Class.forName(testClass).newInstance();
+        test.setName(method);
+        TestResult result = new TestResult();
+        test.run(result);
+        if (result.failureCount() != 0) {
+            Enumeration e = result.failures();
+            return ((TestFailure)e.nextElement()).thrownException();
         }
+        else if (result.errorCount() != 0) {
+            Enumeration e = result.errors();
+            return ((TestFailure)e.nextElement()).thrownException();
+        }
+        return null;
     }
 
     private static void showMessage(String msg) {
@@ -424,20 +424,39 @@ public class WebStartTest extends TestCase {
 
     public static void main(String[] args) {
         try {
-            if (args.length == 4
+            if (args.length >= 4
                 && "javawebstart".equals(args[3])
                 && !runningWebStart()) {
                 System.setProperty("javawebstart.version", "fake");
             }
             if (runningWebStart()) {
-                
                 String testClass = args.length > 0
                     ? args[0] : WebStartTest.class.getName();
                 String testMethod = args.length > 1
                     ? args[1] : "testLaunchedUnderWebStart";
                 int port = args.length > 2
                     ? Integer.parseInt(args[2]) : 8080;
-                runTestCaseTest(testClass, testMethod, port);
+
+                try {
+                    if (args.length >=5
+                        && "arch64=true".equals(args[4])
+                        && !Platform.is64Bit()) {
+                        throw new Error("Cannot run 64-bit test on 32-bit javaws");
+                    }
+                    else {
+                        Throwable t = runTestCaseTest(testClass, testMethod, port);
+                        sendResults(t, port);
+                    }
+                }
+                catch(Throwable t) {
+                    try {
+                        sendResults(t, port);
+                    }
+                    catch(Throwable e) {
+                        // Can't communicate back to launching process
+                        showMessage("ERROR: " + e.getMessage());
+                    }
+                }
             }
             else {
                 junit.textui.TestRunner.run(WebStartTest.class);
@@ -446,5 +465,8 @@ public class WebStartTest extends TestCase {
         catch(Throwable t) {
             showMessage("ERROR: " + t.getMessage());
         }
+        // NOTE: System.exit with non-zero status causes an error dialog
+        // on w32 sun "1.6.0_14" (build 1.6.0_14-b08)
+        System.exit(0);
     }
 }

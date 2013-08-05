@@ -4,7 +4,7 @@ Publishing JNA to Maven Central
 One Time
 --------
 
-* Set up your gpg keys as described [here](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven).
+* Set up your gpg keys as described [here](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven).  Make sure you distribute your public key.
 * Make sure you have a settings.xml file (in directory: ${user.home}/.m2/) as described at the bottom of 7a1 [here](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig). For example:
 
         <settings>
@@ -34,8 +34,10 @@ Every Time
 
 * Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/twall/jna/blob/master/build.xml).
-* Run `ant stage`. This uploads current checkout to maven central.
-* Follow steps from [release it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt)
+* Run `ant -Dmaven-release=true -Dskip-native=true stage`. This uploads current checkout to [maven.java.net](https://maven.java.net).
+* Follow steps from [release
+  it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt).
+  Note that the releases are managed from [maven.java.net](https://maven.java.net).
 * Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
 * After the release is finished, increment the version in build.xml for the next development iteration. Typically, this means increment "jna.revision" by one, and append "-SNAPSHOT" to the "jna.version" property. Create new section in CHANGES.md for 'Next Release (x.y.z)'. Commit and push.
 
@@ -53,7 +55,7 @@ see: https://maven.java.net/content/repositories/snapshots/net/java/dev/jna/ for
 To publish a development SNAPSHOT do the following:
 
         git checkout -- .
-        ant deploy -DskipNative=true
+        ant deploy -Dskip-native=true
 
 Note: Unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
 full release is performed).

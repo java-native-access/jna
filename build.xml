@@ -10,10 +10,11 @@
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm and
-       android-arm) 
+       android-arm/-x86) 
 
        Use ANT_OPTS=-Dskip-native to skip building native parts.
        Use ANT_OPTS=-Dheadless to run tests headless
+       Use ANT_OPTS=-Drelease to stage a final, non-snapshot version
     -->
 
   <!--
@@ -46,22 +47,31 @@
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
+  <tstamp>
+    <format property="year" pattern="yyyy" locale="en,US"/>
+  </tstamp>
   <property name="copyright"
-            value="Copyright &amp;copy; 2007-2012 Timothy Wall. All Rights Reserved."/>
+            value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   <!-- JNA library release version -->
-  <property name="jna.major" value="3"/>
-  <property name="jna.minor" value="5"/>
-  <property name="jna.revision" value="2"/>
+  <property name="jna.major" value="4"/>
+  <property name="jna.minor" value="0"/>
+  <property name="jna.revision" value="0"/>
   <property name="jna.build" value="${build.number}"/>
-  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}-SNAPSHOT"/>
+  <condition property="version.suffix" value="" else="-SNAPSHOT">
+    <or>
+      <isset property="release"/>
+      <isset property="maven-release"/>
+    </or>
+  </condition>
+  <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
-  <property name="jni.major" value="3"/>
-  <property name="jni.minor" value="5"/>
+  <property name="jni.major" value="4"/>
+  <property name="jni.minor" value="0"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="${build.number}"/>
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="60417f69d77e4d8d693b43391a4a5b91"/>
+  <property name="jni.md5" value="1a6047467b59e8748f975e03016ce3d9"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
@@ -73,15 +83,27 @@
   </condition>
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
-  <property name="compatibility" value="1.4"/>
-  <property name="platform.compatibility" value="1.5"/>
+  <condition property="compatibility" value="1.4">
+    <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+  </condition>
+  <!-- Default compatibility, 1.6, or whatever version is running -->
+  <condition property="compatibility" value="${ant.java.version}" else="1.6">
+    <matches pattern="^1.[345]$" string="${ant.java.version}"/>
+  </condition>
+  <!-- Platform default compatibility, 1.5+ -->
+  <condition property="platform.compatibility" value="1.5" else="${compatibility}">
+    <equals arg1="${compatibility}" arg2="1.4"/>
+  </condition>
+  <!-- Test default compatibility, 1.5+ -->
+  <condition property="test.compatibility" value="1.5" else="${compatibility}">
+    <equals arg1="${compatibility}" arg2="1.4"/>
   </condition>
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
-  <property name="test.compatibility" value="1.5"/>
   <property name="dist-jar" value="${dist}/${jar}"/>
 
   <!-- Maven -->
@@ -127,10 +149,10 @@
 
     <replaceregexp match='VERSION = ".*";'
                    replace='VERSION = "${jna.version}";'
-                   file="src/com/sun/jna/Native.java"/>
+                   file="src/com/sun/jna/Version.java"/>
     <replaceregexp match='VERSION_NATIVE = ".*";'
                    replace='VERSION_NATIVE = "${jni.version}";'
-                   file="src/com/sun/jna/Native.java"/>
+                   file="src/com/sun/jna/Version.java"/>
 
     <condition property="jar.omitted" value="**/*jnidispatch*" else="jnilib-included">
       <isset property="omit-jnilib"/>
@@ -138,18 +160,23 @@
     <condition property="cross-compile" value="true">
       <isset property="os.prefix"/>
     </condition>
-    <!-- Keep cross-compiled natives separate from normal builds -->
-    <condition property="native.subdir" value="native-${os.prefix}" else="native">
-      <isset property="cross-compile"/>
+    <!-- Sun 1.6 VM for windows doesn't support -d32/-d64 switch -->
+    <condition property="vm.64" value="-d64" else="-Ddummy">
+      <not><os family="windows"/></not>
     </condition>
-    <condition property="vm.arch" value="-d64" else="">
+    <condition property="vm.32" value="-d32" else="-Ddummy">
+      <not><os family="windows"/></not>
+    </condition>
+    <condition property="vmopt.arch" value="${vm.64}" else="${vm.32}">
       <and>
         <not><equals arg1="${os.prefix}" arg2="android-arm" trim="true"/></not>
+        <not><equals arg1="${os.prefix}" arg2="android-x86" trim="true"/></not>
         <or>
           <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
           <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
           <os arch="x86_64"/>
           <os arch="amd64"/>
+          <os arch="em64t"/>
           <os arch="sparcv9"/>
           <os arch="ppc64"/>
           <os arch="ia64"/>
@@ -159,21 +186,27 @@
     <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
       <and>
         <os name="SunOS"/>
-        <equals arg1="${vm.arch}" arg2="-d64"/>
+        <equals arg1="${vmopt.arch}" arg2="${vm.64}"/>
       </and>
     </condition>
-    <property name="build" value="build${vm.arch}"/>
+    <property name="build" value="build"/>
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
 
     <!-- Add other supported platforms here -->
-    <condition property="jre.arch" value="i386">
-      <equals arg1="x86" arg2="${os.arch}"/>
+    <condition property="jre.arch" value="x86">
+      <matches pattern="(i[3456]86|pentium)" string="${os.arch}"/>
     </condition>
-    <condition property="jre.arch" value="amd64">
-      <equals arg1="x86_64" arg2="${os.arch}"/>
+    <condition property="jre.arch" value="x86-64">
+      <matches pattern="(x86_64|amd64|em64t)" string="${os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc">
+      <matches pattern="(powerpc|power)" string="${os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc64">
+      <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
     </condition>
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
@@ -182,23 +215,26 @@
     <condition property="os.prefix" value="aix-${jre.arch}">
       <os name="AIX"/>
     </condition>
-    <condition property="os.prefix" value="win32-${os.arch}">
+    <condition property="os.prefix" value="win32-${jre.arch}">
       <os family="windows"/>
     </condition>
     <!-- Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
       <os family="mac"/>
     </condition>
-    <condition property="os.prefix" value="sunos-${os.arch}">
+    <condition property="os.prefix" value="sunos-${jre.arch}">
       <os name="SunOS"/>
     </condition>
-    <condition property="os.prefix" value="freebsd-${os.arch}">
-      <os name="FreeBSD"/>
+    <condition property="os.prefix" value="bsd-${jre.arch}">
+      <or>
+	<os name="FreeBSD"/>
+	<os name="OpenBSD"/>
+	<os name="NetBSD"/>
+      </or>
     </condition>
-    <condition property="os.prefix" value="openbsd-${os.arch}">
-      <os name="OpenBSD"/>
-    </condition>
-    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${os.arch}), edit build.xml and native/Makefile to add it."/>
+    <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
+    <!-- Keep all natives separate -->
+    <property name="native.subdir" value="native-${os.prefix}"/>
     <condition property="jdk.home" value="${java.home}">
       <available file="${java.home}/include"/>
     </condition>
@@ -209,9 +245,10 @@
       <available file="/System/Library/Frameworks/JavaVM.framework/Headers"/>
     </condition>
     <fail unless="jdk.home" message="Can't find JNI headers (java.home=${java.home})"/>
+    <property name="libarch" value="${os.arch}"/>
     <condition property="libjsig"
-               value="${java.home}/lib/${jre.arch}/libjsig.so" else="">
-      <available file="${java.home}/lib/${jre.arch}/libjsig.so"/>
+               value="${java.home}/lib/${libarch}/libjsig.so" else="">
+      <available file="${java.home}/lib/${libarch}/libjsig.so"/>
     </condition>
     <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
@@ -257,6 +294,7 @@
     <path id="test.runpath">
       <pathelement path="${build}/${jar}"/>
       <pathelement path="${test.classes}"/>
+      <pathelement path="${build}/${testjar}"/>
       <pathelement path="lib/clover.jar"/>
       <path refid="test.libs"/>
     </path>
@@ -320,14 +358,14 @@
                    value="
 com/sun/jna/win32-x86/jnidispatch.dll;
 processor=x86;osname=win32,
-com/sun/jna/win32-amd64/jnidispatch.dll;
+com/sun/jna/win32-x86-64/jnidispatch.dll;
 processor=x86-64;osname=win32,
 com/sun/jna/w32ce-arm/jnidispatch.dll;
 processor=arm;osname=wince,
 
 com/sun/jna/sunos-x86/libjnidispatch.so;
 processor=x86;osname=sunos,
-com/sun/jna/sunos-amd64/libjnidispatch.so;
+com/sun/jna/sunos-x86-64/libjnidispatch.so;
 processor=x86-64;osname=sunos,
 com/sun/jna/sunos-sparc/libjnidispatch.so;
 processor=sparc;osname=sunos,
@@ -343,24 +381,22 @@ com/sun/jna/linux-ppc/libjnidispatch.so;
 processor=ppc;osname=linux,
 com/sun/jna/linux-ppc64/libjnidispatch.so;
 processor=ppc64;osname=linux,
-com/sun/jna/linux-i386/libjnidispatch.so;
+com/sun/jna/linux-x86/libjnidispatch.so;
 processor=x86;osname=linux,
-com/sun/jna/linux-amd64/libjnidispatch.so;
+com/sun/jna/linux-x86-64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
-com/sun/jna/openbsd-i386/libjnidispatch.so;
-processor=x86;osname=openbsd,
-com/sun/jna/freebsd-i386/libjnidispatch.so;
-processor=x86;osname=freebsd,
-com/sun/jna/freebsd-amd64/libjnidispatch.so;
-processor=x86-64;osname=freebsd,
+com/sun/jna/bsd-x86/libjnidispatch.so;
+processor=x86;osname=openbsd;osname=freebsd;osname=netbsd,
+com/sun/jna/bsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=openbsd;osname=freebsd;osname=netbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
-osname=macos
+osname=macosx;processor=x86;processor=x86-64;processor=ppc
 "/>
       </manifest>
       <fileset dir="${classes}" excludes="${jar.omitted}">
@@ -378,12 +414,12 @@ osname=macos
       <zipfileset src="${lib.native}/darwin.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/darwin"/>
-      <zipfileset src="${lib.native}/linux-i386.jar"
+      <zipfileset src="${lib.native}/linux-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/linux-i386"/>
-      <zipfileset src="${lib.native}/linux-amd64.jar"
+                  prefix="com/sun/jna/linux-x86"/>
+      <zipfileset src="${lib.native}/linux-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/linux-amd64"/>
+                  prefix="com/sun/jna/linux-x86-64"/>
       <zipfileset src="${lib.native}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
@@ -399,27 +435,24 @@ osname=macos
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
-      <zipfileset src="${lib.native}/sunos-amd64.jar"
+      <zipfileset src="${lib.native}/sunos-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/sunos-amd64"/>
+                  prefix="com/sun/jna/sunos-x86-64"/>
       <zipfileset src="${lib.native}/sunos-sparc.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparc"/>
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${lib.native}/freebsd-i386.jar"
+      <zipfileset src="${lib.native}/bsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-i386"/>
-      <zipfileset src="${lib.native}/freebsd-amd64.jar"
+                  prefix="com/sun/jna/bsd-x86"/>
+      <zipfileset src="${lib.native}/bsd-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/freebsd-amd64"/>
-      <zipfileset src="${lib.native}/openbsd-i386.jar"
+                  prefix="com/sun/jna/bsd-x86-64"/>
+      <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/openbsd-i386"/>
-      <zipfileset src="${lib.native}/win32-amd64.jar"
-                  includes="*jnidispatch*"
-                  prefix="com/sun/jna/win32-amd64"/>
+                  prefix="com/sun/jna/win32-x86-64"/>
       <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
@@ -442,9 +475,6 @@ osname=macos
     <zip zipfile="${platform-sources-jar}">
       <zipfileset dir="${contrib}/platform/src" />
     </zip>
-    <jar jarfile="${platform-javadoc-jar}">
-        <fileset dir="${javadoc}" />
-    </jar>
   </target>
 
   <target name="contrib-jars" depends="platform-jar" description="Build contrib jars">
@@ -478,6 +508,7 @@ osname=macos
       <fileset dir="${build.native}" includes="*.h"/>
     </apply>
     <!-- Clean up gcj javah output to match that of Sun's javah -->
+    <fixcrlf file="${md5.file}" eol="unix"/>
     <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
                    replace="\1&#xa;\2- \3&#xa;--"
 		   byline="true"
@@ -490,7 +521,6 @@ osname=macos
                    replace=""
 		   flags="m"
                    file="${md5.file}"/>
-    <fixcrlf srcdir="${build.native}" includes="sig" eol="unix"/>
     <checksum property="md5" file="${md5.file}" />
     <condition property="jni.valid" value="true">
       <or>
@@ -505,22 +535,22 @@ osname=macos
     <echo>Invalidating native code, new checksum is ${md5}</echo>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/darwin.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/win32-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/w32ce-arm.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-i386.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-arm.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-i386.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-amd64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-i386.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-amd64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-x86.jar" overwrite="true"/>
     <delete failOnError="false" includeEmptyDirs="true">
       <fileset dir="${build.native}" includes="*.o,*jnidispatch*"/>
     </delete>
@@ -541,18 +571,27 @@ osname=macos
     <copy todir="${build.native}" file="${native}/jnidispatch.rc"/>
     <replaceregexp match="FILEVERSION.*"
                    replace="FILEVERSION ${jni.major},${jni.minor},${jni.revision},${jni.build}"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="PRODUCTVERSION.*"
                    replace="PRODUCTVERSION ${jna.major},${jna.minor},${jna.revision},${jna.build}"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="FileVersion.*"
                    replace="FileVersion&quot;,&quot;${jni.version}&quot;"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="Full Version.*"
                    replace="Full Version&quot;,&quot;${jni.version} b${jni.build}&quot;"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
     <replaceregexp match="ProductVersion.*"
                    replace="ProductVersion&quot;,&quot;${spec.version}&quot;"
+                   preserveLastModified="true"
+                   file="${rsrc}" byline="true"/>
+    <replaceregexp match="(Copyright.*-)2..."
+                   replace="\1${year}"
+                   preserveLastModified="true"
                    file="${rsrc}" byline="true"/>
   </target>
 
@@ -570,7 +609,10 @@ osname=macos
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
     <condition property="make.OS" value="OS=android">
-      <equals arg1="${os.prefix}" arg2="android-arm"/>
+      <or>
+        <equals arg1="${os.prefix}" arg2="android-arm"/>
+        <equals arg1="${os.prefix}" arg2="android-x86"/>
+      </or>
     </condition>
     <property name="make.OS" value="IGNORE="/>
     <!-- Ensure Makefile ARCH property properly set -->
@@ -580,6 +622,9 @@ osname=macos
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="android-arm"/>
     </condition>
+    <condition property="ARCH" value="x86">
+      <equals arg1="${os.prefix}" arg2="android-x86"/>
+    </condition>
     <condition property="ARCH" value="ppc">
       <equals arg1="${os.prefix}" arg2="aix-ppc"/>
     </condition>
@@ -587,7 +632,7 @@ osname=macos
       <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
-    <!-- use ANT_OPTS=-d64 to build 64-bit if not the platform default -->
+    <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
@@ -637,6 +682,7 @@ osname=macos
       <or>
         <os name="FreeBSD"/>
         <os name="OpenBSD"/>
+        <os name="NetBSD"/>
         <os name="SunOS"/>
         <os name="AIX"/>
       </or>
@@ -704,12 +750,31 @@ osname=macos
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
-    <!-- Create a jar for easy movement of tests -->
+    <!-- Embed testlib-jar at root and at default resource path -->
+    <mkdir dir="${test.classes}/${os.prefix}"/>
+    <copy todir="${test.classes}">
+      <fileset dir="${build.native}">
+        <include name="*testlib-jar*"/>
+      </fileset>
+    </copy>
+    <copy todir="${test.classes}/${os.prefix}">
+      <fileset dir="${build.native}">
+        <include name="*testlib-jar*"/>
+      </fileset>
+    </copy>
+    <!-- Create a jar for easy movement of tests, and jar load test -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
+        <include name="**/*testlib-jar*"/>
       </fileset>
     </jar>
+    <!-- Ensure jar-based library is unavailable on FS-based class path -->
+    <delete>
+      <fileset dir="${build}">
+        <include name="**/*testlib-jar*"/>
+      </fileset>
+    </delete>
     <mkdir dir="${build}/jws"/>
     <copy todir="${build}/jws" file="${build}/${jar}"/>
     <copy todir="${build}/jws" file="${build}/${testjar}"/>
@@ -744,6 +809,8 @@ osname=macos
     <copy todir="${shared}" file="${build.native}/jnidispatch.dll"/>
     <copy todir="${shared}" file="${build.native}/testlib.dll"/>
     <copy todir="${shared}" file="${build.native}/testlib2.dll"/>
+    <copy todir="${shared}" file="${build.native}/test-path.dll"/>
+    <copy todir="${shared}" file="${build.native}/testlib-truncated"/>
     <copy todir="${shared}" file="w32ce-test.lnk"/>
     <chmod file="${shared}/*.dll" perm="+x"/>
   </target>
@@ -761,20 +828,13 @@ osname=macos
     <condition property="tests.platform" value="**/win32/**/*Test.java">
       <os family="windows"/>
     </condition>
-    <condition property="tests.exclude" value="**/win32/*StdCallTest.java">
+    <condition property="tests.exclude" value="${tests.stdcall}">
       <and><os family="windows"/><not><os arch="x86"/></not></and>
     </condition>
     <condition property="tests.platform" value="**/unix/*Test.java">
       <and>
         <os family="unix"/>
         <not><os family="mac"/></not>
-      </and>
-    </condition>
-    <condition property="vmopt.arch" value="-d64" else="-Dignore">
-      <and>
-        <!-- Sun 64-bit VM for windows doesn't support the -d64 switch -->
-        <not><os family="windows"/></not>
-        <equals arg1="${vm.arch}" arg2="-d64" trim="true"/>
       </and>
     </condition>
     <property name="tests.platform" value=""/>
@@ -797,6 +857,7 @@ osname=macos
       <!-- Avoid VM crashes, if possible -->
       <sysproperty key="jna.protected" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
+      <sysproperty key="jna.nativedir" file="${build.native}"/>
       <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="brief" usefile="false"/>
@@ -819,8 +880,8 @@ osname=macos
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
-  <target name="contrib-test" depends="contrib-jars,compile-tests">
-    <subant target="test" failonerror="true">
+  <target name="test-platform" depends="compile-tests,platform-jar">
+    <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
@@ -897,6 +958,9 @@ osname=macos
 
       <arg value="-notimestamp"/>
     </javadoc>
+    <jar jarfile="${platform-javadoc-jar}">
+      <fileset dir="${javadoc}" />
+    </jar>
   </target>
 
   <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
@@ -924,7 +988,7 @@ osname=macos
     <!-- Javadoc -->
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,${pom},LICENSE.txt"/>
+      <zipfileset dir="." includes="build.xml,${pom},LICENSE,LGPL2.1,ASL2.0"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>
@@ -950,7 +1014,7 @@ osname=macos
     <delete quiet="true" includeEmptyDirs="true">
       <fileset dir=".clover"/>
       <fileset dir="${javadoc}"/>
-      <fileset dir="." includes="*~,**/*~"/>
+      <fileset dir="." includes="*~,**/*~,build.number"/>
     </delete>
     <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>

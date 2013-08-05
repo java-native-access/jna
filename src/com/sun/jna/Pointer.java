@@ -24,8 +24,8 @@ import java.util.List;
  * be any <em>type</em> of native pointer.  Methods such as <code>write</code>, 
  * <code>read</code>, <code>getXXX</code>, and <code>setXXX</code>, provide 
  * means to access memory underlying the native pointer.<p>
- * The constructors are intentionally package-private, since it's not generally
- * a good idea to be creating C pointers de novo. 
+ * While a constructor exists to create a Pointer from an integer value, it's
+ * not generally a good idea to be creating pointers that way. 
  *
  * @author Sheng Liang, originator
  * @author Todd Fast, suitability modifications
@@ -415,7 +415,7 @@ public class Pointer {
         }
         else if (type == WString.class) {
             Pointer p = getPointer(offset);
-            result = p != null ? new WString(p.getString(0, true)) : null;
+            result = p != null ? new WString(p.getWideString(0)) : null;
         }
         else if (Callback.class.isAssignableFrom(type)) {
             // Overwrite the Java memory if the native pointer is a different
@@ -467,7 +467,7 @@ public class Pointer {
             if (result == null) {
                 throw new IllegalStateException("Need an initialized array");
             }
-            getArrayValue(offset, result, type.getComponentType());
+            readArray(offset, result, type.getComponentType());
         }
         else {
             throw new IllegalArgumentException("Reading \""
@@ -476,8 +476,8 @@ public class Pointer {
         return result;
     }
 
-    /** Copy memory starting at offset into the array with element type cls. */
-    private void getArrayValue(long offset, Object o, Class cls) {
+    /** Read memory starting at offset into the array with element type cls. */
+    private void readArray(long offset, Object o, Class cls) {
         int length = 0;
         length = Array.getLength(o);
         Object result = o;
@@ -515,12 +515,26 @@ public class Pointer {
                 }
             }
             else {
-                for (int i=0;i < sarray.length;i++) {
+                Structure first = sarray[0];
+                if (first == null) {
+                    first = Structure.newInstance(cls, share(offset));
+                    first.conditionalAutoRead();
+                    sarray[0] = first;
+                }
+                else {
+                    first.useMemory(this, (int)offset);
+                    first.read();
+                }
+                Structure[] tmp = first.toArray(sarray.length);
+                for (int i=1;i < sarray.length;i++) {
                     if (sarray[i] == null) {
-                        sarray[i] = Structure.newInstance(cls);
+                        // Structure.toArray() takes care of read
+                        sarray[i] = tmp[i];
                     }
-                    sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()));
-                    sarray[i].read();
+                    else {
+                        sarray[i].useMemory(this, (int)(offset + i * sarray[i].size()));
+                        sarray[i].read();
+                    }
                 }
             }
         }
@@ -670,37 +684,39 @@ public class Pointer {
      * @param offset byte offset from pointer to obtain the native string
 v     * @param wide whether to convert from a wide or standard C string
      * @return the <code>String</code> value being pointed to 
+     * 
+     * @deprecated use {@link #getString(long,String)} or {@link
+     * #getWideString(long)} instead. 
      */
     public String getString(long offset, boolean wide) {
-        return Native.getString(peer + offset, wide);
+        return wide ? getWideString(offset) : getString(offset);
     }
     
+    /** Read a wide (<code>const wchar_t *</code>) string from memory. */
+    public String getWideString(long offset) {
+        return Native.getWideString(peer + offset);
+    }
+
     /**
-     * Copy native memory to a Java String.  If the system property 
-     * <code>jna.encoding</code> is set, uses it as the native charset
-     * when decoding the value, otherwise falls back to the default platform
-     * encoding.
+     * Copy native memory to a Java String.  The encoding used is obtained
+     * form {@link Native#getDefaultStringEncoding()}.
      *
-     * @param offset byte offset from pointer to obtain the native string
+     * @param offset byte offset from pointer to start reading bytes
      * @return the <code>String</code> value being pointed to 
      */
     public String getString(long offset) {
-        String encoding = System.getProperty("jna.encoding");
-        if (encoding != null) {
-            long len = indexOf(offset, (byte)0);
-            if (len != -1) {
-                if (len > Integer.MAX_VALUE) {
-                    throw new OutOfMemoryError("String exceeds maximum length: " + len);
-                }
-                byte[] data = getByteArray(offset, (int)len);
-                try {
-                    return new String(data, encoding);
-                }
-                catch(UnsupportedEncodingException e) { 
-                }
-            }
-        }
-        return getString(offset, false);
+        return getString(offset, Native.getDefaultStringEncoding());
+    }
+
+    /**
+     * Copy native memory to a Java String using the requested encoding.
+     *
+     * @param offset byte offset from pointer to obtain the native string
+     * @param encoding the desired encoding
+     * @return the <code>String</code> value being pointed to 
+     */
+    public String getString(long offset, String encoding) {
+        return Native.getString(peer + offset, encoding);
     }
 
     /** Read a native array of bytes of size <code>arraySize</code> from the
@@ -791,33 +807,71 @@ v     * @param wide whether to convert from a wide or standard C string
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char *</code>.  The array length is determined by a
      * NULL-valued terminating element. 
+     * <p/>
+     * The strings are decoded using the encoding returned by {@link
+     * Native#getDefaultStringEncoding()}.
      */
     public String[] getStringArray(long offset) {
-        return getStringArray(offset, -1, false);
+        return getStringArray(offset, -1, Native.getDefaultStringEncoding());
+    }
+
+    /** Returns an array of <code>String</code> based on a native array
+     * of <code>char *</code>, using the requested encoding.  The array length
+     * is determined by a NULL-valued terminating element. 
+     */
+    public String[] getStringArray(long offset, String encoding) {
+        return getStringArray(offset, -1, encoding);
     }
 
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char *</code>, using the given array length. 
+     * <p/>
+     * The strings are decoded using the encoding returned by {@link
+     * Native#getDefaultStringEncoding()}.
      */
     public String[] getStringArray(long offset, int length) {
-        return getStringArray(offset, length, false);
+        return getStringArray(offset, length, Native.getDefaultStringEncoding());
     }
 
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char*</code> or <code>wchar_t*</code> based on the
      * <code>wide</code> parameter.  The array length is determined by a
      * NULL-valued terminating element. 
+     * 
+     * @deprecated use {@link #getStringArray(long,String)} or {@link
+     * #getWideStringArray(long)} instead.
      */
     public String[] getStringArray(long offset, boolean wide) {
         return getStringArray(offset, -1, wide);
     }
 
+    public String[] getWideStringArray(long offset) {
+        return getWideStringArray(offset, -1);
+    }
+
+    public String[] getWideStringArray(long offset, int length) {
+        return getStringArray(offset, -1, NativeString.WIDE_STRING);
+    }
+
     /** Returns an array of <code>String</code> based on a native array
      * of <code>char*</code> or <code>wchar_t*</code> based on the
      * <code>wide</code> parameter, using the given array length.
+     * 
+     * @deprecated use {@link #getStringArray(long,int,String)} or {@link
+     * #getWideStringArray(long,int)} instead.
      */
     public String[] getStringArray(long offset, int length, boolean wide) {
-    
+        return getStringArray(offset, length, wide ? NativeString.WIDE_STRING : Native.getDefaultStringEncoding());
+    }
+
+    /** Returns an array of <code>String</code> based on a native array
+     * of <code>char*</code> or <code>wchar_t*</code> based on the
+     * <code>wide</code> parameter, using the given array length.
+     * @param offset
+     * @param length
+     * @param encoding
+     */
+    public String[] getStringArray(long offset, int length, String encoding) {
         List strings = new ArrayList();
         Pointer p;
         int addOffset = 0;
@@ -825,7 +879,10 @@ v     * @param wide whether to convert from a wide or standard C string
             p = getPointer(offset + addOffset);
             int count = 0;
             while (count++ < length) {
-                String s = p == null ? null : p.getString(0, wide);
+                String s = p == null
+                    ? null
+                    : (encoding == NativeString.WIDE_STRING
+                       ? p.getWideString(0) : p.getString(0, encoding));
                 strings.add(s);
                 if (count < length) {
                     addOffset += SIZE;
@@ -835,7 +892,10 @@ v     * @param wide whether to convert from a wide or standard C string
         }
         else {
             while ((p = getPointer(offset + addOffset)) != null) {
-                String s = p == null ? null : p.getString(0, wide);
+                String s = p == null
+                    ? null
+                    : (encoding == NativeString.WIDE_STRING
+                       ? p.getWideString(0) : p.getString(0, encoding));
                 strings.add(s);
                 addOffset += SIZE;
             }
@@ -910,14 +970,15 @@ v     * @param wide whether to convert from a wide or standard C string
             setValue(offset, tc.toNative(value, new ToNativeContext()), nativeType);
         }
         else if (type.isArray()) {
-            setArrayValue(offset, value, type.getComponentType());
+            writeArray(offset, value, type.getComponentType());
         }
         else {
             throw new IllegalArgumentException("Writing " + type + " to memory is not supported");
         }
     }
 
-    private void setArrayValue(long offset, Object value, Class cls) {
+    /** Write memory starting at offset from the array with element type cls. */
+    private void writeArray(long offset, Object value, Class cls) {
         if (cls == byte.class) {
             byte[] buf = (byte[])value;
             write(offset, buf, 0, buf.length);
@@ -966,11 +1027,23 @@ v     * @param wide whether to convert from a wide or standard C string
                 write(offset, buf, 0, buf.length);
             }
             else {
-                for (int i=0;i < sbuf.length;i++) {
+                Structure first = sbuf[0];
+                if (first == null) {
+                    first = Structure.newInstance(cls, share(offset));
+                    sbuf[0] = first;
+                }
+                else {
+                    first.useMemory(this, (int)offset);
+                }
+                first.write();
+                Structure[] tmp = first.toArray(sbuf.length);
+                for (int i=1;i < sbuf.length;i++) {
                     if (sbuf[i] == null) {
-                        sbuf[i] = Structure.newInstance(cls);
+                        sbuf[i] = tmp[i];
                     }
-                    sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()));
+                    else {
+                        sbuf[i].useMemory(this, (int)(offset + i * sbuf[i].size()));
+                    }
                     sbuf[i].write();
                 }
             }
@@ -1124,46 +1197,106 @@ v     * @param wide whether to convert from a wide or standard C string
     }
 
     /**
-     * Copy string <code>value</code> to the location being pointed to.  Copy
-     * each element in <code>value</code>, converted to native encoding, at an
-     * <code>offset</code>from the location pointed to by this pointer.
+     * Copy string <code>value</code> to the location being pointed to.  
      *
      * @param offset byte offset from pointer at which characters in
      * 		     <code>value</code> must be set
      * @param value  <code>java.lang.String</code> value to set
      * @param wide whether to write the native string as an array of 
      * <code>wchar_t</code>.  If false, writes as a NUL-terminated array of 
-     * <code>char</code> using the default platform encoding. 
+     * <code>char</code> using the encoding indicated by {@link
+     * Native#getDefaultStringEncoding()}. 
+     * 
+     * @deprecated use {@link #setWideString(long,String)} instead.
      */
     public void setString(long offset, String value, boolean wide) {
-        Native.setString(peer + offset, value, wide);
+        if (wide) {
+            setWideString(offset, value);
+        }
+        else {
+            setString(offset, value);
+        }
     }
     
     /**
-     * Copy string <code>value</code> to the location being pointed to.  Copy
-     * each element in <code>value</code>, converted to native encoding, at an
-     * <code>offset</code>from the location pointed to by this pointer.
-     * Uses the value of the system property <code>jna.encoding</code>, if set, 
-     * to determine the appropriate native charset in which to encode the value.  
-     * If the property is not set, uses the default platform encoding.
+     * Copy string <code>value</code> to the location being pointed to as a
+     * wide string (<code>wchar_t*</code>).  
+     *
+     * @param offset byte offset from pointer at which characters in
+     * 		     <code>value</code> must be set
+     * @param value  <code>java.lang.String</code> value to set
+     */
+    public void setWideString(long offset, String value) {
+        Native.setWideString(peer + offset, value);
+    }
+
+    /**
+     * Copy string <code>value</code> to the location being pointed to as a
+     * wide string (<code>wchar_t*</code>).  
+     *
+     * @param offset byte offset from pointer at which characters in
+     * 		     <code>value</code> must be set
+     * @param value  <code>WString</code> value to set
+     */
+    public void setString(long offset, WString value) {
+        setWideString(offset, value == null ? null : value.toString());
+    }
+
+    /**
+     * Copy bytes out of string <code>value</code> to the location being
+     * pointed to, using the encoding indicated by {@link
+     * Native#getDefaultStringEncoding()}. 
      *
      * @param offset byte offset from pointer at which characters in
      *               <code>value</code> must be set
      * @param value  <code>java.lang.String</code> value to set
      */
     public void setString(long offset, String value) {
-        byte[] data = Native.getBytes(value);
+        setString(offset, value, Native.getDefaultStringEncoding());
+    }
+
+    /**
+     * Copy string <code>value</code> to the location being pointed to, using
+     * the requested encoding.  
+     *
+     * @param offset byte offset from pointer at which characters in
+     *               <code>value</code> must be set
+     * @param value  <code>java.lang.String</code> value to set
+     * @param encoding desired encoding
+     */
+    public void setString(long offset, String value, String encoding) {
+        byte[] data = Native.getBytes(value, encoding);
         write(offset, data, 0, data.length);
         setByte(offset + data.length, (byte)0);
     }
     
+    /** Dump memory for debugging purposes. */
+    public String dump(long offset, int size) {
+        String LS = System.getProperty("line.separator");
+        String contents = "memory dump" + LS;
+        final int BYTES_PER_ROW = 4;
+        byte[] buf = getByteArray(offset, size);
+        for (int i=0;i < buf.length;i++) {
+            if ((i % BYTES_PER_ROW) == 0) contents += "[";
+            if (buf[i] >=0 && buf[i] < 16)
+                contents += "0";
+            contents += Integer.toHexString(buf[i] & 0xFF);
+            if ((i % BYTES_PER_ROW) == BYTES_PER_ROW-1 && i < buf.length-1)
+                contents += "]" + LS;
+        }
+        if (!contents.endsWith("]" + LS)) {
+            contents += "]" + LS;
+        }
+        return contents;
+    }
+
     public String toString() {
         return "native@0x" + Long.toHexString(peer);
     }
     
     /** Read the native peer value.  Use with caution. */
     public static long nativeValue(Pointer p) {
-        return p.peer;
+        return p == null ? 0 : p.peer;
     }
 
     /** Set the native peer value.  Use with caution. */
@@ -1175,6 +1308,12 @@ v     * @param wide whether to convert from a wide or standard C string
     private static class Opaque extends Pointer {
         private Opaque(long peer) { super(peer); }
         private final String MSG = "This pointer is opaque: " + this;
+        public Pointer share(long offset, long size) {
+            throw new UnsupportedOperationException(MSG);
+        }
+        public void clear(long size) {
+            throw new UnsupportedOperationException(MSG);
+        }
         public long indexOf(long offset, byte value) {
             throw new UnsupportedOperationException(MSG);
         }
@@ -1199,6 +1338,9 @@ v     * @param wide whether to convert from a wide or standard C string
         public void read(long bOff, double[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
+        public void read(long bOff, Pointer[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
         public void write(long bOff, byte[] buf, int index, int length) { 
             throw new UnsupportedOperationException(MSG); 
         }
@@ -1218,6 +1360,12 @@ v     * @param wide whether to convert from a wide or standard C string
             throw new UnsupportedOperationException(MSG); 
         }
         public void write(long bOff, double[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void write(long bOff, Pointer[] buf, int index, int length) { 
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public ByteBuffer getByteBuffer(long offset, long length) {
             throw new UnsupportedOperationException(MSG); 
         }
         public byte getByte(long bOff) {
@@ -1244,7 +1392,10 @@ v     * @param wide whether to convert from a wide or standard C string
         public Pointer getPointer(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public String getString(long bOff, boolean wide) {
+        public String getString(long bOff, String encoding) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public String getWideString(long bOff) {
             throw new UnsupportedOperationException(MSG); 
         }
         public void setByte(long bOff, byte value) {
@@ -1271,11 +1422,17 @@ v     * @param wide whether to convert from a wide or standard C string
         public void setPointer(long offset, Pointer value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public void setString(long offset, String value, boolean wide) {
+        public void setString(long offset, String value, String encoding) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setWideString(long offset, String value) {
+            throw new UnsupportedOperationException(MSG); 
+        }
+        public void setMemory(long offset, long size, byte value) {
             throw new UnsupportedOperationException(MSG); 
         }
         public String toString() {
-            return "opaque@0x" + Long.toHexString(peer);
+            return "const@0x" + Long.toHexString(peer);
         }
     }
 }

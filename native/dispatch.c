@@ -2,7 +2,7 @@
  * @(#)dispatch.c       1.9 98/03/22
  *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
- * Copyright (c) 2007-2012 Timothy Wall. All Rights Reserved.
+ * Copyright (c) 2007-2013 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -17,9 +17,6 @@
  */
 
 #if defined(_WIN32)
-#ifdef _MSC_VER
-#pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
-#endif
 #ifndef UNICODE
 #define UNICODE
 #endif
@@ -28,6 +25,12 @@
 #include <psapi.h>
 #define STRTYPE wchar_t*
 #define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
+#ifdef _WIN32_WCE
+#include <tlhelp32.h>
+#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
+#undef GetProcAddress
+#define GetProcAddress GetProcAddressA
+#else
 /* See http://msdn.microsoft.com/en-us/library/ms682586(VS.85).aspx:
  * "Note that the standard search strategy and the alternate search strategy
  * specified by LoadLibraryEx with LOAD_WITH_ALTERED_SEARCH_PATH differ in
@@ -35,12 +38,6 @@
  * directory, and the alternate search begins in the directory of the
  * executable module that LoadLibraryEx is loading."
  */
-#ifdef _WIN32_WCE
-#include <tlhelp32.h>
-#define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
-#undef GetProcAddress
-#define GetProcAddress GetProcAddressA
-#else
 #define DEFAULT_LOAD_OPTS LOAD_WITH_ALTERED_SEARCH_PATH
 #endif
 #define LOAD_LIBRARY(NAME,OPTS) (NAME ? LoadLibraryExW(NAME, NULL, OPTS) : GetModuleHandleW(NULL))
@@ -48,16 +45,14 @@
 #define STR_ERROR(CODE,BUF,LEN) w32_format_error(CODE, BUF, LEN)
 #define FREE_LIBRARY(HANDLE) (((HANDLE)==GetModuleHandleW(NULL) || FreeLibrary(HANDLE))?0:-1)
 #define FIND_ENTRY(HANDLE, NAME) w32_find_entry(env, HANDLE, NAME)
-#define GET_LAST_ERROR() GetLastError()
-#define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
 #include <dlfcn.h>
 #include <errno.h>
 #define STRTYPE char*
-#ifdef __APPLE__
-#define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
-#else
+#ifdef __sun__ // solaris sparc and x86/amd64 use default (file.encoding)
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
+#else
+#define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
 #endif
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
@@ -65,43 +60,42 @@
 #define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)
-#define GET_LAST_ERROR() errno
-#define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif
 
 #ifdef _AIX
 #pragma alloca
-#undef LOAD_LIBRARY
+#undef DEFAULT_LOAD_OPTS
 #define DEFAULT_LOAD_OPTS (RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
+#undef LOAD_LIBRARY
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
 #endif
 
 #include <stdlib.h>
+// Force XSI-compliant strerror_r (http://unixhelp.ed.ac.uk/CGI/man-cgi?strerror)
+#define _XOPEN_SOURCE 600
 #include <string.h>
 #include <wchar.h>
 #include <jni.h>
+
+#include "dispatch.h"
 
 #ifndef NO_JAWT
 #include <jawt.h>
 #include <jawt_md.h>
 #endif
 
-#include "dispatch.h"
-
-/* Native memory fault protection */
 #ifdef HAVE_PROTECTION
-#define PROTECT is_protected()
-#endif
-#include "protect.h"
-#define ON_ERROR() throwByName(env, EError, "Invalid memory access")
-#define PSTART() PROTECTED_START()
-#define PEND() PROTECTED_END(ON_ERROR())
-
-#ifdef HAVE_PROTECTION
+// When we have SEH, default to protection on
+#if defined(_WIN32) && !(defined(_WIN64) && defined(__GNUC__))
+static int _protect = 1;
+#else
 static int _protect;
+#endif
 #undef PROTECT
 #define PROTECT _protect
 #endif
+
+#define CHARSET_UTF8 "utf8"
 
 #ifdef __cplusplus
 extern "C" {
@@ -109,20 +103,31 @@ extern "C" {
 
 #ifdef _WIN32
 static char*
-w32_format_error(int error, char* buf, int len) {
+w32_format_error(int err, char* buf, int len) {
   wchar_t* wbuf = NULL;
   int wlen =
-    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM|FORMAT_MESSAGE_IGNORE_INSERTS|FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                   NULL, error, 0, (LPWSTR)&wbuf, 0, NULL);
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
+                   |FORMAT_MESSAGE_IGNORE_INSERTS
+                   |FORMAT_MESSAGE_ALLOCATE_BUFFER,
+                   NULL, err, 0, (LPWSTR)&wbuf, 0, NULL);
   if (wlen > 0) {
-    WideCharToMultiByte(CP_UTF8, 0, wbuf, wlen+1, buf, len, NULL, NULL);
+    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
+    if (result == 0) {
+      fprintf(stderr, "JNA: error converting error message: %d\n", (int)GET_LAST_ERROR());
+      *buf = 0;
+    }
+    else {
+      buf[len-1] = 0;
+    }
   }
   else {
+    // Error retrieving message
     *buf = 0;
   }
   if (wbuf) {
     LocalFree(wbuf);
   }
+
   return buf;
 }
 static HANDLE
@@ -169,20 +174,17 @@ w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
   }
   return func;
 }
+#endif /* _WIN32 */
 
-#endif
-
-#define MEMCPY(D,S,L) do { \
-  PSTART(); memcpy(D,S,L); PEND(); \
+#define MEMCPY(ENV,D,S,L) do {     \
+  PSTART(); memcpy(D,S,L); PEND(ENV); \
 } while(0)
-#define MEMSET(D,C,L) do { \
-  PSTART(); memset(D,C,L); PEND(); \
+#define MEMSET(ENV,D,C,L) do {        \
+  PSTART(); memset(D,C,L); PEND(ENV); \
 } while(0)
 
 #define MASK_CC          com_sun_jna_Function_MASK_CC
 #define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
-
-static jboolean preserve_last_error;
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -227,6 +229,7 @@ static jmethodID MID_String_getBytes;
 static jmethodID MID_String_getBytes2;
 static jmethodID MID_String_toCharArray;
 static jmethodID MID_String_init_bytes;
+static jmethodID MID_String_init_bytes2;
 static jmethodID MID_Method_getReturnType;
 static jmethodID MID_Method_getParameterTypes;
 static jmethodID MID_Long_init;
@@ -256,14 +259,12 @@ static jmethodID MID_DoubleBuffer_arrayOffset;
 #endif /* NO_NIO_BUFFERS */
 
 static jmethodID MID_Pointer_init;
-static jmethodID MID_Native_updateLastError;
 static jmethodID MID_Native_fromNative;
 static jmethodID MID_Native_nativeType;
 static jmethodID MID_Native_toNativeTypeMapped;
 static jmethodID MID_Native_fromNativeTypeMapped;
 static jmethodID MID_Structure_getTypeInfo;
 static jmethodID MID_Structure_newInstance;
-static jmethodID MID_Structure_useMemory;
 static jmethodID MID_Structure_read;
 static jmethodID MID_Structure_write;
 static jmethodID MID_CallbackReference_getCallback;
@@ -290,12 +291,10 @@ static jfieldID FID_Structure_typeInfo;
 static jfieldID FID_IntegerType_value;
 static jfieldID FID_PointerType_pointer;
 
-/* Value of System property jna.encoding. */
-static const char* jna_encoding = NULL;
+jstring fileEncoding;
 
 /* Forward declarations */
 static char* newCString(JNIEnv *env, jstring jstr);
-static char* newCStringUTF8(JNIEnv *env, jstring jstr);
 static char* newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding);
 static wchar_t* newWideCString(JNIEnv *env, jstring jstr);
 
@@ -305,22 +304,33 @@ static void* getDirectBufferAddress(JNIEnv*, jobject);
 #endif
 static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
-static void update_last_error(JNIEnv*, int);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
 
 #if 0
 /** Invokes System.err.println (for debugging only). */
-static void
+void
 println(JNIEnv* env, const char* msg) {
   jclass cls = (*env)->FindClass(env, "java/lang/System");
+  if (!cls) {
+    fprintf(stderr, "JNA: failed to find java.lang.System\n");
+    return;
+  }
   jfieldID fid = (*env)->GetStaticFieldID(env, cls, "err",
-                                          "Ljava/io/PrintStream;");
+					  "Ljava/io/PrintStream;");
   jobject err = (*env)->GetStaticObjectField(env, cls, fid);
+  if (!err) {
+    fprintf(stderr, "JNA: failed to find System.err\n");
+    return;
+  }
   jclass pscls = (*env)->FindClass(env, "java/io/PrintStream");
+  if (!pscls) {
+    fprintf(stderr, "JNA: failed to find java.io.PrintStream\n");
+    return;
+  }
   jmethodID mid = (*env)->GetMethodID(env, pscls, "println",
                                       "(Ljava/lang/String;)V");
-  jstring str = newJavaString(env, msg, JNI_FALSE);
+  jstring str = newJavaString(env, msg, CHARSET_UTF8);
   (*env)->CallObjectMethod(env, err, mid, str);
 }
 #endif
@@ -346,7 +356,7 @@ throwByName(JNIEnv *env, const char *name, const char *msg)
 /** Translate FFI errors into exceptions. */
 jboolean
 ffi_error(JNIEnv* env, const char* op, ffi_status status) {
-  char msg[256];
+  char msg[MSG_SIZE];
   switch(status) {
   case FFI_BAD_ABI:
     snprintf(msg, sizeof(msg), "%s: Invalid calling convention", op);
@@ -385,7 +395,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   void** ffi_values;
   ffi_abi abi;
   ffi_status status;
-  char msg[128];
+  char msg[MSG_SIZE];
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
@@ -562,22 +572,21 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   status = ffi_prep_cif(&cif, abi, nargs, ffi_return_type, ffi_types);
   if (!ffi_error(env, "Native call setup", status)) {
     PSTART();
-    if (flags & THROW_LAST_ERROR) {
+    if ((flags & THROW_LAST_ERROR) != 0) {
       SET_LAST_ERROR(0);
     }
     ffi_call(&cif, FFI_FN(func), resP, ffi_values);
-    if (flags & THROW_LAST_ERROR) {
-      int error = GET_LAST_ERROR();
-      if (error) {
-        char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+    {
+      int err = GET_LAST_ERROR();
+      JNA_set_last_error(env, err);
+      if ((flags & THROW_LAST_ERROR) && err) {
+        char emsg[MSG_SIZE];
+        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
     }
-    else if (preserve_last_error) {
-      update_last_error(env, GET_LAST_ERROR());
-    }
+
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access";} while(0));
   }
 
@@ -624,7 +633,7 @@ getChars(JNIEnv* env, wchar_t* volatile dst, jcharArray chars, volatile jint off
       }
     }
   }
-  PEND();
+  PEND(env);
 }
 
 static void
@@ -654,11 +663,11 @@ setChars(JNIEnv* env, wchar_t* src, jcharArray chars, volatile jint off, volatil
       }
     }
   }
-  PEND();
+  PEND(env);
 }
 
-/* Translates a Java string to a C string using the String.getBytes
- * method, which uses default platform encoding.
+/* Translates a Java string to a C string using the
+ * String.getBytes(byte[],String), using the requested encoding.
  */
 static char *
 newCString(JNIEnv *env, jstring jstr)
@@ -685,10 +694,10 @@ newCString(JNIEnv *env, jstring jstr)
 /* Translates a Java string to a C string using the String.getBytes("UTF8")
  * method, which uses UTF8 encoding.
  */
-static char *
+const char *
 newCStringUTF8(JNIEnv *env, jstring jstr)
 {
-  return newCStringEncoding(env, jstr, "UTF8");
+  return newCStringEncoding(env, jstr, CHARSET_UTF8);
 }
 
 static char*
@@ -700,7 +709,7 @@ newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding)
     if (!encoding) return newCString(env, jstr);
 
     bytes = (*env)->CallObjectMethod(env, jstr, MID_String_getBytes2,
-                                     newJavaString(env, encoding, JNI_FALSE));
+                                     newJavaString(env, encoding, CHARSET_UTF8));
     if (!(*env)->ExceptionCheck(env)) {
         jint len = (*env)->GetArrayLength(env, bytes);
         result = (char *)malloc(len + 1);
@@ -749,31 +758,43 @@ newWideCString(JNIEnv *env, jstring str)
     return result;
 }
 
-/** Update the per-thread last error setting. */
-static void
-update_last_error(JNIEnv* env, int err) {
-  (*env)->CallStaticVoidMethod(env, classNative,
-                               MID_Native_updateLastError, err);
-}
-
 jobject
 newJavaWString(JNIEnv *env, const wchar_t* ptr) {
-  jstring s = newJavaString(env, (const char*)ptr, JNI_TRUE);
-  return (*env)->NewObject(env, classWString, MID_WString_init, s);
+  if (ptr) {
+    jstring s = newJavaString(env, (const char*)ptr, NULL);
+    return (*env)->NewObject(env, classWString, MID_WString_init, s);
+  }
+  return NULL;
 }
 
-/* Constructs a Java string from a char array (using the String(byte [])
- * constructor, which uses default local encoding) or a short array (using the
+jstring
+encodingString(JNIEnv *env, const char* ptr) {
+  jstring result = NULL;
+  jbyteArray bytes = 0;
+  int len = (int)strlen((const char*)ptr);
+  
+  bytes = (*env)->NewByteArray(env, len);
+  if (bytes != NULL) {
+    (*env)->SetByteArrayRegion(env, bytes, 0, len, (const jbyte *)ptr);
+    result = (*env)->NewObject(env, classString,
+                               MID_String_init_bytes, bytes);
+    (*env)->DeleteLocalRef(env, bytes);
+  }
+  return result;
+}
+
+/* Constructs a Java string from a char array (using the String(byte[],String)
+ * constructor) or a short array (using the
  * String(char[]) ctor, which uses the character values unmodified).
  */
 jstring
-newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
+newJavaString(JNIEnv *env, const char *ptr, const char* charset)
 {
     volatile jstring result = 0;
     PSTART();
 
     if (ptr) {
-      if (wide) {
+      if (charset == NULL) {
         // TODO: proper conversion from native wchar_t to jchar, if any
         jsize len = (int)wcslen((const wchar_t*)ptr);
         if (sizeof(jchar) != sizeof(wchar_t)) {
@@ -798,18 +819,19 @@ newJavaString(JNIEnv *env, const char *ptr, jboolean wide)
       }
       else {
         jbyteArray bytes = 0;
-        int len = (int)strlen(ptr);
+        int len = (int)strlen((const char*)ptr);
 
         bytes = (*env)->NewByteArray(env, len);
-        if (bytes != 0) {
-          (*env)->SetByteArrayRegion(env, bytes, 0, len, (jbyte *)ptr);
+        if (bytes != NULL) {
+          (*env)->SetByteArrayRegion(env, bytes, 0, len, (const jbyte *)ptr);
           result = (*env)->NewObject(env, classString,
-                                     MID_String_init_bytes, bytes);
+                                     MID_String_init_bytes2, bytes, 
+                                     encodingString(env, charset));
           (*env)->DeleteLocalRef(env, bytes);
         }
       }
     }
-    PEND();
+    PEND(env);
 
     return result;
 }
@@ -825,25 +847,11 @@ newJavaPointer(JNIEnv *env, void *p)
 }
 
 jobject
-newJavaStructure(JNIEnv *env, void *data, jclass type, jboolean new_memory)
+newJavaStructure(JNIEnv *env, void *data, jclass type)
 {
   if (data != NULL) {
-    volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type);
-    if (obj != NULL) {
-      ffi_type* rtype = getStructureType(env, obj);
-      if (rtype) {
-        if (new_memory) {
-          MEMCPY(getStructureAddress(env, obj), data, rtype->size);
-        }
-        else {
-          (*env)->CallVoidMethod(env, obj, MID_Structure_useMemory, newJavaPointer(env, data));
-        }
-        if (!(*env)->ExceptionCheck(env)) {
-          (*env)->CallVoidMethod(env, obj, MID_Structure_read);
-        }
-      }
-    }
-    else {
+    volatile jobject obj = (*env)->CallStaticObjectMethod(env, classStructure, MID_Structure_newInstance, type, A2L(data));
+    if (obj == NULL) {
       fprintf(stderr, "JNA: failed to create structure\n");
     }
     return obj;
@@ -1016,26 +1024,38 @@ initializeThread(callback* cb, AttachOptions* args) {
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   jobject group = NULL;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
 
-  if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
-    fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
-    return NULL;
+  if (!attached) {
+    if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
+      fprintf(stderr, "JNA: Can't attach native thread to VM for callback thread initialization\n");
+      return NULL;
+    }
   }
   (*env)->PushLocalFrame(env, 16);
   {
     jobject cbobj = (*env)->NewLocalRef(env, cb->object);
     if (!(*env)->IsSameObject(env, cbobj, NULL)) {
-      jobject argsobj = newJavaStructure(env, args, classAttachOptions, JNI_FALSE);
+      jobject argsobj = newJavaStructure(env, args, classAttachOptions);
       group = (*env)->CallStaticObjectMethod(env, classCallbackReference,
                                              MID_CallbackReference_initializeThread,
                                              cbobj, argsobj);
       if (group != NULL) {
         group = (*env)->NewWeakGlobalRef(env, group);
       }
+      if (args->name != NULL) {
+        // Make a copy, since the Java Structure which owns this native memory
+        // will go out of scope and be available for GC
+        args->name = strdup(args->name);
+      }
     }
   }
   (*env)->PopLocalFrame(env, NULL);
-  (*jvm)->DetachCurrentThread(jvm);
+  if (!attached) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread after callback init\n");
+    }
+  }
 
   return group;
 }
@@ -1061,7 +1081,7 @@ toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote) 
     }
   }
   else {
-    MEMSET(valuep, 0, size);
+    MEMSET(env, valuep, 0, size);
   }
 }
 
@@ -1074,7 +1094,7 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
     }
   }
   else {
-    MEMSET(valuep, 0, size);
+    MEMSET(env, valuep, 0, size);
   }
 }
 
@@ -1230,38 +1250,22 @@ getBufferArray(JNIEnv* env, jobject buf,
 }
 #endif /* NO_NIO_BUFFERS */
 
-/** Returns the last error code. */
-int lastError() {
-  return GET_LAST_ERROR();
-}
-/** Set the last error code. */
-void setLastError(int err) {
-  SET_LAST_ERROR(err);
-}
-
-static const void*
-get_system_property(JNIEnv* env, const char* name, jboolean wide) {
+static jstring
+get_system_property(JNIEnv* env, const char* name) {
   jclass classSystem = (*env)->FindClass(env, "java/lang/System");
   if (classSystem != NULL) {
     jmethodID mid = (*env)->GetStaticMethodID(env, classSystem, "getProperty",
                                               "(Ljava/lang/String;)Ljava/lang/String;");
     if (mid != NULL) {
-      jstring propname = newJavaString(env, name, JNI_FALSE);
-      jstring value = (*env)->CallStaticObjectMethod(env, classSystem,
-                                                     mid, propname);
-      if (value) {
-        if (wide) {
-          return newWideCString(env, value);
-        }
-        return newCStringUTF8(env, value);
-      }
+      jstring propname = newJavaString(env, name, CHARSET_UTF8);
+      return (*env)->CallStaticObjectMethod(env, classSystem, mid, propname);
     }
   }
   return NULL;
 }
 
 static const char*
-jnidispatch_init(JNIEnv* env) {
+JNA_init(JNIEnv* env) {
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
   if (!LOAD_CREF(env, Class, "java/lang/Class")) return "java.lang.Class";
   if (!LOAD_CREF(env, Method, "java/lang/reflect/Method")) return "java.lang.reflect.Method";
@@ -1329,6 +1333,9 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_MID(env, MID_String_init_bytes, classString,
                 "<init>", "([B)V"))
     return "String<init>([B)V";
+  if (!LOAD_MID(env, MID_String_init_bytes2, classString,
+                "<init>", "([BLjava/lang/String;)V"))
+    return "String<init>([B)V";
   if (!LOAD_MID(env, MID_Method_getParameterTypes, classMethod,
                 "getParameterTypes", "()[Ljava/lang/Class;"))
     return "Method.getParameterTypes()";
@@ -1386,8 +1393,10 @@ jnidispatch_init(JNIEnv* env) {
   if (!LOAD_FID(env, FID_Double_value, classDouble, "value", "D"))
     return "Double.value";
 
-  // Cache jna.encoding value
-  jna_encoding = get_system_property(env, "jna.encoding", JNI_FALSE);
+  fileEncoding = get_system_property(env, "file.encoding");
+  if (fileEncoding) {
+    fileEncoding = (*env)->NewGlobalRef(env, fileEncoding);
+  }
 
   return NULL;
 }
@@ -1539,8 +1548,9 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
   case 'V':
     return &ffi_type_void;
   case 's': {
+#define PLACEHOLDER_MEMORY ((jlong)0)
     jobject s = (*env)->CallStaticObjectMethod(env, classStructure,
-                                               MID_Structure_newInstance, cls);
+                                               MID_Structure_newInstance, cls, PLACEHOLDER_MEMORY);
     if (s) {
       return getStructureType(env, s);
     }
@@ -1585,6 +1595,7 @@ typedef struct _method_data {
   jobject* to_native;
   jobject  from_native;
   jboolean throw_last_error;
+  const char* encoding;
 } method_data;
 
 /** Direct invocation glue.  VM vectors to this callback, which in turn calls
@@ -1604,7 +1615,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   void* oldresp = resp;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
-  char msg[64];
+  char msg[MSG_SIZE];
 
   if (data->flags) {
     objects = alloca(data->cif.nargs * sizeof(void*));
@@ -1670,7 +1681,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         args[i] = getStructureAddress(env, objects[i]);
         break;
       case CVT_STRING:
-        *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], jna_encoding);
+        *(void **)args[i] = newCStringEncoding(env, (jstring)*(void **)args[i], data->encoding);
         break;
       case CVT_WSTRING:
         {
@@ -1742,17 +1753,15 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       SET_LAST_ERROR(0);
     }
     ffi_call(&data->cif, FFI_FN(data->fptr), resp, args);
-    if (data->throw_last_error) {
-      int error = GET_LAST_ERROR();
-      if (error) {
-        char emsg[1024];
-        snprintf(msg, sizeof(msg), "[%d]%s", error, STR_ERROR(error, emsg, sizeof(emsg)));
+    {
+      int err = GET_LAST_ERROR();
+      JNA_set_last_error(env, err);
+      if (data->throw_last_error && err) {
+        char emsg[MSG_SIZE];
+        snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
       }
-    }
-    else if (preserve_last_error) {
-      update_last_error(env, GET_LAST_ERROR());
     }
     PROTECTED_END(do { throw_type=EError;throw_msg="Invalid memory access"; } while(0));
   }
@@ -1770,16 +1779,16 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     *(void **)resp = newJavaPointer(env, *(void **)resp);
     break;
   case CVT_STRING:
-    *(void **)resp = newJavaString(env, *(void **)resp, JNI_FALSE);
+    *(void **)resp = newJavaString(env, *(void **)resp, data->encoding);
     break;
   case CVT_WSTRING:
     *(void **)resp = newJavaWString(env, *(void **)resp);
     break;
   case CVT_STRUCTURE:
-    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass, JNI_FALSE);
+    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass);
     break;
   case CVT_STRUCTURE_BYVAL:
-    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass, JNI_TRUE);
+    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass);
     break;
   case CVT_CALLBACK:
     *(void **)resp = newJavaCallback(env, *(void **)resp, data->closure_rclass);
@@ -1829,9 +1838,8 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
   JavaVM* jvm = cb->vm;
   JNIEnv* env;
   jobject obj;
-  int attached;
+  int attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
 
-  attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   if (!attached) {
     if ((*jvm)->AttachCurrentThread(jvm, (void *)&env, NULL) != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for closure handler\n");
@@ -1860,7 +1868,9 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
   }
 
   if (!attached) {
-    (*jvm)->DetachCurrentThread(jvm);
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread after callback handling\n");
+    }
   }
 }
 
@@ -1994,10 +2004,11 @@ Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
                                              jobjectArray param_types,
                                              jclass return_type,
                                              jint call_conv,
-                                             jint options) {
+                                             jint options,
+                                             jstring encoding) {
   callback* cb =
     create_callback(env, obj, method, param_types, return_type,
-                    call_conv, options);
+                    call_conv, options, encoding);
 
   return A2L(cb);
 }
@@ -2085,7 +2096,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3BII
 {
   PSTART();
   (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2109,7 +2120,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3DII
 {
   PSTART();
   (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2122,7 +2133,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3FII
 {
   PSTART();
   (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2135,7 +2146,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3III
 {
   PSTART();
   (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2148,7 +2159,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3JII
 {
   PSTART();
   (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2161,7 +2172,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__J_3SII
 {
   PSTART();
   (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2181,7 +2192,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf__JB
       result = i;
     ++i;
   }
-  PEND();
+  PEND(env);
 
   return result;
 }
@@ -2196,7 +2207,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3BII
 {
   PSTART();
   (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2220,7 +2231,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3DII
 {
   PSTART();
   (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2233,7 +2244,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3FII
 {
   PSTART();
   (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2246,7 +2257,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3III
 {
   PSTART();
   (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2259,7 +2270,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3JII
 {
   PSTART();
   (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2272,7 +2283,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__J_3SII
 {
   PSTART();
   (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr));
-  PEND();
+  PEND(env);
 }
 
 /*
@@ -2284,7 +2295,7 @@ JNIEXPORT jbyte JNICALL Java_com_sun_jna_Native_getByte
     (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jbyte res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
@@ -2297,7 +2308,7 @@ JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
     (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     wchar_t res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return (jchar)res;
 }
 
@@ -2310,7 +2321,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
     (JNIEnv *env, jclass UNUSED(cls), jlong addr)
 {
     void *ptr = NULL;
-    MEMCPY(&ptr, L2A(addr), sizeof(ptr));
+    MEMCPY(env, &ptr, L2A(addr), sizeof(ptr));
     return A2L(ptr);
 }
 
@@ -2338,7 +2349,7 @@ JNIEXPORT jdouble JNICALL Java_com_sun_jna_Native_getDouble
 (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jdouble res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
@@ -2351,7 +2362,7 @@ JNIEXPORT jfloat JNICALL Java_com_sun_jna_Native_getFloat
 (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jfloat res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
@@ -2364,7 +2375,7 @@ JNIEXPORT jint JNICALL Java_com_sun_jna_Native_getInt
 (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jint res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
@@ -2377,7 +2388,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_getLong
 (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jlong res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
@@ -2390,30 +2401,54 @@ JNIEXPORT jshort JNICALL Java_com_sun_jna_Native_getShort
 (JNIEnv * env, jclass UNUSED(cls), jlong addr)
 {
     jshort res = 0;
-    MEMCPY(&res, L2A(addr), sizeof(res));
+    MEMCPY(env, &res, L2A(addr), sizeof(res));
     return res;
 }
 
 /*
  * Class:     Native
- * Method:    _getString
+ * Method:    getWideString
  * Signature: (JB)Ljava/lang/String;
  */
-JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getString
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jboolean wide)
+JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getWideString
+(JNIEnv *env, jclass UNUSED(cls), jlong addr)
 {
-  return newJavaString(env, L2A(addr), wide);
+  return newJavaString(env, L2A(addr), NULL);
 }
 
 /*
  * Class:     Native
- * Method:    _setMemory
+ * Method:    getStringBytes
+ * Signature: (JB)LB;
+ */
+JNIEXPORT jbyteArray JNICALL Java_com_sun_jna_Native_getStringBytes
+(JNIEnv *env, jclass UNUSED(cls), jlong addr)
+{
+  volatile jbyteArray bytes = 0;
+  PSTART();
+  {
+    int len = (int)strlen(L2A(addr));
+    bytes = (*env)->NewByteArray(env, len);
+    if (bytes != 0) {
+      (*env)->SetByteArrayRegion(env, bytes, 0, len, (jbyte *)L2A(addr));
+    }
+    else {
+      throwByName(env, EOutOfMemory, "Can't allocate byte array");
+    }
+  }
+  PEND(env);
+  return bytes;
+}
+
+/*
+ * Class:     Native
+ * Method:    setMemory
  * Signature: (JJB)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
 (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong count, jbyte value)
 {
-  MEMSET(L2A(addr), (int)value, (size_t)count);
+  MEMSET(env, L2A(addr), (int)value, (size_t)count);
 }
 
 /*
@@ -2424,7 +2459,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setByte
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jbyte value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
@@ -2436,7 +2471,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setChar
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jchar value)
 {
   wchar_t ch = value;
-  MEMCPY(L2A(addr), &ch, sizeof(ch));
+  MEMCPY(env, L2A(addr), &ch, sizeof(ch));
 }
 
 /*
@@ -2448,7 +2483,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
 {
   void *ptr = L2A(value);
-  MEMCPY(L2A(addr), &ptr, sizeof(void *));
+  MEMCPY(env, L2A(addr), &ptr, sizeof(void *));
 }
 
 /*
@@ -2459,7 +2494,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jdouble value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
@@ -2470,7 +2505,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jfloat value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
@@ -2481,7 +2516,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jint value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
@@ -2492,7 +2527,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jlong value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
@@ -2503,30 +2538,24 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setShort
 (JNIEnv * env, jclass UNUSED(cls), jlong addr, jshort value)
 {
-  MEMCPY(L2A(addr), &value, sizeof(value));
+  MEMCPY(env, L2A(addr), &value, sizeof(value));
 }
 
 /*
  * Class:     Native
- * Method:    _setString
- * Signature: (JLjava/lang/String;Z)V
+ * Method:    setWideString
+ * Signature: (JLjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_com_sun_jna_Native_setString
-(JNIEnv *env, jclass UNUSED(cls), jlong addr, jstring value, jboolean wide)
+JNIEXPORT void JNICALL Java_com_sun_jna_Native_setWideString
+(JNIEnv *env, jclass UNUSED(cls), jlong addr, jstring value)
 {
     int len = (*env)->GetStringLength(env, value);
     const void* volatile str;
-    volatile int size = len + 1;
+    volatile int size = (len + 1) * sizeof(wchar_t);
 
-    if (wide) {
-      size *= sizeof(wchar_t);
-      str = newWideCString(env, value);
-    }
-    else {
-      str = newCStringEncoding(env, value, jna_encoding);
-    }
+    str = newWideCString(env, value);
     if (str != NULL) {
-      MEMCPY(L2A(addr), str, size);
+      MEMCPY(env, L2A(addr), str, size);
       free((void*)str);
     }
 }
@@ -2569,7 +2598,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
   case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
   default:
     {
-      char msg[1024];
+      char msg[MSG_SIZE];
       snprintf(msg, sizeof(msg), "Invalid sizeof type %d", (int)type);
       throwByName(env, EIllegalArgument, msg);
       return -1;
@@ -2582,7 +2611,6 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
  */
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
-  preserve_last_error = JNI_TRUE;
   if (!LOAD_CREF(env, Pointer, "com/sun/jna/Pointer")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain class com.sun.jna.Pointer");
@@ -2599,12 +2627,6 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   else if (!(classNative = (*env)->NewWeakGlobalRef(env, cls))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain global reference for class com.sun.jna.Native");
-  }
-  else if (!(MID_Native_updateLastError
-             = (*env)->GetStaticMethodID(env, classNative,
-                                         "updateLastError", "(I)V"))) {
-    throwByName(env, EUnsatisfiedLink,
-                "Can't obtain updateLastError method for class com.sun.jna.Native");
   }
   else if (!(MID_Native_fromNative
              = (*env)->GetStaticMethodID(env, classNative,
@@ -2641,14 +2663,9 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
   else if (!(MID_Structure_newInstance
              = (*env)->GetStaticMethodID(env, classStructure,
-                                         "newInstance", "(Ljava/lang/Class;)Lcom/sun/jna/Structure;"))) {
+                                         "newInstance", "(Ljava/lang/Class;J)Lcom/sun/jna/Structure;"))) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static newInstance method for class com.sun.jna.Structure");
-  }
-  else if (!LOAD_MID(env, MID_Structure_useMemory, classStructure,
-                     "useMemory", "(Lcom/sun/jna/Pointer;)V")) {
-    throwByName(env, EUnsatisfiedLink,
-                "Can't obtain useMemory method for class com.sun.jna.Structure");
   }
   else if (!LOAD_MID(env, MID_Structure_read, classStructure,
                      "autoRead", "()V")) {
@@ -2834,8 +2851,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
     // Use Unicode strings in case the path to the library includes non-ASCII
     // characters.
     wchar_t* path = L"jawt.dll";
-    wchar_t* prop = (wchar_t*)get_system_property(env, "java.home", JNI_TRUE);
-    if (prop != NULL) {
+    jstring jprop = get_system_property(env, "java.home");
+    if (jprop != NULL) {
+      const wchar_t* prop = newWideCString(env, jprop);
       const wchar_t* suffix = L"/bin/jawt.dll";
       size_t len = wcslen(prop) + wcslen(suffix) + 1;
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
@@ -2850,12 +2868,12 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), job
 #define JAWT_NAME path
 #endif
     if ((jawt_handle = LOAD_LIBRARY(JAWT_NAME, DEFAULT_LOAD_OPTS)) == NULL) {
-      char msg[1024];
+      char msg[MSG_SIZE];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(msg, sizeof(msg)));
       return -1;
     }
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
-      char msg[1024], buf[1024];
+      char msg[MSG_SIZE], buf[MSG_SIZE];
       snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
                METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
       throwByName(env, EUnsatisfiedLink, msg);
@@ -2973,19 +2991,14 @@ Java_com_sun_jna_Native_isProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp)) 
 }
 
 JNIEXPORT void JNICALL
-Java_com_sun_jna_Native_setPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(classp), jboolean preserve) {
-  preserve_last_error = preserve;
-}
-
-JNIEXPORT jboolean JNICALL
-Java_com_sun_jna_Native_getPreserveLastError(JNIEnv *UNUSED(env), jclass UNUSED(classp)) {
-  return preserve_last_error;
-}
-
-JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setLastError(JNIEnv *env, jclass UNUSED(classp), jint code) {
-  update_last_error(env, code);
+  JNA_set_last_error(env, code);
   SET_LAST_ERROR(code);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_sun_jna_Native_getLastError(JNIEnv *env, jclass UNUSED(classp)) {
+  return JNA_get_last_error(env);
 }
 
 JNIEXPORT jstring JNICALL
@@ -2993,7 +3006,7 @@ Java_com_sun_jna_Native_getNativeVersion(JNIEnv *env, jclass UNUSED(classp)) {
 #ifndef JNA_JNI_VERSION
 #define JNA_JNI_VERSION "undefined"
 #endif
-  return newJavaString(env, JNA_JNI_VERSION, JNI_FALSE);
+  return newJavaString(env, JNA_JNI_VERSION, CHARSET_UTF8);
 }
 
 JNIEXPORT jstring JNICALL
@@ -3001,7 +3014,7 @@ Java_com_sun_jna_Native_getAPIChecksum(JNIEnv *env, jclass UNUSED(classp)) {
 #ifndef CHECKSUM
 #define CHECKSUM "undefined"
 #endif
-  return newJavaString(env, CHECKSUM, JNI_FALSE);
+  return newJavaString(env, CHECKSUM, CHARSET_UTF8);
 }
 
 JNIEXPORT jint JNICALL
@@ -3018,16 +3031,18 @@ JNI_OnLoad(JavaVM *jvm, void *UNUSED(reserved)) {
     }
   }
 
-  if ((err = jnidispatch_init(env)) != NULL) {
+  if ((err = JNA_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading core IDs: %s\n", err);
     result = 0;
   }
-  else if ((err = jnidispatch_callback_init(env)) != NULL) {
+  else if ((err = JNA_callback_init(env)) != NULL) {
     fprintf(stderr, "JNA: Problems loading callback IDs: %s\n", err);
     result = 0;
   }
   if (!attached) {
-    (*jvm)->DetachCurrentThread(jvm);
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread on initial load\n");
+    }
   }
 
   return result;
@@ -3067,6 +3082,11 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
 
+  if (fileEncoding) {
+    (*env)->DeleteGlobalRef(env, fileEncoding);
+    fileEncoding = NULL;
+  }
+
   for (i=0;i < sizeof(refs)/sizeof(refs[0]);i++) {
     if (*refs[i]) {
       (*env)->DeleteWeakGlobalRef(env, *refs[i]);
@@ -3074,7 +3094,7 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
 
-  jnidispatch_callback_dispose(env);
+  JNA_callback_dispose(env);
 
 #ifdef JAWT_HEADLESS_HACK
   if (jawt_handle != NULL) {
@@ -3084,12 +3104,10 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
   }
 #endif
 
-  if (jna_encoding) {
-    free((void*)jna_encoding);
-  }
-
   if (!attached) {
-    (*vm)->DetachCurrentThread(vm);
+    if ((*vm)->DetachCurrentThread(vm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread on unload\n");
+    }
   }
 }
 
@@ -3112,6 +3130,7 @@ Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass UNUSED(ncls), jclass cls,
     free(md->arg_types);
     free(md->closure_arg_types);
     free(md->flags);
+    free((void *)md->encoding);
     free(md);
   }
   (*env)->ReleaseLongArrayElements(env, handles, data, 0);
@@ -3138,7 +3157,8 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
                                        jlong function, jint cc,
                                        jboolean throw_last_error,
                                        jobjectArray to_native,
-                                       jobject from_native)
+                                       jobject from_native,
+                                       jstring encoding)
 {
   int argc = atypes ? (*env)->GetArrayLength(env, atypes) : 0;
   const char* cname = newCStringUTF8(env, name);
@@ -3172,6 +3192,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   data->rflag = rconversion;
   data->to_native = NULL;
   data->from_native = from_native ? (*env)->NewWeakGlobalRef(env, from_native) : NULL;
+  data->encoding = newCStringUTF8(env, encoding);
 
   for (i=0;i < argc;i++) {
     data->closure_arg_types[i+2] = (ffi_type*)L2A(closure_types[i]);
@@ -3285,6 +3306,11 @@ Java_com_sun_jna_Native_initialize_1ffi_1type(JNIEnv *env, jclass UNUSED(cls), j
     return 0;
   }
   return (jint)type->size;
+}
+
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setDetachState(JNIEnv* env, jclass UNUSED(cls), jboolean d, jlong flag) {
+  JNA_detach(env, d, L2A(flag));
 }
 
 #ifdef __cplusplus

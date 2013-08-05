@@ -18,22 +18,28 @@ import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Properties;
 
 import junit.framework.TestCase;
 
-public class JNAUnloadTest extends TestCase {
+/** Test loading and unloading native support from various locations.  Note
+ * that no JNI classes are directly referenced in these tests.
+ */
+public class JNAUnloadTest extends TestCase implements Paths {
     
-    private static final String BUILDDIR =
-        System.getProperty("jna.builddir", "build"
-                           + (Platform.is64Bit() ? "-d64" : ""));
-
-    private static class TestLoader extends URLClassLoader {
+    private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
                     Platform.isWindowsCE() 
                     ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
                     : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
-            }, null);
+                  }, new CloverLoader());
+            if (fromJar) {
+                assertJarExists();
+            }
+            else {
+                assertLibraryExists();
+            }
         }
         protected Class findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
@@ -48,15 +54,26 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    public void testLoadFromJar() throws Exception {
-        Class.forName("com.sun.jna.Native", true, new TestLoader(true));
+    protected void assertJarExists() {
+        File jar = new File(JNAJAR);
+        if (!jar.exists()) {
+            throw new Error("Expected JNA jar file at " + jar + " is missing");
+        }
+    }
+    
+    protected void assertLibraryExists() {
+        String osPrefix = Platform.getNativeLibraryResourcePrefix();
+        String name = System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+        File lib = new File(CLASSES + "/com/sun/jna/" + osPrefix + "/" + name);
+        if (!lib.exists()) {
+            throw new Error("Expected JNA library at " + lib + " is missing");
+        }
     }
 
     public void testAvoidJarUnpacking() throws Exception {
         System.setProperty("jna.nounpack", "true");
-        ClassLoader loader = new TestLoader(true);
         try {
-            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(true));
 
             fail("Class com.sun.jna.Native should not be loadable if jna.nounpack=true: "
                  + cls.getClassLoader());
@@ -68,18 +85,27 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails under clover
-    public void testUnloadFromJar() throws Exception {
-        File jar = new File((Platform.isWindowsCE() ? "/Storage Card" : BUILDDIR) + "/jna.jar");
-        if (!jar.exists()) {
-            throw new Error("Expected JNA jar file at " + jar + " is missing");
-        }
+    public void testAvoidResourcePathLoading() throws Exception {
+        System.setProperty("jna.noclasspath", "true");
+        try {
+            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(false));
 
+            fail("Class com.sun.jna.Native should not be loadable if jna.noclasspath=true: "
+                 + cls.getClassLoader());
+        }
+        catch(UnsatisfiedLinkError e) {
+        }
+        finally {
+            System.setProperty("jna.noclasspath", "false");
+        }
+    }
+
+    public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library path unavailable", path);
@@ -127,13 +153,13 @@ public class JNAUnloadTest extends TestCase {
         }
     }
 
-    // Fails under clover and OpenJDK(linux/ppc)
-    public void testUnload() throws Exception {
+    // GC Fails under OpenJDK(linux/ppc)
+    public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library not found", path);
@@ -176,6 +202,24 @@ public class JNAUnloadTest extends TestCase {
             loader = null;
             cls = null;
             System.gc();
+        }
+    }
+
+    // Fails on windows (32 and 64-bit)
+    public void testLoadFromUnicodePath() throws Exception {
+        final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
+        File tmpdir = Native.getTempDir();
+        File unicodeDir = new File(tmpdir, UNICODE);
+        unicodeDir.mkdirs();
+        Properties props = (Properties)System.getProperties().clone();
+        try {
+            System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
+            ClassLoader loader = new TestLoader(true);
+            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+            assertEquals("Wrong class loader", loader, cls.getClassLoader());
+        }
+        finally {
+            System.setProperties(props);
         }
     }
 

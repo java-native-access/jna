@@ -1,35 +1,82 @@
-Next Release (3.5.2)
-====================
+Next Release (4.0)
+==================
 
-Bug Fixes
----------
-* [#183](https://github.com/twall/jna/pull/183): Fix `LMAccess.GROUP_INFO_3.getFieldOrder()` to return correct fields names - [@bhamail](https://github.com/bhamail).
-* [#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+
+NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
 Features
 --------
-* [#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
-* [#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
-* [#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification()` and `WTSUnRegisterSessionNotification()` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
-* [#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
-* [#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
-* [#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
-* [#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
-* [#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
-* [#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
-* [#192](https://github.com/twall/jna/pull/192): Added Win32 `SHGetSpecialFolderPath()` and initialization file (.ini) API functions from `kernel32.dll` - [@headcrashing](https://github.com/headcrashing).
-* [#194](https://github.com/twall/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
-* [#196](https://github.com/twall/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
+* Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
+* [#109](https://github.com/twall/jna/issues/109): Set default Java compatibility level to 1.6 - [@twall](https://github.com/twall).
+* [#209](https://github.com/twall/jna/issues/209): Improved default performance saving last error results - [@twall](https://github.com/twall).
+* Use predictable names for CPU architecture prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
+* Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
+* Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library). This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
+* Use per-library String encoding settings (see `Native.getDefaultStringEncoding()` and `Structure.getStringEncoding()`) - [@twall](https://github.com/twall).
+* Added memory dump for debugging (see `com.sun.jna.Memory`) - [@twall](https://github.com/twall).
+* Improved caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
+* [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
+* [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
+* Added `jna.debug_load` property to diagnose library loading issues - [@twall](https://github.com/twall).
+* Throw explicit `IllegalArgumentException` when `Structure.ByReference` is used where it shouldn't be (can result in multiply freed memory or other unexpected behavior) - [@twall](https://github.com/twall).
+
+Bug Fixes
+---------
+* [#213](https://github.com/twall/jna/pull/213): Fixed `Structure.toString()` not to dump memory when `jna.dump_memory` is false - [@tomohiron](https://github.com/tomohiron).
+* Use dedicated TLS to indicate callback detach state, to avoid any potential conflicts with last error storage - [@twall](https://github.com/twall).
+* [#173](https://github.com/twall/jna/issues/173): Fixed OSX 10.8/Xcode 4+ builds, web start path with Oracle 1.7 JDK - [@mkjellman](https://github.com/mkjellman).
+* [#215](https://github.com/twall/jna/issues/215): Forced use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
+* [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
+* [#218](https://github.com/twall/jna/issues/218): Explicitly handled broken Android `SecurityManager` implementation - [@twall](https://github.com/twall).
+* [#223](https://github.com/twall/jna/issues/223): Fixed layout/size derivation for unions - [@twall](https://github.com/twall).
+* [#229](https://github.com/twall/jna/issues/229): Added `CreateProcessW` (Unicode version) - [@twall](https://github.com/twall).
+* Avoid solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
+* Fixed NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
+* [#237](https://github.com/twall/jna/issues/237): Fix LastErrorException/getLastError on AIX - [@skissane](https://github.com/skissane).
+* [#228](https://github.com/twall/jna/issues/228): Fix win32/win64 crashes due to LastErrorException buffer overruns (`snprintf` on windows is broken) - [@davidhoyt](https://github.com/davidhoyt).
+
+Release 3.5.2
+=============
+
+Features
+--------
+* Basic [COM support](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md) for w32 - [@wolftobias](https://github.com/wolftobias).
+* Avoid superfluous Structure memory allocation by using Structure(Pointer) ctors if available - [@twall](https://github.com/twall).
+* [PR#120](https://github.com/twall/jna/pull/120): Provide methods for extracting native libraries from the class path for use by JNA - [@Zlika](https://github.com/Zlika).
+* [PR#163](https://github.com/twall/jna/pull/163): The Java `GUID` structure can be used directly as alternative to `Ole32Util.getGUIDFromString()` - [@wolftobias](https://github.com/wolftobias).
+* [PR#163](https://github.com/twall/jna/pull/163): Ported Win32 `dbt.h` - [@wolftobias](https://github.com/wolftobias).
+* [PR#163](https://github.com/twall/jna/pull/163): Added Win32 `WTSRegisterSessionNotification()` and `WTSUnRegisterSessionNotification()` from `Wtsapi32.dll` - [@wolftobias](https://github.com/wolftobias).
+* [PR#163](https://github.com/twall/jna/pull/163): Added Win32 `native_window_msg` that creates windows, registers for USB device and logon/logoff notifications - [@wolftobias](https://github.com/wolftobias).
+* [PR#178](https://github.com/twall/jna/pull/178): Added Win32 `USER_INFO_10` structure from `LMAccess.h` - [@davidmc24](https://github.com/davidmc24).
+* [PR#192](https://github.com/twall/jna/pull/192): Added Win32 `SHGetSpecialFolderPath()` and initialization file (.ini) API functions from `kernel32.dll` - [@headcrashing](https://github.com/headcrashing).
+* [PR#194](https://github.com/twall/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
+* [PR#196](https://github.com/twall/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
+* [PR#187](https://github.com/twall/jna/pull/187): Allow StructureFieldOrderTest unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
+
+Bug Fixes
+---------
+* [PR#180](https://github.com/twall/jna/pull/180): Fix: added missing fields in `XEvents.getFieldOrder()` - [@xwizard](https://github.com/xwizard).
+* [PR#183](https://github.com/twall/jna/pull/183): Fix `LMAccess.GROUP_INFO_3.getFieldOrder()` to return correct fields names - [@bhamail](https://github.com/bhamail).
+* [PR#187](https://github.com/twall/jna/pull/187): Fix `getFieldOrder()` to return correct field names for some X11 structures - [@bhamail](https://github.com/bhamail).
+* Remove deprecated methods on Memory (getSize,isValid) and Structure (getSize) - [@twall](https://github.com/twall).
+* Remove problematic AWT check via `Class.forName("java.awt.Component")` (see [here](https://bugs.eclipse.org/bugs/show_bug.cgi?id=388170)) - [@twall](https://github.com/twall).
+* [PR#210](https://github.com/twall/jna/pull/210) Add OSGI processor specs for Mac OS X - [@bertfrees](https://github.com/bertfrees).
+* [PR#174](https://github.com/twall/jna/pull/174): Recompile linux-amd64 natives to remove glibc-2.11 dependencies, now requires only 2.2.5 or better - [@twall](https://github.com/twall).
+* [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
+* [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
+* [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* Fix NPE if `Thread.getContextClassLoader()` returns `null`  - [@twall](https://github.com/twall).
 
 Release 3.5.1
-====================
+=============
 
 Bug Fixes
 ---------
 * Fix bug where string fields sometimes failed to be writtern - [@twall](https://github.com/twall) (roman kisluhin).
-* [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
-* [#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
-* [#151](https://github.com/twall/jna/pull/151): 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
+* [PR#145](https://github.com/twall/jna/pull/145): Fix `Netapi32Util.getDomainTrusts()` returns "empty" domain object - [@aikidojohn](https://github.com/aikidojohn).
+* [PR#145](https://github.com/twall/jna/pull/145): Fix `Netapi32.getDC()` - added missing fields in `DOMAIN_CONTROLLER_INFO` - [@aikidojohn](https://github.com/aikidojohn).
+* [PR#151](https://github.com/twall/jna/pull/151): 'platform.jar' in the dist directory was not updated for release 3.5.0. (The 'platform.jar' published to maven central was correct.)
 
 Release 3.5.0
 =============

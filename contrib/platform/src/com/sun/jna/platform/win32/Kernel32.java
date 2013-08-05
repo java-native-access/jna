@@ -20,7 +20,10 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
 
+<<<<<<< HEAD
 // TODO: Auto-generated Javadoc
+=======
+>>>>>>> master
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
  * alternate mappings from {@link WinNT} which make use of NIO buffers.
@@ -41,7 +44,11 @@ public interface Kernel32 extends WinNT {
 	 * resource based on a message identifier and a language identifier. The
 	 * function copies the formatted message text to an output buffer,
 	 * processing any embedded insert sequences if requested.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwFlags
 	 *            Formatting options, and how to interpret the lpSource
 	 *            parameter. The low-order byte of dwFlags specifies how the
@@ -78,11 +85,19 @@ public interface Kernel32 extends WinNT {
 	 * Reads data from the specified file or input/output (I/O) device. Reads
 	 * occur at the position specified by the file pointer if supported by the
 	 * device.
+<<<<<<< HEAD
 	 * 
 	 * This function is designed for both synchronous and asynchronous
 	 * operations. For a similar function designed solely for asynchronous
 	 * operation, see ReadFileEx
 	 * 
+=======
+	 *
+	 * This function is designed for both synchronous and asynchronous
+	 * operations. For a similar function designed solely for asynchronous
+	 * operation, see ReadFileEx
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the device (for example, a file, file stream,
 	 *            physical disk, volume, console buffer, tape drive, socket,
@@ -103,7 +118,11 @@ public interface Kernel32 extends WinNT {
 	 *         the function fails, or is completing asynchronously, the return
 	 *         value is zero (FALSE). To get extended error information, call
 	 *         the GetLastError function.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         Note The GetLastError code ERROR_IO_PENDING is not a failure; it
 	 *         designates the read operation is pending completion
 	 *         asynchronously. For more information, see Remarks.
@@ -113,7 +132,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Frees the specified local memory object and invalidates its handle.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hLocal
 	 *            A handle to the local memory object.
 	 * @return If the function succeeds, the return value is NULL. If the
@@ -125,7 +148,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Frees the specified global memory object and invalidates its handle.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hGlobal
 	 *            A handle to the global memory object.
 	 * @return If the function succeeds, the return value is NULL If the
@@ -139,7 +166,11 @@ public interface Kernel32 extends WinNT {
 	 * The GetModuleHandle function retrieves a module handle for the specified
 	 * module if the file has been mapped into the address space of the calling
 	 * process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param name
 	 *            Pointer to a null-terminated string that contains the name of
 	 *            the module (either a .dll or .exe file).
@@ -152,7 +183,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetSystemTime function retrieves the current system date and time.
 	 * The system time is expressed in Coordinated Universal Time (UTC).
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpSystemTime
 	 *            Pointer to a SYSTEMTIME structure to receive the current
 	 *            system date and time.
@@ -161,7 +196,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves the current local date and time.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpSystemTime
 	 *            A pointer to a SYSTEMTIME structure to receive the current
 	 *            local date and time.
@@ -171,7 +210,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetTickCount function retrieves the number of milliseconds that have
 	 * elapsed since the system was started, up to 49.7 days.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return Number of milliseconds that have elapsed since the system was
 	 *         started.
 	 */
@@ -180,7 +223,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetCurrentThreadId function retrieves the thread identifier of the
 	 * calling thread.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return The return value is the thread identifier of the calling thread.
 	 */
 	int GetCurrentThreadId();
@@ -188,14 +235,22 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetCurrentThread function retrieves a pseudo handle for the current
 	 * thread.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return The return value is a pseudo handle for the current thread.
 	 */
 	HANDLE GetCurrentThread();
 
 	/**
 	 * This function returns the process identifier of the calling process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return The return value is the process identifier of the calling
 	 *         process.
 	 */
@@ -203,7 +258,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * This function returns a pseudohandle for the current process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return The return value is a pseudohandle to the current process.
 	 */
 	HANDLE GetCurrentProcess();
@@ -211,7 +270,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetProcessId function retrieves the process identifier of the
 	 * specified process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param process
 	 *            Handle to the process. The handle must have the
 	 *            PROCESS_QUERY_INFORMATION access right.
@@ -225,7 +288,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetProcessVersion function retrieves the major and minor version
 	 * numbers of the system on which the specified process expects to run.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param processId
 	 *            Process identifier of the process of interest. A value of zero
 	 *            specifies the calling process.
@@ -241,14 +308,22 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves the termination status of the specified process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hProcess
 	 *            A handle to the process.
 	 * @param lpExitCode
 	 *            A pointer to a variable to receive the process termination
 	 *            status.
 	 * @return If the function succeeds, the return value is nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -256,14 +331,22 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Terminates the specified process and all of its threads.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hProcess
 	 *            A handle to the process to be terminated.
 	 * @param uExitCode
 	 *            The exit code to be used by the process and threads terminated
 	 *            as a result of this call.
 	 * @return If the function succeeds, the return value is nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -273,7 +356,11 @@ public interface Kernel32 extends WinNT {
 	 * The GetLastError function retrieves the calling thread's last-error code
 	 * value. The last-error code is maintained on a per-thread basis. Multiple
 	 * threads do not overwrite each other's last-error code.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return The return value is the calling thread's last-error code value.
 	 */
 	int GetLastError();
@@ -281,7 +368,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The SetLastError function sets the last-error code for the calling
 	 * thread.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwErrCode
 	 *            Last-error code for the thread.
 	 */
@@ -290,7 +381,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetDriveType function determines whether a disk drive is a removable,
 	 * fixed, CD-ROM, RAM disk, or network drive.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpRootPathName
 	 *            Pointer to a null-terminated string that specifies the root
 	 *            directory of the disk to return information about. A trailing
@@ -310,7 +405,11 @@ public interface Kernel32 extends WinNT {
 	 * resource based on a message identifier and a language identifier. The
 	 * function copies the formatted message text to an output buffer,
 	 * processing any embedded insert sequences if requested.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwFlags
 	 *            Formatting options, and how to interpret the lpSource
 	 *            parameter. The low-order byte of dwFlags specifies how the
@@ -353,7 +452,11 @@ public interface Kernel32 extends WinNT {
 	 * resource based on a message identifier and a language identifier. The
 	 * function copies the formatted message text to an output buffer,
 	 * processing any embedded insert sequences if requested.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwFlags
 	 *            Formatting options, and how to interpret the lpSource
 	 *            parameter. The low-order byte of dwFlags specifies how the
@@ -393,7 +496,11 @@ public interface Kernel32 extends WinNT {
 	 * physical disk, volume, console buffer, tape drive, communications
 	 * resource, mailslot, or named pipe. The function returns a handle that can
 	 * be used to access an object.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpFileName
 	 *            A pointer to a null-terminated string that specifies the name
 	 *            of an object to create or open.
@@ -432,6 +539,7 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Copies an existing file to a new file.
+<<<<<<< HEAD
 	 * 
 	 * @param lpExistingFileName
 	 *            The name of an existing file.
@@ -450,12 +558,36 @@ public interface Kernel32 extends WinNT {
 	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
 	 *            For more information, see Naming a File.
 	 * 
+=======
+	 *
+	 * @param lpExistingFileName
+	 *            The name of an existing file.
+	 *
+	 *            The name is limited to MAX_PATH characters. To extend this
+	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
+	 *            For more information, see Naming a File.
+	 *
+	 *            If lpExistingFileName does not exist, CopyFile fails, and
+	 *            GetLastError returns ERROR_FILE_NOT_FOUND.
+	 *
+	 * @param lpNewFileName
+	 *            The name of the new file.
+	 *
+	 *            The name is limited to MAX_PATH characters. To extend this
+	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
+	 *            For more information, see Naming a File.
+	 *
+>>>>>>> master
 	 * @param bFailIfExists
 	 *            If this parameter is TRUE and the new file specified by
 	 *            lpNewFileName already exists, the function fails. If this
 	 *            parameter is FALSE and the new file already exists, the
 	 *            function overwrites the existing file and succeeds.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return If the function succeeds, the return value is nonzero. If the
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
@@ -465,11 +597,19 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Moves an existing file or a directory, including its children.
+<<<<<<< HEAD
 	 * 
 	 * @param lpExistingFileName
 	 *            The current name of the file or directory on the local
 	 *            computer.
 	 * 
+=======
+	 *
+	 * @param lpExistingFileName
+	 *            The current name of the file or directory on the local
+	 *            computer.
+	 *
+>>>>>>> master
 	 *            The name is limited to MAX_PATH characters. To extend this
 	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
 	 *            For more information, see Naming a File.
@@ -477,13 +617,21 @@ public interface Kernel32 extends WinNT {
 	 *            The new name for the file or directory. The new name must not
 	 *            already exist. A new file may be on a different file system or
 	 *            drive. A new directory must be on the same drive.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *            The name is limited to MAX_PATH characters. To extend this
 	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
 	 *            For more information, see Naming a File.
 	 * @return true, if successful If the function succeeds, the return value is
 	 *         nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -492,6 +640,7 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Moves an existing file or directory, including its children, with various
 	 * move options.
+<<<<<<< HEAD
 	 * 
 	 * @param lpExistingFileName
 	 *            The current name of the file or directory on the local
@@ -505,11 +654,27 @@ public interface Kernel32 extends WinNT {
 	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
 	 *            For more information, see Naming a File
 	 * 
+=======
+	 *
+	 * @param lpExistingFileName
+	 *            The current name of the file or directory on the local
+	 *            computer.
+	 *
+	 *            If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT, the file
+	 *            cannot exist on a remote share, because delayed operations are
+	 *            performed before the network is available.
+	 *
+	 *            The name is limited to MAX_PATH characters. To extend this
+	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
+	 *            For more information, see Naming a File
+	 *
+>>>>>>> master
 	 *            Windows 2000: If you prepend the file name with "\\?\", you
 	 *            cannot also specify the MOVEFILE_DELAY_UNTIL_REBOOT flag for
 	 *            dwFlags.
 	 * @param lpNewFileName
 	 *            The new name of the file or directory on the local computer.
+<<<<<<< HEAD
 	 * 
 	 *            When moving a file, the destination can be on a different file
 	 *            system or volume. If the destination is on another drive, you
@@ -518,6 +683,16 @@ public interface Kernel32 extends WinNT {
 	 *            When moving a directory, the destination must be on the same
 	 *            drive.
 	 * 
+=======
+	 *
+	 *            When moving a file, the destination can be on a different file
+	 *            system or volume. If the destination is on another drive, you
+	 *            must set the MOVEFILE_COPY_ALLOWED flag in dwFlags.
+	 *
+	 *            When moving a directory, the destination must be on the same
+	 *            drive.
+	 *
+>>>>>>> master
 	 *            If dwFlags specifies MOVEFILE_DELAY_UNTIL_REBOOT and
 	 *            lpNewFileName is NULL, MoveFileEx registers the
 	 *            lpExistingFileName file to be deleted when the system
@@ -528,7 +703,11 @@ public interface Kernel32 extends WinNT {
 	 *            This parameter can be one or more of the following values.
 	 * @return true, if successful If the function succeeds, the return value is
 	 *         nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -539,7 +718,11 @@ public interface Kernel32 extends WinNT {
 	 * The CreateDirectory function creates a new directory. If the underlying
 	 * file system supports security on files and directories, the function
 	 * applies a specified security descriptor to the new directory.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpPathName
 	 *            Pointer to a null-terminated string that specifies the path of
 	 *            the directory to be created.
@@ -560,11 +743,19 @@ public interface Kernel32 extends WinNT {
 	 * Reads data from the specified file or input/output (I/O) device. Reads
 	 * occur at the position specified by the file pointer if supported by the
 	 * device.
+<<<<<<< HEAD
 	 * 
 	 * This function is designed for both synchronous and asynchronous
 	 * operations. For a similar function designed solely for asynchronous
 	 * operation, see ReadFileEx
 	 * 
+=======
+	 *
+	 * This function is designed for both synchronous and asynchronous
+	 * operations. For a similar function designed solely for asynchronous
+	 * operation, see ReadFileEx
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the device (for example, a file, file stream,
 	 *            physical disk, volume, console buffer, tape drive, socket,
@@ -585,7 +776,11 @@ public interface Kernel32 extends WinNT {
 	 *         the function fails, or is completing asynchronously, the return
 	 *         value is zero (FALSE). To get extended error information, call
 	 *         the GetLastError function.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         Note The GetLastError code ERROR_IO_PENDING is not a failure; it
 	 *         designates the read operation is pending completion
 	 *         asynchronously. For more information, see Remarks.
@@ -597,7 +792,11 @@ public interface Kernel32 extends WinNT {
 	 * Creates an input/output (I/O) completion port and associates it with a
 	 * specified file handle, or creates an I/O completion port that is not yet
 	 * associated with a file handle, allowing association at a later time.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param FileHandle
 	 *            An open file handle or INVALID_HANDLE_VALUE.
 	 * @param ExistingCompletionPort
@@ -628,7 +827,11 @@ public interface Kernel32 extends WinNT {
 	 * completion port. If there is no completion packet queued, the function
 	 * waits for a pending I/O operation associated with the completion port to
 	 * complete.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param CompletionPort
 	 *            A handle to the completion port.
 	 * @param lpNumberOfBytes
@@ -654,7 +857,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Posts an I/O completion packet to an I/O completion port.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param CompletionPort
 	 *            A handle to an I/O completion port to which the I/O completion
 	 *            packet is to be posted.
@@ -681,7 +888,11 @@ public interface Kernel32 extends WinNT {
 	 * interval elapses. To enter an alertable wait state, use the
 	 * WaitForSingleObjectEx function. To wait for multiple objects, use the
 	 * WaitForMultipleObjects.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hHandle
 	 *            A handle to the object. For a list of the object types whose
 	 *            handles can be specified, see the following Remarks section.
@@ -705,7 +916,11 @@ public interface Kernel32 extends WinNT {
 	 * Waits until one or all of the specified objects are in the signaled state
 	 * or the time-out interval elapses. To enter an alertable wait state, use
 	 * the WaitForMultipleObjectsEx function.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param nCount
 	 *            The number of object handles in the array pointed to by
 	 *            lpHandles. The maximum number of object handles is
@@ -742,7 +957,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * The DuplicateHandle function duplicates an object handle.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hSourceProcessHandle
 	 *            Handle to the process with the handle to duplicate. The handle
 	 *            must have the PROCESS_DUP_HANDLE access right.
@@ -775,7 +994,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * The CloseHandle function closes an open object handle.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hObject
 	 *            Handle to an open object. This parameter can be a pseudo
 	 *            handle or INVALID_HANDLE_VALUE.
@@ -789,7 +1012,11 @@ public interface Kernel32 extends WinNT {
 	 * Retrieves information that describes the changes within the specified
 	 * directory. The function does not report changes to the specified
 	 * directory itself. Note: there's no ReadDirectoryChangesA.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param directory
 	 *            A handle to the directory to be monitored. This directory must
 	 *            be opened with the FILE_LIST_DIRECTORY access right.
@@ -838,7 +1065,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves the short path form of the specified path.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpszLongPath
 	 *            The path string.
 	 * @param lpdzShortPath
@@ -863,11 +1094,19 @@ public interface Kernel32 extends WinNT {
 	 * The LocalAlloc function allocates the specified number of bytes from the
 	 * heap. Windows memory management does not provide a separate local heap
 	 * and global heap.
+<<<<<<< HEAD
 	 * 
 	 * @param type
 	 *            Memory allocation attributes. The default is the LMEM_FIXED
 	 *            value.
 	 * @param cbInput
+=======
+	 *
+	 * @param uFlags
+	 *            Memory allocation attributes. The default is the LMEM_FIXED
+	 *            value.
+	 * @param uBytes
+>>>>>>> master
 	 *            Number of bytes to allocate. If this parameter is zero and the
 	 *            uFlags parameter specifies LMEM_MOVEABLE, the function returns
 	 *            a handle to a memory object that is marked as discarded.
@@ -876,11 +1115,19 @@ public interface Kernel32 extends WinNT {
 	 *         value is NULL. To get extended error information, call
 	 *         GetLastError.
 	 */
+<<<<<<< HEAD
 	Pointer LocalAlloc(int type, int cbInput);
 
 	/**
 	 * Writes data to the specified file or input/output (I/O) device.
 	 * 
+=======
+	Pointer LocalAlloc(int /* UINT */ uFlags, int /* SIZE_T */ uBytes);
+
+	/**
+	 * Writes data to the specified file or input/output (I/O) device.
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the file or I/O device (for example, a file, file
 	 *            stream, physical disk, volume, console buffer, tape drive,
@@ -908,7 +1155,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Creates or opens a named or unnamed event object.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpEventAttributes
 	 *            A pointer to a SECURITY_ATTRIBUTES structure. If this
 	 *            parameter is NULL, the handle cannot be inherited by child
@@ -938,7 +1189,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Sets the specified event object to the signaled state.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hEvent
 	 *            A handle to the event object. The CreateEvent or OpenEvent
 	 *            function returns this handle.
@@ -952,7 +1207,11 @@ public interface Kernel32 extends WinNT {
 	 * Sets the specified event object to the signaled state and then resets it
 	 * to the nonsignaled state after releasing the appropriate number of
 	 * waiting threads.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hEvent
 	 *            A handle to the event object. The CreateEvent or OpenEvent
 	 *            function returns this handle.
@@ -965,7 +1224,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Creates or opens a named or unnamed file mapping object for a specified
 	 * file.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the file from which to create a file mapping
 	 *            object.
@@ -1002,7 +1265,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Maps a view of a file mapping into the address space of a calling
 	 * process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hFileMappingObject
 	 *            A handle to a file mapping object. The CreateFileMapping and
 	 *            OpenFileMapping functions return this handle.
@@ -1026,7 +1293,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Unmaps a mapped view of a file from the calling process's address space.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpBaseAddress
 	 *            A pointer to the base address of the mapped view of a file
 	 *            that is to be unmapped.
@@ -1039,7 +1310,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves only the NetBIOS name of the local computer.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param buffer
 	 *            A pointer to a buffer that receives the computer name or the
 	 *            cluster virtual server name. The buffer size should be large
@@ -1060,7 +1335,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * The OpenThread function opens an existing thread object.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwDesiredAccess
 	 *            Access to the thread object. This access right is checked
 	 *            against any security descriptor for the thread.
@@ -1080,7 +1359,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Creates a new process and its primary thread. The new process runs in the
 	 * security context of the calling process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpApplicationName
 	 *            The name of the module to be executed.
 	 * @param lpCommandLine
@@ -1090,20 +1373,32 @@ public interface Kernel32 extends WinNT {
 	 *            whether the returned handle to the new process object can be
 	 *            inherited by child processes. If lpProcessAttributes is NULL,
 	 *            the handle cannot be inherited.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpThreadAttributes
 	 *            A pointer to a SECURITY_ATTRIBUTES structure that determines
 	 *            whether the returned handle to the new thread object can be
 	 *            inherited by child processes. If lpThreadAttributes is NULL,
 	 *            the handle cannot be inherited.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param bInheritHandles
 	 *            If this parameter TRUE, each inheritable handle in the calling
 	 *            process is inherited by the new process. If the parameter is
 	 *            FALSE, the handles are not inherited. Note that inherited
 	 *            handles have the same value and access rights as the original
 	 *            handles.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwCreationFlags
 	 *            The flags that control the priority class and the creation of
 	 *            the process.
@@ -1111,7 +1406,11 @@ public interface Kernel32 extends WinNT {
 	 *            A pointer to the environment block for the new process. If
 	 *            this parameter is NULL, the new process uses the environment
 	 *            of the calling process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpCurrentDirectory
 	 *            The full path to the current directory for the process.
 	 * @param lpStartupInfo
@@ -1127,11 +1426,130 @@ public interface Kernel32 extends WinNT {
 			boolean bInheritHandles, DWORD dwCreationFlags,
 			Pointer lpEnvironment, String lpCurrentDirectory,
 			WinBase.STARTUPINFO lpStartupInfo,
+<<<<<<< HEAD
 			WinBase.PROCESS_INFORMATION.ByReference lpProcessInformation);
 
 	/**
 	 * This function returns a handle to an existing process object.
 	 * 
+=======
+			WinBase.PROCESS_INFORMATION lpProcessInformation);
+
+	/**
+	 * Creates a new process and its primary thread. The new process runs in the
+	 * security context of the calling process.
+	 * 
+	 * @param lpApplicationName
+	 *            The name of the module to be executed.
+	 * @param lpCommandLine
+	 *            The command line to be executed. The maximum length of
+	 *            this string is 32,768 characters, including the Unicode
+	 *            terminating null character. If <i>lpApplicationName</i> is
+	 *            NULL, the module name portion of <i>lpCommandLine</i> is
+	 *            limited to MAX_PATH characters.
+         *            <p/>
+         *            The Unicode version of this function, {@link #CreateProcessW},
+	 *            can modify the contents of this string. Therefore, this
+	 *            parameter cannot be a pointer to read-only memory (such
+	 *            as a const variable or a literal string). If this
+	 *            parameter is a constant string, the function may cause
+	 *            an access violation.
+         *            <p/>
+         *            The <i>lpCommandLine</i> parameter can be NULL. In that case,
+	 *            the function uses the string pointed to by
+	 *            <i>lpApplicationName</i> as the command line.
+         *            <p/>
+         *            If both <i>lpApplicationName</i> and <i>lpCommandLine</i> are
+	 *            non-NULL, the null-terminated string pointed to by
+	 *            <i>lpApplicationName</i> specifies the module to execute, and
+	 *            the null-terminated string pointed to by <i>lpCommandLine</i>
+	 *            specifies the command line. The new process can use
+	 *            GetCommandLine to retrieve the entire command
+	 *            line. Console processes written in C can use the argc
+	 *            and argv arguments to parse the command line. Because
+	 *            argv[0] is the module name, C programmers generally
+	 *            repeat the module name as the first token in the command
+	 *            line. 
+         *            <p/>
+         *            If <i>lpApplicationName</i> is NULL, the first white
+	 *            space-delimited token of the command line specifies the
+	 *            module name. If you are using a long file name that
+	 *            contains a space, use quoted strings to indicate where
+	 *            the file name ends and the arguments begin (see the
+	 *            explanation for the <i>lpApplicationName</i> parameter). If the
+	 *            file name does not contain an extension, .exe is
+	 *            appended. Therefore, if the file name extension is .com,
+	 *            this parameter must include the .com extension. If the
+	 *            file name ends in a period (.) with no extension, or if
+	 *            the file name contains a path, .exe is not appended. If
+	 *            the file name does not contain a directory path, the
+	 *            system searches for the executable file in the following
+	 *            sequence: 
+         *            <ul>
+         *            <li>The directory from which the application loaded.
+         *            <li>The current directory for the parent process.
+         *            <li>The 32-bit Windows system directory. Use the
+	 *            GetSystemDirectory function to get the path of this
+	 *            directory. 
+         *            <li>The 16-bit Windows system directory. There is no
+	 *            function that obtains the path of this directory, but it
+	 *            is searched. The name of this directory is System. 
+         *            <li>The Windows directory. Use the GetWindowsDirectory
+	 *            function to get the path of this directory. 
+         *            <li>The directories that are listed in the PATH
+	 *            environment variable. Note that this function does not
+	 *            search the per-application path specified by the App
+	 *            Paths registry key. To include this per-application path
+	 *            in the search sequence, use the ShellExecute function. 
+         *            </ul>
+         *            The system adds a terminating null character to the
+	 *            command-line string to separate the file name from the
+	 *            arguments. This divides the original string into two
+	 *            strings for internal processing. 
+	 * @param lpProcessAttributes
+	 *            A pointer to a SECURITY_ATTRIBUTES structure that determines
+	 *            whether the returned handle to the new process object can be
+	 *            inherited by child processes. If lpProcessAttributes is NULL,
+	 *            the handle cannot be inherited.
+	 * @param lpThreadAttributes
+	 *            A pointer to a SECURITY_ATTRIBUTES structure that determines
+	 *            whether the returned handle to the new thread object can be
+	 *            inherited by child processes. If lpThreadAttributes is NULL,
+	 *            the handle cannot be inherited.
+	 * @param bInheritHandles
+	 *            If this parameter TRUE, each inheritable handle in the calling
+	 *            process is inherited by the new process. If the parameter is
+	 *            FALSE, the handles are not inherited. Note that inherited
+	 *            handles have the same value and access rights as the original
+	 *            handles.
+	 * @param dwCreationFlags
+	 *            The flags that control the priority class and the creation of
+	 *            the process.
+	 * @param lpEnvironment
+	 *            A pointer to the environment block for the new process. If
+	 *            this parameter is NULL, the new process uses the environment
+	 *            of the calling process.
+	 * @param lpCurrentDirectory
+	 *            The full path to the current directory for the process.
+	 * @param lpStartupInfo
+	 *            A pointer to a STARTUPINFO or STARTUPINFOEX structure.
+	 * @param lpProcessInformation
+	 *            A pointer to a PROCESS_INFORMATION structure that receives
+	 *            identification information about the new process.
+	 * @return If the function succeeds, the return value is nonzero.
+	 */
+	boolean CreateProcessW(String lpApplicationName, char[] lpCommandLine,
+			WinBase.SECURITY_ATTRIBUTES lpProcessAttributes,
+			WinBase.SECURITY_ATTRIBUTES lpThreadAttributes,
+			boolean bInheritHandles, DWORD dwCreationFlags,
+			Pointer lpEnvironment, String lpCurrentDirectory,
+			WinBase.STARTUPINFO lpStartupInfo,
+			WinBase.PROCESS_INFORMATION lpProcessInformation);
+
+	/**
+	 * This function returns a handle to an existing process object.
+	 *
+>>>>>>> master
 	 * @param fdwAccess
 	 *            Not supported; set to zero.
 	 * @param fInherit
@@ -1147,7 +1565,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetTempPath function retrieves the path of the directory designated
 	 * for temporary files.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param nBufferLength
 	 *            Size of the string buffer identified by lpBuffer, in TCHARs.
 	 * @param buffer
@@ -1159,7 +1581,11 @@ public interface Kernel32 extends WinNT {
 	 *         terminating null character. If the return value is greater than
 	 *         nBufferLength, the return value is the length, in TCHARs, of the
 	 *         buffer required to hold the path.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -1168,7 +1594,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetVersion function returns the current version number of the
 	 * operating system.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return If the function succeeds, the return value includes the major and
 	 *         minor version numbers of the operating system in the low order
 	 *         word, and information about the operating system platform in the
@@ -1179,7 +1609,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetVersionEx function obtains extended information about the version
 	 * of the operating system that is currently running.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpVersionInfo
 	 *            Pointer to an OSVERSIONINFO data structure that the function
 	 *            fills with operating system version information.
@@ -1194,7 +1628,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetVersionEx function obtains extended information about the version
 	 * of the operating system that is currently running.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpVersionInfo
 	 *            Pointer to an OSVERSIONINFOEX data structure that the function
 	 *            fills with operating system version information.
@@ -1208,7 +1646,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * The GetSystemInfo function returns information about the current system.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpSystemInfo
 	 *            Pointer to a SYSTEM_INFO structure that receives the
 	 *            information.
@@ -1220,7 +1662,11 @@ public interface Kernel32 extends WinNT {
 	 * system to an application running under WOW64. If the function is called
 	 * from a 64-bit application, it is equivalent to the GetSystemInfo
 	 * function.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpSystemInfo
 	 *            Pointer to a SYSTEM_INFO structure that receives the
 	 *            information.
@@ -1230,7 +1676,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The IsWow64Process function determines whether the specified process is
 	 * running under WOW64.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hProcess
 	 *            Handle to a process.
 	 * @param Wow64Process
@@ -1242,10 +1692,29 @@ public interface Kernel32 extends WinNT {
 	 */
 	boolean IsWow64Process(HANDLE hProcess, IntByReference Wow64Process);
 
+<<<<<<< HEAD
 	/**
 	 * Retrieves information about the system's current usage of both physical
 	 * and virtual memory.
 	 * 
+=======
+    /**
+     * Retrieves information about logical processors and related hardware.
+     *
+     * @param buffer a buffer which receives an array of {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} structures.
+     * @param returnLength on input, specifies the length of the buffer in bytes. On output, receives the number of
+     *        bytes actually returned, or if {@link #GetLastError()} returned
+     *        {@link WinError#ERROR_INSUFFICIENT_BUFFER}, the number of bytes wanted for the call to work.
+     * @return {@code true} on success, {@code false} on failure. To get extended error information, call
+     *         {@link #GetLastError()}.
+     */
+    boolean GetLogicalProcessorInformation(Pointer buffer, DWORDByReference returnLength);
+
+	/**
+	 * Retrieves information about the system's current usage of both physical
+	 * and virtual memory.
+	 *
+>>>>>>> master
 	 * @param lpBuffer
 	 *            A pointer to a MEMORYSTATUSEX structure that receives
 	 *            information about current memory availability.
@@ -1258,17 +1727,29 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Retrieves the date and time that a file or directory was created, last
 	 * accessed, and last modified.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the file or directory for which dates and times
 	 *            are to be retrieved. The handle must have been created using
 	 *            the CreateFile function with the GENERIC_READ access right.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpCreationTime
 	 *            A pointer to a FILETIME structure to receive the date and time
 	 *            the file or directory was created. This parameter can be NULL
 	 *            if the application does not require this information.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpLastAccessTime
 	 *            A pointer to a FILETIME structure to receive the date and time
 	 *            the file or directory was last accessed. The last access time
@@ -1276,7 +1757,11 @@ public interface Kernel32 extends WinNT {
 	 *            read from, or, in the case of executable files, run. This
 	 *            parameter can be NULL if the application does not require this
 	 *            information.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpLastWriteTime
 	 *            A pointer to a FILETIME structure to receive the date and time
 	 *            the file or directory was last written to, truncated, or
@@ -1284,20 +1769,34 @@ public interface Kernel32 extends WinNT {
 	 *            This date and time is not updated when file attributes or
 	 *            security descriptors are changed. This parameter can be NULL
 	 *            if the application does not require this information.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return If the function succeeds, the return value is nonzero. If the
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
 	boolean GetFileTime(HANDLE hFile,
+<<<<<<< HEAD
 			WinBase.FILETIME.ByReference lpCreationTime,
 			WinBase.FILETIME.ByReference lpLastAccessTime,
 			WinBase.FILETIME.ByReference lpLastWriteTime);
+=======
+			WinBase.FILETIME lpCreationTime,
+			WinBase.FILETIME lpLastAccessTime,
+			WinBase.FILETIME lpLastWriteTime);
+>>>>>>> master
 
 	/**
 	 * Sets the date and time that the specified file or directory was created,
 	 * last accessed, or last modified.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the file or directory. The handle must have been
 	 *            created using the CreateFile function with the
@@ -1315,7 +1814,11 @@ public interface Kernel32 extends WinNT {
 	 *            written to, read from, or (in the case of executable files)
 	 *            run. This parameter can be NULL if the application does not
 	 *            need to change this information.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *            To preserve the existing last access time for a file even
 	 *            after accessing a file, call SetFileTime immediately after
 	 *            opening the file handle with this parameter's FILETIME
@@ -1326,7 +1829,11 @@ public interface Kernel32 extends WinNT {
 	 *            parameter can be NULL if the application does not need to
 	 *            change this information.
 	 * @return If the function succeeds, the return value is nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -1335,6 +1842,7 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Sets the attributes for a file or directory.
+<<<<<<< HEAD
 	 * 
 	 * @param lpFileName
 	 *            The name of the file whose attributes are to be set.
@@ -1342,11 +1850,24 @@ public interface Kernel32 extends WinNT {
 	 *            The name is limited to MAX_PATH characters. To extend this
 	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
 	 * 
+=======
+	 *
+	 * @param lpFileName
+	 *            The name of the file whose attributes are to be set.
+	 *
+	 *            The name is limited to MAX_PATH characters. To extend this
+	 *            limit to 32,767 wide characters, prepend "\\?\" to the path.
+	 *
+>>>>>>> master
 	 * @param dwFileAttributes
 	 *            The file attributes to set for the file. This parameter can be
 	 *            one or more values, combined using the bitwise-OR operator.
 	 *            However, all other values override FILE_ATTRIBUTE_NORMAL.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return If the function succeeds, the return value is nonzero. If the
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
@@ -1356,7 +1877,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * The GetLogicalDriveStrings function fills a buffer with strings that
 	 * specify valid drives in the system.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param nBufferLength
 	 *            Maximum size of the buffer pointed to by lpBuffer, in TCHARs.
 	 *            This size does not include the terminating null character. If
@@ -1382,7 +1907,11 @@ public interface Kernel32 extends WinNT {
 	 * space that is available on a disk volume, which is the total amount of
 	 * space, the total amount of free space, and the total amount of free space
 	 * available to the user that is associated with the calling thread.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpDirectoryName
 	 *            A pointer to a null-terminated string that specifies a
 	 *            directory on a disk. If this parameter is NULL, the function
@@ -1409,6 +1938,7 @@ public interface Kernel32 extends WinNT {
 	 *         error information, call GetLastError.
 	 */
 	boolean GetDiskFreeSpaceEx(String lpDirectoryName,
+<<<<<<< HEAD
 			LARGE_INTEGER.ByReference lpFreeBytesAvailable,
 			LARGE_INTEGER.ByReference lpTotalNumberOfBytes,
 			LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes);
@@ -1416,6 +1946,15 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Deletes an existing file.
 	 * 
+=======
+			LARGE_INTEGER lpFreeBytesAvailable,
+			LARGE_INTEGER lpTotalNumberOfBytes,
+			LARGE_INTEGER lpTotalNumberOfFreeBytes);
+
+	/**
+	 * Deletes an existing file.
+	 *
+>>>>>>> master
 	 * @param filename
 	 *            The name of the file to be deleted.
 	 * @return If the function succeeds, the return value is nonzero. If the
@@ -1427,7 +1966,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Creates an anonymous pipe, and returns handles to the read and write ends
 	 * of the pipe.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hReadPipe
 	 *            A pointer to a variable that receives the read handle for the
 	 *            pipe.
@@ -1450,7 +1993,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Sets certain properties of an object handle.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hObject
 	 *            A handle to an object whose information is to be set.
 	 * @param dwMask
@@ -1467,7 +2014,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves file system attributes for a specified file or directory.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpFileName
 	 *            The name of the file or directory. Prepend \\?\ to the path
 	 *            for names up to 32,767 wide characters
@@ -1478,7 +2029,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Retrieves the file type of the specified file.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hFile
 	 *            A handle to the file.
 	 * @return FILE_TYPE_UNKNOWN if the function fails, or if the type is
@@ -1494,13 +2049,21 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Sends a control code directly to a specified device driver, causing the
 	 * corresponding device to perform the corresponding operation.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hDevice
 	 *            A handle to the device on which the operation is to be
 	 *            performed. The device is typically a volume, directory, file,
 	 *            or stream. To retrieve a device handle, use the CreateFile
 	 *            function. For more information, see Remarks.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param dwIoControlCode
 	 *            The control code for the operation. This value identifies the
 	 *            specific operation to be performed and the type of device on
@@ -1508,27 +2071,45 @@ public interface Kernel32 extends WinNT {
 	 *            Remarks. The documentation for each control code provides
 	 *            usage details for the lpInBuffer, nInBufferSize, lpOutBuffer,
 	 *            and nOutBufferSize parameters.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpInBuffer
 	 *            A pointer to the input buffer that contains the data required
 	 *            to perform the operation. The format of this data depends on
 	 *            the value of the dwIoControlCode parameter. This parameter can
 	 *            be NULL if dwIoControlCode specifies an operation that does
 	 *            not require input data.
+<<<<<<< HEAD
 	 * 
 	 * @param nInBufferSize
 	 *            The size of the input buffer, in bytes.
 	 * 
+=======
+	 *
+	 * @param nInBufferSize
+	 *            The size of the input buffer, in bytes.
+	 *
+>>>>>>> master
 	 * @param lpOutBuffer
 	 *            A pointer to the output buffer that is to receive the data
 	 *            returned by the operation. The format of this data depends on
 	 *            the value of the dwIoControlCode parameter. This parameter can
 	 *            be NULL if dwIoControlCode specifies an operation that does
 	 *            not return data.
+<<<<<<< HEAD
 	 * 
 	 * @param nOutBufferSize
 	 *            The size of the output buffer, in bytes.
 	 * 
+=======
+	 *
+	 * @param nOutBufferSize
+	 *            The size of the output buffer, in bytes.
+	 *
+>>>>>>> master
 	 * @param lpBytesReturned
 	 *            A pointer to a variable that receives the size of the data
 	 *            stored in the output buffer, in bytes. If the output buffer is
@@ -1552,7 +2133,11 @@ public interface Kernel32 extends WinNT {
 	 *            is associated with an I/O completion port, you can retrieve
 	 *            the number of bytes returned by calling
 	 *            GetQueuedCompletionStatus.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpOverlapped
 	 *            A pointer to an OVERLAPPED structure. If hDevice was opened
 	 *            without specifying FILE_FLAG_OVERLAPPED, lpOverlapped is
@@ -1566,9 +2151,15 @@ public interface Kernel32 extends WinNT {
 	 *            operation has been completed. Otherwise, the function does not
 	 *            return until the operation has been completed or an error
 	 *            occurs.
+<<<<<<< HEAD
 	 * 
 	 * @return If the function succeeds, the return value is nonzero.
 	 * 
+=======
+	 *
+	 * @return If the function succeeds, the return value is nonzero.
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
@@ -1582,7 +2173,11 @@ public interface Kernel32 extends WinNT {
 	 * disk volume, which is the total amount of space, the total amount of free
 	 * space, and the total amount of free space available to the user that is
 	 * associated with the calling thread.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpDirectoryName
 	 *            the lp directory name
 	 * @param lpFreeBytesAvailable
@@ -1592,7 +2187,11 @@ public interface Kernel32 extends WinNT {
 	 * @param lpTotalNumberOfFreeBytes
 	 *            the lp total number of free bytes
 	 * @return If the function succeeds, the return value is nonzero.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *         If the function fails, the return value is zero (0). To get
 	 *         extended error information, call GetLastError.
 	 */
@@ -1604,10 +2203,17 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Takes a snapshot of the specified processes, as well as the heaps,
 	 * modules, and threads used by these processes.
+<<<<<<< HEAD
 	 * 
 	 * @param dwFlags
 	 *            The portions of the system to be included in the snapshot.
 	 * 
+=======
+	 *
+	 * @param dwFlags
+	 *            The portions of the system to be included in the snapshot.
+	 *
+>>>>>>> master
 	 * @param th32ProcessID
 	 *            The process identifier of the process to be included in the
 	 *            snapshot. This parameter can be zero to indicate the current
@@ -1615,11 +2221,16 @@ public interface Kernel32 extends WinNT {
 	 *            TH32CS_SNAPMODULE, TH32CS_SNAPMODULE32, or TH32CS_SNAPALL
 	 *            value is specified. Otherwise, it is ignored and all processes
 	 *            are included in the snapshot.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 *            If the specified process is the Idle process or one of the
 	 *            CSRSS processes, this function fails and the last error code
 	 *            is ERROR_ACCESS_DENIED because their access restrictions
 	 *            prevent user-level code from opening them.
+<<<<<<< HEAD
 	 * 
 	 *            If the specified process is a 64-bit process and the caller is
 	 *            a 32-bit process, this function fails and the last error code
@@ -1628,6 +2239,16 @@ public interface Kernel32 extends WinNT {
 	 * @return If the function succeeds, it returns an open handle to the
 	 *         specified snapshot.
 	 * 
+=======
+	 *
+	 *            If the specified process is a 64-bit process and the caller is
+	 *            a 32-bit process, this function fails and the last error code
+	 *            is ERROR_PARTIAL_COPY (299).
+	 *
+	 * @return If the function succeeds, it returns an open handle to the
+	 *         specified snapshot.
+	 *
+>>>>>>> master
 	 *         If the function fails, it returns INVALID_HANDLE_VALUE. To get
 	 *         extended error information, call GetLastError. Possible error
 	 *         codes include ERROR_BAD_LENGTH.
@@ -1637,7 +2258,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Retrieves information about the first process encountered in a system
 	 * snapshot.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hSnapshot
 	 *            A handle to the snapshot returned from a previous call to the
 	 *            CreateToolhelp32Snapshot function.
@@ -1653,12 +2278,20 @@ public interface Kernel32 extends WinNT {
 	 *         information.
 	 */
 	boolean Process32First(HANDLE hSnapshot,
+<<<<<<< HEAD
 			Tlhelp32.PROCESSENTRY32.ByReference lppe);
+=======
+			Tlhelp32.PROCESSENTRY32 lppe);
+>>>>>>> master
 
 	/**
 	 * Retrieves information about the next process recorded in a system
 	 * snapshot.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param hSnapshot
 	 *            A handle to the snapshot returned from a previous call to the
 	 *            CreateToolhelp32Snapshot function.
@@ -1671,12 +2304,20 @@ public interface Kernel32 extends WinNT {
 	 *         information.
 	 */
 	boolean Process32Next(HANDLE hSnapshot,
+<<<<<<< HEAD
 			Tlhelp32.PROCESSENTRY32.ByReference lppe);
+=======
+			Tlhelp32.PROCESSENTRY32 lppe);
+>>>>>>> master
 
 	/**
 	 * The SetEnvironmentVariable function sets the contents of the specified
 	 * environment variable for the current process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpName
 	 *            Pointer to a string containing the name of the environment
 	 *            variable to set.
@@ -1684,7 +2325,11 @@ public interface Kernel32 extends WinNT {
 	 *            Pointer to a string containing the value to set it to. if this
 	 *            value is NULL, the variable is deleted from the current
 	 *            process' environment.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return If the function succeeds, the return value is non-zero. If the
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
@@ -1694,7 +2339,11 @@ public interface Kernel32 extends WinNT {
 	/**
 	 * Retrieves the contents of the specified variable from the environment
 	 * block of the calling process.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @param lpName
 	 *            The name of the environment variable.
 	 * @param lpBuffer
@@ -1718,7 +2367,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Returns the locale identifier for the system locale.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return Returns the locale identifier for the system default locale,
 	 *         identified by LOCALE_SYSTEM_DEFAULT.
 	 */
@@ -1726,7 +2379,11 @@ public interface Kernel32 extends WinNT {
 
 	/**
 	 * Returns the locale identifier for the user default locale.
+<<<<<<< HEAD
 	 * 
+=======
+	 *
+>>>>>>> master
 	 * @return Returns the locale identifier for the user default locale,
 	 *         represented as LOCALE_USER_DEFAULT. If the user default locale is
 	 *         a custom locale, this function always returns
@@ -1743,7 +2400,11 @@ public interface Kernel32 extends WinNT {
      * @param appName
      *            The name of the section in the initialization file.
      * @param keyName
+<<<<<<< HEAD
      *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link GetPrivateProfileInt} function converts
+=======
+     *            The name of the key whose value is to be retrieved. This value is in the form of a string; the {@link #GetPrivateProfileInt} function converts
+>>>>>>> master
      *            the string into an integer and returns the integer.
      * @param defaultValue
      *            The default value to return if the key name cannot be found in the initialization file.
@@ -1757,15 +2418,25 @@ public interface Kernel32 extends WinNT {
 
     /**
      * Retrieves a string from the specified section in an initialization file.
+<<<<<<< HEAD
      * 
      * @param lpAppName
      *            The name of the section containing the key name. If this parameter is {@code null}, the {@link GetPrivateProfileString} function copies all
+=======
+     *
+     * @param lpAppName
+     *            The name of the section containing the key name. If this parameter is {@code null}, the {@link #GetPrivateProfileString} function copies all
+>>>>>>> master
      *            section names in the file to the supplied buffer.
      * @param lpKeyName
      *            The name of the key whose associated string is to be retrieved. If this parameter is {@code null}, all key names in the section specified by
      *            the {@code lpAppName} parameter are copied to the buffer specified by the {@code lpReturnedString} parameter.
      * @param lpDefault
+<<<<<<< HEAD
      *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link GetPrivateProfileString} copies the default
+=======
+     *            A default string. If the {@code lpKeyName} key cannot be found in the initialization file, {@link #GetPrivateProfileString} copies the default
+>>>>>>> master
      *            string to the {@code lpReturnedString} buffer. If this parameter is {@code null}, the default is an empty string, {@code ""}.
      *            <p>
      *            Avoid specifying a default string with trailing blank characters. The function inserts a {@code null} character in the
@@ -1793,12 +2464,21 @@ public interface Kernel32 extends WinNT {
      *         </p>
      */
     DWORD GetPrivateProfileString(String lpAppName, String lpKeyName, String lpDefault, char[] lpReturnedString, DWORD nSize, String lpFileName);
+<<<<<<< HEAD
     
     /**
      * Copies a string into the specified section of an initialization file.
      * 
      * If the file was created using Unicode characters, the function writes Unicode characters to the file. Otherwise, the function writes ANSI characters.
      * 
+=======
+
+    /**
+     * Copies a string into the specified section of an initialization file.
+     *
+     * If the file was created using Unicode characters, the function writes Unicode characters to the file. Otherwise, the function writes ANSI characters.
+     *
+>>>>>>> master
      * @param lpAppName
      *            The name of the section to which the string will be copied. If the section does not exist, it is created. The name of the section is
      *            case-independent; the string can be any combination of uppercase and lowercase letters.

@@ -19,6 +19,7 @@ extern "C" {
 #include <wchar.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #if !defined(_WIN32_WCE)
 #include <errno.h>
 #endif
@@ -28,6 +29,7 @@ typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;
 typedef __int64 int64_t;
+#include "snprintf.h"
 #else 
 #include <stdint.h>
 #endif
@@ -45,7 +47,11 @@ typedef __int64 int64_t;
 #define THREAD_EXIT() ExitThread(0)
 #define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
 #define THREAD_CURRENT() GetCurrentThreadId()
+#ifdef _WIN64
+#define THREAD_RETURN
+#else
 #define THREAD_RETURN return 0
+#endif
 #else
 #define EXPORT
 #include <unistd.h>
@@ -635,9 +641,9 @@ typedef struct thread_data {
   int repeat_count;
   int sleep_time;
   void (*func)(void);
+  char name[256];
 } thread_data;
 static THREAD_FUNC(thread_function, arg) {
-  // make a local copy
   thread_data td = *(thread_data*)arg;
   void (*func)(void) = td.func;
   int i;
@@ -646,18 +652,21 @@ static THREAD_FUNC(thread_function, arg) {
     func();
     SLEEP(td.sleep_time);
   }
+  free((void*)arg);
   THREAD_EXIT();
   THREAD_RETURN;
 }
 
-static thread_data data;
 EXPORT void
-callVoidCallbackThreaded(void (*func)(void), int n, int ms) {
+callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   THREAD_T thread;
-  data.repeat_count = n;
-  data.sleep_time = ms;
-  data.func = func;
-  THREAD_CREATE(&thread, &thread_function, &data);
+  thread_data* data = (thread_data*)malloc(sizeof(thread_data));
+
+  data->repeat_count = n;
+  data->sleep_time = ms;
+  data->func = func;
+  snprintf(data->name, sizeof(data->name), "%s", name);
+  THREAD_CREATE(&thread, &thread_function, data);
 }
 
 EXPORT int 
@@ -937,7 +946,7 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
 #include <jni.h>
 #include <math.h>
 JNIEXPORT jdouble JNICALL
-Java_com_sun_jna_DirectTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
+Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
   return cos(x);
 }
 

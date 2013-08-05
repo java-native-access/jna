@@ -15,7 +15,10 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.ptr.IntByReference;
 
+<<<<<<< HEAD
 // TODO: Auto-generated Javadoc
+=======
+>>>>>>> master
 /**
  * Exception class for all COM related classes.
  * 
@@ -23,6 +26,7 @@ import com.sun.jna.ptr.IntByReference;
  */
 public class COMException extends RuntimeException {
 
+<<<<<<< HEAD
     /** The p excep info. */
     private EXCEPINFO pExcepInfo;
 
@@ -102,4 +106,85 @@ public class COMException extends RuntimeException {
     public IntByReference getArgErr() {
         return puArgErr;
     }
+=======
+	/** The p excep info. */
+	private EXCEPINFO pExcepInfo;
+
+	/** The pu arg err. */
+	private IntByReference puArgErr;
+
+	/**
+	 * Instantiates a new automation exception.
+	 */
+	public COMException() {
+		super();
+	}
+
+	/**
+	 * Instantiates a new automation exception.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param cause
+	 *            the cause
+	 */
+	public COMException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	/**
+	 * Instantiates a new automation exception.
+	 * 
+	 * @param message
+	 *            the message
+	 */
+	public COMException(String message) {
+		super(message);
+	}
+
+	/**
+	 * Instantiates a new automation exception.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param pExcepInfo
+	 *            the excep info
+	 * @param puArgErr
+	 *            the pu arg err
+	 */
+	public COMException(String message, EXCEPINFO pExcepInfo,
+			IntByReference puArgErr) {
+		super(message);
+		this.pExcepInfo = pExcepInfo;
+		this.puArgErr = puArgErr;
+	}
+
+	/**
+	 * Instantiates a new automation exception.
+	 * 
+	 * @param cause
+	 *            the cause
+	 */
+	public COMException(Throwable cause) {
+		super(cause);
+	}
+
+	/**
+	 * Gets the excep info.
+	 * 
+	 * @return the excep info
+	 */
+	public EXCEPINFO getExcepInfo() {
+		return pExcepInfo;
+	}
+
+	/**
+	 * Gets the arg err.
+	 * 
+	 * @return the arg err
+	 */
+	public IntByReference getArgErr() {
+		return puArgErr;
+	}
+>>>>>>> master
 }

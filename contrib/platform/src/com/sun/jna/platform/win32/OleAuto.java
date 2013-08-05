@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
+=======
+/* copyright (c) 2012 Tobias Wolf, All Rights Reserved
+>>>>>>> master
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +24,11 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
+<<<<<<< HEAD
 import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+=======
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+>>>>>>> master
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -32,13 +40,20 @@ import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+<<<<<<< HEAD
 import com.sun.jna.platform.win32.COM.TypeLib;
+=======
+import com.sun.jna.platform.win32.COM.ITypeLib;
+>>>>>>> master
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+<<<<<<< HEAD
 // TODO: Auto-generated Javadoc
+=======
+>>>>>>> master
 /**
  * Oleaut32.dll Interface.
  * 
@@ -133,6 +148,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param pvarg
 	 *            The variant to initialize.
 	 */
+<<<<<<< HEAD
 	public void VariantInit(VARIANT.ByReference pvarg);
 
 	/**
@@ -144,6 +160,8 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param pvarg
 	 *            The variant to initialize.
 	 */
+=======
+>>>>>>> master
 	public void VariantInit(VARIANT pvarg);
 
 	/**
@@ -236,7 +254,11 @@ public interface OleAuto extends StdCallLibrary {
 	 *         A safe array descriptor, or null if the array could not be
 	 *         created.
 	 */
+<<<<<<< HEAD
 	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
+=======
+	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
+>>>>>>> master
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
@@ -364,7 +386,11 @@ public interface OleAuto extends StdCallLibrary {
 		public VariantArg.ByReference rgvarg;
 
 		/** The rgdispid named args. */
+<<<<<<< HEAD
 		public DISPIDbyReference rgdispidNamedArgs;
+=======
+		public DISPIDByReference rgdispidNamedArgs;
+>>>>>>> master
 
 		/** The c args. */
 		public UINT cArgs;
@@ -471,7 +497,11 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
+<<<<<<< HEAD
 	public HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
+=======
+	HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
+>>>>>>> master
 
 	/**
 	 * Converts a system time to a variant representation.
@@ -484,6 +514,10 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 * @return The function returns TRUE on success and FALSE otherwise.
 	 */
+<<<<<<< HEAD
 	public int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
+=======
+	int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
+>>>>>>> master
 			DoubleByReference pvtime);
 }

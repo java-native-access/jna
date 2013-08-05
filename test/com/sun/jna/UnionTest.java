@@ -1,14 +1,14 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -23,22 +23,22 @@ public class UnionTest extends TestCase {
     public static class TestStructure extends Structure {
         public String value;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" }); 
+            return Arrays.asList(new String[] { "value" });
         }
     }
-    
+
     public static class BigTestStructure extends Structure {
         public long field1;
         public long field2;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field1", "field2" }); 
+            return Arrays.asList(new String[] { "field1", "field2" });
         }
     }
-    
+
     public static class IntStructure extends Structure {
         public int value;
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" }); 
+            return Arrays.asList(new String[] { "value" });
         }
     }
 
@@ -59,7 +59,7 @@ public class UnionTest extends TestCase {
         public WString wstring;
         public Pointer pointer;
     }
-    
+
     public static class StructUnion extends Union {
         public int intField;
         public TestStructure testStruct;
@@ -69,31 +69,33 @@ public class UnionTest extends TestCase {
 
     public void testCalculateSize() {
         Union u = new SizedUnion();
+        assertEquals("Wrong union size: " + u, 16, u.size());
         assertEquals("Union should be size of largest field",
                      new BigTestStructure().size(), u.size());
     }
 
     public void testFieldOffsets() {
         StructUnion u = new StructUnion();
+        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
         u.setType(u.testStruct.getClass());
         u.write();
-        assertEquals("Wrong struct member base address", 
+        assertEquals("Wrong struct member base address",
                      u.getPointer(), u.testStruct.getPointer());
         u.setType(u.intStruct.getClass());
         u.write();
-        assertEquals("Wrong struct member base address (2)", 
+        assertEquals("Wrong struct member base address (2)",
                      u.getPointer(), u.intStruct.getPointer());
     }
 
     public void testWriteUnion() {
         SizedUnion u = new SizedUnion();
-        final int VALUE = 0x12345678; 
+        final int VALUE = 0x12345678;
         u.intField = VALUE;
         u.setType(int.class);
         u.write();
         assertEquals("Wrong value written", VALUE, u.getPointer().getInt(0));
     }
-    
+
     public void testReadUnion() {
         SizedUnion u = new SizedUnion();
         final int VALUE = 0x12345678;
@@ -109,11 +111,12 @@ public class UnionTest extends TestCase {
         assertNull("Unselected String should be null", u.string);
         assertNull("Unselected WString should be null", u.wstring);
     }
-    
+
     public void testWriteTypedUnion() {
         final int VALUE = 0x12345678;
         // write an instance of a direct union class to memory
         StructUnion u = new StructUnion();
+        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
         IntStructure intStruct = new IntStructure();
         intStruct.value = VALUE;
         u.setTypedValue(intStruct);
@@ -138,6 +141,7 @@ public class UnionTest extends TestCase {
 
     public void testReadTypedUnion() {
         StructUnion u = new StructUnion();
+        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
         final int VALUE = 0x12345678;
         u.getPointer().setInt(0, VALUE);
         assertEquals("int structure not read properly", VALUE, ((IntStructure) u.getTypedValue(IntStructure.class)).value);
@@ -145,29 +149,34 @@ public class UnionTest extends TestCase {
 
     public void testReadTypeInfo() {
         SizedUnion u = new SizedUnion();
+        assertEquals("Wrong union size: " + u, 16, u.size());
+        assertNotNull("Type information is missing for union field of type " + BigTestStructure.class, Structure.getTypeInfo(BigTestStructure.class));
+        assertNotNull("Type information is missing for union instance", u.getTypeInfo());
         if (Native.POINTER_SIZE == 4) {
-            assertEquals("Type size should be that of longest field if no field active",
+            assertEquals("Type size should be that of largest field if no field is active",
                          Structure.getTypeInfo(BigTestStructure.class).getInt(0),
                          u.getTypeInfo().getInt(0));
         }
         else {
-            assertEquals("Type size should be that of longest field if no field active",
+            assertEquals("Type size should be that of largest field if no field is active",
                          Structure.getTypeInfo(BigTestStructure.class).getLong(0),
                          u.getTypeInfo().getLong(0));
         }
         u.setType(int.class);
+        assertNotNull("Type information is missing for union field of type " + BigTestStructure.class, Structure.getTypeInfo(BigTestStructure.class));
+        assertNotNull("Type information is missing for union instance after type set", u.getTypeInfo());
         if (Native.POINTER_SIZE == 4) {
-            assertEquals("Type size should be that of longest field if field active",
+            assertEquals("Type size should be that of largest field if any field is active",
                          Structure.getTypeInfo(BigTestStructure.class).getInt(0),
                          u.getTypeInfo().getInt(0));
         }
         else {
-            assertEquals("Type size should be that of longest field if field active",
+            assertEquals("Type size should be that of largest field if any field is active",
                          Structure.getTypeInfo(BigTestStructure.class).getLong(0),
                          u.getTypeInfo().getLong(0));
         }
     }
-    
+
     public void testArraysInUnion() {
         class TestUnion extends Union {
             public byte[] bytes = new byte[16];
@@ -175,6 +184,7 @@ public class UnionTest extends TestCase {
             public int[] ints = new int[4];
         }
         Union u = new TestUnion();
+        assertEquals("Wrong union size: " + u, 16, u.size());
         u.setType(byte[].class);
         u.setType(short[].class);
         u.setType(int[].class);
@@ -183,9 +193,10 @@ public class UnionTest extends TestCase {
     public void testDuplicateFieldTypes() {
         class TestUnion extends Union {
             public int field1;
-            public int field2; 
+            public int field2;
         }
         TestUnion u = new TestUnion();
+        assertEquals("Wrong union size: " + u, 4, u.size());
         u.setType("field1");
         u.field1 = 42;
         u.write();

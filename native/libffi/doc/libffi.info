@@ -318,7 +318,7 @@ is perfectly happy passing structures back and forth.  You must first
 describe the structure to `libffi' by creating a new `ffi_type' object
 for it.
 
- -- ffi_type:
+ -- Data type: ffi_type
      The `ffi_type' has the following members:
     `size_t size'
           This is set by `libffi'; you should initialize it to zero.
@@ -553,7 +553,6 @@ Index
  [index ]
 * Menu:
 
-* :                                      Structures.           (line 12)
 * ABI:                                   Introduction.         (line 13)
 * Application Binary Interface:          Introduction.         (line 13)
 * calling convention:                    Introduction.         (line 13)
@@ -607,11 +606,11 @@ Node: Simple Example7224
 Node: Types8251
 Node: Primitive Types8534
 Node: Structures10354
-Node: Type Example11214
-Node: Multiple ABIs12437
-Node: The Closure API12808
-Node: Closure Example15752
-Node: Missing Features17311
-Node: Index17764
+Node: Type Example11224
+Node: Multiple ABIs12447
+Node: The Closure API12818
+Node: Closure Example15762
+Node: Missing Features17321
+Node: Index17774
 
 End Tag Table
