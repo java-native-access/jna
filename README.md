@@ -46,6 +46,8 @@ Features
 * Type-safety for native pointers
 * VM crash protection (optional)
 * Optimized direct mapping for high-performance applications.
+* COM support for early and late binding.
+* COM/Typelib java code generator.
 
 Community and Support
 =====================
