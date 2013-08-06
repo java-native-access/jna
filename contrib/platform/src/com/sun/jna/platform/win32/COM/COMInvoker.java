@@ -36,4 +36,14 @@ public abstract class COMInvoker extends PointerType {
                 * Pointer.SIZE));
         return func.invoke(returnType, args);
     }
+    
+    protected void _invokeNativeVoid(int vtableId, Object[] args) {
+        Pointer vptr = this.getPointer().getPointer(0);
+        // we take the vtable id and multiply with the pointer size (4 bytes on
+        // 32bit OS)
+        Function func = Function.getFunction(vptr.getPointer(vtableId
+                * Pointer.SIZE));
+        func.invokeVoid(args);
+    }
+    
 }

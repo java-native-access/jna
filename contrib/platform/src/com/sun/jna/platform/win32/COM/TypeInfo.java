@@ -404,9 +404,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      */
     public/* [local] */void ReleaseTypeAttr(
     /* [in] */TYPEATTR pTypeAttr) {
-
-        this._invokeNativeObject(19, new Object[] { this.getPointer(),
-                pTypeAttr }, HRESULT.class);
+        this._invokeNativeVoid(19, new Object[] { this.getPointer(), pTypeAttr });
     }
 
     /**
@@ -417,9 +415,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      */
     public/* [local] */void ReleaseFuncDesc(
     /* [in] */FUNCDESC pFuncDesc) {
-
-        this._invokeNativeObject(20, new Object[] { this.getPointer(),
-                pFuncDesc }, HRESULT.class);
+        this._invokeNativeVoid(20, new Object[] { this.getPointer(), pFuncDesc });
     }
 
     /**
@@ -430,8 +426,6 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      */
     public/* [local] */void ReleaseVarDesc(
     /* [in] */VARDESC pVarDesc) {
-
-        this._invokeNativeObject(21,
-                new Object[] { this.getPointer(), pVarDesc }, HRESULT.class);
+        this._invokeNativeVoid(21, new Object[] { this.getPointer(), pVarDesc });
     }
 }

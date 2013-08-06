@@ -821,7 +821,7 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public ELEMDESC[] elemDescArg = new ELEMDESC[1];
+        public ELEMDESC[] elemDescArg = new ELEMDESC[] { new ELEMDESC() };
 
         public ElemDescArg() {
         }
@@ -837,7 +837,7 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public SCODE[] scodeArg = new SCODE[1];
+        public SCODE[] scodeArg = new SCODE[] { new SCODE() };
 
         public ScodeArg() {
         }
