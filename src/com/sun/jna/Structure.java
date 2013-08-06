@@ -178,7 +178,7 @@ public abstract class Structure {
         initializeTypeMapper(mapper);
         validateFields();
         if (p != null) {
-            useMemory(p);
+            useMemory(p, 0, true);
         }
         else {
             allocateMemory(CALCULATE_SIZE);
@@ -279,12 +279,27 @@ public abstract class Structure {
      * thus does not own its own memory allocation.
      */
     protected void useMemory(Pointer m, int offset) {
+        useMemory(m, offset, false);
+    }
+
+    /** Set the memory used by this structure.  This method is used to
+     * indicate the given structure is based on natively-allocated data,
+     * nested within another, or otherwise overlaid on existing memory and
+     * thus does not own its own memory allocation.
+     * @param m Native pointer
+     * @param offset offset from pointer to use
+     * @param force ByValue structures normally ignore requests to use a
+     * different memory offset; this input is set <code>true</code> when
+     * setting a ByValue struct that is nested within another struct.
+     */
+    void useMemory(Pointer m, int offset, boolean force) {
         try {
             // Clear any local cache
             nativeStrings.clear();
 
-            if (this instanceof ByValue) {
-                // ByValue always uses own memory
+            if (this instanceof ByValue && !force) {
+                // ByValue parameters always use dedicated memory, so only
+                // copy the contents of the original
                 byte[] buf = new byte[size()];
                 m.read(0, buf, 0, buf.length);
                 this.memory.write(0, buf, 0, buf.length);
@@ -624,7 +639,7 @@ public abstract class Structure {
      * updated from the contents of native memory.
      */
     // TODO: make overridable method with calculated native type, offset, etc
-    Object readField(StructField structField) {
+    protected Object readField(StructField structField) {
 
         // Get the offset of the field
         int offset = structField.offset;
@@ -734,7 +749,7 @@ public abstract class Structure {
         writeField(structField);
     }
 
-    void writeField(StructField structField) {
+    protected void writeField(StructField structField) {
 
         if (structField.isReadOnly)
             return;
@@ -1663,7 +1678,7 @@ public abstract class Structure {
         return null;
     }
 
-    static class StructField extends Object {
+    protected static class StructField extends Object {
         public String name;
         public Class type;
         public Field field;

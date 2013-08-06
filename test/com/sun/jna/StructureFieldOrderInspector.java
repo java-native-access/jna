@@ -14,7 +14,7 @@ import java.util.Set;
 /**
  * Utility class for detecting missing {@link com.sun.jna.Structure#getFieldOrder()} methods.
  *
- * This class could be moved to the unit test tree, but them reusing it in the 'platform' project would require
+ * This class could be moved to the unit test tree, but then reusing it in the 'platform' project would require
  * publishing this test tree.
  *
  * @author Dan Rollo

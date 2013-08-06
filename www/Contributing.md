@@ -17,8 +17,8 @@ gcc, autotools (for libffi), ant (1.8+), a JDK (1.4+), and a few other typical
 command-line utilities available.  Feel free to report any issues, we'll
 generally pull build fixes immediately. 
 
-Native builds may be skipped by passing `-Dskip-native=true` to `ant`.  It's
-save to skip the native build as long as your modifications are restricted to
+Native bits are built by passing `-Dskip-native=false` to `ant`.  It's
+safe to skip the native build as long as your modifications are restricted to
 Java code.
 
 For debian-style installs,

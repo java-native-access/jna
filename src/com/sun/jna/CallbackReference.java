@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -37,6 +38,7 @@ class CallbackReference extends WeakReference {
     
     static final Map callbackMap = new WeakHashMap();
     static final Map directCallbackMap = new WeakHashMap();
+    static final Map pointerCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
 
     private static final Method PROXY_CALLBACK_METHOD;
@@ -95,7 +97,10 @@ class CallbackReference extends WeakReference {
 
     /** Return a Callback associated with the given function pointer.
      * If the pointer refers to a Java callback trampoline, return the original
-     * Java Callback.  Otherwise, return a proxy to the native function pointer.
+     * Java Callback.  Otherwise, return a proxy to the native function
+     * pointer.
+     * @throws IllegalStateException if the given pointer has already been
+     * mapped to a callback of a different type.
      */
     public static Callback getCallback(Class type, Pointer p) {
         return getCallback(type, p, false);
@@ -110,29 +115,30 @@ class CallbackReference extends WeakReference {
             throw new IllegalArgumentException("Callback type must be an interface");
         Map map = direct ? directCallbackMap : callbackMap;
         synchronized(callbackMap) {
-            for (Iterator i=map.keySet().iterator();i.hasNext();) {
-                Callback cb = (Callback)i.next();
-                if (type.isAssignableFrom(cb.getClass())) {
-                    CallbackReference cbref = (CallbackReference)map.get(cb);
-                    Pointer cbp = cbref != null
-                        ? cbref.getTrampoline() : getNativeFunctionPointer(cb);
-                    if (p.equals(cbp)) {
-                        return cb;
-                    }
+            Callback cb = null;
+            Reference ref = (Reference)pointerCallbackMap.get(p);
+            if (ref != null) {
+                cb = (Callback)ref.get();
+                if (cb != null && !type.isAssignableFrom(cb.getClass())) {
+                    throw new IllegalStateException("Pointer " + p + " already mapped to " + cb);
                 }
+                return cb;
             }
             int ctype = AltCallingConvention.class.isAssignableFrom(type)
                 ? Function.ALT_CONVENTION : Function.C_CONVENTION;
             Map foptions = new HashMap(Native.getLibraryOptions(type));
             foptions.put(Function.OPTION_INVOKING_METHOD, getCallbackMethod(type));
             NativeFunctionHandler h = new NativeFunctionHandler(p, ctype, foptions);
-            Callback cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
+            cb = (Callback)Proxy.newProxyInstance(type.getClassLoader(), new Class[] { type }, h);
+            // No CallbackReference for this callback
             map.put(cb, null);
+            pointerCallbackMap.put(p, new WeakReference(cb));
             return cb;
         }
     }
     
     Pointer cbstruct;
+    Pointer trampoline;
     // Keep a reference to the proxy to avoid premature GC of it
     CallbackProxy proxy;
     Method method;
@@ -331,7 +337,10 @@ class CallbackReference extends WeakReference {
 
     /** Obtain a pointer to the native glue code for this callback. */
     public Pointer getTrampoline() {
-        return cbstruct.getPointer(0);
+        if (trampoline == null) {
+            trampoline = cbstruct.getPointer(0);
+        }
+        return trampoline;
     }
     
     /** Free native resources associated with this callback when GC'd. */
@@ -389,6 +398,7 @@ class CallbackReference extends WeakReference {
             if (cbref == null) {
                 cbref = new CallbackReference(cb, callingConvention, direct);
                 map.put(cb, cbref);
+                pointerCallbackMap.put(cbref.getTrampoline(), new WeakReference(cb));
                 if (initializers.containsKey(cb)) {
                     cbref.setCallbackOptions(Native.CB_HAS_INITIALIZER);
                 }

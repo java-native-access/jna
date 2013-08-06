@@ -167,10 +167,10 @@ ifeq ($(ARCH),amd64)
 USE_MSVC=true
 else
 # To build 32-bit under MSVC, un-comment this line (default is gcc)
-USE_MSVC=true
+#USE_MSVC=true
 endif
 
-CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
+CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
 ifndef USE_MSVC
 LIBS=-lpsapi
 else
@@ -251,7 +251,7 @@ ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CINCLUDES+=-I/usr/X11R6/include
 LDFLAGS=-o $@ -shared
-CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEAFULT_LIBNAME_ENCODING
 endif
 
 ifeq ($(OS),solaris)
@@ -259,7 +259,7 @@ ifeq ($(ARCH),)
 ARCH=$(shell uname -p)
 endif
 PCFLAGS+=-fPIC
-CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT
+CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEFAULT_LIBNAME_ENCODING
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi
   # configure and some of the other settings in PCFLAGS might make the build

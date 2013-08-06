@@ -17,14 +17,11 @@
  */
 
 #if defined(_WIN32)
-#ifndef UNICODE
-#define UNICODE
-#endif
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <psapi.h>
 #define STRTYPE wchar_t*
-#define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
+#define NAME2CSTR(ENV,JSTR) w32_short_name(ENV,JSTR)
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
 #define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
@@ -49,7 +46,7 @@
 #include <dlfcn.h>
 #include <errno.h>
 #define STRTYPE char*
-#ifdef __sun__ // solaris sparc and x86/amd64 use default (file.encoding)
+#ifdef USE_DEFAULT_LIBNAME_ENCODING
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
 #else
 #define NAME2CSTR(ENV,JSTR) newCStringUTF8(ENV,JSTR)
@@ -100,81 +97,6 @@ static int _protect;
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#ifdef _WIN32
-static char*
-w32_format_error(int err, char* buf, int len) {
-  wchar_t* wbuf = NULL;
-  int wlen =
-    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
-                   |FORMAT_MESSAGE_IGNORE_INSERTS
-                   |FORMAT_MESSAGE_ALLOCATE_BUFFER,
-                   NULL, err, 0, (LPWSTR)&wbuf, 0, NULL);
-  if (wlen > 0) {
-    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
-    if (result == 0) {
-      fprintf(stderr, "JNA: error converting error message: %d\n", (int)GET_LAST_ERROR());
-      *buf = 0;
-    }
-    else {
-      buf[len-1] = 0;
-    }
-  }
-  else {
-    // Error retrieving message
-    *buf = 0;
-  }
-  if (wbuf) {
-    LocalFree(wbuf);
-  }
-
-  return buf;
-}
-static HANDLE
-w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
-  void* func = NULL;
-  if (handle != GetModuleHandle(NULL)) {
-    func = GetProcAddress(handle, funname);
-  }
-  else {
-#if defined(_WIN32_WCE)
-    /* CE has no EnumProcessModules, have to use an alternate API */
-    HANDLE snapshot;
-    if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
-      MODULEENTRY32 moduleInfo;
-      moduleInfo.dwSize = sizeof(moduleInfo);
-      if (Module32First(snapshot, &moduleInfo)) {
-        do {
-          if ((func = (void *) GetProcAddress(moduleInfo.hModule, funname))) {
-            break;
-          }
-        } while (Module32Next(snapshot, &moduleInfo));
-      }
-      CloseToolhelp32Snapshot(snapshot);
-    }
-#else
-    HANDLE cur_proc = GetCurrentProcess ();
-    HMODULE *modules;
-    DWORD needed, i;
-    if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
-    fail:
-      throwByName(env, EError, "Unexpected error enumerating modules");
-      return 0;
-    }
-    modules = (HMODULE*) alloca (needed);
-    if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
-      goto fail;
-    }
-    for (i = 0; i < needed / sizeof (HMODULE); i++) {
-      if ((func = (void *) GetProcAddress (modules[i], funname))) {
-        break;
-      }
-    }
-#endif
-  }
-  return func;
-}
-#endif /* _WIN32 */
 
 #define MEMCPY(ENV,D,S,L) do {     \
   PSTART(); memcpy(D,S,L); PEND(ENV); \
@@ -306,6 +228,118 @@ static char getArrayComponentType(JNIEnv *, jobject);
 static ffi_type* getStructureType(JNIEnv *, jobject);
 
 typedef void (JNICALL* release_t)(JNIEnv*,jarray,void*,jint);
+
+#ifdef _WIN32
+static char*
+w32_format_error(int err, char* buf, int len) {
+  wchar_t* wbuf = NULL;
+  int wlen =
+    FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM
+                   |FORMAT_MESSAGE_IGNORE_INSERTS
+                   |FORMAT_MESSAGE_ALLOCATE_BUFFER,
+                   NULL, err, 0, (LPWSTR)&wbuf, 0, NULL);
+  if (wlen > 0) {
+    int result = WideCharToMultiByte(CP_UTF8, 0, wbuf, -1, buf, len, NULL, NULL);
+    if (result == 0) {
+      fprintf(stderr, "JNA: error converting error message: %d\n", (int)GET_LAST_ERROR());
+      *buf = 0;
+    }
+    else {
+      buf[len-1] = 0;
+    }
+  }
+  else {
+    // Error retrieving message
+    *buf = 0;
+  }
+  if (wbuf) {
+    LocalFree(wbuf);
+  }
+
+  return buf;
+}
+static wchar_t*
+w32_short_name(JNIEnv* env, jstring str) {
+  wchar_t* wstr = newWideCString(env, str);
+  if (wstr && *wstr) {
+    DWORD required;
+    size_t size = wcslen(wstr) + 5;
+    wchar_t* prefixed = (wchar_t*)alloca(sizeof(wchar_t) * size);
+
+#ifdef _MSC_VER
+    swprintf(prefixed, size, L"\\\\?\\%ls", wstr);
+#else
+    swprintf(prefixed, L"\\\\?\\%ls", wstr);
+#endif
+    if ((required = GetShortPathNameW(prefixed, NULL, 0)) != 0) {
+      wchar_t* wshort = (wchar_t*)malloc(sizeof(wchar_t) * required);
+      if (GetShortPathNameW(prefixed, wshort, required)) {
+        free((void *)wstr);
+        wstr = wshort;
+      }
+      else {
+        char buf[MSG_SIZE];
+        throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+        free((void *)wstr);
+        free((void *)wshort);
+        wstr = NULL;
+      }
+    }
+    else if (GET_LAST_ERROR() != ERROR_FILE_NOT_FOUND) { 
+      char buf[MSG_SIZE];
+      throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
+      free((void *)wstr);
+      wstr = NULL;
+    }
+  }
+  return wstr;
+}
+
+static HANDLE
+w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
+  void* func = NULL;
+  if (handle != GetModuleHandle(NULL)) {
+    func = GetProcAddress(handle, funname);
+  }
+  else {
+#if defined(_WIN32_WCE)
+    /* CE has no EnumProcessModules, have to use an alternate API */
+    HANDLE snapshot;
+    if ((snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, 0)) != INVALID_HANDLE_VALUE) {
+      MODULEENTRY32 moduleInfo;
+      moduleInfo.dwSize = sizeof(moduleInfo);
+      if (Module32First(snapshot, &moduleInfo)) {
+        do {
+          if ((func = (void *) GetProcAddress(moduleInfo.hModule, funname))) {
+            break;
+          }
+        } while (Module32Next(snapshot, &moduleInfo));
+      }
+      CloseToolhelp32Snapshot(snapshot);
+    }
+#else
+    HANDLE cur_proc = GetCurrentProcess ();
+    HMODULE *modules;
+    DWORD needed, i;
+    if (!EnumProcessModules (cur_proc, NULL, 0, &needed)) {
+    fail:
+      throwByName(env, EError, "Unexpected error enumerating modules");
+      return 0;
+    }
+    modules = (HMODULE*) alloca (needed);
+    if (!EnumProcessModules (cur_proc, modules, needed, &needed)) {
+      goto fail;
+    }
+    for (i = 0; i < needed / sizeof (HMODULE); i++) {
+      if ((func = (void *) GetProcAddress (modules[i], funname))) {
+        break;
+      }
+    }
+#endif
+  }
+  return func;
+}
+#endif /* _WIN32 */
 
 #if 0
 /** Invokes System.err.println (for debugging only). */
@@ -624,6 +658,8 @@ getChars(JNIEnv* env, wchar_t* volatile dst, jcharArray chars, volatile jint off
         int i;
         (*env)->GetCharArrayRegion(env, chars, off, count, buf);
         for (i=0;i < count;i++) {
+          // TODO: ensure proper encoding conversion from jchar to native
+          // wchar_t 
           dst[i] = (wchar_t)buf[i];
         }
         dst += count;
@@ -728,12 +764,15 @@ newCStringEncoding(JNIEnv *env, jstring jstr, const char* encoding)
 /* Translates a Java string to a wide C string using the String.toCharArray
  * method.
  */
-// TODO: are any encoding changes required?
 static wchar_t *
 newWideCString(JNIEnv *env, jstring str)
 {
     jcharArray chars = 0;
     wchar_t *result = NULL;
+
+    if ((*env)->IsSameObject(env, str, NULL)) {
+      return result;
+    }
 
     chars = (*env)->CallObjectMethod(env, str, MID_String_toCharArray);
     if (!(*env)->ExceptionCheck(env)) {
@@ -744,7 +783,6 @@ newWideCString(JNIEnv *env, jstring str)
             throwByName(env, EOutOfMemory, "Can't allocate wide C string");
             return NULL;
         }
-        // TODO: ensure proper encoding conversion from jchar to native wchar_t
         getChars(env, result, chars, 0, len);
         if ((*env)->ExceptionCheck(env)) {
           free((void *)result);
@@ -1819,8 +1857,9 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       case CVT_ARRAY_LONG:
       case CVT_ARRAY_FLOAT:
       case CVT_ARRAY_DOUBLE:
-        if (*(void **)args[i] && release[i])
+        if (*(void **)args[i] && release[i] != NULL) {
           release[i](env, objects[i], elems[i], 0);
+        }
         break;
       }
     }
@@ -2039,7 +2078,7 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib, jint 
 
     handle = (void *)LOAD_LIBRARY(libname, flags != -1 ? flags : DEFAULT_LOAD_OPTS);
     if (!handle) {
-      char buf[1024];
+      char buf[MSG_SIZE];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
     }
     if (libname != NULL) {
@@ -2057,7 +2096,7 @@ JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_close(JNIEnv *env, jclass UNUSED(cls), jlong handle)
 {
   if (FREE_LIBRARY(L2A(handle))) {
-    char buf[1024];
+    char buf[MSG_SIZE];
     throwByName(env, EError, LOAD_ERROR(buf, sizeof(buf)));
   }
 }
@@ -2078,7 +2117,7 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
     if (funname != NULL) {
       func = (void *)FIND_ENTRY(handle, funname);
       if (!func) {
-        char buf[1024];
+        char buf[MSG_SIZE];
         throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
       }
       free((void *)funname);

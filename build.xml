@@ -12,7 +12,8 @@
        (cross-compile currently only configured/tested on w32ce-arm and
        android-arm/-x86) 
 
-       Use ANT_OPTS=-Dskip-native to skip building native parts.
+       Use ANT_OPTS=-Dskip-native=false to build native parts, or directly
+         invoke the native or test targets
        Use ANT_OPTS=-Dheadless to run tests headless
        Use ANT_OPTS=-Drelease to stage a final, non-snapshot version
     -->
@@ -56,7 +57,7 @@
   <!-- JNA library release version -->
   <property name="jna.major" value="4"/>
   <property name="jna.minor" value="0"/>
-  <property name="jna.revision" value="0"/>
+  <property name="jna.revision" value="1"/>
   <property name="jna.build" value="${build.number}"/>
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
@@ -78,9 +79,6 @@
   <property name="impl.title" value="com.sun.jna"/>
   <property name="impl.vendor" value="${spec.vendor}"/>
   <property name="impl.version" value="${jna.version} (b${jna.build})"/>
-  <condition property="jni.valid" value="true">
-    <isset property="skip-native"/>
-  </condition>
 
   <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
   <condition property="compatibility" value="1.4">
@@ -114,12 +112,12 @@
   <property name="maven-javadoc-jar" value="${dist}/${artifactId}-${jna.version}-javadoc.jar" />
   <property name="maven-sources-jar" value="${dist}/${artifactId}-${jna.version}-sources.jar" />
 
-  <property name="platform-jar" value="${dist}/platform.jar"/>
+  <property name="platform-jar" value="${dist}/jna-platform.jar"/>
   <property name="platform-javadoc-jar" value="${dist}/platform-${jna.version}-javadoc.jar" />
   <property name="platform-sources-jar" value="${dist}/platform-${jna.version}-sources.jar" />
 
   <property name="pom" value="pom-jna.xml" />
-  <property name="pom-platform" value="pom-platform.xml" />
+  <property name="pom-platform" value="pom-jna-platform.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
   <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
@@ -137,6 +135,13 @@
   <target name="compile-single" depends="compile"/>
 
   <target name="-dynamic-properties">
+
+    <condition property="-native" value="true">
+      <not><isset property="build-native"/></not>
+    </condition>
+    <condition property="jni.valid" value="true">
+      <isset property="-native"/>
+    </condition>
 
     <replaceregexp match="(&lt;version&gt;).*(&lt;/version&gt;)"
                    replace="\1${jna.version}\2"
@@ -225,12 +230,17 @@
     <condition property="os.prefix" value="sunos-${jre.arch}">
       <os name="SunOS"/>
     </condition>
-    <condition property="os.prefix" value="bsd-${jre.arch}">
-      <or>
-	<os name="FreeBSD"/>
+    <condition property="os.prefix" value="freebsd-${jre.arch}">
+      <os name="FreeBSD"/>
+    </condition>
+    <condition property="os.prefix" value="openbsd-${jre.arch}">
 	<os name="OpenBSD"/>
-	<os name="NetBSD"/>
-      </or>
+    </condition>
+    <condition property="os.prefix" value="netbsd-${jre.arch}">
+      <os name="NetBSD"/>
+    </condition>
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
+      <os name="GNU/kFreeBSD"/>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <!-- Keep all natives separate -->
@@ -390,10 +400,14 @@ processor=arm;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
-com/sun/jna/bsd-x86/libjnidispatch.so;
-processor=x86;osname=openbsd;osname=freebsd;osname=netbsd,
-com/sun/jna/bsd-x86-64/libjnidispatch.so;
-processor=x86-64;osname=openbsd;osname=freebsd;osname=netbsd,
+com/sun/jna/freebsd-x86/libjnidispatch.so;
+processor=x86;osname=freebsd,
+com/sun/jna/freebsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=freebsd,
+com/sun/jna/openbsd-x86/libjnidispatch.so;
+processor=x86;osname=openbsd,
+com/sun/jna/openbsd-x86-64/libjnidispatch.so;
+processor=x86-64;osname=openbsd,
 
 com/sun/jna/darwin/libjnidispatch.jnilib;
 osname=macosx;processor=x86;processor=x86-64;processor=ppc
@@ -444,12 +458,18 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/sunos-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-sparcv9"/>
-      <zipfileset src="${lib.native}/bsd-x86.jar"
+      <zipfileset src="${lib.native}/freebsd-x86.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/bsd-x86"/>
-      <zipfileset src="${lib.native}/bsd-x86-64.jar"
+                  prefix="com/sun/jna/freebsd-x86"/>
+      <zipfileset src="${lib.native}/freebsd-x86-64.jar"
                   includes="*jnidispatch*"
-                  prefix="com/sun/jna/bsd-x86-64"/>
+                  prefix="com/sun/jna/freebsd-x86-64"/>
+      <zipfileset src="${lib.native}/openbsd-x86.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/openbsd-x86"/>
+      <zipfileset src="${lib.native}/openbsd-x86-64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/openbsd-x86-64"/>
       <zipfileset src="${lib.native}/win32-x86-64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/win32-x86-64"/>
@@ -486,7 +506,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </subant>
   </target>
 
-  <target name="javah" depends="compile" unless="skip-native">
+  <target name="javah" depends="compile" unless="-native">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
       <class name="com.sun.jna.Native"/>
@@ -543,8 +563,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86.jar" overwrite="true"/>
-    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/bsd-x86-64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
@@ -595,7 +617,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
                    file="${rsrc}" byline="true"/>
   </target>
 
-  <target name="native" depends="-setup,javah,-native-api-check,rsrc" unless="skip-native"
+  <target name="native" depends="-enable-native,-setup,javah,-native-api-check,rsrc" unless="-native"
           description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <property name="comment" value="# auto-generated by ant"/>
     <replaceregexp match="^JNA_JNI_VERSION=.*"
@@ -738,6 +760,20 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </copy>
   </target>
 
+  <target name="compile-some-tests" depends="compile,jar"
+          description="Compile test code which does not have additional native
+                       dependencies">
+    <javac classpathref="compile-test.path"
+           source="${test.compatibility}"
+           target="${test.compatibility}"
+           destdir="${test.classes}"
+           includeantruntime="false"
+           includes="**/StructureFieldOrderInspector.java"
+           deprecation="on" debug="${debug}">
+      <src path="${test.src}"/>
+    </javac>
+  </target>
+
   <target name="compile-tests" depends="compile,native,jar"
   	description="Compile all test code">
     <javac classpathref="compile-test.path"
@@ -815,9 +851,13 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <chmod file="${shared}/*.dll" perm="+x"/>
   </target>
 
+  <target name="-enable-native" unless="-native">
+    <property name="build-native" value="true"/>
+  </target>
+
   <!-- When running tests from an IDE, be sure to set jna.library.path -->
   <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="jar,compile-tests" unless="cross-compile"
+  <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
     <property name="reports.junit" location="${reports}/junit"/>
@@ -880,7 +920,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
-  <target name="test-platform" depends="compile-tests,platform-jar">
+  <target name="test-platform" depends="compile-some-tests,platform-jar">
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
@@ -967,7 +1007,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
           description="Build distribution files">
     <copy todir="${dist}">
       <fileset dir="${build}" includes="${jar},${minjar}"/>
-      <fileset dir="${contrib}/platform/dist" includes="platform.jar"/>
+      <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
         <exclude name="out-of-date.jar"/>

@@ -343,6 +343,10 @@ public class StructureTest extends TestCase {
 
     // must be publicly accessible in order to create array elements
     public static class PublicTestStructure extends Structure {
+        public static class ByValue extends PublicTestStructure implements Structure.ByValue {
+            public ByValue() { }
+            public ByValue(Pointer p) { super(p); }
+        }
         public static class ByReference extends PublicTestStructure implements Structure.ByReference {
             public ByReference() { }
             public ByReference(Pointer p) { super(p); }
@@ -362,6 +366,35 @@ public class StructureTest extends TestCase {
     public void testStructureField() {
         class TestStructure extends Structure {
             public PublicTestStructure s1, s2;
+            public int after;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "s1", "s2", "after" });
+            }
+        }
+        TestStructure s = new TestStructure();
+        TestStructure s2 = new TestStructure();
+        assertNotNull("Inner structure should be initialized", s.s1);
+        assertNotNull("Inner structure should be initialized (cached)", s2.s1);
+        assertEquals("Wrong aggregate size",
+                     s.s1.size() + s.s2.size() + 4, s.size());
+        s.write();
+        assertEquals("Wrong memory for structure field 1 after write",
+                     s.getPointer(), s.s1.getPointer());
+        assertEquals("Wrong memory for structure field 2 after write",
+                     s.getPointer().share(s.s1.size()),
+                     s.s2.getPointer());
+
+        s.read();
+        assertEquals("Wrong memory for structure field 1 after read",
+                     s.getPointer(), s.s1.getPointer());
+        assertEquals("Wrong memory for structure field 2 after read",
+                     s.getPointer().share(s.s1.size()),
+                     s.s2.getPointer());
+    }
+
+    public void testStructureByValueField() {
+        class TestStructure extends Structure {
+            public PublicTestStructure.ByValue s1, s2;
             public int after;
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "s1", "s2", "after" });

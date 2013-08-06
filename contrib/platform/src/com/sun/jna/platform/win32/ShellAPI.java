@@ -19,7 +19,13 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
@@ -115,5 +121,89 @@ public interface ShellAPI extends StdCallLibrary {
             }
             return encoded + "\0";
         }
+        
+        
     }
+    
+    /** 
+     * Appbar message value to send. This parameter can be one of the following
+     * values.
+     */
+    int ABM_NEW = 0x00000000;
+    /**
+     * Registers a new appbar and specifies the message identifier that the
+     * system should use to send notification messages to the appbar.
+     */
+    int ABM_REMOVE = 0x00000001;
+    /** Unregisters an appbar, removing the bar from the system's internal list.*/
+    int ABM_QUERYPOS = 0x00000002;
+    /** Requests a size and screen position for an appbar. */
+    int ABM_SETPOS = 0x00000003;
+    /** Sets the size and screen position of an appbar. */
+    int ABM_GETSTATE = 0x00000004;
+    /** Retrieves the autohide and always-on-top states of the Windows taskbar. */
+    int ABM_GETTASKBARPOS = 0x00000005;
+    /**
+     * Retrieves the bounding rectangle of the Windows taskbar. Note that this
+     * applies only to the system taskbar. Other objects, particularly toolbars
+     * supplied with third-party software, also can be present. As a result,
+     * some of the screen area not covered by the Windows taskbar might not be
+     * visible to the user. To retrieve the area of the screen not covered by
+     * both the taskbar and other app bars -- the working area available to your
+     * application --, use the GetMonitorInfo function.
+     */
+    int ABM_ACTIVATE = 0x00000006;
+    /**
+     * Notifies the system to activate or deactivate an appbar. The lParam
+     * member of the APPBARDATA pointed to by pData is set to TRUE to activate
+     * or FALSE to deactivate.
+     */
+    int ABM_GETAUTOHIDEBAR = 0x00000007;
+    /**
+     *  Retrieves the handle to the autohide appbar associated with a particular
+     * edge of the screen.
+     */
+    int ABM_SETAUTOHIDEBAR = 0x00000008;
+    /** Registers or unregisters an autohide appbar for an edge of the screen. */
+    int ABM_WINDOWPOSCHANGED = 0x00000009;
+    /** Notifies the system when an appbar's position has changed. */
+    int ABM_SETSTATE = 0x0000000A;
+
+    /** Left edge. */
+    int ABE_LEFT = 0;
+    /** Top edge. */
+    int ABE_TOP = 1; 
+    /** Right edge. */
+    int ABE_RIGHT = 2; 
+    /** Bottom edge. */
+    int ABE_BOTTOM = 3; 
+
+    /**
+     * Contains information about a system appbar message.
+     */
+    public static class APPBARDATA extends Structure {
+        public static class ByReference extends APPBARDATA implements Structure.ByReference {
+        }
+
+        public DWORD cbSize;
+        public HWND hWnd;
+        public UINT uCallbackMessage;
+        public UINT uEdge;
+        public RECT rc;
+        public LPARAM lParam;
+
+        public APPBARDATA() {
+        	super();
+		}
+
+        public APPBARDATA(Pointer p) {
+        	super(p);
+        }
+
+        @Override
+        protected List getFieldOrder() {
+        	return Arrays.asList("cbSize", "hWnd", "uCallbackMessage", "uEdge",	"rc", "lParam");
+        }
+    }
+
 }
