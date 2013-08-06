@@ -33,8 +33,6 @@ public class IUnknownTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
-
-		Native.setProtected(true);
 		System.out.println("JNA protected mode: " + Native.isProtected());
 
 		// Initialize COM for this thread...

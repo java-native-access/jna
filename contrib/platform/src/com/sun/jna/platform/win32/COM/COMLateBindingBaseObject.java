@@ -62,8 +62,6 @@ public class COMLateBindingBaseObject extends COMInvoker {
     private PointerByReference pUnknown = new PointerByReference();
 
     public COMLateBindingBaseObject(IDispatch dispatch) {
-        // enable JNA protected mode
-        Native.setProtected(true);
         // transfer the value
         this.iDispatch = dispatch;
     }
@@ -74,9 +72,6 @@ public class COMLateBindingBaseObject extends COMInvoker {
 
     public COMLateBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
-        // enable JNA protected mode
-        Native.setProtected(true);
-
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 
@@ -116,9 +111,6 @@ public class COMLateBindingBaseObject extends COMInvoker {
 
     public COMLateBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
-        // enable JNA protected mode
-        Native.setProtected(true);
-
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 

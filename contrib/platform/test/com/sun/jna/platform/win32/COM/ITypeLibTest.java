@@ -40,7 +40,6 @@ public class ITypeLibTest extends TestCase {
     }
 
     public ITypeLibTest() {
-        Native.setProtected(true);
     }
 
     private ITypeLib loadShellTypeLib() {

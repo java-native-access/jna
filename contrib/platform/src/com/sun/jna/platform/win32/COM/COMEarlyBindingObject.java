@@ -36,9 +36,6 @@ public class COMEarlyBindingObject extends Dispatch {
 
     public COMEarlyBindingObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
-        // enable JNA protected mode
-        Native.setProtected(true);
-
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 

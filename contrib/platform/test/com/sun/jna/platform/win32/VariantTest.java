@@ -17,7 +17,6 @@ public class VariantTest extends TestCase {
 	}
 
 	public VariantTest() {
-		Native.setProtected(true);
 	}
 
 	public void testVariantClear() {

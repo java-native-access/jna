@@ -61,7 +61,6 @@ public class TlbImp implements TlbConst {
     }
 
     public TlbImp(String[] args) {
-        Native.setProtected(true);
         this.cmdlineArgs = new TlbCmdlineArgs(args);
 
         if (this.cmdlineArgs.isTlbId()) {

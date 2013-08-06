@@ -39,7 +39,6 @@ public class ITypeInfoTest extends TestCase {
     }
 
     public ITypeInfoTest() {
-        Native.setProtected(true);
     }
 
     @Override

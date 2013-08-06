@@ -37,7 +37,6 @@ public class COMTest extends TestCase {
 	}
 
 	public COMTest() {
-		Native.setProtected(true);
 	}
 
 	@Override
