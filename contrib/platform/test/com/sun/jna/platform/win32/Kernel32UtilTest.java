@@ -97,7 +97,7 @@ public class Kernel32UtilTest extends TestCase {
 
 	public void testFormatMessageFromHR() {
 		assertEquals("The operation completed successfully.",
-				Kernel32Util.formatMessageFromHR(W32Errors.S_OK));
+				Kernel32Util.formatMessage(W32Errors.S_OK));
 	}
 	
 	public void testGetTempPath() {

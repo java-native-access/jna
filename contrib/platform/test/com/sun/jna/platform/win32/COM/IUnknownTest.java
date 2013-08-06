@@ -47,20 +47,20 @@ public class IUnknownTest extends TestCase {
 
 		// Get CLSID for Word.Application...
 		CLSID.ByReference clsid = new CLSID.ByReference();
-		hr = Ole32.INSTANCE.CLSIDFromProgID("Internet.Application",
+		hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application",
 				clsid);
 
 		if (W32Errors.FAILED(hr)) {
 			Ole32.INSTANCE.CoUninitialize();
-			throw new COMException("CLSIDFromProgID() failed!");
+			COMUtils.checkRC(hr);
 		}
 
 		hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-				WTypes.CLSCTX_LOCAL_SERVER, IDispatch.IID_IDispatch,
+				WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
 				this.pDispatch);
 
 		if (W32Errors.FAILED(hr)) {
-			throw new COMException("Internet Explorer not registered properly!");
+		    COMUtils.checkRC(hr);
 		}
 
 		this.iDispatch = new Dispatch(pDispatch.getPointer());

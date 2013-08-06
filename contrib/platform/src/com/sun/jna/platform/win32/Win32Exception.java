@@ -39,7 +39,7 @@ public class Win32Exception extends RuntimeException {
      *  HRESULT
      */
     public Win32Exception(HRESULT hr) {
-        super(Kernel32Util.formatMessageFromHR(hr));
+        super(Kernel32Util.formatMessage(hr));
         _hr = hr;    	
     }
 

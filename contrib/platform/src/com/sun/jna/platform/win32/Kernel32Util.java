@@ -67,8 +67,7 @@ public abstract class Kernel32Util implements WinDef {
                 buffer, 0, null)) {
             throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
         }
-        String s = buffer.getValue().getString(0,
-                !Boolean.getBoolean("w32.ascii"));
+        String s = buffer.getValue().getWideString(0);
         Kernel32.INSTANCE.LocalFree(buffer.getValue());
         return s.trim();
     }

@@ -35,7 +35,7 @@ public class Crypt32Test extends TestCase {
     	DATA_BLOB pDataDecrypted = new DATA_BLOB();
     	assertTrue(Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription, 
     			null, null, null, 0, pDataDecrypted));
-    	assertEquals("description", pDescription.getValue().getString(0, true));
+    	assertEquals("description", pDescription.getValue().getWideString(0));
     	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
     	Kernel32.INSTANCE.LocalFree(pDataEncrypted.pbData);
     	Kernel32.INSTANCE.LocalFree(pDataDecrypted.pbData);
@@ -56,7 +56,7 @@ public class Crypt32Test extends TestCase {
     	// decrypt with entropy
     	assertTrue(Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription, 
     			pEntropy, null, null, 0, pDataDecrypted));
-    	assertEquals("description", pDescription.getValue().getString(0, true));
+    	assertEquals("description", pDescription.getValue().getWideString(0));
     	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
     	Kernel32.INSTANCE.LocalFree(pDataEncrypted.pbData);
     	Kernel32.INSTANCE.LocalFree(pDataDecrypted.pbData);

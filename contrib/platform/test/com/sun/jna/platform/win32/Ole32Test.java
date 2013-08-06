@@ -31,7 +31,7 @@ public class Ole32Test extends TestCase {
 	}
 
 	public void testCoCreateGUID() {
-		GUID.ByReference pguid = new GUID.ByReference();
+		GUID pguid = new GUID();
 		assertEquals(W32Errors.S_OK, Ole32.INSTANCE.CoCreateGuid(pguid));
 		assertTrue(pguid.Data1 != 0 || pguid.Data2 != 0 || pguid.Data3 != 0
 				&& pguid.Data4 != null);

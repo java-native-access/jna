@@ -69,9 +69,9 @@ public interface NTSecApi extends StdCallLibrary {
             if (data.length < 2 || data[data.length - 1] != 0) {
                 Memory newdata = new Memory(data.length + 2);
                 newdata.write(0, data, 0, data.length);
-                return newdata.getString(0, true);
+                return newdata.getWideString(0);
             }
-            return Buffer.getString(0, true);
+            return Buffer.getWideString(0);
         }
     }
 

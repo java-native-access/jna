@@ -112,7 +112,7 @@ public abstract class COMUtils {
     public static void checkRC(HRESULT hr, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
         if(FAILED(hr)) {
-            String formatMessageFromHR = Kernel32Util.formatMessageFromHR(hr);
+            String formatMessageFromHR = Kernel32Util.formatMessage(hr);
             throw new COMException(formatMessageFromHR);
         }
     }

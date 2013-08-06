@@ -17,14 +17,11 @@ import junit.framework.TestCase;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
-import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
-import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -38,107 +35,104 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class ITypeLibTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(ITypeLibTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(ITypeLibTest.class);
+    }
 
-	public ITypeLibTest() {
-		Native.setProtected(true);
-	}
+    public ITypeLibTest() {
+        Native.setProtected(true);
+    }
 
-	private ITypeLib loadShellTypeLib() {
-		// Microsoft Shell Controls And Automation
-		CLSID.ByReference clsid = new CLSID.ByReference();
-		// get CLSID from string
-		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
-				"{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);
-		COMUtils.checkRC(hr);
-		assertEquals(0, hr.intValue());
+    private ITypeLib loadShellTypeLib() {
+        // Microsoft Shell Controls And Automation
+        CLSID.ByReference clsid = new CLSID.ByReference();
+        // get CLSID from string
+        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
+                "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);
+        COMUtils.checkRC(hr);
+        assertEquals(0, hr.intValue());
 
-		// get user default lcid
-		LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
-		// create a IUnknown pointer
-		PointerByReference pShellTypeLib = new PointerByReference();
-		// load typelib
-		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pShellTypeLib);
-		COMUtils.checkRC(hr);
-		assertEquals(0, hr.intValue());
+        // get user default lcid
+        LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
+        // create a IUnknown pointer
+        PointerByReference pShellTypeLib = new PointerByReference();
+        // load typelib
+        hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pShellTypeLib);
+        COMUtils.checkRC(hr);
+        assertEquals(0, hr.intValue());
 
-		return new TypeLib(pShellTypeLib.getValue());
-	}
+        return new TypeLib(pShellTypeLib.getValue());
+    }
 
-	public void testGetTypeInfoCount() {
+    public void testGetTypeInfoCount() {
+        ITypeLib shellTypeLib = loadShellTypeLib();
+        UINT typeInfoCount = shellTypeLib.GetTypeInfoCount();
+        System.out.println("GetTypeInfoCount: " + typeInfoCount);
+    }
+
+    public void testGetTypeInfo() {
+        // ITypeLib shellTypeLib = loadShellTypeLib();
+        //
+        // TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
+        // HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), pTInfo);
+        //
+        // COMUtils.checkRC(hr);
+        // assertEquals(0, hr.intValue());
+        // System.out.println("ITypeInfo: " + pTInfo.toString());
+    }
+
+    public void testGetTypeInfoType() {
+        ITypeLib shellTypeLib = loadShellTypeLib();
+
+        TYPEKIND.ByReference pTKind = new TYPEKIND.ByReference();
+        HRESULT hr = shellTypeLib.GetTypeInfoType(new UINT(0), pTKind);
+
+        COMUtils.checkRC(hr);
+        assertEquals(0, hr.intValue());
+        System.out.println("TYPEKIND: " + pTKind);
+    }
+
+    public void testGetTypeInfoOfGuid() {
+        // ITypeLib shellTypeLib = loadShellTypeLib();
+        //
+        // GUID shellGuid = new GUID("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
+        // TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
+        // HRESULT hr = shellTypeLib.GetTypeInfoOfGuid(shellGuid, pTInfo);
+        //
+        // COMUtils.checkRC(hr);
+        // assertEquals(0, hr.intValue());
+        // System.out.println("ITypeInfo: " + pTInfo.toString());
+    }
+
+    public void testGetLibAttr() {
+        // ITypeLib shellTypeLib = loadShellTypeLib();
+        //
+        // TLIBATTR.ByReference ppTLibAttr = new TLIBATTR.ByReference();
+        // HRESULT hr = shellTypeLib.GetLibAttr(ppTLibAttr);
+        //
+        // COMUtils.checkRC(hr);
+        // assertEquals(0, hr.intValue());
+        // System.out.println("ppTLibAttr: " + ppTLibAttr.toString());
+    }
+
+    public void testGetTypeComp() {
+        // ITypeLib shellTypeLib = loadShellTypeLib();
+        //
+        // TypeComp.ByReference pTComp = new TypeComp.ByReference();
+        // HRESULT hr = shellTypeLib.GetTypeComp(pTComp);
+        //
+        // COMUtils.checkRC(hr);
+        // assertEquals(0, hr.intValue());
+        // System.out.println("pTComp: " + pTComp.toString());
+    }
+
+    public void testFindName() {
 		ITypeLib shellTypeLib = loadShellTypeLib();
-		UINT typeInfoCount = shellTypeLib.GetTypeInfoCount();
-		System.out.println("GetTypeInfoCount: " + typeInfoCount);
-	}
-
-	public void testGetTypeInfo() {
-//		ITypeLib shellTypeLib = loadShellTypeLib();
-//
-//		TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
-//		HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), pTInfo);
-//
-//		COMUtils.checkRC(hr);
-//		assertEquals(0, hr.intValue());
-//		System.out.println("ITypeInfo: " + pTInfo.toString());
-	}
-
-	public void testGetTypeInfoType() {
-		ITypeLib shellTypeLib = loadShellTypeLib();
-
-		TYPEKIND.ByReference pTKind = new TYPEKIND.ByReference();
-		HRESULT hr = shellTypeLib.GetTypeInfoType(new UINT(0), pTKind);
-
-		COMUtils.checkRC(hr);
-		assertEquals(0, hr.intValue());
-		System.out.println("TYPEKIND: " + pTKind);
-	}
-
-	public void testGetTypeInfoOfGuid() {
-//		ITypeLib shellTypeLib = loadShellTypeLib();
-//
-//		GUID shellGuid = new GUID("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
-//		TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
-//		HRESULT hr = shellTypeLib.GetTypeInfoOfGuid(shellGuid, pTInfo);
-//
-//		COMUtils.checkRC(hr);
-//		assertEquals(0, hr.intValue());
-//		System.out.println("ITypeInfo: " + pTInfo.toString());
-	}
-
-	public void testGetLibAttr() {
-//		ITypeLib shellTypeLib = loadShellTypeLib();
-//
-//		TLIBATTR.ByReference ppTLibAttr = new TLIBATTR.ByReference();
-//		HRESULT hr = shellTypeLib.GetLibAttr(ppTLibAttr);
-//
-//		COMUtils.checkRC(hr);
-//		assertEquals(0, hr.intValue());
-//		System.out.println("ppTLibAttr: " + ppTLibAttr.toString());
-	}
-
-	public void testGetTypeComp() {
-//		ITypeLib shellTypeLib = loadShellTypeLib();
-//
-//		TypeComp.ByReference pTComp = new TypeComp.ByReference();
-//		HRESULT hr = shellTypeLib.GetTypeComp(pTComp);
-//
-//		COMUtils.checkRC(hr);
-//		assertEquals(0, hr.intValue());
-//		System.out.println("pTComp: " + pTComp.toString());
-	}
-
-	public void testFindName() {
-		ITypeLib shellTypeLib = loadShellTypeLib();
-		BSTRByReference szNameBuf = new BSTRByReference(new BSTR("Application"));
+		BSTRByReference szNameBuf = new BSTRByReference(OleAuto.INSTANCE.SysAllocString("Application"));
 		ULONG lHashVal = new ULONG(0);
-		MEMBERID[] rgMemIds = new MEMBERID[1000];
-		ITypeInfo[] ppTInfo = new ITypeInfo[1000];
 		USHORTbyReference pcFound = new USHORTbyReference((short)20);
 
-		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, ppTInfo,
-				rgMemIds, pcFound);
+		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, null, null, pcFound);
 
 		COMUtils.checkRC(hr);
 		System.out.println("szNameBuf: " + szNameBuf);

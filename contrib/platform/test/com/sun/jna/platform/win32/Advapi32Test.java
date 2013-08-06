@@ -134,7 +134,7 @@ public class Advapi32Test extends TestCase {
     	PointerByReference convertedSidStringPtr = new PointerByReference();
     	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSid(
     			sid.getValue(), convertedSidStringPtr));
-    	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
+    	String convertedSidString = convertedSidStringPtr.getValue().getWideString(0);
     	assertEquals(convertedSidString, sidString);
     	assertEquals(null, Kernel32.INSTANCE.LocalFree(convertedSidStringPtr.getValue()));
     	assertEquals(null, Kernel32.INSTANCE.LocalFree(sid.getValue().getPointer()));
@@ -497,7 +497,7 @@ public class Advapi32Test extends TestCase {
     	PointerByReference convertedSidStringPtr = new PointerByReference();
     	assertTrue(Advapi32.INSTANCE.ConvertSidToStringSid(
     			pSid, convertedSidStringPtr));
-    	String convertedSidString = convertedSidStringPtr.getValue().getString(0, true);
+    	String convertedSidString = convertedSidStringPtr.getValue().getWideString(0);
     	assertEquals(EVERYONE, convertedSidString);
     }
     
