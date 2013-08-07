@@ -348,7 +348,7 @@ public interface OaIdl {
         public static class ByReference extends TYPEKIND implements
                 Structure.ByReference {
             public ByReference() {
-                // TODO Auto-generated constructor stub
+
             }
 
             public ByReference(int value) {
@@ -450,7 +450,7 @@ public interface OaIdl {
         public PVOID pvData;
 
         /** The rgsabound. */
-        public SAFEARRAYBOUND[] rgsabound = new SAFEARRAYBOUND[1];
+        public SAFEARRAYBOUND[] rgsabound;
 
         public SAFEARRAY() {
         }
@@ -821,9 +821,14 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public ELEMDESC[] elemDescArg = new ELEMDESC[] { new ELEMDESC() };
+        public ELEMDESC[] elemDescArg;
 
         public ElemDescArg() {
+        }
+
+        public ElemDescArg(Pointer pointer) {
+            super(pointer);
+            this.read();
         }
 
         @Override
@@ -837,9 +842,14 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public SCODE[] scodeArg = new SCODE[] { new SCODE() };
+        public SCODE[] scodeArg;
 
         public ScodeArg() {
+        }
+
+        public ScodeArg(Pointer pointer) {
+            super(pointer);
+            this.read();
         }
 
         @Override
@@ -1261,7 +1271,7 @@ public interface OaIdl {
          * [size_is]<br>
          * C type : SAFEARRAYBOUND[1]
          */
-        public SAFEARRAYBOUND[] rgbounds = new SAFEARRAYBOUND[1];
+        public SAFEARRAYBOUND[] rgbounds;
 
         public ARRAYDESC() {
             super();
