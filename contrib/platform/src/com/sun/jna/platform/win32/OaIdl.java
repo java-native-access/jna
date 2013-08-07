@@ -799,7 +799,6 @@ public interface OaIdl {
 
         public FUNCDESC(Pointer pointer) {
             super(pointer);
-            System.out.println(this.toString());
             this.read();
 
             if (this.cParams > 1) {
