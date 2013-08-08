@@ -17,15 +17,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.net.URL;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel;
-import java.util.Enumeration;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
+import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbBase;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCmdlineArgs;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCoClass;
@@ -75,13 +70,13 @@ public class TlbImp implements TlbConst {
             this.typeLibUtil = new TypeLibUtil(clsid, majorVersion,
                     minorVersion);
             this.startCOM2Java();
-        }else if (this.cmdlineArgs.isTlbFile()) {
+        } else if (this.cmdlineArgs.isTlbFile()) {
             String file = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_FILE);
             // initialize typelib
             // check version numbers with registry entries!!!
             this.typeLibUtil = new TypeLibUtil(file);
             this.startCOM2Java();
-        }else
+        } else
             this.cmdlineArgs.showCmdHelp();
     }
 
@@ -92,7 +87,7 @@ public class TlbImp implements TlbConst {
         try {
             // create output Dir
             this.createDir();
-
+            
             int typeInfoCount = typeLibUtil.getTypeInfoCount();
             for (int i = 0; i < typeInfoCount; ++i) {
                 TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
@@ -149,7 +144,8 @@ public class TlbImp implements TlbConst {
 
     private void writeTextFile(String filename, String str) throws IOException {
         String file = this.comRootDir + File.separator + filename;
-        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+        BufferedOutputStream bos = new BufferedOutputStream(
+                new FileOutputStream(file));
         bos.write(str.getBytes());
         bos.close();
     }

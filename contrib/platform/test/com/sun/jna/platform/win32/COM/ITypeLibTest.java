@@ -70,14 +70,14 @@ public class ITypeLibTest extends TestCase {
     }
 
     public void testGetTypeInfo() {
-        // ITypeLib shellTypeLib = loadShellTypeLib();
-        //
-        // TypeInfo.ByReference pTInfo = new TypeInfo.ByReference();
-        // HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), pTInfo);
-        //
-        // COMUtils.checkRC(hr);
-        // assertEquals(0, hr.intValue());
-        // System.out.println("ITypeInfo: " + pTInfo.toString());
+         ITypeLib shellTypeLib = loadShellTypeLib();
+        
+         PointerByReference ppTInfo = new PointerByReference();
+         HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), ppTInfo);
+        
+         COMUtils.checkRC(hr);
+         assertEquals(0, hr.intValue());
+         System.out.println("ITypeInfo: " + ppTInfo.toString());
     }
 
     public void testGetTypeInfoType() {
