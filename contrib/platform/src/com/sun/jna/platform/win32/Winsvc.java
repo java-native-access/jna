@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
@@ -295,6 +296,58 @@ public interface Winsvc extends StdCallLibrary {
      */
     public abstract class SC_STATUS_TYPE { 
         public static final int SC_STATUS_PROCESS_INFO = 0;
+    }
+
+    interface SERVICE_MAIN_FUNCTION extends StdCallCallback {
+        /*
+         * VOID WINAPI ServiceMain( DWORD dwArgc, LPTSTR* lpszArgv );
+         */
+        public void callback(int dwArgc, Pointer lpszArgv);
+    }
+
+    interface Handler extends StdCallCallback {
+        /*
+         * VOID WINAPI Handler( DWORD fdwControl );
+         */
+        public void callback(int fdwControl);
+    }
+
+    interface HandlerEx extends StdCallCallback {
+        /*
+         * DWORD WINAPI HandlerEx( DWORD dwControl, DWORD dwEventType, LPVOID
+         * lpEventData, LPVOID lpContext );
+         */
+        public int callback(int dwControl, int dwEventType,
+                            Pointer lpEventData, Pointer lpContext);
+    }
+
+    /*
+     * typedef struct _SERVICE_TABLE_ENTRY { LPTSTR lpServiceName;
+     * LPSERVICE_MAIN_FUNCTION lpServiceProc; } SERVICE_TABLE_ENTRY,
+     * LPSERVICE_TABLE_ENTRY;
+     */
+    public static class SERVICE_TABLE_ENTRY extends Structure {
+        public String lpServiceName;
+        public SERVICE_MAIN_FUNCTION lpServiceProc;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "lpServiceName", "lpServiceProc" });
+        }
+    }
+
+    public static abstract class ChangeServiceConfig2Info extends Structure {
+    }
+
+    /*
+     * typedef struct _SERVICE_DESCRIPTION { LPTSTR lpDescription; }
+     * SERVICE_DESCRIPTION,LPSERVICE_DESCRIPTION;
+     */
+    public static class SERVICE_DESCRIPTION extends ChangeServiceConfig2Info {
+        public String lpDescription;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "lpDescription" });
+        }
     }
 
 }
