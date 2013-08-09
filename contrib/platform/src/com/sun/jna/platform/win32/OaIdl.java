@@ -450,7 +450,7 @@ public interface OaIdl {
         public PVOID pvData;
 
         /** The rgsabound. */
-        public SAFEARRAYBOUND[] rgsabound;
+        public SAFEARRAYBOUND[] rgsabound = { new SAFEARRAYBOUND() };
 
         public SAFEARRAY() {
         }
@@ -821,7 +821,7 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public ELEMDESC[] elemDescArg;
+        public ELEMDESC[] elemDescArg = { new ELEMDESC() };
 
         public ElemDescArg() {
         }
@@ -842,7 +842,7 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public SCODE[] scodeArg;
+        public SCODE[] scodeArg = { new SCODE() };
 
         public ScodeArg() {
         }
@@ -1271,7 +1271,7 @@ public interface OaIdl {
          * [size_is]<br>
          * C type : SAFEARRAYBOUND[1]
          */
-        public SAFEARRAYBOUND[] rgbounds;
+        public SAFEARRAYBOUND[] rgbounds = { new SAFEARRAYBOUND() };
 
         public ARRAYDESC() {
             super();

@@ -14,7 +14,9 @@ package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
+import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 
 /**
@@ -41,14 +43,27 @@ public class TypeLibUtilTest extends TestCase {
 
     public void testGetTypeInfo() {
         TypeLibUtil shellTypeLib = loadShellTypeLib();
-        ITypeInfo typeInfo = shellTypeLib.getTypeInfo(0);
-        TypeInfoUtil typeInfoUtil = new TypeInfoUtil(typeInfo);
-
-        TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
-        int cFuncs = typeAttr.cFuncs.intValue();
-
-        for (int i = 0; i < cFuncs; i++) {
-            FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(i);
+        int typeInfoCount = shellTypeLib.getTypeInfoCount();
+        
+        for (int i = 0; i < typeInfoCount; i++) 
+        {
+            ITypeInfo typeInfo = shellTypeLib.getTypeInfo(i);
+            TypeInfoUtil typeInfoUtil = new TypeInfoUtil(typeInfo);
+    
+            TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+            int cFuncs = typeAttr.cFuncs.intValue();
+    
+            for (int y = 0; y < cFuncs; y++) {
+                // Get the function description
+                FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(y);
+                // Get the member ID
+                MEMBERID memberID = funcDesc.memid;
+                // Get the name of the method
+                TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+                String methodName = typeInfoDoc2.getName();
+                assertNotNull(methodName);
+                typeInfoUtil.ReleaseFuncDesc(funcDesc);
+            }
         }
     }
 }
