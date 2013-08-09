@@ -12,11 +12,9 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.IID;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -36,7 +34,6 @@ public class Unknown extends COMInvoker implements IUnknown {
     }
 
     public Unknown() {
-        this.setPointer(new Memory(Pointer.SIZE));
     }
 
     /**
@@ -64,13 +61,11 @@ public class Unknown extends COMInvoker implements IUnknown {
                 HRESULT.class);
     }
 
-    public UINT AddRef() {
-        return (UINT) this._invokeNativeObject(1,
-                new Object[] { this.getPointer() }, UINT.class);
+    public int AddRef() {
+        return this._invokeNativeInt(1, new Object[] { this.getPointer() });
     }
 
-    public UINT Release() {
-        return (UINT) this._invokeNativeObject(2,
-                new Object[] { this.getPointer() }, UINT.class);
+    public int Release() {
+        return this._invokeNativeInt(2, new Object[] { this.getPointer() });
     }
 }

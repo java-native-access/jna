@@ -49,7 +49,7 @@ public class TypeLibUtilTest extends TestCase {
         {
             ITypeInfo typeInfo = shellTypeLib.getTypeInfo(i);
             TypeInfoUtil typeInfoUtil = new TypeInfoUtil(typeInfo);
-    
+            
             TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
             int cFuncs = typeAttr.cFuncs.intValue();
     
@@ -61,9 +61,13 @@ public class TypeLibUtilTest extends TestCase {
                 // Get the name of the method
                 TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
                 String methodName = typeInfoDoc2.getName();
+                
                 assertNotNull(methodName);
+
                 typeInfoUtil.ReleaseFuncDesc(funcDesc);
             }
+            
+            typeInfoUtil.ReleaseTypeAttr(typeAttr);
         }
     }
 }

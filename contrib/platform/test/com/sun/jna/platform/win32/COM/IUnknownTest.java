@@ -14,88 +14,82 @@ package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IUnknownTest extends TestCase {
+    
+    private Unknown createIUnknown() {
+        try {
+            PointerByReference pUnknown = new PointerByReference();
 
-	private Dispatch iDispatch = new Dispatch();
+            // Get CLSID for Word.Application...
+            CLSID.ByReference clsid = new CLSID.ByReference();
+            HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application", clsid);
 
-	private PointerByReference pDispatch = new PointerByReference();
+            if (W32Errors.FAILED(hr)) {
+                Ole32.INSTANCE.CoUninitialize();
+                COMUtils.checkRC(hr);
+            }
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		System.out.println("JNA protected mode: " + Native.isProtected());
+            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER,
+                    IUnknown.IID_IUNKNOWN, pUnknown);
 
-		// Initialize COM for this thread...
-		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+            if (W32Errors.FAILED(hr)) {
+                COMUtils.checkRC(hr);
+            }
 
-		if (W32Errors.FAILED(hr)) {
-			this.tearDown();
-			throw new COMException("CoInitialize() failed");
-		}
+            return new Unknown(pUnknown.getValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
 
-		// Get CLSID for Word.Application...
-		CLSID.ByReference clsid = new CLSID.ByReference();
-		hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application",
-				clsid);
+    @Override
+    protected void setUp() throws Exception {
+        // Initialize COM for this thread...
+        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 
-		if (W32Errors.FAILED(hr)) {
-			Ole32.INSTANCE.CoUninitialize();
-			COMUtils.checkRC(hr);
-		}
+        if (W32Errors.FAILED(hr)) {
+            this.tearDown();
+            throw new COMException("CoInitialize() failed");
+        }
+    }
+    
+    public void testQueryInterface() {
+        Unknown iUnknown = this.createIUnknown();
+        PointerByReference ppvObject = new PointerByReference();
+        iUnknown.QueryInterface(IUnknown.IID_IUNKNOWN, ppvObject);
 
-		hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-				WTypes.CLSCTX_SERVER, IDispatch.IID_IDispatch,
-				this.pDispatch);
+        assertTrue("ppvObject:" + ppvObject.toString(), ppvObject != null);
+    }
 
-		if (W32Errors.FAILED(hr)) {
-		    COMUtils.checkRC(hr);
-		}
+    public void testAddRef() {
+        Unknown iUnknown = this.createIUnknown();
+        int addRef = iUnknown.AddRef();
+        assertEquals(2, addRef);
+    }
 
-		this.iDispatch = new Dispatch(pDispatch.getPointer());
-	}
+    public void testRelease() {
+        Unknown iUnknown = this.createIUnknown();
+        int release = iUnknown.Release();
+        
+        assertEquals(0, release);
+    }
 
-	public void testQueryInterface() {
-		System.out.println("start 'testQueryInterface'");
-		PointerByReference ppvObject = new PointerByReference();
-		this.iDispatch.QueryInterface(IDispatch.IID_IDispatch, ppvObject);
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        Ole32.INSTANCE.CoUninitialize();
+    }
 
-		System.out.println("ppvObject:" + ppvObject.toString());
-		System.out.println("end 'testQueryInterface'");
-	}
-
-	public void testAddRef() {
-		System.out.println("start 'testAddRef'");
-		int addRef = this.iDispatch.AddRef().intValue();
-
-		System.out.println("addRef:" + addRef);
-		System.out.println("end 'testAddRef'");
-	}
-
-	public void testRelease() {
-		System.out.println("start 'testQueryInterface'");
-		int release = this.iDispatch.Release().intValue();
-
-		System.out.println("release:" + release);
-		System.out.println("end 'testRelease'");
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		Ole32.INSTANCE.CoUninitialize();
-	}
-
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(IUnknownTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(IUnknownTest.class);
+    }
 }

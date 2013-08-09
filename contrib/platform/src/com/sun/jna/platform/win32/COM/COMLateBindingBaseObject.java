@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.Native;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
@@ -90,15 +89,15 @@ public class COMLateBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
+                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                        IDispatch.IID_IDispatch, this.pDispatch);
+                        IDispatch.IID_IDISPATCH, this.pDispatch);
             }
         } else {
             hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                    IDispatch.IID_IDispatch, this.pDispatch);
+                    IDispatch.IID_IDISPATCH, this.pDispatch);
         }
 
         if (COMUtils.FAILED(hr)) {
@@ -133,15 +132,15 @@ public class COMLateBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDispatch,
+                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                        IDispatch.IID_IDispatch, this.pDispatch);
+                        IDispatch.IID_IDISPATCH, this.pDispatch);
             }
         } else {
             hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                    IDispatch.IID_IDispatch, this.pDispatch);
+                    IDispatch.IID_IDISPATCH, this.pDispatch);
         }
 
         if (COMUtils.FAILED(hr)) {

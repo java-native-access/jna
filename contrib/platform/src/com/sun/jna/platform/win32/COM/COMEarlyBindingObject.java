@@ -54,15 +54,15 @@ public class COMEarlyBindingObject extends Dispatch {
             hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
             if (COMUtils.SUCCEEDED(hr)) {
-                hr = this.QueryInterface(IDispatch.IID_IDispatch,
+                hr = this.QueryInterface(IDispatch.IID_IDISPATCH,
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                        IDispatch.IID_IDispatch, this.pDispatch);
+                        IDispatch.IID_IDISPATCH, this.pDispatch);
             }
         } else {
             hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                    IDispatch.IID_IDispatch, this.pDispatch);
+                    IDispatch.IID_IDISPATCH, this.pDispatch);
         }
 
         if (COMUtils.FAILED(hr)) {

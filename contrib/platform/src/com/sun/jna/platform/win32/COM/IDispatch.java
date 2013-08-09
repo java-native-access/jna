@@ -37,7 +37,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface IDispatch extends IUnknown {
 
-    public final static IID IID_IDispatch = new IID(
+    public final static IID IID_IDISPATCH = new IID(
             "00020400-0000-0000-C000-000000000046");
 
     public HRESULT GetTypeInfoCount(UINTbyReference pctinfo);

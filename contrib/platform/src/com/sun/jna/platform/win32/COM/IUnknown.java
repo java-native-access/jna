@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.platform.win32.Guid.IID;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -29,12 +28,12 @@ import com.sun.jna.ptr.PointerByReference;
 public interface IUnknown {
 
     /** The Constant IID_IDispatch. */
-    public final static IID IID_UNKNOWN = new IID(
+    public final static IID IID_IUNKNOWN = new IID(
             "{00000000-0000-0000-C000-000000000046}");
 
     public HRESULT QueryInterface(IID riid, PointerByReference ppvObject);
 
-    public UINT AddRef();
+    public int AddRef();
 
-    public UINT Release();
+    public int Release();
 }
