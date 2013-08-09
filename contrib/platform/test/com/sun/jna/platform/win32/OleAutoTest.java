@@ -34,6 +34,9 @@ public class OleAutoTest extends TestCase {
 		junit.textui.TestRunner.run(OleAutoTest.class);
 	}
 
+	public OleAutoTest() {
+	}
+
 	public void testSysAllocString() {
 		assertEquals(null, OleAuto.INSTANCE.SysAllocString(null));
 		BSTR p = OleAuto.INSTANCE.SysAllocString("hello world");
@@ -47,7 +50,7 @@ public class OleAutoTest extends TestCase {
 
 	public void testDISPPARAMS() {
 		// Build DISPPARAMS
-		SAFEARRAY safeArg = OleAutoUtil.createVarArray(1);
+		SAFEARRAY.ByReference safeArg = OleAutoUtil.createVarArray(1);
 		OleAutoUtil.SafeArrayPutElement(safeArg, 0, new VARIANT(
 				Variant.VARIANT_TRUE));
 		System.out.println(safeArg.toString(true));
@@ -55,11 +58,11 @@ public class OleAutoTest extends TestCase {
 
 	public void testLoadRegTypeLib() {
 		// MS Word typelib guid
-		CLSID clsid = new CLSID();
+		CLSID.ByReference clsid = new CLSID.ByReference();
 		// get CLSID from string
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
 				"{00020905-0000-0000-C000-000000000046}"), clsid);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 
 		// get user default lcid
@@ -67,7 +70,7 @@ public class OleAutoTest extends TestCase {
 		PointerByReference pWordTypeLib = new PointerByReference();
 		// get typelib based on Word 8.3 (v11)
 		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 8, 3, lcid, pWordTypeLib);
-		COMUtils.checkTypeLibRC(hr);
+		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 	}
 

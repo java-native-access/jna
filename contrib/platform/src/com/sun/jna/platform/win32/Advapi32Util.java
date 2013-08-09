@@ -258,7 +258,7 @@ public abstract class Advapi32Util {
 		if (!Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		String result = stringSid.getValue().getString(0, true);
+		String result = stringSid.getValue().getWideString(0);
 		Kernel32.INSTANCE.LocalFree(stringSid.getValue());
 		return result;
 	}
@@ -664,7 +664,7 @@ public abstract class Advapi32Util {
 			ArrayList<String> result = new ArrayList<String>();
 			int offset = 0;
 			while (offset < data.size()) {
-				String s = data.getString(offset, true);
+				String s = data.getWideString(0);
 				offset += s.length() * Native.WCHAR_SIZE;
 				offset += Native.WCHAR_SIZE;
 				if (s.length() == 0 && offset == data.size()) {
@@ -866,7 +866,7 @@ public abstract class Advapi32Util {
 			result = byteData.getByteArray(0, lpcbData.getValue());
 		} else if ((lpType.getValue() == WinNT.REG_SZ)
 				|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
-			result = byteData.getString(0, true);
+			result = byteData.getWideString(0);
 		}
 
 		return result;
@@ -1158,7 +1158,7 @@ public abstract class Advapi32Util {
 		int offset = 0;
 		Memory data = new Memory(size);
 		for (String s : arr) {
-			data.setString(offset, s, true);
+			data.setWideString(offset, s);
 			offset += s.length() * Native.WCHAR_SIZE;
 			offset += Native.WCHAR_SIZE;
 		}
@@ -1508,7 +1508,7 @@ public abstract class Advapi32Util {
 			}
 			case WinNT.REG_SZ:
 			case WinNT.REG_EXPAND_SZ: {
-				keyValues.put(nameString, byteData.getString(0, true));
+				keyValues.put(nameString, byteData.getWideString(0));
 				break;
 			}
 			case WinNT.REG_BINARY: {
@@ -1522,7 +1522,7 @@ public abstract class Advapi32Util {
 				ArrayList<String> result = new ArrayList<String>();
 				int offset = 0;
 				while (offset < stringData.size()) {
-					String s = stringData.getString(offset, true);
+					String s = stringData.getWideString(0);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
 					if (s.length() == 0 && offset == stringData.size()) {
@@ -1794,7 +1794,7 @@ public abstract class Advapi32Util {
 
 		public EventLogRecord(Pointer pevlr) {
 			_record = new EVENTLOGRECORD(pevlr);
-			_source = pevlr.getString(_record.size(), true);
+			_source = pevlr.getWideString(_record.size());
 			// data
 			if (_record.DataLength.intValue() > 0) {
 				_data = pevlr.getByteArray(_record.DataOffset.intValue(),
@@ -1806,7 +1806,7 @@ public abstract class Advapi32Util {
 				int count = _record.NumStrings.intValue();
 				long offset = _record.StringOffset.intValue();
 				while (count > 0) {
-					String s = pevlr.getString(offset, true);
+					String s = pevlr.getWideString(0);
 					strings.add(s);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
