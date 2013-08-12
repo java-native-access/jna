@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -28,16 +29,22 @@ import junit.framework.TestCase;
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32APIOptions;
 
 /** Exercise callback-related functionality.
  *
  * @author twall@users.sf.net
  */
 //@SuppressWarnings("unused")
-public class CallbacksTest extends TestCase {
+public class CallbacksTest extends TestCase implements Paths {
+
+    private static final String UNICODE = "[\u0444]";
 
     private static final double DOUBLE_MAGIC = -118.625d;
     private static final float FLOAT_MAGIC = -118.625f;
+
+    private static final int THREAD_TIMEOUT = 5000;
 
     public static class SmallTestStructure extends Structure {
         public double value;
@@ -84,7 +91,7 @@ public class CallbacksTest extends TestCase {
             void callback();
         }
         void callVoidCallback(VoidCallback c);
-        void callVoidCallbackThreaded(VoidCallback c, int count, int ms);
+        void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name);
         interface VoidCallbackCustom extends Callback {
             void customMethodName();
         }
@@ -182,6 +189,7 @@ public class CallbacksTest extends TestCase {
     }
 
     TestLibrary lib;
+
     protected void setUp() {
         lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
     }
@@ -230,9 +238,20 @@ public class CallbacksTest extends TestCase {
         }
     }
 
+    public void testThrowOnMultiplyMappedCallback() {
+        try {
+            Pointer p = new Pointer(getName().hashCode());
+            CallbackReference.getCallback(TestLibrary.VoidCallback.class, p);
+            CallbackReference.getCallback(TestLibrary.ByteCallback.class, p);
+            fail("Multiply-mapped callback should fail");
+        }
+        catch(IllegalStateException e) {
+        }
+    }
+
     public void testNoMethodCallback() {
         try {
-            CallbackReference.getCallback(TestLibrary.NoMethodCallback.class, new Pointer(1));
+            CallbackReference.getCallback(TestLibrary.NoMethodCallback.class, new Pointer(getName().hashCode()));
             fail("Callback with no callback method should fail");
         }
         catch(IllegalArgumentException e) {
@@ -240,12 +259,12 @@ public class CallbacksTest extends TestCase {
     }
 
     public void testCustomMethodCallback() {
-        CallbackReference.getCallback(TestLibrary.CustomMethodCallback.class, new Pointer(1));
+        CallbackReference.getCallback(TestLibrary.CustomMethodCallback.class, new Pointer(getName().hashCode()));
     }
 
     public void testTooManyMethodsCallback() {
         try {
-            CallbackReference.getCallback(TestLibrary.TooManyMethodsCallback.class, new Pointer(1));
+            CallbackReference.getCallback(TestLibrary.TooManyMethodsCallback.class, new Pointer(getName().hashCode()));
             fail("Callback lookup with too many methods should fail");
         }
         catch(IllegalArgumentException e) {
@@ -253,19 +272,19 @@ public class CallbacksTest extends TestCase {
     }
 
     public void testMultipleMethodsCallback() {
-        CallbackReference.getCallback(TestLibrary.MultipleMethodsCallback.class, new Pointer(1));
+        CallbackReference.getCallback(TestLibrary.MultipleMethodsCallback.class, new Pointer(getName().hashCode()));
     }
 
     public void testNativeFunctionPointerStringValue() {
-        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
         Class cls = CallbackReference.findCallbackClass(cb.getClass());
         assertTrue("toString should include Java Callback type: " + cb + " ("
                    + cls + ")", cb.toString().indexOf(cls.getName()) != -1);
     }
 
     public void testLookupSameCallback() {
-        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
-        Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(1));
+        Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
+        Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
         
         assertEquals("Callback lookups for same pointer should return same Callback object", cb, cb2);
     }
@@ -587,10 +606,10 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final String VALUE = "value";
+        final String VALUE = "value" + UNICODE;
         String value = lib.callStringCallback(cb, VALUE);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
+        assertEquals("Wrong String callback argument", VALUE, cbargs[0]);
         assertEquals("Wrong String return", VALUE, value);
     }
     
@@ -605,7 +624,7 @@ public class CallbacksTest extends TestCase {
         Map m = CallbackReference.allocations;
         m.clear();
 
-        String arg = getName() + "1";
+        String arg = getName() + "1" + UNICODE;
         String value = lib.callStringCallback(cb, arg);
         WeakReference ref = new WeakReference(value);
         
@@ -632,7 +651,7 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final WString VALUE = new WString("value");
+        final WString VALUE = new WString("value" + UNICODE);
         WString value = lib.callWideStringCallback(cb, VALUE);
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
@@ -649,12 +668,20 @@ public class CallbacksTest extends TestCase {
                 return arg;
             }
         };
-        final String[] VALUE = { "value", null };
-        Pointer value = lib.callStringArrayCallback(cb, VALUE);
+        final String VALUE = "value" + UNICODE;
+        final String[] VALUE_ARRAY = { VALUE, null };
+        Pointer value = lib.callStringArrayCallback(cb, VALUE_ARRAY);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", VALUE[0], cbargs[0][0]);
+        assertEquals("String[] array should not be modified",
+                     VALUE, VALUE_ARRAY[0]);
+        assertEquals("Terminating null should be removed from incoming arg",
+                     VALUE_ARRAY.length-1, cbargs[0].length);
+        assertEquals("String[] argument index 0 mismatch",
+                     VALUE_ARRAY[0], cbargs[0][0]);
         String[] result = value.getStringArray(0);
-        assertEquals("Wrong String return", VALUE[0], result[0]);
+        assertEquals("Wrong String[] return", VALUE_ARRAY[0], result[0]);
+        assertEquals("Terminating null should be removed from return value",
+                     VALUE_ARRAY.length-1, result.length);
     }
     
     public void testCallCallbackWithByReferenceArgument() {
@@ -703,7 +730,7 @@ public class CallbacksTest extends TestCase {
     public void testUnionByValueCallbackArgument() throws Exception{ 
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
-        final String VALUE = getName();
+        final String VALUE = getName() + UNICODE;
         arg.f1 = VALUE;
         final boolean[] called = { false };
         final TestLibrary.TestUnion[] cbvalue = { null };
@@ -873,6 +900,24 @@ public class CallbacksTest extends TestCase {
         assertTrue("Callback with custom method name not called", called[0]);
     }
 
+    public void testDisallowDetachFromJVMThread() {
+    	final boolean[] called = {false};
+        final boolean[] exceptionThrown = {true};
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            public void callback() {
+                called[0] = true;
+                try {
+                    Native.detach(true);
+                }
+                catch(IllegalStateException e) {
+                }
+            }
+        };
+        lib.callVoidCallback(cb);
+        assertTrue("Callback not called", called[0]);
+        assertTrue("Native.detach(true) should throw IllegalStateException when called from JVM thread", exceptionThrown[0]);
+    }
+
     public void testCustomCallbackVariedInheritance() {
     	final boolean[] called = {false};
         TestLibrary.VoidCallbackCustom cb =
@@ -985,15 +1030,22 @@ public class CallbacksTest extends TestCase {
                                         CallbackThreadInitializer cti,
                                         int repeat, int sleepms,
                                         int[] called) throws Exception {
+	callThreadedCallback(cb, cti, repeat, sleepms, called, repeat);
+    }
+
+    protected void callThreadedCallback(TestLibrary.VoidCallback cb,
+                                        CallbackThreadInitializer cti,
+                                        int repeat, int sleepms,
+                                        int[] called, int returnAfter) throws Exception {
         if (cti != null) {
             Native.setCallbackThreadInitializer(cb, cti);
         }
-        lib.callVoidCallbackThreaded(cb, repeat, sleepms);
+        lib.callVoidCallbackThreaded(cb, repeat, sleepms, getName());
 
         long start = System.currentTimeMillis();
-        while (called[0] < repeat) {
+        while (called[0] < returnAfter) {
             Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 5000) {
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
                 fail("Timed out waiting for callback, invoked " + called[0] + " times so far");
             }
         }
@@ -1006,7 +1058,7 @@ public class CallbacksTest extends TestCase {
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
 
-        ThreadGroup testGroup = new ThreadGroup(getName());
+        ThreadGroup testGroup = new ThreadGroup(getName() + UNICODE);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 Thread thread = Thread.currentThread();
@@ -1029,10 +1081,11 @@ public class CallbacksTest extends TestCase {
         final String[] name = { null };
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
-        final String tname = getName() + " thread";
+        // Ensure unicode is properly handled
+        final String tname = "NAME: " + getName() + UNICODE;
         final boolean[] alive = {false};
 
-        ThreadGroup testGroup = new ThreadGroup(getName() + " thread group");
+        ThreadGroup testGroup = new ThreadGroup("Thread group for " + getName());
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false, tname, testGroup);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
@@ -1042,7 +1095,7 @@ public class CallbacksTest extends TestCase {
                 group[0] = thread.getThreadGroup();
                 t[0] = thread;
                 if (thread.isAlive()) {
-                    // NOTE: phoneME incorrectly reports thread "alive" status
+                    // NOTE: older phoneME incorrectly reports thread "alive" status
                     alive[0] = true;
                 }
 
@@ -1052,16 +1105,32 @@ public class CallbacksTest extends TestCase {
                 }
             }
         };
-        callThreadedCallback(cb, init, 1, 5000, called);
+        callThreadedCallback(cb, init, 2, 2000, called, 1);
 
         assertTrue("Callback thread not attached as daemon", daemon[0]);
-        assertEquals("Wrong thread name", tname, name[0]);
-        assertEquals("Wrong thread group", testGroup, group[0]);
-        // NOTE: phoneME incorrectly reports thread "alive" status
+        assertEquals("Callback thread name not applied", tname, name[0]);
+        assertEquals("Callback thread group not applied", testGroup, group[0]);
+        // NOTE: older phoneME incorrectly reports thread "alive" status
         if (!alive[0]) {
             throw new Error("VM incorrectly reports Thread.isAlive() == false within callback");
         }
         assertTrue("Thread should still be alive", t[0].isAlive());
+
+        long start = System.currentTimeMillis();
+	while (called[0] < 2) {
+	    Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+		fail("Timed out waiting for second callback invocation, which indicates detach");
+	    }
+	}
+
+        start = System.currentTimeMillis();
+	while (t[0].isAlive()) {
+	    Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+		fail("Timed out waiting for thread to detach and terminate");
+	    }
+	}
     }
 
     // Detach preference is indicated by the initializer.  Thread is attached
@@ -1073,7 +1142,7 @@ public class CallbacksTest extends TestCase {
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
             public String getName(Callback cb) {
-                return CallbacksTest.this.getName() + " thread " + called[0];
+                return "Test thread (native) for " + CallbacksTest.this.getName() + " (call count: " + called[0] + ")";
             }
         };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
@@ -1089,31 +1158,47 @@ public class CallbacksTest extends TestCase {
     }
 
     // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
-    public void testAttachedThreadCleanupOnExit() throws Exception {
+    public void testCleanupUndetachedThreadOnThreadExit() throws Exception {
         final Set threads = new HashSet();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             public void callback() {
                 threads.add(new WeakReference(Thread.currentThread()));
                 if (++called[0] == 1) {
-                    Thread.currentThread().setName("Thread to be cleaned up");
+                    Thread.currentThread().setName(getName() + " (Thread to be cleaned up)");
                 }
-                Native.detach(false);
+		Native.detach(false);
             }
         };
-        CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true);
-        callThreadedCallback(cb, asDaemon, 1, 0, called);
-        while (threads.size() == 0) {
+	// Always attach as daemon to ensure tests will exit
+        CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
+	    public String getName(Callback cb) {
+		return "Test thread (native) for " + CallbacksTest.this.getName();
+	    }
+	};
+        callThreadedCallback(cb, asDaemon, 2, 100, called);
+	// Wait for it to start up
+        while (threads.size() == 0 && called[0] == 0) {
             Thread.sleep(10);
         }
         long start = System.currentTimeMillis();
         WeakReference ref = (WeakReference)threads.iterator().next();
+
         while (ref.get() != null) {
             System.gc();
-            Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 10000) {
+            Thread.sleep(100);
+	    Thread[] remaining = new Thread[Thread.activeCount()];
+	    Thread.enumerate(remaining);
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
                 Thread t = (Thread)ref.get();
-                fail("Timed out waiting for attached thread to be detached on exit and disposed: " + t + " alive: " + t.isAlive() + " daemon " + t.isDaemon());
+                Pointer terminationFlag = Native.getTerminationFlag(t);
+                assertNotNull("Native thread termination flag is missing", terminationFlag);
+                if (terminationFlag.getInt(0) == 0) {
+                    fail("Timed out waiting for native attached thread to be GC'd: " + t + " alive: "
+                         + t.isAlive() + " daemon: " + t.isDaemon() + "\n" + Arrays.asList(remaining));
+                }
+                System.err.println("Warning: JVM did not GC Thread mapping after native thread terminated");
+                break;
             }
         }
     }
@@ -1131,6 +1216,7 @@ public class CallbacksTest extends TestCase {
                 // detach on final invocation
                 int count = called[0] + 1;
                 if (count == 1) {
+                    Thread.currentThread().setName("Native thread for " + getName());
                     Native.detach(false);
                 }
                 else if (count == COUNT) {
@@ -1141,25 +1227,16 @@ public class CallbacksTest extends TestCase {
         };
         callThreadedCallback(cb, null, COUNT, 100, called);
 
-        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: " + threads,
-                     1, threads.size());
+        assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: "
+                     + threads, 1, threads.size());
         Thread thread = (Thread)threads.iterator().next();
         long start = System.currentTimeMillis();
 
         while (thread.isAlive()) {
             System.gc();
             Thread.sleep(10);
-            if (System.currentTimeMillis() - start > 5000) {
-                PrintStream ps = System.err;
-                ByteArrayOutputStream s = new ByteArrayOutputStream();
-                System.setErr(new PrintStream(s));
-                try {
-                    thread.dumpStack();
-                }
-                finally {
-                    System.setErr(ps);
-                }
-                fail("Timed out waiting for callback thread " + thread + " to die: " + s);
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+                fail("Timed out waiting for native thread " + thread + " to finish");
             }
         }
     }
@@ -1180,6 +1257,26 @@ public class CallbacksTest extends TestCase {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
 
+        // Check module information
+        Pointer fp = CallbackReference.getFunctionPointer(cb);
+        NativeLibrary kernel32 = NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
+        Function f = kernel32.getFunction("GetModuleHandleExW");
+        final int GET_MODULE_HANDLE_FROM_ADDRESS = 0x4;
+        PointerByReference pref = new PointerByReference();
+        int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
+        assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
+
+        f = kernel32.getFunction("GetModuleFileNameW");
+        char[] buf = new char[1024];
+        result = f.invokeInt(new Object[] { pref.getValue(), buf, buf.length });
+        assertTrue("GetModuleFileName(fptr) failed: " + Native.getLastError(), result != 0);
+
+        f = kernel32.getFunction("GetModuleHandleW");
+        Pointer handle = f.invokePointer(new Object[] { Native.jnidispatchPath != null ? Native.jnidispatchPath : "jnidispatch" });
+        assertNotNull("GetModuleHandle(\"jnidispatch\") failed: " + Native.getLastError(), handle);
+        assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
+
+        // Check slot re-use
         Map refs = new WeakHashMap(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
@@ -1215,7 +1312,8 @@ public class CallbacksTest extends TestCase {
         cbstruct = ref.cbstruct;
 
         assertTrue("Callback not called", called[0]);
-        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks", first_fptr, cbstruct.getPointer(0));
+        assertEquals("Same (in-DLL) address should be re-used for DLL callbacks after callback is GCd",
+                     first_fptr, cbstruct.getPointer(0));
     }
 
     public void testThrowOutOfMemoryWhenDLLCallbacksExhausted() throws Exception {

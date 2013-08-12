@@ -20,7 +20,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -38,7 +38,6 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
  * 
@@ -123,17 +122,6 @@ public interface OleAuto extends StdCallLibrary {
 	 *            this parameter to NULL causes the function to simply return.
 	 */
 	public void SysFreeString(BSTR bstr);
-
-	/**
-	 * The VariantInit function initializes the VARIANTARG by setting the vt
-	 * field to VT_EMPTY. Unlike VariantClear, this function does not interpret
-	 * the current contents of the VARIANTARG. Use VariantInit to initialize new
-	 * local variables of type VARIANTARG (or VARIANT).
-	 * 
-	 * @param pvarg
-	 *            The variant to initialize.
-	 */
-	public void VariantInit(VARIANT.ByReference pvarg);
 
 	/**
 	 * The VariantInit function initializes the VARIANTARG by setting the vt
@@ -236,7 +224,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *         A safe array descriptor, or null if the array could not be
 	 *         created.
 	 */
-	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
+	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
@@ -364,7 +352,7 @@ public interface OleAuto extends StdCallLibrary {
 		public VariantArg.ByReference rgvarg;
 
 		/** The rgdispid named args. */
-		public DISPIDbyReference rgdispidNamedArgs;
+		public DISPIDByReference rgdispidNamedArgs;
 
 		/** The c args. */
 		public UINT cArgs;

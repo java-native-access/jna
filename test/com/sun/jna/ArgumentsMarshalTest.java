@@ -26,6 +26,8 @@ import com.sun.jna.ArgumentsMarshalTest.TestLibrary.CheckFieldAlignment;
 //@SuppressWarnings("unused")
 public class ArgumentsMarshalTest extends TestCase {
 
+    private static final String UNICODE = "[\0444]";
+
     public static interface TestLibrary extends Library {
         
         class CheckFieldAlignment extends Structure {
@@ -289,15 +291,16 @@ public class ArgumentsMarshalTest extends TestCase {
                      lib.returnPointerArgument(s.getPointer()));
     }
 
-    static final String MAGIC = "magic";
+    static final String MAGIC = "magic" + UNICODE;
     public void testStringArgumentReturn() {
         assertEquals("Expect null pointer", null, lib.returnStringArgument(null));
         assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC));
     }
 
+    static final WString WMAGIC = new WString("magic" + UNICODE);
     public void testWStringArgumentReturn() {
-        assertEquals("Expect null pointer", null, lib.returnStringArgument(null));
-        assertEquals("Expect string magic", MAGIC, lib.returnStringArgument(MAGIC).toString());
+        assertEquals("Expect null pointer", null, lib.returnWStringArgument(null));
+        assertEquals("Expect string magic", WMAGIC.toString(), lib.returnWStringArgument(WMAGIC).toString());
     }
     
     public void testInt64ArgumentAlignment() {
@@ -403,6 +406,29 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
+    public void testRejectIncompatibleStructureArrayArgument() {
+        TestLibrary.CheckFieldAlignment s1 = new TestLibrary.CheckFieldAlignment.ByReference();
+        TestLibrary.CheckFieldAlignment[] autoArray = (TestLibrary.CheckFieldAlignment[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(autoArray, autoArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment.ByReference[] byRefArray =
+            (TestLibrary.CheckFieldAlignment.ByReference[])s1.toArray(3);
+        try {
+            lib.modifyStructureArray(byRefArray, byRefArray.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+        TestLibrary.CheckFieldAlignment[] arrayWithRefElements = { autoArray[0], autoArray[1], autoArray[2] };
+        try {
+            lib.modifyStructureArray(arrayWithRefElements, arrayWithRefElements.length);
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
     /** When passing an array of <code>struct*</code> to native, be sure to
         invoke <code>Structure.write()</code> on each of the elements. */
     public void testWriteStructureByReferenceArrayArgumentMemory() {
@@ -479,7 +505,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     
-    public void testInvalidArgument() {
+    public void testUnsupportedJavaObjectArgument() {
         try {
             lib.returnBooleanArgument(this);
             fail("Unsupported Java objects should be rejected");
@@ -489,14 +515,14 @@ public class ArgumentsMarshalTest extends TestCase {
     }
     
     public void testStringArrayArgument() {
-        String[] args = { "one", "two", "three" };
+        String[] args = { "one"+UNICODE, "two"+UNICODE, "three"+UNICODE };
         assertEquals("Wrong value returned", args[0], lib.returnStringArrayElement(args, 0));
         assertNull("Native String array should be null terminated", 
                    lib.returnStringArrayElement(args, args.length));
     }
     
     public void testWideStringArrayArgument() {
-        WString[] args = { new WString("one"), new WString("two"), new WString("three") };
+        WString[] args = { new WString("one"+UNICODE), new WString("two"+UNICODE), new WString("three"+UNICODE) };
         assertEquals("Wrong value returned", args[0], lib.returnWideStringArrayElement(args, 0));
         assertNull("Native WString array should be null terminated",
                    lib.returnWideStringArrayElement(args, args.length));

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import com.sun.jna.win32.W32APIOptions;
 
 import junit.framework.TestCase;
 
@@ -40,6 +41,7 @@ public class NativeLibraryTest extends TestCase {
             { Platform.ANDROID, "lib", ".so" },
             { Platform.GNU, "lib", ".so" },
             { Platform.KFREEBSD, "lib", ".so" },
+            { Platform.NETBSD, "lib", ".so" },
         };
         for (int i=0;i < MAPPINGS.length;i++) {
             int osType = ((Integer)MAPPINGS[i][0]).intValue();
@@ -121,6 +123,28 @@ public class NativeLibraryTest extends TestCase {
         int count2 = lib2.callCount();
         assertEquals("Simple library name not aliased", count + 1, count2);
     }
+
+    public void testRejectNullFunctionName() {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        try {
+            Function f = lib.getFunction(null);
+            fail("Function must have a name");
+        }
+        catch(NullPointerException e) {
+        }
+    }
+
+    public void testIncludeSymbolNameInLookupError() {
+        NativeLibrary lib = NativeLibrary.getInstance("testlib");
+        try {
+            lib.getGlobalVariableAddress(getName());
+            fail("Non-existent global variable lookup should fail");
+        }
+        catch(UnsatisfiedLinkError e) {
+            assertTrue("Expect symbol name in error message: " + e.getMessage(), e.getMessage().indexOf(getName()) != -1);
+        }
+    }
+
     public void testFunctionHoldsLibraryReference() throws Exception {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
         WeakReference ref = new WeakReference(lib);
@@ -236,6 +260,25 @@ public class NativeLibraryTest extends TestCase {
         Map options = new HashMap();
         options.put(Library.OPTION_OPEN_FLAGS, new Integer(-1));
         Native.loadLibrary("testlib", TestLibrary.class, options);
+    }
+
+    public interface Kernel32 {
+        int GetLastError();
+        void SetLastError(int code);
+    }
+    public void testInterceptLastError() {
+        if (!Platform.isWindows()) {
+            return;
+        }
+        NativeLibrary kernel32 = (NativeLibrary)NativeLibrary.getInstance("kernel32", W32APIOptions.DEFAULT_OPTIONS);
+        Function get = kernel32.getFunction("GetLastError");
+        Function set = kernel32.getFunction("SetLastError");
+        assertEquals("SetLastError should not be customized", Function.class, set.getClass()); 
+        assertTrue("GetLastError should be a Function", Function.class.isAssignableFrom(get.getClass()));
+        assertTrue("GetLastError should be a customized Function", get.getClass() != Function.class);
+        final int EXPECTED = 42;
+        set.invokeVoid(new Object[] { new Integer(EXPECTED) });
+        assertEquals("Wrong error", EXPECTED, get.invokeInt(null));
     }
 
     public static void main(String[] args) {

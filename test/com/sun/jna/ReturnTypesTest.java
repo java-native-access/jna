@@ -29,6 +29,7 @@ import com.sun.jna.ReturnTypesTest.TestLibrary.TestStructure;
  */
 public class ReturnTypesTest extends TestCase {
 
+    private static final String UNICODE = "[\u0444]";
     private static final double DOUBLE_MAGIC = -118.625d;
     private static final float FLOAT_MAGIC = -118.625f;
 
@@ -277,26 +278,32 @@ public class ReturnTypesTest extends TestCase {
         Pointer[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
         assertEquals("Wrong array element value", value, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((Pointer[])null));
     }
 
     public void testReturnStringArray() {
-        String value = getName();
+        final String VALUE = getName() + UNICODE;
         String[] input = {
-            value, null,
+            VALUE, null,
         };
         String[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
-        assertEquals("Wrong array element value", value, result[0]);
+        assertEquals("Wrong array element value", VALUE, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((String[])null));
     }
 
     public void testReturnWStringArray() {
-        WString value = new WString(getName());
+        final WString VALUE = new WString(getName() + UNICODE);
         WString[] input = {
-            value, null,
+            VALUE, null,
         };
         WString[] result = lib.returnPointerArgument(input);
         assertEquals("Wrong array length", input.length-1, result.length);
-        assertEquals("Wrong array element value", value, result[0]);
+        assertEquals("Wrong array element value", VALUE, result[0]);
+
+        assertNull("NULL should result in null return value", lib.returnPointerArgument((WString[])null));
     }
 
     public static void main(java.lang.String[] argList) {

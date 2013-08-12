@@ -429,7 +429,7 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
             
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "wProcessorArchitecture", "wReserved" });
-            }
+            }  
     	}
     	
         /** Unnamed inner union. */

@@ -1,25 +1,58 @@
-Next Release (3.6)
-==================
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
-NOTE: JNI native support is typically incompatible between minor versions
+NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
+
+Next Release (4.0.1)
+====================
 
 Features
 --------
-* [#209](https://github.com/twall/jna/issues/209): Improve default performance saving last error results - [@twall](https://github.com/twall).
-* Use predictable names for CPU arch prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
-* Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
-* Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library).  This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
-* Copied Win32 service-related code from `ntservice` contrib module to `platform` - [@trejkaz](https://github.com/trejkaz)
+* Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
+* Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
+* COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` [@wolftobias]
+* Copied Win32 service-related code from `ntservice` contrib module to `platform` - [@trejkaz](https://github.com/trejkaz).
 
 Bug Fixes
 ---------
-* [PR#213](https://github.com/twall/jna/pull/213): Fix `Structure.toString()` not to dump memory when `jna.dump_memory` is false. - [@tomohiron](https://github.com/tomohiron).
-* Use TLS to indicate callback detach state, to avoid any potential conflicts with last error storage - [@twall](https://github.com/twall).
-* [#173](https://github.com/twall/jna/issues/173): Fix OSX 10.8/Xcode 4+ builds, web start path with Oracle 1.7 JDK - [@mkjellman](https://github.com/mkjellman).
-* [#215](https://github.com/twall/jna/issues/215): Force use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
+* Fix inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall)
+
+Release 4.0
+===========
+
+Features
+--------
+* Added ASL licensing to facilitate distribution - [@twall](https://github.com/twall).
+* [#109](https://github.com/twall/jna/issues/109): Set default Java compatibility level to 1.6 - [@twall](https://github.com/twall).
+* [#209](https://github.com/twall/jna/issues/209): Improved default performance saving last error results - [@twall](https://github.com/twall).
+* Use predictable names for CPU architecture prefix (namely x86, x86-64); names correspond to OSGI processor values - [@twall](https://github.com/twall).
+* Avoid superfluous Structure memory allocation from native - [@twall](https://github.com/twall).
+* Added `Library.OPTION_CLASSLOADER`, which enables loading native libraries from any class loader (including JNA's native library). This enables parallel dependencies on JNA (e.g. within a tomcat deployment without having to include JNA in the app server environment) - [@twall](https://github.com/twall).
+* Use per-library String encoding settings (see `Native.getDefaultStringEncoding()` and `Structure.getStringEncoding()`) - [@twall](https://github.com/twall).
+* Added memory dump for debugging (see `com.sun.jna.Memory`) - [@twall](https://github.com/twall).
+* Improved caching of Structure alignment, type mapping, and encoding information - [@twall](https://github.com/twall).
+* [#225](https://github.com/twall/jna/pull/225): Added `platform.win32.Kernel32.GetLogicalProcessorInformation` and `platform.win32.Kernel32Util.getLogicalProcessorInformation` - [@trejkaz](https://github.com/trejkaz).
+* [#236](https://github.com/twall/jna/issues/236): Auto-strip profiler native method prefix specified by `jna.profiler.prefix`, which defaults to $$YJP$$ - [@twall](https://github.com/twall).
+* Added `jna.debug_load` property to diagnose library loading issues - [@twall](https://github.com/twall).
+* Throw explicit `IllegalArgumentException` when `Structure.ByReference` is used where it shouldn't be (can result in multiply freed memory or other unexpected behavior) - [@twall](https://github.com/twall).
+* [#243](https://github.com/twall/jna/issues/243): Automatically accommodate long library paths on Windows which would otherwise fail - [@twall](https://github.com/twall).
+* [#241](https://github.com/twall/jna/issues/241) - Added  `com.sun.jna.platform.win32.Shell32.SHAppBarMessage` - [@bsorrentino](https://github.com/bsorrentino).
+* Make `Structure.read/writeField()` protected to facilitate per-field overrides - [@twall](https://github.com/twall).
+* Speed up callback lookup where large numbers of native function pointers are in use - [@twall](https://github.com/twall).
+
+Bug Fixes
+---------
+* [#213](https://github.com/twall/jna/pull/213): Fixed `Structure.toString()` not to dump memory when `jna.dump_memory` is false - [@tomohiron](https://github.com/tomohiron).
+* Use dedicated TLS to indicate callback detach state, to avoid any potential conflicts with last error storage - [@twall](https://github.com/twall).
+* [#173](https://github.com/twall/jna/issues/173): Fixed OSX 10.8/Xcode 4+ builds, web start path with Oracle 1.7 JDK - [@mkjellman](https://github.com/mkjellman).
+* [#215](https://github.com/twall/jna/issues/215): Forced use of XSI `strerror_r` on linux - [LionelCons](https://github.com/LionelCons).
 * [#214](https://github.com/twall/jna/issues/214): Don't map library names when an absolute path is provided - [@twall](https://github.com/twall).
-* [#218](https://github.com/twall/jna/issues/218): Explicitly handle broken Android SecurityManager implementation - [@twall](https://github.com/twall).
-* [#223](https://github.com/twall/jna/issues/223): Fix layout/size derivation for unions - [@twall](https://github.com/twall).
+* [#218](https://github.com/twall/jna/issues/218): Explicitly handled broken Android `SecurityManager` implementation - [@twall](https://github.com/twall).
+* [#223](https://github.com/twall/jna/issues/223): Fixed layout/size derivation for unions - [@twall](https://github.com/twall).
+* [#229](https://github.com/twall/jna/issues/229): Added `CreateProcessW` (Unicode version) - [@twall](https://github.com/twall).
+* Avoid solaris/x86 JVM bug w/library open flags - [@twall](https://github.com/twall).
+* Fixed NPE returning wide string from a direct-mapped function - [@twall](https://github.com/twall).
+* [#237](https://github.com/twall/jna/issues/237): Fix LastErrorException/getLastError on AIX - [@skissane](https://github.com/skissane).
+* [#228](https://github.com/twall/jna/issues/228): Fix win32/win64 crashes due to LastErrorException buffer overruns (`snprintf` on windows is broken) - [@davidhoyt](https://github.com/davidhoyt).
 
 Release 3.5.2
 =============
@@ -51,6 +84,7 @@ Bug Fixes
 * [PR#183](https://github.com/twall/jna/pull/183): Added `StructureFieldOrderInspector` unit test utility to scan for `Structure` field issues; see: `com.sun.jna.platform.StructureFieldOrderTest.testMethodGetFieldOrder` - [@bhamail](https://github.com/bhamail).
 * [PR#187](https://github.com/twall/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux - [@bhamail](https://github.com/bhamail).
 * [#206](https://github.com/twall/jna/issues/206): Fix `moveToTrash()` on OSX to work with symlinks - [@twall](https://github.com/twall).
+* Fix NPE if `Thread.getContextClassLoader()` returns `null`  - [@twall](https://github.com/twall).
 
 Release 3.5.1
 =============

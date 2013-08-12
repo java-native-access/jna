@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -25,6 +25,8 @@ import junit.framework.TestCase;
 //@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
     
+    private static final String UNICODE = "[\u0444]";
+
     public void testLongStringGeneration() {
         StringBuffer buf = new StringBuffer();
         final int MAX = Platform.isWindowsCE() ? 200000 : 2000000;
@@ -33,70 +35,74 @@ public class NativeTest extends TestCase {
         }
         String s1 = buf.toString();
         Memory m = new Memory((MAX + 1)*Native.WCHAR_SIZE);
-        m.setString(0, s1, true);
+        m.setWideString(0, s1);
         assertEquals("Missing terminator after write", 0, m.getChar(MAX*Native.WCHAR_SIZE));
-        String s2 = m.getString(0, true);
+        String s2 = m.getWideString(0);
         assertEquals("Wrong string read length", s1.length(), s2.length());
         assertEquals("Improper wide string read", s1, s2);
     }
 
-    public void testDefaultStringEncoding() throws Exception {
-        String encoding = System.getProperty("file.encoding");
+    public void testCustomStringEncoding() throws Exception {
+        final String ENCODING = System.getProperty("file.encoding");
         // Keep stuff within the extended ASCII range so we work with more
         // limited native encodings
-        String unicode = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index";
+        String UNICODE = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index";
         
-        if (!unicode.equals(new String(unicode.getBytes()))) {
+        if (!UNICODE.equals(new String(UNICODE.getBytes()))) {
             // If the extended characters aren't encodable in the default 
             // encoding, punt and use straight ASCII
-            unicode = "";
+            UNICODE = "";
             for (char ch=1;ch < 128;ch++) {
-                unicode += ch;
+                UNICODE += ch;
             }
         }
-        String unicodez = unicode + "\0more stuff";
+        final String UNICODEZ = UNICODE + "\0more stuff";
         
-        byte[] defaultEncoded = Native.getBytes(unicode);
-        byte[] expected = unicode.getBytes();
-        for (int i=0;i < Math.min(defaultEncoded.length, expected.length);i++) {
-            assertEquals("Improperly encoded (" + encoding + ") from Java at " + i, 
-                         expected[i], defaultEncoded[i]);
+        byte[] customEncoded = Native.getBytes(UNICODE, ENCODING);
+        byte[] expected = UNICODE.getBytes(ENCODING);
+        for (int i=0;i < Math.min(customEncoded.length, expected.length);i++) {
+            assertEquals("Improperly encoded (" + ENCODING + ") from Java at " + i, 
+                         expected[i], customEncoded[i]);
         }
-        assertEquals("Wrong number of encoded characters (" + encoding + ")", 
-                     expected.length, defaultEncoded.length);
-        String result = Native.toString(defaultEncoded);
-        assertEquals("Improperly decoded from native bytes (" + encoding + ")", 
-                     unicode, result);
+        assertEquals("Wrong number of encoded characters (" + ENCODING + ")", 
+                     expected.length, customEncoded.length);
+        String result = Native.toString(customEncoded, ENCODING);
+        assertEquals("Improperly decoded from native bytes (" + ENCODING + ")", 
+                     UNICODE, result);
         
         assertEquals("Should truncate bytes at NUL terminator",
-                     unicode, Native.toString(unicodez.getBytes()));
+                     UNICODE, Native.toString(UNICODEZ.getBytes(ENCODING), ENCODING));
     }
     
-    public void testCustomStringEncoding() throws Exception {
+    public void testDefaultStringEncoding() throws Exception {
+        final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
+        final String UNICODEZ = UNICODE + "\0more stuff";
+        byte[] utf8 = Native.getBytes(UNICODE);
+        byte[] expected = UNICODE.getBytes(Native.DEFAULT_ENCODING);
+        for (int i=0;i < Math.min(utf8.length, expected.length);i++) {
+            assertEquals("Improperly encoded at " + i, 
+                         expected[i], utf8[i]);
+        }
+        assertEquals("Wrong number of encoded characters", expected.length, utf8.length);
+        String result = Native.toString(utf8);
+        assertEquals("Improperly decoded", UNICODE, result);
+        
+        assertEquals("Should truncate bytes at NUL terminator",
+                     UNICODE, Native.toString(UNICODEZ.getBytes(Native.DEFAULT_ENCODING)));
+    }
+    
+    public void testCustomizeDefaultStringEncoding() {
         Properties oldprops = (Properties)System.getProperties().clone();
+        final String ENCODING = System.getProperty("file.encoding");
         try {
-            String encoding = "UTF8";
-            System.setProperty("jna.encoding", encoding);
-            String unicode = "\u0444\u043b\u0441\u0432\u0443";
-            String unicodez = unicode + "\0more stuff";
-            byte[] utf8 = Native.getBytes(unicode);
-            byte[] expected = unicode.getBytes(encoding);
-            for (int i=0;i < Math.min(utf8.length, expected.length);i++) {
-                assertEquals("Improperly encoded at " + i, 
-                             expected[i], utf8[i]);
-            }
-            assertEquals("Wrong number of encoded characters", expected.length, utf8.length);
-            String result = Native.toString(utf8);
-            assertEquals("Improperly decoded", unicode, result);
-            
-            assertEquals("Should truncate bytes at NUL terminator",
-                         unicode, Native.toString(unicodez.getBytes(encoding)));
+            System.setProperty("jna.encoding", ENCODING);
+            assertEquals("Default encoding should match jna.encoding setting", ENCODING, Native.getDefaultStringEncoding());
         }
         finally {
             System.setProperties(oldprops);
         }
     }
-    
+
     public static interface TestLib extends Library {
         interface VoidCallback extends Callback {
             void callback();
@@ -105,7 +111,7 @@ public class NativeTest extends TestCase {
     }
     public void testSynchronizedAccess() throws Exception {
         final boolean[] lockHeld = { false };
-        final NativeLibrary nlib = NativeLibrary.getInstance("testlib");
+        final NativeLibrary nlib = NativeLibrary.getInstance("testlib", TestLib.class.getClassLoader());
         final TestLib lib = (TestLib)Native.loadLibrary("testlib", TestLib.class);
         final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib); 
         final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
@@ -160,62 +166,104 @@ public class NativeTest extends TestCase {
     public interface TestInterfaceWithInstance extends Library {
         int TEST_ALIGNMENT = Structure.ALIGN_NONE;
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        String TEST_ENCODING = "test-encoding";
         Map TEST_OPTS = new HashMap() { {
+            put(OPTION_CLASSLOADER, TestInterfaceWithInstance.class.getClassLoader());
             put(OPTION_TYPE_MAPPER, TEST_MAPPER);
             put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
+            put(OPTION_STRING_ENCODING, TEST_ENCODING);
         }};
         TestInterfaceWithInstance ARBITRARY = (TestInterfaceWithInstance) 
             Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
+        abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromInstanceField() {
-        assertEquals("Wrong options found for interface which provides an instance", 
-                     TestInterfaceWithInstance.TEST_OPTS,
-                     Native.getLibraryOptions(TestInterfaceWithInstance.class));
-        assertEquals("Wrong type mapper found", 
-                     TestInterfaceWithInstance.TEST_MAPPER,
-                     Native.getTypeMapper(TestInterfaceWithInstance.class));
-        assertEquals("Wrong alignment found", 
-                     TestInterfaceWithInstance.TEST_ALIGNMENT,
-                     Native.getStructureAlignment(TestInterfaceWithInstance.class));
+        Class[] classes = { TestInterfaceWithInstance.class, TestInterfaceWithInstance.TestStructure.class };
+        String[] desc = { "interface", "structure from interface" };
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong options found for " + desc[i]
+                         + " which provides an instance", 
+                         TestInterfaceWithInstance.TEST_OPTS,
+                         Native.getLibraryOptions(classes[i]));
+            assertEquals("Wrong type mapper found for " + desc[i], 
+                         TestInterfaceWithInstance.TEST_MAPPER,
+                         Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment found for " + desc[i], 
+                         TestInterfaceWithInstance.TEST_ALIGNMENT,
+                         Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong string encoding found for " + desc[i], 
+                         TestInterfaceWithInstance.TEST_ENCODING,
+                         Native.getStringEncoding(classes[i]));
+        }
     }
     
     public interface TestInterfaceWithOptions extends Library {
         int TEST_ALIGNMENT = Structure.ALIGN_NONE;
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
+        String TEST_ENCODING = "test-encoding";
         Map OPTIONS = new HashMap() { {
             put(OPTION_TYPE_MAPPER, TEST_MAPPER);
             put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
+            put(OPTION_STRING_ENCODING, TEST_ENCODING);
         }};
+        abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromOptionsField() {
-        assertEquals("Wrong options found for interface which provides OPTIONS", 
-                     TestInterfaceWithOptions.OPTIONS,
-                     Native.getLibraryOptions(TestInterfaceWithOptions.class));
-        assertEquals("Wrong type mapper found", 
-                     TestInterfaceWithOptions.TEST_MAPPER,
-                     Native.getTypeMapper(TestInterfaceWithOptions.class));
-        assertEquals("Wrong alignment found", 
-                     TestInterfaceWithOptions.TEST_ALIGNMENT,
-                     Native.getStructureAlignment(TestInterfaceWithOptions.class));
+        Class[] classes = { TestInterfaceWithOptions.class, TestInterfaceWithOptions.TestStructure.class };
+        for (int i=0;i < classes.length;i++) {
+            assertEquals("Wrong options found for interface which provides OPTIONS", 
+                         TestInterfaceWithOptions.OPTIONS,
+                         Native.getLibraryOptions(classes[i]));
+            assertEquals("Wrong type mapper found", 
+                         TestInterfaceWithOptions.TEST_MAPPER,
+                         Native.getTypeMapper(classes[i]));
+            assertEquals("Wrong alignment found", 
+                         TestInterfaceWithOptions.TEST_ALIGNMENT,
+                         Native.getStructureAlignment(classes[i]));
+            assertEquals("Wrong encoding found", 
+                         TestInterfaceWithOptions.TEST_ENCODING,
+                         Native.getStringEncoding(classes[i]));
+        }
     }
 
     public interface TestInterfaceWithTypeMapper extends Library {
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         TypeMapper TYPE_MAPPER = TEST_MAPPER;
+        abstract class TestStructure extends Structure { }
     }
     public void testOptionsInferenceFromTypeMapperField() {
         assertEquals("Wrong type mapper found for interface which provides TYPE_MAPPER", 
                      TestInterfaceWithTypeMapper.TEST_MAPPER,
                      Native.getTypeMapper(TestInterfaceWithTypeMapper.class));
+        assertEquals("Wrong type mapper found for structure from interface which provides TYPE_MAPPER", 
+                     TestInterfaceWithTypeMapper.TEST_MAPPER,
+                     Native.getTypeMapper(TestInterfaceWithTypeMapper.TestStructure.class));
     }
 
     public interface TestInterfaceWithAlignment extends Library {
         int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
+        abstract class TestStructure extends Structure { }
     }
     public void testOptionsInferenceFromAlignmentField() {
         assertEquals("Wrong alignment found for interface which provides STRUCTURE_ALIGNMENT", 
                      Structure.ALIGN_NONE,
                      Native.getStructureAlignment(TestInterfaceWithAlignment.class));
+        assertEquals("Wrong alignment found for structure from interface which provides STRUCTURE_ALIGNMENT", 
+                     Structure.ALIGN_NONE,
+                     Native.getStructureAlignment(TestInterfaceWithAlignment.TestStructure.class));
+    }
+
+    public interface TestInterfaceWithEncoding extends Library {
+        String STRING_ENCODING = "test-encoding";
+        abstract class TestStructure extends Structure { }
+    }
+    public void testOptionsInferenceFromEncodingField() {
+        assertEquals("Wrong encoding found for interface which provides STRING_ENCODING", 
+                     TestInterfaceWithEncoding.STRING_ENCODING,
+                     Native.getStringEncoding(TestInterfaceWithEncoding.class));
+        assertEquals("Wrong encoding found for structure from interface which provides STRING_ENCODING", 
+                     TestInterfaceWithEncoding.STRING_ENCODING,
+                     Native.getStringEncoding(TestInterfaceWithEncoding.TestStructure.class));
     }
 
     public void testCharArrayToString() {
@@ -231,45 +279,26 @@ public class NativeTest extends TestCase {
     public void testToByteArray() {
         final String VALUE = getName();
         byte[] buf = Native.toByteArray(VALUE);
-        assertEquals("Wrong byte array length", VALUE.length()+1, buf.length);
+        assertEquals("Wrong byte array length", VALUE.getBytes().length+1, buf.length);
         assertEquals("Missing NUL terminator", (byte)0, buf[buf.length-1]);
         assertEquals("Wrong byte array contents", VALUE, new String(buf, 0, buf.length-1));
     }
 
+    public void testToByteArrayWithEncoding() throws Exception {
+        final String ENCODING = "utf8";
+        final String VALUE = getName() + UNICODE;
+        byte[] buf = Native.toByteArray(VALUE, ENCODING);
+        assertEquals("Wrong byte array length", VALUE.getBytes(ENCODING).length+1, buf.length);
+        assertEquals("Missing NUL terminator", (byte)0, buf[buf.length-1]);
+        assertEquals("Wrong byte array contents", VALUE, new String(buf, 0, buf.length-1, ENCODING));
+    }
+
     public void testToCharArray() {
-        final String VALUE = getName();
+        final String VALUE = getName() + UNICODE;
         char[] buf = Native.toCharArray(VALUE);
         assertEquals("Wrong char array length", VALUE.length()+1, buf.length);
         assertEquals("Missing NUL terminator", (char)0, buf[buf.length-1]);
         assertEquals("Wrong char array contents: " + new String(buf), VALUE, new String(buf, 0, buf.length-1));
-    }
-
-    public static class DirectMapping {
-        public static class DirectStructure extends Structure {
-            public int field;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
-            }
-        }
-        public static interface DirectCallback extends Callback {
-            void invoke();
-        }
-        public DirectMapping(Map options) {
-            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
-        }
-    }
-
-    public void testGetTypeMapperForDirectMapping() {
-        final TypeMapper mapper = new DefaultTypeMapper();
-        Map options = new HashMap();
-        options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        DirectMapping lib = new DirectMapping(options);
-        assertEquals("Wrong type mapper for direct mapping",
-                     mapper, Native.getTypeMapper(DirectMapping.class));
-        assertEquals("Wrong type mapper for direct mapping nested structure",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectStructure.class));
-        assertEquals("Wrong type mapper for direct mapping nested callback",
-                     mapper, Native.getTypeMapper(DirectMapping.DirectCallback.class));
     }
 
     private static class TestCallback implements Callback {
@@ -305,6 +334,45 @@ public class NativeTest extends TestCase {
         }
     }
 
+    private static final String NUL = "\0";
+    public void testStringConversion() {
+        byte[] buf = (getName() + NUL).getBytes();
+        assertEquals("C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testStringConversionWithEncoding() throws Exception {
+        byte[] buf = (getName() + UNICODE + NUL).getBytes("utf8");
+        assertEquals("Encoded C string improperly converted", getName() + UNICODE, Native.toString(buf, "utf8"));
+    }
+
+    public void testWideStringConversion() {
+        char[] buf = (getName() + NUL).toCharArray();
+        assertEquals("Wide C string improperly converted", getName(), Native.toString(buf));
+    }
+
+    public void testGetBytes() throws Exception {
+        byte[] buf = Native.getBytes(getName() + UNICODE, "utf8");
+        assertEquals("Incorrect native bytes from Java String", getName() + UNICODE, new String(buf, "utf8"));
+    }
+
+    public void testGetBytesBadEncoding() throws Exception {
+        byte[] buf = Native.getBytes(getName(), "unsupported");
+        assertEquals("Incorrect fallback bytes with bad encoding",
+                     getName(), new String(buf, System.getProperty("file.encoding")));
+    }
+
+    public void testFindDirectMappedClassFailure() {
+        try {
+            Native.findDirectMappedClass(NativeTest.class);
+            fail("Expect an exception if native-mapped class can't be found");
+        }
+        catch(IllegalArgumentException e) {
+        }
+    }
+
+    /** This method facilitates running tests from a single entry point
+        outside of ant (i.e. for androide, WCE, etc.).
+    */
     public static void main(String[] args) {
         if (args.length == 0) {
             junit.textui.TestRunner.run(NativeTest.class);

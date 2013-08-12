@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 /** Test loading and unloading native support from various locations.  Note
  * that no JNI classes are directly referenced in these tests.
  */
-public class JNAUnloadTest extends TestCase implements Paths {
+public class JNALoadTest extends TestCase implements Paths {
     
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
@@ -100,13 +100,12 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // GC Fails under clover
     public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library path unavailable", path);
@@ -154,13 +153,13 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
-    // GC Fails under clover and OpenJDK(linux/ppc)
+    // GC Fails under OpenJDK(linux/ppc)
     public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
 
-        Field field = cls.getDeclaredField("nativeLibraryPath");
+        Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
         String path = (String)field.get(null);
         assertNotNull("Native library not found", path);
@@ -206,17 +205,28 @@ public class JNAUnloadTest extends TestCase implements Paths {
         }
     }
 
+    // Fails on Sun JVM windows (32 and 64-bit) 
+    // Works with IBM J9 (jdk6)
     public void testLoadFromUnicodePath() throws Exception {
         final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
-        File tmpdir = Native.getTempDir();
+        File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File unicodeDir = new File(tmpdir, UNICODE);
         unicodeDir.mkdirs();
-        Properties props = System.getProperties();
+        Properties props = (Properties)System.getProperties().clone();
         try {
+            System.setProperty("jnidispatch.preserve", "true");
             System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
             ClassLoader loader = new TestLoader(true);
             Class cls = Class.forName("com.sun.jna.Native", true, loader);
             assertEquals("Wrong class loader", loader, cls.getClassLoader());
+            String path = System.getProperty("jnidispatch.path");
+            if (path != null) {
+                File lib = new File(path);
+                lib.deleteOnExit();
+            }
+        }
+        catch(UnsatisfiedLinkError e) {
+            throw new Error("JVM error: System.load() failed to load JNA native library from " + System.getProperty("jnidispatch.path") + "): " + e);
         }
         finally {
             System.setProperties(props);
@@ -224,6 +234,6 @@ public class JNAUnloadTest extends TestCase implements Paths {
     }
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(JNAUnloadTest.class);
+        junit.textui.TestRunner.run(JNALoadTest.class);
     }
 }

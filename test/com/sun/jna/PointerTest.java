@@ -1,4 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
+ * Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -13,6 +14,9 @@
 
 package com.sun.jna;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,6 +28,8 @@ import junit.framework.TestCase;
 
 public class PointerTest extends TestCase {
     
+    private static final String UNICODE = "[\u0444]";
+
     public void testGetNativeLong() {
         Memory m = new Memory(8);
         if (NativeLong.SIZE == 4) {
@@ -38,6 +44,7 @@ public class PointerTest extends TestCase {
             assertEquals("Native long mismatch", MAGIC, l.longValue());
         }
     }
+
     public void testSetNativeLong() {
         Memory m = new Memory(8);
         if (NativeLong.SIZE == 4) {
@@ -50,35 +57,25 @@ public class PointerTest extends TestCase {
             assertEquals("Native long mismatch", MAGIC, m.getLong(0));
         }
     }
-    public void testSetStringWithEncoding() throws Exception {
-        String old = System.getProperty("jna.encoding");
-        String VALUE = "\u0444\u0438\u0441\u0432\u0443";
-        System.setProperty("jna.encoding", "UTF8");
-        try {
-            int size = VALUE.getBytes("UTF8").length+1;
-            Memory m = new Memory(size);
-            m.setString(0, VALUE);
-            assertEquals("UTF8 encoding should be double", 
-                         VALUE.length() * 2 + 1, size);
-            assertEquals("Wrong decoded value", VALUE, m.getString(0));
-        }
-        finally {
-            if (old != null) {
-                System.setProperty("jna.encoding", old);
-            }
-            else {
-                Map props = System.getProperties();
-                props.remove("jna.encoding");
-                Properties newProps = new Properties();
-                for (Iterator i = props.entrySet().iterator();i.hasNext();) {
-                    Entry e = (Entry)i.next();
-                    newProps.setProperty(e.getKey().toString(), e.getValue().toString());
-                }
-                System.setProperties(newProps);
-            }
-        }
+
+    public void testGetSetStringWithDefaultEncoding() throws Exception {
+        final String ENCODING = Native.DEFAULT_ENCODING;
+        String VALUE = getName();
+        int size = VALUE.getBytes(ENCODING).length+1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE);
+        assertEquals("Wrong decoded value", VALUE, m.getString(0));
     }
-    
+
+    public void testGetSetStringWithCustomEncoding() throws Exception {
+        final String ENCODING = "utf8";
+        String VALUE = getName() + UNICODE;
+        int size = VALUE.getBytes(ENCODING).length+1;
+        Memory m = new Memory(size);
+        m.setString(0, VALUE, ENCODING);
+        assertEquals("Wrong decoded value", VALUE, m.getString(0, ENCODING));
+    }
+
     public static class TestPointerType extends PointerType {
         public TestPointerType() { }
         public TestPointerType(Pointer p) { super(p); }
@@ -105,23 +102,24 @@ public class PointerTest extends TestCase {
 
     public void testGetStringArray() {
         Pointer p = new Memory(Pointer.SIZE*3);
-        String VALUE1 = getName();
-        String VALUE2 = getName() + "2";
+        final String VALUE1 = getName() + UNICODE;
+        final String VALUE2 = getName() + "2" + UNICODE;
+        final String ENCODING = "utf8";
 
-        p.setPointer(0, new NativeString(VALUE1).getPointer());
-        p.setPointer(Pointer.SIZE, new NativeString(VALUE2).getPointer());
+        p.setPointer(0, new NativeString(VALUE1, ENCODING).getPointer());
+        p.setPointer(Pointer.SIZE, new NativeString(VALUE2, ENCODING).getPointer());
         p.setPointer(Pointer.SIZE*2, null);
 
         assertEquals("Wrong null-terminated String array",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
-                     Arrays.asList(p.getStringArray(0)));
+                     Arrays.asList(p.getStringArray(0, ENCODING)));
 
         assertEquals("Wrong length-specified String array (1)",
                      Arrays.asList(new String[] { VALUE1 }),
-                     Arrays.asList(p.getStringArray(0, 1)));
+                     Arrays.asList(p.getStringArray(0, 1, ENCODING)));
         assertEquals("Wrong length-specified String array (2)",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
-                     Arrays.asList(p.getStringArray(0, 2)));
+                     Arrays.asList(p.getStringArray(0, 2, ENCODING)));
     }
 
     public void testReadPointerArray() {
@@ -161,6 +159,53 @@ public class PointerTest extends TestCase {
         String[] arr = m.getStringArray(0, 1);
         assertEquals("Wrong array size", 1, arr.length);
         assertNull("Array element should be null", arr[0]);
+    }
+
+    private Object defaultArg(Class type) {
+        if (type == boolean.class || type == Boolean.class) return Boolean.FALSE;
+        if (type == byte.class || type == Byte.class) return new Byte((byte)0);
+        if (type == char.class || type == Character.class) return new Character((char)0);
+        if (type == short.class || type == Short.class) return new Short((short)0);
+        if (type == int.class || type == Integer.class) return new Integer(0);
+        if (type == long.class || type == Long.class) return new Long(0);
+        if (type == float.class || type == Float.class) return new Float(0);
+        if (type == double.class || type == Double.class) return new Double(0);
+        if (type == NativeLong.class) return new NativeLong(0);
+        return null;
+    }
+
+    public void testOpaquePointer() throws Exception {
+        Pointer p = Pointer.createConstant(0);
+        Class cls = p.getClass();
+        Method[] methods = cls.getMethods();
+        for (int i=0;i < methods.length;i++) {
+            Method m = methods[i];
+            Class[] argTypes = m.getParameterTypes();
+            try {
+                Object[] args = new Object[argTypes.length];
+                for (int arg=0;arg < args.length;arg++) {
+                    args[arg] = defaultArg(argTypes[arg]);
+                }
+                if ("hashCode".equals(m.getName())
+                    || "equals".equals(m.getName())
+                    || m.getDeclaringClass() == Object.class
+                    || (m.getModifiers() & Modifier.STATIC) != 0) {
+                    continue;
+                }
+                Object result = m.invoke(p, args);
+                if ("toString".equals(m.getName())) {
+                    assertTrue("toString() should indicate const-ness", ((String)result).indexOf("const") != -1);
+                    continue;
+                }
+                fail("Method '" + m.getName() + "(" + Arrays.asList(argTypes) + ")' should throw UnsupportedOperationException");
+            }
+            catch(InvocationTargetException e) {
+                assertEquals("Wrong exception type thrown by '" + m.getName() + "(" + Arrays.asList(argTypes) + ")", UnsupportedOperationException.class, e.getTargetException().getClass());
+            }
+            catch(IllegalArgumentException e) {
+                fail("Need to fix test of method '" + m.getName() + "(" + Arrays.asList(argTypes) + ")'");
+            }
+        }
     }
 
     public static void main(String[] args) {

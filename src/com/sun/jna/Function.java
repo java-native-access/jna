@@ -101,7 +101,31 @@ public class Function extends Pointer {
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callFlags) {
-        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callFlags);
+        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callFlags, null);
+    }
+    
+    /**
+     * Obtain a <code>Function</code> representing a native 
+     * function.
+     * 
+     * <p>The allocated instance represents a pointer to the named native 
+     * function from the named library.
+     *
+     * @param   libraryName
+     *                  Library in which to find the function
+     * @param   functionName
+     *                  Name of the native function to be linked with
+     * @param   callFlags
+     *                  Function <a href="#callflags">call flags</a>
+     * @param   encoding
+     *                  Encoding to use for conversion between Java and native
+     *                  strings.
+     *                  
+     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * the given function name is not found within the library.
+     */
+    public static Function getFunction(String libraryName, String functionName, int callFlags, String encoding) {
+        return NativeLibrary.getInstance(libraryName).getFunction(functionName, callFlags, encoding);
     }
     
     /**
@@ -134,14 +158,15 @@ public class Function extends Pointer {
      *                  Function <a href="#callflags">call flags</a>
      */
     public static Function getFunction(Pointer p, int callFlags) {
-        return new Function(p, callFlags);
+        return new Function(p, callFlags, null);
     }
 
     // Keep a reference to the NativeLibrary so it does not get garbage
     // collected until the function is
     private NativeLibrary library;
     private final String functionName;
-    int callFlags;
+    final String encoding;
+    final int callFlags;
     final Map options;
 
     /** For internal JNA use. */
@@ -161,10 +186,12 @@ public class Function extends Pointer {
      *                 Name of the native function to be linked with
      * @param  callFlags
      *                 Function <a href="#callflags">call flags</a>
+     * @param  encoding
+     *                 Encoding for conversion between Java and native strings.
      * @throws {@link UnsatisfiedLinkError} if the given function name is
      * not found within the library.
      */
-    Function(NativeLibrary library, String functionName, int callFlags) {
+    Function(NativeLibrary library, String functionName, int callFlags, String encoding) {
         checkCallingConvention(callFlags & MASK_CC);
         if (functionName == null)
             throw new NullPointerException("Function name must not be null");
@@ -172,6 +199,8 @@ public class Function extends Pointer {
         this.functionName = functionName;
         this.callFlags = callFlags;
         this.options = library.options;
+        this.encoding = encoding != null
+            ? encoding : Native.getDefaultStringEncoding();
         try {
             this.peer = library.getSymbolAddress(functionName);
         }
@@ -194,8 +223,10 @@ public class Function extends Pointer {
      *                 Address of the native function 
      * @param  callFlags
      *                 Function <a href="#callflags">call flags</a>
+     * @param  encoding
+     *                 Encoding for conversion between Java and native strings.
      */
-    Function(Pointer functionAddress, int callFlags) {
+    Function(Pointer functionAddress, int callFlags, String encoding) {
         checkCallingConvention(callFlags & MASK_CC);
         if (functionAddress == null
             || functionAddress.peer == 0) {
@@ -205,6 +236,8 @@ public class Function extends Pointer {
         this.callFlags = callFlags;
         this.peer = functionAddress.peer;
         this.options = Collections.EMPTY_MAP;
+        this.encoding = encoding != null
+            ? encoding : Native.getDefaultStringEncoding();
     }
     
     private void checkCallingConvention(int convention)
@@ -253,10 +286,16 @@ public class Function extends Pointer {
         TypeMapper mapper = 
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
         Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
+        Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
         for (int i=0; i < args.length; i++) {
+            Class paramType = invokingMethod != null
+                ? (isVarArgs(invokingMethod) && i >= paramTypes.length-1
+                   ? paramTypes[paramTypes.length-1].getComponentType()
+                   : paramTypes[i])
+                : null;
             args[i] = convertArgument(args, i, invokingMethod,
-                                      mapper, allowObjects);
+                                      mapper, allowObjects, paramType);
         }
         
         Class nativeType = returnType;
@@ -390,13 +429,13 @@ public class Function extends Pointer {
         else if (returnType==String[].class) {
             Pointer p = invokePointer(callFlags, args);
             if (p != null) {
-                result = p.getStringArray(0);
+                result = p.getStringArray(0, encoding);
             }
         }
         else if (returnType==WString[].class) {
             Pointer p = invokePointer(callFlags, args);
             if (p != null) {
-                String[] arr = p.getStringArray(0, true);
+                String[] arr = p.getWideStringArray(0);
                 WString[] warr = new WString[arr.length];
                 for (int i=0;i < arr.length;i++) {
                     warr[i] = new WString(arr[i]);
@@ -434,7 +473,7 @@ public class Function extends Pointer {
 
     private Object convertArgument(Object[] args, int index,
                                    Method invokingMethod, TypeMapper mapper,
-                                   boolean allowObjects) { 
+                                   boolean allowObjects, Class expectedType) { 
         Object arg = args[index];
         if (arg != null) {
             Class type = arg.getClass();
@@ -511,7 +550,7 @@ public class Function extends Pointer {
             return Boolean.TRUE.equals(arg) ? INTEGER_TRUE : INTEGER_FALSE;
         }
         else if (String[].class == argClass) {
-            return new StringArray((String[])arg);
+            return new StringArray((String[])arg, encoding);
         }
         else if (WString[].class == argClass) {
             return new StringArray((WString[])arg);
@@ -523,9 +562,29 @@ public class Function extends Pointer {
             return new NativeMappedArray((NativeMapped[])arg);
         }
         else if (Structure[].class.isAssignableFrom(argClass)) {
+            // If the signature is Structure[], disallow
+            // Structure.ByReference[] and Structure.ByReference elements
             Structure[] ss = (Structure[])arg;
             Class type = argClass.getComponentType();
             boolean byRef = Structure.ByReference.class.isAssignableFrom(type);
+            if (expectedType != null) {
+                if (!Structure.ByReference[].class.isAssignableFrom(expectedType)) {
+                    if (byRef) {
+                        throw new IllegalArgumentException("Function " + getName()
+                                                           + " declared Structure[] at parameter "
+                                                           + index + " but array of "
+                                                           + type + " was passed");
+                    }
+                    for (int i=0;i < ss.length;i++) {
+                        if (ss[i] instanceof Structure.ByReference) {
+                            throw new IllegalArgumentException("Function " + getName()
+                                                               + " declared Structure[] at parameter "
+                                                               + index + " but element " + i
+                                                               + " is of Structure.ByReference type");
+                        }
+                    }
+                }
+            }
             if (byRef) {
                 Structure.autoWrite(ss);
                 Pointer[] pointers = new Pointer[ss.length + 1];
@@ -592,10 +651,12 @@ public class Function extends Pointer {
         Pointer ptr = invokePointer(callFlags, args);
         String s = null;
         if (ptr != null) {
-            if (wide)
-                s = ptr.getString(0, wide);
-            else
-                s = ptr.getString(0);
+            if (wide) {
+                s = ptr.getWideString(0);
+            }
+            else {
+                s = ptr.getString(0, encoding);
+            }
         }
         return s;
     }

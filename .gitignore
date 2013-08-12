@@ -17,3 +17,5 @@ dist/*-javadoc.jar
 dist/src-mvn.zip
 dist/out-of-date.jar
 perf*.txt
+native/libffi/doc/libffi.info
+junit-*

@@ -19,7 +19,6 @@ import java.util.List;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
  *

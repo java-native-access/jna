@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+  http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.java.dev.jna</groupId>
+  <artifactId>jna-platform</artifactId>
+  <version>4.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Java Native Access Platform</name>
+  <description>Java Native Access Platform</description>
+  <url>https://github.com/twall/jna</url>
+
+  <licenses>
+      <license>
+          <name>LGPL, version 2.1</name>
+          <url>http://www.gnu.org/licenses/licenses.html</url>
+          <distribution>repo</distribution>
+      </license>
+      <license>
+          <name>ASL, version 2</name>
+          <url>http://www.apache.org/licenses/</url>
+          <distribution>repo</distribution>
+      </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/twall/jna</connection>
+    <developerConnection>scm:git:ssh://git@github.com/twall/jna.git</developerConnection>
+    <url>https://github.com/twall/jna</url>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>twall</id>
+      <name>Timothy Wall</name>
+      <roles>
+        <role>Owner</role>
+      </roles>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna</artifactId>
+      <version>4.0.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+</project>

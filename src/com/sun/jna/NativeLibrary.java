@@ -1,5 +1,5 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
- * Copyright (c) 2007-20013 Timothy Wall, All Rights Reserved
+ * Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -58,6 +58,8 @@ import java.util.StringTokenizer;
  * resource will be extracted to <code>jna.tmpdir</code> for loading, and
  * later removed (but only if <code>jna.nounpack</code> is false or not set).
  * </ol>
+ * You may set the system property <code>jna.debug_load=true</code> to make
+ * JNA print the steps of its library search to the console.
  * @author Wayne Meissner, split library loading from Function.java
  * @author twall
  */
@@ -68,6 +70,7 @@ public class NativeLibrary {
     private final String libraryPath;
     private final Map functions = new HashMap();
     final int callFlags;
+    private String encoding;
     final Map options;
 
     private static final Map libraries = new HashMap();
@@ -80,8 +83,8 @@ public class NativeLibrary {
             throw new Error("Native library not initialized");
     }
 
-    private static String functionKey(String name, int flags) {
-        return name + "|" + flags;
+    private static String functionKey(String name, int flags, String encoding) {
+        return name + "|" + flags + "|" + encoding;
     }
 
     private NativeLibrary(String libraryName, String libraryPath, long handle, Map options) {
@@ -89,36 +92,43 @@ public class NativeLibrary {
         this.libraryPath = libraryPath;
         this.handle = handle;
         Object option = options.get(Library.OPTION_CALLING_CONVENTION);
-        int callingConvention = option instanceof Integer
-            ? ((Integer)option).intValue() : Function.C_CONVENTION;
+        int callingConvention = option instanceof Number
+            ? ((Number)option).intValue() : Function.C_CONVENTION;
         this.callFlags = callingConvention;
         this.options = options;
+        this.encoding = (String)options.get(Library.OPTION_STRING_ENCODING);
+        if (this.encoding == null) {
+            this.encoding = Native.getDefaultStringEncoding();
+        }
 
         // Special workaround for w32 kernel32.GetLastError
         // Short-circuit the function to use built-in GetLastError access
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
-                Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION) {
-                    Object invoke(Object[] args, Class returnType, boolean b) {
-                        return new Integer(Native.getLastError());
-                    }
-                };
-                functions.put(functionKey("GetLastError", callFlags), f);
+                Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION, encoding) {
+                        Object invoke(Object[] args, Class returnType, boolean b) {
+                            return new Integer(Native.getLastError());
+                        }
+                    };
+                functions.put(functionKey("GetLastError", callFlags, encoding), f);
             }
         }
     }
 
     private static final int DEFAULT_OPEN_OPTIONS = -1;
     private static int openFlags(Map options) {
-        try {
-            return ((Integer)options.get(Library.OPTION_OPEN_FLAGS)).intValue();
+        Object opt = options.get(Library.OPTION_OPEN_FLAGS);
+        if (opt instanceof Number) {
+            return ((Number)opt).intValue();
         }
-        catch(Throwable t) {
-            return DEFAULT_OPEN_OPTIONS;
-        }
+        return DEFAULT_OPEN_OPTIONS;
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map options) {
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Looking for library '" + libraryName + "'");
+	}
+
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
         List searchPath = new LinkedList();
         int openFlags = openFlags(options);
@@ -127,6 +137,9 @@ public class NativeLibrary {
         // attempt any library name variations
         String webstartPath = Native.getWebStartLibraryPath(libraryName);
         if (webstartPath != null) {
+	    if (Native.DEBUG_LOAD) {
+		System.out.println("Adding web start path " + webstartPath);
+	    }
             searchPath.add(webstartPath);
         }
 
@@ -140,6 +153,9 @@ public class NativeLibrary {
             }
         }
 
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
+	}
         searchPath.addAll(initPaths("jna.library.path"));
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
@@ -149,15 +165,24 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
+ 	    if (Native.DEBUG_LOAD) {
+		System.out.println("Trying " + libraryPath);
+	    }
             handle = Native.open(libraryPath, openFlags);
         }
         catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
+	    if (Native.DEBUG_LOAD) {
+		System.out.println("Adding system paths: " + librarySearchPath);
+	    }
             searchPath.addAll(librarySearchPath);
         }
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Trying " + libraryPath);
+		}
                 handle = Native.open(libraryPath, openFlags);
                 if (handle == 0) {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
@@ -170,6 +195,9 @@ public class NativeLibrary {
             // path, not found in any properties
             if (Platform.isAndroid()) {
                 try {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Preload (via System.loadLibrary) " + libraryName);
+		    }
                     System.loadLibrary(libraryName);
                     handle = Native.open(libraryPath, openFlags);
                 }
@@ -179,9 +207,15 @@ public class NativeLibrary {
                 //
                 // Failed to load the library normally - try to match libfoo.so.*
                 //
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for version variants");
+		}
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
-                    try {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Trying " + libraryPath);
+		    }
+		    try {
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
@@ -190,9 +224,15 @@ public class NativeLibrary {
             // Search framework libraries on OS X
             else if (Platform.isMac()
                      && !libraryName.endsWith(".dylib")) {
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for matching frameworks");
+		}
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
+			if (Native.DEBUG_LOAD) {
+			    System.out.println("Trying " + libraryPath);
+			}
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) { e = e2; }
@@ -200,9 +240,17 @@ public class NativeLibrary {
             }
             // Try the same library with a "lib" prefix
             else if (Platform.isWindows() && !isAbsolutePath) {
+		if (Native.DEBUG_LOAD) {
+		    System.out.println("Looking for lib- prefix");
+		}
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
-                try { handle = Native.open(libraryPath, openFlags); }
-                catch(UnsatisfiedLinkError e2) { e = e2; }
+		if (libraryPath != null) {
+		    if (Native.DEBUG_LOAD) {
+			System.out.println("Trying " + libraryPath);
+		    }
+		    try { handle = Native.open(libraryPath, openFlags); }
+		    catch(UnsatisfiedLinkError e2) { e = e2; }
+		}
             }
             // As a last resort, try to extract the library from the class
             // path, using the current context class loader.
@@ -210,6 +258,7 @@ public class NativeLibrary {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
                     handle = Native.open(embedded.getAbsolutePath());
+                    libraryPath = embedded.getAbsolutePath();
                     // Don't leave temporary files around
                     if (Native.isUnpacked(embedded)) {
                         Native.deleteLibrary(embedded);
@@ -223,6 +272,9 @@ public class NativeLibrary {
                                                + e.getMessage());
             }
         }
+	if (Native.DEBUG_LOAD) {
+	    System.out.println("Found library '" + libraryName + "' at " + libraryPath);
+	}
         return new NativeLibrary(libraryName, libraryPath, handle, options);
     }
 
@@ -379,7 +431,8 @@ public class NativeLibrary {
 
     /**
      * Add a path to search for the specified library, ahead of any system
-     * paths.
+     * paths.  This is similar to setting <code>jna.library.path</code>, but
+     * only extends the search path for a single library.
      *
      * @param libraryName The name of the library to use the path for
      * @param path The path to use when trying to load the library
@@ -418,12 +471,24 @@ public class NativeLibrary {
      * function from the library.
      *
      * @param	name
-     *			Name of the native function to be linked with
+     *			Name of the native function to be linked with.  Uses a
+     *			function mapper option if one was provided to
+     *			transform the name.
      * @param	method
      *			Method to which the native function is to be mapped
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     Function getFunction(String name, Method method) {
+        FunctionMapper mapper = (FunctionMapper)
+            options.get(Library.OPTION_FUNCTION_MAPPER);
+        if (mapper != null) {
+            name = mapper.getFunctionName(this, method);
+        }
+        // If there's native method profiler prefix, strip it
+        String prefix = System.getProperty("jna.profiler.prefix", "$$YJP$$");
+        if (name.startsWith(prefix)) {
+            name = name.substring(prefix.length());
+        }
         int flags = this.callFlags;
         Class[] etypes = method.getExceptionTypes();
         for (int i=0;i < etypes.length;i++) {
@@ -445,13 +510,30 @@ public class NativeLibrary {
      * @throws   UnsatisfiedLinkError if the function is not found
      */
     public Function getFunction(String functionName, int callFlags) {
+        return getFunction(functionName, callFlags, encoding);
+    }
+
+    /**
+     * Create a new  @{link Function} that is linked with a native
+     * function that follows a given calling flags.
+     *
+     * @param	functionName
+     *			Name of the native function to be linked with
+     * @param	callFlags
+     *			Flags affecting the function invocation
+     * @param   encoding
+     *                  Encoding to use to convert between Java and native
+     *                  strings. 
+     * @throws   UnsatisfiedLinkError if the function is not found
+     */
+    public Function getFunction(String functionName, int callFlags, String encoding) {
         if (functionName == null)
             throw new NullPointerException("Function name may not be null");
         synchronized (functions) {
-            String key = functionKey(functionName, callFlags);
+            String key = functionKey(functionName, callFlags, encoding);
             Function function = (Function) functions.get(key);
             if (function == null) {
-                function = new Function(this, functionName, callFlags);
+                function = new Function(this, functionName, callFlags, encoding);
                 functions.put(key, function);
             }
             return function;
@@ -667,13 +749,13 @@ public class NativeLibrary {
             searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String filename) {
-                return (filename.startsWith("lib" + libName + ".so")
-                        || (filename.startsWith(libName + ".so")
-                            && libName.startsWith("lib")))
-                    && isVersionedName(filename);
-            }
-        };
+                public boolean accept(File dir, String filename) {
+                    return (filename.startsWith("lib" + libName + ".so")
+                            || (filename.startsWith(libName + ".so")
+                                && libName.startsWith("lib")))
+                        && isVersionedName(filename);
+                }
+            };
 
         List matches = new LinkedList();
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
@@ -794,7 +876,7 @@ public class NativeLibrary {
     }
 
     private static String getMultiArchPath() {
-        String cpu = System.getProperty("os.arch").toLowerCase().trim();
+        String cpu = Platform.ARCH;
         String kernel = Platform.iskFreeBSD()
             ? "-kfreebsd"
             : (Platform.isGNU() ? "" : "-linux");

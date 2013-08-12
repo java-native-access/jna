@@ -63,6 +63,12 @@ public class PlatformTest extends TestCase {
         assertEquals("Wrong resource path FreeBSD/x86", "freebsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.FREEBSD,
                                                              "x86", "FreeBSD"));
+        assertEquals("Wrong resource path GNU/kFreeBSD/x86", "kfreebsd-x86",
+                     Platform.getNativeLibraryResourcePrefix(Platform.KFREEBSD,
+                                                             "x86", "GNU/kFreeBSD"));
+        assertEquals("Wrong resource path NetBSD/x86", "netbsd-x86",
+                     Platform.getNativeLibraryResourcePrefix(Platform.NETBSD,
+                                                             "x86", "NetBSD"));
         assertEquals("Wrong resource path Linux/armv7l (android)", "android-arm",
                      Platform.getNativeLibraryResourcePrefix(Platform.ANDROID,
                                                              "armv7l", "Linux"));

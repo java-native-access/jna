@@ -23,12 +23,17 @@
 #  include <windows.h>
 #  define TLS_SET(KEY,VALUE) TlsSetValue(KEY,VALUE)
 #  define TLS_GET(KEY) TlsGetValue(KEY)
+#  define TLS_KEY_T DWORD
 #else
 #  include <sys/types.h>
 #  include <sys/param.h>
+#  include <pthread.h>
+#  define PTHREADS
 #  define TLS_SET(KEY,VALUE) (pthread_setspecific(KEY,VALUE)==0)
 #  define TLS_GET(KEY) pthread_getspecific(KEY)
+#  define TLS_KEY_T pthread_key_t
 #endif
+
 #include "dispatch.h"
 
 #ifdef __cplusplus
@@ -49,10 +54,9 @@ extern "C" {
 #endif
 #else /* _WIN64 */
 #ifdef _MSC_VER
-// FIXME is "PROC NEAR" correct?
-#define ASMFN(X) extern void asmfn ## X(); \
-__asm asmfn ## X PROC NEAR \
-__asm jmp fn[X]
+#define ASMFN(X) void __declspec(naked) asmfn ## X () { \
+  __asm jmp DWORD PTR fn[4*X]                                     \
+}
 #else
 #define ASMFN(X) extern void asmfn ## X (); asm(".globl _asmfn" #X "\n\
 _asmfn" #X ":\n\
@@ -74,13 +78,26 @@ static void * const dll_fptrs[] = {
 
 #endif /* _WIN32 && !_WIN32_WCE */
 
+typedef struct _tls {
+  JavaVM* jvm;
+  jint last_error;
+  // Contents set to JNI_TRUE if thread has terminated and detached properly
+  int* termination_flag;
+  jboolean jvm_thread;
+  jboolean detach;
+  char name[256];
+} thread_storage;
+
 static void callback_dispatch(ffi_cif*, void*, void**, void*);
 static jclass classObject;
+
+extern void println(JNIEnv*, const char*);
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jint options) {
+                callconv_t calling_convention, jint options,
+                jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
@@ -91,7 +108,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   jsize argc;
   JavaVM* vm;
   int rtype;
-  char msg[64];
+  char msg[MSG_SIZE];
   int i;
   int cvt = 0;
   const char* throw_type = NULL;
@@ -119,6 +136,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
  
   cb->direct = direct;
   cb->java_arg_types[0] = cb->java_arg_types[1] = cb->java_arg_types[2] = &ffi_type_pointer;
+  cb->encoding = newCStringUTF8(env, encoding);
 
   for (i=0;i < argc;i++) {
     int jtype;
@@ -163,8 +181,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       }
     }
 
+    // Java callback method is called using varargs, so promote floats to 
+    // double where appropriate for the platform
     if (cb->arg_types[i]->type == FFI_TYPE_FLOAT) {
-      // Java method is varargs, so promote floats to double
       cb->java_arg_types[i+3] = &ffi_type_double;
       cb->conversion_flags[i] = CVT_FLOAT;
       cvt = 1;
@@ -234,7 +253,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
     default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
-    status = ffi_prep_cif(&cb->java_cif, java_abi, argc+3, java_ffi_rtype, cb->java_arg_types);
+    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_ffi_rtype, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
       ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
                            cb->x_closure);
@@ -294,6 +313,7 @@ free_callback(JNIEnv* env, callback *cb) {
     }
   }
 #endif
+  free((void *)cb->encoding);
   free(cb);
 }
 
@@ -362,7 +382,7 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
           break;
         case CVT_STRING:
-          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], JNI_FALSE);
+          *((void **)args[i+3]) = newJavaString(env, *(void **)cbargs[i], cb->encoding);
           break;
         case CVT_WSTRING:
           *((void **)args[i+3]) = newJavaWString(env, *(void **)cbargs[i]);
@@ -475,43 +495,72 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
 }
 
-// Handle automatic thread cleanup
-static void detach_thread(void* data) {
-  if (data != NULL) {
-    JavaVM* jvm = (JavaVM *)data;
-    (*jvm)->DetachCurrentThread(jvm);
+static TLS_KEY_T tls_thread_data_key;
+static thread_storage* get_thread_storage(JNIEnv* env) {
+  thread_storage* tls = (thread_storage *)TLS_GET(tls_thread_data_key);
+  if (tls == NULL) {
+    tls = (thread_storage*)malloc(sizeof(thread_storage));
+    if (!tls) {
+      throwByName(env, EOutOfMemory, "JNA: Can't allocate thread storage");
+    }
+    else {
+      snprintf(tls->name, sizeof(tls->name), "<uninitialized thread name>");
+      tls->jvm_thread = JNI_TRUE;
+      tls->last_error = 0;
+      tls->termination_flag = NULL;
+      if ((*env)->GetJavaVM(env, &tls->jvm) != JNI_OK) {
+        free(tls);
+        throwByName(env, EIllegalState, "JNA: Could not get JavaVM");
+        tls = NULL;
+      }
+      else if (!TLS_SET(tls_thread_data_key, tls)) {
+        free(tls);
+        throwByName(env, EOutOfMemory, "JNA: Internal TLS error");
+        tls = NULL;
+      }
+    }
   }
+  return tls;
+}
+
+static void dispose_thread_data(void* data) {
+  thread_storage* tls = (thread_storage*)data;
+  JavaVM* jvm = tls->jvm;
+  JNIEnv* env;
+  int is_attached = (*jvm)->GetEnv(jvm, (void*)&env, JNI_VERSION_1_4) == JNI_OK;
+  jboolean detached = JNI_TRUE;
+  if (is_attached) {
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach native thread (automatic)\n");
+      detached = JNI_FALSE;
+    }
+  }
+  if (tls->termination_flag && detached) {
+    *(tls->termination_flag) = JNI_TRUE;
+  }
+  free(data);
 }
 
 #ifdef _WIN32
 
-static DWORD tls_thread_cleanup_key;
-static DWORD tls_errno_key, tls_detach_key;
 BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   switch (fdwReason) {
   case DLL_PROCESS_ATTACH:
-    tls_thread_cleanup_key = TlsAlloc();
-    if (tls_thread_cleanup_key == TLS_OUT_OF_INDEXES) {
-      return FALSE;
-    }
-    tls_detach_key = TlsAlloc();
-    if (tls_detach_key == TLS_OUT_OF_INDEXES) {
-      return FALSE;
-    }
-    tls_errno_key = TlsAlloc();
-    if (tls_errno_key == TLS_OUT_OF_INDEXES) {
+    tls_thread_data_key = TlsAlloc();
+    if (tls_thread_data_key == TLS_OUT_OF_INDEXES) {
       return FALSE;
     }
     break;
   case DLL_PROCESS_DETACH:
-    TlsFree(tls_thread_cleanup_key);
-    TlsFree(tls_detach_key);
-    TlsFree(tls_errno_key);
+    TlsFree(tls_thread_data_key);
     break;
   case DLL_THREAD_ATTACH:
     break;
   case DLL_THREAD_DETACH: {
-    detach_thread(TlsGetValue(tls_thread_cleanup_key));
+    thread_storage* tls = (thread_storage*)TlsGetValue(tls_thread_data_key);
+    if (tls) {
+      dispose_thread_data(tls);
+    }
     break;
   }
   default:
@@ -520,71 +569,54 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
   return TRUE;
 }
 
-#else
+#endif
 
-#include <pthread.h>
-
-static pthread_key_t tls_thread_cleanup_key, tls_detach_key;
-static void make_thread_cleanup_key() {
-  pthread_key_create(&tls_thread_cleanup_key, detach_thread);
+#ifdef PTHREADS
+static void make_thread_data_key() {
+  pthread_key_create(&tls_thread_data_key, dispose_thread_data);
 }
-static pthread_key_t tls_errno_key;
-static void make_thread_keys() {
-  pthread_key_create(&tls_errno_key, NULL);
-  pthread_key_create(&tls_detach_key, NULL);
-}
-
 #endif
 
 /** Store the requested detach state for the current thread. */
 void
-JNA_detach(jboolean d) {
-  if (!TLS_SET(tls_detach_key, L2A((jlong)(d?THREAD_DETACH:THREAD_LEAVE_ATTACHED)))) {
-    fprintf(stderr, "JNA: unable to set thread-local detach value\n");
+JNA_detach(JNIEnv* env, jboolean detach, void* termination_flag) {
+  thread_storage* tls = get_thread_storage(env);
+  if (tls) {
+    tls->detach = detach;
+    tls->termination_flag = (int *)termination_flag;
+    if (detach && tls->jvm_thread) {
+      throwByName(env, EIllegalState, "Can not detach from a JVM thread");
+    }
   }
 }
 
 /** Store the value of errno/GetLastError in TLS */
 void
-JNA_set_last_error(int err) {
-  if (!TLS_SET(tls_errno_key, L2A((jlong)err))) {
-    fprintf(stderr, "JNA: unable to set thread-local errno value\n");
+JNA_set_last_error(JNIEnv* env, int err) {
+  thread_storage* tls = get_thread_storage(env);
+  if (tls) {
+    tls->last_error = err;
   }
 }
 
 /** Store the value of errno/GetLastError in TLS */
 int
-JNA_get_last_error() {
-  return (int)A2L(TLS_GET(tls_errno_key));
-}
-
-/** Set up to detach the thread when it exits, or clear any handlers if the
-    argument is NULL.
-*/
-static void 
-jvm_detach_on_exit(JavaVM* jvm) {
-#ifdef _WIN32
-  if (!TlsSetValue(tls_thread_cleanup_key, (void *)jvm)) {
-    fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
+JNA_get_last_error(JNIEnv* env) {
+  thread_storage* tls = get_thread_storage(env);
+  if (tls) {
+    return tls->last_error;
   }
-#else
-  static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-  pthread_once(&key_once, make_thread_cleanup_key);
-  if (!jvm || pthread_getspecific(tls_thread_cleanup_key) == NULL) {
-    if (pthread_setspecific(tls_thread_cleanup_key, jvm)) {
-      fprintf(stderr, "JNA: unable to set thread-local JVM value\n");
-    }
-  }
-#endif
+  return 0;
 }
 
 static void
 callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = ((callback *)user_data); 
   JavaVM* jvm = cb->vm;
-  JNIEnv* env;
+  JNIEnv* env = NULL;
   int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
   jboolean detach = was_attached ? JNI_FALSE : JNI_TRUE;
+  thread_storage* tls = was_attached ? get_thread_storage(env) : NULL;
 
   if (!was_attached) {
     int attach_status = 0;
@@ -610,6 +642,14 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     else {
       attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
     }
+    tls = get_thread_storage(env);
+    if (tls) {
+      snprintf(tls->name, sizeof(tls->name), "%s", args.name ? args.name : "<unconfigured native thread>");
+      tls->detach = detach;
+      tls->jvm_thread = JNI_FALSE;
+    }
+    // Dispose of allocated memory
+    free(args.name);
     if (attach_status != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;
@@ -618,37 +658,36 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       (*env)->DeleteWeakGlobalRef(env, args.group);
     }
   }
-  
+						
+  if (!tls) {
+    fprintf(stderr, "JNA: couldn't obtain thread-local storage\n");
+    return;
+  }
+
   // Give the callback glue its own local frame to ensure all local references
   // are properly disposed
   if ((*env)->PushLocalFrame(env, 16) < 0) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
-    TLS_SET(tls_detach_key, L2A((jlong)THREAD_NOCHANGE));
     callback_invoke(env, cb, cif, resp, cbargs);
-    switch((int)A2L(TLS_GET(tls_detach_key))) {
-    case THREAD_LEAVE_ATTACHED: detach = JNI_FALSE; break;
-    case THREAD_DETACH: detach = JNI_TRUE; break;
-    default: break; /* use default detach behavior */
-    }
+    // Make note of whether the callback wants to avoid detach
+    detach = tls->detach && !tls->jvm_thread;
     (*env)->PopLocalFrame(env, NULL);
   }
   
   if (detach) {
-    (*jvm)->DetachCurrentThread(jvm);
-    jvm_detach_on_exit(NULL);
-  }
-  else if (!was_attached) {
-    jvm_detach_on_exit(jvm);
+    if ((*jvm)->DetachCurrentThread(jvm) != 0) {
+      fprintf(stderr, "JNA: could not detach thread\n");
+    }
   }
 }
 
 const char* 
 JNA_callback_init(JNIEnv* env) {
-#ifndef _WIN32
+#ifdef PTHREADS
   static pthread_once_t key_once = PTHREAD_ONCE_INIT;
-  pthread_once(&key_once, make_thread_keys);
+  pthread_once(&key_once, make_thread_data_key);
 #endif
 
   if (!LOAD_CREF(env, Object, "java/lang/Object")) return "java.lang.Object";
@@ -662,10 +701,8 @@ JNA_callback_dispose(JNIEnv* env) {
     (*env)->DeleteWeakGlobalRef(env, classObject);
     classObject = NULL;
   }
-#ifndef _WIN32
-  pthread_key_delete(tls_errno_key);
-  pthread_key_delete(tls_thread_cleanup_key);
-  pthread_key_delete(tls_detach_key);
+#ifdef PTHREADS
+  pthread_key_delete(tls_thread_data_key);
 #endif
 }
 

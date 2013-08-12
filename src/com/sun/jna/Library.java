@@ -51,11 +51,12 @@ import java.util.WeakHashMap;
  * <code>loadLibrary</code> result.
  * <p>
  * <b>OPTIONS</b> (an instance of {@link Map}),
- * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}) and 
+ * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}),
  * <b>STRUCTURE_ALIGNMENT</b> (one of the alignment types defined in 
- * {@link Structure}) may also be defined.  If no instance of the interface
- * has been instantiated, these fields will be used to determine customization
- * settings for structures and methods defined within the interface.
+ * {@link Structure}), and <b>STRING_ENCODING</b> (a {@link String}) may also
+ * be defined.  If no instance of the interface has been instantiated, these
+ * fields will be used to determine customization settings for structures and
+ * methods defined within the interface. 
  * <p>
  * 
  * @author  Todd Fast, todd.fast@sun.com
@@ -72,6 +73,13 @@ public interface Library {
      * be one of the predefined alignment types in {@link Structure}. 
      */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
+    /** Option key for per-library String encoding.  This affects conversions
+     * between Java unicode and native (<code>const char*</code>) strings (as
+     * arguments or Structure fields).
+     * <p/>
+     * Defaults to {@link Native#getDefaultStringEncoding()}.
+     */
+    String OPTION_STRING_ENCODING = "string-encoding";
     /** Option key for a boolean flag to allow any Java class instance as a
         parameter.  If no type mapper is found, the object is passed as a
         pointer.
@@ -110,25 +118,10 @@ public interface Library {
             }
         }
 
-        private static class FunctionNameMap implements FunctionMapper {
-            private final Map map;
-            public FunctionNameMap(Map map) {
-                this.map = new HashMap(map);
-            }
-            public String getFunctionName(NativeLibrary library, Method method) {
-                String name = method.getName();
-                if (map.containsKey(name)) {
-                    return (String)map.get(name);
-                }
-                return name;
-            }
-        }
-
         private final NativeLibrary nativeLibrary;
         private final Class interfaceClass;
         // Library invocation options
         private final Map options;
-        private FunctionMapper functionMapper;
         private final InvocationMapper invocationMapper;
         private final Map functions = new WeakHashMap();
         public Handler(String libname, Class interfaceClass, Map options) {
@@ -147,13 +140,11 @@ public interface Library {
                 options.put(OPTION_CALLING_CONVENTION,
                             new Integer(callingConvention));
             }
+            if (options.get(OPTION_CLASSLOADER) == null) {
+                options.put(OPTION_CLASSLOADER, interfaceClass.getClassLoader());
+            }
             this.options = options;
             this.nativeLibrary = NativeLibrary.getInstance(libname, options);
-            functionMapper = (FunctionMapper)options.get(OPTION_FUNCTION_MAPPER);
-            if (functionMapper == null) {
-                // backward compatibility; passed-in map is itself the name map
-                functionMapper = new FunctionNameMap(options);
-            }
             invocationMapper = (InvocationMapper)options.get(OPTION_INVOCATION_MAPPER);
         }
 
@@ -205,13 +196,7 @@ public interface Library {
                     }
                     if (f.handler == null) {
                         // Find the function to invoke
-                        String methodName = 
-                            functionMapper.getFunctionName(nativeLibrary, method);
-                        if (methodName == null) {
-                            // Just in case the function mapper screwed up
-                            methodName = method.getName();
-                        }
-                        f.function = nativeLibrary.getFunction(methodName, method);
+                        f.function = nativeLibrary.getFunction(method.getName(), method);
                         f.options = new HashMap(this.options);
                         f.options.put(Function.OPTION_INVOKING_METHOD, method);
                     }
