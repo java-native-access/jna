@@ -1,0 +1,7 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}	 
+	 */
+	public ${returntype} ${methodname}() {
+		return (${returntype})this._invokeNativeObject(${functionCount}, new Object[] { this.getPointer() }, ${returntype}.class);
+	}

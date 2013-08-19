@@ -1,4 +1,4 @@
-/* copyright (c) 2012 Tobias Wolf, All Rights Reserved
+/* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -32,12 +32,13 @@ import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.ITypeLib;
+import com.sun.jna.platform.win32.COM.TypeLib;
 import com.sun.jna.ptr.DoubleByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+// TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
  * 
@@ -122,6 +123,17 @@ public interface OleAuto extends StdCallLibrary {
 	 *            this parameter to NULL causes the function to simply return.
 	 */
 	public void SysFreeString(BSTR bstr);
+
+	/**
+	 * The VariantInit function initializes the VARIANTARG by setting the vt
+	 * field to VT_EMPTY. Unlike VariantClear, this function does not interpret
+	 * the current contents of the VARIANTARG. Use VariantInit to initialize new
+	 * local variables of type VARIANTARG (or VARIANT).
+	 * 
+	 * @param pvarg
+	 *            The variant to initialize.
+	 */
+	public void VariantInit(VARIANT.ByReference pvarg);
 
 	/**
 	 * The VariantInit function initializes the VARIANTARG by setting the vt
@@ -224,7 +236,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *         A safe array descriptor, or null if the array could not be
 	 *         created.
 	 */
-	public SAFEARRAY SafeArrayCreate(VARTYPE vt, int cDims,
+	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
@@ -352,7 +364,7 @@ public interface OleAuto extends StdCallLibrary {
 		public VariantArg.ByReference rgvarg;
 
 		/** The rgdispid named args. */
-		public DISPIDByReference rgdispidNamedArgs;
+		public DISPIDbyReference rgdispidNamedArgs;
 
 		/** The c args. */
 		public UINT cArgs;
@@ -459,7 +471,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
 	 */
-	HRESULT LoadTypeLib(WString szFile, ITypeLib pptlib);
+	public HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 
 	/**
 	 * Converts a system time to a variant representation.
@@ -472,6 +484,6 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 * @return The function returns TRUE on success and FALSE otherwise.
 	 */
-	int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
+	public int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
 			DoubleByReference pvtime);
 }

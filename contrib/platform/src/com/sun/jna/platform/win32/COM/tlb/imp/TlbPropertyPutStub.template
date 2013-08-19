@@ -1,0 +1,5 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}	 
+	 */
+	public void ${methodname}(${methodparams});

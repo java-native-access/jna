@@ -1,0 +1,7 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}	 
+	 */
+	public void ${methodname}(${methodparams}) {
+		this._invokeNativeInt(${functionCount}, new Object[] { this.getPointer()${methodvariables}});
+	}
