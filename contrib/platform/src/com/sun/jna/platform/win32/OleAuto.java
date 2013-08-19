@@ -20,7 +20,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -364,7 +364,7 @@ public interface OleAuto extends StdCallLibrary {
 		public VariantArg.ByReference rgvarg;
 
 		/** The rgdispid named args. */
-		public DISPIDbyReference rgdispidNamedArgs;
+		public DISPIDByReference rgdispidNamedArgs;
 
 		/** The c args. */
 		public UINT cArgs;

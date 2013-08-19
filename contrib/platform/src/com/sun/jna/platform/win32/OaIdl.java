@@ -20,7 +20,7 @@ import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
@@ -131,12 +131,12 @@ public interface OaIdl {
         }
     }
 
-    public static class VARIANT_BOOLbyReference extends ByReference {
-        public VARIANT_BOOLbyReference() {
+    public static class VARIANT_BOOLByReference extends ByReference {
+        public VARIANT_BOOLByReference() {
             this(new VARIANT_BOOL(0));
         }
 
-        public VARIANT_BOOLbyReference(VARIANT_BOOL value) {
+        public VARIANT_BOOLByReference(VARIANT_BOOL value) {
             super(VARIANT_BOOL.SIZE);
             setValue(value);
         }
@@ -150,12 +150,12 @@ public interface OaIdl {
         }
     }
 
-    public static class _VARIANT_BOOLbyReference extends ByReference {
-        public _VARIANT_BOOLbyReference() {
+    public static class _VARIANT_BOOLByReference extends ByReference {
+        public _VARIANT_BOOLByReference() {
             this(new VARIANT_BOOL(0));
         }
 
-        public _VARIANT_BOOLbyReference(VARIANT_BOOL value) {
+        public _VARIANT_BOOLByReference(VARIANT_BOOL value) {
             super(VARIANT_BOOL.SIZE);
             setValue(value);
         }
@@ -207,12 +207,12 @@ public interface OaIdl {
         }
     }
 
-    public static class DISPIDbyReference extends ByReference {
-        public DISPIDbyReference() {
+    public static class DISPIDByReference extends ByReference {
+        public DISPIDByReference() {
             this(new DISPID(0));
         }
 
-        public DISPIDbyReference(DISPID value) {
+        public DISPIDByReference(DISPID value) {
             super(DISPID.SIZE);
             setValue(value);
         }
@@ -236,12 +236,12 @@ public interface OaIdl {
         }
     }
 
-    public static class MEMBERIDbyReference extends ByReference {
-        public MEMBERIDbyReference() {
+    public static class MEMBERIDByReference extends ByReference {
+        public MEMBERIDByReference() {
             this(new MEMBERID(0));
         }
 
-        public MEMBERIDbyReference(MEMBERID value) {
+        public MEMBERIDByReference(MEMBERID value) {
             super(MEMBERID.SIZE);
             setValue(value);
         }
@@ -1366,12 +1366,12 @@ public interface OaIdl {
         }
     }
 
-    public static class HREFTYPEbyReference extends DWORDbyReference {
-        public HREFTYPEbyReference() {
+    public static class HREFTYPEByReference extends DWORDByReference {
+        public HREFTYPEByReference() {
             this(new HREFTYPE(0));
         }
 
-        public HREFTYPEbyReference(DWORD value) {
+        public HREFTYPEByReference(DWORD value) {
             super(value);
         }
 

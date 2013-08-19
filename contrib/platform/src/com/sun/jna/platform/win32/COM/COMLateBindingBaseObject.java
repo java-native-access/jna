@@ -18,7 +18,7 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
@@ -214,7 +214,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
         VARIANT[] _args = null;
         WString[] ptName = new WString[] { new WString(name) };
         DISPPARAMS dp = new DISPPARAMS();
-        DISPIDbyReference pdispID = new DISPIDbyReference();
+        DISPIDByReference pdispID = new DISPIDByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
         IntByReference puArgErr = new IntByReference();
 
@@ -238,7 +238,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
         // Handle special-case for property-puts!
         if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
             dp.cNamedArgs = new UINT(_argsLen);
-            dp.rgdispidNamedArgs = new DISPIDbyReference(
+            dp.rgdispidNamedArgs = new DISPIDByReference(
                     OaIdl.DISPID_PROPERTYPUT);
         }
 

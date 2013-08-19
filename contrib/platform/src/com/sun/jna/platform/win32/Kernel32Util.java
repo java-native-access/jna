@@ -341,7 +341,7 @@ public abstract class Kernel32Util implements WinDef {
     public static final WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[] getLogicalProcessorInformation() {
         int sizePerStruct = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION()
                 .size();
-        WinDef.DWORDbyReference bufferSize = new WinDef.DWORDbyReference(
+        WinDef.DWORDByReference bufferSize = new WinDef.DWORDByReference(
                 new WinDef.DWORD(sizePerStruct));
         Memory memory;
         while (true) {

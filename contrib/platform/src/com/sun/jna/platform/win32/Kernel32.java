@@ -1365,7 +1365,7 @@ public interface Kernel32 extends WinNT {
      *         extended error information, call {@link #GetLastError()}.
      */
     boolean GetLogicalProcessorInformation(Pointer buffer,
-            DWORDbyReference returnLength);
+            DWORDByReference returnLength);
 
     /**
      * Retrieves information about the system's current usage of both physical

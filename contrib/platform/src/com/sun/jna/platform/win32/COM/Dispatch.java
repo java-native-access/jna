@@ -17,13 +17,13 @@ import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -59,7 +59,7 @@ public class Dispatch extends Unknown implements IDispatch {
      * 
      *         Virtual
      */
-    public HRESULT GetTypeInfoCount(UINTbyReference pctinfo) {
+    public HRESULT GetTypeInfoCount(UINTByReference pctinfo) {
         return (HRESULT) this._invokeNativeObject(3,
                 new Object[] { this.getPointer(), pctinfo }, HRESULT.class);
     }
@@ -98,7 +98,7 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-            LCID lcid, DISPIDbyReference rgDispId) {
+            LCID lcid, DISPIDByReference rgDispId) {
         return (HRESULT) this._invokeNativeObject(5,
                 new Object[] { this.getPointer(), riid, rgszNames, cNames,
                         lcid, rgDispId }, HRESULT.class);

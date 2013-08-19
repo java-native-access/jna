@@ -22,12 +22,12 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
+import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -196,7 +196,7 @@ public class TypeLibUtil {
     public TypeLibDoc getDocumentation(int index) {
         BSTRByReference pBstrName = new BSTRByReference();
         BSTRByReference pBstrDocString = new BSTRByReference();
-        DWORDbyReference pdwHelpContext = new DWORDbyReference();
+        DWORDByReference pdwHelpContext = new DWORDByReference();
         BSTRByReference pBstrHelpFile = new BSTRByReference();
 
         HRESULT hr = typelib.GetDocumentation(index, pBstrName, pBstrDocString,
@@ -303,7 +303,7 @@ public class TypeLibUtil {
 
         LPOLESTR szNameBuf = new LPOLESTR(nameBuf);
         ULONG lHashVal = new ULONG(hashVal);
-        BOOLbyReference pfName = new BOOLbyReference();
+        BOOLByReference pfName = new BOOLByReference();
 
         HRESULT hr = this.typelib.IsName(szNameBuf, lHashVal, pfName);
         COMUtils.checkRC(hr);
@@ -373,7 +373,7 @@ public class TypeLibUtil {
         BSTRByReference szNameBuf = new BSTRByReference(
                 OleAuto.INSTANCE.SysAllocString(name));
         /* [in] */ULONG lHashVal = new ULONG(hashVal);
-        /* [out][in] */USHORTbyReference pcFound = new USHORTbyReference(found);
+        /* [out][in] */USHORTByReference pcFound = new USHORTByReference(found);
 
         HRESULT hr = this.typelib.FindName(szNameBuf, lHashVal, null, null,
                 pcFound);

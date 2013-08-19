@@ -15,16 +15,16 @@ package com.sun.jna.platform.win32.COM;
 import junit.framework.TestCase;
 
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
-import com.sun.jna.platform.win32.WinDef.WORDbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -74,7 +74,7 @@ public class ITypeInfoTest extends TestCase {
         MEMBERID memid = new MEMBERID(1);
         BSTR[] rgBstrNames = new BSTR[1];
         UINT cMaxNames = new UINT(1);
-        UINTbyReference pcNames = new UINTbyReference();
+        UINTByReference pcNames = new UINTByReference();
         HRESULT hr = typeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
 
         COMUtils.checkRC(hr);
@@ -85,7 +85,7 @@ public class ITypeInfoTest extends TestCase {
 
     public void testGetRefTypeOfImplType() {
         ITypeInfo typeInfo = getTypeInfo();
-        HREFTYPEbyReference pRefType = new HREFTYPEbyReference();
+        HREFTYPEByReference pRefType = new HREFTYPEByReference();
         HRESULT hr = typeInfo.GetRefTypeOfImplType(new UINT(0), pRefType);
 
         COMUtils.checkRC(hr);
@@ -124,7 +124,7 @@ public class ITypeInfoTest extends TestCase {
         MEMBERID memid = new MEMBERID(0);
         BSTRByReference pBstrName = new BSTRByReference();
         BSTRByReference pBstrDocString = new BSTRByReference();
-        DWORDbyReference pdwHelpContext = new DWORDbyReference();
+        DWORDByReference pdwHelpContext = new DWORDByReference();
         BSTRByReference pBstrHelpFile = new BSTRByReference();
         HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
                 pBstrDocString, pdwHelpContext, pBstrHelpFile);
@@ -143,7 +143,7 @@ public class ITypeInfoTest extends TestCase {
         MEMBERID memid = new MEMBERID(0);
         BSTRByReference pBstrDllName = new BSTRByReference();
         BSTRByReference pBstrName = new BSTRByReference();
-        WORDbyReference pwOrdinal = new WORDbyReference();
+        WORDByReference pwOrdinal = new WORDByReference();
         HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
                 pBstrDllName, pBstrName, pwOrdinal);
 

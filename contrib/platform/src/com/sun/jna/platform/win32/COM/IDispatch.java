@@ -15,13 +15,13 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -40,13 +40,13 @@ public interface IDispatch extends IUnknown {
     public final static IID IID_IDISPATCH = new IID(
             "00020400-0000-0000-C000-000000000046");
 
-    public HRESULT GetTypeInfoCount(UINTbyReference pctinfo);
+    public HRESULT GetTypeInfoCount(UINTByReference pctinfo);
 
     public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
             PointerByReference ppTInfo);
 
     public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
-            LCID lcid, DISPIDbyReference rgDispId);
+            LCID lcid, DISPIDByReference rgDispId);
 
     public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
             DISPID wFlags, DISPPARAMS pDispParams,

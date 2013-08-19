@@ -26,7 +26,7 @@ import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
+import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -129,7 +129,7 @@ public class ITypeLibTest extends TestCase {
 		ITypeLib shellTypeLib = loadShellTypeLib();
 		BSTRByReference szNameBuf = new BSTRByReference(OleAuto.INSTANCE.SysAllocString("Application"));
 		ULONG lHashVal = new ULONG(0);
-		USHORTbyReference pcFound = new USHORTbyReference((short)20);
+		USHORTByReference pcFound = new USHORTByReference((short)20);
 
 		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, null, null, pcFound);
 

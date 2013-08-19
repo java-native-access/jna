@@ -16,7 +16,7 @@ import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
@@ -27,12 +27,12 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.WinDef.WORDbyReference;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -128,7 +128,7 @@ public class TypeInfoUtil {
      */
     public String[] getNames(MEMBERID memid, int maxNames) {
         BSTR[] rgBstrNames = new BSTR[maxNames];
-        UINTbyReference pcNames = new UINTbyReference();
+        UINTByReference pcNames = new UINTByReference();
         HRESULT hr = this.typeInfo.GetNames(memid, rgBstrNames, new UINT(
                 maxNames), pcNames);
         COMUtils.checkRC(hr);
@@ -152,7 +152,7 @@ public class TypeInfoUtil {
      * @return the ref type of impl type
      */
     public HREFTYPE getRefTypeOfImplType(int index) {
-        HREFTYPEbyReference ppTInfo = new HREFTYPEbyReference();
+        HREFTYPEByReference ppTInfo = new HREFTYPEByReference();
         HRESULT hr = this.typeInfo.GetRefTypeOfImplType(new UINT(index),
                 ppTInfo);
         COMUtils.checkRC(hr);
@@ -212,7 +212,7 @@ public class TypeInfoUtil {
 
         VARIANT.ByReference pVarResult = new VARIANT.ByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-        UINTbyReference puArgErr = new UINTbyReference();
+        UINTByReference puArgErr = new UINTByReference();
 
         HRESULT hr = this.typeInfo.Invoke(pvInstance, memid, wFlags,
                 pDispParams, pVarResult, pExcepInfo, puArgErr);
@@ -293,7 +293,7 @@ public class TypeInfoUtil {
     public TypeInfoDoc getDocumentation(MEMBERID memid) {
         BSTRByReference pBstrName = new BSTRByReference();
         BSTRByReference pBstrDocString = new BSTRByReference();
-        DWORDbyReference pdwHelpContext = new DWORDbyReference();
+        DWORDByReference pdwHelpContext = new DWORDByReference();
         BSTRByReference pBstrHelpFile = new BSTRByReference();
 
         HRESULT hr = this.typeInfo.GetDocumentation(memid, pBstrName,
@@ -399,7 +399,7 @@ public class TypeInfoUtil {
     public DllEntry GetDllEntry(MEMBERID memid, INVOKEKIND invKind) {
         BSTRByReference pBstrDllName = new BSTRByReference();
         BSTRByReference pBstrName = new BSTRByReference();
-        WORDbyReference pwOrdinal = new WORDbyReference();
+        WORDByReference pwOrdinal = new WORDByReference();
 
         HRESULT hr = this.typeInfo.GetDllEntry(memid, invKind, pBstrDllName,
                 pBstrName, pwOrdinal);
@@ -575,7 +575,7 @@ public class TypeInfoUtil {
     public ContainingTypeLib GetContainingTypeLib() {
 
         PointerByReference ppTLib = new PointerByReference();
-        UINTbyReference pIndex = new UINTbyReference();
+        UINTByReference pIndex = new UINTByReference();
 
         HRESULT hr = this.typeInfo.GetContainingTypeLib(ppTLib, pIndex);
         COMUtils.checkRC(hr);

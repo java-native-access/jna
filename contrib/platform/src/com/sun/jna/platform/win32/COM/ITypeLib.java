@@ -18,11 +18,11 @@ import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WinDef.BOOLbyReference;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.USHORTbyReference;
+import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -58,14 +58,14 @@ public interface ITypeLib extends IUnknown {
     /* [in] */int index,
     /* [out] */BSTRByReference pBstrName,
     /* [out] */BSTRByReference pBstrDocString,
-    /* [out] */DWORDbyReference pdwHelpContext,
+    /* [out] */DWORDByReference pdwHelpContext,
     /* [out] */BSTRByReference pBstrHelpFile);
 
     public HRESULT IsName(
     /* [annotation][out][in] */
     LPOLESTR szNameBuf,
     /* [in] */ULONG lHashVal,
-    /* [out] */BOOLbyReference pfName);
+    /* [out] */BOOLByReference pfName);
 
     public HRESULT FindName(
     /* [annotation][out][in] */
@@ -73,7 +73,7 @@ public interface ITypeLib extends IUnknown {
     /* [in] */ULONG lHashVal,
     /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
     /* [length_is][size_is][out] */MEMBERID[] rgMemId,
-    /* [out][in] */USHORTbyReference pcFound);
+    /* [out][in] */USHORTByReference pcFound);
 
     public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr);
 }

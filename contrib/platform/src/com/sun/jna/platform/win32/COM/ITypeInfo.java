@@ -16,8 +16,8 @@ import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPEbyReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
+import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
@@ -27,12 +27,12 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
-import com.sun.jna.platform.win32.WinDef.DWORDbyReference;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.WinDef.WORDbyReference;
+import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -63,11 +63,11 @@ public interface ITypeInfo extends IUnknown {
     /* [in] */MEMBERID memid,
     /* [length_is][size_is][out] */BSTR[] rgBstrNames,
     /* [in] */UINT cMaxNames,
-    /* [out] */UINTbyReference pcNames);
+    /* [out] */UINTByReference pcNames);
 
     public HRESULT GetRefTypeOfImplType(
     /* [in] */UINT index,
-    /* [out] */HREFTYPEbyReference pRefType);
+    /* [out] */HREFTYPEByReference pRefType);
 
     public HRESULT GetImplTypeFlags(
     /* [in] */UINT index,
@@ -85,13 +85,13 @@ public interface ITypeInfo extends IUnknown {
     /* [out][in] */DISPPARAMS.ByReference pDispParams,
     /* [out] */VARIANT.ByReference pVarResult,
     /* [out] */EXCEPINFO.ByReference pExcepInfo,
-    /* [out] */UINTbyReference puArgErr);
+    /* [out] */UINTByReference puArgErr);
 
     public/* [local] */HRESULT GetDocumentation(
     /* [in] */MEMBERID memid,
     /* [out] */BSTRByReference pBstrName,
     /* [out] */BSTRByReference pBstrDocString,
-    /* [out] */DWORDbyReference pdwHelpContext,
+    /* [out] */DWORDByReference pdwHelpContext,
     /* [out] */BSTRByReference pBstrHelpFile);
 
     public/* [local] */HRESULT GetDllEntry(
@@ -99,7 +99,7 @@ public interface ITypeInfo extends IUnknown {
     /* [in] */INVOKEKIND invKind,
     /* [out] */BSTRByReference pBstrDllName,
     /* [out] */BSTRByReference pBstrName,
-    /* [out] */WORDbyReference pwOrdinal);
+    /* [out] */WORDByReference pwOrdinal);
 
     public HRESULT GetRefTypeInfo(
     /* [in] */HREFTYPE hRefType,
@@ -121,7 +121,7 @@ public interface ITypeInfo extends IUnknown {
 
     public/* [local] */HRESULT GetContainingTypeLib(
     /* [out] */PointerByReference ppTLib,
-    /* [out] */UINTbyReference pIndex);
+    /* [out] */UINTByReference pIndex);
 
     public/* [local] */void ReleaseTypeAttr(
     /* [in] */TYPEATTR pTypeAttr);

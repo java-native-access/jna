@@ -16,7 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDbyReference;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Kernel32;
@@ -25,7 +25,7 @@ import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.UINTbyReference;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -78,7 +78,7 @@ public class IDispatchTest extends TestCase {
     public void testGetTypeInfoCount() {
         Dispatch dispatch = this.createIDispatch();
         
-        UINTbyReference pctinfo = new UINTbyReference();
+        UINTByReference pctinfo = new UINTByReference();
         dispatch.GetTypeInfoCount(pctinfo);
         
         int intValue = pctinfo.getValue().intValue();
@@ -99,7 +99,7 @@ public class IDispatchTest extends TestCase {
         Dispatch dispatch = this.createIDispatch();
         
         WString[] ptName = new WString[] { new WString("Application") };
-        DISPIDbyReference pdispID = new DISPIDbyReference();
+        DISPIDByReference pdispID = new DISPIDByReference();
 
         HRESULT hr = dispatch.GetIDsOfNames(Guid.IID_NULL, ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
         COMUtils.checkRC(hr);
