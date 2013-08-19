@@ -47,7 +47,7 @@ public class TlbPropertyGet extends TlbAbstractMethod implements Variant {
         super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
         this.methodName = "get" + this.getMethodName();
-        short vtableId = funcDesc.oVft;
+        int vtableId = funcDesc.oVft;
         String returnType = this.getType(funcDesc);
         
         this.replaceVariable("helpstring", docStr);

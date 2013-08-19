@@ -786,13 +786,13 @@ public interface OaIdl {
         public INVOKEKIND invkind;
         // / C type : CALLCONV
         public CALLCONV callconv;
-        public short cParams;
-        public short cParamsOpt;
-        public short oVft;
-        public short cScodes;
+        public int cParams;
+        public int cParamsOpt;
+        public int oVft;
+        public int cScodes;
         // / C type : ELEMDESC
         public ELEMDESC elemdescFunc;
-        public short wFuncFlags;
+        public int wFuncFlags;
 
         public FUNCDESC() {
         }
@@ -808,7 +808,7 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "memid", "lprgscode",
                     "lprgelemdescParam", "funckind", "invkind", "callconv",
                     "cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
@@ -1116,7 +1116,7 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "value" });
         }
     };

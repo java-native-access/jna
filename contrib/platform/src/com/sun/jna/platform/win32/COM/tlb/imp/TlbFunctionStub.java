@@ -56,8 +56,8 @@ public class TlbFunctionStub extends TlbAbstractMethod implements Variant {
 
         String methodparams = "";
         String methodvariables = "";
-        short vtableId = funcDesc.oVft;
-        short paramCount = funcDesc.cParams;
+        int vtableId = funcDesc.oVft;
+        int paramCount = funcDesc.cParams;
         ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
         String returnType = this.getType(elemDesdRetType.tdesc);
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);

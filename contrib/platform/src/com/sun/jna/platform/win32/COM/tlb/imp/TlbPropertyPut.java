@@ -53,8 +53,8 @@ public class TlbPropertyPut extends TlbAbstractMethod implements Variant {
         this.methodName = "set" + getMethodName();
         String methodparams = "";
         String methodvariables = ", ";
-        short vtableId = funcDesc.oVft;
-        short paramCount = funcDesc.cParams;
+        int vtableId = funcDesc.oVft;
+        int paramCount = funcDesc.cParams;
         String varType;
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 

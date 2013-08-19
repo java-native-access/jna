@@ -54,8 +54,8 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
         String docStr = typeInfoDoc.getDocString();
         String methodname = "set" + typeInfoDoc.getName();
         String methodparams = "";
-        short vtableId = funcDesc.oVft;
-        short paramCount = funcDesc.cParams;
+        int vtableId = funcDesc.oVft;
+        int paramCount = funcDesc.cParams;
         String varType;
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 
