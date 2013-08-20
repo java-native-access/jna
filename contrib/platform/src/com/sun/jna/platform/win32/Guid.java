@@ -19,6 +19,7 @@ import java.util.List;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+// TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
  * 
@@ -26,15 +27,20 @@ import com.sun.jna.Structure;
  */
 public interface Guid {
 
+    /** The Constant IID_NULL. */
     public final static IID IID_NULL = new IID();
 
     /**
      * The Class GUID.
+     *
+     * @author Tobias Wolf, wolf.tobias@gmx.net
      */
     public static class GUID extends Structure {
 
         /**
          * The Class ByReference.
+         *
+         * @author Tobias Wolf, wolf.tobias@gmx.net
          */
         public static class ByReference extends GUID implements
                 Structure.ByReference {
@@ -355,11 +361,15 @@ public interface Guid {
 
     /**
      * The Class CLSID.
+     *
+     * @author Tobias Wolf, wolf.tobias@gmx.net
      */
     public static class CLSID extends GUID {
 
         /**
          * The Class ByReference.
+         *
+         * @author Tobias Wolf, wolf.tobias@gmx.net
          */
         public static class ByReference extends GUID {
 
@@ -378,7 +388,7 @@ public interface Guid {
             public ByReference(GUID guid) {
                 super(guid);
             }
-
+             
             /**
              * Instantiates a new by reference.
              * 
@@ -395,10 +405,30 @@ public interface Guid {
          */
         public CLSID() {
         }
+        
+        /**
+         * Instantiates a new clsid.
+         *
+         * @param guid the guid
+         */
+        public CLSID(String guid) {
+            super(guid);
+        }
+        
+        /**
+         * Instantiates a new clsid.
+         *
+         * @param guid the guid
+         */
+        public CLSID(GUID guid) {
+            super(guid);
+        }
     }
 
     /**
      * The Class REFIID.
+     *
+     * @author Tobias Wolf, wolf.tobias@gmx.net
      */
     public class REFIID extends IID {
 
@@ -435,6 +465,8 @@ public interface Guid {
 
     /**
      * The Class IID.
+     *
+     * @author Tobias Wolf, wolf.tobias@gmx.net
      */
     public class IID extends GUID {
 
@@ -456,6 +488,11 @@ public interface Guid {
             // TODO Auto-generated constructor stub
         }
 
+        /**
+         * Instantiates a new iid.
+         *
+         * @param iid the iid
+         */
         public IID(String iid) {
             super(iid);
             // TODO Auto-generated constructor stub

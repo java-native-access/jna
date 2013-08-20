@@ -230,7 +230,7 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
     protected String getType(TYPEDESC typeDesc) {
         VARTYPE vt = typeDesc.vt;
         String type = "not_defined";
-
+        
         if (vt.intValue() == Variant.VT_PTR) {
             TYPEDESC lptdesc = typeDesc._typedesc.getLptdesc();
             type = this.getType(lptdesc);

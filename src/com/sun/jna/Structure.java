@@ -666,17 +666,6 @@ public abstract class Structure {
             result = p == null ? null : p.getString(0, encoding);
         }
         else {
-            System.out.println(structField.name+":"+fieldType);
-            System.out.println("structField size:"+structField.size);
-            
-            System.out.println("memory size:"+memory.SIZE);
-            System.out.println("peer:"+memory.peer);
-
-            if(structField.name.equals("cBytes")) {
-                System.out.println("cBytes memory size:"+memory.SIZE);
-                System.out.println("cBytes peer:"+memory.peer);
-            }
-            
             result = memory.getValue(offset, fieldType, currentValue);
         }
         if (readConverter != null) {
