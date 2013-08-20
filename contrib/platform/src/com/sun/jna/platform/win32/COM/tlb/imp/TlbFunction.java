@@ -52,8 +52,8 @@ public class TlbFunction extends TlbAbstractMethod implements Variant {
 
         String methodparams = "";
         String methodvariables = "";
-        int vtableId = funcDesc.oVft;
-        int paramCount = funcDesc.cParams;
+        short vtableId = funcDesc.oVft.shortValue();
+        short paramCount = funcDesc.cParams.shortValue();
         ELEMDESC elemDesdRetType = funcDesc.elemdescFunc;
         String returnType = this.getType(elemDesdRetType.tdesc);
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);

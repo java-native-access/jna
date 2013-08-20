@@ -38,7 +38,7 @@ public class TypeLibUtilTest extends TestCase {
     public void testGetTypeInfoCount() {
         TypeLibUtil shellTypeLib = loadShellTypeLib();
         int typeInfoCount = shellTypeLib.getTypeInfoCount();
-        assertTrue("MS Shell should contain at 36 types.", typeInfoCount == 36);
+        assertTrue("MS Shell should contain at least 36 types.", typeInfoCount >= 36);
     }
 
     public void testGetTypeInfo() {
@@ -69,5 +69,33 @@ public class TypeLibUtilTest extends TestCase {
             
             typeInfoUtil.ReleaseTypeAttr(typeAttr);
         }
+    }
+    
+    public void testBug() {
+        TypeLibUtil shellTypeLib = loadShellTypeLib();
+        int typeInfoCount = shellTypeLib.getTypeInfoCount();
+        
+        ITypeInfo typeInfo = shellTypeLib.getTypeInfo(4);
+        TypeInfoUtil typeInfoUtil = new TypeInfoUtil(typeInfo);
+        
+        TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
+        int cFuncs = typeAttr.cFuncs.intValue();
+    
+        for (int y = 13; y < cFuncs; y++) {
+            System.out.println("y:"+y);
+            // Get the function description
+            FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(y);
+            // Get the member ID
+            MEMBERID memberID = funcDesc.memid;
+            // Get the name of the method
+            TypeInfoDoc typeInfoDoc2 = typeInfoUtil.getDocumentation(memberID);
+            String methodName = typeInfoDoc2.getName();
+            
+            assertNotNull(methodName);
+
+            typeInfoUtil.ReleaseFuncDesc(funcDesc);
+        }
+        
+        typeInfoUtil.ReleaseTypeAttr(typeAttr);
     }
 }

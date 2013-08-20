@@ -26,6 +26,7 @@ import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.SCODE;
+import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
@@ -768,31 +769,18 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
-        // / C type : MEMBERID
         public MEMBERID memid;
-        /**
-         * [size_is]<br>
-         * C type : SCODE*
-         */
         public ScodeArg.ByReference lprgscode;
-        /**
-         * [size_is]<br>
-         * C type : ELEMDESC*
-         */
         public ElemDescArg.ByReference lprgelemdescParam;
-        // / C type : FUNCKIND
         public FUNCKIND funckind;
-        // / C type : INVOKEKIND
         public INVOKEKIND invkind;
-        // / C type : CALLCONV
         public CALLCONV callconv;
-        public int cParams;
-        public int cParamsOpt;
-        public int oVft;
-        public int cScodes;
-        // / C type : ELEMDESC
+        public SHORT cParams;
+        public SHORT cParamsOpt;
+        public SHORT oVft;
+        public SHORT cScodes;
         public ELEMDESC elemdescFunc;
-        public int wFuncFlags;
+        public WORD wFuncFlags;
 
         public FUNCDESC() {
         }
@@ -801,8 +789,8 @@ public interface OaIdl {
             super(pointer);
             this.read();
 
-            if (this.cParams > 1) {
-                this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams];
+            if (this.cParams.shortValue() > 1) {
+                this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams.shortValue()];
                 this.lprgelemdescParam.read();
             }
         }
@@ -1351,7 +1339,7 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cBytes", "varDefaultValue" });
         }
     }
