@@ -61,8 +61,8 @@ public class TlbPropertyPut extends TlbAbstractMethod implements Variant {
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
             varType = this.getType(elemdesc);
-            methodparams += varType + " " + names[i].toLowerCase();
-            methodvariables += names[i].toLowerCase();
+            methodparams += varType + " " + this.replaceJavaKeyword(names[i].toLowerCase());
+            methodvariables += this.replaceJavaKeyword(names[i].toLowerCase());
 
             // if there is more than 1 param
             if (i < (paramCount - 1)) {

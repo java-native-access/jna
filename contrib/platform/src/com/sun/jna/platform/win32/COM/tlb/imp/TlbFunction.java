@@ -65,7 +65,7 @@ public class TlbFunction extends TlbAbstractMethod implements Variant {
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
             String methodName = names[i + 1].toLowerCase();
-            methodparams += this.getType(elemdesc.tdesc) + " " + this.validateMethodName(methodName);
+            methodparams += this.getType(elemdesc.tdesc) + " " + this.replaceJavaKeyword(methodName);
             methodvariables += methodName;
 
             // if there is more than 1 param

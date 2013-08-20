@@ -1303,7 +1303,9 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
-        public PARAMDESCEX.ByReference pparamdescex;
+        // replaced PARAMDESCEX.ByReference with Pointer
+        // because of JNA 4 has a problem with ByReference
+        public Pointer pparamdescex;
         public USHORT wParamFlags;
 
         public PARAMDESC() {

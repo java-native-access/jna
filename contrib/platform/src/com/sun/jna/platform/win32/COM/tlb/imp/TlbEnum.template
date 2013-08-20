@@ -1,6 +1,7 @@
 package ${packagename};
 
-import java.util.*;
+import java.util.List;
+import java.util.Arrays;
 
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.*;

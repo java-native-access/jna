@@ -248,10 +248,18 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
         return type;
     }
     
-    protected String validateMethodName(String methodName) {
-        if(methodName.equals("final"))
-            return "_" + methodName;
+    protected String replaceJavaKeyword(String name) {
+        if(name.equals("final"))
+            return "_" + name;
+        else if(name.equals("default"))
+            return "_" + name;
+        else if(name.equals("case"))
+            return "_" + name;
+        else if(name.equals("char"))
+            return "_" + name;
+        else if(name.equals("private"))
+            return "_" + name;
         else
-            return methodName;
+            return name;
     }
 }

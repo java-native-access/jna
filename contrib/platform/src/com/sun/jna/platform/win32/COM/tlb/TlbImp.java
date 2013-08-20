@@ -18,10 +18,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
-import com.sun.jna.platform.win32.COM.TypeLibUtil.TypeLibDoc;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbBase;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCmdlineArgs;
 import com.sun.jna.platform.win32.COM.tlb.imp.TlbCoClass;
@@ -88,7 +86,7 @@ public class TlbImp implements TlbConst {
         try {
             // create output Dir
             this.createDir();
-            
+
             int typeInfoCount = typeLibUtil.getTypeInfoCount();
             for (int i = 0; i < typeInfoCount; ++i) {
                 TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
