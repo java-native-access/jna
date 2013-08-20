@@ -790,7 +790,8 @@ public interface OaIdl {
             this.read();
 
             if (this.cParams.shortValue() > 1) {
-                this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams.shortValue()];
+                this.lprgelemdescParam.elemDescArg = new ELEMDESC[this.cParams
+                        .shortValue()];
                 this.lprgelemdescParam.read();
             }
         }
@@ -1146,7 +1147,7 @@ public interface OaIdl {
         public _TYPEDESC _typedesc;
 
         public VARTYPE vt;
-        
+
         public TYPEDESC() {
             this.read();
         }
@@ -1180,7 +1181,7 @@ public interface OaIdl {
 
             public _TYPEDESC() {
                 this.setType("hreftype");
-                this.read();                
+                this.read();
             }
 
             public _TYPEDESC(Pointer pointer) {
@@ -1194,7 +1195,7 @@ public interface OaIdl {
                 this.read();
                 return this.lptdesc;
             }
-            
+
             public ARRAYDESC.ByReference getLpadesc() {
                 this.setType("lpadesc");
                 this.read();

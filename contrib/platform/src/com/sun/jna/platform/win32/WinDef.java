@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.IntegerType;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
@@ -195,7 +196,7 @@ public interface WinDef extends StdCallLibrary {
     public static class LONG extends IntegerType {
 
         /** The Constant SIZE. */
-        public static final int SIZE = 4;
+        public static final int SIZE = Native.LONG_SIZE;
 
         /**
          * Instantiates a new long.
@@ -261,7 +262,7 @@ public interface WinDef extends StdCallLibrary {
     public static class LONGLONG extends IntegerType {
 
         /** The Constant SIZE. */
-        public static final int SIZE = 8;
+        public static final int SIZE = Native.LONG_SIZE *2;
 
         /**
          * Instantiates a new LONGLONG.
@@ -771,7 +772,7 @@ public interface WinDef extends StdCallLibrary {
     public static class ULONG extends IntegerType {
 
         /** The Constant SIZE. */
-        public static final int SIZE = 4;
+        public static final int SIZE = Native.LONG_SIZE;
 
         /**
          * Instantiates a new ULONG.
@@ -838,7 +839,7 @@ public interface WinDef extends StdCallLibrary {
     public static class ULONGLONG extends IntegerType {
 
         /** The Constant SIZE. */
-        public static final int SIZE = 8;
+        public static final int SIZE = Native.LONG_SIZE *2;
 
         /**
          * Instantiates a new ULONGLONG.
