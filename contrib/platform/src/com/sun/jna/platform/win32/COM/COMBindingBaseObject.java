@@ -38,7 +38,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class COMLateBindingBaseObject extends COMInvoker {
+public class COMBindingBaseObject extends COMInvoker {
 
     /** The Constant LOCALE_USER_DEFAULT. */
     public final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE
@@ -49,10 +49,10 @@ public class COMLateBindingBaseObject extends COMInvoker {
             .GetSystemDefaultLCID();
 
     /** The i unknown. */
-    protected IUnknown iUnknown;
+    private IUnknown iUnknown;
 
     /** The i dispatch. */
-    protected IDispatch iDispatch;
+    private IDispatch iDispatch;
 
     /** IDispatch interface reference. */
     private PointerByReference pDispatch = new PointerByReference();
@@ -60,28 +60,23 @@ public class COMLateBindingBaseObject extends COMInvoker {
     /** IUnknown interface reference. */
     private PointerByReference pUnknown = new PointerByReference();
 
-    public COMLateBindingBaseObject(IDispatch dispatch) {
+    public COMBindingBaseObject(IDispatch dispatch) {
         // transfer the value
         this.iDispatch = dispatch;
     }
 
-    public COMLateBindingBaseObject(CLSID clsid, boolean useActiveInstance) {
+    public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance) {
         this(clsid, useActiveInstance, WTypes.CLSCTX_SERVER);
     }
 
-    public COMLateBindingBaseObject(CLSID clsid, boolean useActiveInstance,
+    public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 
         if (COMUtils.FAILED(hr)) {
-            this.release();
+            Ole32.INSTANCE.CoUninitialize();            
             throw new COMException("CoInitialize() failed!");
-        }
-
-        if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
-            throw new COMException("CLSIDFromProgID() failed!");
         }
 
         if (useActiveInstance) {
@@ -108,7 +103,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
 
-    public COMLateBindingBaseObject(String progId, boolean useActiveInstance,
+    public COMBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
@@ -152,7 +147,7 @@ public class COMLateBindingBaseObject extends COMInvoker {
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
 
-    public COMLateBindingBaseObject(String progId, boolean useActiveInstance)
+    public COMBindingBaseObject(String progId, boolean useActiveInstance)
             throws COMException {
         this(progId, useActiveInstance, WTypes.CLSCTX_SERVER);
     }
@@ -254,6 +249,56 @@ public class COMLateBindingBaseObject extends COMInvoker {
 
         // Make the call!
         hr = pDisp.Invoke(pdispID.getValue(), Guid.IID_NULL,
+                LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
+                pExcepInfo, puArgErr);
+
+        COMUtils.checkRC(hr, pExcepInfo, puArgErr);
+        return hr;
+    }
+
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            IDispatch pDisp, DISPID dispId, VARIANT[] pArgs) throws COMException {
+
+        if (pDisp == null)
+            throw new COMException("pDisp (IDispatch) parameter is null!");
+
+        // variable declaration
+        int _argsLen = 0;
+        VARIANT[] _args = null;
+        DISPPARAMS dp = new DISPPARAMS();
+        EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+        IntByReference puArgErr = new IntByReference();
+
+        // make parameter reverse ordering as expected by COM runtime
+        if ((pArgs != null) && (pArgs.length > 0)) {
+            _argsLen = pArgs.length;
+            _args = new VARIANT[_argsLen];
+
+            int revCount = _argsLen;
+            for (int i = 0; i < _argsLen; i++) {
+                _args[i] = pArgs[--revCount];
+            }
+        }
+
+        // Handle special-case for property-puts!
+        if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
+            dp.cNamedArgs = new UINT(_argsLen);
+            dp.rgdispidNamedArgs = new DISPIDByReference(
+                    OaIdl.DISPID_PROPERTYPUT);
+        }
+
+        // Build DISPPARAMS
+        if (_argsLen > 0) {
+            dp.cArgs = new UINT(_args.length);
+            // make pointer of variant array
+            dp.rgvarg = new VariantArg.ByReference(_args);
+
+            // write 'DISPPARAMS' structure to memory
+            dp.write();
+        }
+
+        // Make the call!
+        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL,
                 LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
                 pExcepInfo, puArgErr);
 

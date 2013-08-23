@@ -1,4 +1,4 @@
-package com.sun.jna.platform.win32.office;
+package com.sun.jna.platform.win32.COM.office;
 
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.COM.COMException;
@@ -14,7 +14,6 @@ public class MSWord extends COMLateBindingObject {
 
     public MSWord(boolean visible) throws COMException {
         this();
-
         this.setVisible(visible);
     }
 
@@ -46,7 +45,7 @@ public class MSWord extends COMLateBindingObject {
 
     public void insertText(String text) throws COMException {
         Selection pSelection = new Selection(this.getAutomationProperty(
-                "Selection", this.iDispatch));
+                "Selection", this.getIDispatch()));
         this.invokeNoReply("TypeText", pSelection, new VARIANT(text));
     }
 

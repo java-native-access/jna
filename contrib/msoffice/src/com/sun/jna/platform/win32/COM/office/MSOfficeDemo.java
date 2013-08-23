@@ -1,4 +1,4 @@
-package com.sun.jna.platform.win32.office;
+package com.sun.jna.platform.win32.COM.office;
 
 import java.io.File;
 

@@ -12,8 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
-import java.io.PrintStream;
-
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
 import com.sun.jna.platform.win32.OaIdl.VARDESC;
@@ -44,16 +42,16 @@ public class TlbInterface extends TlbBase {
 
         TypeLibDoc typeLibDoc = this.typeLibUtil.getDocumentation(index);
         String docString = typeLibDoc.getDocString();
-        
-        if(typeLibDoc.getName().length() > 0)
+
+        if (typeLibDoc.getName().length() > 0)
             this.name = typeLibDoc.getName();
-        
+
         this.logInfo("Type of kind 'Interface' found: " + this.name);
 
         this.createPackageName(packagename);
         this.createClassName(this.name);
         this.setFilename(this.name);
-        
+
         // Get the TypeAttributes
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
         TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();

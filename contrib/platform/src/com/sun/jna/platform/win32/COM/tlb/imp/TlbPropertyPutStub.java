@@ -12,19 +12,11 @@
  */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
-import com.sun.jna.platform.win32.OaIdl.CURRENCY;
-import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.ELEMDESC;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
-import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.SCODE;
-import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
-import com.sun.jna.platform.win32.COM.IUnknown;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +24,7 @@ import com.sun.jna.platform.win32.COM.IUnknown;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
+public class TlbPropertyPutStub extends TlbAbstractMethod {
 
     /**
      * Instantiates a new tlb property set.
@@ -53,16 +45,13 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
         TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
         String docStr = typeInfoDoc.getDocString();
         String methodname = "set" + typeInfoDoc.getName();
-        String methodparams = "";
-        short vtableId = funcDesc.oVft.shortValue();
-        short paramCount = funcDesc.cParams.shortValue();
-        String varType;
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
-            varType =  this.getType(elemdesc);
-            methodparams += varType + " " + this.replaceJavaKeyword(names[i].toLowerCase());
+            String varType = this.getType(elemdesc);
+            methodparams += varType + " "
+                    + this.replaceJavaKeyword(names[i].toLowerCase());
 
             // if there is more than 1 param
             if (i < (paramCount - 1)) {
@@ -74,6 +63,7 @@ public class TlbPropertyPutStub extends TlbAbstractMethod implements Variant {
         this.replaceVariable("methodname", methodname);
         this.replaceVariable("methodparams", methodparams);
         this.replaceVariable("vtableid", String.valueOf(vtableId));
+        this.replaceVariable("memberid", String.valueOf(memberid));
     }
 
     /*

@@ -1336,7 +1336,7 @@ public interface WinDef extends StdCallLibrary {
          * Instantiates a new bool.
          */
         public BOOL() {
-            super(0);
+            this(0);
         }
 
         /**

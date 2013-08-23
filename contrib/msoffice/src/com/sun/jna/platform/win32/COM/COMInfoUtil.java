@@ -1,4 +1,4 @@
-package com.sun.jna.platform.win32.office;
+package com.sun.jna.platform.win32.COM;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -12,19 +12,10 @@
  */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
-import com.sun.jna.platform.win32.OaIdl.CURRENCY;
-import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.ELEMDESC;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
-import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.SCODE;
-import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
-import com.sun.jna.platform.win32.COM.IUnknown;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -32,7 +23,7 @@ import com.sun.jna.platform.win32.COM.IUnknown;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbPropertyGetStub extends TlbAbstractMethod implements Variant {
+public class TlbPropertyGetStub extends TlbAbstractMethod {
 
     /**
      * Instantiates a new tlb property get.
@@ -53,13 +44,12 @@ public class TlbPropertyGetStub extends TlbAbstractMethod implements Variant {
         TypeInfoDoc typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
         String docStr = typeInfoDoc.getDocString();
         String methodname = "get" + typeInfoDoc.getName();
-        short vtableId = funcDesc.oVft.shortValue();
-        String returnType = this.getType(funcDesc);        
-        
+
         this.replaceVariable("helpstring", docStr);
         this.replaceVariable("returntype", returnType);
         this.replaceVariable("methodname", methodname);
         this.replaceVariable("vtableid", String.valueOf(vtableId));
+        this.replaceVariable("memberid", String.valueOf(memberid));
     }
 
     /*

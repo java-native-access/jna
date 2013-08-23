@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.OaIdl.DECIMAL;
 import com.sun.jna.platform.win32.OaIdl.ELEMDESC;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
+import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEDESC;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WTypes.BSTR;
@@ -61,6 +62,18 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 
     protected String docStr;
 
+    protected short vtableId;
+
+    protected MEMBERID memberid;
+
+    protected short paramCount;
+
+    protected String returnType;
+
+    protected String methodparams = "";
+
+    protected String methodvariables = "";
+
     /**
      * Instantiates a new tlb function.
      * 
@@ -79,6 +92,12 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
         this.typeInfoDoc = typeInfoUtil.getDocumentation(funcDesc.memid);
         this.methodName = typeInfoDoc.getName();
         this.docStr = typeInfoDoc.getDocString();
+
+        // get function values
+        this.vtableId = funcDesc.oVft.shortValue();
+        this.memberid = funcDesc.memid;
+        this.paramCount = funcDesc.cParams.shortValue();
+        this.returnType = this.getType(funcDesc);
     }
 
     public TypeInfoDoc getTypeInfoDoc() {
@@ -200,11 +219,10 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
             return "";
         case VT_ILLEGAL:
             return "illegal";
-/*        case VT_ILLEGALMASKED:
-            return "illegal_masked";
-        case VT_TYPEMASK:
-            return "typemask";
-*/        default:
+            /*
+             * case VT_ILLEGALMASKED: return "illegal_masked"; case VT_TYPEMASK:
+             * return "typemask";
+             */default:
             return null;
         }
     }
@@ -226,11 +244,11 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
         TYPEDESC _typeDesc = elemDesc.tdesc;
         return this.getType(_typeDesc);
     }
-    
+
     protected String getType(TYPEDESC typeDesc) {
         VARTYPE vt = typeDesc.vt;
         String type = "not_defined";
-        
+
         if (vt.intValue() == Variant.VT_PTR) {
             TYPEDESC lptdesc = typeDesc._typedesc.getLptdesc();
             type = this.getType(lptdesc);
@@ -247,17 +265,19 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
 
         return type;
     }
-    
+
     protected String replaceJavaKeyword(String name) {
-        if(name.equals("final"))
+        if (name.equals("final"))
             return "_" + name;
-        else if(name.equals("default"))
+        else if (name.equals("default"))
             return "_" + name;
-        else if(name.equals("case"))
+        else if (name.equals("case"))
             return "_" + name;
-        else if(name.equals("char"))
+        else if (name.equals("char"))
             return "_" + name;
-        else if(name.equals("private"))
+        else if (name.equals("private"))
+            return "_" + name;
+        else if (name.equals("default"))
             return "_" + name;
         else
             return name;

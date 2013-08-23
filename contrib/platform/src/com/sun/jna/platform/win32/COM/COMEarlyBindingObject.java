@@ -12,12 +12,18 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-
-import com.sun.jna.Native;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.OaIdl.DISPID;
+import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
+import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
+import com.sun.jna.platform.win32.WinDef.LCID;
+import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 // TODO: Auto-generated Javadoc
@@ -26,50 +32,50 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class COMEarlyBindingObject extends Dispatch {
-
-    /** IDispatch interface reference. */
-    private PointerByReference pDispatch = new PointerByReference();
-
-    /** IUnknown interface reference. */
-    private PointerByReference pUnknown = new PointerByReference();
+public class COMEarlyBindingObject extends COMBindingBaseObject implements IDispatch {
 
     public COMEarlyBindingObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
-        // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+        super(clsid, useActiveInstance, dwClsContext);
+    }
 
-        if (COMUtils.FAILED(hr)) {
-            this.Release();
-            Ole32.INSTANCE.CoUninitialize();
-            throw new COMException("CoInitialize() failed!");
-        }
+    @Override
+    public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
+        return this.getIDispatch().QueryInterface(riid, ppvObject);
+    }
 
-        if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
-            throw new COMException("CLSIDFromProgID() failed!");
-        }
+    @Override
+    public int AddRef() {
+        return this.getIDispatch().AddRef();
+    }
 
-        if (useActiveInstance) {
-            hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
+    @Override
+    public int Release() {
+        return this.getIDispatch().Release();
+    }
 
-            if (COMUtils.SUCCEEDED(hr)) {
-                hr = this.QueryInterface(IDispatch.IID_IDISPATCH,
-                        this.pDispatch);
-            } else {
-                hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                        IDispatch.IID_IDISPATCH, this.pDispatch);
-            }
-        } else {
-            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                    IDispatch.IID_IDISPATCH, this.pDispatch);
-        }
+    @Override
+    public HRESULT GetTypeInfoCount(UINTByReference pctinfo) {
+        return this.getIDispatch().GetTypeInfoCount(pctinfo);
+    }
 
-        if (COMUtils.FAILED(hr)) {
-            throw new COMException("COM object with CLSID "
-                    + clsid.toGuidString() + " not registered properly!");
-        }
+    @Override
+    public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
+            PointerByReference ppTInfo) {
+        return this.getIDispatch().GetTypeInfo(iTInfo, lcid, ppTInfo);
+    }
 
-        this.setPointer(this.pDispatch.getValue());
+    @Override
+    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+            LCID lcid, DISPIDByReference rgDispId) {
+        return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
+    }
+
+    @Override
+    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
+            DISPID wFlags, DISPPARAMS pDispParams, ByReference pVarResult,
+            com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference pExcepInfo,
+            IntByReference puArgErr) {
+        return this.getIDispatch().Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
     }
 }

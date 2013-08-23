@@ -12,13 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
-import com.sun.jna.platform.win32.OaIdl.ELEMDESC;
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
-import com.sun.jna.platform.win32.OaIdl.TYPEDESC;
-import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.WTypes.VARTYPE;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
 
@@ -28,7 +22,7 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbPropertyGet extends TlbAbstractMethod implements Variant {
+public class TlbPropertyGet extends TlbAbstractMethod {
 
     /**
      * Instantiates a new tlb property get.
@@ -47,13 +41,12 @@ public class TlbPropertyGet extends TlbAbstractMethod implements Variant {
         super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
         this.methodName = "get" + this.getMethodName();
-        short vtableId = funcDesc.oVft.shortValue();
-        String returnType = this.getType(funcDesc);
-        
+
         this.replaceVariable("helpstring", docStr);
         this.replaceVariable("returntype", returnType);
         this.replaceVariable("methodname", methodName);
         this.replaceVariable("vtableid", String.valueOf(vtableId));
+        this.replaceVariable("memberid", String.valueOf(memberid));
         this.replaceVariable("functionCount", String.valueOf(count));
     }
 
