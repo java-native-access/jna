@@ -17,11 +17,10 @@ import java.util.ArrayList;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
+import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;
@@ -111,7 +110,7 @@ public abstract class COMUtils {
      */
     public static void checkRC(HRESULT hr, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
-        if(FAILED(hr)) {
+        if (FAILED(hr)) {
             String formatMessageFromHR = Kernel32Util.formatMessage(hr);
             throw new COMException(formatMessageFromHR);
         }

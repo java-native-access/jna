@@ -17,7 +17,9 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
+import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -32,11 +34,25 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class COMEarlyBindingObject extends COMBindingBaseObject implements IDispatch {
+public class COMEarlyBindingObject extends COMBindingBaseObject implements
+        IDispatch {
 
     public COMEarlyBindingObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
         super(clsid, useActiveInstance, dwClsContext);
+    }
+
+    protected String getStringProperty(DISPID dispId) {
+        VARIANT.ByReference result = new VARIANT.ByReference();
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
+                this.getIDispatch(), dispId);
+
+        return result.getValue().toString();
+    }
+
+    protected void setProperty(DISPID dispId, boolean value) {
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
+                dispId, new VARIANT(value));
     }
 
     @Override
@@ -68,7 +84,8 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements IDisp
     @Override
     public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
-        return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
+        return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid,
+                rgDispId);
     }
 
     @Override
@@ -76,6 +93,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements IDisp
             DISPID wFlags, DISPPARAMS pDispParams, ByReference pVarResult,
             com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {
-        return this.getIDispatch().Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+        return this.getIDispatch().Invoke(dispIdMember, riid, lcid, wFlags,
+                pDispParams, pVarResult, pExcepInfo, puArgErr);
     }
 }

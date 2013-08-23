@@ -39,7 +39,7 @@ public class TlbCoClass extends TlbBase {
      * @param typeLibUtil
      *            the type lib util
      */
-    public TlbCoClass(int index, String packagename, TypeLibUtil typeLibUtil) {
+    public TlbCoClass(int index, String packagename, TypeLibUtil typeLibUtil, int bindingMode) {
         super(index, typeLibUtil, null);
         
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
@@ -76,7 +76,7 @@ public class TlbCoClass extends TlbBase {
             ITypeInfo refTypeInfo = typeInfoUtil
                     .getRefTypeInfo(refTypeOfImplType);
             TypeInfoUtil refTypeInfoUtil = new TypeInfoUtil(refTypeInfo);
-            this.createFunctions(refTypeInfoUtil);
+            this.createFunctions(refTypeInfoUtil, bindingMode);
             TypeInfoDoc documentation = refTypeInfoUtil
                     .getDocumentation(new MEMBERID(-1));
             interfaces += documentation.getName();
@@ -89,7 +89,7 @@ public class TlbCoClass extends TlbBase {
         this.createContent(this.content);
     }
 
-    protected void createFunctions(TypeInfoUtil typeInfoUtil) {
+    protected void createFunctions(TypeInfoUtil typeInfoUtil, int bindingMode) {
         TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
         int cFuncs = typeAttr.cFuncs.intValue();
         for (int i = 0; i < cFuncs; i++) {
@@ -98,8 +98,10 @@ public class TlbCoClass extends TlbBase {
             
             TlbAbstractMethod method = null;
             if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                method = new TlbFunction(i, index, typeLibUtil, funcDesc,
-                        typeInfoUtil);
+                if(this.isDispIdMode())
+                    method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
+                else
+                    method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
             } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
                 method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc,
                         typeInfoUtil);

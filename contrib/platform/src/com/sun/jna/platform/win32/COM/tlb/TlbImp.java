@@ -56,7 +56,7 @@ public class TlbImp implements TlbConst {
 
     public TlbImp(String[] args) {
         this.cmdlineArgs = new TlbCmdlineArgs(args);
-
+        
         if (this.cmdlineArgs.isTlbId()) {
             String clsid = this.cmdlineArgs.getParam(CMD_ARG_TYPELIB_ID);
             int majorVersion = this.cmdlineArgs
@@ -86,7 +86,9 @@ public class TlbImp implements TlbConst {
         try {
             // create output Dir
             this.createDir();
-
+            
+            int bindingMode = this.cmdlineArgs.getBindingMode();
+            
             int typeInfoCount = typeLibUtil.getTypeInfoCount();
             for (int i = 0; i < typeInfoCount; ++i) {
                 TYPEKIND typekind = typeLibUtil.getTypeInfoType(i);
@@ -104,7 +106,7 @@ public class TlbImp implements TlbConst {
                     this.createCOMDispInterface(i, this.getPackageName(),
                             typeLibUtil);
                 } else if (typekind.value == TYPEKIND.TKIND_COCLASS) {
-                    this.createCOMCoClass(i, this.getPackageName(), typeLibUtil);
+                    this.createCOMCoClass(i, this.getPackageName(), typeLibUtil, bindingMode);
                 } else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
                     this.logInfo("'TKIND_ALIAS' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_UNION) {
@@ -202,9 +204,9 @@ public class TlbImp implements TlbConst {
     }
 
     private void createCOMCoClass(int index, String packagename,
-            TypeLibUtil typeLibUtil) throws IOException {
+            TypeLibUtil typeLibUtil, int bindingMode) throws IOException {
         TlbCoClass tlbCoClass = new TlbCoClass(index, this.getPackageName(),
-                typeLibUtil);
+                typeLibUtil, bindingMode);
         this.writeTlbClass(tlbCoClass);
     }
 

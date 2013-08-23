@@ -38,6 +38,12 @@ public interface TlbConst {
     
     public final static String CMD_ARG_TYPELIB_ID = "tlb.id";
     
+    public final static String CMD_ARG_BINDING_MODE = "bind.mode";
+    
+    public final static int BINDING_MODE_VTABLE = 0;
+
+    public final static int BINDING_MODE_DISPID = 1;
+    
     public final static String CMD_ARG_TYPELIB_MAJOR_VERSION = "tlb.major.version";
     
     public final static String CMD_ARG_TYPELIB_MINOR_VERSION = "tlb.minor.version";

@@ -75,7 +75,7 @@ public class COMBindingBaseObject extends COMInvoker {
         HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 
         if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();            
+            Ole32.INSTANCE.CoUninitialize();
             throw new COMException("CoInitialize() failed!");
         }
 
@@ -205,24 +205,8 @@ public class COMBindingBaseObject extends COMInvoker {
             throw new COMException("pDisp (IDispatch) parameter is null!");
 
         // variable declaration
-        int _argsLen = 0;
-        VARIANT[] _args = null;
         WString[] ptName = new WString[] { new WString(name) };
-        DISPPARAMS dp = new DISPPARAMS();
         DISPIDByReference pdispID = new DISPIDByReference();
-        EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-        IntByReference puArgErr = new IntByReference();
-
-        // make parameter reverse ordering as expected by COM runtime
-        if ((pArgs != null) && (pArgs.length > 0)) {
-            _argsLen = pArgs.length;
-            _args = new VARIANT[_argsLen];
-
-            int revCount = _argsLen;
-            for (int i = 0; i < _argsLen; i++) {
-                _args[i] = pArgs[--revCount];
-            }
-        }
 
         // Get DISPID for name passed...
         HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
@@ -230,34 +214,13 @@ public class COMBindingBaseObject extends COMInvoker {
 
         COMUtils.checkRC(hr);
 
-        // Handle special-case for property-puts!
-        if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
-            dp.cNamedArgs = new UINT(_argsLen);
-            dp.rgdispidNamedArgs = new DISPIDByReference(
-                    OaIdl.DISPID_PROPERTYPUT);
-        }
-
-        // Build DISPPARAMS
-        if (_argsLen > 0) {
-            dp.cArgs = new UINT(_args.length);
-            // make pointer of variant array
-            dp.rgvarg = new VariantArg.ByReference(_args);
-
-            // write 'DISPPARAMS' structure to memory
-            dp.write();
-        }
-
-        // Make the call!
-        hr = pDisp.Invoke(pdispID.getValue(), Guid.IID_NULL,
-                LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
-                pExcepInfo, puArgErr);
-
-        COMUtils.checkRC(hr, pExcepInfo, puArgErr);
-        return hr;
+        return this
+                .oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
     }
 
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
-            IDispatch pDisp, DISPID dispId, VARIANT[] pArgs) throws COMException {
+            IDispatch pDisp, DISPID dispId, VARIANT[] pArgs)
+            throws COMException {
 
         if (pDisp == null)
             throw new COMException("pDisp (IDispatch) parameter is null!");
@@ -298,9 +261,8 @@ public class COMBindingBaseObject extends COMInvoker {
         }
 
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL,
-                LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
-                pExcepInfo, puArgErr);
+        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT,
+                new DISPID(nType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;
@@ -330,6 +292,13 @@ public class COMBindingBaseObject extends COMInvoker {
                 new VARIANT[] { pArg });
     }
 
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            IDispatch pDisp, DISPID dispId, VARIANT pArg) throws COMException {
+
+        return this.oleMethod(nType, pvResult, pDisp, dispId,
+                new VARIANT[] { pArg });
+    }
+
     /**
      * Ole method.
      * 
@@ -349,6 +318,12 @@ public class COMBindingBaseObject extends COMInvoker {
             IDispatch pDisp, String name) throws COMException {
 
         return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
+    }
+
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            IDispatch pDisp, DISPID dispId) throws COMException {
+
+        return this.oleMethod(nType, pvResult, pDisp, dispId, (VARIANT[]) null);
     }
 
     /**

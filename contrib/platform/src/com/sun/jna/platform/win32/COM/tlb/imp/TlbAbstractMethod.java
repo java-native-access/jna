@@ -73,7 +73,7 @@ public abstract class TlbAbstractMethod extends TlbBase implements Variant {
     protected String methodparams = "";
 
     protected String methodvariables = "";
-
+    
     /**
      * Instantiates a new tlb function.
      * 

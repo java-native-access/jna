@@ -23,7 +23,7 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil;
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-public class TlbFunction extends TlbAbstractMethod {
+public class TlbFunctionVTable extends TlbAbstractMethod {
 
     /**
      * Instantiates a new tlb function.
@@ -37,7 +37,7 @@ public class TlbFunction extends TlbAbstractMethod {
      * @param typeInfoUtil
      *            the type info util
      */
-    public TlbFunction(int count, int index, TypeLibUtil typeLibUtil,
+    public TlbFunctionVTable(int count, int index, TypeLibUtil typeLibUtil,
             FUNCDESC funcDesc, TypeInfoUtil typeInfoUtil) {
         super(index, typeLibUtil, funcDesc, typeInfoUtil);
 
@@ -78,6 +78,6 @@ public class TlbFunction extends TlbAbstractMethod {
      */
     @Override
     protected String getClassTemplate() {
-        return "com/sun/jna/platform/win32/COM/tlb/imp/TlbFunction.template";
+        return "com/sun/jna/platform/win32/COM/tlb/imp/TlbFunctionVTable.template";
     }
 }

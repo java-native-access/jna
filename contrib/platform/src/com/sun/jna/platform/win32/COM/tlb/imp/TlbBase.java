@@ -73,18 +73,17 @@ public abstract class TlbBase {
     public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
             "GetTypeInfo", "GetIDsOfNames", "Invoke" };
 
-    /**
-     * Instantiates a new tlb base.
-     * 
-     * @param index
-     *            the index
-     * @param typeLibUtil
-     *            the type lib util
-     */
+    protected int bindingMode = TlbConst.BINDING_MODE_DISPID;
+    
     public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil) {
+        this(index, typeLibUtil, typeInfoUtil, TlbConst.BINDING_MODE_DISPID);
+    }
+
+    public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil, int bindingMode) {
         this.index = index;
         this.typeLibUtil = typeLibUtil;
         this.typeInfoUtil = typeInfoUtil;
+        this.bindingMode = bindingMode;
         
         String filename = this.getClassTemplate();
         try {
@@ -264,5 +263,19 @@ public abstract class TlbBase {
         }
 
         return false;
+    }
+    
+    protected boolean isVTableMode() {
+        if(this.bindingMode == TlbConst.BINDING_MODE_VTABLE)
+            return true;
+        else
+            return false;
+    }
+    
+    protected boolean isDispIdMode() {
+        if(this.bindingMode == TlbConst.BINDING_MODE_DISPID)
+            return true;
+        else
+            return false;
     }
 }
