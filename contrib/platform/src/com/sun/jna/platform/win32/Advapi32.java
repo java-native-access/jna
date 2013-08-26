@@ -23,6 +23,8 @@ import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
+import com.sun.jna.platform.win32.Winsvc.HandlerEx;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
@@ -1226,6 +1228,31 @@ public interface Advapi32 extends StdCallLibrary {
 	public boolean ControlService(SC_HANDLE hService, int dwControl,
 			SERVICE_STATUS lpServiceStatus);
 
+    /*
+     * SC_HANDLE WINAPI CreateService( SC_HANDLE hSCManager, LPCTSTR
+     * lpServiceName, LPCTSTR lpDisplayName, DWORD dwDesiredAccess, DWORD
+     * dwServiceType, DWORD dwStartType, DWORD dwErrorControl, LPCTSTR
+     * lpBinaryPathName, LPCTSTR lpLoadOrderGroup, LPDWORD lpdwTagId, LPCTSTR
+     * lpDependencies, LPCTSTR lpServiceStartName, LPCTSTR lpPassword );
+     */
+    public Pointer CreateService(Pointer hSCManager, String lpServiceName,
+                                 String lpDisplayName, int dwDesiredAccess, int dwServiceType,
+                                 int dwStartType, int dwErrorControl, String lpBinaryPathName,
+                                 String lpLoadOrderGroup, IntByReference lpdwTagId,
+                                 String lpDependencies, String lpServiceStartName, String lpPassword);
+
+    /*
+     * BOOL WINAPI DeleteService( SC_HANDLE hService );
+     */
+    public boolean DeleteService(Pointer hService);
+
+    /*
+     * BOOL WINAPI ChangeServiceConfig2( SC_HANDLE hService, DWORD dwInfoLevel,
+     * LPVOID lpInfo );
+     */
+    public boolean ChangeServiceConfig2(Pointer hService, int dwInfoLevel,
+                                        ChangeServiceConfig2Info lpInfo);
+
 	/**
 	 * Starts a service.
 	 *
@@ -1254,6 +1281,33 @@ public interface Advapi32 extends StdCallLibrary {
 	 */
 	public boolean StartService(SC_HANDLE hService, int dwNumServiceArgs,
 			String[] lpServiceArgVectors);
+
+    /*
+     * BOOL WINAPI StartServiceCtrlDispatcher( const SERVICE_TABLE_ENTRY*
+     * lpServiceTable );
+     */
+    public boolean StartServiceCtrlDispatcher(Structure[] lpServiceTable);
+
+    /*
+     * SERVICE_STATUS_HANDLE WINAPI RegisterServiceCtrlHandler( LPCTSTR
+     * lpServiceName, LPHANDLER_FUNCTION lpHandlerProc );
+     */
+    public Pointer RegisterServiceCtrlHandler(String lpServiceName,
+                                              Handler lpHandlerProc);
+
+    /*
+     * SERVICE_STATUS_HANDLE WINAPI RegisterServiceCtrlHandlerEx( LPCTSTR
+     * lpServiceName, LPHANDLER_FUNCTION_EX lpHandlerProc, LPVOID lpContext );
+     */
+    public Pointer RegisterServiceCtrlHandlerEx(String lpServiceName,
+                                                HandlerEx lpHandlerProc, Pointer lpContext);
+
+    /**
+     * BOOL WINAPI SetServiceStatus( SERVICE_STATUS_HANDLE hServiceStatus,
+     * LPSERVICE_STATUS lpServiceStatus );
+     */
+    public boolean SetServiceStatus(Pointer hServiceStatus,
+                                    SERVICE_STATUS lpServiceStatus);
 
 	/**
 	 * Closes a handle to a service control manager or service object.

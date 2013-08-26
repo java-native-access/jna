@@ -10,6 +10,7 @@ Features
 * Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
 * Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
 * COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` [@wolftobias]
+* Copied Win32 service-related code from `ntservice` contrib module to `platform` - [@trejkaz](https://github.com/trejkaz).
 
 Bug Fixes
 ---------
