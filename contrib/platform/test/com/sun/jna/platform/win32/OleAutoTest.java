@@ -53,7 +53,7 @@ public class OleAutoTest extends TestCase {
 		SAFEARRAY.ByReference safeArg = OleAutoUtil.createVarArray(1);
 		OleAutoUtil.SafeArrayPutElement(safeArg, 0, new VARIANT(
 				Variant.VARIANT_TRUE));
-		System.out.println(safeArg.toString(true));
+		//System.out.println(safeArg.toString(true));
 	}
 
 	public void testLoadRegTypeLib() {

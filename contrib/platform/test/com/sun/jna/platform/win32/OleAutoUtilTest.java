@@ -24,44 +24,33 @@ import com.sun.jna.platform.win32.COM.COMException;
  */
 public class OleAutoUtilTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(OleAutoUtilTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(OleAutoUtilTest.class);
+    }
 
-	public void testCreateVarArray() {
-		SAFEARRAY varArray = OleAutoUtil.createVarArray(1);
-		assertTrue(varArray != null);
-	}
+    public void testCreateVarArray() {
+        SAFEARRAY varArray = OleAutoUtil.createVarArray(1);
+        assertTrue(varArray != null);
+    }
 
-	public void testSafeArrayPutGetElement() {
-		SAFEARRAY varArray = OleAutoUtil.createVarArray(10);
+    public void testSafeArrayPutGetElement() throws Exception {
+        SAFEARRAY varArray = OleAutoUtil.createVarArray(10);
 
-		for (int i = 0; i < 10; i++) {
-			try {
-				VARIANT variant = new VARIANT(new SHORT(i + i*100));
-				System.out.println(variant.toString(true));
-				OleAutoUtil.SafeArrayPutElement(varArray, i, variant);
-			} catch (COMException e) {
-				e.printStackTrace();
-			}
-		}
+        for (int i = 0; i < 10; i++) {
+            VARIANT variant = new VARIANT(new SHORT(i + i*100));
+            //System.out.println(variant.toString(true));
+            OleAutoUtil.SafeArrayPutElement(varArray, i, variant);
+        }
 
-		assertTrue(varArray != null);
+        assertTrue(varArray != null);
 
-		System.out
-				.println("\n\n\n-------------------------------------------------------------");
-		System.out
-				.println("-------------------------------------------------------------\n\n\n");
-
-		for (int i = 0; i < 10; i++) {
-			try {
-				VARIANT element = OleAutoUtil.SafeArrayGetElement(varArray, i);
-				System.out.println(element.toString(true));
-				System.out.println("variant type: " + element.getVarType());
-				System.out.println("value: " + element.getValue());
-			} catch (COMException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        for (int i = 0; i < 10; i++) {
+            VARIANT element = OleAutoUtil.SafeArrayGetElement(varArray, i);
+            /*
+            System.out.println(element.toString(true));
+            System.out.println("variant type: " + element.getVarType());
+            System.out.println("value: " + element.getValue());
+            */
+        }
+    }
 }
