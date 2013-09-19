@@ -12,48 +12,48 @@ import com.sun.jna.ptr.DoubleByReference;
 
 public class VariantTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(VariantTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(VariantTest.class);
+    }
 
-	public VariantTest() {
-	}
+    public VariantTest() {
+    }
 
-	public void testVariantClear() {
-		VARIANT variant = new VARIANT(new SHORT(33333));
-		HRESULT hr = OleAuto.INSTANCE.VariantClear(variant.getPointer());
+    public void testVariantClear() {
+        VARIANT variant = new VARIANT(new SHORT(33333));
+        HRESULT hr = OleAuto.INSTANCE.VariantClear(variant.getPointer());
 
-		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
-	}
+        assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+    }
 
-	public void testVariantCopyShort() {
-		VARIANT variantSource = new VARIANT(new SHORT(33333));
-		VARIANT variantDest = new VARIANT();
+    public void testVariantCopyShort() {
+        VARIANT variantSource = new VARIANT(new SHORT(33333));
+        VARIANT variantDest = new VARIANT();
 
-		System.out.println(variantSource.toString(true));
-		HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(),
-				variantSource);
+        //System.out.println(variantSource.toString(true));
+        HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(),
+                                                  variantSource);
 
-		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
-	}
+        assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+    }
 
-	public void testVariantCopyBoolean() {
-		VARIANT variantSource = new VARIANT(Variant.VARIANT_TRUE);
-		VARIANT variantDest = new VARIANT();
+    public void testVariantCopyBoolean() {
+        VARIANT variantSource = new VARIANT(Variant.VARIANT_TRUE);
+        VARIANT variantDest = new VARIANT();
 
-		HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(),
-				variantSource);
+        HRESULT hr = OleAuto.INSTANCE.VariantCopy(variantDest.getPointer(),
+                                                  variantSource);
 
-		assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
-	}
+        assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
+    }
 
-	public void testVariantDate() {
-		SYSTEMTIME lpSystemTime = new SYSTEMTIME();
-		Kernel32.INSTANCE.GetLocalTime(lpSystemTime);
+    public void testVariantDate() {
+        SYSTEMTIME lpSystemTime = new SYSTEMTIME();
+        Kernel32.INSTANCE.GetLocalTime(lpSystemTime);
 
-		DoubleByReference pvtime = new DoubleByReference();
-		OleAuto.INSTANCE.SystemTimeToVariantTime(lpSystemTime, pvtime);
+        DoubleByReference pvtime = new DoubleByReference();
+        OleAuto.INSTANCE.SystemTimeToVariantTime(lpSystemTime, pvtime);
 
-		VARIANT variantDate = new VARIANT(new DATE(pvtime.getValue()));
-	}
+        VARIANT variantDate = new VARIANT(new DATE(pvtime.getValue()));
+    }
 }

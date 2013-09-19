@@ -47,7 +47,7 @@ public class ITypeLibTest extends TestCase {
         CLSID.ByReference clsid = new CLSID.ByReference();
         // get CLSID from string
         HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
-                "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);
+                                                                "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}"), clsid);
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
 
@@ -66,18 +66,18 @@ public class ITypeLibTest extends TestCase {
     public void testGetTypeInfoCount() {
         ITypeLib shellTypeLib = loadShellTypeLib();
         UINT typeInfoCount = shellTypeLib.GetTypeInfoCount();
-        System.out.println("GetTypeInfoCount: " + typeInfoCount);
+        //System.out.println("GetTypeInfoCount: " + typeInfoCount);
     }
 
     public void testGetTypeInfo() {
-         ITypeLib shellTypeLib = loadShellTypeLib();
+        ITypeLib shellTypeLib = loadShellTypeLib();
         
-         PointerByReference ppTInfo = new PointerByReference();
-         HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), ppTInfo);
+        PointerByReference ppTInfo = new PointerByReference();
+        HRESULT hr = shellTypeLib.GetTypeInfo(new UINT(0), ppTInfo);
         
-         COMUtils.checkRC(hr);
-         assertEquals(0, hr.intValue());
-         System.out.println("ITypeInfo: " + ppTInfo.toString());
+        COMUtils.checkRC(hr);
+        assertEquals(0, hr.intValue());
+        //System.out.println("ITypeInfo: " + ppTInfo.toString());
     }
 
     public void testGetTypeInfoType() {
@@ -88,7 +88,7 @@ public class ITypeLibTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("TYPEKIND: " + pTKind);
+        //System.out.println("TYPEKIND: " + pTKind);
     }
 
     public void testGetTypeInfoOfGuid() {
@@ -126,14 +126,14 @@ public class ITypeLibTest extends TestCase {
     }
 
     public void testFindName() {
-		ITypeLib shellTypeLib = loadShellTypeLib();
-		BSTRByReference szNameBuf = new BSTRByReference(OleAuto.INSTANCE.SysAllocString("Application"));
-		ULONG lHashVal = new ULONG(0);
-		USHORTByReference pcFound = new USHORTByReference((short)20);
+        ITypeLib shellTypeLib = loadShellTypeLib();
+        BSTRByReference szNameBuf = new BSTRByReference(OleAuto.INSTANCE.SysAllocString("Application"));
+        ULONG lHashVal = new ULONG(0);
+        USHORTByReference pcFound = new USHORTByReference((short)20);
 
-		HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, null, null, pcFound);
+        HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, null, null, pcFound);
 
-		COMUtils.checkRC(hr);
-		System.out.println("szNameBuf: " + szNameBuf);
-	}
+        COMUtils.checkRC(hr);
+        //System.out.println("szNameBuf: " + szNameBuf);
+    }
 }

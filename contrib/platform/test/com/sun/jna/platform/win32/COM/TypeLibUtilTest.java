@@ -82,7 +82,6 @@ public class TypeLibUtilTest extends TestCase {
         int cFuncs = typeAttr.cFuncs.intValue();
     
         for (int y = 0; y < cFuncs; y++) {
-            System.out.println("\n\n\n y:"+y);
             // Get the function description
             FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(y);
             // Get the member ID

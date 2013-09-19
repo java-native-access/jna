@@ -32,50 +32,50 @@ import com.sun.jna.platform.win32.WinDef.WORD;
  */
 public class COMTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(COMTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(COMTest.class);
+    }
 
-	public COMTest() {
-	}
+    public COMTest() {
+    }
 
-	@Override
+    @Override
 	protected void setUp() throws Exception {
-	}
+    }
 
-	@Override
+    @Override
 	protected void tearDown() throws Exception {
-	}
+    }
 
-	public void testTYPEATTR() {
-		int pSize = Native.POINTER_SIZE;
+    public void testTYPEATTR() {
+        int pSize = Native.POINTER_SIZE;
 
-		TYPEATTR typeAttr = new TYPEATTR();
-		typeAttr.guid = GUID
-				.fromString("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
-		typeAttr.lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
-		typeAttr.dwReserved = new DWORD(1);
-		typeAttr.memidConstructor = new MEMBERID(2);
-		typeAttr.memidDestructor = new MEMBERID(3);
-		typeAttr.lpstrSchema = new LPOLESTR("Hello World");
-		typeAttr.cbSizeInstance = new ULONG(4);
-		typeAttr.typekind = new TYPEKIND(5);
-		typeAttr.cFuncs = new WORD(6);
-		typeAttr.cVars = new WORD(7);
-		typeAttr.cImplTypes = new WORD(8);
-		typeAttr.cbSizeVft = new WORD(9);
-		typeAttr.cbAlignment = new WORD(10);
-		typeAttr.wMajorVerNum = new WORD(11);
-		typeAttr.wMinorVerNum = new WORD(12);
-		typeAttr.tdescAlias = new TYPEDESC();
-		typeAttr.idldescType = new IDLDESC();
+        TYPEATTR typeAttr = new TYPEATTR();
+        typeAttr.guid = GUID
+            .fromString("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}");
+        typeAttr.lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
+        typeAttr.dwReserved = new DWORD(1);
+        typeAttr.memidConstructor = new MEMBERID(2);
+        typeAttr.memidDestructor = new MEMBERID(3);
+        typeAttr.lpstrSchema = new LPOLESTR("Hello World");
+        typeAttr.cbSizeInstance = new ULONG(4);
+        typeAttr.typekind = new TYPEKIND(5);
+        typeAttr.cFuncs = new WORD(6);
+        typeAttr.cVars = new WORD(7);
+        typeAttr.cImplTypes = new WORD(8);
+        typeAttr.cbSizeVft = new WORD(9);
+        typeAttr.cbAlignment = new WORD(10);
+        typeAttr.wMajorVerNum = new WORD(11);
+        typeAttr.wMinorVerNum = new WORD(12);
+        typeAttr.tdescAlias = new TYPEDESC();
+        typeAttr.idldescType = new IDLDESC();
 
-		typeAttr.write();
-		typeAttr.read();
-		System.out.println(typeAttr.toString());
-		System.out.println("TYPEATTR size: " + typeAttr.size());
-	}
+        typeAttr.write();
+        typeAttr.read();
+        //System.out.println(typeAttr.toString());
+        //System.out.println("TYPEATTR size: " + typeAttr.size());
+    }
 
-	public void testDirectMemory() {
-	}
+    public void testDirectMemory() {
+    }
 }

@@ -79,8 +79,8 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("rgBstrNames: " + rgBstrNames[0].getValue());
-        System.out.println("pcNames: " + pcNames.getValue().intValue());
+        //System.out.println("rgBstrNames: " + rgBstrNames[0].getValue());
+        //System.out.println("pcNames: " + pcNames.getValue().intValue());
     }
 
     public void testGetRefTypeOfImplType() {
@@ -90,7 +90,7 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("GetRefTypeOfImplType: " + pRefType.toString());
+        //System.out.println("GetRefTypeOfImplType: " + pRefType.toString());
     }
 
     public void testGetImplTypeFlags() {
@@ -100,7 +100,7 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("GetImplTypeFlags: " + pImplTypeFlags.toString());
+        //System.out.println("GetImplTypeFlags: " + pImplTypeFlags.toString());
     }
 
     public void testGetIDsOfNames() {
@@ -112,7 +112,7 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("pMemId: " + pMemId.toString());
+        //System.out.println("pMemId: " + pMemId.toString());
     }
 
     public void testInvoke() {
@@ -131,11 +131,11 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("memid: " + memid.intValue());
-        System.out.println("pBstrName: " + pBstrName.getValue());
-        System.out.println("pBstrDocString: " + pBstrDocString.getValue());
-        System.out.println("pdwHelpContext: " + pdwHelpContext.getValue());
-        System.out.println("pBstrHelpFile: " + pBstrHelpFile.getValue());
+        //System.out.println("memid: " + memid.intValue());
+        //System.out.println("pBstrName: " + pBstrName.getValue());
+        //System.out.println("pBstrDocString: " + pBstrDocString.getValue());
+        //System.out.println("pdwHelpContext: " + pdwHelpContext.getValue());
+        //System.out.println("pBstrHelpFile: " + pBstrHelpFile.getValue());
     }
 
     public void testGetDllEntry() {
@@ -149,10 +149,10 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("memid: " + memid.intValue());
-        System.out.println("pBstrDllName: " + pBstrDllName.getValue());
-        System.out.println("pBstrName: " + pBstrName.getValue());
-        System.out.println("pwOrdinal: " + pwOrdinal.getValue());
+        //System.out.println("memid: " + memid.intValue());
+        //System.out.println("pBstrDllName: " + pBstrDllName.getValue());
+        //System.out.println("pBstrName: " + pBstrName.getValue());
+        //System.out.println("pwOrdinal: " + pwOrdinal.getValue());
     }
 
     public void testGetRefTypeInfo() {
@@ -167,7 +167,7 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("AddressOfMember: " + ppv.toString());
+        //System.out.println("AddressOfMember: " + ppv.toString());
     }
 
     public void testCreateInstance() {
@@ -182,7 +182,7 @@ public class ITypeInfoTest extends TestCase {
 
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
-        System.out.println("pBstrMops: " + pBstrMops.toString());
+        //System.out.println("pBstrMops: " + pBstrMops.toString());
     }
 
     public void testGetContainingTypeLib() {
