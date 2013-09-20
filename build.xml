@@ -10,7 +10,7 @@
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm and
-       android-arm/-x86)
+       android-arm/-x86) 
 
        Use ANT_OPTS=-Dskip-native=false to build native parts, or directly
          invoke the native or test targets
@@ -356,7 +356,7 @@
         <attribute name="Bundle-Name" value="jna"/>
         <attribute name="Bundle-Description" value="JNA Library"/>
         <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
-        <attribute name="Bundle-Version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
+        <attribute name="Bundle-Version" value="${spec.version}"/>
         <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
         <attribute name="Bundle-Vendor" value="${vendor}"/>
         <attribute name="Bundle-ActivationPolicy" value="lazy"/>
@@ -489,14 +489,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <property name="libs.junit.classpath" location="lib/junit.jar"/>
       <property name="javac.source" value="${platform.compatibility}"/>
       <property name="javac.target" value="${platform.compatibility}"/>
-      <!-- OSGi manifest properties -->
-      <property name="vendor" value="${vendor}"/>
-      <property name="impl.title" value="${impl.title}.platform"/>
-      <property name="impl.version" value="${impl.version}"/>
-      <property name="spec.title" value="${spec.title}"/>
-      <property name="spec.vendor" value="${spec.vendor}"/>
-      <property name="spec.version" value="${spec.version}"/>
-      <property name="osgi.version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
       <fileset dir="${contrib}" includes="platform/build.xml" />
     </subant>
     <!-- Sources package as required by maven -->
