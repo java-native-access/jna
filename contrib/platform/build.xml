@@ -4,9 +4,9 @@
     <import file="nbproject/build-impl.xml"/>
     <!--
 
-    There exist several targets which are by default empty and which can be 
-    used for execution of your tasks. These targets are usually executed 
-    before and after some main targets. They are: 
+    There exist several targets which are by default empty and which can be
+    used for execution of your tasks. These targets are usually executed
+    before and after some main targets. They are:
 
       -pre-init:                 called before initialization of project properties
       -post-init:                called after initialization of project properties
@@ -32,12 +32,12 @@
             </obfuscate>
         </target>
 
-    For list of available properties check the imported 
-    nbproject/build-impl.xml file. 
+    For list of available properties check the imported
+    nbproject/build-impl.xml file.
 
 
     Another way to customize the build is by overriding existing main targets.
-    The targets of interest are: 
+    The targets of interest are:
 
       -init-macrodef-javac:     defines macro for javac compilation
       -init-macrodef-junit:     defines macro for junit execution
@@ -45,7 +45,7 @@
       -init-macrodef-java:      defines macro for class execution
       -do-jar-with-manifest:    JAR building (if you are using a manifest)
       -do-jar-without-manifest: JAR building (if you are not using a manifest)
-      run:                      execution of project 
+      run:                      execution of project
       -javadoc-build:           Javadoc generation
       test-report:              JUnit report generation
 
@@ -57,12 +57,54 @@
             </exec>
         </target>
 
-    Notice that the overridden target depends on the jar target and not only on 
-    the compile target as the regular run target does. Again, for a list of available 
+    Notice that the overridden target depends on the jar target and not only on
+    the compile target as the regular run target does. Again, for a list of available
     properties which you can use, check the target you are overriding in the
-    nbproject/build-impl.xml file. 
+    nbproject/build-impl.xml file.
 
     -->
+
+    <target name="-do-jar-without-manifest">
+       <jar jarfile="${dist.jar}" compress="${jar.compress}">
+         <manifest>
+           <attribute name="Main-Class" value="com.sun.jna.Native"/>
+           <attribute name="Manifest-Version" value="1.0"/>
+           <attribute name="Implementation-Title" value="${impl.title}"/>
+           <attribute name="Implementation-Vendor" value="${vendor}"/>
+           <attribute name="Implementation-Version" value="${impl.version}"/>
+           <attribute name="Specification-Title" value="${spec.title}"/>
+           <attribute name="Specification-Vendor" value="${spec.vendor}"/>
+           <attribute name="Specification-Version" value="${spec.version}"/>
+           <!--
+              OSGi Bundle attributes
+              See http://www.osgi.org/Specifications/Reference
+            -->
+           <attribute name="Bundle-Category" value="jni"/>
+           <attribute name="Bundle-ManifestVersion" value="2"/>
+           <attribute name="Bundle-Name" value="jna-platform"/>
+           <attribute name="Bundle-Description" value="JNA Platform Library"/>
+           <attribute name="Bundle-SymbolicName" value="com.sun.jna.platform"/>
+           <attribute name="Bundle-Version" value="${osgi.version}"/>
+           <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+           <attribute name="Bundle-Vendor" value="${vendor}"/>
+           <attribute name="Require-Bundle" value="com.sun.jna;bundle-version=&quot;${osgi.version}&quot;"/>
+           <attribute name="Export-Package"
+                   value="
+com.sun.jna.platform,
+com.sun.jna.platform.dnd,
+com.sun.jna.platform.mac,
+com.sun.jna.platform.unix,
+com.sun.jna.platform.win32,
+com.sun.jna.platform.win32.COM,
+com.sun.jna.platform.win32.COM.tlb,
+com.sun.jna.platform.win32.COM.tlb.imp,
+com.sun.jna.platform.wince
+"/>
+         </manifest>
+         <fileset dir="${build.classes.dir}"/>
+       </jar>
+    </target>
+
     <target name="test" depends="init,compile,compile-test,-pre-test-run" description="Run platform unit tests.">
       <echo>Running platform tests: ${test.src.dir}</echo>
       <property name="test.fork" value="yes"/>
