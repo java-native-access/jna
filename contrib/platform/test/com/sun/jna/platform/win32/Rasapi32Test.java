@@ -14,6 +14,10 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import com.sun.jna.platform.win32.WinRas.RASCREDENTIALS;
+import com.sun.jna.platform.win32.WinRas.RASDIALPARAMS;
+import com.sun.jna.platform.win32.WinRas.RASENTRY;
 import com.sun.jna.ptr.IntByReference;
 
 /**
@@ -39,5 +43,27 @@ public class Rasapi32Test extends TestCase {
 		int len = 0;
 		for (; len < msg.length; len++) if (msg[len] == 0) break;
 		assertEquals("An incorrect structure size was detected.", new String (msg, 0, len));
+	}
+
+	public void testRasGetCredentials() {
+		RASCREDENTIALS.ByReference credentials = new RASCREDENTIALS.ByReference();
+		credentials.dwMask = WinRas.RASCM_UserName | WinRas.RASCM_Password | WinRas.RASCM_Domain;
+		int err = Rasapi32.INSTANCE.RasGetCredentials(null, "TEST", credentials);
+		assertEquals(623, err);
+	}
+
+	public void testRasGetEntryProperties() {
+		RASENTRY.ByReference rasEntry = new RASENTRY.ByReference();
+		IntByReference lpdwEntryInfoSize = new IntByReference(rasEntry.size());
+		int err = Rasapi32.INSTANCE.RasGetEntryProperties(null, "TEST", rasEntry, lpdwEntryInfoSize, null, null);
+		assertEquals(623, err);
+	}
+
+	public void testRasGetEntryDialParams() {
+		RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
+		System.arraycopy(rasDialParams.szEntryName, 0, "TEST".toCharArray(), 0, "TEST".length());
+		BOOLByReference lpfPassword = new BOOLByReference();
+		int err = Rasapi32.INSTANCE.RasGetEntryDialParams(null, rasDialParams, lpfPassword);
+		assertEquals(623, err);
 	}
 }

@@ -32,6 +32,7 @@ public class Rasapi32UtilTest extends TestCase {
 	public void testGetPhonebookEntry() {
 		try {
 			Rasapi32Util.getPhoneBookEntry("TEST");
+			fail("Test expected to fail");
 		} catch (Ras32Exception e) {
 			assertEquals(623, e.getCode());
 		}
@@ -45,11 +46,23 @@ public class Rasapi32UtilTest extends TestCase {
 		}
 	}
 
+	public void testDialEntry() {
+		try {
+			Rasapi32Util.dialEntry("TEST");
+		} catch (Ras32Exception e) {
+			assertEquals(623, e.getCode());
+		}
+	}
+
 	public void testGetRasErrorString() {
 		assertEquals("An incorrect structure size was detected.", Rasapi32Util.getRasErrorString(632));
 	}
 
 	public void testGetRasConnectionStatusText() {
 		assertEquals("Disconnected", Rasapi32Util.getRasConnectionStatusText(8193));
+	}
+
+	public void testhangupRasConnection() {
+		Rasapi32Util.hangupRasConnection("TEST");
 	}
 }

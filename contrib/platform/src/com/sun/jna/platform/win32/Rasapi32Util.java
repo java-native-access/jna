@@ -230,7 +230,6 @@ public abstract class Rasapi32Util {
 		synchronized (phoneBookMutex) {
 			RASDIALPARAMS.ByReference rasDialParams = new RASDIALPARAMS.ByReference();
 			System.arraycopy(rasDialParams.szEntryName, 0, entryName.toCharArray(), 0, entryName.length());
-			System.out.println("------------size="+rasDialParams.dwSize);
 			BOOLByReference lpfPassword = new BOOLByReference();
 			int err = Rasapi32.INSTANCE.RasGetEntryDialParams(null, rasDialParams, lpfPassword);
 			if (err != WinError.ERROR_SUCCESS) throw new Ras32Exception(err);
