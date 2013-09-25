@@ -7,14 +7,15 @@ Next Release (4.0.1)
 
 Features
 --------
-* Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
-* Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall).
-* COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` - [@wolftobias](https://github.com/wolftobias).
-* [#226](https://github.com/twall/jna/issues/226) Add OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
+* Added `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
+* Enabled platform tests to be run w/o building native bits - [@twall](https://github.com/twall).
+* Added COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` - [@wolftobias](https://github.com/wolftobias).
+* [#226](https://github.com/twall/jna/issues/226): Added OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
+* [#267](https://github.com/twall/jna/pull/267): Added support for Windows RAS32 API, `com.sun.jna.platform.win32.Rasapi32` and `Rasapi32Util` - [@kc7bfi](https://github.com/kc7bfi).
 
 Bug Fixes
 ---------
-* Fix inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
+* Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
 
 Release 4.0
 ===========
