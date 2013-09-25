@@ -1,4 +1,4 @@
-NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+﻿NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
@@ -12,6 +12,7 @@ Features
 * Added COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` - [@wolftobias](https://github.com/wolftobias).
 * [#226](https://github.com/twall/jna/issues/226): Added OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
 * [#267](https://github.com/twall/jna/pull/267): Added support for Windows RAS32 API, `com.sun.jna.platform.win32.Rasapi32` and `Rasapi32Util` - [@kc7bfi](https://github.com/kc7bfi).
+* [#101](https://github.com/twall/jna/issues/101): Modify `com.sun.jna.platform.win32.Advapi32Util.registryGet*` API to support `KEY_WOW64` option - [@falldog] (https://github.com/falldog).
 
 Bug Fixes
 ---------
