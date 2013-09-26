@@ -493,7 +493,7 @@ public class Kernel32Test extends TestCase {
     }
 
     public final void testGetPrivateProfileString() throws IOException {
-        final File tmp = File.createTempFile("testGetPrivateProfileString", "ini");
+        final File tmp = File.createTempFile("testGetPrivateProfileString", ".ini");
         tmp.deleteOnExit();
         final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
         writer.println("[Section]");
@@ -501,12 +501,18 @@ public class Kernel32Test extends TestCase {
         writer.close();
 
         final char[] buffer = new char[8];
-        assertEquals("ABC", Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath()));
-        assertEquals("DEF", Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath()));
+        
+        DWORD len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(3, len.intValue());
+        assertEquals("ABC", Native.toString(buffer));
+        
+        len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(3, len.intValue());
+        assertEquals("DEF", Native.toString(buffer));
     }
 
     public final void testWritePrivateProfileString() throws IOException {
-        final File tmp = File.createTempFile("testWritePrivateProfileString", "ini");
+        final File tmp = File.createTempFile("testWritePrivateProfileString", ".ini");
         tmp.deleteOnExit();
         final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
         writer.println("[Section]");

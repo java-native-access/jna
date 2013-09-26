@@ -1600,7 +1600,7 @@ public abstract class Advapi32Util {
 				ArrayList<String> result = new ArrayList<String>();
 				int offset = 0;
 				while (offset < stringData.size()) {
-					String s = stringData.getWideString(0);
+					String s = stringData.getWideString(offset);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
 					if (s.length() == 0 && offset == stringData.size()) {
