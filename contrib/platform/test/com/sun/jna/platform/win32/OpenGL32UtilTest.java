@@ -24,10 +24,7 @@ public class OpenGL32UtilTest extends TestCase {
     }
 
     public void testCountGpusNV() {
-        try {
-            OpenGL32Util.countGpusNV();
-        } catch (Exception e) {
-            fail("Error enumerating nVidia cards: " + e); e.printStackTrace();
-        }
+        int cnt = OpenGL32Util.countGpusNV();
+        assertTrue("Expecting >= 0", cnt >= 0);
     }
 }
