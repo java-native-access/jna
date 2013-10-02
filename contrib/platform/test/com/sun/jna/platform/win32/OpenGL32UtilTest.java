@@ -19,15 +19,15 @@ import junit.framework.TestCase;
  */
 public class OpenGL32UtilTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(OpenGL32UtilTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(OpenGL32UtilTest.class);
+    }
 
-	public void testCountGpusNV() {
-		try {
-			OpenGL32Util.countGpusNV();
-		} catch (Exception e) {
-			fail("Error enumerating nVidia cards: " + e); e.printStackTrace();
-		}
-	}
+    public void testCountGpusNV() {
+        try {
+            OpenGL32Util.countGpusNV();
+        } catch (Exception e) {
+            fail("Error enumerating nVidia cards: " + e); e.printStackTrace();
+        }
+    }
 }

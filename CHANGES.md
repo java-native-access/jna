@@ -11,6 +11,7 @@ Features
 * Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
 * COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` [@wolftobias]
 * Added support for Windows RAS32 API [@kc7bfi]
+* Added support for some of the Windows OpenGL API [@kc7bfi]
 
 Bug Fixes
 ---------

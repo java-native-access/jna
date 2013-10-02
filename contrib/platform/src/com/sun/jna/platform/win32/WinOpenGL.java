@@ -22,77 +22,77 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public interface WinOpenGL extends StdCallLibrary {
 
-	public final int GL_VENDOR = 0x1F00;
-	public final int  GL_RENDERER = 0x1F01;
-	public final int  GL_VERSION = 0x1F02;
-	public final int  GL_EXTENSIONS = 0x1F03;
+    public final int GL_VENDOR = 0x1F00;
+    public final int  GL_RENDERER = 0x1F01;
+    public final int  GL_VERSION = 0x1F02;
+    public final int  GL_EXTENSIONS = 0x1F03;
 
-	/**
-	 * handle to an OpenGL rendering context
-	 */
-	public static class HGLRC  extends HANDLE {
+    /**
+     * handle to an OpenGL rendering context
+     */
+    public static class HGLRC  extends HANDLE {
 
-		/**
-		 * Instantiates a new HGLRC .
-		 */
-		public HGLRC () {
+        /**
+         * Instantiates a new HGLRC .
+         */
+        public HGLRC () {
 
-		}
+        }
 
-		/**
-		 * Instantiates a new HGLRC .
-		 *
-		 * @param p
-		 *            the p
-		 */
-		public HGLRC (Pointer p) {
-			super(p);
-		}
-	}
+        /**
+         * Instantiates a new HGLRC .
+         *
+         * @param p
+         *            the p
+         */
+        public HGLRC (Pointer p) {
+            super(p);
+        }
+    }
 
-	/**
-	 * handle to an OpenGL rendering context
-	 */
-	public static class HGPUNV  extends HANDLE {
+    /**
+     * handle to an OpenGL rendering context
+     */
+    public static class HGPUNV  extends HANDLE {
 
-		/**
-		 * Instantiates a new HGLRC .
-		 */
-		public HGPUNV () {
+        /**
+         * Instantiates a new HGLRC .
+         */
+        public HGPUNV () {
 
-		}
+        }
 
-		/**
-		 * Instantiates a new HGLRC .
-		 *
-		 * @param p
-		 *            the p
-		 */
-		public HGPUNV (Pointer p) {
-			super(p);
-		}
-	}
+        /**
+         * Instantiates a new HGLRC .
+         *
+         * @param p
+         *            the p
+         */
+        public HGPUNV (Pointer p) {
+            super(p);
+        }
+    }
 
-	/**
-	 * handle to an OpenGL rendering context
-	 */
-	public static class HGPUNVByReference  extends HANDLEByReference {
+    /**
+     * handle to an OpenGL rendering context
+     */
+    public static class HGPUNVByReference  extends HANDLEByReference {
 
-		/**
-		 * Instantiates a new HGLRC .
-		 */
-		public HGPUNVByReference () {
+        /**
+         * Instantiates a new HGLRC .
+         */
+        public HGPUNVByReference () {
 
-		}
+        }
 
-		/**
-		 * Instantiates a new HGLRC .
-		 *
-		 * @param p
-		 *            the p
-		 */
-		public HGPUNVByReference (HGPUNV h) {
-			super(h);
-		}
-	}
+        /**
+         * Instantiates a new HGLRC .
+         *
+         * @param p
+         *            the p
+         */
+        public HGPUNVByReference (HGPUNV h) {
+            super(h);
+        }
+    }
 }

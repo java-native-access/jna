@@ -25,57 +25,57 @@ import com.sun.jna.platform.win32.WinOpenGL.HGPUNVByReference;
  */
 public abstract class OpenGL32Util {
 
-	/**
-	 * Return a procedure function pointer
-	 * @param procName the procedure name
-	 * @return the function
-	 */
-	public static Function wglGetProcAddress(String procName) {
-		Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
-		return (funcPointer == null) ? null : Function.getFunction(funcPointer);
-	}
+    /**
+     * Return a procedure function pointer
+     * @param procName the procedure name
+     * @return the function
+     */
+    public static Function wglGetProcAddress(String procName) {
+        Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
+        return (funcPointer == null) ? null : Function.getFunction(funcPointer);
+    }
 
-	/**
-	 * Return a RAS connection by name
-	 * @param connName the connection name
-	 * @return the RAS connection structure
-	 */
-	public static int countGpusNV() {
-		// create a dummy window
-		HWND hWnd = User32Util.createWindow("Message", null, 0, 0, 0, 0, 0, null, null, null, null);
-		HDC hdc = User32.INSTANCE.GetDC(hWnd);
+    /**
+     * Return a RAS connection by name
+     * @param connName the connection name
+     * @return the RAS connection structure
+     */
+    public static int countGpusNV() {
+        // create a dummy window
+        HWND hWnd = User32Util.createWindow("Message", null, 0, 0, 0, 0, 0, null, null, null, null);
+        HDC hdc = User32.INSTANCE.GetDC(hWnd);
 
-		// set a compatible pixel format
-		PIXELFORMATDESCRIPTOR.ByReference pfd = new PIXELFORMATDESCRIPTOR.ByReference();
-		pfd.nVersion = 1;
-		pfd.dwFlags = WinGDI.PFD_DRAW_TO_WINDOW | WinGDI.PFD_SUPPORT_OPENGL | WinGDI.PFD_DOUBLEBUFFER;
-		pfd.iPixelType = WinGDI.PFD_TYPE_RGBA;
-		pfd.cColorBits = 24;
-		pfd.cDepthBits = 16;
-		pfd.iLayerType = WinGDI.PFD_MAIN_PLANE;
-		GDI32.INSTANCE.SetPixelFormat(hdc, GDI32.INSTANCE.ChoosePixelFormat(hdc, pfd), pfd);
+        // set a compatible pixel format
+        PIXELFORMATDESCRIPTOR.ByReference pfd = new PIXELFORMATDESCRIPTOR.ByReference();
+        pfd.nVersion = 1;
+        pfd.dwFlags = WinGDI.PFD_DRAW_TO_WINDOW | WinGDI.PFD_SUPPORT_OPENGL | WinGDI.PFD_DOUBLEBUFFER;
+        pfd.iPixelType = WinGDI.PFD_TYPE_RGBA;
+        pfd.cColorBits = 24;
+        pfd.cDepthBits = 16;
+        pfd.iLayerType = WinGDI.PFD_MAIN_PLANE;
+        GDI32.INSTANCE.SetPixelFormat(hdc, GDI32.INSTANCE.ChoosePixelFormat(hdc, pfd), pfd);
 
-		// create the OpenGL context to get function address
-		HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
-		OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
-		Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
-		Function fncEnumGpusNV = (funcPointer == null) ? null : Function.getFunction(funcPointer);
-		OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
+        // create the OpenGL context to get function address
+        HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
+        OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
+        Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
+        Function fncEnumGpusNV = (funcPointer == null) ? null : Function.getFunction(funcPointer);
+        OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
 
-		// destroy the window
-		User32.INSTANCE.ReleaseDC(hWnd, hdc);
-		User32Util.destroyWindow(hWnd);
+        // destroy the window
+        User32.INSTANCE.ReleaseDC(hWnd, hdc);
+        User32Util.destroyWindow(hWnd);
 
-		// abort if the nVidia extensions are not present
-		if (fncEnumGpusNV == null) return 0;
+        // abort if the nVidia extensions are not present
+        if (fncEnumGpusNV == null) return 0;
 
-		// enumerate nVidia adapters
-		HGPUNVByReference hGPU = new HGPUNVByReference();
-		for (int i = 0; i < 16; i++) {
-			Boolean ok = (Boolean) fncEnumGpusNV.invoke(Boolean.class, new Object[] { Integer.valueOf(i), hGPU, });
-			if (!ok.booleanValue()) return i;
-		}
+        // enumerate nVidia adapters
+        HGPUNVByReference hGPU = new HGPUNVByReference();
+        for (int i = 0; i < 16; i++) {
+            Boolean ok = (Boolean) fncEnumGpusNV.invoke(Boolean.class, new Object[] { Integer.valueOf(i), hGPU, });
+            if (!ok.booleanValue()) return i;
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 }

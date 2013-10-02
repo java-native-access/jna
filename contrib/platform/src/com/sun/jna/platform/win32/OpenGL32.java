@@ -23,65 +23,65 @@ import com.sun.jna.win32.W32APIOptions;
  * opengl32.dll Interface.
  */
 public interface OpenGL32 extends StdCallLibrary {
-	OpenGL32 INSTANCE = (OpenGL32) Native.loadLibrary("opengl32", OpenGL32.class, W32APIOptions.ASCII_OPTIONS);
+    OpenGL32 INSTANCE = (OpenGL32) Native.loadLibrary("opengl32", OpenGL32.class, W32APIOptions.ASCII_OPTIONS);
 
-	/**
-	 * The glGetString function returns a string describing the current OpenGL connection.
-	 *
-	 * @param name
-	 *            One of the following symbolic constants.
-	 * @return the String
-	 */
-	public String glGetString(int name);
+    /**
+     * The glGetString function returns a string describing the current OpenGL connection.
+     *
+     * @param name
+     *            One of the following symbolic constants.
+     * @return the String
+     */
+    public String glGetString(int name);
 
-	/**
-	 * The wglCreateContext function creates a new OpenGL rendering context, which is suitable for drawing on the device
-	 * referenced by hdc. The rendering context has the same pixel format as the device context.
-	 *
-	 * @param hdc
-	 *            Handle to a device context for which the function creates a suitable OpenGL rendering context.
-	 * @return handle to an OpenGL rendering context
-	 */
-	public HGLRC wglCreateContext(HDC windowDC);
+    /**
+     * The wglCreateContext function creates a new OpenGL rendering context, which is suitable for drawing on the device
+     * referenced by hdc. The rendering context has the same pixel format as the device context.
+     *
+     * @param hdc
+     *            Handle to a device context for which the function creates a suitable OpenGL rendering context.
+     * @return handle to an OpenGL rendering context
+     */
+    public HGLRC wglCreateContext(HDC windowDC);
 
-	/**
-	 * The wglGetCurrentContext function obtains a handle to the current OpenGL rendering context of the calling thread.
-	 *
-	 * @return If the calling thread has a current OpenGL rendering context, wglGetCurrentContext returns a
-	 *         handle to that rendering context. Otherwise, the return value is NULL.
-	 */
-	public HGLRC wglGetCurrentContext();
+    /**
+     * The wglGetCurrentContext function obtains a handle to the current OpenGL rendering context of the calling thread.
+     *
+     * @return If the calling thread has a current OpenGL rendering context, wglGetCurrentContext returns a
+     *         handle to that rendering context. Otherwise, the return value is NULL.
+     */
+    public HGLRC wglGetCurrentContext();
 
-	/**
-	 * The wglMakeCurrent function makes a specified OpenGL rendering context the calling thread's current rendering
-	 * context. All subsequent OpenGL calls made by the thread are drawn on the device identified by hdc.
-	 *
-	 * @param hdc
-	 *            Handle to a device context. Subsequent OpenGL calls made by the calling thread are drawn on the
-	 *            device identified by hdc.
-	 * @param hglrc
-	 *            Handle to an OpenGL rendering context that the function sets as the calling thread's rendering context.
-	 * @return true if successful
-	 */
-	public boolean wglMakeCurrent(HDC windowDC, HGLRC hglrc);
+    /**
+     * The wglMakeCurrent function makes a specified OpenGL rendering context the calling thread's current rendering
+     * context. All subsequent OpenGL calls made by the thread are drawn on the device identified by hdc.
+     *
+     * @param hdc
+     *            Handle to a device context. Subsequent OpenGL calls made by the calling thread are drawn on the
+     *            device identified by hdc.
+     * @param hglrc
+     *            Handle to an OpenGL rendering context that the function sets as the calling thread's rendering context.
+     * @return true if successful
+     */
+    public boolean wglMakeCurrent(HDC windowDC, HGLRC hglrc);
 
-	/**
-	 * The wglDeleteContext function deletes a specified OpenGL rendering context.
-	 *
-	 * @param hglrc
-	 *            Handle to an OpenGL rendering context that the function will delete.
-	 * @return true if successful
-	 */
-	public boolean wglDeleteContext(HGLRC hglrc);
+    /**
+     * The wglDeleteContext function deletes a specified OpenGL rendering context.
+     *
+     * @param hglrc
+     *            Handle to an OpenGL rendering context that the function will delete.
+     * @return true if successful
+     */
+    public boolean wglDeleteContext(HGLRC hglrc);
 
-	/**
-	 * The wglGetProcAddress function returns the address of an OpenGL extension function for use with the
-	 * current OpenGL rendering context.
-	 *
-	 * @param lpszProc
-	 *            Points to a null-terminated string that is the name of the extension function.
-	 *            The name of the extension function must be identical to a corresponding function implemented by OpenGL.
-	 * @return When the function succeeds, the return value is the address of the extension function.
-	 */
-	public Pointer wglGetProcAddress(String lpszProc);
+    /**
+     * The wglGetProcAddress function returns the address of an OpenGL extension function for use with the
+     * current OpenGL rendering context.
+     *
+     * @param lpszProc
+     *            Points to a null-terminated string that is the name of the extension function.
+     *            The name of the extension function must be identical to a corresponding function implemented by OpenGL.
+     * @return When the function succeeds, the return value is the address of the extension function.
+     */
+    public Pointer wglGetProcAddress(String lpszProc);
 }
