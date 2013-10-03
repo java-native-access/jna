@@ -47,6 +47,7 @@ public class OpenGL32Test extends TestCase {
         HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
         OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
         String glString = OpenGL32.INSTANCE.glGetString(WinOpenGL.GL_VERSION);
+        System.out.println("GL_VERSION="+glString);
         OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
 
         // destroy the window
@@ -75,6 +76,7 @@ public class OpenGL32Test extends TestCase {
         HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
         OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
         String glString = OpenGL32.INSTANCE.glGetString(WinOpenGL.GL_RENDERER);
+        System.out.println("GL_RENDERER="+glString);
         OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
 
         // destroy the window
@@ -103,6 +105,7 @@ public class OpenGL32Test extends TestCase {
         HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
         OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
         String glString = OpenGL32.INSTANCE.glGetString(WinOpenGL.GL_VENDOR);
+        System.out.println("GL_VENDOR="+glString);
         OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
 
         // destroy the window
@@ -131,6 +134,7 @@ public class OpenGL32Test extends TestCase {
         HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
         OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
         String glString = OpenGL32.INSTANCE.glGetString(WinOpenGL.GL_EXTENSIONS);
+        System.out.println("GL_EXTENSIONS="+glString);
         OpenGL32.INSTANCE.wglDeleteContext(hGLRC);
 
         // destroy the window

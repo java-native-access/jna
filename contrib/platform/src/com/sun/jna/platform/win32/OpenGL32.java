@@ -17,20 +17,19 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinOpenGL.HGLRC;
 import com.sun.jna.win32.StdCallLibrary;
-import com.sun.jna.win32.W32APIOptions;
 
 /**
  * opengl32.dll Interface.
  */
 public interface OpenGL32 extends StdCallLibrary {
-    OpenGL32 INSTANCE = (OpenGL32) Native.loadLibrary("opengl32", OpenGL32.class, W32APIOptions.ASCII_OPTIONS);
+    OpenGL32 INSTANCE = (OpenGL32) Native.loadLibrary("opengl32", OpenGL32.class);
 
     /**
      * The glGetString function returns a string describing the current OpenGL connection.
      *
      * @param name
      *            One of the following symbolic constants.
-     * @return the String
+     * @return The glGetString function returns a pointer to a static string describing some aspect of the current OpenGL connection.
      */
     public String glGetString(int name);
 
