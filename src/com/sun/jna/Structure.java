@@ -533,7 +533,8 @@ public abstract class Structure {
         }
         try {
             for (Iterator i=fields().values().iterator();i.hasNext();) {
-                readField((StructField)i.next());
+                StructField structField = (StructField)i.next();
+                readField(structField);
             }
         }
         finally {

@@ -1,0 +1,6 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}
+	 * Member id: ${memberid}
+	 */
+	public ${returntype} ${methodname}();

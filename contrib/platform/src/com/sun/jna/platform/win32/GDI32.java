@@ -123,7 +123,7 @@ public interface GDI32 extends StdCallLibrary {
      *  If the function fails, the return value is zero. 
      *  To get extended error information, call GetLastError.
      */
-    HRGN CreatePolyPolygonRgn(WinUser.POINT[] lppt, int[] lpPolyCounts,
+    HRGN CreatePolyPolygonRgn(WinDef.POINT[] lppt, int[] lpPolyCounts,
                               int nCount, int fnPolyFillMode);
 
     /**

@@ -1,0 +1,8 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}
+	 * Member id: ${memberid}
+	 */
+	public ${returntype} ${methodname}(${methodparams}) {
+		return this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, new DISPID(${memberid}));
+	}

@@ -1,4 +1,4 @@
-package com.sun.jna.platform.win32.office;
+package com.sun.jna.platform.win32.COM;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,10 +10,11 @@ import com.sun.jna.platform.win32.COM.COMUtils.COMInfo;
 public class COMInfoUtil {
 
 	public static void main(String[] args) {
+		FileWriter writer = null;
 		try {
 			String filename = "C:\\TEMP\\CLSIDs.txt";
 			ArrayList<COMInfo> comInfos = COMUtils.getAllCOMInfoOnSystem();
-			FileWriter writer = new FileWriter(filename);
+			writer = new FileWriter(filename);
 
 			for (COMInfo comInfo : comInfos) {
 				String result = "CLSID: " + comInfo.clsid + "\n";
@@ -31,6 +32,12 @@ public class COMInfoUtil {
 					+ comInfos.size());
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

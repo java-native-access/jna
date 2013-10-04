@@ -3,6 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jnalib"/>
-	<classpathentry kind="lib" path="C:/GitHub/jna-3.5.1.jar"/>
+	<classpathentry kind="var" path="JNA_LIB"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
