@@ -57,19 +57,18 @@ public class OleAutoTest extends TestCase {
 	}
 
 	public void testLoadRegTypeLib() {
-		// MS Word typelib guid
 		CLSID.ByReference clsid = new CLSID.ByReference();
-		// get CLSID from string
+		// get CLSID from string, Microsoft Scripting Engine
 		HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
-				"{00020905-0000-0000-C000-000000000046}"), clsid);
+				"{420B2830-E718-11CF-893D-00A0C9054228}"), clsid);
 		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 
 		// get user default lcid
 		LCID lcid = Kernel32.INSTANCE.GetUserDefaultLCID();
 		PointerByReference pWordTypeLib = new PointerByReference();
-		// get typelib based on Word 8.3 (v11)
-		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 8, 3, lcid, pWordTypeLib);
+		// get typelib version 1.0
+		hr = OleAuto.INSTANCE.LoadRegTypeLib(clsid, 1, 0, lcid, pWordTypeLib);
 		COMUtils.checkRC(hr);
 		assertEquals(0, hr.intValue());
 	}
