@@ -209,7 +209,7 @@ public interface WTypes {
         }
 
         public LPOLESTR(String value) {
-            this();
+            super(new Memory((value.length() + 1L) * Native.WCHAR_SIZE));
             this.setValue(value);
         }
 
