@@ -83,10 +83,9 @@ public class Ole32Test extends TestCase {
 		HRESULT hrCI = Ole32.INSTANCE.CoInitializeEx(null, 0);
 
 		GUID guid = Ole32Util
-				.getGUIDFromString("{13709620-C279-11CE-A49E-444553540000}"); // Shell
-																				// object
+				.getGUIDFromString("{00021401-0000-0000-C000-000000000046}"); // Shell object
 		GUID riid = Ole32Util
-				.getGUIDFromString("{D8F015C0-C278-11CE-A49E-444553540000}"); // IShellDispatch
+				.getGUIDFromString("{000214EE-0000-0000-C000-000000000046}"); // IShellLinkA
 
 		PointerByReference pDispatch = new PointerByReference();
 
