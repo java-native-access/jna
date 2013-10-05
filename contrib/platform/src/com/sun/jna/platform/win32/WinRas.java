@@ -633,7 +633,7 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public char[] szDeviceType = new char[RAS_MaxDeviceType + 1];
 		/**
-		 * A string that specifies the name of the current device, if available. This would be the name of the modem —
+		 * A string that specifies the name of the current device, if available. This would be the name of the modem -
 		 * for example, "Hayes SmartModem 2400"; the name of the PAD, for example "US Sprint"; or the name of a
 		 * switch device, for example "Racal-Guardata".
 		 */
