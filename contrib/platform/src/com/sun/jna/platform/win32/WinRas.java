@@ -291,7 +291,6 @@ public interface WinRas extends StdCallLibrary {
 		public RASCONN() {
 			super();
 			dwSize = size();
-			System.out.println("Size="+dwSize);
 		}
 
 		public RASCONN(Pointer memory) {

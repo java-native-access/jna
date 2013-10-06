@@ -1,4 +1,4 @@
-﻿NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
@@ -13,6 +13,8 @@ Features
 * [#226](https://github.com/twall/jna/issues/226): Added OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
 * [#267](https://github.com/twall/jna/pull/267): Added support for Windows RAS32 API, `com.sun.jna.platform.win32.Rasapi32` and `Rasapi32Util` - [@kc7bfi](https://github.com/kc7bfi).
 * [#101](https://github.com/twall/jna/issues/101): Modify `com.sun.jna.platform.win32.Advapi32Util.registryGet*` API to support `KEY_WOW64` option - [@falldog] (https://github.com/falldog).
+* [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.Gdi32.ChoosePixelFormat` and `SetPixelFormat` - [@kc7bfi](https://github.com/kc7bfi).
+* [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
 
 Bug Fixes
 ---------
@@ -693,3 +695,4 @@ Bug Fixes
 * Properly handle NULL when the return value is a Structure
 * Proper conversion to wchar_t on linux
 * Copy full length of Java strings to C strings instead of stopping when a NUL character is encountered
+
