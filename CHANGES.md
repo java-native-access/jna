@@ -17,6 +17,7 @@ Features
 Bug Fixes
 ---------
 * Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
+* [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
 
 Release 4.0
 ===========
