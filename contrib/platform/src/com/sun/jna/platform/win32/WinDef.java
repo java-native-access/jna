@@ -23,6 +23,7 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -1509,4 +1510,53 @@ public interface WinDef extends StdCallLibrary {
             return new CHAR(getPointer().getChar(0));
         }
     }
+
+	/**
+	 * handle to an OpenGL rendering context
+	 */
+	public static class HGLRC extends HANDLE {
+	
+	    /**
+	     * Instantiates a new HGLRC .
+	     */
+	    public HGLRC() {
+	
+	    }
+	
+	    /**
+	     * Instantiates a new HGLRC .
+	     *
+	     * @param p
+	     *            the p
+	     */
+	    public HGLRC(Pointer p) {
+	        super(p);
+	    }
+	}
+	
+    /**
+     * handle to an OpenGL rendering context
+     */
+    public static class HGLRCByReference extends HANDLEByReference {
+
+        /**
+         * Instantiates a new HGLRC .
+         */
+        public HGLRCByReference() {
+
+        }
+
+        /**
+         * Instantiates a new HGLRC .
+         *
+         * @param p
+         *            the p
+         */
+        public HGLRCByReference(HGLRC h) {
+            super(h);
+        }
+    }
+
+	
+	
 }
