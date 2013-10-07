@@ -15,7 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HDC;
-import com.sun.jna.platform.win32.WinOpenGL.HGLRC;
+import com.sun.jna.platform.win32.WinDef.HGLRC;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
@@ -41,7 +41,7 @@ public interface OpenGL32 extends StdCallLibrary {
      *            Handle to a device context for which the function creates a suitable OpenGL rendering context.
      * @return handle to an OpenGL rendering context
      */
-    public HGLRC wglCreateContext(HDC windowDC);
+    public WinDef.HGLRC wglCreateContext(HDC windowDC);
 
     /**
      * The wglGetCurrentContext function obtains a handle to the current OpenGL rendering context of the calling thread.
@@ -49,7 +49,7 @@ public interface OpenGL32 extends StdCallLibrary {
      * @return If the calling thread has a current OpenGL rendering context, wglGetCurrentContext returns a
      *         handle to that rendering context. Otherwise, the return value is NULL.
      */
-    public HGLRC wglGetCurrentContext();
+    public WinDef.HGLRC wglGetCurrentContext();
 
     /**
      * The wglMakeCurrent function makes a specified OpenGL rendering context the calling thread's current rendering
@@ -62,7 +62,7 @@ public interface OpenGL32 extends StdCallLibrary {
      *            Handle to an OpenGL rendering context that the function sets as the calling thread's rendering context.
      * @return true if successful
      */
-    public boolean wglMakeCurrent(HDC windowDC, HGLRC hglrc);
+    public boolean wglMakeCurrent(HDC windowDC, WinDef.HGLRC hglrc);
 
     /**
      * The wglDeleteContext function deletes a specified OpenGL rendering context.
@@ -71,7 +71,7 @@ public interface OpenGL32 extends StdCallLibrary {
      *            Handle to an OpenGL rendering context that the function will delete.
      * @return true if successful
      */
-    public boolean wglDeleteContext(HGLRC hglrc);
+    public boolean wglDeleteContext(WinDef.HGLRC hglrc);
 
     /**
      * The wglGetProcAddress function returns the address of an OpenGL extension function for use with the

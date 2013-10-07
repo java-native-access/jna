@@ -15,10 +15,9 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HGLRCByReference;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinGDI.PIXELFORMATDESCRIPTOR;
-import com.sun.jna.platform.win32.WinOpenGL.HGLRC;
-import com.sun.jna.platform.win32.WinOpenGL.HGPUNVByReference;
 
 /**
  * opengl32 utility API.
@@ -56,7 +55,7 @@ public abstract class OpenGL32Util {
         GDI32.INSTANCE.SetPixelFormat(hdc, GDI32.INSTANCE.ChoosePixelFormat(hdc, pfd), pfd);
 
         // create the OpenGL context to get function address
-        HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
+        WinDef.HGLRC hGLRC = OpenGL32.INSTANCE.wglCreateContext(hdc);
         OpenGL32.INSTANCE.wglMakeCurrent(hdc, hGLRC);
         Pointer funcPointer = OpenGL32.INSTANCE.wglGetProcAddress("wglEnumGpusNV");
         Function fncEnumGpusNV = (funcPointer == null) ? null : Function.getFunction(funcPointer);
@@ -70,7 +69,7 @@ public abstract class OpenGL32Util {
         if (fncEnumGpusNV == null) return 0;
 
         // enumerate nVidia adapters
-        HGPUNVByReference hGPU = new HGPUNVByReference();
+        HGLRCByReference hGPU = new HGLRCByReference();
         for (int i = 0; i < 16; i++) {
             Boolean ok = (Boolean) fncEnumGpusNV.invoke(Boolean.class, new Object[] { Integer.valueOf(i), hGPU, });
             if (!ok.booleanValue()) return i;
