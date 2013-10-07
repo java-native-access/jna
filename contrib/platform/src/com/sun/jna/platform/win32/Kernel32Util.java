@@ -362,4 +362,67 @@ public abstract class Kernel32Util implements WinDef {
         return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation
                 .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[returnedStructCount]);
     }
+    
+    /**
+     * Retrieves all the keys and values for the specified section of an initialization file.
+     *
+     * <p>
+     * Each string has the following format: {@code key=string}.
+     * </p>
+     * <p>
+     * This operation is atomic; no updates to the specified initialization file are allowed while this method is executed.
+     * </p>
+     *
+     * @param appName
+     *            The name of the section in the initialization file.
+     * @param fileName
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
+     * @return The key name and value pairs associated with the named section.
+     */
+    public static final String[] getPrivateProfileSection(final String appName, final String fileName) {
+        final char buffer[] = new char[32768]; // Maximum section size according to MSDN (http://msdn.microsoft.com/en-us/library/windows/desktop/ms724348(v=vs.85).aspx)
+        if (Kernel32.INSTANCE.GetPrivateProfileSection(appName, buffer, new DWORD(buffer.length), fileName).intValue() == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return new String(buffer).split("\0");
+    }
+
+    /**
+     * Retrieves the names of all sections in an initialization file.
+     * <p>
+     * This operation is atomic; no updates to the initialization file are allowed while this method is executed.
+     * </p>
+     *
+     * @param fileName
+     *            The name of the initialization file. If this parameter is {@code NULL}, the function searches the Win.ini file. If this parameter does not
+     *            contain a full path to the file, the system searches for the file in the Windows directory.
+     * @return the section names associated with the named file.
+     */
+    public static final String[] getPrivateProfileSectionNames(final String fileName) {
+        final char buffer[] = new char[65536]; // Maximum INI file size according to MSDN (http://support.microsoft.com/kb/78346)
+        if (Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), fileName).intValue() == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return new String(buffer).split("\0");
+    }
+
+    /**
+     * @param appName
+     *            The name of the section in which data is written. This section name is typically the name of the calling application.
+     * @param strings
+     *            The new key names and associated values that are to be written to the named section. Each entry must be of the form {@code key=value}.
+     * @param fileName
+     *            The name of the initialization file. If this parameter does not contain a full path for the file, the function searches the Windows directory
+     *            for the file. If the file does not exist and lpFileName does not contain a full path, the function creates the file in the Windows directory.
+     */
+    public static final void writePrivateProfileSection(final String appName, final String[] strings, final String fileName) {
+        final StringBuilder buffer = new StringBuilder();
+        for (final String string : strings)
+            buffer.append(string).append('\0');
+        buffer.append('\0');
+        if (! Kernel32.INSTANCE.WritePrivateProfileSection(appName, buffer.toString(), fileName)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
 }

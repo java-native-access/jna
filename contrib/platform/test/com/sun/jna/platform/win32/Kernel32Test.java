@@ -531,4 +531,66 @@ public class Kernel32Test extends TestCase {
         assertEquals(reader.readLine(), null);
         reader.close();
     }
+    
+    public final void testGetPrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[X]");
+            writer.println("A=1");
+            writer.println("B=X");
+        } finally {
+            writer.close();
+        }
+
+        final char[] buffer = new char[9];
+        final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSection("X", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+
+        assertEquals(len.intValue(), 7);
+        assertEquals(new String(buffer), "A=1\0B=X\0\0");
+    }
+
+    public final void testGetPrivateProfileSectionNames() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("[S2]");
+        } finally {
+            writer.close();
+        }
+
+        final char[] buffer = new char[7];
+        final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(len.intValue(), 5);
+        assertEquals(new String(buffer), "S1\0S2\0\0");
+    }
+
+    public final void testWritePrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testWritePrivateProfileSection", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("A=1");
+            writer.println("B=X");
+        } finally {
+            writer.close();
+        }
+
+        final boolean result = Kernel32.INSTANCE.WritePrivateProfileSection("S1", "A=3\0E=Z\0\0", tmp.getCanonicalPath());
+        assertTrue(result);
+
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        assertEquals(reader.readLine(), "[S1]");
+        assertTrue(reader.readLine().matches("A\\s*=\\s*3"));
+        assertTrue(reader.readLine().matches("E\\s*=\\s*Z"));
+        reader.close();
+    }
+
 }

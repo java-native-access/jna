@@ -180,4 +180,76 @@ public class Kernel32UtilTest extends TestCase {
         assertEquals(reader.readLine(), null);
         reader.close();
     }
+    
+    public final void testGetPrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[X]");
+            writer.println("A=1");
+            writer.println("foo=bar");
+        } finally {
+            writer.close();
+        }
+
+        final String[] lines = Kernel32Util.getPrivateProfileSection("X", tmp.getCanonicalPath());
+        assertEquals(lines.length, 2);
+        assertEquals(lines[0], "A=1");
+        assertEquals(lines[1], "foo=bar");
+    }
+
+    public final void testGetPrivateProfileSectionNames() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", "ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("A=1");
+            writer.println("B=X");
+            writer.println("[S2]");
+            writer.println("C=2");
+            writer.println("D=Y");
+        } finally {
+            writer.close();
+        }
+
+        String[] sectionNames = Kernel32Util.getPrivateProfileSectionNames(tmp.getCanonicalPath());
+        assertEquals(sectionNames.length, 2);
+        assertEquals(sectionNames[0], "S1");
+        assertEquals(sectionNames[1], "S2");
+    }
+
+    public final void testWritePrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testWritePrivateProfileSecion", "ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("A=1");
+            writer.println("B=X");
+            writer.println("[S2]");
+            writer.println("C=2");
+            writer.println("foo=bar");
+        } finally {
+            writer.close();
+        }
+
+        Kernel32Util.writePrivateProfileSection("S1", new String[] { "A=3", "E=Z" }, tmp.getCanonicalPath());
+
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        try {
+            assertEquals(reader.readLine(), "[S1]");
+            assertEquals(reader.readLine(), "A=3");
+            assertEquals(reader.readLine(), "E=Z");
+            assertEquals(reader.readLine(), "[S2]");
+            assertEquals(reader.readLine(), "C=2");
+            assertEquals(reader.readLine(), "foo=bar");
+        } finally {
+            reader.close();
+        }        
+    }
 }
