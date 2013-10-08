@@ -20,6 +20,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/moxie/ffitarget.h src/moxie/eabi.S src/mips/ffitarget.h	\
 	 src/m32r/ffi.c src/m32r/sysv.S src/m32r/ffitarget.h		\
 	 src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h		\
+	 src/m88k/ffi.c src/m88k/obsd.S src/m88k/ffitarget.h		\
 	 src/microblaze/ffi.c src/microblaze/sysv.S			\
 	 src/microblaze/ffitarget.h src/powerpc/ffi.c			\
 	 src/powerpc/sysv.S src/powerpc/linux64.S			\
@@ -39,6 +40,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/bfin/ffitarget.h src/bfin/sysv.S src/frv/eabi.S		\
 	 src/frv/ffitarget.h src/dlmalloc.c src/tile/ffi.c		\
 	 src/tile/ffitarget.h src/tile/tile.S libtool-version		\
+	 src/vax/ffi.c src/vax/ffitarget.h src/vax/elfbsd.S		\
 	 src/xtensa/ffitarget.h src/xtensa/ffi.c src/xtensa/sysv.S	\
 	 ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4		\
 	 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
@@ -150,6 +152,9 @@ endif
 if M68K
 nodist_libffi_la_SOURCES += src/m68k/ffi.c src/m68k/sysv.S
 endif
+if M88K
+nodist_libffi_la_SOURCES += src/m88k/ffi.c src/m88k/obsd.S
+endif
 if MOXIE
 nodist_libffi_la_SOURCES += src/moxie/ffi.c src/moxie/eabi.S
 endif
@@ -215,6 +220,9 @@ nodist_libffi_la_SOURCES += src/xtensa/sysv.S src/xtensa/ffi.c
 endif
 if METAG
 nodist_libffi_la_SOURCES += src/metag/sysv.S src/metag/ffi.c
+endif
+if VAX
+nodist_libffi_la_SOURCES += src/vax/elfbsd.S src/vax/ffi.c
 endif
 
 libffi_convenience_la_SOURCES = $(libffi_la_SOURCES)

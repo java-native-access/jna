@@ -1,3 +1,22 @@
+2013-10-08  Anthony Green  <green@moxielogic.com>
+
+	* aclocal.m4, compile, config.guess, config.sub, depcomp,
+	install-sh, mdate-sh, missing, texinfo.tex: Update from upstream.
+	* configure.ac: Update version to 3.0.14-rc0.
+	* Makefile.in, configure, Makefile.in, include/Makefile.in,
+	man/Makefile.in, testsuite/Makefile.in: Rebuilt.
+
+2013-07-15  Miod Vallat  <miod@openbsd.org>
+
+	* Makefile.am,
+	configure.ac,
+	src/m88k/ffi.c,
+	src/m88k/ffitarget.h,
+	src/m88k/obsd.S,
+	src/vax/elfbsd.S,
+	src/vax/ffi.c,
+	src/vax/ffitarget.h: Add m88k and vax support.
+
 2013-06-24 Alan Modra  <amodra@gmail.com>
 
 	* src/powerpc/ffi.c (ffi_prep_args_SYSV): Move var declaration

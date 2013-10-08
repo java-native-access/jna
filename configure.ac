@@ -2,7 +2,7 @@ dnl Process this with autoconf to create configure
 
 AC_PREREQ(2.68)
 
-AC_INIT([libffi], [3.0.13], [http://github.com/atgreen/libffi/issues])
+AC_INIT([libffi], [3.0.14-rc0], [http://github.com/atgreen/libffi/issues])
 AC_CONFIG_HEADERS([fficonfig.h])
 
 AC_CANONICAL_SYSTEM
@@ -195,6 +195,10 @@ case "$host" in
 	TARGET=M68K; TARGETDIR=m68k
 	;;
 
+  m88k-*-*)
+	TARGET=M88K; TARGETDIR=m88k
+	;;
+
   microblaze*-*-*)
 	TARGET=MICROBLAZE; TARGETDIR=microblaze
 	;;
@@ -260,6 +264,10 @@ case "$host" in
         TARGET=TILE; TARGETDIR=tile
         ;;
 
+  vax-*-*)
+	TARGET=VAX; TARGETDIR=vax
+	;;
+
   xtensa*-*)
 	TARGET=XTENSA; TARGETDIR=xtensa
 	;;
@@ -285,6 +293,7 @@ AM_CONDITIONAL(ALPHA, test x$TARGET = xALPHA)
 AM_CONDITIONAL(IA64, test x$TARGET = xIA64)
 AM_CONDITIONAL(M32R, test x$TARGET = xM32R)
 AM_CONDITIONAL(M68K, test x$TARGET = xM68K)
+AM_CONDITIONAL(M88K, test x$TARGET = xM88K)
 AM_CONDITIONAL(MICROBLAZE, test x$TARGET = xMICROBLAZE)
 AM_CONDITIONAL(METAG, test x$TARGET = xMETAG)
 AM_CONDITIONAL(MOXIE, test x$TARGET = xMOXIE)
@@ -306,6 +315,7 @@ AM_CONDITIONAL(PA_LINUX, test x$TARGET = xPA_LINUX)
 AM_CONDITIONAL(PA_HPUX, test x$TARGET = xPA_HPUX)
 AM_CONDITIONAL(PA64_HPUX, test x$TARGET = xPA64_HPUX)
 AM_CONDITIONAL(TILE, test x$TARGET = xTILE)
+AM_CONDITIONAL(VAX, test x$TARGET = xVAX)
 AM_CONDITIONAL(XTENSA, test x$TARGET = xXTENSA)
 
 AC_HEADER_STDC
