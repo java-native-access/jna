@@ -1,3 +1,13 @@
+2013-10-08  Ondřej Bílka  <neleai@seznam.cz>
+
+	* src/aarch64/ffi.c, src/aarch64/sysv.S, src/arm/ffi.c,
+	src/arm/gentramp.sh, src/bfin/sysv.S, src/closures.c,
+	src/dlmalloc.c, src/ia64/ffi.c, src/microblaze/ffi.c,
+	src/microblaze/sysv.S, src/powerpc/darwin_closure.S,
+	src/powerpc/ffi.c, src/powerpc/ffi_darwin.c, src/sh/ffi.c,
+	src/tile/tile.S, testsuite/libffi.call/nested_struct11.c: Fix
+	spelling errors.
+
 2013-10-08  Anthony Green  <green@moxielogic.com>
 
 	* aclocal.m4, compile, config.guess, config.sub, depcomp,
@@ -5,6 +15,7 @@
 	* configure.ac: Update version to 3.0.14-rc0.
 	* Makefile.in, configure, Makefile.in, include/Makefile.in,
 	man/Makefile.in, testsuite/Makefile.in: Rebuilt.
+	* README: Mention M88K and VAX.
 
 2013-07-15  Miod Vallat  <miod@openbsd.org>
 

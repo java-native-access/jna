@@ -192,7 +192,7 @@ LCFI1:
 	lg	r0,0(r3)		; size => r0
 	lhz	r3,FFI_TYPE_TYPE(r3)	; type => r3
 
-	/* The helper will have intercepted struture returns and inserted
+	/* The helper will have intercepted structure returns and inserted
 	   the caller`s destination address for structs returned by ref.  */
 
 	/* r3 contains the return type  so use it to look up in a table

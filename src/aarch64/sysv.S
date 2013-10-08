@@ -287,7 +287,7 @@ ffi_closure_SYSV:
         ldp     x2, x3, [x21, #16]
         ldp     x4, x5, [x21, #32]
         ldp     x6, x7, [x21, #48]
-        /* Note nothing usefull is returned in x8.  */
+        /* Note nothing useful is returned in x8.  */
 
         /* We are done, unwind our frame.  */
         ldp     x21, x22, [x29,  #-16]

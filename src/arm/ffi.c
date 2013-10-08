@@ -537,7 +537,7 @@ typedef struct ffi_trampoline_table ffi_trampoline_table;
 typedef struct ffi_trampoline_table_entry ffi_trampoline_table_entry;
 
 struct ffi_trampoline_table {
-  /* contigious writable and executable pages */
+  /* contiguous writable and executable pages */
   vm_address_t config_page;
   vm_address_t trampoline_page;
 
@@ -577,7 +577,7 @@ ffi_trampoline_table_alloc ()
 {
   ffi_trampoline_table *table = NULL;
 
-  /* Loop until we can allocate two contigious pages */
+  /* Loop until we can allocate two contiguous pages */
   while (table == NULL) {
     vm_address_t config_page = 0x0;
     kern_return_t kt;

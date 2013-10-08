@@ -32,7 +32,7 @@
 .align 4
 
 	/*
-	 There is a "feature" in the bfin toolchain that it puts a _ before funcion names
+	 There is a "feature" in the bfin toolchain that it puts a _ before function names
 	 that's why the function here it's called _ffi_call_SYSV and not ffi_call_SYSV
 	 */
 	.global _ffi_call_SYSV;

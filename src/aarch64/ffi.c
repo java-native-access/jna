@@ -447,7 +447,7 @@ allocate_to_stack (struct arg_state *state, void *stack, unsigned alignment,
 static void
 copy_basic_type (void *dest, void *source, unsigned short type)
 {
-  /* This is neccessary to ensure that basic types are copied
+  /* This is necessary to ensure that basic types are copied
      sign extended to 64-bits as libffi expects.  */
   switch (type)
     {
@@ -857,10 +857,10 @@ ffi_prep_closure_loc (ffi_closure* closure,
    the stack at the point ffi_closure_SYSV() was invoked.
 
    On the return path the assembler wrapper will reload call context
-   regsiters.
+   registers.
 
    ffi_closure_SYSV_inner() marshalls the call context into ffi value
-   desriptors, invokes the wrapped function, then marshalls the return
+   descriptors, invokes the wrapped function, then marshalls the return
    value back into the call context.  */
 
 void
@@ -924,7 +924,7 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 			   therefore the structure is not represented as
 			   a contiguous sequence of bytes in our saved
 			   register context. We need to fake up a copy
-			   of the structure layed out in memory
+			   of the structure laid out in memory
 			   correctly. The fake can be tossed once the
 			   closure function has returned hence alloca()
 			   is sufficient. */
@@ -945,7 +945,7 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 			   therefore the structure is not represented as
 			   a contiguous sequence of bytes in our saved
 			   register context. We need to fake up a copy
-			   of the structure layed out in memory
+			   of the structure laid out in memory
 			   correctly. The fake can be tossed once the
 			   closure function has returned hence alloca()
 			   is sufficient. */

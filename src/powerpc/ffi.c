@@ -376,7 +376,7 @@ ffi_prep_args_SYSV (extended_cif *ecif, unsigned *const stack)
   FFI_ASSERT (gpr_base.u <= stacktop.u - ASM_NEEDS_REGISTERS);
   /* The assert below is testing that the number of integer arguments agrees
      with the number found in ffi_prep_cif_machdep().  However, intarg_count
-     is incremeneted whenever we place an FP arg on the stack, so account for
+     is incremented whenever we place an FP arg on the stack, so account for
      that before our assert test.  */
 #ifndef __NO_FPRS__
   if (fparg_count > NUM_FPR_ARG_REGISTERS)
