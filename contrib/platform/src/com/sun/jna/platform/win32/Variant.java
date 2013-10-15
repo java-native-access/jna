@@ -19,6 +19,7 @@ import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.CHARByReference;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONGByReference;
@@ -35,6 +36,8 @@ import com.sun.jna.platform.win32.WinDef.ULONGLONGByReference;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.USHORTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IRecordInfo;
@@ -140,9 +143,29 @@ public interface Variant {
             this.setValue(VT_BOOL, value);
         }
 
-        public VARIANT(LONG value) {
+        public VARIANT(BYTE value) {
             this();
-            this.setValue(VT_I4, value);
+            this.setValue(VT_UI1, value);
+        }
+
+        public VARIANT(WORD value) {
+            this();
+            this.setValue(VT_UI2, value);
+        }
+
+        public VARIANT(DWORD value) {
+            this();
+            this.setValue(VT_UI4, value);
+        }
+
+        public VARIANT(ULONGLONG value) {
+            this();
+            this.setValue(VT_UI8, value);
+        }
+
+        public VARIANT(CHAR value) {
+            this();
+            this.setValue(VT_I1, value);
         }
 
         public VARIANT(SHORT value) {
@@ -150,9 +173,24 @@ public interface Variant {
             this.setValue(VT_I2, value);
         }
 
+        public VARIANT(LONG value) {
+            this();
+            this.setValue(VT_I4, value);
+        }
+
+        public VARIANT(LONGLONG value) {
+            this();
+            this.setValue(VT_I8, value);
+        }
+
         public VARIANT(DATE value) {
             this();
             this.setValue(VT_DATE, value);
+        }
+
+        public VARIANT(byte value) {
+            this();
+            this.setValue(VT_I1, value);
         }
 
         public VARIANT(short value) {
@@ -205,6 +243,11 @@ public interface Variant {
             this.setValue(VT_DATE, date);
         }
 
+        public VARIANT(CURRENCY value) {
+            this();
+            this.setValue(VT_CY, value);
+        }
+
         public VARTYPE getVarType() {
             this.read();
             return _variant.vt;
@@ -220,14 +263,35 @@ public interface Variant {
 
         public void setValue(VARTYPE vt, Object value) {
             switch (vt.intValue()) {
+            case VT_I1:
+                this._variant.__variant.writeField("cVal", value);
+                break;
             case VT_I2:
                 this._variant.__variant.writeField("iVal", value);
+                break;
+            case VT_INT:
+                this._variant.__variant.writeField("intVal", value);
                 break;
             case VT_I4:
                 this._variant.__variant.writeField("lVal", value);
                 break;
             case VT_I8:
                 this._variant.__variant.writeField("llVal", value);
+                break;
+            case VT_UI1:
+                this._variant.__variant.writeField("bVal", value);
+                break;
+            case VT_UI2:
+                this._variant.__variant.writeField("uiVal", value);
+                break;
+            case VT_UINT:
+                this._variant.__variant.writeField("uintVal", value);
+                break;
+            case VT_UI4:
+                this._variant.__variant.writeField("ulVal", value);
+                break;
+            case VT_UI8:
+                this._variant.__variant.writeField("ullVal", value);
                 break;
             case VT_R4:
                 this._variant.__variant.writeField("fltVal", value);
@@ -238,6 +302,7 @@ public interface Variant {
             case VT_BOOL:
                 this._variant.__variant.writeField("boolVal", value);
                 break;
+            case VT_HRESULT:
             case VT_ERROR:
                 this._variant.__variant.writeField("scode", value);
                 break;
@@ -262,17 +327,38 @@ public interface Variant {
             case VT_ARRAY:
                 this._variant.__variant.writeField("parray", value);
                 break;
-            case VT_BYREF | VT_UI1:
-                this._variant.__variant.writeField("pbVal", value);
+            case VT_BYREF:
+                this._variant.__variant.writeField("byref", value);
+                break;
+            case VT_BYREF | VT_I1:
+                this._variant.__variant.writeField("pcVal", value);
                 break;
             case VT_BYREF | VT_I2:
                 this._variant.__variant.writeField("piVal", value);
+                break;
+            case VT_BYREF | VT_INT:
+                this._variant.__variant.writeField("pintVal", value);
                 break;
             case VT_BYREF | VT_I4:
                 this._variant.__variant.writeField("plVal", value);
                 break;
             case VT_BYREF | VT_I8:
                 this._variant.__variant.writeField("pllVal", value);
+                break;
+            case VT_BYREF | VT_UI1:
+                this._variant.__variant.writeField("pbVal", value);
+                break;
+            case VT_BYREF | VT_UI2:
+                this._variant.__variant.writeField("puiVal", value);
+                break;
+            case VT_BYREF | VT_UINT:
+                this._variant.__variant.writeField("puintVal", value);
+                break;
+            case VT_BYREF | VT_UI4:
+                this._variant.__variant.writeField("pulVal", value);
+                break;
+            case VT_BYREF | VT_UI8:
+                this._variant.__variant.writeField("pullVal", value);
                 break;
             case VT_BYREF | VT_R4:
                 this._variant.__variant.writeField("pfltVal", value);
@@ -307,47 +393,8 @@ public interface Variant {
             case VT_BYREF | VT_VARIANT:
                 this._variant.__variant.writeField("pvarVal", value);
                 break;
-            case VT_BYREF:
-                this._variant.__variant.writeField("byref", value);
-                break;
-            case VT_I1:
-                this._variant.__variant.writeField("cVal", value);
-                break;
-            case VT_UI2:
-                this._variant.__variant.writeField("uiVal", value);
-                break;
-            case VT_UI4:
-                this._variant.__variant.writeField("ulVal", value);
-                break;
-            case VT_UI8:
-                this._variant.__variant.writeField("ullVal", value);
-                break;
-            case VT_INT:
-                this._variant.__variant.writeField("intVal", value);
-                break;
-            case VT_UINT:
-                this._variant.__variant.writeField("uintVal", value);
-                break;
             case VT_BYREF | VT_DECIMAL:
                 this._variant.__variant.writeField("pdecVal", value);
-                break;
-            case VT_BYREF | VT_I1:
-                this._variant.__variant.writeField("pcVal", value);
-                break;
-            case VT_BYREF | VT_UI2:
-                this._variant.__variant.writeField("puiVal", value);
-                break;
-            case VT_BYREF | VT_UI4:
-                this._variant.__variant.writeField("pulVal", value);
-                break;
-            case VT_BYREF | VT_UI8:
-                this._variant.__variant.writeField("pullVal", value);
-                break;
-            case VT_BYREF | VT_INT:
-                this._variant.__variant.writeField("pintVal", value);
-                break;
-            case VT_BYREF | VT_UINT:
-                this._variant.__variant.writeField("puintVal", value);
                 break;
             }
 
@@ -358,18 +405,33 @@ public interface Variant {
         public Object getValue() {
             this.read();
             switch (this.getVarType().intValue()) {
+            case VT_I1:
+                return this._variant.__variant.readField("cVal");
             case VT_I2:
                 return this._variant.__variant.readField("iVal");
+            case VT_INT:
+              return this._variant.__variant.readField("intVal");
             case VT_I4:
                 return this._variant.__variant.readField("lVal");
             case VT_I8:
                 return this._variant.__variant.readField("llVal");
+            case VT_UI1:
+                return this._variant.__variant.readField("bVal");
+            case VT_UI2:
+                return this._variant.__variant.readField("uiVal");
+            case VT_UINT:
+              return this._variant.__variant.readField("uintVal");
+            case VT_UI4:
+                return this._variant.__variant.readField("ulVal");
+            case VT_UI8:
+                return this._variant.__variant.readField("ullVal");
             case VT_R4:
                 return this._variant.__variant.readField("fltVal");
             case VT_R8:
                 return this._variant.__variant.readField("dblVal");
             case VT_BOOL:
                 return this._variant.__variant.readField("boolVal");
+            case VT_HRESULT:
             case VT_ERROR:
                 return this._variant.__variant.readField("scode");
             case VT_CY:
@@ -386,14 +448,28 @@ public interface Variant {
                 return this._variant.__variant.readField("parray");
             case VT_ARRAY:
                 return this._variant.__variant.readField("parray");
-            case VT_BYREF | VT_UI1:
-                return this._variant.__variant.readField("pbVal");
+            case VT_BYREF:
+                return this._variant.__variant.readField("byref");
+            case VT_BYREF | VT_I1:
+                return this._variant.__variant.readField("pcVal");
             case VT_BYREF | VT_I2:
                 return this._variant.__variant.readField("piVal");
+            case VT_BYREF | VT_INT:
+                return this._variant.__variant.readField("pintVal");
             case VT_BYREF | VT_I4:
                 return this._variant.__variant.readField("plVal");
             case VT_BYREF | VT_I8:
                 return this._variant.__variant.readField("pllVal");
+            case VT_BYREF | VT_UI1:
+              return this._variant.__variant.readField("pbVal");
+            case VT_BYREF | VT_UI2:
+                return this._variant.__variant.readField("puiVal");
+            case VT_BYREF | VT_UINT:
+                return this._variant.__variant.readField("puintVal");
+            case VT_BYREF | VT_UI4:
+                return this._variant.__variant.readField("pulVal");
+            case VT_BYREF | VT_UI8:
+                return this._variant.__variant.readField("pullVal");
             case VT_BYREF | VT_R4:
                 return this._variant.__variant.readField("pfltVal");
             case VT_BYREF | VT_R8:
@@ -416,57 +492,39 @@ public interface Variant {
                 return this._variant.__variant.readField("pparray");
             case VT_BYREF | VT_VARIANT:
                 return this._variant.__variant.readField("pvarVal");
-            case VT_BYREF:
-                return this._variant.__variant.readField("byref");
-            case VT_I1:
-                return this._variant.__variant.readField("cVal");
-            case VT_UI2:
-                return this._variant.__variant.readField("uiVal");
-            case VT_UI4:
-                return this._variant.__variant.readField("ulVal");
-            case VT_UI8:
-                return this._variant.__variant.readField("ullVal");
-            case VT_INT:
-                return this._variant.__variant.readField("intVal");
-            case VT_UINT:
-                return this._variant.__variant.readField("uintVal");
             case VT_BYREF | VT_DECIMAL:
                 return this._variant.__variant.readField("pdecVal");
-            case VT_BYREF | VT_I1:
-                return this._variant.__variant.readField("pcVal");
-            case VT_BYREF | VT_UI2:
-                return this._variant.__variant.readField("puiVal");
-            case VT_BYREF | VT_UI4:
-                return this._variant.__variant.readField("pulVal");
-            case VT_BYREF | VT_UI8:
-                return this._variant.__variant.readField("pullVal");
-            case VT_BYREF | VT_INT:
-                return this._variant.__variant.readField("pintVal");
-            case VT_BYREF | VT_UINT:
-                return this._variant.__variant.readField("puintVal");
             default:
                 return null;
             }
         }
 
+        public Number numberValue() {
+            return (Number) this.getValue();
+        }
+
+        public int byteValue() {
+            return ((Number) this.getValue()).byteValue();
+        }
+
         public int shortValue() {
-            return (Short) this.getValue();
+            return ((Number) this.getValue()).shortValue();
         }
 
         public int intValue() {
-            return (Integer) this.getValue();
+            return ((Number) this.getValue()).intValue();
         }
 
         public long longValue() {
-            return (Long) this.getValue();
+          return ((Number) this.getValue()).longValue();
         }
 
         public float floatValue() {
-            return (Float) this.getValue();
+          return ((Number) this.getValue()).floatValue();
         }
 
         public double doubleValue() {
-            return (Double) this.getValue();
+          return ((Number) this.getValue()).doubleValue();
         }
 
         public String stringValue() {
