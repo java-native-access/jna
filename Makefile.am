@@ -22,7 +22,9 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/m68k/ffi.c src/m68k/sysv.S src/m68k/ffitarget.h		\
 	 src/m88k/ffi.c src/m88k/obsd.S src/m88k/ffitarget.h		\
 	 src/microblaze/ffi.c src/microblaze/sysv.S			\
-	 src/microblaze/ffitarget.h src/powerpc/ffi.c			\
+	 src/microblaze/ffitarget.h					\
+	 src/nios2/ffi.c src/nios2/ffitarget.h src/nios2/sysv.S		\
+	 src/powerpc/ffi.c						\
 	 src/powerpc/sysv.S src/powerpc/linux64.S			\
 	 src/powerpc/linux64_closure.S src/powerpc/ppc_closure.S	\
 	 src/powerpc/asm.h src/powerpc/aix.S src/powerpc/darwin.S	\
@@ -160,6 +162,9 @@ nodist_libffi_la_SOURCES += src/moxie/ffi.c src/moxie/eabi.S
 endif
 if MICROBLAZE
 nodist_libffi_la_SOURCES += src/microblaze/ffi.c src/microblaze/sysv.S
+endif
+if NIOS2
+nodist_libffi_la_SOURCES += src/nios2/sysv.S src/nios2/ffi.c
 endif
 if POWERPC
 nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S

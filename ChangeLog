@@ -1,3 +1,19 @@
+2013-10-13  Sandra Loosemore  <sandra@codesourcery.com>
+
+	* README: Add Nios II to table of supported platforms.
+	* Makefile.am (EXTRA_DIST): Add nios2 files.
+	(nodist_libffi_la_SOURCES): Likewise.
+	* Makefile.in: Regenerated.
+	* configure.ac (nios2*-linux*): New host.
+	(NIOS2): Add AM_CONDITIONAL.
+	* configure: Regenerated.
+	* src/nios2/ffi.c: New.
+	* src/nios2/ffitarget.h: New.
+	* src/nios2/sysv.S: New.
+	* src/prep_cif.c (initialize_aggregate): Handle extra structure
+	alignment via FFI_AGGREGATE_ALIGNMENT.
+	(ffi_prep_cif_core): Conditionalize structure return for NIOS2.
+
 2013-10-10  Sandra Loosemore  <sandra@codesourcery.com>
 
 	* testsuite/libffi.call/cls_many_mixed_args.c (cls_ret_double_fn):

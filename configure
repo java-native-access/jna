@@ -687,6 +687,8 @@ POWERPC_AIX_FALSE
 POWERPC_AIX_TRUE
 POWERPC_FALSE
 POWERPC_TRUE
+NIOS2_FALSE
+NIOS2_TRUE
 MOXIE_FALSE
 MOXIE_TRUE
 METAG_FALSE
@@ -13499,6 +13501,10 @@ case "$host" in
 	TARGET=MIPS; TARGETDIR=mips
 	;;
 
+  nios2*-linux*)
+	TARGET=NIOS2; TARGETDIR=nios2
+	;;
+
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
 	;;
@@ -13686,6 +13692,14 @@ fi
 else
   MOXIE_TRUE='#'
   MOXIE_FALSE=
+fi
+
+ if test x$TARGET = xNIOS2; then
+  NIOS2_TRUE=
+  NIOS2_FALSE='#'
+else
+  NIOS2_TRUE='#'
+  NIOS2_FALSE=
 fi
 
  if test x$TARGET = xPOWERPC; then
@@ -15162,6 +15176,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${MOXIE_TRUE}" && test -z "${MOXIE_FALSE}"; then
   as_fn_error $? "conditional \"MOXIE\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${NIOS2_TRUE}" && test -z "${NIOS2_FALSE}"; then
+  as_fn_error $? "conditional \"NIOS2\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${POWERPC_TRUE}" && test -z "${POWERPC_FALSE}"; then
