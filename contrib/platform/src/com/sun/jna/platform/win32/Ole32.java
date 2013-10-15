@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.COM.IUnknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
@@ -34,6 +35,107 @@ public interface Ole32 extends StdCallLibrary {
     /** The instance. */
     Ole32 INSTANCE = (Ole32) Native.loadLibrary("Ole32", Ole32.class,
                                                 W32APIOptions.UNICODE_OPTIONS);
+
+    /**
+     * Identifies the version number of the installed OLE framework.
+     *
+     * @return A DWORD uniquely identifying the installed OLE framework build.
+     */
+    int OleBuildVersion();
+
+    /**
+     * Initializes the COM library on the current apartment, identifies the
+     * concurrency model as single-thread apartment (STA), and enables
+     * additional functionality described in the Remarks section below.
+     * Applications must initialize the COM library before they can call COM
+     * library functions other than CoGetMalloc and memory allocation functions.
+     * @param pvReserved Reserved; must be null
+     * @return S_OK if the COM library and additional functionality were
+     *              initialized successfully on this apartment.
+     *         S_FALSE if the COM library is already initialized on this apartment.
+     *         OLE_E_WRONGCOMPOBJ if the versions of COMPOBJ.DLL and OLE2.DLL on
+     *                            your machine are incompatible with each other.
+     *         RPC_E_CHANGED_MODE if a previous call to CoInitializeEx specified
+     *                            the concurrency model for this apartment as
+     *                            multithread apartment (MTA). If running
+     *                            Windows 2000, this could also mean that a
+     *                            change from neutral threaded apartment to
+     *                            single threaded apartment occurred. 
+     */
+    HRESULT OleInitialize(Pointer pvReserved);
+    /**
+     * Closes the COM library on the apartment, releases any class factories,
+     * other COM objects, or servers held by the apartment, disables RPC on the
+     * apartment, and frees any resources the apartment maintains.
+     *
+     * Remarks:
+     * Call OleUninitialize on application shutdown, as the last COM library
+     * call, if the apartment was initialized with a call to
+     * {@link #OleInitialize}. OleUninitialize calls the CoUninitialize function
+     * internally to shut down the OLE Component Object(COM) Library.
+     *
+     * If the COM library was initialized on the apartment with a call to
+     * CoInitialize or CoInitializeEx, it must be closed with a call to
+     * CoUninitialize.
+     *
+     * The {@link #OleInitialize} and OleUninitialize calls must be balanced — 
+     * if there are multiple calls to the {@link #OleInitialize} function, there
+     * must be the same number of calls to OleUninitialize: Only the
+     * OleUninitialize call corresponding to the {@link #OleInitialize} call
+     * that actually initialized the library can close it.
+     */
+    void OleUninitialize();
+
+    /**
+     * Carries out the clipboard shutdown sequence. It also releases the
+     * IDataObject pointer that was placed on the clipboard by the
+     * OleSetClipboard function.
+     * @return S_OK on success.
+     *         CLIPBRD_E_CANT_OPEN The Windows OpenClipboard function used
+     *                             within OleFlushClipboard failed.
+     *         CLIPBRD_E_CANT_CLOSE The Windows CloseClipboard function used
+     *                              within OleFlushClipboard failed.
+     *                              
+     * Remarks:
+     * OleFlushClipboard renders the data from a data object onto the clipboard
+     * and releases the IDataObject pointer to the data object. While the
+     * application that put the data object on the clipboard is running, the
+     * clipboard holds only a pointer to the data object, thus saving memory.
+     * If you are writing an application that acts as the source of a clipboard
+     * operation, you can call the OleFlushClipboard function when your
+     * application is closed, such as when the user exits from your application.
+     * Calling OleFlushClipboard enables pasting and paste-linking of OLE
+     * objects after application shutdown.
+     * Before calling OleFlushClipboard, you can easily determine if your data
+     * is still on the clipboard with a call to the OleIsCurrentClipboard
+     * function.
+     *
+     * OleFlushClipboard leaves all formats offered by the data transfer object,
+     * including the OLE 1 compatibility formats, on the clipboard so they are
+     * available after application shutdown. In addition to OLE 1 compatibility
+     * formats, these include all formats offered on a global handle medium (all
+     * except for TYMED_FILE) and formatted with a null target device. For
+     * example, if a data-source application offers a particular clipboard
+     * format (say cfFOO) on an IStorage object, and calls the OleFlushClipboard
+     * function, the storage object is copied into memory and the hglobal memory
+     * handle is put on the clipboard.
+     *
+     * To retrieve the information on the clipboard, you can call the
+     * OleGetClipboard function from another application, which creates a
+     * default data object, and the hglobal from the clipboard again becomes a
+     * storage object. Furthermore, the FORMATETC enumerator and the
+     * IDataObject::QueryGetData method would all correctly indicate that the
+     * original clipboard format (cfFOO) is again available on a TYMED_ISTORAGE.
+     *
+     * To empty the clipboard, call the OleSetClipboard function specifying a
+     * null value for its parameter. The application should call this when it
+     * closes if there is no need to leave data on the clipboard after shutdown,
+     * or if data will be placed on the clipboard using the standard Windows
+     * clipboard functions.
+     */
+    HRESULT OleFlushClipboard();
+
+    HRESULT OleRun(Pointer pUnknown);
 
     /**
      * Creates a GUID, a unique 128-bit integer used for CLSIDs and interface
