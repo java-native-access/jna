@@ -15,7 +15,7 @@ static void cls_ret_double_fn(ffi_cif* cif __UNUSED__, void* resp, void** args,
 			      void* userdata __UNUSED__)
 {
   int i;
-  double r;
+  double r = 0;
   double t;
   for(i = 0; i < NARGS; i++)
     {

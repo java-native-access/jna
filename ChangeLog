@@ -1,3 +1,8 @@
+2013-10-10  Sandra Loosemore  <sandra@codesourcery.com>
+
+	* testsuite/libffi.call/cls_many_mixed_args.c (cls_ret_double_fn):
+	Fix uninitialized variable.
+
 2013-10-11  Marcus Shawcroft  <marcus.shawcroft@arm.com>
 
 	* testsuite/libffi.call/many.c (many): Replace * with +.
