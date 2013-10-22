@@ -16,6 +16,8 @@ Features
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.Gdi32.ChoosePixelFormat` and `SetPixelFormat` - [@kc7bfi](https://github.com/kc7bfi).
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
 * [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
+* [#286](https://github.com/twall/jna/pull/286): Added in com.sun.jna.platform.win32.Kernel32: CreateRemoteThread, WritePocessMemory and ReadProcessMemory - [@sstokic-tgm](https://github.com/sstokic-tgm).
+
 
 Bug Fixes
 ---------
