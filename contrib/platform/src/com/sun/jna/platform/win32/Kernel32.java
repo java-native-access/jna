@@ -2042,4 +2042,89 @@ public interface Kernel32 extends WinNT {
      * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
      */
     boolean WritePrivateProfileSection(String lpAppName, String lpString, String lpFileName);    
+    
+    /**
+     * Creates a thread that runs in the virtual address space of another process.
+     * 
+     * @param hProcess
+     * 			A handle to the process in which the thread is to be created. The handle must have the PROCESS_CREATE_THREAD, 
+     * 			PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION, PROCESS_VM_WRITE, and PROCESS_VM_READ access rights, 
+     * 			and may fail without these rights on certain platforms.
+     * @param lpThreadAttributes
+     * 			A pointer to a SECURITY_ATTRIBUTES structure that specifies a security descriptor for the new thread and 
+     * 			determines whether child processes can inherit the returned handle. If lpThreadAttributes is NULL, the thread gets a 
+     * 			default security descriptor and the handle cannot be inherited. The access control lists (ACL) in the default 
+     * 			security descriptor for a thread come from the primary token of the creator.
+     * @param dwStackSize
+     * 			The initial size of the stack, in bytes. The system rounds this value to the nearest page. 
+     * 			If this parameter is 0 (zero), the new thread uses the default size for the executable.
+     * @param lpStartAddress
+     * 			A pointer to the application-defined function of type LPTHREAD_START_ROUTINE to be executed by the thread and 
+     * 			represents the starting address of the thread in the remote process. The function must exist in the remote process.
+     * @param lpParameter
+     * 			A pointer to a variable to be passed to the thread function.
+     * @param dwCreationFlags
+     * 			The flags that control the creation of the thread.
+     * 			0 ... The thread runs immediately after creation.
+     * 			CREATE_SUSPENDED => 0x00000004 ... The thread is created in a suspended state, and does not run until the ResumeThread function is called.
+     * 			STACK_SIZE_PARAM_IS_A_RESERVATION => 0x00010000 ... The dwStackSize parameter specifies the initial reserve size of the stack. If this flag is not specified, dwStackSize specifies the commit size.
+     * @param lpThreadId
+     * 			A pointer to a variable that receives the thread identifier. If this parameter is NULL, the thread identifier is not returned.
+     * 
+     * @return  If the function succeeds, the return value is a handle to the new thread. If the function fails, the return value is NULL. 
+     * 			To get extended error information, call GetLastError.
+     * 
+     * Note that CreateRemoteThread may succeed even if lpStartAddress points to data, code, or is not accessible. If the start address is 
+     * invalid when the thread runs, an exception occurs, and the thread terminates. Thread termination due to a invalid start address is 
+     * handled as an error exit for the thread's process. This behavior is similar to the asynchronous nature of CreateProcess, where the 
+     * process is created even if it refers to invalid or missing dynamic-link libraries (DLL).
+     */
+    HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);
+    
+    /**
+     * Writes data to an area of memory in a specified process. The entire area to be written to must be accessible or the operation fails.
+     * 
+     * @param hProcess
+     * 			A handle to the process memory to be modified. The handle must have PROCESS_VM_WRITE and PROCESS_VM_OPERATION 
+     * 			access to the process.
+     * @param lpBaseAddress
+     * 			A pointer to the base address in the specified process to which data is written. Before data transfer occurs, the system 
+     * 			verifies that all data in the base address and memory of the specified size is accessible for write access, and if it is not 
+     * 			accessible, the function fails.
+     * @param lpBuffer
+     * 			A pointer to the buffer that contains data to be written in the address space of the specified process.
+     * @param nSize
+     * 			The number of bytes to be written to the specified process.
+     * @param lpNumberOfBytesWritten
+     * 			A pointer to a variable that receives the number of bytes transferred into the specified process. This parameter is optional.
+     * 			If lpNumberOfBytesWritten is NULL, the parameter is ignored.
+     * 
+     * @return  If the function succeeds, the return value is nonzero.
+     * 			If the function fails, the return value is 0 (zero). To get extended error information, call GetLastError.
+     * 			The function fails if the requested write operation crosses into an area of the process that is inaccessible.
+     */
+    boolean WriteProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesWritten);
+    
+    /**
+     * Reads data from an area of memory in a specified process. The entire area to be read must be accessible or the operation fails.
+     * 
+     * @param hProcess
+     * 			A handle to the process with memory that is being read. The handle must have PROCESS_VM_READ access to the process.
+     * @param lpBaseAddress
+     * 			A pointer to the base address in the specified process from which to read. Before any data transfer occurs, the system 
+     * 			verifies that all data in the base address and memory of the specified size is accessible for read access, and if it is not 
+     * 			accessible the function fails.
+     * @param lpBuffer
+     * 			A pointer to a buffer that receives the contents from the address space of the specified process.
+     * @param nSize
+     * 			The number of bytes to be read from the specified process.
+     * @param lpNumberOfBytesRead
+     * 			A pointer to a variable that receives the number of bytes transferred into the specified buffer.
+     * 			If lpNumberOfBytesRead is NULL, the parameter is ignored.
+     * 
+     * @return  If the function succeeds, the return value is nonzero.
+     * 			If the function fails, the return value is 0 (zero). To get extended error information, call GetLastError.
+     * 			The function fails if the requested read operation crosses into an area of the process that is inaccessible.
+     */
+    boolean ReadProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesRead);
 }

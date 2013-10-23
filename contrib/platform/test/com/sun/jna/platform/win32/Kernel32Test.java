@@ -593,4 +593,80 @@ public class Kernel32Test extends TestCase {
         reader.close();
     }
 
+    public void testWriteProcessMemory() {
+    	
+    	Kernel32 kernel = Kernel32.INSTANCE;
+    	
+    	final int dwDesiredAccess = 0x1F0FFF; //ALL_ACCESS
+    	final boolean bInheritHandle = true;
+    	final int dwProcessId = 5088; //PID of Process
+    	
+    	HANDLE handle = kernel.OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+    	
+    	if (handle == null) {
+    		int lastError = kernel.GetLastError();
+    		System.out.println("lastError = " + lastError);
+    		throw new RuntimeException("no such pid");
+    	}
+    	
+    	int lpBaseAddress = 0x148712A4; //Address to manipulate
+    	int nSize = 32; //size of address type
+    	
+    	Memory lpBuffer = new Memory(nSize);
+    	int dataToWrite = 1;
+    	lpBuffer.setInt(0, dataToWrite);
+    	boolean successWrite = kernel.WriteProcessMemory(handle, lpBaseAddress, lpBuffer, nSize, null);
+    	
+    	assertTrue(successWrite);
+    	
+    	lpBuffer.finalize();
+	}
+    
+    public void testReadProcessMemory() {
+    	
+    	Kernel32 kernel = Kernel32.INSTANCE;
+    	
+    	final int dwDesiredAccess = 0x1F0FFF; //ALL_ACCESS
+    	final boolean bInheritHandle = true;
+    	final int dwProcessId = 5088; //PID of Process
+    	
+    	HANDLE handle = kernel.OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+    	
+    	if (handle == null) {
+    		int lastError = kernel.GetLastError();
+    		System.out.println("lastError = " + lastError);
+    		throw new RuntimeException("no such pid");
+    	}
+    	
+    	int lpBaseAddress = 0x034685FC; // Address to read
+    	int nSize = 8;
+    	Memory lpBuffer = new Memory(nSize);
+    	char[] buffer = new char[lpBuffer + 1];
+    	boolean successRead = kernel.ReadProcessMemory(handle, lpBaseAddress, buffer, nSize, null);
+    	
+    	assertTrue(successRead);
+    	
+    	lpBuffer.finalize();
+    }
+    
+    public void testCreateRemoteThread() {
+    	
+    	Kernel32 kernel = Kernel32.INSTANCE;
+    	
+    	final int dwDesiredAccess = 0x1F0FFF; //ALL_ACCESS
+    	final boolean bInheritHandle = true;
+    	final int dwProcessId = 5088; //PID of Process
+    	
+    	HANDLE hProc = kernel.OpenProcess(dwDesiredAccess, bInheritHandle, dwProcessId);
+    	
+    	if (hProc == null) {
+    		int lastError = kernel.GetLastError();
+    		System.out.println("lastError = " + lastError);
+    		throw new RuntimeException("no such pid");
+    	}
+    	
+    	HANDLE hRemoteThread = kernel.CreateRemoteThread(hProc, null, 0, null, null, 0, null);
+    	assertNull(hRemoteThread);
+    	assertEquals(WinError.ERROR_INVALID_HANDLE, kernel.GetLastError());
+    }
 }
