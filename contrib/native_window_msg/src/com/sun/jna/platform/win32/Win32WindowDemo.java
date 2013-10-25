@@ -317,8 +317,8 @@ public class Win32WindowDemo implements WindowProc {
 			DEV_BROADCAST_VOLUME bvl = new DEV_BROADCAST_VOLUME(bhdr.getPointer());
 			int logicalDriveAffected = bvl.dbcv_unitmask;
 			short flag = bvl.dbcv_flags;
-			boolean isMediaNotPhysical = 0 != (flag & 1/*DBT.DBTF_MEDIA*/);
-			boolean isNet = 0 != (flag & 2/*DBT.DBTF_NET*/);
+			boolean isMediaNotPhysical = 0 != (flag & DBT.DBTF_MEDIA/*value is 1*/);
+			boolean isNet = 0 != (flag & DBT.DBTF_NET/*value is 2*/);
 			System.out.println(action);
 			int driveLetterIndex = 0;
 			while (logicalDriveAffected != 0) {
