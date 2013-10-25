@@ -16,6 +16,11 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DBT;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_HANDLE;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_HDR;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_OEM;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_PORT;
+import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_VOLUME;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
@@ -59,7 +64,9 @@ public class Win32WindowDemo implements WindowProc {
 						User32.WS_EX_TOPMOST,
 						windowClass,
 						"My hidden helper window, used only to catch the windows events",
-						0, 0, 0, 0, 0, WinUser.HWND_MESSAGE, null, hInst, null);
+						0, 0, 0, 0, 0,
+						null, // WM_DEVICECHANGE contradicts parent=WinUser.HWND_MESSAGE
+						null, hInst, null);
 
 		getLastError();
 		System.out.println("window sucessfully created! window hwnd: "
@@ -74,6 +81,7 @@ public class Win32WindowDemo implements WindowProc {
 
 		/* this filters for all usb device classes */
 		DEV_BROADCAST_DEVICEINTERFACE notificationFilter = new DEV_BROADCAST_DEVICEINTERFACE();
+		notificationFilter.dbcc_size = notificationFilter.size();
 		notificationFilter.dbcc_devicetype = DBT.DBT_DEVTYP_DEVICEINTERFACE;
 		notificationFilter.dbcc_classguid = DBT.GUID_DEVINTERFACE_USB_DEVICE;
 
@@ -125,8 +133,9 @@ public class Win32WindowDemo implements WindowProc {
 			return new LRESULT(0);
 		}
 		case WinUser.WM_DEVICECHANGE: {
-			this.onDeviceChange(wParam, lParam);
-			return new LRESULT(0);
+			LRESULT lResult = this.onDeviceChange(wParam, lParam);
+			return lResult != null ? lResult :
+				User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
 		}
 		default:
 			return User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -251,42 +260,101 @@ public class Win32WindowDemo implements WindowProc {
 	 *            the w param
 	 * @param lParam
 	 *            the l param
+	 * @return the result. Null if the message is not processed.
 	 */
-	protected void onDeviceChange(WPARAM wParam, LPARAM lParam) {
-		//
-		// This is the actual message from the interface via Windows messaging.
-		// This code includes some additional decoding for this particular
-		// device type
-		// and some common validation checks.
-		//
-		// Note that not all devices utilize these optional parameters in the
-		// same
-		// way. Refer to the extended information for your particular device
-		// type
-		// specified by your GUID.
-		//
-		DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(
-				lParam.longValue());
-		System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
-		System.out.println("dbcc_name: " + bdif.getDbcc_name());
-		System.out.println("dbcc_classguid: "
-				+ bdif.dbcc_classguid.toGuidString());
-
-		// Output some messages to the window.
+	protected LRESULT onDeviceChange(WPARAM wParam, LPARAM lParam) {
 		switch (wParam.intValue()) {
-		case DBT.DBT_DEVICEARRIVAL:
-			System.out.println("Message DBT_DEVICEARRIVAL");
-			break;
-		case DBT.DBT_DEVICEREMOVECOMPLETE:
-			System.out.println("Message DBT_DEVICEREMOVECOMPLETE");
-			break;
-		case DBT.DBT_DEVNODES_CHANGED:
-			System.out.println("Message DBT_DEVNODES_CHANGED");
-			break;
+		case DBT.DBT_DEVICEARRIVAL: {
+			return onDeviceChangeArrival(lParam);
+		}
+		case DBT.DBT_DEVICEREMOVECOMPLETE: {
+			return onDeviceChangeRemoveComplete(lParam);
+		}
+		case DBT.DBT_DEVNODES_CHANGED: {
+			//lParam is 0 for this wParam
+			return onDeviceChangeNodesChanged();
+		}
 		default:
 			System.out
 					.println("Message WM_DEVICECHANGE message received, value unhandled.");
 		}
+		return null;
+	}
+	
+	protected LRESULT onDeviceChangeArrivalOrRemoveComplete(LPARAM lParam, String action) {
+		DEV_BROADCAST_HDR bhdr = new DEV_BROADCAST_HDR(lParam.longValue());
+		switch (bhdr.dbch_devicetype) {
+		case DBT.DBT_DEVTYP_DEVICEINTERFACE: {
+			// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244.aspx
+			DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(bhdr.getPointer());
+			System.out.println("BROADCAST_DEVICEINTERFACE: " + action);
+			System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
+			System.out.println("dbcc_name: " + bdif.getDbcc_name());
+			System.out.println("dbcc_classguid: "
+					+ bdif.dbcc_classguid.toGuidString());
+			break;
+		}
+		case DBT.DBT_DEVTYP_HANDLE: {
+			// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363245.aspx
+			DEV_BROADCAST_HANDLE bhd = new DEV_BROADCAST_HANDLE(bhdr.getPointer());
+			System.out.println("BROADCAST_HANDLE: " + action);
+			break;
+		}
+		case DBT.DBT_DEVTYP_OEM: {
+			// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363247.aspx
+			DEV_BROADCAST_OEM boem = new DEV_BROADCAST_OEM(bhdr.getPointer());
+			System.out.println("BROADCAST_OEM: " + action);
+			break;
+		}
+		case DBT.DBT_DEVTYP_PORT: {
+			// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363248.aspx
+			DEV_BROADCAST_PORT bpt = new DEV_BROADCAST_PORT(bhdr.getPointer());
+			System.out.println("BROADCAST_PORT: " + action);
+			break;
+		}
+		case DBT.DBT_DEVTYP_VOLUME: {
+			// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363249.aspx
+			DEV_BROADCAST_VOLUME bvl = new DEV_BROADCAST_VOLUME(bhdr.getPointer());
+			int logicalDriveAffected = bvl.dbcv_unitmask;
+			short flag = bvl.dbcv_flags;
+			boolean isMediaNotPhysical = 0 != (flag & 1/*DBT.DBTF_MEDIA*/);
+			boolean isNet = 0 != (flag & 2/*DBT.DBTF_NET*/);
+			System.out.println(action);
+			int driveLetterIndex = 0;
+			while (logicalDriveAffected != 0) {
+				if (0 != (logicalDriveAffected & 1)) {
+					System.out.println("Logical Drive Letter: " +
+						((char) ('A' + driveLetterIndex)));
+				}
+				logicalDriveAffected >>>= 1;
+				driveLetterIndex++;
+			}
+			System.out.println("isMediaNotPhysical:"+isMediaNotPhysical);
+			System.out.println("isNet:"+isNet);
+			break;
+		}
+		default:
+			return null;
+		}
+		// return TRUE means processed message for this wParam.
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363205.aspx
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363208.aspx
+		return new LRESULT(1);
+	}
+
+	protected LRESULT onDeviceChangeArrival(LPARAM lParam) {
+		return onDeviceChangeArrivalOrRemoveComplete(lParam, "Arrival");
+	}
+
+	protected LRESULT onDeviceChangeRemoveComplete(LPARAM lParam) {
+		return onDeviceChangeArrivalOrRemoveComplete(lParam, "Remove Complete");
+	}
+
+	protected LRESULT onDeviceChangeNodesChanged() {
+		System.out.println("Message DBT_DEVNODES_CHANGED");
+		// return TRUE means processed message for this wParam.
+		// see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363211.aspx
+		return new LRESULT(1);
 	}
 
 	/**
