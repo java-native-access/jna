@@ -302,6 +302,12 @@ public interface DBT extends StdCallLibrary {
         }
     }
 
+    /** The dbt change affects media in drive, not physical device or drive. */
+    int DBTF_MEDIA = 0x0001;
+
+    /** The dbt indicated logical volume is a network volume. */
+    int DBTF_NET = 0x0002;
+
     /**
      * The Class DEV_BROADCAST_PORT.
      */
