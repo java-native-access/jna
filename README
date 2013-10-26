@@ -168,7 +168,9 @@ History
 See the ChangeLog files for details.
 
 3.0.14 TBD
+        Add Nios II support.
         Add m88k and DEC VAX support.
+	Fix MIPS N32 ABI bug.
 
 3.0.13 Mar-17-13
 	Add Meta support.
