@@ -4,8 +4,8 @@
            Copyright (c) 2011 Anthony Green
 	   Copyright (c) 2011 Free Software Foundation
            Copyright (c) 1998, 2008, 2011  Red Hat, Inc.
-	   
-   ARM Foreign Function Interface 
+
+   ARM Foreign Function Interface
 
    Permission is hereby granted, free of charge, to any person obtaining
    a copy of this software and associated documentation files (the
@@ -313,7 +313,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   unsigned int temp;
   
   /* If the return value is a struct and we don't have a return	*/
-  /* value address then we need to make one		        */
+  /* value address then we need to make one			*/
 
   if ((rvalue == NULL) && 
       (cif->flags == FFI_TYPE_STRUCT))
@@ -489,18 +489,23 @@ ffi_prep_incoming_args_VFP(char *stack, void **rvalue,
 
           p_argv++;
           regp = tregp + z;
-          /* if regp points above the end of the register area */
+          // if we read past the last core register, make sure we have not read
+          // from the stack before and continue reading after regp
+          if(regp > eo_regp)
+            {
+            if(stack_used)
+              {
+                abort(); // we should never read past the end of the register
+                         // are if the stack is already in use
+              }
+            argp = regp;
+            }
           if(regp >= eo_regp)
             {
-              /* sanity check that we haven't read from the stack area before
-               * reaching this point */
-              FFI_ASSERT(argp <= regp);
-              FFI_ASSERT(argp == stack + 16);
-              argp = regp;
-              done_with_regs = 1;
-              stack_used = 1;
+            done_with_regs = 1;
+            stack_used = 1;
             }
-            continue;
+          continue;
           }
       }
     stack_used = 1;
@@ -773,7 +778,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
 #endif
   else
     return FFI_BAD_ABI;
-    
+
 #if FFI_EXEC_TRAMPOLINE_TABLE
   void **config = FFI_TRAMPOLINE_CODELOC_CONFIG(codeloc);
   config[0] = closure;

@@ -1,3 +1,14 @@
+2013-11-02  Mischa Jonker  <mjonker@synopsys.com>
+
+	* Makefile.am (nodist_libffi_la_SOURCES): Fix build error.
+	* Makefile.in: Rebuilt.
+
+2013-11-02  David Schneider  <david.schneider@bivab.de>
+
+	* src/arm/ffi.c: more robust argument handling for closures on arm hardfloat
+	* testsuite/libffi.call/many_mixed.c: New file.
+	* testsuite/libffi.call/cls_many_mixed_args.c: More tests.
+
 2013-11-02  Vitaly Budovski
 
 	* src/x86/ffi.c (ffi_prep_cif_machdep): Don't align stack for win32.
