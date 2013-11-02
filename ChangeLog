@@ -1,3 +1,7 @@
+2013-11-02  Vitaly Budovski
+
+	* src/x86/ffi.c (ffi_prep_cif_machdep): Don't align stack for win32.
+
 2013-10-23  Mark H Weaver  <mhw@netris.org>
 
 	* src/mips/ffi.c: Fix handling of uint32_t arguments on the
