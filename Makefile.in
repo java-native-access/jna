@@ -995,7 +995,7 @@ src/arc/$(am__dirstamp):
 src/arc/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/arc/$(DEPDIR)
 	@: > src/arc/$(DEPDIR)/$(am__dirstamp)
-src/arc/sysv.lo: src/arc/$(am__dirstamp) \
+src/arc/arcompact.lo: src/arc/$(am__dirstamp) \
 	src/arc/$(DEPDIR)/$(am__dirstamp)
 src/arc/ffi.lo: src/arc/$(am__dirstamp) \
 	src/arc/$(DEPDIR)/$(am__dirstamp)
