@@ -1,3 +1,10 @@
+2013-11-02  Anthony Green  <green@moxielogic.com>
+
+	* doc/libffi.texi (The Basics): Clarify return value buffer size
+	requirements.  Also, NULL result buffer pointers are no longer
+	supported.
+	* doc/libffi.info: Rebuilt.
+
 2013-11-02  Mischa Jonker  <mjonker@synopsys.com>
 
 	* Makefile.am (nodist_libffi_la_SOURCES): Fix build error.

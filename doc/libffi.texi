@@ -184,11 +184,11 @@ This calls the function @var{fn} according to the description given in
 
 @var{rvalue} is a pointer to a chunk of memory that will hold the
 result of the function call.  This must be large enough to hold the
-result and must be suitably aligned; it is the caller's responsibility
+result, no smaller than the system register size (generally 32 or 64
+bits), and must be suitably aligned; it is the caller's responsibility
 to ensure this.  If @var{cif} declares that the function returns
 @code{void} (using @code{ffi_type_void}), then @var{rvalue} is
-ignored.  If @var{rvalue} is @samp{NULL}, then the return value is
-discarded.
+ignored.
 
 @var{avalues} is a vector of @code{void *} pointers that point to the
 memory locations holding the argument values for a call.  If @var{cif}

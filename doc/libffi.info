@@ -156,11 +156,11 @@ function:
      CIF.  CIF must have already been prepared using 'ffi_prep_cif'.
 
      RVALUE is a pointer to a chunk of memory that will hold the result
-     of the function call.  This must be large enough to hold the result
-     and must be suitably aligned; it is the caller's responsibility to
-     ensure this.  If CIF declares that the function returns 'void'
-     (using 'ffi_type_void'), then RVALUE is ignored.  If RVALUE is
-     'NULL', then the return value is discarded.
+     of the function call.  This must be large enough to hold the
+     result, no smaller than the system register size (generally 32 or
+     64 bits), and must be suitably aligned; it is the caller's
+     responsibility to ensure this.  If CIF declares that the function
+     returns 'void' (using 'ffi_type_void'), then RVALUE is ignored.
 
      AVALUES is a vector of 'void *' pointers that point to the memory
      locations holding the argument values for a call.  If CIF declares
@@ -601,15 +601,15 @@ Node: Top682
 Node: Introduction1429
 Node: Using libffi3061
 Node: The Basics3547
-Node: Simple Example7187
-Node: Types8214
-Node: Primitive Types8497
-Node: Structures10318
-Node: Type Example11192
-Node: Multiple ABIs12415
-Node: The Closure API12786
-Node: Closure Example15730
-Node: Missing Features17289
-Node: Index17742
+Node: Simple Example7198
+Node: Types8225
+Node: Primitive Types8508
+Node: Structures10329
+Node: Type Example11203
+Node: Multiple ABIs12426
+Node: The Closure API12797
+Node: Closure Example15741
+Node: Missing Features17300
+Node: Index17753
 
 End Tag Table
