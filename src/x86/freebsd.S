@@ -49,6 +49,9 @@ ffi_call_SYSV:
 	movl  16(%ebp),%ecx
 	subl  %ecx,%esp
 
+	/* Align the stack pointer to 16-bytes */
+	andl  $0xfffffff0, %esp
+
 	movl  %esp,%eax
 
 	/* Place all of the ffi_prep_args in position  */

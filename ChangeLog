@@ -1,3 +1,8 @@
+2013-11-06  Mark Kettenis  <kettenis@gnu.org>
+
+	* src/x86/freebsd.S (ffi_call_SYSV): Align the stack pointer to
+        16-bytes.
+
 2013-11-06  Konstantin Belousov <kib@freebsd.org>
 
 	* src/x86/freebsd.S (ffi_closure_raw_SYSV): Mark the assembler
