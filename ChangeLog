@@ -1,3 +1,8 @@
+2013-11-06  Konstantin Belousov <kib@freebsd.org>
+
+	* src/x86/freebsd.S (ffi_closure_raw_SYSV): Mark the assembler
+	source as not requiring executable stack.
+
 2013-11-02  Anthony Green  <green@moxielogic.com>
 
 	* doc/libffi.texi (The Basics): Clarify return value buffer size
