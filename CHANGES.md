@@ -16,12 +16,13 @@ Features
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.Gdi32.ChoosePixelFormat` and `SetPixelFormat` - [@kc7bfi](https://github.com/kc7bfi).
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
 * [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
+* [#287](https://github.com/twall/jna/pull/287): Added `DBTF_MEDIA` and `DBTF_NET` to `com.sun.jna.platform.win32.DBT` - [@daifei4321](https://github.com/daifei4321).
 
 Bug Fixes
 ---------
 * Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
 * [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
-* [#287](https://github.com/twall/jna/pull/287): Fixed `contrib.native_window_msg.src.com.sun.jna.platform.win32.Win32WindowDemo`; added showing the added/removed drive letter, and the event is about media in drive or physical drive. Modify `contrib.platform.src.com.sun.jna.platform.win32.DBT` add constants DBTF_MEDIA and DBTF_NET - [@daifei4321](https://github.com/daifei4321).
+* [#287](https://github.com/twall/jna/pull/287): Fixed contrib `win32.Win32WindowDemo`, now showing the added/removed drive letter, and whether the event is about media in drive or physical drive - [@daifei4321](https://github.com/daifei4321).
 
 Release 4.0
 ===========
