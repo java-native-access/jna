@@ -21,6 +21,7 @@ Bug Fixes
 ---------
 * Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
 * [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
+* [#287](https://github.com/twall/jna/pull/287): Fixed `contrib.native_window_msg.src.com.sun.jna.platform.win32.Win32WindowDemo`; added showing the added/removed drive letter, and the event is about media in drive or physical drive. Modify `contrib.platform.src.com.sun.jna.platform.win32.DBT` add constants DBTF_MEDIA and DBTF_NET - [@daifei4321](https://github.com/daifei4321).
 
 Release 4.0
 ===========
