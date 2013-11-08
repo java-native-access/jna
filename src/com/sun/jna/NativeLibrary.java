@@ -500,7 +500,7 @@ public class NativeLibrary {
     }
 
     /**
-     * Create a new  @{link Function} that is linked with a native
+     * Create a new  {@link Function} that is linked with a native
      * function that follows a given calling flags.
      *
      * @param	functionName
@@ -514,7 +514,7 @@ public class NativeLibrary {
     }
 
     /**
-     * Create a new  @{link Function} that is linked with a native
+     * Create a new  {@link Function} that is linked with a native
      * function that follows a given calling flags.
      *
      * @param	functionName
