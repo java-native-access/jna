@@ -1,3 +1,14 @@
+2013-11-09  Anthony Green  <green@moxielogic.com>
+
+	* m4/libtool.m4: Refresh.
+	* configure, Makefile.in: Rebuilt.
+	* README: Add more notes about next release.
+
+2013-11-09  Shigeharu TAKENO  <shige@iee.niit.ac.jp>
+
+	* m4/ax_gcc_archflag.m4 (ax_gcc_arch): Don't recognize
+	UltraSPARC-IIi as ultrasparc3.
+
 2013-11-06  Mark Kettenis  <kettenis@gnu.org>
 
 	* src/x86/freebsd.S (ffi_call_SYSV): Align the stack pointer to

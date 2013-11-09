@@ -102,7 +102,7 @@ target_triplet = @target@
 @POWERPC_DARWIN_TRUE@am__append_20 = src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
 @POWERPC_FREEBSD_TRUE@am__append_21 = src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
 @AARCH64_TRUE@am__append_22 = src/aarch64/sysv.S src/aarch64/ffi.c
-@ARC_TRUE@am__append_23 = src/arc/sysv.S src/arc/ffi.c
+@ARC_TRUE@am__append_23 = src/arc/arcompact.S src/arc/ffi.c
 @ARM_TRUE@am__append_24 = src/arm/sysv.S src/arm/ffi.c
 @ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__append_25 = src/arm/trampoline.S
 @AVR32_TRUE@am__append_26 = src/avr32/sysv.S src/avr32/ffi.c
@@ -217,7 +217,7 @@ am_libffi_la_OBJECTS = src/prep_cif.lo src/types.lo src/raw_api.lo \
 @POWERPC_FREEBSD_TRUE@	src/powerpc/sysv.lo \
 @POWERPC_FREEBSD_TRUE@	src/powerpc/ppc_closure.lo
 @AARCH64_TRUE@am__objects_22 = src/aarch64/sysv.lo src/aarch64/ffi.lo
-@ARC_TRUE@am__objects_23 = src/arc/sysv.lo src/arc/ffi.lo
+@ARC_TRUE@am__objects_23 = src/arc/arcompact.lo src/arc/ffi.lo
 @ARM_TRUE@am__objects_24 = src/arm/sysv.lo src/arm/ffi.lo
 @ARM_TRUE@@FFI_EXEC_TRAMPOLINE_TABLE_TRUE@am__objects_25 = src/arm/trampoline.lo
 @AVR32_TRUE@am__objects_26 = src/avr32/sysv.lo src/avr32/ffi.lo
@@ -1202,8 +1202,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/aarch64/$(DEPDIR)/sysv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/alpha/$(DEPDIR)/osf.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/arc/$(DEPDIR)/arcompact.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/arc/$(DEPDIR)/ffi.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/arc/$(DEPDIR)/sysv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/ffi.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/sysv.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/arm/$(DEPDIR)/trampoline.Plo@am__quote@

@@ -171,6 +171,7 @@ See the ChangeLog files for details.
         Add Nios II support.
         Add m88k and DEC VAX support.
 	Fix MIPS N32 ABI bug.
+	Various FreeBSD and UltraSPARC IIi fixes.
 
 3.0.13 Mar-17-13
 	Add Meta support.
