@@ -897,6 +897,9 @@ static void place_vfp_arg (ffi_cif *cif, ffi_type *t)
       return;
     next_reg: ;
     }
+	// done mark all regs as used
+	cif->vfp_reg_free = 16;
+	cif->vfp_used = 0xFFFF;
 }
 
 static void layout_vfp_args (ffi_cif *cif)
