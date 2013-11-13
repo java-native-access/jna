@@ -1,3 +1,8 @@
+2013-11-13  Anthony Green  <green@moxielogic.com>
+
+	* include/ffi_common.h: Respect HAVE_ALLOCA_H for GNU compiler
+	based build. (Thanks to tmr111116 on github)
+
 2013-11-09  Anthony Green  <green@moxielogic.com>
 
 	* m4/libtool.m4: Refresh.
