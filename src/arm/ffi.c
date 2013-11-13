@@ -861,7 +861,7 @@ static int vfp_type_p (ffi_type *t)
   return 0;
 }
 
-static void place_vfp_arg (ffi_cif *cif, ffi_type *t)
+static int place_vfp_arg (ffi_cif *cif, ffi_type *t)
 {
   int reg = cif->vfp_reg_free;
   int nregs = t->size / sizeof (float);
@@ -894,12 +894,13 @@ static void place_vfp_arg (ffi_cif *cif, ffi_type *t)
 	    reg += 1;
 	  cif->vfp_reg_free = reg;
 	}
-      return;
+      return 0;
     next_reg: ;
     }
-	// done mark all regs as used
-	cif->vfp_reg_free = 16;
-	cif->vfp_used = 0xFFFF;
+  // done, mark all regs as used
+  cif->vfp_reg_free = 16;
+  cif->vfp_used = 0xFFFF;
+  return 1;
 }
 
 static void layout_vfp_args (ffi_cif *cif)
@@ -914,7 +915,9 @@ static void layout_vfp_args (ffi_cif *cif)
   for (i = 0; i < cif->nargs; i++)
     {
       ffi_type *t = cif->arg_types[i];
-      if (vfp_type_p (t))
-	place_vfp_arg (cif, t);
+      if (vfp_type_p (t) && place_vfp_arg (cif, t) == 1)
+        {
+          break;
+        }
     }
 }
