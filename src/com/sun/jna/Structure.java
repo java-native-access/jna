@@ -319,7 +319,7 @@ public abstract class Structure {
             this.readCalled = false;
         }
         catch(IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+            throw new IllegalArgumentException("Structure exceeds provided memory bounds", e);
         }
     }
 
@@ -346,7 +346,7 @@ public abstract class Structure {
                     this.memory = this.memory.share(0, this.size);
                 }
                 catch(IndexOutOfBoundsException e) {
-                    throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+                    throw new IllegalArgumentException("Structure exceeds provided memory bounds", e);
                 }
             }
         }
@@ -575,9 +575,7 @@ public abstract class Structure {
             return field.get(this);
         }
         catch (Exception e) {
-            throw new Error("Exception reading field '"
-                            + field.getName() + "' in " + getClass()
-                            + ": " + e);
+            throw new Error("Exception reading field '" + field.getName() + "' in " + getClass(), e);
         }
     }
 
@@ -596,13 +594,11 @@ public abstract class Structure {
                 if (overrideFinal) {
                     // WARNING: setAccessible(true) on J2ME does *not* allow
                     // overwriting of a final field.
-                    throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + field.getName() + "' within " + getClass() + ")");
+                    throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + field.getName() + "' within " + getClass() + ")", e);
                 }
-                throw new UnsupportedOperationException("Attempt to write to read-only field '" + field.getName() + "' within " + getClass());
+                throw new UnsupportedOperationException("Attempt to write to read-only field '" + field.getName() + "' within " + getClass(), e);
             }
-            throw new Error("Unexpectedly unable to write to field '"
-                            + field.getName() + "' within " + getClass()
-                            + ": " + e);
+            throw new Error("Unexpectedly unable to write to field '" + field.getName() + "' within " + getClass(), e);
         }
     }
 
@@ -805,7 +801,7 @@ public abstract class Structure {
                 + (structField.type == fieldType
                    ? "" : " (native type " + fieldType + ")")
                 + ", which is not supported within a Structure";
-            throw new IllegalArgumentException(msg);
+            throw new IllegalArgumentException(msg, e);
         }
     }
 
@@ -1034,8 +1030,8 @@ public abstract class Structure {
                 getNativeSize(type);
             }
             catch(IllegalArgumentException e) {
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + "): " + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + ")";
+                throw new IllegalArgumentException(msg, e);
             }
         }
     }
@@ -1154,8 +1150,8 @@ public abstract class Structure {
                 if (!force && typeMapper == null) {
                     return null;
                 }
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + "): " + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + ")";
+                throw new IllegalArgumentException(msg, e);
             }
 
             // Align fields as appropriate
@@ -1217,9 +1213,7 @@ public abstract class Structure {
                 }
             }
             catch (Exception e) {
-                throw new Error("Exception reading field '"
-                                + f.getName() + "' in " + getClass()
-                                + ": " + e);
+                throw new Error("Exception reading field '" + f.getName() + "' in " + getClass(), e);
             }
         }
     }
@@ -1233,9 +1227,8 @@ public abstract class Structure {
                 setFieldValue(field, value);
             }
             catch(IllegalArgumentException e) {
-                String msg = "Can't determine size of nested structure: "
-                    + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                String msg = "Can't determine size of nested structure";
+                throw new IllegalArgumentException(msg, e);
             }
         }
         else if (NativeMapped.class.isAssignableFrom(type)) {
@@ -1621,18 +1614,17 @@ public abstract class Structure {
             // Might as well try the fallback
         }
         catch(InstantiationException e) {
-            String msg = "Can't instantiate " + type + " (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Can't instantiate " + type;
+            throw new IllegalArgumentException(msg, e);
         }
         catch(IllegalAccessException e) {
-            String msg = "Instantiation of " + type
-                + "(Pointer) not allowed, is it public? (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Instantiation of " + type + " (Pointer) not allowed, is it public?";
+            throw new IllegalArgumentException(msg, e);
         }
         catch(InvocationTargetException e) {
-            String msg = "Exception thrown while instantiating an instance of " + type + " (" + e + ")";
+            String msg = "Exception thrown while instantiating an instance of " + type;
             e.printStackTrace();
-            throw new IllegalArgumentException(msg);
+            throw new IllegalArgumentException(msg, e);
         }
         Structure s = newInstance(type);
         if (init != PLACEHOLDER_MEMORY) {
@@ -1655,13 +1647,13 @@ public abstract class Structure {
             return s;
         }
         catch(InstantiationException e) {
-            String msg = "Can't instantiate " + type + " (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Can't instantiate " + type;
+            throw new IllegalArgumentException(msg, e);
         }
         catch(IllegalAccessException e) {
             String msg = "Instantiation of " + type
-                + " not allowed, is it public? (" + e + ")";
-            throw new IllegalArgumentException(msg);
+                + " not allowed, is it public?";
+            throw new IllegalArgumentException(msg, e);
         }
     }
 
