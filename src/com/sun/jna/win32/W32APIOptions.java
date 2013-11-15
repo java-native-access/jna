@@ -2,7 +2,6 @@ package com.sun.jna.win32;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.sun.jna.Library;
 
 public interface W32APIOptions extends StdCallLibrary {
     /** Standard options to use the unicode version of a w32 API. */
