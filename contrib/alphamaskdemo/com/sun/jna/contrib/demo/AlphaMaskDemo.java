@@ -438,7 +438,7 @@ public class AlphaMaskDemo implements Runnable {
                     if (flavor != null) {
                         Reader reader = flavor.getReaderForText(t);
                         char[] buf = new char[512];
-                        StringBuffer b = new StringBuffer();
+                        StringBuilder b = new StringBuilder();
                         int count;
                         // excise excess NUL characters (bug in firefox, java
                         // or my code, not sure which).  someone got the 

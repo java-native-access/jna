@@ -28,7 +28,7 @@ public class NativeTest extends TestCase {
     private static final String UNICODE = "[\u0444]";
 
     public void testLongStringGeneration() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         final int MAX = Platform.isWindowsCE() ? 200000 : 2000000;
         for (int i=0;i < MAX;i++) {
             buf.append('a');

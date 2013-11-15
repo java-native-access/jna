@@ -1747,7 +1747,7 @@ public abstract class Advapi32Util {
 	 * @return A environment block
 	 */
 	public static String getEnvironmentBlock(Map<String, String> environment) {
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 		for (Entry<String, String> entry : environment.entrySet()) {
 			if (entry.getValue() != null) {
 				out.append(entry.getKey() + "=" + entry.getValue() + "\0");
