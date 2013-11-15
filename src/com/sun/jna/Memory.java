@@ -14,7 +14,6 @@ import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a 

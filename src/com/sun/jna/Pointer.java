@@ -10,7 +10,6 @@
  */
 package com.sun.jna;
 
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;

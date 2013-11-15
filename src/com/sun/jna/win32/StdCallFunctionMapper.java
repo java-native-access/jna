@@ -13,20 +13,13 @@
 package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
 
-import com.sun.jna.Callback;
 import com.sun.jna.FunctionMapper;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-import com.sun.jna.NativeLong;
 import com.sun.jna.NativeMapped;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.WString;
 
 /** Provides mapping from simple method names to w32 stdcall-decorated names
  * where the name suffix is "@" followed by the number of bytes popped by
