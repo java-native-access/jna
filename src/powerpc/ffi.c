@@ -439,6 +439,7 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
     unsigned long *ul;
     float *f;
     double *d;
+    size_t p;
   } valp;
 
   /* 'stacktop' points at the previous backchain pointer.  */
@@ -473,6 +474,9 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
     double **d;
   } p_argv;
   unsigned long gprvalue;
+#ifdef __STRUCT_PARM_ALIGN__
+  unsigned long align;
+#endif
 
   stacktop.c = (char *) stack + bytes;
   gpr_base.ul = stacktop.ul - ASM_NEEDS_REGISTERS64 - NUM_GPR_ARG_REGISTERS64;
@@ -549,6 +553,13 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 #endif
 
 	case FFI_TYPE_STRUCT:
+#ifdef __STRUCT_PARM_ALIGN__
+	  align = (*ptr)->alignment;
+	  if (align > __STRUCT_PARM_ALIGN__)
+	    align = __STRUCT_PARM_ALIGN__;
+	  if (align > 1)
+	    next_arg.p = ALIGN (next_arg.p, align);
+#endif
 	  words = ((*ptr)->size + 7) / 8;
 	  if (next_arg.ul >= gpr_base.ul && next_arg.ul + words > gpr_end.ul)
 	    {
@@ -853,6 +864,10 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
   else
     for (ptr = cif->arg_types, i = cif->nargs; i > 0; i--, ptr++)
       {
+#ifdef __STRUCT_PARM_ALIGN__
+	unsigned int align;
+#endif
+
 	switch ((*ptr)->type)
 	  {
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
@@ -868,6 +883,14 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 	    break;
 
 	  case FFI_TYPE_STRUCT:
+#ifdef __STRUCT_PARM_ALIGN__
+	    align = (*ptr)->alignment;
+	    if (align > __STRUCT_PARM_ALIGN__)
+	      align = __STRUCT_PARM_ALIGN__;
+	    align = align / 8;
+	    if (align > 1)
+	      intarg_count = ALIGN (intarg_count, align);
+#endif
 	    intarg_count += ((*ptr)->size + 7) / 8;
 	    break;
 
@@ -1399,6 +1422,9 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
   unsigned long i, avn, nfixedargs;
   ffi_cif *cif;
   ffi_dblfl *end_pfr = pfr + NUM_FPR_ARG_REGISTERS64;
+#ifdef __STRUCT_PARM_ALIGN__
+  unsigned long align;
+#endif
 
   cif = closure->cif;
   avalue = alloca (cif->nargs * sizeof (void *));
@@ -1453,6 +1479,13 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	  break;
 
 	case FFI_TYPE_STRUCT:
+#ifdef __STRUCT_PARM_ALIGN__
+	  align = arg_types[i]->alignment;
+	  if (align > __STRUCT_PARM_ALIGN__)
+	    align = __STRUCT_PARM_ALIGN__;
+	  if (align > 1)
+	    pst = (unsigned long *) ALIGN ((size_t) pst, align);
+#endif
 #ifndef __LITTLE_ENDIAN__
 	  /* Structures with size less than eight bytes are passed
 	     left-padded.  */

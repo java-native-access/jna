@@ -1,5 +1,12 @@
 2013-11-16  Alan Modra  <amodra@gmail.com>
 
+	* src/powerpc/ffi.c (ffi_prep_args64): Align struct parameters
+	according to __STRUCT_PARM_ALIGN__.
+	(ffi_prep_cif_machdep_core): Likewise.
+	(ffi_closure_helper_LINUX64): Likewise.
+
+2013-11-16  Alan Modra  <amodra@gmail.com>
+
 	* src/powerpc/linux64.S (ffi_call_LINUX64): Tweak restore of r28.
 	(.note.GNU-stack): Move inside outer #ifdef.
 	* src/powerpc/linux64_closure.S (STACKFRAME, PARMSAVE,
