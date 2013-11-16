@@ -1,3 +1,20 @@
+2013-11-16  Alan Modra  <amodra@gmail.com>
+
+	* src/powerpc/ffitarget.h (FFI_TARGET_SPECIFIC_VARIADIC): Define.
+	(FFI_EXTRA_CIF_FIELDS): Define.
+	* src/powerpc/ffi.c (ffi_prep_args64): Save fprs as per the
+	ABI, not to both fpr and param save area.
+	(ffi_prep_cif_machdep_core): Renamed from ffi_prep_cif_machdep.
+	Keep initial flags.  Formatting.  Remove dead FFI_LINUX_SOFT_FLOAT
+	code.
+	(ffi_prep_cif_machdep, ffi_prep_cif_machdep_var): New functions.
+	(ffi_closure_helper_LINUX64): Pass floating point as per ABI,
+	not to both fpr and parameter save areas.
+
+	* libffi/testsuite/libffi.call/cls_double_va.c (main): Correct
+	function cast and don't call ffi_prep_cif.
+	* libffi/testsuite/libffi.call/cls_longdouble_va.c (main): Likewise.
+
 2013-11-15  Andrew Haley  <aph@redhat.com>
 
 	* doc/libffi.texi (Closure Example): Fix the sample code.

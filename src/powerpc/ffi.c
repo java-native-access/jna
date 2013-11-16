@@ -454,9 +454,9 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
   /* 'fpr_base' points at the space for fpr3, and grows upwards as
      we use FPR registers.  */
   valp fpr_base;
-  int fparg_count;
+  unsigned int fparg_count;
 
-  int i, words;
+  unsigned int i, words, nargs, nfixedargs;
   ffi_type **ptr;
   double double_tmp;
   union {
@@ -493,30 +493,34 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 
   /* Now for the arguments.  */
   p_argv.v = ecif->avalue;
-  for (ptr = ecif->cif->arg_types, i = ecif->cif->nargs;
-       i > 0;
-       i--, ptr++, p_argv.v++)
+  nargs = ecif->cif->nargs;
+  nfixedargs = ecif->cif->nfixedargs;
+  for (ptr = ecif->cif->arg_types, i = 0;
+       i < nargs;
+       i++, ptr++, p_argv.v++)
     {
       switch ((*ptr)->type)
 	{
 	case FFI_TYPE_FLOAT:
 	  double_tmp = **p_argv.f;
-	  *next_arg.f = (float) double_tmp;
+	  if (fparg_count < NUM_FPR_ARG_REGISTERS64 && i < nfixedargs)
+	    *fpr_base.d++ = double_tmp;
+	  else
+	    *next_arg.f = (float) double_tmp;
 	  if (++next_arg.ul == gpr_end.ul)
 	    next_arg.ul = rest.ul;
-	  if (fparg_count < NUM_FPR_ARG_REGISTERS64)
-	    *fpr_base.d++ = double_tmp;
 	  fparg_count++;
 	  FFI_ASSERT (flags & FLAG_FP_ARGUMENTS);
 	  break;
 
 	case FFI_TYPE_DOUBLE:
 	  double_tmp = **p_argv.d;
-	  *next_arg.d = double_tmp;
+	  if (fparg_count < NUM_FPR_ARG_REGISTERS64 && i < nfixedargs)
+	    *fpr_base.d++ = double_tmp;
+	  else
+	    *next_arg.d = double_tmp;
 	  if (++next_arg.ul == gpr_end.ul)
 	    next_arg.ul = rest.ul;
-	  if (fparg_count < NUM_FPR_ARG_REGISTERS64)
-	    *fpr_base.d++ = double_tmp;
 	  fparg_count++;
 	  FFI_ASSERT (flags & FLAG_FP_ARGUMENTS);
 	  break;
@@ -524,18 +528,20 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
 	case FFI_TYPE_LONGDOUBLE:
 	  double_tmp = (*p_argv.d)[0];
-	  *next_arg.d = double_tmp;
+	  if (fparg_count < NUM_FPR_ARG_REGISTERS64 && i < nfixedargs)
+	    *fpr_base.d++ = double_tmp;
+	  else
+	    *next_arg.d = double_tmp;
 	  if (++next_arg.ul == gpr_end.ul)
 	    next_arg.ul = rest.ul;
-	  if (fparg_count < NUM_FPR_ARG_REGISTERS64)
-	    *fpr_base.d++ = double_tmp;
 	  fparg_count++;
 	  double_tmp = (*p_argv.d)[1];
-	  *next_arg.d = double_tmp;
+	  if (fparg_count < NUM_FPR_ARG_REGISTERS64 && i < nfixedargs)
+	    *fpr_base.d++ = double_tmp;
+	  else
+	    *next_arg.d = double_tmp;
 	  if (++next_arg.ul == gpr_end.ul)
 	    next_arg.ul = rest.ul;
-	  if (fparg_count < NUM_FPR_ARG_REGISTERS64)
-	    *fpr_base.d++ = double_tmp;
 	  fparg_count++;
 	  FFI_ASSERT (__LDBL_MANT_DIG__ == 106);
 	  FFI_ASSERT (flags & FLAG_FP_ARGUMENTS);
@@ -608,15 +614,14 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 
 
 /* Perform machine dependent cif processing */
-ffi_status
-ffi_prep_cif_machdep (ffi_cif *cif)
+static ffi_status
+ffi_prep_cif_machdep_core (ffi_cif *cif)
 {
   /* All this is for the SYSV and LINUX64 ABI.  */
-  int i;
   ffi_type **ptr;
   unsigned bytes;
-  int fparg_count = 0, intarg_count = 0;
-  unsigned flags = 0;
+  unsigned i, fparg_count = 0, intarg_count = 0;
+  unsigned flags = cif->flags;
   unsigned struct_copy_size = 0;
   unsigned type = cif->rtype->type;
   unsigned size = cif->rtype->size;
@@ -661,19 +666,23 @@ ffi_prep_cif_machdep (ffi_cif *cif)
      - soft-float float/doubles are treated as UINT32/UINT64 respectivley.
      - soft-float long doubles are returned in gpr3-gpr6.  */
   /* First translate for softfloat/nonlinux */
-  if (cif->abi == FFI_LINUX_SOFT_FLOAT) {
-	if (type == FFI_TYPE_FLOAT)
-		type = FFI_TYPE_UINT32;
-	if (type == FFI_TYPE_DOUBLE)
-		type = FFI_TYPE_UINT64;
-	if (type == FFI_TYPE_LONGDOUBLE)
-		type = FFI_TYPE_UINT128;
-  } else if (cif->abi != FFI_LINUX && cif->abi != FFI_LINUX64) {
+  if (cif->abi == FFI_LINUX_SOFT_FLOAT)
+    {
+      if (type == FFI_TYPE_FLOAT)
+	type = FFI_TYPE_UINT32;
+      if (type == FFI_TYPE_DOUBLE)
+	type = FFI_TYPE_UINT64;
+      if (type == FFI_TYPE_LONGDOUBLE)
+	type = FFI_TYPE_UINT128;
+    }
+  else if (cif->abi != FFI_LINUX
+	   && cif->abi != FFI_LINUX64)
+    {
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
-	if (type == FFI_TYPE_LONGDOUBLE)
-		type = FFI_TYPE_STRUCT;
+      if (type == FFI_TYPE_LONGDOUBLE)
+	type = FFI_TYPE_STRUCT;
 #endif
-  }
+    }
 
   switch (type)
     {
@@ -848,13 +857,8 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 	  {
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
 	  case FFI_TYPE_LONGDOUBLE:
-	    if (cif->abi == FFI_LINUX_SOFT_FLOAT)
-	      intarg_count += 4;
-	    else
-	      {
-		fparg_count += 2;
-		intarg_count += 2;
-	      }
+	    fparg_count += 2;
+	    intarg_count += 2;
 	    break;
 #endif
 	  case FFI_TYPE_FLOAT:
@@ -934,6 +938,22 @@ ffi_prep_cif_machdep (ffi_cif *cif)
   cif->bytes = bytes;
 
   return FFI_OK;
+}
+
+ffi_status
+ffi_prep_cif_machdep (ffi_cif *cif)
+{
+  cif->nfixedargs = cif->nargs;
+  return ffi_prep_cif_machdep_core (cif);
+}
+
+ffi_status
+ffi_prep_cif_machdep_var (ffi_cif *cif,
+			  unsigned int nfixedargs,
+			  unsigned int ntotalargs MAYBE_UNUSED)
+{
+  cif->nfixedargs = nfixedargs;
+  return ffi_prep_cif_machdep_core (cif);
 }
 
 extern void ffi_call_SYSV(extended_cif *, unsigned, unsigned, unsigned *,
@@ -1376,7 +1396,7 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 
   void **avalue;
   ffi_type **arg_types;
-  long i, avn;
+  unsigned long i, avn, nfixedargs;
   ffi_cif *cif;
   ffi_dblfl *end_pfr = pfr + NUM_FPR_ARG_REGISTERS64;
 
@@ -1393,6 +1413,7 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 
   i = 0;
   avn = cif->nargs;
+  nfixedargs = cif->nfixedargs;
   arg_types = cif->arg_types;
 
   /* Grab the addresses of the arguments from the stack frame.  */
@@ -1451,7 +1472,7 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 
 	  /* there are 13 64bit floating point registers */
 
-	  if (pfr < end_pfr)
+	  if (pfr < end_pfr && i < nfixedargs)
 	    {
 	      double temp = pfr->d;
 	      pfr->f = (float) temp;
@@ -1467,7 +1488,7 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	  /* On the outgoing stack all values are aligned to 8 */
 	  /* there are 13 64bit floating point registers */
 
-	  if (pfr < end_pfr)
+	  if (pfr < end_pfr && i < nfixedargs)
 	    {
 	      avalue[i] = pfr;
 	      pfr++;
@@ -1479,14 +1500,14 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 
 #if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
 	case FFI_TYPE_LONGDOUBLE:
-	  if (pfr + 1 < end_pfr)
+	  if (pfr + 1 < end_pfr && i + 1 < nfixedargs)
 	    {
 	      avalue[i] = pfr;
 	      pfr += 2;
 	    }
 	  else
 	    {
-	      if (pfr < end_pfr)
+	      if (pfr < end_pfr && i < nfixedargs)
 		{
 		  /* Passed partly in f13 and partly on the stack.
 		     Move it all to the stack.  */

@@ -106,6 +106,10 @@ typedef enum ffi_abi {
 
 #define FFI_CLOSURES 1
 #define FFI_NATIVE_RAW_API 0
+#if defined (POWERPC) || defined (POWERPC_FREEBSD)
+# define FFI_TARGET_SPECIFIC_VARIADIC 1
+# define FFI_EXTRA_CIF_FIELDS unsigned nfixedargs
+#endif
 
 /* For additional types like the below, take care about the order in
    ppc_closures.S. They must follow after the FFI_TYPE_LAST.  */
