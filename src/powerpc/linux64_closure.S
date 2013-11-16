@@ -33,15 +33,22 @@
 #ifdef __powerpc64__
 	FFI_HIDDEN (ffi_closure_LINUX64)
 	.globl  ffi_closure_LINUX64
+# if _CALL_ELF == 2
+	.text
+ffi_closure_LINUX64:
+	addis	%r2, %r12, .TOC.-ffi_closure_LINUX64@ha
+	addi	%r2, %r2, .TOC.-ffi_closure_LINUX64@l
+	.localentry ffi_closure_LINUX64, . - ffi_closure_LINUX64
+# else
 	.section        ".opd","aw"
 	.align  3
 ffi_closure_LINUX64:
-#ifdef _CALL_LINUX
+#  ifdef _CALL_LINUX
 	.quad   .L.ffi_closure_LINUX64,.TOC.@tocbase,0
 	.type   ffi_closure_LINUX64,@function
 	.text
 .L.ffi_closure_LINUX64:
-#else
+#  else
 	FFI_HIDDEN (.ffi_closure_LINUX64)
 	.globl  .ffi_closure_LINUX64
 	.quad   .ffi_closure_LINUX64,.TOC.@tocbase,0
@@ -49,15 +56,52 @@ ffi_closure_LINUX64:
 	.type   .ffi_closure_LINUX64,@function
 	.text
 .ffi_closure_LINUX64:
-#endif
+#  endif
+# endif
 
+# if _CALL_ELF == 2
+#  32 byte special reg save area + 64 byte parm save area and retval
+#  + 13*8 fpr save area + round to 16
+#  define STACKFRAME 208
+#  define PARMSAVE 32
+#  No parameter save area is needed for the call to ffi_closure_helper_LINUX64,
+#  so return value can start there.
+#  define RETVAL PARMSAVE
+# else
 #  48 bytes special reg save area + 64 bytes parm save area
 #  + 16 bytes retval area + 13*8 bytes fpr save area + round to 16
 #  define STACKFRAME 240
 #  define PARMSAVE 48
 #  define RETVAL PARMSAVE+64
+# endif
 
 .LFB1:
+# if _CALL_ELF == 2
+	ld	%r12, FFI_TRAMPOLINE_SIZE(%r11)		# closure->cif
+	mflr	%r0
+	lwz	%r12, 28(%r12)				# cif->flags
+	mtcrf	0x40, %r12
+	addi	%r12, %r1, PARMSAVE
+	bt	7, .Lparmsave
+	# Our caller has not allocated a parameter save area.
+	# We need to allocate one here and use it to pass gprs to
+	# ffi_closure_helper_LINUX64.  The return value area will do.
+	addi	%r12, %r1, -STACKFRAME+RETVAL
+.Lparmsave:
+	std	%r0, 16(%r1)
+	# Save general regs into parm save area
+	std	%r3, 0(%r12)
+	std	%r4, 8(%r12)
+	std	%r5, 16(%r12)
+	std	%r6, 24(%r12)
+	std	%r7, 32(%r12)
+	std	%r8, 40(%r12)
+	std	%r9, 48(%r12)
+	std	%r10, 56(%r12)
+
+	# load up the pointer to the parm save area
+	mr	%r5, %r12
+# else
 	mflr	%r0
 	# Save general regs into parm save area
 	# This is the parameter save area set up by our caller.
@@ -74,6 +118,7 @@ ffi_closure_LINUX64:
 
 	# load up the pointer to the parm save area
 	addi	%r5, %r1, PARMSAVE
+# endif
 
 	# next save fpr 1 to fpr 13
 	stfd	%f1, -104+(0*8)(%r1)
@@ -103,11 +148,11 @@ ffi_closure_LINUX64:
 	mr	%r3, %r11
 
 	# make the call
-#ifdef _CALL_LINUX
+# if defined _CALL_LINUX || _CALL_ELF == 2
 	bl ffi_closure_helper_LINUX64
-#else
+# else
 	bl .ffi_closure_helper_LINUX64
-#endif
+# endif
 .Lret:
 
 	# now r3 contains the return type
@@ -116,10 +161,12 @@ ffi_closure_LINUX64:
 
 	# look up the proper starting point in table
 	# by using return type as offset
+	ld %r0, STACKFRAME+16(%r1)
+	cmpldi %r3, FFI_V2_TYPE_SMALL_STRUCT
+	bge .Lsmall
 	mflr %r4		# move address of .Lret to r4
 	sldi %r3, %r3, 4	# now multiply return type by 16
 	addi %r4, %r4, .Lret_type0 - .Lret
-	ld %r0, STACKFRAME+16(%r1)
 	add %r3, %r3, %r4	# add contents of table to table address
 	mtctr %r3
 	bctr			# jump to it
@@ -234,15 +281,73 @@ ffi_closure_LINUX64:
 	mtlr %r0
 	addi %r1, %r1, STACKFRAME
 	blr
-# esac
+# case FFI_V2_TYPE_FLOAT_HOMOG
+	lfs %f1, RETVAL+0(%r1)
+	lfs %f2, RETVAL+4(%r1)
+	lfs %f3, RETVAL+8(%r1)
+	b .Lmorefloat
+# case FFI_V2_TYPE_DOUBLE_HOMOG
+	lfd %f1, RETVAL+0(%r1)
+	lfd %f2, RETVAL+8(%r1)
+	lfd %f3, RETVAL+16(%r1)
+	lfd %f4, RETVAL+24(%r1)
+	mtlr %r0
+	lfd %f5, RETVAL+32(%r1)
+	lfd %f6, RETVAL+40(%r1)
+	lfd %f7, RETVAL+48(%r1)
+	lfd %f8, RETVAL+56(%r1)
+	addi %r1, %r1, STACKFRAME
+	blr
+.Lmorefloat:
+	lfs %f4, RETVAL+12(%r1)
+	mtlr %r0
+	lfs %f5, RETVAL+16(%r1)
+	lfs %f6, RETVAL+20(%r1)
+	lfs %f7, RETVAL+24(%r1)
+	lfs %f8, RETVAL+28(%r1)
+	addi %r1, %r1, STACKFRAME
+	blr
+.Lsmall:
+# ifdef __LITTLE_ENDIAN__
+	ld %r3,RETVAL+0(%r1)
+	mtlr %r0
+	ld %r4,RETVAL+8(%r1)
+	addi %r1, %r1, STACKFRAME
+	blr
+# else
+	# A struct smaller than a dword is returned in the low bits of r3
+	# ie. right justified.  Larger structs are passed left justified
+	# in r3 and r4.  The return value area on the stack will have
+	# the structs as they are usually stored in memory.
+	cmpldi %r3, FFI_V2_TYPE_SMALL_STRUCT + 7 # size 8 bytes?
+	neg %r5, %r3
+	ld %r3,RETVAL+0(%r1)
+	blt .Lsmalldown
+	mtlr %r0
+	ld %r4,RETVAL+8(%r1)
+	addi %r1, %r1, STACKFRAME
+	blr
+.Lsmalldown:
+	addi %r5, %r5, FFI_V2_TYPE_SMALL_STRUCT + 7
+	mtlr %r0
+	sldi %r5, %r5, 3
+	addi %r1, %r1, STACKFRAME
+	srd %r3, %r3, %r5
+	blr
+# endif
+
 .LFE1:
 	.long	0
 	.byte	0,12,0,1,128,0,0,0
-#ifdef _CALL_LINUX
+# if _CALL_ELF == 2
+	.size	ffi_closure_LINUX64,.-ffi_closure_LINUX64
+# else
+#  ifdef _CALL_LINUX
 	.size	ffi_closure_LINUX64,.-.L.ffi_closure_LINUX64
-#else
+#  else
 	.size	.ffi_closure_LINUX64,.-.ffi_closure_LINUX64
-#endif
+#  endif
+# endif
 
 	.section	.eh_frame,EH_FRAME_FLAGS,@progbits
 .Lframe1:
