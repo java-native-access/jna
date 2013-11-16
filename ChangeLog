@@ -1,5 +1,10 @@
 2013-11-15  Andrew Haley  <aph@redhat.com>
 
+	* doc/libffi.texi (Closure Example): Fix the sample code.
+	* doc/libffi.info, doc/stamp-vti, doc/version.texi: Rebuilt.
+
+2013-11-15  Andrew Haley  <aph@redhat.com>
+
 	* testsuite/libffi.call/va_struct1.c (main): Fix broken test.
 	* testsuite/libffi.call/cls_uint_va.c (cls_ret_T_fn): Likewise
 	* testsuite/libffi.call/cls_struct_va1.c (test_fn): Likewise.

@@ -478,11 +478,13 @@ A trivial example that creates a new 'puts' by binding 'fputs' with
      #include <ffi.h>
 
      /* Acts like puts with the file given at time of enclosure. */
-     void puts_binding(ffi_cif *cif, ffi_arg *ret, void* args[],
-                       FILE *stream)
+     void puts_binding(ffi_cif *cif, void *ret, void* args[],
+                       void *stream)
      {
-       *ret = fputs(*(char **)args[0], stream);
+       *(ffi_arg *)ret = fputs(*(char **)args[0], (FILE *)stream);
      }
+
+     typedef int (*puts_t)(char *);
 
      int main()
      {
@@ -490,7 +492,7 @@ A trivial example that creates a new 'puts' by binding 'fputs' with
        ffi_type *args[1];
        ffi_closure *closure;
 
-       int (*bound_puts)(char *);
+       void *bound_puts;
        int rc;
 
        /* Allocate closure and bound_puts */
@@ -509,7 +511,7 @@ A trivial example that creates a new 'puts' by binding 'fputs' with
                if (ffi_prep_closure_loc(closure, &cif, puts_binding,
                                         stdout, bound_puts) == FFI_OK)
                  {
-                   rc = bound_puts("Hello World!");
+                   rc = ((puts_t)bound_puts)("Hello World!");
                    /* rc now holds the result of the call to fputs */
                  }
              }
@@ -610,7 +612,7 @@ Node: Type Example11207
 Node: Multiple ABIs12473
 Node: The Closure API12844
 Node: Closure Example15788
-Node: Missing Features17342
-Node: Index17795
+Node: Missing Features17396
+Node: Index17849
 
 End Tag Table
