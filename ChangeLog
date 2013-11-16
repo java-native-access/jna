@@ -1,3 +1,10 @@
+2013-11-15  Andrew Haley  <aph@redhat.com>
+
+	* testsuite/libffi.call/va_struct1.c (main): Fix broken test.
+	* testsuite/libffi.call/cls_uint_va.c (cls_ret_T_fn): Likewise
+	* testsuite/libffi.call/cls_struct_va1.c (test_fn): Likewise.
+	* testsuite/libffi.call/va_1.c (main): Likewise.
+
 2013-11-14  David Schneider  <david.schneider@bivab.de>
 
 	* src/arm/ffi.c: Fix register allocation for mixed float and
