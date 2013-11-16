@@ -288,7 +288,7 @@ ENTRY(ffi_closure_SYSV)
 #ifdef __LITTLE_ENDIAN__
 	mtlr %r0
 	b .Lfinish
-+#else
+#else
 	li %r5,16
 	b .Lstruct567
 #endif
