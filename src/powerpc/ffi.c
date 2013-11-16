@@ -49,6 +49,7 @@ enum {
   FLAG_RETURNS_128BITS  = 1 << (31-27), /* cr6  */
 
   FLAG_ARG_NEEDS_COPY   = 1 << (31- 7),
+  FLAG_ARG_NEEDS_PSAVE  = FLAG_ARG_NEEDS_COPY, /* Used by ELFv2 */
 #ifndef __NO_FPRS__
   FLAG_FP_ARGUMENTS     = 1 << (31- 6), /* cr1.eq; specified by ABI */
 #endif
@@ -389,6 +390,45 @@ enum {
 };
 enum { ASM_NEEDS_REGISTERS64 = 4 };
 
+#if _CALL_ELF == 2
+static unsigned int
+discover_homogeneous_aggregate (const ffi_type *t, unsigned int *elnum)
+{
+  switch (t->type)
+    {
+    case FFI_TYPE_FLOAT:
+    case FFI_TYPE_DOUBLE:
+      *elnum = 1;
+      return (int) t->type;
+
+    case FFI_TYPE_STRUCT:;
+      {
+	unsigned int base_elt = 0, total_elnum = 0;
+	ffi_type **el = t->elements;
+	while (*el)
+	  {
+	    unsigned int el_elt, el_elnum = 0;
+	    el_elt = discover_homogeneous_aggregate (*el, &el_elnum);
+	    if (el_elt == 0
+		|| (base_elt && base_elt != el_elt))
+	      return 0;
+	    base_elt = el_elt;
+	    total_elnum += el_elnum;
+	    if (total_elnum > 8)
+	      return 0;
+	    el++;
+	  }
+	*elnum = total_elnum;
+	return base_elt;
+      }
+
+    default:
+      return 0;
+    }
+}
+#endif
+
+
 /* ffi_prep_args64 is called by the assembly routine once stack space
    has been allocated for the function's arguments.
 
@@ -476,7 +516,11 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
   stacktop.c = (char *) stack + bytes;
   gpr_base.ul = stacktop.ul - ASM_NEEDS_REGISTERS64 - NUM_GPR_ARG_REGISTERS64;
   gpr_end.ul = gpr_base.ul + NUM_GPR_ARG_REGISTERS64;
+#if _CALL_ELF == 2
+  rest.ul = stack + 4 + NUM_GPR_ARG_REGISTERS64;
+#else
   rest.ul = stack + 6 + NUM_GPR_ARG_REGISTERS64;
+#endif
   fpr_base.d = gpr_base.d - NUM_FPR_ARG_REGISTERS64;
   fparg_count = 0;
   next_arg.ul = gpr_base.ul;
@@ -498,6 +542,8 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
        i < nargs;
        i++, ptr++, p_argv.v++)
     {
+      unsigned int elt, elnum;
+
       switch ((*ptr)->type)
 	{
 	case FFI_TYPE_FLOAT:
@@ -555,28 +601,79 @@ ffi_prep_args64 (extended_cif *ecif, unsigned long *const stack)
 	  if (align > 1)
 	    next_arg.p = ALIGN (next_arg.p, align);
 #endif
-	  words = ((*ptr)->size + 7) / 8;
-	  if (next_arg.ul >= gpr_base.ul && next_arg.ul + words > gpr_end.ul)
+	  elt = 0;
+#if _CALL_ELF == 2
+	  elt = discover_homogeneous_aggregate (*ptr, &elnum);
+#endif
+	  if (elt)
 	    {
-	      size_t first = gpr_end.c - next_arg.c;
-	      memcpy (next_arg.c, *p_argv.c, first);
-	      memcpy (rest.c, *p_argv.c + first, (*ptr)->size - first);
-	      next_arg.c = rest.c + words * 8 - first;
+	      union {
+		void *v;
+		float *f;
+		double *d;
+	      } arg;
+
+	      arg.v = *p_argv.v;
+	      if (elt == FFI_TYPE_FLOAT)
+		{
+		  do
+		    {
+		      double_tmp = *arg.f++;
+		      if (fparg_count < NUM_FPR_ARG_REGISTERS64
+			  && i < nfixedargs)
+			*fpr_base.d++ = double_tmp;
+		      else
+			*next_arg.f = (float) double_tmp;
+		      if (++next_arg.f == gpr_end.f)
+			next_arg.f = rest.f;
+		      fparg_count++;
+		    }
+		  while (--elnum != 0);
+		  if ((next_arg.p & 3) != 0)
+		    {
+		      if (++next_arg.f == gpr_end.f)
+			next_arg.f = rest.f;
+		    }
+		}
+	      else
+		do
+		  {
+		    double_tmp = *arg.d++;
+		    if (fparg_count < NUM_FPR_ARG_REGISTERS64 && i < nfixedargs)
+		      *fpr_base.d++ = double_tmp;
+		    else
+		      *next_arg.d = double_tmp;
+		    if (++next_arg.d == gpr_end.d)
+		      next_arg.d = rest.d;
+		    fparg_count++;
+		  }
+		while (--elnum != 0);
 	    }
 	  else
 	    {
-	      char *where = next_arg.c;
+	      words = ((*ptr)->size + 7) / 8;
+	      if (next_arg.ul >= gpr_base.ul && next_arg.ul + words > gpr_end.ul)
+		{
+		  size_t first = gpr_end.c - next_arg.c;
+		  memcpy (next_arg.c, *p_argv.c, first);
+		  memcpy (rest.c, *p_argv.c + first, (*ptr)->size - first);
+		  next_arg.c = rest.c + words * 8 - first;
+		}
+	      else
+		{
+		  char *where = next_arg.c;
 
 #ifndef __LITTLE_ENDIAN__
-	      /* Structures with size less than eight bytes are passed
-		 left-padded.  */
-	      if ((*ptr)->size < 8)
-		where += 8 - (*ptr)->size;
+		  /* Structures with size less than eight bytes are passed
+		     left-padded.  */
+		  if ((*ptr)->size < 8)
+		    where += 8 - (*ptr)->size;
 #endif
-	      memcpy (where, *p_argv.c, (*ptr)->size);
-	      next_arg.ul += words;
-	      if (next_arg.ul == gpr_end.ul)
-		next_arg.ul = rest.ul;
+		  memcpy (where, *p_argv.c, (*ptr)->size);
+		  next_arg.ul += words;
+		  if (next_arg.ul == gpr_end.ul)
+		    next_arg.ul = rest.ul;
+		}
 	    }
 	  break;
 
@@ -632,11 +729,10 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
   unsigned type = cif->rtype->type;
   unsigned size = cif->rtype->size;
 
+  /* The machine-independent calculation of cif->bytes doesn't work
+     for us.  Redo the calculation.  */
   if (cif->abi != FFI_LINUX64)
     {
-      /* All the machine-independent calculation of cif->bytes will be wrong.
-	 Redo the calculation for SYSV.  */
-
       /* Space for the frame pointer, callee's LR, and the asm's temp regs.  */
       bytes = (2 + ASM_NEEDS_REGISTERS) * sizeof (int);
 
@@ -646,13 +742,20 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
   else
     {
       /* 64-bit ABI.  */
+#if _CALL_ELF == 2
+      /* Space for backchain, CR, LR, TOC and the asm's temp regs.  */
+      bytes = (4 + ASM_NEEDS_REGISTERS64) * sizeof (long);
 
+      /* Space for the general registers.  */
+      bytes += NUM_GPR_ARG_REGISTERS64 * sizeof (long);
+#else
       /* Space for backchain, CR, LR, cc/ld doubleword, TOC and the asm's temp
 	 regs.  */
       bytes = (6 + ASM_NEEDS_REGISTERS64) * sizeof (long);
 
       /* Space for the mandatory parm save area and general registers.  */
       bytes += 2 * NUM_GPR_ARG_REGISTERS64 * sizeof (long);
+#endif
     }
 
   /* Return value handling.  The rules for SYSV are as follows:
@@ -730,6 +833,25 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 	  flags |= FLAG_RETURNS_SMST;
 	  break;
 	}
+#if _CALL_ELF == 2
+      if (cif->abi == FFI_LINUX64)
+	{
+	  unsigned int elt, elnum;
+	  elt = discover_homogeneous_aggregate (cif->rtype, &elnum);
+	  if (elt)
+	    {
+	      if (elt == FFI_TYPE_DOUBLE)
+		flags |= FLAG_RETURNS_64BITS;
+	      flags |= FLAG_RETURNS_FP | FLAG_RETURNS_SMST;
+	      break;
+	    }
+	  if (size <= 16)
+	    {
+	      flags |= FLAG_RETURNS_SMST;
+	      break;
+	    }
+	}
+#endif
       intarg_count++;
       flags |= FLAG_RETVAL_REFERENCE;
       /* Fall through.  */
@@ -845,6 +967,7 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
   else
     for (ptr = cif->arg_types, i = cif->nargs; i > 0; i--, ptr++)
       {
+	unsigned int elt, elnum;
 #ifdef __STRUCT_PARM_ALIGN__
 	unsigned int align;
 #endif
@@ -855,12 +978,16 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 	  case FFI_TYPE_LONGDOUBLE:
 	    fparg_count += 2;
 	    intarg_count += 2;
+	    if (fparg_count > NUM_FPR_ARG_REGISTERS)
+	      flags |= FLAG_ARG_NEEDS_PSAVE;
 	    break;
 #endif
 	  case FFI_TYPE_FLOAT:
 	  case FFI_TYPE_DOUBLE:
 	    fparg_count++;
 	    intarg_count++;
+	    if (fparg_count > NUM_FPR_ARG_REGISTERS)
+	      flags |= FLAG_ARG_NEEDS_PSAVE;
 	    break;
 
 	  case FFI_TYPE_STRUCT:
@@ -873,6 +1000,21 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 	      intarg_count = ALIGN (intarg_count, align);
 #endif
 	    intarg_count += ((*ptr)->size + 7) / 8;
+	    elt = 0;
+#if _CALL_ELF == 2
+	    elt = discover_homogeneous_aggregate (*ptr, &elnum);
+#endif
+	    if (elt)
+	      {
+		fparg_count += elnum;
+		if (fparg_count > NUM_FPR_ARG_REGISTERS)
+		  flags |= FLAG_ARG_NEEDS_PSAVE;
+	      }
+	    else
+	      {
+		if (intarg_count > NUM_GPR_ARG_REGISTERS)
+		  flags |= FLAG_ARG_NEEDS_PSAVE;
+	      }
 	    break;
 
 	  case FFI_TYPE_POINTER:
@@ -888,9 +1030,11 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 	    /* Everything else is passed as a 8-byte word in a GPR, either
 	       the object itself or a pointer to it.  */
 	    intarg_count++;
+	    if (intarg_count > NUM_GPR_ARG_REGISTERS)
+	      flags |= FLAG_ARG_NEEDS_PSAVE;
 	    break;
 	  default:
-		FFI_ASSERT (0);
+	    FFI_ASSERT (0);
 	  }
       }
 
@@ -928,8 +1072,13 @@ ffi_prep_cif_machdep_core (ffi_cif *cif)
 #endif
 
       /* Stack space.  */
-      if (intarg_count > NUM_GPR_ARG_REGISTERS64)
-	bytes += (intarg_count - NUM_GPR_ARG_REGISTERS64) * sizeof (long);
+      if (cif->abi == FFI_LINUX64)
+	{
+	  if (intarg_count > NUM_GPR_ARG_REGISTERS64)
+	    bytes += (intarg_count - NUM_GPR_ARG_REGISTERS64) * sizeof (long);
+	}
+      else if ((flags & FLAG_ARG_NEEDS_PSAVE) != 0)
+	bytes += intarg_count * sizeof (long);
     }
 
   /* The stack space allocated needs to be a multiple of 16 bytes.  */
@@ -957,6 +1106,10 @@ ffi_prep_cif_machdep_var (ffi_cif *cif,
 			  unsigned int ntotalargs MAYBE_UNUSED)
 {
   cif->nfixedargs = nfixedargs;
+#if _CALL_ELF == 2
+  if (cif->abi == FFI_LINUX64)
+    cif->flags |= FLAG_ARG_NEEDS_PSAVE;
+#endif
   return ffi_prep_cif_machdep_core (cif);
 }
 
@@ -976,8 +1129,11 @@ ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
    *
    * We bounce-buffer SYSV small struct return values so that sysv.S
    * can write r3 and r4 to memory without worrying about struct size.
+   *
+   * For ELFv2 ABI, use a bounce buffer for homogeneous structs too,
+   * for similar reasons.
    */
-  unsigned int smst_buffer[2];
+  unsigned long smst_buffer[8];
   extended_cif ecif;
 
   ecif.cif = cif;
@@ -1019,10 +1175,11 @@ ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 #ifndef __LITTLE_ENDIAN__
       /* The SYSV ABI returns a structure of up to 4 bytes in size
 	 left-padded in r3.  */
-      if (rsize <= 4)
+      if (cif->abi == FFI_SYSV && rsize <= 4)
 	memcpy (rvalue, (char *) smst_buffer + 4 - rsize, rsize);
       /* The SYSV ABI returns a structure of up to 8 bytes in size
-	 left-padded in r3/r4.  */
+	 left-padded in r3/r4, and the ELFv2 ABI similarly returns a
+	 structure of up to 8 bytes in size left-padded in r3.  */
       else if (rsize <= 8)
 	memcpy (rvalue, (char *) smst_buffer + 8 - rsize, rsize);
       else
@@ -1032,7 +1189,7 @@ ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 }
 
 
-#ifndef POWERPC64
+#if !defined POWERPC64 || _CALL_ELF == 2
 #define MIN_CACHE_LINE_SIZE 8
 
 static void
@@ -1056,6 +1213,22 @@ ffi_prep_closure_loc (ffi_closure *closure,
 		      void *codeloc)
 {
 #ifdef POWERPC64
+# if _CALL_ELF == 2
+  unsigned int *tramp = (unsigned int *) &closure->tramp[0];
+
+  if (cif->abi != FFI_LINUX64)
+    return FFI_BAD_ABI;
+
+  tramp[0] = 0xe96c0018;	/* 0:	ld	11,2f-0b(12)	*/
+  tramp[1] = 0xe98c0010;	/*	ld	12,1f-0b(12)	*/
+  tramp[2] = 0x7d8903a6;	/*	mtctr	12		*/
+  tramp[3] = 0x4e800420;	/*	bctr			*/
+				/* 1:	.quad	function_addr	*/
+				/* 2:	.quad	context		*/
+  *(void **) &tramp[4] = (void *) ffi_closure_LINUX64;
+  *(void **) &tramp[6] = codeloc;
+  flush_icache ((char *)tramp, (char *)codeloc, FFI_TRAMPOLINE_SIZE);
+# else
   void **tramp = (void **) &closure->tramp[0];
 
   if (cif->abi != FFI_LINUX64)
@@ -1063,6 +1236,7 @@ ffi_prep_closure_loc (ffi_closure *closure,
   /* Copy function address and TOC from ffi_closure_LINUX64.  */
   memcpy (tramp, (char *) ffi_closure_LINUX64, 16);
   tramp[2] = codeloc;
+# endif
 #else
   unsigned int *tramp;
 
@@ -1419,9 +1593,10 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
   cif = closure->cif;
   avalue = alloca (cif->nargs * sizeof (void *));
 
-  /* Copy the caller's structure return value address so that the closure
-     returns the data directly to the caller.  */
-  if (cif->rtype->type == FFI_TYPE_STRUCT)
+  /* Copy the caller's structure return value address so that the
+     closure returns the data directly to the caller.  */
+  if (cif->rtype->type == FFI_TYPE_STRUCT
+      && (cif->flags & FLAG_RETURNS_SMST) == 0)
     {
       rvalue = (void *) *pst;
       pst++;
@@ -1435,6 +1610,8 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
   /* Grab the addresses of the arguments from the stack frame.  */
   while (i < avn)
     {
+      unsigned int elt, elnum;
+
       switch (arg_types[i]->type)
 	{
 	case FFI_TYPE_SINT8:
@@ -1476,14 +1653,75 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
 	  if (align > 1)
 	    pst = (unsigned long *) ALIGN ((size_t) pst, align);
 #endif
-#ifndef __LITTLE_ENDIAN__
-	  /* Structures with size less than eight bytes are passed
-	     left-padded.  */
-	  if (arg_types[i]->size < 8)
-	    avalue[i] = (char *) pst + 8 - arg_types[i]->size;
-	  else
+	  elt = 0;
+#if _CALL_ELF == 2
+	  elt = discover_homogeneous_aggregate (arg_types[i], &elnum);
 #endif
-	    avalue[i] = pst;
+	  if (elt)
+	    {
+	      union {
+		void *v;
+		unsigned long *ul;
+		float *f;
+		double *d;
+		size_t p;
+	      } to, from;
+
+	      /* Repackage the aggregate from its parts.  The
+		 aggregate size is not greater than the space taken by
+		 the registers so store back to the register/parameter
+		 save arrays.  */
+	      if (pfr + elnum <= end_pfr)
+		to.v = pfr;
+	      else
+		to.v = pst;
+
+	      avalue[i] = to.v;
+	      from.ul = pst;
+	      if (elt == FFI_TYPE_FLOAT)
+		{
+		  do
+		    {
+		      if (pfr < end_pfr && i < nfixedargs)
+			{
+			  *to.f = (float) pfr->d;
+			  pfr++;
+			}
+		      else
+			*to.f = *from.f;
+		      to.f++;
+		      from.f++;
+		    }
+		  while (--elnum != 0);
+		}
+	      else
+		{
+		  do
+		    {
+		      if (pfr < end_pfr && i < nfixedargs)
+			{
+			  *to.d = pfr->d;
+			  pfr++;
+			}
+		      else
+			*to.d = *from.d;
+		      to.d++;
+		      from.d++;
+		    }
+		  while (--elnum != 0);
+		}
+	    }
+	  else
+	    {
+#ifndef __LITTLE_ENDIAN__
+	      /* Structures with size less than eight bytes are passed
+		 left-padded.  */
+	      if (arg_types[i]->size < 8)
+		avalue[i] = (char *) pst + 8 - arg_types[i]->size;
+	      else
+#endif
+		avalue[i] = pst;
+	    }
 	  pst += (arg_types[i]->size + 7) / 8;
 	  break;
 
@@ -1554,5 +1792,14 @@ ffi_closure_helper_LINUX64 (ffi_closure *closure, void *rvalue,
   (closure->fun) (cif, rvalue, avalue, closure->user_data);
 
   /* Tell ffi_closure_LINUX64 how to perform return type promotions.  */
+  if ((cif->flags & FLAG_RETURNS_SMST) != 0)
+    {
+      if ((cif->flags & FLAG_RETURNS_FP) == 0)
+	return FFI_V2_TYPE_SMALL_STRUCT + cif->rtype->size - 1;
+      else if ((cif->flags & FLAG_RETURNS_64BITS) != 0)
+	return FFI_V2_TYPE_DOUBLE_HOMOG;
+      else
+	return FFI_V2_TYPE_FLOAT_HOMOG;
+    }
   return cif->rtype->type;
 }

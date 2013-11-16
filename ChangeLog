@@ -1,5 +1,32 @@
 2013-11-16  Alan Modra  <amodra@gmail.com>
 
+	* src/powerpc/ffitarget.h (FFI_V2_TYPE_FLOAT_HOMOG,
+	FFI_V2_TYPE_DOUBLE_HOMOG, FFI_V2_TYPE_SMALL_STRUCT): Define.
+	(FFI_TRAMPOLINE_SIZE): Define variant for ELFv2.
+	* src/powerpc/ffi.c (FLAG_ARG_NEEDS_PSAVE): Define.
+	(discover_homogeneous_aggregate): New function.
+	(ffi_prep_args64): Adjust start of param save area for ELFv2.
+	Handle homogenous floating point struct parms.
+	(ffi_prep_cif_machdep_core): Adjust space calculation for ELFv2.
+	Handle ELFv2 return values.  Set FLAG_ARG_NEEDS_PSAVE.  Handle
+	homogenous floating point structs.
+	(ffi_call): Increase size of smst_buffer for ELFv2.  Handle ELFv2.
+	(flush_icache): Compile for ELFv2.
+	(ffi_prep_closure_loc): Set up ELFv2 trampoline.
+	(ffi_closure_helper_LINUX64): Don't return all structs directly
+	to caller.  Handle homogenous floating point structs.  Handle
+	ELFv2 struct return values.
+	* src/powerpc/linux64.S (ffi_call_LINUX64): Set up r2 for
+	ELFv2.  Adjust toc save location.  Call function pointer using
+	r12.  Handle FLAG_RETURNS_SMST.  Don't predict branches.
+	* src/powerpc/linux64_closure.S (ffi_closure_LINUX64): Set up r2
+	for ELFv2.  Define ELFv2 versions of STACKFRAME, PARMSAVE, and
+	RETVAL.  Handle possibly missing parameter save area.  Handle
+	ELFv2 return values.
+	(.note.GNU-stack): Move inside outer #ifdef.
+
+2013-11-16  Alan Modra  <amodra@gmail.com>
+
 	* src/powerpc/ffi.c (ffi_prep_cif_machdep): Revert 2013-02-08
 	change.  Do not consume an int arg when returning a small struct
 	for FFI_SYSV ABI.

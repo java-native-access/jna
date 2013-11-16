@@ -122,14 +122,23 @@ typedef enum ffi_abi {
    defined in ffi.c, to determine the exact return type and its size.  */
 #define FFI_SYSV_TYPE_SMALL_STRUCT (FFI_TYPE_LAST + 2)
 
-#if defined(POWERPC64) || defined(POWERPC_AIX)
+/* Used by ELFv2 for homogenous structure returns.  */
+#define FFI_V2_TYPE_FLOAT_HOMOG		(FFI_TYPE_LAST + 1)
+#define FFI_V2_TYPE_DOUBLE_HOMOG	(FFI_TYPE_LAST + 2)
+#define FFI_V2_TYPE_SMALL_STRUCT	(FFI_TYPE_LAST + 3)
+
+#if _CALL_ELF == 2
+# define FFI_TRAMPOLINE_SIZE 32
+#else
+# if defined(POWERPC64) || defined(POWERPC_AIX)
 #  if defined(POWERPC_DARWIN64)
 #    define FFI_TRAMPOLINE_SIZE 48
 #  else
 #    define FFI_TRAMPOLINE_SIZE 24
 #  endif
-#else /* POWERPC || POWERPC_AIX */
+# else /* POWERPC || POWERPC_AIX */
 #  define FFI_TRAMPOLINE_SIZE 40
+# endif
 #endif
 
 #ifndef LIBFFI_ASM
