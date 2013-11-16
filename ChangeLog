@@ -1,5 +1,14 @@
 2013-11-16  Alan Modra  <amodra@gmail.com>
 
+	* src/powerpc/linux64.S (ffi_call_LINUX64): Tweak restore of r28.
+	(.note.GNU-stack): Move inside outer #ifdef.
+	* src/powerpc/linux64_closure.S (STACKFRAME, PARMSAVE,
+	RETVAL): Define and use throughout.
+	(ffi_closure_LINUX64): Save fprs before buying stack.
+	(.note.GNU-stack): Move inside outer #ifdef.
+
+2013-11-16  Alan Modra  <amodra@gmail.com>
+
 	* src/powerpc/ffitarget.h (FFI_TARGET_SPECIFIC_VARIADIC): Define.
 	(FFI_EXTRA_CIF_FIELDS): Define.
 	* src/powerpc/ffi.c (ffi_prep_args64): Save fprs as per the

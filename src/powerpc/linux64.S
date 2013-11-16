@@ -130,7 +130,7 @@ ffi_call_LINUX64:
 	/* Restore the registers we used and return.  */
 	mr	%r1, %r28
 	ld	%r0, 16(%r28)
-	ld	%r28, -32(%r1)
+	ld	%r28, -32(%r28)
 	mtlr	%r0
 	ld	%r29, -24(%r1)
 	ld	%r30, -16(%r1)
@@ -197,8 +197,8 @@ ffi_call_LINUX64:
 	.uleb128 0x4
 	.align 3
 .LEFDE1:
-#endif
 
-#if defined __ELF__ && defined __linux__
+# if (defined __ELF__ && defined __linux__) || _CALL_ELF == 2
 	.section	.note.GNU-stack,"",@progbits
+# endif
 #endif
