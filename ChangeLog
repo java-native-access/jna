@@ -1,3 +1,15 @@
+2013-11-18  Anthony Green  <green@moxielogic.com>
+
+	* src/arm/ffi.c (ffi_call): Hoist declaration of temp to top of
+	function.
+	* src/arm/ffi.c (ffi_closure_inner): Moderize function declaration
+	to appease compiler.
+	Thanks for Gregory P. Smith <greg@krypto.org>.
+
+2013-11-18  Anthony Green  <green@moxielogic.com>
+
+	* README (tested): Mention PowerPC ELFv2.
+
 2013-11-16  Alan Modra  <amodra@gmail.com>
 
 	* src/powerpc/ppc_closure.S: Move errant #endif to where it belongs.

@@ -80,7 +80,8 @@ tested:
 | PowerPC         | Mac OSX          | GCC                     |
 | PowerPC         | FreeBSD          | GCC                     |
 | PowerPC 64-bit  | FreeBSD          | GCC                     |
-| PowerPC 64-bit  | Linux            | GCC                     |
+| PowerPC 64-bit  | Linux ELFv1      | GCC                     |
+| PowerPC 64-bit  | Linux ELFv2      | GCC                     |
 | S390            | Linux            | GCC                     |
 | S390X           | Linux            | GCC                     |
 | SPARC           | Linux            | GCC                     |

@@ -307,11 +307,11 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
   int vfp_struct = (cif->flags == FFI_TYPE_STRUCT_VFP_FLOAT
 		    || cif->flags == FFI_TYPE_STRUCT_VFP_DOUBLE);
 
+  unsigned int temp;
+  
   ecif.cif = cif;
   ecif.avalue = avalue;
 
-  unsigned int temp;
-  
   /* If the return value is a struct and we don't have a return	*/
   /* value address then we need to make one			*/
 
@@ -367,11 +367,8 @@ void ffi_closure_VFP (ffi_closure *);
 /* This function is jumped to by the trampoline */
 
 unsigned int
-ffi_closure_inner (closure, respp, args, vfp_args)
-     ffi_closure *closure;
-     void **respp;
-     void *args;
-     void *vfp_args;
+ffi_closure_inner (ffi_closure *closure, 
+		   void **respp, void *args, void *vfp_args)
 {
   // our various things...
   ffi_cif       *cif;
