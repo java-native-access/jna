@@ -1,3 +1,9 @@
+2013-11-18  Iain Sandoe  <iain@codesourcery.com>
+
+	* src/powerpc/darwin.S (EH): Correct use of pcrel FDE encoding.
+	* src/powerpc/darwin_closure.S (EH): Likewise. Modernise picbase
+	labels.
+
 2013-11-18  Anthony Green  <green@moxielogic.com>
 
 	* src/arm/ffi.c (ffi_call): Hoist declaration of temp to top of
