@@ -238,7 +238,7 @@ ENTRY(ffi_closure_SYSV)
 	lwz %r3,112+0(%r1)
 	lwz %r4,112+4(%r1)
 	lwz %r5,112+8(%r1)
-	bl .Luint128
+	b .Luint128
 
 # The return types below are only used when the ABI type is FFI_SYSV.
 # case FFI_SYSV_TYPE_SMALL_STRUCT + 1. One byte struct.
@@ -320,13 +320,13 @@ ENTRY(ffi_closure_SYSV)
 	mtlr %r0
 	addi %r1,%r1,144
 	blr
+#endif
 
 .Luint128:
 	lwz %r6,112+12(%r1)
 	mtlr %r0
 	addi %r1,%r1,144
 	blr
-#endif
 	
 END(ffi_closure_SYSV)
 

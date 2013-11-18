@@ -1,5 +1,10 @@
 2013-11-16  Alan Modra  <amodra@gmail.com>
 
+	* src/powerpc/ppc_closure.S: Move errant #endif to where it belongs.
+	Don't bl .Luint128.
+
+2013-11-16  Alan Modra  <amodra@gmail.com>
+
 	* src/powerpc/ffi.c (ffi_prep_cif_machdep_core): Use #if _CALL_ELF
 	test to select parameter save sizing for ELFv2 vs. ELFv1.
 	* src/powerpc/ffitarget.h (FFI_V2_TYPE_FLOAT_HOMOG,
