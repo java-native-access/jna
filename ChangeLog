@@ -1,3 +1,41 @@
+2013-11-21  Anthony Green  <green@moxielogic.com>
+
+	* configure, Makefile.in, include/Makefile.in, include/ffi.h.in,
+	man/Makefile.in, testsuite/Makefile.in, fficonfig.h.in: Rebuilt.
+
+2013-11-21  Alan Modra  <amodra@gmail.com>
+
+	* Makefile.am (EXTRA_DIST): Add new src/powerpc files.
+	(nodist_libffi_la_SOURCES <POWERPC, POWERPC_FREEBSD>): Likewise.
+	* configure.ac (HAVE_LONG_DOUBLE_VARIANT): Define for powerpc.
+	* include/ffi.h.in (ffi_prep_types): Declare.
+	* src/prep_cif.c (ffi_prep_cif_core): Call ffi_prep_types.
+	* src/types.c (FFI_NONCONST_TYPEDEF): Define and use for
+	HAVE_LONG_DOUBLE_VARIANT.
+	* src/powerpc/ffi_powerpc.h: New file.
+	* src/powerpc/ffi.c: Split into..
+	* src/powerpc/ffi_sysv.c: ..new file, and..
+	* src/powerpc/ffi_linux64.c: ..new file, rewriting parts.
+	* src/powerpc/ffitarget.h (enum ffi_abi): Rewrite powerpc ABI
+	selection as bits controlling features.
+	* src/powerpc/linux64.S: For consistency, use POWERPC64 rather
+	than __powerpc64__.
+	* src/powerpc/linux64_closure.S: Likewise.
+	* src/powerpc/ppc_closure.S: Likewise.  Move .note.FNU-stack
+	inside guard.
+	* src/powerpc/sysv.S: Likewise.
+	* configure: Regenerate.
+	* fficonfig.h.in: Regenerate.
+	* Makefile.in: Regenerate.
+
+2013-11-20  Alan Modra  <amodra@gmail.com>
+
+	* src/powerpc/ffi.c (ffi_prep_cif_machdep_core): Use
+	NUM_FPR_ARG_REGISTERS64 and NUM_GPR_ARG_REGISTERS64 not their
+	32-bit versions for 64-bit code.
+	* src/powerpc/linux64_closure.S: Don't use the return value area
+	as a parameter save area on ELFv2.
+
 2013-11-18  Iain Sandoe  <iain@codesourcery.com>
 
 	* src/powerpc/darwin.S (EH): Correct use of pcrel FDE encoding.

@@ -24,7 +24,8 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/microblaze/ffi.c src/microblaze/sysv.S			\
 	 src/microblaze/ffitarget.h					\
 	 src/nios2/ffi.c src/nios2/ffitarget.h src/nios2/sysv.S		\
-	 src/powerpc/ffi.c						\
+	 src/powerpc/ffi.c src/powerpc/ffi_powerpc.h			\
+	 src/powerpc/ffi_sysv.c src/powerpc/ffi_linux64.c		\
 	 src/powerpc/sysv.S src/powerpc/linux64.S			\
 	 src/powerpc/linux64_closure.S src/powerpc/ppc_closure.S	\
 	 src/powerpc/asm.h src/powerpc/aix.S src/powerpc/darwin.S	\
@@ -167,7 +168,7 @@ if NIOS2
 nodist_libffi_la_SOURCES += src/nios2/sysv.S src/nios2/ffi.c
 endif
 if POWERPC
-nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
+nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/ffi_sysv.c src/powerpc/ffi_linux64.c src/powerpc/sysv.S src/powerpc/ppc_closure.S src/powerpc/linux64.S src/powerpc/linux64_closure.S
 endif
 if POWERPC_AIX
 nodist_libffi_la_SOURCES += src/powerpc/ffi_darwin.c src/powerpc/aix.S src/powerpc/aix_closure.S
@@ -176,7 +177,7 @@ if POWERPC_DARWIN
 nodist_libffi_la_SOURCES += src/powerpc/ffi_darwin.c src/powerpc/darwin.S src/powerpc/darwin_closure.S
 endif
 if POWERPC_FREEBSD
-nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
+nodist_libffi_la_SOURCES += src/powerpc/ffi.c src/powerpc/ffi_sysv.c src/powerpc/sysv.S src/powerpc/ppc_closure.S
 endif
 if AARCH64
 nodist_libffi_la_SOURCES += src/aarch64/sysv.S src/aarch64/ffi.c
