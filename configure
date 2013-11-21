@@ -645,6 +645,7 @@ FFI_EXEC_TRAMPOLINE_TABLE
 FFI_EXEC_TRAMPOLINE_TABLE_FALSE
 FFI_EXEC_TRAMPOLINE_TABLE_TRUE
 sys_symbol_underscore
+HAVE_LONG_DOUBLE_VARIANT
 HAVE_LONG_DOUBLE
 ALLOCA
 XTENSA_FALSE
@@ -13345,6 +13346,7 @@ fi
 
 
 TARGETDIR="unknown"
+HAVE_LONG_DOUBLE_VARIANT=0
 case "$host" in
   aarch64*-*-*)
 	TARGET=AARCH64; TARGETDIR=aarch64
@@ -13505,6 +13507,7 @@ case "$host" in
 
   powerpc*-*-linux* | powerpc-*-sysv*)
 	TARGET=POWERPC; TARGETDIR=powerpc
+	HAVE_LONG_DOUBLE_VARIANT=1
 	;;
   powerpc-*-amigaos*)
 	TARGET=POWERPC; TARGETDIR=powerpc
@@ -13520,6 +13523,7 @@ case "$host" in
 	;;
   powerpc-*-freebsd* | powerpc-*-openbsd*)
 	TARGET=POWERPC_FREEBSD; TARGETDIR=powerpc
+	HAVE_LONG_DOUBLE_VARIANT=1
 	;;
   powerpc64-*-freebsd*)
 	TARGET=POWERPC; TARGETDIR=powerpc
@@ -14252,15 +14256,23 @@ _ACEOF
 # Also AC_SUBST this variable for ffi.h.
 if test -z "$HAVE_LONG_DOUBLE"; then
   HAVE_LONG_DOUBLE=0
-  if test $ac_cv_sizeof_double != $ac_cv_sizeof_long_double; then
-    if test $ac_cv_sizeof_long_double != 0; then
+  if test $ac_cv_sizeof_long_double != 0; then
+    if test $HAVE_LONG_DOUBLE_VARIANT != 0; then
+
+$as_echo "#define HAVE_LONG_DOUBLE_VARIANT 1" >>confdefs.h
+
       HAVE_LONG_DOUBLE=1
+    else
+      if test $ac_cv_sizeof_double != $ac_cv_sizeof_long_double; then
+        HAVE_LONG_DOUBLE=1
 
 $as_echo "#define HAVE_LONG_DOUBLE 1" >>confdefs.h
 
+      fi
     fi
   fi
 fi
+
 
 
  { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether byte ordering is bigendian" >&5
