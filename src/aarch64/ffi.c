@@ -94,8 +94,10 @@ get_basic_type_addr (unsigned short type, struct call_context *context,
       return get_s_addr (context, n);
     case FFI_TYPE_DOUBLE:
       return get_d_addr (context, n);
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       return get_v_addr (context, n);
+#endif
     case FFI_TYPE_UINT8:
     case FFI_TYPE_SINT8:
     case FFI_TYPE_UINT16:
@@ -123,8 +125,10 @@ get_basic_type_alignment (unsigned short type)
     case FFI_TYPE_FLOAT:
     case FFI_TYPE_DOUBLE:
       return sizeof (UINT64);
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       return sizeof (long double);
+#endif
     case FFI_TYPE_UINT8:
     case FFI_TYPE_SINT8:
     case FFI_TYPE_UINT16:
@@ -154,8 +158,10 @@ get_basic_type_size (unsigned short type)
       return sizeof (UINT32);
     case FFI_TYPE_DOUBLE:
       return sizeof (UINT64);
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       return sizeof (long double);
+#endif
     case FFI_TYPE_UINT8:
       return sizeof (UINT8);
     case FFI_TYPE_SINT8:
@@ -305,7 +311,9 @@ is_register_candidate (ffi_type *ty)
     case FFI_TYPE_VOID:
     case FFI_TYPE_FLOAT:
     case FFI_TYPE_DOUBLE:
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
+#endif
     case FFI_TYPE_UINT8:
     case FFI_TYPE_UINT16:
     case FFI_TYPE_UINT32:
@@ -457,9 +465,11 @@ copy_basic_type (void *dest, void *source, unsigned short type)
     case FFI_TYPE_DOUBLE:
       *(double *) dest = *(double *) source;
       break;
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       *(long double *) dest = *(long double *) source;
       break;
+#endif
     case FFI_TYPE_UINT8:
       *(ffi_arg *) dest = *(UINT8 *) source;
       break;
@@ -548,11 +558,13 @@ allocate_to_register_or_stack (struct call_context *context,
 	return allocate_to_d (context, state);
       state->nsrn = N_V_ARG_REG;
       break;
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
     case FFI_TYPE_LONGDOUBLE:
       if (state->nsrn < N_V_ARG_REG)
 	return allocate_to_v (context, state);
       state->nsrn = N_V_ARG_REG;
       break;
+#endif
     case FFI_TYPE_UINT8:
     case FFI_TYPE_SINT8:
     case FFI_TYPE_UINT16:
@@ -615,7 +627,9 @@ aarch64_prep_args (struct call_context *context, unsigned char *stack,
 	   appropriate register, or if none are available, to the stack.  */
 	case FFI_TYPE_FLOAT:
 	case FFI_TYPE_DOUBLE:
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
 	case FFI_TYPE_LONGDOUBLE:
+#endif
 	case FFI_TYPE_UINT8:
 	case FFI_TYPE_SINT8:
 	case FFI_TYPE_UINT16:
@@ -745,7 +759,9 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
               case FFI_TYPE_VOID:
               case FFI_TYPE_FLOAT:
               case FFI_TYPE_DOUBLE:
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
               case FFI_TYPE_LONGDOUBLE:
+#endif
               case FFI_TYPE_UINT8:
               case FFI_TYPE_SINT8:
               case FFI_TYPE_UINT16:
@@ -897,11 +913,12 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 	case FFI_TYPE_SINT64:
 	case  FFI_TYPE_FLOAT:
 	case  FFI_TYPE_DOUBLE:
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
 	case  FFI_TYPE_LONGDOUBLE:
 	  avalue[i] = allocate_to_register_or_stack (context, stack,
 						     &state, ty->type);
 	  break;
-
+#endif
 	case FFI_TYPE_STRUCT:
 	  if (is_hfa (ty))
 	    {
@@ -958,11 +975,13 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 			break;
 		      }
 
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
 		    case FFI_TYPE_LONGDOUBLE:
 			  memcpy (&avalue[i],
 				  allocate_to_v (context, &state),
 				  sizeof (*avalue));
 		      break;
+#endif
 
 		    default:
 		      FFI_ASSERT (0);
@@ -1033,7 +1052,9 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
         case FFI_TYPE_SINT64:
         case FFI_TYPE_FLOAT:
         case FFI_TYPE_DOUBLE:
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
         case FFI_TYPE_LONGDOUBLE:
+#endif
 	  {
 	    void *addr = get_basic_type_addr (cif->rtype->type, context, 0);
 	    copy_basic_type (addr, rvalue, cif->rtype->type);
