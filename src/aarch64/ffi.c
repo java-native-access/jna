@@ -881,6 +881,9 @@ ffi_prep_closure_loc (ffi_closure* closure,
 
 void
 ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
+	  void *stack);
+void
+ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 			void *stack)
 {
   ffi_cif *cif = closure->cif;
