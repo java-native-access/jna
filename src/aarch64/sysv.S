@@ -23,14 +23,24 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #include <fficonfig.h>
 #include <ffi.h>
 
+#ifdef HAVE_MACHINE_ASM_H
+#include <machine/asm.h>
+#else
+#ifdef __USER_LABEL_PREFIX__
+#define CONCAT1(a, b) CONCAT2(a, b)
+#define CONCAT2(a, b) a ## b
+
+/* Use the right prefix for global labels.  */
+#define CNAME(x) CONCAT1 (__USER_LABEL_PREFIX__, x)
+#else
+#define CNAME(x) x
+#endif
+#endif
+
 #define cfi_adjust_cfa_offset(off)	.cfi_adjust_cfa_offset off
 #define cfi_rel_offset(reg, off)	.cfi_rel_offset reg, off
 #define cfi_restore(reg)		.cfi_restore reg
 #define cfi_def_cfa_register(reg)	.cfi_def_cfa_register reg
-
-        .text
-        .globl ffi_call_SYSV
-        .type ffi_call_SYSV, #function
 
 /* ffi_call_SYSV()
 
@@ -81,8 +91,13 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 
 #define ffi_call_SYSV_FS (8 * 4)
 
+	.text
+	.globl CNAME(ffi_call_SYSV)
+#ifdef __ELF__
+	.type CNAME(ffi_call_SYSV), #function
+#endif
         .cfi_startproc
-ffi_call_SYSV:
+CNAME(ffi_call_SYSV):
         stp     x29, x30, [sp, #-16]!
 	cfi_adjust_cfa_offset (16)
         cfi_rel_offset (x29, 0)
@@ -221,10 +236,10 @@ ffi_call_SYSV:
 
    Voila!  */
 
-        .text
-        .globl ffi_closure_SYSV
+		.text
+		.globl CNAME(ffi_closure_SYSV)
         .cfi_startproc
-ffi_closure_SYSV:
+CNAME(ffi_closure_SYSV):
         stp     x29, x30, [sp, #-16]!
 	cfi_adjust_cfa_offset (16)
         cfi_rel_offset (x29, 0)
@@ -270,7 +285,7 @@ ffi_closure_SYSV:
            trampoline was called.  */
         add     x2, x29, #16
 
-        bl      ffi_closure_SYSV_inner
+		bl      CNAME(ffi_closure_SYSV_inner)
 
         /* Figure out if we should touch the vector registers.  */
         ldr     x0, [x22, #8]
@@ -304,4 +319,4 @@ ffi_closure_SYSV:
 
         ret
         .cfi_endproc
-        .size ffi_closure_SYSV, .-ffi_closure_SYSV
+		.size CNAME(ffi_closure_SYSV), .-CNAME(ffi_closure_SYSV)
