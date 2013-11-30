@@ -65,13 +65,13 @@ static inline void ffi_clear_cache(void *start, void *end)
 }
 
 static void *
-get_x_addr (struct call_context *context, unsigned n)
+get_x_addr (struct call_context *context, size_t n)
 {
   return &context->x[n];
 }
 
 static void *
-get_s_addr (struct call_context *context, unsigned n)
+get_s_addr (struct call_context *context, size_t n)
 {
 #if defined __AARCH64EB__
   return &context->v[n].d[1].s[1];
@@ -81,7 +81,7 @@ get_s_addr (struct call_context *context, unsigned n)
 }
 
 static void *
-get_d_addr (struct call_context *context, unsigned n)
+get_d_addr (struct call_context *context, size_t n)
 {
 #if defined __AARCH64EB__
   return &context->v[n].d[1];
@@ -91,7 +91,7 @@ get_d_addr (struct call_context *context, unsigned n)
 }
 
 static void *
-get_v_addr (struct call_context *context, unsigned n)
+get_v_addr (struct call_context *context, size_t n)
 {
   return &context->v[n];
 }
@@ -207,7 +207,7 @@ ffi_call_SYSV (unsigned (*)(struct call_context *context, unsigned char *,
 			    extended_cif *),
                struct call_context *context,
                extended_cif *,
-               unsigned,
+               size_t,
                void (*fn)(void));
 
 extern void
@@ -388,14 +388,14 @@ is_v_register_candidate (ffi_type *ty)
 
 struct arg_state
 {
-  unsigned ngrn;                /* Next general-purpose register number. */
-  unsigned nsrn;                /* Next vector register number. */
-  unsigned nsaa;                /* Next stack offset. */
+  size_t ngrn;                /* Next general-purpose register number. */
+  size_t nsrn;                /* Next vector register number. */
+  size_t nsaa;                /* Next stack offset. */
 };
 
 /* Initialize a procedure call argument marshalling state.  */
 static void
-arg_init (struct arg_state *state, unsigned call_frame_size)
+arg_init (struct arg_state *state, size_t call_frame_size)
 {
   state->ngrn = 0;
   state->nsrn = 0;
@@ -405,7 +405,7 @@ arg_init (struct arg_state *state, unsigned call_frame_size)
 /* Return the number of available consecutive core argument
    registers.  */
 
-static unsigned
+static size_t
 available_x (struct arg_state *state)
 {
   return N_X_ARG_REG - state->ngrn;
@@ -414,7 +414,7 @@ available_x (struct arg_state *state)
 /* Return the number of available consecutive vector argument
    registers.  */
 
-static unsigned
+static size_t
 available_v (struct arg_state *state)
 {
   return N_V_ARG_REG - state->nsrn;
@@ -450,8 +450,8 @@ allocate_to_v (struct call_context *context, struct arg_state *state)
 
 /* Allocate an aligned slot on the stack and return a pointer to it.  */
 static void *
-allocate_to_stack (struct arg_state *state, void *stack, unsigned alignment,
-		   unsigned size)
+allocate_to_stack (struct arg_state *state, void *stack, size_t alignment,
+		   size_t size)
 {
   void *allocation;
 
@@ -757,7 +757,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
     case FFI_SYSV:
       {
         struct call_context context;
-	unsigned stack_bytes;
+	size_t stack_bytes;
 
 	/* Figure out the total amount of stack space we need, the
 	   above call frame space needs to be 16 bytes aligned to
@@ -809,7 +809,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 		  }
                 else if ((cif->rtype->size + 7) / 8 < N_X_ARG_REG)
                   {
-                    unsigned size = ALIGN (cif->rtype->size, sizeof (UINT64));
+                    size_t size = ALIGN (cif->rtype->size, sizeof (UINT64));
                     memcpy (rvalue, get_x_addr (&context, 0), size);
                   }
                 else
@@ -1093,7 +1093,7 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 	    }
           else if ((cif->rtype->size + 7) / 8 < N_X_ARG_REG)
             {
-              unsigned size = ALIGN (cif->rtype->size, sizeof (UINT64)) ;
+              size_t size = ALIGN (cif->rtype->size, sizeof (UINT64)) ;
               memcpy (get_x_addr (context, 0), rvalue, size);
             }
           else
@@ -1112,4 +1112,3 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
       (closure->fun) (cif, rvalue, avalue, closure->user_data);
     }
 }
-

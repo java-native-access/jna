@@ -63,7 +63,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 			   extended_cif *),
                   struct call_context *context,
                   extended_cif *,
-                  unsigned required_stack_size,
+                  size_t required_stack_size,
                   void (*fn)(void));
 
    Therefore on entry we have:
