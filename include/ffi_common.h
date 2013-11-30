@@ -48,7 +48,7 @@ char *alloca ();
 #endif
 
 /* Check for the existence of memcpy. */
-#if STDC_HEADERS
+#if STDC_HEADERS || HAVE_STRING_H
 # include <string.h>
 #else
 # ifndef HAVE_MEMCPY
