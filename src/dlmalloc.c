@@ -1661,7 +1661,7 @@ struct malloc_chunk {
 typedef struct malloc_chunk  mchunk;
 typedef struct malloc_chunk* mchunkptr;
 typedef struct malloc_chunk* sbinptr;  /* The type of bins of chunks */
-typedef unsigned int bindex_t;         /* Described below */
+typedef size_t bindex_t;               /* Described below */
 typedef unsigned int binmap_t;         /* Described below */
 typedef unsigned int flag_t;           /* The type of various bit flag sets */
 
