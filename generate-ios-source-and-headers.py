@@ -59,8 +59,21 @@ class simulator_platform(Platform):
     short_arch = arch
     triple = 'i386-apple-darwin10'
     sdkroot = sim_sdk_info['Path']
+    version_min = '5.0'
 
-    prefix = "#if !defined(__arm__) && defined(__i386__)\n\n"
+    prefix = "#if !defined(__arm__) && !defined(__arm64__) && !defined(__x86_64__) && defined(__i386__)\n\n"
+    suffix = "\n\n#endif"
+
+
+class simulator64_platform(Platform):
+    sdk = 'iphonesimulator'
+    arch = 'x86_64'
+    short_arch = arch
+    triple = 'x86_64-apple-darwin13'
+    sdkroot = sim_sdk_info['Path']
+    version_min = '5.0'
+
+    prefix = "#if !defined(__arm__) && !defined(__arm64__) && !defined(__i386__) && defined(__x86_64__)\n\n"
     suffix = "\n\n#endif"
 
 
@@ -70,8 +83,21 @@ class device_platform(Platform):
     short_arch = 'arm'
     triple = 'arm-apple-darwin10'
     sdkroot = device_sdk_info['Path']
+    version_min = '5.0'
 
-    prefix = "#ifdef __arm__\n\n"
+    prefix = "#if !defined(__arm64__) && defined(__arm__)\n\n"
+    suffix = "\n\n#endif"
+
+
+class device64_platform(Platform):
+    sdk = 'iphoneos'
+    arch = 'arm64'
+    short_arch = 'arm64'
+    triple = 'aarch64-apple-darwin13'
+    sdkroot = device_sdk_info['Path']
+    version_min = '7.0'
+
+    prefix = "#if !defined(__arm__) && defined(__arm64__)\n\n"
     suffix = "\n\n#endif"
 
 
@@ -119,14 +145,23 @@ def move_source_tree(src_dir, dest_dir, dest_include_dir, arch=None, prefix=None
                      suffix=suffix)
         elif relroot == 'arm':
             move_dir(arch='arm',
-                     prefix="#ifdef __arm__\n\n",
+                     prefix="#if !defined(__arm64__) && defined(__arm__)\n\n",
                      suffix="\n\n#endif",
                      files=['sysv.S', 'trampoline.S', 'ffi.c'])
+        elif relroot == 'aarch64':
+            move_dir(arch='arm64',
+                     prefix="#if !defined(__arm__) && defined(__arm64__)\n\n",
+                     suffix="\n\n#endif",
+                     files=['sysv.S', 'ffi.c'])
         elif relroot == 'x86':
             move_dir(arch='i386',
-                     prefix="#if !defined(__arm__) && defined(__i386__)\n\n",
+                     prefix="#if !defined(__arm__) && !defined(__arm64__) && !defined(__x86_64__) && defined(__i386__)\n\n",
                      suffix="\n\n#endif",
                      files=['darwin.S', 'ffi.c'])
+            move_dir(arch='x86_64',
+                     prefix="#if !defined(__arm__) && !defined(__arm64__) && !defined(__i386__) && defined(__x86_64__)\n\n",
+                     suffix="\n\n#endif",
+                     files=['darwin64.S', 'ffi64.c'])
 
 
 def build_target(platform):
@@ -137,7 +172,7 @@ def build_target(platform):
     mkdir_p(build_dir)
     env = dict(CC=xcrun_cmd('clang'),
                LD=xcrun_cmd('ld'),
-               CFLAGS='-arch %s -isysroot %s -miphoneos-version-min=4.3' % (platform.arch, platform.sdkroot))
+               CFLAGS='-arch %s -isysroot %s -miphoneos-version-min=%s' % (platform.arch, platform.sdkroot, platform.version_min))
     working_dir = os.getcwd()
     try:
         os.chdir(build_dir)
@@ -169,7 +204,9 @@ def main():
     move_source_tree('src', 'ios/src', 'ios/include')
     move_source_tree('include', None, 'ios/include')
     build_target(simulator_platform)
+    build_target(simulator64_platform)
     build_target(device_platform)
+    build_target(device64_platform)
 
     for header_name, archs in headers_seen.iteritems():
         basename, suffix = os.path.splitext(header_name)
