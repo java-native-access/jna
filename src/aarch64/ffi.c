@@ -539,8 +539,8 @@ copy_hfa_to_reg_or_stack (void *memory,
     {
       int i;
       unsigned short type = get_homogeneous_type (ty);
-      unsigned elems = element_count (ty);
-      for (i = 0; i < elems; i++)
+	  unsigned count = element_count (ty);
+	  for (i = 0; i < count; i++)
 	{
 	  void *reg = allocate_to_v (context, state);
 	  copy_basic_type (reg, memory, type);
@@ -1081,10 +1081,10 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
         case FFI_TYPE_STRUCT:
           if (is_hfa (cif->rtype))
 	    {
-	      int i;
+		  int j;
 	      unsigned short type = get_homogeneous_type (cif->rtype);
 	      unsigned elems = element_count (cif->rtype);
-	      for (i = 0; i < elems; i++)
+		  for (j = 0; j < elems; i++)
 		{
 		  void *reg = get_basic_type_addr (type, context, i);
 		  copy_basic_type (reg, rvalue, type);
