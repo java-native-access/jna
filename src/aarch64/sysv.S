@@ -195,7 +195,9 @@ CNAME(ffi_call_SYSV):
         ret
 
         .cfi_endproc
-        .size ffi_call_SYSV, .-ffi_call_SYSV
+#ifdef __ELF__
+		.size CNAME(ffi_call_SYSV), .-CNAME(ffi_call_SYSV)
+#endif
 
 #define ffi_closure_SYSV_FS (8 * 2 + AARCH64_CALL_CONTEXT_SIZE)
 
@@ -319,4 +321,6 @@ CNAME(ffi_closure_SYSV):
 
         ret
         .cfi_endproc
+#ifdef __ELF__
 		.size CNAME(ffi_closure_SYSV), .-CNAME(ffi_closure_SYSV)
+#endif
