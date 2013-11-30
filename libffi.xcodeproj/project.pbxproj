@@ -18,16 +18,16 @@
 		DB13B3461849E0CE0010F42D /* types.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B3391849E0CE0010F42D /* types.c */; };
 		DB13B3471849E0CE0010F42D /* darwin.S in Sources */ = {isa = PBXBuildFile; fileRef = DB13B33B1849E0CE0010F42D /* darwin.S */; };
 		DB13B3481849E0CE0010F42D /* ffi.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B33C1849E0CE0010F42D /* ffi.c */; };
-		DB13B3631849E0FF0010F42D /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34C1849E0FF0010F42D /* ffi.h */; };
-		DB13B3641849E0FF0010F42D /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34D1849E0FF0010F42D /* ffi_common.h */; };
-		DB13B3651849E0FF0010F42D /* ffi_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34E1849E0FF0010F42D /* ffi_i386.h */; };
-		DB13B3661849E0FF0010F42D /* ffi_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34F1849E0FF0010F42D /* ffi_x86_64.h */; };
-		DB13B3671849E0FF0010F42D /* fficonfig.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3501849E0FF0010F42D /* fficonfig.h */; };
-		DB13B3681849E0FF0010F42D /* fficonfig_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3511849E0FF0010F42D /* fficonfig_i386.h */; };
-		DB13B3691849E0FF0010F42D /* fficonfig_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3521849E0FF0010F42D /* fficonfig_x86_64.h */; };
-		DB13B36A1849E0FF0010F42D /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3531849E0FF0010F42D /* ffitarget.h */; };
-		DB13B36B1849E0FF0010F42D /* ffitarget_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3541849E0FF0010F42D /* ffitarget_i386.h */; };
-		DB13B36C1849E0FF0010F42D /* ffitarget_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3551849E0FF0010F42D /* ffitarget_x86_64.h */; };
+		DB13B3631849E0FF0010F42D /* ffi.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34C1849E0FF0010F42D /* ffi.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3641849E0FF0010F42D /* ffi_common.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34D1849E0FF0010F42D /* ffi_common.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3651849E0FF0010F42D /* ffi_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34E1849E0FF0010F42D /* ffi_i386.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3661849E0FF0010F42D /* ffi_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B34F1849E0FF0010F42D /* ffi_x86_64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3671849E0FF0010F42D /* fficonfig.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3501849E0FF0010F42D /* fficonfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3681849E0FF0010F42D /* fficonfig_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3511849E0FF0010F42D /* fficonfig_i386.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B3691849E0FF0010F42D /* fficonfig_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3521849E0FF0010F42D /* fficonfig_x86_64.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B36A1849E0FF0010F42D /* ffitarget.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3531849E0FF0010F42D /* ffitarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B36B1849E0FF0010F42D /* ffitarget_i386.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3541849E0FF0010F42D /* ffitarget_i386.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DB13B36C1849E0FF0010F42D /* ffitarget_x86_64.h in Headers */ = {isa = PBXBuildFile; fileRef = DB13B3551849E0FF0010F42D /* ffitarget_x86_64.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DB13B36D1849E0FF0010F42D /* closures.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B3571849E0FF0010F42D /* closures.c */; };
 		DB13B3711849E0FF0010F42D /* prep_cif.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B35B1849E0FF0010F42D /* prep_cif.c */; };
 		DB13B3721849E0FF0010F42D /* raw_api.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B35C1849E0FF0010F42D /* raw_api.c */; };
@@ -40,17 +40,49 @@
 		DB13B382184A50CC0010F42D /* sysv.S in Sources */ = {isa = PBXBuildFile; fileRef = DB13B380184A50CC0010F42D /* sysv.S */; };
 		DB13B385184A50D60010F42D /* darwin64.S in Sources */ = {isa = PBXBuildFile; fileRef = DB13B383184A50D60010F42D /* darwin64.S */; };
 		DB13B386184A50D60010F42D /* ffi64.c in Sources */ = {isa = PBXBuildFile; fileRef = DB13B384184A50D60010F42D /* ffi64.c */; };
+		DB13B387184A64FA0010F42D /* ffi.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3241849E0CE0010F42D /* ffi.h */; };
+		DB13B388184A64FA0010F42D /* ffi_arm.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3251849E0CE0010F42D /* ffi_arm.h */; };
+		DB13B389184A64FA0010F42D /* ffi_arm64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B378184A50BF0010F42D /* ffi_arm64.h */; };
+		DB13B38A184A64FA0010F42D /* ffi_common.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3261849E0CE0010F42D /* ffi_common.h */; };
+		DB13B38B184A64FA0010F42D /* ffi_i386.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3271849E0CE0010F42D /* ffi_i386.h */; };
+		DB13B38C184A64FA0010F42D /* ffi_x86_64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B379184A50BF0010F42D /* ffi_x86_64.h */; };
+		DB13B38D184A64FA0010F42D /* fficonfig.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3281849E0CE0010F42D /* fficonfig.h */; };
+		DB13B38E184A64FA0010F42D /* fficonfig_arm.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B3291849E0CE0010F42D /* fficonfig_arm.h */; };
+		DB13B38F184A64FA0010F42D /* fficonfig_arm64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B37A184A50BF0010F42D /* fficonfig_arm64.h */; };
+		DB13B390184A64FA0010F42D /* fficonfig_i386.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B32A1849E0CE0010F42D /* fficonfig_i386.h */; };
+		DB13B391184A64FA0010F42D /* fficonfig_x86_64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B37B184A50BF0010F42D /* fficonfig_x86_64.h */; };
+		DB13B392184A64FA0010F42D /* ffitarget.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B32B1849E0CE0010F42D /* ffitarget.h */; };
+		DB13B393184A64FA0010F42D /* ffitarget_arm.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B32C1849E0CE0010F42D /* ffitarget_arm.h */; };
+		DB13B394184A64FA0010F42D /* ffitarget_arm64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B37C184A50BF0010F42D /* ffitarget_arm64.h */; };
+		DB13B395184A64FA0010F42D /* ffitarget_i386.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B32D1849E0CE0010F42D /* ffitarget_i386.h */; };
+		DB13B396184A64FA0010F42D /* ffitarget_x86_64.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = DB13B37D184A50BF0010F42D /* ffitarget_x86_64.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		DB13B1641849DF1E0010F42D /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				DB13B387184A64FA0010F42D /* ffi.h in CopyFiles */,
+				DB13B388184A64FA0010F42D /* ffi_arm.h in CopyFiles */,
+				DB13B389184A64FA0010F42D /* ffi_arm64.h in CopyFiles */,
+				DB13B38A184A64FA0010F42D /* ffi_common.h in CopyFiles */,
+				DB13B38B184A64FA0010F42D /* ffi_i386.h in CopyFiles */,
+				DB13B38C184A64FA0010F42D /* ffi_x86_64.h in CopyFiles */,
+				DB13B38D184A64FA0010F42D /* fficonfig.h in CopyFiles */,
+				DB13B38E184A64FA0010F42D /* fficonfig_arm.h in CopyFiles */,
+				DB13B38F184A64FA0010F42D /* fficonfig_arm64.h in CopyFiles */,
+				DB13B390184A64FA0010F42D /* fficonfig_i386.h in CopyFiles */,
+				DB13B391184A64FA0010F42D /* fficonfig_x86_64.h in CopyFiles */,
+				DB13B392184A64FA0010F42D /* ffitarget.h in CopyFiles */,
+				DB13B393184A64FA0010F42D /* ffitarget_arm.h in CopyFiles */,
+				DB13B394184A64FA0010F42D /* ffitarget_arm64.h in CopyFiles */,
+				DB13B395184A64FA0010F42D /* ffitarget_i386.h in CopyFiles */,
+				DB13B396184A64FA0010F42D /* ffitarget_x86_64.h in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
