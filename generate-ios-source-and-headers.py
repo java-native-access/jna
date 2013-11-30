@@ -4,8 +4,6 @@ import re
 import os
 import errno
 import collections
-#developer_path =
-
 
 class Platform(object):
     pass
@@ -57,11 +55,11 @@ class simulator_platform(Platform):
     sdk = 'iphonesimulator'
     arch = 'i386'
     short_arch = arch
-    triple = 'i386-apple-darwin10'
+    triple = 'i386-apple-darwin11'
     sdkroot = sim_sdk_info['Path']
-    version_min = '5.0'
+    version_min = '5.1.1'
 
-    prefix = "#if !defined(__arm__) && !defined(__arm64__) && !defined(__x86_64__) && defined(__i386__)\n\n"
+    prefix = "#ifdef __i386__\n\n"
     suffix = "\n\n#endif"
 
 
@@ -71,9 +69,9 @@ class simulator64_platform(Platform):
     short_arch = arch
     triple = 'x86_64-apple-darwin13'
     sdkroot = sim_sdk_info['Path']
-    version_min = '5.0'
+    version_min = '7.0'
 
-    prefix = "#if !defined(__arm__) && !defined(__arm64__) && !defined(__i386__) && defined(__x86_64__)\n\n"
+    prefix = "#ifdef __x86_64__\n\n"
     suffix = "\n\n#endif"
 
 
@@ -81,11 +79,11 @@ class device_platform(Platform):
     sdk = 'iphoneos'
     arch = 'armv7'
     short_arch = 'arm'
-    triple = 'arm-apple-darwin10'
+    triple = 'arm-apple-darwin11'
     sdkroot = device_sdk_info['Path']
-    version_min = '5.0'
+    version_min = '5.1.1'
 
-    prefix = "#if !defined(__arm64__) && defined(__arm__)\n\n"
+    prefix = "#ifdef __arm__\n\n"
     suffix = "\n\n#endif"
 
 
@@ -97,7 +95,7 @@ class device64_platform(Platform):
     sdkroot = device_sdk_info['Path']
     version_min = '7.0'
 
-    prefix = "#if !defined(__arm__) && defined(__arm64__)\n\n"
+    prefix = "#ifdef __arm64__\n\n"
     suffix = "\n\n#endif"
 
 
@@ -145,21 +143,21 @@ def move_source_tree(src_dir, dest_dir, dest_include_dir, arch=None, prefix=None
                      suffix=suffix)
         elif relroot == 'arm':
             move_dir(arch='arm',
-                     prefix="#if !defined(__arm64__) && defined(__arm__)\n\n",
+                     prefix="#ifdef __arm__\n\n",
                      suffix="\n\n#endif",
                      files=['sysv.S', 'trampoline.S', 'ffi.c'])
         elif relroot == 'aarch64':
             move_dir(arch='arm64',
-                     prefix="#if !defined(__arm__) && defined(__arm64__)\n\n",
+                     prefix="#ifdef __arm64__\n\n",
                      suffix="\n\n#endif",
                      files=['sysv.S', 'ffi.c'])
         elif relroot == 'x86':
             move_dir(arch='i386',
-                     prefix="#if !defined(__arm__) && !defined(__arm64__) && !defined(__x86_64__) && defined(__i386__)\n\n",
+                     prefix="#ifdef __i386__\n\n",
                      suffix="\n\n#endif",
                      files=['darwin.S', 'ffi.c'])
             move_dir(arch='x86_64',
-                     prefix="#if !defined(__arm__) && !defined(__arm64__) && !defined(__i386__) && defined(__x86_64__)\n\n",
+                     prefix="#ifdef __x86_64__\n\n",
                      suffix="\n\n#endif",
                      files=['darwin64.S', 'ffi64.c'])
 

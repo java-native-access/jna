@@ -2,6 +2,7 @@
 import subprocess
 import re
 import os
+import errno
 import collections
 
 
@@ -20,6 +21,16 @@ def sdkinfo(sdkname):
             ret[k] = v
     return ret
 
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:  # Python >2.5
+        if exc.errno == errno.EEXIST:
+            pass
+        else:
+            raise
+
 desktop_sdk_info = sdkinfo('macosx')
 
 
@@ -36,32 +47,32 @@ def latest_sdks():
 desktop_sdk = latest_sdks()
 
 
-class desktop_platform_32(Platform):
+class desktop32_platform(Platform):
     sdk = 'macosx'
     arch = 'i386'
     name = 'mac32'
-    triple = 'i386-apple-darwin10'
+    triple = 'i386-apple-darwin11'
     sdkroot = desktop_sdk_info['Path']
+    version_min = '10.7'
 
-    prefix = "#if defined(__i386__) && !defined(__x86_64__)\n\n"
+    prefix = "#ifdef __i386__\n\n"
     suffix = "\n\n#endif"
 
 
-class desktop_platform_64(Platform):
+class desktop64_platform(Platform):
     sdk = 'macosx'
     arch = 'x86_64'
     name = 'mac'
-    triple = 'x86_64-apple-darwin10'
+    triple = 'x86_64-apple-darwin11'
     sdkroot = desktop_sdk_info['Path']
+    version_min = '10.7'
 
-    prefix = "#if !defined(__i386__) && defined(__x86_64__)\n\n"
+    prefix = "#ifdef __x86_64__\n\n"
     suffix = "\n\n#endif"
 
 
 def move_file(src_dir, dst_dir, filename, file_suffix=None, prefix='', suffix=''):
-    if not os.path.exists(dst_dir):
-        os.makedirs(dst_dir)
-
+    mkdir_p(dst_dir)
     out_filename = filename
 
     if file_suffix:
@@ -104,11 +115,11 @@ def move_source_tree(src_dir, dest_dir, dest_include_dir, arch=None, prefix=None
                      suffix=suffix)
         elif relroot == 'x86':
             move_dir(arch='i386',
-                     prefix="#if defined(__i386__) && !defined(__x86_64__)\n\n",
+                     prefix="#ifdef __i386__\n\n",
                      suffix="\n\n#endif",
                      files=['darwin.S', 'ffi.c'])
             move_dir(arch='x86_64',
-                     prefix="#if !defined(__i386__) && defined(__x86_64__)\n\n",
+                     prefix="#ifdef __x86_64__\n\n",
                      suffix="\n\n#endif",
                      files=['darwin64.S', 'ffi64.c'])
 
@@ -122,7 +133,7 @@ def build_target(platform):
         os.makedirs(build_dir)
         env = dict(CC=xcrun_cmd('clang'),
                    LD=xcrun_cmd('ld'),
-                   CFLAGS='-arch %s -isysroot %s -mmacosx-version-min=10.6' % (platform.arch, platform.sdkroot))
+                   CFLAGS='-arch %s -isysroot %s -mmacosx-version-min=%s' % (platform.arch, platform.sdkroot, platform.version_min))
         working_dir = os.getcwd()
         try:
             os.chdir(build_dir)
@@ -145,8 +156,8 @@ def build_target(platform):
 def main():
     move_source_tree('src', 'osx/src', 'osx/include')
     move_source_tree('include', None, 'osx/include')
-    build_target(desktop_platform_32)
-    build_target(desktop_platform_64)
+    build_target(desktop32_platform)
+    build_target(desktop64_platform)
 
     for header_name, archs in headers_seen.iteritems():
         basename, suffix = os.path.splitext(header_name)
