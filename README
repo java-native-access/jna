@@ -51,6 +51,7 @@ tested:
 |-----------------+------------------+-------------------------|
 | Architecture    | Operating System | Compiler                |
 |-----------------+------------------+-------------------------|
+| AArch64 (ARM64) | iOS              | Clang                   |
 | AArch64         | Linux            | GCC                     |
 | Alpha           | Linux            | GCC                     |
 | Alpha           | Tru64            | GCC                     |
