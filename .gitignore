@@ -19,3 +19,5 @@ autom4te.cache
 libffi.xcodeproj/xcuserdata
 libffi.xcodeproj/project.xcworkspace
 ios/
+osx/
+build_*/

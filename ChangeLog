@@ -1,3 +1,26 @@
+2012-11-30  Zachary Waldowski  <zwaldowski@gmail.com>
+
+	* src/arm/ffi.c, src/dlmalloc.c, src/x86/ffi.c: Silence Clang
+	warnings.
+	* src/arm/sysv.S: Simplify RETLDM arguments for LLVM 3.1.  More
+	Clang clean-ups.
+	* .gitignore: Exclude OS X generated source and build_.
+	* generate-osx-source-and-headers.py: Clean up, modernize scripts.
+	* generate-ios-source-and-headers.py: Ditto, and add __arm64__
+	support.
+	* include/ffi_common.h: Test for HAVE_STRING_H.
+	* src/closures.c (open_temp_exec_file_dir): Use size_t.
+	* src/prep_cif (ffi_prep_cif_core): Cast ALIGN result.
+	* src/x86/ffi64.c: More Clang warning clean-ups.
+	* src/aarch64/sysv.S: Use CNAME for global symbols.  Only use
+	.size for ELF targets.
+	* src/aarch64/ffi.c: Clean up for double == long double.  Clean up
+	for Xcode warnings.  Use Clang cache invalidation builtin.  Use
+	size_t in place of unsigned in many places.
+	* libffi.xcodeproj/project.pbxproj: Include x86_64+aarch64 pieces
+	in library.  Export headers properly.
+	* build-ios.sh: Remove.
+
 2013-11-21  Anthony Green  <green@moxielogic.com>
 
 	* configure, Makefile.in, include/Makefile.in, include/ffi.h.in,
