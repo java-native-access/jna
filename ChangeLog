@@ -1,3 +1,8 @@
+2013-11-30  Anthony Green  <green@moxielogic.com>
+
+	* Makefile.am (EXTRA_DIST): Remove build-ios.sh.
+	* Makefile:in: Rebuilt.
+
 2012-11-30  Zachary Waldowski  <zwaldowski@gmail.com>
 
 	* src/arm/ffi.c, src/dlmalloc.c, src/x86/ffi.c: Silence Clang
