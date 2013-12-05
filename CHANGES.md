@@ -17,6 +17,7 @@ Features
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
 * [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
 * [#287](https://github.com/twall/jna/pull/287): Added `DBTF_MEDIA` and `DBTF_NET` to `com.sun.jna.platform.win32.DBT` - [@daifei4321](https://github.com/daifei4321).
+* Added ResetEvent - [@manithree](https://github.com/manithree).
 
 Bug Fixes
 ---------
