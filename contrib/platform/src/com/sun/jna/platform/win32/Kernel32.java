@@ -949,6 +949,18 @@ public interface Kernel32 extends WinNT {
     boolean SetEvent(HANDLE hEvent);
 
     /**
+     * Resets (to non-signaled state) the specified event object.
+     *
+     * @param hEvent
+     *           A handle to the event object
+     *
+     * @return If the function succeeds, the return value is nonzero.
+     *         If the function fails the return value is zero.  To get
+     *         extended error information, call GetLastError.
+     */
+    boolean ResetEvent(HANDLE hEvent);
+
+    /**
      * Sets the specified event object to the signaled state and then resets it
      * to the nonsignaled state after releasing the appropriate number of
      * waiting threads.

@@ -120,6 +120,27 @@ public class Kernel32Test extends TestCase {
 		Kernel32.INSTANCE.CloseHandle(handle);
 	}
 
+    public void testResetEvent() {
+		HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, true, false, null);
+
+		// set the event to the signaled state
+		Kernel32.INSTANCE.SetEvent(handle);
+
+		// This should return successfully
+		assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(
+				 handle, 1000));
+		
+		// now reset it to not signaled
+		Kernel32.INSTANCE.ResetEvent(handle);
+		
+		// handle runs into timeout since it is not triggered
+		// WAIT_TIMEOUT = 0x00000102
+		assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
+				handle, 1000));
+
+		Kernel32.INSTANCE.CloseHandle(handle);
+	}
+
     public void testWaitForMultipleObjects(){
     	HANDLE[] handles = new HANDLE[2];
 
