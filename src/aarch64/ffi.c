@@ -1081,12 +1081,12 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
         case FFI_TYPE_STRUCT:
           if (is_hfa (cif->rtype))
 	    {
-	      int i;
+	      int j;
 	      unsigned short type = get_homogeneous_type (cif->rtype);
 	      unsigned elems = element_count (cif->rtype);
-	      for (i = 0; i < elems; i++)
+	      for (j = 0; j < elems; j++)
 		{
-		  void *reg = get_basic_type_addr (type, context, i);
+		  void *reg = get_basic_type_addr (type, context, j);
 		  copy_basic_type (reg, rvalue, type);
 		  rvalue += get_basic_type_size (type);
 		}
