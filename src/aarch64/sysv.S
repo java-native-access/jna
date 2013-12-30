@@ -92,11 +92,11 @@ ffi_call_SYSV:
 	cfi_def_cfa_register (x29)
         sub     sp, sp, #ffi_call_SYSV_FS
 
-        stp     x21, x22, [sp, 0]
+        stp     x21, x22, [sp, #0]
         cfi_rel_offset (x21, 0 - ffi_call_SYSV_FS)
         cfi_rel_offset (x22, 8 - ffi_call_SYSV_FS)
 
-        stp     x23, x24, [sp, 16]
+        stp     x23, x24, [sp, #16]
         cfi_rel_offset (x23, 16 - ffi_call_SYSV_FS)
         cfi_rel_offset (x24, 24 - ffi_call_SYSV_FS)
 
