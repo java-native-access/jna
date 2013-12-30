@@ -350,9 +350,17 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       break;
     }
   if (small_struct)
-    memcpy (rvalue, &temp, cif->rtype->size);
+    {
+      FFI_ASSERT(rvalue != NULL);
+      memcpy (rvalue, &temp, cif->rtype->size);
+    }
+    
   else if (vfp_struct)
-    memcpy (rvalue, ecif.rvalue, cif->rtype->size);
+    {
+      FFI_ASSERT(rvalue != NULL);
+      memcpy (rvalue, ecif.rvalue, cif->rtype->size);
+    }
+    
 }
 
 /** private members **/
