@@ -152,7 +152,7 @@ merge_classes (enum x86_64_reg_class class1, enum x86_64_reg_class class2)
 
    See the x86-64 PS ABI for details.
 */
-static int
+static size_t
 classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
 		   size_t byte_offset)
 {
@@ -168,7 +168,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
     case FFI_TYPE_SINT64:
     case FFI_TYPE_POINTER:
       {
-	int size = byte_offset + type->size;
+	size_t size = byte_offset + type->size;
 
 	if (size <= 4)
 	  {
@@ -209,8 +209,8 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
       return 2;
     case FFI_TYPE_STRUCT:
       {
-	const int UNITS_PER_WORD = 8;
-	int words = (type->size + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
+	const size_t UNITS_PER_WORD = 8;
+	size_t words = (type->size + UNITS_PER_WORD - 1) / UNITS_PER_WORD;
 	ffi_type **ptr;
 	int i;
 	enum x86_64_reg_class subclasses[MAX_CLASSES];
@@ -233,7 +233,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
 	/* Merge the fields of structure.  */
 	for (ptr = type->elements; *ptr != NULL; ptr++)
 	  {
-	    int num;
+	    size_t num;
 
 	    byte_offset = ALIGN (byte_offset, (*ptr)->alignment);
 
@@ -242,7 +242,7 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
 	      return 0;
 	    for (i = 0; i < num; i++)
 	      {
-		int pos = byte_offset / 8;
+		size_t pos = byte_offset / 8;
 		classes[i + pos] =
 		  merge_classes (subclasses[i], classes[i + pos]);
 	      }
@@ -306,11 +306,12 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
    class.  Return zero iff parameter should be passed in memory, otherwise
    the number of registers.  */
 
-static int
+static size_t
 examine_argument (ffi_type *type, enum x86_64_reg_class classes[MAX_CLASSES],
 		  _Bool in_return, int *pngpr, int *pnsse)
 {
-  int i, n, ngpr, nsse;
+  size_t n;
+  int i, ngpr, nsse;
 
   n = classify_argument (type, classes, 0);
   if (n == 0)
@@ -351,9 +352,9 @@ examine_argument (ffi_type *type, enum x86_64_reg_class classes[MAX_CLASSES],
 ffi_status
 ffi_prep_cif_machdep (ffi_cif *cif)
 {
-  int gprcount, ssecount, i, avn, n, ngpr, nsse, flags;
+  int gprcount, ssecount, i, avn, ngpr, nsse, flags;
   enum x86_64_reg_class classes[MAX_CLASSES];
-  size_t bytes;
+  size_t bytes, n;
 
   gprcount = ssecount = 0;
 
@@ -411,7 +412,7 @@ ffi_prep_cif_machdep (ffi_cif *cif)
   if (ssecount)
     flags |= 1 << 11;
   cif->flags = flags;
-  cif->bytes = ALIGN (bytes, 8);
+  cif->bytes = (unsigned)ALIGN (bytes, 8);
 
   return FFI_OK;
 }
@@ -454,8 +455,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 
   for (i = 0; i < avn; ++i)
     {
-      size_t size = arg_types[i]->size;
-      int n;
+      size_t n, size = arg_types[i]->size;
 
       n = examine_argument (arg_types[i], classes, 0, &ngpr, &nsse);
       if (n == 0
@@ -584,7 +584,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
   if (ret != FFI_TYPE_VOID)
     {
       enum x86_64_reg_class classes[MAX_CLASSES];
-      int n = examine_argument (cif->rtype, classes, 1, &ngpr, &nsse);
+      size_t n = examine_argument (cif->rtype, classes, 1, &ngpr, &nsse);
       if (n == 0)
 	{
 	  /* The return value goes in memory.  Arrange for the closure
@@ -611,7 +611,7 @@ ffi_closure_unix64_inner(ffi_closure *closure, void *rvalue,
   for (i = 0; i < avn; ++i)
     {
       enum x86_64_reg_class classes[MAX_CLASSES];
-      int n;
+      size_t n;
 
       n = examine_argument (arg_types[i], classes, 0, &ngpr, &nsse);
       if (n == 0

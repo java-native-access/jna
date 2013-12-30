@@ -187,7 +187,7 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
 	{
 	  /* Add any padding if necessary */
 	  if (((*ptr)->alignment - 1) & bytes)
-	    bytes = ALIGN(bytes, (*ptr)->alignment);
+	    bytes = (unsigned)ALIGN(bytes, (*ptr)->alignment);
 
 #ifdef TILE
 	  if (bytes < 10 * FFI_SIZEOF_ARG &&
