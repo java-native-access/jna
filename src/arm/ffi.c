@@ -871,7 +871,7 @@ static int vfp_type_p (ffi_type *t)
 
 static int place_vfp_arg (ffi_cif *cif, ffi_type *t)
 {
-  int reg = cif->vfp_reg_free;
+  short reg = cif->vfp_reg_free;
   int nregs = t->size / sizeof (float);
   int align = ((t->type == FFI_TYPE_STRUCT_VFP_FLOAT
 		|| t->type == FFI_TYPE_FLOAT) ? 1 : 2);
