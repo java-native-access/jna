@@ -43,15 +43,18 @@ public class TlbFunctionDispId extends TlbAbstractMethod {
 
         String[] names = typeInfoUtil.getNames(funcDesc.memid, paramCount + 1);
 
-        // if there is at least one param we need a comma
-        if (paramCount > 0)
-            methodvariables = ", ";
-
         for (int i = 0; i < paramCount; i++) {
             ELEMDESC elemdesc = funcDesc.lprgelemdescParam.elemDescArg[i];
             String methodName = names[i + 1].toLowerCase();
-            methodparams += this.getType(elemdesc.tdesc) + " " + this.replaceJavaKeyword(methodName);
-            methodvariables += methodName;
+            String type = this.getType(elemdesc.tdesc);
+            String _methodName = this.replaceJavaKeyword(methodName);
+            methodparams += type + " " + _methodName;
+            
+            //wrap all in a VARIANT
+            if(type.equals("VARIANT"))
+                methodvariables += _methodName;
+            else
+                methodvariables += "new VARIANT(" + _methodName + ")";
 
             // if there is more than 1 param
             if (i < (paramCount - 1)) {
@@ -59,9 +62,16 @@ public class TlbFunctionDispId extends TlbAbstractMethod {
                 methodvariables += ", ";
             }
         }
+        
+        String returnValue;
+        if(this.returnType.equalsIgnoreCase("VARIANT"))
+            returnValue = "pResult";
+        else
+            returnValue = "((" + returnType + ") pResult.getValue())";
 
         this.replaceVariable("helpstring", docStr);
         this.replaceVariable("returntype", returnType);
+        this.replaceVariable("returnvalue", returnValue);
         this.replaceVariable("methodname", methodName);
         this.replaceVariable("methodparams", methodparams);
         this.replaceVariable("methodvariables", methodvariables);

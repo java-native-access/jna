@@ -40,7 +40,7 @@ public class MSOfficeDemo {
             Thread.currentThread().sleep(10000);
             // save in different formats
             // pdf format is only supported in MSWord 2007 and above
-            // msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", wdFormatPDF);
+            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", wdFormatPDF);
             msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", wdFormatRTF);
             msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.html", wdFormatHTML);
             // close and save the document

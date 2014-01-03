@@ -4,5 +4,7 @@
 	 * Member id: ${memberid}
 	 */
 	public ${returntype} ${methodname}(${methodparams}) {
-		return this.oleMethod(OleAuto.DISPATCH_METHOD, null, dispatch, new DISPID(${memberid}));
+		VARIANT.ByReference pResult = new VARIANT.ByReference();
+		this.oleMethod(OleAuto.DISPATCH_METHOD, pResult, getIDispatch(), new DISPID(${memberid}), new VARIANT[] {${methodvariables}});
+		return ${returnvalue};
 	}

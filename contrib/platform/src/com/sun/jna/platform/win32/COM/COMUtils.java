@@ -21,6 +21,7 @@ import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;
@@ -112,7 +113,7 @@ public abstract class COMUtils {
             IntByReference puArgErr) {
         if (FAILED(hr)) {
             String formatMessageFromHR = Kernel32Util.formatMessage(hr);
-            throw new COMException(formatMessageFromHR);
+            throw new COMException(formatMessageFromHR, pExcepInfo, puArgErr);
         }
     }
 

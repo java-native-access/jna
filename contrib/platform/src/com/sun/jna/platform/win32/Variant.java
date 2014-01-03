@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.IntegerType;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
@@ -15,14 +16,16 @@ import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOLByReference;
 import com.sun.jna.platform.win32.OaIdl._VARIANT_BOOLByReference;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.CHARByReference;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.LONGByReference;
 import com.sun.jna.platform.win32.WinDef.LONGLONG;
 import com.sun.jna.platform.win32.WinDef.LONGLONGByReference;
-import com.sun.jna.platform.win32.WinDef.LONGByReference;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.SCODE;
 import com.sun.jna.platform.win32.WinDef.SCODEByReference;
@@ -30,9 +33,9 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.ULONGLONGByReference;
-import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.COM.Dispatch;
@@ -135,7 +138,17 @@ public interface Variant {
             this.setValue(VT_BSTR, value);
         }
 
+        public VARIANT(BSTRByReference value) {
+            this();
+            this.setValue(VT_BYREF | VT_BSTR, value);
+        }
+
         public VARIANT(VARIANT_BOOL value) {
+            this();
+            this.setValue(VT_BOOL, new BOOL(value.intValue()));
+        }
+
+        public VARIANT(BOOL value) {
             this();
             this.setValue(VT_BOOL, value);
         }
@@ -189,9 +202,9 @@ public interface Variant {
         public VARIANT(boolean value) {
             this();
             if (value)
-                this.setValue(VT_BOOL, VARIANT_TRUE);
+                this.setValue(VT_BOOL, new BOOL(VARIANT_TRUE.intValue()));
             else
-                this.setValue(VT_BOOL, VARIANT_FALSE);
+                this.setValue(VT_BOOL, new BOOL(VARIANT_FALSE.intValue()));
         }
 
         public VARIANT(IDispatch value) {
@@ -537,7 +550,7 @@ public interface Variant {
                 // DOUBLE VT_R8
                 public Double dblVal;
                 // VARIANT_BOOL VT_BOOL
-                public VARIANT_BOOL boolVal;
+                public BOOL boolVal;
                 // SCODE VT_ERROR
                 public SCODE scode;
                 // CY VT_CY
@@ -575,7 +588,7 @@ public interface Variant {
                 // DATE * VT_BYREF|VT_DATE
                 public DATE.ByReference pdate;
                 // BSTR * VT_BYREF|VT_BSTR
-                public BSTR pbstrVal;
+                public BSTR.ByReference pbstrVal;
                 // IUnknown ** VT_BYREF|VT_UNKNOWN
                 public Unknown.ByReference ppunkVal;
                 // IDispatch ** VT_BYREF|VT_DISPATCH

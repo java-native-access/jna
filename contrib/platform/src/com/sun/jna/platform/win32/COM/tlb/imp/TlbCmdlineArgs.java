@@ -22,12 +22,16 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements
     }
 
     public int getIntParam(String key) {
-        String param = this.getParam(key);
+        String param = this.getRequiredParam(key);
         return new Integer(param).intValue();
     }
 
     public String getParam(String key) {
-        String param = this.get(key);
+        return this.get(key);
+    }
+
+    public String getRequiredParam(String key) {
+        String param = this.getParam(key);
         if (param == null)
             throw new TlbParameterNotFoundException(
                     "Commandline parameter not found: " + key);
@@ -55,15 +59,15 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements
         return this.containsKey(CMD_ARG_TYPELIB_ID);
     }
 
-    public int getBindingMode() {
+    public String getBindingMode() {
         if(this.containsKey(CMD_ARG_BINDING_MODE))
-            return this.getIntParam(CMD_ARG_BINDING_MODE);
+            return this.getParam(CMD_ARG_BINDING_MODE);
         else
             return BINDING_MODE_VTABLE;
     }
     
     public void showCmdHelp() {
-        String helpStr = "usage: TlbImp [-tlb.id -tlb.major.version -tlb.minor.version] [-tlb.file] [-bind.mode vTable, dispId]"
+        String helpStr = "usage: TlbImp [-tlb.id -tlb.major.version -tlb.minor.version] [-tlb.file] [-bind.mode vTable, dispId] [-output.dir]"
                 + CRCR
                 + "options:"
                 + CR
@@ -76,6 +80,8 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements
                 + "-tlb.file             The file name containing the type library."
                 + CR
                 + "-bind.mode            The binding mode used to create the Java code."
+                + CR
+                + "-output.dir           The optional output directory, default is the user temp directory."
                 + CRCR
                 + "samples:"
                 + CR

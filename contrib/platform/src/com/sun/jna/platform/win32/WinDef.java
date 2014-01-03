@@ -1091,7 +1091,7 @@ public interface WinDef extends StdCallLibrary {
          *            the value
          */
         public USHORT(long value) {
-            super(2, value, true);
+            super(SIZE, value, true);
         }
     }
 

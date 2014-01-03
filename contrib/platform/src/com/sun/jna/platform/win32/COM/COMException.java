@@ -28,7 +28,9 @@ public class COMException extends RuntimeException {
 
     /** The pu arg err. */
     private IntByReference puArgErr;
-
+    
+    private int uArgErr;
+    
     /**
      * Instantiates a new automation exception.
      */
@@ -70,7 +72,7 @@ public class COMException extends RuntimeException {
      */
     public COMException(String message, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
-        super(message);
+        super(message + " (puArgErr=" + puArgErr.getValue() + ")");
         this.pExcepInfo = pExcepInfo;
         this.puArgErr = puArgErr;
     }
@@ -101,5 +103,13 @@ public class COMException extends RuntimeException {
      */
     public IntByReference getArgErr() {
         return puArgErr;
+    }
+
+    public int getuArgErr() {
+        return uArgErr;
+    }
+
+    public void setuArgErr(int uArgErr) {
+        this.uArgErr = uArgErr;
     }
 }

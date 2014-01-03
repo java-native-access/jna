@@ -17,6 +17,7 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -91,7 +92,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     @Override
     public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
             DISPID wFlags, DISPPARAMS pDispParams, ByReference pVarResult,
-            com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference pExcepInfo,
+            EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {
         return this.getIDispatch().Invoke(dispIdMember, riid, lcid, wFlags,
                 pDispParams, pVarResult, pExcepInfo, puArgErr);

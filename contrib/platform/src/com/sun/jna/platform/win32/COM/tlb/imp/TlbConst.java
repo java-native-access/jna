@@ -40,13 +40,15 @@ public interface TlbConst {
     
     public final static String CMD_ARG_BINDING_MODE = "bind.mode";
     
-    public final static int BINDING_MODE_VTABLE = 0;
+    public final static String BINDING_MODE_VTABLE = "vtable";
 
-    public final static int BINDING_MODE_DISPID = 1;
+    public final static String BINDING_MODE_DISPID = "dispid";
     
     public final static String CMD_ARG_TYPELIB_MAJOR_VERSION = "tlb.major.version";
     
     public final static String CMD_ARG_TYPELIB_MINOR_VERSION = "tlb.minor.version";
     
     public final static String CMD_ARG_TYPELIB_FILE = "tlb.file";
+    
+    public final static String CMD_ARG_OUTPUT_DIR = "output.dir";
 }

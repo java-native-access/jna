@@ -39,7 +39,7 @@ public class TlbCoClass extends TlbBase {
      * @param typeLibUtil
      *            the type lib util
      */
-    public TlbCoClass(int index, String packagename, TypeLibUtil typeLibUtil, int bindingMode) {
+    public TlbCoClass(int index, String packagename, TypeLibUtil typeLibUtil, String bindingMode) {
         super(index, typeLibUtil, null);
         
         TypeInfoUtil typeInfoUtil = typeLibUtil.getTypeInfoUtil(index);
@@ -89,7 +89,7 @@ public class TlbCoClass extends TlbBase {
         this.createContent(this.content);
     }
 
-    protected void createFunctions(TypeInfoUtil typeInfoUtil, int bindingMode) {
+    protected void createFunctions(TypeInfoUtil typeInfoUtil, String bindingMode) {
         TYPEATTR typeAttr = typeInfoUtil.getTypeAttr();
         int cFuncs = typeAttr.cFuncs.intValue();
         for (int i = 0; i < cFuncs; i++) {
@@ -98,10 +98,10 @@ public class TlbCoClass extends TlbBase {
             
             TlbAbstractMethod method = null;
             if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                if(this.isDispIdMode())
+                if(this.isVTableMode())
                     method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
                 else
-                    method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
+                    method = new TlbFunctionDispId(i, index, typeLibUtil, funcDesc, typeInfoUtil);
             } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
                 method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc,
                         typeInfoUtil);

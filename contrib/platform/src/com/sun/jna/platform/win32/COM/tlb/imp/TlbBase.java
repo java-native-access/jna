@@ -73,13 +73,13 @@ public abstract class TlbBase {
     public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
             "GetTypeInfo", "GetIDsOfNames", "Invoke" };
 
-    protected int bindingMode = TlbConst.BINDING_MODE_DISPID;
+    protected String bindingMode = TlbConst.BINDING_MODE_DISPID;
     
     public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil) {
         this(index, typeLibUtil, typeInfoUtil, TlbConst.BINDING_MODE_DISPID);
     }
 
-    public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil, int bindingMode) {
+    public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil, String bindingMode) {
         this.index = index;
         this.typeLibUtil = typeLibUtil;
         this.typeInfoUtil = typeInfoUtil;
@@ -266,14 +266,14 @@ public abstract class TlbBase {
     }
     
     protected boolean isVTableMode() {
-        if(this.bindingMode == TlbConst.BINDING_MODE_VTABLE)
+        if(this.bindingMode.equalsIgnoreCase(TlbConst.BINDING_MODE_VTABLE))
             return true;
         else
             return false;
     }
     
     protected boolean isDispIdMode() {
-        if(this.bindingMode == TlbConst.BINDING_MODE_DISPID)
+        if(this.bindingMode.equalsIgnoreCase(TlbConst.BINDING_MODE_DISPID))
             return true;
         else
             return false;
