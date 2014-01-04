@@ -697,7 +697,8 @@ ffi_prep_closure_loc_linux64 (ffi_closure *closure,
 
   /* Copy function address and TOC from ffi_closure_LINUX64.  */
   memcpy (tramp, (char *) ffi_closure_LINUX64, 16);
-  tramp[2] = codeloc;
+  tramp[2] = tramp[1];
+  tramp[1] = codeloc;
 #endif
 
   closure->cif = cif;
