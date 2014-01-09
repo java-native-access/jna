@@ -863,7 +863,7 @@ ffi_prep_closure_loc (ffi_closure* closure,
    descriptors, invokes the wrapped function, then marshalls the return
    value back into the call context.  */
 
-void
+void FFI_HIDDEN
 ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 			void *stack)
 {
