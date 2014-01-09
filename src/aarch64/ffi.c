@@ -27,7 +27,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #include <stdlib.h>
 
 /* Stack alignment requirement in bytes */
+#if defined (__APPLE__)
+#define AARCH64_STACK_ALIGN 1
+#else
 #define AARCH64_STACK_ALIGN 16
+#endif
 
 #define N_X_ARG_REG 8
 #define N_V_ARG_REG 8
@@ -148,11 +152,20 @@ get_basic_type_alignment (unsigned short type)
 #endif
     case FFI_TYPE_UINT8:
     case FFI_TYPE_SINT8:
+#if defined (__APPLE__)
+	  return sizeof (UINT8);
+#endif
     case FFI_TYPE_UINT16:
     case FFI_TYPE_SINT16:
+#if defined (__APPLE__)
+	  return sizeof (UINT16);
+#endif
     case FFI_TYPE_UINT32:
     case FFI_TYPE_INT:
     case FFI_TYPE_SINT32:
+#if defined (__APPLE__)
+	  return sizeof (UINT32);
+#endif
     case FFI_TYPE_POINTER:
     case FFI_TYPE_UINT64:
     case FFI_TYPE_SINT64:
@@ -461,7 +474,9 @@ allocate_to_stack (struct arg_state *state, void *stack, size_t alignment,
      alignment of the argument's type.  */
   state->nsaa = ALIGN (state->nsaa, alignment);
   state->nsaa = ALIGN (state->nsaa, alignment);
+#if !defined (__APPLE__)
   state->nsaa = ALIGN (state->nsaa, 8);
+#endif
 
   allocation = stack + state->nsaa;
 
