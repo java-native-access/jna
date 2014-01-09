@@ -49,6 +49,23 @@ struct call_context
   } v [AARCH64_N_VREG];
 };
 
+#if defined (__clang__) && defined (__APPLE__)
+extern void
+sys_icache_invalidate (void *start, size_t len);
+#endif
+
+static inline void
+ffi_clear_cache (void *start, void *end)
+{
+#if defined (__clang__) && defined (__APPLE__)
+	sys_icache_invalidate (start, (char *)end - (char *)start);
+#elif defined (__GNUC__)
+	__builtin___clear_cache (start, end);
+#else
+#error "Missing builtin to flush instruction cache"
+#endif
+}
+
 static void *
 get_x_addr (struct call_context *context, unsigned n)
 {
@@ -840,7 +857,7 @@ static unsigned char trampoline [] =
     memcpy (__tramp + 12, &__fun, sizeof (__fun));			\
     memcpy (__tramp + 20, &__ctx, sizeof (__ctx));			\
     memcpy (__tramp + 28, &__flags, sizeof (__flags));			\
-    __clear_cache(__tramp, __tramp + FFI_TRAMPOLINE_SIZE);		\
+    ffi_clear_cache(__tramp, __tramp + FFI_TRAMPOLINE_SIZE);		\
   })
 
 ffi_status
