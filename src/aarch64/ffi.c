@@ -209,7 +209,7 @@ ffi_call_SYSV (unsigned (*)(struct call_context *context, unsigned char *,
 			    extended_cif *),
                struct call_context *context,
                extended_cif *,
-               unsigned,
+               size_t,
                void (*fn)(void));
 
 extern void
@@ -392,12 +392,12 @@ struct arg_state
 {
   unsigned ngrn;                /* Next general-purpose register number. */
   unsigned nsrn;                /* Next vector register number. */
-  unsigned nsaa;                /* Next stack offset. */
+  size_t nsaa;                  /* Next stack offset. */
 };
 
 /* Initialize a procedure call argument marshalling state.  */
 static void
-arg_init (struct arg_state *state, unsigned call_frame_size)
+arg_init (struct arg_state *state, size_t call_frame_size)
 {
   state->ngrn = 0;
   state->nsrn = 0;
@@ -452,8 +452,8 @@ allocate_to_v (struct call_context *context, struct arg_state *state)
 
 /* Allocate an aligned slot on the stack and return a pointer to it.  */
 static void *
-allocate_to_stack (struct arg_state *state, void *stack, unsigned alignment,
-		   unsigned size)
+allocate_to_stack (struct arg_state *state, void *stack, size_t alignment,
+		   size_t size)
 {
   void *allocation;
 
@@ -759,7 +759,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
     case FFI_SYSV:
       {
         struct call_context context;
-	unsigned stack_bytes;
+	size_t stack_bytes;
 
 	/* Figure out the total amount of stack space we need, the
 	   above call frame space needs to be 16 bytes aligned to
@@ -811,7 +811,7 @@ ffi_call (ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 		  }
                 else if ((cif->rtype->size + 7) / 8 < N_X_ARG_REG)
                   {
-                    unsigned size = ALIGN (cif->rtype->size, sizeof (UINT64));
+                    size_t size = ALIGN (cif->rtype->size, sizeof (UINT64));
                     memcpy (rvalue, get_x_addr (&context, 0), size);
                   }
                 else
@@ -1093,7 +1093,7 @@ ffi_closure_SYSV_inner (ffi_closure *closure, struct call_context *context,
 	    }
           else if ((cif->rtype->size + 7) / 8 < N_X_ARG_REG)
             {
-              unsigned size = ALIGN (cif->rtype->size, sizeof (UINT64)) ;
+              size_t size = ALIGN (cif->rtype->size, sizeof (UINT64)) ;
               memcpy (get_x_addr (context, 0), rvalue, size);
             }
           else
