@@ -556,7 +556,6 @@ copy_hfa_to_reg_or_stack (void *memory,
     {
       int i;
       unsigned short type = get_homogeneous_type (ty);
-      unsigned elems = element_count (ty);
       for (i = 0; i < elems; i++)
 	{
 	  void *reg = allocate_to_v (context, state);
