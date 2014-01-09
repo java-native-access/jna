@@ -37,6 +37,9 @@
 static int vfp_type_p (ffi_type *);
 static void layout_vfp_args (ffi_cif *);
 
+int ffi_prep_args_SYSV(char *stack, extended_cif *ecif, float *vfp_space);
+int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space);
+
 static char* ffi_align(ffi_type **p_arg, char *argp)
 {
   /* Align if necessary */
@@ -366,7 +369,7 @@ void ffi_closure_VFP (ffi_closure *);
 
 /* This function is jumped to by the trampoline */
 
-unsigned int
+unsigned int FFI_HIDDEN
 ffi_closure_inner (ffi_closure *closure, 
 		   void **respp, void *args, void *vfp_args)
 {
