@@ -18,4 +18,5 @@ libffi*gz
 autom4te.cache
 libffi.xcodeproj/xcuserdata
 libffi.xcodeproj/project.xcworkspace
-ios/
+build_*/
+darwin_*/
