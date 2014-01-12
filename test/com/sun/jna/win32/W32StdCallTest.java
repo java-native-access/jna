@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2014 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import com.sun.jna.FunctionMapper;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
+import com.sun.jna.NativeLong;
 import com.sun.jna.Structure;
 
 /**
@@ -54,6 +55,15 @@ public class W32StdCallTest extends TestCase {
             int callback(int arg, int arg2);
         }
         int callInt32StdCallCallback(Int32Callback c, int arg, int arg2);
+        interface BugCallback extends StdCallCallback {
+            void callback(NativeLong arg1, int arg2, double arg3,
+                          String arg4, String arg5, double arg6,
+                          NativeLong arg7, NativeLong arg8, NativeLong arg9);
+        }
+        int callBugCallback(BugCallback c, NativeLong arg1, int arg2,
+                            double arg3, String arg4, String arg5,
+                            double arg6, NativeLong arg7,
+                            NativeLong arg8, NativeLong arg9);
     }
     
     public static void main(java.lang.String[] argList) {
@@ -135,5 +145,26 @@ public class W32StdCallTest extends TestCase {
             fail("stdcall callback did not restore the stack pointer");
         }
         assertEquals("Wrong stdcall callback return", -3, value);
+    }
+
+    public void testCallBugCallback() {
+        final boolean[] called = { false };
+        TestLibrary.BugCallback cb = new TestLibrary.BugCallback() {
+            public void callback(NativeLong arg1, int arg2, double arg3,
+                                 String arg4, String arg5, double arg6,
+                                 NativeLong arg7, NativeLong arg8,
+                                 NativeLong arg9) {
+                called[0] = true;
+            }
+        };
+        int value = testlib.callBugCallback(cb, new NativeLong(1),
+                                            2, 3, "four", "five", 6,
+                                            new NativeLong(7),
+                                            new NativeLong(8),
+                                            new NativeLong(9));
+        assertTrue("stdcall callback not called", called[0]);
+        if (value == -1) {
+            fail("stdcall callback did not restore the stack pointer");
+        }
     }
 }
