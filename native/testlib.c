@@ -947,18 +947,20 @@ callBugCallback(void (__stdcall *func)(long,int,double,
                                        double,long,long,long),
                 long arg1, int arg2, double arg3,
                 const char* arg4, const char* arg5,
-                double arg6, long arg7, long arg8, long arg9) {
+                double arg6, long arg7,
+                double arg8, long arg9,
+                long arg10, long arg11) {
   void* sp1 = NULL;
   void* sp2 = NULL;
   int value = -1;
 
 #if defined(_MSC_VER)
   __asm mov sp1, esp;
-  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
   __asm mov sp2, esp;
 #elif defined(__GNUC__)
   asm volatile (" movl %%esp,%0" : "=g" (sp1));
-  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9);
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
   asm volatile (" movl %%esp,%0" : "=g" (sp2));
 #endif
 
