@@ -944,6 +944,7 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
 EXPORT int32_t __stdcall
 callBugCallback(void (__stdcall *func)(long,int,double,
                                        const char*,const char*,
+                                       double,long,
                                        double,long,long,long),
                 long arg1, int arg2, double arg3,
                 const char* arg4, const char* arg5,
