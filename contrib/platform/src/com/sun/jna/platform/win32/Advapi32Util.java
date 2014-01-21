@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,6 +81,7 @@ public abstract class Advapi32Util {
 		 */
 		public String fqn;
 	}
+
 
 	/**
 	 * Retrieves the name of the user associated with the current thread.
@@ -2062,4 +2064,119 @@ public abstract class Advapi32Util {
 		}
 		return aceStructures;
 	}
+
+    public static enum AccessCheckPermission {
+        READ(WinNT.GENERIC_READ),
+        WRITE(WinNT.GENERIC_WRITE),
+        EXECUTE(WinNT.GENERIC_EXECUTE);
+
+        final int code;
+
+        AccessCheckPermission(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+
+    private static Memory getSecurityDescriptorForFile(final String absoluteFilePath) {
+        final int infoType = WinNT.OWNER_SECURITY_INFORMATION | WinNT.GROUP_SECURITY_INFORMATION |
+                WinNT.DACL_SECURITY_INFORMATION;
+
+        final IntByReference lpnSize = new IntByReference();
+        boolean succeeded = Advapi32.INSTANCE.GetFileSecurity(
+                new WString(absoluteFilePath),
+                infoType,
+                null,
+                0, lpnSize);
+
+        if (!succeeded) {
+            final int lastError = Kernel32.INSTANCE.GetLastError();
+            if (W32Errors.ERROR_INSUFFICIENT_BUFFER != lastError) {
+                throw new Win32Exception(lastError);
+            }
+        }
+
+        final int nLength = lpnSize.getValue();
+        final Memory securityDescriptorMemoryPointer = new Memory(nLength);
+        succeeded = Advapi32.INSTANCE.GetFileSecurity(new WString(
+                absoluteFilePath), infoType, securityDescriptorMemoryPointer, nLength, lpnSize);
+
+        if (!succeeded) {
+            securityDescriptorMemoryPointer.clear();
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        return securityDescriptorMemoryPointer;
+    }
+
+    /**
+     * Checks if the current process has the given permission for the file.
+     * @param file the file to check
+     * @param permissionToCheck the permission to check for the file
+     * @return true if has access, otherwise false
+     */
+    public static boolean accessCheck(File file, AccessCheckPermission permissionToCheck) {
+        boolean hasAccess = false;
+        final Memory securityDescriptorMemoryPointer = getSecurityDescriptorForFile(file.getAbsolutePath().replaceAll("/", "\\"));
+
+        HANDLEByReference openedAccessToken = null;
+        final HANDLEByReference duplicatedToken = new HANDLEByReference();
+        try{
+            openedAccessToken = new HANDLEByReference();
+
+            final int desireAccess = WinNT.TOKEN_IMPERSONATE | WinNT.TOKEN_QUERY | WinNT.TOKEN_DUPLICATE | WinNT.STANDARD_RIGHTS_READ;
+            if(!Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(), desireAccess, openedAccessToken)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            if(!Advapi32.INSTANCE.DuplicateToken(openedAccessToken.getValue(), WinNT.SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, duplicatedToken)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+            mapping.genericRead = new WinDef.DWORD(WinNT.FILE_GENERIC_READ);
+            mapping.genericWrite = new WinDef.DWORD(WinNT.FILE_GENERIC_WRITE);
+            mapping.genericExecute = new WinDef.DWORD(WinNT.FILE_GENERIC_EXECUTE);
+            mapping.genericAll = new WinDef.DWORD(WinNT.FILE_ALL_ACCESS);
+
+            final WinDef.DWORDByReference rights = new WinDef.DWORDByReference(new WinDef.DWORD(permissionToCheck.getCode()));
+            Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+            final WinNT.PRIVILEGE_SET privileges = new WinNT.PRIVILEGE_SET(1);
+            privileges.PrivilegeCount = new WinDef.DWORD(0);
+            final WinNT.DWORDByReference privilegeLength = new WinDef.DWORDByReference(new WinDef.DWORD(privileges.size()));
+
+            final WinDef.DWORDByReference grantedAccess = new WinDef.DWORDByReference();
+            final WinDef.BOOLByReference result = new WinDef.BOOLByReference();
+            if(!Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer,
+                    duplicatedToken.getValue(),
+                    rights.getValue(),
+                    mapping,
+                    privileges, privilegeLength, grantedAccess, result)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            hasAccess = result.getValue().booleanValue();
+
+        } finally {
+
+            if(openedAccessToken != null && openedAccessToken.getValue() != null) {
+                Kernel32.INSTANCE.CloseHandle(openedAccessToken.getValue());
+            }
+
+            if(duplicatedToken != null && duplicatedToken.getValue() != null) {
+                Kernel32.INSTANCE.CloseHandle(duplicatedToken.getValue());
+            }
+
+            if(securityDescriptorMemoryPointer != null) {
+                securityDescriptorMemoryPointer.clear();
+            }
+        }
+
+        return hasAccess;
+    }
 }
