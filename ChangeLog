@@ -1,3 +1,7 @@
+2014-02-09  Heiher  <r@hev.cc>
+
+	* src/mips/n32.S: Fix call floating point va function.
+
 2013-11-21  Anthony Green  <green@moxielogic.com>
 
 	* configure, Makefile.in, include/Makefile.in, include/ffi.h.in,
