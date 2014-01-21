@@ -438,28 +438,28 @@ available_v (struct arg_state *state)
 static void *
 allocate_to_x (struct call_context *context, struct arg_state *state)
 {
-  FFI_ASSERT (state->ngrn < N_X_ARG_REG)
+  FFI_ASSERT (state->ngrn < N_X_ARG_REG);
   return get_x_addr (context, (state->ngrn)++);
 }
 
 static void *
 allocate_to_s (struct call_context *context, struct arg_state *state)
 {
-  FFI_ASSERT (state->nsrn < N_V_ARG_REG)
+  FFI_ASSERT (state->nsrn < N_V_ARG_REG);
   return get_s_addr (context, (state->nsrn)++);
 }
 
 static void *
 allocate_to_d (struct call_context *context, struct arg_state *state)
 {
-  FFI_ASSERT (state->nsrn < N_V_ARG_REG)
+  FFI_ASSERT (state->nsrn < N_V_ARG_REG);
   return get_d_addr (context, (state->nsrn)++);
 }
 
 static void *
 allocate_to_v (struct call_context *context, struct arg_state *state)
 {
-  FFI_ASSERT (state->nsrn < N_V_ARG_REG)
+  FFI_ASSERT (state->nsrn < N_V_ARG_REG);
   return get_v_addr (context, (state->nsrn)++);
 }
 

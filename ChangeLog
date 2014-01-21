@@ -1,3 +1,7 @@
+2014-01-21  Zachary Waldowski  <zach@waldowski.me>
+
+	* src/aarch64/ffi.c: Fix missing semicolons on assertions under
+	debug mode.
 
 2013-12-30  Zachary Waldowski  <zach@waldowski.me>
 
@@ -19,7 +23,7 @@
 	* src/aarch64/sysv.S: Use CNAME for global symbols.  Only use
 	.size for ELF targets.
 	* src/aarch64/ffi.c: Clean up for double == long double.  Clean up
-	for Xcode warnings.  Use Clang cache invalidation builtin.  Use
+	from Clang warnings.  Use Clang cache invalidation builtin.  Use
 	size_t in place of unsigned in many places.  Accommodate for
 	differences in Apple AArch64 ABI.
 
