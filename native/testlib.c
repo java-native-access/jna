@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -939,6 +939,36 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
     return -1;
   }
   return value;
+}
+
+EXPORT int32_t __stdcall
+callBugCallback(void (__stdcall *func)(long,int,double,
+                                       const char*,const char*,
+                                       double,long,
+                                       double,long,long,long),
+                long arg1, int arg2, double arg3,
+                const char* arg4, const char* arg5,
+                double arg6, long arg7,
+                double arg8, long arg9,
+                long arg10, long arg11) {
+  void* sp1 = NULL;
+  void* sp2 = NULL;
+  int value = -1;
+
+#if defined(_MSC_VER)
+  __asm mov sp1, esp;
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  __asm mov sp2, esp;
+#elif defined(__GNUC__)
+  asm volatile (" movl %%esp,%0" : "=g" (sp1));
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  asm volatile (" movl %%esp,%0" : "=g" (sp2));
+#endif
+
+  if (sp1 != sp2) {
+    return -1;
+  }
+  return 0;
 }
 
 #endif /* _WIN32 && !_WIN64 */
