@@ -41,6 +41,8 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
+import static com.sun.jna.platform.win32.WinNT.*;
+
 /**
  * @author dblock[at]dblock[dot]org
  */
@@ -826,4 +828,61 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.ImpersonateSelf(WinNT.SECURITY_IMPERSONATION_LEVEL.SecurityAnonymous));
     	assertTrue(Advapi32.INSTANCE.RevertToSelf());
     }
+
+    public void testMapGenericReadMask() {
+        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+        mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+        mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+        mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+
+        final DWORDByReference rights = new DWORDByReference(new DWORD(GENERIC_READ));
+        Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+        assertEquals(FILE_GENERIC_READ, rights.getValue().intValue());
+        assertTrue(GENERIC_READ !=  (rights.getValue().intValue() & GENERIC_READ));
+    }
+
+    public void testMapGenericWriteMask() {
+        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+        mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+        mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+        mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+
+        final DWORDByReference rights = new DWORDByReference(new DWORD(GENERIC_WRITE));
+        Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+        assertEquals(FILE_GENERIC_WRITE, rights.getValue().intValue());
+        assertTrue(GENERIC_WRITE !=  (rights.getValue().intValue() & GENERIC_WRITE));
+    }
+
+    public void testMapGenericExecuteMask() {
+        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+        mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+        mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+        mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+
+        final DWORDByReference rights = new DWORDByReference(new DWORD(GENERIC_EXECUTE));
+        Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+        assertEquals(FILE_GENERIC_EXECUTE, rights.getValue().intValue());
+        assertTrue(GENERIC_EXECUTE !=  (rights.getValue().intValue() & GENERIC_EXECUTE));
+    }
+
+    public void testMapGenericAllMask() {
+        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+        mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+        mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+        mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+
+        final DWORDByReference rights = new DWORDByReference(new DWORD(GENERIC_ALL));
+        Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+        assertEquals(FILE_ALL_ACCESS, rights.getValue().intValue());
+        assertTrue(GENERIC_ALL != (rights.getValue().intValue() & GENERIC_ALL));
+    }
+
 }

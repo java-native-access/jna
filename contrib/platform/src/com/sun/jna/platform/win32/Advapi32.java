@@ -32,6 +32,12 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import static com.sun.jna.platform.win32.WinDef.DWORD;
+import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
+import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
+
 /**
  * Advapi32.dll Interface.
  *
@@ -1529,7 +1535,7 @@ public interface Advapi32 extends StdCallLibrary {
      * @param AccessMask [in, out] A pointer to an access mask.
      * @param GenericMapping [in] A pointer to a GENERIC_MAPPING structure specifying a mapping of generic access types to specific and standard access types.
      */
-    public void MapGenericMask(WinDef.DWORDByReference AccessMask, WinNT.GENERIC_MAPPING GenericMapping);
+    public void MapGenericMask(DWORDByReference AccessMask, GENERIC_MAPPING GenericMapping);
 
 
     /**
@@ -1547,9 +1553,9 @@ public interface Advapi32 extends StdCallLibrary {
      * @return true on success; false on failure (use GetLastError to get extended error information)
      */
     public boolean AccessCheck(Pointer pSecurityDescriptor,
-                               HANDLE ClientToken, WinDef.DWORD DesiredAccess,
-                               WinNT.GENERIC_MAPPING GenericMapping,
-                               WinNT.PRIVILEGE_SET PrivilegeSet,
-                               WinDef.DWORDByReference PrivilegeSetLength,
-                               WinDef.DWORDByReference GrantedAccess, WinDef.BOOLByReference AccessStatus);
+                               HANDLE ClientToken, DWORD DesiredAccess,
+                               GENERIC_MAPPING GenericMapping,
+                               PRIVILEGE_SET PrivilegeSet,
+                               DWORDByReference PrivilegeSetLength,
+                               DWORDByReference GrantedAccess, BOOLByReference AccessStatus);
 }
