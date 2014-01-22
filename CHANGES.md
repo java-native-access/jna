@@ -18,7 +18,7 @@ Features
 * [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
 * [#287](https://github.com/twall/jna/pull/287): Added `DBTF_MEDIA` and `DBTF_NET` to `com.sun.jna.platform.win32.DBT` - [@daifei4321](https://github.com/daifei4321).
 * [#295](https://github.com/twall/jna/pull/295): Added `com.sun.jna.platform.win32.Kernel32.ResetEvent` - [@manithree](https://github.com/manithree).
-* [#301](https://github.com/twall/jna/pull/301): Added `com.sun.jna.platform.win32.Advapi32Util.accessCheck` and supporting classes/methods to verify file permissions - [@BusyByte] (https://github.com/BusyByte/jna).
+* [#301](https://github.com/twall/jna/pull/301): Added `accessCheck` to `com.sun.jna.platform.win32.Advapi32Util`, `MapGenericMask` and `AccessCheck` to `com.sun.jna.platform.win32.Advapi32`, `PRIVILEGE_SET` and `GENERIC_MAPPING` to `com.sun.jna.platform.win32.WinNT` - [@BusyByte](https://github.com/BusyByte).
 
 Bug Fixes
 ---------

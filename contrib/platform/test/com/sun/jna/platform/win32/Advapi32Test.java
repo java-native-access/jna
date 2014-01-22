@@ -885,4 +885,25 @@ public class Advapi32Test extends TestCase {
         assertTrue(GENERIC_ALL != (rights.getValue().intValue() & GENERIC_ALL));
     }
 
+    public void testAccessCheck() {
+        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+        mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+        mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+        mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+        final Memory securityDescriptorMemoryPointer = new Memory(1);
+
+        final PRIVILEGE_SET privileges = new PRIVILEGE_SET(1);
+        privileges.PrivilegeCount = new DWORD(0);
+        final DWORDByReference privilegeLength = new DWORDByReference(new DWORD(privileges.size()));
+        final DWORDByReference grantedAccess = new DWORDByReference();
+        final BOOLByReference result = new BOOLByReference();
+
+        final boolean status = Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer, null, new DWORD(FILE_GENERIC_READ), mapping, privileges, privilegeLength, grantedAccess, result);
+        assertFalse(status);
+        assertFalse(result.getValue().booleanValue());
+
+        assertEquals("The handle is invalid.", Kernel32Util.formatMessage(W32Errors.HRESULT_FROM_WIN32(Kernel32.INSTANCE.GetLastError())));
+    }
+
 }
