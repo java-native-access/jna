@@ -24,6 +24,7 @@ Bug Fixes
 * Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
 * [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
 * [#287](https://github.com/twall/jna/pull/287): Fixed contrib `win32.Win32WindowDemo`, now showing the added/removed drive letter, and whether the event is about media in drive or physical drive - [@daifei4321](https://github.com/daifei4321).
+* [#300](https://github.com/twall/jna/issues/300): Fix stdcall argument alignment - [@twall] (https://github.com/twall).
 
 Release 4.0
 ===========
