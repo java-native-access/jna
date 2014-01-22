@@ -454,6 +454,46 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     }
 
     /**
+     * Specifies a set of privileges. <br>
+     * It is also used to indicate which, if any, privileges are held by a user or group requesting access to an object.
+     */
+    public static class PRIVILEGE_SET extends Structure {
+        public DWORD PrivilegeCount;
+        public DWORD Control;
+        public LUID_AND_ATTRIBUTES Privileges[];
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList("PrivilegeCount", "Control", "Privileges");
+        }
+
+        public PRIVILEGE_SET() {
+            this(0);
+        }
+        /**
+         * @param nbOfPrivileges
+         *            Desired size of the Privileges array
+         */
+        public PRIVILEGE_SET(int nbOfPrivileges) {
+            PrivilegeCount = new DWORD(nbOfPrivileges);
+            if(nbOfPrivileges > 0) {
+                Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
+            }
+        }
+
+        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. */
+        public PRIVILEGE_SET(Pointer p) {
+            super(p);
+            final int count = p.getInt(0);
+            PrivilegeCount = new DWORD(count);
+            if(count > 0) {
+                Privileges = new LUID_AND_ATTRIBUTES[count];
+            }
+            read();
+        }
+    }
+
+    /**
      * The TOKEN_PRIVILEGES structure contains information about a set of
      * privileges for an access token.
      */
@@ -2174,6 +2214,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     interface OVERLAPPED_COMPLETION_ROUTINE extends StdCallCallback {
         void callback(int errorCode, int nBytesTransferred,
                 WinBase.OVERLAPPED overlapped);
+    }
+
+
+    /**
+     * Defines the mapping of generic access rights to specific and standard access rights for an object
+     */
+    public static class GENERIC_MAPPING extends Structure {
+        public static class ByReference extends GENERIC_MAPPING implements Structure.ByReference {
+        }
+
+        public DWORD genericRead;
+        public DWORD genericWrite;
+        public DWORD genericExecute;
+        public DWORD genericAll;
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList("genericRead", "genericWrite", "genericExecute", "genericAll");
+        }
     }
 
     /**
