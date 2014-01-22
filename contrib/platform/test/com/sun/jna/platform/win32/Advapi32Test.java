@@ -830,7 +830,7 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testMapGenericReadMask() {
-        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
         mapping.genericRead = new DWORD(FILE_GENERIC_READ);
         mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
         mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
@@ -840,11 +840,11 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.MapGenericMask(rights, mapping);
 
         assertEquals(FILE_GENERIC_READ, rights.getValue().intValue());
-        assertTrue(GENERIC_READ !=  (rights.getValue().intValue() & GENERIC_READ));
+        assertTrue(GENERIC_READ != (rights.getValue().intValue() & GENERIC_READ));
     }
 
     public void testMapGenericWriteMask() {
-        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
         mapping.genericRead = new DWORD(FILE_GENERIC_READ);
         mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
         mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
@@ -854,11 +854,11 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.MapGenericMask(rights, mapping);
 
         assertEquals(FILE_GENERIC_WRITE, rights.getValue().intValue());
-        assertTrue(GENERIC_WRITE !=  (rights.getValue().intValue() & GENERIC_WRITE));
+        assertTrue(GENERIC_WRITE != (rights.getValue().intValue() & GENERIC_WRITE));
     }
 
     public void testMapGenericExecuteMask() {
-        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
         mapping.genericRead = new DWORD(FILE_GENERIC_READ);
         mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
         mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
@@ -868,11 +868,11 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.MapGenericMask(rights, mapping);
 
         assertEquals(FILE_GENERIC_EXECUTE, rights.getValue().intValue());
-        assertTrue(GENERIC_EXECUTE !=  (rights.getValue().intValue() & GENERIC_EXECUTE));
+        assertTrue(GENERIC_EXECUTE != (rights.getValue().intValue() & GENERIC_EXECUTE));
     }
 
     public void testMapGenericAllMask() {
-        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
         mapping.genericRead = new DWORD(FILE_GENERIC_READ);
         mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
         mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
@@ -886,7 +886,7 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testAccessCheck() {
-        final WinNT.GENERIC_MAPPING mapping = new WinNT.GENERIC_MAPPING();
+        final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
         mapping.genericRead = new DWORD(FILE_GENERIC_READ);
         mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
         mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
@@ -903,7 +903,7 @@ public class Advapi32Test extends TestCase {
         assertFalse(status);
         assertFalse(result.getValue().booleanValue());
 
-        assertEquals("The handle is invalid.", Kernel32Util.formatMessage(W32Errors.HRESULT_FROM_WIN32(Kernel32.INSTANCE.GetLastError())));
+        assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
     }
 
 }
