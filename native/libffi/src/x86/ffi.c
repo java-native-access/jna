@@ -305,6 +305,9 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 
   for (ptr = cif->arg_types, i = cif->nargs; i > 0; i--, ptr++)
     {
+#ifdef X86_WIN32
+      if (cif->abi != FFI_STDCALL)
+#endif
       if (((*ptr)->alignment - 1) & cif->bytes)
         cif->bytes = ALIGN(cif->bytes, (*ptr)->alignment);
       cif->bytes += ALIGN((*ptr)->size, FFI_SIZEOF_ARG);
