@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.File;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -54,6 +55,22 @@ public class Advapi32UtilTest extends TestCase {
         System.out.println(" Fqn: " + accountBySid.fqn);
         System.out.println(" Name: " + accountBySid.name);
         System.out.println(" Domain: " + accountBySid.domain);
+    }
+
+    public void testReadAccess() {
+        final boolean access = Advapi32Util.accessCheck(new File(System.getProperty("java.io.tmpdir")), Advapi32Util.AccessCheckPermission.READ);
+        assertTrue(access);
+    }
+
+    public void testWriteAccess() {
+        final boolean access = Advapi32Util.accessCheck(new File(System.getProperty("java.io.tmpdir")), Advapi32Util.AccessCheckPermission.WRITE);
+        assertTrue(access);
+    }
+
+
+    public void testExecuteAccess() {
+        final boolean access = Advapi32Util.accessCheck(new File(System.getProperty("java.io.tmpdir")), Advapi32Util.AccessCheckPermission.EXECUTE);
+        assertTrue(access);
     }
     
     public void testGetUsername() {

@@ -72,7 +72,7 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.BLENDFUNCTION;
-import com.sun.jna.platform.win32.WinUser.POINT;
+import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinUser.SIZE;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -438,7 +438,7 @@ public class AlphaMaskDemo implements Runnable {
                     if (flavor != null) {
                         Reader reader = flavor.getReaderForText(t);
                         char[] buf = new char[512];
-                        StringBuffer b = new StringBuffer();
+                        StringBuilder b = new StringBuilder();
                         int count;
                         // excise excess NUL characters (bug in firefox, java
                         // or my code, not sure which).  someone got the 

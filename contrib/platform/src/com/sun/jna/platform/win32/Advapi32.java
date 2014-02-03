@@ -32,6 +32,12 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import static com.sun.jna.platform.win32.WinDef.DWORD;
+import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
+import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
+
 /**
  * Advapi32.dll Interface.
  *
@@ -1523,4 +1529,33 @@ public interface Advapi32 extends StdCallLibrary {
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
 
+
+    /**
+     * Applies the given mapping of generic access rights to the given access mask.
+     * @param AccessMask [in, out] A pointer to an access mask.
+     * @param GenericMapping [in] A pointer to a GENERIC_MAPPING structure specifying a mapping of generic access types to specific and standard access types.
+     */
+    public void MapGenericMask(DWORDByReference AccessMask, GENERIC_MAPPING GenericMapping);
+
+
+    /**
+     * Check if the if the security descriptor grants access to the given client token.
+     *
+     * @param pSecurityDescriptor [in] A pointer to a SECURITY_DESCRIPTOR structure against which access is checked.
+     * @param ClientToken [in] A handle to an impersonation token that represents the client that is attempting to gain access. The handle must have TOKEN_QUERY access to the token; otherwise, the function fails with ERROR_ACCESS_DENIED.
+     * @param DesiredAccess [in] Access mask that specifies the access rights to check. This mask must have been mapped by the MapGenericMask function to contain no generic access rights.<br>
+     *                      If this parameter is MAXIMUM_ALLOWED, the function sets the GrantedAccess access mask to indicate the maximum access rights the security descriptor allows the client.
+     * @param GenericMapping [in] A pointer to the GENERIC_MAPPING structure associated with the object for which access is being checked.
+     * @param PrivilegeSet [out, optional] A pointer to a PRIVILEGE_SET structure that receives the privileges used to perform the access validation. If no privileges were used, the function sets the PrivilegeCount member to zero.
+     * @param PrivilegeSetLength [in, out] Specifies the size, in bytes, of the buffer pointed to by the PrivilegeSet parameter.
+     * @param GrantedAccess [out] A pointer to an access mask that receives the granted access rights. If AccessStatus is set to FALSE, the function sets the access mask to zero. If the function fails, it does not set the access mask.
+     * @param AccessStatus [out] A pointer to a variable that receives the results of the access check. If the security descriptor allows the requested access rights to the client identified by the access token, AccessStatus is set to TRUE. Otherwise, AccessStatus is set to FALSE, and you can call GetLastError to get extended error information.
+     * @return true on success; false on failure (use GetLastError to get extended error information)
+     */
+    public boolean AccessCheck(Pointer pSecurityDescriptor,
+                               HANDLE ClientToken, DWORD DesiredAccess,
+                               GENERIC_MAPPING GenericMapping,
+                               PRIVILEGE_SET PrivilegeSet,
+                               DWORDByReference PrivilegeSetLength,
+                               DWORDByReference GrantedAccess, BOOLByReference AccessStatus);
 }

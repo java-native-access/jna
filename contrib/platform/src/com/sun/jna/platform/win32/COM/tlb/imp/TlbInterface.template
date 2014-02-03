@@ -1,0 +1,23 @@
+package ${packagename};
+
+import java.util.*;
+
+import com.sun.jna.*;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.OaIdl.*;
+import com.sun.jna.platform.win32.WinDef.*;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.*;
+import com.sun.jna.platform.win32.COM.*;
+import com.sun.jna.platform.win32.Guid.*;
+
+/**
+* uuid(${uuid})
+* version(${version})
+* helpstring(${helpstring})
+*
+*/
+public interface ${classname} extends IUnknown {	
+
+${content}
+}

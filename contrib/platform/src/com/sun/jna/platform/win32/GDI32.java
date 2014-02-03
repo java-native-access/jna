@@ -19,6 +19,7 @@ import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HRGN;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFOHEADER;
+import com.sun.jna.platform.win32.WinGDI.PIXELFORMATDESCRIPTOR;
 import com.sun.jna.platform.win32.WinGDI.RGNDATA;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.PointerByReference;
@@ -123,7 +124,7 @@ public interface GDI32 extends StdCallLibrary {
      *  If the function fails, the return value is zero. 
      *  To get extended error information, call GetLastError.
      */
-    HRGN CreatePolyPolygonRgn(WinUser.POINT[] lppt, int[] lpPolyCounts,
+    HRGN CreatePolyPolygonRgn(WinDef.POINT[] lppt, int[] lpPolyCounts,
                               int nCount, int fnPolyFillMode);
 
     /**
@@ -313,4 +314,33 @@ public interface GDI32 extends StdCallLibrary {
      * BITMAPINFO} structure.  
      */
     int GetDIBits(HDC hdc, HBITMAP hbmp, int uStartScan, int cScanLines, Pointer lpvBits, BITMAPINFO lpbi, int uUsage);
+
+    /**
+     * The ChoosePixelFormat function attempts to match an appropriate pixel format supported
+     * by a device context to a given pixel format specification.
+     *
+     * @param hdc
+     *            Specifies the device context that the function examines to determine the best
+     *            match for the pixel format descriptor pointed to by ppfd.
+     * @param ppfd
+     *            Pointer to a PIXELFORMATDESCRIPTOR structure that specifies the requested pixel format.
+     * @return If the function succeeds, the return value is a pixel format index (one-based) that
+     *         is the closest match to the given pixel format descriptor.
+     */
+    public int ChoosePixelFormat(HDC hdc, PIXELFORMATDESCRIPTOR.ByReference ppfd);
+
+    /**
+     * The SetPixelFormat function sets the pixel format of the specified device context to the
+     * format specified by the iPixelFormat index.
+     *
+     * @param hdc
+     *            Specifies the device context whose pixel format the function attempts to set.
+     * @param iPixelFormat
+     *            Index that identifies the pixel format to set. The various pixel formats supported
+     *            by a device context are identified by one-based indexes.
+     * @param ppfd
+     *            Pointer to a PIXELFORMATDESCRIPTOR structure that contains the logical pixel format specification.
+     * @return true if successful
+     */
+    public boolean SetPixelFormat(HDC hdc, int iPixelFormat, PIXELFORMATDESCRIPTOR.ByReference ppfd);
 }

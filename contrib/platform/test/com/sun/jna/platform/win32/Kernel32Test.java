@@ -120,6 +120,27 @@ public class Kernel32Test extends TestCase {
 		Kernel32.INSTANCE.CloseHandle(handle);
 	}
 
+    public void testResetEvent() {
+		HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, true, false, null);
+
+		// set the event to the signaled state
+		Kernel32.INSTANCE.SetEvent(handle);
+
+		// This should return successfully
+		assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(
+				 handle, 1000));
+		
+		// now reset it to not signaled
+		Kernel32.INSTANCE.ResetEvent(handle);
+		
+		// handle runs into timeout since it is not triggered
+		// WAIT_TIMEOUT = 0x00000102
+		assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
+				handle, 1000));
+
+		Kernel32.INSTANCE.CloseHandle(handle);
+	}
+
     public void testWaitForMultipleObjects(){
     	HANDLE[] handles = new HANDLE[2];
 
@@ -296,45 +317,37 @@ public class Kernel32Test extends TestCase {
 
     public void testReadFile() throws IOException {
     	String expected = "jna - testReadFile";
-    	File tmp = File.createTempFile(getName(), "jna");
+    	File tmp = File.createTempFile("testReadFile", "jna");
     	tmp.deleteOnExit();
-        try {
-            FileWriter fw = new FileWriter(tmp);
-            fw.append(expected);
-            fw.close();
-            
-            HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
-                                                        new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-            assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-            
-            Memory m = new Memory(2048);
-            IntByReference lpNumberOfBytesRead = new IntByReference(0);
-            assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int) m.size(), lpNumberOfBytesRead, null));
-            int read = lpNumberOfBytesRead.getValue();
-            assertEquals(expected.length(), read);
-            assertEquals(expected, new String(m.getByteArray(0, read)));
-            
-            assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
-        }
-        finally {
-            tmp.delete();
-        }
+
+    	FileWriter fw = new FileWriter(tmp);
+    	fw.append(expected);
+    	fw.close();
+
+    	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
+    			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+    	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
+
+    	Memory m = new Memory(2048);
+    	IntByReference lpNumberOfBytesRead = new IntByReference(0);
+    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int) m.size(), lpNumberOfBytesRead, null));
+    	int read = lpNumberOfBytesRead.getValue();
+    	assertEquals(expected.length(), read);
+    	assertEquals(expected, new String(m.getByteArray(0, read)));
+
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
 
     public void testSetHandleInformation() throws IOException {
-    	File tmp = File.createTempFile(getName(), "jna");
+    	File tmp = File.createTempFile("testSetHandleInformation", "jna");
     	tmp.deleteOnExit();
-        try {
-            HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
-                                                        new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-            assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-            
-            assertTrue(Kernel32.INSTANCE.SetHandleInformation(hFile, WinBase.HANDLE_FLAG_PROTECT_FROM_CLOSE, 0));
-            assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
-        }
-        finally {
-            tmp.delete();
-        }
+
+    	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
+    			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+    	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
+
+    	assertTrue(Kernel32.INSTANCE.SetHandleInformation(hFile, WinBase.HANDLE_FLAG_PROTECT_FROM_CLOSE, 0));
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
 
     public void testCreatePipe() {
@@ -353,19 +366,14 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testTerminateProcess() throws IOException {
-    	File tmp = File.createTempFile(getName(), "jna");
+    	File tmp = File.createTempFile("testTerminateProcess", "jna");
     	tmp.deleteOnExit();
-        try {
-            HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
-                                                        new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-            
-            assertFalse(Kernel32.INSTANCE.TerminateProcess(hFile, 1));
-            assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
-            assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
-        }
-        finally {
-            tmp.delete();
-        }
+    	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
+    			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+
+    	assertFalse(Kernel32.INSTANCE.TerminateProcess(hFile, 1));
+    	assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
     }
 
     public void testGetFileAttributes() {
@@ -373,52 +381,35 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testCopyFile() throws IOException {
-        File source = File.createTempFile(getName(), "jna");
+        File source = File.createTempFile("testCopyFile", "jna");
         source.deleteOnExit();
         File destination = new File(source.getParent(), source.getName() + "-destination");
         destination.deleteOnExit();
-        try {
-            Kernel32.INSTANCE.CopyFile(source.getCanonicalPath(), destination.getCanonicalPath(), true);
-            assertTrue(destination.exists());
-        }
-        finally {
-            source.delete();
-            destination.delete();
-        }
+
+        Kernel32.INSTANCE.CopyFile(source.getCanonicalPath(), destination.getCanonicalPath(), true);
+        assertTrue(destination.exists());
     }
 
     public void testMoveFile() throws IOException {
-        File source = File.createTempFile(getName(), "jna");
+        File source = File.createTempFile("testMoveFile", "jna");
         source.deleteOnExit();
         File destination = new File(source.getParent(), source.getName() + "-destination");
         destination.deleteOnExit();
 
-        try {
-            Kernel32.INSTANCE.MoveFile(source.getCanonicalPath(), destination.getCanonicalPath());
-            assertTrue(destination.exists());
-            assertFalse(source.exists());
-        }
-        finally {
-            source.delete();
-            destination.delete();
-        }
+        Kernel32.INSTANCE.MoveFile(source.getCanonicalPath(), destination.getCanonicalPath());
+        assertTrue(destination.exists());
+        assertFalse(source.exists());
     }
 
     public void testMoveFileEx() throws IOException {
-        File source = File.createTempFile(getName(), "jna");
+        File source = File.createTempFile("testMoveFileEx", "jna");
         source.deleteOnExit();
-        File destination = File.createTempFile(getName()+"Copy", "jna");
+        File destination = File.createTempFile("testCopyFile", "jna");
         destination.deleteOnExit();
 
-        try {
-            Kernel32.INSTANCE.MoveFileEx(source.getCanonicalPath(), destination.getCanonicalPath(), new DWORD(WinBase.MOVEFILE_REPLACE_EXISTING));
-            assertTrue(destination.exists());
-            assertFalse(source.exists());
-        }
-        finally {
-            source.delete();
-            destination.delete();
-        }
+        Kernel32.INSTANCE.MoveFileEx(source.getCanonicalPath(), destination.getCanonicalPath(), new DWORD(WinBase.MOVEFILE_REPLACE_EXISTING));
+        assertTrue(destination.exists());
+        assertFalse(source.exists());
     }
 
     public void testCreateProcess() {
@@ -428,26 +419,6 @@ public class Kernel32Test extends TestCase {
         boolean status = Kernel32.INSTANCE.CreateProcess(
             null,
             "cmd.exe /c echo hi",
-            null,
-            null,
-            true,
-            new WinDef.DWORD(0),
-            Pointer.NULL,
-            System.getProperty("java.io.tmpdir"),
-            startupInfo,
-            processInformation);
-
-        assertTrue(status);
-        assertTrue(processInformation.dwProcessId.longValue() > 0);
-    }
-
-    public void testCreateProcessW() {
-        WinBase.STARTUPINFO startupInfo = new WinBase.STARTUPINFO();
-        WinBase.PROCESS_INFORMATION.ByReference processInformation = new WinBase.PROCESS_INFORMATION.ByReference();
-
-        boolean status = Kernel32.INSTANCE.CreateProcessW(
-            null,
-            Native.toCharArray("cmd.exe /c echo hi"),
             null,
             null,
             true,
@@ -477,47 +448,39 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testGetSetFileTime() throws IOException {
-        File tmp = File.createTempFile(getName(), "jna");
+        File tmp = File.createTempFile("testGetSetFileTime", "jna");
         tmp.deleteOnExit();
-        try {
-            HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE, WinNT.FILE_SHARE_WRITE,
-                                                        new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-            assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-            
-            WinBase.FILETIME.ByReference creationTime = new WinBase.FILETIME.ByReference();
-            WinBase.FILETIME.ByReference accessTime = new WinBase.FILETIME.ByReference();
-            WinBase.FILETIME.ByReference modifiedTime = new WinBase.FILETIME.ByReference();
-            Kernel32.INSTANCE.GetFileTime(hFile, creationTime, accessTime, modifiedTime);
-            
-            assertEquals(creationTime.toDate().getYear(), new Date().getYear());
-            assertEquals(accessTime.toDate().getYear(), new Date().getYear());
-            assertEquals(modifiedTime.toDate().getYear(), new Date().getYear());
-            
-            Kernel32.INSTANCE.SetFileTime(hFile, null, null, new WinBase.FILETIME(new Date(2010, 1, 1)));
-            
-            assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
-            
-            assertEquals(2010, new Date(tmp.lastModified()).getYear());
-        }
-        finally {
-            tmp.delete();
-        }
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE, WinNT.FILE_SHARE_WRITE,
+    			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+    	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
+
+        WinBase.FILETIME.ByReference creationTime = new WinBase.FILETIME.ByReference();
+        WinBase.FILETIME.ByReference accessTime = new WinBase.FILETIME.ByReference();
+        WinBase.FILETIME.ByReference modifiedTime = new WinBase.FILETIME.ByReference();
+        Kernel32.INSTANCE.GetFileTime(hFile, creationTime, accessTime, modifiedTime);
+
+        assertEquals(creationTime.toDate().getYear(), new Date().getYear());
+        assertEquals(accessTime.toDate().getYear(), new Date().getYear());
+        assertEquals(modifiedTime.toDate().getYear(), new Date().getYear());
+
+        Kernel32.INSTANCE.SetFileTime(hFile, null, null, new WinBase.FILETIME(new Date(2010, 1, 1)));
+
+        assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
+
+        assertEquals(2010, new Date(tmp.lastModified()).getYear());
     }
 
     public void testSetFileAttributes() throws IOException {
-        File tmp = File.createTempFile(getName(), "jna");
+        File tmp = File.createTempFile("testSetFileAttributes", "jna");
         tmp.deleteOnExit();
-        try {
-            Kernel32.INSTANCE.SetFileAttributes(tmp.getCanonicalPath(), new DWORD(WinNT.FILE_ATTRIBUTE_HIDDEN));
-            int attributes = Kernel32.INSTANCE.GetFileAttributes(tmp.getCanonicalPath());
-            
-            assertTrue((attributes & WinNT.FILE_ATTRIBUTE_HIDDEN) != 0);
-        }
-        finally {
-            tmp.delete();
-        }
+
+        Kernel32.INSTANCE.SetFileAttributes(tmp.getCanonicalPath(), new DWORD(WinNT.FILE_ATTRIBUTE_HIDDEN));
+        int attributes = Kernel32.INSTANCE.GetFileAttributes(tmp.getCanonicalPath());
+
+        assertTrue((attributes & WinNT.FILE_ATTRIBUTE_HIDDEN) != 0);
     }
-        
+
     public void testGetProcessList() throws IOException {
         WinNT.HANDLE processEnumHandle = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPALL, new WinDef.DWORD(0));
         assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(processEnumHandle));
@@ -539,97 +502,116 @@ public class Kernel32Test extends TestCase {
     }
 
     public final void testGetPrivateProfileInt() throws IOException {
-        final File tmp = File.createTempFile(getName(), "ini");
+        final File tmp = File.createTempFile("testGetPrivateProfileInt", "ini");
         tmp.deleteOnExit();
-        try {
-            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-            writer.println("[Section]");
-            writer.println("existingKey = 123");
-            writer.close();
-            
-            assertEquals(123, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
-            assertEquals(456, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
-        }
-        finally {
-            tmp.delete();
-        }
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = 123");
+        writer.close();
+
+        assertEquals(123, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "existingKey", 456, tmp.getCanonicalPath()));
+        assertEquals(456, Kernel32.INSTANCE.GetPrivateProfileInt("Section", "missingKey", 456, tmp.getCanonicalPath()));
     }
 
     public final void testGetPrivateProfileString() throws IOException {
-        final File tmp = File.createTempFile(getName(), "ini");
+        final File tmp = File.createTempFile("testGetPrivateProfileString", ".ini");
         tmp.deleteOnExit();
-        final String SECTION = "Section";
-        final String VALUE = "ABC";
-        final String DEFAULT = "DEF";
-        try {
-            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-            writer.println("[" + SECTION + "]");
-            writer.println("existingKey = " + VALUE);
-            writer.close();
-            
-            final char[] buffer = new char[8];
-            DWORD len = Kernel32.INSTANCE.GetPrivateProfileString(SECTION, "existingKey", DEFAULT, buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
-            assertEquals("Wrong value length", new DWORD(VALUE.length()), len);
-            assertEquals("Wrong existing value", VALUE, Native.toString(buffer));
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.close();
 
-            len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", DEFAULT, buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
-            assertEquals("Wrong value length", new DWORD(DEFAULT.length()), len);
-            assertEquals("Wrong default value", DEFAULT, Native.toString(buffer));
-        }
-        finally {
-            tmp.delete();
-        }
+        final char[] buffer = new char[8];
+        
+        DWORD len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(3, len.intValue());
+        assertEquals("ABC", Native.toString(buffer));
+        
+        len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(3, len.intValue());
+        assertEquals("DEF", Native.toString(buffer));
     }
 
     public final void testWritePrivateProfileString() throws IOException {
-        final File tmp = File.createTempFile(getName(), "ini");
+        final File tmp = File.createTempFile("testWritePrivateProfileString", ".ini");
         tmp.deleteOnExit();
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        writer.println("[Section]");
+        writer.println("existingKey = ABC");
+        writer.println("removedKey = JKL");
+        writer.close();
+
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath()));
+        assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath()));
+
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        assertEquals(reader.readLine(), "[Section]");
+        assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
+        assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
+        assertEquals(reader.readLine(), null);
+        reader.close();
+    }
+    
+    public final void testGetPrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
         try {
-            final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
-            writer.println("[Section]");
-            writer.println("existingKey = ABC");
-            writer.println("removedKey = JKL");
+            writer.println("[X]");
+            writer.println("A=1");
+            writer.println("B=X");
+        } finally {
             writer.close();
-            
-            assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "existingKey", "DEF", tmp.getCanonicalPath()));
-            assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "addedKey", "GHI", tmp.getCanonicalPath()));
-            assertTrue(Kernel32.INSTANCE.WritePrivateProfileString("Section", "removedKey", null, tmp.getCanonicalPath()));
-            
-            final BufferedReader reader = new BufferedReader(new FileReader(tmp));
-            assertEquals(reader.readLine(), "[Section]");
-            assertTrue(reader.readLine().matches("existingKey\\s*=\\s*DEF"));
-            assertTrue(reader.readLine().matches("addedKey\\s*=\\s*GHI"));
-            assertEquals(reader.readLine(), null);
-            reader.close();
         }
-        finally {
-            tmp.delete();
+
+        final char[] buffer = new char[9];
+        final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSection("X", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+
+        assertEquals(len.intValue(), 7);
+        assertEquals(new String(buffer), "A=1\0B=X\0\0");
+    }
+
+    public final void testGetPrivateProfileSectionNames() throws IOException {
+        final File tmp = File.createTempFile("testGetPrivateProfileSectionNames", ".ini");
+        tmp.deleteOnExit();
+
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("[S2]");
+        } finally {
+            writer.close();
         }
+
+        final char[] buffer = new char[7];
+        final DWORD len = Kernel32.INSTANCE.GetPrivateProfileSectionNames(buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
+        assertEquals(len.intValue(), 5);
+        assertEquals(new String(buffer), "S1\0S2\0\0");
     }
 
-    public void testGetStdHandle() throws IOException {
-        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
-        assertNotNull(stdOut);
-        assertNotSame(WinBase.INVALID_HANDLE_VALUE, stdOut);
-    }
+    public final void testWritePrivateProfileSection() throws IOException {
+        final File tmp = File.createTempFile("testWritePrivateProfileSection", ".ini");
+        tmp.deleteOnExit();
 
-    public void testWriteConsole() throws IOException {
-        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
+        final PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(tmp)));
+        try {
+            writer.println("[S1]");
+            writer.println("A=1");
+            writer.println("B=X");
+        } finally {
+            writer.close();
+        }
 
-        String data = "hello console :p";
-        BaseTSD.DWORD_PTR charactersWritten = new BaseTSD.DWORD_PTR();
-        boolean result = Kernel32.INSTANCE.WriteConsole(stdOut, data, new DWORD(data.length()), charactersWritten, null);
-
+        final boolean result = Kernel32.INSTANCE.WritePrivateProfileSection("S1", "A=3\0E=Z\0\0", tmp.getCanonicalPath());
         assertTrue(result);
-        assertSame(data.length(), charactersWritten.intValue());
+
+        final BufferedReader reader = new BufferedReader(new FileReader(tmp));
+        assertEquals(reader.readLine(), "[S1]");
+        assertTrue(reader.readLine().matches("A\\s*=\\s*3"));
+        assertTrue(reader.readLine().matches("E\\s*=\\s*Z"));
+        reader.close();
     }
 
-    public void testGetConsoleFont() throws IOException {
-        HANDLE stdOut = Kernel32.INSTANCE.GetStdHandle(WinBase.STD_OUTPUT_HANDLE);
-        Wincon.CONSOLE_FONT_INFO.ByReference fontInfo = new Wincon.CONSOLE_FONT_INFO.ByReference();
-
-        boolean result = Kernel32.INSTANCE.GetCurrentConsoleFont(stdOut, false, fontInfo);
-
-        assertTrue(result);
-    }
 }

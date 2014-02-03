@@ -111,7 +111,7 @@ public abstract class Netapi32Util {
             if (LMErr.NERR_Success != rc) {
                 throw new Win32Exception(rc);
             }
-            return bufptr.getValue().getString(0, true);
+            return bufptr.getValue().getWideString(0);
         } finally {
             if (W32Errors.ERROR_SUCCESS != Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue())) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
@@ -167,7 +167,7 @@ public abstract class Netapi32Util {
                 throw new Win32Exception(rc);			
             }		
             // type of domain: bufferType.getValue()
-            return lpNameBuffer.getValue().getString(0, true);
+            return lpNameBuffer.getValue().getWideString(0);
         } finally {
             if (lpNameBuffer.getPointer() != null) {
                 int rc = Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue());

@@ -7,13 +7,25 @@ Next Release (4.0.1)
 
 Features
 --------
-* Add `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
-* Enable platform tests to be run w/o building native bits - [@twall](https://github.com/twall)
-* Add to `com.sun.jna.platform.win32.Kernel32`: `GetStdHandle`, `WriteConsole`, `GetCurrentConsoleFont` [@tmyroadctfig](https://github.com/tmyroadctfig).
+* Added `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
+* Enabled platform tests to be run w/o building native bits - [@twall](https://github.com/twall).
+* Added COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` - [@wolftobias](https://github.com/wolftobias).
+* [#226](https://github.com/twall/jna/issues/226): Added OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
+* [#267](https://github.com/twall/jna/pull/267): Added support for Windows RAS32 API, `com.sun.jna.platform.win32.Rasapi32` and `Rasapi32Util` - [@kc7bfi](https://github.com/kc7bfi).
+* [#101](https://github.com/twall/jna/issues/101): Modify `com.sun.jna.platform.win32.Advapi32Util.registryGet*` API to support `KEY_WOW64` option - [@falldog] (https://github.com/falldog).
+* [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.Gdi32.ChoosePixelFormat` and `SetPixelFormat` - [@kc7bfi](https://github.com/kc7bfi).
+* [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
+* [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
+* [#287](https://github.com/twall/jna/pull/287): Added `DBTF_MEDIA` and `DBTF_NET` to `com.sun.jna.platform.win32.DBT` - [@daifei4321](https://github.com/daifei4321).
+* [#295](https://github.com/twall/jna/pull/295): Added `com.sun.jna.platform.win32.Kernel32.ResetEvent` - [@manithree](https://github.com/manithree).
+* [#301](https://github.com/twall/jna/pull/301): Added `accessCheck` to `com.sun.jna.platform.win32.Advapi32Util`, `MapGenericMask` and `AccessCheck` to `com.sun.jna.platform.win32.Advapi32`, `PRIVILEGE_SET` and `GENERIC_MAPPING` to `com.sun.jna.platform.win32.WinNT` - [@BusyByte](https://github.com/BusyByte).
 
 Bug Fixes
 ---------
-* Fix inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall)
+* Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
+* [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
+* [#287](https://github.com/twall/jna/pull/287): Fixed contrib `win32.Win32WindowDemo`, now showing the added/removed drive letter, and whether the event is about media in drive or physical drive - [@daifei4321](https://github.com/daifei4321).
+* [#300](https://github.com/twall/jna/issues/300): Fix stdcall argument alignment - [@twall] (https://github.com/twall).
 
 Release 4.0
 ===========
@@ -689,3 +701,4 @@ Bug Fixes
 * Properly handle NULL when the return value is a Structure
 * Proper conversion to wchar_t on linux
 * Copy full length of Java strings to C strings instead of stopping when a NUL character is encountered
+

@@ -13,8 +13,6 @@
 package com.sun.jna.ptr;
 
 import com.sun.jna.Memory;
-import com.sun.jna.NativeMapped;
-import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
 /** Provides generic "pointer to type" functionality, often used in C

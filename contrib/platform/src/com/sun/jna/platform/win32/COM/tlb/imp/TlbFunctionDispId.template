@@ -1,0 +1,10 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}
+	 * Member id: ${memberid}
+	 */
+	public ${returntype} ${methodname}(${methodparams}) {
+		VARIANT.ByReference pResult = new VARIANT.ByReference();
+		this.oleMethod(OleAuto.DISPATCH_METHOD, pResult, getIDispatch(), new DISPID(${memberid}), new VARIANT[] {${methodvariables}});
+		return ${returnvalue};
+	}

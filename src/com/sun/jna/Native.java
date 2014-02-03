@@ -1272,7 +1272,7 @@ public final class Native implements Version {
 
     // No String.replace available in 1.4
     static String replace(String s1, String s2, String str) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         while (true) {
             int idx = str.indexOf(s1);
             if (idx == -1) {

@@ -162,12 +162,8 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-ifeq ($(ARCH),amd64)
-# To build entirely with mingw64, comment out this line (default is MSVC)
+ifdef $(MSVC)
 USE_MSVC=true
-else
-# To build 32-bit under MSVC, un-comment this line (default is gcc)
-#USE_MSVC=true
 endif
 
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
