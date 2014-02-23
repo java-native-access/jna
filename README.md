@@ -5,15 +5,19 @@ Java Native Access (JNA)
 
 The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://twall.github.com/jna/4.0/javadoc/).  Please read the [overview](http://twall.github.com/jna/4.0/javadoc/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
 
-JNA provides Java programs easy access to native shared libraries (DLLs on Windows) without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes. Access is dynamic at runtime without code generation.
+JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.
 
-JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like it does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
+JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like the call does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
 
-The JNA library uses a small native library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.
+JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.
 
-While some attention is paid to performance, correctness and ease of use take priority.
+While significant attention has been paid to performance, correctness and ease of use take priority.
 
-JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.
+In addition, JNA includes a platform library with many native functions already mapped as well as a set of utility interfaces that simplify native access.
+
+Projects Using JNA
+==================
+JNA is a mature library with dozens of contributors and hundreds of commercial and non-commercial projects that use it.  If you're using JNA, feel free to [tell us about it](http://groups.google.com/group/jna-users).  Include some details about your company, project name, purpose and size and tell us how you use the library.
 
 Download
 ========
@@ -114,4 +118,5 @@ version 4.0 onward) the Apache Software License, version 2.0.  Commercial
 license arrangements are negotiable.
 
 *NOTE: Oracle is not sponsoring this project, even though the package name (com.sun.jna) might imply otherwise.*
+
 
