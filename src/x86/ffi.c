@@ -39,9 +39,11 @@
 
 #include <stdlib.h>
 
+
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
+void ffi_prep_args(char *stack, extended_cif *ecif);
 void ffi_prep_args(char *stack, extended_cif *ecif)
 {
   register unsigned int i;

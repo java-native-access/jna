@@ -51,6 +51,7 @@ tested:
 |-----------------+------------------+-------------------------|
 | Architecture    | Operating System | Compiler                |
 |-----------------+------------------+-------------------------|
+| AArch64 (ARM64) | iOS              | Clang                   |
 | AArch64         | Linux            | GCC                     |
 | Alpha           | Linux            | GCC                     |
 | Alpha           | Tru64            | GCC                     |
@@ -169,6 +170,7 @@ History
 See the ChangeLog files for details.
 
 3.0.14 TBD
+        Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.
 	Fix MIPS N32 ABI bug.

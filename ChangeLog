@@ -2,6 +2,40 @@
 
 	* src/mips/n32.S: Fix call floating point va function.
 
+2014-01-21  Zachary Waldowski  <zach@waldowski.me>
+
+	* src/aarch64/ffi.c: Fix missing semicolons on assertions under
+	debug mode.
+
+2013-12-30  Zachary Waldowski  <zach@waldowski.me>
+
+	* .gitignore: Exclude darwin_* generated source and build_* trees.
+	* src/aarch64/ffi.c, src/arm/ffi.c, src/x86/ffi.c: Inhibit Clang
+	previous prototype warnings.
+	* src/arm/ffi.c: Prevent NULL dereference, fix short type warning
+	* src/dlmalloc.c: Fix warnings from set_segment_flags return type,
+	and the native use of size_t for malloc on platforms
+	* src/arm/sysv.S: Use unified syntax. Clang clean-ups for
+	ARM_FUNC_START.
+	* generate-osx-source-and-headers.py: Remove.
+	* build-ios.sh: Remove.
+	* libffi.xcodeproj/project.pbxproj: Rebuild targets. Include
+	x86_64+aarch64 pieces in library.  Export headers properly.
+	* src/x86/ffi64.c: More Clang warning clean-ups.
+	* src/closures.c (open_temp_exec_file_dir): Use size_t.
+	* src/prep_cif.c (ffi_prep_cif_core): Cast ALIGN result.
+	* src/aarch64/sysv.S: Use CNAME for global symbols.  Only use
+	.size for ELF targets.
+	* src/aarch64/ffi.c: Clean up for double == long double.  Clean up
+	from Clang warnings.  Use Clang cache invalidation builtin.  Use
+	size_t in place of unsigned in many places.  Accommodate for
+	differences in Apple AArch64 ABI.
+
+2013-12-02  Daniel Rodríguez Troitiño  <drodrigueztroitino@yahoo.es>
+
+	* generate-darwin-source-and-headers.py: Clean up, modernize,
+	merged version of previous scripts.
+
 2013-11-21  Anthony Green  <green@moxielogic.com>
 
 	* configure, Makefile.in, include/Makefile.in, include/ffi.h.in,

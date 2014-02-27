@@ -37,6 +37,9 @@
 static int vfp_type_p (ffi_type *);
 static void layout_vfp_args (ffi_cif *);
 
+int ffi_prep_args_SYSV(char *stack, extended_cif *ecif, float *vfp_space);
+int ffi_prep_args_VFP(char *stack, extended_cif *ecif, float *vfp_space);
+
 static char* ffi_align(ffi_type **p_arg, char *argp)
 {
   /* Align if necessary */
@@ -347,9 +350,17 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
       break;
     }
   if (small_struct)
-    memcpy (rvalue, &temp, cif->rtype->size);
+    {
+      FFI_ASSERT(rvalue != NULL);
+      memcpy (rvalue, &temp, cif->rtype->size);
+    }
+    
   else if (vfp_struct)
-    memcpy (rvalue, ecif.rvalue, cif->rtype->size);
+    {
+      FFI_ASSERT(rvalue != NULL);
+      memcpy (rvalue, ecif.rvalue, cif->rtype->size);
+    }
+    
 }
 
 /** private members **/
@@ -366,7 +377,7 @@ void ffi_closure_VFP (ffi_closure *);
 
 /* This function is jumped to by the trampoline */
 
-unsigned int
+unsigned int FFI_HIDDEN
 ffi_closure_inner (ffi_closure *closure, 
 		   void **respp, void *args, void *vfp_args)
 {
@@ -860,7 +871,7 @@ static int vfp_type_p (ffi_type *t)
 
 static int place_vfp_arg (ffi_cif *cif, ffi_type *t)
 {
-  int reg = cif->vfp_reg_free;
+  short reg = cif->vfp_reg_free;
   int nregs = t->size / sizeof (float);
   int align = ((t->type == FFI_TYPE_STRUCT_VFP_FLOAT
 		|| t->type == FFI_TYPE_FLOAT) ? 1 : 2);

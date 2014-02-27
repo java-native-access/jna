@@ -8,7 +8,7 @@ SUBDIRS = include testsuite man
 
 EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 src/aarch64/ffi.c src/aarch64/ffitarget.h src/aarch64/sysv.S	\
-	 build-ios.sh src/alpha/ffi.c src/alpha/osf.S			\
+	 src/alpha/ffi.c src/alpha/osf.S			\
 	 src/alpha/ffitarget.h src/arc/ffi.c src/arc/arcompact.S	\
 	 src/arc/ffitarget.h src/arm/ffi.c src/arm/sysv.S		\
 	 src/arm/ffitarget.h src/avr32/ffi.c src/avr32/sysv.S		\

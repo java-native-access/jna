@@ -264,7 +264,7 @@ static int
 open_temp_exec_file_dir (const char *dir)
 {
   static const char suffix[] = "/ffiXXXXXX";
-  int lendir = strlen (dir);
+  size_t lendir = strlen (dir);
   char *tempname = __builtin_alloca (lendir + sizeof (suffix));
 
   if (!tempname)
