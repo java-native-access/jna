@@ -188,9 +188,9 @@ public class NativeLibraryTest extends TestCase {
     	File lib1_1 = new File(dir, "lib" + name + ".so.1.1");
         lib1_1.createNewFile();
     	lib1_1.deleteOnExit();
-    	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
+        List path = Arrays.asList(new String[] { dir.getCanonicalPath() });
     	assertEquals("Latest versioned library not found when unversioned requested",
-                     lib1_1.getAbsolutePath(),	
+                     lib1_1.getCanonicalPath(),
                      NativeLibrary.matchLibrary(name, path));
     }
     
@@ -203,9 +203,9 @@ public class NativeLibraryTest extends TestCase {
         File lib1 = new File(dir, "lib" + name + "-client.so.2");
         lib1.createNewFile();
         lib1.deleteOnExit();
-    	List path = Arrays.asList(new String[] { dir.getAbsolutePath() });
+        List path = Arrays.asList(new String[] { dir.getCanonicalPath() });
     	assertEquals("Library with similar prefix should be ignored",
-                     lib0.getAbsolutePath(),	
+                     lib0.getCanonicalPath(),
                      NativeLibrary.matchLibrary(name, path));
     }
 
