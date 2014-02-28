@@ -1,3 +1,8 @@
+2014-02-28  Josh Triplett  <josh@joshtriplett.org>
+
+	* src/x86/ffi64.c (classify_argument): Handle case where
+	FFI_TYPE_LONGDOUBLE == FFI_TYPE_DOUBLE.
+
 2014-02-28  Anthony Green  <green@moxielogic.com>
 
 	* ltmain.sh: Generate with libtool-2.4.2.418.
