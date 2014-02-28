@@ -353,6 +353,7 @@ ARM_FUNC_START(ffi_call_VFP)
 
 	@ Load VFP register args if needed
 	cmp	r0, #0
+	mov	ip, fp
 	beq	LSYM(Lbase_args)
 
 	@ Load only d0 if possible

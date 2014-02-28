@@ -1,3 +1,7 @@
+2014-02-28  Will Newton  <will.newton@linaro.org>
+
+	* src/arm/sysv.S: Initialize IP register with FP.
+
 2014-02-28  Yufeng Zhang  <yufeng.zhang@arm.com>
 
 	* src/aarch64/sysv.S (ffi_closure_SYSV): Use x29 as the
