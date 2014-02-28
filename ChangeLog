@@ -1,3 +1,8 @@
+2014-02-28  Paulo Pizarro  <paulo.pizarro@gmail.com>
+
+	* src/bfin/sysv.S: Calling functions in shared libraries requires
+	considering the GOT.
+
 2014-02-28  Josh Triplett  <josh@joshtriplett.org>
 
 	* src/x86/ffi64.c (classify_argument): Handle case where
