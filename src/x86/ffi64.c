@@ -203,10 +203,12 @@ classify_argument (ffi_type *type, enum x86_64_reg_class classes[],
     case FFI_TYPE_DOUBLE:
       classes[0] = X86_64_SSEDF_CLASS;
       return 1;
+#if FFI_TYPE_LONGDOUBLE != FFI_TYPE_DOUBLE
     case FFI_TYPE_LONGDOUBLE:
       classes[0] = X86_64_X87_CLASS;
       classes[1] = X86_64_X87UP_CLASS;
       return 2;
+#endif
     case FFI_TYPE_STRUCT:
       {
 	const size_t UNITS_PER_WORD = 8;
