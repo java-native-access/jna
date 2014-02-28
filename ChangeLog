@@ -1,3 +1,13 @@
+2014-02-28  Anthony Green  <green@moxielogic.com>
+
+	* Makefile.am (AM_CFLAGS): Reintroduce missing -DFFI_DEBUG for
+	--enable-debug builds.
+	* Makefile.in: Rebuilt.
+
+2014-02-28  Makoto Kato  <m_kato@ga2.so-net.ne.jp>
+
+	* src/closures.c: Fix build failure when using clang for Android.
+
 2014-02-28  Marcin Wojdyr  <wojdyr@gmail.com>
 
 	* libffi.pc.in (toolexeclibdir): use -L${toolexeclibdir} instead

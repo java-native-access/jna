@@ -236,6 +236,13 @@ nodist_libffi_convenience_la_SOURCES = $(nodist_libffi_la_SOURCES)
 
 LTLDFLAGS = $(shell $(SHELL) $(top_srcdir)/libtool-ldflags $(LDFLAGS))
 
+AM_CFLAGS =
+if FFI_DEBUG
+# Build debug. Define FFI_DEBUG on the commandline so that, when building with
+# MSVC, it can link against the debug CRT.
+AM_CFLAGS += -DFFI_DEBUG
+endif
+
 libffi_la_LDFLAGS = -no-undefined -version-info `grep -v '^\#' $(srcdir)/libtool-version` $(LTLDFLAGS) $(AM_LTLDFLAGS)
 
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
