@@ -1,3 +1,9 @@
+2014-02-28  Dominik Vogt  <vogt@linux.vnet.ibm.com>
+
+	* configure.ac: Fix typo in help strings for
+	--disable-(struct|raw_api).
+	* configure: Rebuilt.
+
 2014-02-28  Will Newton  <will.newton@linaro.org>
 
 	* src/arm/sysv.S: Initialize IP register with FP.
