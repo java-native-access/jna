@@ -548,14 +548,14 @@ AM_CONDITIONAL(FFI_DEBUG, test "$enable_debug" = "yes")
 AC_ARG_ENABLE(structs,
 [  --disable-structs       omit code for struct support],
   if test "$enable_structs" = "no"; then
-    AC_DEFINE(FFI_NO_STRUCTS, 1, [Define this is you do not want support for aggregate types.])
+    AC_DEFINE(FFI_NO_STRUCTS, 1, [Define this if you do not want support for aggregate types.])
   fi)
 AM_CONDITIONAL(FFI_DEBUG, test "$enable_debug" = "yes")
 
 AC_ARG_ENABLE(raw-api,
 [  --disable-raw-api       make the raw api unavailable],
   if test "$enable_raw_api" = "no"; then
-    AC_DEFINE(FFI_NO_RAW_API, 1, [Define this is you do not want support for the raw API.])
+    AC_DEFINE(FFI_NO_RAW_API, 1, [Define this if you do not want support for the raw API.])
   fi)
 
 AC_ARG_ENABLE(purify-safety,

@@ -26,10 +26,10 @@
 /* Cannot use malloc on this target, so, we revert to alternative means */
 #undef FFI_MMAP_EXEC_WRIT
 
-/* Define this is you do not want support for the raw API. */
+/* Define this if you do not want support for the raw API. */
 #undef FFI_NO_RAW_API
 
-/* Define this is you do not want support for aggregate types. */
+/* Define this if you do not want support for aggregate types. */
 #undef FFI_NO_STRUCTS
 
 /* Define to 1 if you have `alloca', as a function or macro. */

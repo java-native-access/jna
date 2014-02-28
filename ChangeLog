@@ -1,3 +1,10 @@
+2014-02-28  Dominik Vogt  <vogt@linux.vnet.ibm.com>
+
+	* configure.ac (AC_ARG_ENABLE struct): Fix typo in help
+	message.
+	(AC_ARG_ENABLE raw_api): Ditto.
+	* configure, fficonfig.h.in: Rebuilt.
+
 2014-02-28  Will Newton  <will.newton@linaro.org>
 
 	* src/arm/sysv.S: Initialize IP register with FP.
