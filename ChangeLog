@@ -1,3 +1,8 @@
+2014-02-28  Marcin Wojdyr  <wojdyr@gmail.com>
+
+	* libffi.pc.in (toolexeclibdir): use -L${toolexeclibdir} instead
+	of -L${libdir}.
+
 2014-02-28  Paulo Pizarro  <paulo.pizarro@gmail.com>
 
 	* src/bfin/sysv.S: Calling functions in shared libraries requires
