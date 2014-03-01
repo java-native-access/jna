@@ -173,8 +173,9 @@ See the ChangeLog files for details.
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.
+	Android build fix.
 	Fix MIPS N32 ABI bug.
-	Various FreeBSD and UltraSPARC IIi fixes.
+	Various x86, FreeBSD and UltraSPARC IIi fixes.
 
 3.0.13 Mar-17-13
 	Add Meta support.
