@@ -48,8 +48,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 ChangeLog.libffi m4/libtool.m4 m4/lt~obsolete.m4		\
 	 m4/ltoptions.m4 m4/ltsugar.m4 m4/ltversion.m4			\
 	 m4/ltversion.m4 src/arm/gentramp.sh src/debug.c msvcc.sh	\
-	 generate-ios-source-and-headers.py				\
-	 generate-osx-source-and-headers.py				\
+	 generate-darwin-source-and-headers.py				\
 	 libffi.xcodeproj/project.pbxproj src/arm/trampoline.S		\
 	 libtool-ldflags
 
