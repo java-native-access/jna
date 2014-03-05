@@ -534,7 +534,7 @@ writable and executable addresses.
 @section Closure Example
 
 A trivial example that creates a new @code{puts} by binding 
-@code{fputs} with @code{stdin}.
+@code{fputs} with @code{stdout}.
 
 @example
 #include <stdio.h>
