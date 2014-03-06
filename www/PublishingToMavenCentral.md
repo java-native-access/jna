@@ -29,11 +29,6 @@ One Time
 
   Because we are still deploying to maven repositories via java.net, see [Java.net Maven Repository Usage Guide](http://java.net/projects/maven2-repository/pages/MigrationAndCleanupRelatedDocumentation) for more info.
 
-Request Permissions to Sonatype
--------------------------------
-
-Open a JIRA ticket [here](https://issues.sonatype.org) to request push access. Ticket can look like [this](https://issues.sonatype.org/browse/OSSRH-8992) or [this](https://issues.sonatype.org/browse/OSSRH-4386).
-
 Publish Snapshot
 ----------------
 
