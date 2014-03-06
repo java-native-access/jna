@@ -15,11 +15,11 @@ JNA Release Process
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
   commit and push.
 
+* [Release to Maven Central](PublishingToMavenCentral.md)
+
 * Update links in README.md, commit and push
   * download links
   * javadoc links
-
-* [Release to Maven Central](PublishingToMavenCentral.md)
 
 * Tag as &lt;version>, push new tag to origin
 
