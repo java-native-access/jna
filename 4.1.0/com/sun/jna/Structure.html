@@ -1,0 +1,1729 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Structure (JNA API)</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Structure (JNA API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/StringArray.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Structure.html" target="_top">Frames</a></li>
+<li><a href="Structure.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">com.sun.jna</div>
+<h2 title="Class Structure" class="title">Class Structure</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>com.sun.jna.Structure</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>Direct Known Subclasses:</dt>
+<dd><a href="../../../com/sun/jna/CallbackReference.AttachOptions.html" title="class in com.sun.jna">CallbackReference.AttachOptions</a>, <a href="../../../com/sun/jna/platform/mac/Carbon.EventHotKeyID.html" title="class in com.sun.jna.platform.mac">Carbon.EventHotKeyID</a>, <a href="../../../com/sun/jna/platform/mac/Carbon.EventTypeSpec.html" title="class in com.sun.jna.platform.mac">Carbon.EventTypeSpec</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_DEVICEINTERFACE.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_DEVICEINTERFACE</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_DEVNODE.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_DEVNODE</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_HANDLE.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_HANDLE</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_HDR.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_HDR</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_NET.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_NET</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_OEM.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_OEM</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_PORT.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_PORT</a>, <a href="../../../com/sun/jna/platform/win32/DBT.DEV_BROADCAST_VOLUME.html" title="class in com.sun.jna.platform.win32">DBT.DEV_BROADCAST_VOLUME</a>, <a href="../../../com/sun/jna/platform/win32/DsGetDC.DOMAIN_CONTROLLER_INFO.html" title="class in com.sun.jna.platform.win32">DsGetDC.DOMAIN_CONTROLLER_INFO</a>, <a href="../../../com/sun/jna/platform/win32/DsGetDC.DS_DOMAIN_TRUSTS.html" title="class in com.sun.jna.platform.win32">DsGetDC.DS_DOMAIN_TRUSTS</a>, <a href="../../../com/sun/jna/platform/win32/DsGetDC.PDOMAIN_CONTROLLER_INFO.html" title="class in com.sun.jna.platform.win32">DsGetDC.PDOMAIN_CONTROLLER_INFO</a>, <a href="../../../com/sun/jna/platform/win32/Guid.GUID.html" title="class in com.sun.jna.platform.win32">Guid.GUID</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_0</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_1</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_2.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_2</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.GROUP_INFO_3.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_INFO_3</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.GROUP_USERS_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.GROUP_USERS_INFO_0</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_INFO_0</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_INFO_1</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.LOCALGROUP_USERS_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.LOCALGROUP_USERS_INFO_0</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.USER_INFO_0.html" title="class in com.sun.jna.platform.win32">LMAccess.USER_INFO_0</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.USER_INFO_1.html" title="class in com.sun.jna.platform.win32">LMAccess.USER_INFO_1</a>, <a href="../../../com/sun/jna/platform/win32/LMAccess.USER_INFO_23.html" title="class in com.sun.jna.platform.win32">LMAccess.USER_INFO_23</a>, <a href="../../../com/sun/jna/platform/mac/MacFileUtils.FileManager.FSRef.html" title="class in com.sun.jna.platform.mac">MacFileUtils.FileManager.FSRef</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_BINARY_DATA.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_BINARY_DATA</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_DOMAIN_INFO.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_DOMAIN_INFO</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_INFORMATION.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.LSA_FOREST_TRUST_RECORD.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_FOREST_TRUST_RECORD</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.LSA_UNICODE_STRING.html" title="class in com.sun.jna.platform.win32">NTSecApi.LSA_UNICODE_STRING</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_INFORMATION.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/NTSecApi.PLSA_FOREST_TRUST_RECORD.html" title="class in com.sun.jna.platform.win32">NTSecApi.PLSA_FOREST_TRUST_RECORD</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.ARRAYDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.ARRAYDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.CALLCONV.html" title="class in com.sun.jna.platform.win32">OaIdl.CALLCONV</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.CURRENCY._CURRENCY.html" title="class in com.sun.jna.platform.win32">OaIdl.CURRENCY._CURRENCY</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.DATE.html" title="class in com.sun.jna.platform.win32">OaIdl.DATE</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.DECIMAL.html" title="class in com.sun.jna.platform.win32">OaIdl.DECIMAL</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.DECIMAL._DECIMAL1._DECIMAL1_DECIMAL.html" title="class in com.sun.jna.platform.win32">OaIdl.DECIMAL._DECIMAL1._DECIMAL1_DECIMAL</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.DECIMAL._DECIMAL2._DECIMAL2_DECIMAL.html" title="class in com.sun.jna.platform.win32">OaIdl.DECIMAL._DECIMAL2._DECIMAL2_DECIMAL</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.DESCKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.DESCKIND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.ELEMDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.ELEMDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.ElemDescArg.html" title="class in com.sun.jna.platform.win32">OaIdl.ElemDescArg</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.EXCEPINFO.html" title="class in com.sun.jna.platform.win32">OaIdl.EXCEPINFO</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.FUNCDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.FUNCKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.FUNCKIND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.IDLDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.IDLDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.INVOKEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.INVOKEKIND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.LIBFLAGS.html" title="class in com.sun.jna.platform.win32">OaIdl.LIBFLAGS</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.PARAMDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.PARAMDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.PARAMDESCEX.html" title="class in com.sun.jna.platform.win32">OaIdl.PARAMDESCEX</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAY.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAY</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.SAFEARRAYBOUND.html" title="class in com.sun.jna.platform.win32">OaIdl.SAFEARRAYBOUND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.ScodeArg.html" title="class in com.sun.jna.platform.win32">OaIdl.ScodeArg</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.SYSKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.SYSKIND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.TLIBATTR.html" title="class in com.sun.jna.platform.win32">OaIdl.TLIBATTR</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.TYPEATTR.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEATTR</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.TYPEDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.TYPEKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.TYPEKIND</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.VARDESC.html" title="class in com.sun.jna.platform.win32">OaIdl.VARDESC</a>, <a href="../../../com/sun/jna/platform/win32/OaIdl.VARKIND.html" title="class in com.sun.jna.platform.win32">OaIdl.VARKIND</a>, <a href="../../../com/sun/jna/platform/win32/OleAuto.DISPPARAMS.html" title="class in com.sun.jna.platform.win32">OleAuto.DISPPARAMS</a>, <a href="../../../com/sun/jna/platform/win32/SetupApi.SP_DEVICE_INTERFACE_DATA.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVICE_INTERFACE_DATA</a>, <a href="../../../com/sun/jna/platform/win32/SetupApi.SP_DEVINFO_DATA.html" title="class in com.sun.jna.platform.win32">SetupApi.SP_DEVINFO_DATA</a>, <a href="../../../com/sun/jna/platform/win32/ShellAPI.APPBARDATA.html" title="class in com.sun.jna.platform.win32">ShellAPI.APPBARDATA</a>, <a href="../../../com/sun/jna/platform/win32/ShellAPI.SHFILEOPSTRUCT.html" title="class in com.sun.jna.platform.win32">ShellAPI.SHFILEOPSTRUCT</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.PSecHandle.html" title="class in com.sun.jna.platform.win32">Sspi.PSecHandle</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.PSecPkgInfo.html" title="class in com.sun.jna.platform.win32">Sspi.PSecPkgInfo</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.SecBuffer.html" title="class in com.sun.jna.platform.win32">Sspi.SecBuffer</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.SecBufferDesc.html" title="class in com.sun.jna.platform.win32">Sspi.SecBufferDesc</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.SecHandle.html" title="class in com.sun.jna.platform.win32">Sspi.SecHandle</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.SecPkgInfo.html" title="class in com.sun.jna.platform.win32">Sspi.SecPkgInfo</a>, <a href="../../../com/sun/jna/platform/win32/Sspi.SECURITY_INTEGER.html" title="class in com.sun.jna.platform.win32">Sspi.SECURITY_INTEGER</a>, <a href="../../../com/sun/jna/Structure.FFIType.html" title="class in com.sun.jna">Structure.FFIType</a>, <a href="../../../com/sun/jna/platform/win32/Tlhelp32.PROCESSENTRY32.html" title="class in com.sun.jna.platform.win32">Tlhelp32.PROCESSENTRY32</a>, <a href="../../../com/sun/jna/Union.html" title="class in com.sun.jna">Union</a>, <a href="../../../com/sun/jna/platform/win32/Variant.VARIANT._VARIANT.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT._VARIANT</a>, <a href="../../../com/sun/jna/platform/win32/Variant.VARIANT._VARIANT.__VARIANT.BRECORD.html" title="class in com.sun.jna.platform.win32">Variant.VARIANT._VARIANT.__VARIANT.BRECORD</a>, <a href="../../../com/sun/jna/platform/win32/Variant.VariantArg.html" title="class in com.sun.jna.platform.win32">Variant.VariantArg</a>, <a href="../../../com/sun/jna/platform/win32/VerRsrc.VS_FIXEDFILEINFO.html" title="class in com.sun.jna.platform.win32">VerRsrc.VS_FIXEDFILEINFO</a>, <a href="../../../com/sun/jna/platform/win32/Wdm.KEY_BASIC_INFORMATION.html" title="class in com.sun.jna.platform.win32">Wdm.KEY_BASIC_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.FILETIME.html" title="class in com.sun.jna.platform.win32">WinBase.FILETIME</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.MEMORYSTATUSEX.html" title="class in com.sun.jna.platform.win32">WinBase.MEMORYSTATUSEX</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.OVERLAPPED.html" title="class in com.sun.jna.platform.win32">WinBase.OVERLAPPED</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.PROCESS_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinBase.PROCESS_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.SECURITY_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinBase.SECURITY_ATTRIBUTES</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.STARTUPINFO.html" title="class in com.sun.jna.platform.win32">WinBase.STARTUPINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.SYSTEM_INFO.PI.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEM_INFO.PI</a>, <a href="../../../com/sun/jna/platform/win32/WinBase.SYSTEMTIME.html" title="class in com.sun.jna.platform.win32">WinBase.SYSTEMTIME</a>, <a href="../../../com/sun/jna/platform/win32/WinCrypt.CRYPTPROTECT_PROMPTSTRUCT.html" title="class in com.sun.jna.platform.win32">WinCrypt.CRYPTPROTECT_PROMPTSTRUCT</a>, <a href="../../../com/sun/jna/platform/win32/WinCrypt.DATA_BLOB.html" title="class in com.sun.jna.platform.win32">WinCrypt.DATA_BLOB</a>, <a href="../../../com/sun/jna/platform/win32/WinDef.POINT.html" title="class in com.sun.jna.platform.win32">WinDef.POINT</a>, <a href="../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.BITMAPINFO.html" title="class in com.sun.jna.platform.win32">WinGDI.BITMAPINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.BITMAPINFOHEADER.html" title="class in com.sun.jna.platform.win32">WinGDI.BITMAPINFOHEADER</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.PIXELFORMATDESCRIPTOR.html" title="class in com.sun.jna.platform.win32">WinGDI.PIXELFORMATDESCRIPTOR</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.RGBQUAD.html" title="class in com.sun.jna.platform.win32">WinGDI.RGBQUAD</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.RGNDATA.html" title="class in com.sun.jna.platform.win32">WinGDI.RGNDATA</a>, <a href="../../../com/sun/jna/platform/win32/WinGDI.RGNDATAHEADER.html" title="class in com.sun.jna.platform.win32">WinGDI.RGNDATAHEADER</a>, <a href="../../../com/sun/jna/platform/win32/Winioctl.STORAGE_DEVICE_NUMBER.html" title="class in com.sun.jna.platform.win32">Winioctl.STORAGE_DEVICE_NUMBER</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.ACEStructure.html" title="class in com.sun.jna.platform.win32">WinNT.ACEStructure</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.ACL.html" title="class in com.sun.jna.platform.win32">WinNT.ACL</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.CACHE_DESCRIPTOR.html" title="class in com.sun.jna.platform.win32">WinNT.CACHE_DESCRIPTOR</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.EVENTLOGRECORD.html" title="class in com.sun.jna.platform.win32">WinNT.EVENTLOGRECORD</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.FILE_NOTIFY_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.FILE_NOTIFY_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.GENERIC_MAPPING.html" title="class in com.sun.jna.platform.win32">WinNT.GENERIC_MAPPING</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.LARGE_INTEGER.LowHigh.html" title="class in com.sun.jna.platform.win32">WinNT.LARGE_INTEGER.LowHigh</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.LUID.html" title="class in com.sun.jna.platform.win32">WinNT.LUID</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.LUID_AND_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinNT.LUID_AND_ATTRIBUTES</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFO.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.OSVERSIONINFOEX.html" title="class in com.sun.jna.platform.win32">WinNT.OSVERSIONINFOEX</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.PRIVILEGE_SET.html" title="class in com.sun.jna.platform.win32">WinNT.PRIVILEGE_SET</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.PSID.html" title="class in com.sun.jna.platform.win32">WinNT.PSID</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SECURITY_DESCRIPTOR.html" title="class in com.sun.jna.platform.win32">WinNT.SECURITY_DESCRIPTOR</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SECURITY_DESCRIPTOR_RELATIVE.html" title="class in com.sun.jna.platform.win32">WinNT.SECURITY_DESCRIPTOR_RELATIVE</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SID_AND_ATTRIBUTES.html" title="class in com.sun.jna.platform.win32">WinNT.SID_AND_ATTRIBUTES</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.AnonymousStructNumaNode.html" title="class in com.sun.jna.platform.win32">WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.AnonymousStructNumaNode</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.AnonymousStructProcessorCore.html" title="class in com.sun.jna.platform.win32">WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.AnonymousStructProcessorCore</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.TOKEN_GROUPS.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_GROUPS</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.TOKEN_OWNER.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_OWNER</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.TOKEN_PRIVILEGES.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_PRIVILEGES</a>, <a href="../../../com/sun/jna/platform/win32/WinNT.TOKEN_USER.html" title="class in com.sun.jna.platform.win32">WinNT.TOKEN_USER</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RAS_STATS.html" title="class in com.sun.jna.platform.win32">WinRas.RAS_STATS</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASCONN.html" title="class in com.sun.jna.platform.win32">WinRas.RASCONN</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASCONNSTATUS.html" title="class in com.sun.jna.platform.win32">WinRas.RASCONNSTATUS</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASCREDENTIALS.html" title="class in com.sun.jna.platform.win32">WinRas.RASCREDENTIALS</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASDEVSPECIFICINFO.html" title="class in com.sun.jna.platform.win32">WinRas.RASDEVSPECIFICINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASDIALEXTENSIONS.html" title="class in com.sun.jna.platform.win32">WinRas.RASDIALEXTENSIONS</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASDIALPARAMS.html" title="class in com.sun.jna.platform.win32">WinRas.RASDIALPARAMS</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASEAPINFO.html" title="class in com.sun.jna.platform.win32">WinRas.RASEAPINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASENTRY.html" title="class in com.sun.jna.platform.win32">WinRas.RASENTRY</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASIPADDR.html" title="class in com.sun.jna.platform.win32">WinRas.RASIPADDR</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASIPV4ADDR.html" title="class in com.sun.jna.platform.win32">WinRas.RASIPV4ADDR</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASIPV6ADDR.html" title="class in com.sun.jna.platform.win32">WinRas.RASIPV6ADDR</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASPPPIP.html" title="class in com.sun.jna.platform.win32">WinRas.RASPPPIP</a>, <a href="../../../com/sun/jna/platform/win32/WinRas.RASTUNNELENDPOINT.html" title="class in com.sun.jna.platform.win32">WinRas.RASTUNNELENDPOINT</a>, <a href="../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_1.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_1</a>, <a href="../../../com/sun/jna/platform/win32/Winspool.PRINTER_INFO_4.html" title="class in com.sun.jna.platform.win32">Winspool.PRINTER_INFO_4</a>, <a href="../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS</a>, <a href="../../../com/sun/jna/platform/win32/Winsvc.SERVICE_STATUS_PROCESS.html" title="class in com.sun.jna.platform.win32">Winsvc.SERVICE_STATUS_PROCESS</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.BLENDFUNCTION.html" title="class in com.sun.jna.platform.win32">WinUser.BLENDFUNCTION</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.FLASHWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.FLASHWINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.GUITHREADINFO.html" title="class in com.sun.jna.platform.win32">WinUser.GUITHREADINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.HARDWAREINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.HARDWAREINPUT</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.INPUT.html" title="class in com.sun.jna.platform.win32">WinUser.INPUT</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.KBDLLHOOKSTRUCT.html" title="class in com.sun.jna.platform.win32">WinUser.KBDLLHOOKSTRUCT</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.KEYBDINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.KEYBDINPUT</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.LASTINPUTINFO.html" title="class in com.sun.jna.platform.win32">WinUser.LASTINPUTINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.MOUSEINPUT.html" title="class in com.sun.jna.platform.win32">WinUser.MOUSEINPUT</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.MSG.html" title="class in com.sun.jna.platform.win32">WinUser.MSG</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.SIZE.html" title="class in com.sun.jna.platform.win32">WinUser.SIZE</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.WINDOWINFO.html" title="class in com.sun.jna.platform.win32">WinUser.WINDOWINFO</a>, <a href="../../../com/sun/jna/platform/win32/WinUser.WNDCLASSEX.html" title="class in com.sun.jna.platform.win32">WinUser.WNDCLASSEX</a>, <a href="../../../com/sun/jna/platform/unix/X11.XAnyEvent.html" title="class in com.sun.jna.platform.unix">X11.XAnyEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XButtonEvent.html" title="class in com.sun.jna.platform.unix">X11.XButtonEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XCirculateEvent.html" title="class in com.sun.jna.platform.unix">X11.XCirculateEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XCirculateRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XCirculateRequestEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XClientMessageEvent.html" title="class in com.sun.jna.platform.unix">X11.XClientMessageEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XColormapEvent.html" title="class in com.sun.jna.platform.unix">X11.XColormapEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XConfigureEvent.html" title="class in com.sun.jna.platform.unix">X11.XConfigureEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XConfigureRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XConfigureRequestEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XCreateWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XCreateWindowEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XCrossingEvent.html" title="class in com.sun.jna.platform.unix">X11.XCrossingEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XDestroyWindowEvent.html" title="class in com.sun.jna.platform.unix">X11.XDestroyWindowEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XDeviceByReference.html" title="class in com.sun.jna.platform.unix">X11.XDeviceByReference</a>, <a href="../../../com/sun/jna/platform/unix/X11.XErrorEvent.html" title="class in com.sun.jna.platform.unix">X11.XErrorEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XExposeEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XFocusChangeEvent.html" title="class in com.sun.jna.platform.unix">X11.XFocusChangeEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XGCValues.html" title="class in com.sun.jna.platform.unix">X11.XGCValues</a>, <a href="../../../com/sun/jna/platform/unix/X11.XGraphicsExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XGraphicsExposeEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XGravityEvent.html" title="class in com.sun.jna.platform.unix">X11.XGravityEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XInputClassInfoByReference.html" title="class in com.sun.jna.platform.unix">X11.XInputClassInfoByReference</a>, <a href="../../../com/sun/jna/platform/unix/X11.XKeyboardControlRef.html" title="class in com.sun.jna.platform.unix">X11.XKeyboardControlRef</a>, <a href="../../../com/sun/jna/platform/unix/X11.XKeyboardStateRef.html" title="class in com.sun.jna.platform.unix">X11.XKeyboardStateRef</a>, <a href="../../../com/sun/jna/platform/unix/X11.XKeyEvent.html" title="class in com.sun.jna.platform.unix">X11.XKeyEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XKeymapEvent.html" title="class in com.sun.jna.platform.unix">X11.XKeymapEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XMapEvent.html" title="class in com.sun.jna.platform.unix">X11.XMapEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XMappingEvent.html" title="class in com.sun.jna.platform.unix">X11.XMappingEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XMapRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XMapRequestEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XModifierKeymapRef.html" title="class in com.sun.jna.platform.unix">X11.XModifierKeymapRef</a>, <a href="../../../com/sun/jna/platform/unix/X11.XMotionEvent.html" title="class in com.sun.jna.platform.unix">X11.XMotionEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XNoExposeEvent.html" title="class in com.sun.jna.platform.unix">X11.XNoExposeEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XPoint.html" title="class in com.sun.jna.platform.unix">X11.XPoint</a>, <a href="../../../com/sun/jna/platform/unix/X11.XPropertyEvent.html" title="class in com.sun.jna.platform.unix">X11.XPropertyEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XRectangle.html" title="class in com.sun.jna.platform.unix">X11.XRectangle</a>, <a href="../../../com/sun/jna/platform/unix/X11.Xrender.XRenderDirectFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderDirectFormat</a>, <a href="../../../com/sun/jna/platform/unix/X11.Xrender.XRenderPictFormat.html" title="class in com.sun.jna.platform.unix">X11.Xrender.XRenderPictFormat</a>, <a href="../../../com/sun/jna/platform/unix/X11.XReparentEvent.html" title="class in com.sun.jna.platform.unix">X11.XReparentEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XResizeRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XResizeRequestEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSelectionClearEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionClearEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSelectionEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSelectionRequestEvent.html" title="class in com.sun.jna.platform.unix">X11.XSelectionRequestEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSetWindowAttributes.html" title="class in com.sun.jna.platform.unix">X11.XSetWindowAttributes</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSizeHints.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints</a>, <a href="../../../com/sun/jna/platform/unix/X11.XSizeHints.Aspect.html" title="class in com.sun.jna.platform.unix">X11.XSizeHints.Aspect</a>, <a href="../../../com/sun/jna/platform/unix/X11.XTextProperty.html" title="class in com.sun.jna.platform.unix">X11.XTextProperty</a>, <a href="../../../com/sun/jna/platform/unix/X11.XUnmapEvent.html" title="class in com.sun.jna.platform.unix">X11.XUnmapEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XVisibilityEvent.html" title="class in com.sun.jna.platform.unix">X11.XVisibilityEvent</a>, <a href="../../../com/sun/jna/platform/unix/X11.XVisualInfo.html" title="class in com.sun.jna.platform.unix">X11.XVisualInfo</a>, <a href="../../../com/sun/jna/platform/unix/X11.XWindowAttributes.html" title="class in com.sun.jna.platform.unix">X11.XWindowAttributes</a>, <a href="../../../com/sun/jna/platform/unix/X11.XWMHints.html" title="class in com.sun.jna.platform.unix">X11.XWMHints</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public abstract class <span class="strong">Structure</span>
+extends java.lang.Object</pre>
+<div class="block">Represents a native structure with a Java peer class.  When used as a
+ function parameter or return value, this class corresponds to
+ <code>struct*</code>.  When used as a field within another
+ <code>Structure</code>, it corresponds to <code>struct</code>.  The
+ tagging interfaces <a href="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><code>Structure.ByReference</code></a> and <a href="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><code>Structure.ByValue</code></a> may be used
+ to alter the default behavior.  Structures may have variable size, but only
+ by providing an array field (e.g. byte[]).
+ <p>
+ See the <a href=../../../overview-summary.html>overview</a> for supported
+ type mappings for struct fields.
+ <p>
+ Structure alignment and type mappings are derived by default from the
+ enclosing interface definition (if any) by using
+ <a href="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)"><code>Native.getStructureAlignment(java.lang.Class)</code></a> and <a href="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)"><code>Native.getTypeMapper(java.lang.Class)</code></a>.
+ Alternatively you can explicitly provide alignment, field order, or type
+ mapping by calling the respective Structure functions in your subclass's
+ constructor.
+ <p/>
+ Structure fields corresponding to native struct fields <em>must</em> be
+ public.  If your structure is to have no fields of its own, it must be
+ declared abstract.
+ <p/>
+ You <em>must</em> define <a href="../../../com/sun/jna/Structure.html#getFieldOrder()"><code>getFieldOrder()</code></a> to return a List of
+ field names (Strings) indicating the proper order of the fields.  When
+ dealing with multiple levels of subclasses of Structure, you must add to
+ the list provided by the superclass <a href="../../../com/sun/jna/Structure.html#getFieldOrder()"><code>getFieldOrder()</code></a>
+ the fields defined in the current class.
+ <p/>
+ In the past, most VMs would return them in a predictable order, but the JVM
+ spec does not require it, so <a href="../../../com/sun/jna/Structure.html#getFieldOrder()"><code>getFieldOrder()</code></a> is now required to
+ ensure JNA knows the proper order).
+ <p/>
+ Structure fields may additionally have the following modifiers:<br>
+ <ul>
+ <li><code>volatile</code> JNA will not write the field unless specifically
+ instructed to do so via <a href="../../../com/sun/jna/Structure.html#writeField(java.lang.String)"><code>writeField(String)</code></a>.  This allows you to
+ prevent inadvertently overwriting memory that may be updated in real time
+ on another (possibly native) thread.
+ <li><code>final</code> JNA will overwrite the field via <a href="../../../com/sun/jna/Structure.html#read()"><code>read()</code></a>,
+ but otherwise the field is not modifiable from Java.  Take care when using
+ this option, since the compiler will usually assume <em>all</em> accesses
+ to the field (for a given Structure instance) have the same value.  This
+ modifier is invalid to use on J2ME.
+ </ul>
+ NOTE: Strings are used to represent native C strings because usage of
+ <code>char *</code> is generally more common than <code>wchar_t *</code>.
+ You may provide a type mapper (<a href="../../../com/sun/jna/win32/W32APITypeMapper.html" title="class in com.sun.jna.win32"><code>example here)</code></a> if you prefer to use String in place of <a href="../../../com/sun/jna/WString.html" title="class in com.sun.jna"><code>WString</code></a> if
+ your native code predominantly uses <code>wchar_t *</code>.
+ <p/>
+ NOTE: In general, instances of this class are <em>not</em> synchronized.
+ <p/></div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Todd Fast, todd.fast@sun.com, twall@users.sf.net</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna">Structure.ByReference</a></strong></code>
+<div class="block">Tagging interface to indicate the address of an instance of the
+ Structure type is to be used within a <code>Structure</code> definition
+ rather than nesting the full Structure contents.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna">Structure.ByValue</a></strong></code>
+<div class="block">Tagging interface to indicate the value of an instance of the
+ <code>Structure</code> type is to be used in function invocations rather
+ than its address.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.FFIType.html" title="class in com.sun.jna">Structure.FFIType</a></strong></code>
+<div class="block">This class auto-generates an ffi_type structure appropriate for a given
+ structure for use by libffi.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected static class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#ALIGN_DEFAULT">ALIGN_DEFAULT</a></strong></code>
+<div class="block">Use the platform default alignment.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#ALIGN_GNUC">ALIGN_GNUC</a></strong></code>
+<div class="block">validated for 32-bit x86 linux/gcc; align field size, max 4 bytes</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#ALIGN_MSVC">ALIGN_MSVC</a></strong></code>
+<div class="block">validated for w32/msvc; align on field size</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#ALIGN_NONE">ALIGN_NONE</a></strong></code>
+<div class="block">No alignment, place all fields on nearest 1-byte boundary</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#CALCULATE_SIZE">CALCULATE_SIZE</a></strong></code>
+<div class="block">Align to an 8-byte boundary.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.util.Map</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#fieldOrder">fieldOrder</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.util.Map</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#layoutInfo">layoutInfo</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier</th>
+<th class="colLast" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure()">Structure</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(int)">Structure</a></strong>(int&nbsp;alignType)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(int, com.sun.jna.TypeMapper)">Structure</a></strong>(int&nbsp;alignType,
+         <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(com.sun.jna.Pointer)">Structure</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</code>
+<div class="block">Create a structure cast onto pre-allocated memory.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(com.sun.jna.Pointer, int)">Structure</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+         int&nbsp;alignType)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)">Structure</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+         int&nbsp;alignType,
+         <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#Structure(com.sun.jna.TypeMapper)">Structure</a></strong>(<a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#allocateMemory()">allocateMemory</a></strong>()</code>
+<div class="block">Attempt to allocate memory if sufficient information is available.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#allocateMemory(int)">allocateMemory</a></strong>(int&nbsp;size)</code>
+<div class="block">Provided for derived classes to indicate a different
+ size than the default.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#autoAllocate(int)">autoAllocate</a></strong>(int&nbsp;size)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#autoRead()">autoRead</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#autoRead(com.sun.jna.Structure[])">autoRead</a></strong>(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;ss)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#autoWrite()">autoWrite</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#autoWrite(com.sun.jna.Structure[])">autoWrite</a></strong>(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;ss)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.util.Set</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#busy()">busy</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#cacheTypeInfo(com.sun.jna.Pointer)">cacheTypeInfo</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</code>
+<div class="block">Cache native type information for use in native code.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#calculateSize(boolean, boolean)">calculateSize</a></strong>(boolean&nbsp;force,
+             boolean&nbsp;avoidFFIType)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#clear()">clear</a></strong>()</code>
+<div class="block">Clears the native memory associated with this Structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#conditionalAutoRead()">conditionalAutoRead</a></strong>()</code>
+<div class="block">Performs auto-read only if uninitialized.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#ensureAllocated()">ensureAllocated</a></strong>()</code>
+<div class="block">Ensure this memory has its size and layout calculated and its
+        memory allocated.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#equals(java.lang.Object)">equals</a></strong>(java.lang.Object&nbsp;o)</code>
+<div class="block">This structure is equal to another based on the same data type
+ and memory contents.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#fieldOffset(java.lang.String)">fieldOffset</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Returns the calculated offset of the given field.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) java.util.Map</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#fields()">fields</a></strong>()</code>
+<div class="block">Return all fields in this structure (ordered).</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getAutoRead()">getAutoRead</a></strong>()</code>
+<div class="block">Returns whether the structure is read from native memory prior to
+        a native function call.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getAutoWrite()">getAutoWrite</a></strong>()</code>
+<div class="block">Returns whether the structure is written to native memory after a native
+        function call.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.util.List</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getFieldList()">getFieldList</a></strong>()</code>
+<div class="block">Look up all fields in this class and superclasses.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected abstract java.util.List</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getFieldOrder()">getFieldOrder</a></strong>()</code>
+<div class="block">Return this Structure's field names in their proper order.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.util.List</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getFields(boolean)">getFields</a></strong>(boolean&nbsp;force)</code>
+<div class="block">Returns all field names (sorted) provided so far by
+        <a href="../../../com/sun/jna/Structure.html#getFieldOrder()"><code>getFieldOrder()</code></a></div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getFieldTypeInfo(com.sun.jna.Structure.StructField)">getFieldTypeInfo</a></strong>(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;f)</code>
+<div class="block">Override to supply native type information for the given field.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getFieldValue(java.lang.reflect.Field)">getFieldValue</a></strong>(java.lang.reflect.Field&nbsp;field)</code>
+<div class="block">Obtain the value currently in the Java field.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">getNativeAlignment</a></strong>(java.lang.Class&nbsp;type,
+                  java.lang.Object&nbsp;value,
+                  boolean&nbsp;isFirstElement)</code>
+<div class="block">Overridable in subclasses.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getNativeSize(java.lang.Class)">getNativeSize</a></strong>(java.lang.Class&nbsp;nativeType)</code>
+<div class="block">Return the native size of the given Java type, from the perspective of
+        this Structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getNativeSize(java.lang.Class, java.lang.Object)">getNativeSize</a></strong>(java.lang.Class&nbsp;nativeType,
+             java.lang.Object&nbsp;value)</code>
+<div class="block">Return the native size of the given Java type, from the perspective of
+        this Structure.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getPointer()">getPointer</a></strong>()</code>
+<div class="block">Return a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> object to this structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getStringEncoding()">getStringEncoding</a></strong>()</code>
+<div class="block">Encoding to use to convert <code>String</code> to native <code>const
+        char*</code>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getStructAlignment()">getStructAlignment</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getTypeInfo()">getTypeInfo</a></strong>()</code>
+<div class="block">Obtain native type information for this structure.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getTypeInfo(java.lang.Object)">getTypeInfo</a></strong>(java.lang.Object&nbsp;obj)</code>
+<div class="block">Exposed for testing purposes only.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#getTypeMapper()">getTypeMapper</a></strong>()</code>
+<div class="block">Return the type mapper in effect for this Structure.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#hashCode()">hashCode</a></strong>()</code>
+<div class="block">Since <a href="../../../com/sun/jna/Structure.html#equals(java.lang.Object)"><code>equals(java.lang.Object)</code></a> depends on the contents of memory, use that
+ as the basis for the hash code.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class)">newInstance</a></strong>(java.lang.Class&nbsp;type)</code>
+<div class="block">Create a new Structure instance of the given type</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#newInstance(java.lang.Class, com.sun.jna.Pointer)">newInstance</a></strong>(java.lang.Class&nbsp;type,
+           <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;init)</code>
+<div class="block">Create a new Structure instance of the given type, initialized with
+ the given memory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#read()">read</a></strong>()</code>
+<div class="block">Reads the fields of the struct from native memory</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#readField(java.lang.String)">readField</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Force a read of the given field from native memory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#readField(com.sun.jna.Structure.StructField)">readField</a></strong>(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;structField)</code>
+<div class="block">Read the given field and return its value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.util.Map</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#reading()">reading</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setAlignType(int)">setAlignType</a></strong>(int&nbsp;alignType)</code>
+<div class="block">Change the alignment of this structure.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setAutoRead(boolean)">setAutoRead</a></strong>(boolean&nbsp;auto)</code>
+<div class="block">Set whether the structure is read from native memory prior to
+        a native function call.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setAutoSynch(boolean)">setAutoSynch</a></strong>(boolean&nbsp;auto)</code>
+<div class="block">Set whether the structure is automatically synchronized to native memory
+        before and after a native function call.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setAutoWrite(boolean)">setAutoWrite</a></strong>(boolean&nbsp;auto)</code>
+<div class="block">Set whether the structure is written to native memory after a native
+        function call.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setFieldOrder(java.lang.String[])">setFieldOrder</a></strong>(java.lang.String[]&nbsp;fields)</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Use the required method getFieldOrder() instead to
+ indicate the order of fields in this structure.</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setFieldValue(java.lang.reflect.Field, java.lang.Object)">setFieldValue</a></strong>(java.lang.reflect.Field&nbsp;field,
+             java.lang.Object&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#setStringEncoding(java.lang.String)">setStringEncoding</a></strong>(java.lang.String&nbsp;encoding)</code>
+<div class="block">Set the desired encoding to use when writing String fields to native
+        memory.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#size()">size</a></strong>()</code>
+<div class="block">Returns the size in memory occupied by this Structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#size(java.lang.Class)">size</a></strong>(java.lang.Class&nbsp;type)</code>
+<div class="block">Efficiently calculate the size of the given Structure subclass.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#size(java.lang.Class, com.sun.jna.Structure)">size</a></strong>(java.lang.Class&nbsp;type,
+    <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;value)</code>
+<div class="block">Efficiently calculate the size of the given Structure subclass.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#sortFields(java.util.List, java.util.List)">sortFields</a></strong>(java.util.List&nbsp;fields,
+          java.util.List&nbsp;names)</code>
+<div class="block">Sort the structure fields according to the given array of names.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#toArray(int)">toArray</a></strong>(int&nbsp;size)</code>
+<div class="block">Returns a view of this structure's memory as an array of structures.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#toArray(com.sun.jna.Structure[])">toArray</a></strong>(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;array)</code>
+<div class="block">Returns a view of this structure's memory as an array of structures.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#toString(boolean)">toString</a></strong>(boolean&nbsp;debug)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) <a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#typeInfoField()">typeInfoField</a></strong>()</code>
+<div class="block">Keep track of the largest aggregate field of the union to use for
+ FFI type information.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">updateStructureByReference</a></strong>(java.lang.Class&nbsp;type,
+                          <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;s,
+                          <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;address)</code>
+<div class="block">Only keep the original structure if its native address is unchanged.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer)">useMemory</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m)</code>
+<div class="block">Set the memory used by this structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int)">useMemory</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m,
+         int&nbsp;offset)</code>
+<div class="block">Set the memory used by this structure.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#useMemory(com.sun.jna.Pointer, int, boolean)">useMemory</a></strong>(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m,
+         int&nbsp;offset,
+         boolean&nbsp;force)</code>
+<div class="block">Set the memory used by this structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#validate(java.lang.Class)">validate</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Indicate whether the given Structure class can be created by JNA.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#write()">write</a></strong>()</code>
+<div class="block">Writes the fields of the struct to native memory</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#writeField(java.lang.String)">writeField</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Write the given field to native memory.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)">writeField</a></strong>(java.lang.String&nbsp;name,
+          java.lang.Object&nbsp;value)</code>
+<div class="block">Write the given field value to the field and native memory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Structure.html#writeField(com.sun.jna.Structure.StructField)">writeField</a></strong>(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;structField)</code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, finalize, getClass, notify, notifyAll, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="ALIGN_DEFAULT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_DEFAULT</h4>
+<pre>public static final&nbsp;int ALIGN_DEFAULT</pre>
+<div class="block">Use the platform default alignment.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Structure.ALIGN_DEFAULT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_NONE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_NONE</h4>
+<pre>public static final&nbsp;int ALIGN_NONE</pre>
+<div class="block">No alignment, place all fields on nearest 1-byte boundary</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Structure.ALIGN_NONE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_GNUC">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_GNUC</h4>
+<pre>public static final&nbsp;int ALIGN_GNUC</pre>
+<div class="block">validated for 32-bit x86 linux/gcc; align field size, max 4 bytes</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Structure.ALIGN_GNUC">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="ALIGN_MSVC">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ALIGN_MSVC</h4>
+<pre>public static final&nbsp;int ALIGN_MSVC</pre>
+<div class="block">validated for w32/msvc; align on field size</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Structure.ALIGN_MSVC">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CALCULATE_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CALCULATE_SIZE</h4>
+<pre>protected static final&nbsp;int CALCULATE_SIZE</pre>
+<div class="block">Align to an 8-byte boundary.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Structure.CALCULATE_SIZE">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="layoutInfo">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>layoutInfo</h4>
+<pre>static final&nbsp;java.util.Map layoutInfo</pre>
+</li>
+</ul>
+<a name="fieldOrder">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>fieldOrder</h4>
+<pre>static final&nbsp;java.util.Map fieldOrder</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Structure()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure()</pre>
+</li>
+</ul>
+<a name="Structure(com.sun.jna.TypeMapper)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(<a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</pre>
+</li>
+</ul>
+<a name="Structure(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(int&nbsp;alignType)</pre>
+</li>
+</ul>
+<a name="Structure(int, com.sun.jna.TypeMapper)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(int&nbsp;alignType,
+         <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</pre>
+</li>
+</ul>
+<a name="Structure(com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</pre>
+<div class="block">Create a structure cast onto pre-allocated memory.</div>
+</li>
+</ul>
+<a name="Structure(com.sun.jna.Pointer, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+         int&nbsp;alignType)</pre>
+</li>
+</ul>
+<a name="Structure(com.sun.jna.Pointer, int, com.sun.jna.TypeMapper)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Structure</h4>
+<pre>protected&nbsp;Structure(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p,
+         int&nbsp;alignType,
+         <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;mapper)</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="fields()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fields</h4>
+<pre>java.util.Map&nbsp;fields()</pre>
+<div class="block">Return all fields in this structure (ordered).  This represents the
+ layout of the structure, and will be shared among Structures of the
+ same class except when the Structure can have a variable size.
+ NOTE: <a href="../../../com/sun/jna/Structure.html#ensureAllocated()"><code>ensureAllocated()</code></a> <em>must</em> be called prior to
+ calling this method.</div>
+</li>
+</ul>
+<a name="getTypeMapper()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTypeMapper</h4>
+<pre><a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;getTypeMapper()</pre>
+<div class="block">Return the type mapper in effect for this Structure.</div>
+</li>
+</ul>
+<a name="setStringEncoding(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setStringEncoding</h4>
+<pre>protected&nbsp;void&nbsp;setStringEncoding(java.lang.String&nbsp;encoding)</pre>
+<div class="block">Set the desired encoding to use when writing String fields to native
+        memory.</div>
+</li>
+</ul>
+<a name="getStringEncoding()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringEncoding</h4>
+<pre>protected&nbsp;java.lang.String&nbsp;getStringEncoding()</pre>
+<div class="block">Encoding to use to convert <code>String</code> to native <code>const
+        char*</code>.  Defaults to <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>Native.getDefaultStringEncoding()</code></a>.</div>
+</li>
+</ul>
+<a name="setAlignType(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAlignType</h4>
+<pre>protected&nbsp;void&nbsp;setAlignType(int&nbsp;alignType)</pre>
+<div class="block">Change the alignment of this structure.  Re-allocates memory if
+ necessary.  If alignment is <a href="../../../com/sun/jna/Structure.html#ALIGN_DEFAULT"><code>ALIGN_DEFAULT</code></a>, the default
+ alignment for the defining class will be used.</div>
+</li>
+</ul>
+<a name="autoAllocate(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>autoAllocate</h4>
+<pre>protected&nbsp;<a href="../../../com/sun/jna/Memory.html" title="class in com.sun.jna">Memory</a>&nbsp;autoAllocate(int&nbsp;size)</pre>
+</li>
+</ul>
+<a name="useMemory(com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>useMemory</h4>
+<pre>protected&nbsp;void&nbsp;useMemory(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m)</pre>
+<div class="block">Set the memory used by this structure.  This method is used to
+ indicate the given structure is nested within another or otherwise
+ overlaid on some other memory block and thus does not own its own
+ memory.</div>
+</li>
+</ul>
+<a name="useMemory(com.sun.jna.Pointer, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>useMemory</h4>
+<pre>protected&nbsp;void&nbsp;useMemory(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m,
+             int&nbsp;offset)</pre>
+<div class="block">Set the memory used by this structure.  This method is used to
+ indicate the given structure is based on natively-allocated data,
+ nested within another, or otherwise overlaid on existing memory and
+ thus does not own its own memory allocation.</div>
+</li>
+</ul>
+<a name="useMemory(com.sun.jna.Pointer, int, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>useMemory</h4>
+<pre>void&nbsp;useMemory(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;m,
+             int&nbsp;offset,
+             boolean&nbsp;force)</pre>
+<div class="block">Set the memory used by this structure.  This method is used to
+ indicate the given structure is based on natively-allocated data,
+ nested within another, or otherwise overlaid on existing memory and
+ thus does not own its own memory allocation.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>m</code> - Native pointer</dd><dd><code>offset</code> - offset from pointer to use</dd><dd><code>force</code> - ByValue structures normally ignore requests to use a
+ different memory offset; this input is set <code>true</code> when
+ setting a ByValue struct that is nested within another struct.</dd></dl>
+</li>
+</ul>
+<a name="ensureAllocated()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ensureAllocated</h4>
+<pre>protected&nbsp;void&nbsp;ensureAllocated()</pre>
+<div class="block">Ensure this memory has its size and layout calculated and its
+        memory allocated.</div>
+</li>
+</ul>
+<a name="allocateMemory()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>allocateMemory</h4>
+<pre>protected&nbsp;void&nbsp;allocateMemory()</pre>
+<div class="block">Attempt to allocate memory if sufficient information is available.
+ Returns whether the operation was successful.</div>
+</li>
+</ul>
+<a name="allocateMemory(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>allocateMemory</h4>
+<pre>protected&nbsp;void&nbsp;allocateMemory(int&nbsp;size)</pre>
+<div class="block">Provided for derived classes to indicate a different
+ size than the default.  Returns whether the operation was successful.
+ Will leave memory untouched if it is non-null and not allocated
+ by this class.</div>
+</li>
+</ul>
+<a name="size()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>size</h4>
+<pre>public&nbsp;int&nbsp;size()</pre>
+<div class="block">Returns the size in memory occupied by this Structure.</div>
+</li>
+</ul>
+<a name="clear()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clear</h4>
+<pre>public&nbsp;void&nbsp;clear()</pre>
+<div class="block">Clears the native memory associated with this Structure.</div>
+</li>
+</ul>
+<a name="getPointer()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPointer</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getPointer()</pre>
+<div class="block">Return a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> object to this structure.  Note that if you
+ use the structure's pointer as a function argument, you are responsible
+ for calling <a href="../../../com/sun/jna/Structure.html#write()"><code>write()</code></a> prior to the call and <a href="../../../com/sun/jna/Structure.html#read()"><code>read()</code></a>
+ after the call.  These calls are normally handled automatically by the
+ <a href="../../../com/sun/jna/Function.html" title="class in com.sun.jna"><code>Function</code></a> object when it encounters a <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><code>Structure</code></a> argument
+ or return value.</div>
+</li>
+</ul>
+<a name="busy()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>busy</h4>
+<pre>static&nbsp;java.util.Set&nbsp;busy()</pre>
+</li>
+</ul>
+<a name="reading()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>reading</h4>
+<pre>static&nbsp;java.util.Map&nbsp;reading()</pre>
+</li>
+</ul>
+<a name="conditionalAutoRead()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>conditionalAutoRead</h4>
+<pre>void&nbsp;conditionalAutoRead()</pre>
+<div class="block">Performs auto-read only if uninitialized.</div>
+</li>
+</ul>
+<a name="read()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>public&nbsp;void&nbsp;read()</pre>
+<div class="block">Reads the fields of the struct from native memory</div>
+</li>
+</ul>
+<a name="fieldOffset(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fieldOffset</h4>
+<pre>protected&nbsp;int&nbsp;fieldOffset(java.lang.String&nbsp;name)</pre>
+<div class="block">Returns the calculated offset of the given field.</div>
+</li>
+</ul>
+<a name="readField(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readField</h4>
+<pre>public&nbsp;java.lang.Object&nbsp;readField(java.lang.String&nbsp;name)</pre>
+<div class="block">Force a read of the given field from native memory.  The Java field
+ will be updated from the current contents of native memory.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the new field value, after updating</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if no field exists with the given name</dd></dl>
+</li>
+</ul>
+<a name="getFieldValue(java.lang.reflect.Field)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFieldValue</h4>
+<pre>java.lang.Object&nbsp;getFieldValue(java.lang.reflect.Field&nbsp;field)</pre>
+<div class="block">Obtain the value currently in the Java field.  Does not read from
+ memory.</div>
+</li>
+</ul>
+<a name="setFieldValue(java.lang.reflect.Field, java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFieldValue</h4>
+<pre>void&nbsp;setFieldValue(java.lang.reflect.Field&nbsp;field,
+                 java.lang.Object&nbsp;value)</pre>
+</li>
+</ul>
+<a name="updateStructureByReference(java.lang.Class, com.sun.jna.Structure, com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateStructureByReference</h4>
+<pre>static&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;updateStructureByReference(java.lang.Class&nbsp;type,
+                                   <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;s,
+                                   <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;address)</pre>
+<div class="block">Only keep the original structure if its native address is unchanged.
+ Otherwise replace it with a new object.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - Structure subclass</dd><dd><code>s</code> - Original Structure object</dd><dd><code>address</code> - the native <code>struct *</code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>Updated <code>Structure.ByReference</code> object</dd></dl>
+</li>
+</ul>
+<a name="readField(com.sun.jna.Structure.StructField)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>readField</h4>
+<pre>protected&nbsp;java.lang.Object&nbsp;readField(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;structField)</pre>
+<div class="block">Read the given field and return its value.  The Java field will be
+ updated from the contents of native memory.</div>
+</li>
+</ul>
+<a name="write()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>public&nbsp;void&nbsp;write()</pre>
+<div class="block">Writes the fields of the struct to native memory</div>
+</li>
+</ul>
+<a name="writeField(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeField</h4>
+<pre>public&nbsp;void&nbsp;writeField(java.lang.String&nbsp;name)</pre>
+<div class="block">Write the given field to native memory.  The current value in the Java
+ field will be translated into native memory.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if no field exists with the given name</dd></dl>
+</li>
+</ul>
+<a name="writeField(java.lang.String, java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeField</h4>
+<pre>public&nbsp;void&nbsp;writeField(java.lang.String&nbsp;name,
+              java.lang.Object&nbsp;value)</pre>
+<div class="block">Write the given field value to the field and native memory.   The
+ given value will be written both to the Java field and the
+ corresponding native memory.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if no field exists with the given name</dd></dl>
+</li>
+</ul>
+<a name="writeField(com.sun.jna.Structure.StructField)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writeField</h4>
+<pre>protected&nbsp;void&nbsp;writeField(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;structField)</pre>
+</li>
+</ul>
+<a name="getFieldOrder()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFieldOrder</h4>
+<pre>protected abstract&nbsp;java.util.List&nbsp;getFieldOrder()</pre>
+<div class="block">Return this Structure's field names in their proper order.  For
+ example,
+ <pre><code>
+ protected List getFieldOrder() {
+     return Arrays.asList(new String[] { ... });
+ }
+ </code></pre>
+ <strong>IMPORTANT</strong>
+ When deriving from an existing Structure subclass, ensure that
+ you augment the list provided by the superclass, e.g.
+ <pre><code>
+ protected List getFieldOrder() {
+     List fields = new ArrayList(super.getFieldOrder());
+     fields.addAll(Arrays.asList(new String[] { ... }));
+     return fields;
+ }
+ </code></pre>
+
+ Field order must be explicitly indicated, since the
+ field order as returned by <code>Class.getFields()</code> is not
+ guaranteed to be predictable.</div>
+</li>
+</ul>
+<a name="setFieldOrder(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFieldOrder</h4>
+<pre>protected final&nbsp;void&nbsp;setFieldOrder(java.lang.String[]&nbsp;fields)</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Use the required method getFieldOrder() instead to
+ indicate the order of fields in this structure.</i></div>
+<div class="block">Force a compile-time error on the old method of field definition</div>
+</li>
+</ul>
+<a name="sortFields(java.util.List, java.util.List)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>sortFields</h4>
+<pre>protected&nbsp;void&nbsp;sortFields(java.util.List&nbsp;fields,
+              java.util.List&nbsp;names)</pre>
+<div class="block">Sort the structure fields according to the given array of names.</div>
+</li>
+</ul>
+<a name="getFieldList()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFieldList</h4>
+<pre>protected&nbsp;java.util.List&nbsp;getFieldList()</pre>
+<div class="block">Look up all fields in this class and superclasses.</div>
+</li>
+</ul>
+<a name="getFields(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFields</h4>
+<pre>protected&nbsp;java.util.List&nbsp;getFields(boolean&nbsp;force)</pre>
+<div class="block">Returns all field names (sorted) provided so far by
+        <a href="../../../com/sun/jna/Structure.html#getFieldOrder()"><code>getFieldOrder()</code></a></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>force</code> - set if results are required immediately</dd>
+<dt><span class="strong">Returns:</span></dt><dd>null if not yet able to provide fields, and force is false.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.Error</code> - if force is true and field order data not yet specified
+        and can't be generated automatically.</dd></dl>
+</li>
+</ul>
+<a name="size(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>size</h4>
+<pre>static&nbsp;int&nbsp;size(java.lang.Class&nbsp;type)</pre>
+<div class="block">Efficiently calculate the size of the given Structure subclass.</div>
+</li>
+</ul>
+<a name="size(java.lang.Class, com.sun.jna.Structure)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>size</h4>
+<pre>static&nbsp;int&nbsp;size(java.lang.Class&nbsp;type,
+       <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;value)</pre>
+<div class="block">Efficiently calculate the size of the given Structure subclass.</div>
+</li>
+</ul>
+<a name="calculateSize(boolean, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>calculateSize</h4>
+<pre>int&nbsp;calculateSize(boolean&nbsp;force,
+                boolean&nbsp;avoidFFIType)</pre>
+</li>
+</ul>
+<a name="getStructAlignment()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStructAlignment</h4>
+<pre>protected&nbsp;int&nbsp;getStructAlignment()</pre>
+</li>
+</ul>
+<a name="getNativeAlignment(java.lang.Class, java.lang.Object, boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeAlignment</h4>
+<pre>protected&nbsp;int&nbsp;getNativeAlignment(java.lang.Class&nbsp;type,
+                     java.lang.Object&nbsp;value,
+                     boolean&nbsp;isFirstElement)</pre>
+<div class="block">Overridable in subclasses.</div>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="toString(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString(boolean&nbsp;debug)</pre>
+</li>
+</ul>
+<a name="toArray(com.sun.jna.Structure[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toArray</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;toArray(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;array)</pre>
+<div class="block">Returns a view of this structure's memory as an array of structures.
+ Note that this <code>Structure</code> must have a public, no-arg
+ constructor.  If the structure is currently using auto-allocated
+ <a href="../../../com/sun/jna/Memory.html" title="class in com.sun.jna"><code>Memory</code></a> backing, the memory will be resized to fit the entire
+ array.</div>
+</li>
+</ul>
+<a name="toArray(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toArray</h4>
+<pre>public&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;toArray(int&nbsp;size)</pre>
+<div class="block">Returns a view of this structure's memory as an array of structures.
+ Note that this <code>Structure</code> must have a public, no-arg
+ constructor.  If the structure is currently using auto-allocated
+ <a href="../../../com/sun/jna/Memory.html" title="class in com.sun.jna"><code>Memory</code></a> backing, the memory will be resized to fit the entire
+ array.</div>
+</li>
+</ul>
+<a name="equals(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
+<div class="block">This structure is equal to another based on the same data type
+ and memory contents.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="hashCode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<div class="block">Since <a href="../../../com/sun/jna/Structure.html#equals(java.lang.Object)"><code>equals(java.lang.Object)</code></a> depends on the contents of memory, use that
+ as the basis for the hash code.</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="cacheTypeInfo(com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>cacheTypeInfo</h4>
+<pre>protected&nbsp;void&nbsp;cacheTypeInfo(<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;p)</pre>
+<div class="block">Cache native type information for use in native code.</div>
+</li>
+</ul>
+<a name="getFieldTypeInfo(com.sun.jna.Structure.StructField)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFieldTypeInfo</h4>
+<pre><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getFieldTypeInfo(<a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;f)</pre>
+<div class="block">Override to supply native type information for the given field.</div>
+</li>
+</ul>
+<a name="getTypeInfo()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTypeInfo</h4>
+<pre><a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getTypeInfo()</pre>
+<div class="block">Obtain native type information for this structure.</div>
+</li>
+</ul>
+<a name="setAutoSynch(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAutoSynch</h4>
+<pre>public&nbsp;void&nbsp;setAutoSynch(boolean&nbsp;auto)</pre>
+<div class="block">Set whether the structure is automatically synchronized to native memory
+        before and after a native function call.  Convenience method for
+        <pre><code>
+        boolean auto = ...;
+        setAutoRead(auto);
+        setAutoWrite(auto);
+        </code></pre>
+        For extremely large or complex structures where you only need to
+        access a small number of fields, you may see a significant performance
+        benefit by avoiding automatic structure reads and writes.  If
+        auto-read and -write are disabled, it is up to you to ensure that the
+        Java fields of interest are synched before and after native function
+        calls via <a href="../../../com/sun/jna/Structure.html#readField(java.lang.String)"><code>readField(String)</code></a> and <a href="../../../com/sun/jna/Structure.html#writeField(java.lang.String, java.lang.Object)"><code>writeField(String,Object)</code></a>.
+        <p/>
+        This is typically most effective when a native call populates a large
+        structure and you only need a few fields out of it.  After the native
+        call you can call <a href="../../../com/sun/jna/Structure.html#readField(java.lang.String)"><code>readField(String)</code></a> on only the fields of
+        interest.</div>
+</li>
+</ul>
+<a name="setAutoRead(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAutoRead</h4>
+<pre>public&nbsp;void&nbsp;setAutoRead(boolean&nbsp;auto)</pre>
+<div class="block">Set whether the structure is read from native memory prior to
+        a native function call.</div>
+</li>
+</ul>
+<a name="getAutoRead()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAutoRead</h4>
+<pre>public&nbsp;boolean&nbsp;getAutoRead()</pre>
+<div class="block">Returns whether the structure is read from native memory prior to
+        a native function call.</div>
+</li>
+</ul>
+<a name="setAutoWrite(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setAutoWrite</h4>
+<pre>public&nbsp;void&nbsp;setAutoWrite(boolean&nbsp;auto)</pre>
+<div class="block">Set whether the structure is written to native memory after a native
+        function call.</div>
+</li>
+</ul>
+<a name="getAutoWrite()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getAutoWrite</h4>
+<pre>public&nbsp;boolean&nbsp;getAutoWrite()</pre>
+<div class="block">Returns whether the structure is written to native memory after a native
+        function call.</div>
+</li>
+</ul>
+<a name="getTypeInfo(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTypeInfo</h4>
+<pre>static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getTypeInfo(java.lang.Object&nbsp;obj)</pre>
+<div class="block">Exposed for testing purposes only.</div>
+</li>
+</ul>
+<a name="newInstance(java.lang.Class, com.sun.jna.Pointer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newInstance</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;newInstance(java.lang.Class&nbsp;type,
+                    <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;init)
+                             throws java.lang.IllegalArgumentException</pre>
+<div class="block">Create a new Structure instance of the given type, initialized with
+ the given memory.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - desired Structure type</dd><dd><code>init</code> - initial memory</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the new instance</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if the instantiation fails</dd></dl>
+</li>
+</ul>
+<a name="newInstance(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>newInstance</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;newInstance(java.lang.Class&nbsp;type)
+                             throws java.lang.IllegalArgumentException</pre>
+<div class="block">Create a new Structure instance of the given type</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>type</code> - desired Structure type</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the new instance</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if the instantiation fails</dd></dl>
+</li>
+</ul>
+<a name="typeInfoField()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>typeInfoField</h4>
+<pre><a href="../../../com/sun/jna/Structure.StructField.html" title="class in com.sun.jna">Structure.StructField</a>&nbsp;typeInfoField()</pre>
+<div class="block">Keep track of the largest aggregate field of the union to use for
+ FFI type information.</div>
+</li>
+</ul>
+<a name="autoRead(com.sun.jna.Structure[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>autoRead</h4>
+<pre>public static&nbsp;void&nbsp;autoRead(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;ss)</pre>
+</li>
+</ul>
+<a name="autoRead()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>autoRead</h4>
+<pre>public&nbsp;void&nbsp;autoRead()</pre>
+</li>
+</ul>
+<a name="autoWrite(com.sun.jna.Structure[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>autoWrite</h4>
+<pre>public static&nbsp;void&nbsp;autoWrite(<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>[]&nbsp;ss)</pre>
+</li>
+</ul>
+<a name="autoWrite()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>autoWrite</h4>
+<pre>public&nbsp;void&nbsp;autoWrite()</pre>
+</li>
+</ul>
+<a name="getNativeSize(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeSize</h4>
+<pre>protected&nbsp;int&nbsp;getNativeSize(java.lang.Class&nbsp;nativeType)</pre>
+<div class="block">Return the native size of the given Java type, from the perspective of
+        this Structure.</div>
+</li>
+</ul>
+<a name="getNativeSize(java.lang.Class, java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeSize</h4>
+<pre>protected&nbsp;int&nbsp;getNativeSize(java.lang.Class&nbsp;nativeType,
+                java.lang.Object&nbsp;value)</pre>
+<div class="block">Return the native size of the given Java type, from the perspective of
+        this Structure.</div>
+</li>
+</ul>
+<a name="validate(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>validate</h4>
+<pre>static&nbsp;void&nbsp;validate(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Indicate whether the given Structure class can be created by JNA.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/StringArray.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/Structure.ByReference.html" title="interface in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Structure.html" target="_top">Frames</a></li>
+<li><a href="Structure.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small><center><i>Copyright &copy; 2007-2014 Timothy Wall. All Rights Reserved.</i></center></small></p>
+</body>
+</html>

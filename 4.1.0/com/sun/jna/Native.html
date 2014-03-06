@@ -1,0 +1,2731 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Native (JNA API)</title>
+<link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Native (JNA API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/MethodResultContext.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Native.html" target="_top">Frames</a></li>
+<li><a href="Native.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">com.sun.jna</div>
+<h2 title="Class Native" class="title">Class Native</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>com.sun.jna.Native</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../com/sun/jna/Version.html" title="interface in com.sun.jna">Version</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public final class <span class="strong">Native</span>
+extends java.lang.Object
+implements <a href="../../../com/sun/jna/Version.html" title="interface in com.sun.jna">Version</a></pre>
+<div class="block">Provides generation of invocation plumbing for a defined native
+ library interface.  Also provides various utilities for native operations.
+ <p>
+ <a href="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)"><code>getTypeMapper(java.lang.Class)</code></a> and <a href="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)"><code>getStructureAlignment(java.lang.Class)</code></a> are provided
+ to avoid having to explicitly pass these parameters to <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><code>Structure</code></a>s,
+ which would require every <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><code>Structure</code></a> which requires custom mapping
+ or alignment to define a constructor and pass parameters to the superclass.
+ To avoid lots of boilerplate, the base <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna"><code>Structure</code></a> constructor
+ figures out these properties based on its enclosing interface.<p>
+ <a name=library_loading></a>
+ <h2>Library Loading</h2>
+ When JNA classes are loaded, the native shared library (jnidispatch) is
+ loaded as well.  An attempt is made to load it from the any paths defined
+ in <code>jna.boot.library.path</code> (if defined), then the system library
+ path using <code>System.loadLibrary(java.lang.String)</code>, unless <code>jna.nosys=true</code>.
+ If not found, the appropriate library will be extracted from the class path
+ (into a temporary directory if found within a jar file) and loaded from
+ there, unless <code>jna.noclasspath=true</code>.  If your system has
+ additional security constraints regarding execution or load of files
+ (SELinux, for example), you should  probably install the native library in
+ an accessible location and configure  your system accordingly, rather than
+ relying on JNA to extract the library  from its own jar file.<p/>
+ To avoid the automatic unpacking (in situations where you want to force a
+ failure if the JNA native library is not properly installed on the system),
+ set the system property <code>jna.nounpack=true</code>.
+ <p/>
+ NOTE: all native functions are provided within this class to ensure that
+ all other JNA-provided classes and objects are GC'd and/or
+ finalized/disposed before this class is disposed and/or removed from
+ memory (most notably Memory and any other class which by default frees its
+ resources in a finalizer).<p/>
+ <a name=native_library_loading</a>
+ <h2>Native Library Loading</h2>
+ Native libraries loaded via <a href="../../../com/sun/jna/Native.html#loadLibrary(java.lang.Class)"><code>loadLibrary(Class)</code></a> may be found in
+ <a href="NativeLibrary.html#library_search_paths">several locations</a>.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>Todd Fast, todd.fast@sun.com, twall@users.sf.net</dd>
+<dt><span class="strong">See Also:</span></dt><dd><a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><code>Library</code></a></dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
+<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Class and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna">Native.ffi_callback</a></strong></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#CB_HAS_INITIALIZER">CB_HAS_INITIALIZER</a></strong></code>
+<div class="block">Indicates whether the callback has an initializer.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#CB_OPTION_DIRECT">CB_OPTION_DIRECT</a></strong></code>
+<div class="block">Use direct mapping for callback.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#CB_OPTION_IN_DLL">CB_OPTION_IN_DLL</a></strong></code>
+<div class="block">Return a DLL-resident fucntion pointer.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#DEBUG_JNA_LOAD">DEBUG_JNA_LOAD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#DEBUG_LOAD">DEBUG_LOAD</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#DEFAULT_ENCODING">DEFAULT_ENCODING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#JNA_TMPLIB_PREFIX">JNA_TMPLIB_PREFIX</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#jnidispatchPath">jnidispatchPath</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#LONG_SIZE">LONG_SIZE</a></strong></code>
+<div class="block">Size of a native <code>long</code> type, in bytes.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#MAX_ALIGNMENT">MAX_ALIGNMENT</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#MAX_PADDING">MAX_PADDING</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#POINTER_SIZE">POINTER_SIZE</a></strong></code>
+<div class="block">The size of a native pointer (<code>void*</code>) on the current
+ platform, in bytes.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#SIZE_T_SIZE">SIZE_T_SIZE</a></strong></code>
+<div class="block">Size of a native <code>size_t</code> type, in bytes.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#WCHAR_SIZE">WCHAR_SIZE</a></strong></code>
+<div class="block">Size of a native <code>wchar_t</code> type, in bytes.</div>
+</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_com.sun.jna.Version">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.sun.jna.<a href="../../../com/sun/jna/Version.html" title="interface in com.sun.jna">Version</a></h3>
+<code><a href="../../../com/sun/jna/Version.html#VERSION">VERSION</a>, <a href="../../../com/sun/jna/Version.html#VERSION_NATIVE">VERSION_NATIVE</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#close(long)">close</a></strong>(long&nbsp;handle)</code>
+<div class="block">Close the given native library.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#createNativeCallback(com.sun.jna.Callback, java.lang.reflect.Method, java.lang.Class[], java.lang.Class, int, int, java.lang.String)">createNativeCallback</a></strong>(<a href="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna">Callback</a>&nbsp;callback,
+                    java.lang.reflect.Method&nbsp;method,
+                    java.lang.Class[]&nbsp;parameterTypes,
+                    java.lang.Class&nbsp;returnType,
+                    int&nbsp;callingConvention,
+                    int&nbsp;flags,
+                    java.lang.String&nbsp;encoding)</code>
+<div class="block">Create a native trampoline to delegate execution to the Java callback.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#deleteLibrary(java.io.File)">deleteLibrary</a></strong>(java.io.File&nbsp;lib)</code>
+<div class="block">Remove any automatically unpacked native library.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#detach(boolean)">detach</a></strong>(boolean&nbsp;detach)</code>
+<div class="block">Indicate whether the JVM should detach the current native thread when
+        the current Java code finishes execution.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.io.File</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#extractFromResourcePath(java.lang.String)">extractFromResourcePath</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Attempt to extract a native library from the current resource path,
+ using the current thread context class loader.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.io.File</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#extractFromResourcePath(java.lang.String, java.lang.ClassLoader)">extractFromResourcePath</a></strong>(java.lang.String&nbsp;name,
+                       java.lang.ClassLoader&nbsp;loader)</code>
+<div class="block">Attempt to extract a native library from the resource path using the
+ given class loader.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#ffi_call(long, long, long, long)">ffi_call</a></strong>(long&nbsp;cif,
+        long&nbsp;fptr,
+        long&nbsp;resp,
+        long&nbsp;args)</code>
+<div class="block">Make an FFI function call.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#ffi_free_closure(long)">ffi_free_closure</a></strong>(long&nbsp;closure)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#ffi_prep_cif(int, int, long, long)">ffi_prep_cif</a></strong>(int&nbsp;abi,
+            int&nbsp;nargs,
+            long&nbsp;ffi_return_type,
+            long&nbsp;ffi_types)</code>
+<div class="block">Create a new cif structure.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#ffi_prep_closure(long, com.sun.jna.Native.ffi_callback)">ffi_prep_closure</a></strong>(long&nbsp;cif,
+                <a href="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna">Native.ffi_callback</a>&nbsp;cb)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.Class</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#findDirectMappedClass(java.lang.Class)">findDirectMappedClass</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Find the nearest enclosing class with native methods.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.lang.Class</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#findEnclosingLibraryClass(java.lang.Class)">findEnclosingLibraryClass</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Find the library interface corresponding to the given class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#findSymbol(long, java.lang.String)">findSymbol</a></strong>(long&nbsp;handle,
+          java.lang.String&nbsp;name)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#free(long)">free</a></strong>(long&nbsp;ptr)</code>
+<div class="block">Call the real native free</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#freeNativeCallback(long)">freeNativeCallback</a></strong>(long&nbsp;ptr)</code>
+<div class="block">Free the given callback trampoline.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static byte</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getByte(long)">getByte</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getBytes(java.lang.String)">getBytes</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">Return a byte array corresponding to the given String.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getBytes(java.lang.String, java.lang.String)">getBytes</a></strong>(java.lang.String&nbsp;s,
+        java.lang.String&nbsp;encoding)</code>
+<div class="block">Return a byte array corresponding to the given String, using the given
+        encoding.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Callback.UncaughtExceptionHandler.html" title="interface in com.sun.jna">Callback.UncaughtExceptionHandler</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getCallbackExceptionHandler()">getCallbackExceptionHandler</a></strong>()</code>
+<div class="block">Returns the current handler for callback uncaught exceptions.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.lang.Class</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getCallingClass()">getCallingClass</a></strong>()</code>
+<div class="block">Try to determine the class context in which a <a href="../../../com/sun/jna/Native.html#register(java.lang.String)"><code>register(String)</code></a> call
+        was made.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static char</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getChar(long)">getChar</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getComponentID(java.awt.Component)">getComponentID</a></strong>(java.awt.Component&nbsp;c)</code>
+<div class="block">Utility method to get the native window ID for a heavyweight Java
+ <code>Component</code> as a <code>long</code> value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getComponentPointer(java.awt.Component)">getComponentPointer</a></strong>(java.awt.Component&nbsp;c)</code>
+<div class="block">Utility method to get the native window pointer for a heavyweight Java
+ <code>Component</code> as a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()">getDefaultStringEncoding</a></strong>()</code>
+<div class="block">Return the default string encoding.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getDirectBufferPointer(java.nio.Buffer)">getDirectBufferPointer</a></strong>(java.nio.Buffer&nbsp;b)</code>
+<div class="block">Convert a direct <code>Buffer</code> into a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.nio.ByteBuffer</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getDirectByteBuffer(long, long)">getDirectByteBuffer</a></strong>(long&nbsp;addr,
+                   long&nbsp;length)</code>
+<div class="block">Get a direct ByteBuffer mapped to the memory pointed to by the pointer.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static double</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getDouble(long)">getDouble</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static float</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getFloat(long)">getFloat</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getInt(long)">getInt</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getLastError()">getLastError</a></strong>()</code>
+<div class="block">Retrieve the last error set by the OS.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.util.Map</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getLibraryOptions(java.lang.Class)">getLibraryOptions</a></strong>(java.lang.Class&nbsp;type)</code>
+<div class="block">Return the preferred native library configuration options for the given
+ class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getLong(long)">getLong</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getNativeSize(java.lang.Class)">getNativeSize</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Returns the native size for a given Java class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getNativeSize(java.lang.Class, java.lang.Object)">getNativeSize</a></strong>(java.lang.Class&nbsp;type,
+             java.lang.Object&nbsp;value)</code>
+<div class="block">Returns the native size of the given class, in bytes.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getPointer(long)">getPointer</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getPreserveLastError()">getPreserveLastError</a></strong>()</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Last error is always preserved</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static short</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getShort(long)">getShort</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getString(long)">getString</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getString(long, java.lang.String)">getString</a></strong>(long&nbsp;addr,
+         java.lang.String&nbsp;encoding)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getStringBytes(long)">getStringBytes</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getStringEncoding(java.lang.Class)">getStringEncoding</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Return the preferred Strring encoding for the given native interface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getStructureAlignment(java.lang.Class)">getStructureAlignment</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Return the preferred structure alignment for the given native interface.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.io.File</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getTempDir()">getTempDir</a></strong>()</code>
+<div class="block">Obtain a directory suitable for writing JNA-specific temporary files.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getTerminationFlag(java.lang.Thread)">getTerminationFlag</a></strong>(java.lang.Thread&nbsp;t)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getTypeMapper(java.lang.Class)">getTypeMapper</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Return the preferred <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><code>TypeMapper</code></a> for the given native interface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getWebStartLibraryPath(java.lang.String)">getWebStartLibraryPath</a></strong>(java.lang.String&nbsp;libName)</code>
+<div class="block">If running web start, determine the location of a given native
+ library.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getWideString(long)">getWideString</a></strong>(long&nbsp;addr)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getWindowHandle0(java.awt.Component)">getWindowHandle0</a></strong>(java.awt.Component&nbsp;c)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getWindowID(java.awt.Window)">getWindowID</a></strong>(java.awt.Window&nbsp;w)</code>
+<div class="block">Utility method to get the native window ID for a Java <code>Window</code>
+ as a <code>long</code> value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#getWindowPointer(java.awt.Window)">getWindowPointer</a></strong>(java.awt.Window&nbsp;w)</code>
+<div class="block">Utility method to get the native window pointer for a Java
+ <code>Window</code> as a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> value.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#indexOf(long, byte)">indexOf</a></strong>(long&nbsp;addr,
+       byte&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#initialize_ffi_type(long)">initialize_ffi_type</a></strong>(long&nbsp;type_info)</code>
+<div class="block">Returns the size (calculated by libffi) of the given type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static double</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeDouble(long, int, java.lang.Object[])">invokeDouble</a></strong>(long&nbsp;fp,
+            int&nbsp;callFlags,
+            java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static float</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeFloat(long, int, java.lang.Object[])">invokeFloat</a></strong>(long&nbsp;fp,
+           int&nbsp;callFlags,
+           java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static int</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeInt(long, int, java.lang.Object[])">invokeInt</a></strong>(long&nbsp;fp,
+         int&nbsp;callFlags,
+         java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeLong(long, int, java.lang.Object[])">invokeLong</a></strong>(long&nbsp;fp,
+          int&nbsp;callFlags,
+          java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeObject(long, int, java.lang.Object[])">invokeObject</a></strong>(long&nbsp;fp,
+            int&nbsp;callFlags,
+            java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object, returning
+ a Java <code>Object</code>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokePointer(long, int, java.lang.Object[])">invokePointer</a></strong>(long&nbsp;fp,
+             int&nbsp;callFlags,
+             java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeStructure(long, int, java.lang.Object[], com.sun.jna.Structure)">invokeStructure</a></strong>(long&nbsp;fp,
+               int&nbsp;callFlags,
+               java.lang.Object[]&nbsp;args,
+               <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;s)</code>
+<div class="block">Call the native function being represented by this object, returning
+ a struct by value.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#invokeVoid(long, int, java.lang.Object[])">invokeVoid</a></strong>(long&nbsp;fp,
+          int&nbsp;callFlags,
+          java.lang.Object[]&nbsp;args)</code>
+<div class="block">Call the native function being represented by this object</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#isProtected()">isProtected</a></strong>()</code>
+<div class="block">Returns whether protection is enabled.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#isSupportedNativeType(java.lang.Class)">isSupportedNativeType</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Indicate whether the given class is supported as a native argument
+ type.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#isUnpacked(java.io.File)">isUnpacked</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Identify temporary files unpacked from classpath jar files.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#loadLibrary(java.lang.Class)">loadLibrary</a></strong>(java.lang.Class&nbsp;interfaceClass)</code>
+<div class="block">Map a library interface to the current process, providing
+ the explicit interface class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#loadLibrary(java.lang.Class, java.util.Map)">loadLibrary</a></strong>(java.lang.Class&nbsp;interfaceClass,
+           java.util.Map&nbsp;options)</code>
+<div class="block">Map a library interface to the current process, providing
+ the explicit interface class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class)">loadLibrary</a></strong>(java.lang.String&nbsp;name,
+           java.lang.Class&nbsp;interfaceClass)</code>
+<div class="block">Map a library interface to the given shared library, providing
+ the explicit interface class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.Object</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#loadLibrary(java.lang.String, java.lang.Class, java.util.Map)">loadLibrary</a></strong>(java.lang.String&nbsp;name,
+           java.lang.Class&nbsp;interfaceClass,
+           java.util.Map&nbsp;options)</code>
+<div class="block">Load a library interface from the given shared library, providing
+ the explicit interface class and a map of options for the library.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#main(java.lang.String[])">main</a></strong>(java.lang.String[]&nbsp;args)</code>
+<div class="block">Prints JNA library details to the console.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#malloc(long)">malloc</a></strong>(long&nbsp;size)</code>
+<div class="block">Call the real native malloc</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#markTemporaryFile(java.io.File)">markTemporaryFile</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Perform cleanup of automatically unpacked native shared library.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#open(java.lang.String)">open</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Open the requested native library with default options.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static long</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#open(java.lang.String, int)">open</a></strong>(java.lang.String&nbsp;name,
+    int&nbsp;flags)</code>
+<div class="block">Open the requested native library with the specified platform-specific
+ otions.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, byte[], int, int)">read</a></strong>(long&nbsp;addr,
+    byte[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, char[], int, int)">read</a></strong>(long&nbsp;addr,
+    char[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, double[], int, int)">read</a></strong>(long&nbsp;addr,
+    double[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, float[], int, int)">read</a></strong>(long&nbsp;addr,
+    float[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, int[], int, int)">read</a></strong>(long&nbsp;addr,
+    int[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, long[], int, int)">read</a></strong>(long&nbsp;addr,
+    long[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#read(long, short[], int, int)">read</a></strong>(long&nbsp;addr,
+    short[]&nbsp;buf,
+    int&nbsp;index,
+    int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#register(java.lang.Class, com.sun.jna.NativeLibrary)">register</a></strong>(java.lang.Class&nbsp;cls,
+        <a href="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</a>&nbsp;lib)</code>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#register(java.lang.Class, java.lang.String)">register</a></strong>(java.lang.Class&nbsp;cls,
+        java.lang.String&nbsp;libName)</code>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#register(com.sun.jna.NativeLibrary)">register</a></strong>(<a href="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</a>&nbsp;lib)</code>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#register(java.lang.String)">register</a></strong>(java.lang.String&nbsp;libName)</code>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#removeTemporaryFiles()">removeTemporaryFiles</a></strong>()</code>
+<div class="block">Remove all marked temporary files in the given directory.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#replace(java.lang.String, java.lang.String, java.lang.String)">replace</a></strong>(java.lang.String&nbsp;s1,
+       java.lang.String&nbsp;s2,
+       java.lang.String&nbsp;str)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setByte(long, byte)">setByte</a></strong>(long&nbsp;addr,
+       byte&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setCallbackExceptionHandler(com.sun.jna.Callback.UncaughtExceptionHandler)">setCallbackExceptionHandler</a></strong>(<a href="../../../com/sun/jna/Callback.UncaughtExceptionHandler.html" title="interface in com.sun.jna">Callback.UncaughtExceptionHandler</a>&nbsp;eh)</code>
+<div class="block">Set the default handler invoked when a callback throws an uncaught
+ exception.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setCallbackThreadInitializer(com.sun.jna.Callback, com.sun.jna.CallbackThreadInitializer)">setCallbackThreadInitializer</a></strong>(<a href="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna">Callback</a>&nbsp;cb,
+                            <a href="../../../com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</a>&nbsp;initializer)</code>
+<div class="block">Set a thread initializer for the given callback.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setChar(long, char)">setChar</a></strong>(long&nbsp;addr,
+       char&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setDouble(long, double)">setDouble</a></strong>(long&nbsp;addr,
+         double&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setFloat(long, float)">setFloat</a></strong>(long&nbsp;addr,
+        float&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setInt(long, int)">setInt</a></strong>(long&nbsp;addr,
+      int&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setLastError(int)">setLastError</a></strong>(int&nbsp;code)</code>
+<div class="block">Set the OS last error code.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setLong(long, long)">setLong</a></strong>(long&nbsp;addr,
+       long&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setMemory(long, long, byte)">setMemory</a></strong>(long&nbsp;addr,
+         long&nbsp;length,
+         byte&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setPointer(long, long)">setPointer</a></strong>(long&nbsp;addr,
+          long&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setPreserveLastError(boolean)">setPreserveLastError</a></strong>(boolean&nbsp;enable)</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>Last error is always preserved</i></div>
+</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setProtected(boolean)">setProtected</a></strong>(boolean&nbsp;enable)</code>
+<div class="block">Set whether native memory accesses are protected from invalid
+ accesses.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setShort(long, short)">setShort</a></strong>(long&nbsp;addr,
+        short&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#setWideString(long, java.lang.String)">setWideString</a></strong>(long&nbsp;addr,
+             java.lang.String&nbsp;value)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a></code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#synchronizedLibrary(com.sun.jna.Library)">synchronizedLibrary</a></strong>(<a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a>&nbsp;library)</code>
+<div class="block">Returns a synchronized (thread-safe) library backed by the specified
+ library.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toByteArray(java.lang.String)">toByteArray</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using the encoding returned by <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>getDefaultStringEncoding()</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static byte[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toByteArray(java.lang.String, java.lang.String)">toByteArray</a></strong>(java.lang.String&nbsp;s,
+           java.lang.String&nbsp;encoding)</code>
+<div class="block">Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using the given encoding.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static char[]</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toCharArray(java.lang.String)">toCharArray</a></strong>(java.lang.String&nbsp;s)</code>
+<div class="block">Obtain a NUL-terminated wide character buffer equivalent to the given
+        String.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toString(byte[])">toString</a></strong>(byte[]&nbsp;buf)</code>
+<div class="block">Obtain a Java String from the given native byte array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toString(byte[], java.lang.String)">toString</a></strong>(byte[]&nbsp;buf,
+        java.lang.String&nbsp;encoding)</code>
+<div class="block">Obtain a Java String from the given native byte array, using the given
+ encoding.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#toString(char[])">toString</a></strong>(char[]&nbsp;buf)</code>
+<div class="block">Obtain a Java String from the given native wchar_t array.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#unregister()">unregister</a></strong>()</code>
+<div class="block">Remove all native mappings for the calling class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#unregister(java.lang.Class)">unregister</a></strong>(java.lang.Class&nbsp;cls)</code>
+<div class="block">Remove all native mappings for the given class.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, byte[], int, int)">write</a></strong>(long&nbsp;addr,
+     byte[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, char[], int, int)">write</a></strong>(long&nbsp;addr,
+     char[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, double[], int, int)">write</a></strong>(long&nbsp;addr,
+     double[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, float[], int, int)">write</a></strong>(long&nbsp;addr,
+     float[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, int[], int, int)">write</a></strong>(long&nbsp;addr,
+     int[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, long[], int, int)">write</a></strong>(long&nbsp;addr,
+     long[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>(package private) static void</code></td>
+<td class="colLast"><code><strong><a href="../../../com/sun/jna/Native.html#write(long, short[], int, int)">write</a></strong>(long&nbsp;addr,
+     short[]&nbsp;buf,
+     int&nbsp;index,
+     int&nbsp;length)</code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="DEFAULT_ENCODING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEFAULT_ENCODING</h4>
+<pre>public static final&nbsp;java.lang.String DEFAULT_ENCODING</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Native.DEFAULT_ENCODING">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="DEBUG_LOAD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEBUG_LOAD</h4>
+<pre>static final&nbsp;boolean DEBUG_LOAD</pre>
+</li>
+</ul>
+<a name="DEBUG_JNA_LOAD">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>DEBUG_JNA_LOAD</h4>
+<pre>static final&nbsp;boolean DEBUG_JNA_LOAD</pre>
+</li>
+</ul>
+<a name="jnidispatchPath">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>jnidispatchPath</h4>
+<pre>static&nbsp;java.lang.String jnidispatchPath</pre>
+</li>
+</ul>
+<a name="POINTER_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>POINTER_SIZE</h4>
+<pre>public static final&nbsp;int POINTER_SIZE</pre>
+<div class="block">The size of a native pointer (<code>void*</code>) on the current
+ platform, in bytes.</div>
+</li>
+</ul>
+<a name="LONG_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LONG_SIZE</h4>
+<pre>public static final&nbsp;int LONG_SIZE</pre>
+<div class="block">Size of a native <code>long</code> type, in bytes.</div>
+</li>
+</ul>
+<a name="WCHAR_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>WCHAR_SIZE</h4>
+<pre>public static final&nbsp;int WCHAR_SIZE</pre>
+<div class="block">Size of a native <code>wchar_t</code> type, in bytes.</div>
+</li>
+</ul>
+<a name="SIZE_T_SIZE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SIZE_T_SIZE</h4>
+<pre>public static final&nbsp;int SIZE_T_SIZE</pre>
+<div class="block">Size of a native <code>size_t</code> type, in bytes.</div>
+</li>
+</ul>
+<a name="MAX_ALIGNMENT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAX_ALIGNMENT</h4>
+<pre>static final&nbsp;int MAX_ALIGNMENT</pre>
+</li>
+</ul>
+<a name="MAX_PADDING">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>MAX_PADDING</h4>
+<pre>static final&nbsp;int MAX_PADDING</pre>
+</li>
+</ul>
+<a name="JNA_TMPLIB_PREFIX">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>JNA_TMPLIB_PREFIX</h4>
+<pre>static final&nbsp;java.lang.String JNA_TMPLIB_PREFIX</pre>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Native.JNA_TMPLIB_PREFIX">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CB_HAS_INITIALIZER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CB_HAS_INITIALIZER</h4>
+<pre>static final&nbsp;int CB_HAS_INITIALIZER</pre>
+<div class="block">Indicates whether the callback has an initializer.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Native.CB_HAS_INITIALIZER">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CB_OPTION_DIRECT">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CB_OPTION_DIRECT</h4>
+<pre>static final&nbsp;int CB_OPTION_DIRECT</pre>
+<div class="block">Use direct mapping for callback.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Native.CB_OPTION_DIRECT">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+<a name="CB_OPTION_IN_DLL">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>CB_OPTION_IN_DLL</h4>
+<pre>static final&nbsp;int CB_OPTION_IN_DLL</pre>
+<div class="block">Return a DLL-resident fucntion pointer.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../constant-values.html#com.sun.jna.Native.CB_OPTION_IN_DLL">Constant Field Values</a></dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="deleteLibrary(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deleteLibrary</h4>
+<pre>static&nbsp;boolean&nbsp;deleteLibrary(java.io.File&nbsp;lib)</pre>
+<div class="block">Remove any automatically unpacked native library.
+
+        This will fail on windows, which disallows removal of any file that is
+        still in use, so an alternative is required in that case.  Mark
+        the file that could not be deleted, and attempt to delete any
+        temporaries on next startup.
+
+        Do NOT force the class loader to unload the native library, since
+        that introduces issues with cleaning up any extant JNA bits
+        (e.g. Memory) which may still need use of the library before shutdown.</div>
+</li>
+</ul>
+<a name="setProtected(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setProtected</h4>
+<pre>public static&nbsp;void&nbsp;setProtected(boolean&nbsp;enable)</pre>
+<div class="block">Set whether native memory accesses are protected from invalid
+ accesses.  This should only be set true when testing or debugging,
+ and should not be considered reliable or robust for applications
+ where JNA native calls are occurring on multiple threads.
+ Protected mode will be automatically set if the
+ system property <code>jna.protected</code> has a value of "true"
+ when the JNA library is first loaded.<p>
+ If not supported by the underlying platform, this setting will
+ have no effect.<p>
+ NOTE: On platforms which support signals (non-Windows), JNA uses
+ signals to trap errors.  This may interfere with the JVM's own use of
+ signals.  When protected mode is enabled, you should make use of the
+ jsig library, if available (see <a href="http://download.oracle.com/javase/6/docs/technotes/guides/vm/signal-chaining.html">Signal Chaining</a>).
+ In short, set the environment variable <code>LD_PRELOAD</code> to the
+ path to <code>libjsig.so</code> in your JRE lib directory
+ (usually ${java.home}/lib/${os.arch}/libjsig.so) before launching your
+ Java application.</div>
+</li>
+</ul>
+<a name="isProtected()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isProtected</h4>
+<pre>public static&nbsp;boolean&nbsp;isProtected()</pre>
+<div class="block">Returns whether protection is enabled.  Check the result of this method
+ after calling <a href="../../../com/sun/jna/Native.html#setProtected(boolean)"><code>setProtected(true)</code></a> to determine
+ if this platform supports protecting memory accesses.</div>
+</li>
+</ul>
+<a name="setPreserveLastError(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPreserveLastError</h4>
+<pre>public static&nbsp;void&nbsp;setPreserveLastError(boolean&nbsp;enable)</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Last error is always preserved</i></div>
+<div class="block">This method is obsolete.  The last error value is always preserved.
+ <p/>
+ NOTE: The preferred method of obtaining the last error result is
+ to declare your mapped method to throw <a href="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><code>LastErrorException</code></a>.</div>
+</li>
+</ul>
+<a name="getPreserveLastError()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPreserveLastError</h4>
+<pre>public static&nbsp;boolean&nbsp;getPreserveLastError()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>Last error is always preserved</i></div>
+<div class="block">Indicates whether the system last error result is preserved
+ after every invocation.  Always returns <code>true</code><p>
+ NOTE: The preferred method of obtaining the last error result is
+ to declare your mapped method to throw <a href="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><code>LastErrorException</code></a>.</div>
+</li>
+</ul>
+<a name="getWindowID(java.awt.Window)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWindowID</h4>
+<pre>public static&nbsp;long&nbsp;getWindowID(java.awt.Window&nbsp;w)
+                        throws java.awt.HeadlessException</pre>
+<div class="block">Utility method to get the native window ID for a Java <code>Window</code>
+ as a <code>long</code> value.
+ This method is primarily for X11-based systems, which use an opaque
+ <code>XID</code> (usually <code>long int</code>) to identify windows.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.awt.HeadlessException</code> - if the current VM is running headless</dd></dl>
+</li>
+</ul>
+<a name="getComponentID(java.awt.Component)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getComponentID</h4>
+<pre>public static&nbsp;long&nbsp;getComponentID(java.awt.Component&nbsp;c)
+                           throws java.awt.HeadlessException</pre>
+<div class="block">Utility method to get the native window ID for a heavyweight Java
+ <code>Component</code> as a <code>long</code> value.
+ This method is primarily for X11-based systems, which use an opaque
+ <code>XID</code> (usually <code>long int</code>) to identify windows.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.awt.HeadlessException</code> - if the current VM is running headless</dd></dl>
+</li>
+</ul>
+<a name="getWindowPointer(java.awt.Window)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWindowPointer</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getWindowPointer(java.awt.Window&nbsp;w)
+                                throws java.awt.HeadlessException</pre>
+<div class="block">Utility method to get the native window pointer for a Java
+ <code>Window</code> as a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> value.  This method is primarily for
+ w32, which uses the <code>HANDLE</code> type (actually
+ <code>void *</code>) to identify windows.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.awt.HeadlessException</code> - if the current VM is running headless</dd></dl>
+</li>
+</ul>
+<a name="getComponentPointer(java.awt.Component)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getComponentPointer</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getComponentPointer(java.awt.Component&nbsp;c)
+                                   throws java.awt.HeadlessException</pre>
+<div class="block">Utility method to get the native window pointer for a heavyweight Java
+ <code>Component</code> as a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a> value.  This method is primarily
+ for w32, which uses the <code>HWND</code> type (actually
+ <code>void *</code>) to identify windows.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.awt.HeadlessException</code> - if the current VM is running headless</dd></dl>
+</li>
+</ul>
+<a name="getWindowHandle0(java.awt.Component)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWindowHandle0</h4>
+<pre>static&nbsp;long&nbsp;getWindowHandle0(java.awt.Component&nbsp;c)</pre>
+</li>
+</ul>
+<a name="getDirectBufferPointer(java.nio.Buffer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDirectBufferPointer</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getDirectBufferPointer(java.nio.Buffer&nbsp;b)</pre>
+<div class="block">Convert a direct <code>Buffer</code> into a <a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna"><code>Pointer</code></a>.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalArgumentException</code> - if the buffer is not direct.</dd></dl>
+</li>
+</ul>
+<a name="toString(byte[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;toString(byte[]&nbsp;buf)</pre>
+<div class="block">Obtain a Java String from the given native byte array.  If there is
+ no NUL terminator, the String will comprise the entire array.  The
+ encoding is obtained from <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>getDefaultStringEncoding()</code></a>.</div>
+</li>
+</ul>
+<a name="toString(byte[], java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;toString(byte[]&nbsp;buf,
+                        java.lang.String&nbsp;encoding)</pre>
+<div class="block">Obtain a Java String from the given native byte array, using the given
+ encoding.  If there is no NUL terminator, the String will comprise the
+ entire array.  If the <code>encoding</code> parameter is null,
+ the platform default encoding will be used.</div>
+</li>
+</ul>
+<a name="toString(char[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;toString(char[]&nbsp;buf)</pre>
+<div class="block">Obtain a Java String from the given native wchar_t array.  If there is
+ no NUL terminator, the String will comprise the entire array.</div>
+</li>
+</ul>
+<a name="loadLibrary(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadLibrary</h4>
+<pre>public static&nbsp;java.lang.Object&nbsp;loadLibrary(java.lang.Class&nbsp;interfaceClass)</pre>
+<div class="block">Map a library interface to the current process, providing
+ the explicit interface class.
+ Native libraries loaded via this method may be found in
+ <a href="NativeLibrary.html#library_search_paths">several locations</a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>interfaceClass</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>an instance of the requested interface, mapped to the current
+ process.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.UnsatisfiedLinkError</code> - if the library cannot be found or
+ dependent libraries are missing.</dd></dl>
+</li>
+</ul>
+<a name="loadLibrary(java.lang.Class, java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadLibrary</h4>
+<pre>public static&nbsp;java.lang.Object&nbsp;loadLibrary(java.lang.Class&nbsp;interfaceClass,
+                           java.util.Map&nbsp;options)</pre>
+<div class="block">Map a library interface to the current process, providing
+ the explicit interface class.  Any options provided for the library are
+ cached and associated with the library and any of its defined
+ structures and/or functions.
+ Native libraries loaded via this method may be found in
+ <a href="NativeLibrary.html#library_search_paths">several locations</a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>interfaceClass</code> - </dd><dd><code>options</code> - Map of library options</dd>
+<dt><span class="strong">Returns:</span></dt><dd>an instance of the requested interface, mapped to the current
+ process.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.UnsatisfiedLinkError</code> - if the library cannot be found or
+ dependent libraries are missing.</dd></dl>
+</li>
+</ul>
+<a name="loadLibrary(java.lang.String, java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadLibrary</h4>
+<pre>public static&nbsp;java.lang.Object&nbsp;loadLibrary(java.lang.String&nbsp;name,
+                           java.lang.Class&nbsp;interfaceClass)</pre>
+<div class="block">Map a library interface to the given shared library, providing
+ the explicit interface class.
+ If <code>name</code> is null, attempts to map onto the current process.
+ Native libraries loaded via this method may be found in
+ <a href="NativeLibrary.html#library_search_paths">several locations</a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>interfaceClass</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>an instance of the requested interface, mapped to the indicated
+ native library.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.UnsatisfiedLinkError</code> - if the library cannot be found or
+ dependent libraries are missing.</dd></dl>
+</li>
+</ul>
+<a name="loadLibrary(java.lang.String, java.lang.Class, java.util.Map)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>loadLibrary</h4>
+<pre>public static&nbsp;java.lang.Object&nbsp;loadLibrary(java.lang.String&nbsp;name,
+                           java.lang.Class&nbsp;interfaceClass,
+                           java.util.Map&nbsp;options)</pre>
+<div class="block">Load a library interface from the given shared library, providing
+ the explicit interface class and a map of options for the library.
+ If no library options are detected the map is interpreted as a map
+ of Java method names to native function names.<p>
+ If <code>name</code> is null, attempts to map onto the current process.
+ Native libraries loaded via this method may be found in
+ <a href="NativeLibrary.html#library_search_paths">several locations</a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - </dd><dd><code>interfaceClass</code> - </dd><dd><code>options</code> - Map of library options</dd>
+<dt><span class="strong">Returns:</span></dt><dd>an instance of the requested interface, mapped to the indicated
+ native library.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.UnsatisfiedLinkError</code> - if the library cannot be found or
+ dependent libraries are missing.</dd></dl>
+</li>
+</ul>
+<a name="findEnclosingLibraryClass(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findEnclosingLibraryClass</h4>
+<pre>static&nbsp;java.lang.Class&nbsp;findEnclosingLibraryClass(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Find the library interface corresponding to the given class.  Checks
+ all ancestor classes and interfaces for a declaring class which
+ implements <a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><code>Library</code></a>.</div>
+</li>
+</ul>
+<a name="getLibraryOptions(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLibraryOptions</h4>
+<pre>public static&nbsp;java.util.Map&nbsp;getLibraryOptions(java.lang.Class&nbsp;type)</pre>
+<div class="block">Return the preferred native library configuration options for the given
+ class.  First attempts to load any field of the interface type within
+ the interface mapping, then checks the cache for any specified library
+ options.  If none found, a set of library options will be generated
+ from the fields (by order of precedence) <code>OPTIONS</code> (a <code>Map</code>), <code>TYPE_MAPPER</code> (a <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><code>TypeMapper</code></a>),
+ <code>STRUCTURE_ALIGNMENT</code> (an <code>Integer</code>), and
+ <code>STRING_ENCODING</code> (a <code>String</code>).</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna"><code>Library</code></a></dd></dl>
+</li>
+</ul>
+<a name="getTypeMapper(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTypeMapper</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna">TypeMapper</a>&nbsp;getTypeMapper(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Return the preferred <a href="../../../com/sun/jna/TypeMapper.html" title="interface in com.sun.jna"><code>TypeMapper</code></a> for the given native interface.
+ See <a href="../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER"><code>Library.OPTION_TYPE_MAPPER</code></a>.</div>
+</li>
+</ul>
+<a name="getStringEncoding(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringEncoding</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getStringEncoding(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Return the preferred Strring encoding for the given native interface. 
+ If there is no setting, defaults to the <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>getDefaultStringEncoding()</code></a>. 
+ See <a href="../../../com/sun/jna/Library.html#OPTION_STRING_ENCODING"><code>Library.OPTION_STRING_ENCODING</code></a>.</div>
+</li>
+</ul>
+<a name="getDefaultStringEncoding()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDefaultStringEncoding</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getDefaultStringEncoding()</pre>
+<div class="block">Return the default string encoding.  Returns the value of the system
+ property <code>jna.encoding</code> or <a href="../../../com/sun/jna/Native.html#DEFAULT_ENCODING"><code>DEFAULT_ENCODING</code></a>.</div>
+</li>
+</ul>
+<a name="getStructureAlignment(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStructureAlignment</h4>
+<pre>public static&nbsp;int&nbsp;getStructureAlignment(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Return the preferred structure alignment for the given native interface.
+ See <a href="../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT"><code>Library.OPTION_STRUCTURE_ALIGNMENT</code></a>.</div>
+</li>
+</ul>
+<a name="getBytes(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getBytes</h4>
+<pre>static&nbsp;byte[]&nbsp;getBytes(java.lang.String&nbsp;s)</pre>
+<div class="block">Return a byte array corresponding to the given String.  The encoding
+ used is obtained from <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>getDefaultStringEncoding()</code></a>.</div>
+</li>
+</ul>
+<a name="getBytes(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getBytes</h4>
+<pre>static&nbsp;byte[]&nbsp;getBytes(java.lang.String&nbsp;s,
+              java.lang.String&nbsp;encoding)</pre>
+<div class="block">Return a byte array corresponding to the given String, using the given
+        encoding.  If the encoding is not found default to the platform native
+        encoding.</div>
+</li>
+</ul>
+<a name="toByteArray(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toByteArray</h4>
+<pre>public static&nbsp;byte[]&nbsp;toByteArray(java.lang.String&nbsp;s)</pre>
+<div class="block">Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using the encoding returned by <a href="../../../com/sun/jna/Native.html#getDefaultStringEncoding()"><code>getDefaultStringEncoding()</code></a>.</div>
+</li>
+</ul>
+<a name="toByteArray(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toByteArray</h4>
+<pre>public static&nbsp;byte[]&nbsp;toByteArray(java.lang.String&nbsp;s,
+                 java.lang.String&nbsp;encoding)</pre>
+<div class="block">Obtain a NUL-terminated byte buffer equivalent to the given String,
+        using the given encoding.</div>
+</li>
+</ul>
+<a name="toCharArray(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>toCharArray</h4>
+<pre>public static&nbsp;char[]&nbsp;toCharArray(java.lang.String&nbsp;s)</pre>
+<div class="block">Obtain a NUL-terminated wide character buffer equivalent to the given
+        String.</div>
+</li>
+</ul>
+<a name="isUnpacked(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isUnpacked</h4>
+<pre>static&nbsp;boolean&nbsp;isUnpacked(java.io.File&nbsp;file)</pre>
+<div class="block">Identify temporary files unpacked from classpath jar files.</div>
+</li>
+</ul>
+<a name="extractFromResourcePath(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>extractFromResourcePath</h4>
+<pre>public static&nbsp;java.io.File&nbsp;extractFromResourcePath(java.lang.String&nbsp;name)
+                                            throws java.io.IOException</pre>
+<div class="block">Attempt to extract a native library from the current resource path,
+ using the current thread context class loader.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - Base name of native library to extract.  May also be an
+ absolute resource path (i.e. starts with "/"), in which case the
+ no transformations of the library name are performed.  If only the base
+ name is given, the resource path is attempted both with and without
+ <a href="../../../com/sun/jna/Platform.html#RESOURCE_PREFIX"><code>Platform.RESOURCE_PREFIX</code></a>, after mapping the library name via
+ <a href="../../../com/sun/jna/NativeLibrary.html#mapSharedLibraryName(java.lang.String)"><code>NativeLibrary.mapSharedLibraryName(String)</code></a>.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>File indicating extracted resource on disk</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - if resource not found</dd></dl>
+</li>
+</ul>
+<a name="extractFromResourcePath(java.lang.String, java.lang.ClassLoader)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>extractFromResourcePath</h4>
+<pre>public static&nbsp;java.io.File&nbsp;extractFromResourcePath(java.lang.String&nbsp;name,
+                                   java.lang.ClassLoader&nbsp;loader)
+                                            throws java.io.IOException</pre>
+<div class="block">Attempt to extract a native library from the resource path using the
+ given class loader.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - Base name of native library to extract.  May also be an
+ absolute resource path (i.e. starts with "/"), in which case the
+ no transformations of the library name are performed.  If only the base
+ name is given, the resource path is attempted both with and without
+ <a href="../../../com/sun/jna/Platform.html#RESOURCE_PREFIX"><code>Platform.RESOURCE_PREFIX</code></a>, after mapping the library name via
+ <a href="../../../com/sun/jna/NativeLibrary.html#mapSharedLibraryName(java.lang.String)"><code>NativeLibrary.mapSharedLibraryName(String)</code></a>.</dd><dd><code>loader</code> - Class loader to use to load resources</dd>
+<dt><span class="strong">Returns:</span></dt><dd>File indicating extracted resource on disk</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code> - if resource not found</dd></dl>
+</li>
+</ul>
+<a name="getLastError()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLastError</h4>
+<pre>public static&nbsp;int&nbsp;getLastError()</pre>
+<div class="block">Retrieve the last error set by the OS.  This corresponds to
+ <code>GetLastError()</code> on Windows, and <code>errno</code> on
+ most other platforms.  The value is preserved per-thread, but whether
+ the original value is per-thread depends on the underlying OS.  The
+ result is undefined if <a href="../../../com/sun/jna/Native.html#getPreserveLastError()"><code>getPreserveLastError()</code></a> is
+ <code>false</code>.<p>
+ The preferred method of obtaining the last error result is
+ to declare your mapped method to throw <a href="../../../com/sun/jna/LastErrorException.html" title="class in com.sun.jna"><code>LastErrorException</code></a>
+ instead.</div>
+</li>
+</ul>
+<a name="setLastError(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLastError</h4>
+<pre>public static&nbsp;void&nbsp;setLastError(int&nbsp;code)</pre>
+<div class="block">Set the OS last error code.  The value will be saved on a per-thread
+ basis.</div>
+</li>
+</ul>
+<a name="synchronizedLibrary(com.sun.jna.Library)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>synchronizedLibrary</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a>&nbsp;synchronizedLibrary(<a href="../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a>&nbsp;library)</pre>
+<div class="block">Returns a synchronized (thread-safe) library backed by the specified
+ library.  This wrapping will prevent simultaneous invocations of any
+ functions mapped to a given <a href="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna"><code>NativeLibrary</code></a>.  Note that the
+ native library may still be sensitive to being called from different
+ threads.
+ <p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>library</code> - the library to be "wrapped" in a synchronized library.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a synchronized view of the specified library.</dd></dl>
+</li>
+</ul>
+<a name="getWebStartLibraryPath(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWebStartLibraryPath</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getWebStartLibraryPath(java.lang.String&nbsp;libName)</pre>
+<div class="block">If running web start, determine the location of a given native
+ library.  This value may be used to properly set
+ <code>jna.library.path</code> so that JNA can load libraries identified
+ by the &lt;nativelib&gt; tag in the JNLP configuration file.  Returns
+ <code>null</code> if the Web Start native library cache location can not
+ be determined.  Note that the path returned may be different for any
+ given library name.
+ <p>
+ Use <code>System.getProperty("javawebstart.version")</code> to detect
+ whether your code is running under Web Start.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>null if unable to query the web start loader.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.UnsatisfiedLinkError</code> - if the library can't be found by the
+ Web Start class loader, which usually means it wasn't included as
+ a <code>&lt;nativelib&gt;</code> resource in the JNLP file.</dd></dl>
+</li>
+</ul>
+<a name="markTemporaryFile(java.io.File)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>markTemporaryFile</h4>
+<pre>static&nbsp;void&nbsp;markTemporaryFile(java.io.File&nbsp;file)</pre>
+<div class="block">Perform cleanup of automatically unpacked native shared library.</div>
+</li>
+</ul>
+<a name="getTempDir()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTempDir</h4>
+<pre>static&nbsp;java.io.File&nbsp;getTempDir()
+                        throws java.io.IOException</pre>
+<div class="block">Obtain a directory suitable for writing JNA-specific temporary files.
+        Override with <code>jna.tmpdir</code></div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="removeTemporaryFiles()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>removeTemporaryFiles</h4>
+<pre>static&nbsp;void&nbsp;removeTemporaryFiles()
+                          throws java.io.IOException</pre>
+<div class="block">Remove all marked temporary files in the given directory.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="getNativeSize(java.lang.Class, java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeSize</h4>
+<pre>public static&nbsp;int&nbsp;getNativeSize(java.lang.Class&nbsp;type,
+                java.lang.Object&nbsp;value)</pre>
+<div class="block">Returns the native size of the given class, in bytes.
+ For use with arrays.</div>
+</li>
+</ul>
+<a name="getNativeSize(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNativeSize</h4>
+<pre>public static&nbsp;int&nbsp;getNativeSize(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Returns the native size for a given Java class.  Structures are
+ assumed to be <code>struct</code> pointers unless they implement
+ <a href="../../../com/sun/jna/Structure.ByValue.html" title="interface in com.sun.jna"><code>Structure.ByValue</code></a>.</div>
+</li>
+</ul>
+<a name="isSupportedNativeType(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isSupportedNativeType</h4>
+<pre>public static&nbsp;boolean&nbsp;isSupportedNativeType(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Indicate whether the given class is supported as a native argument
+ type.</div>
+</li>
+</ul>
+<a name="setCallbackExceptionHandler(com.sun.jna.Callback.UncaughtExceptionHandler)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCallbackExceptionHandler</h4>
+<pre>public static&nbsp;void&nbsp;setCallbackExceptionHandler(<a href="../../../com/sun/jna/Callback.UncaughtExceptionHandler.html" title="interface in com.sun.jna">Callback.UncaughtExceptionHandler</a>&nbsp;eh)</pre>
+<div class="block">Set the default handler invoked when a callback throws an uncaught
+ exception.  If the given handler is <code>null</code>, the default
+ handler will be reinstated.</div>
+</li>
+</ul>
+<a name="getCallbackExceptionHandler()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCallbackExceptionHandler</h4>
+<pre>public static&nbsp;<a href="../../../com/sun/jna/Callback.UncaughtExceptionHandler.html" title="interface in com.sun.jna">Callback.UncaughtExceptionHandler</a>&nbsp;getCallbackExceptionHandler()</pre>
+<div class="block">Returns the current handler for callback uncaught exceptions.</div>
+</li>
+</ul>
+<a name="register(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>register</h4>
+<pre>public static&nbsp;void&nbsp;register(java.lang.String&nbsp;libName)</pre>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>libName</code> - library name to which functions should be bound</dd></dl>
+</li>
+</ul>
+<a name="register(com.sun.jna.NativeLibrary)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>register</h4>
+<pre>public static&nbsp;void&nbsp;register(<a href="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</a>&nbsp;lib)</pre>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lib</code> - native library to which functions should be bound</dd></dl>
+</li>
+</ul>
+<a name="findDirectMappedClass(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findDirectMappedClass</h4>
+<pre>static&nbsp;java.lang.Class&nbsp;findDirectMappedClass(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Find the nearest enclosing class with native methods.</div>
+</li>
+</ul>
+<a name="getCallingClass()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getCallingClass</h4>
+<pre>static&nbsp;java.lang.Class&nbsp;getCallingClass()</pre>
+<div class="block">Try to determine the class context in which a <a href="../../../com/sun/jna/Native.html#register(java.lang.String)"><code>register(String)</code></a> call
+        was made.</div>
+</li>
+</ul>
+<a name="setCallbackThreadInitializer(com.sun.jna.Callback, com.sun.jna.CallbackThreadInitializer)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setCallbackThreadInitializer</h4>
+<pre>public static&nbsp;void&nbsp;setCallbackThreadInitializer(<a href="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna">Callback</a>&nbsp;cb,
+                                <a href="../../../com/sun/jna/CallbackThreadInitializer.html" title="class in com.sun.jna">CallbackThreadInitializer</a>&nbsp;initializer)</pre>
+<div class="block">Set a thread initializer for the given callback.
+        The thread initializer indicates desired thread configuration when the
+        given Callback is invoked on a native thread not yet attached to the
+        VM.</div>
+</li>
+</ul>
+<a name="unregister()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unregister</h4>
+<pre>public static&nbsp;void&nbsp;unregister()</pre>
+<div class="block">Remove all native mappings for the calling class.
+        Should only be called if the class is no longer referenced and about
+        to be garbage collected.</div>
+</li>
+</ul>
+<a name="unregister(java.lang.Class)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>unregister</h4>
+<pre>public static&nbsp;void&nbsp;unregister(java.lang.Class&nbsp;cls)</pre>
+<div class="block">Remove all native mappings for the given class.
+        Should only be called if the class is no longer referenced and about
+        to be garbage collected.</div>
+</li>
+</ul>
+<a name="replace(java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>replace</h4>
+<pre>static&nbsp;java.lang.String&nbsp;replace(java.lang.String&nbsp;s1,
+                       java.lang.String&nbsp;s2,
+                       java.lang.String&nbsp;str)</pre>
+</li>
+</ul>
+<a name="register(java.lang.Class, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>register</h4>
+<pre>public static&nbsp;void&nbsp;register(java.lang.Class&nbsp;cls,
+            java.lang.String&nbsp;libName)</pre>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.  Uses the class loader of the given class to search for the
+ native library in the resource path if it is not found in the system
+ library load path or <code>jna.library.path</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>cls</code> - Class with native methods to register</dd><dd><code>libName</code> - name of or path to native library to which functions
+ should be bound</dd></dl>
+</li>
+</ul>
+<a name="register(java.lang.Class, com.sun.jna.NativeLibrary)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>register</h4>
+<pre>public static&nbsp;void&nbsp;register(java.lang.Class&nbsp;cls,
+            <a href="../../../com/sun/jna/NativeLibrary.html" title="class in com.sun.jna">NativeLibrary</a>&nbsp;lib)</pre>
+<div class="block">When called from a class static initializer, maps all native methods
+ found within that class to native libraries via the JNA raw calling
+ interface.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>cls</code> - Class with native methods to register</dd><dd><code>lib</code> - library to which functions should be bound</dd></dl>
+</li>
+</ul>
+<a name="ffi_prep_cif(int, int, long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ffi_prep_cif</h4>
+<pre>public static&nbsp;long&nbsp;ffi_prep_cif(int&nbsp;abi,
+                int&nbsp;nargs,
+                long&nbsp;ffi_return_type,
+                long&nbsp;ffi_types)</pre>
+<div class="block">Create a new cif structure.</div>
+</li>
+</ul>
+<a name="ffi_call(long, long, long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ffi_call</h4>
+<pre>public static&nbsp;void&nbsp;ffi_call(long&nbsp;cif,
+            long&nbsp;fptr,
+            long&nbsp;resp,
+            long&nbsp;args)</pre>
+<div class="block">Make an FFI function call.</div>
+</li>
+</ul>
+<a name="ffi_prep_closure(long, com.sun.jna.Native.ffi_callback)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ffi_prep_closure</h4>
+<pre>public static&nbsp;long&nbsp;ffi_prep_closure(long&nbsp;cif,
+                    <a href="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna">Native.ffi_callback</a>&nbsp;cb)</pre>
+</li>
+</ul>
+<a name="ffi_free_closure(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>ffi_free_closure</h4>
+<pre>public static&nbsp;void&nbsp;ffi_free_closure(long&nbsp;closure)</pre>
+</li>
+</ul>
+<a name="initialize_ffi_type(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>initialize_ffi_type</h4>
+<pre>static&nbsp;int&nbsp;initialize_ffi_type(long&nbsp;type_info)</pre>
+<div class="block">Returns the size (calculated by libffi) of the given type.</div>
+</li>
+</ul>
+<a name="main(java.lang.String[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>main</h4>
+<pre>public static&nbsp;void&nbsp;main(java.lang.String[]&nbsp;args)</pre>
+<div class="block">Prints JNA library details to the console.</div>
+</li>
+</ul>
+<a name="freeNativeCallback(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>freeNativeCallback</h4>
+<pre>static&nbsp;void&nbsp;freeNativeCallback(long&nbsp;ptr)</pre>
+<div class="block">Free the given callback trampoline.</div>
+</li>
+</ul>
+<a name="createNativeCallback(com.sun.jna.Callback, java.lang.reflect.Method, java.lang.Class[], java.lang.Class, int, int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createNativeCallback</h4>
+<pre>static&nbsp;long&nbsp;createNativeCallback(<a href="../../../com/sun/jna/Callback.html" title="interface in com.sun.jna">Callback</a>&nbsp;callback,
+                        java.lang.reflect.Method&nbsp;method,
+                        java.lang.Class[]&nbsp;parameterTypes,
+                        java.lang.Class&nbsp;returnType,
+                        int&nbsp;callingConvention,
+                        int&nbsp;flags,
+                        java.lang.String&nbsp;encoding)</pre>
+<div class="block">Create a native trampoline to delegate execution to the Java callback.</div>
+</li>
+</ul>
+<a name="invokeInt(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeInt</h4>
+<pre>static&nbsp;int&nbsp;invokeInt(long&nbsp;fp,
+            int&nbsp;callFlags,
+            java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value returned by the target native function</dd></dl>
+</li>
+</ul>
+<a name="invokeLong(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeLong</h4>
+<pre>static&nbsp;long&nbsp;invokeLong(long&nbsp;fp,
+              int&nbsp;callFlags,
+              java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value returned by the target native function</dd></dl>
+</li>
+</ul>
+<a name="invokeVoid(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeVoid</h4>
+<pre>static&nbsp;void&nbsp;invokeVoid(long&nbsp;fp,
+              int&nbsp;callFlags,
+              java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd></dl>
+</li>
+</ul>
+<a name="invokeFloat(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeFloat</h4>
+<pre>static&nbsp;float&nbsp;invokeFloat(long&nbsp;fp,
+                int&nbsp;callFlags,
+                java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value returned by the target native function</dd></dl>
+</li>
+</ul>
+<a name="invokeDouble(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeDouble</h4>
+<pre>static&nbsp;double&nbsp;invokeDouble(long&nbsp;fp,
+                  int&nbsp;callFlags,
+                  java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The value returned by the target native function</dd></dl>
+</li>
+</ul>
+<a name="invokePointer(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokePointer</h4>
+<pre>static&nbsp;long&nbsp;invokePointer(long&nbsp;fp,
+                 int&nbsp;callFlags,
+                 java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The native pointer returned by the target native function</dd></dl>
+</li>
+</ul>
+<a name="invokeStructure(long, int, java.lang.Object[], com.sun.jna.Structure)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeStructure</h4>
+<pre>static&nbsp;<a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;invokeStructure(long&nbsp;fp,
+                        int&nbsp;callFlags,
+                        java.lang.Object[]&nbsp;args,
+                        <a href="../../../com/sun/jna/Structure.html" title="class in com.sun.jna">Structure</a>&nbsp;s)</pre>
+<div class="block">Call the native function being represented by this object, returning
+ a struct by value.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the passed-in Structure</dd></dl>
+</li>
+</ul>
+<a name="invokeObject(long, int, java.lang.Object[])">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>invokeObject</h4>
+<pre>static&nbsp;java.lang.Object&nbsp;invokeObject(long&nbsp;fp,
+                            int&nbsp;callFlags,
+                            java.lang.Object[]&nbsp;args)</pre>
+<div class="block">Call the native function being represented by this object, returning
+ a Java <code>Object</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fp</code> - function pointer</dd><dd><code>callFlags</code> - calling convention to be used</dd><dd><code>args</code> - Arguments to pass to the native function</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The returned Java <code>Object</code></dd></dl>
+</li>
+</ul>
+<a name="open(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>open</h4>
+<pre>static&nbsp;long&nbsp;open(java.lang.String&nbsp;name)</pre>
+<div class="block">Open the requested native library with default options.</div>
+</li>
+</ul>
+<a name="open(java.lang.String, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>open</h4>
+<pre>static&nbsp;long&nbsp;open(java.lang.String&nbsp;name,
+        int&nbsp;flags)</pre>
+<div class="block">Open the requested native library with the specified platform-specific
+ otions.</div>
+</li>
+</ul>
+<a name="close(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>close</h4>
+<pre>static&nbsp;void&nbsp;close(long&nbsp;handle)</pre>
+<div class="block">Close the given native library.</div>
+</li>
+</ul>
+<a name="findSymbol(long, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>findSymbol</h4>
+<pre>static&nbsp;long&nbsp;findSymbol(long&nbsp;handle,
+              java.lang.String&nbsp;name)</pre>
+</li>
+</ul>
+<a name="indexOf(long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>indexOf</h4>
+<pre>static&nbsp;long&nbsp;indexOf(long&nbsp;addr,
+           byte&nbsp;value)</pre>
+</li>
+</ul>
+<a name="read(long, byte[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        byte[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, short[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        short[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, char[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        char[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, int[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        int[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, long[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        long[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, float[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        float[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="read(long, double[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>read</h4>
+<pre>static&nbsp;void&nbsp;read(long&nbsp;addr,
+        double[]&nbsp;buf,
+        int&nbsp;index,
+        int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, byte[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         byte[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, short[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         short[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, char[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         char[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, int[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         int[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, long[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         long[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, float[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         float[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="write(long, double[], int, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>write</h4>
+<pre>static&nbsp;void&nbsp;write(long&nbsp;addr,
+         double[]&nbsp;buf,
+         int&nbsp;index,
+         int&nbsp;length)</pre>
+</li>
+</ul>
+<a name="getByte(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getByte</h4>
+<pre>static&nbsp;byte&nbsp;getByte(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getChar(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getChar</h4>
+<pre>static&nbsp;char&nbsp;getChar(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getShort(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getShort</h4>
+<pre>static&nbsp;short&nbsp;getShort(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getInt(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getInt</h4>
+<pre>static&nbsp;int&nbsp;getInt(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getLong(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLong</h4>
+<pre>static&nbsp;long&nbsp;getLong(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getFloat(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFloat</h4>
+<pre>static&nbsp;float&nbsp;getFloat(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getDouble(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDouble</h4>
+<pre>static&nbsp;double&nbsp;getDouble(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getPointer(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPointer</h4>
+<pre>static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getPointer(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getWideString(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getWideString</h4>
+<pre>static&nbsp;java.lang.String&nbsp;getWideString(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getString(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>static&nbsp;java.lang.String&nbsp;getString(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="getString(long, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getString</h4>
+<pre>static&nbsp;java.lang.String&nbsp;getString(long&nbsp;addr,
+                         java.lang.String&nbsp;encoding)</pre>
+</li>
+</ul>
+<a name="getStringBytes(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStringBytes</h4>
+<pre>static&nbsp;byte[]&nbsp;getStringBytes(long&nbsp;addr)</pre>
+</li>
+</ul>
+<a name="setMemory(long, long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setMemory</h4>
+<pre>static&nbsp;void&nbsp;setMemory(long&nbsp;addr,
+             long&nbsp;length,
+             byte&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setByte(long, byte)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setByte</h4>
+<pre>static&nbsp;void&nbsp;setByte(long&nbsp;addr,
+           byte&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setShort(long, short)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setShort</h4>
+<pre>static&nbsp;void&nbsp;setShort(long&nbsp;addr,
+            short&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setChar(long, char)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setChar</h4>
+<pre>static&nbsp;void&nbsp;setChar(long&nbsp;addr,
+           char&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setInt(long, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setInt</h4>
+<pre>static&nbsp;void&nbsp;setInt(long&nbsp;addr,
+          int&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setLong(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setLong</h4>
+<pre>static&nbsp;void&nbsp;setLong(long&nbsp;addr,
+           long&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setFloat(long, float)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setFloat</h4>
+<pre>static&nbsp;void&nbsp;setFloat(long&nbsp;addr,
+            float&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setDouble(long, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setDouble</h4>
+<pre>static&nbsp;void&nbsp;setDouble(long&nbsp;addr,
+             double&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setPointer(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setPointer</h4>
+<pre>static&nbsp;void&nbsp;setPointer(long&nbsp;addr,
+              long&nbsp;value)</pre>
+</li>
+</ul>
+<a name="setWideString(long, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>setWideString</h4>
+<pre>static&nbsp;void&nbsp;setWideString(long&nbsp;addr,
+                 java.lang.String&nbsp;value)</pre>
+</li>
+</ul>
+<a name="malloc(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>malloc</h4>
+<pre>public static&nbsp;long&nbsp;malloc(long&nbsp;size)</pre>
+<div class="block">Call the real native malloc</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>size</code> - size of the memory to be allocated</dd>
+<dt><span class="strong">Returns:</span></dt><dd>native address of the allocated memory block; zero if the
+ allocation failed.</dd></dl>
+</li>
+</ul>
+<a name="free(long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>free</h4>
+<pre>public static&nbsp;void&nbsp;free(long&nbsp;ptr)</pre>
+<div class="block">Call the real native free</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>ptr</code> - native address to be freed; a value of zero has no effect,
+ passing an already-freed pointer will cause pain.</dd></dl>
+</li>
+</ul>
+<a name="getDirectByteBuffer(long, long)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDirectByteBuffer</h4>
+<pre>public static&nbsp;java.nio.ByteBuffer&nbsp;getDirectByteBuffer(long&nbsp;addr,
+                                      long&nbsp;length)</pre>
+<div class="block">Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
+ This method calls through to the JNA NewDirectByteBuffer method.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>addr</code> - base address of the JNA-originated memory</dd><dd><code>length</code> - Length of ByteBuffer</dd>
+<dt><span class="strong">Returns:</span></dt><dd>a direct ByteBuffer that accesses the memory being pointed to,</dd></dl>
+</li>
+</ul>
+<a name="detach(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>detach</h4>
+<pre>public static&nbsp;void&nbsp;detach(boolean&nbsp;detach)</pre>
+<div class="block">Indicate whether the JVM should detach the current native thread when
+        the current Java code finishes execution.  Generally this is used to
+        avoid detaching native threads when it is known that a given thread
+        will be relatively long-lived and call back to Java code frequently.
+        <p/>
+        This call is lightweight; it only results in an additional JNI
+        crossing if the desired state changes from its last setting.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.IllegalStateException</code> - if <a href="../../../com/sun/jna/Native.html#detach(boolean)"><code>detach(true)</code></a> is
+        called on a thread created by the JVM.</dd></dl>
+</li>
+</ul>
+<a name="getTerminationFlag(java.lang.Thread)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getTerminationFlag</h4>
+<pre>static&nbsp;<a href="../../../com/sun/jna/Pointer.html" title="class in com.sun.jna">Pointer</a>&nbsp;getTerminationFlag(java.lang.Thread&nbsp;t)</pre>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../index-all.html">Index</a></li>
+<li><a href="../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../com/sun/jna/MethodResultContext.html" title="class in com.sun.jna"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../com/sun/jna/Native.ffi_callback.html" title="interface in com.sun.jna"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../index.html?com/sun/jna/Native.html" target="_top">Frames</a></li>
+<li><a href="Native.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
+<li>Constr&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small><center><i>Copyright &copy; 2007-2014 Timothy Wall. All Rights Reserved.</i></center></small></p>
+</body>
+</html>

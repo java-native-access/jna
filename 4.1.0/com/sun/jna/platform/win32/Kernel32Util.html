@@ -1,0 +1,712 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- NewPage -->
+<html lang="en">
+<head>
+<title>Kernel32Util (JNA API)</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<script type="text/javascript"><!--
+    if (location.href.indexOf('is-external=true') == -1) {
+        parent.document.title="Kernel32Util (JNA API)";
+    }
+//-->
+</script>
+<noscript>
+<div>JavaScript is disabled on your browser.</div>
+</noscript>
+<!-- ========= START OF TOP NAVBAR ======= -->
+<div class="topNav"><a name="navbar_top">
+<!--   -->
+</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../com/sun/jna/platform/win32/LMAccess.html" title="interface in com.sun.jna.platform.win32"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?com/sun/jna/platform/win32/Kernel32Util.html" target="_top">Frames</a></li>
+<li><a href="Kernel32Util.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_top">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_top");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_top">
+<!--   -->
+</a></div>
+<!-- ========= END OF TOP NAVBAR ========= -->
+<!-- ======== START OF CLASS DATA ======== -->
+<div class="header">
+<div class="subTitle">com.sun.jna.platform.win32</div>
+<h2 title="Class Kernel32Util" class="title">Class Kernel32Util</h2>
+</div>
+<div class="contentContainer">
+<ul class="inheritance">
+<li>java.lang.Object</li>
+<li>
+<ul class="inheritance">
+<li>com.sun.jna.platform.win32.Kernel32Util</li>
+</ul>
+</li>
+</ul>
+<div class="description">
+<ul class="blockList">
+<li class="blockList">
+<dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../../../com/sun/jna/AltCallingConvention.html" title="interface in com.sun.jna">AltCallingConvention</a>, <a href="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</a>, <a href="../../../../../com/sun/jna/win32/StdCall.html" title="interface in com.sun.jna.win32">StdCall</a>, <a href="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</a></dd>
+</dl>
+<hr>
+<br>
+<pre>public abstract class <span class="strong">Kernel32Util</span>
+extends java.lang.Object
+implements <a href="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</a></pre>
+<div class="block">Kernel32 utility API.</div>
+<dl><dt><span class="strong">Author:</span></dt>
+  <dd>dblock[at]dblock.org, markus[at]headcrashing[dot]eu</dd></dl>
+</li>
+</ul>
+</div>
+<div class="summary">
+<ul class="blockList">
+<li class="blockList">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="nested_class_summary">
+<!--   -->
+</a>
+<h3>Nested Class Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="nested_classes_inherited_from_class_com.sun.jna.platform.win32.WinDef">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from interface&nbsp;com.sun.jna.platform.win32.<a href="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</a></h3>
+<code><a href="../../../../../com/sun/jna/platform/win32/WinDef.ATOM.html" title="class in com.sun.jna.platform.win32">WinDef.ATOM</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.BOOL.html" title="class in com.sun.jna.platform.win32">WinDef.BOOL</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.BOOLByReference.html" title="class in com.sun.jna.platform.win32">WinDef.BOOLByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.BYTE.html" title="class in com.sun.jna.platform.win32">WinDef.BYTE</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.CHAR.html" title="class in com.sun.jna.platform.win32">WinDef.CHAR</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.CHARByReference.html" title="class in com.sun.jna.platform.win32">WinDef.CHARByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.DWORD.html" title="class in com.sun.jna.platform.win32">WinDef.DWORD</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.DWORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.DWORDLONG.html" title="class in com.sun.jna.platform.win32">WinDef.DWORDLONG</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HBITMAP.html" title="class in com.sun.jna.platform.win32">WinDef.HBITMAP</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HBRUSH.html" title="class in com.sun.jna.platform.win32">WinDef.HBRUSH</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HCURSOR.html" title="class in com.sun.jna.platform.win32">WinDef.HCURSOR</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HDC.html" title="class in com.sun.jna.platform.win32">WinDef.HDC</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HFONT.html" title="class in com.sun.jna.platform.win32">WinDef.HFONT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HGLRC.html" title="class in com.sun.jna.platform.win32">WinDef.HGLRC</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HGLRCByReference.html" title="class in com.sun.jna.platform.win32">WinDef.HGLRCByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HICON.html" title="class in com.sun.jna.platform.win32">WinDef.HICON</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HINSTANCE.html" title="class in com.sun.jna.platform.win32">WinDef.HINSTANCE</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HMENU.html" title="class in com.sun.jna.platform.win32">WinDef.HMENU</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HMODULE.html" title="class in com.sun.jna.platform.win32">WinDef.HMODULE</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HPALETTE.html" title="class in com.sun.jna.platform.win32">WinDef.HPALETTE</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HPEN.html" title="class in com.sun.jna.platform.win32">WinDef.HPEN</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HRGN.html" title="class in com.sun.jna.platform.win32">WinDef.HRGN</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HRSRC.html" title="class in com.sun.jna.platform.win32">WinDef.HRSRC</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.HWND.html" title="class in com.sun.jna.platform.win32">WinDef.HWND</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.INT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.INT_PTR</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LCID.html" title="class in com.sun.jna.platform.win32">WinDef.LCID</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONG</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LONGByReference.html" title="class in com.sun.jna.platform.win32">WinDef.LONGByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.LONGLONG</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LONGLONGByReference.html" title="class in com.sun.jna.platform.win32">WinDef.LONGLONGByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.LPARAM</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LPVOID.html" title="class in com.sun.jna.platform.win32">WinDef.LPVOID</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.LRESULT.html" title="class in com.sun.jna.platform.win32">WinDef.LRESULT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.POINT.html" title="class in com.sun.jna.platform.win32">WinDef.POINT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.PVOID.html" title="class in com.sun.jna.platform.win32">WinDef.PVOID</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.RECT.html" title="class in com.sun.jna.platform.win32">WinDef.RECT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.SCODE.html" title="class in com.sun.jna.platform.win32">WinDef.SCODE</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.SCODEByReference.html" title="class in com.sun.jna.platform.win32">WinDef.SCODEByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.SHORT.html" title="class in com.sun.jna.platform.win32">WinDef.SHORT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.UCHAR.html" title="class in com.sun.jna.platform.win32">WinDef.UCHAR</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.UINT.html" title="class in com.sun.jna.platform.win32">WinDef.UINT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.UINT_PTR.html" title="class in com.sun.jna.platform.win32">WinDef.UINT_PTR</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.UINTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.UINTByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.ULONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONG</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.ULONGByReference.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONG.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONG</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.ULONGLONGByReference.html" title="class in com.sun.jna.platform.win32">WinDef.ULONGLONGByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.USHORT.html" title="class in com.sun.jna.platform.win32">WinDef.USHORT</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.USHORTByReference.html" title="class in com.sun.jna.platform.win32">WinDef.USHORTByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.WORD.html" title="class in com.sun.jna.platform.win32">WinDef.WORD</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.WORDByReference.html" title="class in com.sun.jna.platform.win32">WinDef.WORDByReference</a>, <a href="../../../../../com/sun/jna/platform/win32/WinDef.WPARAM.html" title="class in com.sun.jna.platform.win32">WinDef.WPARAM</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="nested_classes_inherited_from_class_com.sun.jna.win32.StdCallLibrary">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from interface&nbsp;com.sun.jna.win32.<a href="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</a></h3>
+<code><a href="../../../../../com/sun/jna/win32/StdCallLibrary.StdCallCallback.html" title="interface in com.sun.jna.win32">StdCallLibrary.StdCallCallback</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="nested_classes_inherited_from_class_com.sun.jna.Library">
+<!--   -->
+</a>
+<h3>Nested classes/interfaces inherited from interface&nbsp;com.sun.jna.<a href="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a></h3>
+<code><a href="../../../../../com/sun/jna/Library.Handler.html" title="class in com.sun.jna">Library.Handler</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field_summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_com.sun.jna.platform.win32.WinDef">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.sun.jna.platform.win32.<a href="../../../../../com/sun/jna/platform/win32/WinDef.html" title="interface in com.sun.jna.platform.win32">WinDef</a></h3>
+<code><a href="../../../../../com/sun/jna/platform/win32/WinDef.html#MAX_PATH">MAX_PATH</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_com.sun.jna.win32.StdCallLibrary">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.sun.jna.win32.<a href="../../../../../com/sun/jna/win32/StdCallLibrary.html" title="interface in com.sun.jna.win32">StdCallLibrary</a></h3>
+<code><a href="../../../../../com/sun/jna/win32/StdCallLibrary.html#FUNCTION_MAPPER">FUNCTION_MAPPER</a>, <a href="../../../../../com/sun/jna/win32/StdCallLibrary.html#STDCALL_CONVENTION">STDCALL_CONVENTION</a></code></li>
+</ul>
+<ul class="blockList">
+<li class="blockList"><a name="fields_inherited_from_class_com.sun.jna.Library">
+<!--   -->
+</a>
+<h3>Fields inherited from interface&nbsp;com.sun.jna.<a href="../../../../../com/sun/jna/Library.html" title="interface in com.sun.jna">Library</a></h3>
+<code><a href="../../../../../com/sun/jna/Library.html#OPTION_ALLOW_OBJECTS">OPTION_ALLOW_OBJECTS</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_CALLING_CONVENTION">OPTION_CALLING_CONVENTION</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_CLASSLOADER">OPTION_CLASSLOADER</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_FUNCTION_MAPPER">OPTION_FUNCTION_MAPPER</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_INVOCATION_MAPPER">OPTION_INVOCATION_MAPPER</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_OPEN_FLAGS">OPTION_OPEN_FLAGS</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_STRING_ENCODING">OPTION_STRING_ENCODING</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_STRUCTURE_ALIGNMENT">OPTION_STRUCTURE_ALIGNMENT</a>, <a href="../../../../../com/sun/jna/Library.html#OPTION_TYPE_MAPPER">OPTION_TYPE_MAPPER</a></code></li>
+</ul>
+</li>
+</ul>
+<!-- ======== CONSTRUCTOR SUMMARY ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_summary">
+<!--   -->
+</a>
+<h3>Constructor Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colOne" scope="col">Constructor and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#Kernel32Util()">Kernel32Util</a></strong>()</code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
+<!-- ========== METHOD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_summary">
+<!--   -->
+</a>
+<h3>Method Summary</h3>
+<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Method and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#deleteFile(java.lang.String)">deleteFile</a></strong>(java.lang.String&nbsp;filename)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessage(int)">formatMessage</a></strong>(int&nbsp;code)</code>
+<div class="block">Format a message from the value obtained from
+ <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetLastError()"><code>Kernel32.GetLastError()</code></a> or <a href="../../../../../com/sun/jna/Native.html#getLastError()"><code>Native.getLastError()</code></a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessage(com.sun.jna.platform.win32.WinNT.HRESULT)">formatMessage</a></strong>(<a href="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</a>&nbsp;code)</code>
+<div class="block">Format a message from an HRESULT.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessageFromHR(com.sun.jna.platform.win32.WinNT.HRESULT)">formatMessageFromHR</a></strong>(<a href="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</a>&nbsp;code)</code>
+<div class="block"><strong>Deprecated.</strong>&nbsp;
+<div class="block"><i>use <a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessage(com.sun.jna.platform.win32.WinNT.HRESULT)"><code>formatMessage(WinNT.HRESULT)</code></a> instead.</i></div>
+</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessageFromLastErrorCode(int)">formatMessageFromLastErrorCode</a></strong>(int&nbsp;code)</code>
+<div class="block">Format a system message from an error code.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getComputerName()">getComputerName</a></strong>()</code>
+<div class="block">Get current computer NetBIOS name.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getDriveType(java.lang.String)">getDriveType</a></strong>(java.lang.String&nbsp;rootName)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getEnvironmentVariable(java.lang.String)">getEnvironmentVariable</a></strong>(java.lang.String&nbsp;name)</code>
+<div class="block">Get the value of an environment variable.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getFileAttributes(java.lang.String)">getFileAttributes</a></strong>(java.lang.String&nbsp;fileName)</code>
+<div class="block">Retrieves file system attributes for a specified file or directory.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getFileType(java.lang.String)">getFileType</a></strong>(java.lang.String&nbsp;fileName)</code>
+<div class="block">Retrieves the result of GetFileType, provided the file exists.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getLogicalDriveStrings()">getLogicalDriveStrings</a></strong>()</code>
+<div class="block">Returns valid drives in the system.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../com/sun/jna/platform/win32/WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION</a>[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getLogicalProcessorInformation()">getLogicalProcessorInformation</a></strong>()</code>
+<div class="block">Convenience method to get the processor information.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getPrivateProfileInt(java.lang.String, java.lang.String, int, java.lang.String)">getPrivateProfileInt</a></strong>(java.lang.String&nbsp;appName,
+                    java.lang.String&nbsp;keyName,
+                    int&nbsp;defaultValue,
+                    java.lang.String&nbsp;fileName)</code>
+<div class="block">Retrieves an integer associated with a key in the specified section of an
+ initialization file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getPrivateProfileSection(java.lang.String, java.lang.String)">getPrivateProfileSection</a></strong>(java.lang.String&nbsp;appName,
+                        java.lang.String&nbsp;fileName)</code>
+<div class="block">Retrieves all the keys and values for the specified section of an initialization file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String[]</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getPrivateProfileSectionNames(java.lang.String)">getPrivateProfileSectionNames</a></strong>(java.lang.String&nbsp;fileName)</code>
+<div class="block">Retrieves the names of all sections in an initialization file.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, java.lang.String)">getPrivateProfileString</a></strong>(java.lang.String&nbsp;lpAppName,
+                       java.lang.String&nbsp;lpKeyName,
+                       java.lang.String&nbsp;lpDefault,
+                       java.lang.String&nbsp;lpFileName)</code>
+<div class="block">Retrieves a string from the specified section in an initialization file.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#getTempPath()">getTempPath</a></strong>()</code>
+<div class="block">Return the path designated for temporary files.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#writePrivateProfileSection(java.lang.String, java.lang.String[], java.lang.String)">writePrivateProfileSection</a></strong>(java.lang.String&nbsp;appName,
+                          java.lang.String[]&nbsp;strings,
+                          java.lang.String&nbsp;fileName)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static void</code></td>
+<td class="colLast"><code><strong><a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#writePrivateProfileString(java.lang.String, java.lang.String, java.lang.String, java.lang.String)">writePrivateProfileString</a></strong>(java.lang.String&nbsp;appName,
+                         java.lang.String&nbsp;keyName,
+                         java.lang.String&nbsp;string,
+                         java.lang.String&nbsp;fileName)</code>&nbsp;</td>
+</tr>
+</table>
+<ul class="blockList">
+<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<!--   -->
+</a>
+<h3>Methods inherited from class&nbsp;java.lang.Object</h3>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="details">
+<ul class="blockList">
+<li class="blockList">
+<!-- ========= CONSTRUCTOR DETAIL ======== -->
+<ul class="blockList">
+<li class="blockList"><a name="constructor_detail">
+<!--   -->
+</a>
+<h3>Constructor Detail</h3>
+<a name="Kernel32Util()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>Kernel32Util</h4>
+<pre>public&nbsp;Kernel32Util()</pre>
+</li>
+</ul>
+</li>
+</ul>
+<!-- ============ METHOD DETAIL ========== -->
+<ul class="blockList">
+<li class="blockList"><a name="method_detail">
+<!--   -->
+</a>
+<h3>Method Detail</h3>
+<a name="getComputerName()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getComputerName</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getComputerName()</pre>
+<div class="block">Get current computer NetBIOS name.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Netbios name.</dd></dl>
+</li>
+</ul>
+<a name="formatMessage(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatMessage</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatMessage(int&nbsp;code)</pre>
+<div class="block">Format a message from the value obtained from
+ <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetLastError()"><code>Kernel32.GetLastError()</code></a> or <a href="../../../../../com/sun/jna/Native.html#getLastError()"><code>Native.getLastError()</code></a>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>code</code> - int</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Formatted message.</dd></dl>
+</li>
+</ul>
+<a name="formatMessage(com.sun.jna.platform.win32.WinNT.HRESULT)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatMessage</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatMessage(<a href="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</a>&nbsp;code)</pre>
+<div class="block">Format a message from an HRESULT.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>code</code> - HRESULT</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Formatted message.</dd></dl>
+</li>
+</ul>
+<a name="formatMessageFromHR(com.sun.jna.platform.win32.WinNT.HRESULT)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatMessageFromHR</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatMessageFromHR(<a href="../../../../../com/sun/jna/platform/win32/WinNT.HRESULT.html" title="class in com.sun.jna.platform.win32">WinNT.HRESULT</a>&nbsp;code)</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;<i>use <a href="../../../../../com/sun/jna/platform/win32/Kernel32Util.html#formatMessage(com.sun.jna.platform.win32.WinNT.HRESULT)"><code>formatMessage(WinNT.HRESULT)</code></a> instead.</i></div>
+</li>
+</ul>
+<a name="formatMessageFromLastErrorCode(int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>formatMessageFromLastErrorCode</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;formatMessageFromLastErrorCode(int&nbsp;code)</pre>
+<div class="block">Format a system message from an error code.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>code</code> - Error code, typically a result of GetLastError.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Formatted message.</dd></dl>
+</li>
+</ul>
+<a name="getTempPath()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTempPath</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getTempPath()</pre>
+<div class="block">Return the path designated for temporary files.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>Path.</dd></dl>
+</li>
+</ul>
+<a name="deleteFile(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>deleteFile</h4>
+<pre>public static&nbsp;void&nbsp;deleteFile(java.lang.String&nbsp;filename)</pre>
+</li>
+</ul>
+<a name="getLogicalDriveStrings()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLogicalDriveStrings</h4>
+<pre>public static&nbsp;java.lang.String[]&nbsp;getLogicalDriveStrings()</pre>
+<div class="block">Returns valid drives in the system.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>An array of valid drives.</dd></dl>
+</li>
+</ul>
+<a name="getFileAttributes(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFileAttributes</h4>
+<pre>public static&nbsp;int&nbsp;getFileAttributes(java.lang.String&nbsp;fileName)</pre>
+<div class="block">Retrieves file system attributes for a specified file or directory.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileName</code> - The name of the file or directory.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The attributes of the specified file or directory.</dd></dl>
+</li>
+</ul>
+<a name="getFileType(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getFileType</h4>
+<pre>public static&nbsp;int&nbsp;getFileType(java.lang.String&nbsp;fileName)
+                       throws java.io.FileNotFoundException</pre>
+<div class="block">Retrieves the result of GetFileType, provided the file exists.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.io.FileNotFoundException</code></dd></dl>
+</li>
+</ul>
+<a name="getDriveType(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDriveType</h4>
+<pre>public static&nbsp;int&nbsp;getDriveType(java.lang.String&nbsp;rootName)</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>One of the WinBase.DRIVE_* constants.</dd></dl>
+</li>
+</ul>
+<a name="getEnvironmentVariable(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEnvironmentVariable</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getEnvironmentVariable(java.lang.String&nbsp;name)</pre>
+<div class="block">Get the value of an environment variable.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>name</code> - Name of the environment variable.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>Value of an environment variable.</dd></dl>
+</li>
+</ul>
+<a name="getPrivateProfileInt(java.lang.String, java.lang.String, int, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrivateProfileInt</h4>
+<pre>public static final&nbsp;int&nbsp;getPrivateProfileInt(java.lang.String&nbsp;appName,
+                       java.lang.String&nbsp;keyName,
+                       int&nbsp;defaultValue,
+                       java.lang.String&nbsp;fileName)</pre>
+<div class="block">Retrieves an integer associated with a key in the specified section of an
+ initialization file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>appName</code> - The name of the section in the initialization file.</dd><dd><code>keyName</code> - The name of the key whose value is to be retrieved. This value
+            is in the form of a string; the
+            <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetPrivateProfileInt(java.lang.String, java.lang.String, int, java.lang.String)"><code>Kernel32.GetPrivateProfileInt(java.lang.String, java.lang.String, int, java.lang.String)</code></a> function converts the
+            string into an integer and returns the integer.</dd><dd><code>defaultValue</code> - The default value to return if the key name cannot be found in
+            the initialization file.</dd><dd><code>fileName</code> - The name of the initialization file. If this parameter does
+            not contain a full path to the file, the system searches for
+            the file in the Windows directory.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The retrieved integer, or the default if not found.</dd></dl>
+</li>
+</ul>
+<a name="getPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrivateProfileString</h4>
+<pre>public static final&nbsp;java.lang.String&nbsp;getPrivateProfileString(java.lang.String&nbsp;lpAppName,
+                                       java.lang.String&nbsp;lpKeyName,
+                                       java.lang.String&nbsp;lpDefault,
+                                       java.lang.String&nbsp;lpFileName)</pre>
+<div class="block">Retrieves a string from the specified section in an initialization file.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>lpAppName</code> - The name of the section containing the key name. If this
+            parameter is <code>null</code>, the
+            <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, char[], com.sun.jna.platform.win32.WinDef.DWORD, java.lang.String)"><code>Kernel32.GetPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, char[], com.sun.jna.platform.win32.WinDef.DWORD, java.lang.String)</code></a> function copies all
+            section names in the file to the supplied buffer.</dd><dd><code>lpKeyName</code> - The name of the key whose associated string is to be
+            retrieved. If this parameter is <code>null</code>, all key names in
+            the section specified by the <code>lpAppName</code> parameter are
+            returned.</dd><dd><code>lpDefault</code> - A default string. If the <code>lpKeyName</code> key cannot be found
+            in the initialization file,
+            <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, char[], com.sun.jna.platform.win32.WinDef.DWORD, java.lang.String)"><code>Kernel32.GetPrivateProfileString(java.lang.String, java.lang.String, java.lang.String, char[], com.sun.jna.platform.win32.WinDef.DWORD, java.lang.String)</code></a> returns the default.
+            If this parameter is <code>null</code>, the default is an empty
+            string, <code>""</code>.
+            <p>
+            Avoid specifying a default string with trailing blank
+            characters. The function inserts a <code>null</code> character in
+            the <code>lpReturnedString</code> buffer to strip any trailing
+            blanks.
+            </p></dd><dd><code>lpFileName</code> - The name of the initialization file. If this parameter does
+            not contain a full path to the file, the system searches for
+            the file in the Windows directory.</dd>
+<dt><span class="strong">Returns:</span></dt><dd><p>
+         If neither <code>lpAppName</code> nor <code>lpKeyName</code> is
+         <code>null</code> and the destination buffer is too small to hold the
+         requested string, the string is truncated.
+         </p>
+         <p>
+         If either <code>lpAppName</code> or <code>lpKeyName</code> is <code>null</code>
+         and the destination buffer is too small to hold all the strings,
+         the last string is truncated and followed by two <code>null</code>
+         characters.
+         </p>
+         <p>
+         In the event the initialization file specified by
+         <code>lpFileName</code> is not found, or contains invalid values, this
+         function will set errorno with a value of '0x2' (File Not Found).
+         To retrieve extended error information, call
+         <a href="../../../../../com/sun/jna/platform/win32/Kernel32.html#GetLastError()"><code>Kernel32.GetLastError()</code></a>.
+         </p></dd></dl>
+</li>
+</ul>
+<a name="writePrivateProfileString(java.lang.String, java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>writePrivateProfileString</h4>
+<pre>public static final&nbsp;void&nbsp;writePrivateProfileString(java.lang.String&nbsp;appName,
+                             java.lang.String&nbsp;keyName,
+                             java.lang.String&nbsp;string,
+                             java.lang.String&nbsp;fileName)</pre>
+</li>
+</ul>
+<a name="getLogicalProcessorInformation()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLogicalProcessorInformation</h4>
+<pre>public static final&nbsp;<a href="../../../../../com/sun/jna/platform/win32/WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION.html" title="class in com.sun.jna.platform.win32">WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION</a>[]&nbsp;getLogicalProcessorInformation()</pre>
+<div class="block">Convenience method to get the processor information. Takes care of
+ auto-growing the array.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the array of processor information.</dd></dl>
+</li>
+</ul>
+<a name="getPrivateProfileSection(java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrivateProfileSection</h4>
+<pre>public static final&nbsp;java.lang.String[]&nbsp;getPrivateProfileSection(java.lang.String&nbsp;appName,
+                                          java.lang.String&nbsp;fileName)</pre>
+<div class="block">Retrieves all the keys and values for the specified section of an initialization file.
+
+ <p>
+ Each string has the following format: <code>key=string</code>.
+ </p>
+ <p>
+ This operation is atomic; no updates to the specified initialization file are allowed while this method is executed.
+ </p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>appName</code> - The name of the section in the initialization file.</dd><dd><code>fileName</code> - The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+            Windows directory.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The key name and value pairs associated with the named section.</dd></dl>
+</li>
+</ul>
+<a name="getPrivateProfileSectionNames(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrivateProfileSectionNames</h4>
+<pre>public static final&nbsp;java.lang.String[]&nbsp;getPrivateProfileSectionNames(java.lang.String&nbsp;fileName)</pre>
+<div class="block">Retrieves the names of all sections in an initialization file.
+ <p>
+ This operation is atomic; no updates to the initialization file are allowed while this method is executed.
+ </p></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>fileName</code> - The name of the initialization file. If this parameter is <code>NULL</code>, the function searches the Win.ini file. If this parameter does not
+            contain a full path to the file, the system searches for the file in the Windows directory.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>the section names associated with the named file.</dd></dl>
+</li>
+</ul>
+<a name="writePrivateProfileSection(java.lang.String, java.lang.String[], java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>writePrivateProfileSection</h4>
+<pre>public static final&nbsp;void&nbsp;writePrivateProfileSection(java.lang.String&nbsp;appName,
+                              java.lang.String[]&nbsp;strings,
+                              java.lang.String&nbsp;fileName)</pre>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>appName</code> - The name of the section in which data is written. This section name is typically the name of the calling application.</dd><dd><code>strings</code> - The new key names and associated values that are to be written to the named section. Each entry must be of the form <code>key=value</code>.</dd><dd><code>fileName</code> - The name of the initialization file. If this parameter does not contain a full path for the file, the function searches the Windows directory
+            for the file. If the file does not exist and lpFileName does not contain a full path, the function creates the file in the Windows directory.</dd></dl>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<!-- ========= END OF CLASS DATA ========= -->
+<!-- ======= START OF BOTTOM NAVBAR ====== -->
+<div class="bottomNav"><a name="navbar_bottom">
+<!--   -->
+</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+<!--   -->
+</a>
+<ul class="navList" title="Navigation">
+<li><a href="../../../../../overview-summary.html">Overview</a></li>
+<li><a href="package-summary.html">Package</a></li>
+<li class="navBarCell1Rev">Class</li>
+<li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
+<li><a href="../../../../../index-all.html">Index</a></li>
+<li><a href="../../../../../help-doc.html">Help</a></li>
+</ul>
+<div class="aboutLanguage"><em><b>JNA API</><font size=-1> 4.1.0</font></em></div>
+</div>
+<div class="subNav">
+<ul class="navList">
+<li><a href="../../../../../com/sun/jna/platform/win32/Kernel32.html" title="interface in com.sun.jna.platform.win32"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../com/sun/jna/platform/win32/LMAccess.html" title="interface in com.sun.jna.platform.win32"><span class="strong">Next Class</span></a></li>
+</ul>
+<ul class="navList">
+<li><a href="../../../../../index.html?com/sun/jna/platform/win32/Kernel32Util.html" target="_top">Frames</a></li>
+<li><a href="Kernel32Util.html" target="_top">No Frames</a></li>
+</ul>
+<ul class="navList" id="allclasses_navbar_bottom">
+<li><a href="../../../../../allclasses-noframe.html">All Classes</a></li>
+</ul>
+<div>
+<script type="text/javascript"><!--
+  allClassesLink = document.getElementById("allclasses_navbar_bottom");
+  if(window==top) {
+    allClassesLink.style.display = "block";
+  }
+  else {
+    allClassesLink.style.display = "none";
+  }
+  //-->
+</script>
+</div>
+<div>
+<ul class="subNavList">
+<li>Summary:&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_summary">Method</a></li>
+</ul>
+<ul class="subNavList">
+<li>Detail:&nbsp;</li>
+<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method_detail">Method</a></li>
+</ul>
+</div>
+<a name="skip-navbar_bottom">
+<!--   -->
+</a></div>
+<!-- ======== END OF BOTTOM NAVBAR ======= -->
+<p class="legalCopy"><small><center><i>Copyright &copy; 2007-2014 Timothy Wall. All Rights Reserved.</i></center></small></p>
+</body>
+</html>
