@@ -2,17 +2,22 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
+Next Release
+============
+
+* Your contribution here.
+
 Release 4.1
 ===========
 
 Features
 --------
-* Added `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog] (https://github.com/falldog).
+* Added `com.sun.jna.platform.win32.Advapi32Util.registryCloseKey` - [@falldog](https://github.com/falldog).
 * Enabled platform tests to be run w/o building native bits - [@twall](https://github.com/twall).
 * Added COM/Typelib java code generator `com.sun.jna.platform.win32.COM.tlb.TlbImp` - [@wolftobias](https://github.com/wolftobias).
 * [#226](https://github.com/twall/jna/issues/226): Added OSGI information to jna-platform.jar - [@brettwooldridge](https://github.com/brettwooldridge).
 * [#267](https://github.com/twall/jna/pull/267): Added support for Windows RAS32 API, `com.sun.jna.platform.win32.Rasapi32` and `Rasapi32Util` - [@kc7bfi](https://github.com/kc7bfi).
-* [#101](https://github.com/twall/jna/issues/101): Modify `com.sun.jna.platform.win32.Advapi32Util.registryGet*` API to support `KEY_WOW64` option - [@falldog] (https://github.com/falldog).
+* [#101](https://github.com/twall/jna/issues/101): Modify `com.sun.jna.platform.win32.Advapi32Util.registryGet*` API to support `KEY_WOW64` option - [@falldog](https://github.com/falldog).
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.Gdi32.ChoosePixelFormat` and `SetPixelFormat` - [@kc7bfi](https://github.com/kc7bfi).
 * [#271](https://github.com/twall/jna/pull/271): Added `com.sun.jna.platform.win32.OpenGL32`, `OpenGL32Util` and `WinOpenGL` - [@kc7bfi](https://github.com/kc7bfi).
 * [#250](https://github.com/twall/jna/pull/250): Added `com.sun.jna.platform.win32.Kernel32.GetPrivateProfileSection`, `GetPrivateProfileSectionNames` and `WritePrivateProfileSection` and corresponding `Kernel32Util` helpers - [@quipsy-karg](https://github.com/quipsy-karg).
@@ -23,9 +28,9 @@ Features
 Bug Fixes
 ---------
 * Fixed inconsistent behavior on `Structure.ByValue` fields within a `Structure` - [@twall](https://github.com/twall).
-* [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan] (https://github.com/sevan).
+* [#279](https://github.com/twall/jna/issues/279): Accommodate FreeBSD libc loading - [@sevan](https://github.com/sevan).
 * [#287](https://github.com/twall/jna/pull/287): Fixed contrib `win32.Win32WindowDemo`, now showing the added/removed drive letter, and whether the event is about media in drive or physical drive - [@daifei4321](https://github.com/daifei4321).
-* [#300](https://github.com/twall/jna/issues/300): Fix stdcall argument alignment - [@twall] (https://github.com/twall).
+* [#300](https://github.com/twall/jna/issues/300): Fix stdcall argument alignment - [@twall](https://github.com/twall).
 
 Release 4.0
 ===========
