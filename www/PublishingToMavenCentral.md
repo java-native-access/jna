@@ -58,7 +58,5 @@ Publish Release
 * Follow steps from [release
   it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt).
   Note that the releases are managed from [maven.java.net](https://maven.java.net).
-* Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
-* After the release is finished and tagged, increment the version in build.xml for the next development iteration: increment "jna.revision" in build.xml by one, and create a new section in CHANGES.md for 'Next Release (x.y.z)'. Commit and push.
 
 

@@ -23,3 +23,9 @@ JNA Release Process
 
 * Tag as &lt;version>, push all changes and new tag to origin.
 
+* Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
+
+* Increment the version in build.xml for the next development iteration: increment "jna.revision" in build.xml by one, and create a new section in CHANGES.md for 'Next Release (x.y.z)'. 
+
+* Commit and push everything.
+
