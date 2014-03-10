@@ -1,3 +1,7 @@
+2014-03-10  Mike Hommey <mh+mozilla@glandium.org>
+
+	* Makefile.am (AM_MAKEFLAGS): Replace double quotes with single quotes.
+
 2014-03-01  Anthony Green  <green@moxielogic.com>
 
 	* Makefile.am (EXTRA_DIST): Replace old scripts with
