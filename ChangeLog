@@ -1,3 +1,7 @@
+2014-03-10  Landry Breuil <landry@openbsd.org>
+
+	* configure.ac: Ensure the linker supports @unwind sections in libffi.
+
 2014-03-01  Anthony Green  <green@moxielogic.com>
 
 	* Makefile.am (EXTRA_DIST): Replace old scripts with
