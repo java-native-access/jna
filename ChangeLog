@@ -1,3 +1,7 @@
+2014-03-10  Mike Hommey <mh+mozilla@glandium.org>
+
+	* configure.ac: Allow building for mipsel with Android NDK r8.
+
 2014-03-01  Anthony Green  <green@moxielogic.com>
 
 	* Makefile.am (EXTRA_DIST): Replace old scripts with
