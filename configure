@@ -13584,7 +13584,7 @@ case "$host" in
   mips-sgi-irix5.* | mips-sgi-irix6.* | mips*-*-rtems*)
 	TARGET=MIPS; TARGETDIR=mips
 	;;
-  mips*-*-linux* | mips*-*-openbsd*)
+  mips*-*linux* | mips*-*-openbsd*)
 	# Support 128-bit long double for NewABI.
 	HAVE_LONG_DOUBLE='defined(__mips64)'
 	TARGET=MIPS; TARGETDIR=mips
@@ -14884,16 +14884,32 @@ fi
 
 
 if test x$TARGET = xX86_64; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking assembler supports unwind section type" >&5
-$as_echo_n "checking assembler supports unwind section type... " >&6; }
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking toolchain supports unwind section type" >&5
+$as_echo_n "checking toolchain supports unwind section type... " >&6; }
 if ${libffi_cv_as_x86_64_unwind_section_type+:} false; then :
   $as_echo_n "(cached) " >&6
 else
 
-	libffi_cv_as_x86_64_unwind_section_type=yes
-	echo '.section .eh_frame,"a",@unwind' > conftest.s
-	if $CC $CFLAGS -c conftest.s 2>&1 | grep -i warning > /dev/null; then
-	    libffi_cv_as_x86_64_unwind_section_type=no
+        cat  > conftest1.s << EOF
+.text
+.globl foo
+foo:
+jmp bar
+.section .eh_frame,"a",@unwind
+bar:
+EOF
+
+        cat > conftest2.c  << EOF
+extern void foo();
+int main(){foo();}
+EOF
+
+	libffi_cv_as_x86_64_unwind_section_type=no
+	# we ensure that we can compile _and_ link an assembly file containing an @unwind section
+	# since the compiler can support it and not the linker (ie old binutils)
+	if $CC -Wa,--fatal-warnings $CFLAGS -c conftest1.s > /dev/null 2>&1 && \
+           $CC conftest2.c conftest1.o > /dev/null 2>&1 ; then
+	    libffi_cv_as_x86_64_unwind_section_type=yes
 	fi
 
 fi

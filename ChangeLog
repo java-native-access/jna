@@ -1,7 +1,15 @@
+2014-03-14  Anthony Green <green@moxielogic.com>
+
+	* configure, Makefile.in: Rebuilt.
+
 2014-03-10  Mike Hommey <mh+mozilla@glandium.org>
 
 	* configure.ac: Allow building for mipsel with Android NDK r8.
 	* Makefile.am (AM_MAKEFLAGS): Replace double quotes with single quotes.
+
+2014-03-10  Landry Breuil <landry@openbsd.org>
+
+	* configure.ac: Ensure the linker supports @unwind sections in libffi.
 
 2014-03-01  Anthony Green  <green@moxielogic.com>
 
