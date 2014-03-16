@@ -98,6 +98,9 @@ typedef enum ffi_abi {
   /* ---- Intel x86 and AMD x86-64 - */
   FFI_SYSV,
   FFI_UNIX64,   /* Unix variants all use the same ABI for x86-64  */
+  FFI_THISCALL,
+  FFI_FASTCALL,
+  FFI_STDCALL,
   FFI_LAST_ABI,
 #if defined(__i386__) || defined(__i386)
   FFI_DEFAULT_ABI = FFI_SYSV
@@ -119,21 +122,13 @@ typedef enum ffi_abi {
 #if defined (X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
 #define FFI_TRAMPOLINE_SIZE 24
 #define FFI_NATIVE_RAW_API 0
-#else
-#ifdef X86_WIN32
-#define FFI_TRAMPOLINE_SIZE 52
-#else
-#ifdef X86_WIN64
+#elif defined(X86_WIN64)
 #define FFI_TRAMPOLINE_SIZE 29
 #define FFI_NATIVE_RAW_API 0
 #define FFI_NO_RAW_API 1
 #else
-#define FFI_TRAMPOLINE_SIZE 10
-#endif
-#endif
-#ifndef X86_WIN64
+#define FFI_TRAMPOLINE_SIZE 52
 #define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
-#endif
 #endif
 
 #endif
