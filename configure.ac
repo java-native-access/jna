@@ -8,7 +8,11 @@ AC_CONFIG_HEADERS([fficonfig.h])
 AC_CANONICAL_SYSTEM
 target_alias=${target_alias-$host_alias}
 
-. ${srcdir}/configure.host
+case "${host}" in
+  frv*-elf)
+    LDFLAGS=`echo $LDFLAGS | sed "s/\-B[^ ]*libgloss\/frv\///"`\ -B`pwd`/../libgloss/frv/
+    ;;
+esac
 
 AX_ENABLE_BUILDDIR
 
