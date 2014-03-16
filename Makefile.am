@@ -6,7 +6,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = include testsuite man
 
-EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
+EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj			\
 	 src/aarch64/ffi.c src/aarch64/ffitarget.h src/aarch64/sysv.S	\
 	 src/alpha/ffi.c src/alpha/osf.S			\
 	 src/alpha/ffitarget.h src/arc/ffi.c src/arc/arcompact.S	\
