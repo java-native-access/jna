@@ -5,4 +5,4 @@ compiler:
 
 before_script: sudo apt-get install dejagnu texinfo
 
-script: ./configure && make && make check
+script: ./autogen.sh && ./configure && make && make check

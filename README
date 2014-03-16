@@ -126,6 +126,9 @@ system. Go to the directory you wish to build libffi in and run the
 "configure" program found in the root directory of the libffi source
 distribution.
 
+If you're building libffi directly from version control, configure won't
+exist yet; run ./autogen.sh first.
+
 You may want to tell configure where to install the libffi library and
 header files. To do that, use the --prefix configure switch.  Libffi
 will install under /usr/local by default. 
