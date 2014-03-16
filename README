@@ -176,6 +176,9 @@ See the ChangeLog files for details.
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.
+	Add support for stdcall, thiscall, and fastcall on non-Windows 32-bit
+	  x86 targets such as Linux.
+	Make the testsuite more robust: eliminated several spurious failures.
 	Android build fix.
 	Fix MIPS N32 ABI bug.
 	Various x86, FreeBSD and UltraSPARC IIi fixes.
