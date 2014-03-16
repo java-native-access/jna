@@ -11,7 +11,9 @@ compile
 config.*
 configure
 depcomp
+doc/libffi.info
 *~
+fficonfig.h.in
 fficonfig.h
 include/ffi.h
 include/ffitarget.h
