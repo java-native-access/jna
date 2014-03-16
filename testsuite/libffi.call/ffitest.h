@@ -17,20 +17,14 @@
 
 #define CHECK(x) !(x) ? (abort(), 1) : 0
 
-/* Define __UNUSED__ that also other compilers than gcc can run the tests.  */
+/* Define macros so that compilers other than gcc can run the tests.  */
 #undef __UNUSED__
 #if defined(__GNUC__)
 #define __UNUSED__ __attribute__((__unused__))
+#define __FASTCALL__ __attribute__((fastcall))
 #else
 #define __UNUSED__
-#endif
-
-/* Define __FASTCALL__ so that other compilers than gcc can run the tests.  */
-#undef __FASTCALL__
-#if defined _MSC_VER
 #define __FASTCALL__ __fastcall
-#else
-#define __FASTCALL__ __attribute__((fastcall))
 #endif
 
 /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
