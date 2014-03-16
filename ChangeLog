@@ -1,5 +1,16 @@
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
 
+	* testsuite/libffi.call/closure_stdcall.c,
+	testsuite/libffi.call/closure_thiscall.c: Remove fragile stack pointer
+	checks.  These files included inline assembly to save the stack
+	pointer before and after the call, and compare the values.  However,
+	compilers can and do leave the stack in different states for these two
+	pieces of inline assembly, such as by saving a temporary value on the
+	stack across the call; observed with gcc -Os, and verified as spurious
+	through careful inspection of disassembly.
+
+2014-03-16  Josh Triplett <josh@joshtriplett.org>
+
 	* testsuite/libffi.call/many.c: Avoid spurious failure due to excess
 	floating-point precision.
 	* testsuite/libffi.call/many_win32.c: Ditto.
