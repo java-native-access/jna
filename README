@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.0.14 was released on TBD.  Check the libffi web
+libffi-3.1 was released on TBD.  Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -170,9 +170,10 @@ To install the library and header files, type "make install".
 History
 =======
 
-See the ChangeLog files for details.
+See the git log for details.
 
-3.0.14 TBD
+3.1 TBD
+	Archive off the manually maintained ChangeLog in favor of git log.
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.

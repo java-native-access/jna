@@ -50,7 +50,7 @@ EXTRA_DIST = LICENSE ChangeLog.v1 ChangeLog.libgcj configure.host	\
 	 m4/ltversion.m4 src/arm/gentramp.sh src/debug.c msvcc.sh	\
 	 generate-darwin-source-and-headers.py				\
 	 libffi.xcodeproj/project.pbxproj src/arm/trampoline.S		\
-	 libtool-ldflags
+	 libtool-ldflags ChangeLog.libffi-3.1
 
 info_TEXINFOS = doc/libffi.texi
 
@@ -247,3 +247,5 @@ libffi_la_LDFLAGS = -no-undefined -version-info `grep -v '^\#' $(srcdir)/libtool
 AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
 AM_CCASFLAGS = $(AM_CPPFLAGS)
 
+dist-hook:
+	if [ -d $(top_srcdir)/.git ] ; then git -C $(top_srcdir) log --no-decorate ; else echo 'See git log for history.' ; fi > $(distdir)/ChangeLog
