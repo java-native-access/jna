@@ -273,6 +273,23 @@ proc libffi-dg-runtest { testcases default-extra-flags } {
     }
 }
 
+proc run-many-tests { testcases extra_flags } {
+    global using_gcc
+    if { [string match $using_gcc "yes"] } {
+        set common "-W -Wall"
+        set optimizations { "-O0" "-O2" "-O3" "-Os" "-O2 -fomit-frame-pointer" }
+    } else {
+        # Assume we are using the vendor compiler.
+        set common ""
+        set optimizations { "" }
+    }
+
+    set common [ concat $common $extra_flags ]
+    foreach opt $optimizations {
+        set options [ concat $common $opt ]
+        dg-runtest $testcases $options ""
+    }
+}
 
 # Like check_conditional_xfail, but callable from a dg test.
 

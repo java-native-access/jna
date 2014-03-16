@@ -19,17 +19,8 @@ libffi-init
 
 global srcdir subdir
 
-global cxx_options
-
-set cxx_options " -shared-libgcc -lstdc++"
-
 if { [string match $using_gcc "yes"] } {
-
-  dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] $cxx_options "-O0 -W -Wall"
-  dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] $cxx_options "-O2"
-  dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] $cxx_options "-O3"
-  dg-runtest [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] $cxx_options "-Os"
-
+  run-many-tests [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] "-shared-libgcc -lstdc++"
 }
 
 dg-finish
