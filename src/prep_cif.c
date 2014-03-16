@@ -118,13 +118,8 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
   FFI_ASSERT((!isvariadic) || (nfixedargs >= 1));
   FFI_ASSERT(nfixedargs <= ntotalargs);
 
-#ifndef X86_WIN32
   if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI))
     return FFI_BAD_ABI;
-#else
-  if (! (abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI || abi == FFI_THISCALL))
-    return FFI_BAD_ABI;
-#endif
 
   cif->abi = abi;
   cif->arg_types = atypes;

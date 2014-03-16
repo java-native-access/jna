@@ -1,5 +1,14 @@
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
 
+	* prep_cif.c: Remove unnecessary ifdef for X86_WIN32.
+	ffi_prep_cif_core had a special case for X86_WIN32, checking for
+	FFI_THISCALL in addition to the FFI_FIRST_ABI-to-FFI_LAST_ABI range
+	before returning FFI_BAD_ABI.  However, on X86_WIN32, FFI_THISCALL
+	already falls in that range, making the special case unnecessary.
+	Remove it.
+
+2014-03-16  Josh Triplett <josh@joshtriplett.org>
+
 	* testsuite/libffi.call/closure_stdcall.c,
 	testsuite/libffi.call/closure_thiscall.c: Remove fragile stack pointer
 	checks.  These files included inline assembly to save the stack
