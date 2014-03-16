@@ -32,9 +32,6 @@ int main (void)
   ffi_closure *pcl = ffi_closure_alloc(sizeof(ffi_closure), &code);
   ffi_type * cl_arg_types[17];
   int res;
-  void* sp_pre;
-  void* sp_post;
-  char buf[1024];
 
   cl_arg_types[0] = &ffi_type_uint;
   cl_arg_types[1] = &ffi_type_uint;
@@ -49,24 +46,11 @@ int main (void)
   CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_stdcall,
                              (void *) 3 /* userdata */, code) == FFI_OK);
 
-#ifdef _MSC_VER
-  __asm { mov sp_pre, esp }
-#else
-  asm volatile (" movl %%esp,%0" : "=g" (sp_pre));
-#endif
   res = (*(closure_test_type0)code)(0, 1, 2, 3);
-#ifdef _MSC_VER
-  __asm { mov sp_post, esp }
-#else
-  asm volatile (" movl %%esp,%0" : "=g" (sp_post));
-#endif
   /* { dg-output "0 1 2 3: 9" } */
 
   printf("res: %d\n",res);
   /* { dg-output "\nres: 9" } */
 
-  sprintf(buf, "mismatch: pre=%p vs post=%p", sp_pre, sp_post);
-  printf("stack pointer %s\n", (sp_pre == sp_post ? "match" : buf));
-  /* { dg-output "\nstack pointer match" } */
   exit(0);
 }
