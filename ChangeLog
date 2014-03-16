@@ -1,5 +1,9 @@
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
 
+	* libtool-ldflags: Re-add.
+
+2014-03-16  Josh Triplett <josh@joshtriplett.org>
+
 	* Makefile.in, aclocal.m4, compile, config.guess, config.sub,
 	configure, depcomp, include/Makefile.in, install-sh, libtool-ldflags,
 	ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltsugar.m4,
