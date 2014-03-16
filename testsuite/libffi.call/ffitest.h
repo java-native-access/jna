@@ -22,10 +22,12 @@
 #if defined(__GNUC__)
 #define __UNUSED__ __attribute__((__unused__))
 #define __STDCALL__ __attribute__((stdcall))
+#define __THISCALL__ __attribute__((thiscall))
 #define __FASTCALL__ __attribute__((fastcall))
 #else
 #define __UNUSED__
 #define __STDCALL__ __stdcall
+#define __THISCALL__ __thiscall
 #define __FASTCALL__ __fastcall
 #endif
 
