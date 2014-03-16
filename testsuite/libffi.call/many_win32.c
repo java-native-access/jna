@@ -23,7 +23,7 @@ static float __attribute__((stdcall)) stdcall_many(float f1,
 						   float f12,
 						   float f13)
 {
-  return ((f1/f2+f3/f4+f5/f6+f7/f8+f9/f10+f11/f12) * f13);
+  return f1+f2+f3+f4+f5+f6+f7+f8+f9+f10+f11+f12+f13;
 }
 
 int main (void)
