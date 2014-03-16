@@ -1,5 +1,11 @@
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
 
+	* testsuite/libffi.call/many.c: Avoid spurious failure due to excess
+	floating-point precision.
+	* testsuite/libffi.call/many_win32.c: Ditto.
+
+2014-03-16  Josh Triplett <josh@joshtriplett.org>
+
 	* libtool-ldflags: Re-add.
 
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
