@@ -473,15 +473,21 @@ END
 
 #else
 
+#if defined(X86_WIN32)
+#define USCORE_SYMBOL(x) _##x
+#else
+#define USCORE_SYMBOL(x) x
+#endif
 	.text
  
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_call_win32
-#ifndef __OS2__
+FFI_HIDDEN(ffi_call_win32)
+	.globl	USCORE_SYMBOL(ffi_call_win32)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_call_win32;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_call_win32:
+USCORE_SYMBOL(ffi_call_win32):
 .LFB1:
         pushl %ebp
 .LCFI0:
@@ -644,11 +650,12 @@ _ffi_call_win32:
         ret
 .ffi_call_win32_end:
         .balign 16
-	.globl	_ffi_closure_THISCALL
-#ifndef __OS2__
+FFI_HIDDEN(ffi_closure_THISCALL)
+	.globl	USCORE_SYMBOL(ffi_closure_THISCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_closure_THISCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_THISCALL:
+USCORE_SYMBOL(ffi_closure_THISCALL):
 	pushl	%ebp
 	movl	%esp, %ebp
 	subl	$40, %esp
@@ -660,11 +667,14 @@ _ffi_closure_THISCALL:
 
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_closure_SYSV
-#ifndef __OS2__
+FFI_HIDDEN(ffi_closure_SYSV)
+#if defined(X86_WIN32)
+	.globl	USCORE_SYMBOL(ffi_closure_SYSV)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_closure_SYSV;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_SYSV:
+USCORE_SYMBOL(ffi_closure_SYSV):
+#endif
 .LFB3:
 	pushl	%ebp
 .LCFI4:
@@ -678,7 +688,7 @@ _ffi_closure_SYSV:
 	movl	%edx, 4(%esp)	/* args = __builtin_dwarf_cfa () */
 	leal	-12(%ebp), %edx
 	movl	%edx, (%esp)	/* &resp */
-	call	_ffi_closure_SYSV_inner
+	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
 	movl	-12(%ebp), %ecx
 
 0:
@@ -789,11 +799,12 @@ _ffi_closure_SYSV:
 #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
 #define CIF_FLAGS_OFFSET 20
         .balign 16
-	.globl	_ffi_closure_raw_THISCALL
-#ifndef __OS2__
+FFI_HIDDEN(ffi_closure_raw_THISCALL)
+	.globl	USCORE_SYMBOL(ffi_closure_raw_THISCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_closure_raw_THISCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_raw_THISCALL:
+USCORE_SYMBOL(ffi_closure_raw_THISCALL):
 	pushl	%ebp
 	movl	%esp, %ebp
 	pushl	%esi
@@ -805,11 +816,13 @@ _ffi_closure_raw_THISCALL:
 	jmp	.stubraw
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_closure_raw_SYSV
-#ifndef __OS2__
+#if defined(X86_WIN32)
+	.globl	USCORE_SYMBOL(ffi_closure_raw_SYSV)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_closure_raw_SYSV;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_raw_SYSV:
+USCORE_SYMBOL(ffi_closure_raw_SYSV):
+#endif /* defined(X86_WIN32) */
 .LFB4:
 	pushl	%ebp
 .LCFI6:
@@ -925,11 +938,12 @@ _ffi_closure_raw_SYSV:
 
         # This assumes we are using gas.
 	.balign	16
-	.globl	_ffi_closure_STDCALL
-#ifndef __OS2__
+FFI_HIDDEN(ffi_closure_STDCALL)
+	.globl	USCORE_SYMBOL(ffi_closure_STDCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.def	_ffi_closure_STDCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_STDCALL:
+USCORE_SYMBOL(ffi_closure_STDCALL):
 .LFB5:
 	pushl	%ebp
 .LCFI9:
@@ -942,7 +956,7 @@ _ffi_closure_STDCALL:
 	movl	%edx, 4(%esp)	/* args */
 	leal	-12(%ebp), %edx
 	movl	%edx, (%esp)	/* &resp */
-	call	_ffi_closure_SYSV_inner
+	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
 	movl	-12(%ebp), %ecx
 0:
 	call	1f
@@ -1034,7 +1048,7 @@ _ffi_closure_STDCALL:
 .ffi_closure_STDCALL_end:
 .LFE5:
 
-#ifndef __OS2__
+#if defined(X86_WIN32) && !defined(__OS2__)
 	.section	.eh_frame,"w"
 #endif
 .Lframe1:
@@ -1093,7 +1107,6 @@ _ffi_closure_STDCALL:
 	/* End of DW_CFA_xxx CFI instructions.  */
 	.align 4
 .LEFDE1:
-
 
 .LSFDE3:
 	.long	.LEFDE3-.LASFDE3	/* FDE Length */

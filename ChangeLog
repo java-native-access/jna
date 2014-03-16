@@ -1,5 +1,39 @@
 2014-03-16  Josh Triplett <josh@joshtriplett.org>
 
+	Add support for stdcall, thiscall, and fastcall on non-Windows x86-32.
+
+	Linux supports the stdcall calling convention, either via functions
+	explicitly declared with the stdcall attribute, or via code compiled
+	with -mrtd which effectively makes stdcall the default.
+
+	This introduces FFI_STDCALL, FFI_THISCALL, and FFI_FASTCALL on
+	non-Windows x86-32 platforms, as non-default calling conventions.
+
+	* Makefile.am: Compile in src/x86/win32.S on non-Windows x86-32.
+	* src/x86/ffitarget.h: Add FFI_STDCALL, FFI_THISCALL, and FFI_FASTCALL
+	on non-Windows x86-32.  Increase trampoline size to accomodate these
+	calling conventions, and unify some ifdeffery.
+	* src/x86/ffi.c: Add support for FFI_STDCALL, FFI_THISCALL, and
+	FFI_FASTCALL on non-Windows x86-32 platforms; update ifdeffery.
+	* src/x86/win32.S: Support compiling on non-Windows x86-32 platforms.
+	On those platforms, avoid redefining the SYSV symbols already provided
+	by src/x86/sysv.S.
+	* testsuite/libffi.call/closure_stdcall.c: Run on non-Windows.
+	#define __stdcall if needed.
+	* testsuite/libffi.call/closure_thiscall.c: Run on non-Windows.
+	#define __fastcall if needed.
+	* testsuite/libffi.call/fastthis1_win32.c: Run on non-Windows.
+	* testsuite/libffi.call/fastthis2_win32.c: Ditto.
+	* testsuite/libffi.call/fastthis3_win32.c: Ditto.
+	* testsuite/libffi.call/many2_win32.c: Ditto.
+	* testsuite/libffi.call/many_win32.c: Ditto.
+	* testsuite/libffi.call/strlen2_win32.c: Ditto.
+	* testsuite/libffi.call/strlen_win32.c: Ditto.
+	* testsuite/libffi.call/struct1_win32.c: Ditto.
+	* testsuite/libffi.call/struct2_win32.c: Ditto.
+
+2014-03-16  Josh Triplett <josh@joshtriplett.org>
+
 	* prep_cif.c: Remove unnecessary ifdef for X86_WIN32.
 	ffi_prep_cif_core had a special case for X86_WIN32, checking for
 	FFI_THISCALL in addition to the FFI_FIRST_ABI-to-FFI_LAST_ABI range

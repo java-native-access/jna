@@ -4,7 +4,7 @@
    PR:		none.
    Originator:	From the original ffitest.c  */
 
-/* { dg-do run { target i?86-*-cygwin* i?86-*-mingw* } } */
+/* { dg-do run { target i?86-*-* } } */
 
 #include "ffitest.h"
 #include <float.h>
