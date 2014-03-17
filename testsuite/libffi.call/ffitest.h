@@ -31,6 +31,11 @@
 #define __FASTCALL__ __fastcall
 #endif
 
+#ifndef ABI_NUM
+#define ABI_NUM FFI_DEFAULT_ABI
+#define ABI_ATTR
+#endif
+
 /* Prefer MAP_ANON(YMOUS) to /dev/zero, since we don't need to keep a
    file open.  */
 #ifdef HAVE_MMAP_ANON
