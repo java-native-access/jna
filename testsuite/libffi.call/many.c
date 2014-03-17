@@ -11,19 +11,7 @@
 #include <float.h>
 #include <math.h>
 
-static float many(float f1,
-		  float f2,
-		  float f3,
-		  float f4,
-		  float f5,
-		  float f6,
-		  float f7,
-		  float f8,
-		  float f9,
-		  float f10,
-		  float f11,
-		  float f12,
-		  float f13)
+static float ABI_ATTR many(float f1, float f2, float f3, float f4, float f5, float f6, float f7, float f8, float f9, float f10, float f11, float f12, float f13)
 {
 #if 0
   printf("%f %f %f %f %f %f %f %f %f %f %f %f %f\n",
@@ -52,7 +40,7 @@ int main (void)
     }
 
     /* Initialize the cif */
-    CHECK(ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 13, 
+    CHECK(ffi_prep_cif(&cif, ABI_NUM, 13,
 		       &ffi_type_float, args) == FFI_OK);
 
     ffi_call(&cif, FFI_FN(many), &f, values);

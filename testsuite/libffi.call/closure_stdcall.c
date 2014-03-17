@@ -23,10 +23,7 @@ closure_test_stdcall(ffi_cif* cif __UNUSED__, void* resp, void** args,
 
 }
 
-#ifndef _MSC_VER
-#define __stdcall __attribute__((stdcall))
-#endif
-typedef int (__stdcall *closure_test_type0)(int, int, int, int);
+typedef int (__STDCALL__ *closure_test_type0)(int, int, int, int);
 
 int main (void)
 {

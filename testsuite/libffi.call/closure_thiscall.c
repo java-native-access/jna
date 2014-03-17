@@ -23,10 +23,7 @@ closure_test_thiscall(ffi_cif* cif __UNUSED__, void* resp, void** args,
 
 }
 
-#ifndef _MSC_VER
-#define __thiscall __attribute__((thiscall))
-#endif
-typedef int (__thiscall *closure_test_type0)(int, int, int, int);
+typedef int (__THISCALL__ *closure_test_type0)(int, int, int, int);
 
 int main (void)
 {
