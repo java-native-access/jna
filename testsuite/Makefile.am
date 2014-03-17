@@ -84,7 +84,7 @@ libffi.call/cls_align_uint64.c libffi.call/cls_4byte.c			\
 libffi.call/strlen_win32.c libffi.call/cls_6_1_byte.c			\
 libffi.call/cls_7_1_byte.c libffi.call/unwindtest.cc			\
 libffi.call/unwindtest_ffi_call.cc	\
-libffi.call/ffitestcxx.h lib/wrapper.exp lib/target-libpath.exp	\
+lib/wrapper.exp lib/target-libpath.exp	\
 lib/libffi.exp libffi.call/cls_struct_va1.c				\
 libffi.call/cls_uchar_va.c libffi.call/cls_uint_va.c			\
 libffi.call/cls_ulong_va.c libffi.call/cls_ushort_va.c			\
