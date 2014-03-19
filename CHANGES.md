@@ -5,7 +5,9 @@ NOTE: JNI native support is typically incompatible between minor versions, and a
 Next Release
 ============
 
-* Your contribution here.
+Features
+--------
+* Updated AIX natives and build - [@twall](https://github.com/twall).
 
 Release 4.1
 ===========

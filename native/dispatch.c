@@ -60,7 +60,6 @@
 #endif
 
 #ifdef _AIX
-#pragma alloca
 #undef DEFAULT_LOAD_OPTS
 #define DEFAULT_LOAD_OPTS (RTLD_MEMBER| RTLD_LAZY | RTLD_GLOBAL)
 #undef LOAD_LIBRARY
@@ -69,7 +68,9 @@
 
 #include <stdlib.h>
 // Force XSI-compliant strerror_r (http://unixhelp.ed.ac.uk/CGI/man-cgi?strerror)
+#ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 600
+#endif
 #include <string.h>
 #include <wchar.h>
 #include <jni.h>
@@ -813,7 +814,7 @@ encodingString(JNIEnv *env, const char* ptr) {
   
   bytes = (*env)->NewByteArray(env, len);
   if (bytes != NULL) {
-    (*env)->SetByteArrayRegion(env, bytes, 0, len, (const jbyte *)ptr);
+    (*env)->SetByteArrayRegion(env, bytes, 0, len, (jbyte *)ptr);
     result = (*env)->NewObject(env, classString,
                                MID_String_init_bytes, bytes);
     (*env)->DeleteLocalRef(env, bytes);
@@ -861,7 +862,7 @@ newJavaString(JNIEnv *env, const char *ptr, const char* charset)
 
         bytes = (*env)->NewByteArray(env, len);
         if (bytes != NULL) {
-          (*env)->SetByteArrayRegion(env, bytes, 0, len, (const jbyte *)ptr);
+          (*env)->SetByteArrayRegion(env, bytes, 0, len, (jbyte *)ptr);
           result = (*env)->NewObject(env, classString,
                                      MID_String_init_bytes2, bytes, 
                                      encodingString(env, charset));

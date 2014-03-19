@@ -527,9 +527,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <os name="OpenBSD"/>
     </condition>
     <property name="grep" value="grep"/>
+    <condition property="grep.required" value="false" else="true">
+      <os name="AIX"/>
+    </condition>
     <!-- args are based on GNU grep, other versions may differ -->
     <apply dir="${build.native}" executable="${grep}" parallel="true"
-           failonerror="true" relative="true" output="${md5.file}">
+           failonerror="${grep.required}" relative="true" output="${md5.file}">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
@@ -552,6 +555,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <checksum property="md5" file="${md5.file}" />
     <condition property="jni.valid" value="true">
       <or>
+        <os name="AIX"/>
         <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
         <equals arg1="${jni.md5}" arg2=""/>
       </or>
