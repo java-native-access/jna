@@ -138,6 +138,9 @@ nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/win64.S
 endif
 if X86_DARWIN
 nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/darwin.S src/x86/ffi64.c src/x86/darwin64.S
+if X86_DARWIN32
+nodist_libffi_la_SOURCES += src/x86/win32.S
+endif
 endif
 if SPARC
 nodist_libffi_la_SOURCES += src/sparc/ffi.c src/sparc/v8.S src/sparc/v9.S

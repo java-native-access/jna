@@ -19,7 +19,7 @@ class simulator_platform(Platform):
     prefix = "#ifdef __i386__\n\n"
     suffix = "\n\n#endif"
     src_dir = 'x86'
-    src_files = ['darwin.S', 'ffi.c']
+    src_files = ['darwin.S', 'win32.S', 'ffi.c']
 
 
 class simulator64_platform(Platform):
@@ -68,7 +68,7 @@ class desktop32_platform(Platform):
     triple = 'i386-apple-darwin10'
     version_min = '-mmacosx-version-min=10.6'
     src_dir = 'x86'
-    src_files = ['darwin.S', 'ffi.c']
+    src_files = ['darwin.S', 'win32.S', 'ffi.c']
 
     prefix = "#ifdef __i386__\n\n"
     suffix = "\n\n#endif"
