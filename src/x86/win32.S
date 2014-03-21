@@ -688,7 +688,16 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 	movl	%edx, 4(%esp)	/* args = __builtin_dwarf_cfa () */
 	leal	-12(%ebp), %edx
 	movl	%edx, (%esp)	/* &resp */
+#if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
 	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+#else
+	movl	%ebx, 8(%esp)
+	call	1f
+1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
+	call	ffi_closure_SYSV_inner@PLT
+	movl	8(%esp), %ebx
+#endif
 	movl	-12(%ebp), %ecx
 
 0:
@@ -956,7 +965,16 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	movl	%edx, 4(%esp)	/* args */
 	leal	-12(%ebp), %edx
 	movl	%edx, (%esp)	/* &resp */
+#if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
 	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+#else
+	movl	%ebx, 8(%esp)
+	call	1f
+1:	popl	%ebx
+	addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
+	call	ffi_closure_SYSV_inner@PLT
+	movl	8(%esp), %ebx
+#endif
 	movl	-12(%ebp), %ecx
 0:
 	call	1f
