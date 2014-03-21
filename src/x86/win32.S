@@ -568,8 +568,7 @@ USCORE_SYMBOL(ffi_call_win32):
 	.long	.Lretstruct4b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_4B */
 	.long	.Lretstruct-.Lstore_table	/* FFI_TYPE_MS_STRUCT */
 1:
-	add	%ecx, %ecx
-	add	%ecx, %ecx
+	shl	$2, %ecx
 	add	(%esp),%ecx
 	mov	(%ecx),%ecx
 	add	(%esp),%ecx
@@ -727,8 +726,7 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 	.long	.Lcls_retmsstruct-.Lcls_store_table	/* FFI_TYPE_MS_STRUCT */
 
 1:
-	add	%eax, %eax
-	add	%eax, %eax
+	shl	$2, %eax
 	add	(%esp),%eax
 	mov	(%eax),%eax
 	add	(%esp),%eax
@@ -879,8 +877,7 @@ USCORE_SYMBOL(ffi_closure_raw_SYSV):
 	.long	.Lrcls_retstruct4-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
 	.long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_MS_STRUCT */
 1:
-	add	%eax, %eax
-	add	%eax, %eax
+	shl	$2, %eax
 	add	(%esp),%eax
 	mov	(%eax),%eax
 	add	(%esp),%eax
@@ -1005,8 +1002,7 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	.long	.Lscls_retstruct2-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
 	.long	.Lscls_retstruct4-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
 1:
-	add	%eax, %eax
-	add	%eax, %eax
+	shl	$2, %eax
 	add	(%esp),%eax
 	mov	(%eax),%eax
 	add	(%esp),%eax
