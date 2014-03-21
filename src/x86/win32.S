@@ -548,31 +548,33 @@ USCORE_SYMBOL(ffi_call_win32):
 	call	1f
 	# Do not insert anything here between the call and the jump table.
 .Lstore_table:
-	.long	.Lnoretval		/* FFI_TYPE_VOID */
-	.long	.Lretint		/* FFI_TYPE_INT */
-	.long	.Lretfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lretdouble		/* FFI_TYPE_DOUBLE */
-	.long	.Lretlongdouble		/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lretuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lretsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lretuint16		/* FFI_TYPE_UINT16 */
-	.long	.Lretsint16		/* FFI_TYPE_SINT16 */
-	.long	.Lretint		/* FFI_TYPE_UINT32 */
-	.long	.Lretint		/* FFI_TYPE_SINT32 */
-	.long	.Lretint64		/* FFI_TYPE_UINT64 */
-	.long	.Lretint64		/* FFI_TYPE_SINT64 */
-	.long	.Lretstruct		/* FFI_TYPE_STRUCT */
-	.long	.Lretint		/* FFI_TYPE_POINTER */
-	.long	.Lretstruct1b		/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lretstruct2b		/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lretstruct4b		/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lretstruct		/* FFI_TYPE_MS_STRUCT */
+	.long	.Lnoretval-.Lstore_table	/* FFI_TYPE_VOID */
+	.long	.Lretint-.Lstore_table		/* FFI_TYPE_INT */
+	.long	.Lretfloat-.Lstore_table	/* FFI_TYPE_FLOAT */
+	.long	.Lretdouble-.Lstore_table	/* FFI_TYPE_DOUBLE */
+	.long	.Lretlongdouble-.Lstore_table	/* FFI_TYPE_LONGDOUBLE */
+	.long	.Lretuint8-.Lstore_table	/* FFI_TYPE_UINT8 */
+	.long	.Lretsint8-.Lstore_table	/* FFI_TYPE_SINT8 */
+	.long	.Lretuint16-.Lstore_table	/* FFI_TYPE_UINT16 */
+	.long	.Lretsint16-.Lstore_table	/* FFI_TYPE_SINT16 */
+	.long	.Lretint-.Lstore_table		/* FFI_TYPE_UINT32 */
+	.long	.Lretint-.Lstore_table		/* FFI_TYPE_SINT32 */
+	.long	.Lretint64-.Lstore_table	/* FFI_TYPE_UINT64 */
+	.long	.Lretint64-.Lstore_table	/* FFI_TYPE_SINT64 */
+	.long	.Lretstruct-.Lstore_table	/* FFI_TYPE_STRUCT */
+	.long	.Lretint-.Lstore_table		/* FFI_TYPE_POINTER */
+	.long	.Lretstruct1b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+	.long	.Lretstruct2b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+	.long	.Lretstruct4b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+	.long	.Lretstruct-.Lstore_table	/* FFI_TYPE_MS_STRUCT */
 1:
 	add	%ecx, %ecx
 	add	%ecx, %ecx
 	add	(%esp),%ecx
+	mov	(%ecx),%ecx
+	add	(%esp),%ecx
 	add	$4, %esp
-	jmp	*(%ecx)
+	jmp	*%ecx
 
 	/* Sign/zero extend as appropriate.  */
 .Lretsint8:
@@ -704,32 +706,34 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 	call	1f
 	# Do not insert anything here between the call and the jump table.
 .Lcls_store_table:
-	.long	.Lcls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lcls_retint		/* FFI_TYPE_INT */
-	.long	.Lcls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lcls_retdouble		/* FFI_TYPE_DOUBLE */
-	.long	.Lcls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lcls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lcls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lcls_retuint16		/* FFI_TYPE_UINT16 */
-	.long	.Lcls_retsint16		/* FFI_TYPE_SINT16 */
-	.long	.Lcls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lcls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lcls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lcls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lcls_retstruct		/* FFI_TYPE_STRUCT */
-	.long	.Lcls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lcls_retmsstruct	/* FFI_TYPE_MS_STRUCT */
+	.long	.Lcls_noretval-.Lcls_store_table	/* FFI_TYPE_VOID */
+	.long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_INT */
+	.long	.Lcls_retfloat-.Lcls_store_table	/* FFI_TYPE_FLOAT */
+	.long	.Lcls_retdouble-.Lcls_store_table	/* FFI_TYPE_DOUBLE */
+	.long	.Lcls_retldouble-.Lcls_store_table	/* FFI_TYPE_LONGDOUBLE */
+	.long	.Lcls_retuint8-.Lcls_store_table	/* FFI_TYPE_UINT8 */
+	.long	.Lcls_retsint8-.Lcls_store_table	/* FFI_TYPE_SINT8 */
+	.long	.Lcls_retuint16-.Lcls_store_table	/* FFI_TYPE_UINT16 */
+	.long	.Lcls_retsint16-.Lcls_store_table	/* FFI_TYPE_SINT16 */
+	.long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_UINT32 */
+	.long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_SINT32 */
+	.long	.Lcls_retllong-.Lcls_store_table	/* FFI_TYPE_UINT64 */
+	.long	.Lcls_retllong-.Lcls_store_table	/* FFI_TYPE_SINT64 */
+	.long	.Lcls_retstruct-.Lcls_store_table	/* FFI_TYPE_STRUCT */
+	.long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_POINTER */
+	.long	.Lcls_retstruct1-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+	.long	.Lcls_retstruct2-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+	.long	.Lcls_retstruct4-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+	.long	.Lcls_retmsstruct-.Lcls_store_table	/* FFI_TYPE_MS_STRUCT */
 
 1:
 	add	%eax, %eax
 	add	%eax, %eax
 	add	(%esp),%eax
+	mov	(%eax),%eax
+	add	(%esp),%eax
 	add	$4, %esp
-	jmp	*(%eax)
+	jmp	*%eax
 
 	/* Sign/zero extend as appropriate.  */
 .Lcls_retsint8:
@@ -855,31 +859,33 @@ USCORE_SYMBOL(ffi_closure_raw_SYSV):
 	call	1f
 	# Do not insert anything here between the call and the jump table.
 .Lrcls_store_table:
-	.long	.Lrcls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lrcls_retint		/* FFI_TYPE_INT */
-	.long	.Lrcls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lrcls_retdouble	/* FFI_TYPE_DOUBLE */
-	.long	.Lrcls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lrcls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lrcls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lrcls_retuint16	/* FFI_TYPE_UINT16 */
-	.long	.Lrcls_retsint16	/* FFI_TYPE_SINT16 */
-	.long	.Lrcls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lrcls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lrcls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lrcls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lrcls_retstruct	/* FFI_TYPE_STRUCT */
-	.long	.Lrcls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lrcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lrcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lrcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lrcls_retstruct	/* FFI_TYPE_MS_STRUCT */
+	.long	.Lrcls_noretval-.Lrcls_store_table	/* FFI_TYPE_VOID */
+	.long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_INT */
+	.long	.Lrcls_retfloat-.Lrcls_store_table	/* FFI_TYPE_FLOAT */
+	.long	.Lrcls_retdouble-.Lrcls_store_table	/* FFI_TYPE_DOUBLE */
+	.long	.Lrcls_retldouble-.Lrcls_store_table	/* FFI_TYPE_LONGDOUBLE */
+	.long	.Lrcls_retuint8-.Lrcls_store_table	/* FFI_TYPE_UINT8 */
+	.long	.Lrcls_retsint8-.Lrcls_store_table	/* FFI_TYPE_SINT8 */
+	.long	.Lrcls_retuint16-.Lrcls_store_table	/* FFI_TYPE_UINT16 */
+	.long	.Lrcls_retsint16-.Lrcls_store_table	/* FFI_TYPE_SINT16 */
+	.long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_UINT32 */
+	.long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_SINT32 */
+	.long	.Lrcls_retllong-.Lrcls_store_table	/* FFI_TYPE_UINT64 */
+	.long	.Lrcls_retllong-.Lrcls_store_table	/* FFI_TYPE_SINT64 */
+	.long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_STRUCT */
+	.long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_POINTER */
+	.long	.Lrcls_retstruct1-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+	.long	.Lrcls_retstruct2-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+	.long	.Lrcls_retstruct4-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+	.long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_MS_STRUCT */
 1:
 	add	%eax, %eax
 	add	%eax, %eax
 	add	(%esp),%eax
+	mov	(%eax),%eax
+	add	(%esp),%eax
 	add	$4, %esp
-	jmp	*(%eax)
+	jmp	*%eax
 
 	/* Sign/zero extend as appropriate.  */
 .Lrcls_retsint8:
@@ -980,30 +986,32 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	call	1f
 	# Do not insert anything here between the call and the jump table.
 .Lscls_store_table:
-	.long	.Lscls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lscls_retint		/* FFI_TYPE_INT */
-	.long	.Lscls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lscls_retdouble	/* FFI_TYPE_DOUBLE */
-	.long	.Lscls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lscls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lscls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lscls_retuint16	/* FFI_TYPE_UINT16 */
-	.long	.Lscls_retsint16	/* FFI_TYPE_SINT16 */
-	.long	.Lscls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lscls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lscls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lscls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lscls_retstruct	/* FFI_TYPE_STRUCT */
-	.long	.Lscls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lscls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lscls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lscls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
+	.long	.Lscls_noretval-.Lscls_store_table	/* FFI_TYPE_VOID */
+	.long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_INT */
+	.long	.Lscls_retfloat-.Lscls_store_table	/* FFI_TYPE_FLOAT */
+	.long	.Lscls_retdouble-.Lscls_store_table	/* FFI_TYPE_DOUBLE */
+	.long	.Lscls_retldouble-.Lscls_store_table	/* FFI_TYPE_LONGDOUBLE */
+	.long	.Lscls_retuint8-.Lscls_store_table	/* FFI_TYPE_UINT8 */
+	.long	.Lscls_retsint8-.Lscls_store_table	/* FFI_TYPE_SINT8 */
+	.long	.Lscls_retuint16-.Lscls_store_table	/* FFI_TYPE_UINT16 */
+	.long	.Lscls_retsint16-.Lscls_store_table	/* FFI_TYPE_SINT16 */
+	.long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_UINT32 */
+	.long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_SINT32 */
+	.long	.Lscls_retllong-.Lscls_store_table	/* FFI_TYPE_UINT64 */
+	.long	.Lscls_retllong-.Lscls_store_table	/* FFI_TYPE_SINT64 */
+	.long	.Lscls_retstruct-.Lscls_store_table	/* FFI_TYPE_STRUCT */
+	.long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_POINTER */
+	.long	.Lscls_retstruct1-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+	.long	.Lscls_retstruct2-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+	.long	.Lscls_retstruct4-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
 1:
 	add	%eax, %eax
 	add	%eax, %eax
 	add	(%esp),%eax
+	mov	(%eax),%eax
+	add	(%esp),%eax
 	add	$4, %esp
-	jmp	*(%eax)
+	jmp	*%eax
 
 	/* Sign/zero extend as appropriate.  */
 .Lscls_retsint8:
