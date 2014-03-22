@@ -691,6 +691,8 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 	movl	%edx, (%esp)	/* &resp */
 #if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
 	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+#elif defined(X86_DARWIN)
+	calll	L_ffi_closure_SYSV_inner$stub
 #else
 	movl	%ebx, 8(%esp)
 	call	1f
@@ -970,6 +972,8 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	movl	%edx, (%esp)	/* &resp */
 #if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
 	call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+#elif defined(X86_DARWIN)
+	calll	L_ffi_closure_SYSV_inner$stub
 #else
 	movl	%ebx, 8(%esp)
 	call	1f
@@ -1069,6 +1073,13 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	ret
 .ffi_closure_STDCALL_end:
 .LFE5:
+
+#if defined(X86_DARWIN)
+.section __IMPORT,__jump_table,symbol_stubs,self_modifying_code+pure_instructions,5
+L_ffi_closure_SYSV_inner$stub:
+	.indirect_symbol _ffi_closure_SYSV_inner
+	hlt ; hlt ; hlt ; hlt ; hlt
+#endif
 
 #if defined(X86_WIN32) && !defined(__OS2__)
 	.section	.eh_frame,"w"
