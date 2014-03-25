@@ -309,7 +309,7 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
     {
       if (((*ptr)->alignment - 1) & cif->bytes)
         cif->bytes = ALIGN(cif->bytes, (*ptr)->alignment);
-      cif->bytes += ALIGN((*ptr)->size, FFI_SIZEOF_ARG);
+      cif->bytes += (unsigned)ALIGN((*ptr)->size, FFI_SIZEOF_ARG);
     }
 
 #ifdef X86_WIN64
