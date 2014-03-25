@@ -128,7 +128,7 @@ if X86
 nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/sysv.S src/x86/win32.S
 endif
 if X86_FREEBSD
-nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/freebsd.S
+nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/freebsd.S src/x86/win32.S
 endif
 if X86_WIN32
 nodist_libffi_la_SOURCES += src/x86/ffi.c src/x86/win32.S
