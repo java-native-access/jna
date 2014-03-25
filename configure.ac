@@ -439,11 +439,9 @@ AC_ARG_ENABLE(pax_emutramp,
       [Define this if you want to enable pax emulated trampolines])
   fi)
 
-if test x$TARGET = xX86_WIN64; then
-    LT_SYS_SYMBOL_USCORE
-    if test "x$sys_symbol_underscore" = xyes; then
-        AC_DEFINE(SYMBOL_UNDERSCORE, 1, [Define if symbols are underscored.])
-    fi
+LT_SYS_SYMBOL_USCORE
+if test "x$sys_symbol_underscore" = xyes; then
+    AC_DEFINE(SYMBOL_UNDERSCORE, 1, [Define if symbols are underscored.])
 fi
 
 FFI_EXEC_TRAMPOLINE_TABLE=0

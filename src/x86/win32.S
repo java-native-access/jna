@@ -473,7 +473,7 @@ END
 
 #else
 
-#if defined(X86_WIN32)
+#if defined(SYMBOL_UNDERSCORE)
 #define USCORE_SYMBOL(x) _##x
 #else
 #define USCORE_SYMBOL(x) x
