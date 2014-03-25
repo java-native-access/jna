@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.0.13
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.1
 
 At the time of release, the following basic configurations have been
 tested:
@@ -170,20 +170,20 @@ To install the library and header files, type "make install".
 History
 =======
 
-See the git log for details.
+See the git log for details at http://github.com/atgreen/libffi.
 
 3.1 TBD
-	Archive off the manually maintained ChangeLog in favor of git log.
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.
 	Add support for stdcall, thiscall, and fastcall on non-Windows
 	  32-bit x86 targets such as Linux.
+	Various Android, MIPS N32, x86, FreeBSD and UltraSPARC IIi
+	  fixes.
 	Make the testsuite more robust: eliminated several spurious
 	  failures.
-	Android build fix.
-	Fix MIPS N32 ABI bug.
-	Various x86, FreeBSD and UltraSPARC IIi fixes.
+	Archive off the manually maintained ChangeLog in favor of git
+	  log.
 
 3.0.13 Mar-17-13
 	Add Meta support.
