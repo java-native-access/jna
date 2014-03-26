@@ -53,12 +53,11 @@ fi
 
 if test "x$GCC" = "xyes"; then
   CFLAGS="$CFLAGS -fexceptions"
-  touch local.exp
-else
-  cat > local.exp <<EOF
+fi
+
+cat > local.exp <<EOF
 set CC_FOR_TARGET "$CC"
 EOF
-fi
 
 AM_MAINTAINER_MODE
 
