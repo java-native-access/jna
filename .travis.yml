@@ -14,4 +14,9 @@ before_script:
   - sudo apt-get install dejagnu texinfo
   - if [ "$HOST" = i386-pc-linux-gnu ] ; then sudo apt-get install gcc-multilib g++-multilib && CC="$CC -m32" ; fi
 
-script: ./autogen.sh && ./configure ${HOST+--host=$HOST} && make && make dist && make check
+script:
+  - ./autogen.sh
+  - ./configure ${HOST+--host=$HOST}
+  - make
+  - make dist
+  - make check
