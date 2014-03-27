@@ -183,8 +183,8 @@ See the git log for details at http://github.com/atgreen/libffi.
 	  32-bit x86 targets such as Linux.
 	Various Android, MIPS N32, x86, FreeBSD and UltraSPARC IIi
 	  fixes.
-	Make the testsuite more robust: eliminated several spurious
-	  failures.
+	Make the testsuite more robust: eliminate several spurious
+	  failures, and respect the $CC and $CXX environment variables.
 	Archive off the manually maintained ChangeLog in favor of git
 	  log.
 
