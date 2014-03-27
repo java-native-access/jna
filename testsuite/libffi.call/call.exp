@@ -19,10 +19,7 @@ libffi-init
 
 global srcdir subdir
 
-run-many-tests [lsort [glob -nocomplain $srcdir/$subdir/*.\[cS\]]] ""
-if { [string match $using_gcc "yes"] } {
-  run-many-tests [lsort [glob -nocomplain $srcdir/$subdir/*.cc]] "-shared-libgcc -lstdc++"
-}
+run-many-tests [lsort [glob -nocomplain -- $srcdir/$subdir/*.{c,cc}]] ""
 
 dg-finish
 

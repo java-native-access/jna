@@ -1,4 +1,4 @@
-language: c
+language: cpp
 compiler:
   - gcc
   - clang
@@ -12,7 +12,7 @@ matrix:
 
 before_script:
   - sudo apt-get install dejagnu texinfo
-  - if [ "$HOST" = i386-pc-linux-gnu ] ; then sudo apt-get install gcc-multilib g++-multilib && CC="$CC -m32" ; fi
+  - if [ "$HOST" = i386-pc-linux-gnu ] ; then sudo apt-get install gcc-multilib g++-multilib && CC="$CC -m32" && CXX="$CXX -m32" ; fi
 
 script:
   - ./autogen.sh
