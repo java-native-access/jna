@@ -11,8 +11,6 @@ RUNTEST = `if [ -f $(top_srcdir)/../dejagnu/runtest ] ; then \
 	       echo $(top_srcdir)/../dejagnu/runtest ; \
 	    else echo runtest; fi`
 
-AM_RUNTESTFLAGS =
-
 EXTRA_DEJAGNU_SITE_CONFIG=../local.exp
 
 CLEANFILES = *.exe core* *.log *.sum
