@@ -90,7 +90,7 @@ Using the Library
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/4.1.0/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://twall.github.com/jna/4.1.0/).
 
 Developers
 ==========
