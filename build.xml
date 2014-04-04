@@ -185,6 +185,7 @@
           <os arch="sparcv9"/>
           <os arch="ppc64"/>
           <os arch="ia64"/>
+          <os arch="aarch64"/>
         </or>
       </and>
     </condition>
@@ -397,6 +398,8 @@ com/sun/jna/linux-x86-64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
+com/sun/jna/linux-aarch64/libjnidispatch.so;
+processor=aarch64;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 
@@ -437,6 +440,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
+      <zipfileset src="${lib.native}/linux-aarch64.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-aarch64"/>
       <zipfileset src="${lib.native}/linux-ia64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ia64"/>
@@ -572,6 +578,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-aarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
