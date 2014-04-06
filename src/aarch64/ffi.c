@@ -408,6 +408,10 @@ struct arg_state
   unsigned ngrn;                /* Next general-purpose register number. */
   unsigned nsrn;                /* Next vector register number. */
   size_t nsaa;                  /* Next stack offset. */
+
+#if defined (__APPLE__)
+  unsigned allocating_variadic;
+#endif
 };
 
 /* Initialize a procedure call argument marshalling state.  */
@@ -417,6 +421,10 @@ arg_init (struct arg_state *state, size_t call_frame_size)
   state->ngrn = 0;
   state->nsrn = 0;
   state->nsaa = 0;
+
+#if defined (__APPLE__)
+  state->allocating_variadic = 0;
+#endif
 }
 
 /* Return the number of available consecutive core argument
@@ -476,7 +484,10 @@ allocate_to_stack (struct arg_state *state, void *stack, size_t alignment,
      alignment of the argument's type.  */
   state->nsaa = ALIGN (state->nsaa, alignment);
   state->nsaa = ALIGN (state->nsaa, alignment);
-#if !defined (__APPLE__)
+#if defined (__APPLE__)
+  if (state->allocating_variadic)
+    state->nsaa = ALIGN (state->nsaa, 8);
+#else
   state->nsaa = ALIGN (state->nsaa, 8);
 #endif
 
@@ -725,6 +736,16 @@ aarch64_prep_args (struct call_context *context, unsigned char *stack,
 	  FFI_ASSERT (0);
 	  break;
 	}
+
+#if defined (__APPLE__)
+      if (i + 1 == ecif->cif->aarch64_nfixedargs)
+	{
+	  state.ngrn = N_X_ARG_REG;
+	  state.nsrn = N_V_ARG_REG;
+
+	  state.allocating_variadic = 1;
+	}
+#endif
     }
 
   return ecif->cif->aarch64_flags;
@@ -760,6 +781,20 @@ ffi_prep_cif_machdep (ffi_cif *cif)
 
   return FFI_OK;
 }
+
+#if defined (__APPLE__)
+
+/* Perform Apple-specific cif processing for variadic calls */
+ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
+				    unsigned int nfixedargs,
+				    unsigned int ntotalargs)
+{
+  cif->aarch64_nfixedargs = nfixedargs;
+
+  return ffi_prep_cif_machdep(cif);
+}
+
+#endif
 
 /* Call a function with the provided arguments and capture the return
    value.  */
