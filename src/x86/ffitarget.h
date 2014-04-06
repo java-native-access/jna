@@ -122,13 +122,21 @@ typedef enum ffi_abi {
 #if defined (X86_64) || (defined (__x86_64__) && defined (X86_DARWIN))
 #define FFI_TRAMPOLINE_SIZE 24
 #define FFI_NATIVE_RAW_API 0
-#elif defined(X86_WIN64)
+#else
+#ifdef X86_WIN32
+#define FFI_TRAMPOLINE_SIZE 52
+#else
+#ifdef X86_WIN64
 #define FFI_TRAMPOLINE_SIZE 29
 #define FFI_NATIVE_RAW_API 0
 #define FFI_NO_RAW_API 1
 #else
-#define FFI_TRAMPOLINE_SIZE 52
+#define FFI_TRAMPOLINE_SIZE 10
+#endif
+#endif
+#ifndef X86_WIN64
 #define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
+#endif
 #endif
 
 #endif
