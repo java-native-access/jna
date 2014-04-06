@@ -47,6 +47,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  */
 #ifdef __ELF__
         .type CNAME(ffi_call_SYSV), #function
 #endif
+#ifdef __APPLE__
+        .align 2
+#endif
 
 /* ffi_call_SYSV()
 
@@ -241,6 +244,9 @@ CNAME(ffi_call_SYSV):
 
         .text
         .globl CNAME(ffi_closure_SYSV)
+#ifdef __APPLE__
+        .align 2
+#endif
         .cfi_startproc
 CNAME(ffi_closure_SYSV):
         stp     x29, x30, [sp, #-16]!
