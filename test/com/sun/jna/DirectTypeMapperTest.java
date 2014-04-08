@@ -13,10 +13,12 @@
 
 package com.sun.jna;
 
+import java.awt.Point;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -155,6 +157,48 @@ public class DirectTypeMapperTest extends TestCase {
         // argument "true" converts to MAGIC; result MAGIC converts to "false"
         assertFalse("Failed to convert integer return to boolean FALSE", 
                     lib.returnInt32Argument(false));
+    }
+    public static class DirectTypeMappedResultTypeTestLibrary {
+        public native Point returnPoint(int x, int y);
+        static {
+            Map options = new HashMap();
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addTypeConverter(Point.class, new TypeConverter() {
+                public Object fromNative(Object value, FromNativeContext context) {
+                    Pointer p = (Pointer) value;
+                    int x = p.getInt(0), y = p.getInt(4);
+                    Native.free(Pointer.nativeValue(p));
+                    return new Point(x, y);
+                }
+                public Object toNative(Object value, ToNativeContext context) {
+                    return Pointer.NULL; // dummy implementation (not called)
+                }
+                public Class nativeType() { 
+                    return Pointer.class;
+                }
+            });
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+
+            // Can't extend java.awt.Point; can't add:
+            // public final static TypeMapper TYPE_MAPPER = mapper;
+            // -> Extend Native.options via reflection:
+            try {
+                Field f = Native.class.getDeclaredField("options");
+                f.setAccessible(true);
+                ((Map) f.get(null)).put(Point.class, options);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            Native.register(NativeLibrary.getInstance("testlib", options));
+        }
+    }
+    public void testTypeMapperResultTypeConversion() throws Exception {
+        DirectTypeMappedResultTypeTestLibrary lib = new DirectTypeMappedResultTypeTestLibrary();
+        Point p = lib.returnPoint(1234, 5678);
+        assertEquals("Failed to convert int* return to java.awt.Point", 1234, p.x);
+        assertEquals("Failed to convert int* return to java.awt.Point", 5678, p.y);
     }
 
     public static void main(String[] args) {

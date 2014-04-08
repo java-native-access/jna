@@ -1150,6 +1150,9 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* typ
       if (type->type != FFI_TYPE_POINTER) {
         extract_value(env, obj, result, type->size, JNI_TRUE);
       }
+      else {
+        *(jobject*)result = obj;
+      }
     }
   }
 }
