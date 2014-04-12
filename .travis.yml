@@ -1,17 +1,22 @@
-language: c
+language: cpp
 compiler:
   - gcc
   - clang
 env:
-  - build32=false
-  - build32=true
+  -
+  - HOST=i386-pc-linux-gnu
 matrix:
   exclude:
     - compiler: clang
-      env: build32=true
+      env: HOST=i386-pc-linux-gnu
 
 before_script:
   - sudo apt-get install dejagnu texinfo
-  - if $build32 ; then sudo apt-get install gcc-multilib g++-multilib ; fi
+  - if [ "$HOST" = i386-pc-linux-gnu ] ; then sudo apt-get install gcc-multilib g++-multilib && CC="$CC -m32" && CXX="$CXX -m32" ; fi
 
-script: run= && if $build32 ; then run=i386 && mkdir path32 && PATH="$(pwd)/path32:$PATH" && printf '#!/bin/sh\nexec /usr/bin/'"$CC"' -m32 "$@"' > "path32/$CC" && chmod a+x "path32/$CC" ; fi && ./autogen.sh && $run ./configure && make && make dist && make check
+script:
+  - ./autogen.sh
+  - ./configure ${HOST+--host=$HOST}
+  - make
+  - make dist
+  - make check

@@ -29,6 +29,7 @@ m4_rename([_AC_ARG_VAR_PRECIOUS],[real_PRECIOUS])
 m4_define([_AC_ARG_VAR_PRECIOUS],[])
 save_CFLAGS=$CFLAGS
 AC_PROG_CC
+AC_PROG_CXX
 CFLAGS=$save_CFLAGS
 m4_undefine([_AC_ARG_VAR_PRECIOUS])
 m4_rename_force([real_PRECIOUS],[_AC_ARG_VAR_PRECIOUS])
@@ -53,12 +54,12 @@ fi
 
 if test "x$GCC" = "xyes"; then
   CFLAGS="$CFLAGS -fexceptions"
-  touch local.exp
-else
-  cat > local.exp <<EOF
-set CC_FOR_TARGET "$CC"
-EOF
 fi
+
+cat > local.exp <<EOF
+set CC_FOR_TARGET "$CC"
+set CXX_FOR_TARGET "$CXX"
+EOF
 
 AM_MAINTAINER_MODE
 
