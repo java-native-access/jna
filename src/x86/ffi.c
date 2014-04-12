@@ -746,7 +746,7 @@ ffi_prep_raw_closure_loc (ffi_raw_closure* closure,
     }
   else if (cif->abi == FFI_THISCALL)
     {
-      FFI_INIT_TRAMPOLINE_RAW_THISCALL (&closure->tramp[0], &ffi_closure_raw_THISCALL, codeloc);
+      FFI_INIT_TRAMPOLINE_RAW_THISCALL (&closure->tramp[0], &ffi_closure_raw_THISCALL, codeloc, cif->bytes);
     }
 #endif
   closure->cif  = cif;
