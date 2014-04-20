@@ -472,14 +472,19 @@ cd_epilogue:
         mov   esp, ebp
         pop   ebp
         pop   ecx
-        mov   ecx, DWORD PTR [ecx + (CLOSURE_CIF_OFFSET-10)]
-        cmp   DWORD PTR [ecx + CIF_ABI_OFFSET], 3
-        mov   ecx, DWORD PTR [ecx + CIF_BYTES_OFFSET]
-        jne   cd_not_thiscall
-        add   ecx, 4
-cd_not_thiscall:
         pop   edx
-        add   esp, ecx
+        mov   ecx, DWORD PTR [ecx + (CLOSURE_CIF_OFFSET-10)]
+        add   esp, DWORD PTR [ecx + CIF_BYTES_OFFSET]
+        mov   ecx, DWORD PTR [ecx + CIF_ABI_OFFSET]
+        cmp   ecx, 3
+        je    cd_thiscall
+        cmp   ecx, 4
+        jne   cd_not_fastcall
+
+        add   esp, 4
+cd_thiscall:
+        add   esp, 4
+cd_not_fastcall:
         jmp   edx
 ffi_closure_STDCALL ENDP
 
@@ -677,6 +682,20 @@ USCORE_SYMBOL(ffi_closure_THISCALL):
 	/* Insert the register argument on the stack as the first argument */
 	xchg	%ecx, 4(%esp)
 	xchg	%ecx, (%esp)
+	push	%ecx
+	jmp	.ffi_closure_STDCALL_internal
+
+        .balign 16
+FFI_HIDDEN(ffi_closure_FASTCALL)
+	.globl	USCORE_SYMBOL(ffi_closure_FASTCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
+	.def	_ffi_closure_FASTCALL;	.scl	2;	.type	32;	.endef
+#endif
+USCORE_SYMBOL(ffi_closure_FASTCALL):
+	/* Insert the register arguments on the stack as the first two arguments */
+	xchg	%edx, 4(%esp)
+	xchg	%ecx, (%esp)
+	push	%edx
 	push	%ecx
 	jmp	.ffi_closure_STDCALL_internal
 .LFE1:
@@ -1090,14 +1109,18 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 	movl	%ebp, %esp
 	popl	%ebp
 	popl	%ecx
+	popl	%edx
 	movl	(CLOSURE_CIF_OFFSET-10)(%ecx), %ecx
-	cmpl	$3, CIF_ABI_OFFSET(%ecx) /* FFI_THISCALL */
-	movl	CIF_BYTES_OFFSET(%ecx), %ecx
-	jne	1f
-	addl	$4, %ecx
-1:	popl	%edx
-	addl	%ecx, %esp
-	jmp	*%edx
+	addl	CIF_BYTES_OFFSET(%ecx), %esp
+	movl	CIF_ABI_OFFSET(%ecx), %ecx
+	cmpl	$3, %ecx /* FFI_THISCALL */
+	je	1f
+	cmpl	$4, %ecx /* FFI_FASTCALL */
+	jne	2f
+
+	addl	$4, %esp
+1:	addl	$4, %esp
+2:	jmp	*%edx
 .ffi_closure_STDCALL_end:
 .LFE5:
 

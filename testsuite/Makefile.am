@@ -35,14 +35,14 @@ libffi.call/cls_align_longdouble_split2.c libffi.call/return_dbl2.c	\
 libffi.call/return_fl3.c libffi.call/stret_medium.c			\
 libffi.call/nested_struct6.c libffi.call/closure_fn3.c			\
 libffi.call/float3.c libffi.call/many2.c				\
-libffi.call/closure_stdcall.c libffi.call/cls_align_uint16.c		\
+libffi.call/closure_simple.c libffi.call/cls_align_uint16.c		\
 libffi.call/cls_9byte1.c libffi.call/closure_fn6.c			\
 libffi.call/cls_double_va.c libffi.call/cls_align_pointer.c		\
 libffi.call/cls_align_longdouble.c libffi.call/closure_fn2.c		\
 libffi.call/cls_sshort.c \
 libffi.call/nested_struct.c libffi.call/cls_20byte.c			\
 libffi.call/cls_longdouble.c libffi.call/cls_multi_uchar.c		\
-libffi.call/return_uc.c libffi.call/closure_thiscall.c			\
+libffi.call/return_uc.c \
 libffi.call/cls_18byte.c libffi.call/cls_8byte.c			\
 libffi.call/promotion.c \
 libffi.call/return_dbl.c libffi.call/cls_24byte.c			\
