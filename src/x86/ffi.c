@@ -448,6 +448,8 @@ void FFI_HIDDEN ffi_closure_STDCALL (ffi_closure *)
      __attribute__ ((regparm(1)));
 void FFI_HIDDEN ffi_closure_THISCALL (ffi_closure *)
      __attribute__ ((regparm(1)));
+void FFI_HIDDEN ffi_closure_FASTCALL (ffi_closure *)
+     __attribute__ ((regparm(1)));
 #else
 void FFI_HIDDEN ffi_closure_win64 (ffi_closure *);
 #endif
@@ -671,6 +673,12 @@ ffi_prep_closure_loc (ffi_closure* closure,
       FFI_INIT_TRAMPOLINE (&closure->tramp[0],
                            &ffi_closure_SYSV,
                            (void*)codeloc);
+    }
+  else if (cif->abi == FFI_FASTCALL)
+    {
+      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
+				   &ffi_closure_FASTCALL,
+				   (void*)codeloc);
     }
   else if (cif->abi == FFI_THISCALL)
     {

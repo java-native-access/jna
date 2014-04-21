@@ -1,15 +1,14 @@
-/* Area:	closure_call (thiscall convention)
-   Purpose:	Check handling when caller expects thiscall callee
+/* Area:	closure_call
+   Purpose:	Check simple closure handling with all ABIs
    Limitations:	none.
    PR:		none.
-   Originator:	<ktietz@redhat.com> */
+   Originator:	<twalljava@dev.java.net> */
 
-/* { dg-do run { target i?86-*-* } } */
+/* { dg-do run } */
 #include "ffitest.h"
 
 static void
-closure_test_thiscall(ffi_cif* cif __UNUSED__, void* resp, void** args,
-		      void* userdata)
+closure_test(ffi_cif* cif __UNUSED__, void* resp, void** args, void* userdata)
 {
   *(ffi_arg*)resp =
     (int)*(int *)args[0] + (int)(*(int *)args[1])
@@ -23,7 +22,7 @@ closure_test_thiscall(ffi_cif* cif __UNUSED__, void* resp, void** args,
 
 }
 
-typedef int (__THISCALL__ *closure_test_type0)(int, int, int, int);
+typedef int (ABI_ATTR *closure_test_type0)(int, int, int, int);
 
 int main (void)
 {
@@ -40,10 +39,10 @@ int main (void)
   cl_arg_types[4] = NULL;
 
   /* Initialize the cif */
-  CHECK(ffi_prep_cif(&cif, FFI_THISCALL, 4,
+  CHECK(ffi_prep_cif(&cif, ABI_NUM, 4,
 		     &ffi_type_sint, cl_arg_types) == FFI_OK);
 
-  CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test_thiscall,
+  CHECK(ffi_prep_closure_loc(pcl, &cif, closure_test,
                              (void *) 3 /* userdata */, code) == FFI_OK);
 
   res = (*(closure_test_type0)code)(0, 1, 2, 3);
