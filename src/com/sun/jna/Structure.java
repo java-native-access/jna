@@ -1030,7 +1030,7 @@ public abstract class Structure {
                 getNativeSize(type);
             }
             catch(IllegalArgumentException e) {
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + ")";
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + "): " + e.getMessage();
                 throw new IllegalArgumentException(msg, e);
             }
         }
@@ -1150,7 +1150,7 @@ public abstract class Structure {
                 if (!force && typeMapper == null) {
                     return null;
                 }
-                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + ")";
+                String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + "): " + e.getMessage();
                 throw new IllegalArgumentException(msg, e);
             }
 
