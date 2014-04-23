@@ -201,6 +201,15 @@ ffi_closure_THISCALL PROC NEAR
 	jmp	ffi_closure_STDCALL
 ffi_closure_THISCALL ENDP
 
+ffi_closure_FASTCALL PROC NEAR
+	;; Insert the register argument on the stack as the first argument
+	xchg	DWORD PTR [esp+4], edx
+	xchg	DWORD PTR [esp], ecx
+	push	edx
+	push	ecx
+	jmp	ffi_closure_STDCALL
+ffi_closure_FASTCALL ENDP
+
 ffi_closure_SYSV PROC NEAR FORCEFRAME
     ;; the ffi_closure ctx is passed in eax by the trampoline.
 
