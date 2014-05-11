@@ -181,10 +181,26 @@ static int emutramp_enabled = -1;
 static int
 emutramp_enabled_check (void)
 {
-  if (getenv ("FFI_DISABLE_EMUTRAMP") == NULL)
-    return 1;
-  else
+  char *buf = NULL;
+  size_t len = 0;
+  FILE *f;
+  int ret;
+  f = fopen ("/proc/self/status", "r");
+  if (f == NULL)
     return 0;
+  ret = 0;
+
+  while (getline (&buf, &len, f) != -1)
+    if (!strncmp (buf, "PaX:", 4))
+      {
+        char emutramp;
+        if (sscanf (buf, "%*s %*c%c", &emutramp) == 1)
+          ret = (emutramp == 'E');
+        break;
+      }
+  free (buf);
+  fclose (f);
+  return ret;
 }
 
 #define is_emutramp_enabled() (emutramp_enabled >= 0 ? emutramp_enabled \
