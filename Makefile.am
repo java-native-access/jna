@@ -251,4 +251,4 @@ AM_CPPFLAGS = -I. -I$(top_srcdir)/include -Iinclude -I$(top_srcdir)/src
 AM_CCASFLAGS = $(AM_CPPFLAGS)
 
 dist-hook:
-	if [ -d $(top_srcdir)/.git ] ; then git -C $(top_srcdir) log --no-decorate ; else echo 'See git log for history.' ; fi > $(distdir)/ChangeLog
+	if [ -d $(top_srcdir)/.git ] ; then (cd $(top_srcdir); git log --no-decorate) ; else echo 'See git log for history.' ; fi > $(distdir)/ChangeLog
