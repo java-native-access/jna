@@ -267,7 +267,13 @@ static size_t execsize = 0;
 static int
 open_temp_exec_file_name (char *name, int flags)
 {
-  int fd = mkostemp (name, flags);
+  int fd;
+
+#ifdef HAVE_MKOSTEMP
+  fd = mkostemp (name, flags);
+#else
+  fd = mkstemp (name);
+#endif
 
   if (fd != -1)
     unlink (name);
