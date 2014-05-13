@@ -117,7 +117,7 @@ public class DefaultTypeMapper implements TypeMapper {
     /** Add a {@link TypeConverter} to provide bidirectional mapping between
      * a native and Java type.  
      */
-    protected void addTypeConverter(Class cls, TypeConverter converter) {
+    public void addTypeConverter(Class cls, TypeConverter converter) {
         addFromNativeConverter(cls, converter);
         addToNativeConverter(cls, converter);
     }

@@ -13,10 +13,6 @@
 
 package com.sun.jna;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -155,6 +151,42 @@ public class DirectTypeMapperTest extends TestCase {
         // argument "true" converts to MAGIC; result MAGIC converts to "false"
         assertFalse("Failed to convert integer return to boolean FALSE", 
                     lib.returnInt32Argument(false));
+    }
+    public static class PointTestClass {
+        public static TypeMapper TYPE_MAPPER;
+        int x, y;
+    }
+    public static class DirectTypeMappedResultTypeTestLibrary {
+        public native PointTestClass returnPoint(int x, int y);
+        static {
+            Map options = new HashMap();
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addTypeConverter(PointTestClass.class, new TypeConverter() {
+                public Object fromNative(Object value, FromNativeContext context) {
+                    Pointer p = (Pointer) value;
+                    PointTestClass pc = new PointTestClass();
+                    pc.x = p.getInt(0);
+                    pc.y = p.getInt(4);
+                    Native.free(Pointer.nativeValue(p));
+                    return pc;
+                }
+                public Object toNative(Object value, ToNativeContext context) {
+                    return Pointer.NULL; // dummy implementation (not called)
+                }
+                public Class nativeType() { 
+                    return Pointer.class;
+                }
+            });
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            PointTestClass.TYPE_MAPPER = mapper;
+            Native.register(NativeLibrary.getInstance("testlib", options));
+        }
+    }
+    public void testTypeMapperResultTypeConversion() throws Exception {
+        DirectTypeMappedResultTypeTestLibrary lib = new DirectTypeMappedResultTypeTestLibrary();
+        PointTestClass p = lib.returnPoint(1234, 5678);
+        assertEquals("Failed to convert int* return to java.awt.Point", 1234, p.x);
+        assertEquals("Failed to convert int* return to java.awt.Point", 5678, p.y);
     }
 
     public static void main(String[] args) {

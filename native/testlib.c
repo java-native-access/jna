@@ -158,6 +158,14 @@ returnInt32Argument(int32_t arg) {
   return arg;
 }
 
+EXPORT int*
+returnPoint(int x, int y) {
+  int *p = malloc(2 * sizeof(int));
+  p[0] = x;
+  p[1] = y;
+  return p;
+}
+
 EXPORT int64_t  
 returnInt64Zero() {
   int64_t value = 0;
