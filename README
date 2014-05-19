@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.1 was released on May 11, 2014.  Check the libffi web page
+libffi-3.1 was released on May 19, 2014.  Check the libffi web page
 for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -175,7 +175,7 @@ History
 
 See the git log for details at http://github.com/atgreen/libffi.
 
-3.1 May-11-14
+3.1 May-19-14
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
         Add m88k and DEC VAX support.
