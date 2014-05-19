@@ -265,9 +265,15 @@ static size_t execsize = 0;
 
 /* Open a temporary file name, and immediately unlink it.  */
 static int
-open_temp_exec_file_name (char *name)
+open_temp_exec_file_name (char *name, int flags)
 {
-  int fd = mkstemp (name);
+  int fd;
+
+#ifdef HAVE_MKOSTEMP
+  fd = mkostemp (name, flags);
+#else
+  fd = mkstemp (name);
+#endif
 
   if (fd != -1)
     unlink (name);
@@ -280,8 +286,27 @@ static int
 open_temp_exec_file_dir (const char *dir)
 {
   static const char suffix[] = "/ffiXXXXXX";
-  size_t lendir = strlen (dir);
-  char *tempname = __builtin_alloca (lendir + sizeof (suffix));
+  int lendir, flags, fd;
+  char *tempname;
+
+#ifdef O_CLOEXEC
+  flags = O_CLOEXEC;
+#else
+  flags = 0;
+#endif
+
+#ifdef O_TMPFILE
+  fd = open (dir, flags | O_RDWR | O_EXCL | O_TMPFILE, 0700);
+  /* If the running system does not support the O_TMPFILE flag then retry without it. */
+  if (fd != -1 || (errno != EINVAL && errno != EISDIR && errno != EOPNOTSUPP)) {
+    return fd;
+  } else {
+    errno = 0;
+  }
+#endif
+
+  lendir = strlen (dir);
+  tempname = __builtin_alloca (lendir + sizeof (suffix));
 
   if (!tempname)
     return -1;
@@ -289,7 +314,7 @@ open_temp_exec_file_dir (const char *dir)
   memcpy (tempname, dir, lendir);
   memcpy (tempname + lendir, suffix, sizeof (suffix));
 
-  return open_temp_exec_file_name (tempname);
+  return open_temp_exec_file_name (tempname, flags);
 }
 
 /* Open a temporary file in the directory in the named environment
