@@ -25,9 +25,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
 
-import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
-import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
-
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
  * by NT, but exposed through the Win32 API. Ported from WinNT.h Microsoft
@@ -2448,4 +2445,263 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public static int CacheTrace = 3;
     }
+
+    /*
+     * Primary language IDs.
+     */
+    public static final int LANG_NEUTRAL                    = 0x00;
+    public static final int LANG_INVARIANT                  = 0x7f;
+
+    public static final int LANG_AFRIKAANS                  = 0x36;
+    public static final int LANG_ALBANIAN                   = 0x1c;
+    public static final int LANG_ARABIC                     = 0x01;
+    public static final int LANG_ARMENIAN                   = 0x2b;
+    public static final int LANG_ASSAMESE                   = 0x4d;
+    public static final int LANG_AZERI                      = 0x2c;
+    public static final int LANG_BASQUE                     = 0x2d;
+    public static final int LANG_BELARUSIAN                 = 0x23;
+    public static final int LANG_BENGALI                    = 0x45;
+    public static final int LANG_BULGARIAN                  = 0x02;
+    public static final int LANG_CATALAN                    = 0x03;
+    public static final int LANG_CHINESE                    = 0x04;
+    public static final int LANG_CROATIAN                   = 0x1a;
+    public static final int LANG_CZECH                      = 0x05;
+    public static final int LANG_DANISH                     = 0x06;
+    public static final int LANG_DIVEHI                     = 0x65;
+    public static final int LANG_DUTCH                      = 0x13;
+    public static final int LANG_ENGLISH                    = 0x09;
+    public static final int LANG_ESTONIAN                   = 0x25;
+    public static final int LANG_FAEROESE                   = 0x38;
+    public static final int LANG_FARSI                      = 0x29;
+    public static final int LANG_FINNISH                    = 0x0b;
+    public static final int LANG_FRENCH                     = 0x0c;
+    public static final int LANG_GALICIAN                   = 0x56;
+    public static final int LANG_GEORGIAN                   = 0x37;
+    public static final int LANG_GERMAN                     = 0x07;
+    public static final int LANG_GREEK                      = 0x08;
+    public static final int LANG_GUJARATI                   = 0x47;
+    public static final int LANG_HEBREW                     = 0x0d;
+    public static final int LANG_HINDI                      = 0x39;
+    public static final int LANG_HUNGARIAN                  = 0x0e;
+    public static final int LANG_ICELANDIC                  = 0x0f;
+    public static final int LANG_INDONESIAN                 = 0x21;
+    public static final int LANG_ITALIAN                    = 0x10;
+    public static final int LANG_JAPANESE                   = 0x11;
+    public static final int LANG_KANNADA                    = 0x4b;
+    public static final int LANG_KASHMIRI                   = 0x60;
+    public static final int LANG_KAZAK                      = 0x3f;
+    public static final int LANG_KONKANI                    = 0x57;
+    public static final int LANG_KOREAN                     = 0x12;
+    public static final int LANG_KYRGYZ                     = 0x40;
+    public static final int LANG_LATVIAN                    = 0x26;
+    public static final int LANG_LITHUANIAN                 = 0x27;
+    public static final int LANG_MACEDONIAN                 = 0x2f;   // the Former Yugoslav Republic of Macedonia
+    public static final int LANG_MALAY                      = 0x3e;
+    public static final int LANG_MALAYALAM                  = 0x4c;
+    public static final int LANG_MANIPURI                   = 0x58;
+    public static final int LANG_MARATHI                    = 0x4e;
+    public static final int LANG_MONGOLIAN                  = 0x50;
+    public static final int LANG_NEPALI                     = 0x61;
+    public static final int LANG_NORWEGIAN                  = 0x14;
+    public static final int LANG_ORIYA                      = 0x48;
+    public static final int LANG_POLISH                     = 0x15;
+    public static final int LANG_PORTUGUESE                 = 0x16;
+    public static final int LANG_PUNJABI                    = 0x46;
+    public static final int LANG_ROMANIAN                   = 0x18;
+    public static final int LANG_RUSSIAN                    = 0x19;
+    public static final int LANG_SANSKRIT                   = 0x4f;
+    public static final int LANG_SERBIAN                    = 0x1a;
+    public static final int LANG_SINDHI                     = 0x59;
+    public static final int LANG_SLOVAK                     = 0x1b;
+    public static final int LANG_SLOVENIAN                  = 0x24;
+    public static final int LANG_SPANISH                    = 0x0a;
+    public static final int LANG_SWAHILI                    = 0x41;
+    public static final int LANG_SWEDISH                    = 0x1d;
+    public static final int LANG_SYRIAC                     = 0x5a;
+    public static final int LANG_TAMIL                      = 0x49;
+    public static final int LANG_TATAR                      = 0x44;
+    public static final int LANG_TELUGU                     = 0x4a;
+    public static final int LANG_THAI                       = 0x1e;
+    public static final int LANG_TURKISH                    = 0x1f;
+    public static final int LANG_UKRAINIAN                  = 0x22;
+    public static final int LANG_URDU                       = 0x20;
+    public static final int LANG_UZBEK                      = 0x43;
+    public static final int LANG_VIETNAMESE                 = 0x2a;
+
+    /*
+     * Sublanguage IDs.
+     *
+     * The name immediately following SUBLANG_ dictates which primary
+     * language ID that sublanguage ID can be combined with to form a
+     * valid language ID.
+     */
+    public static final int SUBLANG_NEUTRAL                 = 0x00;    // language neutral
+    public static final int SUBLANG_DEFAULT                 = 0x01;    // user default
+    public static final int SUBLANG_SYS_DEFAULT             = 0x02;    // system default
+
+    public static final int SUBLANG_ARABIC_SAUDI_ARABIA     = 0x01;    // Arabic (Saudi Arabia)
+    public static final int SUBLANG_ARABIC_IRAQ             = 0x02;    // Arabic (Iraq)
+    public static final int SUBLANG_ARABIC_EGYPT            = 0x03;    // Arabic (Egypt)
+    public static final int SUBLANG_ARABIC_LIBYA            = 0x04;    // Arabic (Libya)
+    public static final int SUBLANG_ARABIC_ALGERIA          = 0x05;    // Arabic (Algeria)
+    public static final int SUBLANG_ARABIC_MOROCCO          = 0x06;    // Arabic (Morocco)
+    public static final int SUBLANG_ARABIC_TUNISIA          = 0x07;    // Arabic (Tunisia)
+    public static final int SUBLANG_ARABIC_OMAN             = 0x08;    // Arabic (Oman)
+    public static final int SUBLANG_ARABIC_YEMEN            = 0x09;    // Arabic (Yemen)
+    public static final int SUBLANG_ARABIC_SYRIA            = 0x0a;    // Arabic (Syria)
+    public static final int SUBLANG_ARABIC_JORDAN           = 0x0b;    // Arabic (Jordan)
+    public static final int SUBLANG_ARABIC_LEBANON          = 0x0c;    // Arabic (Lebanon)
+    public static final int SUBLANG_ARABIC_KUWAIT           = 0x0d;    // Arabic (Kuwait)
+    public static final int SUBLANG_ARABIC_UAE              = 0x0e;    // Arabic (U.A.E)
+    public static final int SUBLANG_ARABIC_BAHRAIN          = 0x0f;    // Arabic (Bahrain)
+    public static final int SUBLANG_ARABIC_QATAR            = 0x10;    // Arabic (Qatar)
+    public static final int SUBLANG_AZERI_LATIN             = 0x01;    // Azeri (Latin)
+    public static final int SUBLANG_AZERI_CYRILLIC          = 0x02;    // Azeri (Cyrillic)
+    public static final int SUBLANG_CHINESE_TRADITIONAL     = 0x01;    // Chinese (Taiwan)
+    public static final int SUBLANG_CHINESE_SIMPLIFIED      = 0x02;    // Chinese (PR China)
+    public static final int SUBLANG_CHINESE_HONGKONG        = 0x03;    // Chinese (Hong Kong S.A.R., P.R.C.)
+    public static final int SUBLANG_CHINESE_SINGAPORE       = 0x04;    // Chinese (Singapore)
+    public static final int SUBLANG_CHINESE_MACAU           = 0x05;    // Chinese (Macau S.A.R.)
+    public static final int SUBLANG_DUTCH                   = 0x01;    // Dutch
+    public static final int SUBLANG_DUTCH_BELGIAN           = 0x02;    // Dutch (Belgian)
+    public static final int SUBLANG_ENGLISH_US              = 0x01;    // English (USA)
+    public static final int SUBLANG_ENGLISH_UK              = 0x02;    // English (UK)
+    public static final int SUBLANG_ENGLISH_AUS             = 0x03;    // English (Australian)
+    public static final int SUBLANG_ENGLISH_CAN             = 0x04;    // English (Canadian)
+    public static final int SUBLANG_ENGLISH_NZ              = 0x05;    // English (New Zealand)
+    public static final int SUBLANG_ENGLISH_EIRE            = 0x06;    // English (Irish)
+    public static final int SUBLANG_ENGLISH_SOUTH_AFRICA    = 0x07;    // English (South Africa)
+    public static final int SUBLANG_ENGLISH_JAMAICA         = 0x08;    // English (Jamaica)
+    public static final int SUBLANG_ENGLISH_CARIBBEAN       = 0x09;    // English (Caribbean)
+    public static final int SUBLANG_ENGLISH_BELIZE          = 0x0a;    // English (Belize)
+    public static final int SUBLANG_ENGLISH_TRINIDAD        = 0x0b;    // English (Trinidad)
+    public static final int SUBLANG_ENGLISH_ZIMBABWE        = 0x0c;    // English (Zimbabwe)
+    public static final int SUBLANG_ENGLISH_PHILIPPINES     = 0x0d;    // English (Philippines)
+    public static final int SUBLANG_FRENCH                  = 0x01;    // French
+    public static final int SUBLANG_FRENCH_BELGIAN          = 0x02;    // French (Belgian)
+    public static final int SUBLANG_FRENCH_CANADIAN         = 0x03;    // French (Canadian)
+    public static final int SUBLANG_FRENCH_SWISS            = 0x04;    // French (Swiss)
+    public static final int SUBLANG_FRENCH_LUXEMBOURG       = 0x05;    // French (Luxembourg)
+    public static final int SUBLANG_FRENCH_MONACO           = 0x06;    // French (Monaco)
+    public static final int SUBLANG_GERMAN                  = 0x01;    // German
+    public static final int SUBLANG_GERMAN_SWISS            = 0x02;    // German (Swiss)
+    public static final int SUBLANG_GERMAN_AUSTRIAN         = 0x03;    // German (Austrian)
+    public static final int SUBLANG_GERMAN_LUXEMBOURG       = 0x04;    // German (Luxembourg)
+    public static final int SUBLANG_GERMAN_LIECHTENSTEIN    = 0x05;    // German (Liechtenstein)
+    public static final int SUBLANG_ITALIAN                 = 0x01;    // Italian
+    public static final int SUBLANG_ITALIAN_SWISS           = 0x02;    // Italian (Swiss)
+    public static final int SUBLANG_KASHMIRI_SASIA          = 0x02;    // Kashmiri (South Asia)
+    public static final int SUBLANG_KASHMIRI_INDIA          = 0x02;    // For app compatibility only
+    public static final int SUBLANG_KOREAN                  = 0x01;    // Korean (Extended Wansung)
+    public static final int SUBLANG_LITHUANIAN              = 0x01;    // Lithuanian
+    public static final int SUBLANG_MALAY_MALAYSIA          = 0x01;    // Malay (Malaysia)
+    public static final int SUBLANG_MALAY_BRUNEI_DARUSSALAM = 0x02;    // Malay (Brunei Darussalam)
+    public static final int SUBLANG_NEPALI_INDIA            = 0x02;    // Nepali (India)
+    public static final int SUBLANG_NORWEGIAN_BOKMAL        = 0x01;    // Norwegian (Bokmal)
+    public static final int SUBLANG_NORWEGIAN_NYNORSK       = 0x02;    // Norwegian (Nynorsk)
+    public static final int SUBLANG_PORTUGUESE              = 0x02;    // Portuguese
+    public static final int SUBLANG_PORTUGUESE_BRAZILIAN    = 0x01;    // Portuguese (Brazilian)
+    public static final int SUBLANG_SERBIAN_LATIN           = 0x02;    // Serbian (Latin)
+    public static final int SUBLANG_SERBIAN_CYRILLIC        = 0x03;    // Serbian (Cyrillic)
+    public static final int SUBLANG_SPANISH                 = 0x01;    // Spanish (Castilian)
+    public static final int SUBLANG_SPANISH_MEXICAN         = 0x02;    // Spanish (Mexican)
+    public static final int SUBLANG_SPANISH_MODERN          = 0x03;    // Spanish (Spain)
+    public static final int SUBLANG_SPANISH_GUATEMALA       = 0x04;    // Spanish (Guatemala)
+    public static final int SUBLANG_SPANISH_COSTA_RICA      = 0x05;    // Spanish (Costa Rica)
+    public static final int SUBLANG_SPANISH_PANAMA          = 0x06;    // Spanish (Panama)
+    public static final int SUBLANG_SPANISH_DOMINICAN_REPUBLIC = 0x07; // Spanish (Dominican Republic)
+    public static final int SUBLANG_SPANISH_VENEZUELA       = 0x08;    // Spanish (Venezuela)
+    public static final int SUBLANG_SPANISH_COLOMBIA        = 0x09;    // Spanish (Colombia)
+    public static final int SUBLANG_SPANISH_PERU            = 0x0a;    // Spanish (Peru)
+    public static final int SUBLANG_SPANISH_ARGENTINA       = 0x0b;    // Spanish (Argentina)
+    public static final int SUBLANG_SPANISH_ECUADOR         = 0x0c;    // Spanish (Ecuador)
+    public static final int SUBLANG_SPANISH_CHILE           = 0x0d;    // Spanish (Chile)
+    public static final int SUBLANG_SPANISH_URUGUAY         = 0x0e;    // Spanish (Uruguay)
+    public static final int SUBLANG_SPANISH_PARAGUAY        = 0x0f;    // Spanish (Paraguay)
+    public static final int SUBLANG_SPANISH_BOLIVIA         = 0x10;    // Spanish (Bolivia)
+    public static final int SUBLANG_SPANISH_EL_SALVADOR     = 0x11;    // Spanish (El Salvador)
+    public static final int SUBLANG_SPANISH_HONDURAS        = 0x12;    // Spanish (Honduras)
+    public static final int SUBLANG_SPANISH_NICARAGUA       = 0x13;    // Spanish (Nicaragua)
+    public static final int SUBLANG_SPANISH_PUERTO_RICO     = 0x14;    // Spanish (Puerto Rico)
+    public static final int SUBLANG_SWEDISH                 = 0x01;    // Swedish
+    public static final int SUBLANG_SWEDISH_FINLAND         = 0x02;    // Swedish (Finland)
+    public static final int SUBLANG_URDU_PAKISTAN           = 0x01;    // Urdu (Pakistan)
+    public static final int SUBLANG_URDU_INDIA              = 0x02;    // Urdu (India)
+    public static final int SUBLANG_UZBEK_LATIN             = 0x01;    // Uzbek (Latin)
+    public static final int SUBLANG_UZBEK_CYRILLIC          = 0x02;    // Uzbek (Cyrillic)
+
+    /*
+     * Sorting IDs.
+     */
+    public static final int SORT_DEFAULT                    = 0x0;     // sorting default
+
+    public static final int SORT_JAPANESE_XJIS              = 0x0;     // Japanese XJIS order
+    public static final int SORT_JAPANESE_UNICODE           = 0x1;     // Japanese Unicode order
+
+    public static final int SORT_CHINESE_BIG5               = 0x0;     // Chinese BIG5 order
+    public static final int SORT_CHINESE_PRCP               = 0x0;     // PRC Chinese Phonetic order
+    public static final int SORT_CHINESE_UNICODE            = 0x1;     // Chinese Unicode order
+    public static final int SORT_CHINESE_PRC                = 0x2;     // PRC Chinese Stroke Count order
+    public static final int SORT_CHINESE_BOPOMOFO           = 0x3;     // Traditional Chinese Bopomofo order
+
+    public static final int SORT_KOREAN_KSC                 = 0x0;     // Korean KSC order
+    public static final int SORT_KOREAN_UNICODE             = 0x1;     // Korean Unicode order
+
+    public static final int SORT_GERMAN_PHONE_BOOK          = 0x1;     // German Phone Book order
+
+    public static final int SORT_HUNGARIAN_DEFAULT          = 0x0;     // Hungarian Default order
+    public static final int SORT_HUNGARIAN_TECHNICAL        = 0x1;     // Hungarian Technical order
+
+    public static final int SORT_GEORGIAN_TRADITIONAL       = 0x0;     // Georgian Traditional order
+    public static final int SORT_GEORGIAN_MODERN            = 0x1;     // Georgian Modern order
+
+    public static final int NLS_VALID_LOCALE_MASK = 0x000fffff;
+
+    public static final class Macros {
+        private static final int _MAKELCID(int lgid, int srtid) {
+            return (srtid << 16) | lgid;
+        }
+
+        public static final LCID MAKELCID(int lgid, int srtid) {
+            return new LCID(_MAKELCID(lgid, srtid));
+        }
+
+        public static final int MAKESORTLCID(int lgid, int srtid, int ver) {
+            return _MAKELCID(lgid, srtid) | (ver << 20);
+        }
+
+        public static final int LANGIDFROMLCID(int lcid) {
+            return lcid & 0xFFFF;
+        }
+
+        public static final int SORTIDFROMLCID(int lcid) {
+            return (lcid >>> 16) & 0xf;
+        }
+
+        public static final int SORTVERSIONFROMLCID(int lcid) {
+            return (lcid >>> 20) & 0xf;
+        }
+
+        public static final int MAKELANGID(int p, int s) {
+            return (s << 10) | (p & 0xFFFF);
+        }
+
+        public static final int PRIMARYLANGID(int lgid) {
+            return lgid & 0x3ff;
+        }
+
+        public static final int SUBLANGID(int lgid) {
+            return (lgid  & 0xFFFF) >>> 10;
+        }
+    }
+
+    public static final int  LANG_SYSTEM_DEFAULT   = Macros.MAKELANGID(LANG_NEUTRAL, SUBLANG_SYS_DEFAULT);
+    public static final int  LANG_USER_DEFAULT     = Macros.MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT);
+
+    public static final LCID LOCALE_SYSTEM_DEFAULT = Macros.MAKELCID(LANG_SYSTEM_DEFAULT, SORT_DEFAULT);
+    public static final LCID LOCALE_USER_DEFAULT   = Macros.MAKELCID(LANG_USER_DEFAULT, SORT_DEFAULT);
+
+    public static final LCID LOCALE_NEUTRAL        = Macros.MAKELCID(Macros.MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT);
+
+    public static final LCID LOCALE_INVARIANT      = Macros.MAKELCID(Macros.MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT);
 }
