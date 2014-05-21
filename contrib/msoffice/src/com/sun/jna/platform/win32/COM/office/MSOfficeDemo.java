@@ -24,10 +24,14 @@ public class MSOfficeDemo {
 
     public void testMSWord() {
         MSWord msWord = null;
+        
+        // http://msdn.microsoft.com/en-us/library/office/ff839952(v=office.15).aspx
         LONG wdFormatPDF = new LONG(17); // PDF format.
         LONG wdFormatRTF = new LONG(6); // Rich text format (RTF).
         LONG wdFormatHTML = new LONG(8); // Standard HTML format.
-
+        LONG wdFormatDocument = new LONG(0); // Microsoft Office Word 97 - 2003 binary file format.
+        LONG wdFormatDocumentDefault = new LONG(16); // Word default document file format. For Word 2010, this is the DOCX format.
+        
         try {
             msWord = new MSWord();
             System.out.println("MSWord version: " + msWord.getVersion());
@@ -35,22 +39,24 @@ public class MSOfficeDemo {
             msWord.setVisible(true);
             // msWord.newDocument();
             msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
-            msWord.insertText("Hello from JNA!");
+            msWord.insertText("Hello from JNA! \n\n");
             // wait 10sec. before closing
-            Thread.currentThread().sleep(10000);
+            Thread.currentThread().sleep(1000);
             // save in different formats
             // pdf format is only supported in MSWord 2007 and above
+            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.doc", wdFormatDocument);
             msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", wdFormatPDF);
             msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", wdFormatRTF);
             msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.html", wdFormatHTML);
             // close and save the document
-            msWord.closeActiveDocument(true);
-            msWord.setVisible(true);
+            msWord.closeActiveDocument(false);
             msWord.newDocument();
             // msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
-            msWord.insertText("Hello from JNA!");
+            msWord.insertText("Hello from JNA! \n Please notice that JNA can control MS Word via the new COM interface! \nHere we are creating a new word document and we save it to the 'TEMP' directory!");
+            // save with user prompt
+            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc.docx", wdFormatDocumentDefault);
             // close and save the document
-            msWord.closeActiveDocument(true);
+            msWord.closeActiveDocument(false);
             // wait then close word
             msWord.quit();
         } catch(InterruptedException ie) {
