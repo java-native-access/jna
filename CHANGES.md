@@ -9,6 +9,7 @@ Features
 --------
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
+* Added Win32 Monitor Configuration API
 
 Bug Fixes
 ---------
