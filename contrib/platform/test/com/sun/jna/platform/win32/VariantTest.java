@@ -56,4 +56,15 @@ public class VariantTest extends TestCase {
 
         VARIANT variantDate = new VARIANT(new DATE(pvtime.getValue()));
     }
+    
+    public void testVariantRecord() {
+        VARIANT._VARIANT.__VARIANT.BRECORD pvRecord = new VARIANT._VARIANT.__VARIANT.BRECORD(); 
+        VARIANT._VARIANT.__VARIANT.BRECORD pvRecord2;
+        
+        VARIANT variant = new VARIANT();
+        variant.setValue(Variant.VT_RECORD, pvRecord);
+        
+        pvRecord2 = (VARIANT._VARIANT.__VARIANT.BRECORD)variant.getValue();
+    }
+    
 }

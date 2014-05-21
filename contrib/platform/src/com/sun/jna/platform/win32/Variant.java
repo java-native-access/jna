@@ -362,6 +362,9 @@ public interface Variant {
             case VT_BYREF | VT_UINT:
                 this._variant.__variant.writeField("puintVal", value);
                 break;
+            case VT_RECORD:
+                this._variant.__variant.writeField("pvRecord", value);
+                break;
             }
 
             this._variant.writeField("vt", vt);
@@ -457,6 +460,8 @@ public interface Variant {
                 return this._variant.__variant.readField("pintVal");
             case VT_BYREF | VT_UINT:
                 return this._variant.__variant.readField("puintVal");
+            case VT_RECORD:
+                return this._variant.__variant.readField("pvRecord");
             default:
                 return null;
             }
@@ -625,7 +630,9 @@ public interface Variant {
                 public IntByReference pintVal;
                 // UINT * VT_BYREF|VT_UINT
                 public UINTByReference puintVal;
-
+                // BRECORD VT_RECORD
+                public BRECORD pvRecord;
+                
                 public static class BRECORD extends Structure {
                     public static class ByReference extends BRECORD implements
                             Structure.ByReference {
@@ -633,7 +640,7 @@ public interface Variant {
 
                     public PVOID pvRecord;
 
-                    public IRecordInfo pRecInfo;
+                    public Pointer pRecInfo;
 
                     public BRECORD() {
                     }
