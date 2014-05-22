@@ -20,7 +20,16 @@ import java.awt.event.KeyEvent;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.POINT;
+import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
+import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
+import com.sun.jna.platform.win32.WinUser.MONITORINFO;
+import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -109,5 +118,33 @@ public class User32Test extends TestCase {
     public final void testRegisterWindowMessage() {
         final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST"); 
         assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
+    }
+
+    public final void testMonitorFrom() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
+
+        POINT pt = new POINT(0, 0);
+        User32.INSTANCE.MonitorFromPoint(pt, dwFlags);
+
+        RECT lprc = new RECT();
+        User32.INSTANCE.MonitorFromRect(lprc, dwFlags);
+
+        HWND hwnd = new HWND();
+        User32.INSTANCE.MonitorFromWindow(hwnd, dwFlags);
+    }
+
+    public final void testGetMonitor() {
+        User32.INSTANCE.GetMonitorInfo(new HMONITOR(), new MONITORINFO());
+
+        User32.INSTANCE.GetMonitorInfo(new HMONITOR(), new MONITORINFOEX());
+
+        User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+
+            @Override
+            public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
+            {
+                return 1;
+            }
+        }, new LPARAM(0));
     }
 }
