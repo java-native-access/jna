@@ -29,39 +29,39 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 public interface PhysicalMonitorEnumerationAPI
 {
 
-	/******************************************************************************
+    /******************************************************************************
       Physical Monitor Constants
-	******************************************************************************/
-	
-	/**
-	 * A physical monitor description is always an array of 128 characters.  Some
-	 * of the characters may not be used.
-	 */
-	final int PHYSICAL_MONITOR_DESCRIPTION_SIZE =                   128;
-	
-	/******************************************************************************
-	  Physical Monitor Structures 
-	******************************************************************************/
-	
-	/**
-	 * Contains a handle and text description corresponding to a physical monitor.
-	 */
-	public class PHYSICAL_MONITOR extends Structure
-	{
-		/**
-		 * Handle to the physical monitor.
-		 */
-		public HANDLE hPhysicalMonitor;
-		
-		/**
-		 * Text description of the physical monitor (always 128 chars)
-		 */
-		public char[] szPhysicalMonitorDescription = new char[PHYSICAL_MONITOR_DESCRIPTION_SIZE];
-		
-		@Override
-		protected List<String> getFieldOrder()
-		{
-			return Arrays.asList("hPhysicalMonitor", "szPhysicalMonitorDescription");
-		}
-	}
+    ******************************************************************************/
+
+    /**
+     * A physical monitor description is always an array of 128 characters.  Some
+     * of the characters may not be used.
+     */
+    final int PHYSICAL_MONITOR_DESCRIPTION_SIZE =                   128;
+
+    /******************************************************************************
+      Physical Monitor Structures 
+    ******************************************************************************/
+
+    /**
+     * Contains a handle and text description corresponding to a physical monitor.
+     */
+    public class PHYSICAL_MONITOR extends Structure
+    {
+        /**
+         * Handle to the physical monitor.
+         */
+        public HANDLE hPhysicalMonitor;
+
+        /**
+         * Text description of the physical monitor (always 128 chars)
+         */
+        public char[] szPhysicalMonitorDescription = new char[PHYSICAL_MONITOR_DESCRIPTION_SIZE];
+
+        @Override
+        protected List<String> getFieldOrder()
+        {
+            return Arrays.asList("hPhysicalMonitor", "szPhysicalMonitorDescription");
+        }
+    }
 }
