@@ -9,10 +9,13 @@ Features
 --------
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
+* Added Winspool monitor sample and updated Kernel32, WinBase, Winspool - [@wolftobias](https://github.com/wolftobias).
+* Added Some minor changes to MS Office samples Test and small changes to the MS Office samples Bug Fixes - [@wolftobias](https://github.com/wolftobias).
 
 Bug Fixes
 ---------
 * [#319](https://github.com/twall/jna/pull/319): Fix direct-mapping type-mapped pointer result types - [@marco2357](https://github.com/marco2357).
+* Added Variant and TlbImp Fixes - [@wolftobias](https://github.com/wolftobias).
 
 Release 4.1
 ===========
