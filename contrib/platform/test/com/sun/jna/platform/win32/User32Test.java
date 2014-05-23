@@ -120,31 +120,43 @@ public class User32Test extends TestCase {
         assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
     }
 
-    public final void testMonitorFrom() {
+    public final void testMonitorFromPoint() {
         int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
 
         POINT pt = new POINT(0, 0);
-        User32.INSTANCE.MonitorFromPoint(pt, dwFlags);
-
-        RECT lprc = new RECT();
-        User32.INSTANCE.MonitorFromRect(lprc, dwFlags);
-
-        HWND hwnd = new HWND();
-        User32.INSTANCE.MonitorFromWindow(hwnd, dwFlags);
+        assertNotNull(User32.INSTANCE.MonitorFromPoint(pt, dwFlags));
     }
 
-    public final void testGetMonitor() {
-        User32.INSTANCE.GetMonitorInfo(new HMONITOR(), new MONITORINFO());
+    public final void testMonitorFromRect() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
+        RECT lprc = new RECT();
+        assertNotNull(User32.INSTANCE.MonitorFromRect(lprc, dwFlags));
+    }
 
-        User32.INSTANCE.GetMonitorInfo(new HMONITOR(), new MONITORINFOEX());
+    public final void testMonitorFromWindow() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
 
-        User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+        HWND hwnd = new HWND();
+        assertNotNull(User32.INSTANCE.MonitorFromWindow(hwnd, dwFlags));
+    }
+
+    public final void testGetMonitorInfo() {
+        HMONITOR hMon = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
+
+        assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFO()).booleanValue());
+
+        assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFOEX()).booleanValue());
+    }
+
+    public final void testEnumDisplayMonitors() {
+
+        assertTrue(User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
 
             @Override
             public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
             {
                 return 1;
             }
-        }, new LPARAM(0));
+        }, new LPARAM(0)).booleanValue());
     }
 }

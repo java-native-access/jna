@@ -16,7 +16,6 @@
 
 package com.sun.jna.platform.win32;
 
-
 import junit.framework.TestCase;
 
 import com.sun.jna.Memory;
@@ -33,12 +32,10 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinDef.HDC;
-import com.sun.jna.platform.win32.WinDef.LPARAM;
-import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
-import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 
 
 /**
@@ -46,96 +43,155 @@ import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
  */
 public class Dxva2Test extends TestCase {
 
-    public void testAll() {
-        User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+	private int monitorCount;
+	private PHYSICAL_MONITOR[] physMons;
 
-            @Override
-            public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
-            {
-                enumerate(hMonitor);
-                return 0;           // stop 
-            }
-        }, new LPARAM(0));
-    }
-
-    static void enumerate(HMONITOR hMonitor)
+    @Override
+	public void setUp()
     {
+        HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
+
         DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
-        Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors);
-        int monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
+        assertTrue(Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors).booleanValue());
 
-        PHYSICAL_MONITOR[] physMons = new PHYSICAL_MONITOR[monitorCount];
-        Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons);
-
-        for (int i = 0; i < monitorCount; i++)
-        {
-            HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
-            enumeratePhysicalMonitor(hPhysicalMonitor);
-        }
+        monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
+        physMons = new PHYSICAL_MONITOR[monitorCount];
+        assertTrue(Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons).booleanValue());
     }
 
-    private static void enumeratePhysicalMonitor(HANDLE hPhysicalMonitor)
+    @Override
+	public void tearDown()
     {
+        assertTrue(Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons).booleanValue()); 
+    }
+
+    public void testGetMonitorTechnologyType()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_DISPLAY_TECHNOLOGY_TYPE.ByReference techType = new MC_DISPLAY_TECHNOLOGY_TYPE.ByReference();
         Dxva2.INSTANCE.GetMonitorTechnologyType(hPhysicalMonitor, techType);
+    }
 
+    public void testGetMonitorCapabilities()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         DWORDByReference temps = new DWORDByReference();
         DWORDByReference caps = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
+    }
 
-        // Brightness
+    public void testGetMonitorBrightness()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         DWORDByReference pdwMinimumBrightness = new DWORDByReference();
         DWORDByReference pdwCurrentBrightness = new DWORDByReference();
         DWORDByReference pdwMaximumBrightness = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorBrightness(hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
+    }
 
-        // Contrast
+    public void testGetMonitorContrast()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         DWORDByReference pdwMinimumContrast = new DWORDByReference();
         DWORDByReference pdwCurrentContrast = new DWORDByReference();
         DWORDByReference pdwMaximumContrast = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorContrast(hPhysicalMonitor, pdwMinimumContrast, pdwCurrentContrast, pdwMaximumContrast);
+    }
 
-        // Temperature
+    public void testGetMonitorColorTemperature()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_COLOR_TEMPERATURE.ByReference pctCurrentColorTemperature = new MC_COLOR_TEMPERATURE.ByReference();
         Dxva2.INSTANCE.GetMonitorColorTemperature(hPhysicalMonitor, pctCurrentColorTemperature);
+    }
 
-        // Capabilities string
+    public void testCapabilitiesRequestAndCapabilitiesReply()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         DWORDByReference pdwCapabilitiesStringLengthInCharacters = new DWORDByReference();
         Dxva2.INSTANCE.GetCapabilitiesStringLength(hPhysicalMonitor, pdwCapabilitiesStringLengthInCharacters);
         DWORD capStrLen = pdwCapabilitiesStringLengthInCharacters.getValue();
 
         LPSTR pszASCIICapabilitiesString = new LPSTR(new Memory(capStrLen.intValue()));
         Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, pszASCIICapabilitiesString, capStrLen);
+    }
 
-        // Position
+    public void testGetMonitorDisplayAreaPosition()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_POSITION_TYPE ptPositionType = MC_POSITION_TYPE.MC_HORIZONTAL_POSITION;
         DWORDByReference pdwMinimumPosition = new DWORDByReference();
         DWORDByReference pdwCurrentPosition = new DWORDByReference();
         DWORDByReference pdwMaximumPosition = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorDisplayAreaPosition(hPhysicalMonitor, ptPositionType, pdwMinimumPosition, pdwCurrentPosition, pdwMaximumPosition);
+    }
 
-        // Size
+    public void testGetMonitorDisplayAreaSize()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_SIZE_TYPE ptSizeType = MC_SIZE_TYPE.MC_WIDTH;
         DWORDByReference pdwMinimumSize = new DWORDByReference();
         DWORDByReference pdwCurrentSize = new DWORDByReference();
         DWORDByReference pdwMaximumSize = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorDisplayAreaSize(hPhysicalMonitor, ptSizeType, pdwMinimumSize, pdwCurrentSize, pdwMaximumSize);
+    }
 
-        // Gain
+    public void testGetMonitorRedGreenOrBlueGain()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_GAIN_TYPE ptGainType = MC_GAIN_TYPE.MC_RED_GAIN;
         DWORDByReference pdwMinimumGain = new DWORDByReference();
         DWORDByReference pdwCurrentGain = new DWORDByReference();
         DWORDByReference pdwMaximumGain = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorRedGreenOrBlueGain(hPhysicalMonitor, ptGainType, pdwMinimumGain, pdwCurrentGain, pdwMaximumGain);
+    }
 
-        // Drive
+    public void testGetMonitorRedGreenOrBlueDrive()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_DRIVE_TYPE ptDriveType = MC_DRIVE_TYPE.MC_RED_DRIVE;
         DWORDByReference pdwMinimumDrive = new DWORDByReference();
         DWORDByReference pdwCurrentDrive = new DWORDByReference();
         DWORDByReference pdwMaximumDrive = new DWORDByReference();
         Dxva2.INSTANCE.GetMonitorRedGreenOrBlueDrive(hPhysicalMonitor, ptDriveType, pdwMinimumDrive, pdwCurrentDrive, pdwMaximumDrive);
+    }
 
-        // Timing Report
+    public void testGetTimingReport()
+    {
+        HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
+
+        // the method returns FALSE if the monitor driver doesn't support it,
+        // but verifies that the JNA mapping is correct (no exception)
         MC_TIMING_REPORT pmtrMonitorTimingReport = new MC_TIMING_REPORT();
         Dxva2.INSTANCE.GetTimingReport(hPhysicalMonitor, pmtrMonitorTimingReport);
     }
