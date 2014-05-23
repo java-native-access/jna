@@ -32,6 +32,11 @@ public class MSOfficeDemo {
         LONG wdFormatDocument = new LONG(0); // Microsoft Office Word 97 - 2003 binary file format.
         LONG wdFormatDocumentDefault = new LONG(16); // Word default document file format. For Word 2010, this is the DOCX format.
         
+        // http://msdn.microsoft.com/en-us/library/office/ff838709(v=office.15).aspx
+        LONG wdOriginalDocumentFormat = new LONG(1); // Original document format.
+        LONG wdPromptUser = new LONG(2); // Prompt user to select a document format.
+        LONG wdWordDocument = new LONG(0); // Microsoft Word document format.        
+        
         try {
             msWord = new MSWord();
             System.out.println("MSWord version: " + msWord.getVersion());
@@ -53,10 +58,21 @@ public class MSOfficeDemo {
             msWord.newDocument();
             // msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
             msWord.insertText("Hello from JNA! \n Please notice that JNA can control MS Word via the new COM interface! \nHere we are creating a new word document and we save it to the 'TEMP' directory!");
-            // save with user prompt
-            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc.docx", wdFormatDocumentDefault);
+            // save with no user prompt
+            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc1.docx", wdFormatDocumentDefault);
+            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc2.docx", wdFormatDocumentDefault);
+            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc3.docx", wdFormatDocumentDefault);
             // close and save the document
             msWord.closeActiveDocument(false);
+            // open 3 documents
+            msWord.openDocument("C:\\TEMP\\jnatestNewDoc1.docx", true);
+            msWord.insertText("Hello some changes from JNA!\n");            
+            msWord.openDocument("C:\\TEMP\\jnatestNewDoc2.docx", true);
+            msWord.insertText("Hello some changes from JNA!\n");            
+            msWord.openDocument("C:\\TEMP\\jnatestNewDoc3.docx", true);
+            msWord.insertText("Hello some changes from JNA!\n");            
+            // save the document and prompt the user
+            msWord.Save(false, wdPromptUser);
             // wait then close word
             msWord.quit();
         } catch(InterruptedException ie) {
