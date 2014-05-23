@@ -109,7 +109,15 @@ public class Ole32Test extends TestCase {
 	    assertEquals("{25336920-03F9-11CF-8FD0-00AA00686F13}", clsid.toGuidString());
 	}
 
-    public void testCoTaskAllocMemory() {
+    public void testCoTaskMemAlloc() {
+        LPVOID ptr = Ole32.INSTANCE.CoTaskMemAlloc(new SIZE_T(256));
+
+        assertTrue(ptr.longValue() != 0);
+
+        Ole32.INSTANCE.CoTaskMemFree(ptr);
+    }
+
+    public void testCoTaskMemRealloc() {
         LPVOID ptr = Ole32.INSTANCE.CoTaskMemAlloc(new SIZE_T(256));
 
         assertTrue(ptr.longValue() != 0);

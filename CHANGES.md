@@ -9,7 +9,7 @@ Features
 --------
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
-* [#333](https://github.com/twall/jna/pull/333): Added CoTaskAllocMemory to Ole32 - [@msteiger](https://github.com/msteiger).
+* [#333](https://github.com/twall/jna/pull/333): Added `CoTaskMemAlloc`, `CoTaskMemRealloc` and `CoTaskMemFree` to `com.sun.jna.platform.win32.Ole32` - [@msteiger](https://github.com/msteiger).
 
 Bug Fixes
 ---------
