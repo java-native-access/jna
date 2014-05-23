@@ -11,6 +11,7 @@ Features
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
 * Added Winspool monitor sample and updated Kernel32, WinBase, Winspool - [@wolftobias](https://github.com/wolftobias).
 * Added Some minor changes to MS Office samples Test and small changes to the MS Office samples Bug Fixes - [@wolftobias](https://github.com/wolftobias).
+* [#333](https://github.com/twall/jna/pull/333): Added `CoTaskMemAlloc`, `CoTaskMemRealloc` and `CoTaskMemFree` to `com.sun.jna.platform.win32.Ole32` - [@msteiger](https://github.com/msteiger).
 
 Bug Fixes
 ---------

@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
@@ -213,5 +214,57 @@ public interface Ole32 extends StdCallLibrary {
      *         REGDB_E_READREGDB The registry could not be opened for reading.
      */
     HRESULT CLSIDFromString(WString lpsz, CLSID.ByReference pclsid);
+
+	/**
+	 * Allocates a block of task memory in the same way that IMalloc::Alloc does. CoTaskMemAlloc uses the default
+	 * allocator to allocate a memory block in the same way that IMalloc::Alloc does. It is not necessary to call the
+	 * CoGetMalloc function before calling CoTaskMemAlloc. 
+	 * <br/><br/>The initial contents of the returned memory block are
+	 * undefined - there is no guarantee that the block has been initialized. The allocated block may be larger than cb
+	 * bytes because of the space required for alignment and for maintenance information. 
+	 * <br/><br/>
+	 * If cb is 0, CoTaskMemAlloc
+	 * allocates a zero-length item and returns a valid pointer to that item. If there is insufficient memory available,
+	 * CoTaskMemAlloc returns NULL. Applications should always check the return value from this function, even when
+	 * requesting small amounts of memory, because there is no guarantee that the memory will be allocated.
+	 * @param cb The size of the memory block to be allocated, in bytes.
+	 * @return If the function succeeds, it returns the allocated memory block. Otherwise, it returns NULL.
+	 */
+    LPVOID CoTaskMemAlloc(SIZE_T cb);
+
+    /**
+	 * Changes the size of a previously allocated block of task memory. This function changes the size of a previously
+	 * allocated memory block in the same way that IMalloc::Realloc does. It is not necessary to call the CoGetMalloc
+	 * function to get a pointer to the OLE allocator before calling CoTaskMemRealloc. 
+	 * <br/><br/>
+	 * The pv parameter points to the
+	 * beginning of the memory block. If pv is NULL, CoTaskMemRealloc allocates a new memory block in the same way as
+	 * the CoTaskMemAlloc function. If pv is not NULL, it should be a pointer returned by a prior call to
+	 * CoTaskMemAlloc. 
+	 * <br/><br>
+	 * The cb parameter specifies the size of the new block. The contents of the block are unchanged up
+	 * to the shorter of the new and old sizes, although the new block can be in a different location. Because the new
+	 * block can be in a different memory location, the pointer returned by CoTaskMemRealloc is not guaranteed to be the
+	 * pointer passed through the pv argument. If pv is not NULL and cb is 0, then the memory pointed to by pv is freed.
+	 * <br/><br/>
+	 * CoTaskMemRealloc returns a void pointer to the reallocated (and possibly moved) memory block. The return value is
+	 * NULL if the size is 0 and the buffer argument is not NULL, or if there is not enough memory available to expand
+	 * the block to the specified size. In the first case, the original block is freed; in the second case, the original
+	 * block is unchanged. The storage space pointed to by the return value is guaranteed to be suitably aligned for
+	 * storage of any type of object. To get a pointer to a type other than void, use a type cast on the return value.
+	 * @param pv A pointer to the memory block to be reallocated. This parameter can be NULL.
+	 * @param cb The size of the memory block to be reallocated, in bytes. This parameter can be 0.
+	 * @return If the function succeeds, it returns the reallocated memory block. Otherwise, it returns NULL.
+	 */
+    LPVOID CoTaskMemRealloc(LPVOID pv, SIZE_T cb);
+
+    /**
+	 * Frees a block of task memory previously allocated through a call to the {@link #CoTaskMemAlloc} or
+	 * {@link #CoTaskMemRealloc} function. The function uses the default OLE allocator. The number of bytes
+	 * freed equals the number of bytes that were originally allocated or reallocated. After the call, the memory block
+	 * pointed to by pv is invalid and can no longer be used.
+	 * @param pv A pointer to the memory block to be freed. If this parameter is NULL, the function has no effect.
+	 */
+    void CoTaskMemFree(LPVOID pv);
 
 }
