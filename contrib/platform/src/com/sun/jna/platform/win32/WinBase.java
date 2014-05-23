@@ -162,7 +162,6 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      */
     int STILL_ACTIVE = WinNT.STATUS_PENDING;
 
-	
     /**
      * The FILETIME structure is a 64-bit value representing the number of 
      * 100-nanosecond intervals since January 1, 1601 (UTC).
@@ -305,6 +304,24 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     }
     
     /**
+     * Specifies settings for a time zone.
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/ms725481(v=vs.85).aspx
+     */
+    public static class TIME_ZONE_INFORMATION extends Structure {
+        public LONG       Bias;
+        public String      StandardName;
+        public SYSTEMTIME StandardDate;
+        public LONG       StandardBias;
+        public String      DaylightName;
+        public SYSTEMTIME DaylightDate;
+        public LONG       DaylightBias;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Bias", "StandardName", "StandardDate", "StandardBias", "DaylightName", "DaylightDate", "DaylightBias" });
+        }
+    }    
+        
+    /**
      * The lpBuffer parameter is a pointer to a PVOID pointer, and that the nSize 
      * parameter specifies the minimum number of TCHARs to allocate for an output 
      * message buffer. The function allocates a buffer large enough to hold the 
@@ -396,7 +413,7 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         }
     }        
     
-    int INFINITE = 0xFFFFFFFF;
+   int INFINITE = 0xFFFFFFFF;
 
     /**
      * Contains information about the current computer system. This includes the architecture and 
