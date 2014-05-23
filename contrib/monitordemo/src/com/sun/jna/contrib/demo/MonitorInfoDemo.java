@@ -97,6 +97,8 @@ public class MonitorInfoDemo
 		
 			enumeratePhysicalMonitor(hPhysicalMonitor);
 		}
+		
+		Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons);
 	}
 
 	/**
