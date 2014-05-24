@@ -20,7 +20,16 @@ import java.awt.event.KeyEvent;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.POINT;
+import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
+import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
+import com.sun.jna.platform.win32.WinUser.MONITORINFO;
+import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -109,5 +118,45 @@ public class User32Test extends TestCase {
     public final void testRegisterWindowMessage() {
         final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST"); 
         assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
+    }
+
+    public final void testMonitorFromPoint() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
+
+        POINT pt = new POINT(0, 0);
+        assertNotNull(User32.INSTANCE.MonitorFromPoint(pt, dwFlags));
+    }
+
+    public final void testMonitorFromRect() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
+        RECT lprc = new RECT();
+        assertNotNull(User32.INSTANCE.MonitorFromRect(lprc, dwFlags));
+    }
+
+    public final void testMonitorFromWindow() {
+        int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
+
+        HWND hwnd = new HWND();
+        assertNotNull(User32.INSTANCE.MonitorFromWindow(hwnd, dwFlags));
+    }
+
+    public final void testGetMonitorInfo() {
+        HMONITOR hMon = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
+
+        assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFO()).booleanValue());
+
+        assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFOEX()).booleanValue());
+    }
+
+    public final void testEnumDisplayMonitors() {
+
+        assertTrue(User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
+
+            @Override
+            public int apply(HMONITOR hMonitor, HDC hdc, RECT rect, LPARAM lparam)
+            {
+                return 1;
+            }
+        }, new LPARAM(0)).booleanValue());
     }
 }
