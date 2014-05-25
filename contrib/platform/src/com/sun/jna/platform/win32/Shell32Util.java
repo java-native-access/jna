@@ -84,7 +84,7 @@ public abstract class Shell32Util {
         }
 
         String result = outPath.getValue().getWideString(0);
-        Ole32.INSTANCE.CoTaskMemFree(new LPVOID(outPath.getPointer().getLong(0)));
+        Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
 
         return result;
     }

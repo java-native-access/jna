@@ -139,7 +139,7 @@ public class Shell32Test extends TestCase {
         GUID guid = KnownFolders.FOLDERID_Fonts;
         HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
 
-        Ole32.INSTANCE.CoTaskMemFree(new LPVOID(outPath.getPointer().getLong(0)));
+        Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
 
         assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
     }

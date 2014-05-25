@@ -110,21 +110,21 @@ public class Ole32Test extends TestCase {
 	}
 
     public void testCoTaskMemAlloc() {
-        LPVOID ptr = Ole32.INSTANCE.CoTaskMemAlloc(new SIZE_T(256));
+        Pointer ptr = Ole32.INSTANCE.CoTaskMemAlloc(256);
 
-        assertTrue(ptr.longValue() != 0);
+        assertTrue(!ptr.equals(Pointer.NULL));
 
         Ole32.INSTANCE.CoTaskMemFree(ptr);
     }
 
     public void testCoTaskMemRealloc() {
-        LPVOID ptr = Ole32.INSTANCE.CoTaskMemAlloc(new SIZE_T(256));
+        Pointer ptr = Ole32.INSTANCE.CoTaskMemAlloc(256);
 
-        assertTrue(ptr.longValue() != 0);
+        assertTrue(!ptr.equals(Pointer.NULL));
 
-        ptr = Ole32.INSTANCE.CoTaskMemRealloc(ptr, new SIZE_T(128));
+        ptr = Ole32.INSTANCE.CoTaskMemRealloc(ptr, 128);
 
-        assertTrue(ptr.longValue() != 0);
+        assertTrue(!ptr.equals(Pointer.NULL));
 
         Ole32.INSTANCE.CoTaskMemFree(ptr);
     }
