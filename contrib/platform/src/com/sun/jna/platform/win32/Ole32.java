@@ -230,7 +230,7 @@ public interface Ole32 extends StdCallLibrary {
 	 * @param cb The size of the memory block to be allocated, in bytes.
 	 * @return If the function succeeds, it returns the allocated memory block. Otherwise, it returns NULL.
 	 */
-    LPVOID CoTaskMemAlloc(SIZE_T cb);
+    Pointer CoTaskMemAlloc(long cb);
 
     /**
 	 * Changes the size of a previously allocated block of task memory. This function changes the size of a previously
@@ -256,7 +256,7 @@ public interface Ole32 extends StdCallLibrary {
 	 * @param cb The size of the memory block to be reallocated, in bytes. This parameter can be 0.
 	 * @return If the function succeeds, it returns the reallocated memory block. Otherwise, it returns NULL.
 	 */
-    LPVOID CoTaskMemRealloc(LPVOID pv, SIZE_T cb);
+    Pointer CoTaskMemRealloc(Pointer pv, long cb);
 
     /**
 	 * Frees a block of task memory previously allocated through a call to the {@link #CoTaskMemAlloc} or
@@ -265,6 +265,6 @@ public interface Ole32 extends StdCallLibrary {
 	 * pointed to by pv is invalid and can no longer be used.
 	 * @param pv A pointer to the memory block to be freed. If this parameter is NULL, the function has no effect.
 	 */
-    void CoTaskMemFree(LPVOID pv);
+    void CoTaskMemFree(Pointer pv);
 
 }

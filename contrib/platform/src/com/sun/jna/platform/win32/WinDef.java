@@ -978,7 +978,7 @@ public interface WinDef extends StdCallLibrary {
     public static class PVOID extends PointerType {
 
         public PVOID() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
@@ -992,25 +992,23 @@ public interface WinDef extends StdCallLibrary {
     }
 
     /**
-     * Message parameter.
+     * LPVOID is simply a Windows API typedef for void* - to pointer to any type so to speak.
      */
-    public static class LPVOID extends LONG_PTR {
+    public static class LPVOID extends PointerType {
 
         /**
-         * Instantiates a new lpvoid.
+         * Instantiates a new instance to NULL.
          */
         public LPVOID() {
-            this(0);
+            super();
         }
 
         /**
-         * Instantiates a new lpvoid.
-         *
-         * @param value
-         *            the value
+         * Instantiates a new instance using a given pointer.
+         * @param p the pointer
          */
-        public LPVOID(long value) {
-            super(value);
+        public LPVOID(Pointer p) {
+            super(p);
         }
     }
 

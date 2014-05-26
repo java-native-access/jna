@@ -15,10 +15,14 @@ package com.sun.jna.platform.win32;
 import junit.framework.TestCase;
 
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT_PTR;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 
@@ -127,4 +131,16 @@ public class Shell32Test extends TestCase {
 
     }
 
+    public void testSHGetKnownFolderPath()
+    {
+        int flags = ShlObj.KNOWN_FOLDER_FLAG.NONE.getFlag();
+        PointerByReference outPath = new PointerByReference();
+        HANDLE token = null;
+        GUID guid = KnownFolders.FOLDERID_Fonts;
+        HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
+
+        Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
+
+        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+    }
 }

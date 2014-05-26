@@ -35,4 +35,42 @@ public class Shell32UtilTest extends TestCase {
 	public final void testGetSpecialFolderPath() {
         assertFalse(Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, false).isEmpty());
     }
+
+    public void testGetKnownFolderPath()
+    {
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Fonts));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Desktop));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Startup));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Programs));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_StartMenu));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Recent));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_SendTo));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Documents));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Favorites));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_NetHood));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_PrintHood));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Templates));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_CommonStartup));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_CommonAdminTools));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_CDBurning));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Music));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_SavedGames));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_SavedSearches));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_AdminTools));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_ProgramFiles));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_ProgramData));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_ProgramFilesCommon));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_ProgramFilesCommonX86));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Programs));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Windows));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Public));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_PublicDesktop));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Links));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_LocalAppData));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_Libraries));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_RoamingAppData));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_UserProfiles));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_UserProgramFiles));
+        assertNotNull(Shell32Util.getKnownFolderPath(KnownFolders.FOLDERID_UserProgramFilesCommon));
+    }
 }
