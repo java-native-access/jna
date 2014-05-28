@@ -16,12 +16,16 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
  * The interface for the w32 setup API.
+ * @author Christian Schwarz
  */
 public interface SetupApi extends StdCallLibrary {
 
@@ -31,49 +35,98 @@ public interface SetupApi extends StdCallLibrary {
     /**
      * The GUID_DEVINTERFACE_DISK device interface class is defined for hard disk storage devices.
      */
-    public static Guid.GUID GUID_DEVINTERFACE_DISK = new Guid.GUID(new byte[]
-    {
-        0x07, 0x63, (byte) 0xf5, 0x53, (byte) 0xbf, (byte) 0xb6, (byte) 0xd0, 0x11,
-        (byte) 0x94, (byte) 0xf2, 0x00, (byte) 0xa0, (byte) 0xc9, (byte) 0x1e, (byte) 0xfb, (byte) 0x8b
-    });
+    GUID GUID_DEVINTERFACE_DISK = new GUID("53F56307-B6BF-11D0-94F2-00A0C91EFB8B");
 
+    
+	/**
+	 * Drivers for serial ports register instances of this device interface
+	 * class to notify the operating system and applications of the presence of
+	 * COM ports.
+	 */
+	GUID GUID_DEVINTERFACE_COMPORT = new GUID("86E0D1E0-8089-11D0-9CE4-08003E301F73");
+	
     /**
      * Return only the device that is associated with the system default device interface, if one is set, for the
      * specified device interface classes.
      */
-    public int DIGCF_DEFAULT = 0x1;
+    int DIGCF_DEFAULT = 0x1;
 
     /**
      * Return only devices that are currently present in a system.
      */
-    public int DIGCF_PRESENT = 0x2;
+    int DIGCF_PRESENT = 0x2;
 
     /**
      * Return a list of installed devices for all device setup classes or all device interface classes.
      */
-    public int DIGCF_ALLCLASSES = 0x4;
+    int DIGCF_ALLCLASSES = 0x4;
 
     /**
      * Return only devices that are a part of the current hardware profile.
      */
-    public int DIGCF_PROFILE = 0x8;
+    int DIGCF_PROFILE = 0x8;
 
     /**
      * Return devices that support device interfaces for the specified device interface classes. This flag must be set
      * in the Flags parameter if the Enumerator parameter specifies a device instance ID.
      */
-    public int DIGCF_DEVICEINTERFACE = 0x10;
+    int DIGCF_DEVICEINTERFACE = 0x10;
 
     /**
      * (Windows XP and later) The function retrieves the device's current removal policy as a DWORD that contains one of
      * the CM_REMOVAL_POLICY_Xxx values that are defined in Cfgmgr32.h.
      */
-    public int SPDRP_REMOVAL_POLICY = 0x0000001F;
+    int SPDRP_REMOVAL_POLICY = 0x0000001F;
 
     /**
      * Removable.
      */
-    public int CM_DEVCAP_REMOVABLE = 0x00000004;
+    int CM_DEVCAP_REMOVABLE = 0x00000004;
+    
+
+	/** make change in all hardware profiles */
+	int DICS_FLAG_GLOBAL = 0x00000001;
+	/** make change in specified profile only */
+	int DICS_FLAG_CONFIGSPECIFIC = 0x00000002;
+	/** 1 or more hardware profile-specific changes to follow. */
+	int DICS_FLAG_CONFIGGENERAL = 0x00000004;
+
+	/**
+	 * Open/Create/Delete device key.
+	 * 
+	 * @see SetupDiCreateDevRegKey , SetupDiOpenDevRegKey, and
+	 *      SetupDiDeleteDevRegKey.
+	 */
+
+	int DIREG_DEV = 0x00000001;
+	/**
+	 * Open/Create/Delete driver key
+	 * 
+	 * @see SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and
+	 *      SetupDiDeleteDevRegKey.
+	 */
+
+	int DIREG_DRV = 0x00000002;
+	/**
+	 * Delete both driver and Device key
+	 * 
+	 * @see SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and
+	 *      SetupDiDeleteDevRegKey.
+	 */
+
+	int DIREG_BOTH = 0x00000004;
+
+	/**
+	 * DeviceDesc (R/W)
+	 * <p>
+	 * Device registry property codes (Codes marked as read-only (R) may only be
+	 * used for SetupDiGetDeviceRegistryProperty)
+	 * <p>
+	 * These values should cover the same set of registry properties as defined
+	 * by the CM_DRP codes in cfgmgr32.h.
+	 */
+	int SPDRP_DEVICEDESC = 0x00000000;
+
 
     /**
      * The SetupDiGetClassDevs function returns a handle to a device information set that contains requested device
@@ -236,9 +289,93 @@ public interface SetupApi extends StdCallLibrary {
      *   ERROR_INVALID_DATA error code if the requested property does not exist for a device or if the property data is
      *   not valid.
      */
-    boolean SetupDiGetDeviceRegistryProperty(WinNT.HANDLE DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData,
+    boolean SetupDiGetDeviceRegistryProperty(HANDLE DeviceInfoSet, SP_DEVINFO_DATA DeviceInfoData,
             int Property, IntByReference PropertyRegDataType, Pointer PropertyBuffer, int PropertyBufferSize,
             IntByReference RequiredSize);
+
+	/**
+	 * The SetupDiOpenDevRegKey function opens a registry key for device-specific configuration information.
+	 * <p>
+	 * Depending on the value that is passed in the samDesired parameter, it might be necessary for the caller of this
+	 * function to be a member of the Administrators group.
+	 * <p>
+	 * Close the handle returned from this function by calling RegCloseKey.
+	 * <p>
+	 * The specified device instance must be registered before this function is called. However, be aware that the
+	 * operating system automatically registers PnP device instances. For information about how to register non-PnP
+	 * device instances, see SetupDiRegisterDeviceInfo.
+	 * 
+	 * @param deviceInfoSet
+	 *            A handle to the device information set that contains a device information element that represents the
+	 *            device for which to open a registry key.
+	 * @param deviceInfoData
+	 *            A pointer to an {@link SP_DEVINFO_DATA} structure that specifies the device information element in
+	 *            DeviceInfoSet.
+	 * @param scope
+	 *            he scope of the registry key to open. The scope determines where the information is stored. The scope
+	 *            can be global or specific to a hardware profile. The scope is specified by one of the following
+	 *            values:
+	 *            <ul>
+	 *            <li>DICS_FLAG_GLOBAL Open a key to store global configuration information. This information is not
+	 *            specific to a particular hardware profile. This opens a key that is rooted at HKEY_LOCAL_MACHINE. The
+	 *            exact key opened depends on the value of the KeyType parameter. <li>DICS_FLAG_CONFIGSPECIFIC Open a
+	 *            key to store hardware profile-specific configuration information. This key is rooted at one of the
+	 *            hardware-profile specific branches, instead of HKEY_LOCAL_MACHINE. The exact key opened depends on the
+	 *            value of the KeyType parameter.
+	 *            </ul>
+	 * @param hwProfile
+	 *            A hardware profile value, which is set as follows:
+	 *            <ul>
+	 *            <li>If Scope is set to DICS_FLAG_CONFIGSPECIFIC, HwProfile specifies the hardware profile of the key
+	 *            that is to be opened. <li>If HwProfile is 0, the key for the current hardware profile is opened. <li>
+	 *            If Scope is DICS_FLAG_GLOBAL, HwProfile is ignored.
+	 *            </ul>
+	 * @param keyType
+	 *            The type of registry storage key to open, which can be one of the following values:
+	 *            <ul>
+	 *            <li> {@link #DIREG_DEV} Open a hardware key for the device. <li>{@link #DIREG_DRV} Open a software key
+	 *            for the device. For more information about a device's hardware and software keys, see Registry Trees
+	 *            and Keys for Devices and Drivers.
+	 *            </ul>
+	 * @param samDesired
+	 *            The registry security access that is required for the requested key. For information about registry
+	 *            security access values of type REGSAM, see the Microsoft Windows SDK documentation.
+	 * @return If the function is successful, it returns a handle to an opened registry key where private configuration
+	 *         data about this device instance can be stored/retrieved.
+	 *         <p>
+	 *         If the function fails, it returns INVALID_HANDLE_VALUE. To get extended error information, call
+	 *         GetLastError.
+	 */
+	HKEY SetupDiOpenDevRegKey(HANDLE deviceInfoSet, SP_DEVINFO_DATA deviceInfoData, int scope, int hwProfile, int keyType, int samDesired);
+
+	/**
+	 * The SetupDiEnumDeviceInfo function returns a {@link SP_DEVINFO_DATA} structure that specifies a device
+	 * information element in a device information set.
+	 * <p>
+	 * <b>Remarks</b><br>
+	 * Repeated calls to this function return a device information element for a different device. This function can be
+	 * called repeatedly to get information about all devices in the device information set.
+	 * <p>
+	 * To enumerate device information elements, an installer should initially call SetupDiEnumDeviceInfo with the
+	 * MemberIndex parameter set to 0. The installer should then increment MemberIndex and call SetupDiEnumDeviceInfo
+	 * until there are no more values (the function fails and a call to GetLastError returns ERROR_NO_MORE_ITEMS).
+	 * <p>
+	 * Call SetupDiEnumDeviceInterfaces to get a context structure for a device interface element (versus a device
+	 * information element).
+	 * 
+	 * 
+	 * @param deviceInfoSet
+	 *            A handle to the device information set for which to return an {@link SP_DEVINFO_DATA} structure that
+	 *            represents a device information element.
+	 * @param memberIndex
+	 *            A zero-based index of the device information element to retrieve.
+	 * @param deviceInfoData
+	 *            A pointer to an SP_DEVINFO_DATA structure to receive information about an enumerated device
+	 *            information element.
+	 * @return The function returns TRUE if it is successful. Otherwise, it returns FALSE and the logged error can be
+	 *         retrieved with a call to GetLastError.
+	 */
+	boolean SetupDiEnumDeviceInfo(HANDLE deviceInfoSet, int memberIndex, SP_DEVINFO_DATA deviceInfoData);
 
     /**
      * An SP_DEVICE_INTERFACE_DATA structure defines a device interface in a device information set.
