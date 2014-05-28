@@ -35,11 +35,7 @@ public interface SetupApi extends StdCallLibrary {
     /**
      * The GUID_DEVINTERFACE_DISK device interface class is defined for hard disk storage devices.
      */
-    GUID GUID_DEVINTERFACE_DISK = new GUID(new byte[]
-    {
-        0x07, 0x63, (byte) 0xf5, 0x53, (byte) 0xbf, (byte) 0xb6, (byte) 0xd0, 0x11,
-        (byte) 0x94, (byte) 0xf2, 0x00, (byte) 0xa0, (byte) 0xc9, (byte) 0x1e, (byte) 0xfb, (byte) 0x8b
-    });
+    GUID GUID_DEVINTERFACE_DISK = new GUID("53F56307-B6BF-11D0-94F2-00A0C91EFB8B");
 
     
 	/**
