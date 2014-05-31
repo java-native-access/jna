@@ -175,6 +175,9 @@ History
 
 See the git log for details at http://github.com/atgreen/libffi.
 
+3.1.1 TBD
+        Bug fixes.
+
 3.1 May-19-14
         Add AArch64 (ARM64) iOS support.
         Add Nios II support.
