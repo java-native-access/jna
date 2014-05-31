@@ -1,5 +1,6 @@
 /* -----------------------------------------------------------------------
-   win32.S - Copyright (c) 1996, 1998, 2001, 2002, 2009  Red Hat, Inc.
+   win32.S - Copyright (c) 2014  Anthony Green
+	     Copyright (c) 1996, 1998, 2001, 2002, 2009  Red Hat, Inc.
 	     Copyright (c) 2001  John Beniton
 	     Copyright (c) 2002  Ranjit Mathew
 	     Copyright (c) 2009  Daniel Witte
@@ -1304,3 +1305,6 @@ L_ffi_closure_SYSV_inner$stub:
 
 #endif /* !_MSC_VER */
 
+#if defined __ELF__ && defined __linux__
+	.section	.note.GNU-stack,"",@progbits
+#endif
