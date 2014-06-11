@@ -63,8 +63,12 @@ do
       shift 1
     ;;
     -m64)
-      cl="cl"   # "$MSVC/x86_amd64/cl"
       ml="ml64" # "$MSVC/x86_amd64/ml64"
+      safeseh=
+      shift 1
+    ;;
+    -clang-cl)
+      cl="clang-cl"
       safeseh=
       shift 1
     ;;

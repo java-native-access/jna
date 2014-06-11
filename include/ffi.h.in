@@ -68,7 +68,7 @@ extern "C" {
 
 #ifndef LIBFFI_ASM
 
-#ifdef _MSC_VER
+#if defined(_MSC_VER) && !defined(__clang__)
 #define __attribute__(X)
 #endif
 
