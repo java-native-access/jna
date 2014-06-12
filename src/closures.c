@@ -286,8 +286,11 @@ static int
 open_temp_exec_file_dir (const char *dir)
 {
   static const char suffix[] = "/ffiXXXXXX";
-  int lendir, flags, fd;
+  int lendir, flags;
   char *tempname;
+#ifdef O_TMPFILE
+  int fd;
+#endif
 
 #ifdef O_CLOEXEC
   flags = O_CLOEXEC;
