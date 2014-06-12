@@ -590,11 +590,11 @@ AC_ARG_ENABLE(purify-safety,
 if test "x$GCC" = "xyes"; then
   if test -n "$with_cross_host" &&
      test x"$with_cross_host" != x"no"; then
-    toolexecdir='$(exec_prefix)/$(target_alias)'
-    toolexeclibdir='$(toolexecdir)/lib'
+    toolexecdir="${exec_prefix}"/'$(target_alias)'
+    toolexeclibdir="${toolexecdir}"/lib
   else
-    toolexecdir='$(libdir)/gcc-lib/$(target_alias)'
-    toolexeclibdir='$(libdir)'
+    toolexecdir="${libdir}"/gcc-lib/'$(target_alias)'
+    toolexeclibdir="${libdir}"
   fi
   multi_os_directory=`$CC $CFLAGS -print-multi-os-directory`
   case $multi_os_directory in
@@ -603,7 +603,7 @@ if test "x$GCC" = "xyes"; then
   esac
   AC_SUBST(toolexecdir)
 else
-  toolexeclibdir='$(libdir)'
+  toolexeclibdir="${libdir}"
 fi
 AC_SUBST(toolexeclibdir)
 
