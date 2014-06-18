@@ -15,11 +15,9 @@ package com.sun.jna.platform.mac;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
 
 public class XAttrUtil {
 
