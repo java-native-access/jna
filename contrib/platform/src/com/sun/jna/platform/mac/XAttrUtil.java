@@ -25,7 +25,7 @@ public class XAttrUtil {
 
 	public static List<String> listXAttr(String path) {
 		// get required buffer size
-		long bufferLength = XAttr.INSTANCE.listxattr(path, Pointer.NULL, 0, 0);
+		long bufferLength = XAttr.INSTANCE.listxattr(path, null, 0, 0);
 
 		if (bufferLength < 0)
 			return null;
@@ -44,7 +44,7 @@ public class XAttrUtil {
 
 	public static String getXAttr(String path, String name) {
 		// get required buffer size
-		long bufferLength = XAttr.INSTANCE.getxattr(path, name, Pointer.NULL, 0, 0, 0);
+		long bufferLength = XAttr.INSTANCE.getxattr(path, name, null, 0, 0, 0);
 
 		if (bufferLength < 0)
 			return null;
