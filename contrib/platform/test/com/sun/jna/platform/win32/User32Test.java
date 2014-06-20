@@ -20,11 +20,14 @@ import java.awt.event.KeyEvent;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
@@ -158,5 +161,42 @@ public class User32Test extends TestCase {
                 return 1;
             }
         }, new LPARAM(0)).booleanValue());
+    }
+    
+    public final void testAdjustWindowRect() {
+    	RECT lpRect = new RECT();
+    	lpRect.left=100;
+    	lpRect.top=200;
+    	lpRect.bottom=300;
+    	lpRect.right=500;
+    	
+    	assertTrue(User32.INSTANCE.AdjustWindowRect(lpRect, new DWORD(WinUser.WS_THICKFRAME), new BOOL(1)).booleanValue());
+    	
+    	assertTrue(lpRect.left < 100);
+    	assertTrue(lpRect.top < 200);
+    	assertTrue(lpRect.bottom > 300);
+    	assertTrue(lpRect.right > 500);
+    }
+    
+    public final void testLockWorkStation() {
+//    	Skipped by default because it locks the screen, which is generally undesirable during unit testing.
+//    	Can be uncommented in order to test.
+    	
+    	boolean runLockTest = false;
+    	if(runLockTest)
+    		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
+    	else
+    		System.out.println("Skipping User32Test.testLockWorkStation()");
+    }
+    
+    public final void testExitWindows() {
+//    	Skipped by default because it shuts down the computer, which is generally undesirable during unit testing.
+//    	Can be uncommented in order to test.
+    	
+    	boolean runShutdownTest = false;
+    	if(runShutdownTest)
+    		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
+    	else
+    		System.out.println("Skipping User32Test.testExitWindows()");
     }
 }
