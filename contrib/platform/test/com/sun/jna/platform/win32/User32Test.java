@@ -18,13 +18,20 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 
-import junit.framework.TestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.JUnitCore;
 
+import static org.junit.Assert.*;
+
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
@@ -34,17 +41,19 @@ import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 /**
  * @author dblock[at]dblock[dot]org
  */
-public class User32Test extends TestCase {
+public class User32Test {
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(User32Test.class);
+    	JUnitCore.runClasses(User32Test.class);
     }
 
+    @Test
     public void testGetSystemMetrics() {
         int cursorWidth = INSTANCE.GetSystemMetrics(WinUser.SM_CXCURSOR);
         assertTrue(cursorWidth > 0);
     }
 
+    @Test
     public void testRegisterHotKey() {
         int vk = KeyEvent.VK_D;
         int id = 1;
@@ -106,6 +115,7 @@ public class User32Test extends TestCase {
         return null;
     }
 
+    @Test
     public void testGetLastInputInfo() throws Exception {
         LASTINPUTINFO plii = new LASTINPUTINFO();
         assertEquals(plii.size(), plii.cbSize);
@@ -115,11 +125,13 @@ public class User32Test extends TestCase {
         assertTrue(plii.dwTime > 0);
     }
     
+    @Test
     public final void testRegisterWindowMessage() {
         final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST"); 
         assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
     }
 
+    @Test
     public final void testMonitorFromPoint() {
         int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
 
@@ -127,12 +139,14 @@ public class User32Test extends TestCase {
         assertNotNull(User32.INSTANCE.MonitorFromPoint(pt, dwFlags));
     }
 
+    @Test
     public final void testMonitorFromRect() {
         int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
         RECT lprc = new RECT();
         assertNotNull(User32.INSTANCE.MonitorFromRect(lprc, dwFlags));
     }
 
+    @Test
     public final void testMonitorFromWindow() {
         int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
 
@@ -140,6 +154,7 @@ public class User32Test extends TestCase {
         assertNotNull(User32.INSTANCE.MonitorFromWindow(hwnd, dwFlags));
     }
 
+    @Test
     public final void testGetMonitorInfo() {
         HMONITOR hMon = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
 
@@ -148,6 +163,7 @@ public class User32Test extends TestCase {
         assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFOEX()).booleanValue());
     }
 
+    @Test
     public final void testEnumDisplayMonitors() {
 
         assertTrue(User32.INSTANCE.EnumDisplayMonitors(null, null, new MONITORENUMPROC() {
@@ -158,5 +174,33 @@ public class User32Test extends TestCase {
                 return 1;
             }
         }, new LPARAM(0)).booleanValue());
+    }
+    
+    @Test
+    public final void testAdjustWindowRect() {
+    	RECT lpRect = new RECT();
+    	lpRect.left = 100;
+    	lpRect.top = 200;
+    	lpRect.bottom = 300;
+    	lpRect.right = 500;
+    	
+    	assertTrue(User32.INSTANCE.AdjustWindowRect(lpRect, new DWORD(WinUser.WS_THICKFRAME), new BOOL(1)).booleanValue());
+    	
+    	assertTrue(lpRect.left < 100);
+    	assertTrue(lpRect.top < 200);
+    	assertTrue(lpRect.bottom > 300);
+    	assertTrue(lpRect.right > 500);
+    }
+    
+    @Ignore("Locks the workstation")
+    @Test
+    public final void testLockWorkStation() {
+		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
+    }
+    
+    @Ignore("Shutsdown the workstation")
+    @Test
+    public final void testExitWindows() {
+		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
     }
 }

@@ -40,16 +40,13 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * Handle for message-only window.
      */
     public static final HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
-
+    
     /** The cs globalclass. */
     int CS_GLOBALCLASS = 0x4000;
 
     /** The ws ex topmost. */
     int WS_EX_TOPMOST = 0x00000008;
-
-    /** The ws overlapped. */
-    int WS_OVERLAPPED = 0x00000000;
-
+    
     /** The hRecipient parameter is a window handle. */
     int DEVICE_NOTIFY_WINDOW_HANDLE = 0x00000000;
 
@@ -1689,7 +1686,8 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     boolean UnregisterDeviceNotification(HDEVNOTIFY Handle);
 
     /**
-     * Defines a new window message that is guaranteed to be unique throughout the system. The message value can be used when sending or posting messages.
+     * Defines a new window message that is guaranteed to be unique throughout the system.
+     * The message value can be used when sending or posting messages.
      * 
      * @param string
      *            The message to be registered.
@@ -1778,6 +1776,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * region of a device context. EnumDisplayMonitors calls an application-defined MonitorEnumProc callback 
      * function once for each monitor that is enumerated. Note that GetSystemMetrics (SM_CMONITORS) counts 
      * only the display monitors.
+     * 
      * @param hdc A handle to a display device context that defines the visible region of interest. If this 
      *        parameter is NULL, the hdcMonitor parameter passed to the callback function will be NULL, and 
      *        the visible region of interest is the virtual screen that encompasses all the displays on the 
@@ -1793,4 +1792,162 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *        is zero.
      */
     BOOL EnumDisplayMonitors(HDC hdc, RECT lprcClip, MONITORENUMPROC lpfnEnum, LPARAM dwData);
+    
+    /**
+     * Retrieves the show state and the restored, minimized, and maximized
+     * positions of the specified window. 
+     * 
+     * @param hwnd A handle to the window. 
+     * @param dest A pointer to the WINDOWPLACEMENT structure that receives the
+     *        show state and position information. 
+     * @return The number of characters copied to the specified buffer indicates
+     *        success. Zero indicates failure. To get extended error
+     *        information, call GetLastError.
+     */
+    BOOL GetWindowPlacement(HWND hwnd, WINDOWPLACEMENT lpwndpl);
+
+    /**
+     * Sets the show state and the restored, minimized, and maximized positions
+     * of the specified window. 
+     * 
+     * @param hwnd A handle to the window. 
+     * @param dest A pointer to a WINDOWPLACEMENT structure that specifies the
+     *        new show state and window positions.
+     * @return The number of characters copied to the specified buffer indicates
+     *        success. Zero indicates failure. To get extended error 
+     *        information, call GetLastError.
+     */
+    BOOL SetWindowPlacement(HWND hwnd, WINDOWPLACEMENT lpwndpl);
+    
+    /**
+     * Calculates the required size of the window rectangle, based on the desired
+     * client-rectangle size. The window rectangle can then be passed to the CreateWindow
+     * function to create a window whose client area is the desired size.
+     * 
+     * To specify an extended window style, use the AdjustWindowRectEx function.
+     * 
+     * A client rectangle is the smallest rectangle that completely encloses a
+     * client area. A window rectangle is the smallest rectangle that completely
+     * encloses the window, which includes the client area and the nonclient area.
+     * 
+     * The AdjustWindowRect function does not add extra space when a menu bar wraps
+     * to two or more rows.
+     * 
+     * The AdjustWindowRect function does not take the WS_VSCROLL or WS_HSCROLL
+     * styles into account. To account for the scroll bars, call the GetSystemMetrics
+     * function with SM_CXVSCROLL or SM_CYHSCROLL. 
+     * 
+     * @param lpRect A pointer to a RECT structure that contains the coordinates
+     *        of the top-left and bottom-right corners  of the desired client area.
+     *        When the function returns, the structure contains the coordinates
+     *        of the top-left and bottom-right corners of the window to accommodate
+     *        the desired client area. 
+     * @param dwStyle The window style of the window whose required size is to be
+     *        calculated. Note that you cannot specify the WS_OVERLAPPED style. 
+     * @param bMenu Indicates whether the window has a menu. 
+     * @return The number of characters copied to the specified buffer indicates
+     *        success. Zero indicates failure. To get extended error
+     *        information, call GetLastError.
+     */
+    BOOL AdjustWindowRect(RECT lpRect, DWORD dwStyle, BOOL bMenu);
+    
+    /**
+     * Calculates the required size of the window rectangle, based on the desired
+     * client-rectangle size. The window rectangle can then be passed to the CreateWindowEx
+     * function to create a window whose client area is the desired size.
+     * 
+     * A client rectangle is the smallest rectangle that completely encloses a
+     * client area. A window rectangle is the smallest rectangle that completely
+     * encloses the window, which includes the client area and the nonclient area.
+     * 
+     * The AdjustWindowRectEx function does not add extra space when a menu bar wraps
+     * to two or more rows.
+     * 
+     * The AdjustWindowRectEx function does not take the WS_VSCROLL or WS_HSCROLL
+     * styles into account. To account for the scroll bars, call the GetSystemMetrics
+     * function with SM_CXVSCROLL or SM_CYHSCROLL. 
+     * 
+     * @param lpRect A pointer to a RECT structure that contains the coordinates
+     *        of the top-left and bottom-right corners  of the desired client area.
+     *        When the function returns, the structure contains the coordinates
+     *        of the top-left and bottom-right corners of the window to accommodate
+     *        the desired client area. 
+     * @param dwStyle The window style of the window whose required size is to be
+     *        calculated. Note that you cannot specify the WS_OVERLAPPED style. 
+     * @param bMenu Indicates whether the window has a menu. 
+     * @param dwExStyle The extended window style of the window whose required size
+     *        is to be calculated. 
+     * @return The number of characters copied to the specified buffer indicates
+     *        success. Zero indicates failure. To get extended error
+     *        information, call GetLastError.
+     */
+    BOOL AdjustWindowRectEx(RECT lpRect, DWORD dwStyle, BOOL bMenu, DWORD dwExStyle);
+    
+    /** 
+     * Logs off the interactive user, shuts down the system, or shuts down and restarts
+     * the system. It sends the WM_QUERYENDSESSION message to all applications to
+     * determine if they can be terminated.
+     * 
+     * When this function is called, the caller must specify whether or not applications
+     * with unsaved changes should be forcibly closed. If the caller chooses not to force
+     * these applications to close and an application with unsaved changes is running on
+     * the console session, the shutdown will remain in progress until the user logged
+     * into the console session aborts the shutdown, saves changes, closes the application,
+     * or forces the application to close. During this period, the shutdown may not be
+     * aborted except by the console user, and another shutdown may not be initiated.
+     * 
+     * Calling this function with the value of the uFlags parameter set to EWX_FORCE avoids
+     * this situation. Remember that doing this may result in loss of data.
+     * 
+     * To set a shutdown priority for an application relative to other applications in the
+     * system, use the SetProcessShutdownParameters function.
+     * 
+     * During a shutdown or log-off operation, running applications are allowed a specific
+     * amount of time to respond to the shutdown request. If this time expires before all
+     * applications have stopped, the system displays a user interface that allows the user
+     * to forcibly shut down the system or to cancel the shutdown request. If the EWX_FORCE
+     * value is specified, the system forces running applications to stop when the time expires.
+     * 
+     * If the EWX_FORCEIFHUNG value is specified, the system forces hung applications to close
+     * and does not display the dialog box.
+     * 
+     * Console processes receive a separate notification message, CTRL_SHUTDOWN_EVENT or
+     * CTRL_LOGOFF_EVENT, as the situation warrants. A console process routes these messages
+     * to its HandlerRoutine function. ExitWindowsEx sends these notification messages
+     * asynchronously; thus, an application cannot assume that the console notification messages
+     * have been handled when a call to ExitWindowsEx returns.
+     * 
+     * To shut down or restart the system, the calling process must use the {@link com.sun.jna.platform.Advapi32.AdjustTokenPrivileges}
+     * function to enable the SE_SHUTDOWN_NAME privilege. For more information, see Running with Special Privileges.
+     * 
+     * @param uFlags The shutdown type. This parameter must include one of EWX_HYBRID_SHUTDOWN,
+     *        EWX_LOGOFF, EWX_POWEROFF, EWX_REBOOT, EWX_RESTARTAPPS, or EWX_SHUTDOWN. This
+     *        parameter can optionally include one of EWX_FORCE or EWX_FORCEIFHUNG.
+     * @param dReason The reason for initiating the shutdown. This parameter must be one
+     *        of the system shutdown reason codes. If this parameter is zero, the
+     *        SHTDN_REASON_FLAG_PLANNED reason code will not be set and therefore the
+     *        default action is an undefined shutdown that is logged as "No title for
+     *        this reason could be found". By default, it is also an unplanned shutdown.
+     *        Depending on how the system is configured, an unplanned shutdown triggers
+     *        the creation of a file that contains the system state information, which
+     *        can delay shutdown. Therefore, do not use zero for this parameter.
+     * @return If the function succeeds, the return value is nonzero. Because the function
+     *        executes asynchronously, a nonzero return value indicates that the shutdown has been
+     *        initiated. It does not indicate whether the shutdown will succeed. It is possible
+     *        that the system, the user, or another application will abort the shutdown. If the
+     *        function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    BOOL ExitWindowsEx(UINT uFlags, DWORD dReason);
+    
+    /**
+     * Locks the workstation's display. Locking a workstation protects it from unauthorized use. The
+     * LockWorkStation function is callable only by processes running on the interactive desktop.
+     * In addition, the user must be logged on, and the workstation cannot already be locked.
+     * 
+     * @return If the function succeeds, the return value is nonzero. Because the function executes
+     *        asynchronously, a nonzero return value indicates that the operation has been initiated.
+     *        It does not indicate whether the workstation has been successfully locked. If the
+     *        function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    BOOL LockWorkStation();
 }

@@ -91,7 +91,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public HWND hwndCaret;
         public RECT rcCaret;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cbSize", "flags",
                                                 "hwndActive", "hwndFocus", "hwndCapture", "hwndMenuOwner",
                                                 "hwndMoveSize", "hwndCaret", "rcCaret" });
@@ -110,36 +110,222 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public short atomWindowType;
         public short wCreatorVersion;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cbSize", "rcWindow",
                                                 "rcClient", "dwStyle", "dwExStyle", "dwWindowStatus",
                                                 "cxWindowBorders", "cyWindowBorders", "atomWindowType",
                                                 "wCreatorVersion" });
         }
     }
+	
+    /**
+     * Contains information about the placement of a window on the screen. 
+     */
+    public class WINDOWPLACEMENT extends Structure {
+    	/**
+    	 * The coordinates of the minimized window may be specified. 
+    	 */
+    	public static final int WPF_SETMINPOSITION = 0x1;
+    	
+    	/**The restored window will be maximized, regardless of whether it was maximized before it
+    	 * was minimized. This setting is only valid the next time the window is restored. It does not
+    	 * change the default restoration behavior.
+    	 * 
+    	 * This flag is only valid when the SW_SHOWMINIMIZED value is specified for the showCmd member.
+    	 */
+    	public static final int WPF_RESTORETOMAXIMIZED = 0x2;
+    	
+    	/**
+    	 * If the calling thread and the thread that owns the window are attached to different input
+    	 * queues, the system posts the request to the thread that owns the window. This prevents
+    	 * the calling thread from blocking its execution while other threads process the request.
+    	 */
+    	public static final int WPF_ASYNCWINDOWPLACEMENT = 0x4;
+    	
+    	
+    	
+    	/**
+    	 * The length of the structure, in bytes.
+    	 */
+		public int length = size();
+		/**
+		 * The flags that control the position of the minimized window and the method by which the
+		 * window is restored. This member can be one or more of WPF_SETMINPOSITION,
+		 * WPF_RESTORETOMAXIMIZED, or WPF_ASYNCWINDOWPLACEMENT.
+		 */
+		public int flags;
+		/**
+		 * The current show state of the window. This member can be one of SW_HIDE, SW_MAXIMIZE,
+		 * SW_MINIMIZE, SW_RESTORE, SW_SHOW, SW_SHOWMAXIMIZED, SW_SHOWMINIMIZED, SW_SHOWMINNOACTIVE,
+		 * SW_SHOWNA, SW_SHOWNOACTIVATE, SW_SHOWNORMAL.
+		 * 
+		 * Note that here SW_MAXIMIZE and SW_SHOWMAXIMIZED are the same value.
+		 */
+		public int showCmd;
+		/**
+		 * Virtual position of the window's upper-left corner when minimized. Usually largely negative.
+		 * May be in workspace coordinates.
+		 */
+		public POINT ptMinPosition;
+		/**
+		 * Coordinates of the window's upper-right corner when maximized. Usually small and negative.
+		 * May be in workspace coordinates.
+		 */
+		public POINT ptMaxPosition;
+		/**
+		 * The window's coordinates when the window is in the restored position. May be in workspace
+		 * coordinates.
+		 */
+		public RECT rcNormalPosition;
+	
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[]{"length","flags","showCmd","ptMinPosition","ptMaxPosition",
+					"rcNormalPosition"});
+		}
+	}
 
+    /* Get/SetWindowLong properties */
     int GWL_EXSTYLE = -20;
     int GWL_STYLE = -16;
     int GWL_WNDPROC = -4;
     int GWL_HINSTANCE = -6;
     int GWL_ID = -12;
     int GWL_USERDATA = -21;
-    int DWL_DLGPROC = 4;
-
+    int GWL_HWNDPARENT = -8;
+    
+    int DWL_DLGPROC = Pointer.SIZE;
     int DWL_MSGRESULT = 0;
-    int DWL_USER = 8;
+    int DWL_USER = 2*Pointer.SIZE;
 
-    int WS_MAXIMIZE = 0x01000000;
-    int WS_VISIBLE = 0x10000000;
-    int WS_MINIMIZE = 0x20000000;
-    int WS_CHILD = 0x40000000;
-    int WS_POPUP = 0x80000000;
+    /* Window Styles */
+    
+    /** The window has a thin-line border. */
+    int WS_BORDER	= 0x800000;
+    
+    /** The window has a title bar (includes the WS_BORDER style). */
+    int WS_CAPTION	= 0xc00000;
+    
+    /** The window is a child window. A window with this style cannot have a
+     * menu bar. This style cannot be used with the WS_POPUP style. */
+    int WS_CHILD	= 0x40000000;
+    
+    /** Same as the WS_CHILD style. */
+    int WS_CHILDWINDOW	= 0x40000000;
+    
+    /** Excludes the area occupied by child windows when drawing occurs within
+     * the parent window. This style is used when creating the parent window. */
+    int WS_CLIPCHILDREN = 0x2000000;
+    
+    /** Clips child windows relative to each other; that is, when a particular
+     * child window receives a WM_PAINT message, the WS_CLIPSIBLINGS style clips
+     * all other overlapping child windows out of the region of the child window
+     * to be updated. If WS_CLIPSIBLINGS is not specified and child windows
+     * overlap, it is possible, when drawing within the client area of a child
+     * window, to draw within the client area of a neighboring child window. */
+    int WS_CLIPSIBLINGS = 0x4000000;
+    
+    /** The window is initially disabled. A disabled window cannot receive input
+     * from the user. To change this after a window has been created, use the
+     * EnableWindow function. */
+    int WS_DISABLED	= 0x8000000;
+    
+    /** The window has a border of a style typically used with dialog boxes. A
+     * window with this style cannot have a title bar. */
+    int WS_DLGFRAME	= 0x400000;
+    
+    /** The window is the first control of a group of controls. The group
+     * consists of this first control and all controls defined after it, up to
+     * the next control with the WS_GROUP style. The first control in each group
+     * usually has the WS_TABSTOP style so that the user can move from group to
+     * group. The user can subsequently change the keyboard focus from one control
+     * in the group to the next control in the group by using the direction keys
+     * .
+     * You can turn this style on and off to change dialog box navigation. To
+     * change this style after a window has been created, use the SetWindowLong
+     * function.
+     */
+    int WS_GROUP	= 0x20000;
+    
+    /** The window has a horizontal scroll bar. */
+    int WS_HSCROLL	= 0x100000;
+    
+    /** The window is initially minimized. Same as the WS_MINIMIZE style. */
+    int WS_ICONIC	= 0x20000000;
+    
+    /** The window is initially maximized. */
+    int WS_MAXIMIZE	= 0x1000000;
+    
+    /** The window has a maximize button. Cannot be combined with the
+     * WS_EX_CONTEXTHELP style. The WS_SYSMENU style must also be specified.  */
+    int WS_MAXIMIZEBOX	= 0x10000;
+    
+    /** The window is initially minimized. Same as the WS_ICONIC style. */
+    int WS_MINIMIZE	= 0x20000000;
+    
+    /** The window has a minimize button. Cannot be combined with the
+     * WS_EX_CONTEXTHELP style. The WS_SYSMENU style must also be specified. */
+    int WS_MINIMIZEBOX	= 0x20000;
+    
+    /** The window style overlapped. The window is an overlapped window. An
+     * overlapped window has a title bar and a border. Same as the WS_TILED style. */
+    int WS_OVERLAPPED = 0x00000000;
+    
+    /** The windows is a pop-up window. This style cannot be used with the WS_CHILD style. */
+    int WS_POPUP	= 0x80000000;
+    
+    /** The window has a window menu on its title bar. The WS_CAPTION style must also be specified. */
+    int WS_SYSMENU	= 0x80000;
+    
+    /** The window has a sizing border. Same as the WS_SIZEBOX style. */
+    int WS_THICKFRAME	= 0x40000;
+    
+    /** The window is a pop-up window. The WS_CAPTION and WS_POPUPWINDOW styles
+     * must be combined to make the window menu visible. */
+    int WS_POPUPWINDOW	= (WS_POPUP | WS_BORDER | WS_SYSMENU);
+    
+    /** The window is an overlapped window. Same as the WS_TILEDWINDOW style.  */
+    int WS_OVERLAPPEDWINDOW	= (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+    		WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+    
+    /** The window has a sizing border. Same as the WS_THICKFRAME style. */
+    int WS_SIZEBOX	= 0x40000;
+    
+    /** The window is a control that can receive the keyboard focus when the
+     * user presses the TAB key. Pressing the TAB key changes the keyboard focus
+     * to the next control with the WS_TABSTOP style.
+     * 
+     * You can turn this style on and off to change dialog box navigation.
+     * To change this style after a window has been created, use the SetWindowLong
+     * function. For user-created windows and modeless dialogs to work with tab
+     * stops, alter the message loop to call the IsDialogMessage function.
+     */
+    int WS_TABSTOP	= 0x10000;
+    
+    /** The window is an overlapped window. An overlapped window has a
+     * title bar and a border. Same as the WS_OVERLAPPED style. */
+    int WS_TILED	= 0;
+    
+    /** The window is an overlapped window. Same as the WS_OVERLAPPEDWINDOW style. */
+    int WS_TILEDWINDOW	= (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | 
+    		WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+    
+    /** The window is initially visible. This style can be turned on and off
+     * by using the ShowWindow or SetWindowPos function. */
+    int WS_VISIBLE	= 0x10000000;
+    
+    /** The window has a vertical scroll bar. */
+    int WS_VSCROLL	= 0x200000;
+    
+    /* Extended Window Styles */
     int WS_EX_COMPOSITED = 0x20000000;
     int WS_EX_LAYERED = 0x80000;
     int WS_EX_TRANSPARENT = 32;
 
+    /* Layered Window Attributes flags */
     int LWA_COLORKEY = 1;
     int LWA_ALPHA = 2;
+    
+    /* Update Layered Window flags */
     int ULW_COLORKEY = 1;
     int ULW_ALPHA = 2;
     int ULW_OPAQUE = 4;
@@ -152,20 +338,20 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int time;
         public POINT pt;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "hWnd", "message", "wParam",
                                                 "lParam", "time", "pt" });
         }
     }
 
     public class FLASHWINFO extends Structure {
-        public int cbSize;
+        public int cbSize = size();
         public HANDLE hWnd;
         public int dwFlags;
         public int uCount;
         public int dwTimeout;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cbSize", "hWnd", "dwFlags",
                                                 "uCount", "dwTimeout" });
         }
@@ -192,7 +378,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
             this.cy = h;
         }
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cx", "cy" });
         }
     }
@@ -208,7 +394,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "BlendOp", "BlendFlags",
                                                 "SourceConstantAlpha", "AlphaFormat" });
         }
@@ -321,12 +507,13 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int time;
         public ULONG_PTR dwExtraInfo;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "vkCode", "scanCode", "flags",
                                                 "time", "dwExtraInfo" });
         }
     }
 
+    /* System Metrics */
     int SM_CXSCREEN = 0;
     int SM_CYSCREEN = 1;
     int SM_CXVSCROLL = 2;
@@ -564,7 +751,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.WORD wParamL;
         public WinDef.WORD wParamH;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "uMsg", "wParamL", "wParamH" });
         }
     }
@@ -600,7 +787,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD type;
         public INPUT_UNION input = new INPUT_UNION();
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "type", "input" });
         }
 
@@ -698,7 +885,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
          */
         public BaseTSD.ULONG_PTR dwExtraInfo;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "wVk", "wScan", "dwFlags",
                                                 "time", "dwExtraInfo" });
         }
@@ -734,7 +921,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public WinDef.DWORD time;
         public BaseTSD.ULONG_PTR dwExtraInfo;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "dx", "dy", "mouseData",
                                                 "dwFlags", "time", "dwExtraInfo" });
         }
@@ -749,7 +936,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         // Tick count of when the last input event was received.
         public int dwTime;
 
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cbSize", "dwTime" });
         }
     }
@@ -825,13 +1012,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         /** The h icon sm. */
         public HICON hIconSm;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        @Override
-            protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "cbSize", "style",
                                                 "lpfnWndProc", "cbClsExtra", "cbWndExtra", "hInstance",
                                                 "hIcon", "hCursor", "hbrBackground", "lpszMenuName",
@@ -1067,4 +1248,45 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public int apply(HMONITOR hMonitor, HDC hdcMonitor, RECT lprcMonitor, LPARAM dwData);
     }
 
+    /* Extendend Exit Windows flags */
+    
+    /** Beginning with Windows 8:  You can prepare the system for a faster startup by
+     * combining the EWX_HYBRID_SHUTDOWN flag with the EWX_SHUTDOWN flag. */
+    int EWX_HYBRID_SHUTDOWN = 0x00400000;
+    
+    /** Shuts down all processes running in the logon session of the process that called the ExitWindowsEx function.
+     * Then it logs the user off. This flag can be used only by processes running in an interactive user's logon session. */
+    int EWX_LOGOFF = 0;
+    
+    /** Shuts down the system and turns off the power. The system must support the power-off feature. The calling
+     * process must have the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+    int EWX_POWEROFF = 0x00000008;
+    
+    /** Shuts down the system and then restarts the system. The calling process must have the SE_SHUTDOWN_NAME
+     * privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+    int EWX_REBOOT = 0x00000002; 
+
+    /** Shuts down the system and then restarts it, as well as any applications that have been registered for
+     * restart using the RegisterApplicationRestart function. These application receive the WM_QUERYENDSESSION
+     * message with lParam set to the ENDSESSION_CLOSEAPP value. For more information, see Guidelines for Applications. */
+    int EWX_RESTARTAPPS = 0x00000040; 
+
+    /** Shuts down the system to a point at which it is safe to turn off the power. All file buffers
+     * have been flushed to disk, and all running processes have stopped. The calling process must have
+     * the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. Specifying
+     * this flag will not turn off the power even if the system supports the power-off feature. You must
+     * specify EWX_POWEROFF to do this.
+     * 
+     * Windows XP with SP1:  If the system supports the power-off feature, specifying this flag turns off the power.
+     */
+    int EWX_SHUTDOWN = 0x00000001; 
+    
+    /** This flag has no effect if terminal services is enabled. Otherwise, the system does not send the
+     * WM_QUERYENDSESSION message. This can cause applications to lose data. Therefore, you should only
+     * use this flag in an emergency. */
+    int EWX_FORCE = 0x00000004;
+    
+    /** Forces processes to terminate if they do not respond to the WM_QUERYENDSESSION or WM_ENDSESSION
+     * message within the timeout interval. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+    int EWX_FORCEIFHUNG = 0x00000010;
 }
