@@ -410,7 +410,7 @@ public class NativeTest extends TestCase {
             for (int i=0;i < args.length;i++) {
                 System.out.println("Running tests on class " + args[i]);
                 try {
-                    junit.textui.TestRunner.run(Class.forName(args[i]));
+                    junit.textui.TestRunner.run((Class<? extends TestCase>) Class.forName(args[i]));
                 }
                 catch(Throwable e) {
                     e.printStackTrace();
