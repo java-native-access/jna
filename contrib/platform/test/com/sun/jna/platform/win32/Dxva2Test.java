@@ -16,7 +16,9 @@
 
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.Dxva2;
@@ -41,12 +43,12 @@ import com.sun.jna.platform.win32.WinUser.HMONITOR;
 /**
  * @author Martin Steiger
  */
-public class Dxva2Test extends TestCase {
+public class Dxva2Test {
 
 	private int monitorCount;
 	private PHYSICAL_MONITOR[] physMons;
 
-    @Override
+    @Before
 	public void setUp()
     {
         HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
@@ -56,15 +58,17 @@ public class Dxva2Test extends TestCase {
 
         monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
         physMons = new PHYSICAL_MONITOR[monitorCount];
-        assertTrue(Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons).booleanValue());
+        
+        assumeTrue(Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons).booleanValue());
     }
 
-    @Override
+    @After
 	public void tearDown()
     {
-        assertTrue(Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons).booleanValue()); 
+        Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons);
     }
 
+    @Test
     public void testGetMonitorTechnologyType()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -75,6 +79,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorTechnologyType(hPhysicalMonitor, techType);
     }
 
+    @Test
     public void testGetMonitorCapabilities()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -86,6 +91,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorCapabilities(hPhysicalMonitor, caps, temps);
     }
 
+    @Test
     public void testGetMonitorBrightness()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -98,6 +104,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorBrightness(hPhysicalMonitor, pdwMinimumBrightness, pdwCurrentBrightness, pdwMaximumBrightness);
     }
 
+    @Test
     public void testGetMonitorContrast()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -110,6 +117,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorContrast(hPhysicalMonitor, pdwMinimumContrast, pdwCurrentContrast, pdwMaximumContrast);
     }
 
+    @Test
     public void testGetMonitorColorTemperature()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -120,6 +128,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorColorTemperature(hPhysicalMonitor, pctCurrentColorTemperature);
     }
 
+    @Test
     public void testCapabilitiesRequestAndCapabilitiesReply()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -134,6 +143,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, pszASCIICapabilitiesString, capStrLen);
     }
 
+    @Test
     public void testGetMonitorDisplayAreaPosition()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -147,6 +157,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorDisplayAreaPosition(hPhysicalMonitor, ptPositionType, pdwMinimumPosition, pdwCurrentPosition, pdwMaximumPosition);
     }
 
+    @Test
     public void testGetMonitorDisplayAreaSize()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -160,6 +171,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorDisplayAreaSize(hPhysicalMonitor, ptSizeType, pdwMinimumSize, pdwCurrentSize, pdwMaximumSize);
     }
 
+    @Test
     public void testGetMonitorRedGreenOrBlueGain()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -173,6 +185,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorRedGreenOrBlueGain(hPhysicalMonitor, ptGainType, pdwMinimumGain, pdwCurrentGain, pdwMaximumGain);
     }
 
+    @Test
     public void testGetMonitorRedGreenOrBlueDrive()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
@@ -186,6 +199,7 @@ public class Dxva2Test extends TestCase {
         Dxva2.INSTANCE.GetMonitorRedGreenOrBlueDrive(hPhysicalMonitor, ptDriveType, pdwMinimumDrive, pdwCurrentDrive, pdwMaximumDrive);
     }
 
+    @Test
     public void testGetTimingReport()
     {
         HANDLE hPhysicalMonitor = physMons[0].hPhysicalMonitor;
