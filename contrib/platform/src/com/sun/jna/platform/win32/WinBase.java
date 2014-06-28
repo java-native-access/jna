@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -903,4 +904,23 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      */
     int MOVEFILE_WRITE_THROUGH = 0x8;
 
+    /**
+     * Represents a thread entry point local to this process, as a Callback.
+     */
+    public interface THREAD_START_ROUTINE extends Callback{
+    	public DWORD apply( LPVOID lpParameter );
+    }
+    
+    /**
+     * Represents a thread entry point in another process. Can only be expressed as a pointer, as
+     * the location has no meaning in the Java process.
+     */
+    public class FOREIGN_THREAD_START_ROUTINE extends Structure {
+		LPVOID foreignLocation;
+
+		@Override
+		protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "foreignLocation" });
+		}
+    }
 }

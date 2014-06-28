@@ -16,6 +16,7 @@ Features
 * [#334](https://github.com/twall/jna/pull/334): Added `com.sun.jna.platform.win32.Shell32.SHGetKnownFolderPath` and `KnownFolders` GUID constants - [@msteiger](https://github.com/msteiger).
 * [#338](https://github.com/twall/jna/pull/338): Added `com.sun.jna.platform.mac.XAttr` and `com.sun.jna.platform.mac.XAttrUtil` JNA wrapper for `<sys/xattr.h>` for Mac OS X - [@rednoah](https://github.com/rednoah).
 * [#339](https://github.com/twall/jna/pull/339): Added `GetWindowPlacement`, `SetWindowPlacement`, `AdjustWindowRect`, `AdjustWindowRectEx`, `ExitWindowsEx`, and `LockWorkstation` to `com.sun.jna.platform.win32.User32` - [@Timeroot](https://github.com/Timeroot).
+* [#286](https://github.com/twall/jna/pull/286): Added in com.sun.jna.platform.win32.Kernel32: CreateRemoteThread, WritePocessMemory and ReadProcessMemory - [@sstokic-tgm](https://github.com/sstokic-tgm).
 
 Bug Fixes
 ---------
