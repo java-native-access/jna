@@ -19,6 +19,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -614,4 +615,63 @@ public class Kernel32Test extends TestCase {
         reader.close();
     }
 
+    private int getNonexistantPID() {
+    	int dwPID;
+    	HANDLE hProc;
+    	Random r = new Random(11111111);
+    	do{
+        	final int dwDesiredAccess = 0x1; //PROCESS_TERMINATE
+        	final boolean bInheritHandle = false;
+        	dwPID = r.nextInt() & 65535;
+    		hProc = Kernel32.INSTANCE.OpenProcess(dwDesiredAccess, bInheritHandle, dwPID);
+    	}while((hProc != null) || (Kernel32.INSTANCE.GetLastError() != WinError.ERROR_INVALID_PARAMETER));
+    	
+    	return dwPID;
+    }
+    
+    public void testWriteProcessMemory() {
+    	Kernel32 kernel = Kernel32.INSTANCE;
+    	
+    	boolean successWrite = kernel.WriteProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);	
+    	assertFalse(successWrite);
+    	assertEquals(kernel.GetLastError(), WinError.ERROR_INVALID_HANDLE);
+    	
+    	ByteBuffer bufDest = ByteBuffer.allocateDirect(4);
+    	bufDest.put(new byte[]{0,1,2,3});
+    	ByteBuffer bufSrc = ByteBuffer.allocateDirect(4);
+    	bufSrc.put(new byte[]{5,10,15,20});
+    	Pointer ptrSrc = Native.getDirectBufferPointer(bufSrc);
+    	Pointer ptrDest = Native.getDirectBufferPointer(bufDest);
+    	
+    	HANDLE selfHandle = kernel.GetCurrentProcess();
+    	kernel.WriteProcessMemory(selfHandle, ptrDest, ptrSrc, 3, null);//Write only the first three
+    	
+		assertEquals(bufDest.get(0),5);
+    	assertEquals(bufDest.get(1),10);
+    	assertEquals(bufDest.get(2),15);
+    	assertEquals(bufDest.get(3),3);
+	}
+    
+    public void testReadProcessMemory() {
+    	Kernel32 kernel = Kernel32.INSTANCE;
+    	
+    	boolean successRead = kernel.ReadProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);	
+    	assertFalse(successRead);
+    	assertEquals(kernel.GetLastError(), WinError.ERROR_INVALID_HANDLE);
+    	
+    	ByteBuffer bufSrc = ByteBuffer.allocateDirect(4);
+    	bufSrc.put(new byte[]{5,10,15,20});
+    	ByteBuffer bufDest = ByteBuffer.allocateDirect(4);
+    	bufDest.put(new byte[]{0,1,2,3});
+    	Pointer ptrSrc = Native.getDirectBufferPointer(bufSrc);
+    	Pointer ptrDest = Native.getDirectBufferPointer(bufDest);
+    	
+    	HANDLE selfHandle = kernel.GetCurrentProcess();
+    	kernel.ReadProcessMemory(selfHandle, ptrSrc, ptrDest, 3, null);//Read only the first three
+    	
+		assertEquals(bufDest.get(0),5);
+    	assertEquals(bufDest.get(1),10);
+    	assertEquals(bufDest.get(2),15);
+    	assertEquals(bufDest.get(3),3);
+    }
 }
