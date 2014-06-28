@@ -615,18 +615,10 @@ public class Kernel32Test extends TestCase {
         reader.close();
     }
 
-    private int getNonexistantPID() {
-    	int dwPID;
-    	HANDLE hProc;
-    	Random r = new Random(11111111);
-    	do{
-        	final int dwDesiredAccess = 0x1; //PROCESS_TERMINATE
-        	final boolean bInheritHandle = false;
-        	dwPID = r.nextInt() & 65535;
-    		hProc = Kernel32.INSTANCE.OpenProcess(dwDesiredAccess, bInheritHandle, dwPID);
-    	}while((hProc != null) || (Kernel32.INSTANCE.GetLastError() != WinError.ERROR_INVALID_PARAMETER));
-    	
-    	return dwPID;
+    public final void testCreateRemoteThread() throws IOException {
+    	HANDLE hThrd = Kernel32.INSTANCE.CreateRemoteThread(null, null, 0, null, null, null, null);
+    	assertNull(hThrd);
+    	assertEquals(Kernel32.INSTANCE.GetLastError(), WinError.ERROR_INVALID_HANDLE);
     }
     
     public void testWriteProcessMemory() {
