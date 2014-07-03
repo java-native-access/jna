@@ -1,0 +1,6 @@
+language: java
+
+script:
+  - ant test 
+  - cd contrib/platform ; ant test ; cd ../..
+  - ant dist
