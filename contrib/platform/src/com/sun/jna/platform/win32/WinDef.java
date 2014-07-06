@@ -1538,17 +1538,17 @@ public interface WinDef extends StdCallLibrary {
     public static class HGLRCByReference extends HANDLEByReference {
 
         /**
-         * Instantiates a new HGLRC .
+         * Instantiates a new pointer to an HGLRC.
          */
         public HGLRCByReference() {
 
         }
 
         /**
-         * Instantiates a new HGLRC .
+         * Instantiates a new pointer to an HGLRC.
          *
-         * @param p
-         *            the p
+         * @param h
+         *            Initial valure for the HGLRC
          */
         public HGLRCByReference(HGLRC h) {
             super(h);

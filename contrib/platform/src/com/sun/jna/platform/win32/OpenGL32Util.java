@@ -35,9 +35,8 @@ public abstract class OpenGL32Util {
     }
 
     /**
-     * Return a RAS connection by name
-     * @param connName the connection name
-     * @return the RAS connection structure
+     * Count GPUs
+     * @return the number of available GPUs
      */
     public static int countGpusNV() {
         // create a dummy window

@@ -1366,7 +1366,7 @@ public interface Kernel32 extends WinNT {
      * 
      * @param buffer
      *            a buffer which receives an array of
-     *            {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} structures.
+     *            {@link WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION} structures.
      * @param returnLength
      *            on input, specifies the length of the buffer in bytes. On
      *            output, receives the number of bytes actually returned, or if

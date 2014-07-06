@@ -1111,7 +1111,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
     /**
      * The MONITORINFO structure contains information about a display monitor.<br/>
-     * The {@link MyUser32#GetMonitorInfo(HMONITOR, MONITORINFO)} function stores 
+     * The {@link User32#GetMonitorInfo} function stores 
      * information into a MONITORINFO structure<br/><br/>
      * The MONITORINFO structure is a subset of the MONITORINFOEX structure.      
      */
@@ -1154,7 +1154,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
     /**
      * The MONITORINFOEX structure contains information about a display monitor.<br/>
-     * The {@link MyUser32#GetMonitorInfo(HMONITOR, MONITORINFOEX)} function stores 
+     * The {@link User32#GetMonitorInfo} function stores 
      * information into a MONITORINFOEX structure<br/><br/>
      * The MONITORINFOEX structure is a superset of the MONITORINFO structure. 
      * The MONITORINFOEX structure adds a string member to contain a name for the display monitor. 
@@ -1210,7 +1210,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
     }
 
     /**
-     * An application-defined callback function that is called by the {@link MyUser32#EnumDisplayMonitors} function.
+     * An application-defined callback function that is called by the {@link User32#EnumDisplayMonitors} function.
      * <br/><br/>
      * You can use the EnumDisplayMonitors function to enumerate the set of display monitors that intersect 
      * the visible region of a specified device context and, optionally, a clipping rectangle. To do this, 
@@ -1259,11 +1259,11 @@ public interface WinUser extends StdCallLibrary, WinDef {
     int EWX_LOGOFF = 0;
     
     /** Shuts down the system and turns off the power. The system must support the power-off feature. The calling
-     * process must have the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+     * process must have the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32#ExitWindowsEx}. */
     int EWX_POWEROFF = 0x00000008;
     
     /** Shuts down the system and then restarts the system. The calling process must have the SE_SHUTDOWN_NAME
-     * privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+     * privilege. For more information, see {@link com.sun.jna.platform.win32.User32#ExitWindowsEx}. */
     int EWX_REBOOT = 0x00000002; 
 
     /** Shuts down the system and then restarts it, as well as any applications that have been registered for
@@ -1273,7 +1273,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
     /** Shuts down the system to a point at which it is safe to turn off the power. All file buffers
      * have been flushed to disk, and all running processes have stopped. The calling process must have
-     * the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. Specifying
+     * the SE_SHUTDOWN_NAME privilege. For more information, see {@link com.sun.jna.platform.win32.User32#ExitWindowsEx}. Specifying
      * this flag will not turn off the power even if the system supports the power-off feature. You must
      * specify EWX_POWEROFF to do this.
      * 
@@ -1287,6 +1287,6 @@ public interface WinUser extends StdCallLibrary, WinDef {
     int EWX_FORCE = 0x00000004;
     
     /** Forces processes to terminate if they do not respond to the WM_QUERYENDSESSION or WM_ENDSESSION
-     * message within the timeout interval. For more information, see {@link com.sun.jna.platform.win32.User32.ExitWindowsEx}. */
+     * message within the timeout interval. For more information, see {@link com.sun.jna.platform.win32.User32#ExitWindowsEx}. */
     int EWX_FORCEIFHUNG = 0x00000010;
 }

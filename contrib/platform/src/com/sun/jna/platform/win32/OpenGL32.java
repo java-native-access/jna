@@ -37,7 +37,7 @@ public interface OpenGL32 extends StdCallLibrary {
      * The wglCreateContext function creates a new OpenGL rendering context, which is suitable for drawing on the device
      * referenced by hdc. The rendering context has the same pixel format as the device context.
      *
-     * @param hdc
+     * @param windowDC
      *            Handle to a device context for which the function creates a suitable OpenGL rendering context.
      * @return handle to an OpenGL rendering context
      */
@@ -55,7 +55,7 @@ public interface OpenGL32 extends StdCallLibrary {
      * The wglMakeCurrent function makes a specified OpenGL rendering context the calling thread's current rendering
      * context. All subsequent OpenGL calls made by the thread are drawn on the device identified by hdc.
      *
-     * @param hdc
+     * @param windowDC
      *            Handle to a device context. Subsequent OpenGL calls made by the calling thread are drawn on the
      *            device identified by hdc.
      * @param hglrc

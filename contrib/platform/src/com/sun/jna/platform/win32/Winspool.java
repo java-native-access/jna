@@ -212,8 +212,7 @@ public interface Winspool extends StdCallLibrary {
      * The OpenPrinter function retrieves a handle to the specified printer or
      * print server or other types of handles in the print subsystem.
      * 
-     * {@link http://msdn
-     * .microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx}
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx}">MSDN</a>
      * 
      * @param pPrinterName
      *            [in] A pointer to a null-terminated string that specifies the
@@ -257,20 +256,12 @@ public interface Winspool extends StdCallLibrary {
      * the change, and to reset the change notification object for use in the
      * next wait operation.
      * 
-     * {@link http
-     * ://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=
-     * vs.85).aspx}
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx}">MSDN</a>
      * 
      * @param hPrinter
      *            [in] A handle to the printer or print server that you want to
      *            monitor. Use the OpenPrinter or AddPrinter function to
      *            retrieve a printer handle.
-     * @param phPrinter
-     *            [out] A pointer to a variable that receives a handle (not
-     *            thread safe) to the open printer or print server object. The
-     *            phPrinter parameter can return an Xcv handle for use with the
-     *            XcvData function. For more information about XcvData, see the
-     *            DDK.
      * @param fdwFilter
      *            The conditions that will cause the change notification object
      *            to enter a signaled state. A change notification occurs when
@@ -278,10 +269,11 @@ public interface Winspool extends StdCallLibrary {
      *            parameter can be zero if pPrinterNotifyOptions is non-NULL.
      * 
      * @param fdwOptions
-     *            Reserved; must be zero. pPrinterNotifyOptions [in, optional] A
-     *            pointer to a PRINTER_NOTIFY_OPTIONS structure. The pTypes
-     *            member of this structure is an array of one or more
-     *            PRINTER_NOTIFY_OPTIONS_TYPE structures, each of which
+     *            Reserved; must be zero. 
+     * @param pPrinterNotifyOptions 
+     *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
+     *            structure. The pTypes member of this structure is an array of 
+     *            one or more PRINTER_NOTIFY_OPTIONS_TYPE structures, each of which
      *            specifies a printer information field to monitor. A change
      *            notification occurs when one or more of the specified fields
      *            changes. When a change occurs, the
@@ -314,9 +306,7 @@ public interface Winspool extends StdCallLibrary {
      * FindFirstPrinterChangeNotification function creates the change
      * notification object and specifies the set of changes to be monitored.
      * 
-     * {@link http
-     * ://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=
-     * vs.85).aspx}
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx}">MSDN</a>
      * 
      * @param hChange
      *            [in] A handle to a change notification object associated with
@@ -383,9 +373,7 @@ public interface Winspool extends StdCallLibrary {
      * associated with the change notification object will no longer be
      * monitored by that object.
      * 
-     * {@link http
-     * ://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=
-     * vs.85).aspx}
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx}">MSDN</a>
      * 
      * @param hChange
      *            [in] A handle to the change notification object to be closed.

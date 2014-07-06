@@ -1798,7 +1798,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * positions of the specified window. 
      * 
      * @param hwnd A handle to the window. 
-     * @param dest A pointer to the WINDOWPLACEMENT structure that receives the
+     * @param lpwndpl A pointer to the WINDOWPLACEMENT structure that receives the
      *        show state and position information. 
      * @return The number of characters copied to the specified buffer indicates
      *        success. Zero indicates failure. To get extended error
@@ -1811,7 +1811,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * of the specified window. 
      * 
      * @param hwnd A handle to the window. 
-     * @param dest A pointer to a WINDOWPLACEMENT structure that specifies the
+     * @param lpwndpl A pointer to a WINDOWPLACEMENT structure that specifies the
      *        new show state and window positions.
      * @return The number of characters copied to the specified buffer indicates
      *        success. Zero indicates failure. To get extended error 
@@ -1917,7 +1917,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * asynchronously; thus, an application cannot assume that the console notification messages
      * have been handled when a call to ExitWindowsEx returns.
      * 
-     * To shut down or restart the system, the calling process must use the {@link com.sun.jna.platform.Advapi32.AdjustTokenPrivileges}
+     * To shut down or restart the system, the calling process must use the {@link com.sun.jna.platform.win32.Advapi32#AdjustTokenPrivileges}
      * function to enable the SE_SHUTDOWN_NAME privilege. For more information, see Running with Special Privileges.
      * 
      * @param uFlags The shutdown type. This parameter must include one of EWX_HYBRID_SHUTDOWN,
