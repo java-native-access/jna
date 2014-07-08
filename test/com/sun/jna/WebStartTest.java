@@ -68,7 +68,9 @@ public class WebStartTest extends TestCase implements Paths {
         // Explicitly supply javawebstart.version, which is missing in NetX
         // Boo, java-vm-args doesn't work in NetX
         // and neither does javaws -J<arg>
-        + "    <j2se version='1.4+' java-vm-args='-Djavawebstart.version=0.0'/>\n"
+        // java-vm-args also causes javaws to ask for the JNLP to be signed,
+        // so don't bother
+        //+ "    <j2se version='1.4+' java-vm-args='-Djavawebstart.version=0.0'/>\n"
         + "    <jar href='jna-test.jar'/>\n"
         + "    <jar href='jna.jar'/>\n"
         + "    <jar href='junit.jar'/>{CLOVER}\n"
