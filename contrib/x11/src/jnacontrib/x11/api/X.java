@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 
 import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.unix.X11.Atom;
+import com.sun.jna.platform.unix.X11.WindowByReference;
 
 /**
  * Object oriented X window system.
@@ -586,7 +587,7 @@ public class X {
          * @return PID of the window
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getPID() throws X11Exception {
+        public Integer getPID() throws X11Exception {
             return getIntProperty(X11.XA_CARDINAL, "_NET_WM_PID");
         }
 
@@ -731,11 +732,15 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as integer
+         * @return property value as integer or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getIntProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
-            return bytesToInt(getProperty(xa_prop_type, xa_prop_name));
+        public Integer getIntProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
+        	byte[] property = getProperty(xa_prop_type, xa_prop_name);
+        	if( property == null ){
+        		return null;
+        	}
+            return bytesToInt(property);
         }
 
         /**
@@ -746,7 +751,7 @@ public class X {
          * @return property value as integer
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getIntProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
+        public Integer getIntProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
             return getIntProperty(xa_prop_type, display.getAtom(xa_prop_name));
         }
 
@@ -755,11 +760,14 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as window
+         * @return property value as window, or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getWindowProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
-            int windowId = getIntProperty(xa_prop_type, xa_prop_name);
+            Integer windowId = getIntProperty(xa_prop_type, xa_prop_name);
+            if( windowId == null ){
+            	return null;
+            }
             X11.Window x11Window = new X11.Window(windowId);
             return new Window(display, x11Window);
         }
@@ -781,12 +789,16 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as a null terminated byte array
+         * @return property value as a null terminated byte array, or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullTerminatedProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytesOrig = getProperty(xa_prop_type, xa_prop_name);
             byte[] bytesDest;
+            
+            if( bytesOrig == null ){
+            	return null;
+            }
 
             // search for '\0'
             int i;
@@ -821,12 +833,16 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as byte array where every '\0' character is replaced by '.'
+         * @return property value as byte array where every '\0' character is replaced by '.'.  null if the property was not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullReplacedStringProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytes = getProperty(xa_prop_type, xa_prop_name);
 
+            if( bytes == null ){
+            	return null;
+            }
+            
             // search for '\0'
             int i;
             for (i = 0; i < bytes.length; i++) {
@@ -891,11 +907,15 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as string list
+         * @return property value as string list, or null if the property value does not exist
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getStringListProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
-            return new String(getProperty(xa_prop_type, xa_prop_name)).split("\0");
+        	byte[] property = getProperty(xa_prop_type, xa_prop_name);
+        	if( property == null ){
+        		return null;
+        	}
+            return new String(property).split("\0");
         }
 
         /**
@@ -908,7 +928,11 @@ public class X {
          */
         public String getUtf8Property(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             try {
-                return new String(getNullReplacedStringProperty(xa_prop_type, xa_prop_name), "UTF8");
+            	byte[] property = getNullReplacedStringProperty(xa_prop_type, xa_prop_name);
+            	if( property == null ){
+            		return null;
+            	}
+                return new String(property, "UTF8");
             } catch (UnsupportedEncodingException e) {
                 throw new X11Exception(e);
             }
@@ -986,6 +1010,11 @@ public class X {
 
             X11.Atom xa_ret_type = xa_ret_type_ref.getValue();
             Pointer ret_prop = ret_prop_ref.getValue();
+            
+            if( xa_ret_type == null ){
+            	//the specified property does not exist for the specified window
+            	return null;
+            }
 
             if (xa_ret_type == null || xa_prop_type == null ||
                 !xa_ret_type.toNative().equals(xa_prop_type.toNative())) {
@@ -1066,6 +1095,32 @@ public class X {
             } else {
                 throw new X11Exception("Cannot send " + msg + " event.");
             }
+        }
+        
+        public Window[] getSubwindows() throws X11Exception {
+        	WindowByReference root = new WindowByReference();
+        	WindowByReference parent = new WindowByReference();
+        	PointerByReference children = new PointerByReference();
+        	IntByReference childCount = new IntByReference();
+        	
+        	if (x11.XQueryTree(display.x11Display, x11Window, root, parent, children, childCount) == 0){
+        		throw new X11Exception("Can't query subwindows");
+        	}
+        	
+        	if( childCount.getValue() == 0 ){
+        		return null;
+        	}
+        	
+        	Window[] retVal = new Window[ childCount.getValue() ];
+        	long[] windows = children.getValue().getLongArray( 0, childCount.getValue() );
+        	for( int x = 0; x < retVal.length; x++ ){
+        		X11.Window win = new X11.Window( windows [ x ] );
+        		retVal[ x ] = new Window( display, win );
+        	}
+        	
+        	x11.XFree( children.getValue() );
+        	
+        	return retVal;
         }
 
         public String toString() {
