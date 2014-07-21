@@ -18,6 +18,7 @@ Features
 * [#286](https://github.com/twall/jna/pull/286): Added in com.sun.jna.platform.win32.Kernel32: CreateRemoteThread, WritePocessMemory and ReadProcessMemory - [@sstokic-tgm](https://github.com/sstokic-tgm).
 * [#350](https://github.com/twall/jna/pull/350): Added `jnacontrib.x11.api.X.Window.getSubwindows` - [@rm5248](https://github.com/rm5248).
 * Improved `contrib/msoffice` sample - [@wolftobias](https://github.com/wolftobias).
+* [#352](https://github.com/twall/jna/pull/352): Performance improvements due to reduced locking in `com.sun.jna.Library$Handler` and fewer vararg checks in `com.sun.jna.Function` - [@Boereck](https://github.com/Boereck).
 
 Bug Fixes
 ---------
