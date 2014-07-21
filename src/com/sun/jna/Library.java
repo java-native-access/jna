@@ -160,11 +160,25 @@ public interface Library {
             return interfaceClass;
         }
         
-        private static class FunctionInfo {
-            InvocationHandler handler;
-            Function function;
-            boolean isVarArgs;
-            Map options;
+        /**
+         * FunctionInfo has to be immutable to to make the object visible 
+         * to other threads fully initialized. This is a prerequisite for
+         * using the class in the double checked locking scenario of {@link Handler#invoke(Object, Method, Object[])}
+         */
+        private static final class FunctionInfo {
+            
+            FunctionInfo(InvocationHandler handler, Function function, boolean isVarArgs, Map options) {
+                super();
+                this.handler = handler;
+                this.function = function;
+                this.isVarArgs = isVarArgs;
+                this.options = options;
+            }
+            
+            final InvocationHandler handler;
+            final Function function;
+            final boolean isVarArgs;
+            final Map options;
         }
 
         public Object invoke(Object proxy, Method method, Object[] inArgs)
@@ -185,22 +199,28 @@ public interface Library {
                 return Boolean.FALSE;
             }
             
-            FunctionInfo f = null;
-            synchronized(functions) {
-                f = (FunctionInfo)functions.get(method);
-                if (f == null) {
-                    f = new FunctionInfo();
-                    f.isVarArgs = Function.isVarArgs(method);
-                    if (invocationMapper != null) {
-                        f.handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
+            // Using the double-checked locking pattern to speed up function calls
+            FunctionInfo f = (FunctionInfo)functions.get(method);
+            if(f == null) {
+                synchronized(functions) {
+                    f = (FunctionInfo)functions.get(method);
+                    if (f == null) {
+                        boolean isVarArgs = Function.isVarArgs(method);
+                        InvocationHandler handler = null;
+                        if (invocationMapper != null) {
+                            handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
+                        }
+                        Function function = null;
+                        Map options = null;
+                        if (handler == null) {
+                            // Find the function to invoke
+                            function = nativeLibrary.getFunction(method.getName(), method);
+                            options = new HashMap(this.options);
+                            options.put(Function.OPTION_INVOKING_METHOD, method);
+                        }
+                        f = new FunctionInfo(handler, function, isVarArgs, options);
+                        functions.put(method, f);
                     }
-                    if (f.handler == null) {
-                        // Find the function to invoke
-                        f.function = nativeLibrary.getFunction(method.getName(), method);
-                        f.options = new HashMap(this.options);
-                        f.options.put(Function.OPTION_INVOKING_METHOD, method);
-                    }
-                    functions.put(method, f);
                 }
             }
             if (f.isVarArgs) {

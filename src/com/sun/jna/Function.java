@@ -288,9 +288,10 @@ public class Function extends Pointer {
         Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
         Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
+        boolean isVarArgs = args.length > 0 && invokingMethod != null ? isVarArgs(invokingMethod) : false;
         for (int i=0; i < args.length; i++) {
             Class paramType = invokingMethod != null
-                ? (isVarArgs(invokingMethod) && i >= paramTypes.length-1
+                ? (isVarArgs && i >= paramTypes.length-1
                    ? paramTypes[paramTypes.length-1].getComponentType()
                    : paramTypes[i])
                 : null;
@@ -776,21 +777,34 @@ public class Function extends Pointer {
         return inArgs;
     }
 
+    /**
+     * Reference to Method.isVarArgs
+     */
+    private static Method isVarArgsMethod = getIsVarArgsMethod();
+    
+    /**
+     * If possible returns the Method.isVarArgs method via reflection
+     * @return Method.isVarArgs method
+     */
+    private static Method getIsVarArgsMethod() {
+        try {
+            return Method.class.getMethod("isVarArgs", new Class[0]);
+        } catch (SecurityException e) {
+            return null;
+        } catch (NoSuchMethodException e) {
+            return null;
+        }
+    }
+    
     /** Varargs are only supported on 1.5+. */
     static boolean isVarArgs(Method m) {
-        try {
-            Method v = m.getClass().getMethod("isVarArgs", new Class[0]);
-            return Boolean.TRUE.equals(v.invoke(m, new Object[0]));
-        }
-        catch (SecurityException e) {
-        }
-        catch (NoSuchMethodException e) {
-        }
-        catch (IllegalArgumentException e) {
-        }
-        catch (IllegalAccessException e) {
-        }
-        catch (InvocationTargetException e) {
+        if(isVarArgsMethod != null) {
+            try {
+                return Boolean.TRUE.equals(isVarArgsMethod.invoke(m, new Object[0]));
+            } catch (IllegalArgumentException e) {
+            } catch (IllegalAccessException e) {
+            } catch (InvocationTargetException e) {
+            }
         }
         return false;
     }
