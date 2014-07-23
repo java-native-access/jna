@@ -17,13 +17,13 @@ Features
 * [#338](https://github.com/twall/jna/pull/338): Added `com.sun.jna.platform.mac.XAttr` and `com.sun.jna.platform.mac.XAttrUtil` JNA wrapper for `<sys/xattr.h>` for Mac OS X - [@rednoah](https://github.com/rednoah).
 * [#339](https://github.com/twall/jna/pull/339): Added `GetWindowPlacement`, `SetWindowPlacement`, `AdjustWindowRect`, `AdjustWindowRectEx`, `ExitWindowsEx`, and `LockWorkstation` to `com.sun.jna.platform.win32.User32` - [@Timeroot](https://github.com/Timeroot).
 * [#286](https://github.com/twall/jna/pull/286): Added in com.sun.jna.platform.win32.Kernel32: CreateRemoteThread, WritePocessMemory and ReadProcessMemory - [@sstokic-tgm](https://github.com/sstokic-tgm).
-* Object-oriented X API allows you to get subwindows of an X.Window - [@rm5248](https://github.com/rm5248)
+* [#350](https://github.com/twall/jna/pull/350): Object-oriented X API(jnacontrib.x11.api.X.Window) allows you to get subwindows of an X.Window - [@rm5248](https://github.com/rm5248).
 
 Bug Fixes
 ---------
 * [#319](https://github.com/twall/jna/pull/319): Fix direct-mapping type-mapped pointer result types - [@marco2357](https://github.com/marco2357).
 * Added Variant and TlbImp Fixes - [@wolftobias](https://github.com/wolftobias).
-* Object-oriented X API will now return null if the window property is not found - [@rm5248](https://github.com/rm5248)
+* [#350](https://github.com/twall/jna/pull/350): jnacontrib.x11.api.X.Window.getXXXProperty returns null if the window property is not found - [@rm5248](https://github.com/rm5248).
 
 Release 4.1
 ===========
