@@ -1020,6 +1020,11 @@ public class X {
                 return null;
             }
 
+            if( xa_ret_type == null ){
+                //the specified property does not exist for the specified window
+                return null;
+            }
+
             if (xa_ret_type == null || xa_prop_type == null ||
                     !xa_ret_type.toNative().equals(xa_prop_type.toNative())) {
                 x11.XFree(ret_prop);
