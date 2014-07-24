@@ -27,6 +27,7 @@ import java.awt.Rectangle;
 
 import com.sun.jna.platform.unix.X11;
 import com.sun.jna.platform.unix.X11.Atom;
+import com.sun.jna.platform.unix.X11.WindowByReference;
 
 /**
  * Object oriented X window system.
@@ -51,16 +52,16 @@ public class X {
 
     private static int bytesToInt(byte[] prop) {
         return ((prop[3] & 0xff) << 24)
-            | ((prop[2] & 0xff) << 16)
-            | ((prop[1] & 0xff) << 8)
-            | ((prop[0] & 0xff));
+                | ((prop[2] & 0xff) << 16)
+                | ((prop[1] & 0xff) << 8)
+                | ((prop[0] & 0xff));
     }
 
     private static int bytesToInt(byte[] prop, int offset) {
         return ((prop[3 + offset] & 0xff) << 24)
-            | ((prop[2 + offset] & 0xff) << 16)
-            | ((prop[1 + offset] & 0xff) << 8)
-            | ((prop[offset] & 0xff));
+                | ((prop[2 + offset] & 0xff) << 16)
+                | ((prop[1 + offset] & 0xff) << 8)
+                | ((prop[offset] & 0xff));
     }
 
 
@@ -303,11 +304,11 @@ public class X {
          * @param on true if auto-repeat shall be enabled
          */
         public void setKeyAutoRepeat(boolean on) {
-           if (on) {
-               x11.XAutoRepeatOn(x11Display);
-           } else {
-               x11.XAutoRepeatOff(x11Display);
-           }
+            if (on) {
+                x11.XAutoRepeatOn(x11Display);
+            } else {
+                x11.XAutoRepeatOff(x11Display);
+            }
         }
 
         /**
@@ -586,7 +587,7 @@ public class X {
          * @return PID of the window
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getPID() throws X11Exception {
+        public Integer getPID() throws X11Exception {
             return getIntProperty(X11.XA_CARDINAL, "_NET_WM_PID");
         }
 
@@ -645,10 +646,10 @@ public class X {
             x11.XGetGeometry(display.x11Display, x11Window, junkRoot, junkX, junkY, width, height, borderWidth, depth);
 
             x11.XTranslateCoordinates(display.x11Display, x11Window, junkRoot.getValue(), junkX.getValue(),
-                junkY.getValue(), x, y, junkRoot);
+                    junkY.getValue(), x, y, junkRoot);
 
             return new Geometry(x.getValue(), y.getValue(), width.getValue(), height.getValue(),
-                borderWidth.getValue(), depth.getValue());
+                    borderWidth.getValue(), depth.getValue());
         }
 
         /**
@@ -670,7 +671,7 @@ public class X {
             x11.XGetGeometry(display.x11Display, x11Window, junkRoot, junkX, junkY, width, height, border_width, depth);
 
             x11.XTranslateCoordinates(display.x11Display, x11Window, junkRoot.getValue(), junkX.getValue(),
-                junkY.getValue(), x, y, junkRoot);
+                    junkY.getValue(), x, y, junkRoot);
 
             int xVal = x.getValue();
             int yVal = y.getValue();
@@ -731,11 +732,15 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as integer
+         * @return property value as integer or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getIntProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
-            return bytesToInt(getProperty(xa_prop_type, xa_prop_name));
+        public Integer getIntProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
+            byte[] property = getProperty(xa_prop_type, xa_prop_name);
+            if( property == null ){
+                return null;
+            }
+            return bytesToInt(property);
         }
 
         /**
@@ -746,7 +751,7 @@ public class X {
          * @return property value as integer
          * @throws X11Exception thrown if X11 window errors occurred
          */
-        public int getIntProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
+        public Integer getIntProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
             return getIntProperty(xa_prop_type, display.getAtom(xa_prop_name));
         }
 
@@ -755,11 +760,14 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as window
+         * @return property value as window, or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public Window getWindowProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
-            int windowId = getIntProperty(xa_prop_type, xa_prop_name);
+            Integer windowId = getIntProperty(xa_prop_type, xa_prop_name);
+            if( windowId == null ){
+                return null;
+            }
             X11.Window x11Window = new X11.Window(windowId);
             return new Window(display, x11Window);
         }
@@ -781,13 +789,16 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as a null terminated byte array
+         * @return property value as a null terminated byte array, or null if not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullTerminatedProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytesOrig = getProperty(xa_prop_type, xa_prop_name);
             byte[] bytesDest;
 
+            if( bytesOrig == null ){
+                return null;
+            }
             // search for '\0'
             int i;
             for (i = 0; i < bytesOrig.length; i++) {
@@ -821,11 +832,15 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as byte array where every '\0' character is replaced by '.'
+         * @return property value as byte array where every '\0' character is replaced by '.'.  null if the property was not found
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public byte[] getNullReplacedStringProperty(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             byte[] bytes = getProperty(xa_prop_type, xa_prop_name);
+
+            if( bytes == null ){
+                return null;
+            }
 
             // search for '\0'
             int i;
@@ -891,11 +906,15 @@ public class X {
          *
          * @param xa_prop_type property type
          * @param xa_prop_name property name
-         * @return property value as string list
+         * @return property value as string list, or null if the property value does not exist
          * @throws X11Exception thrown if X11 window errors occurred
          */
         public String[] getStringListProperty(X11.Atom xa_prop_type, String xa_prop_name) throws X11Exception {
-            return new String(getProperty(xa_prop_type, xa_prop_name)).split("\0");
+            byte[] property = getProperty(xa_prop_type, xa_prop_name);
+            if( property == null ){
+                return null;
+            }
+            return new String(property).split("\0");
         }
 
         /**
@@ -908,7 +927,11 @@ public class X {
          */
         public String getUtf8Property(X11.Atom xa_prop_type, X11.Atom xa_prop_name) throws X11Exception {
             try {
-                return new String(getNullReplacedStringProperty(xa_prop_type, xa_prop_name), "UTF8");
+                byte[] property = getNullReplacedStringProperty(xa_prop_type, xa_prop_name);
+                if( property == null ){
+                    return null;
+                }
+                return new String(property, "UTF8");
             } catch (UnsupportedEncodingException e) {
                 throw new X11Exception(e);
             }
@@ -973,22 +996,37 @@ public class X {
             NativeLong long_length = new NativeLong(MAX_PROPERTY_VALUE_LEN / 4);
 
             /* MAX_PROPERTY_VALUE_LEN / 4 explanation (XGetWindowProperty manpage):
-                                    *
-                                    * long_length = Specifies the length in 32-bit multiples of the
-                                    *               data to be retrieved.
-                                    */
+             *
+             * long_length = Specifies the length in 32-bit multiples of the
+             *               data to be retrieved.
+             */
             if (x11.XGetWindowProperty(display.x11Display, x11Window, xa_prop_name, long_offset, long_length, false,
-                xa_prop_type, xa_ret_type_ref, ret_format_ref,
-                ret_nitems_ref, ret_bytes_after_ref, ret_prop_ref) != X11.Success) {
+                    xa_prop_type, xa_ret_type_ref, ret_format_ref,
+                    ret_nitems_ref, ret_bytes_after_ref, ret_prop_ref) != X11.Success) {
                 String prop_name = x11.XGetAtomName(display.x11Display, xa_prop_name);
                 throw new X11Exception("Cannot get " + prop_name + " property.");
             }
 
             X11.Atom xa_ret_type = xa_ret_type_ref.getValue();
             Pointer ret_prop = ret_prop_ref.getValue();
+            
+            if( xa_ret_type == null ){
+            	//the specified property does not exist for the specified window
+            	return null;
+            }
+
+            if( xa_ret_type == null ){
+                //the specified property does not exist for the specified window
+                return null;
+            }
+
+            if( xa_ret_type == null ){
+                //the specified property does not exist for the specified window
+                return null;
+            }
 
             if (xa_ret_type == null || xa_prop_type == null ||
-                !xa_ret_type.toNative().equals(xa_prop_type.toNative())) {
+                    !xa_ret_type.toNative().equals(xa_prop_type.toNative())) {
                 x11.XFree(ret_prop);
                 String prop_name = x11.XGetAtomName(display.x11Display, xa_prop_name);
                 throw new X11Exception("Invalid type of " + prop_name + " property");
@@ -1031,13 +1069,13 @@ public class X {
 
         public int clientMsg(String msg, int data0, int data1, int data2, int data3, int data4) throws X11Exception {
             return clientMsg(
-                msg,
-                new NativeLong(data0),
-                new NativeLong(data1),
-                new NativeLong(data2),
-                new NativeLong(data3),
-                new NativeLong(data4)
-            );
+                    msg,
+                    new NativeLong(data0),
+                    new NativeLong(data1),
+                    new NativeLong(data2),
+                    new NativeLong(data3),
+                    new NativeLong(data4)
+                    );
         }
 
         public int clientMsg(String msg, NativeLong data0, NativeLong data1, NativeLong data2, NativeLong data3, NativeLong data4) throws X11Exception {
@@ -1068,6 +1106,30 @@ public class X {
             }
         }
 
+        public Window[] getSubwindows() throws X11Exception {
+            WindowByReference root = new WindowByReference();
+            WindowByReference parent = new WindowByReference();
+            PointerByReference children = new PointerByReference();
+            IntByReference childCount = new IntByReference();
+
+            if (x11.XQueryTree(display.x11Display, x11Window, root, parent, children, childCount) == 0){
+                throw new X11Exception("Can't query subwindows");
+            }
+
+            if( childCount.getValue() == 0 ){
+                return null;
+            }
+
+            Window[] retVal = new Window[ childCount.getValue() ];
+            //Depending on if we're running on 64-bit or 32-bit systems,
+            //the long size may be different; we need to make sure that 
+            //we get the data properly no matter what
+            if( Native.LONG_SIZE == 4 ){
+                int[] windows = children.getValue().getIntArray( 0, childCount.getValue() );
+                for( int x = 0; x < retVal.length; x++ ){
+                    X11.Window win = new X11.Window( windows [ x ] );
+                    retVal[ x ] = new Window( display, win );
+                }
         public String toString() {
             return x11Window.toString();
         }
@@ -1090,7 +1152,7 @@ public class X {
      * General exception which is thrown when an X11 window error occurred.
      */
     public static class X11Exception extends Exception {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public X11Exception() {
         }
 
