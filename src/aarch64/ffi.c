@@ -146,6 +146,9 @@ get_basic_type_alignment (unsigned short type)
   switch (type)
     {
     case FFI_TYPE_FLOAT:
+#if defined (__APPLE__)
+      return sizeof (UINT32);
+#endif
     case FFI_TYPE_DOUBLE:
       return sizeof (UINT64);
 #if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
