@@ -21,7 +21,7 @@
 #include <windows.h>
 #include <psapi.h>
 #define STRTYPE wchar_t*
-#define NAME2CSTR(ENV,JSTR) w32_short_name(ENV,JSTR)
+#define NAME2CSTR(ENV,JSTR) newWideCString(ENV,JSTR)
 #ifdef _WIN32_WCE
 #include <tlhelp32.h>
 #define DEFAULT_LOAD_OPTS 0 /* altered search path unsupported on CE */
@@ -2074,13 +2074,28 @@ Java_com_sun_jna_Native_open(JNIEnv *env, jclass UNUSED(cls), jstring lib, jint 
     const STRTYPE libname = NULL;
     void *handle = NULL;
 
+    if (flags == -1) {
+      flags = DEFAULT_LOAD_OPTS;
+    }
+
     if (lib != NULL) {
       if ((libname = NAME2CSTR(env, lib)) == NULL) {
         return A2L(NULL);
       }
     }
 
-    handle = (void *)LOAD_LIBRARY(libname, flags != -1 ? flags : DEFAULT_LOAD_OPTS);
+    handle = (void *)LOAD_LIBRARY(libname, flags);
+#if defined(_WIN32)
+    /** Reattempt lookup using the short name version */
+    if (!handle) {
+      const STRTYPE short_libname = NULL;
+      if ((short_libname = w32_short_name(env, lib)) != NULL) {
+        free((void *)libname);
+        libname = short_libname;
+        handle = (void *)LOAD_LIBRARY(libname, flags);
+      }
+    }
+#endif
     if (!handle) {
       char buf[MSG_SIZE];
       throwByName(env, EUnsatisfiedLink, LOAD_ERROR(buf, sizeof(buf)));
