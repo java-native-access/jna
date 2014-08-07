@@ -83,10 +83,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean FAILED(int hr) {
-        if (hr != S_OK)
-            return true;
-        else
-            return false;
+        return (hr != S_OK);
     }
 
     /**
