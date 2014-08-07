@@ -78,6 +78,40 @@ public class Kernel32Test extends TestCase {
                      cal.get(Calendar.YEAR), time.wYear);
     }
 
+    public void testSetSystemTime() {
+        Kernel32 kernel = Kernel32.INSTANCE;
+        WinBase.SYSTEMTIME time = new WinBase.SYSTEMTIME();
+        kernel.GetSystemTime(time);
+        try {
+            WinBase.SYSTEMTIME expected = new WinBase.SYSTEMTIME();
+            expected.wYear = time.wYear;
+            expected.wMonth = time.wMonth;
+            expected.wDay = time.wDay;
+            expected.wHour = time.wHour;
+            expected.wMinute = time.wMinute;
+            expected.wSecond = time.wSecond;
+            expected.wMilliseconds = time.wMilliseconds;
+
+            if (expected.wHour > 0) {
+                expected.wHour--;
+            } else {
+                expected.wHour++;
+            }
+
+            if (!kernel.SetSystemTime(expected)) {
+                fail("Failed to modify time: error=" + kernel.GetLastError());
+            }
+            
+            WinBase.SYSTEMTIME actual = new WinBase.SYSTEMTIME();
+            kernel.GetSystemTime(actual);
+            assertEquals("Mismatched hour value", expected.wHour, actual.wHour);
+        } finally {
+            if (!kernel.SetSystemTime(time)) {
+                fail("Failed to restore original time: error=" + kernel.GetLastError());
+            }
+        }
+    }
+
     public void testGetLastError() {
         Kernel32 kernel = Kernel32.INSTANCE;
         int ERRCODE  = 8;

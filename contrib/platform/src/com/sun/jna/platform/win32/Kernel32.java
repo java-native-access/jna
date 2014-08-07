@@ -160,6 +160,20 @@ public interface Kernel32 extends WinNT {
     void GetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
 
     /**
+     * The SetSystemTime function modifies the current system date and time.
+     * The system time is expressed in Coordinated Universal Time (UTC).
+     * 
+     * @param lpSystemTime
+     *            Pointer to a SYSTEMTIME structure holding the new
+     *            system date and time. <B>Note:</B> The {@code wDayOfWeek}
+     *            member of the SYSTEMTIME structure is ignored.
+     * @return {@code true} if the function succeeds, {@code false} otherwise.
+     *         If the function fails, call GetLastError to get extended error
+     *         information.
+     */
+    boolean SetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
+
+    /**
      * Retrieves the current local date and time.
      * 
      * @param lpSystemTime
