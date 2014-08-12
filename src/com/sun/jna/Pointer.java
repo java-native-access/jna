@@ -849,7 +849,7 @@ v     * @param wide whether to convert from a wide or standard C string
     }
 
     public String[] getWideStringArray(long offset, int length) {
-        return getStringArray(offset, -1, NativeString.WIDE_STRING);
+        return getStringArray(offset, length, NativeString.WIDE_STRING);
     }
 
     /** Returns an array of <code>String</code> based on a native array
