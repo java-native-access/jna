@@ -122,6 +122,27 @@ public class PointerTest extends TestCase {
                      Arrays.asList(p.getStringArray(0, 2, ENCODING)));
     }
 
+    public void testGetWideStringArray() {
+        Pointer p = new Memory(Pointer.SIZE*3);
+        final String VALUE1 = getName() + UNICODE;
+        final String VALUE2 = getName() + "2" + UNICODE;
+
+        p.setPointer(0, new NativeString(VALUE1, true).getPointer());
+        p.setPointer(Pointer.SIZE, new NativeString(VALUE2, true).getPointer());
+        p.setPointer(Pointer.SIZE*2, null);
+
+        assertEquals("Wrong null-terminated String array",
+                     Arrays.asList(new String[] { VALUE1, VALUE2 }),
+                     Arrays.asList(p.getWideStringArray(0)));
+
+        assertEquals("Wrong length-specified String array (1)",
+                     Arrays.asList(new String[] { VALUE1 }),
+                     Arrays.asList(p.getWideStringArray(0, 1)));
+        assertEquals("Wrong length-specified String array (2)",
+                     Arrays.asList(new String[] { VALUE1, VALUE2 }),
+                     Arrays.asList(p.getWideStringArray(0, 2)));
+    }
+
     public void testReadPointerArray() {
         Pointer mem = new Memory(Pointer.SIZE * 2);
         Pointer[] p = new Pointer[2];
