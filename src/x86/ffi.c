@@ -43,19 +43,21 @@
 /* ffi_prep_args is called by the assembly routine once stack space
    has been allocated for the function's arguments */
 
-void ffi_prep_args(char *stack, extended_cif *ecif);
-void ffi_prep_args(char *stack, extended_cif *ecif)
+unsigned int ffi_prep_args(char *stack, extended_cif *ecif);
+unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
 {
   register unsigned int i;
   register void **p_argv;
   register char *argp;
   register ffi_type **p_arg;
 #ifndef X86_WIN64
-  size_t p_stack_args[2];
-  void *p_stack_data[2];
+  void *p_stack_data[3];
   char *argp2 = stack;
-  int stack_args_count = 0;
-  int cabi = ecif->cif->abi;
+  unsigned int stack_args_count = 0;
+  const int cabi = ecif->cif->abi;
+  const int dir = (cabi == FFI_PASCAL || cabi == FFI_REGISTER) ? -1 : +1;
+#else
+  #define dir 1
 #endif
 
   argp = stack;
@@ -63,42 +65,46 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
   if ((ecif->cif->flags == FFI_TYPE_STRUCT
        || ecif->cif->flags == FFI_TYPE_MS_STRUCT)
 #ifdef X86_WIN64
-      && (ecif->cif->rtype->size != 1 && ecif->cif->rtype->size != 2
-          && ecif->cif->rtype->size != 4 && ecif->cif->rtype->size != 8)
+      && ((ecif->cif->rtype->size & (1 | 2 | 4 | 8)) == 0)
 #endif
       )
     {
       *(void **) argp = ecif->rvalue;
 #ifndef X86_WIN64
-      /* For fastcall/thiscall this is first register-passed
+      /* For fastcall/thiscall/register this is first register-passed
          argument.  */
-      if (cabi == FFI_THISCALL || cabi == FFI_FASTCALL)
-	{
-	  p_stack_args[stack_args_count] = sizeof (void*);
-	  p_stack_data[stack_args_count] = argp;
-	  ++stack_args_count;
-	}
+      if (cabi == FFI_THISCALL || cabi == FFI_FASTCALL || cabi == FFI_REGISTER)
+        {
+          p_stack_data[stack_args_count] = argp;
+          ++stack_args_count;
+        }
 #endif
       argp += sizeof(void*);
     }
 
+  p_arg = ecif->cif->arg_types;
   p_argv = ecif->avalue;
-
-  for (i = ecif->cif->nargs, p_arg = ecif->cif->arg_types;
-       i != 0;
-       i--, p_arg++)
+  if (dir < 0)
     {
-      size_t z;
+      const unsigned int nargs = ecif->cif->nargs - 1;
+      if (nargs > 0)
+      {
+        p_arg  += nargs;
+        p_argv += nargs;
+      }
+    }
 
+  for (i = ecif->cif->nargs; i != 0; i--)
+    {	
       /* Align if necessary */
       if ((sizeof(void*) - 1) & (size_t) argp)
         argp = (char *) ALIGN(argp, sizeof(void*));
-
-      z = (*p_arg)->size;
+    	
+      size_t z = (*p_arg)->size;
 #ifdef X86_WIN64
       if (z > sizeof(ffi_arg)
           || ((*p_arg)->type == FFI_TYPE_STRUCT
-              && (z != 1 && z != 2 && z != 4 && z != 8))
+              && (z & (1 | 2 | 4 | 8)) == 0)
 #if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
           || ((*p_arg)->type == FFI_TYPE_LONGDOUBLE)
 #endif
@@ -156,23 +162,33 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
         }
 
 #ifndef X86_WIN64
-    /* For thiscall/fastcall convention register-passed arguments
+    /* For thiscall/fastcall/register convention register-passed arguments
        are the first two none-floating-point arguments with a size
        smaller or equal to sizeof (void*).  */
-    if ((cabi == FFI_THISCALL && stack_args_count < 1)
-        || (cabi == FFI_FASTCALL && stack_args_count < 2))
+    if ((z == sizeof(ffi_arg))
+        && ((cabi == FFI_REGISTER)
+          || (cabi == FFI_THISCALL && stack_args_count < 1)
+          || (cabi == FFI_FASTCALL && stack_args_count < 2))
+        && ((*p_arg)->type != FFI_TYPE_FLOAT && (*p_arg)->type != FFI_TYPE_STRUCT)
+       )
       {
-	if (z <= 4
-	    && ((*p_arg)->type != FFI_TYPE_FLOAT
-	        && (*p_arg)->type != FFI_TYPE_STRUCT))
-	  {
-	    p_stack_args[stack_args_count] = z;
-	    p_stack_data[stack_args_count] = argp;
-	    ++stack_args_count;
-	  }
+        if (dir < 0 && stack_args_count > 2)
+          {
+            /* Iterating arguments backwards, so first register-passed argument
+               will be passed last. Shift temporary values to make place. */
+			p_stack_data[0] = p_stack_data[1];
+            p_stack_data[1] = p_stack_data[2];
+            stack_args_count = 2;
+          }
+
+        p_stack_data[stack_args_count] = argp;
+        ++stack_args_count;
       }
 #endif
-      p_argv++;
+
+      p_arg  += dir;
+      p_argv += dir;
+
 #ifdef X86_WIN64
       argp += (z + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 #else
@@ -181,44 +197,35 @@ void ffi_prep_args(char *stack, extended_cif *ecif)
     }
 
 #ifndef X86_WIN64
-  /* We need to move the register-passed arguments for thiscall/fastcall
-     on top of stack, so that those can be moved to registers ecx/edx by
-     call-handler.  */
+  /* We need to move the register-passed arguments for thiscall/fastcall/register
+     on top of stack, so that those can be moved to registers by call-handler.  */
   if (stack_args_count > 0)
     {
-      size_t zz = (p_stack_args[0] + 3) & ~3;
-      char *h;
+      int i;
+	  if (dir < 0 && stack_args_count > 1)
+	    {
+		  /* Reverse order if iterating arguments backwards */
+		  ffi_arg tmp = *(ffi_arg*) p_stack_data[0];
+		  *(ffi_arg*) p_stack_data[0] = *(ffi_arg*) p_stack_data[stack_args_count - 1];
+		  *(ffi_arg*) p_stack_data[stack_args_count - 1] = tmp;
+		}
+      
+      for (i = 0; i < stack_args_count; i++)
+        {
+          if (p_stack_data[i] != argp2)
+            {
+              ffi_arg tmp = *(ffi_arg*) p_stack_data[i];
+              memmove (argp2 + sizeof(ffi_arg), argp2, (size_t) ((char*) p_stack_data[i] - (char*)argp2));
+			  *(ffi_arg *) argp2 = tmp;
+            }
 
-      /* Move first argument to top-stack position.  */
-      if (p_stack_data[0] != argp2)
-	{
-	  h = alloca (zz + 1);
-	  memcpy (h, p_stack_data[0], zz);
-	  memmove (argp2 + zz, argp2,
-	           (size_t) ((char *) p_stack_data[0] - (char*)argp2));
-	  memcpy (argp2, h, zz);
-	}
-
-      argp2 += zz;
-      --stack_args_count;
-      if (zz > 4)
-	stack_args_count = 0;
-
-      /* If we have a second argument, then move it on top
-         after the first one.  */
-      if (stack_args_count > 0 && p_stack_data[1] != argp2)
-	{
-	  zz = p_stack_args[1];
-	  zz = (zz + 3) & ~3;
-	  h = alloca (zz + 1);
-	  h = alloca (zz + 1);
-	  memcpy (h, p_stack_data[1], zz);
-	  memmove (argp2 + zz, argp2, (size_t) ((char*) p_stack_data[1] - (char*)argp2));
-	  memcpy (argp2, h, zz);
-	}
+          argp2 += sizeof(ffi_arg);
+        }
     }
+
+    return stack_args_count;
 #endif
-  return;
+    return 0;
 }
 
 /* Perform machine dependent cif processing */
@@ -387,37 +394,12 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
     case FFI_MS_CDECL:
 #endif
     case FFI_STDCALL:
-      ffi_call_win32(ffi_prep_args, &ecif, cif->abi, cif->bytes, cif->flags,
-		     ecif.rvalue, fn);
-      break;
     case FFI_THISCALL:
     case FFI_FASTCALL:
-      {
-	unsigned int abi = cif->abi;
-	unsigned int i, passed_regs = 0;
-
-	if (cif->flags == FFI_TYPE_STRUCT)
-	  ++passed_regs;
-
-	for (i=0; i < cif->nargs && passed_regs < 2;i++)
-	  {
-	    size_t sz;
-
-	    if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
-	        || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
-	      continue;
-	    sz = (cif->arg_types[i]->size + 3) & ~3;
-	    if (sz == 0 || sz > 4)
-	      continue;
-	    ++passed_regs;
-	  }
-	if (passed_regs < 2 && abi == FFI_FASTCALL)
-	  abi = FFI_THISCALL;
-	if (passed_regs < 1 && abi == FFI_THISCALL)
-	  abi = FFI_STDCALL;
-        ffi_call_win32(ffi_prep_args, &ecif, abi, cif->bytes, cif->flags,
-                       ecif.rvalue, fn);
-      }
+    case FFI_PASCAL:
+    case FFI_REGISTER:
+      ffi_call_win32(ffi_prep_args, &ecif, cif->abi, cif->bytes, cif->flags,
+                     ecif.rvalue, fn);
       break;
 #endif
     default:
@@ -677,14 +659,14 @@ ffi_prep_closure_loc (ffi_closure* closure,
   else if (cif->abi == FFI_FASTCALL)
     {
       FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
-				   &ffi_closure_FASTCALL,
-				   (void*)codeloc);
+                                   &ffi_closure_FASTCALL,
+                                   (void*)codeloc);
     }
   else if (cif->abi == FFI_THISCALL)
     {
       FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
-				   &ffi_closure_THISCALL,
-				   (void*)codeloc);
+                                   &ffi_closure_THISCALL,
+                                   (void*)codeloc);
     }
   else if (cif->abi == FFI_STDCALL)
     {
@@ -764,10 +746,36 @@ ffi_prep_raw_closure_loc (ffi_raw_closure* closure,
   return FFI_OK;
 }
 
-static void 
+static unsigned int 
 ffi_prep_args_raw(char *stack, extended_cif *ecif)
 {
-  memcpy (stack, ecif->avalue, ecif->cif->bytes);
+  const ffi_cif *cif = ecif->cif;
+  const unsigned int abi = cif->abi;
+  const unsigned int max = (abi == FFI_THISCALL) ? 1
+                         : (abi == FFI_FASTCALL) ? 2
+						 : (abi == FFI_REGISTER) ? 3
+						 : 0;
+
+  unsigned int i, passed_regs = 0;
+
+  if (cif->flags == FFI_TYPE_STRUCT)
+    ++passed_regs;
+  
+  for (i = 0; i < cif->nargs && passed_regs <= max; i++)
+    {
+  	  if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
+  	     || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
+  	    continue;
+
+  	  size_t sz = (cif->arg_types[i]->size + 3) & ~3;
+  	  if (sz == 0 || sz > 4)
+  	    continue;
+
+  	  ++passed_regs;
+    }
+
+  memcpy (stack, ecif->avalue, cif->bytes);
+  return passed_regs;
 }
 
 /* we borrow this routine from libffi (it must be changed, though, to
@@ -810,37 +818,12 @@ ffi_raw_call(ffi_cif *cif, void (*fn)(void), void *rvalue, ffi_raw *fake_avalue)
 #endif
 #ifndef X86_WIN64
     case FFI_STDCALL:
-      ffi_call_win32(ffi_prep_args_raw, &ecif, cif->abi, cif->bytes, cif->flags,
-		     ecif.rvalue, fn);
-      break;
     case FFI_THISCALL:
     case FFI_FASTCALL:
-      {
-	unsigned int abi = cif->abi;
-	unsigned int i, passed_regs = 0;
-
-	if (cif->flags == FFI_TYPE_STRUCT)
-	  ++passed_regs;
-
-	for (i=0; i < cif->nargs && passed_regs < 2;i++)
-	  {
-	    size_t sz;
-
-	    if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
-	        || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
-	      continue;
-	    sz = (cif->arg_types[i]->size + 3) & ~3;
-	    if (sz == 0 || sz > 4)
-	      continue;
-	    ++passed_regs;
-	  }
-	if (passed_regs < 2 && abi == FFI_FASTCALL)
-	  cif->abi = abi = FFI_THISCALL;
-	if (passed_regs < 1 && abi == FFI_THISCALL)
-	  cif->abi = abi = FFI_STDCALL;
-        ffi_call_win32(ffi_prep_args_raw, &ecif, abi, cif->bytes, cif->flags,
-                       ecif.rvalue, fn);
-      }
+    case FFI_PASCAL:
+    case FFI_REGISTER:
+      ffi_call_win32(ffi_prep_args_raw, &ecif, cif->abi, cif->bytes, cif->flags,
+                     ecif.rvalue, fn);
       break;
 #endif
     default:
