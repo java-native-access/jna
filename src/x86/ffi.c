@@ -419,6 +419,8 @@ void FFI_HIDDEN ffi_closure_SYSV (ffi_closure *)
      __attribute__ ((regparm(1)));
 unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
      __attribute__ ((regparm(1)));
+unsigned int FFI_HIDDEN ffi_closure_WIN32_inner (ffi_closure *, void **, void *)
+     __attribute__ ((regparm(1)));
 void FFI_HIDDEN ffi_closure_raw_SYSV (ffi_raw_closure *)
      __attribute__ ((regparm(1)));
 #ifdef X86_WIN32
@@ -426,12 +428,10 @@ void FFI_HIDDEN ffi_closure_raw_THISCALL (ffi_raw_closure *)
      __attribute__ ((regparm(1)));
 #endif
 #ifndef X86_WIN64
-void FFI_HIDDEN ffi_closure_STDCALL (ffi_closure *)
-     __attribute__ ((regparm(1)));
-void FFI_HIDDEN ffi_closure_THISCALL (ffi_closure *)
-     __attribute__ ((regparm(1)));
-void FFI_HIDDEN ffi_closure_FASTCALL (ffi_closure *)
-     __attribute__ ((regparm(1)));
+void FFI_HIDDEN ffi_closure_STDCALL (ffi_closure *);
+void FFI_HIDDEN ffi_closure_THISCALL (ffi_closure *);
+void FFI_HIDDEN ffi_closure_FASTCALL (ffi_closure *);
+void FFI_HIDDEN ffi_closure_REGISTER (ffi_closure *);
 #else
 void FFI_HIDDEN ffi_closure_win64 (ffi_closure *);
 #endif
@@ -489,6 +489,29 @@ ffi_closure_SYSV_inner (ffi_closure *closure, void **respp, void *args)
   (closure->fun) (cif, *respp, arg_area, closure->user_data);
 
   return cif->flags;
+}
+
+unsigned int FFI_HIDDEN __attribute__ ((regparm(1)))
+ffi_closure_WIN32_inner (ffi_closure *closure, void **respp, void *args)
+{
+  /* our various things...  */
+  ffi_cif       *cif;
+  void         **arg_area;
+
+  cif         = closure->cif;
+  arg_area    = (void**) alloca (cif->nargs * sizeof (void*));  
+
+  /* this call will initialize ARG_AREA, such that each
+   * element in that array points to the corresponding 
+   * value on the stack; and if the function returns
+   * a structure, it will change RESP to point to the
+   * structure return address.  */
+
+  ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif);
+
+  (closure->fun) (cif, *respp, arg_area, closure->user_data);
+
+  return cif->bytes;
 }
 #endif /* !X86_WIN64 */
 
@@ -587,7 +610,7 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
    unsigned int  __dis = __fun - (__ctx + 10);  \
    *(unsigned char*) &__tramp[0] = 0xb8; \
    *(unsigned int*)  &__tramp[1] = __ctx; /* movl __ctx, %eax */ \
-   *(unsigned char *)  &__tramp[5] = 0xe9; \
+   *(unsigned char*) &__tramp[5] = 0xe9; \
    *(unsigned int*)  &__tramp[6] = __dis; /* jmp __fun  */ \
  }
 
@@ -618,15 +641,15 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
    *(unsigned short*)  &__tramp[50] = (__size + 8); /* ret (__size + 8)  */ \
  }
 
-#define FFI_INIT_TRAMPOLINE_STDCALL(TRAMP,FUN,CTX)  \
+#define FFI_INIT_TRAMPOLINE_WIN32(TRAMP,FUN,CTX)  \
 { unsigned char *__tramp = (unsigned char*)(TRAMP); \
    unsigned int  __fun = (unsigned int)(FUN); \
    unsigned int  __ctx = (unsigned int)(CTX); \
    unsigned int  __dis = __fun - (__ctx + 10); \
-   *(unsigned char*) &__tramp[0] = 0xb8; \
-   *(unsigned int*)  &__tramp[1] = __ctx; /* movl __ctx, %eax */ \
-   *(unsigned char *)  &__tramp[5] = 0xe8; \
-   *(unsigned int*)  &__tramp[6] = __dis; /* call __fun  */ \
+   *(unsigned char*) &__tramp[0] = 0x68; \
+   *(unsigned int*)  &__tramp[1] = __ctx; /* push __ctx */ \
+   *(unsigned char*) &__tramp[5] = 0xe9; \
+   *(unsigned int*)  &__tramp[6] = __dis; /* jmp __fun  */ \
  }
 
 /* the cif must already be prep'ed */
@@ -656,21 +679,27 @@ ffi_prep_closure_loc (ffi_closure* closure,
                            &ffi_closure_SYSV,
                            (void*)codeloc);
     }
+  else if (cif->abi == FFI_REGISTER)
+    {
+      FFI_INIT_TRAMPOLINE_WIN32 (&closure->tramp[0],
+                                   &ffi_closure_REGISTER,
+                                   (void*)codeloc);
+    }
   else if (cif->abi == FFI_FASTCALL)
     {
-      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
+      FFI_INIT_TRAMPOLINE_WIN32 (&closure->tramp[0],
                                    &ffi_closure_FASTCALL,
                                    (void*)codeloc);
     }
   else if (cif->abi == FFI_THISCALL)
     {
-      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
+      FFI_INIT_TRAMPOLINE_WIN32 (&closure->tramp[0],
                                    &ffi_closure_THISCALL,
                                    (void*)codeloc);
     }
-  else if (cif->abi == FFI_STDCALL)
+  else if (cif->abi == FFI_STDCALL || cif->abi == FFI_PASCAL)
     {
-      FFI_INIT_TRAMPOLINE_STDCALL (&closure->tramp[0],
+      FFI_INIT_TRAMPOLINE_WIN32 (&closure->tramp[0],
                                    &ffi_closure_STDCALL,
                                    (void*)codeloc);
     }

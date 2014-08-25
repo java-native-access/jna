@@ -34,8 +34,8 @@
 #include <fficonfig.h>
 #include <ffi.h>
 
-#define CIF_ABI_OFFSET 0
 #define CIF_BYTES_OFFSET 16
+#define CIF_FLAGS_OFFSET 20
 
 #ifdef _MSC_VER
 
@@ -45,6 +45,7 @@
 .MODEL FLAT, C
 
 EXTRN ffi_closure_SYSV_inner:NEAR
+EXTRN ffi_closure_WIN32_inner:NEAR
 
 _TEXT SEGMENT
 
@@ -215,11 +216,21 @@ ffi_closure_THISCALL PROC NEAR
 ffi_closure_THISCALL ENDP
 
 ffi_closure_FASTCALL PROC NEAR
-        ;; Insert the register argument on the stack as the first argument
+        ;; Insert the 2 register arguments on the stack as the first argument
         xchg	DWORD PTR [esp+4], edx
         xchg	DWORD PTR [esp], ecx
         push	edx
         push	ecx
+        jmp	ffi_closure_STDCALL
+ffi_closure_FASTCALL ENDP
+
+ffi_closure_REGISTER PROC NEAR
+        ;; Insert the 3 register arguments on the stack as the first argument
+        push	eax
+        xchg	DWORD PTR [esp+8], ecx
+        xchg	DWORD PTR [esp+4], edx
+        push	ecx
+        push	edx
         jmp	ffi_closure_STDCALL
 ffi_closure_FASTCALL ENDP
 
@@ -320,7 +331,6 @@ ffi_closure_SYSV ENDP
 #define RAW_CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) AND NOT 3)
 #define RAW_CLOSURE_FUN_OFFSET (RAW_CLOSURE_CIF_OFFSET + 4)
 #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
-#define CIF_FLAGS_OFFSET 20
 
 ffi_closure_raw_THISCALL PROC NEAR USES esi FORCEFRAME
         sub esp, 36
@@ -417,7 +427,7 @@ ffi_closure_raw_SYSV ENDP
 #endif /* !FFI_NO_RAW_API */
 
 ffi_closure_STDCALL PROC NEAR FORCEFRAME
-    ;; the ffi_closure ctx is passed in eax by the trampoline.
+        mov  eax, [esp] ;; the ffi_closure ctx passed by the trampoline.
 
         sub  esp, 40
         lea  edx, [ebp - 24]
@@ -427,9 +437,13 @@ ffi_closure_STDCALL PROC NEAR FORCEFRAME
         lea  edx, [ebp - 12]
         mov  [esp + 4], edx          ;; &resp
         mov  [esp], eax              ;; closure
-        call ffi_closure_SYSV_inner
+        call ffi_closure_WIN32_inner
         mov  ecx, [ebp - 12]
 
+        xchg [ebp + 4], eax          ;;xchg size of stack parameters and ffi_closure ctx
+        mov  eax, DWORD PTR [eax + CLOSURE_CIF_OFFSET]
+        mov  eax, DWORD PTR [eax + CIF_FLAGS_OFFSET]
+		
 cd_jumptable:
         jmp  [cd_jumpdata + 4 * eax]
 cd_jumpdata:
@@ -493,21 +507,10 @@ cd_retlongdouble:
 cd_epilogue:
         mov   esp, ebp
         pop   ebp
-        pop   ecx
-        pop   edx
-        mov   ecx, DWORD PTR [ecx + (CLOSURE_CIF_OFFSET-10)]
-        add   esp, DWORD PTR [ecx + CIF_BYTES_OFFSET]
-        mov   ecx, DWORD PTR [ecx + CIF_ABI_OFFSET]
-        cmp   ecx, 3
-        je    cd_thiscall
-        cmp   ecx, 4
-        jne   cd_not_fastcall
-
-        add   esp, 4
-cd_thiscall:
-        add   esp, 4
-cd_not_fastcall:
-        jmp   edx
+        mov   ecx, [esp + 4]  ;; Return address
+        add   esp, [esp]      ;; Parameters stack size
+		add   esp, 8
+        jmp   ecx
 ffi_closure_STDCALL ENDP
 
 _TEXT ENDS
@@ -728,14 +731,27 @@ FFI_HIDDEN(ffi_closure_FASTCALL)
         .def	_ffi_closure_FASTCALL;	.scl	2;	.type	32;	.endef
 #endif
 USCORE_SYMBOL(ffi_closure_FASTCALL):
-        /* Insert the register arguments on the stack as the first two arguments */
+        /* Insert the 2 register arguments on the stack as the first two arguments */
         xchg	%edx, 4(%esp)
         xchg	%ecx, (%esp)
         push	%edx
         push	%ecx
         jmp	.ffi_closure_STDCALL_internal
+FFI_HIDDEN(ffi_closure_REGISTER)
+        .globl	USCORE_SYMBOL(ffi_closure_REGISTER)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_REGISTER;	.scl	2;	.type	32;	.endef
+#endif
+USCORE_SYMBOL(ffi_closure_REGISTER):
+        /* Insert the 3 register arguments on the stack as the first two arguments */
+        push	%eax
+        xchg	%ecx, 8(%esp)
+        xchg	%edx, 4(%esp)
+        push	%ecx
+        push	%edx
+        jmp	.ffi_closure_STDCALL_internal
+		
 .LFE1:
-
         # This assumes we are using gas.
         .balign 16
 FFI_HIDDEN(ffi_closure_SYSV)
@@ -879,7 +895,6 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 #define RAW_CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) & ~3)
 #define RAW_CLOSURE_FUN_OFFSET (RAW_CLOSURE_CIF_OFFSET + 4)
 #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
-#define CIF_FLAGS_OFFSET 20
 
 #ifdef X86_WIN32
         .balign 16
@@ -1032,6 +1047,8 @@ FFI_HIDDEN(ffi_closure_STDCALL)
 #endif
 USCORE_SYMBOL(ffi_closure_STDCALL):
 .ffi_closure_STDCALL_internal:
+        /* ffi_closure ctx is at top of the stack */
+        movl	(%esp), %eax
 .LFB5:
         pushl	%ebp
 .LCFI9:
@@ -1045,19 +1062,23 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
         leal	-12(%ebp), %edx
         movl	%edx, (%esp)	/* &resp */
 #if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
-        call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+        call	USCORE_SYMBOL(ffi_closure_WIN32_inner)
 #elif defined(X86_DARWIN)
-        calll	L_ffi_closure_SYSV_inner$stub
+        calll	L_ffi_closure_WIN32_inner$stub
 #else
         movl	%ebx, 8(%esp)
         call	1f
-1:	popl	%ebx
+1:      popl	%ebx
         addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
-        call	ffi_closure_SYSV_inner@PLT
+        call	ffi_closure_WIN32_inner@PLT
         movl	8(%esp), %ebx
 #endif
         movl	-12(%ebp), %ecx
 0:
+		xchgl	4(%ebp), %eax /* xchg size of stack parameters and ffi_closure ctx */
+        movl	CLOSURE_CIF_OFFSET(%eax), %eax
+        movl	CIF_FLAGS_OFFSET(%eax), %eax
+		
         call	1f
         # Do not insert anything here between the call and the jump table.
 .Lscls_store_table:
@@ -1144,19 +1165,10 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 .Lscls_epilogue:
         movl	%ebp, %esp
         popl	%ebp
-        popl	%ecx
-        popl	%edx
-        movl	(CLOSURE_CIF_OFFSET-10)(%ecx), %ecx
-        addl	CIF_BYTES_OFFSET(%ecx), %esp
-        movl	CIF_ABI_OFFSET(%ecx), %ecx
-        cmpl	$3, %ecx /* FFI_THISCALL */
-        je	1f
-        cmpl	$4, %ecx /* FFI_FASTCALL */
-        jne	2f
-
-        addl	$4, %esp
-1:	addl	$4, %esp
-2:	jmp	*%edx
+		movl	4(%esp), %ecx /* Return address */
+		addl	(%esp), %esp  /* Parameters stack size */
+		addl	$8, %esp
+        jmp	*%ecx
 .ffi_closure_STDCALL_end:
 .LFE5:
 
@@ -1164,6 +1176,9 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 .section __IMPORT,__jump_table,symbol_stubs,self_modifying_code+pure_instructions,5
 L_ffi_closure_SYSV_inner$stub:
         .indirect_symbol _ffi_closure_SYSV_inner
+        hlt ; hlt ; hlt ; hlt ; hlt
+L_ffi_closure_WIN32_inner$stub:
+        .indirect_symbol _ffi_closure_WIN32_inner
         hlt ; hlt ; hlt ; hlt ; hlt
 #endif
 
