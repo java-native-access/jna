@@ -4,8 +4,8 @@
              Copyright (c) 2001  John Beniton
              Copyright (c) 2002  Ranjit Mathew
              Copyright (c) 2009  Daniel Witte
-        		
- 
+
+
    X86 Foreign Function Interface
  
    Permission is hereby granted, free of charge, to any person obtaining
@@ -100,7 +100,7 @@ prepr_one:
         xchg ecx, eax
 
 fun:
-    	;; Call function
+        ;; Call function
         call fn
 
         ;; Load ecx with the return type code
@@ -443,7 +443,7 @@ ffi_closure_STDCALL PROC NEAR FORCEFRAME
         xchg [ebp + 4], eax          ;;xchg size of stack parameters and ffi_closure ctx
         mov  eax, DWORD PTR [eax + CLOSURE_CIF_OFFSET]
         mov  eax, DWORD PTR [eax + CIF_FLAGS_OFFSET]
-		
+
 cd_jumptable:
         jmp  [cd_jumpdata + 4 * eax]
 cd_jumpdata:
@@ -509,7 +509,7 @@ cd_epilogue:
         pop   ebp
         mov   ecx, [esp + 4]  ;; Return address
         add   esp, [esp]      ;; Parameters stack size
-		add   esp, 8
+        add   esp, 8
         jmp   ecx
 ffi_closure_STDCALL ENDP
 
@@ -552,40 +552,40 @@ USCORE_SYMBOL(ffi_call_win32):
         call  *8(%ebp)
         addl  $8,%esp
 
-    	# Prepare registers
-    	# EAX stores the number of register arguments
-    	cmpl  $0, %eax
-    	je    .fun
-    	cmpl  $3, %eax
-    	jl    .prepr_two_cmp
-    	
-    	movl  %esp, %ecx
-    	addl  $12, %esp
-    	movl  8(%ecx), %eax
-    	jmp   .prepr_two
+        # Prepare registers
+        # EAX stores the number of register arguments
+        cmpl  $0, %eax
+        je    .fun
+        cmpl  $3, %eax
+        jl    .prepr_two_cmp
+        
+        movl  %esp, %ecx
+        addl  $12, %esp
+        movl  8(%ecx), %eax
+        jmp   .prepr_two
 .prepr_two_cmp:
-    	cmpl  $2, %eax
-    	jl    .prepr_one_prep
-    	movl  %esp, %ecx
-    	addl  $8, %esp
+        cmpl  $2, %eax
+        jl    .prepr_one_prep
+        movl  %esp, %ecx
+        addl  $8, %esp
 .prepr_two:
-    	movl  4(%ecx), %edx
-    	jmp   .prepr_one
+        movl  4(%ecx), %edx
+        jmp   .prepr_one
 .prepr_one_prep:
-    	movl  %esp, %ecx
-    	addl  $4, %esp
+        movl  %esp, %ecx
+        addl  $4, %esp
 .prepr_one:
-    	movl  (%ecx), %ecx
-    	cmpl  $7, 16(%ebp) # FFI_REGISTER
-    	jne   .fun
+        movl  (%ecx), %ecx
+        cmpl  $7, 16(%ebp) # FFI_REGISTER
+        jne   .fun
 
-    	xchgl %eax, %ecx
-    	
+        xchgl %eax, %ecx
+        
 .fun:
         # FIXME: Align the stack to a 128-bit boundary to avoid
         # potential performance hits.
 
-    	# Call function
+        # Call function
         call  *32(%ebp)
  
         # stdcall functions pop arguments off the stack themselves
@@ -606,7 +606,7 @@ USCORE_SYMBOL(ffi_call_win32):
         jmp   .Lepilogue
 
 0:
-        call	1f
+        call 1f
         # Do not insert anything here between the call and the jump table.
 .Lstore_table:
         .long	.Lnoretval-.Lstore_table	/* FFI_TYPE_VOID */
@@ -750,7 +750,7 @@ USCORE_SYMBOL(ffi_closure_REGISTER):
         push	%ecx
         push	%edx
         jmp	.ffi_closure_STDCALL_internal
-		
+
 .LFE1:
         # This assumes we are using gas.
         .balign 16
@@ -781,7 +781,7 @@ USCORE_SYMBOL(ffi_closure_SYSV):
 #else
         movl	%ebx, 8(%esp)
         call	1f
-1:	popl	%ebx
+1:      popl	%ebx
         addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
         call	ffi_closure_SYSV_inner@PLT
         movl	8(%esp), %ebx
@@ -1075,10 +1075,10 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 #endif
         movl	-12(%ebp), %ecx
 0:
-		xchgl	4(%ebp), %eax /* xchg size of stack parameters and ffi_closure ctx */
+        xchgl	4(%ebp), %eax /* xchg size of stack parameters and ffi_closure ctx */
         movl	CLOSURE_CIF_OFFSET(%eax), %eax
         movl	CIF_FLAGS_OFFSET(%eax), %eax
-		
+
         call	1f
         # Do not insert anything here between the call and the jump table.
 .Lscls_store_table:
@@ -1165,9 +1165,9 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
 .Lscls_epilogue:
         movl	%ebp, %esp
         popl	%ebp
-		movl	4(%esp), %ecx /* Return address */
-		addl	(%esp), %esp  /* Parameters stack size */
-		addl	$8, %esp
+        movl	4(%esp), %ecx /* Return address */
+        addl	(%esp), %esp  /* Parameters stack size */
+        addl	$8, %esp
         jmp	*%ecx
 .ffi_closure_STDCALL_end:
 .LFE5:

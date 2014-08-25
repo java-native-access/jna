@@ -139,7 +139,7 @@ typedef enum ffi_abi {
 #endif
 #endif
 #ifndef X86_WIN64
-#define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
+#define FFI_NATIVE_RAW_API 1  /* x86 has native raw api support */
 #endif
 #endif
 

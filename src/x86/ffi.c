@@ -51,11 +51,11 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
   register char *argp;
   register ffi_type **p_arg;
 #ifndef X86_WIN64
-  void *p_stack_data[3];
-  char *argp2 = stack;
-  unsigned int stack_args_count = 0;
   const int cabi = ecif->cif->abi;
   const int dir = (cabi == FFI_PASCAL || cabi == FFI_REGISTER) ? -1 : +1;
+  unsigned int stack_args_count = 0;
+  void *p_stack_data[3];
+  char *argp2 = stack;
 #else
   #define dir 1
 #endif
@@ -69,7 +69,6 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
 #endif
       )
     {
-      *(void **) argp = ecif->rvalue;
 #ifndef X86_WIN64
       /* For fastcall/thiscall/register this is first register-passed
          argument.  */
@@ -79,14 +78,16 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
           ++stack_args_count;
         }
 #endif
+
+      *(void **) argp = ecif->rvalue;
       argp += sizeof(void*);
     }
 
-  p_arg = ecif->cif->arg_types;
+  p_arg  = ecif->cif->arg_types;
   p_argv = ecif->avalue;
   if (dir < 0)
     {
-      const unsigned int nargs = ecif->cif->nargs - 1;
+      const int nargs = ecif->cif->nargs - 1;
       if (nargs > 0)
       {
         p_arg  += nargs;
@@ -94,15 +95,18 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
       }
     }
 
-  for (i = ecif->cif->nargs; i != 0; i--)
-    {	
+  for (i = ecif->cif->nargs;
+       i != 0;
+       i--, p_arg += dir, p_argv += dir)
+    {
       /* Align if necessary */
       if ((sizeof(void*) - 1) & (size_t) argp)
         argp = (char *) ALIGN(argp, sizeof(void*));
-    	
+
       size_t z = (*p_arg)->size;
+
 #ifdef X86_WIN64
-      if (z > sizeof(ffi_arg)
+      if (z > FFI_SIZEOF_ARG
           || ((*p_arg)->type == FFI_TYPE_STRUCT
               && (z & (1 | 2 | 4 | 8)) == 0)
 #if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
@@ -110,7 +114,7 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
 #endif
           )
         {
-          z = sizeof(ffi_arg);
+          z = FFI_SIZEOF_ARG;
           *(void **)argp = *p_argv;
         }
       else if ((*p_arg)->type == FFI_TYPE_FLOAT)
@@ -119,9 +123,9 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
         }
       else
 #endif
-      if (z < sizeof(ffi_arg))
+      if (z < FFI_SIZEOF_ARG)
         {
-          z = sizeof(ffi_arg);
+          z = FFI_SIZEOF_ARG;
           switch ((*p_arg)->type)
             {
             case FFI_TYPE_SINT8:
@@ -165,7 +169,7 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
     /* For thiscall/fastcall/register convention register-passed arguments
        are the first two none-floating-point arguments with a size
        smaller or equal to sizeof (void*).  */
-    if ((z == sizeof(ffi_arg))
+    if ((z == FFI_SIZEOF_ARG)
         && ((cabi == FFI_REGISTER)
           || (cabi == FFI_THISCALL && stack_args_count < 1)
           || (cabi == FFI_FASTCALL && stack_args_count < 2))
@@ -176,7 +180,7 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
           {
             /* Iterating arguments backwards, so first register-passed argument
                will be passed last. Shift temporary values to make place. */
-			p_stack_data[0] = p_stack_data[1];
+            p_stack_data[0] = p_stack_data[1];
             p_stack_data[1] = p_stack_data[2];
             stack_args_count = 2;
           }
@@ -185,9 +189,6 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
         ++stack_args_count;
       }
 #endif
-
-      p_arg  += dir;
-      p_argv += dir;
 
 #ifdef X86_WIN64
       argp += (z + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
@@ -201,25 +202,25 @@ unsigned int ffi_prep_args(char *stack, extended_cif *ecif)
      on top of stack, so that those can be moved to registers by call-handler.  */
   if (stack_args_count > 0)
     {
-      int i;
-	  if (dir < 0 && stack_args_count > 1)
-	    {
-		  /* Reverse order if iterating arguments backwards */
-		  ffi_arg tmp = *(ffi_arg*) p_stack_data[0];
-		  *(ffi_arg*) p_stack_data[0] = *(ffi_arg*) p_stack_data[stack_args_count - 1];
-		  *(ffi_arg*) p_stack_data[stack_args_count - 1] = tmp;
-		}
+      if (dir < 0 && stack_args_count > 1)
+        {
+          /* Reverse order if iterating arguments backwards */
+          ffi_arg tmp = *(ffi_arg*) p_stack_data[0];
+          *(ffi_arg*) p_stack_data[0] = *(ffi_arg*) p_stack_data[stack_args_count - 1];
+          *(ffi_arg*) p_stack_data[stack_args_count - 1] = tmp;
+        }
       
+      int i;
       for (i = 0; i < stack_args_count; i++)
         {
           if (p_stack_data[i] != argp2)
             {
               ffi_arg tmp = *(ffi_arg*) p_stack_data[i];
-              memmove (argp2 + sizeof(ffi_arg), argp2, (size_t) ((char*) p_stack_data[i] - (char*)argp2));
-			  *(ffi_arg *) argp2 = tmp;
+              memmove (argp2 + FFI_SIZEOF_ARG, argp2, (size_t) ((char*) p_stack_data[i] - (char*)argp2));
+              *(ffi_arg *) argp2 = tmp;
             }
 
-          argp2 += sizeof(ffi_arg);
+          argp2 += FFI_SIZEOF_ARG;
         }
     }
 
@@ -321,12 +322,12 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 
 #ifdef X86_WIN64
   /* ensure space for storing four registers */
-  cif->bytes += 4 * sizeof(ffi_arg);
+  cif->bytes += 4 * FFI_SIZEOF_ARG;
 #endif
 
 #ifndef X86_WIN32
 #ifndef X86_WIN64
-  if (cif->abi != FFI_STDCALL && cif->abi != FFI_THISCALL && cif->abi != FFI_FASTCALL)
+  if (cif->abi == FFI_SYSV || cif->abi == FFI_UNIX64)
 #endif
     cif->bytes = (cif->bytes + 15) & ~0xF;
 #endif
@@ -336,11 +337,11 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 
 #ifdef X86_WIN64
 extern int
-ffi_call_win64(void (*)(char *, extended_cif *), extended_cif *,
+ffi_call_win64(unsigned int (*)(char *, extended_cif *), extended_cif *,
                unsigned, unsigned, unsigned *, void (*fn)(void));
 #else
 extern void
-ffi_call_win32(void (*)(char *, extended_cif *), extended_cif *,
+ffi_call_win32(unsigned int (*)(char *, extended_cif *), extended_cif *,
                unsigned, unsigned, unsigned, unsigned *, void (*fn)(void));
 extern void ffi_call_SYSV(void (*)(char *, extended_cif *), extended_cif *,
                           unsigned, unsigned, unsigned *, void (*fn)(void));
@@ -359,8 +360,7 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 #ifdef X86_WIN64
   if (rvalue == NULL
       && cif->flags == FFI_TYPE_STRUCT
-      && cif->rtype->size != 1 && cif->rtype->size != 2
-      && cif->rtype->size != 4 && cif->rtype->size != 8)
+      && ((cif->rtype->size & (1 | 2 | 4 | 8)) == 0))
     {
       ecif.rvalue = alloca((cif->rtype->size + 0xF) & ~0xF);
     }
@@ -413,8 +413,8 @@ void ffi_call(ffi_cif *cif, void (*fn)(void), void *rvalue, void **avalue)
 
 /* The following __attribute__((regparm(1))) decorations will have no effect
    on MSVC or SUNPRO_C -- standard conventions apply. */
-static void ffi_prep_incoming_args_SYSV (char *stack, void **ret,
-                                         void** args, ffi_cif* cif);
+static unsigned int ffi_prep_incoming_args (char *stack, void **ret,
+                                            void** args, ffi_cif* cif);
 void FFI_HIDDEN ffi_closure_SYSV (ffi_closure *)
      __attribute__ ((regparm(1)));
 unsigned int FFI_HIDDEN ffi_closure_SYSV_inner (ffi_closure *, void **, void *)
@@ -455,7 +455,7 @@ ffi_closure_win64_inner (ffi_closure *closure, void *args) {
    * a structure, it will change RESP to point to the
    * structure return address.  */
 
-  ffi_prep_incoming_args_SYSV(args, &resp, arg_area, cif);
+  ffi_prep_incoming_args(args, &resp, arg_area, cif);
   
   (closure->fun) (cif, resp, arg_area, closure->user_data);
 
@@ -484,7 +484,7 @@ ffi_closure_SYSV_inner (ffi_closure *closure, void **respp, void *args)
    * a structure, it will change RESP to point to the
    * structure return address.  */
 
-  ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif);
+  ffi_prep_incoming_args(args, respp, arg_area, cif);
 
   (closure->fun) (cif, *respp, arg_area, closure->user_data);
 
@@ -497,6 +497,7 @@ ffi_closure_WIN32_inner (ffi_closure *closure, void **respp, void *args)
   /* our various things...  */
   ffi_cif       *cif;
   void         **arg_area;
+  unsigned int   ret;
 
   cif         = closure->cif;
   arg_area    = (void**) alloca (cif->nargs * sizeof (void*));  
@@ -507,80 +508,141 @@ ffi_closure_WIN32_inner (ffi_closure *closure, void **respp, void *args)
    * a structure, it will change RESP to point to the
    * structure return address.  */
 
-  ffi_prep_incoming_args_SYSV(args, respp, arg_area, cif);
+  ret = ffi_prep_incoming_args(args, respp, arg_area, cif);
 
   (closure->fun) (cif, *respp, arg_area, closure->user_data);
 
-  return cif->bytes;
+  return ret;
 }
 #endif /* !X86_WIN64 */
 
-static void
-ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
-                            ffi_cif *cif)
+static unsigned int
+ffi_prep_incoming_args(char *stack, void **rvalue, void **avalue,
+                       ffi_cif *cif)
 {
   register unsigned int i;
   register void **p_argv;
   register char *argp;
   register ffi_type **p_arg;
-
-  argp = stack;
-
-#ifdef X86_WIN64
-  if (cif->rtype->size > sizeof(ffi_arg)
-      || (cif->flags == FFI_TYPE_STRUCT
-          && (cif->rtype->size != 1 && cif->rtype->size != 2
-              && cif->rtype->size != 4 && cif->rtype->size != 8))) {
-    *rvalue = *(void **) argp;
-    argp += sizeof(void *);
-  }
+#ifndef X86_WIN64
+  const int cabi = cif->abi;
+  const int dir = (cabi == FFI_PASCAL || cabi == FFI_REGISTER) ? -1 : +1;
+  const unsigned int max_stack_count = (cabi == FFI_THISCALL) ? 1
+                                     : (cabi == FFI_FASTCALL) ? 2
+                                     : (cabi == FFI_REGISTER) ? 3
+                                     : 0;
+  unsigned int passed_regs = 0;
+  void *p_stack_data[3] = { stack - 1 };
 #else
-  if ( cif->flags == FFI_TYPE_STRUCT
-       || cif->flags == FFI_TYPE_MS_STRUCT ) {
-    *rvalue = *(void **) argp;
-    argp += sizeof(void *);
-  }
+  #define dir 1
 #endif
 
-  p_argv = avalue;
+  argp = stack;
+#ifndef X86_WIN64
+  argp += max_stack_count * FFI_SIZEOF_ARG;
+#endif
 
-  for (i = cif->nargs, p_arg = cif->arg_types; (i != 0); i--, p_arg++)
-    {
-      size_t z;
-
-      /* Align if necessary */
-      if ((sizeof(void*) - 1) & (size_t) argp) {
-        argp = (char *) ALIGN(argp, sizeof(void*));
-      }
-
+  if ((cif->flags == FFI_TYPE_STRUCT
+       || cif->flags == FFI_TYPE_MS_STRUCT)
 #ifdef X86_WIN64
-      if ((*p_arg)->size > sizeof(ffi_arg)
-          || ((*p_arg)->type == FFI_TYPE_STRUCT
-              && ((*p_arg)->size != 1 && (*p_arg)->size != 2
-                  && (*p_arg)->size != 4 && (*p_arg)->size != 8)))
+      && ((cif->rtype->size & (1 | 2 | 4 | 8)) == 0)
+#endif
+      )
+    {
+#ifndef X86_WIN64
+      if (passed_regs < max_stack_count)
         {
-          z = sizeof(void *);
-          *p_argv = *(void **)argp;
+          *rvalue = *(void**) (stack + (passed_regs*FFI_SIZEOF_ARG));
+          ++passed_regs;
         }
       else
 #endif
         {
-          z = (*p_arg)->size;
-          
+          *rvalue = *(void **) argp;
+          argp += sizeof(void *);
+        }
+    }
+
+#ifndef X86_WIN64
+  /* Do register arguments first  */
+  for (i = 0, p_arg = cif->arg_types; 
+       i < cif->nargs && passed_regs < max_stack_count;
+       i++, p_arg++)
+    {
+      if ((*p_arg)->type == FFI_TYPE_FLOAT
+         || (*p_arg)->type == FFI_TYPE_STRUCT)
+        continue;
+
+      size_t sz = (*p_arg)->size;
+      if(sz == 0 || sz > FFI_SIZEOF_ARG)
+        continue;
+
+      p_stack_data[passed_regs] = avalue + i;
+      avalue[i] = stack + (passed_regs*FFI_SIZEOF_ARG);
+      ++passed_regs;
+    }
+#endif
+
+  p_arg = cif->arg_types;
+  p_argv = avalue;
+  if (dir < 0)
+    {
+      const int nargs = cif->nargs - 1;
+      if (nargs > 0)
+      {
+        p_arg  += nargs;
+        p_argv += nargs;
+      }
+    }
+
+  for (i = cif->nargs;
+       i != 0;
+       i--, p_arg += dir, p_argv += dir)
+    {
+      /* Align if necessary */
+      if ((sizeof(void*) - 1) & (size_t) argp)
+        argp = (char *) ALIGN(argp, sizeof(void*));
+
+      size_t z = (*p_arg)->size;
+
+#ifdef X86_WIN64
+      if (z > FFI_SIZEOF_ARG
+          || ((*p_arg)->type == FFI_TYPE_STRUCT
+              && (z & (1 | 2 | 4 | 8)) == 0)
+#if FFI_TYPE_DOUBLE != FFI_TYPE_LONGDOUBLE
+          || ((*p_arg)->type == FFI_TYPE_LONGDOUBLE)
+#endif
+          )
+        {
+          z = FFI_SIZEOF_ARG;
+          *p_argv = *(void **)argp;
+        }
+      else
+#else
+      if (passed_regs > 0
+          && z <= FFI_SIZEOF_ARG
+          && (p_argv == p_stack_data[0]
+            || p_argv == p_stack_data[1]
+            || p_argv == p_stack_data[2]))
+        {
+          /* Already assigned a register value */
+          continue;
+        }
+      else
+#endif
+        {
           /* because we're little endian, this is what it turns into.   */
-          
           *p_argv = (void*) argp;
         }
-          
-      p_argv++;
+
 #ifdef X86_WIN64
       argp += (z + sizeof(void*) - 1) & ~(sizeof(void*) - 1);
 #else
       argp += z;
 #endif
     }
-  
-  return;
+
+  return (size_t)argp - (size_t)stack;
 }
 
 #define FFI_INIT_TRAMPOLINE_WIN64(TRAMP,FUN,CTX,MASK) \
@@ -620,24 +682,24 @@ ffi_prep_incoming_args_SYSV(char *stack, void **rvalue, void **avalue,
    unsigned int  __ctx = (unsigned int)(CTX); \
    unsigned int  __dis = __fun - (__ctx + 49);  \
    unsigned short __size = (unsigned short)(SIZE); \
-   *(unsigned int *) &__tramp[0] = 0x8324048b;	/* mov (%esp), %eax */ \
-   *(unsigned int *) &__tramp[4] = 0x4c890cec;	/* sub $12, %esp */ \
-   *(unsigned int *) &__tramp[8] = 0x04890424;	/* mov %ecx, 4(%esp) */ \
-   *(unsigned char*) &__tramp[12] = 0x24;	/* mov %eax, (%esp) */ \
+   *(unsigned int *) &__tramp[0] = 0x8324048b;      /* mov (%esp), %eax */ \
+   *(unsigned int *) &__tramp[4] = 0x4c890cec;      /* sub $12, %esp */ \
+   *(unsigned int *) &__tramp[8] = 0x04890424;      /* mov %ecx, 4(%esp) */ \
+   *(unsigned char*) &__tramp[12] = 0x24;           /* mov %eax, (%esp) */ \
    *(unsigned char*) &__tramp[13] = 0xb8; \
-   *(unsigned int *) &__tramp[14] = __size;	/* mov __size, %eax */ \
-   *(unsigned int *) &__tramp[18] = 0x08244c8d;	/* lea 8(%esp), %ecx */ \
-   *(unsigned int *) &__tramp[22] = 0x4802e8c1; /* shr $2, %eax ; dec %eax */ \
-   *(unsigned short*) &__tramp[26] = 0x0b74;	/* jz 1f */ \
-   *(unsigned int *) &__tramp[28] = 0x8908518b;	/* 2b: mov 8(%ecx), %edx */ \
-   *(unsigned int *) &__tramp[32] = 0x04c18311; /* mov %edx, (%ecx) ; add $4, %ecx */ \
-   *(unsigned char*) &__tramp[36] = 0x48;	/* dec %eax */ \
-   *(unsigned short*) &__tramp[37] = 0xf575;	/* jnz 2b ; 1f: */ \
+   *(unsigned int *) &__tramp[14] = __size;         /* mov __size, %eax */ \
+   *(unsigned int *) &__tramp[18] = 0x08244c8d;     /* lea 8(%esp), %ecx */ \
+   *(unsigned int *) &__tramp[22] = 0x4802e8c1;     /* shr $2, %eax ; dec %eax */ \
+   *(unsigned short*) &__tramp[26] = 0x0b74;        /* jz 1f */ \
+   *(unsigned int *) &__tramp[28] = 0x8908518b;     /* 2b: mov 8(%ecx), %edx */ \
+   *(unsigned int *) &__tramp[32] = 0x04c18311;     /* mov %edx, (%ecx) ; add $4, %ecx */ \
+   *(unsigned char*) &__tramp[36] = 0x48;           /* dec %eax */ \
+   *(unsigned short*) &__tramp[37] = 0xf575;        /* jnz 2b ; 1f: */ \
    *(unsigned char*) &__tramp[39] = 0xb8; \
-   *(unsigned int*)  &__tramp[40] = __ctx; /* movl __ctx, %eax */ \
+   *(unsigned int*)  &__tramp[40] = __ctx;          /* movl __ctx, %eax */ \
    *(unsigned char *)  &__tramp[44] = 0xe8; \
-   *(unsigned int*)  &__tramp[45] = __dis; /* call __fun  */ \
-   *(unsigned char*)  &__tramp[49] = 0xc2; /* ret  */ \
+   *(unsigned int*)  &__tramp[45] = __dis;          /* call __fun  */ \
+   *(unsigned char*)  &__tramp[49] = 0xc2;          /* ret  */ \
    *(unsigned short*)  &__tramp[50] = (__size + 8); /* ret (__size + 8)  */ \
  }
 
@@ -779,29 +841,31 @@ static unsigned int
 ffi_prep_args_raw(char *stack, extended_cif *ecif)
 {
   const ffi_cif *cif = ecif->cif;
-  const unsigned int abi = cif->abi;
-  const unsigned int max = (abi == FFI_THISCALL) ? 1
-                         : (abi == FFI_FASTCALL) ? 2
-						 : (abi == FFI_REGISTER) ? 3
-						 : 0;
-
   unsigned int i, passed_regs = 0;
+  
+#ifndef X86_WIN64
+  const unsigned int abi = cif->abi;
+  const unsigned int max_regs = (abi == FFI_THISCALL) ? 1
+                              : (abi == FFI_FASTCALL) ? 2
+                              : (abi == FFI_REGISTER) ? 3
+                              : 0;
 
   if (cif->flags == FFI_TYPE_STRUCT)
     ++passed_regs;
   
-  for (i = 0; i < cif->nargs && passed_regs <= max; i++)
+  for (i = 0; i < cif->nargs && passed_regs <= max_regs; i++)
     {
-  	  if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
-  	     || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
-  	    continue;
+      if (cif->arg_types[i]->type == FFI_TYPE_FLOAT
+         || cif->arg_types[i]->type == FFI_TYPE_STRUCT)
+        continue;
 
-  	  size_t sz = (cif->arg_types[i]->size + 3) & ~3;
-  	  if (sz == 0 || sz > 4)
-  	    continue;
+      size_t sz = cif->arg_types[i]->size;
+      if (sz == 0 || sz > FFI_SIZEOF_ARG)
+        continue;
 
-  	  ++passed_regs;
+      ++passed_regs;
     }
+#endif
 
   memcpy (stack, ecif->avalue, cif->bytes);
   return passed_regs;
