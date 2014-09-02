@@ -10,7 +10,6 @@
  */
 package com.sun.jna;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
@@ -171,6 +170,9 @@ public class Function extends Pointer {
 
     /** For internal JNA use. */
     static final String OPTION_INVOKING_METHOD = "invoking-method";
+
+    /** For checking if methods declare varargs */
+    private static final VarArgsChecker IS_VARARGS = VarArgsChecker.create();
 
     /**
      * Create a new <code>Function</code> that is linked with a native 
@@ -509,7 +511,7 @@ public class Function extends Pointer {
                 Class ptype = struct.getClass();
             	if (invokingMethod != null) {
                     Class[] ptypes = invokingMethod.getParameterTypes();
-                    if (isVarArgs(invokingMethod)) {
+                    if (IS_VARARGS.isVarArgs(invokingMethod)) {
                         if (index < ptypes.length-1) {
                             ptype = ptypes[index];
                         }
@@ -776,37 +778,10 @@ public class Function extends Pointer {
         }
         return inArgs;
     }
-
-    /**
-     * Reference to Method.isVarArgs
-     */
-    private static Method isVarArgsMethod = getIsVarArgsMethod();
-    
-    /**
-     * If possible returns the Method.isVarArgs method via reflection
-     * @return Method.isVarArgs method
-     */
-    private static Method getIsVarArgsMethod() {
-        try {
-            return Method.class.getMethod("isVarArgs", new Class[0]);
-        } catch (SecurityException e) {
-            return null;
-        } catch (NoSuchMethodException e) {
-            return null;
-        }
-    }
     
     /** Varargs are only supported on 1.5+. */
     static boolean isVarArgs(Method m) {
-        if(isVarArgsMethod != null) {
-            try {
-                return Boolean.TRUE.equals(isVarArgsMethod.invoke(m, new Object[0]));
-            } catch (IllegalArgumentException e) {
-            } catch (IllegalAccessException e) {
-            } catch (InvocationTargetException e) {
-            }
-        }
-        return false;
+        return IS_VARARGS.isVarArgs(m);
     }
     
     private static class NativeMappedArray extends Memory implements PostCallRead {
