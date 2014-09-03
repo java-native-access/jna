@@ -923,4 +923,67 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
             return Arrays.asList(new String[] { "foreignLocation" });
 		}
     }
+    
+    /**
+     * Specifies a type of computer name to be retrieved by the GetComputerNameEx function
+     */
+    public static interface COMPUTER_NAME_FORMAT {
+        /**
+          * The NetBIOS name of the local computer or the cluster associated with the local
+          * computer. This name is limited to MAX_COMPUTERNAME_LENGTH + 1 characters and may
+          * be a truncated version of the DNS host name. For example, if the DNS host name is
+          * &quot;corporate-mail-server&quot;, the NetBIOS name would be &quot;corporate-mail-"&quot;.
+          */
+        int ComputerNameNetBIOS = 0;
+        
+        /**
+         * The DNS name of the local computer or the cluster associated with the local computer.
+         */
+        int ComputerNameDnsHostname = 1;
+        
+        /**
+         * The name of the DNS domain assigned to the local computer or the cluster associated
+         * with the local computer.
+         */
+        int ComputerNameDnsDomain = 2;
+        
+        /**
+         * The fully qualified DNS name that uniquely identifies the local computer or the cluster
+         * associated with the local computer. This name is a combination of the DNS host name and
+         * the DNS domain name, using the form HostName.DomainName. For example, if the DNS host
+         * name is &quot;corporate-mail-server&quot; and the DNS domain name is &quot;microsoft.com&quot;,
+         * the fully qualified DNS name is &quot;corporate-mail-server.microsoft.com&quot;.
+         */
+        int ComputerNameDnsFullyQualified = 3;
+        
+        /**
+         * The NetBIOS name of the local computer. On a cluster, this is the NetBIOS name of the
+         * local node on the cluster.
+         */
+        int ComputerNamePhysicalNetBIOS = 4;
+        
+        /**
+         * The DNS host name of the local computer. On a cluster, this is the DNS host name of the
+         * local node on the cluster.
+         */
+        int ComputerNamePhysicalDnsHostname = 5;
+        
+        /**
+         * The name of the DNS domain assigned to the local computer. On a cluster, this is the DNS
+         * domain of the local node on the cluster.
+         */
+        int ComputerNamePhysicalDnsDomain = 6;
+        
+        /**
+         * The fully qualified DNS name that uniquely identifies the computer. On a cluster, this is
+         * the fully qualified DNS name of the local node on the cluster. The fully qualified DNS name
+         * is a combination of the DNS host name and the DNS domain name, using the form HostName.DomainName.
+         */
+        int ComputerNamePhysicalDnsFullyQualified = 7;
+        
+        /**
+         * Note used - serves as an upper limit in case one wants to go through all the values
+         */
+        int ComputerNameMax = 8;
+    }
 }

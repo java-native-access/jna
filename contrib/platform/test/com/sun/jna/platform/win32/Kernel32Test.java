@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -142,6 +143,22 @@ public class Kernel32Test extends TestCase {
     	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
     	lpnSize.setValue(buffer.length);
     	assertTrue(Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
+    }
+
+    public void testGetComputerNameExSameAsGetComputerName() {
+    	IntByReference lpnSize = new IntByReference(0);
+    	char buffer[] = new char[WinBase.MAX_COMPUTERNAME_LENGTH + 1];
+    	lpnSize.setValue(buffer.length);
+    	assertTrue("Failed to retrieve expected computer name", Kernel32.INSTANCE.GetComputerName(buffer, lpnSize));
+        String expected = Native.toString(buffer);
+
+        // reset
+    	lpnSize.setValue(buffer.length);
+        Arrays.fill(buffer, '\0');
+    	assertTrue("Failed to retrieve extended computer name", Kernel32.INSTANCE.GetComputerNameEx(WinBase.COMPUTER_NAME_FORMAT.ComputerNameNetBIOS, buffer, lpnSize));
+        String  actual = Native.toString(buffer);
+
+        assertEquals("Mismatched names", expected, actual);
     }
 
     public void testWaitForSingleObject() {
