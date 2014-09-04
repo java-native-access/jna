@@ -1085,6 +1085,35 @@ public interface Kernel32 extends WinNT {
     public boolean GetComputerName(char[] buffer, IntByReference lpnSize);
 
     /**
+     * Retrieves a NetBIOS or DNS name associated with the local computer,
+     * according to the <code>nameType</code> enumeration value
+     * 
+     * @param nameType
+     *            An enumeration value specifying the type of name to be
+     *            retrieved - this parameter is a value from the
+     *            COMPUTER_NAME_FORMAT in the WinBase definitions
+     * @param buffer
+     *            A pointer to a buffer that receives the computer name or the
+     *            cluster virtual server name. The length of the name may
+     *            be greater than MAX_COMPUTERNAME_LENGTH characters because DNS
+     *            allows longer names. To ensure that this buffer is large enough,
+     *            set this parameter to NULL and use the required buffer size
+     *            returned in the lpnSize parameter.
+     * @param lpnSize
+     *            On input, specifies the size of the buffer, in TCHARs. On
+     *            output, the number of TCHARs copied to the destination buffer,
+     *            not including the terminating null character. If the buffer is
+     *            too small, the function fails and GetLastError returns
+     *            ERROR_BUFFER_OVERFLOW. The lpnSize parameter specifies the
+     *            size of the buffer required, including the terminating null
+     *            character.
+     * @return If the function succeeds, the return value is a nonzero value. If
+     *         the function fails, the return value is zero. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean GetComputerNameEx(int nameType, char[] buffer, IntByReference lpnSize);
+
+    /**
      * The OpenThread function opens an existing thread object.
      * 
      * @param dwDesiredAccess
