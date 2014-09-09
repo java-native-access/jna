@@ -1,3 +1,15 @@
+/* Copyright (c) 20010-2014 Sanjay Dasgupta, All Rights Reserved
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * <p/>
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ */
 /* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
@@ -17,6 +29,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.Method;
 import java.nio.Buffer;
 import java.util.AbstractCollection;
 import java.util.ArrayList;
@@ -90,7 +103,7 @@ import java.util.zip.Adler32;
  * @author  Todd Fast, todd.fast@sun.com
  * @author twall@users.sf.net
  */
-public abstract class Structure {
+public class Structure {
 
     /** Tagging interface to indicate the value of an instance of the
      * <code>Structure</code> type is to be used in function invocations rather
@@ -146,6 +159,10 @@ public abstract class Structure {
     // Keep a reference when this structure is mapped to an array
     private Structure[] array;
     private boolean readCalled;
+
+    private List scalaFields = null;
+    private Map scalaGetters = new HashMap();
+    private Map scalaSetters = new HashMap();
 
     protected Structure() {
         this(ALIGN_DEFAULT);
@@ -572,7 +589,8 @@ public abstract class Structure {
      */
     Object getFieldValue(Field field) {
         try {
-            return field.get(this);
+            Method getter = (Method) scalaGetters.get(field.getName());
+            return getter.invoke(this);
         }
         catch (Exception e) {
             throw new Error("Exception reading field '" + field.getName() + "' in " + getClass(), e);
@@ -586,7 +604,8 @@ public abstract class Structure {
     private void setFieldValue(Field field, Object value, boolean overrideFinal) {
 
         try {
-            field.set(this, value);
+            Method setter = (Method) scalaSetters.get(field.getName());
+            setter.invoke(this, value);
         }
         catch(IllegalAccessException e) {
             int modifiers = field.getModifiers();
@@ -599,6 +618,11 @@ public abstract class Structure {
                 throw new UnsupportedOperationException("Attempt to write to read-only field '" + field.getName() + "' within " + getClass(), e);
             }
             throw new Error("Unexpectedly unable to write to field '" + field.getName() + "' within " + getClass(), e);
+        }
+        catch(Exception e) {
+            throw new Error("Unexpectedly unable to write to Scala field '"
+                    + field.getName() + "' within " + getClass()
+                    + ": " + e);
         }
     }
 
@@ -827,7 +851,15 @@ public abstract class Structure {
      * field order as returned by {@link Class#getFields()} is not
      * guaranteed to be predictable.
      */
-    protected abstract List getFieldOrder();
+    protected List getFieldOrder() {
+        List lst = new ArrayList();
+        List fl = getFieldList();
+        for (Object f: fl) {
+            String fn = ((Field)f).getName();
+            lst.add(fn);
+        }
+        return lst;
+    }
 
     /**
      * Force a compile-time error on the old method of field definition
@@ -854,22 +886,31 @@ public abstract class Structure {
 
     /** Look up all fields in this class and superclasses. */
     protected List getFieldList() {
-        List flist = new ArrayList();
-        for (Class cls = getClass();
-             !cls.equals(Structure.class);
-             cls = cls.getSuperclass()) {
-            List classFields = new ArrayList();
-            Field[] fields = cls.getDeclaredFields();
-            for (int i=0;i < fields.length;i++) {
-                int modifiers = fields[i].getModifiers();
-                if (Modifier.isStatic(modifiers)
-                    || !Modifier.isPublic(modifiers))
-                    continue;
-                classFields.add(fields[i]);
+        if (scalaFields == null) {
+            List flist = new ArrayList();
+            scalaFields = new ArrayList();
+            for (Class cls = getClass();
+                 !cls.equals(Structure.class);
+                 cls = cls.getSuperclass()) {
+                Field[] fields = cls.getDeclaredFields();
+                Method[] methods = cls.getDeclaredMethods();
+                Map methodNames = new HashMap();
+                for (Method m: methods)
+                    methodNames.put(m.getName(), m);
+                for (int i=0;i < fields.length;i++) {
+                    int modifiers = fields[i].getModifiers();
+                    if (Modifier.isStatic(modifiers)
+                    ||!methodNames.containsKey(fields[i].getName())
+                    ||!methodNames.containsKey(fields[i].getName() + "_$eq")
+                    )
+                        continue;
+                    scalaGetters.put(fields[i].getName(), methodNames.get(fields[i].getName()));
+                    scalaSetters.put(fields[i].getName(), methodNames.get(fields[i].getName() + "_$eq"));
+                    scalaFields.add(fields[i]);
+                }
             }
-            flist.addAll(0, classFields);
         }
-        return flist;
+        return scalaFields;
     }
 
     /** Cache field order per-class. */
@@ -1100,9 +1141,6 @@ public abstract class Structure {
             }
 
             int fieldAlignment = 1;
-            if (!Modifier.isPublic(field.getModifiers())) {
-                continue;
-            }
 
             Object value = getFieldValue(structField.field);
             if (value == null && type.isArray()) {
@@ -1207,7 +1245,8 @@ public abstract class Structure {
         for (Iterator i = flist.iterator(); i.hasNext();) {
             Field f = (Field) i.next();
             try {
-                Object o = f.get(this);
+                Method getter = (Method)scalaGetters.get(f.getName());
+                Object o = getter.invoke(this);
                 if (o == null) {
                     initializeField(f, f.getType());
                 }
