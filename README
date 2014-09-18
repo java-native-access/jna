@@ -146,11 +146,16 @@ It's also possible to build libffi on Windows platforms with
 Microsoft's Visual C++ compiler.  In this case, use the msvcc.sh
 wrapper script during configuration like so:
 
-path/to/configure CC=path/to/msvcc.sh CXX=path/to/msvcc.sh LD=link CPP=\"cl -nologo -EP\"
+path/to/configure CC=path/to/msvcc.sh CXX=path/to/msvcc.sh LD=link CPP="cl -nologo -EP"
 
 For 64-bit Windows builds, use CC="path/to/msvcc.sh -m64" and
 CXX="path/to/msvcc.sh -m64".  You may also need to specify --build
 appropriately.
+
+It is also possible to build libffi on Windows platforms with the LLVM
+project's clang-cl compiler, like below:
+
+path/to/configure CC="path/to/msvcc.sh -clang-cl" CXX="path/to/msvcc.sh -clang-cl" LD=link CPP="clang-cl -EP"
 
 When building with MSVC under a MingW environment, you may need to
 remove the line in configure that sets 'fix_srcfile_path' to a 'cygpath'
