@@ -779,6 +779,8 @@ ffi_prep_cif_machdep (ffi_cif *cif)
           }
     }
 
+  cif->aarch64_nfixedargs = 0;
+
   return FFI_OK;
 }
 
@@ -789,9 +791,13 @@ ffi_status ffi_prep_cif_machdep_var(ffi_cif *cif,
 				    unsigned int nfixedargs,
 				    unsigned int ntotalargs)
 {
+  ffi_status status;
+
+  status = ffi_prep_cif_machdep (cif);
+
   cif->aarch64_nfixedargs = nfixedargs;
 
-  return ffi_prep_cif_machdep(cif);
+  return status;
 }
 
 #endif
