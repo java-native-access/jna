@@ -82,6 +82,8 @@ typedef enum ffi_abi {
   FFI_THISCALL,
   FFI_FASTCALL,
   FFI_MS_CDECL,
+  FFI_PASCAL,
+  FFI_REGISTER,
   FFI_LAST_ABI,
 #ifdef _MSC_VER
   FFI_DEFAULT_ABI = FFI_MS_CDECL
@@ -101,6 +103,8 @@ typedef enum ffi_abi {
   FFI_THISCALL,
   FFI_FASTCALL,
   FFI_STDCALL,
+  FFI_PASCAL,
+  FFI_REGISTER,
   FFI_LAST_ABI,
 #if defined(__i386__) || defined(__i386)
   FFI_DEFAULT_ABI = FFI_SYSV
@@ -135,7 +139,7 @@ typedef enum ffi_abi {
 #endif
 #endif
 #ifndef X86_WIN64
-#define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
+#define FFI_NATIVE_RAW_API 1  /* x86 has native raw api support */
 #endif
 #endif
 
