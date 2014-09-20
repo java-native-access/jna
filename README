@@ -110,6 +110,7 @@ tested:
 | X86-64          | Linux/x32        | GCC                     |
 | X86-64          | OpenBSD          | GCC                     |
 | X86-64          | Solaris          | Oracle Solaris Studio C |
+| X86-64          | Windows/Cygwin   | GCC                     |
 | X86-64          | Windows/MingW    | GCC                     |
 | Xtensa          | Linux            | GCC                     |
 |-----------------+------------------+-------------------------|
@@ -180,7 +181,9 @@ History
 
 See the git log for details at http://github.com/atgreen/libffi.
 
-3.1.1 TBD
+3.2 TBD
+        Add C99 Complex Type support.
+	Add Cygwin-64 support.
         Bug fixes.
 
 3.1 May-19-14
