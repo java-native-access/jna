@@ -199,6 +199,16 @@ FFI_EXTERN ffi_type ffi_type_longdouble;
 #else
 #define ffi_type_longdouble ffi_type_double
 #endif
+
+#ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+FFI_EXTERN ffi_type ffi_type_complex_float;
+FFI_EXTERN ffi_type ffi_type_complex_double;
+#if @HAVE_LONG_DOUBLE@
+FFI_EXTERN ffi_type ffi_type_complex_longdouble;
+#else
+#define ffi_type_complex_longdouble ffi_type_complex_double
+#endif
+#endif
 #endif /* LIBFFI_HIDE_BASIC_TYPES */
 
 typedef enum {
@@ -465,9 +475,10 @@ void ffi_call(ffi_cif *cif,
 #define FFI_TYPE_SINT64     12
 #define FFI_TYPE_STRUCT     13
 #define FFI_TYPE_POINTER    14
+#define FFI_TYPE_COMPLEX    15
 
 /* This should always refer to the last type code (for sanity checks) */
-#define FFI_TYPE_LAST       FFI_TYPE_POINTER
+#define FFI_TYPE_LAST       FFI_TYPE_COMPLEX
 
 #ifdef __cplusplus
 }

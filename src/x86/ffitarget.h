@@ -49,6 +49,8 @@
 #define USE_BUILTIN_FFS 0 /* not yet implemented in mingw-64 */
 #endif
 
+#define FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
+
 /* ---- Generic type definitions ----------------------------------------- */
 
 #ifndef LIBFFI_ASM

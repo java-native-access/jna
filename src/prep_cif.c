@@ -136,11 +136,15 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
   if ((cif->rtype->size == 0) && (initialize_aggregate(cif->rtype) != FFI_OK))
     return FFI_BAD_TYPEDEF;
 
+#ifndef FFI_TARGET_HAS_COMPLEX_TYPE
+  if (rtype->type == FFI_TYPE_COMPLEX)
+    abort();
+#endif
   /* Perform a sanity check on the return type */
   FFI_ASSERT_VALID_TYPE(cif->rtype);
 
   /* x86, x86-64 and s390 stack space allocation is handled in prep_machdep. */
-#if !defined M68K && !defined X86_ANY && !defined S390 && !defined PA
+#if !defined FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
   /* Make space for the return structure pointer */
   if (cif->rtype->type == FFI_TYPE_STRUCT
 #ifdef SPARC
@@ -166,11 +170,15 @@ ffi_status FFI_HIDDEN ffi_prep_cif_core(ffi_cif *cif, ffi_abi abi,
       if (((*ptr)->size == 0) && (initialize_aggregate((*ptr)) != FFI_OK))
 	return FFI_BAD_TYPEDEF;
 
+#ifndef FFI_TARGET_HAS_COMPLEX_TYPE
+      if ((*ptr)->type == FFI_TYPE_COMPLEX)
+	abort();
+#endif
       /* Perform a sanity check on the argument type, do this
 	 check after the initialization.  */
       FFI_ASSERT_VALID_TYPE(*ptr);
 
-#if !defined X86_ANY && !defined S390 && !defined PA
+#if !defined FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
 #ifdef SPARC
       if (((*ptr)->type == FFI_TYPE_STRUCT
 	   && ((*ptr)->size > 16 || cif->abi != FFI_V9))
