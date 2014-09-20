@@ -2262,4 +2262,26 @@ public interface Kernel32 extends WinNT {
 	*/
     boolean ReadProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesRead);
 
+    /**
+     * Retrieves information about a range of pages within the virtual address space of a specified process.
+     *
+     * @param hProcess
+     * A handle to the process whose memory information is queried. The handle must have been
+     * opened with the PROCESS_QUERY_INFORMATION access right, which enables using the handle
+     * to read information from the process object.
+     * @param lpAddress
+     * A pointer to the base address of the region of pages to be queried.
+     * This value is rounded down to the next page boundary. To determine the size of a page on the host computer,
+     * use the GetSystemInfo function. If lpAddress specifies an address above the highest memory address
+     * accessible to the process, the function fails with ERROR_INVALID_PARAMETER.
+     * @param lpBuffer
+     * A pointer to a MEMORY_BASIC_INFORMATION structure in which information about the specified page range is returned.
+     * @param dwLength
+     * The size of the buffer pointed to by the lpBuffer parameter, in bytes.
+     *
+     * @return The return value is the actual number of bytes returned in the information buffer.
+     * If the function fails, the return value is zero. To get extended error information,
+     * call GetLastError. Possible error values include ERROR_INVALID_PARAMETER.
+     */
+    SIZE_T VirtualQueryEx(HANDLE hProcess, Pointer lpAddress, MEMORY_BASIC_INFORMATION lpBuffer, SIZE_T dwLength);
 }

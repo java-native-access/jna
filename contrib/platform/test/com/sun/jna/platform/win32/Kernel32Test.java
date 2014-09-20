@@ -39,11 +39,13 @@ import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
+import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
 
 public class Kernel32Test extends TestCase {
@@ -716,5 +718,12 @@ public class Kernel32Test extends TestCase {
     	assertEquals(bufDest.get(1),10);
     	assertEquals(bufDest.get(2),15);
     	assertEquals(bufDest.get(3),3);
+    }
+
+    public void testVirtualQueryEx() {
+        HANDLE selfHandle = Kernel32.INSTANCE.GetCurrentProcess();
+        MEMORY_BASIC_INFORMATION mbi = new MEMORY_BASIC_INFORMATION();
+        SIZE_T bytesRead = Kernel32.INSTANCE.VirtualQueryEx(selfHandle, Pointer.NULL, mbi, new SIZE_T(mbi.size()));
+        assertTrue(bytesRead.intValue() > 0);
     }
 }
