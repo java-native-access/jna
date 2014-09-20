@@ -183,6 +183,8 @@ See the git log for details at http://github.com/atgreen/libffi.
 
 3.2 TBD
         Add C99 Complex Type support.
+	Add support for PASCAL and REGISTER calling conventions on x86
+	  Windows/Linux.
 	Add Cygwin-64 support.
         Bug fixes.
 
