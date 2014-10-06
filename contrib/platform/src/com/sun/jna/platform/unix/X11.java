@@ -238,13 +238,13 @@ public interface X11 extends Library {
     class Display extends PointerType { }
     // TODO: define structure
     class Visual extends PointerType {
-        public int getVisualID() {
+        public VisualID getVisualID() {
             if (getPointer() != null)
-                return getPointer().getInt(Native.POINTER_SIZE);
-            return 0;
+                return new VisualID(getPointer().getNativeLong(Native.POINTER_SIZE).longValue());
+            throw new IllegalStateException("Attempting to retrieve VisualID from a null Visual");
         }
         public String toString() {
-            return "Visual: VisualID=0x" + Long.toHexString(getVisualID());
+            return "Visual: VisualID=0x" + Long.toHexString(getVisualID().longValue());
         }
     }
     // TODO: define structure
