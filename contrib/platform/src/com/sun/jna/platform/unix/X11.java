@@ -220,7 +220,7 @@ public interface X11 extends Library {
         public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
             NativeLong value = getPointer().getNativeLong(0);
-            return value.longValue() == 0 ? Window.None : new Window(value.longValue());
+            return value.longValue() == X11.None ? Window.None : new Window(value.longValue());
         }
     }
     class Pixmap extends Drawable {
