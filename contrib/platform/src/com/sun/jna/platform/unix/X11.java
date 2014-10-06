@@ -146,7 +146,7 @@ public interface X11 extends Library {
     class AtomByReference extends ByReference {
         public AtomByReference() { super(XID.SIZE); }
         public Atom getValue() {
-            int value = getPointer().getInt(0);
+            NativeLong value = getPointer().getNativeLong(0);
             return (Atom)new Atom().fromNative(value, null);
         }
     }
@@ -219,8 +219,8 @@ public interface X11 extends Library {
     class WindowByReference extends ByReference {
         public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
-            int value = getPointer().getInt(0);
-            return value == 0 ? Window.None : new Window(value);
+            NativeLong value = getPointer().getNativeLong(0);
+            return value.longValue() == 0 ? Window.None : new Window(value.longValue());
         }
     }
     class Pixmap extends Drawable {
