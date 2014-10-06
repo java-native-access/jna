@@ -146,7 +146,7 @@ public interface X11 extends Library {
     class AtomByReference extends ByReference {
         public AtomByReference() { super(XID.SIZE); }
         public Atom getValue() {
-            int value = getPointer().getInt(0);
+            NativeLong value = getPointer().getNativeLong(0);
             return (Atom)new Atom().fromNative(value, null);
         }
     }
@@ -219,8 +219,8 @@ public interface X11 extends Library {
     class WindowByReference extends ByReference {
         public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
-            int value = getPointer().getInt(0);
-            return value == 0 ? Window.None : new Window(value);
+            NativeLong value = getPointer().getNativeLong(0);
+            return value.longValue() == X11.None ? Window.None : new Window(value.longValue());
         }
     }
     class Pixmap extends Drawable {
@@ -238,13 +238,13 @@ public interface X11 extends Library {
     class Display extends PointerType { }
     // TODO: define structure
     class Visual extends PointerType {
-        public int getVisualID() {
+        public VisualID getVisualID() {
             if (getPointer() != null)
-                return getPointer().getInt(Native.POINTER_SIZE);
-            return 0;
+                return new VisualID(getPointer().getNativeLong(Native.POINTER_SIZE).longValue());
+            throw new IllegalStateException("Attempting to retrieve VisualID from a null Visual");
         }
         public String toString() {
-            return "Visual: VisualID=0x" + Long.toHexString(getVisualID());
+            return "Visual: VisualID=0x" + Long.toHexString(getVisualID().longValue());
         }
     }
     // TODO: define structure
@@ -284,10 +284,9 @@ public interface X11 extends Library {
                 return Arrays.asList(new String[] { "red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask" }); 
             }
         }
-        class PictFormat extends IntegerType {
+        class PictFormat extends XID {
             private static final long serialVersionUID = 1L;
-            public static final int SIZE = 4;
-            public PictFormat(long value) { super(SIZE, value, true); }
+            public PictFormat(long value) { super(value); }
             public PictFormat() { this(0); }
         }
         class XRenderPictFormat extends Structure {
