@@ -33,19 +33,17 @@ import com.sun.jna.ptr.PointerByReference;
 /** Definition (incomplete) of the X library. */
 public interface X11 extends Library {
 
-    class VisualID extends IntegerType {
+    class VisualID extends NativeLong {
         private static final long serialVersionUID = 1L;
-        public static final int SIZE = 4;
         public VisualID() { this(0); }
-        public VisualID(long value) { super(SIZE, value, true); }
+        public VisualID(long value) { super(value, true); }
     }
 
-    class XID extends IntegerType {
+    class XID extends NativeLong {
         private static final long serialVersionUID = 1L;
         public static final XID None = null;
-        public static final int SIZE = 4;
         public XID() { this(0); }
-        public XID(long id) { super(SIZE, id, true); }
+        public XID(long id) { super(id, true); }
         protected boolean isNone(Object o) {
             return o == null
                 || (o instanceof Number

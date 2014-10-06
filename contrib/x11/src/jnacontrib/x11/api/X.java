@@ -1122,12 +1122,21 @@ public class X {
 
             Window[] retVal = new Window[ childCount.getValue() ];
             //Depending on if we're running on 64-bit or 32-bit systems,
-            //the long size may be different; we need to make sure that 
+            //the Window ID size may be different; we need to make sure that 
             //we get the data properly no matter what
-            int[] windows = children.getValue().getIntArray( 0, childCount.getValue() );
-            for( int x = 0; x < retVal.length; x++ ){
-                X11.Window win = new X11.Window( windows [ x ] );
-                retVal[ x ] = new Window( display, win );
+            if (X11.XID.SIZE == 4) {
+                int[] windows = children.getValue().getIntArray( 0, childCount.getValue() );
+                for( int x = 0; x < retVal.length; x++ ){
+                    X11.Window win = new X11.Window( windows [ x ] );
+                    retVal[ x ] = new Window( display, win );
+                }
+            }
+            else {
+                long[] windows = children.getValue().getLongArray( 0, childCount.getValue() );
+                for( int x = 0; x < retVal.length; x++ ){
+                    X11.Window win = new X11.Window( windows [ x ] );
+                    retVal[ x ] = new Window( display, win );
+                }
             }
             x11.XFree(children.getValue());
 

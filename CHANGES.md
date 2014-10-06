@@ -29,6 +29,7 @@ Bug Fixes
 * [#350](https://github.com/twall/jna/pull/350): Fix `jnacontrib.x11.api.X.Window.getXXXProperty`, returns `null` if the window property is not found - [@rm5248](https://github.com/rm5248).
 * Fixed `com.sun.jna.platform.win32.Variant` and `TlbImp` - [@wolftobias](https://github.com/wolftobias).
 * Fixed `com.sun.jna.Pointer.getWideStringArray` not respecting the length parameter - [@csoren](https://github.com/csoren).
+* X11 XID is always 32 bits - [@twall](https://github.com/twall).
 
 Release 4.1
 ===========
