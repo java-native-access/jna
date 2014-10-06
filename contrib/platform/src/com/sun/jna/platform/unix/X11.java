@@ -284,10 +284,9 @@ public interface X11 extends Library {
                 return Arrays.asList(new String[] { "red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask" }); 
             }
         }
-        class PictFormat extends IntegerType {
+        class PictFormat extends XID {
             private static final long serialVersionUID = 1L;
-            public static final int SIZE = 4;
-            public PictFormat(long value) { super(SIZE, value, true); }
+            public PictFormat(long value) { super(value); }
             public PictFormat() { this(0); }
         }
         class XRenderPictFormat extends Structure {
