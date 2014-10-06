@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.sun.jna.Callback;
 import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -32,17 +33,19 @@ import com.sun.jna.ptr.PointerByReference;
 /** Definition (incomplete) of the X library. */
 public interface X11 extends Library {
 
-    class VisualID extends NativeLong {
-		private static final long serialVersionUID = 1L;
-		public VisualID() { }
-        public VisualID(long value) { super(value); }
+    class VisualID extends IntegerType {
+        private static final long serialVersionUID = 1L;
+        public static final int SIZE = 4;
+        public VisualID() { this(0); }
+        public VisualID(long value) { super(SIZE, value, true); }
     }
 
-    class XID extends NativeLong {
-		private static final long serialVersionUID = 1L;
-		public static final XID None = null;
+    class XID extends IntegerType {
+        private static final long serialVersionUID = 1L;
+        public static final XID None = null;
+        public static final int SIZE = 4;
         public XID() { this(0); }
-        public XID(long id) { super(id); }
+        public XID(long id) { super(SIZE, id, true); }
         protected boolean isNone(Object o) {
             return o == null
                 || (o instanceof Number
@@ -58,7 +61,7 @@ public interface X11 extends Library {
         }
     }
     class Atom extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Atom None = null;
         public Atom() { }
         public Atom(long id) { super(id); }
@@ -145,7 +148,7 @@ public interface X11 extends Library {
     class AtomByReference extends ByReference {
         public AtomByReference() { super(XID.SIZE); }
         public Atom getValue() {
-            NativeLong value = getPointer().getNativeLong(0);
+            int value = getPointer().getInt(0);
             return (Atom)new Atom().fromNative(value, null);
         }
     }
@@ -194,7 +197,7 @@ public interface X11 extends Library {
         }
     }
     class Drawable extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Drawable None = null;
         public Drawable() { }
         public Drawable(long id) { super(id); }
@@ -205,8 +208,8 @@ public interface X11 extends Library {
         }
     }
     class Window extends Drawable {
-		private static final long serialVersionUID = 1L;
-		public static final Window None = null;
+        private static final long serialVersionUID = 1L;
+        public static final Window None = null;
         public Window() { }
         public Window(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -218,14 +221,13 @@ public interface X11 extends Library {
     class WindowByReference extends ByReference {
         public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
-            NativeLong value = getPointer().getNativeLong(0);
-            return value.longValue() == X11.None
-                ? Window.None : new Window(value.longValue());
+            int value = getPointer().getInt(0);
+            return value == 0 ? Window.None : new Window(value);
         }
     }
     class Pixmap extends Drawable {
-		private static final long serialVersionUID = 1L;
-		public static final Pixmap None = null;
+        private static final long serialVersionUID = 1L;
+        public static final Pixmap None = null;
         public Pixmap() { }
         public Pixmap(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -238,13 +240,13 @@ public interface X11 extends Library {
     class Display extends PointerType { }
     // TODO: define structure
     class Visual extends PointerType {
-        public NativeLong getVisualID() {
+        public int getVisualID() {
             if (getPointer() != null)
-                return getPointer().getNativeLong(Native.POINTER_SIZE);
-            return new NativeLong(0);
+                return getPointer().getInt(Native.POINTER_SIZE);
+            return 0;
         }
         public String toString() {
-            return "Visual: VisualID=0x" + Long.toHexString(getVisualID().longValue());
+            return "Visual: VisualID=0x" + Long.toHexString(getVisualID());
         }
     }
     // TODO: define structure
@@ -284,10 +286,11 @@ public interface X11 extends Library {
                 return Arrays.asList(new String[] { "red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask" }); 
             }
         }
-        class PictFormat extends NativeLong {
+        class PictFormat extends IntegerType {
             private static final long serialVersionUID = 1L;
-            public PictFormat(long value) { super(value); }
-            public PictFormat() { }
+            public static final int SIZE = 4;
+            public PictFormat(long value) { super(SIZE, value, true); }
+            public PictFormat() { this(0); }
         }
         class XRenderPictFormat extends Structure {
             public PictFormat id;
