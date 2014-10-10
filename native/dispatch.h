@@ -50,12 +50,6 @@
  #endif
 #endif /* !defined(UNUSED) */
 
-#if !defined(PROTECT)
- #define UNUSED_ENV(X) UNUSED(X)
-#else
- #define UNUSED_ENV(X) X
-#endif /* PROTECT */
-
 #ifdef NO_JAWT
  #define UNUSED_JAWT(X) UNUSED(X)
 #else
@@ -235,6 +229,9 @@ extern jobject initializeThread(callback*,AttachOptions*);
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION
 #define PROTECT is_protected()
+#define UNUSED_ENV(X) X
+#else
+#define UNUSED_ENV(X) UNUSED(X)
 #endif
 #include "protect.h"
 #define ON_ERROR(ENV) throwByName(ENV, EError, "Invalid memory access")
