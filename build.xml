@@ -99,7 +99,7 @@
   <condition property="test.compatibility" value="1.5" else="${compatibility}">
     <equals arg1="${compatibility}" arg2="1.4"/>
   </condition>
-  <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java">
+  <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java,**/WebStartTest.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
   <property name="dist-jar" value="${dist}/${jar}"/>
