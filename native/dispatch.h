@@ -50,6 +50,18 @@
  #endif
 #endif /* !defined(UNUSED) */
 
+#if !defined(PROTECT)
+ #define UNUSED_ENV(X) UNUSED(X)
+#else
+ #define UNUSED_ENV(X) X
+#endif /* PROTECT */
+
+#ifdef NO_JAWT
+ #define UNUSED_JAWT(X) UNUSED(X)
+#else
+ #define UNUSED_JAWT(X) X
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif

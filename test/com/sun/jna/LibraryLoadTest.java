@@ -40,7 +40,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
     
     public void testLoadJAWT() {
-        if (!Platform.HAS_AWT) return;
+        if (!Platform.HAS_AWT || !Platform.HAS_JAWT) return;
 
         if (GraphicsEnvironment.isHeadless()) return;
 

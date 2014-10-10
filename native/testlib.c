@@ -983,8 +983,9 @@ callBugCallback(void (__stdcall *func)(long,int,double,
 
 #include <jni.h>
 #include <math.h>
+#include "dispatch.h"
 JNIEXPORT jdouble JNICALL
-Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
+Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *UNUSED(env), jclass UNUSED(cls), jdouble x) {
   return cos(x);
 }
 
