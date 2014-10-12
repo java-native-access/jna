@@ -272,6 +272,17 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
+        Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
+        Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
+        return invoke(invokingMethod, paramTypes, returnType, inArgs, options);
+    }
+
+    /** Invoke the native function with the given arguments, returning the
+     * native result as an Object. This method can be called if invoking method and parameter
+     * types are already at hand. When calling {@link Function#invoke(Class, Object[], Map)},
+     * the method has to be in the options under key {@link Function#OPTION_INVOKING_METHOD}.
+     */
+    Object invoke(Method invokingMethod, Class[] paramTypes, Class returnType, Object[] inArgs, Map options) {
         // Clone the argument array to obtain a scratch space for modified
         // types/values
         Object[] args = { };
@@ -285,8 +296,6 @@ public class Function extends Pointer {
 
         TypeMapper mapper = 
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
-        Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
-        Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
         boolean isVarArgs = args.length > 0 && invokingMethod != null ? isVarArgs(invokingMethod) : false;
         for (int i=0; i < args.length; i++) {
