@@ -15,9 +15,9 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
@@ -257,7 +257,7 @@ public interface Ole32 extends StdCallLibrary {
 	 * @return If the function succeeds, it returns the reallocated memory block. Otherwise, it returns NULL.
 	 */
     Pointer CoTaskMemRealloc(Pointer pv, long cb);
-
+   
     /**
 	 * Frees a block of task memory previously allocated through a call to the {@link #CoTaskMemAlloc} or
 	 * {@link #CoTaskMemRealloc} function. The function uses the default OLE allocator. The number of bytes
@@ -266,5 +266,49 @@ public interface Ole32 extends StdCallLibrary {
 	 * @param pv A pointer to the memory block to be freed. If this parameter is NULL, the function has no effect.
 	 */
     void CoTaskMemFree(Pointer pv);
+
+    /**
+     * Retrieves a pointer to the default OLE task memory allocator
+     * 
+     * {@code
+     *   HRESULT CoGetMalloc(
+     *     [In]   DWORD dwMemContext,
+     *     [Out]  LPMALLOC *ppMalloc
+     *   );
+     * 
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms693395%28v=vs.85%29.aspx">MSDN</a>
+     * 
+     */
+    HRESULT CoGetMalloc(DWORD dwMemContext, PointerByReference ppMalloc);
+    
+    /**
+     * Returns a pointer to the IRunningObjectTable interface on the local running object table (ROT).
+     * 
+     * {@code
+     *   HRESULT GetRunningObjectTable(
+  	 *     [In]   DWORD reserved,
+  	 *     [Out]  LPRUNNINGOBJECTTABLE *pprot
+	 *   );
+	 * }
+	 * 
+	 * 
+	 * @see <a href="">MSDN</a>
+	 */
+    HRESULT GetRunningObjectTable(DWORD reserved, PointerByReference pprot);
+
+    /**
+     * Returns a pointer to an implementation of IBindCtx (a bind context object).
+     * 
+     * {@code
+     *   HRESULT CreateBindCtx(
+     *     [In]   DWORD reserved,
+     *     [Out]  LPBC *ppbc
+     *   );
+	 * }
+	 * 
+	 * 
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms678542%28v=vs.85%29.aspx">MSDN</a>
+     */
+    HRESULT CreateBindCtx(DWORD reserved, PointerByReference ppbc);
 
 }
