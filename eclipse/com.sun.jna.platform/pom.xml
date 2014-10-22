@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.sun.jna</groupId>
+		<artifactId>com.sun.jna.parent</artifactId>
+		<version>4.1.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>com.sun.jna.platform</artifactId>
+
+	<packaging>bundle</packaging>
+
+	<properties>
+		<bundle-version>${parsedVersion.osgiVersion}</bundle-version>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>com.sun.jna</groupId>
+			<artifactId>com.sun.jna.core</artifactId>
+			<version>${project.version}</version>		
+		</dependency>
+	</dependencies>
+	
+	
+	<build>
+		<sourceDirectory>${project.basedir}/../../contrib/platform/src</sourceDirectory>
+		
+	
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+	
+			<!-- create manifest file -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Manifest-Version>1.0</Manifest-Version>
+						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+						<Bundle-Name>${project.artifactId}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${bundle-version}</Bundle-Version>
+						<Bundle-Vendor>JNA Development Team</Bundle-Vendor>
+						<Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Export-Package>
+com.sun.jna.platform,
+com.sun.jna.platform.dnd,
+com.sun.jna.platform.mac,
+com.sun.jna.platform.unix,
+com.sun.jna.platform.win32,
+com.sun.jna.platform.win32.COM,
+com.sun.jna.platform.win32.COM.proxy,
+com.sun.jna.platform.win32.COM.proxy.annotation,
+com.sun.jna.platform.win32.COM.tlb,
+com.sun.jna.platform.win32.COM.tlb.imp,
+com.sun.jna.platform.win32.COM.util,
+com.sun.jna.platform.win32.COM.wince
+						</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+</project>
