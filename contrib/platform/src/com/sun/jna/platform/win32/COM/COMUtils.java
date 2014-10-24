@@ -128,10 +128,10 @@ public abstract class COMUtils {
         try {
             // open root key
             phkResult = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT,
-                    "CLSID", WinNT.KEY_ALL_ACCESS);
+                    "CLSID", WinNT.KEY_READ);
             // open subkey
             InfoKey infoKey = Advapi32Util.registryQueryInfoKey(
-                    phkResult.getValue(), WinNT.KEY_ALL_ACCESS);
+                    phkResult.getValue(), WinNT.KEY_READ);
 
             for (int i = 0; i < infoKey.lpcSubKeys.getValue(); i++) {
                 EnumKey enumKey = Advapi32Util.registryRegEnumKey(
@@ -141,9 +141,9 @@ public abstract class COMUtils {
                 COMInfo comInfo = new COMInfo(subKey);
 
                 phkResult2 = Advapi32Util.registryGetKey(phkResult.getValue(),
-                        subKey, WinNT.KEY_ALL_ACCESS);
+                        subKey, WinNT.KEY_READ);
                 InfoKey infoKey2 = Advapi32Util.registryQueryInfoKey(
-                        phkResult2.getValue(), WinNT.KEY_ALL_ACCESS);
+                        phkResult2.getValue(), WinNT.KEY_READ);
 
                 for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++) {
                     EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(
