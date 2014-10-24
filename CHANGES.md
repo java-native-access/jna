@@ -29,6 +29,10 @@ Bug Fixes
 * [#350](https://github.com/twall/jna/pull/350): Fix `jnacontrib.x11.api.X.Window.getXXXProperty`, returns `null` if the window property is not found - [@rm5248](https://github.com/rm5248).
 * Fixed `com.sun.jna.platform.win32.Variant` and `TlbImp` - [@wolftobias](https://github.com/wolftobias).
 * Fixed `com.sun.jna.Pointer.getWideStringArray` not respecting the length parameter - [@csoren](https://github.com/csoren).
+* Fix missing code in X11 demos - [@twall](https://github.com/twall).
+* Fix compiler warnings OSX - [@twall](https://github.com/twall).
+* Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
+* Disable WebStart tests - [@twall](https://github.com/twall).
 
 Release 4.1
 ===========

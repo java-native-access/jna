@@ -93,10 +93,19 @@ static jclass classObject;
 
 extern void println(JNIEnv*, const char*);
 
+#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
+#define HAS_ALT_CALLING_CONVENTION 
+#endif
+
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jint options,
+#ifdef HAS_ALT_CALLING_CONVENTION
+                callconv_t calling_convention, 
+#else
+                callconv_t UNUSED(calling_convention),
+#endif
+                jint options,
                 jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
@@ -208,7 +217,8 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
+#if HAS_ALT_CALLING_CONVENTION
+  // Currently only w32 stdcall is supported
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
   }

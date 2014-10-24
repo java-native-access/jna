@@ -33,6 +33,8 @@ public final class Platform {
      * running headless.
      */
     public static final boolean HAS_AWT;
+    /** Whether this platform supports the JAWT library. */
+    public static final boolean HAS_JAWT;
     /** Canonical name of this platform's math library. */
     public static final String MATH_LIBRARY_NAME;
     /** Canonical name of this platform's C runtime library. */
@@ -104,6 +106,7 @@ public final class Platform {
         // has the unintended side effect of actually loading AWT native libs,
         // which can be problematic
         HAS_AWT = osType != WINDOWSCE && osType != ANDROID && osType != AIX;
+        HAS_JAWT = HAS_AWT && osType != MAC;
         HAS_BUFFERS = hasBuffers;
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";

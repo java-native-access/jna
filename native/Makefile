@@ -348,7 +348,8 @@ endif
 endif
 
 PCFLAGS+=$(ISYSROOT) -x objective-c
-CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT
+# JAWT no longer supported on OSX
+CDEFINES+=-DTARGET_RT_MAC_CFM=0 -DFFI_MMAP_EXEC_WRIT -DNO_JAWT
 LDFLAGS=$(ARCHFLAGS) -dynamiclib -o $@ -framework JavaVM \
   -compatibility_version $(shell echo ${JNA_JNI_VERSION}|sed 's/^\([0-9][0-9]*\).*/\1/g') \
   -current_version $(JNA_JNI_VERSION) \
