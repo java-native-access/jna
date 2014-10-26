@@ -217,7 +217,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if HAS_ALT_CALLING_CONVENTION
+#ifdef HAS_ALT_CALLING_CONVENTION
   // Currently only w32 stdcall is supported
   if (calling_convention == CALLCONV_STDCALL) {
     abi = FFI_STDCALL;
