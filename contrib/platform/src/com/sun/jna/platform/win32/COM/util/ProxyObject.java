@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package com.sun.jna.platform.win32.COM.proxy;
+package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -41,9 +41,9 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
-import com.sun.jna.platform.win32.COM.proxy.annotation.ComInterface;
-import com.sun.jna.platform.win32.COM.proxy.annotation.Method;
-import com.sun.jna.platform.win32.COM.proxy.annotation.Property;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.ptr.IntByReference;
@@ -71,7 +71,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		Class<?> returnType = method.getReturnType();
 		boolean isVoid = Void.TYPE.equals(returnType);
 
-		Property prop = method.getAnnotation(Property.class);
+		ComProperty prop = method.getAnnotation(ComProperty.class);
 		if (null != prop) {
 			if (isVoid) {
 				String propName = this.getMutatorName(method, prop);
@@ -83,7 +83,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			}
 		}
 
-		Method meth = method.getAnnotation(Method.class);
+		ComMethod meth = method.getAnnotation(ComMethod.class);
 		if (null != meth) {
 			String methName = this.getMethodName(method, meth);
 			Object res = this.invokeMethod(returnType, methName, args);
@@ -164,7 +164,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	
 	//--------------------- ProxyObject  ---------------------
 	
-	private String getAccessorName(java.lang.reflect.Method method, Property prop) {
+	private String getAccessorName(java.lang.reflect.Method method, ComProperty prop) {
 		if (prop.name().isEmpty()) {
 			String methName = method.getName();
 			if (methName.startsWith("get")) {
@@ -178,7 +178,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	private String getMutatorName(java.lang.reflect.Method method, Property prop) {
+	private String getMutatorName(java.lang.reflect.Method method, ComProperty prop) {
 		if (prop.name().isEmpty()) {
 			String methName = method.getName();
 			if (methName.startsWith("set")) {
@@ -192,7 +192,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	private String getMethodName(java.lang.reflect.Method method, Method meth) {
+	private String getMethodName(java.lang.reflect.Method method, ComMethod meth) {
 		if (meth.name().isEmpty()) {
 			String methName = method.getName();
 			return methName;

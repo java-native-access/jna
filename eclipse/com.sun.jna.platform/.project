@@ -27,5 +27,10 @@
 			<type>2</type>
 			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/contrib/platform/src</locationURI>
 		</link>
+		<link>
+			<name>test</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/contrib/platform/test</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

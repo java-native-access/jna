@@ -16,8 +16,26 @@
 
 	<packaging>jar</packaging>
 
+	<dependencies>
+	
+		<dependency>
+			<groupId>com.sun.jna</groupId>
+			<artifactId>com.sun.jna.core</artifactId>
+			<version>4.1.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.sun.jna</groupId>
+			<artifactId>com.sun.jna.platform</artifactId>
+			<version>4.1.1-SNAPSHOT</version>
+		</dependency>
+		
+	</dependencies>
+	
+	
 	<build>
 		<plugins>
 		</plugins>
 	</build>
+	
 </project>

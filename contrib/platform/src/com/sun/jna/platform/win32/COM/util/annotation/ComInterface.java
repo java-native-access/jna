@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package com.sun.jna.platform.win32.COM.proxy.annotation;
+package com.sun.jna.platform.win32.COM.util.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;

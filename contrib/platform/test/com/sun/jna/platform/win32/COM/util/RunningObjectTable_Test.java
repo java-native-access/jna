@@ -22,11 +22,10 @@ import org.junit.Test;
 
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.proxy.Factory;
-import com.sun.jna.platform.win32.COM.proxy.annotation.ComInterface;
-import com.sun.jna.platform.win32.COM.proxy.annotation.ComObject;
-import com.sun.jna.platform.win32.COM.proxy.annotation.Method;
-import com.sun.jna.platform.win32.COM.proxy.annotation.Property;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Ole32Util;
@@ -40,13 +39,13 @@ public class RunningObjectTable_Test {
 
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application {
-		@Property
+		@ComProperty
 		boolean getVisible();
 		
-		@Property
+		@ComProperty
 		void setVisible(boolean value);
 		
-		@Method
+		@ComMethod
 		void Quit();
 	}	
 	

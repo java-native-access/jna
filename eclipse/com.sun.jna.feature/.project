@@ -26,4 +26,16 @@
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 		<nature>org.eclipse.pde.FeatureNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>feature.xml</name>
+			<type>1</type>
+			<locationURI>$%7BPROJECT_LOC%7D/src/main/resources/feature.xml</locationURI>
+		</link>
+		<link>
+			<name>license.txt</name>
+			<type>1</type>
+			<locationURI>$%7BPROJECT_LOC%7D/src/main/resources/license.txt</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

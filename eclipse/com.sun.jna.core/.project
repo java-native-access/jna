@@ -17,7 +17,8 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.pde.PluginNature</nature>
+
 		<nature>org.eclipse.m2e.core.maven2Nature</nature>
 	</natures>
 	<linkedResources>
@@ -25,6 +26,11 @@
 			<name>src</name>
 			<type>2</type>
 			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/src</locationURI>
+		</link>
+		<link>
+			<name>test</name>
+			<type>2</type>
+			<locationURI>$%7BPARENT-2-PROJECT_LOC%7D/test</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

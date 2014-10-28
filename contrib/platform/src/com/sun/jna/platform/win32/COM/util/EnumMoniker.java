@@ -20,7 +20,6 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IEnumMoniker;
 import com.sun.jna.platform.win32.COM.Moniker;
-import com.sun.jna.platform.win32.COM.proxy.ProxyObject;
 import com.sun.jna.ptr.PointerByReference;
 
 /**

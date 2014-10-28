@@ -19,6 +19,24 @@
 		<bundle-version>${parsedVersion.osgiVersion}</bundle-version>
 	</properties>
 	
+	<dependencies>
+		
+		<dependency>
+        	<groupId>org.reflections</groupId>
+        	<artifactId>reflections</artifactId>
+        	<version>0.9.8</version>
+        	<scope>test</scope>
+     	</dependency>
+		
+		<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.11</version>
+    		<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	
 	<!-- add path to native lib jars a s a repository so that maven-dependency-plugin can find them -->
 	<repositories>
 		<repository>

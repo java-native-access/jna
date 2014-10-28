@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package com.sun.jna.platform.win32.COM.proxy;
+package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.Proxy;
 
@@ -24,8 +24,8 @@ import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.proxy.annotation.ComInterface;
-import com.sun.jna.platform.win32.COM.proxy.annotation.ComObject;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.ptr.PointerByReference;
 
 public class Factory {
@@ -73,7 +73,7 @@ public class Factory {
 	 * Gets and existing COM object (GetActiveObject) for the given progId and returns a ProxyObject
 	 * for the given interface. 
 	 */
-	public static <T> T fetchObject(Class<T> comInterface, String progId) {
+	public static <T> T fetchObject(Class<T> comInterface) {
 		ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
 		if (null==comObectAnnotation) {
 			throw new COMException("createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
