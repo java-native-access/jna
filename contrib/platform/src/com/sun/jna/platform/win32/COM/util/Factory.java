@@ -19,14 +19,13 @@ import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
-import com.sun.jna.ptr.PointerByReference;
 
 public class Factory {
 	
@@ -37,6 +36,22 @@ public class Factory {
 	
 	public static void releaseThreadFromComAccess() {
 		Ole32.INSTANCE.CoUninitialize();
+	}
+	
+	/**
+	 * CoInitialize must be called be fore this method. Either explicitly or
+	 * implicitly via other methods.
+	 * 
+	 * @return
+	 */
+	static public IRunningObjectTable getRunningObjectTable() {
+		PointerByReference rotPtr = new PointerByReference();
+		WinNT.HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(
+				new WinDef.DWORD(0), rotPtr);
+		COMUtils.checkRC(hr);
+		com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(rotPtr.getValue());
+		IRunningObjectTable rot = new RunningObjectTable(raw);
+		return rot;
 	}
 	
 	/**

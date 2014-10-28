@@ -12,22 +12,6 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable implements IRunningObjectTable {
 
-	/**
-	 * CoInitialize must be called be fore this method. Either explicitly or
-	 * implicitly via other methods.
-	 * 
-	 * @return
-	 */
-	static public IRunningObjectTable getRunningObjectTable() {
-		PointerByReference rotPtr = new PointerByReference();
-		WinNT.HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(
-				new WinDef.DWORD(0), rotPtr);
-		COMUtils.checkRC(hr);
-		com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(rotPtr.getValue());
-		IRunningObjectTable rot = new RunningObjectTable(raw);
-		return rot;
-	}
-
 	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw) {
 		this.raw = raw;
 	}
