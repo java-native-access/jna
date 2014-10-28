@@ -57,29 +57,25 @@ public class RunningObjectTable_Test {
 	
 	@Before
 	public void before() {
-		Factory.initializeThreadForComAccess();
-		
-		this.msWord = Factory.createObject(MsWordApp.class);
+		this.msWord = Factory.INSTANCE.createObject(MsWordApp.class);
 		msWord.setVisible(true);
 	}
 	
 	@After
 	public void after() {
 		this.msWord.Quit();
-		
-		Factory.releaseThreadFromComAccess();
 	}
 	
 	@Test
 	public void getRunningObjectTable() {
-		IRunningObjectTable rot = RunningObjectTable.getRunningObjectTable();
+		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
 
 		assertNotNull(rot);
 	}
 
 	@Test
 	public void enumRunning() {
-		IRunningObjectTable rot = RunningObjectTable.getRunningObjectTable();
+		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
 
 		for(IUnknown obj: rot.enumRunning()) {
 			try {
@@ -92,7 +88,7 @@ public class RunningObjectTable_Test {
 	
 	@Test
 	public void getActiveObjectsByInterface() {
-		IRunningObjectTable rot = RunningObjectTable.getRunningObjectTable();
+		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
 		
 		List<Application> objs = rot.getActiveObjectsByInterface(Application.class);
 		assertTrue(objs.size() > 0);

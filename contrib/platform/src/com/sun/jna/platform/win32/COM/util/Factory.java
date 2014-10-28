@@ -13,6 +13,8 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.Proxy;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -26,95 +28,150 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.ptr.PointerByReference;
 
 public class Factory {
+
+	public static Factory INSTANCE = new Factory();
 	
-	public static void initializeThreadForComAccess() {
-		WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
-		COMUtils.checkRC(hr);
+	public Factory() {
+		this.comThread = new ComThread("Factory COM Thread");
 	}
-	
-	public static void releaseThreadFromComAccess() {
-		Ole32.INSTANCE.CoUninitialize();
-	}
-	
+
+	ComThread comThread;
+
 	/**
 	 * CoInitialize must be called be fore this method. Either explicitly or
 	 * implicitly via other methods.
 	 * 
 	 * @return
 	 */
-	static public IRunningObjectTable getRunningObjectTable() {
-		PointerByReference rotPtr = new PointerByReference();
-		WinNT.HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(
-				new WinDef.DWORD(0), rotPtr);
-		COMUtils.checkRC(hr);
-		com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(rotPtr.getValue());
-		IRunningObjectTable rot = new RunningObjectTable(raw);
-		return rot;
+	public IRunningObjectTable getRunningObjectTable() {
+		try {
+
+			final PointerByReference rotPtr = new PointerByReference();
+
+			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
+				@Override
+				public WinNT.HRESULT call() throws Exception {
+					return Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
+				}
+			});
+			COMUtils.checkRC(hr);
+			com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
+					rotPtr.getValue());
+			IRunningObjectTable rot = new RunningObjectTable(raw, comThread);
+			return rot;
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
-	
+
 	/**
 	 * Creates a ProxyObject for the given interface and IDispatch pointer.
 	 * 
 	 */
-	public static <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
-		ProxyObject jop = new ProxyObject(dispatch);
+	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch, ComThread comThread) {
+		ProxyObject jop = new ProxyObject(comInterface, dispatch, comThread);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
 		return result;
 	}
 
 	/**
-	 * Creates a new COM object (CoCreateInstance) for the given progId and returns a ProxyObject
-	 * for the given interface. 
+	 * Creates a new COM object (CoCreateInstance) for the given progId and
+	 * returns a ProxyObject for the given interface.
 	 */
-	public static <T> T createObject(Class<T> comInterface) {
-		ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-		if (null==comObectAnnotation) {
-			throw new COMException("createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-		}
-		GUID guid = Factory.discoverClsId(comObectAnnotation);
-	    
-	    PointerByReference ptrDisp = new PointerByReference();
-		WinNT.HRESULT hr = Ole32.INSTANCE.CoCreateInstance(guid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp);
-		COMUtils.checkRC(hr);
-		
-		T t = Factory.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
-		return t;
-	}
-	
-	/**
-	 * Gets and existing COM object (GetActiveObject) for the given progId and returns a ProxyObject
-	 * for the given interface. 
-	 */
-	public static <T> T fetchObject(Class<T> comInterface) {
-		ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-		if (null==comObectAnnotation) {
-			throw new COMException("createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-		}
-		GUID guid = Factory.discoverClsId(comObectAnnotation);
-	    
-	    PointerByReference ptrDisp = new PointerByReference();
-	    WinNT.HRESULT hr = OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
-		COMUtils.checkRC(hr);
+	public <T> T createObject(Class<T> comInterface) {
+		try {
 
-		T t = Factory.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
-		return t;
+			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+			if (null == comObectAnnotation) {
+				throw new COMException(
+						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+			}
+			final GUID guid = this.discoverClsId(comObectAnnotation);
+
+			final PointerByReference ptrDisp = new PointerByReference();
+			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
+				@Override
+				public WinNT.HRESULT call() throws Exception {
+					return Ole32.INSTANCE.CoCreateInstance(guid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH,
+							ptrDisp);
+				}
+			});
+			COMUtils.checkRC(hr);
+
+			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()), this.comThread);
+			return t;
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
-	
-	static GUID discoverClsId(ComObject annotation) {
-		String clsIdStr = annotation.clsId();
-		String progIdStr = annotation.progId();
-		if (null!=clsIdStr && !clsIdStr.isEmpty()) {
-			return new CLSID(clsIdStr);
-		} else if (null!=progIdStr && !progIdStr.isEmpty()) {
-			CLSID.ByReference rclsid = new CLSID.ByReference();
-		    WinNT.HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
-		    COMUtils.checkRC(hr);
-		    return rclsid;
-		} else {
-			throw new COMException("ComObject must define a value for either clsId or progId");
+
+	/**
+	 * Gets and existing COM object (GetActiveObject) for the given progId and
+	 * returns a ProxyObject for the given interface.
+	 */
+	public <T> T fetchObject(Class<T> comInterface) {
+		try {
+			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+			if (null == comObectAnnotation) {
+				throw new COMException(
+						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+			}
+			final GUID guid = this.discoverClsId(comObectAnnotation);
+
+			final PointerByReference ptrDisp = new PointerByReference();
+			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
+				@Override
+				public WinNT.HRESULT call() throws Exception {
+					return OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
+				}
+			});
+			COMUtils.checkRC(hr);
+
+			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()), this.comThread);
+			return t;
+
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	GUID discoverClsId(ComObject annotation) {
+		try {
+			String clsIdStr = annotation.clsId();
+			final String progIdStr = annotation.progId();
+			if (null != clsIdStr && !clsIdStr.isEmpty()) {
+				return new CLSID(clsIdStr);
+			} else if (null != progIdStr && !progIdStr.isEmpty()) {
+				final CLSID.ByReference rclsid = new CLSID.ByReference();
+
+				WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
+					@Override
+					public WinNT.HRESULT call() throws Exception {
+						return Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
+					}
+				});
+
+				COMUtils.checkRC(hr);
+				return rclsid;
+			} else {
+				throw new COMException("ComObject must define a value for either clsId or progId");
+			}
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

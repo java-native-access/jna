@@ -19,45 +19,54 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.util.ProxyObject;
+import com.sun.jna.platform.win32.COM.util.Factory;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.ptr.PointerByReference;
 
 public class EnumMoniker_Test {
-
-	ProxyObject ob1;
-	ProxyObject ob2;
+	
+	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
+	interface Application {
+		@ComProperty
+		boolean getVisible();
+		
+		@ComProperty
+		void setVisible(boolean value);
+		
+		@ComMethod
+		void Quit();
+	}	
+	
+	@ComObject(progId="Word.Application")
+	interface MsWordApp extends Application {
+	}
+	
+	MsWordApp ob1;
+	MsWordApp ob2;
 
 	@Before
 	public void before() {
-		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
-		COMUtils.checkRC(hr);
-
 		// Two COM objects are require to be running for these tests to work
-		CLSID.ByReference clsid = new CLSID.ByReference();
-	    hr = Ole32.INSTANCE.CLSIDFromProgID("Word.Application", clsid);
-	    PointerByReference ptrDisp1 = new PointerByReference();
-		Ole32.INSTANCE.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp1);
-		this.ob1 = new ProxyObject(new Dispatch(ptrDisp1.getValue()));
+		this.ob1 = Factory.INSTANCE.createObject(MsWordApp.class);
+		this.ob2 = Factory.INSTANCE.createObject(MsWordApp.class);
 		
-		PointerByReference ptrDisp2 = new PointerByReference();
-		Ole32.INSTANCE.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp2);
-		this.ob2 =  new ProxyObject(new Dispatch(ptrDisp2.getValue()));
-
+		WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+		COMUtils.checkRC(hr);
 	}
 
 	@After
 	public void after() {
-		ob1.invokeMethod(Void.TYPE, "Quit");
-
-		ob2.invokeMethod(Void.TYPE, "Quit");
-
+		ob1.Quit();
+		ob2.Quit();
 		Ole32.INSTANCE.CoUninitialize();
 	}
 

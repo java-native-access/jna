@@ -15,15 +15,15 @@ package com.sun.jna.platform.win32.COM.util;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Date;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
-import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl;
-import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
@@ -41,33 +41,37 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
+import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
-import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- *  Ole32.INSTANCE.CoInitialize must be called on the current thread before using this object
+ * Ole32.INSTANCE.CoInitialize must be called on the current thread before using
+ * this object
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch {
 
-	public ProxyObject(IDispatch rawDispatch) {
+	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, ComThread comThread) {
 		this.rawDispatch = rawDispatch;
+		this.comThread = comThread;
+		this.theInterface = theInterface;
 	}
 
+	Class<?> theInterface;
+	ComThread comThread;
 	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
 
 	com.sun.jna.platform.win32.COM.IDispatch getIDispatch() {
 		return this.rawDispatch;
 	}
 
-	//--------------------- InvocationHandler -----------------------------
+	// --------------------- InvocationHandler -----------------------------
 	@Override
-	public Object invoke(Object proxy, java.lang.reflect.Method method, Object[] args) throws Throwable {
-		Class<?> dcls = method.getDeclaringClass();
+	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
+			throws Throwable {
 		Class<?> returnType = method.getReturnType();
 		boolean isVoid = Void.TYPE.equals(returnType);
 
@@ -90,6 +94,12 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return res;
 		}
 
+		if (method.equals(Object.class.getMethod("toString"))) {
+			return this.theInterface.getName();
+		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
+			return this.queryInterface((Class<?>) args[0]);
+		}
+
 		return null;
 	}
 
@@ -108,11 +118,12 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		COMUtils.checkRC(hr);
 		Object jobj = this.getJavaObject(result);
 		if (jobj instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-			return Factory.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj);
+			return Factory.INSTANCE.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj,
+					this.comThread);
 		}
-		return (T)jobj;
+		return (T) jobj;
 	}
-	
+
 	@Override
 	public <T> T invokeMethod(Class<T> returnType, String name, Object... args) {
 		VARIANT[] vargs;
@@ -130,40 +141,54 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		Object jobj = this.getJavaObject(result);
 		if (jobj instanceof IDispatch) {
-			return Factory.createProxy(returnType, (IDispatch) jobj);
+			return Factory.INSTANCE.createProxy(returnType, (IDispatch) jobj, this.comThread);
 		}
-		return (T)jobj;
+		return (T) jobj;
 	}
-	
+
 	@Override
 	public <T> T queryInterface(Class<T> comInterface) {
-		ComInterface comInterfaceAnnotation = comInterface.getAnnotation(ComInterface.class);
-		if (null==comInterfaceAnnotation) {
-			throw new COMException("createObject: Interface must define a value for either iid or progId via the ComInterface annotation");
-		}
-		IID iid = this.getIID(comInterfaceAnnotation);
-		PointerByReference ppvObject = new PointerByReference();
-		WinNT.HRESULT hr = this.getIDispatch().QueryInterface(iid, ppvObject);
-		if (WinNT.S_OK.equals(hr)) {
-			Dispatch dispatch = new Dispatch(ppvObject.getValue());
-			return Factory.createProxy(comInterface, dispatch);
-		} else {
-			String formatMessageFromHR = Kernel32Util.formatMessage(hr);
-			throw new COMException("queryInterface: "+formatMessageFromHR);
+		try {
+			ComInterface comInterfaceAnnotation = comInterface.getAnnotation(ComInterface.class);
+			if (null == comInterfaceAnnotation) {
+				throw new COMException(
+						"createObject: Interface must define a value for either iid or progId via the ComInterface annotation");
+			}
+			final IID iid = this.getIID(comInterfaceAnnotation);
+			final PointerByReference ppvObject = new PointerByReference();
+
+			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
+				@Override
+				public HRESULT call() throws Exception {
+					return ProxyObject.this.getIDispatch().QueryInterface(iid, ppvObject);
+				}
+			});
+
+			if (WinNT.S_OK.equals(hr)) {
+				Dispatch dispatch = new Dispatch(ppvObject.getValue());
+				return Factory.INSTANCE.createProxy(comInterface, dispatch, this.comThread);
+			} else {
+				String formatMessageFromHR = Kernel32Util.formatMessage(hr);
+				throw new COMException("queryInterface: " + formatMessageFromHR);
+			}
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
 		}
 	}
-	
+
 	IID getIID(ComInterface annotation) {
 		String iidStr = annotation.iid();
-		if (null!=iidStr && !iidStr.isEmpty()) {
+		if (null != iidStr && !iidStr.isEmpty()) {
 			return new IID(iidStr);
 		} else {
 			throw new COMException("ComInterface must define a value for either iid");
 		}
 	}
-	
-	//--------------------- ProxyObject  ---------------------
-	
+
+	// --------------------- ProxyObject ---------------------
+
 	private String getAccessorName(java.lang.reflect.Method method, ComProperty prop) {
 		if (prop.name().isEmpty()) {
 			String methName = method.getName();
@@ -287,29 +312,39 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	/*
 	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
 	 */
-	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, String name, VARIANT[] pArgs)
-			throws COMException {
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, final IDispatch pDisp, String name,
+			VARIANT[] pArgs) throws COMException {
+		try {
+			if (pDisp == null)
+				throw new COMException("pDisp (IDispatch) parameter is null!");
 
-		if (pDisp == null)
-			throw new COMException("pDisp (IDispatch) parameter is null!");
+			// variable declaration
+			final WString[] ptName = new WString[] { new WString(name) };
+			final DISPIDByReference pdispID = new DISPIDByReference();
 
-		// variable declaration
-		WString[] ptName = new WString[] { new WString(name) };
-		DISPIDByReference pdispID = new DISPIDByReference();
+			// Get DISPID for name passed...
+			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
+				@Override
+				public HRESULT call() throws Exception {
+					HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1, LOCALE_USER_DEFAULT, pdispID);
+					return hr;
+				}
+			});
+			COMUtils.checkRC(hr);
 
-		// Get DISPID for name passed...
-		HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1, LOCALE_USER_DEFAULT, pdispID);
-
-		COMUtils.checkRC(hr);
-
-		return this.oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
+			return this.oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/*
 	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
 	 */
-	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, DISPID dispId, VARIANT[] pArgs)
-			throws COMException {
+	protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult, final IDispatch pDisp,
+			final DISPID dispId, VARIANT[] pArgs) throws COMException {
 
 		if (pDisp == null)
 			throw new COMException("pDisp (IDispatch) parameter is null!");
@@ -317,9 +352,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		// variable declaration
 		int _argsLen = 0;
 		VARIANT[] _args = null;
-		DISPPARAMS dp = new DISPPARAMS();
-		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-		IntByReference puArgErr = new IntByReference();
+		final DISPPARAMS dp = new DISPPARAMS();
+		final EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+		final IntByReference puArgErr = new IntByReference();
 
 		// make parameter reverse ordering as expected by COM runtime
 		if ((pArgs != null) && (pArgs.length > 0)) {
@@ -349,10 +384,22 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 
 		// Make the call!
-		HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
-				pExcepInfo, puArgErr);
+		try {
 
-		COMUtils.checkRC(hr, pExcepInfo, puArgErr);
-		return hr;
+			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
+				@Override
+				public HRESULT call() throws Exception {
+					return pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
+							pExcepInfo, puArgErr);
+				}
+			});
+
+			COMUtils.checkRC(hr, pExcepInfo, puArgErr);
+			return hr;
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
