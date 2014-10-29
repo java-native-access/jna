@@ -48,6 +48,7 @@
 	
 	<build>
 		<sourceDirectory>${project.basedir}/../../src</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/../../test</testSourceDirectory>
 		
 		<resources>
 			<!-- native files are unpacked to the project.build.outputDirectory, this ensures that 

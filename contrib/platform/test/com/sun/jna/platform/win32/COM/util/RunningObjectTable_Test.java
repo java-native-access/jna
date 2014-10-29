@@ -38,7 +38,7 @@ import com.sun.jna.ptr.PointerByReference;
 public class RunningObjectTable_Test {
 
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
-	interface Application {
+	interface Application extends IUnknown {
 		@ComProperty
 		boolean getVisible();
 		
@@ -46,7 +46,7 @@ public class RunningObjectTable_Test {
 		void setVisible(boolean value);
 		
 		@ComMethod
-		void Quit();
+		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
 	}	
 	
 	@ComObject(progId="Word.Application")
@@ -57,13 +57,41 @@ public class RunningObjectTable_Test {
 	
 	@Before
 	public void before() {
+		//ensure there is only one word application running.
+		while(true) {
+			try {
+				MsWordApp ao = Factory.INSTANCE.fetchObject(MsWordApp.class);
+				Application a = ao.queryInterface(Application.class);
+				try {
+					a.Quit(true, null, null);
+					try {
+						//wait for it to quit
+						Thread.sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();e.getCause().printStackTrace();
+				}
+			} catch(Exception e) {
+				break;
+			}
+		}
+		
+		
 		this.msWord = Factory.INSTANCE.createObject(MsWordApp.class);
 		msWord.setVisible(true);
 	}
 	
 	@After
 	public void after() {
-		this.msWord.Quit();
+		this.msWord.Quit(true, null, null);
+		try {
+			//wait for it to quit
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Test

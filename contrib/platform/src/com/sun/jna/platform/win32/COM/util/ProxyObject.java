@@ -266,7 +266,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			ProxyObject pobj = (ProxyObject) ih;
 			return new VARIANT(pobj.getIDispatch());
 		} else {
-			throw new RuntimeException("Cannot convert to VARIANT - " + value);
+			return null;
 		}
 	}
 
