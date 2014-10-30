@@ -169,7 +169,9 @@ public final class Native implements Version {
         }
     };
 
-    /** Properly dispose of JNA functionality. */
+    /** Properly dispose of JNA functionality. Also called from JNI when
+        JNA's native shared library is unloaded.
+     */
     private static void dispose() {
         NativeLibrary.disposeAll();
         jnidispatchPath = null;
