@@ -33,6 +33,7 @@ Bug Fixes
 * Fix compiler warnings OSX - [@twall](https://github.com/twall).
 * Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
 * Disable WebStart tests - [@twall](https://github.com/twall).
+* Dispose all native resources when native library is unloaded - [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
 
 Release 4.1
 ===========

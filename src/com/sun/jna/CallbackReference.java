@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,6 +40,7 @@ class CallbackReference extends WeakReference {
     static final Map directCallbackMap = new WeakHashMap();
     static final Map pointerCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
+    private static final Map allocatedMemory = Collections.synchronizedMap(new WeakIdentityHashMap());
 
     private static final Method PROXY_CALLBACK_METHOD;
     
@@ -187,6 +189,7 @@ class CallbackReference extends WeakReference {
                                                     callingConvention, flags,
                                                     encoding);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
+            allocatedMemory.put(this, this);
         }
         else {
             if (callback instanceof CallbackProxy) {
@@ -354,6 +357,13 @@ class CallbackReference extends WeakReference {
             cbstruct.peer = 0;
             cbstruct = null;
         }
+    }
+
+    static void disposeAll() {
+        for (Iterator i=allocatedMemory.keySet().iterator();i.hasNext();) {
+            ((Memory)i.next()).dispose();
+        }
+        allocatedMemory.clear();
     }
 
     private Callback getCallback() {

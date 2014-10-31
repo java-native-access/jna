@@ -182,6 +182,7 @@ static jmethodID MID_DoubleBuffer_arrayOffset;
 #endif /* NO_NIO_BUFFERS */
 
 static jmethodID MID_Pointer_init;
+static jmethodID MID_Native_dispose;
 static jmethodID MID_Native_fromNative;
 static jmethodID MID_Native_nativeType;
 static jmethodID MID_Native_toNativeTypeMapped;
@@ -2686,6 +2687,12 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain global reference for class com.sun.jna.Native");
   }
+  else if (!(MID_Native_dispose
+             = (*env)->GetStaticMethodID(env, classNative,
+                                         "dispose", "()V"))) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain static method dispose from class com.sun.jna.Native");
+  }
   else if (!(MID_Native_fromNative
              = (*env)->GetStaticMethodID(env, classNative,
                                          "fromNative", "(Ljava/lang/Class;Ljava/lang/Object;)Lcom/sun/jna/NativeMapped;"))) {
@@ -3139,6 +3146,8 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
       return;
     }
   }
+
+  (*env)->CallStaticObjectMethod(env, classNative, MID_Native_dispose);
 
   if (fileEncoding) {
     (*env)->DeleteGlobalRef(env, fileEncoding);

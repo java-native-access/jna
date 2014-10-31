@@ -13,6 +13,7 @@ package com.sun.jna;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -39,11 +40,14 @@ import java.util.Map;
 public class Memory extends Pointer {
 
     private static final Map buffers;
+    /** Keep track of all allocated memory so we can dispose of it before unloading. */
+    private static final Map allocatedMemory;
 
     static {
         buffers = Collections.synchronizedMap(Platform.HAS_BUFFERS
                                               ? (Map)new WeakIdentityHashMap()
                                               : (Map)new HashMap());
+        allocatedMemory = Collections.synchronizedMap(new WeakIdentityHashMap());
     }
 
     /** Force cleanup of memory that has associated NIO Buffers which have
@@ -51,6 +55,13 @@ public class Memory extends Pointer {
     */
     public static void purge() {
         buffers.size();
+    }
+
+    public static void disposeAll() {
+        for (Iterator i=allocatedMemory.keySet().iterator();i.hasNext();) {
+            ((Memory)i.next()).dispose();
+        }
+        allocatedMemory.clear();
     }
 
     protected long size; // Size of the malloc'ed space
@@ -89,6 +100,8 @@ public class Memory extends Pointer {
         peer = malloc(size);
         if (peer == 0) 
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
+
+        allocatedMemory.put(this, this);
     }
 
     protected Memory() { }
@@ -151,7 +164,7 @@ public class Memory extends Pointer {
     }
 
     /** Free the native memory and set peer to zero */
-    protected void dispose() {
+    protected synchronized void dispose() {
         free(peer);
         peer = 0;
     }
@@ -674,7 +687,10 @@ public class Memory extends Pointer {
     }
 
     protected static void free(long p) {
-        Native.free(p);
+        // free(0) is a no-op, so avoid the overhead of the call 
+        if (p != 0) {
+            Native.free(p);
+        }
     }
 
     protected static long malloc(long size) {
