@@ -154,7 +154,7 @@ public final class Native implements Version {
                             + " - set jna.boot.library.path to include the path to the version of the " + LS
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-	MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
+        MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
             || (Platform.isLinux() && (Platform.isARM() || Platform.isPPC()))
             || Platform.isAIX()
             || Platform.isAndroid()
@@ -162,18 +162,22 @@ public final class Native implements Version {
         MAX_PADDING = (Platform.isMac() && Platform.isPPC()) ? 8 : MAX_ALIGNMENT;
     }
 
-    /** Force a dispose when this class is GC'd. */
+    /** Force a dispose when the Native class is GC'd. */
     private static final Object finalizer = new Object() {
         protected void finalize() {
             dispose();
         }
     };
 
-    /** Properly dispose of JNA functionality. Also called from JNI when
+    /** Properly dispose of JNA functionality.  
+        Called when this class is finalized and also from JNI when
         JNA's native shared library is unloaded.
      */
     private static void dispose() {
+        CallbackReference.disposeAll();
+        Memory.disposeAll();
         NativeLibrary.disposeAll();
+        unregisterAll();
         jnidispatchPath = null;
     }
 
@@ -667,20 +671,20 @@ public final class Native implements Version {
                 String dir = dirs.nextToken();
                 File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
-		if (DEBUG_JNA_LOAD) {
-		    System.out.println("Looking in " + path);
-		}
+                if (DEBUG_JNA_LOAD) {
+                    System.out.println("Looking in " + path);
+                }
                 if (file.exists()) {
                     try {
-			if (DEBUG_JNA_LOAD) {
-			    System.out.println("Trying " + path);
-			}
+                        if (DEBUG_JNA_LOAD) {
+                            System.out.println("Trying " + path);
+                        }
                         System.setProperty("jnidispatch.path", path);
                         System.load(path);
                         jnidispatchPath = path;
-			if (DEBUG_JNA_LOAD) {
-			    System.out.println("Found jnidispatch at " + path);
-			}
+                        if (DEBUG_JNA_LOAD) {
+                            System.out.println("Found jnidispatch at " + path);
+                        }
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                         // Not a problem if already loaded in anoteher class loader
@@ -698,14 +702,14 @@ public final class Native implements Version {
                         ext = "dylib";
                     }
                     path = path.substring(0, path.lastIndexOf(orig)) + ext;
-		    if (DEBUG_JNA_LOAD) {
-			System.out.println("Looking in " + path);
-		    }
+                    if (DEBUG_JNA_LOAD) {
+                        System.out.println("Looking in " + path);
+                    }
                     if (new File(path).exists()) {
                         try {
-			    if (DEBUG_JNA_LOAD) {
-				System.out.println("Trying " + path);
-			    }
+                            if (DEBUG_JNA_LOAD) {
+                                System.out.println("Trying " + path);
+                            }
                             System.setProperty("jnidispatch.path", path);
                             System.load(path);
                             jnidispatchPath = path;
@@ -722,9 +726,9 @@ public final class Native implements Version {
         }
         if (!Boolean.getBoolean("jna.nosys")) {
             try {
-		if (DEBUG_JNA_LOAD) {
-		    System.out.println("Trying (via loadLibrary) " + libName);
-		}
+                if (DEBUG_JNA_LOAD) {
+                    System.out.println("Trying (via loadLibrary) " + libName);
+                }
                 System.loadLibrary(libName);
                 if (DEBUG_JNA_LOAD) {
                     System.out.println("Found jnidispatch on system path");
@@ -756,11 +760,11 @@ public final class Native implements Version {
                     throw new UnsatisfiedLinkError("Could not find JNA native support");
                 }
             }
-	    if (DEBUG_JNA_LOAD) {
-		System.out.println("Trying " + lib.getAbsolutePath());
-	    }
+            if (DEBUG_JNA_LOAD) {
+                System.out.println("Trying " + lib.getAbsolutePath());
+            }
             System.setProperty("jnidispatch.path", lib.getAbsolutePath());
-	    System.load(lib.getAbsolutePath());
+            System.load(lib.getAbsolutePath());
             jnidispatchPath = lib.getAbsolutePath();
             if (DEBUG_JNA_LOAD) {
                 System.out.println("Found jnidispatch at " + jnidispatchPath);
@@ -821,9 +825,9 @@ public final class Native implements Version {
                 loader = Native.class.getClassLoader();
             }
         }
-	if (DEBUG) {
-	    System.out.println("Looking in classpath from " + loader + " for " + name);
-	}
+        if (DEBUG) {
+            System.out.println("Looking in classpath from " + loader + " for " + name);
+        }
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
         if (resourcePath.startsWith("/")) {
@@ -853,9 +857,9 @@ public final class Native implements Version {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
-	    if (DEBUG) {
-		System.out.println("Looking in " + lib.getAbsolutePath());
-	    }
+            if (DEBUG) {
+                System.out.println("Looking in " + lib.getAbsolutePath());
+            }
             if (!lib.exists()) {
                 throw new IOException("File URL " + url + " could not be properly decoded");
             }
@@ -1217,17 +1221,16 @@ public final class Native implements Version {
 
     private static Map registeredClasses = new HashMap();
     private static Map registeredLibraries = new HashMap();
-    private static Object unloader = new Object() {
-        protected void finalize() {
-            synchronized(registeredClasses) {
-                for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
-                    Map.Entry e = (Map.Entry)i.next();
-                    unregister((Class)e.getKey(), (long[])e.getValue());
-                    i.remove();
-                }
+
+    private static void unregisterAll() {
+        synchronized(registeredClasses) {
+            for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
+                Map.Entry e = (Map.Entry)i.next();
+                unregister((Class)e.getKey(), (long[])e.getValue());
+                i.remove();
             }
         }
-    };
+    }
 
     /** Remove all native mappings for the calling class.
         Should only be called if the class is no longer referenced and about
@@ -1657,10 +1660,10 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      *
-     * @return	The value returned by the target native function
+     * @return  The value returned by the target native function
      */
     static  native int invokeInt(long fp, int callFlags, Object[] args);
 
@@ -1668,10 +1671,10 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      *
-     * @return	The value returned by the target native function
+     * @return  The value returned by the target native function
      */
     static native long invokeLong(long fp, int callFlags, Object[] args);
 
@@ -1679,8 +1682,8 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      */
     static native void invokeVoid(long fp, int callFlags, Object[] args);
 
@@ -1688,10 +1691,10 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      *
-     * @return	The value returned by the target native function
+     * @return  The value returned by the target native function
      */
     static native float invokeFloat(long fp, int callFlags, Object[] args);
 
@@ -1699,10 +1702,10 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      *
-     * @return	The value returned by the target native function
+     * @return  The value returned by the target native function
      */
     static native double invokeDouble(long fp, int callFlags, Object[] args);
 
@@ -1710,10 +1713,10 @@ public final class Native implements Version {
      * Call the native function being represented by this object
      * @param fp function pointer
      * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param   args
+     *                  Arguments to pass to the native function
      *
-     * @return	The native pointer returned by the target native function
+     * @return  The native pointer returned by the target native function
      */
     static native long invokePointer(long fp, int callFlags, Object[] args);
 
