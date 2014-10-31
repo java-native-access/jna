@@ -25,5 +25,11 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
+	<distributionManagement>
+  <repository>
+    <id>akehurst</id>
+	<url>https://projects.itemis.de/nexus/content/repositories/akehurst</url>
+  </repository>
+</distributionManagement>
 
 </project>

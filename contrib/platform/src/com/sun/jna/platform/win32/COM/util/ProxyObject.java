@@ -248,11 +248,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		if (value instanceof Boolean) {
 			return new VARIANT((Boolean) value);
 		} else if (value instanceof Long) {
-			return new VARIANT(new WinDef.LONG((Long) value));
+			return new VARIANT(new WinDef.LONG((long) value));
 		} else if (value instanceof Integer) {
 			return new VARIANT((Integer) value);
 		} else if (value instanceof Short) {
-			return new VARIANT(new WinDef.SHORT((Short) value));
+			return new VARIANT(new WinDef.SHORT((short) value));
 		} else if (value instanceof Float) {
 			return new VARIANT((Float) value);
 		} else if (value instanceof Double) {
@@ -265,6 +265,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			InvocationHandler ih = Proxy.getInvocationHandler(value);
 			ProxyObject pobj = (ProxyObject) ih;
 			return new VARIANT(pobj.getIDispatch());
+		} if (value instanceof IComEnum) {
+			IComEnum enm = (IComEnum)value;
+			return new VARIANT(new WinDef.LONG(enm.getValue()));
 		} else {
 			return null;
 		}
