@@ -1219,8 +1219,8 @@ public final class Native implements Version {
     }
 
 
-    private static Map registeredClasses = new HashMap();
-    private static Map registeredLibraries = new HashMap();
+    private static Map registeredClasses = new WeakHashMap();
+    private static Map registeredLibraries = new WeakHashMap();
 
     private static void unregisterAll() {
         synchronized(registeredClasses) {
