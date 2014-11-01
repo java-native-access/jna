@@ -10,11 +10,15 @@
  */
 package com.sun.jna;
 
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.WeakHashMap;
 
 /**
  * A <code>Pointer</code> to memory obtained from the native heap via a 
@@ -47,7 +51,7 @@ public class Memory extends Pointer {
         buffers = Collections.synchronizedMap(Platform.HAS_BUFFERS
                                               ? (Map)new WeakIdentityHashMap()
                                               : (Map)new HashMap());
-        allocatedMemory = Collections.synchronizedMap(new WeakIdentityHashMap());
+        allocatedMemory = Collections.synchronizedMap(new WeakHashMap());
     }
 
     /** Force cleanup of memory that has associated NIO Buffers which have
@@ -57,11 +61,11 @@ public class Memory extends Pointer {
         buffers.size();
     }
 
+    /** Dispose of all allocated memory. */
     public static void disposeAll() {
         for (Iterator i=allocatedMemory.keySet().iterator();i.hasNext();) {
             ((Memory)i.next()).dispose();
         }
-        allocatedMemory.clear();
     }
 
     protected long size; // Size of the malloc'ed space
@@ -101,7 +105,7 @@ public class Memory extends Pointer {
         if (peer == 0) 
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(this, this);
+        allocatedMemory.put(this, new WeakReference(this));
     }
 
     protected Memory() { }
@@ -167,6 +171,7 @@ public class Memory extends Pointer {
     protected synchronized void dispose() {
         free(peer);
         peer = 0;
+        allocatedMemory.remove(this);
     }
 
     /** Zero the full extent of this memory region. */
