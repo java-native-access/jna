@@ -40,7 +40,7 @@ class CallbackReference extends WeakReference {
     static final Map directCallbackMap = new WeakHashMap();
     static final Map pointerCallbackMap = new WeakHashMap();
     static final Map allocations = new WeakHashMap();
-    private static final Map allocatedMemory = Collections.synchronizedMap(new WeakIdentityHashMap());
+    private static final Map allocatedMemory = Collections.synchronizedMap(new WeakHashMap());
 
     private static final Method PROXY_CALLBACK_METHOD;
     
@@ -189,7 +189,7 @@ class CallbackReference extends WeakReference {
                                                     callingConvention, flags,
                                                     encoding);
             cbstruct = peer != 0 ? new Pointer(peer) : null;
-            allocatedMemory.put(this, this);
+            allocatedMemory.put(this, new WeakReference(this));
         }
         else {
             if (callback instanceof CallbackProxy) {
@@ -356,14 +356,15 @@ class CallbackReference extends WeakReference {
             Native.freeNativeCallback(cbstruct.peer);
             cbstruct.peer = 0;
             cbstruct = null;
+            allocatedMemory.remove(this);
         }
     }
 
+    /** Dispose of all memory allocated for callbacks. */
     static void disposeAll() {
         for (Iterator i=allocatedMemory.keySet().iterator();i.hasNext();) {
             ((Memory)i.next()).dispose();
         }
-        allocatedMemory.clear();
     }
 
     private Callback getCallback() {
