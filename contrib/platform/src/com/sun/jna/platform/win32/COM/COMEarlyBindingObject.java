@@ -84,7 +84,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid,
                 rgDispId);

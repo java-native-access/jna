@@ -210,7 +210,7 @@ public class COMBindingBaseObject extends COMInvoker {
         DISPIDByReference pdispID = new DISPIDByReference();
 
         // Get DISPID for name passed...
-        HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
+        HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
         COMUtils.checkRC(hr);

@@ -20,5 +20,5 @@ public interface IConnectionPoint extends IUnknown {
 	 * @param pdwCookie
 	 * @return
 	 */
-	WinNT.HRESULT Advise(UnknownCallback pUnkSink, DWORDByReference pdwCookie);
+	WinNT.HRESULT Advise(IUnknownCallback pUnkSink, DWORDByReference pdwCookie);
 }

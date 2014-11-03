@@ -16,8 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
@@ -35,29 +33,44 @@ public class ConnectionPointContainer_Test {
 		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 		COMUtils.checkRC(hr);
 	}
-	
+
 	@After
 	public void after() {
 		Ole32.INSTANCE.CoUninitialize();
 	}
-	
+
+	class Application_Events4 extends UnknownCallback {
+		@Override
+		public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
+			String s = refid.toGuidString();
+			IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
+			REFIID.ByValue riid = new REFIID.ByValue(appEvnts4.getPointer());
+			
+			if (refid.equals(riid)) {
+				return WinError.S_OK;
+			}
+			
+			return super.QueryInterface(refid, ppvObject);
+		}
+	}
+
 	@Test
 	public void getConnectionPointContainer() {
-		//Get active word object
+		// Get active word object
 		CLSID clsid = new CLSID("{000209FF-0000-0000-C000-000000000046}");
 		PointerByReference ppUnkApp = new PointerByReference();
 		HRESULT hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, ppUnkApp);
 		COMUtils.checkRC(hr);
-		
-		//query for ConnectionPointContainer
+
+		// query for ConnectionPointContainer
 		Unknown unk = new Unknown(ppUnkApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
 		hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
-		ConnectionPointContainer cpc =new ConnectionPointContainer(ppCpc.getValue());
-		
-		//find connection point for Application_Events4
+		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
+
+		// find connection point for Application_Events4
 		IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
 		REFIID riid = new REFIID(appEvnts4.getPointer());
 		PointerByReference ppCp = new PointerByReference();
@@ -66,16 +79,13 @@ public class ConnectionPointContainer_Test {
 		ConnectionPoint cp = new ConnectionPoint(ppCp.getValue());
 		IID cp_iid = new IID();
 		hr = cp.GetConnectionInterface(cp_iid);
-		String cp_guid = cp_iid.toGuidString();
-		UnknownCallback listener = new UnknownCallback();
 
-		
+		Application_Events4 listener = new Application_Events4();
+
 		DWORDByReference pdwCookie = new DWORDByReference();
 		hr = cp.Advise(listener, pdwCookie);
 		COMUtils.checkRC(hr);
-		
+
 	}
-
-
 
 }

@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
@@ -45,7 +46,7 @@ public interface IDispatch extends IUnknown {
     public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid,
             PointerByReference ppTInfo);
 
-    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId);
 
     public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,

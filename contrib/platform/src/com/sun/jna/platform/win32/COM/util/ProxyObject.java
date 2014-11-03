@@ -330,7 +330,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1, LOCALE_USER_DEFAULT, pdispID);
+					HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT, pdispID);
 					return hr;
 				}
 			});
