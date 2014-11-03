@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.ULONG;
@@ -126,7 +127,7 @@ public class RunningObjectTable_Test {
 			
 			IUnknown unk = new Unknown(ppunkObject.getValue());
 			PointerByReference ppvObject = new PointerByReference();
-			hr = unk.QueryInterface(IUnknown.IID_IUNKNOWN, ppvObject);
+			hr = unk.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
 			assertEquals(0, hr.intValue());
 			assertNotNull(ppvObject.getValue());
 			

@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -84,7 +85,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID.ByValue( IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -127,7 +128,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID.ByValue(IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,

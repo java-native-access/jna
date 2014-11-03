@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutionException;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl;
@@ -160,7 +161,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					return ProxyObject.this.getIDispatch().QueryInterface(iid, ppvObject);
+					return ProxyObject.this.getIDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
 				}
 			});
 
