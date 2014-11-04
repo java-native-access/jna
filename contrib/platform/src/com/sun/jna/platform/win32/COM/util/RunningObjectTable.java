@@ -12,11 +12,13 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable implements IRunningObjectTable {
 
-	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, ComThread comThread) {
+	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, Factory factory) {
 		this.raw = raw;
-		this.comThread = comThread;
+		this.factory = factory;
+		this.comThread = factory.getComThread();
 	}
 
+	Factory factory;
 	ComThread comThread;
 	com.sun.jna.platform.win32.COM.RunningObjectTable raw;
 
@@ -37,7 +39,7 @@ public class RunningObjectTable implements IRunningObjectTable {
 			com.sun.jna.platform.win32.COM.EnumMoniker raw = new com.sun.jna.platform.win32.COM.EnumMoniker(
 					ppenumMoniker.getValue());
 
-			return new EnumMoniker(raw, this.raw, this.comThread);
+			return new EnumMoniker(raw, this.raw, this.factory);
 
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);

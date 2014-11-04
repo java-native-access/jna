@@ -53,14 +53,16 @@ public class RunningObjectTable_Test {
 	interface MsWordApp extends Application {
 	}
 	
+	Factory factory;
 	MsWordApp msWord;
 	
 	@Before
 	public void before() {
+		this.factory = new Factory();
 		//ensure there is only one word application running.
 		while(true) {
 			try {
-				MsWordApp ao = Factory.INSTANCE.fetchObject(MsWordApp.class);
+				MsWordApp ao = this.factory.fetchObject(MsWordApp.class);
 				Application a = ao.queryInterface(Application.class);
 				try {
 					a.Quit(true, null, null);
@@ -79,7 +81,7 @@ public class RunningObjectTable_Test {
 		}
 		
 		
-		this.msWord = Factory.INSTANCE.createObject(MsWordApp.class);
+		this.msWord = this.factory.createObject(MsWordApp.class);
 		msWord.setVisible(true);
 	}
 	
@@ -96,14 +98,14 @@ public class RunningObjectTable_Test {
 	
 	@Test
 	public void getRunningObjectTable() {
-		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
+		IRunningObjectTable rot = this.factory.getRunningObjectTable();
 
 		assertNotNull(rot);
 	}
 
 	@Test
 	public void enumRunning() {
-		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
+		IRunningObjectTable rot = this.factory.getRunningObjectTable();
 
 		for(IUnknown obj: rot.enumRunning()) {
 			try {
@@ -116,7 +118,7 @@ public class RunningObjectTable_Test {
 	
 	@Test
 	public void getActiveObjectsByInterface() {
-		IRunningObjectTable rot = Factory.INSTANCE.getRunningObjectTable();
+		IRunningObjectTable rot = this.factory.getRunningObjectTable();
 		
 		List<Application> objs = rot.getActiveObjectsByInterface(Application.class);
 		assertTrue(objs.size() > 0);

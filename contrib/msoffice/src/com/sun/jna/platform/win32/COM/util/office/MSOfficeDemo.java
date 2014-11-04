@@ -25,8 +25,10 @@ public class MSOfficeDemo {
 	public void testMSWord() {
 		ComWord_Application msWordObject = null;
 		ComIApplication msWord = null;
+		Factory factory = null;
 		try {
-			msWordObject = Factory.INSTANCE.createObject(ComWord_Application.class);
+			factory = new Factory();
+			msWordObject = factory.createObject(ComWord_Application.class);
 			msWord = msWordObject.queryInterface(ComIApplication.class);
 
 			System.out.println("MSWord version: " + msWord.getVersion());
@@ -67,6 +69,7 @@ public class MSOfficeDemo {
 			msWord.getDocuments().Save(false, WdOriginalFormat.wdPromptUser);
 			// wait then close word
 			msWord.Quit();
+			msWord = null;
 		} catch (InterruptedException ie) {
 			ie.printStackTrace();
 		} catch (COMException e) {
@@ -78,8 +81,12 @@ public class MSOfficeDemo {
 			// print stack trace
 			e.printStackTrace();
 		} finally {
-			if (msWord != null)
+			if (msWord != null) {
 				msWord.Quit();
+			}
+			if (null != factory) {
+				factory.getComThread().terminate(500);
+			}
 		}
 	}
 

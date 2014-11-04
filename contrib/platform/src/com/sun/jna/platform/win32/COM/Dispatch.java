@@ -25,6 +25,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -126,8 +127,8 @@ public class Dispatch extends Unknown implements IDispatch {
      *            the pu arg err
      * @return the hresult
      */
-    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-            DISPID wFlags, DISPPARAMS pDispParams,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+            WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {
         return (HRESULT) this

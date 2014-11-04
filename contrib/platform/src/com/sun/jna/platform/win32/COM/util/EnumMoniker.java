@@ -35,10 +35,11 @@ import com.sun.jna.ptr.PointerByReference;
 public class EnumMoniker implements Iterable<IDispatch> {
 
 	protected EnumMoniker(IEnumMoniker raw, com.sun.jna.platform.win32.COM.IRunningObjectTable rawRot,
-			ComThread comThread) {
+			Factory factory) {
 		this.rawRot = rawRot;
 		this.raw = raw;
-		this.comThread = comThread;
+		this.factory = factory;
+		this.comThread = factory.getComThread();
 
 		try {
 			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
@@ -58,6 +59,7 @@ public class EnumMoniker implements Iterable<IDispatch> {
 	}
 
 	ComThread comThread;
+	Factory factory;
 	com.sun.jna.platform.win32.COM.IRunningObjectTable rawRot;
 	IEnumMoniker raw;
 	Moniker rawNext;
@@ -134,7 +136,7 @@ public class EnumMoniker implements Iterable<IDispatch> {
 					Dispatch dispatch = new Dispatch(ppunkObject.getValue());
 					EnumMoniker.this.cacheNext();
 					
-					return new ProxyObject(IUnknown.class, dispatch, EnumMoniker.this.comThread);
+					return new ProxyObject(IUnknown.class, dispatch, EnumMoniker.this.factory);
 					
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);

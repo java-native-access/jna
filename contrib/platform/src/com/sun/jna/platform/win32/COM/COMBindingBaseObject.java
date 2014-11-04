@@ -27,6 +27,7 @@ import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -229,7 +230,7 @@ public class COMBindingBaseObject extends COMInvoker {
         // variable declaration
         int _argsLen = 0;
         VARIANT[] _args = null;
-        DISPPARAMS dp = new DISPPARAMS();
+        DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
         IntByReference puArgErr = new IntByReference();
 
@@ -262,8 +263,8 @@ public class COMBindingBaseObject extends COMInvoker {
         }
 
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT,
-                new DISPID(nType), dp, pvResult, pExcepInfo, puArgErr);
+        HRESULT hr = pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;

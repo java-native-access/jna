@@ -32,13 +32,21 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Factory {
 
-	public static Factory INSTANCE = new Factory();
+	//public static Factory INSTANCE = new Factory();
 	
+	/**
+	 * Creates a utility COM Factory and a ComThreadon which all COM calls are executed.
+	 * NOTE: Remember to call factory.getComThread().terminate() at some appropriate point.
+	 * 
+	 */
 	public Factory() {
 		this.comThread = new ComThread("Factory COM Thread");
 	}
 
 	ComThread comThread;
+	public ComThread getComThread() {
+		return this.comThread;
+	}
 
 	/**
 	 * CoInitialize must be called be fore this method. Either explicitly or
@@ -60,7 +68,7 @@ public class Factory {
 			COMUtils.checkRC(hr);
 			com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
 					rotPtr.getValue());
-			IRunningObjectTable rot = new RunningObjectTable(raw, comThread);
+			IRunningObjectTable rot = new RunningObjectTable(raw, this);
 			return rot;
 
 		} catch (InterruptedException e) {
@@ -74,8 +82,8 @@ public class Factory {
 	 * Creates a ProxyObject for the given interface and IDispatch pointer.
 	 * 
 	 */
-	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch, ComThread comThread) {
-		ProxyObject jop = new ProxyObject(comInterface, dispatch, comThread);
+	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
+		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
 		return result;
@@ -105,7 +113,7 @@ public class Factory {
 			});
 			COMUtils.checkRC(hr);
 
-			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()), this.comThread);
+			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
 			return t;
 
 		} catch (InterruptedException e) {
@@ -137,7 +145,7 @@ public class Factory {
 			});
 			COMUtils.checkRC(hr);
 
-			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()), this.comThread);
+			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
 			return t;
 
 		} catch (InterruptedException e) {

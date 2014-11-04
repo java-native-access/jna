@@ -23,6 +23,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -49,8 +50,8 @@ public interface IDispatch extends IUnknown {
     public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId);
 
-    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-            DISPID wFlags, DISPPARAMS pDispParams,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+            WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr);
 }

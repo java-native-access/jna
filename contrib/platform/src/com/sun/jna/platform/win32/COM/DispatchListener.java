@@ -8,12 +8,17 @@ import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
+import com.sun.jna.platform.win32.Guid.GUID.ByValue;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -73,6 +78,16 @@ public class DispatchListener extends Structure {
 			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
 					DISPIDByReference rgDispId) {
 				return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
+			}
+		};
+		this.vtbl.InvokeCallback = new DispatchVTable.InvokeCallback() {
+			
+			@Override
+			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+					DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+		            IntByReference puArgErr) {
+
+				return callback.Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
 			}
 		};
 	}

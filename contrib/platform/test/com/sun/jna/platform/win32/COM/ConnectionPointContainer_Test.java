@@ -40,6 +40,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -66,10 +67,10 @@ public class ConnectionPointContainer_Test {
 		// Close Word
 		Dispatch d = new Dispatch(this.ppWordApp.getValue());
 		DISPID dispIdMember = new DISPID(1105); // Quit
-		IID riid = Guid.IID_NULL;
+		REFIID.ByValue riid = new REFIID.ByValue(Guid.IID_NULL);
 		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
-		DISPID wFlags = new DISPID(1);
-		DISPPARAMS pDispParams = new DISPPARAMS();
+		WinDef.WORD wFlags = new WinDef.WORD(1);
+		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
 		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
 		IntByReference puArgErr = new IntByReference();
 		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
@@ -158,9 +159,9 @@ public class ConnectionPointContainer_Test {
 
 		public boolean Invoke_called = false;
 		@Override
-		public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid, DISPID wFlags, DISPPARAMS pDispParams,
-				com.sun.jna.platform.win32.Variant.VARIANT.ByReference pVarResult,
-				com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference pExcepInfo, IntByReference puArgErr) {
+		public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+	            IntByReference puArgErr) {
 			this.Invoke_called = true;
 			return new HRESULT(WinError.E_NOTIMPL);
 		}
@@ -235,38 +236,7 @@ public class ConnectionPointContainer_Test {
 		COMUtils.checkRC(hr);
 
 		Assert.assertTrue(listener.QueryInterface_called);
-	}
-
-	@Test
-	public void Invoke() {
-
-		// query for ConnectionPointContainer
-		Unknown unk = new Unknown(this.ppWordApp.getValue());
-		PointerByReference ppCpc = new PointerByReference();
-		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		HRESULT hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
-		COMUtils.checkRC(hr);
-		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
-
-		// find connection point for Application_Events4
-		IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
-		REFIID riid = new REFIID(appEvnts4.getPointer());
-		PointerByReference ppCp = new PointerByReference();
-		hr = cpc.FindConnectionPoint(riid, ppCp);
-		COMUtils.checkRC(hr);
-		ConnectionPoint cp = new ConnectionPoint(ppCp.getValue());
-		IID cp_iid = new IID();
-		hr = cp.GetConnectionInterface(cp_iid);
-		COMUtils.checkRC(hr);
-
-		Application_Events4 listener = new Application_Events4();
-
-		DWORDByReference pdwCookie = new DWORDByReference();
-		hr = cp.Advise(listener, pdwCookie);
-		COMUtils.checkRC(hr);
-
-		Assert.assertTrue(listener.QueryInterface_called);
-		
 		
 	}
+
 }

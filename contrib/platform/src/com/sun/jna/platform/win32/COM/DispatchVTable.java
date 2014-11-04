@@ -57,7 +57,7 @@ public class DispatchVTable extends UnknownVTable {
 
 	public static interface InvokeCallback extends StdCallLibrary.StdCallCallback {
 		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
-				DISPPARAMS pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 				IntByReference puArgErr);
 	}
 }

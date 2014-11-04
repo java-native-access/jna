@@ -50,14 +50,16 @@ public class EnumMoniker_Test {
 	interface MsWordApp extends Application {
 	}
 	
+	Factory factory;
 	MsWordApp ob1;
 	MsWordApp ob2;
 
 	@Before
 	public void before() {
+		this.factory = new Factory();
 		// Two COM objects are require to be running for these tests to work
-		this.ob1 = Factory.INSTANCE.createObject(MsWordApp.class);
-		this.ob2 = Factory.INSTANCE.createObject(MsWordApp.class);
+		this.ob1 = this.factory.createObject(MsWordApp.class);
+		this.ob2 = this.factory.createObject(MsWordApp.class);
 		
 		WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 		COMUtils.checkRC(hr);

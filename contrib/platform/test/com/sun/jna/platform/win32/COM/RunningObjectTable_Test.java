@@ -123,8 +123,6 @@ public class RunningObjectTable_Test {
 			hr = rot.GetObject(moniker.getPointer(), ppunkObject);
 			COMUtils.checkRC(hr);
 			
-			
-			
 			IUnknown unk = new Unknown(ppunkObject.getValue());
 			PointerByReference ppvObject = new PointerByReference();
 			hr = unk.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);

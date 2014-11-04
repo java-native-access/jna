@@ -55,13 +55,15 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch {
 
-	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, ComThread comThread) {
+	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.rawDispatch = rawDispatch;
-		this.comThread = comThread;
+		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
+		this.factory = factory;
 	}
 
 	Class<?> theInterface;
+	Factory factory;
 	ComThread comThread;
 	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
 
@@ -119,8 +121,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		COMUtils.checkRC(hr);
 		Object jobj = this.getJavaObject(result);
 		if (jobj instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-			return Factory.INSTANCE.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj,
-					this.comThread);
+			return this.factory
+					.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj);
 		}
 		return (T) jobj;
 	}
@@ -142,7 +144,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		Object jobj = this.getJavaObject(result);
 		if (jobj instanceof IDispatch) {
-			return Factory.INSTANCE.createProxy(returnType, (IDispatch) jobj, this.comThread);
+			return this.factory.createProxy(returnType, (IDispatch) jobj);
 		}
 		return (T) jobj;
 	}
@@ -167,7 +169,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 			if (WinNT.S_OK.equals(hr)) {
 				Dispatch dispatch = new Dispatch(ppvObject.getValue());
-				return Factory.INSTANCE.createProxy(comInterface, dispatch, this.comThread);
+				return this.factory.createProxy(comInterface, dispatch);
 			} else {
 				String formatMessageFromHR = Kernel32Util.formatMessage(hr);
 				throw new COMException("queryInterface: " + formatMessageFromHR);
@@ -266,8 +268,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			InvocationHandler ih = Proxy.getInvocationHandler(value);
 			ProxyObject pobj = (ProxyObject) ih;
 			return new VARIANT(pobj.getIDispatch());
-		} if (value instanceof IComEnum) {
-			IComEnum enm = (IComEnum)value;
+		}
+		if (value instanceof IComEnum) {
+			IComEnum enm = (IComEnum) value;
 			return new VARIANT(new WinDef.LONG(enm.getValue()));
 		} else {
 			return null;
@@ -330,7 +333,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT, pdispID);
+					HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT,
+							pdispID);
 					return hr;
 				}
 			});
@@ -356,7 +360,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		// variable declaration
 		int _argsLen = 0;
 		VARIANT[] _args = null;
-		final DISPPARAMS dp = new DISPPARAMS();
+		final DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
 		final EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
 		final IntByReference puArgErr = new IntByReference();
 
@@ -393,8 +397,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					return pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT, new DISPID(nType), dp, pvResult,
-							pExcepInfo, puArgErr);
+					return pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+							new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 				}
 			});
 

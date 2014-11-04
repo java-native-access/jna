@@ -310,5 +310,19 @@ public interface Ole32 extends StdCallLibrary {
 	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms678542%28v=vs.85%29.aspx">MSDN</a>
      */
     HRESULT CreateBindCtx(DWORD reserved, PointerByReference ppbc);
+    
+    /**
+     * Determines whether a remote object is connected to the corresponding in-process object.
+     * 
+     * {@code
+     *   BOOL CoIsHandlerConnected(
+     *     [In]  LPUNKNOWN pUnk
+     *   );
+     * }
+     * 
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms694359%28v=vs.85%29.aspx">MSDN</a>
+     * 
+     */
+    boolean CoIsHandlerConnected(Pointer pUnk);
 
 }
