@@ -44,7 +44,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-public class ConnectionPointContainer_Test {
+public class ComEventCallbacks_Test {
 
 	PointerByReference ppWordApp;
 

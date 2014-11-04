@@ -11,66 +11,44 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
-public class UnknownCallback extends Structure implements IUnknownCallback {
+public class UnknownListener extends Structure {
 
-	public UnknownVTable.ByReference vtbl;
-
-	public UnknownCallback() {
+	public UnknownListener(IUnknownCallback callback) {
 		this.vtbl = this.constructVTable();
-		this.initVTable();
+		this.initVTable(callback);
 		super.write();
 	}
 
+	public UnknownVTable.ByReference vtbl;
+	
+	@Override
+	protected List<String> getFieldOrder() {
+		return Arrays.asList(new String[] { "vtbl" });
+	}
+	
 	protected UnknownVTable.ByReference constructVTable() {
 		return new UnknownVTable.ByReference();
 	}
 	
-	protected void initVTable() {
+	protected void initVTable(final IUnknownCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
 			@Override
 			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject) {
-				return UnknownCallback.this.QueryInterface(refid, ppvObject);
+				return callback.QueryInterface(refid, ppvObject);
 			}
 		};
 		this.vtbl.AddRefCallback = new UnknownVTable.AddRefCallback() {
 			@Override
 			public int invoke(Pointer thisPointer) {
-				return UnknownCallback.this.AddRef();
+				return callback.AddRef();
 			}
 		};
 		this.vtbl.ReleaseCallback = new UnknownVTable.ReleaseCallback() {
 			@Override
 			public int invoke(Pointer thisPointer) {
-				return UnknownCallback.this.Release();
+				return callback.Release();
 			}
 		};
 	}
-	
-	public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
-		if (null==ppvObject) {
-			return new HRESULT(WinError.E_POINTER);
-		}
-
-		if (new Guid.IID(refid.getPointer()).equals(Unknown.IID_IUNKNOWN)) {
-			ppvObject.setValue(this.getPointer());
-			return WinError.S_OK;
-		}
-		
-		return new HRESULT(WinError.E_NOINTERFACE);
-	}
-
-	public int AddRef() {
-		return 0;
-	}
-
-	public int Release() {
-		return 0;
-	}
-
-	@Override
-	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "vtbl" });
-	}
-
 
 }

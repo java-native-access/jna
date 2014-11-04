@@ -20,13 +20,12 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-public class DispatchCallback extends Structure implements IDispatch {
-	public DispatchCallback() {
+public class DispatchListener extends Structure {
+	public DispatchListener(IDispatchCallback callback) {
 		this.vtbl = this.constructVTable();
-		this.initVTable();
+		this.initVTable(callback);
 		super.write();
 	}
-
 	public DispatchVTable.ByReference vtbl;
 	
 	@Override
@@ -38,100 +37,44 @@ public class DispatchCallback extends Structure implements IDispatch {
 		return new DispatchVTable.ByReference();
 	}
 	
-	protected void initVTable() {
+	protected void initVTable(final IDispatchCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
 			@Override
 			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject) {
-				return DispatchCallback.this.QueryInterface(refid, ppvObject);
+				return callback.QueryInterface(refid, ppvObject);
 			}
 		};
 		this.vtbl.AddRefCallback = new UnknownVTable.AddRefCallback() {
 			@Override
 			public int invoke(Pointer thisPointer) {
-				return DispatchCallback.this.AddRef();
+				return callback.AddRef();
 			}
 		};
 		this.vtbl.ReleaseCallback = new UnknownVTable.ReleaseCallback() {
 			@Override
 			public int invoke(Pointer thisPointer) {
-				return DispatchCallback.this.Release();
+				return callback.Release();
 			}
 		};
 		this.vtbl.GetTypeInfoCountCallback = new DispatchVTable.GetTypeInfoCountCallback() {
 			@Override
 			public HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo) {
-				return DispatchCallback.this.GetTypeInfoCount(pctinfo);
+				return callback.GetTypeInfoCount(pctinfo);
 			}
 		};
 		this.vtbl.GetTypeInfoCallback = new DispatchVTable.GetTypeInfoCallback() {
 			@Override
 			public HRESULT invoke(Pointer thisPointer, UINT iTInfo, LCID lcid, PointerByReference ppTInfo) {
-				return DispatchCallback.this.GetTypeInfo(iTInfo, lcid, ppTInfo);
+				return callback.GetTypeInfo(iTInfo, lcid, ppTInfo);
 			}
 		};
 		this.vtbl.GetIDsOfNamesCallback = new DispatchVTable.GetIDsOfNamesCallback() {
 			@Override
 			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
 					DISPIDByReference rgDispId) {
-				return DispatchCallback.this.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
+				return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
 			}
 		};
-	}
-
-	//------------------------ IDispatch ------------------------------
-	@Override
-	public HRESULT GetTypeInfoCount(UINTByReference pctinfo) {
-		// TODO not implemented
-		return new HRESULT(WinError.E_NOTIMPL);
-	}
-
-	@Override
-	public HRESULT GetTypeInfo(UINT iTInfo, LCID lcid, PointerByReference ppTInfo) {
-		// TODO not implemented
-		return new HRESULT(WinError.E_NOTIMPL);
-	}
-
-	@Override
-	public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid, DISPIDByReference rgDispId) {
-		// TODO not implemented
-		return new HRESULT(WinError.E_NOTIMPL);
-	}
-
-	@Override
-	public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid, DISPID wFlags, DISPPARAMS pDispParams,
-			com.sun.jna.platform.win32.Variant.VARIANT.ByReference pVarResult,
-			com.sun.jna.platform.win32.OaIdl.EXCEPINFO.ByReference pExcepInfo, IntByReference puArgErr) {
-		// TODO not implemented
-		return new HRESULT(WinError.E_NOTIMPL);
-	}
-	
-	
-	//------------------------ IUnknown ------------------------------
-	@Override
-	public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
-		if (null==ppvObject) {
-			return new HRESULT(WinError.E_POINTER);
-		}
-
-		if (new Guid.IID(refid.getPointer()).equals(Unknown.IID_IUNKNOWN)) {
-			ppvObject.setValue(this.getPointer());
-			return WinError.S_OK;
-		}
-		
-		if (new Guid.IID(refid.getPointer()).equals(Dispatch.IID_IDISPATCH)) {
-			ppvObject.setValue(this.getPointer());
-			return WinError.S_OK;
-		}
-		
-		return new HRESULT(WinError.E_NOINTERFACE);
-	}
-
-	public int AddRef() {
-		return 0;
-	}
-
-	public int Release() {
-		return 0;
 	}
 
 }
