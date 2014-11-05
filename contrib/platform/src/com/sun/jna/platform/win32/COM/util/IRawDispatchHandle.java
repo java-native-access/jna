@@ -12,13 +12,13 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.IDispatch;
+
 /**
- * Java friendly version of {@link com.sun.jna.platform.win32.COM.IDispatch}.
+ * IF you want to access the underlying raw (com.sun.jna.platform.win32.COM.IDispatch) object
+ * then have your @ComObject or @ComInterface interface extends this interface.
  *
  */
-public interface IDispatch extends IUnknown {
-
-	<T> void setProperty(String name, T value);
-	<T> T getProperty(Class<T> returnType, String name);
-	<T> T invokeMethod(Class<T> returnType, String name, Object... args);
+public interface IRawDispatchHandle {
+	IDispatch getRawDispatch();
 }

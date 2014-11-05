@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Dr David H. Akehurst, All Rights Reserved
+/* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -53,7 +53,7 @@ import com.sun.jna.ptr.PointerByReference;
  * Ole32.INSTANCE.CoInitialize must be called on the current thread before using
  * this object
  */
-public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch {
+public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch, IRawDispatchHandle {
 
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.rawDispatch = rawDispatch;
@@ -67,7 +67,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	ComThread comThread;
 	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
 
-	com.sun.jna.platform.win32.COM.IDispatch getIDispatch() {
+	public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
 		return this.rawDispatch;
 	}
 
@@ -75,6 +75,16 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	@Override
 	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
 			throws Throwable {
+
+		if (method.equals(Object.class.getMethod("toString"))) {
+			return this.theInterface.getName();
+		} else if (method.equals(IRawDispatchHandle.class.getMethod("getRawDispatch"))) {
+			return this.getRawDispatch();
+		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
+			return this.queryInterface((Class<?>) args[0]);
+		}
+		
+		
 		Class<?> returnType = method.getReturnType();
 		boolean isVoid = Void.TYPE.equals(returnType);
 
@@ -97,12 +107,6 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return res;
 		}
 
-		if (method.equals(Object.class.getMethod("toString"))) {
-			return this.theInterface.getName();
-		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
-			return this.queryInterface((Class<?>) args[0]);
-		}
-
 		return null;
 	}
 
@@ -110,14 +114,14 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	@Override
 	public <T> void setProperty(String name, T value) {
 		VARIANT v = this.toVariant(value);
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(), name, v);
+		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), name, v);
 		COMUtils.checkRC(hr);
 	}
 
 	@Override
 	public <T> T getProperty(Class<T> returnType, String name) {
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getIDispatch(), name);
+		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name);
 		COMUtils.checkRC(hr);
 		Object jobj = this.getJavaObject(result);
 		if (jobj instanceof com.sun.jna.platform.win32.COM.IDispatch) {
@@ -139,7 +143,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			vargs[i] = this.toVariant(args[i]);
 		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getIDispatch(), name, vargs);
+		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
 
 		Object jobj = this.getJavaObject(result);
@@ -163,7 +167,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					return ProxyObject.this.getIDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
+					return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
 				}
 			});
 
@@ -267,7 +271,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		} else if (value instanceof Proxy) {
 			InvocationHandler ih = Proxy.getInvocationHandler(value);
 			ProxyObject pobj = (ProxyObject) ih;
-			return new VARIANT(pobj.getIDispatch());
+			return new VARIANT(pobj.getRawDispatch());
 		}
 		if (value instanceof IComEnum) {
 			IComEnum enm = (IComEnum) value;

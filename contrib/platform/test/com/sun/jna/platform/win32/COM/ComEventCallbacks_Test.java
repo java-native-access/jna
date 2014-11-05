@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Dr David H. Akehurst, All Rights Reserved
+/* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,12 +24,14 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.NtDll;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
+import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -39,11 +41,15 @@ import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class ComEventCallbacks_Test {
 
+	final String WORD_APPLICATION_INTERFACE = "{00020970-0000-0000-C000-000000000046}";
+	final String APPLICATION_EVENTS_4 = "{00020A01-0000-0000-C000-000000000046}";
+	
 	@Before
 	public void before() {
 		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
@@ -86,6 +92,7 @@ public class ComEventCallbacks_Test {
 	            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 	            IntByReference puArgErr) {
 			this.Invoke_called = true;
+			
 			return new HRESULT(WinError.E_NOTIMPL);
 		}
 		
@@ -100,7 +107,7 @@ public class ComEventCallbacks_Test {
 			}
 
 			String s = refid.toGuidString();
-			IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
+			IID appEvnts4 = new IID(APPLICATION_EVENTS_4);
 			REFIID.ByValue riid = new REFIID.ByValue(appEvnts4.getPointer());
 
 			if (refid.equals(riid)) {
@@ -150,41 +157,44 @@ public class ComEventCallbacks_Test {
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 
 		// find connection point for Application_Events4
-		IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
+		IID appEvnts4 = new IID(APPLICATION_EVENTS_4);
 		REFIID riid = new REFIID(appEvnts4.getPointer());
 		PointerByReference ppCp = new PointerByReference();
 		hr = cpc.FindConnectionPoint(riid, ppCp);
 		COMUtils.checkRC(hr);
-		ConnectionPoint cp = new ConnectionPoint(ppCp.getValue());
+		final ConnectionPoint cp = new ConnectionPoint(ppCp.getValue());
 		IID cp_iid = new IID();
 		hr = cp.GetConnectionInterface(cp_iid);
 		COMUtils.checkRC(hr);
 
-		Application_Events4 listener = new Application_Events4();
+		final Application_Events4 listener = new Application_Events4();
+		final DWORDByReference pdwCookie = new DWORDByReference();
+		HRESULT hr1 = cp.Advise(listener, pdwCookie);
+		COMUtils.checkRC(hr1);
 
-		DWORDByReference pdwCookie = new DWORDByReference();
-		hr = cp.Advise(listener, pdwCookie);
+//		Assert.assertTrue(listener.QueryInterface_called);
+//		
+//		// Call Quit
+		Dispatch d = new Dispatch(ppWordApp.getValue());
+		DISPID dispIdMember = new DISPID(1105); // Quit
+		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
+		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
+		WinDef.WORD wFlags = new WinDef.WORD(1);
+		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
+		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
+		IntByReference puArgErr = new IntByReference();
+		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
 		COMUtils.checkRC(hr);
-
-		Assert.assertTrue(listener.QueryInterface_called);
-		
-		// Call Quit
-//		Dispatch d = new Dispatch(ppWordApp.getValue());
-//		DISPID dispIdMember = new DISPID(1105); // Quit
-//		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
-//		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
-//		WinDef.WORD wFlags = new WinDef.WORD(1);
-//		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
-//		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
-//		IntByReference puArgErr = new IntByReference();
-//		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-//		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
-		//COMUtils.checkRC(hr);
 		
 		//Wait for event to happen
 		try {
-			Thread.sleep(10000);
-		} catch (InterruptedException e) {
+			WinUser.MSG msg = new WinUser.MSG();
+			while (((User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0)) {
+			    User32.INSTANCE.TranslateMessage(msg);
+			    User32.INSTANCE.DispatchMessage(msg);
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
