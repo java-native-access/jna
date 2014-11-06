@@ -34,7 +34,7 @@ Bug Fixes
 * Fix compiler warnings OSX - [@twall](https://github.com/twall).
 * Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
 * Disable WebStart tests - [@twall](https://github.com/twall).
-* Dispose all native resources when native library is unloaded - Paul Grtter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
+* Dispose all native resources when JNA's native library is unloaded - Paul Grütter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
 * Weakly hold registered Direct-mapped classes - [@twall](https://github.com/twall).  
 
 Release 4.1
