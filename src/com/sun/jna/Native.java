@@ -127,6 +127,10 @@ public final class Native implements Version {
     static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
 
+    public static float parseVersion(String v) {
+        return Float.parseFloat(v.substring(0, v.lastIndexOf(".")));
+    }
+
     static {
         loadNativeDispatchLibrary();
         POINTER_SIZE = sizeof(TYPE_VOIDP);
@@ -140,8 +144,8 @@ public final class Native implements Version {
         if (Boolean.getBoolean("jna.protected")) {
             setProtected(true);
         }
-        String version = getNativeVersion();
-        if (!VERSION_NATIVE.equals(version)) {
+        float version = parseVersion(getNativeVersion());
+        if (version != parseVersion(VERSION_NATIVE)) {
             String LS = System.getProperty("line.separator");
             throw new Error(LS + LS
                             + "There is an incompatible JNA native library installed on this system" + LS
