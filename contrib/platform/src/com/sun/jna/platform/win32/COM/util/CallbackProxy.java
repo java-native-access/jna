@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
@@ -55,6 +58,13 @@ public class CallbackProxy implements IDispatchCallback {
 		this.listenedToRiid = this.createRIID(comEventCallbackInterface);
 		this.dsipIdMap = this.createDispIdMap(comEventCallbackInterface);
 		this.dispatchListener = new DispatchListener(this);
+		this.executorService = Executors.newCachedThreadPool(new ThreadFactory() {
+			@Override
+			public Thread newThread(Runnable r) {
+				Thread t = new Thread(r, "COM Event Callback executor");
+				return t;
+			}
+		});
 	}
 
 	Class<?> comEventCallbackInterface;
@@ -62,6 +72,7 @@ public class CallbackProxy implements IDispatchCallback {
 	REFIID.ByValue listenedToRiid;
 	public DispatchListener dispatchListener;
 	Map<DISPID, Method> dsipIdMap;
+	ExecutorService executorService;
 
 	REFIID.ByValue createRIID(Class<?> comEventCallbackInterface) {
 		ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
@@ -98,6 +109,43 @@ public class CallbackProxy implements IDispatchCallback {
 		return -1;
 	}
 
+	void invokeOnThread(final DISPID dispIdMember, final REFIID.ByValue riid, LCID lcid, WORD wFlags,
+			final DISPPARAMS.ByReference pDispParams) {
+		Runnable invokation = new Runnable() {
+			@Override
+			public void run() {
+				try {
+					// decode argumentt
+					final List<Object> jargs = new ArrayList<Object>();
+					if (pDispParams.cArgs.intValue() > 0) {
+						VariantArg vargs = new VariantArg(pDispParams.getPointer());
+						for (Variant.VARIANT varg : vargs.variantArg) {
+							Object jarg = Convert.toJavaObject(varg);
+							jargs.add(jarg);
+						}
+					}
+					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
+						final Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
+						String eventMethodName = eventMethod.getName();
+						try {
+							eventMethod.invoke(comEventCallbackListener, jargs.toArray());
+						} catch (Exception e) {
+							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+									"Exception invoking method " + eventMethod, e);
+						}
+					} else {
+						CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+								"No method found with dispId = " + dispIdMember, null);
+					}
+				} catch (Exception e) {
+					CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+							"Exception receiving callback event ", e);
+				}
+			}
+		};
+		this.executorService.execute(invokation);
+	}
+
 	@Override
 	public Pointer getPointer() {
 		return this.dispatchListener.getPointer();
@@ -125,34 +173,8 @@ public class CallbackProxy implements IDispatchCallback {
 			DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
 
-		// decode argumentt
-		final List<Object> jargs = new ArrayList<Object>();
-		if (pDispParams.cArgs.intValue() > 0) {
-			VariantArg vargs = new VariantArg(pDispParams.getPointer());
-			for (Variant.VARIANT varg : vargs.variantArg) {
-				Object jarg = Convert.toJavaObject(varg);
-				jargs.add(jarg);
-			}
-		}
-
-		if (this.dsipIdMap.containsKey(dispIdMember)) {
-			final Method eventMethod = this.dsipIdMap.get(dispIdMember);
-			String eventMethodName = eventMethod.getName();
-			Runnable invokation = new Runnable() {
-				@Override
-				public void run() {
-					try {
-						eventMethod.invoke(comEventCallbackListener, jargs.toArray());
-					} catch (Exception e) {
-						CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent("Exception invoking method "+eventMethod, e);
-					}
-				}
-			};
-			Thread t = new Thread(invokation, "COM Event Callback: " + eventMethodName);
-			t.run();
-		} else {
-			this.comEventCallbackListener.errorReceivingCallbackEvent("No method found with dispId = "+dispIdMember, null);
-		}			
+		this.invokeOnThread(dispIdMember, riid, lcid, wFlags, pDispParams);
+		
 		return WinError.S_OK;
 	}
 
