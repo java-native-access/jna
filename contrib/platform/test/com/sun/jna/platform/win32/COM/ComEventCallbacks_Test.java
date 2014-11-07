@@ -173,22 +173,22 @@ public class ComEventCallbacks_Test {
 
 //		Assert.assertTrue(listener.QueryInterface_called);
 //		
-//		// Call Quit
-//		Dispatch d = new Dispatch(ppWordApp.getValue());
-//		DISPID dispIdMember = new DISPID(1105); // Quit
-//		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
-//		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
-//		WinDef.WORD wFlags = new WinDef.WORD(1);
-//		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
-//		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
-//		IntByReference puArgErr = new IntByReference();
-//		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-//		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
-//		COMUtils.checkRC(hr);
+		// Call Quit
+		Dispatch d = new Dispatch(ppWordApp.getValue());
+		DISPID dispIdMember = new DISPID(1105); // Quit
+		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
+		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
+		WinDef.WORD wFlags = new WinDef.WORD(1);
+		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
+		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
+		IntByReference puArgErr = new IntByReference();
+		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+		COMUtils.checkRC(hr);
 		
 		//Wait for event to happen
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(200);
 //			WinUser.MSG msg = new WinUser.MSG();
 //			while (((User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0)) {
 //			    User32.INSTANCE.TranslateMessage(msg);

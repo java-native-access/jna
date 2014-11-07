@@ -32,6 +32,10 @@ public class ComThread {
 	boolean requiresInitialisation;
 
 	public ComThread(final String threadName) {
+		this(threadName, Ole32.COINIT_MULTITHREADED);
+	}
+	
+	public ComThread(final String threadName, final int coinitialiseExFlag) {
 		this.requiresInitialisation = true;
 		this.firstTask = new Runnable() {
 			@Override
@@ -40,7 +44,7 @@ public class ComThread {
 				// a message loop see -
 				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5529/Understanding-COM-Apartments-Part-I.htm]
 				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5533/Understanding-COM-Apartments-Part-II.htm]
-				WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
+				WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, coinitialiseExFlag);
 				COMUtils.checkRC(hr);
 				ComThread.this.requiresInitialisation = false;
 			}

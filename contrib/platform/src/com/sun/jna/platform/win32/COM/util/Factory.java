@@ -43,6 +43,10 @@ public class Factory {
 		this.comThread = new ComThread("Factory COM Thread");
 	}
 
+	public Factory(ComThread comThread) {
+		this.comThread = comThread;
+	}
+	
 	ComThread comThread;
 	public ComThread getComThread() {
 		return this.comThread;

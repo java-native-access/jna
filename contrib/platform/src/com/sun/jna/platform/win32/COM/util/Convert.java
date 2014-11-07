@@ -26,11 +26,11 @@ public class Convert {
 		if (value instanceof Boolean) {
 			return new VARIANT((Boolean) value);
 		} else if (value instanceof Long) {
-			return new VARIANT(new WinDef.LONG((long) value));
+			return new VARIANT(new WinDef.LONG((Long) value));
 		} else if (value instanceof Integer) {
 			return new VARIANT((Integer) value);
 		} else if (value instanceof Short) {
-			return new VARIANT(new WinDef.SHORT((short) value));
+			return new VARIANT(new WinDef.SHORT((Short) value));
 		} else if (value instanceof Float) {
 			return new VARIANT((Float) value);
 		} else if (value instanceof Double) {
