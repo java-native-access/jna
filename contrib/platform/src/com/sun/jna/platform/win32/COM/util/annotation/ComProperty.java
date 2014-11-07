@@ -22,6 +22,5 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Inherited
 public @interface ComProperty {
-	String iid() default "";
 	String name() default "";
 }

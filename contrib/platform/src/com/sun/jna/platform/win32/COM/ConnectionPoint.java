@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
@@ -23,6 +24,7 @@ public class ConnectionPoint extends Unknown implements IConnectionPoint {
 		super(pointer);
 	}
 
+	@Override
 	public HRESULT GetConnectionInterface(IID iid) {
 		final int vTableId = 3;
 		return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), iid }, HRESULT.class);
@@ -41,9 +43,11 @@ public class ConnectionPoint extends Unknown implements IConnectionPoint {
 				pdwCookie }, HRESULT.class);
 	}
 
-	void Unadvise() {
+	@Override
+	public HRESULT Unadvise(DWORD dwCookie) {
 		final int vTableId = 6;
-
+		
+		return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), dwCookie }, HRESULT.class);
 	}
 
 	void EnumConnections() {

@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.COMException;
+
 /**
  * Java friendly version of the IUnknown interface.
  * 
@@ -23,6 +25,9 @@ public interface IUnknown {
 	 * interface is annotated with a ComInterface annotation that provides a
 	 * valid iid.
 	 * 
+	 * Will throw COMException if an error occurs trying to retrieve the requested interface,
+	 * see exception cause for details.  
+	 * 
 	 */
-	<T> T queryInterface(Class<T> comInterface);
+	<T> T queryInterface(Class<T> comInterface) throws COMException;
 }

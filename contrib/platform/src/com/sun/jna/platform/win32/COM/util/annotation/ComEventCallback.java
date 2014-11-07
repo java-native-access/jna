@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 @Inherited
-public @interface ComMethod {
+public @interface ComEventCallback {
+	int dispid() default -1; // default to dispid unknown
 	String name() default "";
-	int dispId() default -1; //default to dispid unknown
 }

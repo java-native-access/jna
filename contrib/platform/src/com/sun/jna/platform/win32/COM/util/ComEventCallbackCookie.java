@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Dr David H. Akehurst, All Rights Reserved
+/* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -10,18 +10,19 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package com.sun.jna.platform.win32.COM.util.annotation;
+package com.sun.jna.platform.win32.COM.util;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.METHOD })
-@Inherited
-public @interface ComMethod {
-	String name() default "";
-	int dispId() default -1; //default to dispid unknown
+public class ComEventCallbackCookie implements IComEventCallbackCookie {
+
+	public ComEventCallbackCookie(DWORD value) {
+		this.value = value;
+	}
+	
+	DWORD value;
+	public DWORD getValue() {
+		return this.value;
+	}
+
 }

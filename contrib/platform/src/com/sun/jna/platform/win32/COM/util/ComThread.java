@@ -36,7 +36,11 @@ public class ComThread {
 		this.firstTask = new Runnable() {
 			@Override
 			public void run() {
-				WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+				//If we do not use COINIT_MULTITHREADED, it is necessary to have
+				// a message loop see -
+				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5529/Understanding-COM-Apartments-Part-I.htm]
+				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5533/Understanding-COM-Apartments-Part-II.htm]
+				WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 				COMUtils.checkRC(hr);
 				ComThread.this.requiresInitialisation = false;
 			}
@@ -50,6 +54,9 @@ public class ComThread {
 					throw new RuntimeException("ComThread executor has a problem.");
 				}
 				Thread thread = new Thread(r, threadName);
+				//make sure this is a daemon thread, or it will stop JVM existing
+				// if program does not call terminate(); 
+				thread.setDaemon(true);
 
 				thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
 					@Override

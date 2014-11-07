@@ -24,15 +24,14 @@ import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.NtDll;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
@@ -52,7 +51,7 @@ public class ComEventCallbacks_Test {
 	
 	@Before
 	public void before() {
-		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+		HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
 		COMUtils.checkRC(hr);
 	}
 
@@ -143,9 +142,9 @@ public class ComEventCallbacks_Test {
 		// Create word object
 		CLSID clsid = new CLSID("{000209FF-0000-0000-C000-000000000046}");
 		PointerByReference ppWordApp = new PointerByReference();
-//		HRESULT hr = Ole32.INSTANCE
-//				.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ppWordApp);
-		HRESULT hr =OleAuto.INSTANCE.GetActiveObject(clsid, null, ppWordApp);
+		HRESULT hr = Ole32.INSTANCE
+				.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ppWordApp);
+//		HRESULT hr =OleAuto.INSTANCE.GetActiveObject(clsid, null, ppWordApp);
 		COMUtils.checkRC(hr);
 		
 		// query for ConnectionPointContainer
@@ -175,25 +174,26 @@ public class ComEventCallbacks_Test {
 //		Assert.assertTrue(listener.QueryInterface_called);
 //		
 //		// Call Quit
-		Dispatch d = new Dispatch(ppWordApp.getValue());
-		DISPID dispIdMember = new DISPID(1105); // Quit
-		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
-		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
-		WinDef.WORD wFlags = new WinDef.WORD(1);
-		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
-		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
-		IntByReference puArgErr = new IntByReference();
-		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
-		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
-		COMUtils.checkRC(hr);
+//		Dispatch d = new Dispatch(ppWordApp.getValue());
+//		DISPID dispIdMember = new DISPID(1105); // Quit
+//		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
+//		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
+//		WinDef.WORD wFlags = new WinDef.WORD(1);
+//		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
+//		VARIANT.ByReference pVarResult = new VARIANT.ByReference();
+//		IntByReference puArgErr = new IntByReference();
+//		EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+//		hr = d.Invoke(dispIdMember, niid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+//		COMUtils.checkRC(hr);
 		
 		//Wait for event to happen
 		try {
-			WinUser.MSG msg = new WinUser.MSG();
-			while (((User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0)) {
-			    User32.INSTANCE.TranslateMessage(msg);
-			    User32.INSTANCE.DispatchMessage(msg);
-			}
+			Thread.sleep(10000);
+//			WinUser.MSG msg = new WinUser.MSG();
+//			while (((User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0)) {
+//			    User32.INSTANCE.TranslateMessage(msg);
+//			    User32.INSTANCE.DispatchMessage(msg);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

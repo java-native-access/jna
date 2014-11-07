@@ -692,6 +692,13 @@ public interface Variant {
         public VariantArg() {
         }
 
+        /**
+         * construct VariantArg cast onto pre-allocated memory
+         */
+        public VariantArg(Pointer pointer) {
+        	super(pointer);
+        }
+        
         public VariantArg(VARIANT[] variantArg) {
             this.variantArg = variantArg;
         }

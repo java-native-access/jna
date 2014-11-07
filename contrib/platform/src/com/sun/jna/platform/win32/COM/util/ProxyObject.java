@@ -35,14 +35,18 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.ConnectionPoint;
+import com.sun.jna.platform.win32.COM.ConnectionPointContainer;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
+import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
@@ -53,7 +57,8 @@ import com.sun.jna.ptr.PointerByReference;
  * Ole32.INSTANCE.CoInitialize must be called on the current thread before using
  * this object
  */
-public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch, IRawDispatchHandle {
+public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
+		IRawDispatchHandle {
 
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.rawDispatch = rawDispatch;
@@ -82,9 +87,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return this.getRawDispatch();
 		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
 			return this.queryInterface((Class<?>) args[0]);
+		} else if (method.equals(IConnectionPoint.class.getMethod("advise", Class.class, IComEventCallbackListener.class))) {
+			return this.advise((Class<?>)args[0], (IComEventCallbackListener) args[1]);
+		} else if (method.equals(IConnectionPoint.class.getMethod("unadvise", Class.class, IComEventCallbackCookie.class))) {
+			this.unadvise((Class<?>)args[0], (IComEventCallbackCookie) args[1]);
+			return null;
 		}
-		
-		
+
 		Class<?> returnType = method.getReturnType();
 		boolean isVoid = Void.TYPE.equals(returnType);
 
@@ -110,10 +119,90 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		return null;
 	}
 
+	// ---------------------- IConnectionPoint ----------------------
+	ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException {
+		// query for ConnectionPointContainer
+		IConnectionPointContainer cpc = this.queryInterface(IConnectionPointContainer.class);
+		Dispatch rawCpcDispatch = (Dispatch) cpc.getRawDispatch();
+		final ConnectionPointContainer rawCpc = new ConnectionPointContainer(rawCpcDispatch.getPointer());
+
+		// find connection point for comEventCallback interface
+		final REFIID adviseRiid = new REFIID(iid.getPointer());
+		final PointerByReference ppCp = new PointerByReference();
+		HRESULT hr = factory.getComThread().execute(new Callable<HRESULT>() {
+			@Override
+			public HRESULT call() throws Exception {
+				return rawCpc.FindConnectionPoint(adviseRiid, ppCp);
+			}
+		});
+		COMUtils.checkRC(hr);
+		final ConnectionPoint rawCp = new ConnectionPoint(ppCp.getValue());
+		return rawCp;
+	}
+
+	public IComEventCallbackCookie advise(Class<?> comEventCallbackInterface, final IComEventCallbackListener comEventCallbackListener) {
+		try {
+			ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
+			if (null == comInterfaceAnnotation) {
+				throw new COMException(
+						"advise: Interface must define a value for either iid via the ComInterface annotation");
+			}
+			final IID iid = this.getIID(comInterfaceAnnotation);
+
+			final ConnectionPoint rawCp = this.fetchRawConnectionPoint(iid);
+
+			// create the dispatch listener
+			final IDispatchCallback rawListener = new CallbackProxy(comEventCallbackInterface, comEventCallbackListener);
+			// store it the comEventCallback argument, so it is not garbage
+			// collected.
+			comEventCallbackListener.setDispatchCallbackListener(rawListener);
+			// set the dispatch listener to listen to events from the connection
+			// point
+			final DWORDByReference pdwCookie = new DWORDByReference();
+			HRESULT hr = factory.getComThread().execute(new Callable<HRESULT>() {
+				@Override
+				public HRESULT call() throws Exception {
+					return rawCp.Advise(rawListener, pdwCookie);
+				}
+			});
+			COMUtils.checkRC(hr);
+
+			// return the cookie so that a call to stop listening can be made
+			return new ComEventCallbackCookie(pdwCookie.getValue());
+
+		} catch (Exception e) {
+			throw new COMException("Error occured in advise when trying to connect the listener " + comEventCallbackListener, e);
+		}
+	}
+
+	public void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) {
+		try {
+			ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
+			if (null == comInterfaceAnnotation) {
+				throw new COMException(
+						"unadvise: Interface must define a value for iid via the ComInterface annotation");
+			}
+			IID iid = this.getIID(comInterfaceAnnotation);
+
+			final ConnectionPoint rawCp = this.fetchRawConnectionPoint(iid);
+
+			HRESULT hr = factory.getComThread().execute(new Callable<HRESULT>() {
+				@Override
+				public HRESULT call() throws Exception {
+					return rawCp.Unadvise(((ComEventCallbackCookie) cookie).getValue());
+				}
+			});
+			COMUtils.checkRC(hr);
+
+		} catch (Exception e) {
+			throw new COMException("Error occured in unadvise when trying to disconnect the listener from " + this, e);
+		}
+	}
+
 	// --------------------- IDispatch ------------------------------
 	@Override
 	public <T> void setProperty(String name, T value) {
-		VARIANT v = this.toVariant(value);
+		VARIANT v = Convert.toVariant(value);
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), name, v);
 		COMUtils.checkRC(hr);
 	}
@@ -123,10 +212,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name);
 		COMUtils.checkRC(hr);
-		Object jobj = this.getJavaObject(result);
+		Object jobj = Convert.toJavaObject(result);
 		if (jobj instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-			return this.factory
-					.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj);
+			return this.factory.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj);
 		}
 		return (T) jobj;
 	}
@@ -140,13 +228,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			vargs = new VARIANT[args.length];
 		}
 		for (int i = 0; i < vargs.length; ++i) {
-			vargs[i] = this.toVariant(args[i]);
+			vargs[i] = Convert.toVariant(args[i]);
 		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
 
-		Object jobj = this.getJavaObject(result);
+		Object jobj = Convert.toJavaObject(result);
 		if (jobj instanceof IDispatch) {
 			return this.factory.createProxy(returnType, (IDispatch) jobj);
 		}
@@ -154,12 +242,12 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	@Override
-	public <T> T queryInterface(Class<T> comInterface) {
+	public <T> T queryInterface(Class<T> comInterface) throws COMException {
 		try {
 			ComInterface comInterfaceAnnotation = comInterface.getAnnotation(ComInterface.class);
 			if (null == comInterfaceAnnotation) {
 				throw new COMException(
-						"createObject: Interface must define a value for either iid or progId via the ComInterface annotation");
+						"queryInterface: Interface must define a value for iid via the ComInterface annotation");
 			}
 			final IID iid = this.getIID(comInterfaceAnnotation);
 			final PointerByReference ppvObject = new PointerByReference();
@@ -178,10 +266,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 				String formatMessageFromHR = Kernel32Util.formatMessage(hr);
 				throw new COMException("queryInterface: " + formatMessageFromHR);
 			}
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
+		} catch (Exception e) {
+			throw new COMException("Error occured when trying to query for interface " + comInterface.getName(), e);
 		}
 	}
 
@@ -190,7 +276,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		if (null != iidStr && !iidStr.isEmpty()) {
 			return new IID(iidStr);
 		} else {
-			throw new COMException("ComInterface must define a value for either iid");
+			throw new COMException("ComInterface must define a value for iid");
 		}
 	}
 
@@ -230,54 +316,6 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return methName;
 		} else {
 			return meth.name();
-		}
-	}
-
-	protected Object getJavaObject(VARIANT value) {
-		Object vobj = value.getValue();
-		if (vobj instanceof WinDef.BOOL) {
-			return ((WinDef.BOOL) vobj).booleanValue();
-		} else if (vobj instanceof WinDef.LONG) {
-			return ((WinDef.LONG) vobj).longValue();
-		} else if (vobj instanceof WinDef.SHORT) {
-			return ((WinDef.SHORT) vobj).shortValue();
-		} else if (vobj instanceof WinDef.UINT) {
-			return ((WinDef.UINT) vobj).intValue();
-		} else if (vobj instanceof WinDef.WORD) {
-			return ((WinDef.WORD) vobj).intValue();
-		} else if (vobj instanceof WTypes.BSTR) {
-			return ((WTypes.BSTR) vobj).getValue();
-		}
-		return vobj;
-	}
-
-	protected VARIANT toVariant(Object value) {
-		if (value instanceof Boolean) {
-			return new VARIANT((Boolean) value);
-		} else if (value instanceof Long) {
-			return new VARIANT(new WinDef.LONG((long) value));
-		} else if (value instanceof Integer) {
-			return new VARIANT((Integer) value);
-		} else if (value instanceof Short) {
-			return new VARIANT(new WinDef.SHORT((short) value));
-		} else if (value instanceof Float) {
-			return new VARIANT((Float) value);
-		} else if (value instanceof Double) {
-			return new VARIANT((Double) value);
-		} else if (value instanceof String) {
-			return new VARIANT((String) value);
-		} else if (value instanceof Date) {
-			return new VARIANT((Date) value);
-		} else if (value instanceof Proxy) {
-			InvocationHandler ih = Proxy.getInvocationHandler(value);
-			ProxyObject pobj = (ProxyObject) ih;
-			return new VARIANT(pobj.getRawDispatch());
-		}
-		if (value instanceof IComEnum) {
-			IComEnum enm = (IComEnum) value;
-			return new VARIANT(new WinDef.LONG(enm.getValue()));
-		} else {
-			return null;
 		}
 	}
 
