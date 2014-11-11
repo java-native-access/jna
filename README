@@ -1,8 +1,8 @@
 Status
 ======
 
-libffi-3.x was released on xxxxxxxxx.  Check the libffi web page
-for updates: <URL:http://sourceware.org/libffi/>.
+libffi-3.2 was released on November 11, 2014.  Check the libffi web
+page for updates: <URL:http://sourceware.org/libffi/>.
 
 
 What is libffi?
@@ -43,7 +43,7 @@ Libffi has been ported to many different platforms.
 For specific configuration details and testing status, please
 refer to the wiki page here:
 
- http://www.moxielogic.org/wiki/index.php?title=Libffi_3.1
+ http://www.moxielogic.org/wiki/index.php?title=Libffi_3.2
 
 At the time of release, the following basic configurations have been
 tested:
