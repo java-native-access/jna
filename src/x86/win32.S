@@ -232,7 +232,7 @@ ffi_closure_REGISTER PROC NEAR
         push	ecx
         push	edx
         jmp	ffi_closure_STDCALL
-ffi_closure_FASTCALL ENDP
+ffi_closure_REGISTER ENDP
 
 ffi_closure_SYSV PROC NEAR FORCEFRAME
     ;; the ffi_closure ctx is passed in eax by the trampoline.
