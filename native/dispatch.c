@@ -2884,7 +2884,8 @@ static jboolean (JNICALL *pJAWT_GetAWT)(JNIEnv*,JAWT*);
 #endif /* NO_JAWT */
 
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *UNUSED_ENV(env), jclass UNUSED(classp), jobject UNUSED_JAWT(w)) {
+Java_com_sun_jna_Native_getWindowHandle0(JNIEnv *env, jclass UNUSED(classp), jobject UNUSED_JAWT(w)) {
+  //NOTE: must not have env parameter marked as UNUSED_ENV, as it is used on WIN32 build - #ifdef below.
   jlong handle = 0;
 #ifndef NO_JAWT
   JAWT_DrawingSurface* ds;
