@@ -182,8 +182,9 @@ History
 
 See the git log for details at http://github.com/atgreen/libffi.
 
-3.2 TBD
-        Add C99 Complex Type support.
+3.2 Nov-11-14
+        Add C99 Complex Type support (currently only supported on
+          s390).
 	Add support for PASCAL and REGISTER calling conventions on x86
 	  Windows/Linux.
 	Add OpenRISC and Cygwin-64 support.
@@ -407,6 +408,7 @@ mips		Anthony Green, Casey Marshall
 mips64		David Daney
 moxie		Anthony Green
 nios ii		Sandra Loosemore
+openrisc        Sebastian Macke
 pa		Randolph Chung, Dave Anglin, Andreas Tobler
 powerpc		Geoffrey Keating, Andreas Tobler, 
 			 David Edelsohn, John Hornkvist
