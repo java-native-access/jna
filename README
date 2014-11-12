@@ -1,7 +1,7 @@
 Status
 ======
 
-libffi-3.2 was released on November 11, 2014.  Check the libffi web
+libffi-3.2.1 was released on November 12, 2014.  Check the libffi web
 page for updates: <URL:http://sourceware.org/libffi/>.
 
 
@@ -181,6 +181,9 @@ History
 =======
 
 See the git log for details at http://github.com/atgreen/libffi.
+
+3.2.1 Nov-12-14
+        Build fix for non-iOS AArch64 targets.
 
 3.2 Nov-11-14
         Add C99 Complex Type support (currently only supported on

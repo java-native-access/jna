@@ -782,7 +782,9 @@ ffi_prep_cif_machdep (ffi_cif *cif)
           }
     }
 
+#if defined (__APPLE__)
   cif->aarch64_nfixedargs = 0;
+#endif
 
   return FFI_OK;
 }
