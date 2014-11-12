@@ -146,6 +146,11 @@ public class EnumMoniker implements Iterable<IDispatch> {
 
 			}
 
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException("remove");
+			}
+			
 		};
 	}
 

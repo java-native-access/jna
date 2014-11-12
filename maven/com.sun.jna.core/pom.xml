@@ -357,6 +357,23 @@ com/sun/jna/linux-ia64/libjnidispatch.so;processor=ia64;osname=linux,
 					</instructions>
 				</configuration>
 			</plugin>
+			
+			<!-- Create sources artifact/bundle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
 		</plugins>
 	</build>
 	
