@@ -30,7 +30,7 @@
 				<version>2.4</version>
 				<executions>
 					<!-- also add the test lib dll/jar  so tests can be run,
-					TODO: combine this with other platforms below as different test jat for each -->
+					TODO: combine this with other platforms below as different test jat for each
 					<execution>
 						<id>jna-test</id>
 						<phase>generate-resources</phase>
@@ -43,7 +43,7 @@
 							<version>${project.version}</version>
 							<packaging>jar</packaging>
 						</configuration>
-					</execution>
+					</execution> -->
 					<!-- native jars -->
 					<execution>
 						<id>win32-x86</id>
