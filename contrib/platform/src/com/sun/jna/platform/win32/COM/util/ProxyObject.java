@@ -76,13 +76,57 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		return this.rawDispatch;
 	}
 
+	// -------------------- Object -------------------------
+	
+	/*
+	 * The QueryInterface rule state that
+	 * 'a call to QueryInterface with IID_IUnknown must always return the same physical pointer value.'
+	 * 
+	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
+	 */
+	public boolean equals(Object arg) {
+		InvocationHandler handler = Proxy.getInvocationHandler(arg);
+		if (handler instanceof ProxyObject) {
+			ProxyObject other = (ProxyObject)handler;
+			
+			IUnknown unk1 = this.queryInterface(IUnknown.class);
+			IUnknown unk2 = other.queryInterface(IUnknown.class);
+			
+			InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
+			InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
+			
+			ProxyObject po1 = (ProxyObject)h1;
+			ProxyObject po2 = (ProxyObject)h2;
+			
+			IDispatch d1 = po1.getRawDispatch();
+			IDispatch d2 = po2.getRawDispatch();
+			
+			return d1.equals(d2);
+		} else {
+			return false;
+		}
+	};
+	@Override
+	public int hashCode() {
+		// this returns the native pointer peer value
+		return this.getRawDispatch().hashCode();
+	}
+	@Override
+	public String toString() {
+		return this.theInterface.getName() + "{"+this.hashCode()+"}";
+	}
+	
 	// --------------------- InvocationHandler -----------------------------
 	@Override
 	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
 			throws Throwable {
 
 		if (method.equals(Object.class.getMethod("toString"))) {
-			return this.theInterface.getName();
+			return this.toString();
+		} else if (method.equals(Object.class.getMethod("equals",Object.class))) {
+			return this.equals(args[0]);
+		} else if (method.equals(Object.class.getMethod("hashCode"))) {
+			return this.hashCode();
 		} else if (method.equals(IRawDispatchHandle.class.getMethod("getRawDispatch"))) {
 			return this.getRawDispatch();
 		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {

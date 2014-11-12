@@ -13,7 +13,9 @@
 
 	<properties>
 		<native-groupId>com.sun.jna.native</native-groupId>
+		<native-test-groupId>com.sun.jna.native.test</native-test-groupId>
 		<native-jars>${project.basedir}/../../lib/native</native-jars>
+		<native-test-jars>${project.basedir}/../../lib/test</native-test-jars>
 		<native-repo-dir>${project.build.directory}/repo</native-repo-dir>
 	</properties>
 
@@ -27,6 +29,22 @@
 				<artifactId>maven-install-plugin</artifactId>
 				<version>2.4</version>
 				<executions>
+					<!-- also add the test lib dll/jar  so tests can be run,
+					TODO: combine this with other platforms below as different test jat for each -->
+					<execution>
+						<id>jna-test</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-test-jars}/jna-test/win32-x86-64.jar</file>
+							<groupId>${native-test-groupId}</groupId>
+							<artifactId>win32-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<!-- native jars -->
 					<execution>
 						<id>win32-x86</id>
 						<phase>generate-resources</phase>

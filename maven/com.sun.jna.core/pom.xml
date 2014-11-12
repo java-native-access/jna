@@ -11,10 +11,10 @@
 
 	<packaging>bundle</packaging>
 
-
-
 	<properties>
+		<test-target-platform>win32-x86-64</test-target-platform>
 		<native-repo-dir>${project.basedir}/../com.sun.jna.native-repo/target/repo</native-repo-dir>
+		<native-test-groupId>com.sun.jna.native</native-test-groupId>
 		<native-groupId>com.sun.jna.native</native-groupId>
 		<bundle-version>${parsedVersion.osgiVersion}</bundle-version>
 	</properties>
@@ -27,6 +27,13 @@
         	<version>0.9.8</version>
         	<scope>test</scope>
      	</dependency>
+
+		<dependency>
+    		<groupId>${native-test-groupId}</groupId>
+    		<artifactId>${test-target-platform}</artifactId>
+    		<version>${project.version}</version>
+    		<scope>test</scope>
+		</dependency>
 		
 		<dependency>
     		<groupId>junit</groupId>

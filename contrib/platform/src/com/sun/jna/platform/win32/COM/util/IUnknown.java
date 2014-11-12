@@ -13,12 +13,14 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 
 /**
  * Java friendly version of the IUnknown interface.
  * 
  *
  */
+@ComInterface(iid="{00000000-0000-0000-C000-000000000046}")
 public interface IUnknown {
 	/**
 	 * Returns a proxy object for the given interface. Assuming that the

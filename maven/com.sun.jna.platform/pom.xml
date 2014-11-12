@@ -36,7 +36,6 @@
 	<build>
 		<sourceDirectory>${project.basedir}/../../contrib/platform/src</sourceDirectory>
 		<testSourceDirectory>${project.basedir}/../../contrib/platform/test</testSourceDirectory>
-		
 	
 		<plugins>
 			<plugin>

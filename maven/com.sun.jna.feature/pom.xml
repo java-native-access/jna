@@ -12,7 +12,7 @@
 		<version>4.1.1-SNAPSHOT</version>
 	</parent>
 	
-	<artifactId>feature</artifactId>
+	<artifactId>com.sun.jna.feature</artifactId>
 
 	<packaging>jar</packaging>
 
