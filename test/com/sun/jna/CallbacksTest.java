@@ -1178,10 +1178,14 @@ public class CallbacksTest extends TestCase implements Paths {
 	};
         callThreadedCallback(cb, asDaemon, 2, 100, called);
 	// Wait for it to start up
+        long start = System.currentTimeMillis();
         while (threads.size() == 0 && called[0] == 0) {
             Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+		fail("Timed out waiting for thread to detach and terminate");
+	    }
         }
-        long start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         WeakReference ref = (WeakReference)threads.iterator().next();
 
         while (ref.get() != null) {
