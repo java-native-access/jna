@@ -36,6 +36,7 @@ Bug Fixes
 * Disable WebStart tests - [@twall](https://github.com/twall).
 * Dispose all native resources when JNA's native library is unloaded - Paul Grütter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
 * Weakly hold registered Direct-mapped classes - [@twall](https://github.com/twall).  
+* Fixed memory allocation in classes `com.sun.jna.platform.win32.WTypes.LPWSTR` and `com.sun.jna.platform.win32.WTypes.LPSTR`.
 
 Release 4.1
 ===========
