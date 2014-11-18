@@ -23,7 +23,7 @@
 		<tycho-groupid>org.eclipse.tycho</tycho-groupid>
 		<platform-version-name>kepler</platform-version-name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<additional.pluginRepository></additional.pluginRepository>
+		<additional.pluginRepository>http://central</additional.pluginRepository>
 	</properties>
 
 	<build>
