@@ -65,8 +65,16 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
 		this.factory = factory;
+		
+		//make sure dispatch object knows we have a reference to it
+		this.rawDispatch.AddRef();
 	}
 
+	@Override
+	protected void finalize() throws Throwable {
+		this.rawDispatch.Release();
+	}
+	
 	Class<?> theInterface;
 	Factory factory;
 	ComThread comThread;

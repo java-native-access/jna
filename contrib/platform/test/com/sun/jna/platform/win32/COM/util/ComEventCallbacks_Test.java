@@ -60,17 +60,29 @@ public class ComEventCallbacks_Test {
 		
 	}	
 	
-	@ComInterface
+	@ComInterface(iid="{0002096C-0000-0000-C000-000000000046}")
 	interface ComIDocuments {
 		@ComMethod
 		ComIDocument Open(String fileName);
 	}
 	
-	@ComInterface
-	interface ComIDocument {}
+	@ComInterface(iid="{0002096B-0000-0000-C000-000000000046}")
+	interface ComIDocument {
+		@ComProperty
+		String getFullName();
+		
+		@ComMethod
+		void Select();
+	}
 	
-	@ComInterface
+	@ComInterface(iid="{00020962-0000-0000-C000-000000000046}")
 	interface ComIWindow {}
+	
+	@ComInterface(iid="{00020975-0000-0000-C000-000000000046}")
+	public interface ComISelection {
+		@ComProperty
+		String getText();
+	}
 	
 	@ComInterface(iid="{00020A01-0000-0000-C000-000000000046}")
 	interface ApplicationEvents4_Event {
@@ -79,28 +91,40 @@ public class ComEventCallbacks_Test {
 		
 		@ComEventCallback(dispid=2)
 		void Quit();
+		
+		@ComEventCallback(dispid=12)
+		void WindowSelectionChange(ComISelection sel);
 	}
 	
 	class ApplicationEvents4_EventListener extends AbstractComEventCallbackListener implements ApplicationEvents4_Event {
-		Boolean Quit_called = null;
-		Boolean WindowActivate_called = null;
+
+		@Override
+		public void errorReceivingCallbackEvent(String message, Exception exception) {
+			
+		}
 		
+		Boolean WindowActivate_called = null;
 		@Override
 		public void WindowActivate(ComIDocument doc, ComIWindow win) {
-			if (null!=doc && null !=win) { 
+			if (null!=doc && null !=win) {
+				String docName = doc.getFullName();
 				WindowActivate_called = true;
 			}
 		}
-
+		
+		Boolean Quit_called = null;
 		@Override
 		public void Quit() {
 			Quit_called = true;
 		}
 
+		Boolean WindowSelectionChange_called = null;
 		@Override
-		public void errorReceivingCallbackEvent(String message, Exception exception) {
-			
-			
+		public void WindowSelectionChange(ComISelection sel) {
+			if (null!=sel) {
+				String t = sel.getText();
+				WindowSelectionChange_called = true;
+			}
 		}
 		
 	}
@@ -171,7 +195,7 @@ public class ComEventCallbacks_Test {
 				
 		//Wait for event to happen
 		try {
-			Thread.sleep(200);
+			Thread.sleep(500);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -182,4 +206,32 @@ public class ComEventCallbacks_Test {
 		wordApp.Quit(false, null, null);
 
 	}
+
+	@Test
+	public void WindowSelectionChanged() {
+		// Create word object
+		ComIMsWordApp wordObj = factory.createObject(ComIMsWordApp.class);
+		ComIApplication wordApp = wordObj.queryInterface(ComIApplication.class);
+		wordApp.setVisible(true);
+		ApplicationEvents4_EventListener listener = new ApplicationEvents4_EventListener();
+		wordApp.advise(ApplicationEvents4_Event.class, listener);
+		
+		ComIDocument doc = wordApp.getDocuments().Open("C:\\temp\\test.doc");
+
+		doc.Select();
+				
+		//Wait for event to happen
+		try {
+			Thread.sleep(200);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Assert.assertNotNull(listener.WindowSelectionChange_called);
+		Assert.assertTrue(listener.WindowSelectionChange_called);
+		
+		wordApp.Quit(false, null, null);
+
+	}
+
 }
