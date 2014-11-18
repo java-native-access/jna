@@ -196,7 +196,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			final ConnectionPoint rawCp = this.fetchRawConnectionPoint(iid);
 
 			// create the dispatch listener
-			final IDispatchCallback rawListener = new CallbackProxy(comEventCallbackInterface, comEventCallbackListener);
+			final IDispatchCallback rawListener = new CallbackProxy(this.factory, comEventCallbackInterface, comEventCallbackListener);
 			// store it the comEventCallback argument, so it is not garbage
 			// collected.
 			comEventCallbackListener.setDispatchCallbackListener(rawListener);

@@ -17,7 +17,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jna.platform.win32.COM.util.RunningObjectTable_Test.Application;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
@@ -53,12 +54,28 @@ public class ComEventCallbacks_Test {
 		
 		@ComMethod
 		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
+		
+		@ComProperty
+		ComIDocuments getDocuments();
+		
 	}	
+	
+	@ComInterface
+	interface ComIDocuments {
+		@ComMethod
+		ComIDocument Open(String fileName);
+	}
+	
+	@ComInterface
+	interface ComIDocument {}
+	
+	@ComInterface
+	interface ComIWindow {}
 	
 	@ComInterface(iid="{00020A01-0000-0000-C000-000000000046}")
 	interface ApplicationEvents4_Event {
-		@ComEventCallback
-		void WindowActive();
+		@ComEventCallback(dispid=10)
+		void WindowActivate(ComIDocument doc, ComIWindow win);
 		
 		@ComEventCallback(dispid=2)
 		void Quit();
@@ -66,9 +83,13 @@ public class ComEventCallbacks_Test {
 	
 	class ApplicationEvents4_EventListener extends AbstractComEventCallbackListener implements ApplicationEvents4_Event {
 		Boolean Quit_called = null;
+		Boolean WindowActivate_called = null;
 		
 		@Override
-		public void WindowActive() {
+		public void WindowActivate(ComIDocument doc, ComIWindow win) {
+			if (null!=doc && null !=win) { 
+				WindowActivate_called = true;
+			}
 		}
 
 		@Override
@@ -85,7 +106,7 @@ public class ComEventCallbacks_Test {
 	}
 
 	@Test
-	public void advise() {
+	public void advise_Quit() {
 		// Create word object
 		ComIMsWordApp wordObj = factory.createObject(ComIMsWordApp.class);
 		ComIApplication wordApp = wordObj.queryInterface(ComIApplication.class);
@@ -107,7 +128,7 @@ public class ComEventCallbacks_Test {
 	}
 
 	@Test
-	public void unadvise() {
+	public void unadvise_Quit() {
 		// Create word object
 		ComIMsWordApp wordObj = factory.createObject(ComIMsWordApp.class);
 		ComIApplication wordApp = wordObj.queryInterface(ComIApplication.class);
@@ -128,5 +149,37 @@ public class ComEventCallbacks_Test {
 		
 		Assert.assertNotNull(listener.Quit_called);
 		Assert.assertFalse(listener.Quit_called);
+	}
+	
+	@Test
+	public void WindowActivate() {
+		// Create word object
+		ComIMsWordApp wordObj = factory.createObject(ComIMsWordApp.class);
+		ComIApplication wordApp = wordObj.queryInterface(ComIApplication.class);
+		wordApp.setVisible(true);
+		ApplicationEvents4_EventListener listener = new ApplicationEvents4_EventListener();
+		wordApp.advise(ApplicationEvents4_Event.class, listener);
+		
+		wordApp.getDocuments().Open("C:\\temp\\test.doc");
+		
+		//bring word doc to front
+		HWND h = User32.INSTANCE.FindWindow("OpusApp", null);
+		if (h == null)
+			h = User32.INSTANCE.FindWindow("NetUIHWND", null);
+		User32.INSTANCE.ShowWindow(h, User32.SW_RESTORE);
+		User32.INSTANCE.SetForegroundWindow(h);
+				
+		//Wait for event to happen
+		try {
+			Thread.sleep(200);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Assert.assertNotNull(listener.WindowActivate_called);
+		Assert.assertTrue(listener.WindowActivate_called);
+		
+		wordApp.Quit(false, null, null);
+
 	}
 }

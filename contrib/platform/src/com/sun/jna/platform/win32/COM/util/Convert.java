@@ -53,6 +53,7 @@ public class Convert {
 	}
 	
 	public static Object toJavaObject(VARIANT value) {
+		if (null==value) return null;
 		Object vobj = value.getValue();
 		if (vobj instanceof WinDef.BOOL) {
 			return ((WinDef.BOOL) vobj).booleanValue();

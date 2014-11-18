@@ -707,5 +707,12 @@ public interface Variant {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "variantArg" });
         }
+        
+        public void setArraySize(int size) {
+        	this.variantArg = new VARIANT[size];
+        	this.read();
+        }
+        
+
     }
 }

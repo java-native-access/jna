@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.DispatchListener;
+import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
@@ -52,7 +54,8 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class CallbackProxy implements IDispatchCallback {
 
-	public CallbackProxy(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
+	public CallbackProxy(Factory factory, Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
+		this.factory = factory;
 		this.comEventCallbackInterface = comEventCallbackInterface;
 		this.comEventCallbackListener = comEventCallbackListener;
 		this.listenedToRiid = this.createRIID(comEventCallbackInterface);
@@ -66,7 +69,7 @@ public class CallbackProxy implements IDispatchCallback {
 			}
 		});
 	}
-
+	Factory factory;
 	Class<?> comEventCallbackInterface;
 	IComEventCallbackListener comEventCallbackListener;
 	REFIID.ByValue listenedToRiid;
@@ -116,22 +119,46 @@ public class CallbackProxy implements IDispatchCallback {
 			public void run() {
 				try {
 					// decode argumentt
-					final List<Object> jargs = new ArrayList<Object>();
+					List<Object> jargs = new ArrayList<Object>();
 					if (pDispParams.cArgs.intValue() > 0) {
-						VariantArg vargs = new VariantArg(pDispParams.getPointer());
+						VariantArg vargs = pDispParams.rgvarg;
+						vargs.setArraySize(pDispParams.cArgs.intValue());
 						for (Variant.VARIANT varg : vargs.variantArg) {
 							Object jarg = Convert.toJavaObject(varg);
 							jargs.add(jarg);
 						}
 					}
 					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
-						final Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
+						Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
 						String eventMethodName = eventMethod.getName();
-						try {
-							eventMethod.invoke(comEventCallbackListener, jargs.toArray());
-						} catch (Exception e) {
+						if (eventMethod.getParameterCount() != jargs.size()) {
 							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-									"Exception invoking method " + eventMethod, e);
+									"Trying to invoke method " + eventMethod +" with "+jargs.size()+" arguments", null);
+						} else {
+							try {
+								//need to convert arguments maybe
+								List<Object> margs = new ArrayList<Object>();
+								Parameter[] params = eventMethod.getParameters();
+								for(int i=0;i<eventMethod.getParameterCount();++i) {
+									Parameter param = params[i];
+									Object jobj = jargs.get(i);
+									if (param.getType().getAnnotation(ComInterface.class)!=null) {
+										if (jobj instanceof IDispatch) {
+											IDispatch dispatch = (IDispatch)jobj;
+											Object mobj = CallbackProxy.this.factory.createProxy(param.getType(), dispatch);
+											margs.add(mobj);
+										} else {
+											throw new RuntimeException("Cannot convert argument "+jobj.getClass()+" to ComInterface "+param.getType());
+										}
+									} else {
+										margs.add(jobj);
+									}
+								}
+								eventMethod.invoke(comEventCallbackListener, margs.toArray());
+							} catch (Exception e) {
+								CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+										"Exception invoking method " + eventMethod, e);
+							}
 						}
 					} else {
 						CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
