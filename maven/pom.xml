@@ -24,12 +24,23 @@
 		<platform-version-name>kepler</platform-version-name>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-	<distributionManagement>
-  <repository>
-    <id>akehurst</id>
-	<url>https://projects.itemis.de/nexus/content/repositories/akehurst</url>
-  </repository>
-</distributionManagement>
 
+	<build>
+		<pluginManagement>
+			<plugins>
+			
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.2</version>
+					<configuration>
+					  <source>1.6</source>
+					  <target>1.6</target>
+					</configuration>
+				</plugin>
+				
+			</plugins>
+		</pluginManagement>
+	</build>
+	
 </project>

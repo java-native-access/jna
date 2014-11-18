@@ -32,10 +32,12 @@
 								<artifact>
 									<id>com.sun.jna:com.sun.jna.core:${project.version}</id>
 									<transitive>false</transitive>
+									<source>true</source>
 								</artifact>
 								<artifact>
 									<id>com.sun.jna:com.sun.jna.platform:${project.version}</id>
 									<transitive>false</transitive>
+									<source>true</source>
 								</artifact>
 							</artifacts>
 							<features>
