@@ -12,7 +12,10 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
@@ -40,11 +43,21 @@ public class Factory {
 	 * 
 	 */
 	public Factory() {
-		this.comThread = new ComThread("Factory COM Thread");
+		this(new ComThread("Default Factory COM Thread"));
 	}
 
 	public Factory(ComThread comThread) {
 		this.comThread = comThread;
+		this.registeredObjects = new WeakHashMap<ProxyObject, Integer>();
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		try {
+			this.disposeAll();
+		} finally {
+			super.finalize();
+		}
 	}
 	
 	ComThread comThread;
@@ -116,8 +129,11 @@ public class Factory {
 				}
 			});
 			COMUtils.checkRC(hr);
-
-			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
+			Dispatch d = new Dispatch(ptrDisp.getValue());
+			T t = this.createProxy(comInterface,d);
+			//CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
+			//Note: the createProxy adds one
+			int n = d.Release();
 			return t;
 
 		} catch (InterruptedException e) {
@@ -148,10 +164,13 @@ public class Factory {
 				}
 			});
 			COMUtils.checkRC(hr);
-
-			T t = this.createProxy(comInterface, new Dispatch(ptrDisp.getValue()));
+			Dispatch d = new Dispatch(ptrDisp.getValue());
+			T t = this.createProxy(comInterface, d);
+			//GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
+			//Note: the createProxy adds one
+			d.Release();
+			
 			return t;
-
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
@@ -184,6 +203,55 @@ public class Factory {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	//factory needs to keep a register of all handles to COM objects so that it can clean them up properly
+	// (if java had an out of scope clean up destructor like C++, this wouldn't be needed)
+	WeakHashMap<ProxyObject, Integer> registeredObjects;
+	public void register(ProxyObject proxyObject) {
+		synchronized (this.registeredObjects) {
+			//make sure dispatch object knows we have a reference to it
+			// (for debug it is usefult to be able to see how many refs are present
+			int numRefs = proxyObject.rawDispatch.AddRef();
+			if (this.registeredObjects.containsKey(proxyObject)) {
+				int r = this.registeredObjects.get(proxyObject);
+				this.registeredObjects.put(proxyObject, r+1);
+			} else {
+				this.registeredObjects.put(proxyObject, 1);
+			}
+		}
+	}
+	
+	public void dispose(ProxyObject proxyObject) {
+		synchronized (this.registeredObjects) {
+			if (this.registeredObjects.containsKey(proxyObject)) {
+				int r = this.registeredObjects.get(proxyObject);
+				if (r > 1) {
+					this.registeredObjects.put(proxyObject, r-1);
+				} else {
+					this.registeredObjects.remove(proxyObject);
+				}
+				int numRefs = proxyObject.rawDispatch.Release();
+				int n=numRefs;
+			} else {
+				throw new RuntimeException("Tried to dispose a ProxyObject that is not registered");
+			}
+			
+		}
+	}
+	
+	public void disposeAll() {
+		synchronized (this.registeredObjects) {
+			for(ProxyObject proxyObject : this.registeredObjects.keySet()) {
+				int r = this.registeredObjects.get(proxyObject);
+				for (int i=0; i<r;++i) {
+					//catch the result to help with debug and see howmany refs are left.
+					int n = proxyObject.rawDispatch.Release();
+					int n2 = n;
+				}
+			}
+			this.registeredObjects.clear();
 		}
 	}
 }

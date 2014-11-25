@@ -65,16 +65,18 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
 		this.factory = factory;
-		
-		//make sure dispatch object knows we have a reference to it
-		this.rawDispatch.AddRef();
+		factory.register(this);
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.rawDispatch.Release();
+		this.dispose();
 	}
-	
+
+	public void dispose() {
+		this.factory.dispose(this);
+	}
+
 	Class<?> theInterface;
 	Factory factory;
 	ComThread comThread;
@@ -85,45 +87,54 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	// -------------------- Object -------------------------
-	
+
 	/*
-	 * The QueryInterface rule state that
-	 * 'a call to QueryInterface with IID_IUnknown must always return the same physical pointer value.'
+	 * The QueryInterface rule state that 'a call to QueryInterface with
+	 * IID_IUnknown must always return the same physical pointer value.'
 	 * 
 	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
 	 */
 	public boolean equals(Object arg) {
-		InvocationHandler handler = Proxy.getInvocationHandler(arg);
-		if (handler instanceof ProxyObject) {
-			ProxyObject other = (ProxyObject)handler;
-			
-			IUnknown unk1 = this.queryInterface(IUnknown.class);
-			IUnknown unk2 = other.queryInterface(IUnknown.class);
-			
-			InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
-			InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
-			
-			ProxyObject po1 = (ProxyObject)h1;
-			ProxyObject po2 = (ProxyObject)h2;
-			
-			IDispatch d1 = po1.getRawDispatch();
-			IDispatch d2 = po2.getRawDispatch();
-			
-			return d1.equals(d2);
+		if (arg instanceof ProxyObject) {
+			ProxyObject other = (ProxyObject) arg;
+			return this.getRawDispatch().equals(other.getRawDispatch());
+		} else if (Proxy.isProxyClass(arg.getClass())) {
+			InvocationHandler handler = Proxy.getInvocationHandler(arg);
+			if (handler instanceof ProxyObject) {
+				ProxyObject other = (ProxyObject) handler;
+
+				IUnknown unk1 = this.queryInterface(IUnknown.class);
+				IUnknown unk2 = other.queryInterface(IUnknown.class);
+
+				InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
+				InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
+
+				ProxyObject po1 = (ProxyObject) h1;
+				ProxyObject po2 = (ProxyObject) h2;
+
+				IDispatch d1 = po1.getRawDispatch();
+				IDispatch d2 = po2.getRawDispatch();
+
+				return d1.equals(d2);
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
 	};
+
 	@Override
 	public int hashCode() {
 		// this returns the native pointer peer value
 		return this.getRawDispatch().hashCode();
 	}
+
 	@Override
 	public String toString() {
-		return this.theInterface.getName() + "{"+this.hashCode()+"}";
+		return this.theInterface.getName() + "{" + this.hashCode() + "}";
 	}
-	
+
 	// --------------------- InvocationHandler -----------------------------
 	@Override
 	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
@@ -131,7 +142,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		if (method.equals(Object.class.getMethod("toString"))) {
 			return this.toString();
-		} else if (method.equals(Object.class.getMethod("equals",Object.class))) {
+		} else if (method.equals(Object.class.getMethod("equals", Object.class))) {
 			return this.equals(args[0]);
 		} else if (method.equals(Object.class.getMethod("hashCode"))) {
 			return this.hashCode();
@@ -139,10 +150,12 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return this.getRawDispatch();
 		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
 			return this.queryInterface((Class<?>) args[0]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("advise", Class.class, IComEventCallbackListener.class))) {
-			return this.advise((Class<?>)args[0], (IComEventCallbackListener) args[1]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("unadvise", Class.class, IComEventCallbackCookie.class))) {
-			this.unadvise((Class<?>)args[0], (IComEventCallbackCookie) args[1]);
+		} else if (method.equals(IConnectionPoint.class.getMethod("advise", Class.class,
+				IComEventCallbackListener.class))) {
+			return this.advise((Class<?>) args[0], (IComEventCallbackListener) args[1]);
+		} else if (method.equals(IConnectionPoint.class.getMethod("unadvise", Class.class,
+				IComEventCallbackCookie.class))) {
+			this.unadvise((Class<?>) args[0], (IComEventCallbackCookie) args[1]);
 			return null;
 		}
 
@@ -157,7 +170,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 				return null;
 			} else {
 				String propName = this.getAccessorName(method, prop);
-				return this.getProperty(returnType, propName);
+				return this.getProperty(returnType, propName, args);
 			}
 		}
 
@@ -192,7 +205,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		return rawCp;
 	}
 
-	public IComEventCallbackCookie advise(Class<?> comEventCallbackInterface, final IComEventCallbackListener comEventCallbackListener) {
+	public IComEventCallbackCookie advise(Class<?> comEventCallbackInterface,
+			final IComEventCallbackListener comEventCallbackListener) {
 		try {
 			ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
 			if (null == comInterfaceAnnotation) {
@@ -204,7 +218,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			final ConnectionPoint rawCp = this.fetchRawConnectionPoint(iid);
 
 			// create the dispatch listener
-			final IDispatchCallback rawListener = new CallbackProxy(this.factory, comEventCallbackInterface, comEventCallbackListener);
+			final IDispatchCallback rawListener = new CallbackProxy(this.factory, comEventCallbackInterface,
+					comEventCallbackListener);
 			// store it the comEventCallback argument, so it is not garbage
 			// collected.
 			comEventCallbackListener.setDispatchCallbackListener(rawListener);
@@ -223,7 +238,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return new ComEventCallbackCookie(pdwCookie.getValue());
 
 		} catch (Exception e) {
-			throw new COMException("Error occured in advise when trying to connect the listener " + comEventCallbackListener, e);
+			throw new COMException("Error occured in advise when trying to connect the listener "
+					+ comEventCallbackListener, e);
 		}
 	}
 
@@ -260,13 +276,26 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	@Override
-	public <T> T getProperty(Class<T> returnType, String name) {
+	public <T> T getProperty(Class<T> returnType, String name, Object... args) {
+		VARIANT[] vargs;
+		if (null == args) {
+			vargs = new VARIANT[0];
+		} else {
+			vargs = new VARIANT[args.length];
+		}
+		for (int i = 0; i < vargs.length; ++i) {
+			vargs[i] = Convert.toVariant(args[i]);
+		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name);
+		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
 		Object jobj = Convert.toJavaObject(result);
-		if (jobj instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-			return this.factory.createProxy(returnType, (com.sun.jna.platform.win32.COM.IDispatch) jobj);
+		if (jobj instanceof IDispatch) {
+			IDispatch d = (IDispatch) jobj;
+			T t = this.factory.createProxy(returnType, d);
+			//must release a COM reference, createProxy adds one, as does the call 
+			int n = d.Release();
+			return t;
 		}
 		return (T) jobj;
 	}
@@ -288,7 +317,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		Object jobj = Convert.toJavaObject(result);
 		if (jobj instanceof IDispatch) {
-			return this.factory.createProxy(returnType, (IDispatch) jobj);
+			IDispatch d = (IDispatch) jobj;
+			T t = this.factory.createProxy(returnType, d);
+			//must release a COM reference, createProxy adds one, as does the call 
+			int n = d.Release();
+			return t;
 		}
 		return (T) jobj;
 	}
@@ -313,7 +346,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 			if (WinNT.S_OK.equals(hr)) {
 				Dispatch dispatch = new Dispatch(ppvObject.getValue());
-				return this.factory.createProxy(comInterface, dispatch);
+				T t = this.factory.createProxy(comInterface, dispatch);
+				// QueryInterface returns a COM object pointer with a +1 reference, we must drop one,
+				// Note: createProxy adds one;
+				int n = dispatch.Release();
+				return t;
 			} else {
 				String formatMessageFromHR = Kernel32Util.formatMessage(hr);
 				throw new COMException("queryInterface: " + formatMessageFromHR);

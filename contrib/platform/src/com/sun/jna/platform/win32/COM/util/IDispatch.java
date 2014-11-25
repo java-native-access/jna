@@ -19,6 +19,6 @@ package com.sun.jna.platform.win32.COM.util;
 public interface IDispatch extends IUnknown {
 
 	<T> void setProperty(String name, T value);
-	<T> T getProperty(Class<T> returnType, String name);
+	<T> T getProperty(Class<T> returnType, String name, Object... args);
 	<T> T invokeMethod(Class<T> returnType, String name, Object... args);
 }

@@ -120,6 +120,10 @@ public class CallbackProxy implements IDispatchCallback {
 
 	void invokeOnThread(final DISPID dispIdMember, final REFIID.ByValue riid, LCID lcid, WORD wFlags,
 			final DISPPARAMS.ByReference pDispParams) {
+		// decode arguments
+		// must decode them on this thread, and create a proxy for any COM objects (IDispatch)
+		// this will AddRef on the COM object so that it is not cleaned up before we can use it
+		// on the thread that does the java callback.
 		List<Object> rjargs = new ArrayList<Object>();
 		if (pDispParams.cArgs.intValue() > 0) {
 			VariantArg vargs = pDispParams.rgvarg;
@@ -128,9 +132,9 @@ public class CallbackProxy implements IDispatchCallback {
 				Object jarg = Convert.toJavaObject(varg);
 				if (jarg instanceof IDispatch) {
 					IDispatch dispatch = (IDispatch) jarg;
+					//Note: unlike in other places, there is currently no COM ref already added for this pointer 
 					IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, dispatch);
 					rjargs.add(unk);
-
 				} else {
 					rjargs.add(jarg);
 				}
@@ -141,12 +145,8 @@ public class CallbackProxy implements IDispatchCallback {
 			@Override
 			public void run() {
 				try {
-					// decode argumentt
-
-					//Collections.reverse(jargs);
 					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
 						Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
-						String eventMethodName = eventMethod.getName();
 						if (eventMethod.getParameterCount() != jargs.size()) {
 							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
 									"Trying to invoke method " + eventMethod + " with " + jargs.size() + " arguments",
@@ -162,8 +162,7 @@ public class CallbackProxy implements IDispatchCallback {
 									if (jobj != null && param.getType().getAnnotation(ComInterface.class) != null) {
 										if (jobj instanceof IUnknown) {
 											IUnknown unk = (IUnknown) jobj;
-											Object mobj = unk.queryInterface(param.getType());// CallbackProxy.this.factory.createProxy(param.getType(),
-																								// dispatch);
+											Object mobj = unk.queryInterface(param.getType());
 											margs.add(mobj);
 										} else {
 											throw new RuntimeException("Cannot convert argument " + jobj.getClass()
