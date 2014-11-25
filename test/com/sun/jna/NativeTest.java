@@ -27,6 +27,14 @@ public class NativeTest extends TestCase {
     
     private static final String UNICODE = "[\u0444]";
 
+    public void testVersion() {
+        String[] INPUTS = { "1.0", "1.0.1", "2.1.3" };
+        float[] EXPECTED = { 1.0f, 1.0f, 2.1f };
+        for (int i=0;i < INPUTS.length;i++) {
+            assertEquals("Incorrectly parsed version", EXPECTED[i], Native.parseVersion(INPUTS[i]));
+        }
+    }
+
     public void testLongStringGeneration() {
         StringBuilder buf = new StringBuilder();
         final int MAX = Platform.isWindowsCE() ? 200000 : 2000000;

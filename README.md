@@ -21,6 +21,12 @@ Projects Using JNA
 ==================
 JNA is a mature library with dozens of contributors and hundreds of commercial and non-commercial projects that use it.  If you're using JNA, feel free to [tell us about it](http://groups.google.com/group/jna-users).  Include some details about your company, project name, purpose and size and tell us how you use the library.
 
+Supported Platforms
+===================
+JNA will build on most linux-like platforms with a reasonable set of GNU tools and a JDK.  See the native [Makefile](https://raw.githubusercontent.com/twall/jna/master/native/Makefile) for native configurations that have been built and tested.  If your platform is supported by [libffi](http://en.wikipedia.org/wiki/Libffi), then chances are you can build JNA for it.
+
+Pre-built platform support may be found [here](https://github.com/twall/jna/tree/master/lib/native).
+
 Download
 ========
 

@@ -37,7 +37,7 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class COMBindingBaseObject extends COMInvoker {
@@ -74,8 +74,9 @@ public class COMBindingBaseObject extends COMInvoker {
     public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
-
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
+        if (hr.intValue() == 1) // Already initialized, no problem
+            hr = new HRESULT(0);
         if (COMUtils.FAILED(hr)) {
             Ole32.INSTANCE.CoUninitialize();
             throw new COMException("CoInitialize() failed!");
@@ -108,7 +109,9 @@ public class COMBindingBaseObject extends COMInvoker {
     public COMBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
+        if (hr.intValue() == 1) // Already initialized, no problem
+            hr = new HRESULT(0);
 
         if (COMUtils.FAILED(hr)) {
             this.release();
@@ -156,7 +159,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i dispatch.
-     * 
+     *
      * @return the i dispatch
      */
     public IDispatch getIDispatch() {
@@ -165,7 +168,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i dispatch pointer.
-     * 
+     *
      * @return the i dispatch pointer
      */
     public PointerByReference getIDispatchPointer() {
@@ -174,7 +177,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i unknown.
-     * 
+     *
      * @return the i unknown
      */
     public IUnknown getIUnknown() {
@@ -183,7 +186,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i unknown pointer.
-     * 
+     *
      * @return the i unknown pointer
      */
     public PointerByReference getIUnknownPointer() {
@@ -272,7 +275,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Ole method.
-     * 
+     *
      * @param nType
      *            the n type
      * @param pvResult
@@ -303,7 +306,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Ole method.
-     * 
+     *
      * @param nType
      *            the n type
      * @param pvResult
@@ -330,7 +333,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Check failed.
-     * 
+     *
      * @param hr
      *            the hr
      */
