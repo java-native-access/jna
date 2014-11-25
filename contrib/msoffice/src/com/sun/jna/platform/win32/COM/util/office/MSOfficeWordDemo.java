@@ -15,23 +15,25 @@ package com.sun.jna.platform.win32.COM.util.office;
 import java.io.File;
 
 import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.office.MSExcel;
 import com.sun.jna.platform.win32.COM.util.Factory;
+import com.sun.jna.platform.win32.COM.util.office.word.ComIApplication;
+import com.sun.jna.platform.win32.COM.util.office.word.ComWord_Application;
+import com.sun.jna.platform.win32.COM.util.office.word.WdOriginalFormat;
+import com.sun.jna.platform.win32.COM.util.office.word.WdSaveFormat;
 
-public class MSOfficeDemo {
+public class MSOfficeWordDemo {
 
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new MSOfficeDemo();
+		new MSOfficeWordDemo();
 	}
 
 	private String currentWorkingDir = new File("").getAbsolutePath() + File.separator;
 
-	public MSOfficeDemo() {
+	public MSOfficeWordDemo() {
 		this.testMSWord();
-		// this.testMSExcel();
 	}
 
 	public void testMSWord() {
@@ -99,34 +101,6 @@ public class MSOfficeDemo {
 			if (null != factory) {
 				factory.getComThread().terminate(500);
 			}
-		}
-	}
-
-	public void testMSExcel() {
-		MSExcel msExcel = null;
-
-		try {
-			msExcel = new MSExcel();
-			System.out.println("MSExcel version: " + msExcel.getVersion());
-			msExcel.setVisible(true);
-			// msExcel.newExcelBook();
-			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
-			msExcel.insertValue("A1", "Hello from JNA!");
-			// wait 10sec. before closing
-			Thread.currentThread().sleep(10000);
-			// close and save the active sheet
-			msExcel.closeActiveWorkbook(true);
-			msExcel.setVisible(true);
-			// msExcel.newExcelBook();
-			msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
-			msExcel.insertValue("A1", "Hello from JNA!");
-			// close and save the active sheet
-			msExcel.closeActiveWorkbook(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-
-			if (msExcel != null)
-				msExcel.quit();
 		}
 	}
 }

@@ -10,7 +10,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
-package com.sun.jna.platform.win32.COM.util.office;
+package com.sun.jna.platform.win32.COM.util.office.word;
 
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 

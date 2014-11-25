@@ -18,8 +18,8 @@ public class MSOfficeDemo {
             + File.separator;
 
     public MSOfficeDemo() {
-        this.testMSWord();
-        // this.testMSExcel();
+        //this.testMSWord();
+         this.testMSExcel();
     }
 
     public void testMSWord() {
