@@ -15,9 +15,13 @@ package com.sun.jna.platform.win32.COM.util.office;
 import java.io.File;
 
 import com.sun.jna.platform.win32.COM.office.MSExcel;
+import com.sun.jna.platform.win32.COM.util.AbstractComEventCallbackListener;
 import com.sun.jna.platform.win32.COM.util.Factory;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComExcel_Application;
+import com.sun.jna.platform.win32.COM.util.office.excel.ComIAppEvents;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIApplication;
+import com.sun.jna.platform.win32.COM.util.office.excel.ComIRange;
+import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorksheet;
 import com.sun.jna.platform.win32.COM.util.office.word.ComWord_Application;
 
 public class MSOfficeExcelDemo {
@@ -48,17 +52,38 @@ public class MSOfficeExcelDemo {
 			// msExcel.newExcelBook();
 			msExcel.getWorkbooks().Open(currentWorkingDir + "jnatest.xls");
 			msExcel.getActiveSheet().getRange("A1").setValue("Hello from JNA!");
-			// wait 10sec. before closing
+			// wait 1sec. before closing
 			Thread.currentThread().sleep(1000);
-			// close and save the active sheet
-			msExcel.getActiveWorkbook().Close(true);
-			msExcel.setVisible(true);
-			// msExcel.newExcelBook();
-			msExcel.getWorkbooks().Open(currentWorkingDir + "jnatest.xls");
-			msExcel.getActiveSheet().getRange("A2").setValue("Hello again from JNA!");
-			// close and save the active sheet
-			msExcel.getActiveWorkbook().Close(true);
+//			// close and save the active sheet
+//			msExcel.getActiveWorkbook().Close(true);
+//			msExcel.setVisible(true);
+//			// msExcel.newExcelBook();
+//			msExcel.getWorkbooks().Open(currentWorkingDir + "jnatest.xls");
+//			msExcel.getActiveSheet().getRange("A2").setValue("Hello again from JNA!");
 
+			class Listener extends AbstractComEventCallbackListener implements ComIAppEvents {
+				boolean SheetSelectionChange_called;
+				
+				@Override
+				public void errorReceivingCallbackEvent(String message, Exception exception) {
+				}
+
+				@Override
+				public void SheetSelectionChange(ComIWorksheet sheet, ComIRange target) {
+					SheetSelectionChange_called = true;
+				}
+				
+			};
+			Listener listener = new Listener();
+			msExcel.advise(ComIAppEvents.class, listener);
+//			
+//			msExcel.getActiveSheet().getRange("A5").Activate();
+//			
+//			Thread.currentThread().sleep(500);
+			
+			// close and save the active sheet
+			msExcel.getActiveWorkbook().Close(true);
+			
 			msExcel.Quit();
 			msExcel = null;
 		} catch (Exception e) {

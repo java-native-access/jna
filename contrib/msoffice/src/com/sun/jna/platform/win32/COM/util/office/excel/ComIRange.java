@@ -19,4 +19,7 @@ public interface ComIRange {
 	@ComProperty
 	void setValue(String value);
 
+	@ComMethod
+	void Activate();
+
 }

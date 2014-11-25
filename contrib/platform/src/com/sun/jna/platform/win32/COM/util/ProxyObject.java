@@ -95,7 +95,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
 	 */
 	public boolean equals(Object arg) {
-		if (arg instanceof ProxyObject) {
+		if (null==arg) {
+			return false;
+		} else if (arg instanceof ProxyObject) {
 			ProxyObject other = (ProxyObject) arg;
 			return this.getRawDispatch().equals(other.getRawDispatch());
 		} else if (Proxy.isProxyClass(arg.getClass())) {
@@ -232,6 +234,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					return rawCp.Advise(rawListener, pdwCookie);
 				}
 			});
+			int n = rawCp.Release(); //release before check in case check throws exception
 			COMUtils.checkRC(hr);
 
 			// return the cookie so that a call to stop listening can be made
@@ -260,6 +263,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					return rawCp.Unadvise(((ComEventCallbackCookie) cookie).getValue());
 				}
 			});
+			
+			rawCp.Release();
 			COMUtils.checkRC(hr);
 
 		} catch (Exception e) {

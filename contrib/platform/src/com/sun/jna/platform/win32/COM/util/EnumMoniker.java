@@ -135,8 +135,10 @@ public class EnumMoniker implements Iterable<IDispatch> {
 
 					Dispatch dispatch = new Dispatch(ppunkObject.getValue());
 					EnumMoniker.this.cacheNext();
-					
-					return new ProxyObject(IUnknown.class, dispatch, EnumMoniker.this.factory);
+					IDispatch d = EnumMoniker.this.factory.createProxy(IDispatch.class, dispatch);
+					//must release a COM Ref, GetObject returns a pointer with +1
+					int n = dispatch.Release();
+					return d;
 					
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);

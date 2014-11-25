@@ -36,6 +36,7 @@ public class ComEventCallbacks_Test {
 
 	@After
 	public void after() {
+		this.factory.disposeAll();
 		this.factory.getComThread().terminate(100);
 	}
 	
