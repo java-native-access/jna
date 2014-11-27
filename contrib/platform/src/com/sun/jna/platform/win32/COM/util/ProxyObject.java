@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -65,16 +66,29 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
 		this.factory = factory;
+		//make sure dispatch object knows we have a reference to it
+		// (for debug it is usefult to be able to see how many refs are present
+		int n = this.rawDispatch.AddRef();
 		factory.register(this);
 	}
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.dispose();
+		this.dispose(1);
 	}
 
-	public void dispose() {
-		this.factory.dispose(this);
+	public void dispose(int r) {
+		if (((Dispatch)this.rawDispatch).getPointer().equals(Pointer.NULL)) {
+			//do nothing, already disposed
+		} else {
+			for (int i=0; i<r;++i) {
+				//catch result to help with debug
+				int n = this.rawDispatch.Release();
+				int n2 = n;
+			}
+			this.factory.unregister(this, r);
+			((Dispatch)this.rawDispatch).setPointer(Pointer.NULL);
+		}
 	}
 
 	Class<?> theInterface;

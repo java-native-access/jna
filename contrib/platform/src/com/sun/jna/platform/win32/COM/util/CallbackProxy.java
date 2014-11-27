@@ -70,6 +70,7 @@ public class CallbackProxy implements IDispatchCallback {
 			@Override
 			public Thread newThread(Runnable r) {
 				Thread t = new Thread(r, "COM Event Callback executor");
+				t.setDaemon(true);
 				return t;
 			}
 		});

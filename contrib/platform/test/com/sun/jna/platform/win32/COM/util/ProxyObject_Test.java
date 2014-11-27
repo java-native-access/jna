@@ -102,5 +102,6 @@ public class ProxyObject_Test {
 		
 		assertTrue(res);
 		
+		comObj1.Quit(false, null,null);
 	}
 }

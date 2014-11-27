@@ -15,6 +15,8 @@ package com.sun.jna.platform.win32.COM.util;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -211,9 +213,9 @@ public class Factory {
 	WeakHashMap<ProxyObject, Integer> registeredObjects;
 	public void register(ProxyObject proxyObject) {
 		synchronized (this.registeredObjects) {
-			//make sure dispatch object knows we have a reference to it
-			// (for debug it is usefult to be able to see how many refs are present
-			int numRefs = proxyObject.rawDispatch.AddRef();
+			//ProxyObject identity resolves to the underlying native pointer value
+			// different java ProxyObjects will resolve to the same pointer
+			// thus we need to count the number of references.
 			if (this.registeredObjects.containsKey(proxyObject)) {
 				int r = this.registeredObjects.get(proxyObject);
 				this.registeredObjects.put(proxyObject, r+1);
@@ -223,17 +225,15 @@ public class Factory {
 		}
 	}
 	
-	public void dispose(ProxyObject proxyObject) {
+	public void unregister(ProxyObject proxyObject, int d) {
 		synchronized (this.registeredObjects) {
 			if (this.registeredObjects.containsKey(proxyObject)) {
 				int r = this.registeredObjects.get(proxyObject);
 				if (r > 1) {
-					this.registeredObjects.put(proxyObject, r-1);
+					this.registeredObjects.put(proxyObject, r-d);
 				} else {
 					this.registeredObjects.remove(proxyObject);
 				}
-				int numRefs = proxyObject.rawDispatch.Release();
-				int n=numRefs;
 			} else {
 				throw new RuntimeException("Tried to dispose a ProxyObject that is not registered");
 			}
@@ -243,13 +243,10 @@ public class Factory {
 	
 	public void disposeAll() {
 		synchronized (this.registeredObjects) {
-			for(ProxyObject proxyObject : this.registeredObjects.keySet()) {
+			Set<ProxyObject> s = new HashSet<ProxyObject>(this.registeredObjects.keySet());
+			for(ProxyObject proxyObject : s) {
 				int r = this.registeredObjects.get(proxyObject);
-				for (int i=0; i<r;++i) {
-					//catch the result to help with debug and see howmany refs are left.
-					int n = proxyObject.rawDispatch.Release();
-					int n2 = n;
-				}
+				proxyObject.dispose(r);
 			}
 			this.registeredObjects.clear();
 		}
