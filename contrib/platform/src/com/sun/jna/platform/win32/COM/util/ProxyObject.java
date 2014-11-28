@@ -17,6 +17,7 @@ import java.lang.reflect.Proxy;
 import java.util.Date;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
@@ -107,6 +108,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * IID_IUnknown must always return the same physical pointer value.'
 	 * 
 	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
+	 * 
+	 * therefore we can compare the pointers
+	 * 
 	 */
 	public boolean equals(Object arg) {
 		if (null==arg) {
@@ -117,21 +121,27 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		} else if (Proxy.isProxyClass(arg.getClass())) {
 			InvocationHandler handler = Proxy.getInvocationHandler(arg);
 			if (handler instanceof ProxyObject) {
-				ProxyObject other = (ProxyObject) handler;
-
-				IUnknown unk1 = this.queryInterface(IUnknown.class);
-				IUnknown unk2 = other.queryInterface(IUnknown.class);
-
-				InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
-				InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
-
-				ProxyObject po1 = (ProxyObject) h1;
-				ProxyObject po2 = (ProxyObject) h2;
-
-				IDispatch d1 = po1.getRawDispatch();
-				IDispatch d2 = po2.getRawDispatch();
-
-				return d1.equals(d2);
+				try {
+					ProxyObject other = (ProxyObject) handler;
+	
+					IUnknown unk1 = this.queryInterface(IUnknown.class);
+					IUnknown unk2 = other.queryInterface(IUnknown.class);
+	
+					InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
+					InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
+	
+					ProxyObject po1 = (ProxyObject) h1;
+					ProxyObject po2 = (ProxyObject) h2;
+	
+					IDispatch d1 = po1.getRawDispatch();
+					IDispatch d2 = po2.getRawDispatch();
+	
+					return d1.equals(d2);
+				} catch (Exception e) {
+					//if can't do this comparison, return false
+					// (queryInterface may throw if COM objects become invalid)
+					return false;
+				}
 			} else {
 				return false;
 			}
@@ -201,7 +211,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	// ---------------------- IConnectionPoint ----------------------
-	ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException {
+	ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
 		// query for ConnectionPointContainer
 		IConnectionPointContainer cpc = this.queryInterface(IConnectionPointContainer.class);
 		Dispatch rawCpcDispatch = (Dispatch) cpc.getRawDispatch();
@@ -492,9 +502,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 			return this.oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new COMException(e);
 		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
+			throw new COMException(e);
+		} catch (TimeoutException e) {
+			throw new COMException(e);
 		}
 	}
 
@@ -555,9 +567,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			COMUtils.checkRC(hr, pExcepInfo, puArgErr);
 			return hr;
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			throw new COMException(e);
 		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
+			throw new COMException(e);
+		} catch (TimeoutException e) {
+			throw new COMException(e);
 		}
 	}
 }

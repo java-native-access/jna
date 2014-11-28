@@ -30,13 +30,15 @@ public class ComThread {
 	ExecutorService executor;
 	Runnable firstTask;
 	boolean requiresInitialisation;
-
-	public ComThread(final String threadName) {
-		this(threadName, Ole32.COINIT_MULTITHREADED);
+	long timeoutMilliseconds;
+	
+	public ComThread(final String threadName, long timeoutMilliseconds) {
+		this(threadName, timeoutMilliseconds, Ole32.COINIT_MULTITHREADED);
 	}
 	
-	public ComThread(final String threadName, final int coinitialiseExFlag) {
+	public ComThread(final String threadName, long timeoutMilliseconds, final int coinitialiseExFlag) {
 		this.requiresInitialisation = true;
+		this.timeoutMilliseconds = timeoutMilliseconds;
 		this.firstTask = new Runnable() {
 			@Override
 			public void run() {
@@ -110,11 +112,11 @@ public class ComThread {
 		}
 	}
 
-	public <T> T execute(Callable<T> task) throws InterruptedException, ExecutionException {
+	public <T> T execute(Callable<T> task) throws TimeoutException, InterruptedException, ExecutionException {
 		if (this.requiresInitialisation) {
 			executor.execute(firstTask);
 		}
-		return executor.submit(task).get();
+		return executor.submit(task).get(this.timeoutMilliseconds, TimeUnit.MILLISECONDS);
 	}
 
 }

@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMException;
@@ -56,6 +57,8 @@ public class RunningObjectTable implements IRunningObjectTable {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
 			throw new RuntimeException(e);
 		}
 

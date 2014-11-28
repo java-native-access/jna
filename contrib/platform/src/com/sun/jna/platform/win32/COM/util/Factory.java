@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -40,12 +41,12 @@ public class Factory {
 	//public static Factory INSTANCE = new Factory();
 	
 	/**
-	 * Creates a utility COM Factory and a ComThreadon which all COM calls are executed.
+	 * Creates a utility COM Factory and a ComThread on which all COM calls are executed.
 	 * NOTE: Remember to call factory.getComThread().terminate() at some appropriate point.
 	 * 
 	 */
 	public Factory() {
-		this(new ComThread("Default Factory COM Thread"));
+		this(new ComThread("Default Factory COM Thread", 5000));
 	}
 
 	public Factory(ComThread comThread) {
@@ -93,6 +94,8 @@ public class Factory {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -142,6 +145,8 @@ public class Factory {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -177,6 +182,8 @@ public class Factory {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
@@ -204,6 +211,8 @@ public class Factory {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
 			throw new RuntimeException(e);
 		}
 	}

@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM.util;
 import java.util.Iterator;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
@@ -53,6 +54,8 @@ public class EnumMoniker implements Iterable<IDispatch> {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
 			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
+			throw new RuntimeException(e);
 		}
 
 		this.cacheNext();
@@ -88,6 +91,8 @@ public class EnumMoniker implements Iterable<IDispatch> {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} catch (ExecutionException e) {
+			throw new RuntimeException(e);
+		} catch (TimeoutException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -143,6 +148,8 @@ public class EnumMoniker implements Iterable<IDispatch> {
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				} catch (ExecutionException e) {
+					throw new RuntimeException(e);
+				} catch (TimeoutException e) {
 					throw new RuntimeException(e);
 				}
 
