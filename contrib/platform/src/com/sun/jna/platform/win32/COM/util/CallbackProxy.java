@@ -14,7 +14,7 @@ package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -148,7 +148,7 @@ public class CallbackProxy implements IDispatchCallback {
 				try {
 					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
 						Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
-						if (eventMethod.getParameterCount() != jargs.size()) {
+						if (eventMethod.getParameterTypes().length != jargs.size()) {
 							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
 									"Trying to invoke method " + eventMethod + " with " + jargs.size() + " arguments",
 									null);
@@ -156,18 +156,18 @@ public class CallbackProxy implements IDispatchCallback {
 							try {
 								// need to convert arguments maybe
 								List<Object> margs = new ArrayList<Object>();
-								Parameter[] params = eventMethod.getParameters();
-								for (int i = 0; i < eventMethod.getParameterCount(); ++i) {
-									Parameter param = params[i];
+								Class<?>[] params = eventMethod.getParameterTypes();
+								for (int i = 0; i < eventMethod.getParameterTypes().length; ++i) {
+									Class<?> paramType = params[i];
 									Object jobj = jargs.get(i);
-									if (jobj != null && param.getType().getAnnotation(ComInterface.class) != null) {
+									if (jobj != null && paramType.getAnnotation(ComInterface.class) != null) {
 										if (jobj instanceof IUnknown) {
 											IUnknown unk = (IUnknown) jobj;
-											Object mobj = unk.queryInterface(param.getType());
+											Object mobj = unk.queryInterface(paramType);
 											margs.add(mobj);
 										} else {
 											throw new RuntimeException("Cannot convert argument " + jobj.getClass()
-													+ " to ComInterface " + param.getType());
+													+ " to ComInterface " + paramType);
 										}
 									} else {
 										margs.add(jobj);
