@@ -65,6 +65,8 @@ public class ComEventCallbacks_Test {
 	interface ComIDocuments {
 		@ComMethod
 		ComIDocument Open(String fileName);
+		@ComMethod
+		ComIDocument Add();
 	}
 	
 	@ComInterface(iid="{0002096B-0000-0000-C000-000000000046}")
@@ -184,8 +186,7 @@ public class ComEventCallbacks_Test {
 		wordApp.setVisible(true);
 		ApplicationEvents4_EventListener listener = new ApplicationEvents4_EventListener();
 		wordApp.advise(ApplicationEvents4_Event.class, listener);
-		
-		wordApp.getDocuments().Open("C:\\temp\\test.doc");
+		wordApp.getDocuments().Add();
 		
 		//bring word doc to front
 		HWND h = User32.INSTANCE.FindWindow("OpusApp", null);
@@ -217,7 +218,7 @@ public class ComEventCallbacks_Test {
 		ApplicationEvents4_EventListener listener = new ApplicationEvents4_EventListener();
 		wordApp.advise(ApplicationEvents4_Event.class, listener);
 		
-		ComIDocument doc = wordApp.getDocuments().Open("C:\\temp\\test.doc");
+		ComIDocument doc = wordApp.getDocuments().Add();
 
 		doc.Select();
 				

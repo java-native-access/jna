@@ -31,24 +31,30 @@ public class ComThread {
 	Runnable firstTask;
 	boolean requiresInitialisation;
 	long timeoutMilliseconds;
+	UncaughtExceptionHandler uncaughtExceptionHandler;
 	
-	public ComThread(final String threadName, long timeoutMilliseconds) {
-		this(threadName, timeoutMilliseconds, Ole32.COINIT_MULTITHREADED);
+	public ComThread(final String threadName, long timeoutMilliseconds, UncaughtExceptionHandler uncaughtExceptionHandler) {
+		this(threadName, timeoutMilliseconds, uncaughtExceptionHandler, Ole32.COINIT_MULTITHREADED);
 	}
 	
-	public ComThread(final String threadName, long timeoutMilliseconds, final int coinitialiseExFlag) {
+	public ComThread(final String threadName, long timeoutMilliseconds, UncaughtExceptionHandler uncaughtExceptionHandler, final int coinitialiseExFlag) {
 		this.requiresInitialisation = true;
 		this.timeoutMilliseconds = timeoutMilliseconds;
+		this.uncaughtExceptionHandler = uncaughtExceptionHandler;
 		this.firstTask = new Runnable() {
 			@Override
 			public void run() {
-				//If we do not use COINIT_MULTITHREADED, it is necessary to have
-				// a message loop see -
-				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5529/Understanding-COM-Apartments-Part-I.htm]
-				// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5533/Understanding-COM-Apartments-Part-II.htm]
-				WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, coinitialiseExFlag);
-				COMUtils.checkRC(hr);
-				ComThread.this.requiresInitialisation = false;
+				try {
+					//If we do not use COINIT_MULTITHREADED, it is necessary to have
+					// a message loop see -
+					// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5529/Understanding-COM-Apartments-Part-I.htm]
+					// [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5533/Understanding-COM-Apartments-Part-II.htm]
+					WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, coinitialiseExFlag);
+					COMUtils.checkRC(hr);
+					ComThread.this.requiresInitialisation = false;
+				} catch (Throwable t) {
+					ComThread.this.uncaughtExceptionHandler.uncaughtException(Thread.currentThread(), t);
+				}
 			}
 		};
 		executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
@@ -68,6 +74,7 @@ public class ComThread {
 					@Override
 					public void uncaughtException(Thread t, Throwable e) {
 						ComThread.this.requiresInitialisation = true;
+						ComThread.this.uncaughtExceptionHandler.uncaughtException(t, e);
 					}
 				});
 

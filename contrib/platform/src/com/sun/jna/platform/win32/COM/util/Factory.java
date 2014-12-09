@@ -12,9 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
-import java.lang.ref.WeakReference;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
@@ -46,7 +44,12 @@ public class Factory {
 	 * 
 	 */
 	public Factory() {
-		this(new ComThread("Default Factory COM Thread", 5000));
+		this(new ComThread("Default Factory COM Thread", 5000, new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				//ignore
+			}
+		}));
 	}
 
 	public Factory(ComThread comThread) {
