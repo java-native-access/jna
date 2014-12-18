@@ -319,6 +319,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
 		Object jobj = Convert.toJavaObject(result);
+		if (IComEnum.class.isAssignableFrom(returnType)) {
+			return (T)Convert.toComEnum((Class<? extends IComEnum>)returnType, jobj);
+		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
 			T t = this.factory.createProxy(returnType, d);
@@ -345,6 +348,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		COMUtils.checkRC(hr);
 
 		Object jobj = Convert.toJavaObject(result);
+		if (IComEnum.class.isAssignableFrom(returnType)) {
+			return (T)Convert.toComEnum((Class<? extends IComEnum>)returnType, jobj);
+		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
 			T t = this.factory.createProxy(returnType, d);

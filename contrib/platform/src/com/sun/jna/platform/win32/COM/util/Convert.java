@@ -13,6 +13,8 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
 
@@ -69,5 +71,22 @@ public class Convert {
 			return ((WTypes.BSTR) vobj).getValue();
 		}
 		return vobj;
+	}
+	
+	public static <T extends IComEnum> T toComEnum(Class<T> enumType, Object value) {
+		try {
+			Method m = enumType.getMethod("values");
+			T[] values = (T[])m.invoke(null);
+			for(T t: values) {
+				if (value.equals(t.getValue())) {
+					return t;
+				}
+			}
+		} catch (NoSuchMethodException e) {
+		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException e) {
+		} catch (InvocationTargetException e) {
+		}
+		return null;
 	}
 }
