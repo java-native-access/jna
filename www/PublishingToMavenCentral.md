@@ -52,7 +52,7 @@ full release is performed).
 Publish Release
 ---------------
 
-* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
+* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-jna-platform.xml](https://github.com/twall/jna/blob/master/pom-jna-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/twall/jna/blob/master/build.xml).
 * Run `ant -Dmaven-release=true stage`. This uploads current checkout to [maven.java.net](https://maven.java.net).
 * Follow steps from [Releasing the Deployment](http://central.sonatype.org/pages/releasing-the-deployment.html).
