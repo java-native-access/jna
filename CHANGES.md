@@ -37,6 +37,7 @@ Bug Fixes
 * Dispose all native resources when JNA's native library is unloaded - Paul Grütter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
 * Weakly hold registered Direct-mapped classes - [@twall](https://github.com/twall).
 * [#382](https://github.com/twall/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
+* Fix publish doc links - [@bhamail](https://github.com/bhamail).
 
 Release 4.1
 ===========
