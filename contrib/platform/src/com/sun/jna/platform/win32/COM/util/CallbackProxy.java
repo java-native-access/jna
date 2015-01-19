@@ -12,9 +12,9 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,12 +66,18 @@ public class CallbackProxy implements IDispatchCallback {
 		this.listenedToRiid = this.createRIID(comEventCallbackInterface);
 		this.dsipIdMap = this.createDispIdMap(comEventCallbackInterface);
 		this.dispatchListener = new DispatchListener(this);
-		this.executorService = Executors.newCachedThreadPool(new ThreadFactory() {
+		this.executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
 			@Override
 			public Thread newThread(Runnable r) {
-				Thread t = new Thread(r, "COM Event Callback executor");
-				t.setDaemon(true);
-				return t;
+				Thread thread = new Thread(r, "COM Event Callback executor");
+				thread.setDaemon(true);
+				thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+					@Override
+					public void uncaughtException(Thread t, Throwable e) {
+						CallbackProxy.this.factory.comThread.uncaughtExceptionHandler.uncaughtException(t, e);
+					}
+				});
+				return thread;
 			}
 		});
 	}

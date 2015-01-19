@@ -163,9 +163,16 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	// --------------------- InvocationHandler -----------------------------
 	@Override
-	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
-			throws Throwable {
-
+	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
+		return this.invokeSynchronised(proxy, method, args);
+	}
+	
+	/*
+	 * may not necessary for this method to be synchronised as all calls to COM are on their
+	 * own , single, thread. However, might be best not to overlap calls to COM object
+	 * with advise,unadvise,queryInterface, etc.
+	 */
+	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
 		if (method.equals(Object.class.getMethod("toString"))) {
 			return this.toString();
 		} else if (method.equals(Object.class.getMethod("equals", Object.class))) {

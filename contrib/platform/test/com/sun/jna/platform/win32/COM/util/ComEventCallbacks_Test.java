@@ -236,4 +236,33 @@ public class ComEventCallbacks_Test {
 
 	}
 
+//	@Test
+//	public void WindowSelectionChanged_jvmCrash() {
+//		// Create word object
+//		ComIMsWordApp wordObj = factory.createObject(ComIMsWordApp.class);
+//		ComIApplication wordApp = wordObj.queryInterface(ComIApplication.class);
+//		wordApp.setVisible(true);
+//		ApplicationEvents4_EventListener listener = new ApplicationEvents4_EventListener();
+//		wordApp.advise(ApplicationEvents4_Event.class, listener);
+//		
+//
+//		
+//		ComIDocument doc = wordApp.getDocuments().Add();
+//
+//		doc.Select();
+//				
+//		//Wait for event to happen
+//		try {
+//			Thread.sleep(2000000);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		Assert.assertNotNull(listener.WindowSelectionChange_called);
+//		Assert.assertTrue(listener.WindowSelectionChange_called);
+//		
+//		wordApp.Quit(false, null, null);
+//
+//	}
+	
 }

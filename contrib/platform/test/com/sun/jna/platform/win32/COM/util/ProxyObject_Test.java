@@ -104,4 +104,15 @@ public class ProxyObject_Test {
 		
 		comObj1.Quit(false, null,null);
 	}
+	
+	@Test
+	public void accessWhilstDisposing() {
+		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
+		
+		//TODO: how to test this?
+		
+		this.factory.disposeAll();
+		
+	}
+	
 }
