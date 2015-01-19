@@ -375,6 +375,18 @@ com/sun/jna/linux-ia64/libjnidispatch.so;processor=ia64;osname=linux,
 				</executions>
 			</plugin>
 			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<testSource>1.6</testSource>
+					<testTarget>1.6</testTarget>
+				</configuration>
+			</plugin>
+			
 		</plugins>
 	</build>
 	
