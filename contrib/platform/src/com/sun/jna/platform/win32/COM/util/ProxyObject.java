@@ -63,6 +63,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		IRawDispatchHandle {
 
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
+		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
 		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
@@ -70,7 +71,42 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		//make sure dispatch object knows we have a reference to it
 		// (for debug it is usefult to be able to see how many refs are present
 		int n = this.rawDispatch.AddRef();
+		this.getUnknownId(); //pre cache it
 		factory.register(this);
+	}
+	
+	//cached value of the IUnknown interface pointer
+	// Rules of COM state that querying for the IUnknown interface must return an identical pointer value
+	long unknownId;
+	long getUnknownId() {
+		if (-1 == this.unknownId) {
+			try {
+	
+				final PointerByReference ppvObject = new PointerByReference();
+	
+//				HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
+//					@Override
+//					public HRESULT call() throws Exception {
+						IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+						HRESULT hr = ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
+//					}
+//				});
+	
+				if (WinNT.S_OK.equals(hr)) {
+					Dispatch dispatch = new Dispatch(ppvObject.getValue());
+					this.unknownId = Pointer.nativeValue(dispatch.getPointer());
+					// QueryInterface returns a COM object pointer with a +1 reference, we must drop one,
+					// Note: createProxy adds one;
+					int n = dispatch.Release();
+				} else {
+					String formatMessageFromHR = Kernel32Util.formatMessage(hr);
+					throw new COMException("getUnknownId: " + formatMessageFromHR);
+				}
+			} catch (Exception e) {
+				throw new COMException("Error occured when trying get Unknown Id ", e);
+			}
+		}
+		return this.unknownId;
 	}
 
 	@Override
@@ -117,26 +153,26 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return false;
 		} else if (arg instanceof ProxyObject) {
 			ProxyObject other = (ProxyObject) arg;
-			return this.getRawDispatch().equals(other.getRawDispatch());
+			return this.getUnknownId() == other.getUnknownId();//this.getRawDispatch().equals(other.getRawDispatch());
 		} else if (Proxy.isProxyClass(arg.getClass())) {
 			InvocationHandler handler = Proxy.getInvocationHandler(arg);
 			if (handler instanceof ProxyObject) {
 				try {
 					ProxyObject other = (ProxyObject) handler;
-	
-					IUnknown unk1 = this.queryInterface(IUnknown.class);
-					IUnknown unk2 = other.queryInterface(IUnknown.class);
-	
-					InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
-					InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
-	
-					ProxyObject po1 = (ProxyObject) h1;
-					ProxyObject po2 = (ProxyObject) h2;
-	
-					IDispatch d1 = po1.getRawDispatch();
-					IDispatch d2 = po2.getRawDispatch();
-	
-					return d1.equals(d2);
+					return this.getUnknownId() == other.getUnknownId();
+//					IUnknown unk1 = this.queryInterface(IUnknown.class);
+//					IUnknown unk2 = other.queryInterface(IUnknown.class);
+//	
+//					InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
+//					InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
+//	
+//					ProxyObject po1 = (ProxyObject) h1;
+//					ProxyObject po2 = (ProxyObject) h2;
+//	
+//					IDispatch d1 = po1.getRawDispatch();
+//					IDispatch d2 = po2.getRawDispatch();
+//	
+//					return d1.equals(d2);
 				} catch (Exception e) {
 					//if can't do this comparison, return false
 					// (queryInterface may throw if COM objects become invalid)
@@ -152,13 +188,14 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	@Override
 	public int hashCode() {
+		return Long.valueOf(this.getUnknownId()).intValue();
 		// this returns the native pointer peer value
-		return this.getRawDispatch().hashCode();
+		//return this.getRawDispatch().hashCode();
 	}
 
 	@Override
 	public String toString() {
-		return this.theInterface.getName() + "{" + this.hashCode() + "}";
+		return this.theInterface.getName() + "{unk=" + this.hashCode() + "}";
 	}
 
 	// --------------------- InvocationHandler -----------------------------
