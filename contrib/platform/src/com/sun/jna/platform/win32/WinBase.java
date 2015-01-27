@@ -153,6 +153,23 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
     int CREATE_NO_WINDOW = 0x08000000;
 
+    /* File encryption status */
+    int FILE_ENCRYPTABLE = 0;
+    int FILE_IS_ENCRYPTED = 1;
+    int FILE_SYSTEM_ATTR = 2;
+    int FILE_ROOT_DIR = 3;
+    int FILE_SYSTEM_DIR = 4;
+    int FILE_UNKNOWN = 5;
+    int FILE_SYSTEM_NOT_SUPPORT = 6;
+    int FILE_USER_DISALLOWED = 7;
+    int FILE_READ_ONLY = 8;
+    int FILE_DIR_DISALOWED = 9;
+    
+    /* Open encrypted files raw flags */
+    int CREATE_FOR_IMPORT = 1;
+    int CREATE_FOR_DIR = 2;
+    int OVERWRITE_HIDDEN = 4;
+    
     /* Invalid return values */
     int INVALID_FILE_SIZE           = 0xFFFFFFFF;
     int INVALID_SET_FILE_POINTER    = 0xFFFFFFFF;
@@ -985,5 +1002,29 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
          * Note used - serves as an upper limit in case one wants to go through all the values
          */
         int ComputerNameMax = 8;
+    }
+
+    /**
+     * An application-defined callback function used with ReadEncryptedFileRaw.
+     * The system calls ExportCallback one or more times, each time with a block
+     * of the encrypted file's data, until it has received all of the file data.
+     * ExportCallback writes the encrypted file's data to another storage media,
+     * usually for purposes of backing up the file.
+     */
+    public interface FE_EXPORT_FUNC extends Callback {
+        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                              ULONG ulLength);
+    }
+
+    /**
+     * An application-defined callback function used with WriteEncryptedFileRaw.
+     * The system calls ImportCallback one or more times, each time to retrieve a
+     * portion of a backup file's data. ImportCallback reads the data from a
+     * backup file sequentially and restores the data, and the system continues
+     * calling it until it has read all of the backup file data.
+     */
+    public interface FE_IMPORT_FUNC extends Callback {
+        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                              ULONGByReference ulLength);
     }
 }
