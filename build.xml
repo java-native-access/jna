@@ -293,12 +293,18 @@
       <path id="test.libs">
         <fileset dir="lib">
           <include name="junit.jar"/>
+          <include name="logback-core-1.1.2.jar"/>
+          <include name="logback-classic-1.1.2.jar"/>
         </fileset>
         <fileset dir="lib/test"/>
         <pathelement path="${classes}"/>
       </path>
     </path>
-    <path id="compile.path"/>
+    <path id="compile.path">
+      <fileset dir="lib">
+        <include name="slf4j-api-1.7.10.jar"/>
+      </fileset>
+    </path>
     <path id="src.path">
       <pathelement location="${src}"/>
     </path>
@@ -486,6 +492,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/w32ce-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/w32ce-arm"/>
+      <zipfileset src="lib/slf4j-api-1.7.10.jar"/>
     </jar>
     <zip zipfile="${build}/${minjar}">
       <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>

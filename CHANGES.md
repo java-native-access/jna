@@ -24,6 +24,7 @@ Features
 * [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants to `com.sun.jna.platform.win32.WinNT` - [@apsk](https://github.com/apsk).
 * Allow interoperation with JNI revision changes - [@twall](https://github.com/twall).
 * [#391](https://github.com/twall/jna/pull/391): Added `EncryptFile`, `DecryptFile`, `FileEncryptionStatus`, `EncryptionDisable`, `OpenEncryptedFileRaw`, `ReadEncryptedFileRaw`, `WriteEncryptedFileRaw`, and `CloseEncryptedFileRaw` to `com.sun.jna.platform.win32.Advapi32` with related `Advapi32Util` helpers - [@khalidq](https://github.com/khalidq).
+* [#394](https://github.com/twall/jna/pull/394): Set up logging - [@khalidq](https://github.com/khalidq).
 
 Bug Fixes
 ---------
