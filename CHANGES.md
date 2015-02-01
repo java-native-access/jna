@@ -36,6 +36,7 @@ Bug Fixes
 * Disable WebStart tests - [@twall](https://github.com/twall).
 * Dispose all native resources when JNA's native library is unloaded - Paul Grütter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
 * Weakly hold registered Direct-mapped classes - [@twall](https://github.com/twall).  
+* [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
 
 Release 4.1
 ===========
