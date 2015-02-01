@@ -93,7 +93,7 @@ Using the Library
 * [Platform Library](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/twall/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/twall/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://twall.github.com/jna/4.1.0/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://twall.github.com/jna/4.1.0/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================

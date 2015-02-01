@@ -17,6 +17,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -35,6 +37,7 @@ import com.sun.jna.win32.W32APIOptions;
 import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import static com.sun.jna.platform.win32.WinDef.DWORD;
 import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinDef.ULONG;
 import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 
@@ -1558,4 +1561,153 @@ public interface Advapi32 extends StdCallLibrary {
                                PRIVILEGE_SET PrivilegeSet,
                                DWORDByReference PrivilegeSetLength,
                                DWORDByReference GrantedAccess, BOOLByReference AccessStatus);
+	
+	/**
+	 * Encrypts a file or directory. All data streams in a file are encrypted. All
+	 * new files created in an encrypted directory are encrypted.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be encrypted.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean EncryptFile(WString lpFileName);
+
+	/**
+	 * Decrypts an encrypted file or directory.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be decrypted.
+	 * @param dwReserved
+	 *         Reserved; must be zero.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean DecryptFile(WString lpFileName, DWORD dwReserved);
+
+	/**
+	 * Retrieves the encryption status of the specified file.
+	 *
+	 * @param lpFileName
+	 *         The name of the file.
+	 * @param lpStatus
+	 *         A pointer to a variable that receives the encryption status of the
+	 *         file.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
+
+	/**
+	 * Disables or enables encryption of the specified directory and the files in
+	 * it. It does not affect encryption of subdirectories below the indicated
+	 * directory.
+	 *
+	 * @param DirPath
+	 *         The name of the directory for which to enable or disable
+	 *         encryption.
+	 * @param Disable
+	 *         Indicates whether to disable encryption (TRUE) or enable it
+	 *         (FALSE).
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean EncryptionDisable(WString DirPath, boolean Disable);
+
+	/**
+	 * Opens an encrypted file in order to backup (export) or restore (import) the
+	 * file. This is one of a group of Encrypted File System (EFS) functions that
+	 * is intended to implement backup and restore functionality, while
+	 * maintaining files in their encrypted state.
+	 *
+	 * @param lpFileName
+	 *         The name of the file to be opened. The string must consist of
+	 *         characters from the Windows character set.
+	 * @param ulFlags
+	 *         The operation to be performed.
+	 * @param pvContext
+	 *         The address of a context block that must be presented in subsequent
+	 *         calls to ReadEncryptedFileRaw, WriteEncryptedFileRaw, or
+	 *         CloseEncryptedFileRaw. Do not modify it.
+	 * @return If the function succeeds, it returns ERROR_SUCCESS. If the function
+	 * fails, it returns a nonzero error code defined in WinError.h. You can use
+	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
+	 * text description of the error.
+	 */
+	public int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags,
+                                  PointerByReference pvContext);
+
+	/**
+	 * Backs up (export) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pfExportCallback
+	 *         A pointer to the export callback function. The system calls the
+	 *         callback function multiple times, each time passing a block of the
+	 *         file's data to the callback function until the entire file has been
+	 *         read. For more information, see ExportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	public int ReadEncryptedFileRaw(FE_EXPORT_FUNC pfExportCallback, 
+                                  Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Restores (import) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in.
+	 *
+	 * @param pfImportCallback
+	 *         A pointer to the import callback function. The system calls the
+	 *         callback function multiple times, each time passing a buffer that
+	 *         will be filled by the callback function with a portion of backed-up
+	 *         file's data. When the callback function signals that the entire
+	 *         file has been processed, it tells the system that the restore
+	 *         operation is finished. For more information, see ImportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	public int WriteEncryptedFileRaw(FE_IMPORT_FUNC pfImportCallback, 
+                                   Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Closes an encrypted file after a backup or restore operation, and frees
+	 * associated system resources. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The
+	 *         OpenEncryptedFileRaw function returns the context block.
+	 */
+	public void CloseEncryptedFileRaw(Pointer pvContext);
 }
