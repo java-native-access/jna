@@ -106,6 +106,18 @@ public class ProxyObject_Test {
 	}
 	
 	@Test
+	public void notEquals() {
+		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
+		MsWordApp comObj2 = this.factory.createObject(MsWordApp.class);
+
+		boolean res = comObj1.equals(comObj2);
+		
+		assertFalse(res);
+		
+		comObj1.Quit(false, null,null);
+	}
+	
+	@Test
 	public void accessWhilstDisposing() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
 		
