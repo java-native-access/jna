@@ -41,6 +41,9 @@ public class MSOfficeWordDemo {
 		ComIApplication msWord = null;
 		Factory factory = null;
 		try {
+			String tempDir = System.getProperty("java.io.tmpdir");
+			System.out.println("Files in temp dir: "+tempDir);
+			
 			factory = new Factory();
 			msWordObject = factory.createObject(ComWord_Application.class);
 			msWord = msWordObject.queryInterface(ComIApplication.class);
@@ -55,10 +58,10 @@ public class MSOfficeWordDemo {
 			Thread.sleep(1000);
 			// save in different formats
 			// pdf format is only supported in MSWord 2007 and above
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestSaveAs.doc", WdSaveFormat.wdFormatDocument);
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", WdSaveFormat.wdFormatPDF);
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", WdSaveFormat.wdFormatRTF);
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestSaveAs.html", WdSaveFormat.wdFormatHTML);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestSaveAs.doc", WdSaveFormat.wdFormatDocument);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestSaveAs.pdf", WdSaveFormat.wdFormatPDF);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestSaveAs.rtf", WdSaveFormat.wdFormatRTF);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestSaveAs.html", WdSaveFormat.wdFormatHTML);
 			// close and save the document
 			msWord.getActiveDocument().Close(false);
 			msWord.getDocuments().Add();
@@ -67,17 +70,17 @@ public class MSOfficeWordDemo {
 					.TypeText(
 							"Hello from JNA! \n Please notice that JNA can control MS Word via the new COM interface! \nHere we are creating a new word document and we save it to the 'TEMP' directory!");
 			// save with no user prompt
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestNewDoc1.docx", WdSaveFormat.wdFormatDocumentDefault);
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestNewDoc2.docx", WdSaveFormat.wdFormatDocumentDefault);
-			msWord.getActiveDocument().SaveAs("C:\\TEMP\\jnatestNewDoc3.docx", WdSaveFormat.wdFormatDocumentDefault);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestNewDoc1.docx", WdSaveFormat.wdFormatDocumentDefault);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestNewDoc2.docx", WdSaveFormat.wdFormatDocumentDefault);
+			msWord.getActiveDocument().SaveAs(tempDir+"\\jnatestNewDoc3.docx", WdSaveFormat.wdFormatDocumentDefault);
 			// close and save the document
 			msWord.getActiveDocument().Close(false);
 			// open 3 documents
-			msWord.getDocuments().Open("C:\\TEMP\\jnatestNewDoc1.docx");
+			msWord.getDocuments().Open(tempDir+"\\jnatestNewDoc1.docx");
 			msWord.getSelection().TypeText("Hello some changes from JNA!\n");
-			msWord.getDocuments().Open("C:\\TEMP\\jnatestNewDoc2.docx");
+			msWord.getDocuments().Open(tempDir+"\\jnatestNewDoc2.docx");
 			msWord.getSelection().TypeText("Hello some changes from JNA!\n");
-			msWord.getDocuments().Open("C:\\TEMP\\jnatestNewDoc3.docx");
+			msWord.getDocuments().Open(tempDir+"\\jnatestNewDoc3.docx");
 			msWord.getSelection().TypeText("Hello some changes from JNA!\n");
 			// save the document and prompt the user
 			msWord.getDocuments().Save(false, WdOriginalFormat.wdPromptUser);

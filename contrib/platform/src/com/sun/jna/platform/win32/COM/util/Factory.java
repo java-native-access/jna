@@ -36,8 +36,6 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Factory {
 
-	//public static Factory INSTANCE = new Factory();
-	
 	/**
 	 * Creates a utility COM Factory and a ComThread on which all COM calls are executed.
 	 * NOTE: Remember to call factory.getComThread().terminate() at some appropriate point.

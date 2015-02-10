@@ -268,7 +268,7 @@ public interface Ole32 extends StdCallLibrary {
     void CoTaskMemFree(Pointer pv);
 
     /**
-     * Retrieves a pointer to the default OLE task memory allocator
+     * Retrieves a pointer to the default OLE task memory allocator.
      * 
      * {@code
      *   HRESULT CoGetMalloc(

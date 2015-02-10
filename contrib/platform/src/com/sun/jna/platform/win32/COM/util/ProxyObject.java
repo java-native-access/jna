@@ -56,8 +56,9 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * Ole32.INSTANCE.CoInitialize must be called on the current thread before using
- * this object
+ * This object acts as the invocation handler for interfaces annotated with ComInterface.
+ * It wraps all (necessary) low level COM calls and executes them on a 'ComThread' held by
+ * the Factory object. 
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
 		IRawDispatchHandle {
@@ -84,13 +85,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	
 				final PointerByReference ppvObject = new PointerByReference();
 	
-//				HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
-//					@Override
-//					public HRESULT call() throws Exception {
-						IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-						HRESULT hr = ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
-//					}
-//				});
+				IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+				HRESULT hr = ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
 	
 				if (WinNT.S_OK.equals(hr)) {
 					Dispatch dispatch = new Dispatch(ppvObject.getValue());
@@ -153,26 +149,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			return false;
 		} else if (arg instanceof ProxyObject) {
 			ProxyObject other = (ProxyObject) arg;
-			return this.getUnknownId() == other.getUnknownId();//this.getRawDispatch().equals(other.getRawDispatch());
+			return this.getUnknownId() == other.getUnknownId();
 		} else if (Proxy.isProxyClass(arg.getClass())) {
 			InvocationHandler handler = Proxy.getInvocationHandler(arg);
 			if (handler instanceof ProxyObject) {
 				try {
 					ProxyObject other = (ProxyObject) handler;
 					return this.getUnknownId() == other.getUnknownId();
-//					IUnknown unk1 = this.queryInterface(IUnknown.class);
-//					IUnknown unk2 = other.queryInterface(IUnknown.class);
-//	
-//					InvocationHandler h1 = Proxy.getInvocationHandler(unk1);
-//					InvocationHandler h2 = Proxy.getInvocationHandler(unk2);
-//	
-//					ProxyObject po1 = (ProxyObject) h1;
-//					ProxyObject po2 = (ProxyObject) h2;
-//	
-//					IDispatch d1 = po1.getRawDispatch();
-//					IDispatch d2 = po2.getRawDispatch();
-//	
-//					return d1.equals(d2);
 				} catch (Exception e) {
 					//if can't do this comparison, return false
 					// (queryInterface may throw if COM objects become invalid)
@@ -207,7 +190,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	/*
 	 * may not necessary for this method to be synchronised as all calls to COM are on their
 	 * own , single, thread. However, might be best not to overlap calls to COM object
-	 * with advise,unadvise,queryInterface, etc.
+	 * with advise, unadvise, queryInterface, etc.
 	 */
 	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
 		if (method.equals(Object.class.getMethod("toString"))) {
