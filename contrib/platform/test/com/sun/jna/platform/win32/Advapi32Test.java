@@ -12,7 +12,10 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import junit.framework.TestCase;
 
@@ -38,6 +41,7 @@ import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -906,4 +910,225 @@ public class Advapi32Test extends TestCase {
         assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
     }
 
+    public void testEncryptFile() throws Exception {
+        // create a temp file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+
+        // encrypt a read only file
+        file.setWritable(false);
+        assertFalse(Advapi32.INSTANCE.EncryptFile(lpFileName));
+        assertEquals(WinError.ERROR_FILE_READ_ONLY, Kernel32.INSTANCE.GetLastError());
+
+        // encrypt a writable file
+        file.setWritable(true);
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+
+        file.delete();
+    }
+
+    public void testDecryptFile() throws Exception {
+        // create an encrypted file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+
+        // decrypt a read only file
+        file.setWritable(false);
+        assertFalse(Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0)));
+        assertEquals(WinError.ERROR_FILE_READ_ONLY, Kernel32.INSTANCE.GetLastError());
+
+        // decrypt
+        file.setWritable(true);
+        assertTrue(Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0)));
+
+        file.delete();
+    }
+
+    public void testFileEncryptionStatus() throws Exception {
+        DWORDByReference lpStatus = new DWORDByReference();
+
+        // create a temp file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+
+        // unencrypted file
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, lpStatus));
+        assertEquals(FILE_ENCRYPTABLE, lpStatus.getValue().intValue());
+
+        // read only file
+        file.setWritable(false);
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, lpStatus));
+        assertEquals(FILE_READ_ONLY, lpStatus.getValue().intValue());
+
+        // encrypted file
+        file.setWritable(true);
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, lpStatus));
+        assertEquals(FILE_IS_ENCRYPTED, lpStatus.getValue().intValue());
+
+        file.delete();
+    }
+
+    public void testEncryptionDisable() throws Exception {
+        DWORDByReference lpStatus = new DWORDByReference();
+
+        // create a temp dir
+        String filePath = System.getProperty("java.io.tmpdir") + File.separator +
+                System.nanoTime();
+        WString DirPath = new WString(filePath);
+        File dir = new File(filePath);
+        dir.mkdir();
+
+        // check status
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(DirPath, lpStatus));
+        assertEquals(FILE_ENCRYPTABLE, lpStatus.getValue().intValue());
+
+        // disable encryption
+        assertTrue(Advapi32.INSTANCE.EncryptionDisable(DirPath, true));
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(DirPath, lpStatus));
+        assertEquals(FILE_DIR_DISALOWED, lpStatus.getValue().intValue());
+
+        // enable encryption
+        assertTrue(Advapi32.INSTANCE.EncryptionDisable(DirPath, false));
+        assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(DirPath, lpStatus));
+        assertEquals(FILE_ENCRYPTABLE, lpStatus.getValue().intValue());
+
+        // clean up
+        for (File file : dir.listFiles()) {
+            file.delete();
+        }
+        dir.delete();
+    }
+
+    public void testOpenEncryptedFileRaw() throws Exception {
+        // create an encrypted file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+
+        // open file for export
+        ULONG ulFlags = new ULONG(0);
+        PointerByReference pvContext = new PointerByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
+                lpFileName, ulFlags, pvContext));
+
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+        file.delete();
+    }
+
+    public void testReadEncryptedFileRaw() throws Exception {
+        // create an encrypted file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+
+        // open file for export
+        ULONG ulFlags = new ULONG(0);
+        PointerByReference pvContext = new PointerByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
+                lpFileName, ulFlags, pvContext));
+
+        // read encrypted file
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer
+                    pvCallbackContext, ULONG ulLength) {
+                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                try {
+                    outputStream.write(arr);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.ReadEncryptedFileRaw(
+                pfExportCallback, null, pvContext.getValue()));
+        outputStream.close();
+
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+        file.delete();
+    }
+
+    public void testWriteEncryptedFileRaw() throws Exception {
+        // create an encrypted file
+        File file = createTempFile();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+
+        // open file for export
+        ULONG ulFlags = new ULONG(0);
+        PointerByReference pvContext = new PointerByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
+                lpFileName, ulFlags, pvContext));
+
+        // read encrypted file
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer
+                    pvCallbackContext, ULONG ulLength) {
+                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                try {
+                    outputStream.write(arr);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.ReadEncryptedFileRaw(
+                pfExportCallback, null, pvContext.getValue()));
+        outputStream.close();
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+
+        // open file for import
+        WString lbFileName2 = new WString(System.getProperty("java.io.tmpdir") +
+                File.separator + "backup-" + file.getName());
+        ULONG ulFlags2 = new ULONG(CREATE_FOR_IMPORT);
+        PointerByReference pvContext2 = new PointerByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
+                lbFileName2, ulFlags2, pvContext2));
+
+        // write encrypted file
+        final IntByReference elementsReadWrapper = new IntByReference(0);
+        FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext, 
+                                  ULONGByReference ulLength) {
+                int elementsRead = elementsReadWrapper.getValue();
+                int remainingElements = outputStream.size() - elementsRead;
+                int length = Math.min(remainingElements, ulLength.getValue().intValue());
+                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead, 
+                        length);
+                elementsReadWrapper.setValue(elementsRead + length);
+                ulLength.setValue(new ULONG(length));
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.WriteEncryptedFileRaw(
+                pfImportCallback, null, pvContext2.getValue()));
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext2.getValue());
+
+        file.delete();
+        new File(lbFileName2.toString()).delete();
+    }
+
+    private File createTempFile() throws Exception {
+        String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime() 
+                + ".text";
+        File file = new File(filePath);
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        for (int i = 0; i < 1000; i++) {
+            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+        }
+        fileWriter.close();
+        return file;
+    }
 }

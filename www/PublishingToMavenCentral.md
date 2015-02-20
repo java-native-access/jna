@@ -4,8 +4,8 @@ Publishing JNA to Maven Central
 One Time
 --------
 
-* Set up your gpg keys as described [here](https://docs.sonatype.org/display/Repository/How+To+Generate+PGP+Signatures+With+Maven). Make sure you distribute your public key.
-* Make sure you have a settings.xml file (in directory: ${user.home}/.m2/) as described at the bottom of 7a1 [here](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-7a.1.POMandsettingsconfig). For example:
+* Set up your gpg keys as described [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html). Make sure you distribute your public key.
+* Make sure you have a settings.xml file (in directory: ${user.home}/.m2/). For example:
 
         <settings>
         ...
@@ -52,11 +52,10 @@ full release is performed).
 Publish Release
 ---------------
 
-* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-platform.xml](https://github.com/twall/jna/blob/master/pom-platform.xml)
+* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/twall/jna/blob/master/pom-jna.xml) and [pom-jna-platform.xml](https://github.com/twall/jna/blob/master/pom-jna-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/twall/jna/blob/master/build.xml).
 * Run `ant -Dmaven-release=true stage`. This uploads current checkout to [maven.java.net](https://maven.java.net).
-* Follow steps from [release
-  it](https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide#SonatypeOSSMavenRepositoryUsageGuide-8a.ReleaseIt).
+* Follow steps from [Releasing the Deployment](http://central.sonatype.org/pages/releasing-the-deployment.html).
   Note that the releases are managed from [maven.java.net](https://maven.java.net).
 
 
