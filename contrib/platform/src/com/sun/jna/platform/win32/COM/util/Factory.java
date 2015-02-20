@@ -112,6 +112,20 @@ public class Factory {
 		return result;
 	}
 
+	/** only for use when creating ProxyObjects from Callbacks
+	 * 
+	 * @param comInterface
+	 * @param unk
+	 * @param dispatch
+	 * @return
+	 */
+	<T> T createProxy(Class<T> comInterface, long unknownId, IDispatch dispatch) {
+		ProxyObject jop = new ProxyObject(comInterface, unknownId, dispatch, this);
+		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
+		T result = comInterface.cast(proxy);
+		return result;
+	}
+	
 	/**
 	 * Creates a new COM object (CoCreateInstance) for the given progId and
 	 * returns a ProxyObject for the given interface.

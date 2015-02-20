@@ -49,6 +49,7 @@ import com.sun.jna.platform.win32.COM.ConnectionPointContainer;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
@@ -56,9 +57,9 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * This object acts as the invocation handler for interfaces annotated with ComInterface.
- * It wraps all (necessary) low level COM calls and executes them on a 'ComThread' held by
- * the Factory object. 
+ * This object acts as the invocation handler for interfaces annotated with
+ * ComInterface. It wraps all (necessary) low level COM calls and executes them
+ * on a 'ComThread' held by the Factory object.
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
 		IRawDispatchHandle {
@@ -69,29 +70,61 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		this.comThread = factory.getComThread();
 		this.theInterface = theInterface;
 		this.factory = factory;
-		//make sure dispatch object knows we have a reference to it
+		// make sure dispatch object knows we have a reference to it
 		// (for debug it is usefult to be able to see how many refs are present
 		int n = this.rawDispatch.AddRef();
-		this.getUnknownId(); //pre cache it
+		this.getUnknownId(); // pre cache/calculate it
+		factory.register(this);
+	}
+
+	/** when proxy is created for arguments on a call back, they are already on the 
+	 * com thread, and hence calling 'getUnknownId' will not work as it uses the ComThread
+	 * however, the unknown pointer value is passed in;
+	 * 
+	 * @param theInterface
+	 * @param rawUnk
+	 * @param rawDispatch
+	 * @param factory
+	 */
+	ProxyObject(Class<?> theInterface, long unknownId, IDispatch rawDispatch, Factory factory) {
+		this.unknownId = unknownId;
+		this.rawDispatch = rawDispatch;
+		this.comThread = factory.getComThread();
+		this.theInterface = theInterface;
+		this.factory = factory;
+		// make sure dispatch object knows we have a reference to it
+		// (for debug it is usefult to be able to see how many refs are present
+		int n = this.rawDispatch.AddRef();
 		factory.register(this);
 	}
 	
-	//cached value of the IUnknown interface pointer
-	// Rules of COM state that querying for the IUnknown interface must return an identical pointer value
+	// cached value of the IUnknown interface pointer
+	// Rules of COM state that querying for the IUnknown interface must return
+	// an identical pointer value
 	long unknownId;
+
 	long getUnknownId() {
 		if (-1 == this.unknownId) {
 			try {
-	
+
 				final PointerByReference ppvObject = new PointerByReference();
-	
-				IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-				HRESULT hr = ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
-	
+
+				Thread current = Thread.currentThread();
+				String tn = current.getName();
+				
+				HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
+					@Override
+					public HRESULT call() throws Exception {
+						IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+						return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
+					}
+				});
+				
 				if (WinNT.S_OK.equals(hr)) {
 					Dispatch dispatch = new Dispatch(ppvObject.getValue());
 					this.unknownId = Pointer.nativeValue(dispatch.getPointer());
-					// QueryInterface returns a COM object pointer with a +1 reference, we must drop one,
+					// QueryInterface returns a COM object pointer with a +1
+					// reference, we must drop one,
 					// Note: createProxy adds one;
 					int n = dispatch.Release();
 				} else {
@@ -111,16 +144,16 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	public void dispose(int r) {
-		if (((Dispatch)this.rawDispatch).getPointer().equals(Pointer.NULL)) {
-			//do nothing, already disposed
+		if (((Dispatch) this.rawDispatch).getPointer().equals(Pointer.NULL)) {
+			// do nothing, already disposed
 		} else {
-			for (int i=0; i<r;++i) {
-				//catch result to help with debug
+			for (int i = 0; i < r; ++i) {
+				// catch result to help with debug
 				int n = this.rawDispatch.Release();
 				int n2 = n;
 			}
 			this.factory.unregister(this, r);
-			((Dispatch)this.rawDispatch).setPointer(Pointer.NULL);
+			((Dispatch) this.rawDispatch).setPointer(Pointer.NULL);
 		}
 	}
 
@@ -142,10 +175,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
 	 * 
 	 * therefore we can compare the pointers
-	 * 
 	 */
 	public boolean equals(Object arg) {
-		if (null==arg) {
+		if (null == arg) {
 			return false;
 		} else if (arg instanceof ProxyObject) {
 			ProxyObject other = (ProxyObject) arg;
@@ -157,7 +189,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					ProxyObject other = (ProxyObject) handler;
 					return this.getUnknownId() == other.getUnknownId();
 				} catch (Exception e) {
-					//if can't do this comparison, return false
+					// if can't do this comparison, return false
 					// (queryInterface may throw if COM objects become invalid)
 					return false;
 				}
@@ -173,7 +205,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	public int hashCode() {
 		return Long.valueOf(this.getUnknownId()).intValue();
 		// this returns the native pointer peer value
-		//return this.getRawDispatch().hashCode();
+		// return this.getRawDispatch().hashCode();
 	}
 
 	@Override
@@ -183,16 +215,18 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	// --------------------- InvocationHandler -----------------------------
 	@Override
-	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
+	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
+			throws Throwable {
 		return this.invokeSynchronised(proxy, method, args);
 	}
-	
+
 	/*
-	 * may not necessary for this method to be synchronised as all calls to COM are on their
-	 * own , single, thread. However, might be best not to overlap calls to COM object
-	 * with advise, unadvise, queryInterface, etc.
+	 * may not necessary for this method to be synchronised as all calls to COM
+	 * are on their own , single, thread. However, might be best not to overlap
+	 * calls to COM object with advise, unadvise, queryInterface, etc.
 	 */
-	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method, final Object[] args) throws Throwable {
+	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method,
+			final Object[] args) throws Throwable {
 		if (method.equals(Object.class.getMethod("toString"))) {
 			return this.toString();
 		} else if (method.equals(Object.class.getMethod("equals", Object.class))) {
@@ -285,7 +319,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					return rawCp.Advise(rawListener, pdwCookie);
 				}
 			});
-			int n = rawCp.Release(); //release before check in case check throws exception
+			int n = rawCp.Release(); // release before check in case check
+										// throws exception
 			COMUtils.checkRC(hr);
 
 			// return the cookie so that a call to stop listening can be made
@@ -314,7 +349,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					return rawCp.Unadvise(((ComEventCallbackCookie) cookie).getValue());
 				}
 			});
-			
+
 			rawCp.Release();
 			COMUtils.checkRC(hr);
 
@@ -347,12 +382,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		COMUtils.checkRC(hr);
 		Object jobj = Convert.toJavaObject(result);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return (T)Convert.toComEnum((Class<? extends IComEnum>)returnType, jobj);
+			return (T) Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj);
 		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
 			T t = this.factory.createProxy(returnType, d);
-			//must release a COM reference, createProxy adds one, as does the call 
+			// must release a COM reference, createProxy adds one, as does the
+			// call
 			int n = d.Release();
 			return t;
 		}
@@ -376,12 +412,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		Object jobj = Convert.toJavaObject(result);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return (T)Convert.toComEnum((Class<? extends IComEnum>)returnType, jobj);
+			return (T) Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj);
 		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
 			T t = this.factory.createProxy(returnType, d);
-			//must release a COM reference, createProxy adds one, as does the call 
+			// must release a COM reference, createProxy adds one, as does the
+			// call
 			int n = d.Release();
 			return t;
 		}
@@ -409,7 +446,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			if (WinNT.S_OK.equals(hr)) {
 				Dispatch dispatch = new Dispatch(ppvObject.getValue());
 				T t = this.factory.createProxy(comInterface, dispatch);
-				// QueryInterface returns a COM object pointer with a +1 reference, we must drop one,
+				// QueryInterface returns a COM object pointer with a +1
+				// reference, we must drop one,
 				// Note: createProxy adds one;
 				int n = dispatch.Release();
 				return t;

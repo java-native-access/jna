@@ -139,8 +139,15 @@ public class CallbackProxy implements IDispatchCallback {
 				Object jarg = Convert.toJavaObject(varg);
 				if (jarg instanceof IDispatch) {
 					IDispatch dispatch = (IDispatch) jarg;
+					//get raw IUnknown interface
+					PointerByReference ppvObject = new PointerByReference();
+					IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+					dispatch.QueryInterface(new REFIID.ByValue(iid), ppvObject);
+					Unknown rawUnk = new Unknown(ppvObject.getValue());
+					long unknownId = Pointer.nativeValue( rawUnk.getPointer() );
+					int n = rawUnk.Release();
 					//Note: unlike in other places, there is currently no COM ref already added for this pointer 
-					IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, dispatch);
+					IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, unknownId, dispatch);
 					rjargs.add(unk);
 				} else {
 					rjargs.add(jarg);
