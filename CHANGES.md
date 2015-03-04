@@ -7,10 +7,10 @@ Release 4.2
 
 Features
 --------
-* Significant enhancements to COM support under com.sun.jna.platform.win32.COM.util, - [@dhakehurst](https://github.com/dhakehurst)
- * Use of interfaces and annotations to provide easier implementation of COM interfaces (uses InvocationHandler). - [@dhakehurst](https://github.com/dhakehurst)
- * Support for COM event callbacks (this was particularly tricky, very happy I got it to work). - [@dhakehurst](https://github.com/dhakehurst)
- * Support for COM interface discovery by iteration over the RunningObjectTable. - [@dhakehurst](https://github.com/dhakehurst)
+* Significant enhancements to COM support under com.sun.jna.platform.win32.COM.util - [@dhakehurst](https://github.com/dhakehurst).
+ * Use of interfaces and annotations to provide easier implementation of COM interfaces (uses InvocationHandler) - [@dhakehurst](https://github.com/dhakehurst).
+ * Support for COM event callbacks (this was particularly tricky, very happy I got it to work) - [@dhakehurst](https://github.com/dhakehurst).
+ * Support for COM interface discovery by iteration over the RunningObjectTable - [@dhakehurst](https://github.com/dhakehurst).
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
 * [#332](https://github.com/twall/jna/pull/332): Added Win32 Monitor Configuration API in `com.sun.jna.platform.win32.Dxva2` - [@msteiger](https://github.com/msteiger).
