@@ -41,6 +41,8 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) (Olivier Chafik)
 - [IAXClient Applet](http://callino.cc/jiaxcapplet/) (Wolfgang Pichler), providing VOIP for Java.
 
+There are also a number of examples and projects within the `contrib` directory of the JNA project itself.
+
 Supported Platforms
 ===================
 JNA will build on most linux-like platforms with a reasonable set of GNU tools and a JDK.  See the native [Makefile](https://raw.githubusercontent.com/twall/jna/master/native/Makefile) for native configurations that have been built and tested.  If your platform is supported by [libffi](http://en.wikipedia.org/wiki/Libffi), then chances are you can build JNA for it.
