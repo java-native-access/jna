@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform;
 
+import static org.junit.Assert.assertNotEquals;
+
 import java.awt.AlphaComposite;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,9 +33,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -45,7 +52,14 @@ import javax.swing.event.MouseInputAdapter;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.HICON;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinUser;
 
 // NOTE: java.awt.Robot can't properly capture transparent pixels
 // Transparency tests are disabled until this can be resolved
@@ -101,6 +115,44 @@ public class WindowUtilsTest extends TestCase {
     private static final int Y = 100;
     private static final int W = 100;
     private static final int H = 100;
+
+	/**
+	 * Verfies that the specified pixel within the image has the expected color component values.
+	 * 
+	 * @param img The image to be checked.
+	 * @param x The X coordinate of the pixel to be checked.
+	 * @param y The Y coordinate of the pixel to be checked.
+	 * @param expectedRed The expected value of the red color component.
+	 * @param expectedGreen The expected value of the green color component.
+	 * @param expectedBlue The expected value of the blue color component.
+	 */
+	private static void assertPixelColor(final BufferedImage img, final int x, final int y, final int expectedRed, final int expectedGreen, final int expectedBlue){
+		int rgb = img.getRGB(x, y);
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = (rgb & 0xFF);
+		
+		assertEquals(expectedRed, r);
+		assertEquals(expectedGreen, g);
+		assertEquals(expectedBlue, b);
+	}
+	
+	/**
+	 * Extracts the values of the color components at the specified pixel.
+	 * 
+	 * @param img The concerning image.
+	 * @param x The X coordinate of the concerning pixel.
+	 * @param y The Y coordinate of the concerning pixel.
+	 * @return An array with three elements that represents the color components of the pixel: Red, green, blue.
+	 */
+	private static int[] getPixelColor(final BufferedImage img, final int x, final int y){
+		int rgb = img.getRGB(x, y);
+		int r = (rgb >> 16) & 0xFF;
+		int g = (rgb >> 8) & 0xFF;
+		int b = (rgb & 0xFF);
+		
+		return new int[]{r,g,b};
+	}
     
     public void xtestReveal() throws Exception {
         final int SIZE = 200;
@@ -417,7 +469,157 @@ public class WindowUtilsTest extends TestCase {
             });
         }
     }
-    
+	
+	public void testGetAllWindows() {
+		final List<DesktopWindow> allWindows = WindowUtils.getAllWindows(false);
+		final List<DesktopWindow> allVisibleWindows = WindowUtils
+				.getAllWindows(true);
+
+		assertTrue(allWindows.size() > 0);
+		assertTrue(allVisibleWindows.size() > 0);
+		assertTrue(allWindows.size() > allVisibleWindows.size());
+
+		DesktopWindow explorerProc = null;
+		for (final DesktopWindow dw : allWindows) {
+			if (dw.getFilePath().toLowerCase().endsWith("explorer.exe")) {
+				explorerProc = dw;
+				break;
+			}
+		}
+
+		assertNotNull(explorerProc);
+
+		explorerProc = null;
+		for (final DesktopWindow dw : allVisibleWindows) {
+			if (dw.getFilePath().toLowerCase().endsWith("explorer.exe")) {
+				explorerProc = dw;
+				break;
+			}
+		}
+
+		assertNotNull(explorerProc);
+	}
+
+	public void testGetWindowIcon() throws Exception {
+		final JFrame w = new JFrame();
+		try {
+			final BufferedImage expectedIcon = ImageIO
+					.read(new FileInputStream(new File(getClass().getResource(
+							"/res/test_icon.png").getPath())));
+			w.setIconImage(expectedIcon);
+			w.setVisible(true);
+			HWND hwnd = new HWND();
+			hwnd.setPointer(Native.getComponentPointer(w));
+
+			final BufferedImage obtainedIcon = WindowUtils.getWindowIcon(hwnd);
+
+			assertTrue(obtainedIcon.getWidth() > 0);
+			assertTrue(obtainedIcon.getHeight() > 0);
+
+			int[] expectedColors = getPixelColor(expectedIcon, 10, 10);
+			assertPixelColor(obtainedIcon, 10, 10, expectedColors[0],
+					expectedColors[1], expectedColors[2]);
+
+			expectedColors = getPixelColor(expectedIcon,
+					expectedIcon.getWidth() - 10, 10);
+			assertPixelColor(obtainedIcon, obtainedIcon.getWidth() - 10, 10,
+					expectedColors[0], expectedColors[1], expectedColors[2]);
+
+			expectedColors = getPixelColor(expectedIcon,
+					expectedIcon.getWidth() - 10, expectedIcon.getHeight() - 10);
+			assertPixelColor(obtainedIcon, obtainedIcon.getWidth() - 10,
+					obtainedIcon.getHeight() - 10, expectedColors[0],
+					expectedColors[1], expectedColors[2]);
+
+			expectedColors = getPixelColor(expectedIcon, 10,
+					expectedIcon.getHeight() - 10);
+			assertPixelColor(obtainedIcon, 10, obtainedIcon.getHeight() - 10,
+					expectedColors[0], expectedColors[1], expectedColors[2]);
+		} finally {
+			w.dispose();
+		}
+	}
+	
+	public void testGetWindowLocationAndSize() {
+		final JFrame w = new JFrame();
+		try {
+			w.setLocation(23, 23);
+			w.setPreferredSize(new Dimension(100, 100));
+			w.pack();
+			w.setVisible(true);
+
+			HWND hwnd = new HWND();
+			hwnd.setPointer(Native.getComponentPointer(w));
+			final Rectangle locAndSize = WindowUtils
+					.getWindowLocationAndSize(hwnd);
+
+			assertEquals(w.getLocation().x, locAndSize.x);
+			assertEquals(w.getLocation().y, locAndSize.y);
+			assertEquals(w.getSize().width, locAndSize.width);
+			assertEquals(w.getSize().height, locAndSize.height);
+		} finally {
+			w.dispose();
+		}
+	}
+	
+	public void testGetWindowTitle() {
+		final JFrame w = new JFrame("A super unique title by PAX! "
+				+ System.currentTimeMillis());
+		try {
+			w.setVisible(true);
+
+			HWND hwnd = new HWND();
+			hwnd.setPointer(Native.getComponentPointer(w));
+
+			assertEquals(w.getTitle(), WindowUtils.getWindowTitle(hwnd));
+		} finally {
+			w.dispose();
+		}
+	}
+	
+	public void testGetIconSize() throws Exception {
+		final JFrame w = new JFrame();
+		try {
+			final BufferedImage expectedIcon = ImageIO
+					.read(new FileInputStream(new File(getClass().getResource(
+							"/res/test_icon.png").getPath())));
+			w.setIconImage(expectedIcon);
+			w.setVisible(true);
+			HWND hwnd = new HWND();
+			hwnd.setPointer(Native.getComponentPointer(w));
+
+			final DWORDByReference hIconNumber = new DWORDByReference();
+			long result = User32.INSTANCE.SendMessageTimeoutA(hwnd,
+					WinUser.WM_GETICON, WinUser.ICON_BIG, 0,
+					WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
+
+			assertNotEquals(0, result);
+
+			final HICON hIcon = new HICON(new Pointer(hIconNumber.getValue()
+					.longValue()));
+			assertTrue(WindowUtils.getIconSize(hIcon).width >= 32);
+			assertTrue(WindowUtils.getIconSize(hIcon).height >= 32);
+			assertEquals(WindowUtils.getIconSize(hIcon).width,
+					WindowUtils.getIconSize(hIcon).height);
+		} finally {
+			w.dispose();
+		}
+	}
+	
+	public void testGetProcessFilePath() {
+		final JFrame w = new JFrame();
+		try {
+			w.setVisible(true);
+			HWND hwnd = new HWND();
+			hwnd.setPointer(Native.getComponentPointer(w));
+
+			assertTrue(WindowUtils.getProcessFilePath(hwnd).toLowerCase()
+					.contains("java"));
+		} finally {
+			w.dispose();
+		}
+	}
+	
     public static void main(String[] args) {
         junit.textui.TestRunner.run(WindowUtilsTest.class);
     }

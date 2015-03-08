@@ -15,8 +15,10 @@ package com.sun.jna.platform.win32;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -24,6 +26,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Ported from WinGDI.h. 
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
+ * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
  */
 public interface WinGDI extends StdCallLibrary {
     public int RDH_RECTANGLES = 1;
@@ -138,6 +141,32 @@ public interface WinGDI extends StdCallLibrary {
             bmiColors = new RGBQUAD[size];
         }
     }
+    
+	public class ICONINFO extends Structure {
+		public boolean fIcon;
+		public int xHotspot;
+		public int yHotspot;
+		public HBITMAP hbmMask;
+		public HBITMAP hbmColor;
+		protected List getFieldOrder() {
+			return Arrays.asList(new String[] { "fIcon", "xHotspot",
+					"yHotspot", "hbmMask", "hbmColor" });
+		}
+	}
+	
+	public class BITMAP extends Structure {
+	    public NativeLong bmType;
+	    public NativeLong bmWidth;
+	    public NativeLong bmHeight;
+	    public NativeLong bmWidthBytes;
+	    public short bmPlanes;
+	    public short bmBitsPixel;
+	    public Pointer bmBits;
+		protected List getFieldOrder() {
+			return Arrays.asList("bmType", "bmWidth", "bmHeight",
+					"bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
+		}
+	}
     
     public int DIB_RGB_COLORS = 0;
     public int DIB_PAL_COLORS = 1;

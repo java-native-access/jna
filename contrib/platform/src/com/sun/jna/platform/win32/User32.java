@@ -16,6 +16,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinGDI.ICONINFO;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -29,6 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author twalljava@dev.java.net
  * @author Tobias Wolf, wolf.tobias@gmx.net
  * @author Markus KARG (markus[at]headcrashing[dot]eu)
+ * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
  */
 public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
@@ -331,23 +333,27 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     boolean FlashWindowEx(FLASHWINFO pfwi);
 
     /**
-     * This function loads the specified icon resource from the executable
-     * (.exe) file associated with an application instance.
-     * 
-     * @param hInstance
-     *            Handle to an instance of the module whose executable file
-     *            contains the icon to be loaded. This parameter must be NULL
-     *            when a standard icon is being loaded.
-     * @param iconName
-     *            Long pointer to a null-terminated string that contains the
-     *            name of the icon resource to be loaded. Alternatively, this
-     *            parameter can contain the resource identifier in the low-order
-     *            word and zero in the high-order word. Use the MAKEINTRESOURCE
-     *            macro to create this value.
-     * @return A handle to the newly loaded icon indicates success. NULL
-     *         indicates failure. To get extended error information, call
-     *         GetLastError.
-     */
+	 * This function loads the specified icon resource from the executable
+	 * (.exe) file associated with an application instance.
+	 * 
+	 * @param hInstance
+	 *            Handle to an instance of the module whose executable file
+	 *            contains the icon to be loaded. This parameter must be NULL
+	 *            when a standard icon is being loaded.
+	 * @param iconName
+	 *            Long pointer to a null-terminated string that contains the
+	 *            name of the icon resource to be loaded. Alternatively, this
+	 *            parameter can contain the resource identifier in the low-order
+	 *            word and zero in the high-order word. Use the MAKEINTRESOURCE
+	 *            macro to create this value.
+	 *            <p/>
+	 *            To use one of the predefined icons, set the hInstance
+	 *            parameter to NULL and the lpIconName parameter to one of the
+	 *            following values: {@link WinUser#IDC_APPSTARTING} etc.
+	 * @return A handle to the newly loaded icon indicates success. NULL
+	 *         indicates failure. To get extended error information, call
+	 *         GetLastError.
+	 */
     HICON LoadIcon(HINSTANCE hInstance, String iconName);
 
     /**
@@ -1950,4 +1956,192 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *        function fails, the return value is zero. To get extended error information, call GetLastError.
      */
     BOOL LockWorkStation();
+
+	/**
+	 * Retrieves information about the specified icon or cursor.
+	 * 
+	 * @param hIcon
+	 *            A handle to the icon or cursor.
+	 *            <p/>
+	 *            To retrieve information about a standard icon or cursor,
+	 *            specify one of the following values and use the
+	 *            MAKEINTRESOURCE macro to create this value:
+	 *            {@link WinUser#IDC_APPSTARTING} etc.
+	 * @param piconinfo
+	 *            A pointer to an ICONINFO structure. The function fills in the
+	 *            structure's members.
+	 * @return If the function succeeds, the return value is {@code true} and
+	 *         the function fills in the members of the specified ICONINFO
+	 *         structure.
+	 *         <p/>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 */
+	boolean GetIconInfo(HICON hIcon, ICONINFO piconinfo);
+	
+	/**
+	 * Retrieves information about the specified icon or cursor.
+	 * 
+	 * @param hIcon
+	 *            A handle to the icon or cursor.
+	 *            <p/>
+	 *            To retrieve information about a standard icon or cursor,
+	 *            specify one of the following values and use the
+	 *            MAKEINTRESOURCE macro to create this value:
+	 *            {@link WinUser#IDC_APPSTARTING} etc.
+	 * @param piconinfo
+	 *            A pointer to an ICONINFO structure. The function fills in the
+	 *            structure's members.
+	 * @return If the function succeeds, the return value is {@code true} and
+	 *         the function fills in the members of the specified ICONINFO
+	 *         structure.
+	 *         <p/>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 */
+	boolean GetIconInfo(HANDLE hIcon, ICONINFO piconinfo);
+
+	/**
+	 * Sends the specified message to one or more windows.
+	 * 
+	 * @param hWnd
+	 *            A handle to the window whose window procedure will receive the
+	 *            message.
+	 *            <p/>
+	 *            If this parameter is HWND_BROADCAST ((HWND)0xffff), the
+	 *            message is sent to all top-level windows in the system,
+	 *            including disabled or invisible unowned windows. The function
+	 *            does not return until each window has timed out. Therefore,
+	 *            the total wait time can be up to the value of uTimeout
+	 *            multiplied by the number of top-level windows.
+	 * @param msg
+	 *            The message to be sent.
+	 * @param wParam
+	 *            Any additional message-specific information.
+	 * @param lParam
+	 *            Any additional message-specific information.
+	 * @param fuFlags
+	 *            The behavior of this function. This parameter can be one or
+	 *            more of the following values: {@link WinUser#SMTO_ABORTIFHUNG}
+	 *            etc.
+	 * @param uTimeout
+	 *            The duration of the time-out period, in milliseconds. If the
+	 *            message is a broadcast message, each window can use the full
+	 *            time-out period. For example, if you specify a five second
+	 *            time-out period and there are three top-level windows that
+	 *            fail to process the message, you could have up to a 15 second
+	 *            delay.
+	 * @param lpdwResult
+	 *            The result of the message processing. The value of this
+	 *            parameter depends on the message that is specified.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *         SendMessageTimeout does not provide information about individual
+	 *         windows timing out if HWND_BROADCAST is used.
+	 *         <p/>
+	 *         If the function fails or times out, the return value is 0. To get
+	 *         extended error information, call GetLastError. If GetLastError
+	 *         returns ERROR_TIMEOUT, then the function timed out.
+	 *         <p/>
+	 *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
+	 *         the function timed out.
+	 */
+	long SendMessageTimeoutA(HWND hWnd, int msg, long wParam, long lParam,
+			int fuFlags, int uTimeout, DWORDByReference lpdwResult);
+	
+	/**
+	 * Sends the specified message to one or more windows.
+	 * 
+	 * @param hWnd
+	 *            A handle to the window whose window procedure will receive the
+	 *            message.
+	 *            <p/>
+	 *            If this parameter is HWND_BROADCAST ((HWND)0xffff), the
+	 *            message is sent to all top-level windows in the system,
+	 *            including disabled or invisible unowned windows. The function
+	 *            does not return until each window has timed out. Therefore,
+	 *            the total wait time can be up to the value of uTimeout
+	 *            multiplied by the number of top-level windows.
+	 * @param msg
+	 *            The message to be sent.
+	 * @param wParam
+	 *            Any additional message-specific information.
+	 * @param lParam
+	 *            Any additional message-specific information.
+	 * @param fuFlags
+	 *            The behavior of this function. This parameter can be one or
+	 *            more of the following values: {@link WinUser#SMTO_ABORTIFHUNG}
+	 *            etc.
+	 * @param uTimeout
+	 *            The duration of the time-out period, in milliseconds. If the
+	 *            message is a broadcast message, each window can use the full
+	 *            time-out period. For example, if you specify a five second
+	 *            time-out period and there are three top-level windows that
+	 *            fail to process the message, you could have up to a 15 second
+	 *            delay.
+	 * @param lpdwResult
+	 *            The result of the message processing. The value of this
+	 *            parameter depends on the message that is specified.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *         SendMessageTimeout does not provide information about individual
+	 *         windows timing out if HWND_BROADCAST is used.
+	 *         <p/>
+	 *         If the function fails or times out, the return value is 0. To get
+	 *         extended error information, call GetLastError. If GetLastError
+	 *         returns ERROR_TIMEOUT, then the function timed out.
+	 *         <p/>
+	 *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
+	 *         the function timed out.
+	 */
+	long SendMessageTimeoutW(HWND hWnd, int msg, long wParam, long lParam,
+			int fuFlags, int uTimeout, DWORDByReference lpdwResult);
+	
+	/**
+	 * Retrieves the specified value from the WNDCLASSEX structure associated
+	 * with the specified window.
+	 * 
+	 * @param hWnd
+	 *            A handle to the window and, indirectly, the class to which the
+	 *            window belongs.
+	 * @param nIndex
+	 *            The value to be retrieved. To retrieve a value from the extra
+	 *            class memory, specify the positive, zero-based byte offset of
+	 *            the value to be retrieved. Valid values are in the range zero
+	 *            through the number of bytes of extra class memory, minus
+	 *            eight; for example, if you specified 24 or more bytes of extra
+	 *            class memory, a value of 16 would be an index to the third
+	 *            integer.To retrieve any other value from the WNDCLASSEX
+	 *            structure, specify one of the following values:
+	 *            {@link WinUser#GCW_ATOM} etc.
+	 * @return If the function succeeds, the return value is the requested
+	 *         value.
+	 *         <p/>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 */
+	long GetClassLongPtrA(HWND hWnd, int nIndex);
+	
+	/**
+	 * Retrieves the specified value from the WNDCLASSEX structure associated
+	 * with the specified window.
+	 * 
+	 * @param hWnd
+	 *            A handle to the window and, indirectly, the class to which the
+	 *            window belongs.
+	 * @param nIndex
+	 *            The value to be retrieved. To retrieve a value from the extra
+	 *            class memory, specify the positive, zero-based byte offset of
+	 *            the value to be retrieved. Valid values are in the range zero
+	 *            through the number of bytes of extra class memory, minus
+	 *            eight; for example, if you specified 24 or more bytes of extra
+	 *            class memory, a value of 16 would be an index to the third
+	 *            integer.To retrieve any other value from the WNDCLASSEX
+	 *            structure, specify one of the following values:
+	 *            {@link WinUser#GCW_ATOM} etc.
+	 * @return If the function succeeds, the return value is the requested
+	 *         value.
+	 *         <p/>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 */
+	long GetClassLongPtrW(HWND hWnd, int nIndex);
 }

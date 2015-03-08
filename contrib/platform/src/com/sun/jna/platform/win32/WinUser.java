@@ -21,16 +21,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
-import com.sun.jna.platform.win32.WinDef.HBRUSH;
-import com.sun.jna.platform.win32.WinDef.HCURSOR;
-import com.sun.jna.platform.win32.WinDef.HDC;
-import com.sun.jna.platform.win32.WinDef.HICON;
-import com.sun.jna.platform.win32.WinDef.HINSTANCE;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.LPARAM;
-import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -38,6 +28,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Ported from WinUser.h Microsoft Windows SDK 6.0A.
  * 
  * @author dblock[at]dblock.org
+ * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
  */
 public interface WinUser extends StdCallLibrary, WinDef {
     HWND HWND_BROADCAST = new HWND(Pointer.createConstant(0xFFFF));
@@ -499,6 +490,30 @@ public interface WinUser extends StdCallLibrary, WinDef {
     int WM_DESTROY = 0x0002;
 
     public static final int WM_DEVICECHANGE = 0x0219;
+    
+	/**
+	 * Sent to a window to retrieve a handle to the large or small icon
+	 * associated with a window. The system displays the large icon in the
+	 * ALT+TAB dialog, and the small icon in the window caption.
+	 */
+	int WM_GETICON = 0x007F;
+
+	/**
+	 * Retrieve the large icon for the window.
+	 */
+	int ICON_BIG = 1;
+
+	/**
+	 * Retrieve the small icon for the window.
+	 */
+	int ICON_SMALL = 0;
+
+	/**
+	 * Retrieves the small icon provided by the application. If the application
+	 * does not provide one, the system uses the system-generated icon for that
+	 * window.
+	 */
+	int ICON_SMALL2 = 2;
 
     public class KBDLLHOOKSTRUCT extends Structure {
         public int vkCode;
@@ -1289,4 +1304,200 @@ public interface WinUser extends StdCallLibrary, WinDef {
     /** Forces processes to terminate if they do not respond to the WM_QUERYENDSESSION or WM_ENDSESSION
      * message within the timeout interval. For more information, see {@link com.sun.jna.platform.win32.User32#ExitWindowsEx}. */
     int EWX_FORCEIFHUNG = 0x00000010;
+    
+    /* GetClassLong properties */
+	/**
+	 * Retrieves an ATOM value that uniquely identifies the window class. This
+	 * is the same atom that the RegisterClassEx function returns.
+	 */
+	int GCW_ATOM = -32;
+
+	/**
+	 * Retrieves the size, in bytes, of the extra memory associated with the
+	 * class.
+	 */
+	int GCL_CBCLSEXTRA = -20;
+
+	/**
+	 * Retrieves the size, in bytes, of the extra window memory associated with
+	 * each window in the class. For information on how to access this memory,
+	 * see GetWindowLongPtr.
+	 */
+	int GCL_CBWNDEXTRA = -18;
+
+	/**
+	 * Retrieves a handle to the background brush associated with the class.
+	 */
+	int GCLP_HBRBACKGROUND = -10;
+
+	/**
+	 * Retrieves a handle to the cursor associated with the class.
+	 */
+	int GCLP_HCURSOR = -12;
+
+	/**
+	 * Retrieves a handle to the icon associated with the class.
+	 */
+	int GCLP_HICON = -14;
+
+	/**
+	 * Retrieves a handle to the small icon associated with the class.
+	 */
+	int GCLP_HICONSM = -34;
+
+	/**
+	 * Retrieves a handle to the module that registered the class.
+	 */
+	int GCLP_HMODULE = -16;
+
+	/**
+	 * Retrieves the pointer to the menu name string. The string identifies the
+	 * menu resource associated with the class.
+	 */
+	int GCLP_MENUNAME = -8;
+
+	/**
+	 * Retrieves the window-class style bits.
+	 */
+	int GCL_STYLE = -26;
+
+	/**
+	 * Retrieves the address of the window procedure, or a handle representing
+	 * the address of the window procedure. You must use the CallWindowProc
+	 * function to call the window procedure.
+	 */
+	int GCLP_WNDPROC = -24;
+
+	/* SendMessageTimeout properties */
+	/**
+	 * The function returns without waiting for the time-out period to elapse if
+	 * the receiving thread appears to not respond or "hangs."
+	 */
+	int SMTO_ABORTIFHUNG = 0x0002;
+
+	/**
+	 * Prevents the calling thread from processing any other requests until the
+	 * function returns.
+	 */
+	int SMTO_BLOCK = 0x0001;
+
+	/**
+	 * The calling thread is not prevented from processing other requests while
+	 * waiting for the function to return.
+	 */
+	int SMTO_NORMAL = 0x0000;
+
+	/**
+	 * The function does not enforce the time-out period as long as the
+	 * receiving thread is processing messages.
+	 */
+	int SMTO_NOTIMEOUTIFNOTHUNG = 0x0008;
+
+	/**
+	 * The function should return 0 if the receiving window is destroyed or its
+	 * owning thread dies while the message is being processed.
+	 */
+	int SMTO_ERRORONEXIT=0x0020;
+	
+	/* GetIconInfo properties */
+
+	/**
+	 * Standard arrow and small hourglass cursor.
+	 */
+	int IDC_APPSTARTING = 32650;
+
+	/**
+	 * Standard arrow cursor.
+	 */
+	int IDC_ARROW = 32512;
+
+	/**
+	 * Crosshair cursor.
+	 */
+	int IDC_CROSS = 32515;
+
+	/**
+	 * Hand cursor.
+	 */
+	int IDC_HAND = 32649;
+
+	/**
+	 * Arrow and question mark cursor.
+	 */
+	int IDC_HELP = 32651;
+
+	/**
+	 * I-beam cursor.
+	 */
+	int IDC_IBEAM = 32513;
+
+	/**
+	 * Slashed circle cursor.
+	 */
+	int IDC_NO = 32648;
+
+	/**
+	 * Four-pointed arrow cursor pointing north, south, east, and west.
+	 */
+	int IDC_SIZEALL = 32646;
+
+	/**
+	 * Double-pointed arrow cursor pointing northeast and southwest.
+	 */
+	int IDC_SIZENESW = 32643;
+
+	/**
+	 * Double-pointed arrow cursor pointing north and south.
+	 */
+	int IDC_SIZENS = 32645;
+
+	/**
+	 * Double-pointed arrow cursor pointing northwest and southeast.
+	 */
+	int IDC_SIZENWSE = 32642;
+
+	/**
+	 * Double-pointed arrow cursor pointing west and east.
+	 */
+	int IDC_SIZEWE = 32644;
+
+	/**
+	 * Vertical arrow cursor.
+	 */
+	int IDC_UPARROW = 32516;
+
+	/**
+	 * Hourglass cursor.
+	 */
+	int IDC_WAIT = 32514;
+
+	/**
+	 * Application icon.
+	 */
+	int IDI_APPLICATION = 32512;
+
+	/**
+	 * Asterisk icon.
+	 */
+	int IDI_ASTERISK = 32516;
+
+	/**
+	 * Exclamation point icon.
+	 */
+	int IDI_EXCLAMATION = 32515;
+
+	/**
+	 * Stop sign icon.
+	 */
+	int IDI_HAND = 32513;
+
+	/**
+	 * Question-mark icon.
+	 */
+	int IDI_QUESTION = 32514;
+
+	/**
+	 * Application icon. Windows 2000: Windows logo icon.
+	 */
+	int IDI_WINLOGO = 32517;
 }
