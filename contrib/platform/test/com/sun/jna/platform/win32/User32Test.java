@@ -14,9 +14,9 @@ package com.sun.jna.platform.win32;
 
 import static com.sun.jna.platform.win32.User32.INSTANCE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -32,7 +32,6 @@ import org.junit.runner.JUnitCore;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.Utils;
 import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -251,7 +250,7 @@ public class User32Test {
 			if (!User32.INSTANCE.GetIconInfo(hIcon, iconInfo))
 				throw new Exception(
 						"Invocation of User32.GetIconInfo() failed: "
-								+ Utils.getLastErrorMessage());
+								+ Kernel32Util.getLastErrorMessage());
 			iconInfo.read();
 		} finally {
 			if (iconInfo.hbmColor != null

@@ -17,7 +17,6 @@ import java.io.File;
 import junit.framework.TestCase;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.Utils;
 import com.sun.jna.platform.win32.WinGDI.BITMAP;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinGDI.ICONINFO;
@@ -55,7 +54,7 @@ public class GDI32Test extends TestCase {
 			if (!User32.INSTANCE.GetIconInfo(hIcon, iconInfo))
 				throw new Exception(
 						"Invocation of User32.GetIconInfo() failed: "
-								+ Utils.getLastErrorMessage());
+								+ Kernel32Util.getLastErrorMessage());
 			iconInfo.read();
 
 			// test ANSI GetObject method
@@ -65,7 +64,7 @@ public class GDI32Test extends TestCase {
 			bmp.read();
 			if (nWrittenBytes <= 0)
 				throw new Exception("Detection of bitmap information failed: "
-						+ Utils.getLastErrorMessage());
+						+ Kernel32Util.getLastErrorMessage());
 
 			// verify that bitmap information was successfully detected
 			assertEquals(32, bmp.bmHeight.intValue());
@@ -78,7 +77,7 @@ public class GDI32Test extends TestCase {
 			bmp.read();
 			if (nWrittenBytes <= 0)
 				throw new Exception("Detection of bitmap information failed: "
-						+ Utils.getLastErrorMessage());
+						+ Kernel32Util.getLastErrorMessage());
 
 			// verify that bitmap information was successfully detected
 			assertEquals(32, bmp.bmHeight.intValue());

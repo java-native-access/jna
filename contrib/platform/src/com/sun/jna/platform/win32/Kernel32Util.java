@@ -31,6 +31,7 @@ import com.sun.jna.ptr.PointerByReference;
  * 
  * @author dblock[at]dblock.org
  * @author markus[at]headcrashing[dot]eu
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public abstract class Kernel32Util implements WinDef {
 
@@ -98,6 +99,15 @@ public abstract class Kernel32Util implements WinDef {
     public static String formatMessageFromLastErrorCode(int code) {
         return formatMessageFromHR(W32Errors.HRESULT_FROM_WIN32(code));
     }
+
+	/**
+	 * @return Obtains the human-readable error message text from the last error
+	 *         that occurred by invocating {@code Kernel32.GetLastError()}.
+	 */
+	public static String getLastErrorMessage() {
+		return Kernel32Util.formatMessageFromLastErrorCode(Kernel32.INSTANCE
+				.GetLastError());
+	}
 
     /**
      * Return the path designated for temporary files.

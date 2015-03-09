@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.platform.Utils;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -48,7 +47,7 @@ public interface Psapi extends StdCallLibrary {
 	 * @return If the function succeeds, the return value specifies the length
 	 *         of the string copied to the buffer. If the function fails, the
 	 *         return value is zero. To get extended error information, call
-	 *         {@link Utils#getLastErrorMessage()}.
+	 *         {@link Kernel32Util#getLastErrorMessage()}.
 	 */
 	int GetModuleFileNameExA(final HANDLE process, final HANDLE module,
 			final byte[] lpFilename, final int nSize);
