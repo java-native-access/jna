@@ -589,7 +589,7 @@ public class WindowUtilsTest extends TestCase {
 			hwnd.setPointer(Native.getComponentPointer(w));
 
 			final DWORDByReference hIconNumber = new DWORDByReference();
-			long result = User32.INSTANCE.SendMessageTimeoutA(hwnd,
+			long result = User32.INSTANCE.SendMessageTimeout(hwnd,
 					WinUser.WM_GETICON, WinUser.ICON_BIG, 0,
 					WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 
@@ -613,8 +613,11 @@ public class WindowUtilsTest extends TestCase {
 			HWND hwnd = new HWND();
 			hwnd.setPointer(Native.getComponentPointer(w));
 
-			assertTrue(WindowUtils.getProcessFilePath(hwnd).toLowerCase()
-					.contains("java"));
+			assertTrue(
+					"Path didn't contain 'java': "
+							+ WindowUtils.getProcessFilePath(hwnd),
+					WindowUtils.getProcessFilePath(hwnd).toLowerCase()
+							.contains("java"));
 		} finally {
 			w.dispose();
 		}

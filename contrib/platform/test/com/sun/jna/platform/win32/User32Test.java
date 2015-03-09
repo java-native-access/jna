@@ -269,15 +269,9 @@ public class User32Test {
 		assertNotNull(explorerProc);
 
 		final DWORDByReference hIconNumber = new DWORDByReference();
-		long result = User32.INSTANCE.SendMessageTimeoutA(
+		long result = User32.INSTANCE.SendMessageTimeout(
 				explorerProc.getHWND(), WinUser.WM_GETICON, WinUser.ICON_BIG,
 				0, WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
-
-		assertNotEquals(0, result);
-
-		result = User32.INSTANCE.SendMessageTimeoutW(explorerProc.getHWND(),
-				WinUser.WM_GETICON, WinUser.ICON_BIG, 0,
-				WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 
 		assertNotEquals(0, result);
 	}
@@ -288,14 +282,9 @@ public class User32Test {
 
 		assertNotNull(explorerProc);
 
-		long result = User32.INSTANCE.GetClassLongPtrA(explorerProc.getHWND(),
+		long result = User32.INSTANCE.GetClassLongPtr(explorerProc.getHWND(),
 				WinUser.GCLP_HMODULE);
 
-		assertNotEquals(0, result);
-
-		result = User32.INSTANCE.GetClassLongPtrW(explorerProc.getHWND(),
-				WinUser.GCLP_HMODULE);
-		
 		assertNotEquals(0, result);
 	}
 }

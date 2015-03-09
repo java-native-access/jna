@@ -2045,54 +2045,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
 	 *         the function timed out.
 	 */
-	long SendMessageTimeoutA(HWND hWnd, int msg, long wParam, long lParam,
-			int fuFlags, int uTimeout, DWORDByReference lpdwResult);
-	
-	/**
-	 * Sends the specified message to one or more windows.
-	 * 
-	 * @param hWnd
-	 *            A handle to the window whose window procedure will receive the
-	 *            message.
-	 *            <p/>
-	 *            If this parameter is HWND_BROADCAST ((HWND)0xffff), the
-	 *            message is sent to all top-level windows in the system,
-	 *            including disabled or invisible unowned windows. The function
-	 *            does not return until each window has timed out. Therefore,
-	 *            the total wait time can be up to the value of uTimeout
-	 *            multiplied by the number of top-level windows.
-	 * @param msg
-	 *            The message to be sent.
-	 * @param wParam
-	 *            Any additional message-specific information.
-	 * @param lParam
-	 *            Any additional message-specific information.
-	 * @param fuFlags
-	 *            The behavior of this function. This parameter can be one or
-	 *            more of the following values: {@link WinUser#SMTO_ABORTIFHUNG}
-	 *            etc.
-	 * @param uTimeout
-	 *            The duration of the time-out period, in milliseconds. If the
-	 *            message is a broadcast message, each window can use the full
-	 *            time-out period. For example, if you specify a five second
-	 *            time-out period and there are three top-level windows that
-	 *            fail to process the message, you could have up to a 15 second
-	 *            delay.
-	 * @param lpdwResult
-	 *            The result of the message processing. The value of this
-	 *            parameter depends on the message that is specified.
-	 * @return If the function succeeds, the return value is nonzero.
-	 *         SendMessageTimeout does not provide information about individual
-	 *         windows timing out if HWND_BROADCAST is used.
-	 *         <p/>
-	 *         If the function fails or times out, the return value is 0. To get
-	 *         extended error information, call GetLastError. If GetLastError
-	 *         returns ERROR_TIMEOUT, then the function timed out.
-	 *         <p/>
-	 *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
-	 *         the function timed out.
-	 */
-	long SendMessageTimeoutW(HWND hWnd, int msg, long wParam, long lParam,
+	long SendMessageTimeout(HWND hWnd, int msg, long wParam, long lParam,
 			int fuFlags, int uTimeout, DWORDByReference lpdwResult);
 	
 	/**
@@ -2118,30 +2071,5 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call {@link Kernel32#GetLastError()}.
 	 */
-	long GetClassLongPtrA(HWND hWnd, int nIndex);
-	
-	/**
-	 * Retrieves the specified value from the WNDCLASSEX structure associated
-	 * with the specified window.
-	 * 
-	 * @param hWnd
-	 *            A handle to the window and, indirectly, the class to which the
-	 *            window belongs.
-	 * @param nIndex
-	 *            The value to be retrieved. To retrieve a value from the extra
-	 *            class memory, specify the positive, zero-based byte offset of
-	 *            the value to be retrieved. Valid values are in the range zero
-	 *            through the number of bytes of extra class memory, minus
-	 *            eight; for example, if you specified 24 or more bytes of extra
-	 *            class memory, a value of 16 would be an index to the third
-	 *            integer.To retrieve any other value from the WNDCLASSEX
-	 *            structure, specify one of the following values:
-	 *            {@link WinUser#GCW_ATOM} etc.
-	 * @return If the function succeeds, the return value is the requested
-	 *         value.
-	 *         <p/>
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.
-	 */
-	long GetClassLongPtrW(HWND hWnd, int nIndex);
+	long GetClassLongPtr(HWND hWnd, int nIndex);
 }

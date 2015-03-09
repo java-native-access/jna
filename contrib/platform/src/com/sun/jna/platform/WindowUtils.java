@@ -1060,24 +1060,24 @@ public class WindowUtils {
 		public BufferedImage getWindowIcon(final HWND hwnd) {
 			// request different kind of icons if any solution fails
 			final DWORDByReference hIconNumber = new DWORDByReference();
-			long result = User32.INSTANCE.SendMessageTimeoutA(hwnd,
+			long result = User32.INSTANCE.SendMessageTimeout(hwnd,
 					WinUser.WM_GETICON, WinUser.ICON_BIG, 0,
 					WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 			if (result == 0)
-				result = User32.INSTANCE.SendMessageTimeoutA(hwnd,
+				result = User32.INSTANCE.SendMessageTimeout(hwnd,
 						WinUser.WM_GETICON, WinUser.ICON_SMALL, 0,
 						WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 			if (result == 0)
-				result = User32.INSTANCE.SendMessageTimeoutA(hwnd,
+				result = User32.INSTANCE.SendMessageTimeout(hwnd,
 						WinUser.WM_GETICON, WinUser.ICON_SMALL2, 0,
 						WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 			if (result == 0) {
-				result = User32.INSTANCE.GetClassLongPtrA(hwnd,
+				result = User32.INSTANCE.GetClassLongPtr(hwnd,
 						WinUser.GCLP_HICON);
 				hIconNumber.getValue().setValue(result);
 			}
 			if (result == 0) {
-				result = User32.INSTANCE.GetClassLongPtrA(hwnd,
+				result = User32.INSTANCE.GetClassLongPtr(hwnd,
 						WinUser.GCLP_HICONSM);
 				hIconNumber.getValue().setValue(result);
 			}
@@ -1154,7 +1154,7 @@ public class WindowUtils {
 				final BITMAP bmp = new BITMAP();
 				if (iconInfo.hbmColor != null
 						&& iconInfo.hbmColor.getPointer() != Pointer.NULL) {
-					final int nWrittenBytes = GDI32.INSTANCE.GetObjectA(
+					final int nWrittenBytes = GDI32.INSTANCE.GetObject(
 							iconInfo.hbmColor, bmp.size(), bmp.getPointer());
 					bmp.read();
 					if (nWrittenBytes > 0)
@@ -1162,7 +1162,7 @@ public class WindowUtils {
 								bmp.bmHeight.intValue());
 				} else if (iconInfo.hbmMask != null
 						&& iconInfo.hbmMask.getPointer() != Pointer.NULL) {
-					final int nWrittenBytes = GDI32.INSTANCE.GetObjectA(
+					final int nWrittenBytes = GDI32.INSTANCE.GetObject(
 							iconInfo.hbmMask, bmp.size(), bmp.getPointer());
 					bmp.read();
 					if (nWrittenBytes > 0)

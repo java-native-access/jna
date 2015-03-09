@@ -57,22 +57,9 @@ public class GDI32Test extends TestCase {
 								+ Kernel32Util.getLastErrorMessage());
 			iconInfo.read();
 
-			// test ANSI GetObject method
+			// test GetObject method
 			BITMAP bmp = new BITMAP();
-			int nWrittenBytes = GDI32.INSTANCE.GetObjectA(iconInfo.hbmColor,
-					bmp.size(), bmp.getPointer());
-			bmp.read();
-			if (nWrittenBytes <= 0)
-				throw new Exception("Detection of bitmap information failed: "
-						+ Kernel32Util.getLastErrorMessage());
-
-			// verify that bitmap information was successfully detected
-			assertEquals(32, bmp.bmHeight.intValue());
-			assertEquals(32, bmp.bmWidth.intValue());
-
-			// test Unicode GetObject method
-			bmp = new BITMAP();
-			nWrittenBytes = GDI32.INSTANCE.GetObjectW(iconInfo.hbmColor,
+			int nWrittenBytes = GDI32.INSTANCE.GetObject(iconInfo.hbmColor,
 					bmp.size(), bmp.getPointer());
 			bmp.read();
 			if (nWrittenBytes <= 0)
