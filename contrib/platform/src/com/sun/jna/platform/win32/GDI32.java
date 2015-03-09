@@ -35,7 +35,7 @@ import com.sun.jna.win32.W32APIOptions;
 /** 
  * Definition (incomplete) of <code>gdi32.dll</code>. 
  * 
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface GDI32 extends StdCallLibrary {
 

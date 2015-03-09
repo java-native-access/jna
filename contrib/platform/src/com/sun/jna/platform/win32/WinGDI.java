@@ -26,7 +26,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Ported from WinGDI.h. 
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface WinGDI extends StdCallLibrary {
     public int RDH_RECTANGLES = 1;

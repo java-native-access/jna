@@ -136,7 +136,7 @@ import com.sun.jna.ptr.PointerByReference;
  * property has no effect. 
  * @see <a href="http://developer.apple.com/technotes/tn2007/tn2196.html#APPLE_AWT_DRAGGABLEWINDOWBACKGROUND">Apple Technote 2007</a>
  * 
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 // TODO: setWindowMask() should accept a threshold; some cases want a
 // 50% threshold, some might want zero/non-zero

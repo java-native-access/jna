@@ -28,7 +28,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Ported from WinUser.h Microsoft Windows SDK 6.0A.
  * 
  * @author dblock[at]dblock.org
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface WinUser extends StdCallLibrary, WinDef {
     HWND HWND_BROADCAST = new HWND(Pointer.createConstant(0xFFFF));

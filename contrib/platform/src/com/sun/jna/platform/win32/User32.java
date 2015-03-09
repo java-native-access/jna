@@ -30,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author twalljava@dev.java.net
  * @author Tobias Wolf, wolf.tobias@gmx.net
  * @author Markus KARG (markus[at]headcrashing[dot]eu)
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface User32 extends StdCallLibrary, WinUser, WinNT {
 

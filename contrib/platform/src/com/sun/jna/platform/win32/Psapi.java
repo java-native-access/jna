@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Andreas "PAX" Lück, All Rights Reserved
+/* Copyright (c) 2015 Andreas "PAX" L\u00FCck, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * library that makes it easier for you to obtain information about processes
  * and device drivers.
  * 
- * @author Andreas "PAX" Lück, onkelpax-forum[at]yahoo.de
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface Psapi extends StdCallLibrary {
 	public static final Psapi INSTANCE = (Psapi) Native.loadLibrary("psapi",
