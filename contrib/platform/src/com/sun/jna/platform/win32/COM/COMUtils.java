@@ -38,6 +38,8 @@ public abstract class COMUtils {
 
     /** The Constant CO_E_NOTINITIALIZED. */
     public static final int S_OK = 0;
+    public static final int S_FALSE = 1;
+    public static final int E_UNEXPECTED=0x8000FFFF;
 
     /**
      * Succeeded.
@@ -58,10 +60,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean SUCCEEDED(int hr) {
-        if (hr == S_OK)
-            return true;
-        else
-            return false;
+        return hr >= 0;
     }
 
     /**
@@ -83,7 +82,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean FAILED(int hr) {
-        return (hr != S_OK);
+        return hr < 0;
     }
 
     /**
