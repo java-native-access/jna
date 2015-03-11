@@ -73,8 +73,7 @@ public class COMBindingBaseObject extends COMInvoker {
             int dwClsContext) {
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-        if (hr.intValue() == 1) // Already initialized, no problem
-            hr = new HRESULT(0);
+
         if (COMUtils.FAILED(hr)) {
             Ole32.INSTANCE.CoUninitialize();
             throw new COMException("CoInitialize() failed!");
@@ -108,8 +107,6 @@ public class COMBindingBaseObject extends COMInvoker {
             int dwClsContext) throws COMException {
         // Initialize COM for this thread...
         HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-        if (hr.intValue() == 1) // Already initialized, no problem
-            hr = new HRESULT(0);
 
         if (COMUtils.FAILED(hr)) {
             this.release();
