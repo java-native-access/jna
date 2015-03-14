@@ -23,6 +23,7 @@ Features
 * [#365](https://github.com/twall/jna/pull/365): Added `com.sun.jna.platform.win32.Kernel32.GetComputerNameEx` support - [@lgoldstein](https://github.com/lgoldstein).
 * [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants to `com.sun.jna.platform.win32.WinNT` - [@apsk](https://github.com/apsk).
 * Allow interoperation with JNI revision changes - [@twall](https://github.com/twall).
+* [#400](https://github.com/twall/jna/pull/400): Added several window utility functions for Windows (get all current window handles, get set icon of window, obtain size of HICON, get title of window, get process file path of window, get window location and size), Request textual message of current last error code, Added missing constants and API functions that were required - [@PAX523](https://github.com/PAX523).
 
 Bug Fixes
 ---------
