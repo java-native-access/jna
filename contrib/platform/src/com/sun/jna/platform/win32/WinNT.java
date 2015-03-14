@@ -1969,8 +1969,83 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_PRIVILEGE_REMOVED = 0X00000004;
     int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-    int PROCESS_TERMINATE = 0x00000001;
-    int PROCESS_SYNCHRONIZE = 0x00100000;
+	/** Required to create a process. */
+	int PROCESS_CREATE_PROCESS = 0x0080;
+
+	/** Required to create a thread. */
+	int PROCESS_CREATE_THREAD = 0x0002;
+
+	/**
+	 * Required to duplicate a handle using
+	 * {@link Kernel32#DuplicateHandle(HANDLE, HANDLE, HANDLE, HANDLEByReference, int, boolean, int)}
+	 * .
+	 */
+	int PROCESS_DUP_HANDLE = 0x0040;
+
+	/**
+	 * Required to retrieve certain information about a process, such as its
+	 * token, exit code, and priority class (see
+	 * {@link Advapi32#OpenProcessToken(HANDLE, int, HANDLEByReference)}).
+	 */
+	int PROCESS_QUERY_INFORMATION = 0x0400;
+
+	/**
+	 * Required to retrieve certain information about a process (see
+	 * {@link Kernel32#GetExitCodeProcess(HANDLE, com.sun.jna.ptr.IntByReference)}
+	 * , {@code Kernel32.GetPriorityClass()}, {@code Kernel32.IsProcessInJob()},
+	 * {@code Kernel32.QueryFullProcessImageName()}). A handle that has the
+	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
+	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
+	 * 
+	 * Windows Server 2003 and Windows XP: This access right is not supported.
+	 */
+	int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
+	/**
+	 * Required to set certain information about a process, such as its priority
+	 * class (see {@code Kernel32.SetPriorityClass()}).
+	 */
+	int PROCESS_SET_INFORMATION = 0x0200;
+
+	/**
+	 * Required to set memory limits using
+	 * {@code Kernel32.SetProcessWorkingSetSize()}.
+	 */
+	int PROCESS_SET_QUOTA = 0x0100;
+
+	/** Required to suspend or resume a process. */
+	int PROCESS_SUSPEND_RESUME = 0x0800;
+
+	/**
+	 * Required to terminate a process using
+	 * {@link Kernel32#TerminateProcess(HANDLE, int)}.
+	 */
+	int PROCESS_TERMINATE = 0x00000001;
+
+	/**
+	 * Required to perform an operation on the address space of a process (see
+	 * {@code Kernel32.VirtualProtectEx()} and
+	 * {@link Kernel32#WriteProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * ).
+	 */
+	int PROCESS_VM_OPERATION = 0x0008;
+
+	/**
+	 * Required to read memory in a process using
+	 * {@link Kernel32#ReadProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * .
+	 */
+	int PROCESS_VM_READ = 0x0010;
+
+	/**
+	 * Required to write to memory in a process using
+	 * {@link Kernel32#WriteProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * .
+	 */
+	int PROCESS_VM_WRITE = 0x0020;
+
+	/** Required to wait for the process to terminate using the wait functions. */
+	int PROCESS_SYNCHRONIZE = 0x00100000;
 
     /* Security information types */
     int OWNER_SECURITY_INFORMATION = 0x00000001;

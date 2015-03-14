@@ -76,6 +76,7 @@ import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Psapi;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Win32Exception;
+import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
@@ -1225,18 +1226,21 @@ public class WindowUtils {
 
 		@Override
 		public String getProcessFilePath(final HWND hwnd) {
-			final byte[] filePath = new byte[256];
+			final char[] filePath = new char[1025];
 			final IntByReference pid = new IntByReference();
 			User32.INSTANCE.GetWindowThreadProcessId(hwnd, pid);
 
 			final HANDLE process = Kernel32.INSTANCE.OpenProcess(
-					0x0400 | 0x0010, false, pid.getValue());
-			if (process == null && Kernel32.INSTANCE.GetLastError() != 5)
+					WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ,
+					false, pid.getValue());
+			if (process == null
+					&& Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED)
 				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 
-			final int length = Psapi.INSTANCE.GetModuleFileNameExA(process,
+			final int length = Psapi.INSTANCE.GetModuleFileNameExW(process,
 					null, filePath, filePath.length);
-			if (length == 0 && Kernel32.INSTANCE.GetLastError() != 6)
+			if (length == 0
+					&& Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_INVALID_HANDLE)
 				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 
 			return Native.toString(filePath).trim();

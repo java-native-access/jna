@@ -13,8 +13,10 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APIOptions;
 
 /**
  * The process status application programming interface (PSAPI) is a helper
@@ -25,8 +27,8 @@ import com.sun.jna.win32.StdCallLibrary;
  */
 public interface Psapi extends StdCallLibrary {
 	public static final Psapi INSTANCE = (Psapi) Native.loadLibrary("psapi",
-			Psapi.class);
-
+			Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
+	
 	/**
 	 * Retrieves the fully qualified path for the file containing the specified
 	 * module.
@@ -51,4 +53,54 @@ public interface Psapi extends StdCallLibrary {
 	 */
 	int GetModuleFileNameExA(final HANDLE process, final HANDLE module,
 			final byte[] lpFilename, final int nSize);
+	
+	/**
+	 * Retrieves the fully qualified path for the file containing the specified
+	 * module.
+	 * 
+	 * @param process
+	 *            A handle to the process that contains the module.
+	 * @param module
+	 *            A handle to the module. If this parameter is NULL,
+	 *            GetModuleFileNameEx returns the path of the executable file of
+	 *            the process specified in hProcess.
+	 * @param lpFilename
+	 *            A pointer to a buffer that receives the fully qualified path
+	 *            to the module. If the size of the file name is larger than the
+	 *            value of the nSize parameter, the function succeeds but the
+	 *            file name is truncated and null-terminated.
+	 * @param nSize
+	 *            The size of the lpFilename buffer, in characters.
+	 * @return If the function succeeds, the return value specifies the length
+	 *         of the string copied to the buffer. If the function fails, the
+	 *         return value is zero. To get extended error information, call
+	 *         {@link Kernel32Util#getLastErrorMessage()}.
+	 */
+	int GetModuleFileNameExW(final HANDLE process, final HANDLE module,
+			final char[] lpFilename, final int nSize);
+
+	/**
+	 * Retrieves the fully qualified path for the file containing the specified
+	 * module.
+	 * 
+	 * @param process
+	 *            A handle to the process that contains the module.
+	 * @param module
+	 *            A handle to the module. If this parameter is NULL,
+	 *            GetModuleFileNameEx returns the path of the executable file of
+	 *            the process specified in hProcess.
+	 * @param lpFilename
+	 *            A pointer to a buffer that receives the fully qualified path
+	 *            to the module. If the size of the file name is larger than the
+	 *            value of the nSize parameter, the function succeeds but the
+	 *            file name is truncated and null-terminated.
+	 * @param nSize
+	 *            The size of the lpFilename buffer, in characters.
+	 * @return If the function succeeds, the return value specifies the length
+	 *         of the string copied to the buffer. If the function fails, the
+	 *         return value is zero. To get extended error information, call
+	 *         {@link Kernel32Util#getLastErrorMessage()}.
+	 */
+	int GetModuleFileNameEx(final HANDLE process, final HANDLE module,
+			final Pointer lpFilename, final int nSize);
 }
