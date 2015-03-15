@@ -23,7 +23,28 @@ Features
 * [#365](https://github.com/twall/jna/pull/365): Added `com.sun.jna.platform.win32.Kernel32.GetComputerNameEx` support - [@lgoldstein](https://github.com/lgoldstein).
 * [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants to `com.sun.jna.platform.win32.WinNT` - [@apsk](https://github.com/apsk).
 * Allow interoperation with JNI revision changes - [@twall](https://github.com/twall).
-* [#400](https://github.com/twall/jna/pull/400): Added several window utility functions for Windows (get all current window handles, get set icon of window, obtain size of HICON, get title of window, get process file path of window, get window location and size), Request textual message of current last error code, Added missing constants and API functions that were required - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to get all current window handles `com.sun.jna.platform.WindowUtils.getAllWindows` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to get the set icon of a window handle `com.sun.jna.platform.WindowUtils.getWindowIcon` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to obtain the size of a HICON `com.sun.jna.platform.WindowUtils.getIconSize` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to get the title of a window `com.sun.jna.platform.WindowUtils.getWindowTitle` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to get the process' file path of a window `com.sun.jna.platform.WindowUtils.getProcessFilePath` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added window utility function for Windows to get the location and size of a window handle: `com.sun.jna.platform.WindowUtils.getWindowLocationAndSize` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Request textual message of current last error code `com.sun.jna.platform.win32.Kernel32Util.getLastErrorMessage` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.GDI32.GetObject` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `Psapi` API class - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi.GetModuleFileNameExA` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi.GetModuleFileNameExW` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi.GetModuleFileNameEx` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.GetIconInfo` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.SendMessageTimeout` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.GetClassLongPtr` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.WinGDI.ICONINFO` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.WinGDI.BITMAP` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added process-specific access rights constants in `com.sun.jna.platform.win32.WinNT` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added specific constants for request of icon settings in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added constants for `GetClassLong` function in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added constants for `SendMessageTimeout` function in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added constants for `GetIconInfo` function in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
 
 Bug Fixes
 ---------
