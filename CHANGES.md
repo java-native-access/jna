@@ -40,6 +40,7 @@ Bug Fixes
 * [#382](https://github.com/twall/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
 * [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
+* Make com.sun.jna.platform.win32.COM.COMUtils.SUCCEEDED and FAILED conform to MSDN specification for said macros. [@lwahonen](https://github.com/lwahonen)
 
 Release 4.1
 ===========

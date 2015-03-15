@@ -58,10 +58,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean SUCCEEDED(int hr) {
-        if (hr == S_OK)
-            return true;
-        else
-            return false;
+        return hr >= 0;
     }
 
     /**
@@ -83,7 +80,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean FAILED(int hr) {
-        return (hr != S_OK);
+        return hr < 0;
     }
 
     /**
