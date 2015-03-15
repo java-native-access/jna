@@ -13,25 +13,37 @@
 package com.sun.jna.platform.win32;
 
 import static com.sun.jna.platform.win32.User32.INSTANCE;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.util.List;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
-import static org.junit.Assert.*;
-
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinGDI.ICONINFO;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
 import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
@@ -45,6 +57,27 @@ public class User32Test {
 
     public static void main(String[] args) {
     	JUnitCore.runClasses(User32Test.class);
+    }
+    
+	/**
+	 * Iterates over all currently available Desktop windows and searches for
+	 * the window with the associated process whose full PE file path ends with
+	 * the specified string (case insensitive).
+	 * 
+	 * @param filePathEnd
+	 *            The requested end of the process' full file path.
+	 * @return Either the found window or {@code null} if nothing was found.
+	 */
+	private static DesktopWindow getWindowByProcessPath(final String filePathEnd) {
+		final List<DesktopWindow> allWindows = WindowUtils.getAllWindows(false);
+		for (final DesktopWindow wnd : allWindows) {
+			if (wnd.getFilePath().toLowerCase()
+					.endsWith(filePathEnd.toLowerCase())) {
+				return wnd;
+			}
+		}
+
+		return null;
     }
 
     @Test
@@ -203,4 +236,55 @@ public class User32Test {
     public final void testExitWindows() {
 		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
     }
+    
+    @Test
+	public void testGetIconInfo() throws Exception {
+		final ICONINFO iconInfo = new ICONINFO();
+		final HANDLE hIcon = User32.INSTANCE.LoadImage(null, new File(
+				getClass().getResource("/res/test_icon.ico").toURI())
+				.getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
+				WinUser.LR_LOADFROMFILE);
+
+		try {
+			// obtain test icon from classpath
+			if (!User32.INSTANCE.GetIconInfo(hIcon, iconInfo))
+				throw new Exception(
+						"Invocation of User32.GetIconInfo() failed: "
+								+ Kernel32Util.getLastErrorMessage());
+			iconInfo.read();
+		} finally {
+			if (iconInfo.hbmColor != null
+					&& iconInfo.hbmColor.getPointer() != Pointer.NULL)
+				GDI32.INSTANCE.DeleteObject(iconInfo.hbmColor);
+			if (iconInfo.hbmMask != null
+					&& iconInfo.hbmMask.getPointer() != Pointer.NULL)
+				GDI32.INSTANCE.DeleteObject(iconInfo.hbmMask);
+		}
+	}
+
+	@Test
+	public void testSendMessageTimeout() {
+		DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+
+		assertNotNull(explorerProc);
+
+		final DWORDByReference hIconNumber = new DWORDByReference();
+		long result = User32.INSTANCE.SendMessageTimeout(
+				explorerProc.getHWND(), WinUser.WM_GETICON, WinUser.ICON_BIG,
+				0, WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
+
+		assertNotEquals(0, result);
+	}
+
+	@Test
+	public void testGetClassLongPtr() {
+		DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+
+		assertNotNull(explorerProc);
+
+		long result = User32.INSTANCE.GetClassLongPtr(explorerProc.getHWND(),
+				WinUser.GCLP_HMODULE);
+
+		assertNotEquals(0, result);
+	}
 }
