@@ -12,7 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -37,6 +39,7 @@ import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -2184,5 +2187,160 @@ public abstract class Advapi32Util {
         }
 
         return hasAccess;
+    }
+	
+    /**
+     * Encrypts a file or directory.
+     *
+     * @param file
+     *         The file or directory to encrypt.
+     */
+    public static void encryptFile(File file) {
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.EncryptFile(lpFileName)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Decrypts an encrypted file or directory.
+     *
+     * @param file
+     *         The file or directory to decrypt.
+     */
+    public static void decryptFile(File file) {
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0))) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Checks the encryption status of a file.
+     *
+     * @param file
+     *         The file to check the status for.
+     * @return The status of the file.
+     */ 
+    public static int fileEncryptionStatus(File file) {
+        DWORDByReference status = new DWORDByReference();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, status)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return status.getValue().intValue();
+    }
+
+    /**
+     * Disables or enables encryption of the specified directory and the files in
+     * it.
+     *
+     * @param directory
+     *         The directory for which to enable or disable encryption.
+     * @param disable
+     *         TRUE to disable encryption. FALSE to enable it.
+     */
+    public static void disableEncryption(File directory, boolean disable) {
+        WString dirPath = new WString(directory.getAbsolutePath());
+        if (!Advapi32.INSTANCE.EncryptionDisable(dirPath, disable)) {
+            throw new Win32Exception(Native.getLastError());
+        }
+    }
+
+    /**
+     * Backup an encrypted file or folder without decrypting it. A file named
+     * "bar/sample.text" will be backed-up to "destDir/sample.text". A directory
+     * named "bar" will be backed-up to "destDir/bar". This method is NOT
+     * recursive. If you have an encrypted directory with encrypted files, this
+     * method must be called once for the directory, and once for each encrypted
+     * file to be backed-up.
+     *
+     * @param src
+     *         The encrypted file or directory to backup.
+     * @param destDir
+     *         The directory where the backup will be saved.
+     */
+    public static void backupEncryptedFile(File src, File destDir) {
+        if (!destDir.isDirectory()) {
+            throw new IllegalArgumentException("destDir must be a directory.");
+        }
+
+        ULONG readFlag = new ULONG(0); // Open the file for export (backup)
+        ULONG writeFlag = new ULONG(CREATE_FOR_IMPORT); // Import (restore) file
+
+        if (src.isDirectory()) {
+            writeFlag.setValue(CREATE_FOR_IMPORT | CREATE_FOR_DIR);
+        }
+        
+        // open encrypted file for export
+        WString srcFileName = new WString(src.getAbsolutePath());
+        PointerByReference pvContext = new PointerByReference();
+        if (Advapi32.INSTANCE.OpenEncryptedFileRaw(srcFileName, readFlag,
+                pvContext) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // read encrypted file
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                                  ULONG ulLength) {
+                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                try {
+                    outputStream.write(arr);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        if (Advapi32.INSTANCE.ReadEncryptedFileRaw(pfExportCallback, null, 
+                pvContext.getValue()) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // close
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+
+        // open file for import
+        WString destFileName = new WString(destDir.getAbsolutePath() + File.separator
+                        + src.getName());
+        pvContext = new PointerByReference();
+        if (Advapi32.INSTANCE.OpenEncryptedFileRaw(destFileName, writeFlag,
+                pvContext) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // write encrypted file
+        final IntByReference elementsReadWrapper = new IntByReference(0);
+        FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext, 
+                                  ULONGByReference ulLength) {
+                int elementsRead = elementsReadWrapper.getValue();
+                int remainingElements = outputStream.size() - elementsRead;
+                int length = Math.min(remainingElements, ulLength.getValue().intValue());
+                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead, 
+                        length);
+                elementsReadWrapper.setValue(elementsRead + length);
+                ulLength.setValue(new ULONG(length));
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        if (Advapi32.INSTANCE.WriteEncryptedFileRaw(pfImportCallback, null, 
+                pvContext.getValue()) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // close
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
     }
 }

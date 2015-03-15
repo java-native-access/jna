@@ -21,6 +21,28 @@ Projects Using JNA
 ==================
 JNA is a mature library with dozens of contributors and hundreds of commercial and non-commercial projects that use it.  If you're using JNA, feel free to [tell us about it](http://groups.google.com/group/jna-users).  Include some details about your company, project name, purpose and size and tell us how you use the library.
 
+- [Apache Cassandra](http://cassandra.apache.org) Large-scale NoSQL data store.
+- [Rococoa](http://rococoa.dev.java.net) Java bindings to the Mac OS X Cocoa framework (Duncan McGregor)
+- [jna-posix](http://kenai.com/projects/jna-posix) Common POSIX Functions for Java
+- [JNAerator](http://jnaerator.googlecode.com/") (pronounced "generator") Autogenerates JNA mappings from C headers (Olivier Chafik)
+- [Freedom for Media in Java](http://fmj.sf.net) (Ken Larson/Dieter Krachtus)
+- [gstreamer for Java](http://code.google.com/p/gstreamer-java) (Wayne Meissner)
+- [Videolan](http://trac.videolan.org/jvlc/) JVLC Java Multimedia Library
+- [SVNKit](http://svnkit.com) Pure Java Subversion client library.
+- [OmegaT Computer-Aided Translation](http://omegat.sf.net), which makes use of the [hunspell spell checker](http://hunspell.sf.net).
+- [IntelliJ IDEA](http://jetbrains.com) (JetBrains)
+- [NetBeans IDE](http://netbeans.org)
+- [Athena Backup](http://www.athenabackup.com) (Doug Patriarche)
+- [USB for Java](https://launchpad.net/libusb4j) (Mario Boikov)
+
+*Interesting Investigations/Experiments*
+- [Drive Lego Mindstorm NXT](http://epirsch.blogspot.com/2008/02/jna-love-nxt.html) (Emmanuel Pirsch)
+- [A JavaFX Clock](http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency) (Augusto Sellhorn)
+- [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) (Olivier Chafik)
+- [IAXClient Applet](http://callino.cc/jiaxcapplet/) (Wolfgang Pichler), providing VOIP for Java.
+
+There are also a number of examples and projects within the `contrib` directory of the JNA project itself.
+
 Supported Platforms
 ===================
 JNA will build on most linux-like platforms with a reasonable set of GNU tools and a JDK.  See the native [Makefile](https://raw.githubusercontent.com/twall/jna/master/native/Makefile) for native configurations that have been built and tested.  If your platform is supported by [libffi](http://en.wikipedia.org/wiki/Libffi), then chances are you can build JNA for it.
@@ -93,7 +115,7 @@ Using the Library
 * [Platform Library](https://github.com/twall/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/twall/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/twall/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://twall.github.com/jna/4.1.0/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://twall.github.com/jna/4.1.0/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
