@@ -20,7 +20,9 @@ JNA supports a direct mapping method which can improve performance substantially
         }
     }
 
-Direct mapping supports the same type mappings as interface mapping, except for arrays of `Pointer`/`Structure`/`String`/`WString`/`NativeMapped` as function arguments.  Methods may be either static or member methods.
+Direct mapping supports the same type mappings as interface mapping, except for arrays of `Pointer`/`Structure`/`String`/`WString`/`NativeMapped` as function arguments.  **Varargs are not supported**.
+
+Methods may be either static or member methods; the class or object is ignored on the native side.
 
 You can easily convert from interface mapping to direct mapping by creating a direct mapping class which implements your library interface, with all methods defined as native methods. Then your library instance variable can be assigned an instance of this new class instead of the object returned by `Native.loadLibrary()`.
 
