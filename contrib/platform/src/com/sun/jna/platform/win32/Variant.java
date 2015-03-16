@@ -116,6 +116,32 @@ public interface Variant {
 
         public static class ByReference extends VARIANT implements
                 Structure.ByReference {
+            public ByReference(VARIANT variant) {
+                setValue(variant.getVarType(), variant.getValue());
+            }
+
+            public ByReference(Pointer variant) {
+                super(variant);
+            }
+
+            public ByReference() {
+                super();
+            }
+        }
+
+        public static class ByValue extends VARIANT implements
+                Structure.ByValue {
+            public ByValue(VARIANT variant) {
+                setValue(variant.getVarType(), variant.getValue());
+            }
+
+            public ByValue(Pointer variant) {
+                super(variant);
+            }
+
+            public ByValue() {
+                super();
+            }
         }
 
         public _VARIANT _variant;
@@ -170,17 +196,17 @@ public interface Variant {
 
         public VARIANT(short value) {
             this();
-            this.setValue(VT_I2, value);
+            this.setValue(VT_I2, new SHORT(value));
         }
 
         public VARIANT(int value) {
             this();
-            this.setValue(VT_I4, value);
+            this.setValue(VT_I4, new LONG(value));
         }
 
         public VARIANT(long value) {
             this();
-            this.setValue(VT_I8, value);
+            this.setValue(VT_I8, new LONGLONG(value));
         }
 
         public VARIANT(float value) {

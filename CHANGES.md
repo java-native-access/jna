@@ -45,6 +45,7 @@ Bug Fixes
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
 * [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
 * [#403](https://github.com/twall/jna/pull/403): Fix `com.sun.jna.platform.win32.COM.COMUtils.SUCCEEDED` and `FAILED` - [@lwahonen](https://github.com/lwahonen).
+* [#404](https://github.com/twall/jna/pull/404): Fix `VARIANT` constructors for `int`, `short`, and `long` - [@lwahonen](https://github.com/lwahonen).
 
 Release 4.1
 ===========
