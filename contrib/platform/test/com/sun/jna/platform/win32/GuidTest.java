@@ -126,4 +126,18 @@ public class GuidTest extends TestCase {
 
 		assertEquals(guidFromString.toGuidString(), guidString);
 	}
+	
+	/**
+	 * Tests the GUID.ByValue.
+	 */
+	public void testGuidByValue() {
+		GUID newGuid = GUID.newGuid();
+		String guidString = newGuid.toGuidString();
+		
+		GUID.ByValue bv = new GUID.ByValue(newGuid);
+		
+		String guidBV = bv.toGuidString();
+
+		assertEquals(guidBV, guidString);
+	}
 }

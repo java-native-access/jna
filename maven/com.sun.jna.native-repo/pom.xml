@@ -1,0 +1,333 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.sun.jna</groupId>
+		<artifactId>com.sun.jna.parent</artifactId>
+		<version>4.1.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>com.sun.jna.native-repo</artifactId>
+
+	<packaging>pom</packaging>
+
+	<properties>
+		<native-groupId>com.sun.jna.native</native-groupId>
+		<native-test-groupId>com.sun.jna.native.test</native-test-groupId>
+		<native-jars>${project.basedir}/../../lib/native</native-jars>
+		<native-test-jars>${project.basedir}/../../lib/test</native-test-jars>
+		<native-repo-dir>${project.build.directory}/repo</native-repo-dir>
+	</properties>
+
+	<build>
+
+		<plugins>
+
+			<!-- install native libs to a local repo -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-install-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<!-- also add the test lib dll/jar  so tests can be run,
+					TODO: combine this with other platforms below as different test jat for each
+					<execution>
+						<id>jna-test</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-test-jars}/jna-test/win32-x86-64.jar</file>
+							<groupId>${native-test-groupId}</groupId>
+							<artifactId>win32-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution> -->
+					<!-- native jars -->
+					<execution>
+						<id>win32-x86</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/win32-x86.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>win32-x86</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>win32-x86-64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/win32-x86-64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>win32-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>w32ce-arm</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/w32ce-arm.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>w32ce-arm</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>sunos-x86</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/sunos-x86.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>sunos-x86</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sunos-x86-64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/sunos-x86-64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>sunos-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sunos-sparc</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/sunos-sparc.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>sunos-sparc</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>sunos-sparcv9</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/sunos-sparcv9.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>sunos-sparcv9</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>aix-ppc</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/aix-ppc.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>aix-ppc</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>aix-ppc64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/aix-ppc64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>aix-ppc64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					
+					<execution>
+						<id>linux-ppc</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-ppc.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-ppc</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-ppc64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-ppc64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-ppc64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-x86</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-x86.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-x86</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-x86-64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-x86-64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-arm</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-arm.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-arm</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-aarch64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-aarch64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-aarch64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>linux-ia64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/linux-ia64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>linux-ia64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>freebsd-x86</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/freebsd-x86.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>freebsd-x86</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>freebsd-x86-64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/freebsd-x86-64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>freebsd-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>openbsd-x86</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/openbsd-x86.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>openbsd-x86</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					<execution>
+						<id>openbsd-x86-64</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/openbsd-x86-64.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>openbsd-x86-64</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>darwin</id>
+						<phase>generate-resources</phase>
+						<goals> <goal>install-file</goal> </goals>
+						<configuration>
+							<localRepositoryPath>${native-repo-dir}</localRepositoryPath>
+							<file>${native-jars}/darwin.jar</file>
+							<groupId>${native-groupId}</groupId>
+							<artifactId>darwin</artifactId>
+							<version>${project.version}</version>
+							<packaging>jar</packaging>
+						</configuration>
+					</execution>
+					
+				</executions>
+			</plugin>
+		
+		</plugins>
+	</build>
+	
+</project>

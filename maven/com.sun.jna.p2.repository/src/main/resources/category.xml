@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/com.sun.jna.feature_4.1.1.qualifier.jar" id="com.sun.jna.feature" version="4.1.1.qualifier">
+      <category name="jna"/>
+   </feature>
+   <category-def name="jna" label="jna"/>
+</site>

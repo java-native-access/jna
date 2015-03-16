@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.sun.jna</groupId>
+		<artifactId>com.sun.jna.parent</artifactId>
+		<version>4.1.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>com.sun.jna.p2.repository</artifactId>
+	
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.reficio</groupId>
+				<artifactId>p2-maven-plugin</artifactId>
+				<version>1.1.2-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<id>default-cli</id>
+						<phase>package</phase>
+						<goals>
+							<goal>site</goal>
+						</goals>
+						<configuration>
+							<categoryFileURL>${project.basedir}/src/main/resources/category.xml</categoryFileURL>
+							<artifacts>
+								<artifact>
+									<id>com.sun.jna:com.sun.jna.core:${project.version}</id>
+									<transitive>false</transitive>
+									<source>true</source>
+								</artifact>
+								<artifact>
+									<id>com.sun.jna:com.sun.jna.platform:${project.version}</id>
+									<transitive>false</transitive>
+									<source>true</source>
+								</artifact>
+							</artifacts>
+							<features>
+								<artifact>
+									<id>com.sun.jna:feature:${project.version}</id>
+									<transitive>false</transitive>
+								</artifact>
+							</features>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

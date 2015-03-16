@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
@@ -25,6 +26,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -57,7 +59,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT QueryInterface(IID riid, PointerByReference ppvObject) {
+    public HRESULT QueryInterface(REFIID.ByValue riid, PointerByReference ppvObject) {
         return this.getIDispatch().QueryInterface(riid, ppvObject);
     }
 
@@ -83,16 +85,16 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid,
                 rgDispId);
     }
 
     @Override
-    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-            DISPID wFlags, DISPPARAMS pDispParams, ByReference pVarResult,
-            EXCEPINFO.ByReference pExcepInfo,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+            WORD wFlags, DISPPARAMS.ByReference pDispParams,
+            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {
         return this.getIDispatch().Invoke(dispIdMember, riid, lcid, wFlags,
                 pDispParams, pVarResult, pExcepInfo, puArgErr);

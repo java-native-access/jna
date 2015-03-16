@@ -72,7 +72,7 @@ public class COMException extends RuntimeException {
      */
     public COMException(String message, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
-        super(message + " (puArgErr=" + puArgErr.getValue() + ")");
+        super(message + " (puArgErr=" + (null==puArgErr?"":puArgErr.getValue()) + ")");
         this.pExcepInfo = pExcepInfo;
         this.puArgErr = puArgErr;
     }

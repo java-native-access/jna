@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -26,6 +27,7 @@ import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -84,7 +86,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID.ByValue( IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -127,7 +129,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID.ByValue(IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -209,7 +211,7 @@ public class COMBindingBaseObject extends COMInvoker {
         DISPIDByReference pdispID = new DISPIDByReference();
 
         // Get DISPID for name passed...
-        HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
+        HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
         COMUtils.checkRC(hr);
@@ -228,7 +230,7 @@ public class COMBindingBaseObject extends COMInvoker {
         // variable declaration
         int _argsLen = 0;
         VARIANT[] _args = null;
-        DISPPARAMS dp = new DISPPARAMS();
+        DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
         IntByReference puArgErr = new IntByReference();
 
@@ -261,8 +263,8 @@ public class COMBindingBaseObject extends COMInvoker {
         }
 
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT,
-                new DISPID(nType), dp, pvResult, pExcepInfo, puArgErr);
+        HRESULT hr = pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;

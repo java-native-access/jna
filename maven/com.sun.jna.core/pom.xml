@@ -1,0 +1,393 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.sun.jna</groupId>
+		<artifactId>com.sun.jna.parent</artifactId>
+		<version>4.1.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>com.sun.jna.core</artifactId>
+
+	<packaging>bundle</packaging>
+
+	<properties>
+		<test-target-platform>win32-x86-64</test-target-platform>
+		<native-repo-dir>${project.basedir}/../com.sun.jna.native-repo/target/repo</native-repo-dir>
+		<native-test-groupId>com.sun.jna.native</native-test-groupId>
+		<native-groupId>com.sun.jna.native</native-groupId>
+		<bundle-version>${parsedVersion.osgiVersion}</bundle-version>
+	</properties>
+	
+	<dependencies>
+		
+		<dependency>
+        	<groupId>org.reflections</groupId>
+        	<artifactId>reflections</artifactId>
+        	<version>0.9.8</version>
+        	<scope>test</scope>
+     	</dependency>
+		<!-- TODO, this doesn;t work yet
+		<dependency>
+    		<groupId>${native-test-groupId}</groupId>
+    		<artifactId>${test-target-platform}</artifactId>
+    		<version>${project.version}</version>
+    		<scope>test</scope>
+		</dependency>
+		-->
+		<dependency>
+    		<groupId>junit</groupId>
+    		<artifactId>junit</artifactId>
+    		<version>4.11</version>
+    		<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+	
+	<!-- add path to native lib jars a s a repository so that maven-dependency-plugin can find them -->
+	<repositories>
+		<repository>
+			<id>project.local</id>
+			<name>project</name>
+			<url>file:${native-repo-dir}</url>
+		</repository>
+	</repositories>
+	
+	<build>
+		<sourceDirectory>${project.basedir}/../../src</sourceDirectory>
+		<testSourceDirectory>${project.basedir}/../../test</testSourceDirectory>
+		
+		<resources>
+			<!-- native files are unpacked to the project.build.outputDirectory, this ensures that 
+			the maven-bundle-plugin includes the native libsin the bundle -->
+			<resource>
+				<directory>${project.build.outputDirectory}</directory>
+				<includes>
+					<include>**/*.dll</include>
+					<include>**/*.a</include>
+					<include>**/*.so</include>
+					<include>**/*.jnilib</include>
+				</includes>
+			</resource>
+		</resources>
+	
+		<plugins>
+	
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.9.1</version>
+				<executions>
+					<execution>
+						<id>parse-version</id>
+						<goals>
+							<goal>parse-version</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<!-- unpack native libs so they are packaged into the jar -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.9</version>
+				<executions>
+					<execution>
+						<id>unpack</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>unpack</goal>
+						</goals>
+						<configuration>
+							<localRepositoryDirectory>${native-repo-dir}</localRepositoryDirectory>
+							<artifactItems>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/win32-x86</outputDirectory>
+									<includes>jnidispatch.dll</includes>
+									<artifactId>win32-x86</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/win32-x86-64</outputDirectory>
+									<includes>jnidispatch.dll</includes>
+									<artifactId>win32-x86-64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/w32ce-arm</outputDirectory>
+									<includes>jnidispatch.dll</includes>
+									<artifactId>w32ce-arm</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/sunos-x86</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>sunos-x86</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/sunos-x86-64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>sunos-x86-64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/sunos-sparc</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>sunos-sparc</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/sunos-sparcv9</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>sunos-sparcv9</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/aix-ppc</outputDirectory>
+									<includes>libjnidispatch.a</includes>
+									<artifactId>aix-ppc</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/aix-ppc64</outputDirectory>
+									<includes>libjnidispatch.a</includes>
+									<artifactId>aix-ppc64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-ppc</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-ppc</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-ppc64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-ppc64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-x86</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-x86</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-x86-64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-x86-64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-arm</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-arm</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-aarch64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>linux-aarch64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/linux-ia64</outputDirectory>
+									<includes>jnidispatch.dll</includes>
+									<artifactId>linux-ia64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/freebsd-x86</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>freebsd-x86</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/freebsd-x86-64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>freebsd-x86-64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/openbsd-x86</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>openbsd-x86</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/openbsd-x86-64</outputDirectory>
+									<includes>libjnidispatch.so</includes>
+									<artifactId>openbsd-x86-64</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+
+								<artifactItem>
+									<outputDirectory>${project.build.outputDirectory}/com/sun/jna/darwin</outputDirectory>
+									<includes>libjnidispatch.jnilib</includes>
+									<artifactId>darwin</artifactId>
+									<groupId>${native-groupId}</groupId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<overWrite>true</overWrite>
+								</artifactItem>
+								
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		
+			<!-- create manifest file -->
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Manifest-Version>1.0</Manifest-Version>
+						<Bundle-ManifestVersion>2</Bundle-ManifestVersion>
+						<Bundle-Name>${project.artifactId}</Bundle-Name>
+						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+						<Bundle-Version>${bundle-version}</Bundle-Version>
+						<Bundle-Vendor>JNA Development Team</Bundle-Vendor>
+						<Bundle-RequiredExecutionEnvironment>J2SE-1.4</Bundle-RequiredExecutionEnvironment>
+						<Bundle-ActivationPolicy>lazy</Bundle-ActivationPolicy>
+						<Export-Package>com.sun.jna,com.sun.jna.ptr,com.sun.jna.win32</Export-Package>
+						<Bundle-NativeCode>
+com/sun/jna/win32-x86/jnidispatch.dll;processor=x86;osname=win32,
+com/sun/jna/win32-x86-64/jnidispatch.dll;processor=x86-64;osname=win32,
+com/sun/jna/w32ce-arm/jnidispatch.dll;processor=arm;osname=wince,
+
+com/sun/jna/sunos-x86/libjnidispatch.so;processor=x86;osname=sunos,
+com/sun/jna/sunos-x86-64/libjnidispatch.so;processor=x86-64;osname=sunos,
+com/sun/jna/sunos-sparc/libjnidispatch.so;processor=sparc;osname=sunos,
+com/sun/jna/sunos-sparcv9/libjnidispatch.so;processor=sparcv9;osname=sunos,
+
+com/sun/jna/aix-ppc/libjnidispatch.a;processor=ppc;osname=aix,
+
+com/sun/jna/linux-x86/libjnidispatch.so;processor=x86;osname=linux,
+com/sun/jna/linux-x86-64/libjnidispatch.so;processor=x86-64;osname=linux,
+com/sun/jna/linux-arm/libjnidispatch.so;processor=arm;osname=linux,
+com/sun/jna/linux-aarch64/libjnidispatch.so;processor=aarch64;osname=linux,
+
+
+com/sun/jna/freebsd-x86/libjnidispatch.so;processor=x86;osname=freebsd,
+com/sun/jna/freebsd-x86-64/libjnidispatch.so;processor=x86-64;osname=freebsd,
+com/sun/jna/openbsd-x86/libjnidispatch.so;processor=x86;osname=openbsd,
+com/sun/jna/openbsd-x86-64/libjnidispatch.so;processor=x86-64;osname=openbsd,
+
+com/sun/jna/darwin/libjnidispatch.jnilib;osname=macosx;processor=x86;processor=x86-64;processor=ppc
+						</Bundle-NativeCode>
+						<!--
+						The built jar files for these is OUT_OF_DATE and doesn't contain the lib binary
+						hence can't be included in the bundle
+
+com/sun/jna/aix-ppc64/libjnidispatch.a;processor=ppc64;osname=aix,
+
+com/sun/jna/linux-ppc/libjnidispatch.so;processor=ppc;osname=linux,
+com/sun/jna/linux-ppc64/libjnidispatch.so;processor=ppc64;osname=linux,
+com/sun/jna/linux-ia64/libjnidispatch.so;processor=ia64;osname=linux,							 
+						-->
+					</instructions>
+				</configuration>
+			</plugin>
+			
+			<!-- Create sources artifact/bundle -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.0</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+					<testSource>1.6</testSource>
+					<testTarget>1.6</testTarget>
+				</configuration>
+			</plugin>
+			
+		</plugins>
+	</build>
+	
+</project>
