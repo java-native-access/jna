@@ -40,6 +40,7 @@ Bug Fixes
 * [#382](https://github.com/twall/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
 * [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
+* [#404](https://github.com/twall/jna/pull/404): Fix VARIANT constructors for int, short, and long - [@lwahonen](https://github.com/lwahonen).
 
 Release 4.1
 ===========
