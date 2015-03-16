@@ -14,26 +14,25 @@ Features
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
 * [#332](https://github.com/twall/jna/pull/332): Added Win32 Monitor Configuration API in `com.sun.jna.platform.win32.Dxva2` - [@msteiger](https://github.com/msteiger).
-* Added Winspool monitor sample and updated Kernel32, WinBase, Winspool - [@wolftobias](https://github.com/wolftobias).
-* [#333](https://github.com/twall/jna/pull/333): Added `CoTaskMemAlloc`, `CoTaskMemRealloc` and `CoTaskMemFree` to `com.sun.jna.platform.win32.Ole32` - [@msteiger](https://github.com/msteiger).
+* Added Winspool monitor sample and updated Kernel32, WinBase and Winspool - [@wolftobias](https://github.com/wolftobias).
+* [#333](https://github.com/twall/jna/pull/333): Added `com.sun.jna.platform.win32.Ole32.CoTaskMemAlloc`, `CoTaskMemRealloc` and `CoTaskMemFree` - [@msteiger](https://github.com/msteiger).
 * [#334](https://github.com/twall/jna/pull/334): Added `com.sun.jna.platform.win32.Shell32.SHGetKnownFolderPath` and `KnownFolders` GUID constants - [@msteiger](https://github.com/msteiger).
 * [#338](https://github.com/twall/jna/pull/338): Added `com.sun.jna.platform.mac.XAttr` and `com.sun.jna.platform.mac.XAttrUtil` JNA wrapper for `<sys/xattr.h>` for Mac OS X - [@rednoah](https://github.com/rednoah).
-* [#339](https://github.com/twall/jna/pull/339): Added `GetWindowPlacement`, `SetWindowPlacement`, `AdjustWindowRect`, `AdjustWindowRectEx`, `ExitWindowsEx`, and `LockWorkstation` to `com.sun.jna.platform.win32.User32` - [@Timeroot](https://github.com/Timeroot).
-* [#286](https://github.com/twall/jna/pull/286): Added in com.sun.jna.platform.win32.Kernel32: CreateRemoteThread, WritePocessMemory and ReadProcessMemory - [@sstokic-tgm](https://github.com/sstokic-tgm).
+* [#339](https://github.com/twall/jna/pull/339): Added `com.sun.jna.platform.win32.User32.GetWindowPlacement`, `SetWindowPlacement`, `AdjustWindowRect`, `AdjustWindowRectEx`, `ExitWindowsEx`, and `LockWorkstation` - [@Timeroot](https://github.com/Timeroot).
+* [#286](https://github.com/twall/jna/pull/286): Added `com.sun.jna.platform.win32.Kernel32.CreateRemoteThread`, `WritePocessMemory` and `ReadProcessMemory` - [@sstokic-tgm](https://github.com/sstokic-tgm).
 * [#350](https://github.com/twall/jna/pull/350): Added `jnacontrib.x11.api.X.Window.getSubwindows` - [@rm5248](https://github.com/rm5248).
 * Improved `contrib/msoffice` sample - [@wolftobias](https://github.com/wolftobias).
 * [#352](https://github.com/twall/jna/pull/352): Performance improvements due to reduced locking in `com.sun.jna.Library$Handler` and fewer vararg checks in `com.sun.jna.Function` - [@Boereck](https://github.com/Boereck).
 * [#357](https://github.com/twall/jna/pull/357): Added `com.sun.jna.platform.win32.Kernel32.SetSystemTime` - [@lgoldstein](https://github.com/lgoldstein), [@thomasjoulin](https://github.com/thomasjoulin).
 * [#365](https://github.com/twall/jna/pull/365): Added `com.sun.jna.platform.win32.Kernel32.GetComputerNameEx` support - [@lgoldstein](https://github.com/lgoldstein).
-* [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants to `com.sun.jna.platform.win32.WinNT` - [@apsk](https://github.com/apsk).
+* [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants - [@apsk](https://github.com/apsk).
 * Allow interoperation with JNI revision changes - [@twall](https://github.com/twall).
-* [#391](https://github.com/twall/jna/pull/391): Added `EncryptFile`, `DecryptFile`, `FileEncryptionStatus`, `EncryptionDisable`, `OpenEncryptedFileRaw`, `ReadEncryptedFileRaw`, `WriteEncryptedFileRaw`, and `CloseEncryptedFileRaw` to `com.sun.jna.platform.win32.Advapi32` with related `Advapi32Util` helpers - [@khalidq](https://github.com/khalidq).
-
+* [#391](https://github.com/twall/jna/pull/391): Added `com.sun.jna.platform.win32.Advapi3.EncryptFile`, `DecryptFile`, `FileEncryptionStatus`, `EncryptionDisable`, `OpenEncryptedFileRaw`, `ReadEncryptedFileRaw`, `WriteEncryptedFileRaw`, and `CloseEncryptedFileRaw` with related `Advapi32Util` helpers - [@khalidq](https://github.com/khalidq).
 * [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.WindowUtils.getAllWindows`, `getWindowIcon`, `getIconSize`, `getWindowTitle`, `getPRocessFilePath` and `getWindowLocationAndSize` - [@PAX523](https://github.com/PAX523).
-* [#400](https://github.com/twall/jna/pull/400): Request textual message of current last error code `com.sun.jna.platform.win32.Kernel32Util.getLastErrorMessage` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Kernel32Util.getLastErrorMessage` - [@PAX523](https://github.com/PAX523).
 * [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.GDI32.GetObject` - [@PAX523](https://github.com/PAX523).
-* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi` with `GetModuleFileNameEx`- [@PAX523](https://github.com/PAX523).
-* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.GetIconInfo`, `SendMessageTimeout`, `GetClassLongPtr` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi.GetModuleFileNameEx`- [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.GetIconInfo`, `SendMessageTimeout` and `GetClassLongPtr` - [@PAX523](https://github.com/PAX523).
 * [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.WinGDI.ICONINFO` and `BITMAP` - [@PAX523](https://github.com/PAX523).
 * [#400](https://github.com/twall/jna/pull/400): Added process-specific access rights constants in `com.sun.jna.platform.win32.WinNT` - [@PAX523](https://github.com/PAX523).
 * [#400](https://github.com/twall/jna/pull/400): Added specific constants for request of icon settings in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
@@ -49,8 +48,8 @@ Bug Fixes
 * Fix compiler warnings OSX - [@twall](https://github.com/twall).
 * Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
 * Disable WebStart tests - [@twall](https://github.com/twall).
-* Dispose all native resources when JNA's native library is unloaded - Paul Grütter of signotec GmbH and [@twall](https://github.com/twall).  This fixes a number of seemingly random, sporadic crashes on windows.
-* Weakly hold registered Direct-mapped classes - [@twall](https://github.com/twall).  
+* Dispose all native resources when JNA's native library is unloaded - Paul Grütter,  [@twall](https://github.com/twall).
+* Weakly hold registered direct-mapped classes - [@twall](https://github.com/twall).  
 * [#382](https://github.com/twall/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
 * [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
