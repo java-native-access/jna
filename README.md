@@ -21,25 +21,28 @@ Projects Using JNA
 ==================
 JNA is a mature library with dozens of contributors and hundreds of commercial and non-commercial projects that use it.  If you're using JNA, feel free to [tell us about it](http://groups.google.com/group/jna-users).  Include some details about your company, project name, purpose and size and tell us how you use the library.
 
-- [Apache Cassandra](http://cassandra.apache.org) Large-scale NoSQL data store.
-- [Rococoa](http://rococoa.dev.java.net) Java bindings to the Mac OS X Cocoa framework (Duncan McGregor)
-- [jna-posix](http://kenai.com/projects/jna-posix) Common POSIX Functions for Java
-- [JNAerator](http://jnaerator.googlecode.com/") (pronounced "generator") Autogenerates JNA mappings from C headers (Olivier Chafik)
-- [Freedom for Media in Java](http://fmj.sf.net) (Ken Larson/Dieter Krachtus)
-- [gstreamer for Java](http://code.google.com/p/gstreamer-java) (Wayne Meissner)
-- [Videolan](http://trac.videolan.org/jvlc/) JVLC Java Multimedia Library
-- [SVNKit](http://svnkit.com) Pure Java Subversion client library.
-- [OmegaT Computer-Aided Translation](http://omegat.sf.net), which makes use of the [hunspell spell checker](http://hunspell.sf.net).
-- [IntelliJ IDEA](http://jetbrains.com) (JetBrains)
-- [NetBeans IDE](http://netbeans.org)
-- [Athena Backup](http://www.athenabackup.com) (Doug Patriarche)
-- [USB for Java](https://launchpad.net/libusb4j) (Mario Boikov)
+- [Apache Cassandra](http://cassandra.apache.org): Large-scale NoSQL data store.
+- [Rococoa](http://rococoa.dev.java.net): Java bindings to the Mac OS X Cocoa framework, by Duncan McGregor.
+- [jna-posix](http://kenai.com/projects/jna-posix): Common POSIX Functions for Java.
+- [JNAerator](http://jnaerator.googlecode.com): Pronounced "generator", auto-generates JNA mappings from C headers, by Olivier Chafik.
+- [Freedom for Media in Java](http://fmj.sf.net) by Ken Larson/Dieter Krachtus.
+- [gstreamer for Java](http://code.google.com/p/gstreamer-java) by Wayne Meissner.
+- [Videolan](http://trac.videolan.org/jvlc/): JVLC Java Multimedia Library.
+- [SVNKit](http://svnkit.com): Pure Java Subversion client library.
+- [OmegaT Computer-Aided Translation](http://omegat.sf.net).
+- [IntelliJ IDEA](http://jetbrains.com) by JetBrains.
+- [NetBeans IDE](http://netbeans.org).
+- [Athena Backup](http://www.athenabackup.com) by Doug Patriarche.
+- [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
+- [Waffle](https://github.com/dblock/waffle): Enables SSO on Windows in Java applications, by Daniel Doubrovkine.
+- 
 
 *Interesting Investigations/Experiments*
-- [Drive Lego Mindstorm NXT](http://epirsch.blogspot.com/2008/02/jna-love-nxt.html) (Emmanuel Pirsch)
-- [A JavaFX Clock](http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency) (Augusto Sellhorn)
-- [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) (Olivier Chafik)
-- [IAXClient Applet](http://callino.cc/jiaxcapplet/) (Wolfgang Pichler), providing VOIP for Java.
+
+- [Drive Lego Mindstorm NXT](http://epirsch.blogspot.com/2008/02/jna-love-nxt.html) by Emmanuel Pirsch.
+- [A JavaFX Clock](http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency) by Augusto Sellhorn.
+- [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) by Olivier Chafik.
+- [IAXClient Applet](http://callino.cc/jiaxcapplet/) provides VOIP for Java, by Wolfgang Pichler.
 
 There are also a number of examples and projects within the `contrib` directory of the JNA project itself.
 
