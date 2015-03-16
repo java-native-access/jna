@@ -1,12 +1,16 @@
-NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+﻿NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Release 4.2
-===========
+Release 4.2 (Next)
+==================
 
 Features
 --------
+
+* [#387](https://github.com/twall/jna/pull/397): Use of interfaces and annotations to provide easier implementation of COM interfaces (with `InvocationHandler`) - [@dhakehurst](https://github.com/dhakehurst).
+* [#387](https://github.com/twall/jna/pull/397): Support for COM event callbacks - [@dhakehurst](https://github.com/dhakehurst).
+* [#387](https://github.com/twall/jna/pull/397): Support for COM interface discovery by iteration over `RunningObjectTable` - [@dhakehurst](https://github.com/dhakehurst).
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
 * [#332](https://github.com/twall/jna/pull/332): Added Win32 Monitor Configuration API in `com.sun.jna.platform.win32.Dxva2` - [@msteiger](https://github.com/msteiger).
@@ -40,7 +44,7 @@ Bug Fixes
 * [#382](https://github.com/twall/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
 * [#388](https://github.com/twall/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
-* [#403](https://github.com/twall/jna/pull/403): Make com.sun.jna.platform.win32.COM.COMUtils.SUCCEEDED and FAILED conform to MSDN specification for said macros - [@lwahonen](https://github.com/lwahonen).
+* [#403](https://github.com/twall/jna/pull/403): Fix `com.sun.jna.platform.win32.COM.COMUtils.SUCCEEDED` and `FAILED` - [@lwahonen](https://github.com/lwahonen).
 
 Release 4.1
 ===========

@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
@@ -65,7 +66,7 @@ public class IUnknownTest extends TestCase {
     public void testQueryInterface() {
         Unknown iUnknown = this.createIUnknown();
         PointerByReference ppvObject = new PointerByReference();
-        iUnknown.QueryInterface(IUnknown.IID_IUNKNOWN, ppvObject);
+        iUnknown.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
 
         assertTrue("ppvObject:" + ppvObject.toString(), ppvObject != null);
     }

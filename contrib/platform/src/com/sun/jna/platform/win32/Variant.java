@@ -692,6 +692,13 @@ public interface Variant {
         public VariantArg() {
         }
 
+        /**
+         * construct VariantArg cast onto pre-allocated memory
+         */
+        public VariantArg(Pointer pointer) {
+        	super(pointer);
+        }
+        
         public VariantArg(VARIANT[] variantArg) {
             this.variantArg = variantArg;
         }
@@ -700,5 +707,12 @@ public interface Variant {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "variantArg" });
         }
+        
+        public void setArraySize(int size) {
+        	this.variantArg = new VARIANT[size];
+        	this.read();
+        }
+        
+
     }
 }

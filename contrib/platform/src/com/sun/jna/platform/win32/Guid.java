@@ -37,6 +37,21 @@ public interface Guid {
      */
     public static class GUID extends Structure {
 
+    	public static class ByValue extends GUID implements Structure.ByValue {
+    		public ByValue() {}
+            public ByValue(GUID guid) {
+                super(guid.getPointer());
+
+                Data1 = guid.Data1;
+                Data2 = guid.Data2;
+                Data3 = guid.Data3;
+                Data4 = guid.Data4;
+            }
+            public ByValue(Pointer memory) {
+                super(memory);
+            }
+    	}
+    	
         /**
          * The Class ByReference.
          *
