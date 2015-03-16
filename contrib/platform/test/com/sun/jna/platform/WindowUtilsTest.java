@@ -610,9 +610,9 @@ public class WindowUtilsTest extends TestCase {
 		final JFrame w = new JFrame();
 		try {
 			w.setVisible(true);
-			final String searchSubStr = "\\bin\\javaw.exe";
-			final HWND hwnd = new HWND();
-			hwnd.setPointer(Native.getComponentPointer(w));
+			
+			final String searchSubStr = "\\bin\\java";
+			final HWND hwnd = new HWND(Native.getComponentPointer(w));
 
 			assertTrue("Path didn't contain '" + searchSubStr + "': "
 					+ WindowUtils.getProcessFilePath(hwnd),
