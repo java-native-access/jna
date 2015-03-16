@@ -29,6 +29,16 @@ Features
 * Allow interoperation with JNI revision changes - [@twall](https://github.com/twall).
 * [#391](https://github.com/twall/jna/pull/391): Added `EncryptFile`, `DecryptFile`, `FileEncryptionStatus`, `EncryptionDisable`, `OpenEncryptedFileRaw`, `ReadEncryptedFileRaw`, `WriteEncryptedFileRaw`, and `CloseEncryptedFileRaw` to `com.sun.jna.platform.win32.Advapi32` with related `Advapi32Util` helpers - [@khalidq](https://github.com/khalidq).
 
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.WindowUtils.getAllWindows`, `getWindowIcon`, `getIconSize`, `getWindowTitle`, `getPRocessFilePath` and `getWindowLocationAndSize` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Request textual message of current last error code `com.sun.jna.platform.win32.Kernel32Util.getLastErrorMessage` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.GDI32.GetObject` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.Psapi` with `GetModuleFileNameEx`- [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.User32.GetIconInfo`, `SendMessageTimeout`, `GetClassLongPtr` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added `com.sun.jna.platform.win32.WinGDI.ICONINFO` and `BITMAP` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added process-specific access rights constants in `com.sun.jna.platform.win32.WinNT` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added specific constants for request of icon settings in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
+* [#400](https://github.com/twall/jna/pull/400): Added constants for `GetClassLong`, `SendMessageTimeout` and `GetIconInfo` in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
+
 Bug Fixes
 ---------
 * [#319](https://github.com/twall/jna/pull/319): Fix direct-mapping type-mapped pointer result types - [@marco2357](https://github.com/marco2357).
