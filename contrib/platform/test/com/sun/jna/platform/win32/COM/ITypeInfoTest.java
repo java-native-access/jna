@@ -49,12 +49,25 @@ public class ITypeInfoTest extends TestCase {
     protected void tearDown() throws Exception {
     }
 
-    public int getTypeInfoCount() {
-        return 0;
+    public ITypeInfo getTypeInfo() {
+        TypeLibUtil shellTypeLib = new TypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
+        int typeInfoCount = shellTypeLib.getTypeInfoCount();
+        if (typeInfoCount == 0)
+            throw new RuntimeException("Shell lib contains zero type infos");
+        ITypeInfo typeInfo = shellTypeLib.getTypeInfo(18);
+        return typeInfo;
     }
 
-    public ITypeInfo getTypeInfo() {
-        return null;
+    public ITypeInfo[] getTypeInfos() {
+        TypeLibUtil shellTypeLib = new TypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
+        int typeInfoCount = shellTypeLib.getTypeInfoCount();
+        if (typeInfoCount == 0)
+            throw new RuntimeException("Shell lib contains zero type infos");
+        ITypeInfo[] typeInfos = new ITypeInfo[typeInfoCount];
+        for (int i = 0; i < typeInfoCount; i++) {
+            typeInfos[i] = shellTypeLib.getTypeInfo(i);
+        }
+        return typeInfos;
     }
 
     public void testGetTypeAttr() {
@@ -70,17 +83,20 @@ public class ITypeInfoTest extends TestCase {
     }
 
     public void testGetNames() {
-        ITypeInfo typeInfo = getTypeInfo();
+        ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(1);
         BSTR[] rgBstrNames = new BSTR[1];
         UINT cMaxNames = new UINT(1);
         UINTByReference pcNames = new UINTByReference();
-        HRESULT hr = typeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
-
-        COMUtils.checkRC(hr);
-        assertEquals(0, hr.intValue());
-        //System.out.println("rgBstrNames: " + rgBstrNames[0].getValue());
-        //System.out.println("pcNames: " + pcNames.getValue().intValue());
+        for (ITypeInfo typeInfo : typeInfos) {
+            HRESULT hr = typeInfo.GetNames(memid, rgBstrNames, cMaxNames, pcNames);
+            if (COMUtils.SUCCEEDED(hr)) {
+                //System.out.println("rgBstrNames: " + rgBstrNames[0].getValue());
+                //System.out.println("pcNames: " + pcNames.getValue().intValue());
+                return;
+            }
+        }
+        throw new RuntimeException("Didn't find name for member in any of the type infos");
     }
 
     public void testGetRefTypeOfImplType() {
@@ -104,15 +120,18 @@ public class ITypeInfoTest extends TestCase {
     }
 
     public void testGetIDsOfNames() {
-        ITypeInfo typeInfo = getTypeInfo();
-        LPOLESTR[] rgszNames = { new LPOLESTR("Help") };
+        ITypeInfo[] typeInfos = getTypeInfos();
+        LPOLESTR[] rgszNames = {new LPOLESTR("Help")};
         UINT cNames = new UINT(1);
         MEMBERID[] pMemId = new MEMBERID[1];
-        HRESULT hr = typeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
-
-        COMUtils.checkRC(hr);
-        assertEquals(0, hr.intValue());
-        //System.out.println("pMemId: " + pMemId.toString());
+        for (ITypeInfo typeInfo : typeInfos) {
+            HRESULT hr = typeInfo.GetIDsOfNames(rgszNames, cNames, pMemId);
+            if (COMUtils.SUCCEEDED(hr)) {
+                //System.out.println("pMemId: " + pMemId.toString());
+                return;
+            }
+        }
+        throw new RuntimeException("Didn't find Help in any of the type infos");
     }
 
     public void testInvoke() {
@@ -120,54 +139,63 @@ public class ITypeInfoTest extends TestCase {
     }
 
     public void testGetDocumentation() {
-        ITypeInfo typeInfo = getTypeInfo();
+        ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(0);
         BSTRByReference pBstrName = new BSTRByReference();
         BSTRByReference pBstrDocString = new BSTRByReference();
         DWORDByReference pdwHelpContext = new DWORDByReference();
         BSTRByReference pBstrHelpFile = new BSTRByReference();
+        for (ITypeInfo typeInfo : typeInfos) {
         HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
                 pBstrDocString, pdwHelpContext, pBstrHelpFile);
-
-        COMUtils.checkRC(hr);
-        assertEquals(0, hr.intValue());
-        //System.out.println("memid: " + memid.intValue());
-        //System.out.println("pBstrName: " + pBstrName.getValue());
-        //System.out.println("pBstrDocString: " + pBstrDocString.getValue());
-        //System.out.println("pdwHelpContext: " + pdwHelpContext.getValue());
-        //System.out.println("pBstrHelpFile: " + pBstrHelpFile.getValue());
+            if (COMUtils.SUCCEEDED(hr)) {
+                //System.out.println("memid: " + memid.intValue());
+                //System.out.println("pBstrName: " + pBstrName.getValue());
+                //System.out.println("pBstrDocString: " + pBstrDocString.getValue());
+                //System.out.println("pdwHelpContext: " + pdwHelpContext.getValue());
+                //System.out.println("pBstrHelpFile: " + pBstrHelpFile.getValue());
+                return;
+            }
+        }
+        throw new RuntimeException("Didn't find documentation in any of the type infos");
     }
 
     public void testGetDllEntry() {
-        ITypeInfo typeInfo = getTypeInfo();
+        ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(0);
         BSTRByReference pBstrDllName = new BSTRByReference();
         BSTRByReference pBstrName = new BSTRByReference();
         WORDByReference pwOrdinal = new WORDByReference();
-        HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
-                pBstrDllName, pBstrName, pwOrdinal);
-
-        COMUtils.checkRC(hr);
-        assertEquals(0, hr.intValue());
-        //System.out.println("memid: " + memid.intValue());
-        //System.out.println("pBstrDllName: " + pBstrDllName.getValue());
-        //System.out.println("pBstrName: " + pBstrName.getValue());
-        //System.out.println("pwOrdinal: " + pwOrdinal.getValue());
+        for (ITypeInfo typeInfo : typeInfos) {
+            HRESULT hr = typeInfo.GetDllEntry(memid, INVOKEKIND.INVOKE_FUNC,
+                    pBstrDllName, pBstrName, pwOrdinal);
+            if (COMUtils.SUCCEEDED(hr)) {
+                //System.out.println("memid: " + memid.intValue());
+                //System.out.println("pBstrDllName: " + pBstrDllName.getValue());
+                //System.out.println("pBstrName: " + pBstrName.getValue());
+                //System.out.println("pwOrdinal: " + pwOrdinal.getValue());
+                return;
+            }
+        }
+        throw new RuntimeException("Didn't find Dll entry for member in any of the type infos");
     }
 
     public void testGetRefTypeInfo() {
     }
 
     public void testAddressOfMember() {
-        ITypeInfo typeInfo = getTypeInfo();
+        ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID();
         PointerByReference ppv = new PointerByReference();
-        HRESULT hr = typeInfo.AddressOfMember(memid, INVOKEKIND.INVOKE_FUNC,
-                ppv);
-
-        COMUtils.checkRC(hr);
-        assertEquals(0, hr.intValue());
-        //System.out.println("AddressOfMember: " + ppv.toString());
+        for (ITypeInfo typeInfo : typeInfos) {
+            HRESULT hr = typeInfo.AddressOfMember(memid, INVOKEKIND.INVOKE_FUNC,
+                    ppv);
+            if (COMUtils.SUCCEEDED(hr)) {
+                //System.out.println("AddressOfMember: " + ppv.toString());
+                return;
+            }
+        }
+        throw new RuntimeException("Didn't find address for function in any of the type infos");
     }
 
     public void testCreateInstance() {
