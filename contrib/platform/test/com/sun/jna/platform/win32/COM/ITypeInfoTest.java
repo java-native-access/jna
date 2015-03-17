@@ -28,6 +28,7 @@ import com.sun.jna.platform.win32.WinDef.WORDByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import org.junit.Ignore;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -160,6 +161,7 @@ public class ITypeInfoTest extends TestCase {
         throw new RuntimeException("Didn't find documentation in any of the type infos");
     }
 
+    @Ignore("Needs a DLL that contains code")
     public void testGetDllEntry() {
         ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(0);
@@ -183,6 +185,7 @@ public class ITypeInfoTest extends TestCase {
     public void testGetRefTypeInfo() {
     }
 
+    @Ignore("Needs a DLL that contains code")
     public void testAddressOfMember() {
         ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID();
