@@ -427,72 +427,77 @@ public abstract class Structure {
     // Keep track of what is currently being read/written to avoid redundant
     // reads (avoids problems with circular references).
     private static final ThreadLocal busy = new ThreadLocal() {
-        /** Avoid using a hash-based implementation since the hash code
-            for a Structure is not immutable.
-        */
-        class StructureSet extends AbstractCollection implements Set {
-            private Structure[] elements;
-            private int count;
-            private void ensureCapacity(int size) {
-                if (elements == null) {
-                    elements = new Structure[size*3/2];
-                }
-                else if (elements.length < size) {
-                    Structure[] e = new Structure[size*3/2];
-                    System.arraycopy(elements, 0, e, 0, elements.length);
-                    elements = e;
-                }
-            }
-            public int size() { return count; }
-            public boolean contains(Object o) {
-                return indexOf(o) != -1;
-            }
-            public boolean add(Object o) {
-                if (!contains(o)) {
-                    ensureCapacity(count+1);
-                    elements[count++] = (Structure)o;
-                }
-                return true;
-            }
-            private int indexOf(Object o) {
-                Structure s1 = (Structure)o;
-                for (int i=0;i < count;i++) {
-                    Structure s2 = elements[i];
-                    if (s1 == s2
-                        || (s1.getClass() == s2.getClass()
-                            && s1.size() == s2.size()
-                            && s1.getPointer().equals(s2.getPointer()))) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            public boolean remove(Object o) {
-                int idx = indexOf(o);
-                if (idx != -1) {
-                    if (--count > 0) {
-                        elements[idx] = elements[count];
-                        elements[count] = null;
-                    }
-                    return true;
-                }
-                return false;
-            }
-            /** Simple implementation so that toString() doesn't break.
-                Provides an iterator over a snapshot of this Set.
-            */
-            public Iterator iterator() {
-                Structure[] e = new Structure[count];
-                if (count > 0) {
-                    System.arraycopy(elements, 0, e, 0, count);
-                }
-                return Arrays.asList(e).iterator();
-            }
-        }
         protected synchronized Object initialValue() {
             return new StructureSet();
         }
     };
+    
+    /** Avoid using a hash-based implementation since the hash code
+            for a Structure is not immutable.
+     */
+    static class StructureSet extends AbstractCollection implements Set {
+        Structure[] elements;
+        private int count;
+        private void ensureCapacity(int size) {
+            if (elements == null) {
+                elements = new Structure[size*3/2];
+            }
+            else if (elements.length < size) {
+                Structure[] e = new Structure[size*3/2];
+                System.arraycopy(elements, 0, e, 0, elements.length);
+                elements = e;
+            }
+        }
+        public Structure[] getElements() {
+			return elements;
+		}
+        public int size() { return count; }
+        public boolean contains(Object o) {
+            return indexOf(o) != -1;
+        }
+        public boolean add(Object o) {
+            if (!contains(o)) {
+                ensureCapacity(count+1);
+                elements[count++] = (Structure)o;
+            }
+            return true;
+        }
+        private int indexOf(Object o) {
+            Structure s1 = (Structure)o;
+            for (int i=0;i < count;i++) {
+                Structure s2 = elements[i];
+                if (s1 == s2
+                    || (s1.getClass() == s2.getClass()
+                        && s1.size() == s2.size()
+                        && s1.getPointer().equals(s2.getPointer()))) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public boolean remove(Object o) {
+            int idx = indexOf(o);
+            if (idx != -1) {
+                if (--count >= 0) {
+                    elements[idx] = elements[count];
+                    elements[count] = null;
+                }
+                return true;
+            }
+            return false;
+        }
+        /** Simple implementation so that toString() doesn't break.
+            Provides an iterator over a snapshot of this Set.
+        */
+        public Iterator iterator() {
+            Structure[] e = new Structure[count];
+            if (count > 0) {
+                System.arraycopy(elements, 0, e, 0, count);
+            }
+            return Arrays.asList(e).iterator();
+        }
+    }
+    
     static Set busy() {
         return (Set)busy.get();
     }
