@@ -16,9 +16,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Structure.StructureSet;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
@@ -1967,5 +1969,25 @@ public class StructureTest extends TestCase {
         s.field = null;
         s.read();
         assertEquals("String not decoded properly on read", VALUE, s.field);
+    }
+    
+    public void testThreadLocalSetReleasesReferences() {
+    	class TestStructure extends Structure {
+            public String field;
+            protected List getFieldOrder() {
+                return Arrays.asList(new String[] { "field" });
+            }
+        }
+    	
+    	TestStructure ts1 = new TestStructure();
+    	TestStructure ts2 = new TestStructure();
+    	
+    	StructureSet structureSet = (StructureSet) Structure.busy();
+    	structureSet.add(ts1);
+    	structureSet.add(ts2);
+    	structureSet.remove(ts1);
+    	assertNotNull(structureSet.elements[0]);
+    	structureSet.remove(ts2);
+    	assertNull(structureSet.elements[0]);
     }
 }
