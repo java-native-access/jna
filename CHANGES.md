@@ -38,6 +38,7 @@ Features
 * [#400](https://github.com/twall/jna/pull/400): Added specific constants for request of icon settings in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
 * [#400](https://github.com/twall/jna/pull/400): Added constants for `GetClassLong`, `SendMessageTimeout` and `GetIconInfo` in `com.sun.jna.platform.win32.WinUser` - [@PAX523](https://github.com/PAX523).
 * [#419](https://github.com/twall/jna/pull/419): Added `SetupDiOpenDevRegKey` , `SetupDiEnumDeviceInfo` and related constants to `com.sun.jna.platform.win32.SetupApi` - [@ChristianSchwarz](https://github.com/ChristianSchwarz).
+* [#421](https://github.com/twall/jna/pull/421): Added `XGrabKeyboard` and `XUngrabKeyboard` to `X11` interface.
 
 Bug Fixes
 ---------

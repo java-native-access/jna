@@ -1953,6 +1953,27 @@ public interface X11 extends Library {
      */
     int XUngrabKey(Display display, int keyCode, int modifiers, Window grab_window);
 
+    /**
+     * Actively grabs control of the keyboard and generates FocusIn and FocusOut events
+     *
+     * @param display Specifies the connection to the X server.
+     * @param grab_window Specifies the grab window.
+     * @param owner_events Specifies a Boolean value that indicates whether the keyboard events are to be reported as usual.
+     * @param pointer_mode Specifies further processing of pointer events. You can pass GrabModeSync or GrabModeAsync.
+     * @param keyboard_mode Specifies further processing of keyboard events. You can pass GrabModeSync or GrabModeAsync.
+     * @param time Specifies the time. You can pass either a timestamp or CurrentTime.
+     * @return nothing
+     */
+    int XGrabKeyboard(Display display, Window grab_window, int owner_events, int pointer_mode, int keyboard_mode, NativeLong time);
+
+    /**
+     * Releases the keyboard and any queued events if this client has it actively grabbed from either XGrabKeyboard() or XGrabKey().
+     * @param display Specifies the connection to the X server.
+     * @param time Specifies the time. You can pass either a timestamp or CurrentTime.
+     * @return nothing
+     */
+    int XUngrabKeyboard(Display display, NativeLong time);
+
     //int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym *keysyms, int num_codes);
     /** Defines the symbols for the specified number of KeyCodes starting with first_keycode. The symbols for KeyCodes outside this range remain unchanged. The number of elements in keysyms must be: num_codes * keysyms_per_keycode. The specified first_keycode must be greater than or equal to min_keycode returned by XDisplayKeycodes, or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes, or a BadValue error results: first_keycode + num_codes - 1. */
     int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym[] keysyms, int num_codes);
