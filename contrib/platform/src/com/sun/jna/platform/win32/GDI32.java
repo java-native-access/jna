@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -387,7 +387,7 @@ public interface GDI32 extends StdCallLibrary {
 	 *            <tr>
 	 *            <td>
 	 *            {@link HBITMAP} returned from a call to
-	 *            {@link #CreateDIBSection(HDC, BITMAPINFO, int, PointerByReference, Pointer, int)}
+	 *            {@link #CreateDIBSection}
 	 *            </td>
 	 *            <td>{@link DIBSECTION}, if cbBuffer is set to sizeof(
 	 *            {@link DIBSECTION}), or {@link BITMAP}, if cbBuffer is set to

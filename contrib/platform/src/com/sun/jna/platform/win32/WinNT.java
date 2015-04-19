@@ -1977,7 +1977,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
 	/**
 	 * Required to duplicate a handle using
-	 * {@link Kernel32#DuplicateHandle(HANDLE, HANDLE, HANDLE, HANDLEByReference, int, boolean, int)}
+	 * {@link Kernel32#DuplicateHandle}
 	 * .
 	 */
 	int PROCESS_DUP_HANDLE = 0x0040;
@@ -1985,15 +1985,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 	/**
 	 * Required to retrieve certain information about a process, such as its
 	 * token, exit code, and priority class (see
-	 * {@link Advapi32#OpenProcessToken(HANDLE, int, HANDLEByReference)}).
+	 * {@link Advapi32#OpenProcessToken}).
 	 */
 	int PROCESS_QUERY_INFORMATION = 0x0400;
 
 	/**
 	 * Required to retrieve certain information about a process (see
-	 * {@link Kernel32#GetExitCodeProcess(HANDLE, com.sun.jna.ptr.IntByReference)}
-	 * , {@code Kernel32.GetPriorityClass()}, {@code Kernel32.IsProcessInJob()},
-	 * {@code Kernel32.QueryFullProcessImageName()}). A handle that has the
+	 * {@link Kernel32#GetExitCodeProcess}
+	 * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
+	 * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
 	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
 	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
 	 * 
@@ -2003,7 +2003,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
 	/**
 	 * Required to set certain information about a process, such as its priority
-	 * class (see {@code Kernel32.SetPriorityClass()}).
+	 * class (see {@code Kernel32#SetPriorityClass}).
 	 */
 	int PROCESS_SET_INFORMATION = 0x0200;
 
@@ -2018,28 +2018,28 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
 	/**
 	 * Required to terminate a process using
-	 * {@link Kernel32#TerminateProcess(HANDLE, int)}.
+	 * {@link Kernel32#TerminateProcess}.
 	 */
 	int PROCESS_TERMINATE = 0x00000001;
 
 	/**
 	 * Required to perform an operation on the address space of a process (see
 	 * {@code Kernel32.VirtualProtectEx()} and
-	 * {@link Kernel32#WriteProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * {@link Kernel32#WriteProcessMemory}
 	 * ).
 	 */
 	int PROCESS_VM_OPERATION = 0x0008;
 
 	/**
 	 * Required to read memory in a process using
-	 * {@link Kernel32#ReadProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * {@link Kernel32#ReadProcessMemory}
 	 * .
 	 */
 	int PROCESS_VM_READ = 0x0010;
 
 	/**
 	 * Required to write to memory in a process using
-	 * {@link Kernel32#WriteProcessMemory(HANDLE, Pointer, Pointer, int, com.sun.jna.ptr.IntByReference)}
+	 * {@link Kernel32#WriteProcessMemory}
 	 * .
 	 */
 	int PROCESS_VM_WRITE = 0x0020;

@@ -94,24 +94,27 @@ public interface SetupApi extends StdCallLibrary {
 	/**
 	 * Open/Create/Delete device key.
 	 * 
-	 * @see SetupDiCreateDevRegKey , SetupDiOpenDevRegKey, and
-	 *      SetupDiDeleteDevRegKey.
+	 * @see SetupDiCreateDevRegKey
+         * @see SetupDiOpenDevRegKey
+	 * @see SetupDiDeleteDevRegKey
 	 */
 
 	int DIREG_DEV = 0x00000001;
 	/**
 	 * Open/Create/Delete driver key
 	 * 
-	 * @see SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and
-	 *      SetupDiDeleteDevRegKey.
+	 * @see SetupDiCreateDevRegKey
+         * @see SetupDiOpenDevRegKey
+	 * @see SetupDiDeleteDevRegKey
 	 */
 
 	int DIREG_DRV = 0x00000002;
 	/**
 	 * Delete both driver and Device key
 	 * 
-	 * @see SetupDiCreateDevRegKey, SetupDiOpenDevRegKey, and
-	 *      SetupDiDeleteDevRegKey.
+	 * @see SetupDiCreateDevRegKey
+         * @see SetupDiOpenDevRegKey
+	 * @see SetupDiDeleteDevRegKey
 	 */
 
 	int DIREG_BOTH = 0x00000004;

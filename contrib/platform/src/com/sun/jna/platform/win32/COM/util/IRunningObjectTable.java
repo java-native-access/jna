@@ -34,7 +34,7 @@ public interface IRunningObjectTable {
 	 * Enumerates the running objects (via enumRunning), and returns a list of
 	 * those for which queryInterface(iid) gives a valid result.
 	 * 
-	 * @param iid
+	 * @param comInterface
 	 * @return
 	 */
 	<T> List<T> getActiveObjectsByInterface(Class<T> comInterface);

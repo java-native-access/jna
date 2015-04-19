@@ -115,7 +115,7 @@ public class Factory {
 	/** only for use when creating ProxyObjects from Callbacks
 	 * 
 	 * @param comInterface
-	 * @param unk
+	 * @param unknownId
 	 * @param dispatch
 	 * @return
 	 */

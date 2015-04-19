@@ -78,11 +78,9 @@ public interface IMoniker extends IPersistStream {
 	 *     [in]   IMoniker *pmkToLeft,
 	 *     [out]  LPOLESTR *ppszDisplayName
 	 *   );
-	 * 
-	 * @see <a
-	 *      href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms680754%28v=vs.85%29.aspx">MSDN</a>
-	 * 
 	 * }
+         * 
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms680754%28v=vs.85%29.aspx">MSDN</a>
 	 */
 	HRESULT GetDisplayName(Pointer pbc, Pointer pmkToLeft, BSTRByReference ppszDisplayName);
 

@@ -274,7 +274,7 @@ public interface Ole32 extends StdCallLibrary {
      *   HRESULT CoGetMalloc(
      *     [In]   DWORD dwMemContext,
      *     [Out]  LPMALLOC *ppMalloc
-     *   );
+     *   );}
      * 
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms693395%28v=vs.85%29.aspx">MSDN</a>
      * 

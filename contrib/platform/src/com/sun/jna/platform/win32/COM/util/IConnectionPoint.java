@@ -20,7 +20,7 @@ public interface IConnectionPoint {
 	 * Set up the comEventCallbackListener to receive callback events from the target COM object
 	 * 
 	 * @param comEventCallbackInterface - the COM interface that the listener will receive events from
-	 * @param comEventCallback - and object that will receive the callback events
+	 * @param comEventCallbackListener - and object that will receive the callback events
 	 * @return - a cookie that can be used to detach (unadvise) the event callback listener
 	 * 
 	 * throws COMException if an error occurs trying to set up the listener on the target COM object,

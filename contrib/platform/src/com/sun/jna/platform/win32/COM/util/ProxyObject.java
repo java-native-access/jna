@@ -82,7 +82,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * however, the unknown pointer value is passed in;
 	 * 
 	 * @param theInterface
-	 * @param rawUnk
+	 * @param unknownId
 	 * @param rawDispatch
 	 * @param factory
 	 */

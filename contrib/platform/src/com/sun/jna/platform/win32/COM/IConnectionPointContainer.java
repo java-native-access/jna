@@ -21,7 +21,7 @@ public interface IConnectionPointContainer extends IUnknown {
 	 public final static IID IID_IConnectionPointContainer = new IID("B196B284-BAB4-101A-B69C-00AA00341D07");
 	 
 	 /**
-	  * @code{
+	  * {@code
 	  *   HRESULT FindConnectionPoint(
 	  *     [in]   REFIID riid,
 	  *     [out]  IConnectionPoint **ppCP
