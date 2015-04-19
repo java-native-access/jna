@@ -419,6 +419,10 @@ $(TESTLIB2): $(BUILD)/testlib2.o
 ifneq ($(DYNAMIC_LIBFFI),true)
 $(FFI_LIB): 
 	@mkdir -p $(FFI_BUILD)
+	@if [ ! -f $(FFI_SRC)/configure ]; then \
+	  echo "Generating configure"; \
+	  (cd $(FFI_SRC); ./autogen.sh); \
+	fi
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \
 	  (cd $(FFI_BUILD) \
