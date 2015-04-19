@@ -1,10 +1,11 @@
 /* -----------------------------------------------------------------------
-   win32.S - Copyright (c) 1996, 1998, 2001, 2002, 2009  Red Hat, Inc.
-	     Copyright (c) 2001  John Beniton
-	     Copyright (c) 2002  Ranjit Mathew
-	     Copyright (c) 2009  Daniel Witte
-			
- 
+   win32.S - Copyright (c) 2014  Anthony Green
+             Copyright (c) 1996, 1998, 2001, 2002, 2009  Red Hat, Inc.
+             Copyright (c) 2001  John Beniton
+             Copyright (c) 2002  Ranjit Mathew
+             Copyright (c) 2009  Daniel Witte
+
+
    X86 Foreign Function Interface
  
    Permission is hereby granted, free of charge, to any person obtaining
@@ -33,12 +34,18 @@
 #include <fficonfig.h>
 #include <ffi.h>
 
+#define CIF_BYTES_OFFSET 16
+#define CIF_FLAGS_OFFSET 20
+
 #ifdef _MSC_VER
+
+#define CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) AND NOT 3)
 
 .386
 .MODEL FLAT, C
 
 EXTRN ffi_closure_SYSV_inner:NEAR
+EXTRN ffi_closure_WIN32_inner:NEAR
 
 _TEXT SEGMENT
 
@@ -57,32 +64,44 @@ ffi_call_win32 PROC NEAR,
 
         mov  eax, esp
 
-        ;; Place all of the ffi_prep_args in position
+        ;; Call ffi_prep_args
         push ecif
         push eax
         call ffi_prep_args
-
-        ;; Return stack to previous state and call the function
         add  esp, 8
 
-	;; Handle thiscall and fastcall
-	cmp cif_abi, 3 ;; FFI_THISCALL
-	jz do_thiscall
-	cmp cif_abi, 4 ;; FFI_FASTCALL
-	jnz do_stdcall
-	mov ecx, DWORD PTR [esp]
-	mov edx, DWORD PTR [esp+4]
-	add esp, 8
-	jmp do_stdcall
-do_thiscall:
-	mov ecx, DWORD PTR [esp]
-	add esp, 4
-do_stdcall:
-        call fn
+        ;; Prepare registers
+        ;; EAX stores the number of register arguments
+        cmp  eax, 0
+        je   fun
+        cmp  eax, 3
+        jl   prepr_two_cmp
+        
+        mov  ecx, esp
+        add  esp, 12
+        mov  eax, DWORD PTR [ecx+8]
+        jmp  prepr_two
+prepr_two_cmp:
+        cmp  eax, 2
+        jl   prepr_one_prep
+        mov  ecx, esp
+        add  esp, 8
+prepr_two:
+        mov  edx, DWORD PTR [ecx+4]
+        jmp  prepr_one
+prepr_one_prep:
+        mov  ecx, esp
+        add  esp, 4
+prepr_one:
+        mov  ecx, DWORD PTR [ecx]
+        cmp  cif_abi, 7 ;; FFI_REGISTER
+        jne  fun
 
-        ;; cdecl:   we restore esp in the epilogue, so there's no need to
-        ;;          remove the space we pushed for the args.
-        ;; stdcall: the callee has already cleaned the stack.
+        xchg ecx, eax
+
+fun:
+        ;; Call function
+        call fn
 
         ;; Load ecx with the return type code
         mov  ecx, cif_flags
@@ -188,13 +207,32 @@ ca_epilogue:
         ret
 ffi_call_win32 ENDP
 
-ffi_closure_THISCALL PROC NEAR FORCEFRAME
-	sub	esp, 40
-	lea	edx, [ebp -24]
-	mov	[ebp - 12], edx	/* resp */
-	lea	edx, [ebp + 12]  /* account for stub return address on stack */
-	jmp	stub
+ffi_closure_THISCALL PROC NEAR
+        ;; Insert the register argument on the stack as the first argument
+        xchg	DWORD PTR [esp+4], ecx
+        xchg	DWORD PTR [esp], ecx
+        push	ecx
+        jmp	ffi_closure_STDCALL
 ffi_closure_THISCALL ENDP
+
+ffi_closure_FASTCALL PROC NEAR
+        ;; Insert the 2 register arguments on the stack as the first argument
+        xchg	DWORD PTR [esp+4], edx
+        xchg	DWORD PTR [esp], ecx
+        push	edx
+        push	ecx
+        jmp	ffi_closure_STDCALL
+ffi_closure_FASTCALL ENDP
+
+ffi_closure_REGISTER PROC NEAR
+        ;; Insert the 3 register arguments on the stack as the first argument
+        push	eax
+        xchg	DWORD PTR [esp+8], ecx
+        xchg	DWORD PTR [esp+4], edx
+        push	ecx
+        push	edx
+        jmp	ffi_closure_STDCALL
+ffi_closure_REGISTER ENDP
 
 ffi_closure_SYSV PROC NEAR FORCEFRAME
     ;; the ffi_closure ctx is passed in eax by the trampoline.
@@ -293,15 +331,14 @@ ffi_closure_SYSV ENDP
 #define RAW_CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) AND NOT 3)
 #define RAW_CLOSURE_FUN_OFFSET (RAW_CLOSURE_CIF_OFFSET + 4)
 #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
-#define CIF_FLAGS_OFFSET 20
 
 ffi_closure_raw_THISCALL PROC NEAR USES esi FORCEFRAME
-	sub esp, 36
-	mov  esi, [eax + RAW_CLOSURE_CIF_OFFSET]        ;; closure->cif
-	mov  edx, [eax + RAW_CLOSURE_USER_DATA_OFFSET]  ;; closure->user_data
-	mov [esp + 12], edx
-	lea edx, [ebp + 12]
-	jmp stubraw
+        sub esp, 36
+        mov  esi, [eax + RAW_CLOSURE_CIF_OFFSET]        ;; closure->cif
+        mov  edx, [eax + RAW_CLOSURE_USER_DATA_OFFSET]  ;; closure->user_data
+        mov [esp + 12], edx
+        lea edx, [ebp + 12]
+        jmp stubraw
 ffi_closure_raw_THISCALL ENDP
 
 ffi_closure_raw_SYSV PROC NEAR USES esi FORCEFRAME
@@ -390,7 +427,7 @@ ffi_closure_raw_SYSV ENDP
 #endif /* !FFI_NO_RAW_API */
 
 ffi_closure_STDCALL PROC NEAR FORCEFRAME
-    ;; the ffi_closure ctx is passed in eax by the trampoline.
+        mov  eax, [esp] ;; the ffi_closure ctx passed by the trampoline.
 
         sub  esp, 40
         lea  edx, [ebp - 24]
@@ -400,8 +437,12 @@ ffi_closure_STDCALL PROC NEAR FORCEFRAME
         lea  edx, [ebp - 12]
         mov  [esp + 4], edx          ;; &resp
         mov  [esp], eax              ;; closure
-        call ffi_closure_SYSV_inner
+        call ffi_closure_WIN32_inner
         mov  ecx, [ebp - 12]
+
+        xchg [ebp + 4], eax          ;;xchg size of stack parameters and ffi_closure ctx
+        mov  eax, DWORD PTR [eax + CLOSURE_CIF_OFFSET]
+        mov  eax, DWORD PTR [eax + CIF_FLAGS_OFFSET]
 
 cd_jumptable:
         jmp  [cd_jumpdata + 4 * eax]
@@ -464,8 +505,12 @@ cd_retlongdouble:
         jmp   cd_epilogue
 
 cd_epilogue:
-        ;; Epilogue code is autogenerated.
-        ret
+        mov   esp, ebp
+        pop   ebp
+        mov   ecx, [esp + 4]  ;; Return address
+        add   esp, [esp]      ;; Parameters stack size
+        add   esp, 8
+        jmp   ecx
 ffi_closure_STDCALL ENDP
 
 _TEXT ENDS
@@ -473,15 +518,23 @@ END
 
 #else
 
-	.text
+#define CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) & ~3)
+
+#if defined(SYMBOL_UNDERSCORE)
+#define USCORE_SYMBOL(x) _##x
+#else
+#define USCORE_SYMBOL(x) x
+#endif
+        .text
  
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_call_win32
-#ifndef __OS2__
-	.def	_ffi_call_win32;	.scl	2;	.type	32;	.endef
+FFI_HIDDEN(ffi_call_win32)
+        .globl	USCORE_SYMBOL(ffi_call_win32)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_call_win32;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_call_win32:
+USCORE_SYMBOL(ffi_call_win32):
 .LFB1:
         pushl %ebp
 .LCFI0:
@@ -493,32 +546,46 @@ _ffi_call_win32:
  
         movl  %esp,%eax
  
-        # Place all of the ffi_prep_args in position
+        # Call ffi_prep_args
         pushl 12(%ebp)
         pushl %eax
         call  *8(%ebp)
- 
-        # Return stack to previous state and call the function
         addl  $8,%esp
 
-	# Handle fastcall and thiscall
-	cmpl $3, 16(%ebp)  # FFI_THISCALL
-	jz .do_thiscall
-	cmpl $4, 16(%ebp) # FFI_FASTCALL
-	jnz .do_fncall
-	movl (%esp), %ecx
-	movl 4(%esp), %edx
-	addl $8, %esp
-	jmp .do_fncall
-.do_thiscall:
-	movl (%esp), %ecx
-	addl $4, %esp
+        # Prepare registers
+        # EAX stores the number of register arguments
+        cmpl  $0, %eax
+        je    .fun
+        cmpl  $3, %eax
+        jl    .prepr_two_cmp
+        
+        movl  %esp, %ecx
+        addl  $12, %esp
+        movl  8(%ecx), %eax
+        jmp   .prepr_two
+.prepr_two_cmp:
+        cmpl  $2, %eax
+        jl    .prepr_one_prep
+        movl  %esp, %ecx
+        addl  $8, %esp
+.prepr_two:
+        movl  4(%ecx), %edx
+        jmp   .prepr_one
+.prepr_one_prep:
+        movl  %esp, %ecx
+        addl  $4, %esp
+.prepr_one:
+        movl  (%ecx), %ecx
+        cmpl  $7, 16(%ebp) # FFI_REGISTER
+        jne   .fun
 
-.do_fncall:
-	 
+        xchgl %eax, %ecx
+        
+.fun:
         # FIXME: Align the stack to a 128-bit boundary to avoid
         # potential performance hits.
 
+        # Call function
         call  *32(%ebp)
  
         # stdcall functions pop arguments off the stack themselves
@@ -539,51 +606,52 @@ _ffi_call_win32:
         jmp   .Lepilogue
 
 0:
-	call	1f
-	# Do not insert anything here between the call and the jump table.
+        call 1f
+        # Do not insert anything here between the call and the jump table.
 .Lstore_table:
-	.long	.Lnoretval		/* FFI_TYPE_VOID */
-	.long	.Lretint		/* FFI_TYPE_INT */
-	.long	.Lretfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lretdouble		/* FFI_TYPE_DOUBLE */
-	.long	.Lretlongdouble		/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lretuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lretsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lretuint16		/* FFI_TYPE_UINT16 */
-	.long	.Lretsint16		/* FFI_TYPE_SINT16 */
-	.long	.Lretint		/* FFI_TYPE_UINT32 */
-	.long	.Lretint		/* FFI_TYPE_SINT32 */
-	.long	.Lretint64		/* FFI_TYPE_UINT64 */
-	.long	.Lretint64		/* FFI_TYPE_SINT64 */
-	.long	.Lretstruct		/* FFI_TYPE_STRUCT */
-	.long	.Lretint		/* FFI_TYPE_POINTER */
-	.long	.Lretstruct1b		/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lretstruct2b		/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lretstruct4b		/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lretstruct		/* FFI_TYPE_MS_STRUCT */
+        .long	.Lnoretval-.Lstore_table	/* FFI_TYPE_VOID */
+        .long	.Lretint-.Lstore_table		/* FFI_TYPE_INT */
+        .long	.Lretfloat-.Lstore_table	/* FFI_TYPE_FLOAT */
+        .long	.Lretdouble-.Lstore_table	/* FFI_TYPE_DOUBLE */
+        .long	.Lretlongdouble-.Lstore_table	/* FFI_TYPE_LONGDOUBLE */
+        .long	.Lretuint8-.Lstore_table	/* FFI_TYPE_UINT8 */
+        .long	.Lretsint8-.Lstore_table	/* FFI_TYPE_SINT8 */
+        .long	.Lretuint16-.Lstore_table	/* FFI_TYPE_UINT16 */
+        .long	.Lretsint16-.Lstore_table	/* FFI_TYPE_SINT16 */
+        .long	.Lretint-.Lstore_table		/* FFI_TYPE_UINT32 */
+        .long	.Lretint-.Lstore_table		/* FFI_TYPE_SINT32 */
+        .long	.Lretint64-.Lstore_table	/* FFI_TYPE_UINT64 */
+        .long	.Lretint64-.Lstore_table	/* FFI_TYPE_SINT64 */
+        .long	.Lretstruct-.Lstore_table	/* FFI_TYPE_STRUCT */
+        .long	.Lretint-.Lstore_table		/* FFI_TYPE_POINTER */
+        .long	.Lretstruct1b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+        .long	.Lretstruct2b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+        .long	.Lretstruct4b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+        .long	.Lretstruct-.Lstore_table	/* FFI_TYPE_MS_STRUCT */
 1:
-	add	%ecx, %ecx
-	add	%ecx, %ecx
-	add	(%esp),%ecx
-	add	$4, %esp
-	jmp	*(%ecx)
+        shl	$2, %ecx
+        add	(%esp),%ecx
+        mov	(%ecx),%ecx
+        add	(%esp),%ecx
+        add	$4, %esp
+        jmp	*%ecx
 
-	/* Sign/zero extend as appropriate.  */
+        /* Sign/zero extend as appropriate.  */
 .Lretsint8:
-	movsbl	%al, %eax
-	jmp	.Lretint
+        movsbl	%al, %eax
+        jmp	.Lretint
 
 .Lretsint16:
-	movswl	%ax, %eax
-	jmp	.Lretint
+        movswl	%ax, %eax
+        jmp	.Lretint
 
 .Lretuint8:
-	movzbl	%al, %eax
-	jmp	.Lretint
+        movzbl	%al, %eax
+        jmp	.Lretint
 
 .Lretuint16:
-	movzwl	%ax, %eax
-	jmp	.Lretint
+        movzwl	%ax, %eax
+        jmp	.Lretint
 
 .Lretint:
         # Load %ecx with the pointer to storage for the return value
@@ -614,7 +682,7 @@ _ffi_call_win32:
         movl  28(%ebp),%ecx
         movl  %eax,0(%ecx)
         movl  %edx,4(%ecx)
-	jmp   .Lepilogue
+        jmp   .Lepilogue
 
 .Lretstruct1b:
         # Load %ecx with the pointer to storage for the return value
@@ -644,141 +712,181 @@ _ffi_call_win32:
         ret
 .ffi_call_win32_end:
         .balign 16
-	.globl	_ffi_closure_THISCALL
-#ifndef __OS2__
-	.def	_ffi_closure_THISCALL;	.scl	2;	.type	32;	.endef
+FFI_HIDDEN(ffi_closure_THISCALL)
+        .globl	USCORE_SYMBOL(ffi_closure_THISCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_THISCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_THISCALL:
-	pushl	%ebp
-	movl	%esp, %ebp
-	subl	$40, %esp
-	leal	-24(%ebp), %edx
-	movl	%edx, -12(%ebp)	/* resp */
-	leal	12(%ebp), %edx  /* account for stub return address on stack */
-	jmp	.stub
-.LFE1:
+USCORE_SYMBOL(ffi_closure_THISCALL):
+        /* Insert the register argument on the stack as the first argument */
+        xchg	%ecx, 4(%esp)
+        xchg	%ecx, (%esp)
+        push	%ecx
+        jmp	.ffi_closure_STDCALL_internal
 
+        .balign 16
+FFI_HIDDEN(ffi_closure_FASTCALL)
+        .globl	USCORE_SYMBOL(ffi_closure_FASTCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_FASTCALL;	.scl	2;	.type	32;	.endef
+#endif
+USCORE_SYMBOL(ffi_closure_FASTCALL):
+        /* Insert the 2 register arguments on the stack as the first two arguments */
+        xchg	%edx, 4(%esp)
+        xchg	%ecx, (%esp)
+        push	%edx
+        push	%ecx
+        jmp	.ffi_closure_STDCALL_internal
+FFI_HIDDEN(ffi_closure_REGISTER)
+        .globl	USCORE_SYMBOL(ffi_closure_REGISTER)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_REGISTER;	.scl	2;	.type	32;	.endef
+#endif
+USCORE_SYMBOL(ffi_closure_REGISTER):
+        /* Insert the 3 register arguments on the stack as the first two arguments */
+        push	%eax
+        xchg	%ecx, 8(%esp)
+        xchg	%edx, 4(%esp)
+        push	%ecx
+        push	%edx
+        jmp	.ffi_closure_STDCALL_internal
+
+.LFE1:
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_closure_SYSV
-#ifndef __OS2__
-	.def	_ffi_closure_SYSV;	.scl	2;	.type	32;	.endef
+FFI_HIDDEN(ffi_closure_SYSV)
+#if defined(X86_WIN32)
+        .globl	USCORE_SYMBOL(ffi_closure_SYSV)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_SYSV;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_SYSV:
+USCORE_SYMBOL(ffi_closure_SYSV):
+#endif
 .LFB3:
-	pushl	%ebp
+        pushl	%ebp
 .LCFI4:
-	movl	%esp, %ebp
+        movl	%esp, %ebp
 .LCFI5:
-	subl	$40, %esp
-	leal	-24(%ebp), %edx
-	movl	%edx, -12(%ebp)	/* resp */
-	leal	8(%ebp), %edx
-.stub:
-	movl	%edx, 4(%esp)	/* args = __builtin_dwarf_cfa () */
-	leal	-12(%ebp), %edx
-	movl	%edx, (%esp)	/* &resp */
-	call	_ffi_closure_SYSV_inner
-	movl	-12(%ebp), %ecx
+        subl	$40, %esp
+        leal	-24(%ebp), %edx
+        movl	%edx, -12(%ebp)	/* resp */
+        leal	8(%ebp), %edx
+        movl	%edx, 4(%esp)	/* args = __builtin_dwarf_cfa () */
+        leal	-12(%ebp), %edx
+        movl	%edx, (%esp)	/* &resp */
+#if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
+        call	USCORE_SYMBOL(ffi_closure_SYSV_inner)
+#elif defined(X86_DARWIN)
+        calll	L_ffi_closure_SYSV_inner$stub
+#else
+        movl	%ebx, 8(%esp)
+        call	1f
+1:      popl	%ebx
+        addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
+        call	ffi_closure_SYSV_inner@PLT
+        movl	8(%esp), %ebx
+#endif
+        movl	-12(%ebp), %ecx
 
 0:
-	call	1f
-	# Do not insert anything here between the call and the jump table.
+        call	1f
+        # Do not insert anything here between the call and the jump table.
 .Lcls_store_table:
-	.long	.Lcls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lcls_retint		/* FFI_TYPE_INT */
-	.long	.Lcls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lcls_retdouble		/* FFI_TYPE_DOUBLE */
-	.long	.Lcls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lcls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lcls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lcls_retuint16		/* FFI_TYPE_UINT16 */
-	.long	.Lcls_retsint16		/* FFI_TYPE_SINT16 */
-	.long	.Lcls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lcls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lcls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lcls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lcls_retstruct		/* FFI_TYPE_STRUCT */
-	.long	.Lcls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lcls_retmsstruct	/* FFI_TYPE_MS_STRUCT */
+        .long	.Lcls_noretval-.Lcls_store_table	/* FFI_TYPE_VOID */
+        .long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_INT */
+        .long	.Lcls_retfloat-.Lcls_store_table	/* FFI_TYPE_FLOAT */
+        .long	.Lcls_retdouble-.Lcls_store_table	/* FFI_TYPE_DOUBLE */
+        .long	.Lcls_retldouble-.Lcls_store_table	/* FFI_TYPE_LONGDOUBLE */
+        .long	.Lcls_retuint8-.Lcls_store_table	/* FFI_TYPE_UINT8 */
+        .long	.Lcls_retsint8-.Lcls_store_table	/* FFI_TYPE_SINT8 */
+        .long	.Lcls_retuint16-.Lcls_store_table	/* FFI_TYPE_UINT16 */
+        .long	.Lcls_retsint16-.Lcls_store_table	/* FFI_TYPE_SINT16 */
+        .long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_UINT32 */
+        .long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_SINT32 */
+        .long	.Lcls_retllong-.Lcls_store_table	/* FFI_TYPE_UINT64 */
+        .long	.Lcls_retllong-.Lcls_store_table	/* FFI_TYPE_SINT64 */
+        .long	.Lcls_retstruct-.Lcls_store_table	/* FFI_TYPE_STRUCT */
+        .long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_POINTER */
+        .long	.Lcls_retstruct1-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+        .long	.Lcls_retstruct2-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+        .long	.Lcls_retstruct4-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+        .long	.Lcls_retmsstruct-.Lcls_store_table	/* FFI_TYPE_MS_STRUCT */
 
 1:
-	add	%eax, %eax
-	add	%eax, %eax
-	add	(%esp),%eax
-	add	$4, %esp
-	jmp	*(%eax)
+        shl	$2, %eax
+        add	(%esp),%eax
+        mov	(%eax),%eax
+        add	(%esp),%eax
+        add	$4, %esp
+        jmp	*%eax
 
-	/* Sign/zero extend as appropriate.  */
+        /* Sign/zero extend as appropriate.  */
 .Lcls_retsint8:
-	movsbl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movsbl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retsint16:
-	movswl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movswl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retuint8:
-	movzbl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movzbl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retuint16:
-	movzwl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movzwl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retint:
-	movl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retfloat:
-	flds	(%ecx)
-	jmp	.Lcls_epilogue
+        flds	(%ecx)
+        jmp	.Lcls_epilogue
 
 .Lcls_retdouble:
-	fldl	(%ecx)
-	jmp	.Lcls_epilogue
+        fldl	(%ecx)
+        jmp	.Lcls_epilogue
 
 .Lcls_retldouble:
-	fldt	(%ecx)
-	jmp	.Lcls_epilogue
+        fldt	(%ecx)
+        jmp	.Lcls_epilogue
 
 .Lcls_retllong:
-	movl	(%ecx), %eax
-	movl	4(%ecx), %edx
-	jmp	.Lcls_epilogue
+        movl	(%ecx), %eax
+        movl	4(%ecx), %edx
+        jmp	.Lcls_epilogue
 
 .Lcls_retstruct1:
-	movsbl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movsbl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retstruct2:
-	movswl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movswl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retstruct4:
-	movl	(%ecx), %eax
-	jmp	.Lcls_epilogue
+        movl	(%ecx), %eax
+        jmp	.Lcls_epilogue
 
 .Lcls_retstruct:
         # Caller expects us to pop struct return value pointer hidden arg.
-	movl	%ebp, %esp
-	popl	%ebp
-	ret	$0x4
+        movl	%ebp, %esp
+        popl	%ebp
+        ret	$0x4
 
 .Lcls_retmsstruct:
-	# Caller expects us to return a pointer to the real return value.
-	mov	%ecx, %eax
-	# Caller doesn't expects us to pop struct return value pointer hidden arg.
-	jmp	.Lcls_epilogue
+        # Caller expects us to return a pointer to the real return value.
+        mov	%ecx, %eax
+        # Caller doesn't expects us to pop struct return value pointer hidden arg.
+        jmp	.Lcls_epilogue
 
 .Lcls_noretval:
 .Lcls_epilogue:
-	movl	%ebp, %esp
-	popl	%ebp
-	ret
+        movl	%ebp, %esp
+        popl	%ebp
+        ret
 .ffi_closure_SYSV_end:
 .LFE3:
 
@@ -787,415 +895,457 @@ _ffi_closure_SYSV:
 #define RAW_CLOSURE_CIF_OFFSET ((FFI_TRAMPOLINE_SIZE + 3) & ~3)
 #define RAW_CLOSURE_FUN_OFFSET (RAW_CLOSURE_CIF_OFFSET + 4)
 #define RAW_CLOSURE_USER_DATA_OFFSET (RAW_CLOSURE_FUN_OFFSET + 4)
-#define CIF_FLAGS_OFFSET 20
+
+#ifdef X86_WIN32
         .balign 16
-	.globl	_ffi_closure_raw_THISCALL
-#ifndef __OS2__
-	.def	_ffi_closure_raw_THISCALL;	.scl	2;	.type	32;	.endef
+FFI_HIDDEN(ffi_closure_raw_THISCALL)
+        .globl	USCORE_SYMBOL(ffi_closure_raw_THISCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_raw_THISCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_raw_THISCALL:
-	pushl	%ebp
-	movl	%esp, %ebp
-	pushl	%esi
-	subl	$36, %esp
-	movl	RAW_CLOSURE_CIF_OFFSET(%eax), %esi	 /* closure->cif */
-	movl	RAW_CLOSURE_USER_DATA_OFFSET(%eax), %edx /* closure->user_data */
-	movl	%edx, 12(%esp)	/* user_data */
-	leal	12(%ebp), %edx	/* __builtin_dwarf_cfa () */
-	jmp	.stubraw
+USCORE_SYMBOL(ffi_closure_raw_THISCALL):
+        pushl	%ebp
+        movl	%esp, %ebp
+        pushl	%esi
+        subl	$36, %esp
+        movl	RAW_CLOSURE_CIF_OFFSET(%eax), %esi	 /* closure->cif */
+        movl	RAW_CLOSURE_USER_DATA_OFFSET(%eax), %edx /* closure->user_data */
+        movl	%edx, 12(%esp)	/* user_data */
+        leal	12(%ebp), %edx	/* __builtin_dwarf_cfa () */
+        jmp	.stubraw
+#endif /* X86_WIN32 */
+
         # This assumes we are using gas.
         .balign 16
-	.globl	_ffi_closure_raw_SYSV
-#ifndef __OS2__
-	.def	_ffi_closure_raw_SYSV;	.scl	2;	.type	32;	.endef
+#if defined(X86_WIN32)
+        .globl	USCORE_SYMBOL(ffi_closure_raw_SYSV)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_raw_SYSV;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_raw_SYSV:
+USCORE_SYMBOL(ffi_closure_raw_SYSV):
+#endif /* defined(X86_WIN32) */
 .LFB4:
-	pushl	%ebp
+        pushl	%ebp
 .LCFI6:
-	movl	%esp, %ebp
+        movl	%esp, %ebp
 .LCFI7:
-	pushl	%esi
+        pushl	%esi
 .LCFI8:
-	subl	$36, %esp
-	movl	RAW_CLOSURE_CIF_OFFSET(%eax), %esi	 /* closure->cif */
-	movl	RAW_CLOSURE_USER_DATA_OFFSET(%eax), %edx /* closure->user_data */
-	movl	%edx, 12(%esp)	/* user_data */
-	leal	8(%ebp), %edx	/* __builtin_dwarf_cfa () */
+        subl	$36, %esp
+        movl	RAW_CLOSURE_CIF_OFFSET(%eax), %esi	 /* closure->cif */
+        movl	RAW_CLOSURE_USER_DATA_OFFSET(%eax), %edx /* closure->user_data */
+        movl	%edx, 12(%esp)	/* user_data */
+        leal	8(%ebp), %edx	/* __builtin_dwarf_cfa () */
 .stubraw:
-	movl	%edx, 8(%esp)	/* raw_args */
-	leal	-24(%ebp), %edx
-	movl	%edx, 4(%esp)	/* &res */
-	movl	%esi, (%esp)	/* cif */
-	call	*RAW_CLOSURE_FUN_OFFSET(%eax)		 /* closure->fun */
-	movl	CIF_FLAGS_OFFSET(%esi), %eax		 /* rtype */
+        movl	%edx, 8(%esp)	/* raw_args */
+        leal	-24(%ebp), %edx
+        movl	%edx, 4(%esp)	/* &res */
+        movl	%esi, (%esp)	/* cif */
+        call	*RAW_CLOSURE_FUN_OFFSET(%eax)		 /* closure->fun */
+        movl	CIF_FLAGS_OFFSET(%esi), %eax		 /* rtype */
 0:
-	call	1f
-	# Do not insert anything here between the call and the jump table.
+        call	1f
+        # Do not insert anything here between the call and the jump table.
 .Lrcls_store_table:
-	.long	.Lrcls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lrcls_retint		/* FFI_TYPE_INT */
-	.long	.Lrcls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lrcls_retdouble	/* FFI_TYPE_DOUBLE */
-	.long	.Lrcls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lrcls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lrcls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lrcls_retuint16	/* FFI_TYPE_UINT16 */
-	.long	.Lrcls_retsint16	/* FFI_TYPE_SINT16 */
-	.long	.Lrcls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lrcls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lrcls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lrcls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lrcls_retstruct	/* FFI_TYPE_STRUCT */
-	.long	.Lrcls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lrcls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lrcls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lrcls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
-	.long	.Lrcls_retstruct	/* FFI_TYPE_MS_STRUCT */
+        .long	.Lrcls_noretval-.Lrcls_store_table	/* FFI_TYPE_VOID */
+        .long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_INT */
+        .long	.Lrcls_retfloat-.Lrcls_store_table	/* FFI_TYPE_FLOAT */
+        .long	.Lrcls_retdouble-.Lrcls_store_table	/* FFI_TYPE_DOUBLE */
+        .long	.Lrcls_retldouble-.Lrcls_store_table	/* FFI_TYPE_LONGDOUBLE */
+        .long	.Lrcls_retuint8-.Lrcls_store_table	/* FFI_TYPE_UINT8 */
+        .long	.Lrcls_retsint8-.Lrcls_store_table	/* FFI_TYPE_SINT8 */
+        .long	.Lrcls_retuint16-.Lrcls_store_table	/* FFI_TYPE_UINT16 */
+        .long	.Lrcls_retsint16-.Lrcls_store_table	/* FFI_TYPE_SINT16 */
+        .long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_UINT32 */
+        .long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_SINT32 */
+        .long	.Lrcls_retllong-.Lrcls_store_table	/* FFI_TYPE_UINT64 */
+        .long	.Lrcls_retllong-.Lrcls_store_table	/* FFI_TYPE_SINT64 */
+        .long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_STRUCT */
+        .long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_POINTER */
+        .long	.Lrcls_retstruct1-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+        .long	.Lrcls_retstruct2-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+        .long	.Lrcls_retstruct4-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+        .long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_MS_STRUCT */
 1:
-	add	%eax, %eax
-	add	%eax, %eax
-	add	(%esp),%eax
-	add	$4, %esp
-	jmp	*(%eax)
+        shl	$2, %eax
+        add	(%esp),%eax
+        mov	(%eax),%eax
+        add	(%esp),%eax
+        add	$4, %esp
+        jmp	*%eax
 
-	/* Sign/zero extend as appropriate.  */
+        /* Sign/zero extend as appropriate.  */
 .Lrcls_retsint8:
-	movsbl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movsbl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retsint16:
-	movswl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movswl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retuint8:
-	movzbl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movzbl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retuint16:
-	movzwl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movzwl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retint:
-	movl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retfloat:
-	flds	-24(%ebp)
-	jmp	.Lrcls_epilogue
+        flds	-24(%ebp)
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retdouble:
-	fldl	-24(%ebp)
-	jmp	.Lrcls_epilogue
+        fldl	-24(%ebp)
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retldouble:
-	fldt	-24(%ebp)
-	jmp	.Lrcls_epilogue
+        fldt	-24(%ebp)
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retllong:
-	movl	-24(%ebp), %eax
-	movl	-20(%ebp), %edx
-	jmp	.Lrcls_epilogue
+        movl	-24(%ebp), %eax
+        movl	-20(%ebp), %edx
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retstruct1:
-	movsbl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movsbl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retstruct2:
-	movswl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movswl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retstruct4:
-	movl	-24(%ebp), %eax
-	jmp	.Lrcls_epilogue
+        movl	-24(%ebp), %eax
+        jmp	.Lrcls_epilogue
 
 .Lrcls_retstruct:
-	# Nothing to do!
+        # Nothing to do!
 
 .Lrcls_noretval:
 .Lrcls_epilogue:
-	addl	$36, %esp
-	popl	%esi
-	popl	%ebp
-	ret
+        addl	$36, %esp
+        popl	%esi
+        popl	%ebp
+        ret
 .ffi_closure_raw_SYSV_end:
 .LFE4:
 
 #endif /* !FFI_NO_RAW_API */
 
         # This assumes we are using gas.
-	.balign	16
-	.globl	_ffi_closure_STDCALL
-#ifndef __OS2__
-	.def	_ffi_closure_STDCALL;	.scl	2;	.type	32;	.endef
+        .balign	16
+FFI_HIDDEN(ffi_closure_STDCALL)
+        .globl	USCORE_SYMBOL(ffi_closure_STDCALL)
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .def	_ffi_closure_STDCALL;	.scl	2;	.type	32;	.endef
 #endif
-_ffi_closure_STDCALL:
+USCORE_SYMBOL(ffi_closure_STDCALL):
+.ffi_closure_STDCALL_internal:
+        /* ffi_closure ctx is at top of the stack */
+        movl	(%esp), %eax
 .LFB5:
-	pushl	%ebp
+        pushl	%ebp
 .LCFI9:
-	movl	%esp, %ebp
+        movl	%esp, %ebp
 .LCFI10:
-	subl	$40, %esp
-	leal	-24(%ebp), %edx
-	movl	%edx, -12(%ebp)	/* resp */
-	leal	12(%ebp), %edx  /* account for stub return address on stack */
-	movl	%edx, 4(%esp)	/* args */
-	leal	-12(%ebp), %edx
-	movl	%edx, (%esp)	/* &resp */
-	call	_ffi_closure_SYSV_inner
-	movl	-12(%ebp), %ecx
+        subl	$40, %esp
+        leal	-24(%ebp), %edx
+        movl	%edx, -12(%ebp)	/* resp */
+        leal	12(%ebp), %edx  /* account for stub return address on stack */
+        movl	%edx, 4(%esp)	/* args */
+        leal	-12(%ebp), %edx
+        movl	%edx, (%esp)	/* &resp */
+#if defined(HAVE_HIDDEN_VISIBILITY_ATTRIBUTE) || !defined(__PIC__)
+        call	USCORE_SYMBOL(ffi_closure_WIN32_inner)
+#elif defined(X86_DARWIN)
+        calll	L_ffi_closure_WIN32_inner$stub
+#else
+        movl	%ebx, 8(%esp)
+        call	1f
+1:      popl	%ebx
+        addl	$_GLOBAL_OFFSET_TABLE_+[.-1b], %ebx
+        call	ffi_closure_WIN32_inner@PLT
+        movl	8(%esp), %ebx
+#endif
+        movl	-12(%ebp), %ecx
 0:
-	call	1f
-	# Do not insert anything here between the call and the jump table.
-.Lscls_store_table:
-	.long	.Lscls_noretval		/* FFI_TYPE_VOID */
-	.long	.Lscls_retint		/* FFI_TYPE_INT */
-	.long	.Lscls_retfloat		/* FFI_TYPE_FLOAT */
-	.long	.Lscls_retdouble	/* FFI_TYPE_DOUBLE */
-	.long	.Lscls_retldouble	/* FFI_TYPE_LONGDOUBLE */
-	.long	.Lscls_retuint8		/* FFI_TYPE_UINT8 */
-	.long	.Lscls_retsint8		/* FFI_TYPE_SINT8 */
-	.long	.Lscls_retuint16	/* FFI_TYPE_UINT16 */
-	.long	.Lscls_retsint16	/* FFI_TYPE_SINT16 */
-	.long	.Lscls_retint		/* FFI_TYPE_UINT32 */
-	.long	.Lscls_retint		/* FFI_TYPE_SINT32 */
-	.long	.Lscls_retllong		/* FFI_TYPE_UINT64 */
-	.long	.Lscls_retllong		/* FFI_TYPE_SINT64 */
-	.long	.Lscls_retstruct	/* FFI_TYPE_STRUCT */
-	.long	.Lscls_retint		/* FFI_TYPE_POINTER */
-	.long	.Lscls_retstruct1	/* FFI_TYPE_SMALL_STRUCT_1B */
-	.long	.Lscls_retstruct2	/* FFI_TYPE_SMALL_STRUCT_2B */
-	.long	.Lscls_retstruct4	/* FFI_TYPE_SMALL_STRUCT_4B */
-1:
-	add	%eax, %eax
-	add	%eax, %eax
-	add	(%esp),%eax
-	add	$4, %esp
-	jmp	*(%eax)
+        xchgl	4(%ebp), %eax /* xchg size of stack parameters and ffi_closure ctx */
+        movl	CLOSURE_CIF_OFFSET(%eax), %eax
+        movl	CIF_FLAGS_OFFSET(%eax), %eax
 
-	/* Sign/zero extend as appropriate.  */
+        call	1f
+        # Do not insert anything here between the call and the jump table.
+.Lscls_store_table:
+        .long	.Lscls_noretval-.Lscls_store_table	/* FFI_TYPE_VOID */
+        .long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_INT */
+        .long	.Lscls_retfloat-.Lscls_store_table	/* FFI_TYPE_FLOAT */
+        .long	.Lscls_retdouble-.Lscls_store_table	/* FFI_TYPE_DOUBLE */
+        .long	.Lscls_retldouble-.Lscls_store_table	/* FFI_TYPE_LONGDOUBLE */
+        .long	.Lscls_retuint8-.Lscls_store_table	/* FFI_TYPE_UINT8 */
+        .long	.Lscls_retsint8-.Lscls_store_table	/* FFI_TYPE_SINT8 */
+        .long	.Lscls_retuint16-.Lscls_store_table	/* FFI_TYPE_UINT16 */
+        .long	.Lscls_retsint16-.Lscls_store_table	/* FFI_TYPE_SINT16 */
+        .long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_UINT32 */
+        .long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_SINT32 */
+        .long	.Lscls_retllong-.Lscls_store_table	/* FFI_TYPE_UINT64 */
+        .long	.Lscls_retllong-.Lscls_store_table	/* FFI_TYPE_SINT64 */
+        .long	.Lscls_retstruct-.Lscls_store_table	/* FFI_TYPE_STRUCT */
+        .long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_POINTER */
+        .long	.Lscls_retstruct1-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
+        .long	.Lscls_retstruct2-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
+        .long	.Lscls_retstruct4-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
+1:
+        shl	$2, %eax
+        add	(%esp),%eax
+        mov	(%eax),%eax
+        add	(%esp),%eax
+        add	$4, %esp
+        jmp	*%eax
+
+        /* Sign/zero extend as appropriate.  */
 .Lscls_retsint8:
-	movsbl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movsbl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retsint16:
-	movswl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movswl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retuint8:
-	movzbl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movzbl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retuint16:
-	movzwl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movzwl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retint:
-	movl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retfloat:
-	flds	(%ecx)
-	jmp	.Lscls_epilogue
+        flds	(%ecx)
+        jmp	.Lscls_epilogue
 
 .Lscls_retdouble:
-	fldl	(%ecx)
-	jmp	.Lscls_epilogue
+        fldl	(%ecx)
+        jmp	.Lscls_epilogue
 
 .Lscls_retldouble:
-	fldt	(%ecx)
-	jmp	.Lscls_epilogue
+        fldt	(%ecx)
+        jmp	.Lscls_epilogue
 
 .Lscls_retllong:
-	movl	(%ecx), %eax
-	movl	4(%ecx), %edx
-	jmp	.Lscls_epilogue
+        movl	(%ecx), %eax
+        movl	4(%ecx), %edx
+        jmp	.Lscls_epilogue
 
 .Lscls_retstruct1:
-	movsbl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movsbl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retstruct2:
-	movswl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movswl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retstruct4:
-	movl	(%ecx), %eax
-	jmp	.Lscls_epilogue
+        movl	(%ecx), %eax
+        jmp	.Lscls_epilogue
 
 .Lscls_retstruct:
-	# Nothing to do!
+        # Nothing to do!
 
 .Lscls_noretval:
 .Lscls_epilogue:
-	movl	%ebp, %esp
-	popl	%ebp
-	ret
+        movl	%ebp, %esp
+        popl	%ebp
+        movl	4(%esp), %ecx /* Return address */
+        addl	(%esp), %esp  /* Parameters stack size */
+        addl	$8, %esp
+        jmp	*%ecx
 .ffi_closure_STDCALL_end:
 .LFE5:
 
-#ifndef __OS2__
-	.section	.eh_frame,"w"
+#if defined(X86_DARWIN)
+.section __IMPORT,__jump_table,symbol_stubs,self_modifying_code+pure_instructions,5
+L_ffi_closure_SYSV_inner$stub:
+        .indirect_symbol _ffi_closure_SYSV_inner
+        hlt ; hlt ; hlt ; hlt ; hlt
+L_ffi_closure_WIN32_inner$stub:
+        .indirect_symbol _ffi_closure_WIN32_inner
+        hlt ; hlt ; hlt ; hlt ; hlt
+#endif
+
+#if defined(X86_WIN32) && !defined(__OS2__)
+        .section	.eh_frame,"w"
 #endif
 .Lframe1:
 .LSCIE1:
-	.long	.LECIE1-.LASCIE1  /* Length of Common Information Entry */
+        .long	.LECIE1-.LASCIE1  /* Length of Common Information Entry */
 .LASCIE1:
-	.long	0x0	/* CIE Identifier Tag */
-	.byte	0x1	/* CIE Version */
+        .long	0x0	/* CIE Identifier Tag */
+        .byte	0x1	/* CIE Version */
 #ifdef __PIC__
-	.ascii "zR\0"	/* CIE Augmentation */
+        .ascii "zR\0"	/* CIE Augmentation */
 #else
-	.ascii "\0"	/* CIE Augmentation */
+        .ascii "\0"	/* CIE Augmentation */
 #endif
-	.byte	0x1	/* .uleb128 0x1; CIE Code Alignment Factor */
-	.byte	0x7c	/* .sleb128 -4; CIE Data Alignment Factor */
-	.byte	0x8	/* CIE RA Column */
+        .byte	0x1	/* .uleb128 0x1; CIE Code Alignment Factor */
+        .byte	0x7c	/* .sleb128 -4; CIE Data Alignment Factor */
+        .byte	0x8	/* CIE RA Column */
 #ifdef __PIC__
-	.byte	0x1	/* .uleb128 0x1; Augmentation size */
-	.byte	0x1b	/* FDE Encoding (pcrel sdata4) */
+        .byte	0x1	/* .uleb128 0x1; Augmentation size */
+        .byte	0x1b	/* FDE Encoding (pcrel sdata4) */
 #endif
-	.byte	0xc	/* DW_CFA_def_cfa CFA = r4 + 4 = 4(%esp) */
-	.byte	0x4	/* .uleb128 0x4 */
-	.byte	0x4	/* .uleb128 0x4 */
-	.byte	0x88	/* DW_CFA_offset, column 0x8 %eip at CFA + 1 * -4 */
-	.byte	0x1	/* .uleb128 0x1 */
-	.align 4
+        .byte	0xc	/* DW_CFA_def_cfa CFA = r4 + 4 = 4(%esp) */
+        .byte	0x4	/* .uleb128 0x4 */
+        .byte	0x4	/* .uleb128 0x4 */
+        .byte	0x88	/* DW_CFA_offset, column 0x8 %eip at CFA + 1 * -4 */
+        .byte	0x1	/* .uleb128 0x1 */
+        .align 4
 .LECIE1:
 
 .LSFDE1:
-	.long	.LEFDE1-.LASFDE1	/* FDE Length */
+        .long	.LEFDE1-.LASFDE1	/* FDE Length */
 .LASFDE1:
-	.long	.LASFDE1-.Lframe1	/* FDE CIE offset */
+        .long	.LASFDE1-.Lframe1	/* FDE CIE offset */
 #if defined __PIC__ && defined HAVE_AS_X86_PCREL
-	.long	.LFB1-.	/* FDE initial location */
+        .long	.LFB1-.	/* FDE initial location */
 #else
-	.long	.LFB1
+        .long	.LFB1
 #endif
-	.long	.LFE1-.LFB1	/* FDE address range */
+        .long	.LFE1-.LFB1	/* FDE address range */
 #ifdef __PIC__
-	.byte	0x0	/* .uleb128 0x0; Augmentation size */
+        .byte	0x0	/* .uleb128 0x0; Augmentation size */
 #endif
-	/* DW_CFA_xxx CFI instructions go here.  */
+        /* DW_CFA_xxx CFI instructions go here.  */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI0-.LFB1
-	.byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
-	.byte	0x8	/* .uleb128 0x8 */
-	.byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
-	.byte	0x2	/* .uleb128 0x2 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI0-.LFB1
+        .byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
+        .byte	0x8	/* .uleb128 0x8 */
+        .byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
+        .byte	0x2	/* .uleb128 0x2 */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI1-.LCFI0
-	.byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
-	.byte	0x5	/* .uleb128 0x5 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI1-.LCFI0
+        .byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
+        .byte	0x5	/* .uleb128 0x5 */
 
-	/* End of DW_CFA_xxx CFI instructions.  */
-	.align 4
+        /* End of DW_CFA_xxx CFI instructions.  */
+        .align 4
 .LEFDE1:
 
-
 .LSFDE3:
-	.long	.LEFDE3-.LASFDE3	/* FDE Length */
+        .long	.LEFDE3-.LASFDE3	/* FDE Length */
 .LASFDE3:
-	.long	.LASFDE3-.Lframe1	/* FDE CIE offset */
+        .long	.LASFDE3-.Lframe1	/* FDE CIE offset */
 #if defined __PIC__ && defined HAVE_AS_X86_PCREL
-	.long	.LFB3-.	/* FDE initial location */
+        .long	.LFB3-.	/* FDE initial location */
 #else
-	.long	.LFB3
+        .long	.LFB3
 #endif
-	.long	.LFE3-.LFB3	/* FDE address range */
+        .long	.LFE3-.LFB3	/* FDE address range */
 #ifdef __PIC__
-	.byte	0x0	/* .uleb128 0x0; Augmentation size */
+        .byte	0x0	/* .uleb128 0x0; Augmentation size */
 #endif
-	/* DW_CFA_xxx CFI instructions go here.  */
+        /* DW_CFA_xxx CFI instructions go here.  */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI4-.LFB3
-	.byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
-	.byte	0x8	/* .uleb128 0x8 */
-	.byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
-	.byte	0x2	/* .uleb128 0x2 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI4-.LFB3
+        .byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
+        .byte	0x8	/* .uleb128 0x8 */
+        .byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
+        .byte	0x2	/* .uleb128 0x2 */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI5-.LCFI4
-	.byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
-	.byte	0x5	/* .uleb128 0x5 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI5-.LCFI4
+        .byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
+        .byte	0x5	/* .uleb128 0x5 */
 
-	/* End of DW_CFA_xxx CFI instructions.  */
-	.align 4
+        /* End of DW_CFA_xxx CFI instructions.  */
+        .align 4
 .LEFDE3:
 
 #if !FFI_NO_RAW_API
 
 .LSFDE4:
-	.long	.LEFDE4-.LASFDE4	/* FDE Length */
+        .long	.LEFDE4-.LASFDE4	/* FDE Length */
 .LASFDE4:
-	.long	.LASFDE4-.Lframe1	/* FDE CIE offset */
+        .long	.LASFDE4-.Lframe1	/* FDE CIE offset */
 #if defined __PIC__ && defined HAVE_AS_X86_PCREL
-	.long	.LFB4-.	/* FDE initial location */
+        .long	.LFB4-.	/* FDE initial location */
 #else
-	.long	.LFB4
+        .long	.LFB4
 #endif
-	.long	.LFE4-.LFB4	/* FDE address range */
+        .long	.LFE4-.LFB4	/* FDE address range */
 #ifdef __PIC__
-	.byte	0x0	/* .uleb128 0x0; Augmentation size */
+        .byte	0x0	/* .uleb128 0x0; Augmentation size */
 #endif
-	/* DW_CFA_xxx CFI instructions go here.  */
+        /* DW_CFA_xxx CFI instructions go here.  */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI6-.LFB4
-	.byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
-	.byte	0x8	/* .uleb128 0x8 */
-	.byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
-	.byte	0x2	/* .uleb128 0x2 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI6-.LFB4
+        .byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
+        .byte	0x8	/* .uleb128 0x8 */
+        .byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
+        .byte	0x2	/* .uleb128 0x2 */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI7-.LCFI6
-	.byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
-	.byte	0x5	/* .uleb128 0x5 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI7-.LCFI6
+        .byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
+        .byte	0x5	/* .uleb128 0x5 */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI8-.LCFI7
-	.byte	0x86	/* DW_CFA_offset, column 0x6 %esi at CFA + 3 * -4 */
-	.byte	0x3	/* .uleb128 0x3 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI8-.LCFI7
+        .byte	0x86	/* DW_CFA_offset, column 0x6 %esi at CFA + 3 * -4 */
+        .byte	0x3	/* .uleb128 0x3 */
 
-	/* End of DW_CFA_xxx CFI instructions.  */
-	.align 4
+        /* End of DW_CFA_xxx CFI instructions.  */
+        .align 4
 .LEFDE4:
 
 #endif /* !FFI_NO_RAW_API */
 
 .LSFDE5:
-	.long	.LEFDE5-.LASFDE5	/* FDE Length */
+        .long	.LEFDE5-.LASFDE5	/* FDE Length */
 .LASFDE5:
-	.long	.LASFDE5-.Lframe1	/* FDE CIE offset */
+        .long	.LASFDE5-.Lframe1	/* FDE CIE offset */
 #if defined __PIC__ && defined HAVE_AS_X86_PCREL
-	.long	.LFB5-.	/* FDE initial location */
+        .long	.LFB5-.	/* FDE initial location */
 #else
-	.long	.LFB5
+        .long	.LFB5
 #endif
-	.long	.LFE5-.LFB5	/* FDE address range */
+        .long	.LFE5-.LFB5	/* FDE address range */
 #ifdef __PIC__
-	.byte	0x0	/* .uleb128 0x0; Augmentation size */
+        .byte	0x0	/* .uleb128 0x0; Augmentation size */
 #endif
-	/* DW_CFA_xxx CFI instructions go here.  */
+        /* DW_CFA_xxx CFI instructions go here.  */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI9-.LFB5
-	.byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
-	.byte	0x8	/* .uleb128 0x8 */
-	.byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
-	.byte	0x2	/* .uleb128 0x2 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI9-.LFB5
+        .byte	0xe	/* DW_CFA_def_cfa_offset CFA = r4 + 8 = 8(%esp) */
+        .byte	0x8	/* .uleb128 0x8 */
+        .byte	0x85	/* DW_CFA_offset, column 0x5 %ebp at CFA + 2 * -4 */
+        .byte	0x2	/* .uleb128 0x2 */
 
-	.byte	0x4	/* DW_CFA_advance_loc4 */
-	.long	.LCFI10-.LCFI9
-	.byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
-	.byte	0x5	/* .uleb128 0x5 */
+        .byte	0x4	/* DW_CFA_advance_loc4 */
+        .long	.LCFI10-.LCFI9
+        .byte	0xd	/* DW_CFA_def_cfa_register CFA = r5 = %ebp */
+        .byte	0x5	/* .uleb128 0x5 */
 
-	/* End of DW_CFA_xxx CFI instructions.  */
-	.align 4
+        /* End of DW_CFA_xxx CFI instructions.  */
+        .align 4
 .LEFDE5:
 
 #endif /* !_MSC_VER */
 
+#if defined __ELF__ && defined __linux__
+        .section	.note.GNU-stack,"",@progbits
+#endif

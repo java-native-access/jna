@@ -184,11 +184,11 @@ This calls the function @var{fn} according to the description given in
 
 @var{rvalue} is a pointer to a chunk of memory that will hold the
 result of the function call.  This must be large enough to hold the
-result and must be suitably aligned; it is the caller's responsibility
+result, no smaller than the system register size (generally 32 or 64
+bits), and must be suitably aligned; it is the caller's responsibility
 to ensure this.  If @var{cif} declares that the function returns
 @code{void} (using @code{ffi_type_void}), then @var{rvalue} is
-ignored.  If @var{rvalue} is @samp{NULL}, then the return value is
-discarded.
+ignored.
 
 @var{avalues} is a vector of @code{void *} pointers that point to the
 memory locations holding the argument values for a call.  If @var{cif}
@@ -214,7 +214,7 @@ int main()
   ffi_type *args[1];
   void *values[1];
   char *s;
-  int rc;
+  ffi_arg rc;
   
   /* Initialize the argument info vectors */    
   args[0] = &ffi_type_pointer;
@@ -222,7 +222,7 @@ int main()
   
   /* Initialize the cif */
   if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1, 
-		       &ffi_type_uint, args) == FFI_OK)
+		       &ffi_type_sint, args) == FFI_OK)
     @{
       s = "Hello World!";
       ffi_call(&cif, puts, &rc, values);
@@ -247,6 +247,8 @@ int main()
 * Primitive Types::             Built-in types.
 * Structures::                  Structure types.
 * Type Example::                Structure type example.
+* Complex::                     Complex types.
+* Complex Type Example::        Complex type example.
 @end menu
 
 @node Primitive Types
@@ -345,6 +347,20 @@ On other platforms, it is not.
 @tindex ffi_type_pointer
 A generic @code{void *} pointer.  You should use this for all
 pointers, regardless of their real type.
+
+@item ffi_type_complex_float
+@tindex ffi_type_complex_float
+The C @code{_Complex float} type.
+
+@item ffi_type_complex_double
+@tindex ffi_type_complex_double
+The C @code{_Complex double} type.
+
+@item ffi_type_complex_longdouble
+@tindex ffi_type_complex_longdouble
+The C @code{_Complex long double} type.
+On platforms that have a C @code{long double} type, this is defined.
+On other platforms, it is not.
 @end table
 
 Each of these is of type @code{ffi_type}, so you must take the address
@@ -414,6 +430,7 @@ Here is the corresponding code to describe this struct to
       int i;
 
       tm_type.size = tm_type.alignment = 0;
+      tm_type.type = FFI_TYPE_STRUCT;
       tm_type.elements = &tm_type_elements;
     
       for (i = 0; i < 9; i++)
@@ -428,6 +445,135 @@ Here is the corresponding code to describe this struct to
     @}
 @end example
 
+@node Complex
+@subsection Complex Types
+
+@samp{libffi} supports the complex types defined by the C99
+standard (@code{_Complex float}, @code{_Complex double} and
+@code{_Complex long double} with the built-in type descriptors
+@code{ffi_type_complex_float}, @code{ffi_type_complex_double} and
+@code{ffi_type_complex_longdouble}.
+
+Custom complex types like @code{_Complex int} can also be used.
+An @code{ffi_type} object has to be defined to describe the
+complex type to @samp{libffi}.
+
+@tindex ffi_type
+@deftp {Data type} ffi_type
+@table @code
+@item size_t size
+This must be manually set to the size of the complex type.
+
+@item unsigned short alignment
+This must be manually set to the alignment of the complex type.
+
+@item unsigned short type
+For a complex type, this must be set to @code{FFI_TYPE_COMPLEX}.
+
+@item ffi_type **elements
+
+This is a @samp{NULL}-terminated array of pointers to
+@code{ffi_type} objects.  The first element is set to the
+@code{ffi_type} of the complex's base type.  The second element
+must be set to @code{NULL}.
+@end table
+@end deftp
+
+The section @ref{Complex Type Example} shows a way to determine
+the @code{size} and @code{alignment} members in a platform
+independent way.
+
+For platforms that have no complex support in @code{libffi} yet,
+the functions @code{ffi_prep_cif} and @code{ffi_prep_args} abort
+the program if they encounter a complex type.
+
+@node Complex Type Example
+@subsection Complex Type Example
+
+This example demonstrates how to use complex types:
+
+@example
+#include <stdio.h>
+#include <ffi.h>
+#include <complex.h>
+
+void complex_fn(_Complex float cf,
+                _Complex double cd,
+                _Complex long double cld)
+@{
+  printf("cf=%f+%fi\ncd=%f+%fi\ncld=%f+%fi\n",
+         (float)creal (cf), (float)cimag (cf),
+         (float)creal (cd), (float)cimag (cd),
+         (float)creal (cld), (float)cimag (cld));
+@}
+
+int main()
+@{
+  ffi_cif cif;
+  ffi_type *args[3];
+  void *values[3];
+  _Complex float cf;
+  _Complex double cd;
+  _Complex long double cld;
+
+  /* Initialize the argument info vectors */
+  args[0] = &ffi_type_complex_float;
+  args[1] = &ffi_type_complex_double;
+  args[2] = &ffi_type_complex_longdouble;
+  values[0] = &cf;
+  values[1] = &cd;
+  values[2] = &cld;
+
+  /* Initialize the cif */
+  if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 3,
+                   &ffi_type_void, args) == FFI_OK)
+    @{
+      cf = 1.0 + 20.0 * I;
+      cd = 300.0 + 4000.0 * I;
+      cld = 50000.0 + 600000.0 * I;
+      /* Call the function */
+      ffi_call(&cif, (void (*)(void))complex_fn, 0, values);
+    @}
+
+  return 0;
+@}
+@end example
+
+This is an example for defining a custom complex type descriptor
+for compilers that support them:
+
+@example
+/*
+ * This macro can be used to define new complex type descriptors
+ * in a platform independent way.
+ *
+ * name: Name of the new descriptor is ffi_type_complex_<name>.
+ * type: The C base type of the complex type.
+ */
+#define FFI_COMPLEX_TYPEDEF(name, type, ffitype)             \
+  static ffi_type *ffi_elements_complex_##name [2] = @{      \
+    (ffi_type *)(&ffitype), NULL                             \
+  @};                                                        \
+  struct struct_align_complex_##name @{                      \
+    char c;                                                  \
+    _Complex type x;                                         \
+  @};                                                        \
+  ffi_type ffi_type_complex_##name = @{                      \
+    sizeof(_Complex type),                                   \
+    offsetof(struct struct_align_complex_##name, x),         \
+    FFI_TYPE_COMPLEX,                                        \
+    (ffi_type **)ffi_elements_complex_##name                 \
+  @}
+
+/* Define new complex type descriptors using the macro: */
+/* ffi_type_complex_sint */
+FFI_COMPLEX_TYPEDEF(sint, int, ffi_type_sint);
+/* ffi_type_complex_uchar */
+FFI_COMPLEX_TYPEDEF(uchar, unsigned char, ffi_type_uint8);
+@end example
+
+The new type descriptors can then be used like one of the built-in
+type descriptors in the previous example.
 
 @node Multiple ABIs
 @section Multiple ABIs
@@ -533,18 +679,20 @@ writable and executable addresses.
 @section Closure Example
 
 A trivial example that creates a new @code{puts} by binding 
-@code{fputs} with @code{stdin}.
+@code{fputs} with @code{stdout}.
 
 @example
 #include <stdio.h>
 #include <ffi.h>
 
 /* Acts like puts with the file given at time of enclosure. */
-void puts_binding(ffi_cif *cif, unsigned int *ret, void* args[], 
-                  FILE *stream)
+void puts_binding(ffi_cif *cif, void *ret, void* args[],
+                  void *stream)
 @{
-  *ret = fputs(*(char **)args[0], stream);
+  *(ffi_arg *)ret = fputs(*(char **)args[0], (FILE *)stream);
 @}
+
+typedef int (*puts_t)(char *);
 
 int main()
 @{
@@ -552,9 +700,9 @@ int main()
   ffi_type *args[1];
   ffi_closure *closure;
 
-  int (*bound_puts)(char *);
+  void *bound_puts;
   int rc;
-  
+
   /* Allocate closure and bound_puts */
   closure = ffi_closure_alloc(sizeof(ffi_closure), &bound_puts);
 
@@ -565,13 +713,13 @@ int main()
 
       /* Initialize the cif */
       if (ffi_prep_cif(&cif, FFI_DEFAULT_ABI, 1,
-                       &ffi_type_uint, args) == FFI_OK)
+                       &ffi_type_sint, args) == FFI_OK)
         @{
           /* Initialize the closure, setting stream to stdout */
-          if (ffi_prep_closure_loc(closure, &cif, puts_binding, 
+          if (ffi_prep_closure_loc(closure, &cif, puts_binding,
                                    stdout, bound_puts) == FFI_OK)
             @{
-              rc = bound_puts("Hello World!");
+              rc = ((puts_t)bound_puts)("Hello World!");
               /* rc now holds the result of the call to fputs */
             @}
         @}
