@@ -2,7 +2,7 @@
 The libffi subdirectory is managed as a subtree.  Use subtree merging
 to update from upstream, e.g.
 
-$ git pull -s subtree -Xsubtree=native/libffi libffi master (or other branch, if necessary)
+$ git pull --squash -s subtree -Xsubtree=native/libffi libffi master (or other branch, if necessary)
 
 The libffi subdirectory was originally mapped into the local repo as follows:
 
