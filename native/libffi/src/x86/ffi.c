@@ -315,8 +315,8 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 
   for (ptr = cif->arg_types, i = cif->nargs; i > 0; i--, ptr++)
     {
-#ifdef X86_WIN32
-      if (cif->abi != FFI_STDCALL)
+#ifndef X86_WIN64
+      if (cif->abi != FFI_STDCALL && cif->abi != FFI_FASTCALL && cif->abi != FFI_THISCALL)
 #endif
       if (((*ptr)->alignment - 1) & cif->bytes)
         cif->bytes = ALIGN(cif->bytes, (*ptr)->alignment);
@@ -332,7 +332,6 @@ ffi_status ffi_prep_cif_machdep(ffi_cif *cif)
 #ifndef X86_WIN64
   if (cif->abi == FFI_SYSV || cif->abi == FFI_UNIX64)
 #endif
-  if (cif->abi != FFI_STDCALL)
     cif->bytes = (cif->bytes + 15) & ~0xF;
 #endif
 
