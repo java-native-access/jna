@@ -184,6 +184,7 @@
           <os arch="em64t"/>
           <os arch="sparcv9"/>
           <os arch="ppc64"/>
+          <os arch="ppc64le"/>
           <os arch="ia64"/>
           <os arch="aarch64"/>
         </or>
@@ -213,6 +214,9 @@
     </condition>
     <condition property="jre.arch" value="ppc64">
       <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
+    </condition>
+    <condition property="jre.arch" value="ppc64le">
+      <matches pattern="(powerpc64le|power64le)" string="${os.arch}"/>
     </condition>
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
@@ -396,6 +400,8 @@ com/sun/jna/linux-ppc/libjnidispatch.so;
 processor=ppc;osname=linux,
 com/sun/jna/linux-ppc64/libjnidispatch.so;
 processor=ppc64;osname=linux,
+com/sun/jna/linux-ppc64le/libjnidispatch.so;
+processor=ppc64le;osname=linux,
 com/sun/jna/linux-x86/libjnidispatch.so;
 processor=x86;osname=linux,
 com/sun/jna/linux-x86-64/libjnidispatch.so;
@@ -456,6 +462,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-ppc64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc64"/>
+      <zipfileset src="${lib.native}/linux-ppc64le.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-ppc64le"/>
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -586,6 +595,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64le.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>

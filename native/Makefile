@@ -302,6 +302,10 @@ ifeq ($(ARCH),ppc64)
   CC += -m64
   LD += -m64
 endif
+ifeq ($(ARCH),ppc64le)
+  CC += -m64
+  LD += -m64
+endif
 ifeq ($(ARCH),ppc)
   CC += -m32
   LD += -m32
