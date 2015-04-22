@@ -23,9 +23,10 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
- * alternate mappings from {@link WinNT} which make use of NIO buffers.
+ * alternate mappings from {@link WinNT} which make use of NIO buffers,
+ * {@link Wincon} for console API.
  */
-public interface Kernel32 extends WinNT {
+public interface Kernel32 extends WinNT, Wincon {
 
     /** The instance. */
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32",
