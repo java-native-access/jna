@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
@@ -212,6 +213,38 @@ public interface Wincon {
     boolean SetConsoleMode(HANDLE hConsoleHandle, int dwMode);
     
     int MAX_CONSOLE_TITLE_LENGTH=64 * 1024;
+
+    /**
+     * @param lpConsoleTitle A pointer to a buffer that receives a null-terminated
+     * string containing the title. If the buffer is too small to store the title,
+     * the function stores as many characters of the title as will fit in the buffer,
+     * ending with a null terminator. <B>Note:</B> use {@link Native#toString(char[])}
+     * to convert it to a {@link String} value
+     * @param nSize The size of the buffer pointed to by the lpConsoleTitle parameter,
+     * in characters.
+     * @return If the function succeeds, the return value is the length of the console
+     * window's title, in characters. If the function fails, the return value is zero
+     * and {@code GetLastError} returns the error code.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683174(v=vs.85).aspx">GetConsoleTitle</A>
+     * documentation
+     */
+    int GetConsoleTitle(char[] lpConsoleTitle, int nSize);
+
+    /**
+     * @param lpConsoleTitle A pointer to a buffer that receives a null-terminated
+     * string containing the original title. <B>Note:</B> use {@link Native#toString(char[])}
+     * to convert it to a {@link String} value
+     * @param nSize The size of the lpConsoleTitle buffer, in characters
+     * @return If the function succeeds, the return value is the length of the
+     * string copied to the buffer, in characters. If the buffer is not large enough
+     * to store the title, the return value is zero and {@code GetLastError} returns
+     * {@code ERROR_SUCCESS}. If the function fails, the return value is zero
+     * and {@code GetLastError} returns the error code.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683168(v=vs.85).aspx">GetConsoleOriginalTitle</A>
+     * documentation
+     */
+    int GetConsoleOriginalTitle(char[] lpConsoleTitle, int nSize);
+
     /**
      * @param lpConsoleTitle The string to be displayed in the title bar of the console window.
      * The total size must be less than {@link #MAX_CONSOLE_TITLE_LENGTH}.
