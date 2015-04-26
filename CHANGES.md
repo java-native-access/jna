@@ -41,6 +41,7 @@ Features
 * [#421](https://github.com/twall/jna/pull/421): Added `XGrabKeyboard` and `XUngrabKeyboard` to `X11` interface.
 * [#422](https://github.com/twall/jna/pull/422): Update libffi to v3.2.1.
 * [#425](https://github.com/twall/jna/pull/425): Add support for PPCLE [@tdaitx](https://github.com/tdaix).
+* [#428](https://github.com/twall/jna/pull/428): Added some Wincon.h related functions and definitions
 
 Bug Fixes
 ---------
