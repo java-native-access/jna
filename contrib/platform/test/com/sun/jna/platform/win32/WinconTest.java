@@ -32,13 +32,11 @@ public class WinconTest extends Assert {
 	public void testGetConsoleDisplayMode() {
 		IntByReference	curMode=new IntByReference();
 		assertCallSucceeded("Initial display mode value retrieval", INSTANCE.GetConsoleDisplayMode(curMode));
-		System.out.println("GetConsoleDisplayMode: " + curMode.getValue());
 	}
 	
 	@Test
 	public void testConsoleCP() {
 		int	curCP=INSTANCE.GetConsoleCP();
-		System.out.println("Console CP=" + curCP);
 		// NOTE: we use the same code page value just in case the "SetConsoleCP" call fails
 		assertCallSucceeded("Restore CP=" + curCP, INSTANCE.SetConsoleCP(curCP));
 	}
@@ -46,7 +44,6 @@ public class WinconTest extends Assert {
 	@Test
 	public void testConsoleOutputCP() {
 		int	curCP=INSTANCE.GetConsoleOutputCP();
-		System.out.println("Console output CP=" + curCP);
 		// NOTE: we use the same code page value just in case the "SetConsoleOutputCP" call fails
 		assertCallSucceeded("Restore CP=" + curCP, INSTANCE.SetConsoleOutputCP(curCP));
 	}
@@ -55,14 +52,13 @@ public class WinconTest extends Assert {
 	public void testGetConsoleWindow() {
 		HWND	hwnd=INSTANCE.GetConsoleWindow();
 		// don't really care what the handle value is - just ensure that API can be called
-		System.out.println("Console window=" + hwnd);
+		assertNotNull("No console window handle", hwnd);
 	}
 
 	@Test
 	public void testGetNumberOfConsoleMouseButtons() {
 		IntByReference	numButtons=new IntByReference(0);
 		assertCallSucceeded("Initial display mode value retrieval", INSTANCE.GetNumberOfConsoleMouseButtons(numButtons));
-		System.out.println("GetNumberOfConsoleMouseButtons: " + numButtons.getValue());
 	}
 
 	@Test
@@ -71,7 +67,6 @@ public class WinconTest extends Assert {
 			HANDLE	hndl=INSTANCE.GetStdHandle(nHandle);
 			assertNotEquals("Bad handle value for std handle=" + nHandle, WinBase.INVALID_HANDLE_VALUE, hndl);
 			// don't really care what the handle value is - just ensure that API can be called
-			System.out.println("GetStdHandle(" + nHandle + "): " + hndl);
 
 			/*
 			 * According to the API documentation:
@@ -82,7 +77,7 @@ public class WinconTest extends Assert {
 			 */
 			Pointer	ptr=hndl.getPointer();
 			if (ptr == Pointer.NULL) {
-				System.out.println("NULL standard handle for type=" + nHandle);
+				continue;
 			} else {
 				assertCallSucceeded("SetStdHandle(" + nHandle + ")", INSTANCE.SetStdHandle(nHandle, hndl));
 			}
@@ -96,7 +91,6 @@ public class WinconTest extends Assert {
 			HANDLE	hndl=INSTANCE.GetStdHandle(nHandle);
 			Pointer	ptr=hndl.getPointer();
 			if (ptr == Pointer.NULL) {
-				System.out.println("NULL standard handle for type=" + nHandle);
 				continue;	// can happen for interactive desktop application
 			}
 			
@@ -116,7 +110,6 @@ public class WinconTest extends Assert {
 		assertCallSucceeded("GetConsoleTitle", (len > 0));
 		
 		String	title=Native.toString(lpConsoleTitle);
-		System.out.println("Console title(len=" + len + "): " + title);
 		assertCallSucceeded("SetConsoleTitle", INSTANCE.SetConsoleTitle(title));
 	}
 
@@ -127,12 +120,10 @@ public class WinconTest extends Assert {
 		if (len <= 0) {
 			int	hr=Kernel32.INSTANCE.GetLastError();
 			if (hr == 0) {	// don't fail the test - we just want to see if the API can be called
-				System.err.println("Buffer not large enough to hold the title");
+				fail("Buffer not large enough to hold the title");
 			} else {
 				fail("Call failed: hr=0x" + Integer.toHexString(hr));
 			}
-		} else {
-			System.out.println("Console original title (len=" + len + "): " + Native.toString(lpConsoleTitle));
 		}
 	}
 
