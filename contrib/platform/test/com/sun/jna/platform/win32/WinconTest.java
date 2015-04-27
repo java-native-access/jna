@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -25,7 +24,7 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * @author lgoldstein
  */
-public class WinconTest extends Assert {
+public class WinconTest extends AbstractWin32TestSupport {
 	private static final Wincon	INSTANCE=Kernel32.INSTANCE;
 
 	@Test
@@ -124,19 +123,6 @@ public class WinconTest extends Assert {
 			} else {
 				fail("Call failed: hr=0x" + Integer.toHexString(hr));
 			}
-		}
-	}
-
-	private static void assertCallSucceeded(String message, boolean result) {
-		if (result) {
-			return;
-		}
-		
-		int	hr=Kernel32.INSTANCE.GetLastError();
-		if (hr == 0) {
-			fail(message + " failed with unknown reason code");
-		} else {
-			fail(message + " failed: hr=0x" + Integer.toHexString(hr));
 		}
 	}
 }

@@ -1027,4 +1027,34 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
                               ULONGByReference ulLength);
     }
+    
+    int PIPE_CLIENT_END=0x00000000;
+    int PIPE_SERVER_END=0x00000001;
+
+        /* Pipe open mode values */
+    int PIPE_ACCESS_DUPLEX=0x00000003;
+    int PIPE_ACCESS_INBOUND=0x00000001;
+    int PIPE_ACCESS_OUTBOUND=0x00000002;
+    
+        /* Pipe type values */
+    int PIPE_TYPE_BYTE=0x00000000;
+    int PIPE_TYPE_MESSAGE=0x00000004;
+    
+        /* Pipe read modes */
+    int PIPE_READMODE_BYTE=0x00000000;
+    int PIPE_READMODE_MESSAGE=0x00000002;
+    
+        /* Pipe wait modes */
+    int PIPE_WAIT=0x00000000;
+    int PIPE_NOWAIT=0x00000001;
+    
+    int PIPE_ACCEPT_REMOTE_CLIENTS=0x00000000;
+    int PIPE_REJECT_REMOTE_CLIENTS=0x00000008;
+    
+    int PIPE_UNLIMITED_INSTANCES=255;
+    
+    /* Named pipe pre-defined timeout values */
+    int NMPWAIT_USE_DEFAULT_WAIT=0x00000000;
+    int NMPWAIT_NOWAIT=0x00000001;
+    int NMPWAIT_WAIT_FOREVER=0xffffffff;
 }
