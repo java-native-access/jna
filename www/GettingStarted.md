@@ -105,5 +105,5 @@ JNA provides an additional method of mapping native methods, should you need ext
 
 Automated Interface Generation
 ------------------------------
-If the C header files for your library are available, you can auto-generate a library mapping by using Olivier Chafik's excellent [JNAerator](http://jnaerator.googlecode.com/) utility. This is especially useful if your library uses long or complicated structures where translating by hand can be error-prone.
+If the C header files for your library are available, you can auto-generate a library mapping by using Olivier Chafik's excellent [JNAerator](https://github.com/nativelibs4java/JNAerator) utility. This is especially useful if your library uses long or complicated structures where translating by hand can be error-prone.
 
