@@ -922,6 +922,20 @@ public interface Kernel32 extends WinNT, Wincon {
             WinBase.OVERLAPPED lpOverlapped);
 
     /**
+     * Flushes the buffers of a specified file and causes all buffered data
+     * to be written to a file.
+     * @param hFile A handle to the open file. If a handle to a communications
+     * device, the function only flushes the transmit buffer. If a handle to the
+     * server end of a named pipe, the function does not return until the client
+     * has read all buffered data from the pipe.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364439(v=vs.85).aspx">FlushFileBuffers</A>
+     * documentation
+     */
+    boolean FlushFileBuffers(HANDLE hFile);
+
+    /**
      * Creates or opens a named or unnamed event object.
      * 
      * @param lpEventAttributes
@@ -1628,6 +1642,288 @@ public interface Kernel32 extends WinNT, Wincon {
             WinBase.SECURITY_ATTRIBUTES lpPipeAttributes, int nSize);
 
     /**
+     * Connects to a message-type pipe (and waits if an instance of the pipe is
+     * not available), writes to and reads from the pipe, and then closes the pipe.
+     * @param lpNamedPipeName The pipe name.
+     * @param lpInBuffer The data to be written to the pipe.
+     * @param nInBufferSize The size of the write buffer, in bytes.
+     * @param lpOutBuffer The buffer that receives the data read from the pipe.
+     * @param nOutBufferSize The size of the read buffer, in bytes.
+     * @param lpBytesRead A variable that receives the number of bytes read from
+     * the pipe.
+     * @param nTimeOut The number of milliseconds to wait for the named pipe to
+     * be available. 
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365144(v=vs.85).aspx">CallNamedPipe</A>
+     * documentation
+     */
+    public boolean CallNamedPipe(String lpNamedPipeName,
+                          byte[] lpInBuffer, int nInBufferSize,
+                          byte[] lpOutBuffer, int nOutBufferSize,
+                          IntByReference lpBytesRead, int nTimeOut);
+
+    /**
+     * Enables a named pipe server process to wait for a client process to connect
+     * to an instance of a named pipe
+     * @param hNamedPipe A handle to the server end of a named pipe instance.
+     * @param lpOverlapped A pointer to an {@link OVERLAPPED} structure.
+     * @return <P>If the operation is synchronous, does not return until the operation
+     * has completed. If the function succeeds, the return value is {@code true}. If
+     * the function fails, the return value is {@code false}. To get extended error
+     * information, call {@link #GetLastError()}.</P>
+     * <P>If the operation is asynchronous, returns immediately. If the operation is
+     * still pending, the return value is {@code false} and {@link #GetLastError()}
+     * returns {@link #ERROR_IO_PENDING}.</P>
+     * <P>If a client connects before the function is called, the function returns
+     * {@code false} and {@link #GetLastError()} returns {@link #ERROR_PIPE_CONNECTED}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365146(v=vs.85).aspx">ConnectNamedPipe</A> documentation
+     */
+    public boolean ConnectNamedPipe(HANDLE hNamedPipe, OVERLAPPED lpOverlapped);
+
+    int MAX_PIPE_NAME_LENGTH=256;
+
+    /**
+     * @param lpName The unique pipe name. This string must have the following form:</BR>
+     * <P>
+     * <code>
+     *        \\.\pipe\pipename
+     * </code>
+     * </P>
+     * <P>The <I>pipename</I> part of the name can include any character other than a backslash,
+     * including numbers and special characters. The entire pipe name string can be up to
+     * {@link #MAX_PIPE_NAME_LENGTH} characters long. Pipe names are not case sensitive.</P>
+     * @param dwOpenMode The open mode. The function fails if specifies anything other than
+     * 0 or the allowed flags
+     * @param dwPipeMode The pipe mode. The function fails if specifies anything other than
+     * 0 or the allowed flags
+     * @param nMaxInstances The maximum number of instances that can be created for this pipe.
+     * Acceptable values are in the range 1 through {@link #PIPE_UNLIMITED_INSTANCES}
+     * @param nOutBufferSize The number of bytes to reserve for the output buffer. 
+     * @param nInBufferSize The number of bytes to reserve for the input buffer.
+     * @param nDefaultTimeOut The default time-out value, in milliseconds. A value of zero will
+     * result in a default time-out of 50 milliseconds
+     * @param lpSecurityAttributes A pointer to a {@link #SECURITY_ATTRIBUTES} structure that
+     * specifies a security descriptor for the new named pipe. If {@code null} the named pipe
+     * gets a default security descriptor and the handle cannot be inherited. 
+     * @return If the function succeeds, the return value is a handle to the server end of a
+     * named pipe instance. If the function fails, the return value is {@link #INVALID_HANDLE_VALUE}.
+     * To get extended error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365150(v=vs.85).aspx">CreateNamedPipe</A>
+     * documentation
+     */
+    public HANDLE CreateNamedPipe(String lpName, int dwOpenMode, int dwPipeMode, int nMaxInstances,
+                                  int nOutBufferSize, int nInBufferSize, int nDefaultTimeOut,
+                                  SECURITY_ATTRIBUTES lpSecurityAttributes);
+
+    /**
+     * Disconnects the server end of a named pipe instance from a client process.
+     * @param hNamedPipe A handle to an instance of a named pipe.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365166(v=vs.85).aspx">DisconnectNamedPipe</A>
+     * documentation
+     */
+    public boolean DisconnectNamedPipe(HANDLE hNamedPipe);
+    
+    /**
+     * Retrieves the client computer name for the specified named pipe.
+     * @param Pipe A handle to an instance of a named pipe.
+     * @param ClientComputerName The buffer to receive the computer name.
+     * <B>Note:</B> use {@link Native#toString(char[])} to convert it
+     * to a {@link String}
+     * @param ClientComputerNameLength The size of the <tt>ClientComputerName</tt>
+     * buffer, in bytes.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365437(v=vs.85).aspx">GetNamedPipeClientComputerName</A>
+     * documentation
+     */
+    public boolean GetNamedPipeClientComputerName(HANDLE Pipe, char[] ClientComputerName, int ClientComputerNameLength);
+
+    /**
+     * @param Pipe A handle to an instance of a named pipe.
+     * @param ClientProcessId Recipient of the process identifier
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365440(v=vs.85).aspx">GetNamedPipeClientProcessId</A>
+     * documentation
+     */
+    public boolean GetNamedPipeClientProcessId(HANDLE Pipe, ULONGByReference ClientProcessId);
+
+    /**
+     * @param Pipe A handle to an instance of a named pipe.
+     * @param ClientSessionId Recipient of the session identifier
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365442(v=vs.85).aspx">GetNamedPipeClientProcessId</A>
+     * documentation
+     */
+    public boolean GetNamedPipeClientSessionId(HANDLE Pipe, ULONGByReference ClientSessionId);
+
+    /**
+     * Retrieves information about a specified named pipe.
+     * @param hNamedPipe A handle to the named pipe for which information is wanted. 
+     * @param lpState A pointer to a variable that indicates the current
+     * state of the handle. This parameter can be {@code null} if this information
+     * is not needed.
+     * @param lpCurInstances A pointer to a variable that receives the number
+     * of current pipe instances. This parameter can be {@code null} if this
+     * information is not needed.
+     * @param lpMaxCollectionCount A pointer to a variable that receives the
+     * maximum number of bytes to be collected on the client's computer before
+     * transmission to the server. This parameter can be {@code null} if this
+     * information is not needed.
+     * @param lpCollectDataTimeout A pointer to a variable that receives the
+     * maximum time, in milliseconds, that can pass before a remote named pipe
+     * transfers information over the network. This parameter can be {@code null}
+     * if this information is not needed. 
+     * @param lpUserName A buffer that receives the user name string associated
+     * with the client application.  This parameter can be {@code null} if this
+     * information is not needed.
+     * @param nMaxUserNameSize The size of the buffer specified by the <tt>lpUserName</tt>
+     * parameter. This parameter is ignored if <tt>lpUserName</tt> is {@code null}.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365443(v=vs.85).aspx">GetNamedPipeHandleState</A>
+     * documentation
+     */
+    public boolean GetNamedPipeHandleState(HANDLE hNamedPipe, IntByReference lpState,
+              IntByReference lpCurInstances, IntByReference lpMaxCollectionCount,
+              IntByReference lpCollectDataTimeout, char[] lpUserName, int nMaxUserNameSize);
+
+    /**
+     * Retrieves information about the specified named pipe.
+     * @param hNamedPipe A handle to the named pipe instance.
+     * @param lpFlags A pointer to a variable that receives the type of the
+     * named pipe. This parameter can be {@code null} if this information is
+     * not needed.
+     * @param lpOutBufferSize A pointer to a variable that receives the size
+     * of the buffer for outgoing data, in bytes. This parameter can be
+     * {@code null} if this information is not needed.
+     * @param lpInBufferSize A pointer to a variable that receives the size of
+     * the buffer for incoming data, in bytes. This parameter can be {@code null}
+     * if this information is not needed.
+     * @param lpMaxInstances A pointer to a variable that receives the maximum
+     * number of pipe instances that can be created. This parameter can be {@code null}
+     * if this information is not needed.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365445(v=vs.85).aspx">GetNamedPipeInfo</A>
+     * documentation
+     */
+    public boolean GetNamedPipeInfo(HANDLE hNamedPipe, IntByReference lpFlags,
+              IntByReference lpOutBufferSize, IntByReference lpInBufferSize,
+              IntByReference lpMaxInstances);
+
+    /**
+     * @param Pipe A handle to an instance of a named pipe.
+     * @param ServerProcessId Recipient of the process identifier.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365446(v=vs.85).aspx">GetNamedPipeServerProcessId</A>
+     * documentation
+     */
+    public boolean GetNamedPipeServerProcessId(HANDLE Pipe, ULONGByReference ServerProcessId);
+
+    /**
+     * @param Pipe A handle to an instance of a named pipe.
+     * @param ServerProcessId Recipient of the session identifier.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365569(v=vs.85).aspx">GetNamedPipeServerSessionId</A>
+     * documentation
+     */
+    public boolean GetNamedPipeServerSessionId(HANDLE Pipe, ULONGByReference ServerSessionId);
+
+    /**
+     * Copies data from a named or anonymous pipe into a buffer without
+     * removing it from the pipe. 
+     * @param hNamedPipe A handle to the pipe.
+     * @param lpBuffer A buffer that receives data read from the pipe.
+     * This parameter can be {@code null} if no data is to be read.
+     * @param nBufferSize The size of the buffer specified by the
+     * <tt>lpBuffer parameter</tt>, in bytes. This parameter is ignored if
+     * <tt>lpBuffer</tt> is {@code null}.
+     * @param lpBytesRead A variable that receives the number of bytes read
+     * from the pipe. This parameter can be {@code null} if no data is to be read.
+     * @param lpTotalBytesAvail A variable that receives the total number of
+     * bytes available to be read from the pipe. This parameter can be {@code null}
+     * if no data is to be read.
+     * @param lpBytesLeftThisMessage A variable that receives the number of
+     * bytes remaining in this message. This parameter can be {@code null}
+     * if no data is to be read.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365779(v=vs.85).aspx">PeekNamedPipe</A>
+     * documentation
+     */
+    public boolean PeekNamedPipe(HANDLE hNamedPipe, byte[] lpBuffer, int nBufferSize,
+              IntByReference lpBytesRead,IntByReference lpTotalBytesAvail, IntByReference lpBytesLeftThisMessage);
+
+    /**
+     * Sets the read mode and the blocking mode of the specified named pipe.
+     * @param hNamedPipe A handle to the named pipe instance.
+     * @param lpMode The new pipe mode. The mode is a combination of a read-mode
+     * flag and a wait-mode flag. This parameter can be {@code null} if the
+     * mode is not being set. 
+     * @param lpMaxCollectionCount The maximum number of bytes collected on
+     * the client computer before transmission to the server. This parameter
+     * can be {@code null} if the count is not being set. 
+     * @param lpCollectDataTimeout The maximum time, in milliseconds, that can
+     * pass before a remote named pipe transfers information over the network.
+     * This parameter can be {@code null} if the timeout is not being set. 
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365787(v=vs.85).aspx">SetNamedPipeHandleState</A>
+     * documentation
+     */
+    public boolean SetNamedPipeHandleState(HANDLE hNamedPipe, IntByReference lpMode,
+              IntByReference lpMaxCollectionCount, IntByReference lpCollectDataTimeout);
+
+    /**
+     * Combines the functions that write a message to and read a message from
+     * the specified named pipe into a single network operation.
+     * @param hNamedPipe A handle to the named pipe
+     * @param lpInBuffer The buffer containing the data to be written to the pipe.
+     * @param nInBufferSize The size of the input buffer, in bytes.
+     * @param lpOutBuffer The buffer that receives the data read from the pipe.
+     * @param nOutBufferSize The size of the output buffer, in bytes.
+     * @param lpBytesRead Variable that receives the number of bytes read from the pipe.
+     * @param lpOverlapped A pointer to an {@link #OVERLAPPED} structure. Can
+     * be {@code null} if pipe not opened with {@link #FILE_FLAG_OVERLAPPED}. 
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365790(v=vs.85).aspx">TransactNamedPipe</A>
+     * documentation
+     */
+    public boolean TransactNamedPipe(HANDLE hNamedPipe,
+                      byte[] lpInBuffer, int nInBufferSize,
+                      byte[] lpOutBuffer, int nOutBufferSize,
+                      IntByReference lpBytesRead, OVERLAPPED lpOverlapped);
+
+    /**
+     * Waits until either a time-out interval elapses or an instance of the
+     * specified named pipe is available for connection - i.e., the pipe's
+     * server process has a pending {@link #ConnectNamedPipe(HANDLE, OVERLAPPED)}
+     * operation on the pipe.
+     * @param lpNamedPipeName The name of the named pipe. The string must
+     * include the name of the computer on which the server process is executing.
+     * The following pipe name format is used:</BR>
+     * <P><code>
+     *         \\servername\pipe\pipename
+     * </code></P>
+     * <P>A period may be used for the <I>servername</I> if the pipe is local.</P>
+     * @param nTimeOut The number of milliseconds that the function will wait for
+     * an instance of the named pipe to be available.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365800(v=vs.85).aspx">WaitNamedPipe</A>
+     * documentation
+     */
+    public boolean WaitNamedPipe(String lpNamedPipeName, int nTimeOut);
+
+    /**
      * Sets certain properties of an object handle.
      * 
      * @param hObject
@@ -2178,111 +2474,82 @@ public interface Kernel32 extends WinNT, Wincon {
      *         information, call GetLastError.
      */
     boolean SystemTimeToFileTime(SYSTEMTIME lpSystemTime, FILETIME lpFileTime);
+
     /**
-	* Creates a thread that runs in the virtual address space of another process.
-	*
-	* @param hProcess
-	* A handle to the process in which the thread is to be created. The handle must have the PROCESS_CREATE_THREAD,
-	* PROCESS_QUERY_INFORMATION, PROCESS_VM_OPERATION, PROCESS_VM_WRITE, and PROCESS_VM_READ access rights,
-	* and may fail without these rights on certain platforms.
-	* @param lpThreadAttributes
-	* A pointer to a SECURITY_ATTRIBUTES structure that specifies a security descriptor for the new thread and
-	* determines whether child processes can inherit the returned handle. If lpThreadAttributes is NULL, the thread gets a
-	* default security descriptor and the handle cannot be inherited. The access control lists (ACL) in the default
-	* security descriptor for a thread come from the primary token of the creator.
-	* @param dwStackSize
-	* The initial size of the stack, in bytes. The system rounds this value to the nearest page.
-	* If this parameter is 0 (zero), the new thread uses the default size for the executable.
-	* @param lpStartAddress
-	* A pointer to the application-defined function of type LPTHREAD_START_ROUTINE to be executed by the thread and
-	* represents the starting address of the thread in the remote process. The function must exist in the remote process.
-	* @param lpParameter
-	* A pointer to a variable to be passed to the thread function.
-	* @param dwCreationFlags
-	* The flags that control the creation of the thread.
-	* 0 ... The thread runs immediately after creation.
-	* CREATE_SUSPENDED => 0x00000004 ... The thread is created in a suspended state, and does not run until the ResumeThread function is called.
-	* STACK_SIZE_PARAM_IS_A_RESERVATION => 0x00010000 ... The dwStackSize parameter specifies the initial reserve size of the stack. If this flag is not specified, dwStackSize specifies the commit size.
-	* @param lpThreadId
-	* A pointer to a variable that receives the thread identifier. If this parameter is NULL, the thread identifier is not returned.
-	*
-	* @return If the function succeeds, the return value is a handle to the new thread. If the function fails, the return value is NULL.
-	* To get extended error information, call GetLastError.
-	*
-	* Note that CreateRemoteThread may succeed even if lpStartAddress points to data, code, or is not accessible. If the start address is
-	* invalid when the thread runs, an exception occurs, and the thread terminates. Thread termination due to a invalid start address is
-	* handled as an error exit for the thread's process. This behavior is similar to the asynchronous nature of CreateProcess, where the
-	* process is created even if it refers to invalid or missing dynamic-link libraries (DLL).
-	*/
+     * Creates a thread that runs in the virtual address space of another process.
+     *
+     * @param hProcess A handle to the process in which the thread is to be created.
+     * @param lpThreadAttributes The {@link #SECURITY_ATTRIBUTES} structure that
+     * specifies a security descriptor for the new thread. If {@code null}, the
+     * thread gets a default security descriptor and the handle cannot be inherited.
+     * @param dwStackSize The initial size of the stack, in bytes. The system rounds
+     * this value to the nearest page. If this parameter is 0 (zero), the new thread
+     * uses the default size for the executable.
+     * @param lpStartAddress The application-defined {@link #FOREIGN_THREAD_START_ROUTINE}
+     * to be executed by the thread and represents the starting address of the
+     * thread in the remote process. The function must exist in the remote process.
+     * @param lpParameter A pointer to a variable to be passed to the thread function.
+     * @param dwCreationFlags The flags that control the creation of the thread.
+     * @param lpThreadId A variable that receives the thread identifier. If this
+     * parameter is {@code null}, the thread identifier is not returned.
+     * @return If the function succeeds, the return value is a handle to the new thread.
+     * If the function fails, the return value is {@code null}. To get extended
+     * error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682437(v=vs.85).aspx">CreateRemoteThread</A>
+     * documentation
+     */
     HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);
     
     /**
-	* Writes data to an area of memory in a specified process. The entire area to be written to must be accessible or the operation fails.
-	*
-	* @param hProcess
-	* A handle to the process memory to be modified. The handle must have PROCESS_VM_WRITE and PROCESS_VM_OPERATION
-	* access to the process.
-	* @param lpBaseAddress
-	* A pointer to the base address in the specified process to which data is written. Before data transfer occurs, the system
-	* verifies that all data in the base address and memory of the specified size is accessible for write access, and if it is not
-	* accessible, the function fails.
-	* @param lpBuffer
-	* A pointer to the buffer that contains data to be written in the address space of the specified process.
-	* @param nSize
-	* The number of bytes to be written to the specified process.
-	* @param lpNumberOfBytesWritten
-	* A pointer to a variable that receives the number of bytes transferred into the specified process. This parameter is optional.
-	* If lpNumberOfBytesWritten is NULL, the parameter is ignored.
-	*
-	* @return If the function succeeds, the return value is nonzero.
-	* If the function fails, the return value is 0 (zero). To get extended error information, call GetLastError.
-	* The function fails if the requested write operation crosses into an area of the process that is inaccessible.
-*/
+     * Writes data to an area of memory in a specified process. The entire area
+     * to be written to must be accessible or the operation fails.
+     * @param hProcess A handle to the process memory to be modified.
+     * @param lpBaseAddress The base address in the specified process to which
+     * data is written.
+     * @param lpBuffer The buffer that contains data to be written in the
+     * address space of the specified process.
+     * @param nSize The number of bytes to be written to the specified process.
+     * @param lpNumberOfBytesWritten A variable that receives the number of bytes
+     * transferred into the specified process.  If {@code null} the parameter is ignored.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681674(v=vs.85).aspx">WriteProcessMemory</A>
+     * documentation
+     */
     boolean WriteProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesWritten);
     
     /**
-	* Reads data from an area of memory in a specified process. The entire area to be read must be accessible or the operation fails.
-	*
-	* @param hProcess
-	* A handle to the process with memory that is being read. The handle must have PROCESS_VM_READ access to the process.
-	* @param lpBaseAddress
-	* A pointer to the base address in the specified process from which to read. Before any data transfer occurs, the system
-	* verifies that all data in the base address and memory of the specified size is accessible for read access, and if it is not
-	* accessible the function fails.
-	* @param lpBuffer
-	* A pointer to a buffer that receives the contents from the address space of the specified process.
-	* @param nSize
-	* The number of bytes to be read from the specified process.
-	* @param lpNumberOfBytesRead
-	* A pointer to a variable that receives the number of bytes transferred into the specified buffer.
-	* If lpNumberOfBytesRead is NULL, the parameter is ignored.
-	*
-	* @return If the function succeeds, the return value is nonzero.
-	* If the function fails, the return value is 0 (zero). To get extended error information, call GetLastError.
-	* The function fails if the requested read operation crosses into an area of the process that is inaccessible.
-	*/
+     * Reads data from an area of memory in a specified process. The entire area
+     * to be read must be accessible or the operation fails.
+     * @param hProcess A handle to the process with memory that is being read.
+     * @param lpBaseAddress The base address in the specified process from which
+     * to read.
+     * @param lpBuffer A buffer that receives the contents from the address space
+     * of the specified process.
+     * @param nSize The number of bytes to be read from the specified process.
+     * @param lpNumberOfBytesRead A variable that receives the number of bytes
+     * transferred into the specified buffer. If {@code null} the parameter is ignored.
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">ReadProcessMemory</A>
+     * documentation
+     */
     boolean ReadProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesRead);
 
     /**
-     * Retrieves information about a range of pages within the virtual address space of a specified process.
-     *
-     * @param hProcess
-     * A handle to the process whose memory information is queried. The handle must have been
-     * opened with the PROCESS_QUERY_INFORMATION access right, which enables using the handle
-     * to read information from the process object.
-     * @param lpAddress
-     * A pointer to the base address of the region of pages to be queried.
-     * This value is rounded down to the next page boundary. To determine the size of a page on the host computer,
-     * use the GetSystemInfo function. If lpAddress specifies an address above the highest memory address
-     * accessible to the process, the function fails with ERROR_INVALID_PARAMETER.
-     * @param lpBuffer
-     * A pointer to a MEMORY_BASIC_INFORMATION structure in which information about the specified page range is returned.
-     * @param dwLength
-     * The size of the buffer pointed to by the lpBuffer parameter, in bytes.
-     *
+     * Retrieves information about a range of pages within the virtual address
+     * space of a specified process.
+     * @param hProcess A handle to the process whose memory information is queried.
+     * @param lpAddress The base address of the region of pages to be queried.
+     * @param lpBuffer A {@link #MEMORY_BASIC_INFORMATION} structure in which
+     * information about the specified page range is returned.
+     * @param dwLength The size of the buffer pointed to by the <tt>lpBuffer</tt>
+     * parameter, in bytes.
      * @return The return value is the actual number of bytes returned in the information buffer.
      * If the function fails, the return value is zero. To get extended error information,
-     * call GetLastError. Possible error values include ERROR_INVALID_PARAMETER.
+     * call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366907(v=vs.85).aspx">VirtualQueryEx</A>
+     * documentation
      */
     SIZE_T VirtualQueryEx(HANDLE hProcess, Pointer lpAddress, MEMORY_BASIC_INFORMATION lpBuffer, SIZE_T dwLength);
 }
