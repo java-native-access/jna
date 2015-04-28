@@ -43,6 +43,7 @@ Features
 * [#425](https://github.com/twall/jna/pull/425): Add support for PPCLE - [@tdaitx](https://github.com/tdaix).
 * [#428](https://github.com/twall/jna/pull/428): Added Wincon.h related functions and definitions to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
 * [#431](https://github.com/twall/jna/pull/431): Added named pipe API support to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#432](https://github.com/twall/jna/pull/432): Added SetLocalTime definition to 'com.sun.jna.platform.win32.Kernel32' - [@lgoldstein](https://github.com/lgoldstein).
 
 Bug Fixes
 ---------

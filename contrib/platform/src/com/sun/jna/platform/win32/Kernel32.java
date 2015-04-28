@@ -155,33 +155,54 @@ public interface Kernel32 extends WinNT, Wincon {
      * The system time is expressed in Coordinated Universal Time (UTC).
      * 
      * @param lpSystemTime
-     *            Pointer to a SYSTEMTIME structure to receive the current
+     *            Pointer to a {@link #SYSTEMTIME} structure to receive the current
      *            system date and time.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724390(v=vs.85).aspx">GetSystemTime</A>
+     * documentation
      */
-    void GetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
+    void GetSystemTime(SYSTEMTIME lpSystemTime);
 
     /**
      * The SetSystemTime function modifies the current system date and time.
      * The system time is expressed in Coordinated Universal Time (UTC).
      * 
      * @param lpSystemTime
-     *            Pointer to a SYSTEMTIME structure holding the new
+     *            Pointer to a {@link #SYSTEMTIME} structure holding the new
      *            system date and time. <B>Note:</B> The {@code wDayOfWeek}
      *            member of the SYSTEMTIME structure is ignored.
      * @return {@code true} if the function succeeds, {@code false} otherwise.
-     *         If the function fails, call GetLastError to get extended error
+     *         If the function fails, call {@link #GetLastError()} to get extended error
      *         information.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724942(v=vs.85).aspx">SetSystemTime</A>
+     * documentation
      */
-    boolean SetSystemTime(WinBase.SYSTEMTIME lpSystemTime);
+    boolean SetSystemTime(SYSTEMTIME lpSystemTime);
 
     /**
      * Retrieves the current local date and time.
      * 
      * @param lpSystemTime
-     *            A pointer to a SYSTEMTIME structure to receive the current
+     *            A pointer to a {@link #SYSTEMTIME} structure to receive the current
      *            local date and time.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724338(v=vs.85).aspx">GetLocalTime</A>
+     * documentation
      */
     void GetLocalTime(WinBase.SYSTEMTIME lpSystemTime);
+
+    /**
+     * Sets the current local time and date
+     * 
+     * @param lpSystemTime
+     *            Pointer to a {@link #SYSTEMTIME} structure holding the new
+     *            system date and time. <B>Note:</B> The {@code wDayOfWeek}
+     *            member of the SYSTEMTIME structure is ignored.
+     * @return {@code true} if the function succeeds, {@code false} otherwise.
+     *         If the function fails, call {@link #GetLastError()} to get extended error
+     *         information.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724936(v=vs.85).aspx">SetLocalTime</A>
+     * documentation
+     */
+    boolean SetLocalTime(SYSTEMTIME lpSystemTime);
 
     /**
      * The GetTickCount function retrieves the number of milliseconds that have
