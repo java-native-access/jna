@@ -14,12 +14,16 @@ package com.sun.jna.platform.win32;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -250,6 +254,176 @@ public abstract class Kernel32Util implements WinDef {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
         return Native.toString(buffer);
+    }
+
+    /**
+     * Uses the {@link Kernel32#GetEnvironmentStrings()} to retrieve and
+     * parse the current process environment
+     * @return The current process environment as a {@link Map}.
+     * @throws LastErrorException if failed to get or free the environment
+     * data block
+     * @see #getEnvironmentVariables(Pointer, long)
+     */
+    public static Map<String,String> getEnvironmentVariables() {
+        Pointer lpszEnvironmentBlock=Kernel32.INSTANCE.GetEnvironmentStrings();
+        if (lpszEnvironmentBlock == null) {
+            throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+        }
+        
+        try {
+            return getEnvironmentVariables(lpszEnvironmentBlock, 0L);
+        } finally {
+            if (!Kernel32.INSTANCE.FreeEnvironmentStrings(lpszEnvironmentBlock)) {
+                throw new LastErrorException(Kernel32.INSTANCE.GetLastError());
+            }
+        }
+    }
+
+    /**
+     * @param lpszEnvironmentBlock The environment block as received from the
+     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
+     * function
+     * @param offset Offset within the block to parse the data
+     * @return A {@link Map} of the parsed <code>name=value</code> pairs.
+     * <B>Note:</B> if the environment block is {@code null} then {@code null}
+     * is returned instead of an empty map since we want to distinguish
+     * between the case that the data block is {@code null} and when there are
+     * no environment variables (as unlikely as it may be) 
+     */
+    public static Map<String,String> getEnvironmentVariables(Pointer lpszEnvironmentBlock, long offset) {
+        if (lpszEnvironmentBlock == null) {
+            return null;
+        }
+        
+        Map<String,String>  vars=new TreeMap<String,String>();
+        boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
+        long                stepFactor=asWideChars ? 2L : 1L;
+        for (long    curOffset=offset; ; ) {
+            String  nvp=readEnvironmentStringBlockEntry(lpszEnvironmentBlock, curOffset, asWideChars);
+            int     len=nvp.length();
+            if (len == 0) { // found the ending '\0'
+                break;
+            }
+
+            int pos=nvp.indexOf('=');
+            if (pos < 0) {
+                throw new IllegalArgumentException("Missing variable value separator in " + nvp);
+            }
+            
+            String  name=nvp.substring(0, pos), value=nvp.substring(pos + 1);
+            vars.put(name, value);
+
+            curOffset += (len + 1 /* skip the ending '\0' */) * stepFactor;
+        }
+        
+        return vars;
+    }
+
+    /**
+     * @param lpszEnvironmentBlock The environment block as received from the
+     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
+     * function
+     * @param offset Offset within the block to look for the entry
+     * @param asWideChars If {@code true} then the block contains {@code wchar_t}
+     * instead of &quot;plain old&quot; {@code char}s
+     * @return A {@link String} containing the <code>name=value</code> pair or
+     * empty if reached end of block
+     * @see #isWideCharEnvironmentStringBlock(Pointer)
+     * @see #findEnvironmentStringBlockEntryEnd(Pointer, long, boolean)
+     */
+    public static String readEnvironmentStringBlockEntry(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
+        long endOffset=findEnvironmentStringBlockEntryEnd(lpszEnvironmentBlock, offset, asWideChars);
+        int  dataLen=(int) (endOffset - offset);
+        if (dataLen == 0) {
+            return "";
+        }
+        
+        int         charsLen=asWideChars ? (dataLen / 2) : dataLen;
+        char[]      chars=new char[charsLen];
+        long        curOffset=offset, stepSize=asWideChars ? 2L : 1L;
+        ByteOrder   byteOrder=ByteOrder.nativeOrder();
+        for (int index=0; index < chars.length; index++, curOffset += stepSize) {
+            byte b=lpszEnvironmentBlock.getByte(curOffset);
+            if (asWideChars) {
+                byte x=lpszEnvironmentBlock.getByte(curOffset + 1L);
+                if (ByteOrder.LITTLE_ENDIAN.equals(byteOrder)) {
+                    chars[index] = (char) (((x << Byte.SIZE) & 0xFF00) | (b & 0x00FF));
+                } else {    // unlikely, but handle it
+                    chars[index] = (char) (((b << Byte.SIZE) & 0xFF00) | (x & 0x00FF));
+                }
+            } else {
+                chars[index] = (char) (b & 0x00FF);
+            }
+        }
+        
+        return new String(chars);
+    }
+
+    /**
+     * @param lpszEnvironmentBlock The environment block as received from the
+     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
+     * function
+     * @param offset Offset within the block to look for the entry
+     * @param asWideChars If {@code true} then the block contains {@code wchar_t}
+     * instead of &quot;plain old&quot; {@code char}s
+     * @return The offset of the <U>first</U> {@code '\0'} in the data block
+     * starting at the specified offset - can be the start offset itself if empty
+     * string.
+     * @see #isWideCharEnvironmentStringBlock(Pointer)
+     */
+    public static long findEnvironmentStringBlockEntryEnd(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
+        for (long curOffset=offset, stepSize=asWideChars ? 2L : 1L; ; curOffset += stepSize) {
+            byte b=lpszEnvironmentBlock.getByte(curOffset);
+            if (b == 0) {
+                return curOffset;
+            }
+        }
+    }
+
+    /**
+     * <P>Attempts to determine whether the data block uses {@code wchar_t}
+     * instead of &quot;plain old&quot; {@code char}s. It does that by reading
+     * 2 bytes from the specified offset - the character value and its charset
+     * indicator - and examining them as follows:</P></BR>
+     * <UL>
+     *      <LI>
+     *      If the charset indicator is non-zero then it is assumed to be
+     *      a &quot;plain old&quot; {@code char}s data block. <B>Note:</B>
+     *      the assumption is that the environment variable <U>name</U> (at
+     *      least) is ASCII.
+     *      </LI>
+     *      
+     *      <LI>
+     *      Otherwise (i.e., zero charset indicator), it is assumed to be
+     *      a {@code wchar_t} 
+     *      </LI>
+     * </UL>
+     * <B>Note:</B> the code takes into account the {@link ByteOrder} even though
+     * only {@link ByteOrder#LITTLE_ENDIAN} is the likely one
+     * @param lpszEnvironmentBlock The environment block as received from the
+     * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
+     * function
+     * @return {@code true} if the block contains {@code wchar_t} instead of
+     * &quot;plain old&quot; {@code char}s
+     */
+    public static boolean isWideCharEnvironmentStringBlock(Pointer lpszEnvironmentBlock, long offset) {
+        byte        b0=lpszEnvironmentBlock.getByte(offset);
+        byte        b1=lpszEnvironmentBlock.getByte(offset + 1L);
+        ByteOrder   byteOrder=ByteOrder.nativeOrder();
+        if (ByteOrder.LITTLE_ENDIAN.equals(byteOrder)) {
+            return isWideCharEnvironmentStringBlock(b1);
+        } else {
+            return isWideCharEnvironmentStringBlock(b0);
+        }
+    }
+    
+    private static boolean isWideCharEnvironmentStringBlock(byte charsetIndicator) {
+        // assume wchar_t for environment variables represents ASCII letters
+        if (charsetIndicator != 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**

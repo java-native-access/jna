@@ -2211,6 +2211,34 @@ public interface Kernel32 extends WinNT, Wincon {
     int GetEnvironmentVariable(String lpName, char[] lpBuffer, int nSize);
 
     /**
+     * <P>Retrieves the environment variables for the current process. The
+     * block of variables format is as follows:</P></BR>
+     * <code>
+     *      Var1=Value1\0
+     *      Var2=Value2\0
+     *      Var3=Value3\0
+     *      ...
+     *      VarN=ValueN\0\0
+     * </code>
+     * @return If the function succeeds, the return value is a {@link Pointer}.
+     * to the environment block of the current process. If fails, then
+     * {@code null} is returned. When the data is no longer needed the memory
+     * block must be released using {@link #FreeEnvironmentStrings(Pointer)}
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A> documentation
+     */
+    Pointer GetEnvironmentStrings();
+
+    /**
+     * @param lpszEnvironmentBlock A pointer to a block of environment strings
+     * obtained by calling the {@link #GetEnvironmentStrings()} function
+     * @return {@code true} if successful, {@code false} otherwise. 
+     * To get extended error information, call {@link #GetLastError()}. 
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683151(v=vs.85).aspx">FreeEnvironmentStrings</A>
+     * documentation
+     */
+    boolean FreeEnvironmentStrings(Pointer lpszEnvironmentBlock);
+
+    /**
      * Returns the locale identifier for the system locale.
      * 
      * @return Returns the locale identifier for the system default locale,

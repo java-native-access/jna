@@ -24,7 +24,7 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * @author lgoldstein
  */
-public class WinconTest extends AbstractWin32TestSupport {
+public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
 	private static final Wincon	INSTANCE=Kernel32.INSTANCE;
 
 	@Test

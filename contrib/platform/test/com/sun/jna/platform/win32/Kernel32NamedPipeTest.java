@@ -29,8 +29,8 @@ import com.sun.jna.ptr.IntByReference;
 /**
  * @author lgoldstein
  */
-public class NamedPipeTest extends AbstractWin32TestSupport {
-    public NamedPipeTest() {
+public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
+    public Kernel32NamedPipeTest() {
         super();
     }
 
