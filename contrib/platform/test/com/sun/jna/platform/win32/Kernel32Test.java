@@ -101,18 +101,71 @@ public class Kernel32Test extends TestCase {
                 expected.wHour++;
             }
 
-            if (!kernel.SetSystemTime(expected)) {
-                fail("Failed to modify time: error=" + kernel.GetLastError());
+            if (assertTimeSettingOperationSucceeded("SetSystemTime", kernel.SetSystemTime(expected))) {
+                WinBase.SYSTEMTIME actual = new WinBase.SYSTEMTIME();
+                kernel.GetSystemTime(actual);
+                assertEquals("Mismatched hour value", expected.wHour, actual.wHour);
             }
-            
-            WinBase.SYSTEMTIME actual = new WinBase.SYSTEMTIME();
-            kernel.GetSystemTime(actual);
-            assertEquals("Mismatched hour value", expected.wHour, actual.wHour);
         } finally {
-            if (!kernel.SetSystemTime(time)) {
-                fail("Failed to restore original time: error=" + kernel.GetLastError());
-            }
+            assertTimeSettingOperationSucceeded("Restore original system time", kernel.SetSystemTime(time));
         }
+    }
+
+    public void testSetLocaltime() {
+        Kernel32 kernel = Kernel32.INSTANCE;
+        WinBase.SYSTEMTIME time = new WinBase.SYSTEMTIME();
+        kernel.GetLocalTime(time);
+        try {
+            WinBase.SYSTEMTIME expected = new WinBase.SYSTEMTIME();
+            expected.wYear = time.wYear;
+            expected.wMonth = time.wMonth;
+            expected.wDay = time.wDay;
+            expected.wHour = time.wHour;
+            expected.wMinute = time.wMinute;
+            expected.wSecond = time.wSecond;
+            expected.wMilliseconds = time.wMilliseconds;
+
+            if (expected.wHour > 0) {
+                expected.wHour--;
+            } else {
+                expected.wHour++;
+            }
+
+            if (assertTimeSettingOperationSucceeded("SetLocalTime", kernel.SetLocalTime(expected))) {
+                WinBase.SYSTEMTIME actual = new WinBase.SYSTEMTIME();
+                kernel.GetLocalTime(actual);
+                assertEquals("Mismatched hour value", expected.wHour, actual.wHour);
+            }
+        } finally {
+            assertTimeSettingOperationSucceeded("Restore local time", kernel.SetLocalTime(time));
+        }
+    }
+
+    private static boolean assertTimeSettingOperationSucceeded(String message, boolean result) {
+        if (result) {
+            return result;
+        }
+        
+        int hr=Kernel32.INSTANCE.GetLastError();
+        /*
+         * Check special error in case the user running the test isn't allowed
+         * to change the time. This can happen for hosts that are managed
+         * by some central administrator using an automated time setting mechanism.
+         * In such cases, the user running the tests might not have admin
+         * privileges and it may be too much to ask to have them just for running
+         * this JNA API test...
+         */
+        if (hr == WinError.ERROR_PRIVILEGE_NOT_HELD) {
+            return false; // don't fail the test, but signal the failure
+        }
+        
+        if (hr != WinError.ERROR_SUCCESS) {
+            fail(message + " failed: hr=" + hr);
+        } else {
+            fail(message + " unknown failure reason code");
+        }
+        
+        return false;
     }
 
     public void testGetLastError() {
