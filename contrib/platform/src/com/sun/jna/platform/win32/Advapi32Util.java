@@ -1758,13 +1758,14 @@ public abstract class Advapi32Util {
 	 * @return A environment block
 	 */
 	public static String getEnvironmentBlock(Map<String, String> environment) {
-		StringBuilder out = new StringBuilder();
+		StringBuilder out = new StringBuilder(environment.size() * 32 /* some guess about average name=value length*/);
 		for (Entry<String, String> entry : environment.entrySet()) {
-			if (entry.getValue() != null) {
-				out.append(entry.getKey() + "=" + entry.getValue() + "\0");
+		    String    key=entry.getKey(), value=entry.getValue();
+			if (value != null) {
+				out.append(key).append("=").append(value).append('\0');
 			}
 		}
-		return out.toString() + "\0";
+		return out.append('\0').toString();
 	}
 
 	/**
