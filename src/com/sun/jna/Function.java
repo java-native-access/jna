@@ -64,6 +64,17 @@ public class Function extends Pointer {
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
 
+    private static ThreadLocal<Object[][]> argTable = new ThreadLocal<Object[][]>();
+
+    /** Creates Object[][] for arguments for this thread. */
+    private void createArgTable() {
+        Object args[][] = new Object[MAX_NARGS+1][];  //+1 for zero args
+        argTable.set(args);
+        for(int a=0;a<=MAX_NARGS;a++) {
+            args[a] = new Object[a];
+        }
+    }
+
     /** 
      * Obtain a <code>Function</code> representing a native 
      * function that follows the standard "C" calling convention.
@@ -274,12 +285,15 @@ public class Function extends Pointer {
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
         // Clone the argument array to obtain a scratch space for modified
         // types/values
-        Object[] args = { };
+        if (argTable.get() == null) {
+          createArgTable();
+        }
+        Object[] args = argTable.get()[0];
         if (inArgs != null) {
             if (inArgs.length > MAX_NARGS) {
                 throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
             }
-            args = new Object[inArgs.length];
+            args = argTable.get()[inArgs.length];
             System.arraycopy(inArgs, 0, args, 0, args.length);
         }
 
@@ -355,9 +369,11 @@ public class Function extends Pointer {
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
                     Structure.autoRead((Structure[])inArg);
                 }
+                /* Clear args */
+                args[i] = null;
             }
         }
-                        
+
         return result;
     }
 
