@@ -286,9 +286,6 @@ public class Function extends Pointer {
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
         // Clone the argument array to obtain a scratch space for modified
         // types/values
-        if (argTable.get() == null) {
-          createArgTable();
-        }
         Object[] args = argTable.get()[0];
         if (inArgs != null) {
             if (inArgs.length > MAX_NARGS) {
