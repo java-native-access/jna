@@ -69,10 +69,10 @@ public class Function extends Pointer {
         @Override
         protected Object[][] initialValue() {        
             Object args[][] = new Object[MAX_NARGS+1][];  //+1 for zero args
-            argTable.set(args);
             for(int a=0;a<=MAX_NARGS;a++) {
                 args[a] = new Object[a];
             }
+            return args;
         }
     };
 
