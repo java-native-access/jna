@@ -63,17 +63,18 @@ public class Function extends Pointer {
 
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
-
-    private static ThreadLocal<Object[][]> argTable = new ThreadLocal<Object[][]>();
-
+    
     /** Creates Object[][] for arguments for this thread. */
-    private void createArgTable() {
-        Object args[][] = new Object[MAX_NARGS+1][];  //+1 for zero args
-        argTable.set(args);
-        for(int a=0;a<=MAX_NARGS;a++) {
-            args[a] = new Object[a];
+    private static ThreadLocal<Object[][]> argTable = new ThreadLocal<Object[][]>() {
+        @Override
+        protected Object[][] initialValue() {        
+            Object args[][] = new Object[MAX_NARGS+1][];  //+1 for zero args
+            argTable.set(args);
+            for(int a=0;a<=MAX_NARGS;a++) {
+                args[a] = new Object[a];
+            }
         }
-    }
+    };
 
     /** 
      * Obtain a <code>Function</code> representing a native 
@@ -369,7 +370,7 @@ public class Function extends Pointer {
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
                     Structure.autoRead((Structure[])inArg);
                 }
-                /* Clear args */
+                /* Clear args so they will get garbage collected. */
                 args[i] = null;
             }
         }
