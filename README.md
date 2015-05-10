@@ -130,6 +130,7 @@ Developers
 * [Contributing to JNA](https://github.com/twall/jna/blob/master/www/Contributing.md)
 * [Setting up a Windows Development Environment](https://github.com/twall/jna/blob/master/www/WindowsDevelopmentEnvironment.md)
 * [Setting up an Android Development Environment](https://github.com/twall/jna/blob/master/www/AndroidDevelopmentEnvironment.md)
+* [Setting up a RaspberryPi Development Environment](https://github.com/twall/jna/blob/master/www/RaspberryPiDevelopmentEnvironment.md)
 * [Releasing JNA](https://github.com/twall/jna/blob/master/www/ReleasingJNA.md)
 * [Publishing to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
 
