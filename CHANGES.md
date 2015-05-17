@@ -45,6 +45,7 @@ Features
 * [#431](https://github.com/twall/jna/pull/431): Added named pipe API support to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
 * [#432](https://github.com/twall/jna/pull/432): Added SetLocalTime definition to 'com.sun.jna.platform.win32.Kernel32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#434](https://github.com/twall/jna/pull/434): Added GetEnvironmentStrings to 'com.sun.jna.platform.win32.Kernel32'  - [@lgoldstein](https://github.com/lgoldstein).
+* Loosen OSGI OS name matching to accommodate Windows 8 family - Niels Bertram.
 
 Bug Fixes
 ---------
