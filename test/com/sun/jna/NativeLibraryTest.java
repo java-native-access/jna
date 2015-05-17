@@ -67,14 +67,17 @@ public class NativeLibraryTest extends TestCase {
         assertNull("Library not GC'd", ref.get());
     }
 
-    public void testAvoidDuplicateLoads() {
+    public void testAvoidDuplicateLoads() throws Exception {
         NativeLibrary.disposeAll();
+        // Give the system a moment to unload the library; on OSX we
+        // occasionally get the same library handle back on subsequent dlopen
+        Thread.sleep(2);
 
         TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
-        assertEquals("Library should be newly loaded after all others disposed",
+        assertEquals("Library should be newly loaded after explicit dispose of all native libraries",
                      1, lib.callCount());
         if (lib.callCount() <= 1) {
-            fail("Library should not be reloaded");
+            fail("Library should not be reloaded without dispose");
         }
     }
     
