@@ -946,7 +946,7 @@ public abstract class Structure {
      * @throws IllegalArgumentException when an unsupported field type is
      * encountered
      */
-    private int calculateSize(boolean force) {
+    protected int calculateSize(boolean force) {
         return calculateSize(force, false);
     }
 
