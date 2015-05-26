@@ -7,7 +7,7 @@ Release 4.2 (Next)
 
 Features
 --------
-* [#446](https://github.com/twall/jna/pull/443): Added `com.sun.jna.platform.win32.Advapi32.GetNamedSecurityInfo`, `SetNamedSecurityInfo`, `GetSecurityDescriptorLength`, `IsValidSecurityDescriptor`, `IsValidAcl` - [@amarcionek](https://github.com/amarcionek).
+* [#446](https://github.com/twall/jna/pull/446): Added `com.sun.jna.platform.win32.Advapi32.GetNamedSecurityInfo`, `SetNamedSecurityInfo`, `GetSecurityDescriptorLength`, `IsValidSecurityDescriptor`, `IsValidAcl` - [@amarcionek](https://github.com/amarcionek).
 * [#387](https://github.com/twall/jna/pull/397): Use of interfaces and annotations to provide easier implementation of COM interfaces (with `InvocationHandler`) - [@dhakehurst](https://github.com/dhakehurst).
 * [#387](https://github.com/twall/jna/pull/397): Support for COM event callbacks - [@dhakehurst](https://github.com/dhakehurst).
 * [#387](https://github.com/twall/jna/pull/397): Support for COM interface discovery by iteration over `RunningObjectTable` - [@dhakehurst](https://github.com/dhakehurst).
