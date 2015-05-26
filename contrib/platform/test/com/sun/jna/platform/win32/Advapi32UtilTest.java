@@ -26,6 +26,7 @@ import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
@@ -487,6 +488,22 @@ public class Advapi32UtilTest extends TestCase {
         assertEquals("Environment block must comprise key=value pairs separated by NUL characters", expected, block);
     }
 	
+    public void testGetFileSecurityDescriptor() throws Exception {
+        File file = createTempFile();        
+        SECURITY_DESCRIPTOR_RELATIVE sdr = Advapi32Util.getFileSecurityDescriptor(file, false);
+        assertTrue(Advapi32.INSTANCE.IsValidSecurityDescriptor(sdr.getPointer()));
+        file.delete();
+    }
+    
+    public void testSetFileSecurityDescriptor() throws Exception {
+        File file = createTempFile();        
+        SECURITY_DESCRIPTOR_RELATIVE sdr = Advapi32Util.getFileSecurityDescriptor(file, false);        
+        Advapi32Util.setFileSecurityDescriptor(file, sdr, false, true, true, false, true, false);
+        sdr = Advapi32Util.getFileSecurityDescriptor(file, false);
+        assertTrue(Advapi32.INSTANCE.IsValidSecurityDescriptor(sdr.getPointer()));        
+        file.delete();
+    }
+    
     public void testEncryptFile() throws Exception {
         File file = createTempFile();
         assertEquals(FILE_ENCRYPTABLE, Advapi32Util.fileEncryptionStatus(file));
