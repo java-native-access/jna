@@ -2124,6 +2124,164 @@ public abstract class Advapi32Util {
     }
 
     /**
+     * Get a self relative security descriptor for the given object type. The value is returned in Memory
+     * @param absoluteObjectPath
+     *         A pointer to a null-terminated string that specifies the name of the object
+     *         from which to retrieve security information. For descriptions of the string
+     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     * @param objectType
+     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     * @param getSACL
+     *         Get SACL of the object. See {@link Advapi32#GetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @return Memory containing the self relative security descriptor
+     */
+    public static Memory getSecurityDescriptorForObject(final String absoluteObjectPath, int objectType, boolean getSACL) {
+    	
+        int infoType = OWNER_SECURITY_INFORMATION 
+                        | GROUP_SECURITY_INFORMATION
+                        | DACL_SECURITY_INFORMATION
+                        | (getSACL ? SACL_SECURITY_INFORMATION : 0);        
+
+        PointerByReference ppSecurityDescriptor = new PointerByReference();	
+
+        int lastError = Advapi32.INSTANCE.GetNamedSecurityInfo(
+		                absoluteObjectPath,
+		                objectType,
+		                infoType,
+		                null,
+		                null,
+		                null,
+		                null,
+		                ppSecurityDescriptor);
+
+        if (lastError != 0) {
+            throw new Win32Exception(lastError);
+        }
+        
+        int nLength = Advapi32.INSTANCE.GetSecurityDescriptorLength(ppSecurityDescriptor.getValue());        
+        final Memory memory = new Memory(nLength);
+        memory.write(0, ppSecurityDescriptor.getValue().getByteArray(0, nLength), 0, nLength);
+        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+        return memory;
+    }
+    
+    /**
+     * Set a self relative security descriptor for the given object type.
+     *
+     * @param absoluteObjectPath
+     *         A pointer to a null-terminated string that specifies the name of the object
+     *         from which to retrieve security information. For descriptions of the string
+     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     * @param objectType
+     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     * @param securityDescriptor
+     *         A security descriptor to set.
+     * @param setOwner
+     *         Set the owner. The owner is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     *         See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in getting the OWNER.
+     * @param setGroup
+     *         Set the group. The group is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     * @param setDACL
+     *         Set the DACL. The DACL is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     * @param setSACL
+     *         Set the SACL. The SACL is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     *          See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @param setDACLProtectedStatus
+     *         Set DACL protected status as contained within securityDescriptor.control.
+     * @param setSACLProtectedStatus
+     *         Set SACL protected status as contained within securityDescriptor.control.
+     */
+    public static void setSecurityDescriptorForObject(final String absoluteObjectPath,
+                                                      int objectType,
+                                                      SECURITY_DESCRIPTOR_RELATIVE securityDescriptor,
+                                                      boolean setOwner,
+                                                      boolean setGroup, 
+                                                      boolean setDACL,
+                                                      boolean setSACL,
+                                                      boolean setDACLProtectedStatus,
+                                                      boolean setSACLProtectedStatus) {
+    	    	
+    	final PSID psidOwner = securityDescriptor.getOwner();
+    	final PSID psidGroup = securityDescriptor.getGroup();
+    	final ACL dacl = securityDescriptor.getDiscretionaryACL();
+    	final ACL sacl = securityDescriptor.getSystemACL();
+
+    	int infoType = 0;    	
+    	// Parameter validation and infoType flag setting.
+    	if (setOwner) {
+            if (psidOwner == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain owner");
+            if (!Advapi32.INSTANCE.IsValidSid(psidOwner))
+                throw new IllegalArgumentException("Owner PSID is invalid");    		
+            infoType |= OWNER_SECURITY_INFORMATION;
+        }
+
+        if (setGroup) {
+            if (psidGroup == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain group");
+            if (!Advapi32.INSTANCE.IsValidSid(psidGroup))
+                throw new IllegalArgumentException("Group PSID is invalid");    		
+            infoType |= GROUP_SECURITY_INFORMATION;
+        }
+
+        if (setDACL) {    		
+            if (dacl == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain DACL");
+            if (!Advapi32.INSTANCE.IsValidAcl(dacl.getPointer()))
+                throw new IllegalArgumentException("DACL is invalid");    		
+            infoType |= DACL_SECURITY_INFORMATION;
+        }
+
+        if (setSACL) {
+            if (sacl == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain SACL");
+            if (!Advapi32.INSTANCE.IsValidAcl(sacl.getPointer()))
+                throw new IllegalArgumentException("SACL is invalid");    		
+            infoType |= SACL_SECURITY_INFORMATION;
+        }
+
+    	/* 
+    	 * Control bits SE_DACL_PROTECTED/SE_SACL_PROTECTED indicate the *ACL is protected. The *ACL_SECURITY_INFORMATION flags 
+    	 * are meta flags for SetNamedSecurityInfo and are not stored in the SD.  If either *ACLProtectedStatus is set,
+    	 * get the current status from the securityDescriptor and apply as such, otherwise the ACL remains at its default.
+    	*/
+        if (setDACLProtectedStatus) {
+            if ((securityDescriptor.Control & SE_DACL_PROTECTED) != 0) {
+                infoType |= PROTECTED_DACL_SECURITY_INFORMATION;
+            }
+            else if ((securityDescriptor.Control & SE_DACL_PROTECTED) == 0) {
+                infoType |= UNPROTECTED_DACL_SECURITY_INFORMATION;
+            }
+        }
+
+        if (setSACLProtectedStatus) {
+            if ((securityDescriptor.Control & SE_SACL_PROTECTED) != 0) {
+                infoType |= PROTECTED_SACL_SECURITY_INFORMATION;
+        }
+            else if ((securityDescriptor.Control & SE_SACL_PROTECTED) == 0) {
+                infoType |= UNPROTECTED_SACL_SECURITY_INFORMATION;
+            }
+        }
+
+        int lastError = Advapi32.INSTANCE.SetNamedSecurityInfo(
+                         absoluteObjectPath,
+                         objectType,
+                         infoType,
+                         setOwner ? psidOwner.getPointer() : null,
+                         setGroup ? psidGroup.getPointer() : null,
+                         setDACL ? dacl.getPointer() : null,
+                         setSACL ? sacl.getPointer() : null);
+
+        if (lastError != 0) {
+            throw new Win32Exception(lastError);
+        }
+    }
+
+    /**
      * Checks if the current process has the given permission for the file.
      * @param file the file to check
      * @param permissionToCheck the permission to check for the file
@@ -2188,6 +2346,55 @@ public abstract class Advapi32Util {
         }
 
         return hasAccess;
+    }
+    
+    /**
+     * Gets a file's Security Descriptor. Convenience wrapper getSecurityDescriptorForObject. 
+     *
+     * @param file
+     *         File object containing a path to a file system object.
+     * @param getSACL
+     *         Get the SACL. See {@link Advapi32#GetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @return The file's Security Descriptor in self relative format.
+     */
+    public static SECURITY_DESCRIPTOR_RELATIVE getFileSecurityDescriptor(File file, boolean getSACL)
+    {
+    	SECURITY_DESCRIPTOR_RELATIVE sdr = null;
+    	Memory securityDesc = getSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, getSACL);
+    	sdr = new SECURITY_DESCRIPTOR_RELATIVE(securityDesc);
+    	return sdr;
+    }
+    
+    /**
+     * Sets a file's Security Descriptor. Convenience wrapper setSecurityDescriptorForObject. 
+     * @param file
+     *         File object containing a path to a file system object.
+     * @param securityDescriptor
+     *         The security descriptor to set.
+     * @param setOwner
+     *         Set the owner. See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in setting the owner.
+     * @param setGroup
+     *         Set the group. 
+     * @param setDACL
+     *         Set the DACL.
+     * @param setSACL
+     *         Set the SACL. See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in setting the SACL.
+     * @param setDACLProtectedStatus
+     *         Set DACL protected status as contained within securityDescriptor.control.
+     * @param setSACLProtectedStatus
+     *         Set SACL protected status as contained within securityDescriptor.control.     * 
+     */
+    public static void setFileSecurityDescriptor(
+                        File file,
+                        SECURITY_DESCRIPTOR_RELATIVE securityDescriptor,
+                        boolean setOwner,
+                        boolean setGroup, 
+                        boolean setDACL,
+                        boolean setSACL,
+                        boolean setDACLProtectedStatus,
+                        boolean setSACLProtectedStatus)
+    {
+    	setSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, securityDescriptor, setOwner, setGroup, setDACL, setSACL, setDACLProtectedStatus, setSACLProtectedStatus);
     }
 	
     /**

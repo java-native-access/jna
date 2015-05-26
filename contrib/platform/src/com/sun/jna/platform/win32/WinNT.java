@@ -355,6 +355,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             int len = Advapi32.INSTANCE.GetLengthSid(this);
             return getPointer().getByteArray(0, len);
         }
+        
+        public String getSidString() {
+            return Advapi32Util.convertSidToStringSid(this);
+        }        
 
         public Pointer sid;
     }
@@ -2057,7 +2061,24 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000;
     int UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000;
     int UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000;
-
+    
+    /* Security control bits */
+    int SE_OWNER_DEFAULTED          = 0x00000001;
+    int SE_GROUP_DEFAULTED          = 0x00000002;
+    int SE_DACL_PRESENT             = 0x00000004;
+    int SE_DACL_DEFAULTED           = 0x00000008;
+    int SE_SACL_PRESENT             = 0x00000010;
+    int SE_SACL_DEFAULTED           = 0x00000020;
+    int SE_DACL_AUTO_INHERIT_REQ    = 0x00000100;
+    int SE_SACL_AUTO_INHERIT_REQ    = 0x00000200;
+    int SE_DACL_AUTO_INHERITED      = 0x00000400;
+    int SE_SACL_AUTO_INHERITED      = 0x00000800;
+    int SE_DACL_PROTECTED           = 0x00001000;
+    int SE_SACL_PROTECTED           = 0x00002000;
+    int SE_RM_CONTROL_VALID         = 0x00004000;
+    int SE_SELF_RELATIVE            = 0x00008000;
+    
+    
     public static class SECURITY_DESCRIPTOR extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR implements
                 Structure.ByReference {
@@ -2111,7 +2132,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                     ace = new ACCESS_DENIED_ACE(share);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknwon ACE type "
+                    throw new IllegalArgumentException("Unknown ACE type "
                             + aceType);
                 }
                 ACEs[i] = ace;
@@ -2150,30 +2171,54 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         private ACL DACL;
-
+        private PSID OWNER;
+        private PSID GROUP;        
+        private ACL SACL;
+        
         public SECURITY_DESCRIPTOR_RELATIVE() {
         }
 
         public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
             super(new Memory(data.length));
             getPointer().write(0, data, 0, data.length);
-            setDacl();
+            setMembers();
         }
 
         public SECURITY_DESCRIPTOR_RELATIVE(Pointer p) {
             super(p);
-            setDacl();
+            setMembers();
+        }
+
+        public PSID getOwner() {
+        	return OWNER;
+        }
+
+        public PSID getGroup() {
+        	return GROUP;
         }
 
         public ACL getDiscretionaryACL() {
             return DACL;
         }
 
-        private final void setDacl() {
+        public ACL getSystemACL() {
+        	return SACL;
+        }
+
+        private final void setMembers() {
             read();
             if (Dacl != 0) {
                 DACL = new ACL(getPointer().share(Dacl));
             }
+            if (Sacl != 0) {
+                SACL = new ACL(getPointer().share(Sacl));
+            }
+        	if (Group != 0) {
+        		GROUP =  new PSID(getPointer().share(Group));
+        	}
+        	if (Owner != 0) {
+        		OWNER =  new PSID(getPointer().share(Owner));
+        	}
         }
     }
 

@@ -306,6 +306,25 @@ public interface Advapi32 extends StdCallLibrary {
 			boolean OpenAsSelf, HANDLEByReference TokenHandle);
 
 	/**
+	 * The SetThreadToken function assigns an impersonation token to a thread.
+	 * The function can also cause a thread to stop using an impersonation token.
+	 * @param ThreadHandle [in, optional]
+	 *                     A pointer to a handle to the thread to which the function
+	 *                     assigns the impersonation token. If ThreadHandle is NULL, the
+	 *                     function assigns the impersonation token to the calling thread.
+	 * @param TokenHandle [in, optional]
+	 *                     A handle to the impersonation token to assign to the thread.
+	 *                     This handle must have been opened with TOKEN_IMPERSONATE access
+	 *                     rights. For more information, see Access Rights for Access-Token
+	 *                     Objects. If Token is NULL, the function causes the
+	 *                     thread to stop using an impersonation token.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 *         function fails, the return value is zero. To get extended error
+	 *         information, call GetLastError.
+	 */
+	public boolean SetThreadToken(HANDLEByReference ThreadHandle, HANDLE TokenHandle);
+	
+	/**
 	 * The OpenProcessToken function opens the access token associated with a
 	 * process.
 	 *
@@ -1532,6 +1551,177 @@ public interface Advapi32 extends StdCallLibrary {
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
 
+	/**
+	 * The GetNamedSecurityInfo function retrieves a copy of the security
+	 * descriptor for an object specified by name
+	 *
+	 * @param pObjectName
+	 *            A pointer to a that specifies the name of the object from
+	 *            which to retrieve security information.
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType
+	 *            Specifies a value from the SE_OBJECT_TYPE enumeration that
+	 *            indicates the type of object named by the pObjectName parameter.
+	 * @param SecurityInfo
+	 *            A set of bit flags that indicate the type of security
+	 *            information to retrieve. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [out, optional]
+	 *            A pointer to a variable that receives a pointer to the owner SID
+	 *            in the security descriptor returned in ppSecurityDescriptor
+	 *            or NULL if the security descriptor has no owner SID.
+	 *            The returned pointer is valid only if you set the
+	 *            OWNER_SECURITY_INFORMATION flag. Also, this parameter can be
+	 *            NULL if you do not need the owner SID.
+	 * @param ppsidGroup [out, optional]
+	 *            A pointer to a variable that receives a pointer to the primary
+	 *            group SID in the returned security descriptor or NULL if the
+	 *            security descriptor has no group SID. The returned pointer is
+	 *            valid only if you set the GROUP_SECURITY_INFORMATION flag.
+	 *            Also, this parameter can be NULL if you do not need the group SID.
+	 * @param ppDacl [out, optional]
+	 *            A pointer to a variable that receives a pointer to the DACL in
+	 *            the returned security descriptor or NULL if the security
+	 *            descriptor has no DACL. The returned pointer is valid only if
+	 *            you set the DACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *            can be NULL if you do not need the DACL.
+	 * @param ppSacl [out, optional]
+	 *             A pointer to a variable that receives a pointer to the SACL in
+	 *             the returned security descriptor or NULL if the security
+	 *             descriptor has no SACL. The returned pointer is valid only if
+	 *             you set the SACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *             can be NULL if you do not need the SACL.
+	 * @param ppSecurityDescriptor
+	 *            A pointer to a variable that receives a pointer to the security
+	 *            descriptor of the object. When you have finished using the
+	 *            pointer, free the returned buffer by calling the LocalFree
+	 *            function.
+	 *            
+	 *            This parameter is required if any one of the ppsidOwner,
+	 *            ppsidGroup, ppDacl, or ppSacl parameters is not NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 * 
+	 * NOTES:
+	 * 1. To read the owner, group, or DACL from the object's security descriptor,
+	 * the object's DACL must grant READ_CONTROL access to the caller, or the caller
+	 * must be the owner of the object.
+	 * 2. To read the system access control list of the object, the SE_SECURITY_NAME
+	 * privilege must be enabled for the calling process. For information about the
+	 * security implications of enabling privileges, see Running with Special Privileges.
+	 */
+	public int GetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			PointerByReference ppsidOwner,
+			PointerByReference ppsidGroup,
+			PointerByReference ppDacl,
+			PointerByReference ppSacl,
+			PointerByReference ppSecurityDescriptor);
+	
+	/**
+	 * The SetNamedSecurityInfo function sets specified security information in
+	 * the security descriptor of a specified object. The caller identifies the
+	 * object by name.
+	 *
+	 * @param pObjectName [in]
+	 *            A pointer to a string that specifies the name of the object for
+	 *            which to set security information. This can be
+	 *            the name of a local or remote file or directory on an NTFS file
+	 *            system, network share, registry key, semaphore, event, mutex,
+	 *            file mapping, or waitable timer.	 *            
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType [in]
+	 *            A value of the SE_OBJECT_TYPE enumeration that indicates the type
+	 *            of object named by the pObjectName parameter.
+	 * @param SecurityInfo [in]
+	 *            A set of bit flags that indicate the type of security
+	 *            information to set. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [in, optional]
+	 *            A pointer to a SID structure that identifies the owner of the object.
+	 *            If the caller does not have the SeRestorePrivilege constant
+	 *            (see Privilege Constants), this SID must be contained in the
+	 *            caller's token, and must have the SE_GROUP_OWNER permission enabled.
+	 *            The SecurityInfo parameter must include the OWNER_SECURITY_INFORMATION
+	 *            flag. To set the owner, the caller must have WRITE_OWNER access to
+	 *            the object or have the SE_TAKE_OWNERSHIP_NAME privilege enabled.
+	 *            If you are not setting the owner SID, this parameter can be NULL.
+	 * @param ppsidGroup [in, optional]
+	 *            A pointer to a SID that identifies the primary group of the object.
+	 *            The SecurityInfo parameter must include the GROUP_SECURITY_INFORMATION
+	 *            flag. If you are not setting the primary group SID, this parameter
+	 *            can be NULL.
+	 * @param ppDacl [in, optional]
+	 *            A pointer to the new DACL for the object. The SecurityInfo parameter
+	 *            must include the DACL_SECURITY_INFORMATION flag. The caller must have
+	 *            WRITE_DAC access to the object or be the owner of the object. If you
+	 *            are not setting the DACL, this parameter can be NULL.
+	 * @param ppSacl [in, optional]
+	 *             A pointer to the new SACL for the object. The SecurityInfo parameter
+	 *             must include any of the following flags: SACL_SECURITY_INFORMATION,
+	 *             LABEL_SECURITY_INFORMATION, ATTRIBUTE_SECURITY_INFORMATION,
+	 *             SCOPE_SECURITY_INFORMATION, or BACKUP_SECURITY_INFORMATION.
+	 *             If setting SACL_SECURITY_INFORMATION or SCOPE_SECURITY_INFORMATION,
+	 *             the caller must have the SE_SECURITY_NAME privilege enabled. If
+	 *             you are not setting the SACL, this parameter can be NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 * 
+	 * NOTES:
+	 * 1. The SetNamedSecurityInfo function does not reorder access-allowed or access-denied
+	 * ACEs based on the preferred order. When propagating inheritable ACEs to existing
+	 * child objects, SetNamedSecurityInfo puts inherited ACEs in order after all of the
+	 * noninherited ACEs in the DACLs of the child objects.
+	 * 2. This function transfers information in plaintext. The information transferred by
+	 * this function is signed unless signing has been turned off for the system, but no
+	 * encryption is performed.
+	 * 3. When you update access rights of a folder indicated by an UNC path, for example
+	 * \\Test\TestFolder, the original inherited ACE is removed and the full volume path
+	 * is not included.
+	 */	
+	public int SetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			Pointer ppsidOwner,
+			Pointer ppsidGroup,
+			Pointer ppDacl,
+			Pointer ppSacl);
+	
+	/**
+	 * The GetSecurityDescriptorLength function returns the length, in bytes, of a structurally
+	 * valid security descriptor. The length includes the length of all associated structures.
+	 * 
+	 * @param ppSecurityDescriptor
+	 *            A pointer to the SECURITY_DESCRIPTOR structure whose length the function returns. 
+	 *            The pointer is assumed to be valid.
+	 * @return If the function succeeds, the function returns the length, in bytes, of the SECURITY_DESCRIPTOR structure.
+     *         If the SECURITY_DESCRIPTOR structure is not valid, the return value is undefined.
+	 */
+	public int GetSecurityDescriptorLength(Pointer ppSecurityDescriptor);
+	
+	/**
+	 * The IsValidSecurityDescriptor function determines whether the components of a security descriptor are valid.
+	 * 
+	 * @param ppSecurityDescriptor [in]
+     *            A pointer to a SECURITY_DESCRIPTOR structure that the function validates.
+	 * @return If the components of the security descriptor are valid, the return value is nonzero.
+	 */
+	public boolean IsValidSecurityDescriptor(Pointer ppSecurityDescriptor);
+		
+	/**
+	 * The IsValidAcl function validates an access control list (ACL).
+	 * 
+	 * @param pAcl [in]
+     *            A pointer to an ACL structure validated by this function. This value must not be NULL.
+	 * @return If the ACL is valid, the function returns nonzero. If the ACL is not valid, the function returns zero.
+	 * There is no extended error information for this function; do not call GetLastError.
+	 * 
+	 * This function checks the revision level of the ACL and verifies that the number of access control entries
+	 * (ACEs) specified in the AceCount member of the ACL structure fits the space specified by the AclSize member
+	 * of the ACL structure.If pAcl is NULL, the application will fail with an access violation.
+	 */
+	public boolean IsValidAcl(Pointer pAcl);
 
     /**
      * Applies the given mapping of generic access rights to the given access mask.
