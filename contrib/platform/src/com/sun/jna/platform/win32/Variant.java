@@ -203,6 +203,15 @@ public interface Variant {
             this.setValue(Variant.VT_UI1, value);
         }
 
+        public VARIANT(char value) {
+            this(new CHAR(value));
+        }
+
+        public VARIANT(CHAR value) {
+            this();
+            this.setValue(Variant.VT_I1, value);
+        }
+
         public VARIANT(short value) {
             this();
             this.setValue(VT_I2, new SHORT(value));
