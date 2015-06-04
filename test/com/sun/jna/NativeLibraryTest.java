@@ -12,8 +12,12 @@
  */
 package com.sun.jna;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -282,6 +286,35 @@ public class NativeLibraryTest extends TestCase {
         final int EXPECTED = 42;
         set.invokeVoid(new Object[] { new Integer(EXPECTED) });
         assertEquals("Wrong error", EXPECTED, get.invokeInt(null));
+    }
+
+    public void testCleanupOnLoadError() throws Exception {
+        Map options = new HashMap();
+        options.put(Library.OPTION_CLASSLOADER, new DisfunctClassLoader());
+        int previousTempFileCount = Native.getTempDir().listFiles().length;
+        try {
+            NativeLibrary.getInstance("disfunct", options);
+            fail("Expected NativeLibrary.getInstance() to fail with an UnsatisfiedLinkError here.");
+        } catch(UnsatisfiedLinkError e) {
+            int currentTempFileCount = Native.getTempDir().listFiles().length;
+            assertEquals("Extracted native library should be cleaned up again. Number of files in temp directory:", previousTempFileCount, currentTempFileCount);
+        }
+    }
+
+    // returns unloadable "shared library" on any input
+    private class DisfunctClassLoader extends ClassLoader {
+        public URL getResource(String name) {
+            try {
+                return new URL("jar", "", name);
+            } catch(MalformedURLException e) {
+                fail("Could not even create disfunct library URL: " + e.getMessage());
+                return null;
+            }
+        }
+
+        public InputStream getResourceAsStream(String name) {
+            return new ByteArrayInputStream(new byte[0]);
+        }
     }
 
     public static void main(String[] args) {
