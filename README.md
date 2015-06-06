@@ -35,6 +35,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [Athena Backup](http://www.athenabackup.com) by Doug Patriarche.
 - [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
 - [Waffle](https://github.com/dblock/waffle): Enables SSO on Windows in Java applications, by Daniel Doubrovkine.
+- [leveldb-jna](https://github.com/protonail/leveldb-jna): Cross-platform JNA based adapter for LevelDB (used in [Keylord](http://protonail.com/products/keylord)).
 
 *Interesting Investigations/Experiments*
 
