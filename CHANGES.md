@@ -7,6 +7,7 @@ Release 4.2 (Next)
 
 Features
 --------
+* [#452](https://github.com/twall/jna/pull/452): Added Mac OS X System.B library at `com.sun.jna.platform.mac.SystemB`  including support for `sysctl`, `sysctlbyname`, `sysctlnametomib`, `mach_host_self`, `host_page_size`, `host_statistics` and `host_statistics64` - [@dbwiddis](https://github.com/dbwiddis).
 * [#446](https://github.com/twall/jna/pull/446): Added `com.sun.jna.platform.win32.Advapi32.GetNamedSecurityInfo`, `SetNamedSecurityInfo`, `GetSecurityDescriptorLength`, `IsValidSecurityDescriptor`, `IsValidAcl` - [@amarcionek](https://github.com/amarcionek).
 * [#387](https://github.com/twall/jna/pull/397): Use of interfaces and annotations to provide easier implementation of COM interfaces (with `InvocationHandler`) - [@dhakehurst](https://github.com/dhakehurst).
 * [#387](https://github.com/twall/jna/pull/397): Support for COM event callbacks - [@dhakehurst](https://github.com/dhakehurst).
