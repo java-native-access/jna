@@ -1896,7 +1896,7 @@ public abstract class Advapi32Util {
 				int count = _record.NumStrings.intValue();
 				long offset = _record.StringOffset.intValue();
 				while (count > 0) {
-					String s = pevlr.getWideString(0);
+					String s = pevlr.getWideString(offset);
 					strings.add(s);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
