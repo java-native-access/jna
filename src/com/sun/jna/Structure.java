@@ -912,9 +912,11 @@ public abstract class Structure {
         if (fieldOrder.size() != flist.size() && flist.size() > 1) {
             if (force) {
                 throw new Error("Structure.getFieldOrder() on " + getClass()
-                                + " does not provide enough names ("
+                                + " does not provide enough names [" + fieldOrder.size()
+                                + "] ("
                                 + sort(fieldOrder)
-                                + ") to match declared fields ("
+                                + ") to match declared fields [" + flist.size()
+                                + "] ("
                                 + sort(names)
                                 + ")");
             }

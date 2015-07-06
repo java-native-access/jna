@@ -17,10 +17,10 @@
 package com.sun.jna.platform.mac;
 
 import junit.framework.TestCase;
-import oshi.software.os.mac.local.SystemB.HostCpuLoadInfo;
-import oshi.software.os.mac.local.SystemB.HostLoadInfo;
-import oshi.software.os.mac.local.SystemB.VMStatistics;
-import oshi.software.os.mac.local.SystemB.VMStatistics64;
+import com.sun.jna.platform.mac.SystemB.HostCpuLoadInfo;
+import com.sun.jna.platform.mac.SystemB.HostLoadInfo;
+import com.sun.jna.platform.mac.SystemB.VMStatistics;
+import com.sun.jna.platform.mac.SystemB.VMStatistics64;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Platform;

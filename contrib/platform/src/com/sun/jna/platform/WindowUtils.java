@@ -572,114 +572,107 @@ public class WindowUtils {
             }
         }
 
-		/**
-		 * Obtains the set icon for the window associated with the specified
-		 * window handle.
-		 *
-		 * @param hwnd
-		 *            The concerning window handle.
-		 * @return Either the window's icon or {@code null} if an error
-		 *         occurred.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-		 *             current platform.
-		 */
-		protected BufferedImage getWindowIcon(final HWND hwnd) {
-			throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-		}
-
-		/**
-		 * Detects the size of an icon.
-		 *
-		 * @param hIcon
-		 *            The icon handle type.
-		 * @return Either the requested icon's dimension or an {@link Dimension}
-		 *         instance of {@code (0, 0)}.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-		 *             current platform.
-		 */
-		protected Dimension getIconSize(final HICON hIcon) {
-			throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-		}
-
-		/**
-		 * Requests a list of all currently available Desktop windows.
-		 *
-		 * @param onlyVisibleWindows
-		 *            Specifies whether only currently visible windows will be
-		 *            considered ({@code true}). That are windows which are not
-		 *            minimized. The {@code WS_VISIBLE} flag will be checked
-		 *            (see: <a href=
-		 *            "https://msdn.microsoft.com/de-de/library/windows/desktop/ms633530%28v=vs.85%29.aspx"
-		 *            >User32.IsWindowVisible(HWND)</a>).
-		 *
-		 * @return A list with all windows and some detailed information.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-		 *             current platform.
-		 */
-		protected List<DesktopWindow> getAllWindows(
-				final boolean onlyVisibleWindows) {
-			throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-		}
-
-		/**
-		 * Tries to obtain the Window's title which belongs to the specified
-		 * window handle.
-		 *
-		 * @param hwnd
-		 *            The concerning window handle.
-		 * @return Either the title or an empty string of no title was found or
-		 *         an error occurred.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-		 */
-		protected String getWindowTitle(final HWND hwnd) {
-			throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-		}
-
-	    /**
-	     * Detects the full file path of the process associated with the specified
-	     * window handle.
-	     *
-	     * @param hwnd
-	     *            The concerning window handle for which the PE file path is
-	     *            required.
-	     * @return The full file path of the PE file that is associated with the
-	     *         specified window handle.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-	     */
-	    protected  String getProcessFilePath(final HWND hwnd){
-	    	throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-	    }
-
-		/**
-		 * Requests the location and size of the window associated with the
-		 * specified window handle.
-		 *
-		 * @param hwnd
-		 *            The concerning window handle.
-		 * @return The location and size of the window.
-		 * 
-		 * @throws UnsupportedOperationException
-		 *             Thrown if this method wasn't yet implemented for the
-		 */
-		protected Rectangle getWindowLocationAndSize(final HWND hwnd) {
-			throw new UnsupportedOperationException(
-					"This platform is not supported, yet.");
-		}
+        /**
+         * Obtains the set icon for the window associated with the specified
+         * window handle.
+         *
+         * @param hwnd
+         *            The concerning window handle.
+         * @return Either the window's icon or {@code null} if an error
+         *         occurred.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         *             current platform.
+         */
+        protected BufferedImage getWindowIcon(final HWND hwnd) {
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
+        
+        /**
+         * Detects the size of an icon.
+         *
+         * @param hIcon
+         *            The icon handle type.
+         * @return Either the requested icon's dimension or an {@link Dimension}
+         *         instance of {@code (0, 0)}.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         *             current platform.
+         */
+        protected Dimension getIconSize(final HICON hIcon) {
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
+        
+        /**
+         * Requests a list of all currently available Desktop windows.
+         *
+         * @param onlyVisibleWindows
+         *            Specifies whether only currently visible windows will be
+         *            considered ({@code true}). That are windows which are not
+         *            minimized. The {@code WS_VISIBLE} flag will be checked
+         *            (see: <a href=
+         *            "https://msdn.microsoft.com/de-de/library/windows/desktop/ms633530%28v=vs.85%29.aspx"
+         *            >User32.IsWindowVisible(HWND)</a>).
+         *
+         * @return A list with all windows and some detailed information.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         *             current platform.
+         */
+        protected List<DesktopWindow> getAllWindows(final boolean onlyVisibleWindows) {
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
+        
+        /**
+         * Tries to obtain the Window's title which belongs to the specified
+         * window handle.
+         *
+         * @param hwnd
+         *            The concerning window handle.
+         * @return Either the title or an empty string of no title was found or
+         *         an error occurred.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         */
+        protected String getWindowTitle(final HWND hwnd) {
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
+        
+        /**
+         * Detects the full file path of the process associated with the specified
+         * window handle.
+         *
+         * @param hwnd
+         *            The concerning window handle for which the PE file path is
+         *            required.
+         * @return The full file path of the PE file that is associated with the
+         *         specified window handle.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         */
+        protected  String getProcessFilePath(final HWND hwnd){
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
+        
+        /**
+         * Requests the location and size of the window associated with the
+         * specified window handle.
+         *
+         * @param hwnd
+         *            The concerning window handle.
+         * @return The location and size of the window.
+         * 
+         * @throws UnsupportedOperationException
+         *             Thrown if this method wasn't yet implemented for the
+         */
+        protected Rectangle getWindowLocationAndSize(final HWND hwnd) {
+            throw new UnsupportedOperationException("This platform is not supported, yet.");
+        }
     }
     /** Canonical lazy loading of a singleton. */
     private static class Holder {

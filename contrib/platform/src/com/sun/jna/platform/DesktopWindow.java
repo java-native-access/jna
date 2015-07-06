@@ -22,55 +22,55 @@ import com.sun.jna.platform.win32.WinDef.HWND;
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public class DesktopWindow {
-	private HWND hwnd;
-	private String title;
-	private String filePath;
-	private Rectangle locAndSize;
+    private HWND hwnd;
+    private String title;
+    private String filePath;
+    private Rectangle locAndSize;
 
-	/**
-	 * @param hwnd
-	 *            The associated window handle for this window.
-	 * @param title
-	 *            The title text of the window.
-	 * @param filePath
-	 *            The full file path to the main process that created the
-	 *            window.
-	 * @param locAndSize
-	 *            The window's location on screen and its dimensions.
-	 */
-	public DesktopWindow(final HWND hwnd, final String title,
-			final String filePath, final Rectangle locAndSize) {
-		this.hwnd = hwnd;
-		this.title = title;
-		this.filePath = filePath;
-		this.locAndSize = locAndSize;
-	}
+    /**
+     * @param hwnd
+     *            The associated window handle for this window.
+     * @param title
+     *            The title text of the window.
+     * @param filePath
+     *            The full file path to the main process that created the
+     *            window.
+     * @param locAndSize
+     *            The window's location on screen and its dimensions.
+     */
+    public DesktopWindow(final HWND hwnd, final String title,
+                         final String filePath, final Rectangle locAndSize) {
+        this.hwnd = hwnd;
+        this.title = title;
+        this.filePath = filePath;
+        this.locAndSize = locAndSize;
+    }
 
-	/**
-	 * @return The associated window handle for this window.
-	 */
-	public HWND getHWND() {
-		return hwnd;
-	}
+    /**
+     * @return The associated window handle for this window.
+     */
+    public HWND getHWND() {
+        return hwnd;
+    }
 
-	/**
-	 * @return The title text of the window.
-	 */
-	public String getTitle() {
-		return title;
-	}
+    /**
+     * @return The title text of the window.
+     */
+    public String getTitle() {
+        return title;
+    }
 
-	/**
-	 * @return The full file path to the main process that created the window.
-	 */
-	public String getFilePath() {
-		return filePath;
-	}
+    /**
+     * @return The full file path to the main process that created the window.
+     */
+    public String getFilePath() {
+        return filePath;
+    }
 
-	/**
-	 * @return The window's location on screen and its dimensions.
-	 */
-	public Rectangle getLocAndSize() {
-		return locAndSize;
-	}
+    /**
+     * @return The window's location on screen and its dimensions.
+     */
+    public Rectangle getLocAndSize() {
+        return locAndSize;
+    }
 }
