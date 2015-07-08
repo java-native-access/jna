@@ -974,7 +974,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <fail if="testfailure" unless="clover">One or more tests failed</fail>
   </target>
 
-  <target name="test-platform" depends="compile-some-tests,platform-jar">
+  <target name="test-platform" depends="compile-some-tests,platform-jar"
+          description="Run platform-specific tests">
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
