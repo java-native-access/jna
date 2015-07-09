@@ -6,7 +6,7 @@ install:
 
 script:
   - ant test
-  - ant -f ./contrib/platform/build.xml test
+  - ant test-platform
   - ant dist
 
 os:
