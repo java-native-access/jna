@@ -121,7 +121,10 @@ class CallbackReference extends WeakReference {
             if (ref != null) {
                 cb = (Callback)ref.get();
                 if (cb != null && !type.isAssignableFrom(cb.getClass())) {
-                    throw new IllegalStateException("Pointer " + p + " already mapped to " + cb);
+                    throw new IllegalStateException("Pointer " + p + " already mapped to " + cb
+                                                    + ".\nNative code may be re-using a default function pointer"
+                                                    + ", in which case you may need to use a common Callback class"
+                                                    + " wherever the function pointer is reused.");
                 }
                 return cb;
             }
