@@ -6,7 +6,7 @@ install:
 
 script:
   - ant test
-  - cd contrib/platform ; ant test ; cd ../..
+  - ant test-platform
   - ant dist
 
 os:
