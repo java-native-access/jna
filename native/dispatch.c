@@ -1139,20 +1139,31 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
 }
 
 static void
-fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass javaClass, void* result) {
-  int jtype = get_jtype_from_ffi_type(type);
-  jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
+fromNativeTypeMapped(JNIEnv* env, jobject from_native,
+                     void* native_return_value,
+                     ffi_type* native_return_type,
+                     jclass java_return_class,
+                     void* result_storage) {
+  int jtype = get_jtype_from_ffi_type(native_return_type);
+  jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                  MID_Native_fromNativeTypeMapped,
-                                                 from_native, value, javaClass);
+                                                 from_native, value, java_return_class);
     if (!(*env)->ExceptionCheck(env)) {
-      // Must extract primitive types
-      if (type->type != FFI_TYPE_POINTER) {
-        extract_value(env, obj, result, type->size, JNI_TRUE);
+      // Convert objects into primitive types if the return class demands it
+      if ((*env)->IsSameObject(env, java_return_class, classPrimitiveBoolean)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveByte)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveCharacter)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveShort)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveInteger)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveLong)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveFloat)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveDouble)) {
+        extract_value(env, obj, result_storage, native_return_type->size, JNI_TRUE);
       }
       else {
-        *(jobject*)result = obj;
+        *(jobject*)result_storage = obj;
       }
     }
   }
@@ -1444,6 +1455,7 @@ JNA_init(JNIEnv* env) {
   return NULL;
 }
 
+/** Copy value from the given Java object into the given storage buffer. */
 void
 extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean promote) {
   if (value == NULL) {
@@ -1514,8 +1526,9 @@ extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean prom
     *(void **)resp = getNativeAddress(env, value);
   }
   else {
-    fprintf(stderr, "JNA: unrecognized return type, size %d\n", (int)size);
+    fprintf(stderr, "JNA: extract_value: unrecognized return type, size %d\n", (int)size);
     memset(resp, 0, size);
+    throwByName(env, EError, "Unrecognized return type");
   }
 }
 
@@ -1780,7 +1793,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     resp = alloca(sizeof(jobject));
   }
   else if (data->rflag == CVT_TYPE_MAPPER) {
-    // Ensure enough space for the inner call result
+    // Ensure enough space for the inner call result, which may differ
+    // from the closure result
     resp = alloca(data->cif.rtype->size);
   }
   else if (data->rflag == CVT_STRUCTURE_BYVAL) {
