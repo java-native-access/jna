@@ -1138,17 +1138,29 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
   }
 }
 
+static jboolean 
+is_primitive(JNIEnv* env, jobject converted) {
+  return ((*env)->IsInstanceOf(env, converted, classBoolean)
+          || (*env)->IsInstanceOf(env, converted, classByte)
+          || (*env)->IsInstanceOf(env, converted, classCharacter)
+          || (*env)->IsInstanceOf(env, converted, classShort)
+          || (*env)->IsInstanceOf(env, converted, classInteger)
+          || (*env)->IsInstanceOf(env, converted, classLong)
+          || (*env)->IsInstanceOf(env, converted, classFloat)
+          || (*env)->IsInstanceOf(env, converted, classDouble));
+}
+
 static void
-fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass javaClass, void* result) {
+fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass java_return_class, void* result) {
   int jtype = get_jtype_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                  MID_Native_fromNativeTypeMapped,
-                                                 from_native, value, javaClass);
+                                                 from_native, value, java_return_class);
     if (!(*env)->ExceptionCheck(env)) {
       // Must extract primitive types
-      if (type->type != FFI_TYPE_POINTER) {
+      if (is_primitive(env, obj)) {
         extract_value(env, obj, result, type->size, JNI_TRUE);
       }
       else {
@@ -1514,8 +1526,9 @@ extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean prom
     *(void **)resp = getNativeAddress(env, value);
   }
   else {
-    fprintf(stderr, "JNA: unrecognized return type, size %d\n", (int)size);
+    fprintf(stderr, "JNA: extract_value: unrecognized return type, size %d\n", (int)size);
     memset(resp, 0, size);
+    throwByName(env, EError, "Unrecognized return type");
   }
 }
 
@@ -1780,7 +1793,8 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     resp = alloca(sizeof(jobject));
   }
   else if (data->rflag == CVT_TYPE_MAPPER) {
-    // Ensure enough space for the inner call result
+    // Ensure enough space for the inner call result, which may differ
+    // from the closure result
     resp = alloca(data->cif.rtype->size);
   }
   else if (data->rflag == CVT_STRUCTURE_BYVAL) {

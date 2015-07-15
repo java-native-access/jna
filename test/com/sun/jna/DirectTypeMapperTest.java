@@ -187,20 +187,20 @@ public class DirectTypeMapperTest extends TestCase {
         assertEquals("Failed to convert int* return to java.awt.Point", 1234, p.x);
         assertEquals("Failed to convert int* return to java.awt.Point", 5678, p.y);
     }
-    public static enum Enumeration {
-        STATUS_0(0), STATUS_1(1), STATUS_ERROR(-1);
-        private final int code;
-        Enumeration(int code) { this.code = code; }
-        public int getCode() { return code; }
-        public static Enumeration fromCode(int code) {
-            switch(code) {
-            case 0: return STATUS_0;
-            case 1: return STATUS_1;
-            default: return STATUS_ERROR;
+    public static class DirectTypeMappedEnumerationTestLibrary {
+        public static enum Enumeration {
+            STATUS_0(0), STATUS_1(1), STATUS_ERROR(-1);
+            private final int code;
+            Enumeration(int code) { this.code = code; }
+            public int getCode() { return code; }
+            public static Enumeration fromCode(int code) {
+                switch(code) {
+                case 0: return STATUS_0;
+                case 1: return STATUS_1;
+                default: return STATUS_ERROR;
+                }
             }
         }
-    }
-    public static class DirectTypeMappedEnumerationTestLibrary {
         public native Enumeration returnInt32Argument(Enumeration e);
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
@@ -223,8 +223,8 @@ public class DirectTypeMapperTest extends TestCase {
     }
     public void testEnumerationConversion() {
         DirectTypeMappedEnumerationTestLibrary lib = new DirectTypeMappedEnumerationTestLibrary();
-        Enumeration e = lib.returnInt32Argument(Enumeration.STATUS_1);
-        assertEquals("Failed to convert enumeration", Enumeration.STATUS_1, e);
+        DirectTypeMappedEnumerationTestLibrary.Enumeration e = lib.returnInt32Argument(DirectTypeMappedEnumerationTestLibrary.Enumeration.STATUS_1);
+        assertEquals("Failed to convert enumeration", DirectTypeMappedEnumerationTestLibrary.Enumeration.STATUS_1, e);
     }
 
     public static void main(String[] args) {

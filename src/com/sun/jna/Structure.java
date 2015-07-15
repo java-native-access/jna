@@ -1791,6 +1791,7 @@ public abstract class Structure {
             write();
         }
 
+        /** Obtain a pointer to the native FFI type descriptor for the given object. */
         static Pointer get(Object obj) {
             if (obj == null)
                 return FFITypes.ffi_type_pointer;
@@ -1840,7 +1841,7 @@ public abstract class Structure {
                     typeInfoMap.put(obj, type);
                     return type.getPointer();
                 }
-                throw new IllegalArgumentException("Unsupported Structure field type " + cls);
+                throw new IllegalArgumentException("Unsupported type " + cls);
             }
         }
     }
