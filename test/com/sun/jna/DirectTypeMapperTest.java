@@ -90,7 +90,6 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
-
     public void testBooleanToIntArgumentConversion() {
         DirectTestLibraryBoolean lib = new DirectTestLibraryBoolean();
         assertEquals("Failed to convert Boolean argument to Int",
@@ -187,6 +186,45 @@ public class DirectTypeMapperTest extends TestCase {
         PointTestClass p = lib.returnPoint(1234, 5678);
         assertEquals("Failed to convert int* return to java.awt.Point", 1234, p.x);
         assertEquals("Failed to convert int* return to java.awt.Point", 5678, p.y);
+    }
+    public static enum Enumeration {
+        STATUS_0(0), STATUS_1(1), STATUS_ERROR(-1);
+        private final int code;
+        Enumeration(int code) { this.code = code; }
+        public int getCode() { return code; }
+        public static Enumeration fromCode(int code) {
+            switch(code) {
+            case 0: return STATUS_0;
+            case 1: return STATUS_1;
+            default: return STATUS_ERROR;
+            }
+        }
+    }
+    public static class DirectTypeMappedEnumerationTestLibrary {
+        public native Enumeration returnInt32Argument(Enumeration e);
+        static {
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addTypeConverter(Enumeration.class, new TypeConverter() {
+                public Object toNative(Object arg, ToNativeContext ctx) {
+                    return new Integer(((Enumeration)arg).getCode());
+                }
+                public Object fromNative(Object value, FromNativeContext context) {
+                    return Enumeration.fromCode(((Integer)value).intValue());
+                }
+                public Class nativeType() {
+                    return Integer.class;
+                }
+            });
+            Map options = new HashMap();
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            
+            Native.register(NativeLibrary.getInstance("testlib", options));
+        }
+    }
+    public void testEnumerationConversion() {
+        DirectTypeMappedEnumerationTestLibrary lib = new DirectTypeMappedEnumerationTestLibrary();
+        Enumeration e = lib.returnInt32Argument(Enumeration.STATUS_1);
+        assertEquals("Failed to convert enumeration", Enumeration.STATUS_1, e);
     }
 
     public static void main(String[] args) {
