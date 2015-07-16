@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 public class DirectTypeMapperTest extends TestCase {
 
+    /** Converts boolean to int when going to native. */
     public static class DirectTestLibraryBoolean {
         final static int MAGIC = 0xABEDCF23;
         public native int returnInt32Argument(boolean b);
@@ -37,6 +38,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts String to int when going to native. */
     public static class DirectTestLibraryString {
         public native int returnInt32Argument(String s);
         static {
@@ -54,6 +56,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts CharSequence to int when going to native. */
     public static class DirectTestLibraryCharSequence {
         public native int returnInt32Argument(String n);
         static {
@@ -72,6 +75,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts Number to int when going to native. */
     public static class DirectTestLibraryNumber {
         public native int returnInt32Argument(Number n);
         static {
@@ -90,7 +94,6 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
-
     public void testBooleanToIntArgumentConversion() {
         DirectTestLibraryBoolean lib = new DirectTestLibraryBoolean();
         assertEquals("Failed to convert Boolean argument to Int",
@@ -116,7 +119,8 @@ public class DirectTypeMapperTest extends TestCase {
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
-    public static class DirectBooleanTestLibrary {
+    /** Uses a type mapper to convert boolean->int and int->boolean */
+    public static class DirectTestLibraryBidirectionalBoolean {
         public native boolean returnInt32Argument(boolean b);
         static {
             final int MAGIC = 0xABEDCF23;
@@ -144,7 +148,7 @@ public class DirectTypeMapperTest extends TestCase {
         }
     }
     public void testIntegerToBooleanResultConversion() throws Exception {
-        DirectBooleanTestLibrary lib = new DirectBooleanTestLibrary();
+        DirectTestLibraryBidirectionalBoolean lib = new DirectTestLibraryBidirectionalBoolean();
         // argument "true" converts to zero; result zero converts to "true"
         assertTrue("Failed to convert integer return to boolean TRUE", 
                    lib.returnInt32Argument(true));
@@ -187,6 +191,45 @@ public class DirectTypeMapperTest extends TestCase {
         PointTestClass p = lib.returnPoint(1234, 5678);
         assertEquals("Failed to convert int* return to java.awt.Point", 1234, p.x);
         assertEquals("Failed to convert int* return to java.awt.Point", 5678, p.y);
+    }
+    public static class DirectTypeMappedEnumerationTestLibrary {
+        public static enum Enumeration {
+            STATUS_0(0), STATUS_1(1), STATUS_ERROR(-1);
+            private final int code;
+            Enumeration(int code) { this.code = code; }
+            public int getCode() { return code; }
+            public static Enumeration fromCode(int code) {
+                switch(code) {
+                case 0: return STATUS_0;
+                case 1: return STATUS_1;
+                default: return STATUS_ERROR;
+                }
+            }
+        }
+        public native Enumeration returnInt32Argument(Enumeration e);
+        static {
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addTypeConverter(Enumeration.class, new TypeConverter() {
+                public Object toNative(Object arg, ToNativeContext ctx) {
+                    return new Integer(((Enumeration)arg).getCode());
+                }
+                public Object fromNative(Object value, FromNativeContext context) {
+                    return Enumeration.fromCode(((Integer)value).intValue());
+                }
+                public Class nativeType() {
+                    return Integer.class;
+                }
+            });
+            Map options = new HashMap();
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            
+            Native.register(NativeLibrary.getInstance("testlib", options));
+        }
+    }
+    public void testEnumerationConversion() {
+        DirectTypeMappedEnumerationTestLibrary lib = new DirectTypeMappedEnumerationTestLibrary();
+        DirectTypeMappedEnumerationTestLibrary.Enumeration e = lib.returnInt32Argument(DirectTypeMappedEnumerationTestLibrary.Enumeration.STATUS_1);
+        assertEquals("Failed to convert enumeration", DirectTypeMappedEnumerationTestLibrary.Enumeration.STATUS_1, e);
     }
 
     public static void main(String[] args) {

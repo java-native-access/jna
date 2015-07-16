@@ -1419,6 +1419,7 @@ public final class Native implements Version {
         List mlist = new ArrayList();
         TypeMapper mapper = (TypeMapper)
             lib.getOptions().get(Library.OPTION_TYPE_MAPPER);
+        cacheOptions(cls, lib.getOptions(), null);
 
         for (int i=0;i < methods.length;i++) {
             if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
@@ -1444,7 +1445,10 @@ public final class Native implements Version {
                 throw new IllegalArgumentException(rclass + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
             case CVT_TYPE_MAPPER:
                 fromNative = mapper.getFromNativeConverter(rclass);
-                closure_rtype = FFIType.get(rclass).peer;
+                // FFIType.get() always looks up the native type for any given
+                // class, so if we actually have conversion into a Java
+                // object, make sure we use the proper type information
+                closure_rtype = FFIType.get(rclass.isPrimitive() ? rclass : Pointer.class).peer;
                 rtype = FFIType.get(fromNative.nativeType()).peer;
                 break;
             case CVT_NATIVE_MAPPED:
@@ -1490,10 +1494,7 @@ public final class Native implements Version {
                     closure_atypes[t] = FFIType.get(Pointer.class).peer;
                     break;
                 case CVT_TYPE_MAPPER:
-                    if (type.isPrimitive())
-                        closure_atypes[t] = FFIType.get(type).peer;
-                    else
-                        closure_atypes[t] = FFIType.get(Pointer.class).peer;
+                    closure_atypes[t] = FFIType.get(type.isPrimitive() ? type : Pointer.class).peer;
                     atypes[t] = FFIType.get(toNative[t].nativeType()).peer;
                     break;
                 case CVT_DEFAULT:
@@ -1535,7 +1536,6 @@ public final class Native implements Version {
             registeredClasses.put(cls, handles);
             registeredLibraries.put(cls, lib);
         }
-        cacheOptions(cls, lib.getOptions(), null);
     }
 
     /** Take note of options used for a given library mapping, to facilitate
