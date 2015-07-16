@@ -19,6 +19,7 @@ import junit.framework.TestCase;
 
 public class DirectTypeMapperTest extends TestCase {
 
+    /** Converts boolean to int when going to native. */
     public static class DirectTestLibraryBoolean {
         final static int MAGIC = 0xABEDCF23;
         public native int returnInt32Argument(boolean b);
@@ -37,6 +38,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts String to int when going to native. */
     public static class DirectTestLibraryString {
         public native int returnInt32Argument(String s);
         static {
@@ -54,6 +56,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts CharSequence to int when going to native. */
     public static class DirectTestLibraryCharSequence {
         public native int returnInt32Argument(String n);
         static {
@@ -72,6 +75,7 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts Number to int when going to native. */
     public static class DirectTestLibraryNumber {
         public native int returnInt32Argument(Number n);
         static {
@@ -115,7 +119,8 @@ public class DirectTypeMapperTest extends TestCase {
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
-    public static class DirectBooleanTestLibrary {
+    /** Uses a type mapper to convert boolean->int and int->boolean */
+    public static class DirectTestLibraryBidirectionalBoolean {
         public native boolean returnInt32Argument(boolean b);
         static {
             final int MAGIC = 0xABEDCF23;
@@ -143,7 +148,7 @@ public class DirectTypeMapperTest extends TestCase {
         }
     }
     public void testIntegerToBooleanResultConversion() throws Exception {
-        DirectBooleanTestLibrary lib = new DirectBooleanTestLibrary();
+        DirectTestLibraryBidirectionalBoolean lib = new DirectTestLibraryBidirectionalBoolean();
         // argument "true" converts to zero; result zero converts to "true"
         assertTrue("Failed to convert integer return to boolean TRUE", 
                    lib.returnInt32Argument(true));
