@@ -1494,10 +1494,7 @@ public final class Native implements Version {
                     closure_atypes[t] = FFIType.get(Pointer.class).peer;
                     break;
                 case CVT_TYPE_MAPPER:
-                    if (type.isPrimitive())
-                        closure_atypes[t] = FFIType.get(type).peer;
-                    else
-                        closure_atypes[t] = FFIType.get(Pointer.class).peer;
+                    closure_atypes[t] = FFIType.get(type.isPrimitive() ? type : Pointer.class).peer;
                     atypes[t] = FFIType.get(toNative[t].nativeType()).peer;
                     break;
                 case CVT_DEFAULT:
