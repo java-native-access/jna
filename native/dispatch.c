@@ -1138,33 +1138,32 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
   }
 }
 
-static jboolean 
-is_primitive(JNIEnv* env, jobject converted) {
-  return ((*env)->IsInstanceOf(env, converted, classBoolean)
-          || (*env)->IsInstanceOf(env, converted, classByte)
-          || (*env)->IsInstanceOf(env, converted, classCharacter)
-          || (*env)->IsInstanceOf(env, converted, classShort)
-          || (*env)->IsInstanceOf(env, converted, classInteger)
-          || (*env)->IsInstanceOf(env, converted, classLong)
-          || (*env)->IsInstanceOf(env, converted, classFloat)
-          || (*env)->IsInstanceOf(env, converted, classDouble));
-}
-
 static void
-fromNativeTypeMapped(JNIEnv* env, jobject from_native, void* resp, ffi_type* type, jclass java_return_class, void* result) {
-  int jtype = get_jtype_from_ffi_type(type);
-  jobject value = new_object(env, (char)jtype, resp, JNI_TRUE);
+fromNativeTypeMapped(JNIEnv* env, jobject from_native,
+                     void* native_return_value,
+                     ffi_type* native_return_type,
+                     jclass java_return_class,
+                     void* result_storage) {
+  int jtype = get_jtype_from_ffi_type(native_return_type);
+  jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                  MID_Native_fromNativeTypeMapped,
                                                  from_native, value, java_return_class);
     if (!(*env)->ExceptionCheck(env)) {
-      // Must extract primitive types
-      if (is_primitive(env, obj)) {
-        extract_value(env, obj, result, type->size, JNI_TRUE);
+      // Convert objects into primitive types if the return class demands it
+      if ((*env)->IsSameObject(env, java_return_class, classPrimitiveBoolean)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveByte)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveCharacter)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveShort)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveInteger)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveLong)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveFloat)
+          || (*env)->IsSameObject(env, java_return_class, classPrimitiveDouble)) {
+        extract_value(env, obj, result_storage, native_return_type->size, JNI_TRUE);
       }
       else {
-        *(jobject*)result = obj;
+        *(jobject*)result_storage = obj;
       }
     }
   }
@@ -1456,6 +1455,7 @@ JNA_init(JNIEnv* env) {
   return NULL;
 }
 
+/** Copy value from the given Java object into the given storage buffer. */
 void
 extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean promote) {
   if (value == NULL) {
