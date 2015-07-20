@@ -42,4 +42,20 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
             fail(message + " failed: hr=0x" + Integer.toHexString(hr));
         }
     }
+    
+    /**
+     * Checks if the status code is ERROR_SUCCESS
+     * @param message Message to display if code is an error
+     * @param statusCode Status code to check
+     * @param showHex If status code is not error success then show it as HEX
+     */
+    public static final void assertErrorSuccess(String message, int statusCode, boolean showHex) {
+        if (showHex) {
+            if (statusCode != WinError.ERROR_SUCCESS) {
+                fail(message + " - failed - hr=0x" + Integer.toHexString(statusCode));
+            }
+        } else {
+            assertEquals(message, WinError.ERROR_SUCCESS, statusCode);
+        }
+    }
 }
