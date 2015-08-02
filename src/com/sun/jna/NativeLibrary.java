@@ -868,9 +868,11 @@ public class NativeLibrary {
             }
 
             // We might be wrong with the multiArchPath above. Raspbian,
-            // the Raspberry Pi flavor of Debian, uses arm-linux-gnuabihf,
-            // for example, since it's using the hard-float ABI for armv6.
-            // Try to get additional library paths from ldconfig instead
+            // the Raspberry Pi flavor of Debian, for example, uses
+            // uses arm-linux-gnuabihf since it's using the hard-float
+            // ABI for armv6. Other distributions might use a different
+            // tuple for the same thing. Query ldconfig to get the additional
+            // library paths it knows about.
             if (Platform.isLinux()) {
                 ArrayList<String> ldPaths = getLinuxLdPaths();
                 // prepend the paths we already have
