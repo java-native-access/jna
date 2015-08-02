@@ -873,11 +873,13 @@ public class NativeLibrary {
             // Try to get additional library paths from ldconfig instead
             if (Platform.isLinux()) {
                 ArrayList<String> ldPaths = getLinuxLdPaths();
-                // add the paths we already have
-                for (int i=0; i < paths.length; i++) {
-                    if (ldPaths.contains(paths[i]) == false) {
-                        ldPaths.add(paths[i]);
+                // prepend the paths we already have
+                for (int i=paths.length-1; 0 <= i; i--) {
+                    int found = ldPaths.indexOf(paths[i]);
+                    if (found != -1) {
+                        ldPaths.remove(found);
                     }
+                    ldPaths.add(0, paths[i]);
                 }
                 paths = ldPaths.toArray(new String[ldPaths.size()]);
             }
