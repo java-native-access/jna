@@ -82,6 +82,23 @@ public class NativeTest extends TestCase {
                      UNICODE, Native.toString(UNICODEZ.getBytes(ENCODING), ENCODING));
     }
     
+    public void testToStringList() {
+        List<String> expected = Arrays.asList(getClass().getPackage().getName(), getClass().getSimpleName(), "testToStringList");
+        StringBuilder sb = new StringBuilder();
+        for (String value : expected) {
+            sb.append(value).append('\0');
+        }
+        sb.append('\0');
+        
+        List<String> actual = Native.toStringList(sb.toString().toCharArray());
+        assertEquals("Mismatched result size", expected.size(), actual.size());
+        for (int index = 0; index < expected.size(); index++) {
+            String expValue = expected.get(index);
+            String actValue = actual.get(index);
+            assertEquals("Mismatched value at index #" + index, expValue, actValue);
+        }
+    }
+
     public void testDefaultStringEncoding() throws Exception {
         final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
         final String UNICODEZ = UNICODE + "\0more stuff";

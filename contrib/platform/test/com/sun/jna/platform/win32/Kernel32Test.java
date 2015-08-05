@@ -399,13 +399,6 @@ public class Kernel32Test extends TestCase {
     	assertEquals(0, lpBuffer.ullAvailExtendedVirtual.intValue());
     }
 
-    public void testGetLogicalDriveStrings() {
-    	DWORD dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(new DWORD(0), null);
-    	assertTrue(dwSize.intValue() > 0);
-    	char buf[] = new char[dwSize.intValue()];
-    	assertTrue(Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf).intValue() > 0);
-    }
-
     public void testGetDiskFreeSpaceEx() {
     	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference();
     	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference();

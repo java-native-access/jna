@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.platform.AbstractPlatformTestSupport;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
  * @author lgoldstein
@@ -35,11 +36,11 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
             return;
         }
         
-        int hr=Kernel32.INSTANCE.GetLastError();
+        int hr = Kernel32.INSTANCE.GetLastError();
         if (hr == WinError.ERROR_SUCCESS) {
             fail(message + " failed with unknown reason code");
         } else {
-            fail(message + " failed: hr=0x" + Integer.toHexString(hr));
+            fail(message + " failed: hr=" + hr + " - 0x" + Integer.toHexString(hr));
         }
     }
     
@@ -57,5 +58,27 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
         } else {
             assertEquals(message, WinError.ERROR_SUCCESS, statusCode);
         }
+    }
+    
+    /**
+     * Makes sure that the handle argument is not {@code null} or {@link WinBase#INVALID_HANDLE_VALUE}.
+     * If invalid handle detected, then it invokes {@link Kernel32#GetLastError()}
+     * in order to display the error code
+     * @param message Message to display if bad handle
+     * @param handle The {@link HANDLE} to test
+     * @return The same as the input handle if good handle - otherwise does
+     * not return and throws an assertion error
+     */
+    public static final HANDLE assertValidHandle(String message, HANDLE handle) {
+        if ((handle == null) || WinBase.INVALID_HANDLE_VALUE.equals(handle)) {
+            int hr = Kernel32.INSTANCE.GetLastError();
+            if (hr == WinError.ERROR_SUCCESS) {
+                fail(message + " failed with unknown reason code");
+            } else {
+                fail(message + " failed: hr=" + hr + " - 0x" + Integer.toHexString(hr));
+            }
+        }
+
+        return handle;
     }
 }

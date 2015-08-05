@@ -324,8 +324,8 @@ public interface Kernel32 extends WinNT, Wincon {
     void SetLastError(int dwErrCode);
 
     /**
-     * The GetDriveType function determines whether a disk drive is a removable,
-     * fixed, CD-ROM, RAM disk, or network drive.
+     * Determines whether a disk drive is a removable, fixed, CD-ROM, RAM
+     * disk, or network drive.
      * 
      * @param lpRootPathName
      *            Pointer to a null-terminated string that specifies the root
@@ -333,6 +333,7 @@ public interface Kernel32 extends WinNT, Wincon {
      *            backslash is required. If this parameter is NULL, the function
      *            uses the root of the current directory.
      * @return The return value specifies the type of drive.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364939(v=vs.85).aspx">GetDriveType</A>
      */
     int GetDriveType(String lpRootPathName);
 
@@ -2601,4 +2602,268 @@ public interface Kernel32 extends WinNT, Wincon {
      * documentation
      */
     SIZE_T VirtualQueryEx(HANDLE hProcess, Pointer lpAddress, MEMORY_BASIC_INFORMATION lpBuffer, SIZE_T dwLength);
+    
+    /**
+     * Defines, redefines, or deletes MS-DOS device names.
+     * @param dwFlags The controllable aspects of the function - see the
+     * various {@code DDD_XXX} constants
+     * @param lpDeviceName The MS-DOS device name string specifying the device
+     * the function is defining, redefining, or deleting. The device name string
+     * must not have a colon as the last character, unless a drive letter is
+     * being defined, redefined, or deleted. For example, drive {@code C} would
+     * be the string &quot;C:&quot;. In no case is a trailing backslash
+     * (&quot;\&quot;) allowed.
+     * @param lpTargetPath  The path string that will implement this device.
+     * The string is an MS-DOS path string unless the {@code DDD_RAW_TARGET_PATH}
+     * flag is specified, in which case this string is a path string.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx">DefineDosDevice</A>
+     */
+    boolean DefineDosDevice(int dwFlags, String lpDeviceName, String lpTargetPath);
+    
+    /**
+     * Retrieves information about MS-DOS device names
+     * @param lpDeviceName An MS-DOS device name string specifying the target
+     * of the query. The device name cannot have a trailing backslash; for
+     * example, use &quot;C:&quot;, not &quot;C:\&quot;. This parameter can be
+     * NULL. In that case, the function will store a list of all existing MS-DOS
+     * device names into the buffer.
+     * @param lpTargetPath A buffer that will receive the result of the query.
+     * The function fills this buffer with one or more null-terminated strings.
+     * The final null-terminated string is followed by an additional NULL. If
+     * device name is non-NULL, the function retrieves information about the
+     * particular MS-DOS device. The first null-terminated string stored into
+     * the buffer is the current mapping for the device. The other null-terminated
+     * strings represent undeleted prior mappings for the device. Each
+     * null-terminated string stored into the buffer is the name of an existing
+     * MS-DOS device, for example, {@code \Device\HarddiskVolume1} or {@code \Device\Floppy0}.
+     * @param ucchMax The maximum number of characters that can be stored into the buffer 
+     * @return If the function succeeds, the return value is the number of characters stored
+     * into the buffer, otherwise zero. Use {@link #GetLastError()} to get extended
+     * error information. If the buffer is too small, the function fails and the last error
+     * code is {@code ERROR_INSUFFICIENT_BUFFER}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365461(v=vs.85).aspx">QueryDosDevice</A>
+     */
+    int QueryDosDevice(String lpDeviceName, char[] lpTargetPath, int ucchMax);
+
+    /**
+     * Retrieves the name of a mounted folder on the specified volume - used
+     * to begin scanning the mounted folders on a volume
+     * @param lpszRootPathName A volume GUID path for the volume to scan for
+     * mounted folders. A trailing backslash is required.
+     * @param lpszVolumeMountPoint A buffer that receives the name of the first
+     * mounted folder that is found.
+     * @param cchBufferLength The length of the buffer that receives the path
+     * to the mounted folder
+     * @return If succeeds, a search handle used in a subsequent call to the
+     * FindNextVolumeMountPoint and FindVolumeMountPointClose
+     * functions. Otherwise, the return value is the {@link #INVALID_HANDLE_VALUE}.
+     * To get extended error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364426(v=vs.85).aspx">FindFirstVolumeMountPoint</A>
+     */
+    HANDLE FindFirstVolumeMountPoint(String lpszRootPathName, char[] lpszVolumeMountPoint, int cchBufferLength);
+
+    /**
+     * Continues a mounted folder search started by a call to the
+     * {@link #FindFirstVolumeMountPoint(String, char[], int)} function - finds one
+     * (next) mounted folder per call.
+     * @param hFindVolumeMountPoint A mounted folder search handle returned by
+     * a previous call to the {@link #FindFirstVolumeMountPoint(String, char[], int)}
+     * function.
+     * @param lpszVolumeMountPoint A buffer that receives the name of the (next)
+     * mounted folder that is found.
+     * @param cchBufferLength The length of the buffer that receives the path
+     * to the mounted folder
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information. If no more mount points found then the reported
+     * error is {@code ERROR_NO_MORE_FILES}. In this case, simply call
+     * {@link #FindVolumeMountPointClose(com.sun.jna.platform.win32.WinNT.HANDLE)}
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364432(v=vs.85).aspx">FindNextVolumeMountPoint</A>
+     */
+    boolean FindNextVolumeMountPoint(HANDLE hFindVolumeMountPoint, char[] lpszVolumeMountPoint, int cchBufferLength);
+
+    /**
+     * Closes the specified mounted folder search handle. 
+     * @param hFindVolumeMountPoint A mounted folder search handle returned by
+     * a previous call to the {@link #FindFirstVolumeMountPoint(String, char[], int)}
+     * function.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364435(v=vs.85).aspx">FindVolumeMountPointClose</A>
+     */
+    boolean FindVolumeMountPointClose(HANDLE hFindVolumeMountPoint);
+
+    /**
+     * Retrieves a volume GUID path for the volume that is associated with the
+     * specified volume mount point (drive letter, volume GUID path, or mounted
+     * folder).
+     * @param lpszVolumeMountPoint A string that contains the path of a mounted
+     * folder (e.g., &quot;Y:\MountX\&quot;) or a drive letter (for example,
+     * &quot;X:\&quot;). The string must end with a trailing backslash.
+     * @param lpszVolumeName A buffer that receives the volume GUID path - if
+     * there is more than one volume GUID path for the volume, only the first
+     * one in the mount manager's cache is returned.
+     * @param cchBufferLength The length of the output buffer - a reasonable size
+     * for the buffer to accommodate the largest possible volume GUID path is
+     * at 50 characters
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364994(v=vs.85).aspx">GetVolumeNameForVolumeMountPoint</A>
+     */
+    boolean GetVolumeNameForVolumeMountPoint(String lpszVolumeMountPoint, char[] lpszVolumeName, int cchBufferLength);
+
+    /**
+     * Sets the label of a file system volume.
+     * @param lpRootPathName The volume's drive letter (for example, {@code X:\})
+     * or the path of a mounted folder that is associated with the volume (for
+     * example, {@code Y:\MountX\}). The string must end with a trailing backslash.
+     * If this parameter is NULL, the root of the current directory is used.
+     * @param lpVolumeName The new label for the volume. If this parameter is NULL,
+     * the function deletes any existing label from the specified volume and does
+     * not assign a new label.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365560(v=vs.85).aspx">SetVolumeLabel</A>
+     */
+    boolean SetVolumeLabel(String lpRootPathName, String lpVolumeName);
+
+    /**
+     * Associates a volume with a drive letter or a directory on another volume.
+     * @param lpszVolumeMountPoint The user-mode path to be associated with the
+     * volume. This may be a drive letter (for example, &quot;X:\&quot;) or a
+     * directory on another volume (for example, &quot;Y:\MountX\&quot;). The
+     * string must end with a trailing backslash.
+     * @param lpszVolumeName A volume GUID path for the volume.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365561(v=vs.85).aspx">SetVolumeMountPoint</A>
+     */
+    boolean SetVolumeMountPoint(String lpszVolumeMountPoint, String lpszVolumeName);
+
+    /**
+     * Deletes a drive letter or mounted folder
+     * @param lpszVolumeMountPoint The drive letter or mounted folder to be deleted.
+     * A trailing backslash is required, for example, &quot;X:\&quot; or &quot;Y:\MountX\&quot;.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363927(v=vs.85).aspx">DeleteVolumeMountPoint</A>
+     */
+    boolean DeleteVolumeMountPoint(String lpszVolumeMountPoint);
+
+    /**
+     * @param lpRootPathName A string that contains the root directory of the
+     * volume to be described. If this parameter is {@code null}, the root of
+     * the current directory is used. A trailing backslash is required. For example,
+     * you specify &quot;\\MyServer\MyShare\&quot;, or &quot;C:\&quot;.
+     * @param lpVolumeNameBuffer If not {@code null} then receives the name of
+     * the specified volume. The buffer size is specified by the <tt>nVolumeNameSize</tt>
+     * parameter.
+     * @param nVolumeNameSize The length of the volume name buffer - max. size is
+     * {@link WinDef#MAX_PATH} + 1 - ignored if no volume name buffer provided
+     * @param lpVolumeSerialNumber Receives the volume serial number - can be
+     * {@code null} if the serial number is not required
+     * @param lpMaximumComponentLength Receives the maximum length of a file name
+     * component that the underlying file system supports - can be {@code null}
+     * if this data is not required
+     * @param lpFileSystemFlags Receives flags associated with the file system
+     *  - can be {@code null} if this data is not required
+     * @param lpFileSystemNameBuffer If not {@code null} then receives the name
+     * of the file system. The buffer size is specified by the <tt>nFileSystemNameSize</tt>
+     * parameter.
+     * @param nFileSystemNameSize The length of the file system name buffer -
+     * max. size is {@link WinDef#MAX_PATH} + 1 - ignored if no file system name
+     * buffer provided
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364993(v=vs.85).aspx">GetVolumeInformation</A>
+     */
+    boolean GetVolumeInformation(String lpRootPathName,
+                    char[] lpVolumeNameBuffer, int nVolumeNameSize,
+                    IntByReference lpVolumeSerialNumber,
+                    IntByReference lpMaximumComponentLength,
+                    IntByReference lpFileSystemFlags,
+                    char[] lpFileSystemNameBuffer, int nFileSystemNameSize);
+
+    /**
+     * Retrieves the volume mount point where the specified path is mounted.
+     * @param lpszFileName The input path string. Both absolute and relative
+     * file and directory names, for example &quot;..&quot;, are acceptable in
+     * this path. If you specify a relative directory or file name without a 
+     * volume qualifier, returns the drive letter of the boot volume. If this
+     * parameter is an empty string, the function fails but the last error is
+     * set to {@code ERROR_SUCCESS}.
+     * @param lpszVolumePathName Buffer receives the volume mount point for the
+     * input path.
+     * @param cchBufferLength The length of the output buffer
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364996(v=vs.85).aspx">GetVolumePathName</A>
+     */
+    boolean GetVolumePathName(String lpszFileName, char[] lpszVolumePathName, int cchBufferLength);
+
+    /**
+     * Retrieves a list of drive letters and mounted folder paths for the specified volume
+     * @param lpszVolumeName A volume GUID path for the volume
+     * @param lpszVolumePathNames A buffer that receives the list of drive
+     * letters and mounted folder paths. The list is an array of null-terminated
+     * strings terminated by an additional NULL character. If the buffer is
+     * not large enough to hold the complete list, the buffer holds as much of
+     * the list as possible.
+     * @param cchBufferLength The available length of the buffer - including all
+     * NULL characters.
+     * @param lpcchReturnLength If the call is successful, this parameter is the
+     * number of character copied to the buffer. Otherwise, this parameter is the
+     * size of the buffer required to hold the complete list
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information. If the buffer is not large enough to hold
+     * the complete list, the error code is {@code ERROR_MORE_DATA} and the
+     * <tt>lpcchReturnLength</tt> parameter receives the required buffer size.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364998(v=vs.85).aspx">GetVolumePathNamesForVolumeName</A>
+     */
+    boolean GetVolumePathNamesForVolumeName(String lpszVolumeName,
+                    char[] lpszVolumePathNames, int cchBufferLength,
+                    IntByReference lpcchReturnLength);
+
+    /**
+     * Retrieves the name of a volume on a computer - used to begin scanning the
+     * volumes of a computer
+     * @param lpszVolumeName A buffer that receives a null-terminated string that
+     * specifies a volume GUID path for the first volume that is found
+     * @param cchBufferLength The length of the buffer to receive the volume GUID path
+     * @return If the function succeeds, the return value is a search handle
+     * used in a subsequent call to the {@link #FindNextVolume(com.sun.jna.platform.win32.WinNT.HANDLE, char[], int)
+     * and {@link #FindVolumeClose(com.sun.jna.platform.win32.WinNT.HANDLE)} functions.
+     * Otherwise, the return value is the {@link #INVALID_HANDLE_VALUE}. To get
+     * extended error information, call {@link #GetLastError()}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364425(v=vs.85).aspx">FindFirstVolume</A>
+     * @see Kernel32Util#extractVolumeGUID(String)
+     */
+    HANDLE FindFirstVolume(char[] lpszVolumeName, int cchBufferLength);
+    
+    /**
+     * Continues a volume search started by a call to the {@link #FindFirstVolume(char[], int)}
+     * function - finds one volume per call.
+     * @param hFindVolume The volume search handle returned by a previous call to the
+     * {@link #FindFirstVolume(char[], int)}.
+     * @param lpszVolumeName A buffer that receives a null-terminated string that
+     * specifies a volume GUID path for the (next) path that is found
+     * @param cchBufferLength The length of the buffer to receive the volume GUID path
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information. If no more volumes found then the reported
+     * error is {@code ERROR_NO_MORE_FILES}. In this case, simply call {@link #FindVolumeClose(com.sun.jna.platform.win32.WinNT.HANDLE)}
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364431(v=vs.85).aspx">FindNextVolume</A>
+     * @see Kernel32Util#extractVolumeGUID(String)
+     */
+    boolean FindNextVolume(HANDLE hFindVolume, char[] lpszVolumeName, int cchBufferLength);
+    
+    /**
+     * Closes the specified volume search handle. 
+     * @param hFindVolume The volume search handle returned by a previous call to the
+     * {@link #FindFirstVolume(char[], int)}.
+     * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
+     * to get extended error information
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364433(v=vs.85).aspx">FindVolumeClose</A>
+     */
+    boolean FindVolumeClose(HANDLE hFindVolume);
 }

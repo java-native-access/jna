@@ -101,6 +101,7 @@ public final class Native implements Version {
     private static Map libraries = new WeakHashMap();
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
         new UncaughtExceptionHandler() {
+            @Override
             public void uncaughtException(Callback c, Throwable e) {
                 System.err.println("JNA: Callback " + c + " threw the following exception:");
                 e.printStackTrace();
@@ -168,12 +169,13 @@ public final class Native implements Version {
 
     /** Force a dispose when the Native class is GC'd. */
     private static final Object finalizer = new Object() {
+        @Override
         protected void finalize() {
             dispose();
         }
     };
 
-    /** Properly dispose of JNA functionality.  
+    /** Properly dispose of JNA functionality.
         Called when this class is finalized and also from JNI when
         JNA's native shared library is unloaded.
      */
@@ -244,6 +246,7 @@ public final class Native implements Version {
      *
      * @deprecated Last error is always preserved
      */
+    @Deprecated
     public static void setPreserveLastError(boolean enable) { }
 
     /** Indicates whether the system last error result is preserved
@@ -253,6 +256,7 @@ public final class Native implements Version {
      *
      * @deprecated Last error is always preserved
      */
+    @Deprecated
     public static boolean getPreserveLastError() { return true; }
 
     /** Utility method to get the native window ID for a Java {@link Window}
@@ -307,51 +311,126 @@ public final class Native implements Version {
 
     private static native long _getDirectBufferPointer(Buffer b);
 
-    /** Obtain a Java String from the given native byte array.  If there is
+    /**
+     * Obtain a Java String from the given native byte array.  If there is
      * no NUL terminator, the String will comprise the entire array.  The
      * encoding is obtained from {@link #getDefaultStringEncoding()}.
+     *
+     * @param buf The buffer containing the encoded bytes
+     * @see #toString(byte[], String)
      */
     public static String toString(byte[] buf) {
         return toString(buf, getDefaultStringEncoding());
     }
 
-    /** Obtain a Java String from the given native byte array, using the given
+    /**
+     * Obtain a Java String from the given native byte array, using the given
      * encoding.  If there is no NUL terminator, the String will comprise the
-     * entire array.  If the <code>encoding</code> parameter is null,
-     * the platform default encoding will be used.
+     * entire array.
+     *
+     * @param buf The buffer containing the encoded bytes
+     * @param encoding The encoding name - if {@code null} then the platform
+     * default encoding will be used
      */
     public static String toString(byte[] buf, String encoding) {
-        String s = null;
+        int len = buf.length;
+        // find out the effective length
+        for (int index = 0; index < len; index++) {
+            if (buf[index] == 0) {
+                len = index;
+                break;
+            }
+        }
+
+        if (len == 0) {
+            return "";
+        }
+
         if (encoding != null) {
             try {
-                s = new String(buf, encoding);
+                return new String(buf, 0, len, encoding);
             }
             catch(UnsupportedEncodingException e) {
                 System.err.println("JNA Warning: Encoding '"
                                    + encoding + "' is unsupported");
             }
         }
-        if (s == null) {
-            System.err.println("JNA Warning: Decoding with fallback " + System.getProperty("file.encoding"));
-            s = new String(buf);
-        }
-        int term = s.indexOf(0);
-        if (term != -1) {
-            s = s.substring(0, term);
-        }
-        return s;
+
+        System.err.println("JNA Warning: Decoding with fallback " + System.getProperty("file.encoding"));
+        return new String(buf, 0, len);
     }
 
-    /** Obtain a Java String from the given native wchar_t array.  If there is
-     * no NUL terminator, the String will comprise the entire array.  
+    /**
+     * Obtain a Java String from the given native wchar_t array.  If there is
+     * no NUL terminator, the String will comprise the entire array.
+     *
+     * @param buf The buffer containing the characters
      */
     public static String toString(char[] buf) {
-        String s = new String(buf);
-        int term = s.indexOf(0);
-        if (term != -1) {
-            s = s.substring(0, term);
+        int len = buf.length;
+        for (int index = 0; index < len; index++) {
+            if (buf[index] == '\0') {
+                len = index;
+                break;
+            }
         }
-        return s;
+
+        if (len == 0) {
+            return "";
+        } else {
+            return new String(buf, 0, len);
+        }
+    }
+
+    /**
+     * Converts a &quot;list&quot; of strings each null terminated
+     * into a {@link List} of {@link String} values. The end of the
+     * list is signaled by an extra NULL value at the end or by the
+     * end of the buffer.
+     * @param buf The buffer containing the strings
+     * @return A {@link List} of all the strings in the buffer
+     * @see #toStringList(char[], int, int)
+     */
+    public static List<String> toStringList(char[] buf) {
+        return toStringList(buf, 0, buf.length);
+    }
+
+    /**
+     * Converts a &quot;list&quot; of strings each null terminated
+     * into a {@link List} of {@link String} values. The end of the
+     * list is signaled by an extra NULL value at the end or by the
+     * end of the data.
+     * @param buf The buffer containing the strings
+     * @param offset Offset to start parsing
+     * @param len The total characters to parse
+     * @return A {@link List} of all the strings in the buffer
+     */
+    public static List<String> toStringList(char[] buf, int offset, int len) {
+        List<String> list = new ArrayList<String>();
+        int lastPos = offset;
+        int maxPos = offset + len;
+        for (int curPos = offset; curPos < maxPos; curPos++) {
+            if (buf[curPos] != '\0') {
+                continue;
+            }
+
+            // check if found the extra null terminator
+            if (lastPos == curPos) {
+                return list;
+            }
+
+            String value = new String(buf, lastPos, curPos - lastPos);
+            list.add(value);
+            lastPos = curPos + 1;   // skip the '\0'
+        }
+
+        // This point is reached if there is no double null terminator
+        if (lastPos < maxPos) {
+            String value = new String(buf, lastPos, maxPos - lastPos);
+            list.add(value);
+        }
+
+        return list;
     }
 
     /** Map a library interface to the current process, providing
@@ -360,7 +439,7 @@ public final class Native implements Version {
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the current
-     * process. 
+     * process.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
@@ -377,7 +456,7 @@ public final class Native implements Version {
      * @param interfaceClass
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the current
-     * process. 
+     * process.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
@@ -393,7 +472,7 @@ public final class Native implements Version {
      * @param name
      * @param interfaceClass
      * @return an instance of the requested interface, mapped to the indicated
-     * native library. 
+     * native library.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
@@ -412,7 +491,7 @@ public final class Native implements Version {
      * @param interfaceClass
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the indicated
-     * native library. 
+     * native library.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
@@ -559,7 +638,7 @@ public final class Native implements Version {
             return null;
         }
         catch (Exception e) {
-            throw new IllegalArgumentException(fieldName + " must be a public field of type " 
+            throw new IllegalArgumentException(fieldName + " must be a public field of type "
                                                + resultClass.getName() + " ("
                                                + e + "): " + mappingClass);
         }
@@ -572,9 +651,9 @@ public final class Native implements Version {
         return (TypeMapper)getLibraryOptions(cls).get(Library.OPTION_TYPE_MAPPER);
     }
 
-    /** Return the preferred Strring encoding for the given native interface. 
+    /** Return the preferred Strring encoding for the given native interface.
      * If there is no setting, defaults to the {@link
-     * #getDefaultStringEncoding()}. 
+     * #getDefaultStringEncoding()}.
      * See {@link com.sun.jna.Library#OPTION_STRING_ENCODING}.
      */
     public static String getStringEncoding(Class cls) {
@@ -606,7 +685,7 @@ public final class Native implements Version {
 
     /** Return a byte array corresponding to the given String, using the given
         encoding.  If the encoding is not found default to the platform native
-        encoding. 
+        encoding.
     */
     static byte[] getBytes(String s, String encoding) {
         if (encoding != null) {
@@ -808,7 +887,7 @@ public final class Native implements Version {
     }
 
     /** Attempt to extract a native library from the resource path using the
-     * given class loader.  
+     * given class loader.
      * @param name Base name of native library to extract.  May also be an
      * absolute resource path (i.e. starts with "/"), in which case the
      * no transformations of the library name are performed.  If only the base
@@ -926,7 +1005,7 @@ public final class Native implements Version {
     public static native int getLastError();
 
     /** Set the OS last error code.  The value will be saved on a per-thread
-     * basis. 
+     * basis.
      */
     public static native void setLastError(int code);
 
@@ -951,6 +1030,7 @@ public final class Native implements Version {
         }
         final Library.Handler handler = (Library.Handler)ih;
         InvocationHandler newHandler = new InvocationHandler() {
+            @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 synchronized(handler.getNativeLibrary()) {
                     return handler.invoke(library, method, args);
@@ -984,6 +1064,7 @@ public final class Native implements Version {
 
             final ClassLoader cl = Native.class.getClassLoader();
             Method m = (Method)AccessController.doPrivileged(new PrivilegedAction() {
+                @Override
                 public Object run() {
                     try {
                         Method m = ClassLoader.class.getDeclaredMethod("findLibrary", new Class[] { String.class });
@@ -1052,6 +1133,7 @@ public final class Native implements Version {
     static void removeTemporaryFiles() throws IOException {
         File dir = getTempDir();
         FilenameFilter filter = new FilenameFilter() {
+            @Override
             public boolean accept(File dir, String name) {
                 return name.endsWith(".x") && name.startsWith(JNA_TMPLIB_PREFIX);
             }
@@ -1200,6 +1282,7 @@ public final class Native implements Version {
     */
     static Class getCallingClass() {
         Class[] context = new SecurityManager() {
+            @Override
             public Class[] getClassContext() {
                 return super.getClassContext();
             }
@@ -1397,7 +1480,7 @@ public final class Native implements Version {
      * library load path or <code>jna.library.path</code>.
      * @param cls Class with native methods to register
      * @param libName name of or path to native library to which functions
-     * should be bound 
+     * should be bound
      */
     public static void register(Class cls, String libName) {
         Map options = new HashMap();
@@ -1933,8 +2016,9 @@ public final class Native implements Version {
 
     private static Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
 
-    private static ThreadLocal nativeThreadTerminationFlag = 
+    private static ThreadLocal nativeThreadTerminationFlag =
         new ThreadLocal() {
+            @Override
             protected Object initialValue() {
                 Memory m = new Memory(4);
                 m.clear();
