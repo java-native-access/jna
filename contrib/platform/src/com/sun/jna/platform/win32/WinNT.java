@@ -722,6 +722,19 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int FILE_READ_ONLY_VOLUME = 0x00080000;
     int FILE_SEQUENTIAL_WRITE_ONCE = 0x00100000;
     int FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
+    // NOTE: These values are not supported until Windows Server 2008 R2 and Windows 7
+    int FILE_SUPPORTS_HARD_LINKS = 0x00400000;
+    int FILE_SUPPORTS_EXTENDED_ATTRIBUTES = 0x00800000;
+    int FILE_SUPPORTS_OPEN_BY_FILE_ID = 0x01000000;
+    int FILE_SUPPORTS_USN_JOURNAL = 0x02000000;
+
+    
+    // The controllable aspects of the DefineDosDevice function.
+    // see https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx
+    int DDD_RAW_TARGET_PATH = 0x00000001;
+    int DDD_REMOVE_DEFINITION = 0x00000002;
+    int DDD_EXACT_MATCH_ON_REMOVE = 0x00000004;
+    int DDD_NO_BROADCAST_SYSTEM = 0x00000008;
 
     /**
      * The FILE_NOTIFY_INFORMATION structure describes the changes found by the

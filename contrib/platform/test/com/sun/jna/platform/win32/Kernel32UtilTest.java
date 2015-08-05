@@ -19,10 +19,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
-import junit.framework.TestCase;
+import java.util.Collection;
 
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -35,7 +36,7 @@ public class Kernel32UtilTest extends TestCase {
         System.out.println("Temp path: " + Kernel32Util.getTempPath());
         // logical drives
         System.out.println("Logical drives: ");
-		String[] logicalDrives = Kernel32Util.getLogicalDriveStrings();
+		Collection<String> logicalDrives = Kernel32Util.getLogicalDriveStrings();
 		for(String logicalDrive : logicalDrives) {
 			// drive type
 			System.out.println(" " + logicalDrive + " (" 
@@ -105,10 +106,10 @@ public class Kernel32UtilTest extends TestCase {
 	}
 	
 	public void testGetLogicalDriveStrings() {
-		String[] logicalDrives = Kernel32Util.getLogicalDriveStrings();
-		assertTrue(logicalDrives.length > 0);
+	    Collection<String> logicalDrives = Kernel32Util.getLogicalDriveStrings();
+		assertTrue("No logical drives found", logicalDrives.size() > 0);
 		for(String logicalDrive : logicalDrives) {
-			assertTrue(logicalDrive.length() > 0);
+			assertTrue("Empty logical drive name in list", logicalDrive.length() > 0);
 		}
 	}
 	

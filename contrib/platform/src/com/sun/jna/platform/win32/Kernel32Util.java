@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -136,33 +135,22 @@ public abstract class Kernel32Util implements WinDef {
     /**
      * Returns valid drives in the system.
      * 
-     * @return An array of valid drives.
+     * @return A {@link List} of valid drives.
      */
-    public static String[] getLogicalDriveStrings() {
-        DWORD dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(new DWORD(0),
-                null);
+    public static List<String> getLogicalDriveStrings() {
+        DWORD dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(new DWORD(0), null);
         if (dwSize.intValue() <= 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
         char buf[] = new char[dwSize.intValue()];
         dwSize = Kernel32.INSTANCE.GetLogicalDriveStrings(dwSize, buf);
-        if (dwSize.intValue() <= 0) {
+        int bufSize = dwSize.intValue();
+        if (bufSize <= 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        List<String> drives = new ArrayList<String>();
-        String drive = "";
-        // the buffer is double-null-terminated
-        for (int i = 0; i < buf.length - 1; i++) {
-            if (buf[i] == 0) {
-                drives.add(drive);
-                drive = "";
-            } else {
-                drive += buf[i];
-            }
-        }
-        return drives.toArray(new String[0]);
+        return Native.toStringList(buf, 0, bufSize);
     }
 
     /**
@@ -608,5 +596,77 @@ public abstract class Kernel32Util implements WinDef {
         if (! Kernel32.INSTANCE.WritePrivateProfileSection(appName, buffer.toString(), fileName)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
+    }
+
+    /**
+     * Invokes the {@link Kernel32#QueryDosDevice(String, char[], int)} method
+     * and parses the result
+     * @param lpszDeviceName The device name
+     * @param maxTargetSize The work buffer size to use for the query
+     * @return The parsed result
+     */
+    public static final List<String> queryDosDevice(String lpszDeviceName, int maxTargetSize) {
+        char[] lpTargetPath = new char[maxTargetSize];
+        int dwSize = Kernel32.INSTANCE.QueryDosDevice(lpszDeviceName, lpTargetPath, lpTargetPath.length);
+        if (dwSize == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        return Native.toStringList(lpTargetPath, 0, dwSize);
+    }
+
+    /**
+     * Invokes and parses the result of {@link Kernel32#GetVolumePathNamesForVolumeName(String, char[], int, IntByReference)}
+     * @param lpszVolumeName The volume name
+     * @return The parsed result
+     * @throws Win32Exception If failed to retrieve the required information
+     */
+    public static final List<String> getVolumePathNamesForVolumeName(String lpszVolumeName) {
+        char[] lpszVolumePathNames = new char[WinDef.MAX_PATH + 1];
+        IntByReference lpcchReturnLength = new IntByReference();
+
+        if (!Kernel32.INSTANCE.GetVolumePathNamesForVolumeName(lpszVolumeName, lpszVolumePathNames, lpszVolumePathNames.length, lpcchReturnLength)) {
+            int hr = Kernel32.INSTANCE.GetLastError();
+            if (hr != WinError.ERROR_MORE_DATA) {
+                throw new Win32Exception(hr);
+            }
+            
+            int required = lpcchReturnLength.getValue();
+            lpszVolumePathNames = new char[required];
+            // this time we MUST succeed
+            if (!Kernel32.INSTANCE.GetVolumePathNamesForVolumeName(lpszVolumeName, lpszVolumePathNames, lpszVolumePathNames.length, lpcchReturnLength)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+        }
+        
+        int bufSize = lpcchReturnLength.getValue();
+        return Native.toStringList(lpszVolumePathNames, 0, bufSize);
+    }
+
+    // prefix and suffix of a volume GUID path
+    public static final String VOLUME_GUID_PATH_PREFIX = "\\\\?\\Volume{";
+    public static final String VOLUME_GUID_PATH_SUFFIX = "}\\";
+
+    /**
+     * Parses and returns the pure GUID value of a volume name obtained
+     * from {@link Kernel32#FindFirstVolume(char[], int)} or
+     * {@link Kernel32#FindNextVolume(HANDLE, char[], int)} calls
+     * 
+     * @param volumeName
+     *              The volume name as returned by on of the above mentioned calls
+     * @return The pure GUID value after stripping the &quot;\\?\&quot; prefix and
+     * removing the trailing backslash.
+     * @throws IllegalArgumentException if bad format encountered
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365248(v=vs.85).aspx">Naming a Volume</A>
+     */
+    public static final String extractVolumeGUID(String volumeGUIDPath) {
+        if ((volumeGUIDPath == null)
+         || (volumeGUIDPath.length() <= (VOLUME_GUID_PATH_PREFIX.length() + VOLUME_GUID_PATH_SUFFIX.length()))
+         || (!volumeGUIDPath.startsWith(VOLUME_GUID_PATH_PREFIX))
+         || (!volumeGUIDPath.endsWith(VOLUME_GUID_PATH_SUFFIX))) {
+            throw new IllegalArgumentException("Bad volume GUID path format: " + volumeGUIDPath);
+        }
+        
+        return volumeGUIDPath.substring(VOLUME_GUID_PATH_PREFIX.length(), volumeGUIDPath.length() - VOLUME_GUID_PATH_SUFFIX.length());
     }
 }
