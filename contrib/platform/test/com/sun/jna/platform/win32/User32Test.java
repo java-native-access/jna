@@ -1,29 +1,24 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
 import static com.sun.jna.platform.win32.User32.INSTANCE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -37,6 +32,7 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
@@ -53,17 +49,17 @@ import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
 /**
  * @author dblock[at]dblock[dot]org
  */
-public class User32Test {
+public class User32Test extends AbstractWin32TestSupport {
 
     public static void main(String[] args) {
     	JUnitCore.runClasses(User32Test.class);
     }
-    
+
 	/**
 	 * Iterates over all currently available Desktop windows and searches for
 	 * the window with the associated process whose full PE file path ends with
 	 * the specified string (case insensitive).
-	 * 
+	 *
 	 * @param filePathEnd
 	 *            The requested end of the process' full file path.
 	 * @return Either the found window or {@code null} if nothing was found.
@@ -78,6 +74,22 @@ public class User32Test {
 		}
 
 		return null;
+    }
+
+	@Test
+    public void testNoDuplicateMethodsNames() {
+	    // see https://github.com/twall/jna/issues/482
+        Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(User32.class);
+        if (dupSet.size() > 0) {
+            for (String name : new String[] {
+                    // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
+                    "GetMonitorInfo"
+                }) {
+                dupSet.remove(name);
+            }
+        }
+
+        assertTrue("Duplicate methods found: " + dupSet, dupSet.isEmpty());
     }
 
     @Test
@@ -157,10 +169,10 @@ public class User32Test {
         assertTrue(Kernel32.INSTANCE.GetTickCount() >= plii.dwTime);
         assertTrue(plii.dwTime > 0);
     }
-    
+
     @Test
     public final void testRegisterWindowMessage() {
-        final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST"); 
+        final int msg = User32.INSTANCE.RegisterWindowMessage("RM_UNITTEST");
         assertTrue(msg >= 0xC000 && msg <= 0xFFFF);
     }
 
@@ -208,7 +220,7 @@ public class User32Test {
             }
         }, new LPARAM(0)).booleanValue());
     }
-    
+
     @Test
     public final void testAdjustWindowRect() {
     	RECT lpRect = new RECT();
@@ -216,38 +228,38 @@ public class User32Test {
     	lpRect.top = 200;
     	lpRect.bottom = 300;
     	lpRect.right = 500;
-    	
+
     	assertTrue(User32.INSTANCE.AdjustWindowRect(lpRect, new DWORD(WinUser.WS_THICKFRAME), new BOOL(1)).booleanValue());
-    	
+
     	assertTrue(lpRect.left < 100);
     	assertTrue(lpRect.top < 200);
     	assertTrue(lpRect.bottom > 300);
     	assertTrue(lpRect.right > 500);
     }
-    
+
     @Ignore("Locks the workstation")
     @Test
     public final void testLockWorkStation() {
 		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
     }
-    
+
     @Ignore("Shutsdown the workstation")
     @Test
     public final void testExitWindows() {
 		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
     }
-    
+
     @Test
 	public void testGetIconInfo() throws Exception {
 		final ICONINFO iconInfo = new ICONINFO();
-		final HANDLE hIcon = User32.INSTANCE.LoadImage(null, new File(
+		final HANDLE hImage = User32.INSTANCE.LoadImage(null, new File(
 				getClass().getResource("/res/test_icon.ico").toURI())
 				.getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
 				WinUser.LR_LOADFROMFILE);
 
 		try {
 			// obtain test icon from classpath
-			if (!User32.INSTANCE.GetIconInfo(hIcon, iconInfo))
+			if (!User32.INSTANCE.GetIconInfo(new HICON(hImage), iconInfo))
 				throw new Exception(
 						"Invocation of User32.GetIconInfo() failed: "
 								+ Kernel32Util.getLastErrorMessage());

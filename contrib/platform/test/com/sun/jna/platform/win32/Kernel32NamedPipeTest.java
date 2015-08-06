@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -71,50 +70,48 @@ public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
 
     @Test
     public void testMultiThreadedNamedPipe() {
-        final String    pipeName="\\\\.\\pipe\\" + getCurrentTestName();
-        final Logger    logger=Logger.getLogger(getClass().getName());
-        final int        MAX_BUFFER_SIZE=1024;
-        ExecutorService    executors=Executors.newFixedThreadPool(2);
+        final String pipeName = "\\\\.\\pipe\\" + getCurrentTestName();
+        final Logger logger = Logger.getLogger(getClass().getName());
+        final int MAX_BUFFER_SIZE=1024;
+        ExecutorService executors = Executors.newFixedThreadPool(2);
         try {
-            Future<?>        server=executors.submit(new Runnable() {
+            Future<?> server = executors.submit(new Runnable() {
                     @Override
                     public void run() {
                         // based on https://msdn.microsoft.com/en-us/library/windows/desktop/aa365588(v=vs.85).aspx
-                        HANDLE    hNamedPipe=Kernel32.INSTANCE.CreateNamedPipe(pipeName,
+                        HANDLE hNamedPipe = assertValidHandle("CreateNamedPipe", Kernel32.INSTANCE.CreateNamedPipe(pipeName,
                                 WinBase.PIPE_ACCESS_DUPLEX,        // dwOpenMode
                                 WinBase.PIPE_TYPE_MESSAGE | WinBase.PIPE_READMODE_MESSAGE | WinBase.PIPE_WAIT,    // dwPipeMode
                                 1,    // nMaxInstances,
                                 MAX_BUFFER_SIZE,    // nOutBufferSize,
                                 MAX_BUFFER_SIZE,    // nInBufferSize,
                                 (int) TimeUnit.SECONDS.toMillis(30L),    // nDefaultTimeOut,
-                                null);    // lpSecurityAttributes
-                        assertCallSucceeded("CreateNamedPipe", !WinBase.INVALID_HANDLE_VALUE.equals(hNamedPipe));
+                                null    // lpSecurityAttributes
+                              ));
+
                         try {
                             logger.info("Await client connection");
                             assertCallSucceeded("ConnectNamedPipe", Kernel32.INSTANCE.ConnectNamedPipe(hNamedPipe, null));
                             logger.info("Client connected");
-                            
-                            ByteBuffer        readBuffer=ByteBuffer.allocate(MAX_BUFFER_SIZE);
-                            IntByReference    lpNumberOfBytesRead=new IntByReference(0);
-                            assertCallSucceeded("ReadFile", Kernel32.INSTANCE.ReadFile(hNamedPipe, readBuffer, MAX_BUFFER_SIZE, lpNumberOfBytesRead, null));
-                            
-                            int    readSize=lpNumberOfBytesRead.getValue();
+
+                            byte[] readBuffer = new byte[MAX_BUFFER_SIZE];
+                            IntByReference lpNumberOfBytesRead = new IntByReference(0);
+                            assertCallSucceeded("ReadFile", Kernel32.INSTANCE.ReadFile(hNamedPipe, readBuffer, readBuffer.length, lpNumberOfBytesRead, null));
+
+                            int readSize = lpNumberOfBytesRead.getValue();
                             logger.info("Received client data - length=" + readSize);
                             assertTrue("No data receieved from client", readSize > 0);
-                            
-                            byte[]    writeBuffer=new byte[readSize];
-                            readBuffer.get(writeBuffer);
-    
-                            IntByReference    lpNumberOfBytesWritten=new IntByReference(0);
-                            assertCallSucceeded("WriteFile", Kernel32.INSTANCE.WriteFile(hNamedPipe, writeBuffer, readSize, lpNumberOfBytesWritten, null));
+
+                            IntByReference lpNumberOfBytesWritten = new IntByReference(0);
+                            assertCallSucceeded("WriteFile", Kernel32.INSTANCE.WriteFile(hNamedPipe, readBuffer, readSize, lpNumberOfBytesWritten, null));
                             logger.info("Echoed client data - length=" + lpNumberOfBytesWritten.getValue());
                             assertEquals("Mismatched write buffer size", readSize, lpNumberOfBytesWritten.getValue());
-    
+
                             // Flush the pipe to allow the client to read the pipe's contents before disconnecting
                             assertCallSucceeded("FlushFileBuffers", Kernel32.INSTANCE.FlushFileBuffers(hNamedPipe));
-                                logger.info("Disconnecting");
-                                assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
-                                logger.info("Disconnected");
+                            logger.info("Disconnecting");
+                            assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
+                            logger.info("Disconnected");
                         } finally {    // clean up
                             assertCallSucceeded("Named pipe handle close", Kernel32.INSTANCE.CloseHandle(hNamedPipe));
                         }
@@ -122,43 +119,43 @@ public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
                 });
             logger.info("Started server - handle=" + server);
 
-            Future<?>    client=executors.submit(new Runnable() {
+            Future<?> client = executors.submit(new Runnable() {
                     @Override
                     public void run() {
                         // based on https://msdn.microsoft.com/en-us/library/windows/desktop/aa365592(v=vs.85).aspx
                         assertCallSucceeded("WaitNamedPipe", Kernel32.INSTANCE.WaitNamedPipe(pipeName, (int) TimeUnit.SECONDS.toMillis(15L)));
                         logger.info("Connected to server");
 
-                        HANDLE    hPipe=Kernel32.INSTANCE.CreateFile(pipeName, 
-                                 WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 
-                                 0,                      // no sharing 
+                        HANDLE hPipe = assertValidHandle("CreateNamedPipe", Kernel32.INSTANCE.CreateFile(pipeName,
+                                 WinNT.GENERIC_READ | WinNT.GENERIC_WRITE,
+                                 0,                      // no sharing
                                  null,                   // default security attributes
-                                 WinNT.OPEN_EXISTING,      // opens existing pipe 
-                                 0,                      // default attributes 
-                                 null);                  // no template file                         
-                        assertCallSucceeded("CreateNamedPipe", !WinBase.INVALID_HANDLE_VALUE.equals(hPipe));
+                                 WinNT.OPEN_EXISTING,      // opens existing pipe
+                                 0,                      // default attributes
+                                 null                  // no template file
+                               ));
+
                         try {
-                            IntByReference    lpMode=new IntByReference(WinBase.PIPE_READMODE_MESSAGE);
+                            IntByReference lpMode = new IntByReference(WinBase.PIPE_READMODE_MESSAGE);
                             assertCallSucceeded("SetNamedPipeHandleState", Kernel32.INSTANCE.SetNamedPipeHandleState(hPipe, lpMode, null, null));
-                            
-                            String            expMessage=Thread.currentThread().getName() + " says hello";
-                            byte[]            expData=expMessage.getBytes();
-                            IntByReference    lpNumberOfBytesWritten=new IntByReference(0);
+
+                            String expMessage = Thread.currentThread().getName() + " says hello";
+                            byte[] expData = expMessage.getBytes();
+                            IntByReference lpNumberOfBytesWritten = new IntByReference(0);
                             assertCallSucceeded("WriteFile", Kernel32.INSTANCE.WriteFile(hPipe, expData, expData.length, lpNumberOfBytesWritten, null));
                             logger.info("Sent hello message");
                             assertEquals("Mismatched write buffer size", expData.length, lpNumberOfBytesWritten.getValue());
-                            
-                            ByteBuffer        readBuffer=ByteBuffer.allocate(MAX_BUFFER_SIZE);
-                            IntByReference    lpNumberOfBytesRead=new IntByReference(0);
-                            assertCallSucceeded("ReadFile", Kernel32.INSTANCE.ReadFile(hPipe, readBuffer, MAX_BUFFER_SIZE, lpNumberOfBytesRead, null));
 
-                            int    readSize=lpNumberOfBytesRead.getValue();
+                            byte[] readBuffer = new byte[MAX_BUFFER_SIZE];
+                            IntByReference lpNumberOfBytesRead = new IntByReference(0);
+                            assertCallSucceeded("ReadFile", Kernel32.INSTANCE.ReadFile(hPipe, readBuffer, readBuffer.length, lpNumberOfBytesRead, null));
+
+                            int readSize = lpNumberOfBytesRead.getValue();
                             logger.info("Received server data - length=" + readSize);
                             assertTrue("No data receieved from server", readSize > 0);
 
-                            byte[]    actData=new byte[readSize];
-                            readBuffer.get(actData);
-                            assertArrayEquals("Mismatched server data", expData, actData);
+                            String actMessage = new String(readBuffer, 0, readSize);
+                            assertEquals("Mismatched server data", expMessage, actMessage);
                         } finally {    // clean up
                             assertCallSucceeded("Named pipe handle close", Kernel32.INSTANCE.CloseHandle(hPipe));
                         }
