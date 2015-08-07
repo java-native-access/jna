@@ -1974,6 +1974,19 @@ public interface X11 extends Library {
      */
     int XUngrabKeyboard(Display display, NativeLong time);
 
+    /**
+     * The XFetchName() function returns the name of the specified window. If it succeeds, it returns a nonzero status;
+     * otherwise, no name has been set for the window, and it returns zero. If the WM_NAME property has not been set for this
+     * window, XFetchName() sets window_name_return to NULL. If the data returned by the server is in the Latin Portable Character
+     * Encoding, then the returned string is in the Host Portable Character Encoding. Otherwise, the result is implementation
+     * dependent. When finished with it, a client must free the window name string using XFree().
+     * @param display Specifies the connection to the X server.
+     * @param window Specifies the window.
+     * @param window_name_return Returns the window name, which is a null-terminated string.
+     * @return Integer. Nonzero = success, zero = no name has been set.
+     */
+    int XFetchName(Display display, Window window, PointerByReference window_name_return);
+
     //int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym *keysyms, int num_codes);
     /** Defines the symbols for the specified number of KeyCodes starting with first_keycode. The symbols for KeyCodes outside this range remain unchanged. The number of elements in keysyms must be: num_codes * keysyms_per_keycode. The specified first_keycode must be greater than or equal to min_keycode returned by XDisplayKeycodes, or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes, or a BadValue error results: first_keycode + num_codes - 1. */
     int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym[] keysyms, int num_codes);
