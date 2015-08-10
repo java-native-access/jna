@@ -27,7 +27,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
  *
@@ -356,6 +355,18 @@ public interface WinDef extends StdCallLibrary {
          */
         public HICON() {
 
+        }
+
+        /**
+         * Instantiates a new hicon from a handle - this is required since
+         * in Win32 API HANDLE and HICON are the same, whereas in Java they
+         * are not, so in order to &quot;cast&quot; the handle we need this
+         * constructor
+         *
+         * @param handle The {@link HANDLE} to cast
+         */
+        public HICON(HANDLE handle) {
+            this(handle.getPointer());
         }
 
         /**
@@ -743,6 +754,7 @@ public interface WinDef extends StdCallLibrary {
          *
          * @see com.sun.jna.Structure#getFieldOrder()
          */
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "left", "top", "right",
                                                 "bottom" });
@@ -762,6 +774,7 @@ public interface WinDef extends StdCallLibrary {
          *
          * @see com.sun.jna.Structure#toString()
          */
+        @Override
         public String toString() {
             return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
         }
@@ -1062,6 +1075,7 @@ public interface WinDef extends StdCallLibrary {
          *
          * @see com.sun.jna.Structure#getFieldOrder()
          */
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "x", "y" });
         }
@@ -1513,14 +1527,14 @@ public interface WinDef extends StdCallLibrary {
 	 * handle to an OpenGL rendering context
 	 */
 	public static class HGLRC extends HANDLE {
-	
+
 	    /**
 	     * Instantiates a new HGLRC .
 	     */
 	    public HGLRC() {
-	
+
 	    }
-	
+
 	    /**
 	     * Instantiates a new HGLRC .
 	     *
@@ -1531,7 +1545,7 @@ public interface WinDef extends StdCallLibrary {
 	        super(p);
 	    }
 	}
-	
+
     /**
      * handle to an OpenGL rendering context
      */
@@ -1555,6 +1569,6 @@ public interface WinDef extends StdCallLibrary {
         }
     }
 
-	
-	
+
+
 }

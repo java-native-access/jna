@@ -20,33 +20,31 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.TimeZone;
 
-import junit.framework.TestCase;
-
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
-import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
-import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.ptr.IntByReference;
+
+import junit.framework.TestCase;
 
 public class Kernel32Test extends TestCase {
 
@@ -58,6 +56,21 @@ public class Kernel32Test extends TestCase {
     			+ " (" + lpVersionInfo.dwBuildNumber + ")"
     			+ " [" + Native.toString(lpVersionInfo.szCSDVersion) + "]");
         junit.textui.TestRunner.run(Kernel32Test.class);
+    }
+
+    // see https://github.com/twall/jna/issues/482
+    public void testNoDuplicateMethodsNames() {
+        Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Kernel32.class);
+        if (dupSet.size() > 0) {
+            for (String name : new String[] {
+                    // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
+                    "GetVersionEx"
+                }) {
+                dupSet.remove(name);
+            }
+        }
+
+        assertTrue("Duplicate methods found: " + dupSet, dupSet.isEmpty());
     }
 
     public void testGetDriveType() {
@@ -145,7 +158,7 @@ public class Kernel32Test extends TestCase {
         if (result) {
             return result;
         }
-        
+
         int hr=Kernel32.INSTANCE.GetLastError();
         /*
          * Check special error in case the user running the test isn't allowed
@@ -158,13 +171,13 @@ public class Kernel32Test extends TestCase {
         if (hr == WinError.ERROR_PRIVILEGE_NOT_HELD) {
             return false; // don't fail the test, but signal the failure
         }
-        
+
         if (hr != WinError.ERROR_SUCCESS) {
             fail(message + " failed: hr=" + hr);
         } else {
             fail(message + " unknown failure reason code");
         }
-        
+
         return false;
     }
 
@@ -236,10 +249,10 @@ public class Kernel32Test extends TestCase {
 		// This should return successfully
 		assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(
 				 handle, 1000));
-		
+
 		// now reset it to not signaled
 		Kernel32.INSTANCE.ResetEvent(handle);
-		
+
 		// handle runs into timeout since it is not triggered
 		// WAIT_TIMEOUT = 0x00000102
 		assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
@@ -399,16 +412,6 @@ public class Kernel32Test extends TestCase {
     	assertEquals(0, lpBuffer.ullAvailExtendedVirtual.intValue());
     }
 
-    public void testGetDiskFreeSpaceEx() {
-    	LARGE_INTEGER.ByReference lpFreeBytesAvailable = new LARGE_INTEGER.ByReference();
-    	LARGE_INTEGER.ByReference lpTotalNumberOfBytes = new LARGE_INTEGER.ByReference();
-    	LARGE_INTEGER.ByReference lpTotalNumberOfFreeBytes = new LARGE_INTEGER.ByReference();
-    	assertTrue(Kernel32.INSTANCE.GetDiskFreeSpaceEx(null,
-    			lpFreeBytesAvailable, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes));
-    	assertTrue(lpTotalNumberOfFreeBytes.getValue() > 0);
-    	assertTrue(lpTotalNumberOfFreeBytes.getValue() < lpTotalNumberOfBytes.getValue());
-    }
-
     public void testDeleteFile() {
     	String filename = Kernel32Util.getTempPath() + "\\FileDoesNotExist.jna";
     	assertFalse(Kernel32.INSTANCE.DeleteFile(filename));
@@ -421,21 +424,28 @@ public class Kernel32Test extends TestCase {
     	tmp.deleteOnExit();
 
     	FileWriter fw = new FileWriter(tmp);
-    	fw.append(expected);
-    	fw.close();
+    	try {
+    	    fw.append(expected);
+    	} finally {
+    	    fw.close();
+    	}
 
     	HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
     			new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-    	assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
+    	assertFalse("Failed to create file handle: " + tmp, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
 
-    	Memory m = new Memory(2048);
-    	IntByReference lpNumberOfBytesRead = new IntByReference(0);
-    	assertTrue(Kernel32.INSTANCE.ReadFile(hFile, m, (int) m.size(), lpNumberOfBytesRead, null));
-    	int read = lpNumberOfBytesRead.getValue();
-    	assertEquals(expected.length(), read);
-    	assertEquals(expected, new String(m.getByteArray(0, read)));
+    	try {
+            byte[] readBuffer=new byte[expected.length() + Byte.MAX_VALUE];
+        	IntByReference lpNumberOfBytesRead = new IntByReference(0);
+        	assertTrue("Failed to read from file", Kernel32.INSTANCE.ReadFile(hFile, readBuffer, readBuffer.length, lpNumberOfBytesRead, null));
 
-    	assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
+        	int read = lpNumberOfBytesRead.getValue();
+        	assertEquals("Mismatched read size", expected.length(), read);
+
+        	assertEquals("Mismatched read content", expected, new String(readBuffer, 0, read));
+    	} finally {
+    	    assertTrue("Failed to close file", Kernel32.INSTANCE.CloseHandle(hFile));
+    	}
     }
 
     public void testSetHandleInformation() throws IOException {
@@ -607,11 +617,11 @@ public class Kernel32Test extends TestCase {
         writer.close();
 
         final char[] buffer = new char[8];
-        
+
         DWORD len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "existingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
         assertEquals(3, len.intValue());
         assertEquals("ABC", Native.toString(buffer));
-        
+
         len = Kernel32.INSTANCE.GetPrivateProfileString("Section", "missingKey", "DEF", buffer, new DWORD(buffer.length), tmp.getCanonicalPath());
         assertEquals(3, len.intValue());
         assertEquals("DEF", Native.toString(buffer));
@@ -637,7 +647,7 @@ public class Kernel32Test extends TestCase {
         assertEquals(reader.readLine(), null);
         reader.close();
     }
-    
+
     public final void testGetPrivateProfileSection() throws IOException {
         final File tmp = File.createTempFile("testGetPrivateProfileSection", ".ini");
         tmp.deleteOnExit();
@@ -704,47 +714,47 @@ public class Kernel32Test extends TestCase {
     	assertNull(hThrd);
     	assertEquals(Kernel32.INSTANCE.GetLastError(), WinError.ERROR_INVALID_HANDLE);
     }
-    
+
     public void testWriteProcessMemory() {
     	Kernel32 kernel = Kernel32.INSTANCE;
-    	
-    	boolean successWrite = kernel.WriteProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);	
+
+    	boolean successWrite = kernel.WriteProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);
     	assertFalse(successWrite);
     	assertEquals(kernel.GetLastError(), WinError.ERROR_INVALID_HANDLE);
-    	
+
     	ByteBuffer bufDest = ByteBuffer.allocateDirect(4);
     	bufDest.put(new byte[]{0,1,2,3});
     	ByteBuffer bufSrc = ByteBuffer.allocateDirect(4);
     	bufSrc.put(new byte[]{5,10,15,20});
     	Pointer ptrSrc = Native.getDirectBufferPointer(bufSrc);
     	Pointer ptrDest = Native.getDirectBufferPointer(bufDest);
-    	
+
     	HANDLE selfHandle = kernel.GetCurrentProcess();
     	kernel.WriteProcessMemory(selfHandle, ptrDest, ptrSrc, 3, null);//Write only the first three
-    	
+
 		assertEquals(bufDest.get(0),5);
     	assertEquals(bufDest.get(1),10);
     	assertEquals(bufDest.get(2),15);
     	assertEquals(bufDest.get(3),3);
 	}
-    
+
     public void testReadProcessMemory() {
     	Kernel32 kernel = Kernel32.INSTANCE;
-    	
-    	boolean successRead = kernel.ReadProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);	
+
+    	boolean successRead = kernel.ReadProcessMemory(null, Pointer.NULL, Pointer.NULL, 1, null);
     	assertFalse(successRead);
     	assertEquals(kernel.GetLastError(), WinError.ERROR_INVALID_HANDLE);
-    	
+
     	ByteBuffer bufSrc = ByteBuffer.allocateDirect(4);
     	bufSrc.put(new byte[]{5,10,15,20});
     	ByteBuffer bufDest = ByteBuffer.allocateDirect(4);
     	bufDest.put(new byte[]{0,1,2,3});
     	Pointer ptrSrc = Native.getDirectBufferPointer(bufSrc);
     	Pointer ptrDest = Native.getDirectBufferPointer(bufDest);
-    	
+
     	HANDLE selfHandle = kernel.GetCurrentProcess();
     	kernel.ReadProcessMemory(selfHandle, ptrSrc, ptrDest, 3, null);//Read only the first three
-    	
+
 		assertEquals(bufDest.get(0),5);
     	assertEquals(bufDest.get(1),10);
     	assertEquals(bufDest.get(2),15);

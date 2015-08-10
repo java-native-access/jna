@@ -49,6 +49,7 @@ Features
 * Loosen OSGI OS name matching to accommodate Windows 8 family - Niels Bertram.
 * [#436] (https://github.com/twall/jna/pull/469): Added basic Pdh API implementation to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#481] (https://github.com/twall/jna/pull/481): Added volume management functions to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
+* [#483] (https://github.com/twall/jna/pull/483): Found and fixed duplicate method definitions for the same API in 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 
 Bug Fixes
 ---------

@@ -12,15 +12,50 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.sun.jna.platform.AbstractPlatformTestSupport;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
-/**
- * @author lgoldstein
- */
 public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSupport {
     protected AbstractWin32TestSupport() {
         super();
+    }
+
+    /**
+     * Makes sure that the method names (which represent APIs) do not repeat
+     * themselves. This check is in order where APIs are WIN32 API <U>functions</U>
+     * since these are C functions - which means no overloading is possible.
+     *
+     * @param ifc The interface (not checked) class to test
+     * @see #detectDuplicateMethods(Class)
+     */
+    public static final void assertNoDuplicateMethodsNames(Class<?> ifc) {
+        Collection<String> dupSet = detectDuplicateMethods(ifc);
+        assertTrue("Duplicate names found in " + ifc.getSimpleName() + ": " + dupSet, dupSet.isEmpty());
+    }
+
+    /**
+     * Checks if there are methods with the same name - regardless of the signature
+     *
+     * @param ifc The interface (not checked) class to test
+     * @return The {@link Set} of duplicate names - empty if no duplicates
+     */
+    public static final Set<String> detectDuplicateMethods(Class<?> ifc) {
+        Method[] methods = ifc.getMethods();
+        Set<String> nameSet = new HashSet<String>(methods.length);
+        Set<String> dupSet = new HashSet<String>();
+        for (Method m : methods) {
+            String name = m.getName();
+            if (!nameSet.add(name)) {
+                dupSet.add(name);
+            }
+        }
+
+        return dupSet;
     }
 
     /**
@@ -35,7 +70,7 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
         if (result) {
             return;
         }
-        
+
         int hr = Kernel32.INSTANCE.GetLastError();
         if (hr == WinError.ERROR_SUCCESS) {
             fail(message + " failed with unknown reason code");
@@ -43,7 +78,7 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
             fail(message + " failed: hr=" + hr + " - 0x" + Integer.toHexString(hr));
         }
     }
-    
+
     /**
      * Checks if the status code is ERROR_SUCCESS
      * @param message Message to display if code is an error
@@ -59,7 +94,7 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
             assertEquals(message, WinError.ERROR_SUCCESS, statusCode);
         }
     }
-    
+
     /**
      * Makes sure that the handle argument is not {@code null} or {@link WinBase#INVALID_HANDLE_VALUE}.
      * If invalid handle detected, then it invokes {@link Kernel32#GetLastError()}
