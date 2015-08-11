@@ -64,11 +64,11 @@ public class Kernel32DiskManagementFunctionsTest extends AbstractWin32TestSuppor
 //        System.out.append('\t').append("TotalNumberOfBytes: ").println(lpTotalNumberOfBytes);
 //        System.out.append('\t').append("TotalNumberOfFreeBytes: ").println(lpTotalNumberOfFreeBytes);
 
-        assertTrue("No free size for " + lpDirectoryName, lpTotalNumberOfFreeBytes.getValue() > 0L);
+        assertTrue("No free size for " + lpDirectoryName, LARGE_INTEGER.compare(lpTotalNumberOfFreeBytes, 0L) > 0);
         assertTrue("Free size (" + lpTotalNumberOfFreeBytes + ")"
                  + " not below total size (" + lpTotalNumberOfBytes + ")"
                  + " for " + lpDirectoryName,
-                   lpTotalNumberOfFreeBytes.getValue() < lpTotalNumberOfBytes.getValue());
+                 LARGE_INTEGER.compare(lpTotalNumberOfFreeBytes, lpTotalNumberOfBytes) < 0);
     }
 
     @Test
