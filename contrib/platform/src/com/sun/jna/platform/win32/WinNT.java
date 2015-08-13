@@ -14,9 +14,11 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -24,9 +26,6 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
-
-import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION;
-import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -251,6 +250,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public DWORD Attributes;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Luid", "Attributes" });
         }
@@ -270,6 +270,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class SID_AND_ATTRIBUTES extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Sid", "Attributes" });
         }
@@ -300,6 +301,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_OWNER extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Owner" });
         }
@@ -328,6 +330,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     public static class PSID extends Structure {
         public static class ByReference extends PSID implements Structure.ByReference { }
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "sid" });
         }
@@ -355,10 +358,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             int len = Advapi32.INSTANCE.GetLengthSid(this);
             return getPointer().getByteArray(0, len);
         }
-        
+
         public String getSidString() {
             return Advapi32Util.convertSidToStringSid(this);
-        }        
+        }
 
         public Pointer sid;
     }
@@ -394,6 +397,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_USER extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "User" });
         }
@@ -425,6 +429,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_GROUPS extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "GroupCount", "Group0" });
         }
@@ -513,6 +518,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public LUID_AND_ATTRIBUTES Privileges[];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "PrivilegeCount", "Privileges" });
         }
@@ -728,7 +734,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int FILE_SUPPORTS_OPEN_BY_FILE_ID = 0x01000000;
     int FILE_SUPPORTS_USN_JOURNAL = 0x02000000;
 
-    
+
     // The controllable aspects of the DefineDosDevice function.
     // see https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx
     int DDD_RAW_TARGET_PATH = 0x00000001;
@@ -751,6 +757,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         // filename is not nul-terminated, so we can't use a String/WString
         public char[] FileName = new char[1];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "NextEntryOffset", "Action", "FileNameLength", "FileName" });
         }
@@ -774,6 +781,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return new String(FileName, 0, FileNameLength / 2);
         }
 
+        @Override
         public void read() {
             // avoid reading filename until we know how long it is
             FileName = new char[0];
@@ -1027,6 +1035,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     public static class LUID extends Structure {
         public int LowPart;
         public int HighPart;
+
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "LowPart", "HighPart" });
         }
@@ -1035,7 +1045,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * A 64-bit integer;
      */
-    public static class LARGE_INTEGER extends Structure {
+    public static class LARGE_INTEGER extends Structure implements Comparable<LARGE_INTEGER> {
         public static class ByReference extends LARGE_INTEGER implements
                 Structure.ByReference {
         }
@@ -1043,26 +1053,83 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public static class LowHigh extends Structure {
             public DWORD LowPart;
             public DWORD HighPart;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "LowPart", "HighPart" });
+
+            public LowHigh() {
+                super();
+            }
+
+            public LowHigh(long value) {
+                this(new DWORD(value & 0xFFFFFFFFL),  new DWORD((value >> 32) & 0xFFFFFFFFL));
+            }
+
+            public LowHigh(DWORD low, DWORD high) {
+                LowPart = low;
+                HighPart = high;
+            }
+
+            @Override
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("LowPart", "HighPart");
+            }
+
+            public long longValue() {
+                long loValue = LowPart.longValue();
+                long hiValue = HighPart.longValue();
+                return ((hiValue << 32) & 0xFFFFFFFF00000000L) | (loValue & 0xFFFFFFFFL);
+            }
+
+            @Override
+            public String toString() {
+                if ((LowPart == null) || (HighPart == null)) {
+                    return "null";
+                } else {
+                    return Long.toString(longValue());
+                }
             }
         }
 
         public static class UNION extends Union {
             public LowHigh lh;
             public long value;
+
+            public UNION() {
+                super();
+            }
+
+            public UNION(long value) {
+                this.value = value;
+                this.lh = new LowHigh(value);
+            }
+
+            public long longValue() {
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                return Long.toString(longValue());
+            }
         }
 
         public UNION u;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "u" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return Collections.singletonList("u");
+        }
+
+        public LARGE_INTEGER() {
+            super();
+        }
+
+        public LARGE_INTEGER(long value) {
+            this.u = new UNION(value);
         }
 
         /**
          * Low DWORD.
          *
-         * @return DWORD.
+         * @return Low DWORD value
          */
         public DWORD getLow() {
             return u.lh.LowPart;
@@ -1071,7 +1138,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * High DWORD.
          *
-         * @return DWORD.
+         * @return High DWORD value
          */
         public DWORD getHigh() {
             return u.lh.HighPart;
@@ -1080,10 +1147,64 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * 64-bit value.
          *
-         * @return 64-bit value.
+         * @return The 64-bit value.
          */
         public long getValue() {
             return u.value;
+        }
+
+        @Override
+        public int compareTo(LARGE_INTEGER other) {
+            return compare(this, other);
+        }
+
+        @Override
+        public String toString() {
+            return (u == null) ? "null" : Long.toString(getValue());
+        }
+
+        /**
+         * Compares 2 LARGE_INTEGER values -  - <B>Note:</B> a {@code null}
+         * value is considered <U>greater</U> than any non-{@code null} one
+         * (i.e., {@code null} values are &quot;pushed&quot; to the end
+         * of a sorted array / list of values)
+         *
+         * @param v1 The 1st value
+         * @param v2 The 2nd value
+         * @return 0 if values are equal (including if <U>both</U> are {@code null},
+         * negative if 1st value less than 2nd one, positive otherwise. <B>Note:</B>
+         * the comparison uses the {@link #getValue()}.
+         * @see IntegerType#compare(long, long)
+         */
+        public static int compare(LARGE_INTEGER v1, LARGE_INTEGER v2) {
+            if (v1 == v2) {
+                return 0;
+            } else if (v1 == null) {
+                return 1;   // v2 cannot be null or v1 == v2 would hold
+            } else if (v2 == null) {
+                return (-1);
+            } else {
+                return IntegerType.compare(v1.getValue(), v2.getValue());
+            }
+        }
+
+        /**
+         * Compares a LARGE_INTEGER value with a {@code long} one. <B>Note:</B> if
+         * the LARGE_INTEGER value is {@code null} then it is consider <U>greater</U>
+         * than any {@code long} value.
+         *
+         * @param v1 The {@link LARGE_INTEGER} value
+         * @param v2 The {@code long} value
+         * @return 0 if values are equal, negative if 1st value less than 2nd one,
+         * positive otherwise. <B>Note:</B> the comparison uses the {@link #getValue()}.
+         * @see IntegerType#compare(long, long)
+         */
+        public static int compare(LARGE_INTEGER v1, long v2) {
+            if (v1 == null) {
+                return 1;
+            } else {
+                return IntegerType.compare(v1.getValue(), v2);
+            }
         }
     }
 
@@ -1102,6 +1223,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
+        @Override
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             Object o = super.fromNative(nativeValue, context);
             if (WinBase.INVALID_HANDLE_VALUE.equals(o)) {
@@ -1110,6 +1232,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return o;
         }
 
+        @Override
         public void setPointer(Pointer p) {
             if (immutable) {
                 throw new UnsupportedOperationException("immutable reference");
@@ -1629,6 +1752,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public char szCSDVersion[];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion" });
         }
@@ -1714,6 +1838,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public byte wReserved;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion", "wServicePackMajor", "wServicePackMinor", "wSuiteMask", "wProductType", "wReserved"});
         }
@@ -1919,6 +2044,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public DWORD DataOffset;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Length", "Reserved", "RecordNumber", "TimeGenerated", "TimeWritten", "EventID", "EventType", "NumStrings", "EventCategory", "ReservedFlags", "ClosingRecordNumber", "StringOffset", "UserSidLength", "UserSidOffset", "DataLength", "DataOffset"});
         }
@@ -2013,7 +2139,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 	 * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
 	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
 	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
-	 * 
+	 *
 	 * Windows Server 2003 and Windows XP: This access right is not supported.
 	 */
 	int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
@@ -2074,7 +2200,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000;
     int UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000;
     int UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000;
-    
+
     /* Security control bits */
     int SE_OWNER_DEFAULTED          = 0x00000001;
     int SE_GROUP_DEFAULTED          = 0x00000002;
@@ -2090,8 +2216,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_SACL_PROTECTED           = 0x00002000;
     int SE_RM_CONTROL_VALID         = 0x00004000;
     int SE_SELF_RELATIVE            = 0x00008000;
-    
-    
+
+
     public static class SECURITY_DESCRIPTOR extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR implements
                 Structure.ByReference {
@@ -2113,6 +2239,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public byte[] data;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "data" });
         }
@@ -2120,6 +2247,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     public static class ACL extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2" });
         }
@@ -2179,15 +2307,16 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public int Sacl;
         public int Dacl;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Revision", "Sbz1", "Control", "Owner", "Group", "Sacl", "Dacl" });
         }
 
         private ACL DACL;
         private PSID OWNER;
-        private PSID GROUP;        
+        private PSID GROUP;
         private ACL SACL;
-        
+
         public SECURITY_DESCRIPTOR_RELATIVE() {
         }
 
@@ -2247,6 +2376,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
         }
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AceType", "AceFlags", "AceSize" });
         }
@@ -2273,6 +2403,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
     public static abstract class ACCESS_ACEStructure extends ACEStructure {
+        @Override
         protected List getFieldOrder() {
             List list = new ArrayList(super.getFieldOrder());
             list.addAll(Arrays.asList(new String[] { "Mask", "SidStart"}));

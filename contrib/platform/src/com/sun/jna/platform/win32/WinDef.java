@@ -41,7 +41,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * 16-bit unsigned integer.
      */
-    public static class WORD extends IntegerType {
+    public static class WORD extends IntegerType implements Comparable<WORD> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 2;
@@ -61,6 +61,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public WORD(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(WORD other) {
+            return compare(this, other);
         }
     }
 
@@ -108,7 +113,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * 32-bit unsigned integer.
      */
-    public static class DWORD extends IntegerType {
+    public static class DWORD extends IntegerType implements Comparable<DWORD> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 4;
@@ -146,6 +151,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public WORD getHigh() {
             return new WORD((longValue() >> 16) & 0xFF);
+        }
+
+        @Override
+        public int compareTo(DWORD other) {
+            return compare(this, other);
         }
     }
 
@@ -193,7 +203,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class LONG.
      */
-    public static class LONG extends IntegerType {
+    public static class LONG extends IntegerType implements Comparable<LONG> {
 
         /** The Constant SIZE. */
         public static final int SIZE = Native.LONG_SIZE;
@@ -212,6 +222,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public LONG(long value) {
             super(SIZE, value);
+        }
+
+        @Override
+        public int compareTo(LONG other) {
+            return compare(this, other);
         }
     }
 
@@ -259,7 +274,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class LONGLONG.
      */
-    public static class LONGLONG extends IntegerType {
+    public static class LONGLONG extends IntegerType implements Comparable<LONGLONG> {
 
         /** The Constant SIZE. */
         public static final int SIZE = Native.LONG_SIZE *2;
@@ -278,6 +293,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public LONGLONG(long value) {
             super(8, value, false);
+        }
+
+        @Override
+        public int compareTo(LONGLONG other) {
+            return compare(this, other);
         }
     }
 
@@ -749,15 +769,9 @@ public interface WinDef extends StdCallLibrary {
         /** The bottom. */
         public int bottom;
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "left", "top", "right",
-                                                "bottom" });
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("left", "top", "right", "bottom");
         }
 
         /**
@@ -769,11 +783,6 @@ public interface WinDef extends StdCallLibrary {
             return new Rectangle(left, top, right - left, bottom - top);
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.sun.jna.Structure#toString()
-         */
         @Override
         public String toString() {
             return "[(" + left + "," + top + ")(" + right + "," + bottom + ")]";
@@ -783,7 +792,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * 32-bit unsigned integer.
      */
-    public static class ULONG extends IntegerType {
+    public static class ULONG extends IntegerType implements Comparable<ULONG> {
 
         /** The Constant SIZE. */
         public static final int SIZE = Native.LONG_SIZE;
@@ -801,8 +810,13 @@ public interface WinDef extends StdCallLibrary {
          * @param value
          *            the value
          */
-        public ULONG(int value) {
+        public ULONG(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(ULONG other) {
+            return compare(this, other);
         }
     }
 
@@ -850,7 +864,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class ULONGLONG.
      */
-    public static class ULONGLONG extends IntegerType {
+    public static class ULONGLONG extends IntegerType implements Comparable<ULONGLONG> {
 
         /** The Constant SIZE. */
         public static final int SIZE = Native.LONG_SIZE *2;
@@ -869,6 +883,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public ULONGLONG(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(ULONGLONG other) {
+            return compare(this, other);
         }
     }
 
@@ -916,7 +935,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * 64-bit unsigned integer.
      */
-    public static class DWORDLONG extends IntegerType {
+    public static class DWORDLONG extends IntegerType implements Comparable<DWORDLONG> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 8;
@@ -936,6 +955,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public DWORDLONG(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(DWORDLONG other) {
+            return compare(this, other);
         }
     }
 
@@ -1070,21 +1094,16 @@ public interface WinDef extends StdCallLibrary {
             this.y = y;
         }
 
-        /*
-         * (non-Javadoc)
-         *
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "x", "y" });
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("x", "y");
         }
     }
 
     /**
      * 16-bit unsigned short.
      */
-    public static class USHORT extends IntegerType {
+    public static class USHORT extends IntegerType implements Comparable<USHORT> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 2;
@@ -1104,6 +1123,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public USHORT(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(USHORT other) {
+            return compare(this, other);
         }
     }
 
@@ -1161,7 +1185,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * 16-bit short.
      */
-    public static class SHORT extends IntegerType {
+    public static class SHORT extends IntegerType implements Comparable<SHORT> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 2;
@@ -1182,12 +1206,17 @@ public interface WinDef extends StdCallLibrary {
         public SHORT(long value) {
             super(SIZE, value, false);
         }
+
+        @Override
+        public int compareTo(SHORT other) {
+            return compare(this, other);
+        }
     }
 
     /**
      * 32-bit unsigned int.
      */
-    public static class UINT extends IntegerType {
+    public static class UINT extends IntegerType implements Comparable<UINT> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 4;
@@ -1207,6 +1236,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public UINT(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(UINT other) {
+            return compare(this, other);
         }
     }
 
@@ -1269,7 +1303,7 @@ public interface WinDef extends StdCallLibrary {
          * @param value
          *            the value
          */
-        public SCODE(int value) {
+        public SCODE(long value) {
             super(value);
         }
     }
@@ -1340,7 +1374,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class BOOL.
      */
-    public static class BOOL extends IntegerType {
+    public static class BOOL extends IntegerType implements Comparable<BOOL> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 4;
@@ -1357,15 +1391,90 @@ public interface WinDef extends StdCallLibrary {
          *
          * @param value the value
          */
+        public BOOL(boolean value) {
+            this(value ? 1L : 0L);
+        }
+
+        /**
+         * Instantiates a new bool.
+         *
+         * @param value the value
+         */
         public BOOL(long value) {
             super(SIZE, value, false);
         }
 
         public boolean booleanValue() {
-            if(this.intValue() > 0)
+            if (this.intValue() > 0) {
                 return true;
-            else
+            } else {
                 return false;
+            }
+        }
+
+        @Override
+        public String toString() {
+            return Boolean.toString(booleanValue());
+        }
+
+        @Override
+        public int compareTo(BOOL other) {
+            return compare(this, other);
+        }
+
+        /**
+         * Compares 2 BOOL values -  - <B>Note:</B> a {@code null}
+         * value is considered <U>greater</U> than any non-{@code null} one
+         * (i.e., {@code null} values are &quot;pushed&quot; to the end
+         * of a sorted array / list of values)
+         *
+         * @param v1 The 1st value
+         * @param v2 The 2nd value
+         * @return 0 if values are equal (including if <U>both</U> are {@code null},
+         * negative if 1st value less than 2nd one, positive otherwise. <B>Note:</B>
+         * the comparison uses the {@link #booleanValue()}.
+         * @see #compare(boolean, boolean)
+         */
+        public static int compare(BOOL v1, BOOL v2) {
+            if (v1 == v2) {
+                return 0;
+            } else if (v1 == null) {
+                return 1;   // v2 cannot be null or v1 == v2 would hold
+            } else if (v2 == null) {
+                return (-1);
+            } else {
+                return compare(v1.booleanValue(), v2.booleanValue());
+            }
+        }
+
+        /**
+         * Compares a BOOL value with a {@code long} one. <B>Note:</B> if
+         * the BOOL value is {@code null} then it is consider <U>greater</U>
+         * than any {@code long} value.
+         *
+         * @param v1 The {@link BOOL} value
+         * @param v2 The {@code boolean} value
+         * @return 0 if values are equal, negative if 1st value less than 2nd one,
+         * positive otherwise. <B>Note:</B> the comparison uses the {@link #longValue()}.
+         * @see #compare(boolean, boolean)
+         */
+        public static int compare(BOOL v1, boolean v2) {
+            if (v1 == null) {
+                return 1;
+            } else {
+                return compare(v1.booleanValue(), v2);
+            }
+        }
+
+        // TODO when JDK 1.7 becomes the min. version, use Boolean.compare(...)
+        public static int compare(boolean v1, boolean v2) {
+            if (v1 == v2) {
+                return 0;
+            } else if (v1) {
+                return 1;   // v2 cannot be true or v1 == v2
+            } else {
+                return (-1);
+            }
         }
     }
 
@@ -1413,7 +1522,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class UCHAR.
      */
-    public static class UCHAR extends IntegerType {
+    public static class UCHAR extends IntegerType implements Comparable<UCHAR> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 1;
@@ -1425,6 +1534,10 @@ public interface WinDef extends StdCallLibrary {
             this(0);
         }
 
+        public UCHAR(char ch) {
+            this(ch & 0xFF);
+        }
+
         /**
          * Instantiates a new uchar.
          *
@@ -1432,6 +1545,11 @@ public interface WinDef extends StdCallLibrary {
          */
         public UCHAR(long value) {
             super(SIZE, value, true);
+        }
+
+        @Override
+        public int compareTo(UCHAR other) {
+            return compare(this, other);
         }
     }
 
@@ -1460,7 +1578,7 @@ public interface WinDef extends StdCallLibrary {
     /**
      * The Class CHAR.
      */
-    public static class CHAR extends IntegerType {
+    public static class CHAR extends IntegerType implements Comparable<CHAR> {
 
         /** The Constant SIZE. */
         public static final int SIZE = 1;
@@ -1475,10 +1593,24 @@ public interface WinDef extends StdCallLibrary {
         /**
          * Instantiates a new char.
          *
+         * @param ch The {@code char} value
+         */
+        public CHAR(char ch) {
+            this(ch & 0xFF);
+        }
+
+        /**
+         * Instantiates a new char.
+         *
          * @param value the value
          */
         public CHAR(long value) {
             super(1, value, false);
+        }
+
+        @Override
+        public int compareTo(CHAR other) {
+            return compare(this, other);
         }
     }
 
@@ -1568,7 +1700,4 @@ public interface WinDef extends StdCallLibrary {
             super(h);
         }
     }
-
-
-
 }
