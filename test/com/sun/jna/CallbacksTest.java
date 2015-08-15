@@ -46,6 +46,17 @@ public class CallbacksTest extends TestCase implements Paths {
 
     private static final int THREAD_TIMEOUT = 5000;
 
+    protected void waitFor(Thread t) {
+        long start = System.currentTimeMillis();
+	while (t.isAlive()) {
+	    Thread.sleep(10);
+	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+		fail("Timed out waiting for native thread " + thread
+                     + " to detach and terminate");
+	    }
+	}
+    }
+
     public static class SmallTestStructure extends Structure {
         public double value;
         public static int allocations = 0;
@@ -700,7 +711,7 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong value in by reference memory", VALUE, ref.getValue());
     }
     
-    public void testCallCallbackWithStructByValue() {
+    public void testCallCallbackWithStructByValue() throws Exception {
         final boolean[] called = { false };
         final TestStructure.ByValue[] arg = { null };
         final TestStructure.ByValue s = new TestStructure.ByValue();
@@ -1099,10 +1110,7 @@ public class CallbacksTest extends TestCase implements Paths {
                     alive[0] = true;
                 }
 
-                if (++called[0] == 2) {
-                    // Allow the thread to exit
-                    Native.detach(true);
-                }
+                ++called[0];
             }
         };
         callThreadedCallback(cb, init, 2, 2000, called, 1);
@@ -1124,17 +1132,11 @@ public class CallbacksTest extends TestCase implements Paths {
 	    }
 	}
 
-        start = System.currentTimeMillis();
-	while (t[0].isAlive()) {
-	    Thread.sleep(10);
-	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-		fail("Timed out waiting for thread to detach and terminate");
-	    }
-	}
+        waitFor(t[0]);
     }
 
     // Detach preference is indicated by the initializer.  Thread is attached
-    // as daemon to allow VM to reclaim it.
+    // as daemon to avoid VM having to wait for it.
     public void testCallbackThreadPersistence() throws Exception {
     	final int[] called = {0};
         final Set threads = new HashSet();
@@ -1155,6 +1157,8 @@ public class CallbacksTest extends TestCase implements Paths {
 
         assertEquals("Multiple callbacks on a given native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
+
+        waitFor((Thread)threads.iterator().next());
     }
 
     // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
@@ -1233,16 +1237,8 @@ public class CallbacksTest extends TestCase implements Paths {
 
         assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: "
                      + threads, 1, threads.size());
-        Thread thread = (Thread)threads.iterator().next();
-        long start = System.currentTimeMillis();
 
-        while (thread.isAlive()) {
-            System.gc();
-            Thread.sleep(10);
-            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-                fail("Timed out waiting for native thread " + thread + " to finish");
-            }
-        }
+        waitFor((Thread)threads.iterator().next());
     }
 
     public void testDLLCallback() throws Exception {
