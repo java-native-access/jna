@@ -1109,7 +1109,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <delete quiet="true" includeEmptyDirs="true">
       <fileset dir=".clover"/>
       <fileset dir="${javadoc}"/>
-      <fileset dir="." includes="*~,**/*~,build.number"/>
+      <fileset dir="." includes="*~,**/*~,build.number,native/libffi/configure"/>
     </delete>
     <subant target="clean" failonerror="true">
       <fileset dir="${contrib}" includes="*/build.xml"/>
