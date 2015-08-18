@@ -27,8 +27,16 @@ public class NativeTest extends TestCase {
     
     private static final String UNICODE = "[\u0444]";
 
+    public void testVersion() {
+        String[] INPUTS = { "1.0", "1.0.1", "2.1.3" };
+        float[] EXPECTED = { 1.0f, 1.0f, 2.1f };
+        for (int i=0;i < INPUTS.length;i++) {
+            assertEquals("Incorrectly parsed version", EXPECTED[i], Native.parseVersion(INPUTS[i]));
+        }
+    }
+
     public void testLongStringGeneration() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         final int MAX = Platform.isWindowsCE() ? 200000 : 2000000;
         for (int i=0;i < MAX;i++) {
             buf.append('a');
@@ -74,6 +82,23 @@ public class NativeTest extends TestCase {
                      UNICODE, Native.toString(UNICODEZ.getBytes(ENCODING), ENCODING));
     }
     
+    public void testToStringList() {
+        List<String> expected = Arrays.asList(getClass().getPackage().getName(), getClass().getSimpleName(), "testToStringList");
+        StringBuilder sb = new StringBuilder();
+        for (String value : expected) {
+            sb.append(value).append('\0');
+        }
+        sb.append('\0');
+        
+        List<String> actual = Native.toStringList(sb.toString().toCharArray());
+        assertEquals("Mismatched result size", expected.size(), actual.size());
+        for (int index = 0; index < expected.size(); index++) {
+            String expValue = expected.get(index);
+            String actValue = actual.get(index);
+            assertEquals("Mismatched value at index #" + index, expValue, actValue);
+        }
+    }
+
     public void testDefaultStringEncoding() throws Exception {
         final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
         final String UNICODEZ = UNICODE + "\0more stuff";
@@ -410,7 +435,7 @@ public class NativeTest extends TestCase {
             for (int i=0;i < args.length;i++) {
                 System.out.println("Running tests on class " + args[i]);
                 try {
-                    junit.textui.TestRunner.run(Class.forName(args[i]));
+                    junit.textui.TestRunner.run((Class<? extends TestCase>) Class.forName(args[i]));
                 }
                 catch(Throwable e) {
                     e.printStackTrace();

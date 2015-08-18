@@ -1,0 +1,14 @@
+language: java
+
+install:
+  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
+  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
+
+script:
+  - ant test
+  - ant test-platform
+  - ant dist
+
+os:
+  - linux
+  - osx

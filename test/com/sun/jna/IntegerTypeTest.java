@@ -15,6 +15,7 @@ public class IntegerTypeTest extends TestCase {
     public void testWriteNull() {
         class NTStruct extends Structure {
             public Sized field;
+            @Override
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "field" });
             }
@@ -25,6 +26,7 @@ public class IntegerTypeTest extends TestCase {
     public void testReadNull() {
         class NTStruct extends Structure {
             public Sized field;
+            @Override
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "field" });
             }
@@ -67,7 +69,7 @@ public class IntegerTypeTest extends TestCase {
             }
         }
     }
-	
+
     public void testInitialValue() {
         long VALUE = 20;
         NativeLong nl = new NativeLong(VALUE);
@@ -122,6 +124,14 @@ public class IntegerTypeTest extends TestCase {
         assertTrue("Expected an unsigned value (ctor): " + tt.longValue(), tt.longValue() > 0);
         tt.setValue(-2);
         assertTrue("Expected an unsigned value: " + tt.longValue(), tt.longValue() > 0);
+    }
+
+    public void testCompareLongs() {
+        final long v1 = 7365L;
+        final long v2 = 3777347L;
+        assertEquals("Mismatched same value comparison", 0, IntegerType.compare(v1, v1));
+        assertEquals("Mismatched natural order comparison", (-1), IntegerType.compare(v1, v2));
+        assertEquals("Mismatched reversed order comparison", 1, IntegerType.compare(v2, v1));
     }
 
     public static void main(String[] args) {

@@ -14,9 +14,11 @@ package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
@@ -248,6 +250,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public DWORD Attributes;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Luid", "Attributes" });
         }
@@ -267,6 +270,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class SID_AND_ATTRIBUTES extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Sid", "Attributes" });
         }
@@ -297,6 +301,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_OWNER extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Owner" });
         }
@@ -325,6 +330,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     public static class PSID extends Structure {
         public static class ByReference extends PSID implements Structure.ByReference { }
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "sid" });
         }
@@ -351,6 +357,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public byte[] getBytes() {
             int len = Advapi32.INSTANCE.GetLengthSid(this);
             return getPointer().getByteArray(0, len);
+        }
+
+        public String getSidString() {
+            return Advapi32Util.convertSidToStringSid(this);
         }
 
         public Pointer sid;
@@ -387,6 +397,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_USER extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "User" });
         }
@@ -418,6 +429,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     public static class TOKEN_GROUPS extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "GroupCount", "Group0" });
         }
@@ -451,6 +463,46 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     }
 
     /**
+     * Specifies a set of privileges. <br>
+     * It is also used to indicate which, if any, privileges are held by a user or group requesting access to an object.
+     */
+    public static class PRIVILEGE_SET extends Structure {
+        public DWORD PrivilegeCount;
+        public DWORD Control;
+        public LUID_AND_ATTRIBUTES Privileges[];
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList("PrivilegeCount", "Control", "Privileges");
+        }
+
+        public PRIVILEGE_SET() {
+            this(0);
+        }
+        /**
+         * @param nbOfPrivileges
+         *            Desired size of the Privileges array
+         */
+        public PRIVILEGE_SET(int nbOfPrivileges) {
+            PrivilegeCount = new DWORD(nbOfPrivileges);
+            if(nbOfPrivileges > 0) {
+                Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
+            }
+        }
+
+        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. */
+        public PRIVILEGE_SET(Pointer p) {
+            super(p);
+            final int count = p.getInt(0);
+            PrivilegeCount = new DWORD(count);
+            if(count > 0) {
+                Privileges = new LUID_AND_ATTRIBUTES[count];
+            }
+            read();
+        }
+    }
+
+    /**
      * The TOKEN_PRIVILEGES structure contains information about a set of
      * privileges for an access token.
      */
@@ -466,6 +518,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public LUID_AND_ATTRIBUTES Privileges[];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "PrivilegeCount", "Privileges" });
         }
@@ -675,6 +728,19 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int FILE_READ_ONLY_VOLUME = 0x00080000;
     int FILE_SEQUENTIAL_WRITE_ONCE = 0x00100000;
     int FILE_SUPPORTS_TRANSACTIONS = 0x00200000;
+    // NOTE: These values are not supported until Windows Server 2008 R2 and Windows 7
+    int FILE_SUPPORTS_HARD_LINKS = 0x00400000;
+    int FILE_SUPPORTS_EXTENDED_ATTRIBUTES = 0x00800000;
+    int FILE_SUPPORTS_OPEN_BY_FILE_ID = 0x01000000;
+    int FILE_SUPPORTS_USN_JOURNAL = 0x02000000;
+
+
+    // The controllable aspects of the DefineDosDevice function.
+    // see https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx
+    int DDD_RAW_TARGET_PATH = 0x00000001;
+    int DDD_REMOVE_DEFINITION = 0x00000002;
+    int DDD_EXACT_MATCH_ON_REMOVE = 0x00000004;
+    int DDD_NO_BROADCAST_SYSTEM = 0x00000008;
 
     /**
      * The FILE_NOTIFY_INFORMATION structure describes the changes found by the
@@ -691,6 +757,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         // filename is not nul-terminated, so we can't use a String/WString
         public char[] FileName = new char[1];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "NextEntryOffset", "Action", "FileNameLength", "FileName" });
         }
@@ -714,6 +781,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return new String(FileName, 0, FileNameLength / 2);
         }
 
+        @Override
         public void read() {
             // avoid reading filename until we know how long it is
             FileName = new char[0];
@@ -967,6 +1035,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     public static class LUID extends Structure {
         public int LowPart;
         public int HighPart;
+
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "LowPart", "HighPart" });
         }
@@ -975,7 +1045,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * A 64-bit integer;
      */
-    public static class LARGE_INTEGER extends Structure {
+    public static class LARGE_INTEGER extends Structure implements Comparable<LARGE_INTEGER> {
         public static class ByReference extends LARGE_INTEGER implements
                 Structure.ByReference {
         }
@@ -983,26 +1053,83 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public static class LowHigh extends Structure {
             public DWORD LowPart;
             public DWORD HighPart;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "LowPart", "HighPart" });
+
+            public LowHigh() {
+                super();
+            }
+
+            public LowHigh(long value) {
+                this(new DWORD(value & 0xFFFFFFFFL),  new DWORD((value >> 32) & 0xFFFFFFFFL));
+            }
+
+            public LowHigh(DWORD low, DWORD high) {
+                LowPart = low;
+                HighPart = high;
+            }
+
+            @Override
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("LowPart", "HighPart");
+            }
+
+            public long longValue() {
+                long loValue = LowPart.longValue();
+                long hiValue = HighPart.longValue();
+                return ((hiValue << 32) & 0xFFFFFFFF00000000L) | (loValue & 0xFFFFFFFFL);
+            }
+
+            @Override
+            public String toString() {
+                if ((LowPart == null) || (HighPart == null)) {
+                    return "null";
+                } else {
+                    return Long.toString(longValue());
+                }
             }
         }
 
         public static class UNION extends Union {
             public LowHigh lh;
             public long value;
+
+            public UNION() {
+                super();
+            }
+
+            public UNION(long value) {
+                this.value = value;
+                this.lh = new LowHigh(value);
+            }
+
+            public long longValue() {
+                return value;
+            }
+
+            @Override
+            public String toString() {
+                return Long.toString(longValue());
+            }
         }
 
         public UNION u;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "u" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return Collections.singletonList("u");
+        }
+
+        public LARGE_INTEGER() {
+            super();
+        }
+
+        public LARGE_INTEGER(long value) {
+            this.u = new UNION(value);
         }
 
         /**
          * Low DWORD.
          *
-         * @return DWORD.
+         * @return Low DWORD value
          */
         public DWORD getLow() {
             return u.lh.LowPart;
@@ -1011,7 +1138,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * High DWORD.
          *
-         * @return DWORD.
+         * @return High DWORD value
          */
         public DWORD getHigh() {
             return u.lh.HighPart;
@@ -1020,10 +1147,64 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * 64-bit value.
          *
-         * @return 64-bit value.
+         * @return The 64-bit value.
          */
         public long getValue() {
             return u.value;
+        }
+
+        @Override
+        public int compareTo(LARGE_INTEGER other) {
+            return compare(this, other);
+        }
+
+        @Override
+        public String toString() {
+            return (u == null) ? "null" : Long.toString(getValue());
+        }
+
+        /**
+         * Compares 2 LARGE_INTEGER values -  - <B>Note:</B> a {@code null}
+         * value is considered <U>greater</U> than any non-{@code null} one
+         * (i.e., {@code null} values are &quot;pushed&quot; to the end
+         * of a sorted array / list of values)
+         *
+         * @param v1 The 1st value
+         * @param v2 The 2nd value
+         * @return 0 if values are equal (including if <U>both</U> are {@code null},
+         * negative if 1st value less than 2nd one, positive otherwise. <B>Note:</B>
+         * the comparison uses the {@link #getValue()}.
+         * @see IntegerType#compare(long, long)
+         */
+        public static int compare(LARGE_INTEGER v1, LARGE_INTEGER v2) {
+            if (v1 == v2) {
+                return 0;
+            } else if (v1 == null) {
+                return 1;   // v2 cannot be null or v1 == v2 would hold
+            } else if (v2 == null) {
+                return (-1);
+            } else {
+                return IntegerType.compare(v1.getValue(), v2.getValue());
+            }
+        }
+
+        /**
+         * Compares a LARGE_INTEGER value with a {@code long} one. <B>Note:</B> if
+         * the LARGE_INTEGER value is {@code null} then it is consider <U>greater</U>
+         * than any {@code long} value.
+         *
+         * @param v1 The {@link LARGE_INTEGER} value
+         * @param v2 The {@code long} value
+         * @return 0 if values are equal, negative if 1st value less than 2nd one,
+         * positive otherwise. <B>Note:</B> the comparison uses the {@link #getValue()}.
+         * @see IntegerType#compare(long, long)
+         */
+        public static int compare(LARGE_INTEGER v1, long v2) {
+            if (v1 == null) {
+                return 1;
+            } else {
+                return IntegerType.compare(v1.getValue(), v2);
+            }
         }
     }
 
@@ -1042,6 +1223,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         /** Override to the appropriate object for INVALID_HANDLE_VALUE. */
+        @Override
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             Object o = super.fromNative(nativeValue, context);
             if (WinBase.INVALID_HANDLE_VALUE.equals(o)) {
@@ -1050,6 +1232,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return o;
         }
 
+        @Override
         public void setPointer(Pointer p) {
             if (immutable) {
                 throw new UnsupportedOperationException("immutable reference");
@@ -1569,6 +1752,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public char szCSDVersion[];
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion" });
         }
@@ -1654,6 +1838,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public byte wReserved;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwOSVersionInfoSize", "dwMajorVersion", "dwMinorVersion", "dwBuildNumber", "dwPlatformId", "szCSDVersion", "wServicePackMajor", "wServicePackMinor", "wSuiteMask", "wProductType", "wReserved"});
         }
@@ -1859,6 +2044,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public DWORD DataOffset;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Length", "Reserved", "RecordNumber", "TimeGenerated", "TimeWritten", "EventID", "EventType", "NumStrings", "EventCategory", "ReservedFlags", "ClosingRecordNumber", "StringOffset", "UserSidLength", "UserSidOffset", "DataLength", "DataOffset"});
         }
@@ -1926,8 +2112,83 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_PRIVILEGE_REMOVED = 0X00000004;
     int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-    int PROCESS_TERMINATE = 0x00000001;
-    int PROCESS_SYNCHRONIZE = 0x00100000;
+	/** Required to create a process. */
+	int PROCESS_CREATE_PROCESS = 0x0080;
+
+	/** Required to create a thread. */
+	int PROCESS_CREATE_THREAD = 0x0002;
+
+	/**
+	 * Required to duplicate a handle using
+	 * {@link Kernel32#DuplicateHandle}
+	 * .
+	 */
+	int PROCESS_DUP_HANDLE = 0x0040;
+
+	/**
+	 * Required to retrieve certain information about a process, such as its
+	 * token, exit code, and priority class (see
+	 * {@link Advapi32#OpenProcessToken}).
+	 */
+	int PROCESS_QUERY_INFORMATION = 0x0400;
+
+	/**
+	 * Required to retrieve certain information about a process (see
+	 * {@link Kernel32#GetExitCodeProcess}
+	 * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
+	 * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
+	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
+	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
+	 *
+	 * Windows Server 2003 and Windows XP: This access right is not supported.
+	 */
+	int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
+
+	/**
+	 * Required to set certain information about a process, such as its priority
+	 * class (see {@code Kernel32#SetPriorityClass}).
+	 */
+	int PROCESS_SET_INFORMATION = 0x0200;
+
+	/**
+	 * Required to set memory limits using
+	 * {@code Kernel32.SetProcessWorkingSetSize()}.
+	 */
+	int PROCESS_SET_QUOTA = 0x0100;
+
+	/** Required to suspend or resume a process. */
+	int PROCESS_SUSPEND_RESUME = 0x0800;
+
+	/**
+	 * Required to terminate a process using
+	 * {@link Kernel32#TerminateProcess}.
+	 */
+	int PROCESS_TERMINATE = 0x00000001;
+
+	/**
+	 * Required to perform an operation on the address space of a process (see
+	 * {@code Kernel32.VirtualProtectEx()} and
+	 * {@link Kernel32#WriteProcessMemory}
+	 * ).
+	 */
+	int PROCESS_VM_OPERATION = 0x0008;
+
+	/**
+	 * Required to read memory in a process using
+	 * {@link Kernel32#ReadProcessMemory}
+	 * .
+	 */
+	int PROCESS_VM_READ = 0x0010;
+
+	/**
+	 * Required to write to memory in a process using
+	 * {@link Kernel32#WriteProcessMemory}
+	 * .
+	 */
+	int PROCESS_VM_WRITE = 0x0020;
+
+	/** Required to wait for the process to terminate using the wait functions. */
+	int PROCESS_SYNCHRONIZE = 0x00100000;
 
     /* Security information types */
     int OWNER_SECURITY_INFORMATION = 0x00000001;
@@ -1939,6 +2200,23 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000;
     int UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000;
     int UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000;
+
+    /* Security control bits */
+    int SE_OWNER_DEFAULTED          = 0x00000001;
+    int SE_GROUP_DEFAULTED          = 0x00000002;
+    int SE_DACL_PRESENT             = 0x00000004;
+    int SE_DACL_DEFAULTED           = 0x00000008;
+    int SE_SACL_PRESENT             = 0x00000010;
+    int SE_SACL_DEFAULTED           = 0x00000020;
+    int SE_DACL_AUTO_INHERIT_REQ    = 0x00000100;
+    int SE_SACL_AUTO_INHERIT_REQ    = 0x00000200;
+    int SE_DACL_AUTO_INHERITED      = 0x00000400;
+    int SE_SACL_AUTO_INHERITED      = 0x00000800;
+    int SE_DACL_PROTECTED           = 0x00001000;
+    int SE_SACL_PROTECTED           = 0x00002000;
+    int SE_RM_CONTROL_VALID         = 0x00004000;
+    int SE_SELF_RELATIVE            = 0x00008000;
+
 
     public static class SECURITY_DESCRIPTOR extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR implements
@@ -1961,6 +2239,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public byte[] data;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "data" });
         }
@@ -1968,6 +2247,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     public static class ACL extends Structure {
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2" });
         }
@@ -1993,7 +2273,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                     ace = new ACCESS_DENIED_ACE(share);
                     break;
                 default:
-                    throw new IllegalArgumentException("Unknwon ACE type "
+                    throw new IllegalArgumentException("Unknown ACE type "
                             + aceType);
                 }
                 ACEs[i] = ace;
@@ -2027,11 +2307,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public int Sacl;
         public int Dacl;
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "Revision", "Sbz1", "Control", "Owner", "Group", "Sacl", "Dacl" });
         }
 
         private ACL DACL;
+        private PSID OWNER;
+        private PSID GROUP;
+        private ACL SACL;
 
         public SECURITY_DESCRIPTOR_RELATIVE() {
         }
@@ -2039,23 +2323,44 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public SECURITY_DESCRIPTOR_RELATIVE(byte[] data) {
             super(new Memory(data.length));
             getPointer().write(0, data, 0, data.length);
-            setDacl();
+            setMembers();
         }
 
         public SECURITY_DESCRIPTOR_RELATIVE(Pointer p) {
             super(p);
-            setDacl();
+            setMembers();
+        }
+
+        public PSID getOwner() {
+        	return OWNER;
+        }
+
+        public PSID getGroup() {
+        	return GROUP;
         }
 
         public ACL getDiscretionaryACL() {
             return DACL;
         }
 
-        private final void setDacl() {
+        public ACL getSystemACL() {
+        	return SACL;
+        }
+
+        private final void setMembers() {
             read();
             if (Dacl != 0) {
                 DACL = new ACL(getPointer().share(Dacl));
             }
+            if (Sacl != 0) {
+                SACL = new ACL(getPointer().share(Sacl));
+            }
+        	if (Group != 0) {
+        		GROUP =  new PSID(getPointer().share(Group));
+        	}
+        	if (Owner != 0) {
+        		OWNER =  new PSID(getPointer().share(Owner));
+        	}
         }
     }
 
@@ -2071,6 +2376,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
         }
 
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "AceType", "AceFlags", "AceSize" });
         }
@@ -2097,6 +2403,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
     public static abstract class ACCESS_ACEStructure extends ACEStructure {
+        @Override
         protected List getFieldOrder() {
             List list = new ArrayList(super.getFieldOrder());
             list.addAll(Arrays.asList(new String[] { "Mask", "SidStart"}));
@@ -2173,6 +2480,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                 WinBase.OVERLAPPED overlapped);
     }
 
+
+    /**
+     * Defines the mapping of generic access rights to specific and standard access rights for an object
+     */
+    public static class GENERIC_MAPPING extends Structure {
+        public static class ByReference extends GENERIC_MAPPING implements Structure.ByReference {
+        }
+
+        public DWORD genericRead;
+        public DWORD genericWrite;
+        public DWORD genericExecute;
+        public DWORD genericAll;
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList("genericRead", "genericWrite", "genericExecute", "genericAll");
+        }
+    }
+
     /**
      * Describes the relationship between the specified processor set. This structure is used with the
      * {@link Kernel32#GetLogicalProcessorInformation} function.
@@ -2189,8 +2515,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * This member can be one of
          * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
          * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
-         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore} or
-         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationPackage}.
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore} or
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}.
          *
          * @see LOGICAL_PROCESSOR_RELATIONSHIP
          */
@@ -2202,11 +2528,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public AnonymousUnionPayload payload;
 
         public SYSTEM_LOGICAL_PROCESSOR_INFORMATION() {
-            super(ALIGN_MSVC);
         }
 
         public SYSTEM_LOGICAL_PROCESSOR_INFORMATION(Pointer memory) {
-            super(memory, ALIGN_MSVC);
+            super(memory);
+            read();
         }
 
         @Override
@@ -2216,7 +2542,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public static class AnonymousUnionPayload extends Union {
             /**
-             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCore}.
+             * Contains valid data only if {@link #relationship} is {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}.
              */
             public AnonymousStructProcessorCore processorCore;
 
@@ -2277,25 +2603,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     /**
      * Represents the relationship between the processor set identified in the corresponding
-     * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure.
+     * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or <code>SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX</code> structure.
      */
-    public static abstract class LOGICAL_PROCESSOR_RELATIONSHIP {
+    public interface LOGICAL_PROCESSOR_RELATIONSHIP {
         /**
          * The specified logical processors share a single processor core.
          */
-        public static final int RelationProcessorCore = 0;
+        int RelationProcessorCore = 0;
 
         /**
          * The specified logical processors are part of the same NUMA node.
          */
-        public static final int RelationNumaNode = 1;
+        int RelationNumaNode = 1;
 
         /**
          * <p>The specified logical processors share a cache.</p>
          *
          * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
          */
-        public static final int RelationCache = 2;
+        int RelationCache = 2;
 
         /**
          * <p>The specified logical processors share a physical package (a single package socketed or soldered onto a
@@ -2304,22 +2630,24 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          *
          * <p>Not supported until Windows Server 2003 SP1 / Windows XP Professional x64.</p>
          */
-        public static final int RelationProcessorPackage = 3;
+        int RelationProcessorPackage = 3;
 
         /**
          * <p>The specified logical processors share a single processor group.</p>
          *
          * <p>Not supported until Windows Server 2008 R2.</p>
          */
-        public static final int RelationGroup = 4;
+        int RelationGroup = 4;
 
         /**
          * <p>On input, retrieves information about all possible relation types. This value is not used on output.</p>
          *
          * <p>Not supported until Windows Server 2008 R2.</p>
          */
-        public static final int RelationAll = 0xFFFF;
+        int RelationAll = 0xFFFF;
     }
+
+    byte CACHE_FULLY_ASSOCIATIVE = (byte)0xFF;
 
     /**
      * Describes the cache attributes.
@@ -2383,5 +2711,96 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * The cache is for traces.
          */
         public static int CacheTrace = 3;
+    }
+
+    /**
+     * Indicates committed pages for which physical storage has been allocated, either in memory or in the paging file on disk.
+     */
+    int MEM_COMMIT = 0x1000;
+
+    /**
+     * Indicates free pages not accessible to the calling process and available to be allocated.
+     * For free pages, the information in the AllocationBase, AllocationProtect, Protect, and Type members is undefined.
+     */
+    int MEM_FREE = 0x10000;
+
+    /**
+     * Indicates reserved pages where a range of the process's virtual address space is reserved without any physical storage being allocated.
+     * For reserved pages, the information in the Protect member is undefined.
+     */
+    int MEM_RESERVE = 0x2000;
+
+    /**
+     * Indicates that the memory pages within the region are mapped into the view of an image section.
+     */
+    int MEM_IMAGE = 0x1000000;
+
+    /**
+     * Indicates that the memory pages within the region are mapped into the view of a section.
+     */
+    int MEM_MAPPED = 0x40000;
+
+    /**
+     * Indicates that the memory pages within the region are private (that is, not shared by other processes).
+     */
+    int MEM_PRIVATE = 0x20000;
+
+    public static class MEMORY_BASIC_INFORMATION extends Structure {
+
+        /**
+         * A pointer to the base address of the region of pages.
+         */
+        public Pointer baseAddress;
+
+        /**
+         * A pointer to the base address of a range of pages allocated by the VirtualAlloc function.
+         * The page pointed to by the BaseAddress member is contained within this allocation range.
+         */
+        public Pointer allocationBase;
+
+        /**
+         * The memory protection option when the region was initially allocated.
+         * This member can be one of the memory protection constants or 0 if the caller does not have access.
+         */
+        public DWORD allocationProtect;
+
+        /**
+         * The size of the region beginning at the base address in which all pages have identical attributes, in bytes.
+         */
+        public SIZE_T regionSize;
+
+        /**
+         * The state of the pages in the region.
+         * This member can be one of the following values:
+         *
+         * MEM_COMMIT,
+         * MEM_FREE,
+         * MEM_RESERVE.
+         */
+        public DWORD state;
+
+        /**
+         * The access protection of the pages in the region.
+         * This member is one of the values listed for the AllocationProtect member.
+         */
+        public DWORD protect;
+
+        /**
+         * The type of pages in the region.
+         * The following types are defined:
+         *
+         * MEM_IMAGE
+         * MEM_MAPPED
+         * MEM_PRIVATE
+         */
+        public DWORD type;
+
+        @Override
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[]{
+                "baseAddress", "allocationBase", "allocationProtect",
+                "regionSize", "state", "protect", "type"
+            });
+        }
     }
 }

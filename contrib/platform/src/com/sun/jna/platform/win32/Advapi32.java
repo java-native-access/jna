@@ -17,6 +17,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -31,6 +33,13 @@ import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
+
+import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import static com.sun.jna.platform.win32.WinDef.DWORD;
+import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinDef.ULONG;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
+import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 
 /**
  * Advapi32.dll Interface.
@@ -296,6 +305,25 @@ public interface Advapi32 extends StdCallLibrary {
 	public boolean OpenThreadToken(HANDLE ThreadHandle, int DesiredAccess,
 			boolean OpenAsSelf, HANDLEByReference TokenHandle);
 
+	/**
+	 * The SetThreadToken function assigns an impersonation token to a thread.
+	 * The function can also cause a thread to stop using an impersonation token.
+	 * @param ThreadHandle [in, optional]
+	 *                     A pointer to a handle to the thread to which the function
+	 *                     assigns the impersonation token. If ThreadHandle is NULL, the
+	 *                     function assigns the impersonation token to the calling thread.
+	 * @param TokenHandle [in, optional]
+	 *                     A handle to the impersonation token to assign to the thread.
+	 *                     This handle must have been opened with TOKEN_IMPERSONATE access
+	 *                     rights. For more information, see Access Rights for Access-Token
+	 *                     Objects. If Token is NULL, the function causes the
+	 *                     thread to stop using an impersonation token.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 *         function fails, the return value is zero. To get extended error
+	 *         information, call GetLastError.
+	 */
+	public boolean SetThreadToken(HANDLEByReference ThreadHandle, HANDLE TokenHandle);
+	
 	/**
 	 * The OpenProcessToken function opens the access token associated with a
 	 * process.
@@ -1523,4 +1551,353 @@ public interface Advapi32 extends StdCallLibrary {
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
 
+	/**
+	 * The GetNamedSecurityInfo function retrieves a copy of the security
+	 * descriptor for an object specified by name
+	 *
+	 * @param pObjectName
+	 *            A pointer to a that specifies the name of the object from
+	 *            which to retrieve security information.
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType
+	 *            Specifies a value from the SE_OBJECT_TYPE enumeration that
+	 *            indicates the type of object named by the pObjectName parameter.
+	 * @param SecurityInfo
+	 *            A set of bit flags that indicate the type of security
+	 *            information to retrieve. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [out, optional]
+	 *            A pointer to a variable that receives a pointer to the owner SID
+	 *            in the security descriptor returned in ppSecurityDescriptor
+	 *            or NULL if the security descriptor has no owner SID.
+	 *            The returned pointer is valid only if you set the
+	 *            OWNER_SECURITY_INFORMATION flag. Also, this parameter can be
+	 *            NULL if you do not need the owner SID.
+	 * @param ppsidGroup [out, optional]
+	 *            A pointer to a variable that receives a pointer to the primary
+	 *            group SID in the returned security descriptor or NULL if the
+	 *            security descriptor has no group SID. The returned pointer is
+	 *            valid only if you set the GROUP_SECURITY_INFORMATION flag.
+	 *            Also, this parameter can be NULL if you do not need the group SID.
+	 * @param ppDacl [out, optional]
+	 *            A pointer to a variable that receives a pointer to the DACL in
+	 *            the returned security descriptor or NULL if the security
+	 *            descriptor has no DACL. The returned pointer is valid only if
+	 *            you set the DACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *            can be NULL if you do not need the DACL.
+	 * @param ppSacl [out, optional]
+	 *             A pointer to a variable that receives a pointer to the SACL in
+	 *             the returned security descriptor or NULL if the security
+	 *             descriptor has no SACL. The returned pointer is valid only if
+	 *             you set the SACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *             can be NULL if you do not need the SACL.
+	 * @param ppSecurityDescriptor
+	 *            A pointer to a variable that receives a pointer to the security
+	 *            descriptor of the object. When you have finished using the
+	 *            pointer, free the returned buffer by calling the LocalFree
+	 *            function.
+	 *            
+	 *            This parameter is required if any one of the ppsidOwner,
+	 *            ppsidGroup, ppDacl, or ppSacl parameters is not NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 * 
+	 * NOTES:
+	 * 1. To read the owner, group, or DACL from the object's security descriptor,
+	 * the object's DACL must grant READ_CONTROL access to the caller, or the caller
+	 * must be the owner of the object.
+	 * 2. To read the system access control list of the object, the SE_SECURITY_NAME
+	 * privilege must be enabled for the calling process. For information about the
+	 * security implications of enabling privileges, see Running with Special Privileges.
+	 */
+	public int GetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			PointerByReference ppsidOwner,
+			PointerByReference ppsidGroup,
+			PointerByReference ppDacl,
+			PointerByReference ppSacl,
+			PointerByReference ppSecurityDescriptor);
+	
+	/**
+	 * The SetNamedSecurityInfo function sets specified security information in
+	 * the security descriptor of a specified object. The caller identifies the
+	 * object by name.
+	 *
+	 * @param pObjectName [in]
+	 *            A pointer to a string that specifies the name of the object for
+	 *            which to set security information. This can be
+	 *            the name of a local or remote file or directory on an NTFS file
+	 *            system, network share, registry key, semaphore, event, mutex,
+	 *            file mapping, or waitable timer.	 *            
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType [in]
+	 *            A value of the SE_OBJECT_TYPE enumeration that indicates the type
+	 *            of object named by the pObjectName parameter.
+	 * @param SecurityInfo [in]
+	 *            A set of bit flags that indicate the type of security
+	 *            information to set. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [in, optional]
+	 *            A pointer to a SID structure that identifies the owner of the object.
+	 *            If the caller does not have the SeRestorePrivilege constant
+	 *            (see Privilege Constants), this SID must be contained in the
+	 *            caller's token, and must have the SE_GROUP_OWNER permission enabled.
+	 *            The SecurityInfo parameter must include the OWNER_SECURITY_INFORMATION
+	 *            flag. To set the owner, the caller must have WRITE_OWNER access to
+	 *            the object or have the SE_TAKE_OWNERSHIP_NAME privilege enabled.
+	 *            If you are not setting the owner SID, this parameter can be NULL.
+	 * @param ppsidGroup [in, optional]
+	 *            A pointer to a SID that identifies the primary group of the object.
+	 *            The SecurityInfo parameter must include the GROUP_SECURITY_INFORMATION
+	 *            flag. If you are not setting the primary group SID, this parameter
+	 *            can be NULL.
+	 * @param ppDacl [in, optional]
+	 *            A pointer to the new DACL for the object. The SecurityInfo parameter
+	 *            must include the DACL_SECURITY_INFORMATION flag. The caller must have
+	 *            WRITE_DAC access to the object or be the owner of the object. If you
+	 *            are not setting the DACL, this parameter can be NULL.
+	 * @param ppSacl [in, optional]
+	 *             A pointer to the new SACL for the object. The SecurityInfo parameter
+	 *             must include any of the following flags: SACL_SECURITY_INFORMATION,
+	 *             LABEL_SECURITY_INFORMATION, ATTRIBUTE_SECURITY_INFORMATION,
+	 *             SCOPE_SECURITY_INFORMATION, or BACKUP_SECURITY_INFORMATION.
+	 *             If setting SACL_SECURITY_INFORMATION or SCOPE_SECURITY_INFORMATION,
+	 *             the caller must have the SE_SECURITY_NAME privilege enabled. If
+	 *             you are not setting the SACL, this parameter can be NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 * 
+	 * NOTES:
+	 * 1. The SetNamedSecurityInfo function does not reorder access-allowed or access-denied
+	 * ACEs based on the preferred order. When propagating inheritable ACEs to existing
+	 * child objects, SetNamedSecurityInfo puts inherited ACEs in order after all of the
+	 * noninherited ACEs in the DACLs of the child objects.
+	 * 2. This function transfers information in plaintext. The information transferred by
+	 * this function is signed unless signing has been turned off for the system, but no
+	 * encryption is performed.
+	 * 3. When you update access rights of a folder indicated by an UNC path, for example
+	 * \\Test\TestFolder, the original inherited ACE is removed and the full volume path
+	 * is not included.
+	 */	
+	public int SetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			Pointer ppsidOwner,
+			Pointer ppsidGroup,
+			Pointer ppDacl,
+			Pointer ppSacl);
+	
+	/**
+	 * The GetSecurityDescriptorLength function returns the length, in bytes, of a structurally
+	 * valid security descriptor. The length includes the length of all associated structures.
+	 * 
+	 * @param ppSecurityDescriptor
+	 *            A pointer to the SECURITY_DESCRIPTOR structure whose length the function returns. 
+	 *            The pointer is assumed to be valid.
+	 * @return If the function succeeds, the function returns the length, in bytes, of the SECURITY_DESCRIPTOR structure.
+     *         If the SECURITY_DESCRIPTOR structure is not valid, the return value is undefined.
+	 */
+	public int GetSecurityDescriptorLength(Pointer ppSecurityDescriptor);
+	
+	/**
+	 * The IsValidSecurityDescriptor function determines whether the components of a security descriptor are valid.
+	 * 
+	 * @param ppSecurityDescriptor [in]
+     *            A pointer to a SECURITY_DESCRIPTOR structure that the function validates.
+	 * @return If the components of the security descriptor are valid, the return value is nonzero.
+	 */
+	public boolean IsValidSecurityDescriptor(Pointer ppSecurityDescriptor);
+		
+	/**
+	 * The IsValidAcl function validates an access control list (ACL).
+	 * 
+	 * @param pAcl [in]
+     *            A pointer to an ACL structure validated by this function. This value must not be NULL.
+	 * @return If the ACL is valid, the function returns nonzero. If the ACL is not valid, the function returns zero.
+	 * There is no extended error information for this function; do not call GetLastError.
+	 * 
+	 * This function checks the revision level of the ACL and verifies that the number of access control entries
+	 * (ACEs) specified in the AceCount member of the ACL structure fits the space specified by the AclSize member
+	 * of the ACL structure.If pAcl is NULL, the application will fail with an access violation.
+	 */
+	public boolean IsValidAcl(Pointer pAcl);
+
+    /**
+     * Applies the given mapping of generic access rights to the given access mask.
+     * @param AccessMask [in, out] A pointer to an access mask.
+     * @param GenericMapping [in] A pointer to a GENERIC_MAPPING structure specifying a mapping of generic access types to specific and standard access types.
+     */
+    public void MapGenericMask(DWORDByReference AccessMask, GENERIC_MAPPING GenericMapping);
+
+
+    /**
+     * Check if the if the security descriptor grants access to the given client token.
+     *
+     * @param pSecurityDescriptor [in] A pointer to a SECURITY_DESCRIPTOR structure against which access is checked.
+     * @param ClientToken [in] A handle to an impersonation token that represents the client that is attempting to gain access. The handle must have TOKEN_QUERY access to the token; otherwise, the function fails with ERROR_ACCESS_DENIED.
+     * @param DesiredAccess [in] Access mask that specifies the access rights to check. This mask must have been mapped by the MapGenericMask function to contain no generic access rights.<br>
+     *                      If this parameter is MAXIMUM_ALLOWED, the function sets the GrantedAccess access mask to indicate the maximum access rights the security descriptor allows the client.
+     * @param GenericMapping [in] A pointer to the GENERIC_MAPPING structure associated with the object for which access is being checked.
+     * @param PrivilegeSet [out, optional] A pointer to a PRIVILEGE_SET structure that receives the privileges used to perform the access validation. If no privileges were used, the function sets the PrivilegeCount member to zero.
+     * @param PrivilegeSetLength [in, out] Specifies the size, in bytes, of the buffer pointed to by the PrivilegeSet parameter.
+     * @param GrantedAccess [out] A pointer to an access mask that receives the granted access rights. If AccessStatus is set to FALSE, the function sets the access mask to zero. If the function fails, it does not set the access mask.
+     * @param AccessStatus [out] A pointer to a variable that receives the results of the access check. If the security descriptor allows the requested access rights to the client identified by the access token, AccessStatus is set to TRUE. Otherwise, AccessStatus is set to FALSE, and you can call GetLastError to get extended error information.
+     * @return true on success; false on failure (use GetLastError to get extended error information)
+     */
+    public boolean AccessCheck(Pointer pSecurityDescriptor,
+                               HANDLE ClientToken, DWORD DesiredAccess,
+                               GENERIC_MAPPING GenericMapping,
+                               PRIVILEGE_SET PrivilegeSet,
+                               DWORDByReference PrivilegeSetLength,
+                               DWORDByReference GrantedAccess, BOOLByReference AccessStatus);
+	
+	/**
+	 * Encrypts a file or directory. All data streams in a file are encrypted. All
+	 * new files created in an encrypted directory are encrypted.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be encrypted.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean EncryptFile(WString lpFileName);
+
+	/**
+	 * Decrypts an encrypted file or directory.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be decrypted.
+	 * @param dwReserved
+	 *         Reserved; must be zero.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean DecryptFile(WString lpFileName, DWORD dwReserved);
+
+	/**
+	 * Retrieves the encryption status of the specified file.
+	 *
+	 * @param lpFileName
+	 *         The name of the file.
+	 * @param lpStatus
+	 *         A pointer to a variable that receives the encryption status of the
+	 *         file.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
+
+	/**
+	 * Disables or enables encryption of the specified directory and the files in
+	 * it. It does not affect encryption of subdirectories below the indicated
+	 * directory.
+	 *
+	 * @param DirPath
+	 *         The name of the directory for which to enable or disable
+	 *         encryption.
+	 * @param Disable
+	 *         Indicates whether to disable encryption (TRUE) or enable it
+	 *         (FALSE).
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	public boolean EncryptionDisable(WString DirPath, boolean Disable);
+
+	/**
+	 * Opens an encrypted file in order to backup (export) or restore (import) the
+	 * file. This is one of a group of Encrypted File System (EFS) functions that
+	 * is intended to implement backup and restore functionality, while
+	 * maintaining files in their encrypted state.
+	 *
+	 * @param lpFileName
+	 *         The name of the file to be opened. The string must consist of
+	 *         characters from the Windows character set.
+	 * @param ulFlags
+	 *         The operation to be performed.
+	 * @param pvContext
+	 *         The address of a context block that must be presented in subsequent
+	 *         calls to ReadEncryptedFileRaw, WriteEncryptedFileRaw, or
+	 *         CloseEncryptedFileRaw. Do not modify it.
+	 * @return If the function succeeds, it returns ERROR_SUCCESS. If the function
+	 * fails, it returns a nonzero error code defined in WinError.h. You can use
+	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
+	 * text description of the error.
+	 */
+	public int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags,
+                                  PointerByReference pvContext);
+
+	/**
+	 * Backs up (export) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pfExportCallback
+	 *         A pointer to the export callback function. The system calls the
+	 *         callback function multiple times, each time passing a block of the
+	 *         file's data to the callback function until the entire file has been
+	 *         read. For more information, see ExportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	public int ReadEncryptedFileRaw(FE_EXPORT_FUNC pfExportCallback, 
+                                  Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Restores (import) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in.
+	 *
+	 * @param pfImportCallback
+	 *         A pointer to the import callback function. The system calls the
+	 *         callback function multiple times, each time passing a buffer that
+	 *         will be filled by the callback function with a portion of backed-up
+	 *         file's data. When the callback function signals that the entire
+	 *         file has been processed, it tells the system that the restore
+	 *         operation is finished. For more information, see ImportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	public int WriteEncryptedFileRaw(FE_IMPORT_FUNC pfImportCallback, 
+                                   Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Closes an encrypted file after a backup or restore operation, and frees
+	 * associated system resources. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The
+	 *         OpenEncryptedFileRaw function returns the context block.
+	 */
+	public void CloseEncryptedFileRaw(Pointer pvContext);
 }

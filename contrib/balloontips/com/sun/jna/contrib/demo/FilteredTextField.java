@@ -256,8 +256,8 @@ public class FilteredTextField extends JTextField {
           balloon.hide();
         }
       }
-      StringBuffer buffer =
-        new StringBuffer(FilteredTextField.this.getText());
+      StringBuilder buffer =
+        new StringBuilder(FilteredTextField.this.getText());
       if (offset >= 0 && offset <= buffer.length()) {
         buffer.insert(offset, str);
         String strBuf = buffer.toString();

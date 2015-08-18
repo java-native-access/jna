@@ -32,7 +32,8 @@ public interface Winioctl extends StdCallLibrary {
      */
     public static class STORAGE_DEVICE_NUMBER extends Structure {
 
-        public static class ByReference extends STORAGE_DEVICE_NUMBER implements Structure.ByReference {
+		public static class ByReference extends STORAGE_DEVICE_NUMBER implements
+				Structure.ByReference {
             public ByReference() {
             }
 

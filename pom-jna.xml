@@ -6,7 +6,7 @@
 
   <groupId>net.java.dev.jna</groupId>
   <artifactId>jna</artifactId>
-  <version>4.0.0-SNAPSHOT</version>
+  <version>4.1.0</version>
   <packaging>jar</packaging>
 
   <name>Java Native Access</name>
@@ -21,7 +21,7 @@
       </license>
       <license>
           <name>ASL, version 2</name>
-          <url>http://www.apache.org/licenses/</url>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
       </license>
   </licenses>

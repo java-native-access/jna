@@ -173,7 +173,44 @@ public class TypeMapperTest extends TestCase {
         s.read();
         assertFalse("Wrong value read", s.data);
     }
-
+    
+    public static enum Enumeration {
+        STATUS_0(0), STATUS_1(1), STATUS_ERROR(-1);
+        private final int code;
+        Enumeration(int code) { this.code = code; }
+        public int getCode() { return code; }
+        public static Enumeration fromCode(int code) {
+            switch(code) {
+            case 0: return STATUS_0;
+            case 1: return STATUS_1;
+            default: return STATUS_ERROR;
+            }
+        }
+    }
+    public static interface EnumerationTestLibrary extends Library {
+        Enumeration returnInt32Argument(Enumeration arg);
+    }
+    public void testEnumConversion() throws Exception {
+        DefaultTypeMapper mapper = new DefaultTypeMapper();
+        TypeConverter converter = new TypeConverter() {
+            public Object toNative(Object value, ToNativeContext ctx) {
+                return new Integer(((Enumeration)value).getCode());
+            }
+            public Object fromNative(Object value, FromNativeContext context) {
+                return Enumeration.fromCode(((Integer)value).intValue());
+            }
+            public Class nativeType() {
+                return Integer.class;
+            }
+        };
+        mapper.addTypeConverter(Enumeration.class, converter);
+        Map options = new HashMap();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        EnumerationTestLibrary lib = (EnumerationTestLibrary)
+            Native.loadLibrary("testlib", EnumerationTestLibrary.class, options);
+        assertEquals("Enumeration improperly converted", Enumeration.STATUS_1, lib.returnInt32Argument(Enumeration.STATUS_1));
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TypeMapperTest.class);
     }

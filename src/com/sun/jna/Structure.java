@@ -178,7 +178,7 @@ public abstract class Structure {
         initializeTypeMapper(mapper);
         validateFields();
         if (p != null) {
-            useMemory(p);
+            useMemory(p, 0, true);
         }
         else {
             allocateMemory(CALCULATE_SIZE);
@@ -279,12 +279,27 @@ public abstract class Structure {
      * thus does not own its own memory allocation.
      */
     protected void useMemory(Pointer m, int offset) {
+        useMemory(m, offset, false);
+    }
+
+    /** Set the memory used by this structure.  This method is used to
+     * indicate the given structure is based on natively-allocated data,
+     * nested within another, or otherwise overlaid on existing memory and
+     * thus does not own its own memory allocation.
+     * @param m Native pointer
+     * @param offset offset from pointer to use
+     * @param force ByValue structures normally ignore requests to use a
+     * different memory offset; this input is set <code>true</code> when
+     * setting a ByValue struct that is nested within another struct.
+     */
+    void useMemory(Pointer m, int offset, boolean force) {
         try {
             // Clear any local cache
             nativeStrings.clear();
 
-            if (this instanceof ByValue) {
-                // ByValue always uses own memory
+            if (this instanceof ByValue && !force) {
+                // ByValue parameters always use dedicated memory, so only
+                // copy the contents of the original
                 byte[] buf = new byte[size()];
                 m.read(0, buf, 0, buf.length);
                 this.memory.write(0, buf, 0, buf.length);
@@ -304,7 +319,7 @@ public abstract class Structure {
             this.readCalled = false;
         }
         catch(IndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+            throw new IllegalArgumentException("Structure exceeds provided memory bounds", e);
         }
     }
 
@@ -331,7 +346,7 @@ public abstract class Structure {
                     this.memory = this.memory.share(0, this.size);
                 }
                 catch(IndexOutOfBoundsException e) {
-                    throw new IllegalArgumentException("Structure exceeds provided memory bounds");
+                    throw new IllegalArgumentException("Structure exceeds provided memory bounds", e);
                 }
             }
         }
@@ -412,72 +427,77 @@ public abstract class Structure {
     // Keep track of what is currently being read/written to avoid redundant
     // reads (avoids problems with circular references).
     private static final ThreadLocal busy = new ThreadLocal() {
-        /** Avoid using a hash-based implementation since the hash code
-            for a Structure is not immutable.
-        */
-        class StructureSet extends AbstractCollection implements Set {
-            private Structure[] elements;
-            private int count;
-            private void ensureCapacity(int size) {
-                if (elements == null) {
-                    elements = new Structure[size*3/2];
-                }
-                else if (elements.length < size) {
-                    Structure[] e = new Structure[size*3/2];
-                    System.arraycopy(elements, 0, e, 0, elements.length);
-                    elements = e;
-                }
-            }
-            public int size() { return count; }
-            public boolean contains(Object o) {
-                return indexOf(o) != -1;
-            }
-            public boolean add(Object o) {
-                if (!contains(o)) {
-                    ensureCapacity(count+1);
-                    elements[count++] = (Structure)o;
-                }
-                return true;
-            }
-            private int indexOf(Object o) {
-                Structure s1 = (Structure)o;
-                for (int i=0;i < count;i++) {
-                    Structure s2 = elements[i];
-                    if (s1 == s2
-                        || (s1.getClass() == s2.getClass()
-                            && s1.size() == s2.size()
-                            && s1.getPointer().equals(s2.getPointer()))) {
-                        return i;
-                    }
-                }
-                return -1;
-            }
-            public boolean remove(Object o) {
-                int idx = indexOf(o);
-                if (idx != -1) {
-                    if (--count > 0) {
-                        elements[idx] = elements[count];
-                        elements[count] = null;
-                    }
-                    return true;
-                }
-                return false;
-            }
-            /** Simple implementation so that toString() doesn't break.
-                Provides an iterator over a snapshot of this Set.
-            */
-            public Iterator iterator() {
-                Structure[] e = new Structure[count];
-                if (count > 0) {
-                    System.arraycopy(elements, 0, e, 0, count);
-                }
-                return Arrays.asList(e).iterator();
-            }
-        }
         protected synchronized Object initialValue() {
             return new StructureSet();
         }
     };
+    
+    /** Avoid using a hash-based implementation since the hash code
+            for a Structure is not immutable.
+     */
+    static class StructureSet extends AbstractCollection implements Set {
+        Structure[] elements;
+        private int count;
+        private void ensureCapacity(int size) {
+            if (elements == null) {
+                elements = new Structure[size*3/2];
+            }
+            else if (elements.length < size) {
+                Structure[] e = new Structure[size*3/2];
+                System.arraycopy(elements, 0, e, 0, elements.length);
+                elements = e;
+            }
+        }
+        public Structure[] getElements() {
+			return elements;
+		}
+        public int size() { return count; }
+        public boolean contains(Object o) {
+            return indexOf(o) != -1;
+        }
+        public boolean add(Object o) {
+            if (!contains(o)) {
+                ensureCapacity(count+1);
+                elements[count++] = (Structure)o;
+            }
+            return true;
+        }
+        private int indexOf(Object o) {
+            Structure s1 = (Structure)o;
+            for (int i=0;i < count;i++) {
+                Structure s2 = elements[i];
+                if (s1 == s2
+                    || (s1.getClass() == s2.getClass()
+                        && s1.size() == s2.size()
+                        && s1.getPointer().equals(s2.getPointer()))) {
+                    return i;
+                }
+            }
+            return -1;
+        }
+        public boolean remove(Object o) {
+            int idx = indexOf(o);
+            if (idx != -1) {
+                if (--count >= 0) {
+                    elements[idx] = elements[count];
+                    elements[count] = null;
+                }
+                return true;
+            }
+            return false;
+        }
+        /** Simple implementation so that toString() doesn't break.
+            Provides an iterator over a snapshot of this Set.
+        */
+        public Iterator iterator() {
+            Structure[] e = new Structure[count];
+            if (count > 0) {
+                System.arraycopy(elements, 0, e, 0, count);
+            }
+            return Arrays.asList(e).iterator();
+        }
+    }
+    
     static Set busy() {
         return (Set)busy.get();
     }
@@ -518,7 +538,8 @@ public abstract class Structure {
         }
         try {
             for (Iterator i=fields().values().iterator();i.hasNext();) {
-                readField((StructField)i.next());
+                StructField structField = (StructField)i.next();
+                readField(structField);
             }
         }
         finally {
@@ -559,9 +580,7 @@ public abstract class Structure {
             return field.get(this);
         }
         catch (Exception e) {
-            throw new Error("Exception reading field '"
-                            + field.getName() + "' in " + getClass()
-                            + ": " + e);
+            throw new Error("Exception reading field '" + field.getName() + "' in " + getClass(), e);
         }
     }
 
@@ -580,13 +599,11 @@ public abstract class Structure {
                 if (overrideFinal) {
                     // WARNING: setAccessible(true) on J2ME does *not* allow
                     // overwriting of a final field.
-                    throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + field.getName() + "' within " + getClass() + ")");
+                    throw new UnsupportedOperationException("This VM does not support Structures with final fields (field '" + field.getName() + "' within " + getClass() + ")", e);
                 }
-                throw new UnsupportedOperationException("Attempt to write to read-only field '" + field.getName() + "' within " + getClass());
+                throw new UnsupportedOperationException("Attempt to write to read-only field '" + field.getName() + "' within " + getClass(), e);
             }
-            throw new Error("Unexpectedly unable to write to field '"
-                            + field.getName() + "' within " + getClass()
-                            + ": " + e);
+            throw new Error("Unexpectedly unable to write to field '" + field.getName() + "' within " + getClass(), e);
         }
     }
 
@@ -606,12 +623,16 @@ public abstract class Structure {
                 Structure s1 = (Structure)reading().get(address);
                 if (s1 != null && type.equals(s1.getClass())) {
                     s = s1;
+                    s.autoRead();
                 }
                 else {
                     s = newInstance(type, address);
+                    s.conditionalAutoRead();
                 }
             }
-            s.autoRead();
+            else {
+                s.autoRead();
+            }
         }
         return s;
     }
@@ -620,7 +641,7 @@ public abstract class Structure {
      * updated from the contents of native memory.
      */
     // TODO: make overridable method with calculated native type, offset, etc
-    Object readField(StructField structField) {
+    protected Object readField(StructField structField) {
 
         // Get the offset of the field
         int offset = structField.offset;
@@ -730,7 +751,7 @@ public abstract class Structure {
         writeField(structField);
     }
 
-    void writeField(StructField structField) {
+    protected void writeField(StructField structField) {
 
         if (structField.isReadOnly)
             return;
@@ -785,7 +806,7 @@ public abstract class Structure {
                 + (structField.type == fieldType
                    ? "" : " (native type " + fieldType + ")")
                 + ", which is not supported within a Structure";
-            throw new IllegalArgumentException(msg);
+            throw new IllegalArgumentException(msg, e);
         }
     }
 
@@ -891,9 +912,11 @@ public abstract class Structure {
         if (fieldOrder.size() != flist.size() && flist.size() > 1) {
             if (force) {
                 throw new Error("Structure.getFieldOrder() on " + getClass()
-                                + " does not provide enough names ("
+                                + " does not provide enough names [" + fieldOrder.size()
+                                + "] ("
                                 + sort(fieldOrder)
-                                + ") to match declared fields ("
+                                + ") to match declared fields [" + flist.size()
+                                + "] ("
                                 + sort(names)
                                 + ")");
             }
@@ -925,7 +948,7 @@ public abstract class Structure {
      * @throws IllegalArgumentException when an unsupported field type is
      * encountered
      */
-    private int calculateSize(boolean force) {
+    protected int calculateSize(boolean force) {
         return calculateSize(force, false);
     }
 
@@ -1015,7 +1038,7 @@ public abstract class Structure {
             }
             catch(IllegalArgumentException e) {
                 String msg = "Invalid Structure field in " + getClass() + ", field name '" + name + "' (" + type + "): " + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                throw new IllegalArgumentException(msg, e);
             }
         }
     }
@@ -1135,7 +1158,7 @@ public abstract class Structure {
                     return null;
                 }
                 String msg = "Invalid Structure field in " + getClass() + ", field name '" + structField.name + "' (" + structField.type + "): " + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                throw new IllegalArgumentException(msg, e);
             }
 
             // Align fields as appropriate
@@ -1197,9 +1220,7 @@ public abstract class Structure {
                 }
             }
             catch (Exception e) {
-                throw new Error("Exception reading field '"
-                                + f.getName() + "' in " + getClass()
-                                + ": " + e);
+                throw new Error("Exception reading field '" + f.getName() + "' in " + getClass(), e);
             }
         }
     }
@@ -1213,9 +1234,8 @@ public abstract class Structure {
                 setFieldValue(field, value);
             }
             catch(IllegalArgumentException e) {
-                String msg = "Can't determine size of nested structure: "
-                    + e.getMessage();
-                throw new IllegalArgumentException(msg);
+                String msg = "Can't determine size of nested structure";
+                throw new IllegalArgumentException(msg, e);
             }
         }
         else if (NativeMapped.class.isAssignableFrom(type)) {
@@ -1301,7 +1321,7 @@ public abstract class Structure {
             // NOTE this is published ABI for 32-bit gcc/linux/x86, osx/x86,
             // and osx/ppc.  osx/ppc special-cases the first element
             if (!isFirstElement || !(Platform.isMac() && Platform.isPPC())) {
-                alignment = Math.min(Native.MAX_PADDING, alignment);
+                alignment = Math.min(Native.MAX_ALIGNMENT, alignment);
             }
             if (!isFirstElement && Platform.isAIX() && (type == double.class || type == Double.class)) {
                 alignment = 4;
@@ -1601,18 +1621,17 @@ public abstract class Structure {
             // Might as well try the fallback
         }
         catch(InstantiationException e) {
-            String msg = "Can't instantiate " + type + " (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Can't instantiate " + type;
+            throw new IllegalArgumentException(msg, e);
         }
         catch(IllegalAccessException e) {
-            String msg = "Instantiation of " + type
-                + "(Pointer) not allowed, is it public? (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Instantiation of " + type + " (Pointer) not allowed, is it public?";
+            throw new IllegalArgumentException(msg, e);
         }
         catch(InvocationTargetException e) {
-            String msg = "Exception thrown while instantiating an instance of " + type + " (" + e + ")";
+            String msg = "Exception thrown while instantiating an instance of " + type;
             e.printStackTrace();
-            throw new IllegalArgumentException(msg);
+            throw new IllegalArgumentException(msg, e);
         }
         Structure s = newInstance(type);
         if (init != PLACEHOLDER_MEMORY) {
@@ -1635,13 +1654,13 @@ public abstract class Structure {
             return s;
         }
         catch(InstantiationException e) {
-            String msg = "Can't instantiate " + type + " (" + e + ")";
-            throw new IllegalArgumentException(msg);
+            String msg = "Can't instantiate " + type;
+            throw new IllegalArgumentException(msg, e);
         }
         catch(IllegalAccessException e) {
             String msg = "Instantiation of " + type
-                + " not allowed, is it public? (" + e + ")";
-            throw new IllegalArgumentException(msg);
+                + " not allowed, is it public?";
+            throw new IllegalArgumentException(msg, e);
         }
     }
 
@@ -1659,7 +1678,7 @@ public abstract class Structure {
         return null;
     }
 
-    static class StructField extends Object {
+    protected static class StructField extends Object {
         public String name;
         public Class type;
         public Field field;
@@ -1779,6 +1798,7 @@ public abstract class Structure {
             write();
         }
 
+        /** Obtain a pointer to the native FFI type descriptor for the given object. */
         static Pointer get(Object obj) {
             if (obj == null)
                 return FFITypes.ffi_type_pointer;
@@ -1828,7 +1848,7 @@ public abstract class Structure {
                     typeInfoMap.put(obj, type);
                     return type.getPointer();
                 }
-                throw new IllegalArgumentException("Unsupported Structure field type " + cls);
+                throw new IllegalArgumentException("Unsupported type " + cls);
             }
         }
     }

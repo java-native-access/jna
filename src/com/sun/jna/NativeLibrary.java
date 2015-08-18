@@ -106,10 +106,10 @@ public class NativeLibrary {
         if (Platform.isWindows() && "kernel32".equals(this.libraryName.toLowerCase())) {
             synchronized(functions) {
                 Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION, encoding) {
-                    Object invoke(Object[] args, Class returnType, boolean b) {
-                        return new Integer(Native.getLastError());
-                    }
-                };
+                        Object invoke(Object[] args, Class returnType, boolean b) {
+                            return new Integer(Native.getLastError());
+                        }
+                    };
                 functions.put(functionKey("GetLastError", callFlags, encoding), f);
             }
         }
@@ -203,7 +203,7 @@ public class NativeLibrary {
                 }
                 catch(UnsatisfiedLinkError e2) { e = e2; }
             }
-            else if (Platform.isLinux()) {
+            else if (Platform.isLinux() || Platform.isFreeBSD()) {
                 //
                 // Failed to load the library normally - try to match libfoo.so.*
                 //
@@ -257,11 +257,14 @@ public class NativeLibrary {
             if (handle == 0) {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
-                    handle = Native.open(embedded.getAbsolutePath());
-                    libraryPath = embedded.getAbsolutePath();
-                    // Don't leave temporary files around
-                    if (Native.isUnpacked(embedded)) {
-                        Native.deleteLibrary(embedded);
+                    try {
+                        handle = Native.open(embedded.getAbsolutePath(), openFlags);
+                        libraryPath = embedded.getAbsolutePath();
+                    } finally {
+                        // Don't leave temporary files around
+                        if (Native.isUnpacked(embedded)) {
+                            Native.deleteLibrary(embedded);
+                        }
                     }
                 }
                 catch(IOException e2) { e = new UnsatisfiedLinkError(e2.getMessage()); }
@@ -382,7 +385,7 @@ public class NativeLibrary {
 
         // Use current process to load libraries we know are already
         // loaded by the VM to ensure we get the correct version
-        if ((Platform.isLinux() || Platform.isAIX())
+        if ((Platform.isLinux() || Platform.isFreeBSD() || Platform.isAIX())
             && Platform.C_LIBRARY_NAME.equals(libraryName)) {
             libraryName = null;
         }
@@ -500,7 +503,7 @@ public class NativeLibrary {
     }
 
     /**
-     * Create a new  @{link Function} that is linked with a native
+     * Create a new  {@link Function} that is linked with a native
      * function that follows a given calling flags.
      *
      * @param	functionName
@@ -514,7 +517,7 @@ public class NativeLibrary {
     }
 
     /**
-     * Create a new  @{link Function} that is linked with a native
+     * Create a new  {@link Function} that is linked with a native
      * function that follows a given calling flags.
      *
      * @param	functionName
@@ -702,7 +705,7 @@ public class NativeLibrary {
             }
             return name;
         }
-        else if (Platform.isLinux()) {
+        else if (Platform.isLinux() || Platform.isFreeBSD()) {
             if (isVersionedName(libName) || libName.endsWith(".so")) {
                 // A specific version was requested - use as is for search
                 return libName;
@@ -749,13 +752,13 @@ public class NativeLibrary {
             searchPath = Arrays.asList(new String[] { lib.getParent() });
         }
         FilenameFilter filter = new FilenameFilter() {
-            public boolean accept(File dir, String filename) {
-                return (filename.startsWith("lib" + libName + ".so")
-                        || (filename.startsWith(libName + ".so")
-                            && libName.startsWith("lib")))
-                    && isVersionedName(filename);
-            }
-        };
+                public boolean accept(File dir, String filename) {
+                    return (filename.startsWith("lib" + libName + ".so")
+                            || (filename.startsWith(libName + ".so")
+                                && libName.startsWith("lib")))
+                        && isVersionedName(filename);
+                }
+            };
 
         List matches = new LinkedList();
         for (Iterator it = searchPath.iterator(); it.hasNext(); ) {

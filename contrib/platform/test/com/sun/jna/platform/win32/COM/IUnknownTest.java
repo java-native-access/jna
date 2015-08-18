@@ -1,4 +1,4 @@
-/* copyright (c) 2012 Tobias Wolf, All Rights Reserved
+/* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -14,74 +14,80 @@ package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IUnknownTest extends TestCase {
+    
+    private Unknown createIUnknown() {
+        try {
+            PointerByReference pUnknown = new PointerByReference();
 
-    private IDispatch iDispatch = new IDispatch();
+            // Get CLSID for Word.Application...
+            CLSID.ByReference clsid = new CLSID.ByReference();
+            HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application", clsid);
 
-    private PointerByReference pDispatch = new PointerByReference();
-    private boolean initialized;
+            if (W32Errors.FAILED(hr)) {
+                Ole32.INSTANCE.CoUninitialize();
+                COMUtils.checkRC(hr);
+            }
+
+            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, WTypes.CLSCTX_SERVER,
+                    IUnknown.IID_IUNKNOWN, pUnknown);
+
+            if (W32Errors.FAILED(hr)) {
+                COMUtils.checkRC(hr);
+            }
+
+            return new Unknown(pUnknown.getValue());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        return null;
+    }
 
     @Override
     protected void setUp() throws Exception {
-
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
+        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
 
-        assertTrue("CoInitializeEx() failed: "
-                   + Kernel32Util.formatMessage(hr), W32Errors.SUCCEEDED(hr));
-        initialized = true;
+        if (W32Errors.FAILED(hr)) {
+            this.tearDown();
+            throw new COMException("CoInitialize() failed");
+        }
+    }
+    
+    public void testQueryInterface() {
+        Unknown iUnknown = this.createIUnknown();
+        PointerByReference ppvObject = new PointerByReference();
+        iUnknown.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
 
-        CLSID clsid = new CLSID();
-        hr = Ole32.INSTANCE.CLSIDFromProgID("InternetExplorer.Application",
-                                            clsid);
+        assertTrue("ppvObject:" + ppvObject.toString(), ppvObject != null);
+    }
 
-        assertTrue("CLSIDFromProgID() failed: "
-                   + Kernel32Util.formatMessage(hr), W32Errors.SUCCEEDED(hr));
+    public void testAddRef() {
+        Unknown iUnknown = this.createIUnknown();
+        int addRef = iUnknown.AddRef();
+        assertEquals(2, addRef);
+    }
 
-        hr = Ole32.INSTANCE.CoCreateInstance(clsid, null,
-                                             WTypes.CLSCTX_LOCAL_SERVER,
-                                             IDispatch.IID_IDispatch,
-                                             this.pDispatch);
-
-        assertTrue("Internet Explorer not registered properly: "
-                   + Kernel32Util.formatMessage(hr), W32Errors.SUCCEEDED(hr));
-
-        this.iDispatch = new IDispatch(pDispatch.getPointer());
+    public void testRelease() {
+        Unknown iUnknown = this.createIUnknown();
+        int release = iUnknown.Release();
+        
+        assertEquals(0, release);
     }
 
     @Override
     protected void tearDown() throws Exception {
-        if (initialized) {
-            Ole32.INSTANCE.CoUninitialize();
-        }
-    }
-
-    public void testQueryInterface() {
-        PointerByReference ppvObject = new PointerByReference();
-        this.iDispatch.QueryInterface(IDispatch.IID_IDispatch, ppvObject);
-        assertNotNull(ppvObject.getValue());
-    }
-
-    public void testAddRef() {
-        int addRef = this.iDispatch.AddRef();
-        assertEquals("Wrong addRef result", 1, addRef);
-    }
-
-    public void testRelease() {
-        int release = this.iDispatch.Release();
-        assertEquals("Wrong release result", 0, release);
+        super.tearDown();
+        Ole32.INSTANCE.CoUninitialize();
     }
 
     public static void main(String[] args) {

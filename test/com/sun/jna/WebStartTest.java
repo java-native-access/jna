@@ -28,7 +28,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import junit.framework.AssertionFailedError;
@@ -66,7 +68,9 @@ public class WebStartTest extends TestCase implements Paths {
         // Explicitly supply javawebstart.version, which is missing in NetX
         // Boo, java-vm-args doesn't work in NetX
         // and neither does javaws -J<arg>
-        + "    <j2se version='1.4+' java-vm-args='-Djavawebstart.version=0.0'/>\n"
+        // java-vm-args also causes javaws to ask for the JNLP to be signed,
+        // so don't bother
+        //+ "    <j2se version='1.4+' java-vm-args='-Djavawebstart.version=0.0'/>\n"
         + "    <jar href='jna-test.jar'/>\n"
         + "    <jar href='jna.jar'/>\n"
         + "    <jar href='junit.jar'/>{CLOVER}\n"
@@ -272,10 +276,17 @@ public class WebStartTest extends TestCase implements Paths {
         String JAVA_HOME = System.getProperty("java.home");
         String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
         File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
+        List tried = new ArrayList();
+        tried.add(javaws);
         if (!javaws.exists()) {
             // NOTE: OSX puts javaws somewhere else entirely
             if (Platform.isMac()) {
                 javaws = new File(JAVA_HOME, "../Commands/javaws");
+                tried.add(javaws);
+                if (!javaws.exists()) {
+                    // Hack, look for the "old" location
+                    javaws = new File("/System/Library/Frameworks/JavaVM.framework/Versions/Current/Commands/javaws");
+                }
             }
             // NOTE: win64 only includes javaws in the system path
             if (Platform.isWindows()) {
@@ -292,8 +303,9 @@ public class WebStartTest extends TestCase implements Paths {
                     javaws = new File(path, "system32/javaws.exe");
                 }
             }
+            tried.add(javaws);
             if (!javaws.exists()) {
-                throw new IOException("javaws executable not found");
+                throw new IOException("javaws executable not found, tried " + tried);
             }
         }
         return javaws.getAbsolutePath();

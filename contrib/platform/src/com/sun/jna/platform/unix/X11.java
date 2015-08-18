@@ -17,6 +17,7 @@ import java.util.List;
 
 import com.sun.jna.Callback;
 import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
@@ -33,16 +34,16 @@ import com.sun.jna.ptr.PointerByReference;
 public interface X11 extends Library {
 
     class VisualID extends NativeLong {
-		private static final long serialVersionUID = 1L;
-		public VisualID() { }
-        public VisualID(long value) { super(value); }
+        private static final long serialVersionUID = 1L;
+        public VisualID() { this(0); }
+        public VisualID(long value) { super(value, true); }
     }
 
     class XID extends NativeLong {
-		private static final long serialVersionUID = 1L;
-		public static final XID None = null;
+        private static final long serialVersionUID = 1L;
+        public static final XID None = null;
         public XID() { this(0); }
-        public XID(long id) { super(id); }
+        public XID(long id) { super(id, true); }
         protected boolean isNone(Object o) {
             return o == null
                 || (o instanceof Number
@@ -58,7 +59,7 @@ public interface X11 extends Library {
         }
     }
     class Atom extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Atom None = null;
         public Atom() { }
         public Atom(long id) { super(id); }
@@ -194,7 +195,7 @@ public interface X11 extends Library {
         }
     }
     class Drawable extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Drawable None = null;
         public Drawable() { }
         public Drawable(long id) { super(id); }
@@ -205,8 +206,8 @@ public interface X11 extends Library {
         }
     }
     class Window extends Drawable {
-		private static final long serialVersionUID = 1L;
-		public static final Window None = null;
+        private static final long serialVersionUID = 1L;
+        public static final Window None = null;
         public Window() { }
         public Window(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -219,13 +220,12 @@ public interface X11 extends Library {
         public WindowByReference() { super(XID.SIZE); }
         public Window getValue() {
             NativeLong value = getPointer().getNativeLong(0);
-            return value.longValue() == X11.None
-                ? Window.None : new Window(value.longValue());
+            return value.longValue() == X11.None ? Window.None : new Window(value.longValue());
         }
     }
     class Pixmap extends Drawable {
-		private static final long serialVersionUID = 1L;
-		public static final Pixmap None = null;
+        private static final long serialVersionUID = 1L;
+        public static final Pixmap None = null;
         public Pixmap() { }
         public Pixmap(long id) { super(id); }
         public Object fromNative(Object nativeValue, FromNativeContext context) {
@@ -238,10 +238,10 @@ public interface X11 extends Library {
     class Display extends PointerType { }
     // TODO: define structure
     class Visual extends PointerType {
-        public NativeLong getVisualID() {
+        public VisualID getVisualID() {
             if (getPointer() != null)
-                return getPointer().getNativeLong(Native.POINTER_SIZE);
-            return new NativeLong(0);
+                return new VisualID(getPointer().getNativeLong(Native.POINTER_SIZE).longValue());
+            throw new IllegalStateException("Attempting to retrieve VisualID from a null Visual");
         }
         public String toString() {
             return "Visual: VisualID=0x" + Long.toHexString(getVisualID().longValue());
@@ -284,10 +284,10 @@ public interface X11 extends Library {
                 return Arrays.asList(new String[] { "red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask" }); 
             }
         }
-        class PictFormat extends NativeLong {
+        class PictFormat extends XID {
             private static final long serialVersionUID = 1L;
             public PictFormat(long value) { super(value); }
-            public PictFormat() { }
+            public PictFormat() { this(0); }
         }
         class XRenderPictFormat extends Structure {
             public PictFormat id;
@@ -1952,6 +1952,27 @@ public interface X11 extends Library {
      * @return nothing
      */
     int XUngrabKey(Display display, int keyCode, int modifiers, Window grab_window);
+
+    /**
+     * Actively grabs control of the keyboard and generates FocusIn and FocusOut events
+     *
+     * @param display Specifies the connection to the X server.
+     * @param grab_window Specifies the grab window.
+     * @param owner_events Specifies a Boolean value that indicates whether the keyboard events are to be reported as usual.
+     * @param pointer_mode Specifies further processing of pointer events. You can pass GrabModeSync or GrabModeAsync.
+     * @param keyboard_mode Specifies further processing of keyboard events. You can pass GrabModeSync or GrabModeAsync.
+     * @param time Specifies the time. You can pass either a timestamp or CurrentTime.
+     * @return nothing
+     */
+    int XGrabKeyboard(Display display, Window grab_window, int owner_events, int pointer_mode, int keyboard_mode, NativeLong time);
+
+    /**
+     * Releases the keyboard and any queued events if this client has it actively grabbed from either XGrabKeyboard() or XGrabKey().
+     * @param display Specifies the connection to the X server.
+     * @param time Specifies the time. You can pass either a timestamp or CurrentTime.
+     * @return nothing
+     */
+    int XUngrabKeyboard(Display display, NativeLong time);
 
     //int XChangeKeyboardMapping(Display display, int first_keycode, int keysyms_per_keycode, KeySym *keysyms, int num_codes);
     /** Defines the symbols for the specified number of KeyCodes starting with first_keycode. The symbols for KeyCodes outside this range remain unchanged. The number of elements in keysyms must be: num_codes * keysyms_per_keycode. The specified first_keycode must be greater than or equal to min_keycode returned by XDisplayKeycodes, or a BadValue error results. In addition, the following expression must be less than or equal to max_keycode as returned by XDisplayKeycodes, or a BadValue error results: first_keycode + num_codes - 1. */

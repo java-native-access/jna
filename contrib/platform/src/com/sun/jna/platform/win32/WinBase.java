@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.Callback;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -152,6 +153,23 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     int CREATE_DEFAULT_ERROR_MODE = 0x04000000;
     int CREATE_NO_WINDOW = 0x08000000;
 
+    /* File encryption status */
+    int FILE_ENCRYPTABLE = 0;
+    int FILE_IS_ENCRYPTED = 1;
+    int FILE_SYSTEM_ATTR = 2;
+    int FILE_ROOT_DIR = 3;
+    int FILE_SYSTEM_DIR = 4;
+    int FILE_UNKNOWN = 5;
+    int FILE_SYSTEM_NOT_SUPPORT = 6;
+    int FILE_USER_DISALLOWED = 7;
+    int FILE_READ_ONLY = 8;
+    int FILE_DIR_DISALOWED = 9;
+    
+    /* Open encrypted files raw flags */
+    int CREATE_FOR_IMPORT = 1;
+    int CREATE_FOR_DIR = 2;
+    int OVERWRITE_HIDDEN = 4;
+    
     /* Invalid return values */
     int INVALID_FILE_SIZE           = 0xFFFFFFFF;
     int INVALID_SET_FILE_POINTER    = 0xFFFFFFFF;
@@ -162,7 +180,6 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      */
     int STILL_ACTIVE = WinNT.STATUS_PENDING;
 
-	
     /**
      * The FILETIME structure is a 64-bit value representing the number of 
      * 100-nanosecond intervals since January 1, 1601 (UTC).
@@ -305,6 +322,24 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     }
     
     /**
+     * Specifies settings for a time zone.
+     * http://msdn.microsoft.com/en-us/library/windows/desktop/ms725481(v=vs.85).aspx
+     */
+    public static class TIME_ZONE_INFORMATION extends Structure {
+        public LONG       Bias;
+        public String      StandardName;
+        public SYSTEMTIME StandardDate;
+        public LONG       StandardBias;
+        public String      DaylightName;
+        public SYSTEMTIME DaylightDate;
+        public LONG       DaylightBias;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "Bias", "StandardName", "StandardDate", "StandardBias", "DaylightName", "DaylightDate", "DaylightBias" });
+        }
+    }    
+        
+    /**
      * The lpBuffer parameter is a pointer to a PVOID pointer, and that the nSize 
      * parameter specifies the minimum number of TCHARs to allocate for an output 
      * message buffer. The function allocates a buffer large enough to hold the 
@@ -396,7 +431,7 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
         }
     }        
     
-    int INFINITE = 0xFFFFFFFF;
+   int INFINITE = 0xFFFFFFFF;
 
     /**
      * Contains information about the current computer system. This includes the architecture and 
@@ -886,4 +921,140 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      */
     int MOVEFILE_WRITE_THROUGH = 0x8;
 
+    /**
+     * Represents a thread entry point local to this process, as a Callback.
+     */
+    public interface THREAD_START_ROUTINE extends Callback{
+    	public DWORD apply( LPVOID lpParameter );
+    }
+    
+    /**
+     * Represents a thread entry point in another process. Can only be expressed as a pointer, as
+     * the location has no meaning in the Java process.
+     */
+    public class FOREIGN_THREAD_START_ROUTINE extends Structure {
+		LPVOID foreignLocation;
+
+		@Override
+		protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "foreignLocation" });
+		}
+    }
+    
+    /**
+     * Specifies a type of computer name to be retrieved by the GetComputerNameEx function
+     */
+    public static interface COMPUTER_NAME_FORMAT {
+        /**
+          * The NetBIOS name of the local computer or the cluster associated with the local
+          * computer. This name is limited to MAX_COMPUTERNAME_LENGTH + 1 characters and may
+          * be a truncated version of the DNS host name. For example, if the DNS host name is
+          * &quot;corporate-mail-server&quot;, the NetBIOS name would be &quot;corporate-mail-"&quot;.
+          */
+        int ComputerNameNetBIOS = 0;
+        
+        /**
+         * The DNS name of the local computer or the cluster associated with the local computer.
+         */
+        int ComputerNameDnsHostname = 1;
+        
+        /**
+         * The name of the DNS domain assigned to the local computer or the cluster associated
+         * with the local computer.
+         */
+        int ComputerNameDnsDomain = 2;
+        
+        /**
+         * The fully qualified DNS name that uniquely identifies the local computer or the cluster
+         * associated with the local computer. This name is a combination of the DNS host name and
+         * the DNS domain name, using the form HostName.DomainName. For example, if the DNS host
+         * name is &quot;corporate-mail-server&quot; and the DNS domain name is &quot;microsoft.com&quot;,
+         * the fully qualified DNS name is &quot;corporate-mail-server.microsoft.com&quot;.
+         */
+        int ComputerNameDnsFullyQualified = 3;
+        
+        /**
+         * The NetBIOS name of the local computer. On a cluster, this is the NetBIOS name of the
+         * local node on the cluster.
+         */
+        int ComputerNamePhysicalNetBIOS = 4;
+        
+        /**
+         * The DNS host name of the local computer. On a cluster, this is the DNS host name of the
+         * local node on the cluster.
+         */
+        int ComputerNamePhysicalDnsHostname = 5;
+        
+        /**
+         * The name of the DNS domain assigned to the local computer. On a cluster, this is the DNS
+         * domain of the local node on the cluster.
+         */
+        int ComputerNamePhysicalDnsDomain = 6;
+        
+        /**
+         * The fully qualified DNS name that uniquely identifies the computer. On a cluster, this is
+         * the fully qualified DNS name of the local node on the cluster. The fully qualified DNS name
+         * is a combination of the DNS host name and the DNS domain name, using the form HostName.DomainName.
+         */
+        int ComputerNamePhysicalDnsFullyQualified = 7;
+        
+        /**
+         * Note used - serves as an upper limit in case one wants to go through all the values
+         */
+        int ComputerNameMax = 8;
+    }
+
+    /**
+     * An application-defined callback function used with ReadEncryptedFileRaw.
+     * The system calls ExportCallback one or more times, each time with a block
+     * of the encrypted file's data, until it has received all of the file data.
+     * ExportCallback writes the encrypted file's data to another storage media,
+     * usually for purposes of backing up the file.
+     */
+    public interface FE_EXPORT_FUNC extends Callback {
+        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                              ULONG ulLength);
+    }
+
+    /**
+     * An application-defined callback function used with WriteEncryptedFileRaw.
+     * The system calls ImportCallback one or more times, each time to retrieve a
+     * portion of a backup file's data. ImportCallback reads the data from a
+     * backup file sequentially and restores the data, and the system continues
+     * calling it until it has read all of the backup file data.
+     */
+    public interface FE_IMPORT_FUNC extends Callback {
+        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                              ULONGByReference ulLength);
+    }
+    
+    int PIPE_CLIENT_END=0x00000000;
+    int PIPE_SERVER_END=0x00000001;
+
+        /* Pipe open mode values */
+    int PIPE_ACCESS_DUPLEX=0x00000003;
+    int PIPE_ACCESS_INBOUND=0x00000001;
+    int PIPE_ACCESS_OUTBOUND=0x00000002;
+    
+        /* Pipe type values */
+    int PIPE_TYPE_BYTE=0x00000000;
+    int PIPE_TYPE_MESSAGE=0x00000004;
+    
+        /* Pipe read modes */
+    int PIPE_READMODE_BYTE=0x00000000;
+    int PIPE_READMODE_MESSAGE=0x00000002;
+    
+        /* Pipe wait modes */
+    int PIPE_WAIT=0x00000000;
+    int PIPE_NOWAIT=0x00000001;
+    
+    int PIPE_ACCEPT_REMOTE_CLIENTS=0x00000000;
+    int PIPE_REJECT_REMOTE_CLIENTS=0x00000008;
+    
+    int PIPE_UNLIMITED_INSTANCES=255;
+    
+    /* Named pipe pre-defined timeout values */
+    int NMPWAIT_USE_DEFAULT_WAIT=0x00000000;
+    int NMPWAIT_NOWAIT=0x00000001;
+    int NMPWAIT_WAIT_FOREVER=0xffffffff;
 }

@@ -1,0 +1,46 @@
+package ${packagename};
+
+import java.util.List;
+import java.util.Arrays;
+
+import com.sun.jna.*;
+import com.sun.jna.platform.win32.*;
+import com.sun.jna.platform.win32.WinNT.*;
+import com.sun.jna.platform.win32.OaIdl.*;
+import com.sun.jna.platform.win32.WinDef.*;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.*;
+import com.sun.jna.platform.win32.COM.*;
+import com.sun.jna.platform.win32.Guid.*;
+
+/**
+ * uuid(${uuid})
+ * helpstring(${helpstring})
+ *
+ */
+public class ${classname} extends Structure {
+	public static class ByReference extends ${classname} implements
+			Structure.ByReference {
+	}
+
+	public int value;
+
+	public  ${classname}() {
+	}
+
+	public  ${classname}(int value) {
+		this.value = value;
+	}
+
+	public  ${classname}(Pointer pointer) {
+		super(pointer);
+		this.read();
+	}
+
+${content}
+		
+	@Override
+	protected List<String> getFieldOrder() {
+		return Arrays.asList(new String[] { "value" });
+	}
+}

@@ -1,25 +1,31 @@
 JNA Release Process
 ===================
 
-* Bump version in CHANGES.md and build.xml. Remove the "-SNAPSHOT" suffix from "jna.version" property in build.xml. Change JNI version in build.xml *only* if
+* Bump version in CHANGES.md and build.xml. Change JNI version in build.xml *only* if
   JNA's native API has been changed (i.e. md5 changed).  Bump JNA minor version if its Java API
   has changed significantly or incompatibly.
 
-* If native changes have been made, run `ant dist` target on each target
-  platform, pushing the resulting target-specific jar file to master.
+* If native changes have been made, run `ant native` target on each target
+  platform, pushing the resulting target-specific jar (in lib/native) file to master.
 
-* Run `ant clean dist` target.  Commit and push generated files in dist, except for a platform specific jar: "&lt;os>-&lt;arch>.jar".
-  You will also see differences in the pom-*.xml files and src/.../Native.java. Commit and push these also. Do not commit the altered platform specific jar "&lt;os>-&lt;arch>.jar" in lib/native/.
-  At some point we may change the 'dist' target to "skip-native", thereby avoiding the rebuild of the "&lt;os>-&lt;arch>.jar" files in lib/native and dist.
+* Run `ant -Drelease=true clean dist` target on a fully up-to-date checkout with no modifications. Commit generated files in dist.
+  You will also see differences in the pom-*.xml files and src/.../Native.java.  Do not commit these files.
+
+* [Release to Maven Central](PublishingToMavenCentral.md)
+
+* Update links in README.md, commit the changes.
+  * download links
+  * javadoc links
 
 * Update Javadoc
   Check out gh-pages branch, copy latest doc/javadoc into <version>/javadoc,
   commit and push.
 
-* Update README.md, commit and push
-  * download links
-  * javadoc links
+* Tag as &lt;version>, push all changes and new tag to origin.
 
-* Tag as &lt;version>, push new tag to origin
+* Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
 
-* [Release to Maven Central](https://github.com/twall/jna/blob/master/www/PublishingToMavenCentral.md)
+* Increment the version in build.xml for the next development iteration: increment "jna.revision" in build.xml by one, and create a new section in CHANGES.md for 'Next Release (x.y.z)'. 
+
+* Commit and push everything.
+

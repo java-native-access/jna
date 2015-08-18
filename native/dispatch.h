@@ -18,7 +18,7 @@
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
-#if defined(sun) || defined(_AIX)
+#if defined(__sun__) || defined(_AIX)
 #  include <alloca.h>
 #endif
 #ifdef _WIN32
@@ -49,6 +49,12 @@
   #define UNUSED(x) x
  #endif
 #endif /* !defined(UNUSED) */
+
+#ifdef NO_JAWT
+ #define UNUSED_JAWT(X) UNUSED(X)
+#else
+ #define UNUSED_JAWT(X) X
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -132,16 +138,7 @@ typedef struct _callback {
 #endif
 
 #if defined(_MSC_VER)
-// snprintf on windows is broken; always nul-terminate manually
-// DO NOT rely on the return value...
-static int snprintf(char * str, size_t size, const char * format, ...) {
-  int retval;
-  va_list ap;
-  va_start(ap, format);
-  retval = _vsnprintf_s(str, size, _TRUNCATE, format, ap);
-  va_end(ap);
-  return retval;
-}
+#include "snprintf.h"
 #define strdup _strdup
 #if defined(_WIN64)
 #define L2A(X) ((void *)(X))
@@ -232,6 +229,9 @@ extern jobject initializeThread(callback*,AttachOptions*);
 /* Native memory fault protection */
 #ifdef HAVE_PROTECTION
 #define PROTECT is_protected()
+#define UNUSED_ENV(X) X
+#else
+#define UNUSED_ENV(X) UNUSED(X)
 #endif
 #include "protect.h"
 #define ON_ERROR(ENV) throwByName(ENV, EError, "Invalid memory access")

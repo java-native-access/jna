@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,17 +15,28 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
+import com.sun.jna.platform.win32.WinDef.HBRUSH;
 import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HFONT;
+import com.sun.jna.platform.win32.WinDef.HPALETTE;
+import com.sun.jna.platform.win32.WinDef.HPEN;
 import com.sun.jna.platform.win32.WinDef.HRGN;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinGDI.BITMAP;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFOHEADER;
+import com.sun.jna.platform.win32.WinGDI.PIXELFORMATDESCRIPTOR;
 import com.sun.jna.platform.win32.WinGDI.RGNDATA;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-/** Definition (incomplete) of <code>gdi32.dll</code>. */
+/** 
+ * Definition (incomplete) of <code>gdi32.dll</code>. 
+ * 
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
+ */
 public interface GDI32 extends StdCallLibrary {
 
     GDI32 INSTANCE = (GDI32) Native.loadLibrary("gdi32", GDI32.class,
@@ -123,7 +134,7 @@ public interface GDI32 extends StdCallLibrary {
      *  If the function fails, the return value is zero. 
      *  To get extended error information, call GetLastError.
      */
-    HRGN CreatePolyPolygonRgn(WinUser.POINT[] lppt, int[] lpPolyCounts,
+    HRGN CreatePolyPolygonRgn(WinDef.POINT[] lppt, int[] lpPolyCounts,
                               int nCount, int fnPolyFillMode);
 
     /**
@@ -313,4 +324,108 @@ public interface GDI32 extends StdCallLibrary {
      * BITMAPINFO} structure.  
      */
     int GetDIBits(HDC hdc, HBITMAP hbmp, int uStartScan, int cScanLines, Pointer lpvBits, BITMAPINFO lpbi, int uUsage);
+
+    /**
+     * The ChoosePixelFormat function attempts to match an appropriate pixel format supported
+     * by a device context to a given pixel format specification.
+     *
+     * @param hdc
+     *            Specifies the device context that the function examines to determine the best
+     *            match for the pixel format descriptor pointed to by ppfd.
+     * @param ppfd
+     *            Pointer to a PIXELFORMATDESCRIPTOR structure that specifies the requested pixel format.
+     * @return If the function succeeds, the return value is a pixel format index (one-based) that
+     *         is the closest match to the given pixel format descriptor.
+     */
+    public int ChoosePixelFormat(HDC hdc, PIXELFORMATDESCRIPTOR.ByReference ppfd);
+
+    /**
+     * The SetPixelFormat function sets the pixel format of the specified device context to the
+     * format specified by the iPixelFormat index.
+     *
+     * @param hdc
+     *            Specifies the device context whose pixel format the function attempts to set.
+     * @param iPixelFormat
+     *            Index that identifies the pixel format to set. The various pixel formats supported
+     *            by a device context are identified by one-based indexes.
+     * @param ppfd
+     *            Pointer to a PIXELFORMATDESCRIPTOR structure that contains the logical pixel format specification.
+     * @return true if successful
+     */
+    public boolean SetPixelFormat(HDC hdc, int iPixelFormat, PIXELFORMATDESCRIPTOR.ByReference ppfd);
+
+	/**
+	 * Retrieves information for the specified graphics object.
+	 * 
+	 * @param hgdiobj
+	 *            A handle to the graphics object of interest. This can be a
+	 *            handle to one of the following: a logical bitmap, a brush, a
+	 *            font, a palette, a pen, or a device independent bitmap created
+	 *            by calling the {@link #CreateDIBSection} function.
+	 * @param cbBuffer
+	 *            The number of bytes of information to be written to the
+	 *            buffer.
+	 * @param lpvObject
+	 *            A pointer to a buffer that receives the information about the
+	 *            specified graphics object.
+	 *            <p/>
+	 *            The following table shows the type of information the buffer
+	 *            receives for each type of graphics object you can specify with
+	 *            hgdiobj.
+	 *            <p/>
+	 *            <table border="1px">
+	 *            <thead>
+	 *            <tr>
+	 *            <td><b>Object type</b></td>
+	 *            <td><b>Data written to buffer</b></td>
+	 *            </tr>
+	 *            </thead> <tbody>
+	 *            <tr>
+	 *            <td>{@link HBITMAP}</td>
+	 *            <td>{@link BITMAP}</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>
+	 *            {@link HBITMAP} returned from a call to
+	 *            {@link #CreateDIBSection}
+	 *            </td>
+	 *            <td>{@link DIBSECTION}, if cbBuffer is set to sizeof(
+	 *            {@link DIBSECTION}), or {@link BITMAP}, if cbBuffer is set to
+	 *            sizeof ({@link BITMAP}).</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HPALETTE}</td>
+	 *            <td>A {@link WORD} count of the number of entries in the
+	 *            logical palette</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>
+	 *            {@link HPEN} returned from a call to ExtCreatePen</td>
+	 *            <td>{@link EXTLOGPEN}</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HPEN}</td>
+	 *            <td>{@link LOGPEN}</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HBRUSH}</td>
+	 *            <td>{@link LOGBRUSH}</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HFONT}</td>
+	 *            <td>{@link LOGFONT}</td>
+	 *            </tr>
+	 *            </tbody>
+	 *            </table>
+	 * @return If the function succeeds, and lpvObject is a valid pointer, the
+	 *         return value is the number of bytes stored into the buffer.
+	 *         <p/>
+	 *         If the function succeeds, and lpvObject is NULL, the return value
+	 *         is the number of bytes required to hold the information the
+	 *         function would store into the buffer.
+	 *         <p/>
+	 *         If the function fails, the return value is zero.
+	 */
+	public int GetObject(final HANDLE hgdiobj, final int cbBuffer,
+			final Pointer lpvObject);
 }

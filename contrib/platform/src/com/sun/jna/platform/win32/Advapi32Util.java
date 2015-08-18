@@ -12,6 +12,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,9 +39,16 @@ import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import static com.sun.jna.platform.win32.WinDef.DWORD;
+import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinNT.*;
+
 
 /**
  * Advapi32 utility API.
@@ -80,6 +90,7 @@ public abstract class Advapi32Util {
 		 */
 		public String fqn;
 	}
+
 
 	/**
 	 * Retrieves the name of the user associated with the current thread.
@@ -258,7 +269,7 @@ public abstract class Advapi32Util {
 		if (!Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		String result = stringSid.getValue().getString(0, true);
+		String result = stringSid.getValue().getWideString(0);
 		Kernel32.INSTANCE.LocalFree(stringSid.getValue());
 		return result;
 	}
@@ -430,14 +441,14 @@ public abstract class Advapi32Util {
 			// open thread or process token
 			HANDLE threadHandle = Kernel32.INSTANCE.GetCurrentThread();
 			if (!Advapi32.INSTANCE.OpenThreadToken(threadHandle,
-					WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, true, phToken)) {
+					TOKEN_DUPLICATE | TOKEN_QUERY, true, phToken)) {
 				if (W32Errors.ERROR_NO_TOKEN != Kernel32.INSTANCE
 						.GetLastError()) {
 					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 				}
 				HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
 				if (!Advapi32.INSTANCE.OpenProcessToken(processHandle,
-						WinNT.TOKEN_DUPLICATE | WinNT.TOKEN_QUERY, phToken)) {
+						TOKEN_DUPLICATE | TOKEN_QUERY, phToken)) {
 					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 				}
 			}
@@ -544,28 +555,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_SZ
-					&& lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue()
-						+ ", expected REG_SZ or REG_EXPAND_SZ");
-			}
-			char[] data = new char[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return Native.toString(data);
+			return registryGetStringValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -574,6 +564,40 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String registryGetStringValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_SZ
+				&& lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue()
+					+ ", expected REG_SZ or REG_EXPAND_SZ");
+		}
+		char[] data = new char[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return Native.toString(data);		
+	}
+	
 	/**
 	 * Get a registry REG_EXPAND_SZ value.
 	 *
@@ -594,26 +618,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_SZ");
-			}
-			char[] data = new char[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return Native.toString(data);
+			return registryGetExpandableStringValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -622,6 +627,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_EXPAND_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String registryGetExpandableStringValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_SZ");
+		}
+		char[] data = new char[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return Native.toString(data);
+	}
+	
 	/**
 	 * Get a registry REG_MULTI_SZ value.
 	 *
@@ -642,38 +679,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_SZ");
-			}
-			Memory data = new Memory(lpcbData.getValue());
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			ArrayList<String> result = new ArrayList<String>();
-			int offset = 0;
-			while (offset < data.size()) {
-				String s = data.getString(offset, true);
-				offset += s.length() * Native.WCHAR_SIZE;
-				offset += Native.WCHAR_SIZE;
-				if (s.length() == 0 && offset == data.size()) {
-					// skip the final NULL
-				} else {
-					result.add(s);
-				}
-			}
-			return result.toArray(new String[0]);
+			return registryGetStringArray(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -682,6 +688,50 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_MULTI_SZ value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static String[] registryGetStringArray(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_SZ");
+		}
+		Memory data = new Memory(lpcbData.getValue());
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		ArrayList<String> result = new ArrayList<String>();
+		int offset = 0;
+		while (offset < data.size()) {
+			String s = data.getWideString(offset);
+			offset += s.length() * Native.WCHAR_SIZE;
+			offset += Native.WCHAR_SIZE;
+			if (s.length() == 0 && offset == data.size()) {
+				// skip the final NULL
+			} else {
+				result.add(s);
+			}
+		}
+		return result.toArray(new String[0]);
+	}
+	
 	/**
 	 * Get a registry REG_BINARY value.
 	 *
@@ -702,26 +752,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_BINARY) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_BINARY");
-			}
-			byte[] data = new byte[lpcbData.getValue()];
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data;
+			return registryGetBinaryValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -730,6 +761,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry REG_BINARY value.
+	 *
+	 * @param hKey
+	 *            Parent Key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return String value.
+	 */
+	public static byte[] registryGetBinaryValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_BINARY) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_BINARY");
+		}
+		byte[] data = new byte[lpcbData.getValue()];
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data;
+	}
+	
 	/**
 	 * Get a registry DWORD value.
 	 *
@@ -749,26 +812,7 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_DWORD) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_DWORD");
-			}
-			IntByReference data = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data.getValue();
+			return registryGetIntValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
@@ -777,6 +821,38 @@ public abstract class Advapi32Util {
 		}
 	}
 
+	/**
+	 * Get a registry DWORD value.
+	 *
+	 * @param hKey
+	 *            Parent key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return Integer value.
+	 */
+	public static int registryGetIntValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_DWORD) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_DWORD");
+		}
+		IntByReference data = new IntByReference();
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data.getValue();
+	}
+	
 	/**
 	 * Get a registry QWORD value.
 	 *
@@ -796,32 +872,45 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			if (lpType.getValue() != WinNT.REG_QWORD) {
-				throw new RuntimeException("Unexpected registry type "
-						+ lpType.getValue() + ", expected REG_QWORD");
-			}
-			LongByReference data = new LongByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, data, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS
-					&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-				throw new Win32Exception(rc);
-			}
-			return data.getValue();
+			return registryGetLongValue(phkKey.getValue(), value);
 		} finally {
 			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
 			if (rc != W32Errors.ERROR_SUCCESS) {
 				throw new Win32Exception(rc);
 			}
 		}
+	}
+	
+	/**
+	 * Get a registry QWORD value.
+	 *
+	 * @param hKey
+	 *            Parent key.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @return Integer value.
+	 */
+	public static long registryGetLongValue(HKEY hKey, String value) {
+		IntByReference lpcbData = new IntByReference();
+		IntByReference lpType = new IntByReference();
+		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, (char[]) null, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		if (lpType.getValue() != WinNT.REG_QWORD) {
+			throw new RuntimeException("Unexpected registry type "
+					+ lpType.getValue() + ", expected REG_QWORD");
+		}
+		LongByReference data = new LongByReference();
+		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+				lpType, data, lpcbData);
+		if (rc != W32Errors.ERROR_SUCCESS
+				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+			throw new Win32Exception(rc);
+		}
+		return data.getValue();
 	}
 
 	/**
@@ -866,7 +955,7 @@ public abstract class Advapi32Util {
 			result = byteData.getByteArray(0, lpcbData.getValue());
 		} else if ((lpType.getValue() == WinNT.REG_SZ)
 				|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
-			result = byteData.getString(0, true);
+			result = byteData.getWideString(0);
 		}
 
 		return result;
@@ -1158,7 +1247,7 @@ public abstract class Advapi32Util {
 		int offset = 0;
 		Memory data = new Memory(size);
 		for (String s : arr) {
-			data.setString(offset, s, true);
+			data.setWideString(offset, s);
 			offset += s.length() * Native.WCHAR_SIZE;
 			offset += Native.WCHAR_SIZE;
 		}
@@ -1420,6 +1509,19 @@ public abstract class Advapi32Util {
 
 		return phkKey;
 	}
+	
+	/**
+	 * Close the registry key
+	 *
+	 * @param hKey
+	 *            Registry key.
+	 */
+	public static void registryCloseKey(HKEY hKey) {
+		int rc = Advapi32.INSTANCE.RegCloseKey(hKey);
+		if (rc != W32Errors.ERROR_SUCCESS) {
+			throw new Win32Exception(rc);
+		}
+	}
 
 	/**
 	 * Get a table of registry values.
@@ -1495,7 +1597,7 @@ public abstract class Advapi32Util {
 			}
 			case WinNT.REG_SZ:
 			case WinNT.REG_EXPAND_SZ: {
-				keyValues.put(nameString, byteData.getString(0, true));
+				keyValues.put(nameString, byteData.getWideString(0));
 				break;
 			}
 			case WinNT.REG_BINARY: {
@@ -1509,7 +1611,7 @@ public abstract class Advapi32Util {
 				ArrayList<String> result = new ArrayList<String>();
 				int offset = 0;
 				while (offset < stringData.size()) {
-					String s = stringData.getString(offset, true);
+					String s = stringData.getWideString(offset);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
 					if (s.length() == 0 && offset == stringData.size()) {
@@ -1656,13 +1758,14 @@ public abstract class Advapi32Util {
 	 * @return A environment block
 	 */
 	public static String getEnvironmentBlock(Map<String, String> environment) {
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder(environment.size() * 32 /* some guess about average name=value length*/);
 		for (Entry<String, String> entry : environment.entrySet()) {
-			if (entry.getValue() != null) {
-				out.append(entry.getKey() + "=" + entry.getValue() + "\0");
+		    String    key=entry.getKey(), value=entry.getValue();
+			if (value != null) {
+				out.append(key).append("=").append(value).append('\0');
 			}
 		}
-		return out.toString() + "\0";
+		return out.append('\0').toString();
 	}
 
 	/**
@@ -1781,7 +1884,7 @@ public abstract class Advapi32Util {
 
 		public EventLogRecord(Pointer pevlr) {
 			_record = new EVENTLOGRECORD(pevlr);
-			_source = pevlr.getString(_record.size(), true);
+			_source = pevlr.getWideString(_record.size());
 			// data
 			if (_record.DataLength.intValue() > 0) {
 				_data = pevlr.getByteArray(_record.DataOffset.intValue(),
@@ -1793,7 +1896,7 @@ public abstract class Advapi32Util {
 				int count = _record.NumStrings.intValue();
 				long offset = _record.StringOffset.intValue();
 				while (count > 0) {
-					String s = pevlr.getString(offset, true);
+					String s = pevlr.getWideString(offset);
 					strings.add(s);
 					offset += s.length() * Native.WCHAR_SIZE;
 					offset += Native.WCHAR_SIZE;
@@ -1971,4 +2074,481 @@ public abstract class Advapi32Util {
 		}
 		return aceStructures;
 	}
+
+    public static enum AccessCheckPermission {
+        READ(GENERIC_READ),
+        WRITE(GENERIC_WRITE),
+        EXECUTE(GENERIC_EXECUTE);
+
+        final int code;
+
+        AccessCheckPermission(int code) {
+            this.code = code;
+        }
+
+        public int getCode() {
+            return code;
+        }
+    }
+
+
+    private static Memory getSecurityDescriptorForFile(final String absoluteFilePath) {
+        final int infoType = OWNER_SECURITY_INFORMATION | GROUP_SECURITY_INFORMATION |
+                DACL_SECURITY_INFORMATION;
+
+        final IntByReference lpnSize = new IntByReference();
+        boolean succeeded = Advapi32.INSTANCE.GetFileSecurity(
+                new WString(absoluteFilePath),
+                infoType,
+                null,
+                0, lpnSize);
+
+        if (!succeeded) {
+            final int lastError = Kernel32.INSTANCE.GetLastError();
+            if (W32Errors.ERROR_INSUFFICIENT_BUFFER != lastError) {
+                throw new Win32Exception(lastError);
+            }
+        }
+
+        final int nLength = lpnSize.getValue();
+        final Memory securityDescriptorMemoryPointer = new Memory(nLength);
+        succeeded = Advapi32.INSTANCE.GetFileSecurity(new WString(
+                absoluteFilePath), infoType, securityDescriptorMemoryPointer, nLength, lpnSize);
+
+        if (!succeeded) {
+            securityDescriptorMemoryPointer.clear();
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        return securityDescriptorMemoryPointer;
+    }
+
+    /**
+     * Get a self relative security descriptor for the given object type. The value is returned in Memory
+     * @param absoluteObjectPath
+     *         A pointer to a null-terminated string that specifies the name of the object
+     *         from which to retrieve security information. For descriptions of the string
+     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     * @param objectType
+     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     * @param getSACL
+     *         Get SACL of the object. See {@link Advapi32#GetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @return Memory containing the self relative security descriptor
+     */
+    public static Memory getSecurityDescriptorForObject(final String absoluteObjectPath, int objectType, boolean getSACL) {
+    	
+        int infoType = OWNER_SECURITY_INFORMATION 
+                        | GROUP_SECURITY_INFORMATION
+                        | DACL_SECURITY_INFORMATION
+                        | (getSACL ? SACL_SECURITY_INFORMATION : 0);        
+
+        PointerByReference ppSecurityDescriptor = new PointerByReference();	
+
+        int lastError = Advapi32.INSTANCE.GetNamedSecurityInfo(
+		                absoluteObjectPath,
+		                objectType,
+		                infoType,
+		                null,
+		                null,
+		                null,
+		                null,
+		                ppSecurityDescriptor);
+
+        if (lastError != 0) {
+            throw new Win32Exception(lastError);
+        }
+        
+        int nLength = Advapi32.INSTANCE.GetSecurityDescriptorLength(ppSecurityDescriptor.getValue());        
+        final Memory memory = new Memory(nLength);
+        memory.write(0, ppSecurityDescriptor.getValue().getByteArray(0, nLength), 0, nLength);
+        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+        return memory;
+    }
+    
+    /**
+     * Set a self relative security descriptor for the given object type.
+     *
+     * @param absoluteObjectPath
+     *         A pointer to a null-terminated string that specifies the name of the object
+     *         from which to retrieve security information. For descriptions of the string
+     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     * @param objectType
+     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     * @param securityDescriptor
+     *         A security descriptor to set.
+     * @param setOwner
+     *         Set the owner. The owner is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     *         See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in getting the OWNER.
+     * @param setGroup
+     *         Set the group. The group is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     * @param setDACL
+     *         Set the DACL. The DACL is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     * @param setSACL
+     *         Set the SACL. The SACL is extracted from securityDescriptor and must be valid,
+     *         otherwise IllegalArgumentException is throw.
+     *          See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @param setDACLProtectedStatus
+     *         Set DACL protected status as contained within securityDescriptor.control.
+     * @param setSACLProtectedStatus
+     *         Set SACL protected status as contained within securityDescriptor.control.
+     */
+    public static void setSecurityDescriptorForObject(final String absoluteObjectPath,
+                                                      int objectType,
+                                                      SECURITY_DESCRIPTOR_RELATIVE securityDescriptor,
+                                                      boolean setOwner,
+                                                      boolean setGroup, 
+                                                      boolean setDACL,
+                                                      boolean setSACL,
+                                                      boolean setDACLProtectedStatus,
+                                                      boolean setSACLProtectedStatus) {
+    	    	
+    	final PSID psidOwner = securityDescriptor.getOwner();
+    	final PSID psidGroup = securityDescriptor.getGroup();
+    	final ACL dacl = securityDescriptor.getDiscretionaryACL();
+    	final ACL sacl = securityDescriptor.getSystemACL();
+
+    	int infoType = 0;    	
+    	// Parameter validation and infoType flag setting.
+    	if (setOwner) {
+            if (psidOwner == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain owner");
+            if (!Advapi32.INSTANCE.IsValidSid(psidOwner))
+                throw new IllegalArgumentException("Owner PSID is invalid");    		
+            infoType |= OWNER_SECURITY_INFORMATION;
+        }
+
+        if (setGroup) {
+            if (psidGroup == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain group");
+            if (!Advapi32.INSTANCE.IsValidSid(psidGroup))
+                throw new IllegalArgumentException("Group PSID is invalid");    		
+            infoType |= GROUP_SECURITY_INFORMATION;
+        }
+
+        if (setDACL) {    		
+            if (dacl == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain DACL");
+            if (!Advapi32.INSTANCE.IsValidAcl(dacl.getPointer()))
+                throw new IllegalArgumentException("DACL is invalid");    		
+            infoType |= DACL_SECURITY_INFORMATION;
+        }
+
+        if (setSACL) {
+            if (sacl == null)    			
+                throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain SACL");
+            if (!Advapi32.INSTANCE.IsValidAcl(sacl.getPointer()))
+                throw new IllegalArgumentException("SACL is invalid");    		
+            infoType |= SACL_SECURITY_INFORMATION;
+        }
+
+    	/* 
+    	 * Control bits SE_DACL_PROTECTED/SE_SACL_PROTECTED indicate the *ACL is protected. The *ACL_SECURITY_INFORMATION flags 
+    	 * are meta flags for SetNamedSecurityInfo and are not stored in the SD.  If either *ACLProtectedStatus is set,
+    	 * get the current status from the securityDescriptor and apply as such, otherwise the ACL remains at its default.
+    	*/
+        if (setDACLProtectedStatus) {
+            if ((securityDescriptor.Control & SE_DACL_PROTECTED) != 0) {
+                infoType |= PROTECTED_DACL_SECURITY_INFORMATION;
+            }
+            else if ((securityDescriptor.Control & SE_DACL_PROTECTED) == 0) {
+                infoType |= UNPROTECTED_DACL_SECURITY_INFORMATION;
+            }
+        }
+
+        if (setSACLProtectedStatus) {
+            if ((securityDescriptor.Control & SE_SACL_PROTECTED) != 0) {
+                infoType |= PROTECTED_SACL_SECURITY_INFORMATION;
+        }
+            else if ((securityDescriptor.Control & SE_SACL_PROTECTED) == 0) {
+                infoType |= UNPROTECTED_SACL_SECURITY_INFORMATION;
+            }
+        }
+
+        int lastError = Advapi32.INSTANCE.SetNamedSecurityInfo(
+                         absoluteObjectPath,
+                         objectType,
+                         infoType,
+                         setOwner ? psidOwner.getPointer() : null,
+                         setGroup ? psidGroup.getPointer() : null,
+                         setDACL ? dacl.getPointer() : null,
+                         setSACL ? sacl.getPointer() : null);
+
+        if (lastError != 0) {
+            throw new Win32Exception(lastError);
+        }
+    }
+
+    /**
+     * Checks if the current process has the given permission for the file.
+     * @param file the file to check
+     * @param permissionToCheck the permission to check for the file
+     * @return true if has access, otherwise false
+     */
+    public static boolean accessCheck(File file, AccessCheckPermission permissionToCheck) {
+        boolean hasAccess = false;
+        final Memory securityDescriptorMemoryPointer = getSecurityDescriptorForFile(file.getAbsolutePath().replaceAll("/", "\\"));
+
+        HANDLEByReference openedAccessToken = null;
+        final HANDLEByReference duplicatedToken = new HANDLEByReference();
+        try{
+            openedAccessToken = new HANDLEByReference();
+
+            final int desireAccess = TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_DUPLICATE | STANDARD_RIGHTS_READ;
+            if(!Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(), desireAccess, openedAccessToken)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            if(!Advapi32.INSTANCE.DuplicateToken(openedAccessToken.getValue(), SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, duplicatedToken)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
+            mapping.genericRead = new DWORD(FILE_GENERIC_READ);
+            mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
+            mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
+            mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
+
+            final DWORDByReference rights = new DWORDByReference(new DWORD(permissionToCheck.getCode()));
+            Advapi32.INSTANCE.MapGenericMask(rights, mapping);
+
+            final PRIVILEGE_SET privileges = new PRIVILEGE_SET(1);
+            privileges.PrivilegeCount = new DWORD(0);
+            final DWORDByReference privilegeLength = new DWORDByReference(new DWORD(privileges.size()));
+
+            final DWORDByReference grantedAccess = new DWORDByReference();
+            final BOOLByReference result = new BOOLByReference();
+            if(!Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer,
+                    duplicatedToken.getValue(),
+                    rights.getValue(),
+                    mapping,
+                    privileges, privilegeLength, grantedAccess, result)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            hasAccess = result.getValue().booleanValue();
+
+        } finally {
+
+            if(openedAccessToken != null && openedAccessToken.getValue() != null) {
+                Kernel32.INSTANCE.CloseHandle(openedAccessToken.getValue());
+            }
+
+            if(duplicatedToken != null && duplicatedToken.getValue() != null) {
+                Kernel32.INSTANCE.CloseHandle(duplicatedToken.getValue());
+            }
+
+            if(securityDescriptorMemoryPointer != null) {
+                securityDescriptorMemoryPointer.clear();
+            }
+        }
+
+        return hasAccess;
+    }
+    
+    /**
+     * Gets a file's Security Descriptor. Convenience wrapper getSecurityDescriptorForObject. 
+     *
+     * @param file
+     *         File object containing a path to a file system object.
+     * @param getSACL
+     *         Get the SACL. See {@link Advapi32#GetNamedSecurityInfo} for process privilege requirements in getting the SACL.
+     * @return The file's Security Descriptor in self relative format.
+     */
+    public static SECURITY_DESCRIPTOR_RELATIVE getFileSecurityDescriptor(File file, boolean getSACL)
+    {
+    	SECURITY_DESCRIPTOR_RELATIVE sdr = null;
+    	Memory securityDesc = getSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, getSACL);
+    	sdr = new SECURITY_DESCRIPTOR_RELATIVE(securityDesc);
+    	return sdr;
+    }
+    
+    /**
+     * Sets a file's Security Descriptor. Convenience wrapper setSecurityDescriptorForObject. 
+     * @param file
+     *         File object containing a path to a file system object.
+     * @param securityDescriptor
+     *         The security descriptor to set.
+     * @param setOwner
+     *         Set the owner. See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in setting the owner.
+     * @param setGroup
+     *         Set the group. 
+     * @param setDACL
+     *         Set the DACL.
+     * @param setSACL
+     *         Set the SACL. See {@link Advapi32#SetNamedSecurityInfo} for process privilege requirements in setting the SACL.
+     * @param setDACLProtectedStatus
+     *         Set DACL protected status as contained within securityDescriptor.control.
+     * @param setSACLProtectedStatus
+     *         Set SACL protected status as contained within securityDescriptor.control.     * 
+     */
+    public static void setFileSecurityDescriptor(
+                        File file,
+                        SECURITY_DESCRIPTOR_RELATIVE securityDescriptor,
+                        boolean setOwner,
+                        boolean setGroup, 
+                        boolean setDACL,
+                        boolean setSACL,
+                        boolean setDACLProtectedStatus,
+                        boolean setSACLProtectedStatus)
+    {
+    	setSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, securityDescriptor, setOwner, setGroup, setDACL, setSACL, setDACLProtectedStatus, setSACLProtectedStatus);
+    }
+	
+    /**
+     * Encrypts a file or directory.
+     *
+     * @param file
+     *         The file or directory to encrypt.
+     */
+    public static void encryptFile(File file) {
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.EncryptFile(lpFileName)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Decrypts an encrypted file or directory.
+     *
+     * @param file
+     *         The file or directory to decrypt.
+     */
+    public static void decryptFile(File file) {
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0))) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
+     * Checks the encryption status of a file.
+     *
+     * @param file
+     *         The file to check the status for.
+     * @return The status of the file.
+     */ 
+    public static int fileEncryptionStatus(File file) {
+        DWORDByReference status = new DWORDByReference();
+        WString lpFileName = new WString(file.getAbsolutePath());
+        if (!Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, status)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return status.getValue().intValue();
+    }
+
+    /**
+     * Disables or enables encryption of the specified directory and the files in
+     * it.
+     *
+     * @param directory
+     *         The directory for which to enable or disable encryption.
+     * @param disable
+     *         TRUE to disable encryption. FALSE to enable it.
+     */
+    public static void disableEncryption(File directory, boolean disable) {
+        WString dirPath = new WString(directory.getAbsolutePath());
+        if (!Advapi32.INSTANCE.EncryptionDisable(dirPath, disable)) {
+            throw new Win32Exception(Native.getLastError());
+        }
+    }
+
+    /**
+     * Backup an encrypted file or folder without decrypting it. A file named
+     * "bar/sample.text" will be backed-up to "destDir/sample.text". A directory
+     * named "bar" will be backed-up to "destDir/bar". This method is NOT
+     * recursive. If you have an encrypted directory with encrypted files, this
+     * method must be called once for the directory, and once for each encrypted
+     * file to be backed-up.
+     *
+     * @param src
+     *         The encrypted file or directory to backup.
+     * @param destDir
+     *         The directory where the backup will be saved.
+     */
+    public static void backupEncryptedFile(File src, File destDir) {
+        if (!destDir.isDirectory()) {
+            throw new IllegalArgumentException("destDir must be a directory.");
+        }
+
+        ULONG readFlag = new ULONG(0); // Open the file for export (backup)
+        ULONG writeFlag = new ULONG(CREATE_FOR_IMPORT); // Import (restore) file
+
+        if (src.isDirectory()) {
+            writeFlag.setValue(CREATE_FOR_IMPORT | CREATE_FOR_DIR);
+        }
+        
+        // open encrypted file for export
+        WString srcFileName = new WString(src.getAbsolutePath());
+        PointerByReference pvContext = new PointerByReference();
+        if (Advapi32.INSTANCE.OpenEncryptedFileRaw(srcFileName, readFlag,
+                pvContext) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // read encrypted file
+        final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+                                  ULONG ulLength) {
+                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                try {
+                    outputStream.write(arr);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        if (Advapi32.INSTANCE.ReadEncryptedFileRaw(pfExportCallback, null, 
+                pvContext.getValue()) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // close
+        try {
+            outputStream.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+
+        // open file for import
+        WString destFileName = new WString(destDir.getAbsolutePath() + File.separator
+                        + src.getName());
+        pvContext = new PointerByReference();
+        if (Advapi32.INSTANCE.OpenEncryptedFileRaw(destFileName, writeFlag,
+                pvContext) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // write encrypted file
+        final IntByReference elementsReadWrapper = new IntByReference(0);
+        FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
+            @Override
+            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext, 
+                                  ULONGByReference ulLength) {
+                int elementsRead = elementsReadWrapper.getValue();
+                int remainingElements = outputStream.size() - elementsRead;
+                int length = Math.min(remainingElements, ulLength.getValue().intValue());
+                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead, 
+                        length);
+                elementsReadWrapper.setValue(elementsRead + length);
+                ulLength.setValue(new ULONG(length));
+                return new DWORD(W32Errors.ERROR_SUCCESS);
+            }
+        };
+
+        if (Advapi32.INSTANCE.WriteEncryptedFileRaw(pfImportCallback, null, 
+                pvContext.getValue()) != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        // close
+        Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
+    }
 }

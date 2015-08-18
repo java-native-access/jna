@@ -29,6 +29,11 @@ public class NativeLong extends IntegerType {
     
     /** Create a NativeLong with the given value. */
     public NativeLong(long value) {
-        super(SIZE, value);
+        this(value, false);
+    }
+
+    /** Create a NativeLong with the given value, optionally unsigned. */
+    public NativeLong(long value, boolean unsigned) {
+        super(SIZE, value, unsigned);
     }
 }

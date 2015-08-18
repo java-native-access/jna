@@ -40,7 +40,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
     
     public void testLoadJAWT() {
-        if (!Platform.HAS_AWT) return;
+        if (!Platform.HAS_AWT || !Platform.HAS_JAWT) return;
 
         if (GraphicsEnvironment.isHeadless()) return;
 
@@ -72,6 +72,11 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadFromJNALibraryPath() {
         // Tests are already configured to load from this path
         NativeLibrary.getInstance("testlib");
+    }
+
+    public void testLoadFromCustomPath() throws MalformedURLException {
+        NativeLibrary.addSearchPath("testlib-path", TESTPATH);
+        NativeLibrary.getInstance("testlib-path", new TestLoader(new File(".")));
     }
 
     public void testLoadFromClasspath() throws MalformedURLException {
@@ -149,11 +154,41 @@ public class LibraryLoadTest extends TestCase implements Paths {
 
         String newLibName = libName.replace("testlib", UNICODE);
         File dst = new File(tmpdir, newLibName);
-        dst.deleteOnExit();
         copy(src, dst);
-        NativeLibrary.getInstance(UNICODE, new TestLoader(tmpdir));
+        try {
+            NativeLibrary.getInstance(UNICODE, new TestLoader(tmpdir));
+            dst.deleteOnExit();
+        }
+        catch(UnsatisfiedLinkError e) {
+            fail("Library '" + newLibName + "' at " + dst + " could not be loaded: " + e);
+        }
     }
     
+    public void testLoadLibraryWithLongName() throws Exception {
+        File tmpdir = Native.getTempDir();
+        String libName = NativeLibrary.mapSharedLibraryName("testlib");
+        File src = new File(TESTPATH, libName);
+        assertTrue("Expected JNA native library at " + src + " is missing", src.exists());
+
+        for (int i=0;i < 16;i++) {
+            tmpdir = new File(tmpdir, "subdir0123456789");
+            tmpdir.deleteOnExit();
+        }
+
+        final String NAME = getName();
+        String newLibName = libName.replace("testlib", NAME);
+        tmpdir.mkdirs();
+        File dst = new File(tmpdir, newLibName);
+        copy(src, dst);
+        try {
+            NativeLibrary.getInstance(NAME, new TestLoader(tmpdir));
+            dst.deleteOnExit();
+        }
+        catch(UnsatisfiedLinkError e) {
+            fail("Library '" + newLibName + "' at " + dst + " could not be loaded: " + e);
+        }
+    }
+
     public void testLoadFrameworkLibrary() {
         if (Platform.isMac()) {
             final String PATH = "/System/Library/Frameworks/CoreServices.framework";

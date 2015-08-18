@@ -5,6 +5,18 @@ I'm having trouble generating correct library mappings
 ------------------------------------------------------
 Make sure you've read [this page](https://github.com/twall/jna/tree/master/www/Mappings.md) and [this one](http://twall.github.com/jna/3.4.0/javadoc/overview-summary.html#overview_description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
 
+JNA is missing function XXX in its platform library mappings
+------------------------------------------------------------
+No, it's not, it's just waiting for you to add it :)
+
+    public interface MyUser32 extends User32 {
+        // DEFAULT_OPTIONS is critical for W32 API functions to simplify ASCII/UNICODE details
+        MyUser32 INSTANCE = (MyUser32)Native.loadLibrary("user32", W32APIOptions.DEFAULT_OPTIONS);
+        void ThatFunctionYouReallyNeed();
+    }
+    
+That's all it takes.  If you'd like to submit the change back to JNA, make sure you provide a change log entry and corresponding test that invokes the function to prove that the mapping works.  We don't really care what the API actually does, the call can be a very minimal invocation, but should ensure all the parameters are correctly passed and that you get a reasonable return value.
+
 Calling `Native.loadLibrary()` causes an UnsatisfiedLinkError
 -------------------------------------------------------------
 

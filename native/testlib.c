@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@ typedef signed char int8_t;
 typedef short int16_t;
 typedef int int32_t;
 typedef __int64 int64_t;
+#include "snprintf.h"
 #else 
 #include <stdint.h>
 #endif
@@ -155,6 +156,14 @@ returnInt32Magic() {
 EXPORT int32_t  
 returnInt32Argument(int32_t arg) {
   return arg;
+}
+
+EXPORT int*
+returnPoint(int x, int y) {
+  int *p = malloc(2 * sizeof(int));
+  p[0] = x;
+  p[1] = y;
+  return p;
 }
 
 EXPORT int64_t  
@@ -659,12 +668,11 @@ EXPORT void
 callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   THREAD_T thread;
   thread_data* data = (thread_data*)malloc(sizeof(thread_data));
-  size_t len = strlen(name);
+
   data->repeat_count = n;
   data->sleep_time = ms;
   data->func = func;
-  memcpy(data->name, name, len < sizeof(data->name) ? len + 1 : sizeof(data->name));
-  data->name[sizeof(data->name)-1] = 0;
+  snprintf(data->name, sizeof(data->name), "%s", name);
   THREAD_CREATE(&thread, &thread_function, data);
 }
 
@@ -940,12 +948,43 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
   return value;
 }
 
+EXPORT int32_t __stdcall
+callBugCallback(void (__stdcall *func)(long,int,double,
+                                       const char*,const char*,
+                                       double,long,
+                                       double,long,long,long),
+                long arg1, int arg2, double arg3,
+                const char* arg4, const char* arg5,
+                double arg6, long arg7,
+                double arg8, long arg9,
+                long arg10, long arg11) {
+  void* sp1 = NULL;
+  void* sp2 = NULL;
+  int value = -1;
+
+#if defined(_MSC_VER)
+  __asm mov sp1, esp;
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  __asm mov sp2, esp;
+#elif defined(__GNUC__)
+  asm volatile (" movl %%esp,%0" : "=g" (sp1));
+  (*func)(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11);
+  asm volatile (" movl %%esp,%0" : "=g" (sp2));
+#endif
+
+  if (sp1 != sp2) {
+    return -1;
+  }
+  return 0;
+}
+
 #endif /* _WIN32 && !_WIN64 */
 
 #include <jni.h>
 #include <math.h>
+#include "dispatch.h"
 JNIEXPORT jdouble JNICALL
-Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
+Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *UNUSED(env), jclass UNUSED(cls), jdouble x) {
   return cos(x);
 }
 

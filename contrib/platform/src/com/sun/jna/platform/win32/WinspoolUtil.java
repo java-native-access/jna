@@ -12,13 +12,15 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.Winspool.JOB_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 import com.sun.jna.ptr.IntByReference;
 
 /**
  * Winspool Utility API.
- *
+ * 
  * @author dblock[at]dblock.org
  */
 public abstract class WinspoolUtil {
@@ -26,15 +28,16 @@ public abstract class WinspoolUtil {
     public static PRINTER_INFO_1[] getPrinterInfo1() {
         IntByReference pcbNeeded = new IntByReference();
         IntByReference pcReturned = new IntByReference();
-        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL,
-                null, 1, null, 0, pcbNeeded, pcReturned);
+        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 1,
+                null, 0, pcbNeeded, pcReturned);
         if (pcbNeeded.getValue() <= 0) {
             return new PRINTER_INFO_1[0];
         }
 
         PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
-        if (!Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL,
-                null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned)) {
+        if (!Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null,
+                1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+                pcReturned)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
@@ -46,15 +49,16 @@ public abstract class WinspoolUtil {
     public static PRINTER_INFO_4[] getPrinterInfo4() {
         IntByReference pcbNeeded = new IntByReference();
         IntByReference pcReturned = new IntByReference();
-        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL,
-                null, 4, null, 0, pcbNeeded, pcReturned);
+        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 4,
+                null, 0, pcbNeeded, pcReturned);
         if (pcbNeeded.getValue() <= 0) {
             return new PRINTER_INFO_4[0];
         }
 
         PRINTER_INFO_4 pPrinterEnum = new PRINTER_INFO_4(pcbNeeded.getValue());
-        if (!Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL,
-                null, 4, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned)) {
+        if (!Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null,
+                4, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+                pcReturned)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
@@ -62,4 +66,26 @@ public abstract class WinspoolUtil {
 
         return (PRINTER_INFO_4[]) pPrinterEnum.toArray(pcReturned.getValue());
     }
+
+    public static JOB_INFO_1[] getJobInfo1(HANDLEByReference phPrinter) {
+        IntByReference pcbNeeded = new IntByReference();
+        IntByReference pcReturned = new IntByReference();
+        Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1, null, 0,
+                pcbNeeded, pcReturned);
+        if (pcbNeeded.getValue() <= 0) {
+            return new JOB_INFO_1[0];
+        }
+
+        JOB_INFO_1 pJobEnum = new JOB_INFO_1(pcbNeeded.getValue());
+        if (!Winspool.INSTANCE.EnumJobs(phPrinter.getValue(), 0, 255, 1,
+                pJobEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+                pcReturned)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        pJobEnum.read();
+
+        return (JOB_INFO_1[]) pJobEnum.toArray(pcReturned.getValue());
+    }
+
 }

@@ -1,0 +1,8 @@
+	/**
+	 * ${helpstring}
+	 * Virtual table id: ${vtableid}
+	 * Member id: ${memberid}
+	 */
+	public ${returntype} ${methodname}(${methodparams}) {
+		return (${returntype})this._invokeNativeObject(${functionCount}, new Object[] { this.getPointer()${methodvariables}}, ${returntype}.class);
+	}
