@@ -550,7 +550,6 @@ getStructureSize(unsigned index) {
   return STRUCT_SIZES[index];
 }
 
-extern void exit(int);
 #define FIELD(T,X,N) (((T*)X)->field ## N)
 #define OFFSET(T,X,N) (int)(((char*)&FIELD(T,X,N))-((char*)&FIELD(T,X,0)))
 #define V8(N) (N+1)

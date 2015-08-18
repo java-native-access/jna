@@ -162,13 +162,8 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-ifeq ($(ARCH),amd64)
-# To build entirely with mingw64, comment out this line (default is MSVC)
+# To build with mingw, comment out this line (default is MSVC)
 USE_MSVC=true
-else
-# To build 32-bit under MSVC, un-comment this line (default is gcc)
-USE_MSVC=true
-endif
 
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING
 ifndef USE_MSVC
@@ -185,30 +180,20 @@ LIBPFX=
 LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
-ifneq ($(ARCH),amd64)
 ifdef USE_MSVC
-CC=$(FFI_SRC)/../cc.sh -m32
-CPP=$(FFI_SRC)/../cc.sh -m32 -E
-LD=$(FFI_SRC)/../ld.sh -m32
+CC=$(FFI_SRC)/msvcc.sh
+CPP=cl -nologo -EP
+LD=link
+LDFLAGS=/DLL /OUT:$@
+ifeq ($(ARCH),amd64)
+FFI_CONFIG+=--host=x86_64-w64-mingw32
+endif
 FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)"
+EXTRAOBJS+=$(DLLCB)
 endif
 
-ifeq ($(CC),gcc)
-# -mno-cygwin is only available on GCC 3; GCC 4 requires an explicit mingw
-# installation
-GCC_VERSION = $(shell gcc --version | sed -n 's/.*(GCC) \([0-9]\)\.[0-9.]*.*/\1/p')
-ifeq ($(GCC_VERSION),3)
-NOCYGWIN=-mno-cygwin
-else
-NOCYGWIN=
-endif
-CC += $(NOCYGWIN)
-LD += $(NOCYGWIN) -Wl,--add-stdcall-alias
-endif
-
-else 
-
+ifeq ($(ARCH),amd64)
 # Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
@@ -216,26 +201,18 @@ MINGW_PREFIX?=x86_64-w64-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
 # Still need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
-ifndef USE_MSVC
-CC=$(MINGW)
-endif
 
-ifeq ($(CC),$(MINGW))
+ifdef USE_MSVC
+CC+= -m64
+else
+CC=$(MINGW)
 # No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1
 LD = $(CC)
 LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
-FFI_CONFIG += --host=x86_64-w64-mingw32
-else
-# MSVC (wrapper scripts)
-CC=$(FFI_SRC)/../cc.sh -m64
-CPP=$(FFI_SRC)/../cc.sh -m64 -E
-LD=$(FFI_SRC)/../ld.sh -m64
-FFI_CONFIG+=--host=x86_64-w64-mingw32 && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP="$(CPP)" 
-EXTRAOBJS+=$(DLLCB)
 endif
+
 endif
 endif
 

@@ -108,13 +108,13 @@ do
       shift 1
     ;;
     -I)
-      args="$args -I$2"
-      includes="$includes -I$2"
+      args="$args -I\"$2\""
+      includes="$includes -I\"$2\""
       shift 2
     ;;
     -I*)
-      args="$args $1"
-      includes="$includes $1"
+      args="$args -I\"$(echo $1|sed 's/^-I//g')\""
+      includes="$includes -I\"$(echo $1|sed 's/^-I//g')\""
       shift 1
     ;;
     -W|-Wextra)
@@ -134,12 +134,16 @@ do
       # TODO map specific warnings
       shift 1
     ;;
+    -warn)
+      # Ignore "-warn all"
+      shift 2
+    ;;
     -S)
       args="$args -FAs"
       shift 1
     ;;
     -o)
-      outdir="$(dirname $2)"
+      outdir="$(cygpath -m $(dirname $2))"
       base="$(basename $2|sed 's/\.[^.]*//g')"
       if [ -n "$single" ]; then 
         output="-Fo$2"
@@ -154,12 +158,12 @@ do
       shift 2
     ;;
     *.S)
-      src=$1
+      src="$(cygpath -m $1)"
       assembly="true"
       shift 1
     ;;
     *.c)
-      args="$args $1"
+      args="$args $(cygpath -m $1)"
       shift 1
     ;;
     *)
