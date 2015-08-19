@@ -1175,6 +1175,33 @@ public interface Advapi32 extends StdCallLibrary {
 	public boolean GetOldestEventLogRecord(HANDLE hEventLog,
 			IntByReference OldestRecord);
 
+
+	/**
+	 * Changes the optional configuration parameters of a service.
+	 *
+	 * @param hService
+	 *            A handle to the service. This handle is returned by the
+	 *            OpenService or CreateService function and must have the
+	 *            SERVICE_CHANGE_CONFIG access right. For more information,
+	 *            see <a
+	 *            href="http://msdn.microsoft.com/en-us/library/ms685981.aspx"
+	 *            >Service Security and Access Rights</a>.
+	 *            If the service controller handles the SC_ACTION_RESTART
+	 *            action, hService must have the SERVICE_START access right.
+	 * @param dwInfoLevel
+	 *            The configuration information to be changed.
+	 * @param lpInfo
+	 *            A pointer to the new value to be set for the configuration
+	 *            information. The format of this data depends on the value
+	 *            of the dwInfoLevel parameter. If this value is NULL, the
+	 *            information remains unchanged.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call GetLastError.
+	 */
+	public boolean ChangeServiceConfig2W(SC_HANDLE hService, int dwInfoLevel,
+			Structure lpInfo);
+
 	/**
 	 * Retrieves the current status of the specified service based on the
 	 * specified information level.

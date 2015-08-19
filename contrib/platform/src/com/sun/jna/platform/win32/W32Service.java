@@ -13,10 +13,20 @@
 
 package com.sun.jna.platform.win32;
 
+import java.util.List;
+
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.Winsvc.SC_ACTION;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS_FLAG;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
+
 
 /**
  * Win32 Service wrapper 
@@ -46,7 +56,60 @@ public class W32Service {
 			_handle = null;
 		}
 	}
-	
+
+	/**
+	 * Set the failure actions of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">ChangeServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS. 
+	 */
+	public void setFailureActions(List<SC_ACTION> actions, int resetPeriod, String rebootMsg, 
+			String command) {
+		SERVICE_FAILURE_ACTIONS.ByReference actionStruct = new SERVICE_FAILURE_ACTIONS.ByReference();
+		actionStruct.dwResetPeriod = resetPeriod;
+		if (rebootMsg != null) {
+			actionStruct.lpRebootMsg = new Memory((rebootMsg.length() + 1) * Native.WCHAR_SIZE);
+			actionStruct.lpRebootMsg.setWideString(0, rebootMsg);
+		} else {
+			actionStruct.lpRebootMsg = Pointer.NULL;
+		}
+		if (command != null) {
+			actionStruct.lpCommand = new Memory((command.length() + 1) * Native.WCHAR_SIZE);
+			actionStruct.lpCommand.setWideString(0, command);
+		} else {
+			actionStruct.lpCommand = Pointer.NULL;
+		}
+		actionStruct.cActions = actions.size();
+
+		actionStruct.lpsaActions = new SC_ACTION.ByReference();
+		SC_ACTION[] actionArray = (SC_ACTION[])actionStruct.lpsaActions.toArray(actions.size());
+		int i = 0;
+		for (SC_ACTION action : actions) {
+			actionArray[i].type = action.type;
+			actionArray[i].delay = action.delay;
+			i++;
+		}
+
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2W(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS, 
+				actionStruct)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+	}
+
+	/**
+	 * Set the failure action flag of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">ChangeServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS_FLAG. 
+	 */
+	public void setFailureActionsFlag(boolean flagValue) {
+		SERVICE_FAILURE_ACTIONS_FLAG flag = new SERVICE_FAILURE_ACTIONS_FLAG();
+		flag.fFailureActionsOnNonCrashFailures = flagValue ? 1 : 0;
+
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2W(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG, 
+				flag)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+	}
+
 	/**
 	 * Retrieves the current status of the specified service based on the specified information level.
 	 * @return 
