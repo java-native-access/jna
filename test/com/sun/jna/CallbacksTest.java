@@ -46,10 +46,10 @@ public class CallbacksTest extends TestCase implements Paths {
 
     private static final int THREAD_TIMEOUT = 5000;
 
-    protected void waitFor(Thread t) {
+    protected void waitFor(Thread thread) {
         long start = System.currentTimeMillis();
-	while (t.isAlive()) {
-	    Thread.sleep(10);
+	while (thread.isAlive()) {
+	    try { Thread.sleep(10); } catch(InterruptedException e) { }
 	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
 		fail("Timed out waiting for native thread " + thread
                      + " to detach and terminate");
