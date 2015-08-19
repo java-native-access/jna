@@ -165,17 +165,9 @@ endif
 
 ifeq ($(OS),win32)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-ifdef $(MSVC)
 USE_MSVC=true
 
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
-ifndef USE_MSVC
-LIBS=-lpsapi
-else
-ARSFX=.lib
-COPT=
-LIBS=psapi.lib
-endif
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
 STRIP=@echo
@@ -185,15 +177,21 @@ TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
 ifdef USE_MSVC
 CC=$(FFI_SRC)/msvcc.sh
+COPT=
 CPP=cl -nologo -EP
 LD=link
 LDFLAGS=/DLL /OUT:$@
+LIBS=psapi.lib
+ARSFX=.lib
 ifeq ($(ARCH),amd64)
+CC+= -m64
 FFI_CONFIG+=--host=x86_64-w64-mingw32
 endif
 FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
+else
+LIBS=-lpsapi
 endif
 
 ifeq ($(ARCH),amd64)
@@ -205,9 +203,7 @@ MINGW=$(MINGW_PREFIX)gcc
 # Still need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
 
-ifdef USE_MSVC
-CC+= -m64
-else
+ifndef USE_MSVC
 CC=$(MINGW)
 # No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1
