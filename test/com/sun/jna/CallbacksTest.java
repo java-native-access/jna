@@ -39,6 +39,12 @@ import com.sun.jna.win32.W32APIOptions;
 //@SuppressWarnings("unused")
 public class CallbacksTest extends TestCase implements Paths {
 
+    // On OSX, on Oracle JVM 1.8+, pthread cleanup thinks the native thread is 
+    // not attached, and the JVM never unmaps the defunct native thread.  In
+    // order to avoid this situation causing tests to time out, we need to
+    // explicitly detach the native thread after our Java code is done with it.
+    private static final boolean THREAD_DETACH_BUG = Platform.isMac();
+
     private static final String UNICODE = "[\u0444]";
 
     private static final double DOUBLE_MAGIC = -118.625d;
@@ -1111,6 +1117,9 @@ public class CallbacksTest extends TestCase implements Paths {
                 }
 
                 ++called[0];
+                if (THREAD_DETACH_BUG && called[0] == 2) {
+                    Native.detach(true);
+                }
             }
         };
         callThreadedCallback(cb, init, 2, 2000, called, 1);
@@ -1151,6 +1160,9 @@ public class CallbacksTest extends TestCase implements Paths {
             public void callback() {
                 threads.add(Thread.currentThread());
                 ++called[0];
+                if (THREAD_DETACH_BUG && called[0] == COUNT) {
+                    Native.detach(true);
+                }
             }
         };
         callThreadedCallback(cb, init, COUNT, 100, called);
