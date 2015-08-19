@@ -414,8 +414,8 @@ ffi_error(JNIEnv* env, const char* op, ffi_status status) {
 
 /* invoke the real native function */
 static void
-dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
-         ffi_type *ffi_return_type, void *resP)
+dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
+         ffi_type *return_type, void *presult)
 {
   int i, nargs;
   jvalue* c_args;
@@ -427,8 +427,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   } *array_elements;
   volatile int array_count = 0;
   ffi_cif cif;
-  ffi_type** ffi_types;
-  void** ffi_values;
+  ffi_type** arg_types;
+  void** arg_values;
   ffi_abi abi;
   ffi_status status;
   char msg[MSG_SIZE];
@@ -436,7 +436,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
 
-  nargs = (*env)->GetArrayLength(env, arr);
+  nargs = (*env)->GetArrayLength(env, args);
 
   if (nargs > MAX_NARGS) {
     snprintf(msg, sizeof(msg), "Too many arguments (max %ld)", MAX_NARGS);
@@ -447,42 +447,42 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
   c_args = (jvalue*)alloca(nargs * sizeof(jvalue));
   array_elements = (struct _array_elements*)
     alloca(nargs * sizeof(struct _array_elements));
-  ffi_types = (ffi_type**)alloca(nargs * sizeof(ffi_type*));
-  ffi_values = (void**)alloca(nargs * sizeof(void*));
+  arg_types = (ffi_type**)alloca(nargs * sizeof(ffi_type*));
+  arg_values = (void**)alloca(nargs * sizeof(void*));
 
   for (i = 0; i < nargs; i++) {
-    jobject arg = (*env)->GetObjectArrayElement(env, arr, i);
+    jobject arg = (*env)->GetObjectArrayElement(env, args, i);
 
     if (arg == NULL) {
       c_args[i].l = NULL;
-      ffi_types[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
     }
     else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
       c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
-      ffi_types[i] = &ffi_type_sint32;
-      ffi_values[i] = &c_args[i].i;
+      arg_types[i] = &ffi_type_sint32;
+      arg_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
       c_args[i].b = (*env)->GetByteField(env, arg, FID_Byte_value);
-      ffi_types[i] = &ffi_type_sint8;
-      ffi_values[i] = &c_args[i].b;
+      arg_types[i] = &ffi_type_sint8;
+      arg_values[i] = &c_args[i].b;
     }
     else if ((*env)->IsInstanceOf(env, arg, classShort)) {
       c_args[i].s = (*env)->GetShortField(env, arg, FID_Short_value);
-      ffi_types[i] = &ffi_type_sint16;
-      ffi_values[i] = &c_args[i].s;
+      arg_types[i] = &ffi_type_sint16;
+      arg_values[i] = &c_args[i].s;
     }
     else if ((*env)->IsInstanceOf(env, arg, classCharacter)) {
       if (sizeof(wchar_t) == 2) {
         c_args[i].c = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_types[i] = &ffi_type_uint16;
-        ffi_values[i] = &c_args[i].c;
+        arg_types[i] = &ffi_type_uint16;
+        arg_values[i] = &c_args[i].c;
       }
       else if (sizeof(wchar_t) == 4) {
         c_args[i].i = (*env)->GetCharField(env, arg, FID_Character_value);
-        ffi_types[i] = &ffi_type_uint32;
-        ffi_values[i] = &c_args[i].i;
+        arg_types[i] = &ffi_type_uint32;
+        arg_values[i] = &c_args[i].i;
       }
       else {
         snprintf(msg, sizeof(msg), "Unsupported wchar_t size (%d)", (int)sizeof(wchar_t));
@@ -493,34 +493,34 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     }
     else if ((*env)->IsInstanceOf(env, arg, classInteger)) {
       c_args[i].i = (*env)->GetIntField(env, arg, FID_Integer_value);
-      ffi_types[i] = &ffi_type_sint32;
-      ffi_values[i] = &c_args[i].i;
+      arg_types[i] = &ffi_type_sint32;
+      arg_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classLong)) {
       c_args[i].j = (*env)->GetLongField(env, arg, FID_Long_value);
-      ffi_types[i] = &ffi_type_sint64;
-      ffi_values[i] = &c_args[i].j;
+      arg_types[i] = &ffi_type_sint64;
+      arg_values[i] = &c_args[i].j;
     }
     else if ((*env)->IsInstanceOf(env, arg, classFloat)) {
       c_args[i].f = (*env)->GetFloatField(env, arg, FID_Float_value);
-      ffi_types[i] = &ffi_type_float;
-      ffi_values[i] = &c_args[i].f;
+      arg_types[i] = &ffi_type_float;
+      arg_values[i] = &c_args[i].f;
     }
     else if ((*env)->IsInstanceOf(env, arg, classDouble)) {
       c_args[i].d = (*env)->GetDoubleField(env, arg, FID_Double_value);
-      ffi_types[i] = &ffi_type_double;
-      ffi_values[i] = &c_args[i].d;
+      arg_types[i] = &ffi_type_double;
+      arg_values[i] = &c_args[i].d;
     }
     else if ((*env)->IsInstanceOf(env, arg, classPointer)) {
       c_args[i].l = getNativeAddress(env, arg);
-      ffi_types[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
     }
     else if ((*env)->IsInstanceOf(env, arg, classStructure)) {
       c_args[i].l = getStructureAddress(env, arg);
-      ffi_types[i] = getStructureType(env, arg);
-      ffi_values[i] = c_args[i].l;
-      if (!ffi_types[i]) {
+      arg_types[i] = getStructureType(env, arg);
+      arg_values[i] = c_args[i].l;
+      if (!arg_types[i]) {
         snprintf(msg, sizeof(msg),
                  "Structure type info not initialized at argument %d", i);
         throw_type = EIllegalState;
@@ -531,8 +531,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
 #ifndef NO_NIO_BUFFERS
     else if ((*env)->IsInstanceOf(env, arg, classBuffer)) {
       c_args[i].l = getDirectBufferAddress(env, arg);
-      ffi_types[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
       if (c_args[i].l == NULL) {
         c_args[i].l =
           getBufferArray(env, arg, &array_elements[array_count].array,
@@ -569,8 +569,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
         goto cleanup;
       }
       c_args[i].l = ptr;
-      ffi_types[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
       array_elements[array_count].array = arg;
       array_elements[array_count].elems = ptr;
       array_elements[array_count++].release = release;
@@ -578,8 +578,8 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     else {
       // Anything else, pass directly as a pointer
       c_args[i].l = (void*)arg;
-      ffi_types[i] = &ffi_type_pointer;
-      ffi_values[i] = &c_args[i].l;
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
     }
   }
 
@@ -605,13 +605,13 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray arr,
     goto cleanup;
   }
 
-  status = ffi_prep_cif(&cif, abi, nargs, ffi_return_type, ffi_types);
+  status = ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
   if (!ffi_error(env, "Native call setup", status)) {
     PSTART();
     if ((flags & THROW_LAST_ERROR) != 0) {
       SET_LAST_ERROR(0);
     }
-    ffi_call(&cif, FFI_FN(func), resP, ffi_values);
+    ffi_call(&cif, FFI_FN(func), presult, arg_values);
     {
       int err = GET_LAST_ERROR();
       JNA_set_last_error(env, err);
@@ -926,7 +926,7 @@ getNativeString(JNIEnv* env, jstring s, jboolean wide) {
 
 int
 get_conversion_flag(JNIEnv* env, jclass cls) {
-  int type = get_jtype(env, cls);
+  int type = get_java_type(env, cls);
   if (type == 's') {
     return CVT_STRUCTURE_BYVAL;
   }
@@ -960,7 +960,7 @@ get_conversion_flag(JNIEnv* env, jclass cls) {
 }
 
 int
-get_jtype_from_ffi_type(ffi_type* type) {
+get_java_type_from_ffi_type(ffi_type* type) {
   switch(type->type) {
     // FIXME aliases 'C' on *nix; this will cause problems if anyone
     // ever installs a type mapper for char/Character (not a common arg type)
@@ -977,7 +977,7 @@ get_jtype_from_ffi_type(ffi_type* type) {
 }
 
 int
-get_jtype(JNIEnv* env, jclass cls) {
+get_java_type(JNIEnv* env, jclass cls) {
 
   if ((*env)->IsSameObject(env, classVoid, cls)
       || (*env)->IsSameObject(env, classPrimitiveVoid, cls))
@@ -1144,7 +1144,7 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native,
                      ffi_type* native_return_type,
                      jclass java_return_class,
                      void* result_storage) {
-  int jtype = get_jtype_from_ffi_type(native_return_type);
+  int jtype = get_java_type_from_ffi_type(native_return_type);
   jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
@@ -1171,7 +1171,7 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native,
 
 jobject
 fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote) {
-  int jtype = get_jtype_from_ffi_type(type);
+  int jtype = get_java_type_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, promote);
   if (!(*env)->ExceptionCheck(env)) {
     return (*env)->CallStaticObjectMethod(env, classNative,
@@ -1206,7 +1206,7 @@ getArrayComponentType(JNIEnv *env, jobject obj) {
   jclass cls = (*env)->GetObjectClass(env, obj);
   jclass type = (*env)->CallObjectMethod(env, cls, MID_Class_getComponentType);
   if (type != NULL) {
-    return (char)get_jtype(env, type);
+    return (char)get_java_type(env, type);
   }
   return 0;
 }
@@ -1457,9 +1457,9 @@ JNA_init(JNIEnv* env) {
 
 /** Copy value from the given Java object into the given storage buffer. */
 void
-extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean promote) {
+extract_value(JNIEnv* env, jobject value, void* buffer, size_t size, jboolean promote) {
   if (value == NULL) {
-    *(void **)resp = NULL;
+    *(void **)buffer = NULL;
   }
   else if ((*env)->IsInstanceOf(env, value, classVoid)) {
     // nothing to do
@@ -1467,67 +1467,67 @@ extract_value(JNIEnv* env, jobject value, void* resp, size_t size, jboolean prom
   else if ((*env)->IsInstanceOf(env, value, classBoolean)) {
     jboolean b = (*env)->GetBooleanField(env, value, FID_Boolean_value);
     if (promote) {
-      *(ffi_arg*)resp = b;
+      *(ffi_arg*)buffer = b;
     }
     else {
-      *(jint*)resp = b;
+      *(jint*)buffer = b;
     }
   }
   else if ((*env)->IsInstanceOf(env, value, classByte)) {
     jbyte b = (*env)->GetByteField(env, value, FID_Byte_value);
     if (promote) {
-      *(ffi_arg*)resp = b;
+      *(ffi_arg*)buffer = b;
     }
     else {
-      *(jbyte*)resp = b;
+      *(jbyte*)buffer = b;
     }
   }
   else if ((*env)->IsInstanceOf(env, value, classShort)) {
     jshort s = (*env)->GetShortField(env, value, FID_Short_value);
     if (promote) {
-      *(ffi_arg*)resp = s;
+      *(ffi_arg*)buffer = s;
     }
     else {
-      *(jshort*)resp = s;
+      *(jshort*)buffer = s;
     }
   }
   else if ((*env)->IsInstanceOf(env, value, classCharacter)) {
     jchar c = (*env)->GetCharField(env, value, FID_Character_value);
     if (promote) {
-      *(ffi_arg*)resp = c;
+      *(ffi_arg*)buffer = c;
     }
     else {
-      *(wchar_t*)resp = c;
+      *(wchar_t*)buffer = c;
     }
   }
   else if ((*env)->IsInstanceOf(env, value, classInteger)) {
     jint i = (*env)->GetIntField(env, value, FID_Integer_value);
     if (promote) {
-      *(ffi_arg*)resp = i;
+      *(ffi_arg*)buffer = i;
     }
     else {
-      *(jint*)resp = i;
+      *(jint*)buffer = i;
     }
   }
   else if ((*env)->IsInstanceOf(env, value, classLong)) {
-    *(jlong *)resp = (*env)->GetLongField(env, value, FID_Long_value);
+    *(jlong *)buffer = (*env)->GetLongField(env, value, FID_Long_value);
   }
   else if ((*env)->IsInstanceOf(env, value, classFloat)) {
-    *(float *)resp = (*env)->GetFloatField(env, value, FID_Float_value);
+    *(float *)buffer = (*env)->GetFloatField(env, value, FID_Float_value);
   }
   else if ((*env)->IsInstanceOf(env, value, classDouble)) {
-    *(double *)resp = (*env)->GetDoubleField(env, value, FID_Double_value);
+    *(double *)buffer = (*env)->GetDoubleField(env, value, FID_Double_value);
   }
   else if ((*env)->IsInstanceOf(env, value, classStructure)) {
     void* ptr = getStructureAddress(env, value);
-    memcpy(resp, ptr, size);
+    memcpy(buffer, ptr, size);
   }
   else if ((*env)->IsInstanceOf(env, value, classPointer)) {
-    *(void **)resp = getNativeAddress(env, value);
+    *(void **)buffer = getNativeAddress(env, value);
   }
   else {
     fprintf(stderr, "JNA: extract_value: unrecognized return type, size %d\n", (int)size);
-    memset(resp, 0, size);
+    memset(buffer, 0, size);
     throwByName(env, EError, "Unrecognized return type");
   }
 }
@@ -1621,7 +1621,7 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
 /** Return the FFI type corresponding to the native equivalent of a
     callback function's return value. */
 ffi_type*
-get_ffi_rtype(JNIEnv* env, jclass cls, char jtype) {
+get_ffi_return_type(JNIEnv* env, jclass cls, char jtype) {
   switch (jtype) {
   case 'Z':
   case 'B':
@@ -1658,7 +1658,7 @@ typedef struct _method_data {
     native code
 */
 static void
-method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
+dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   JNIEnv* env = (JNIEnv*)*(void **)argp[0];
   method_data *data = (method_data*)cdata;
 
@@ -1708,7 +1708,7 @@ method_handler(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       case CVT_TYPE_MAPPER:
         {
           void* valuep = args[i];
-          int jtype = get_jtype_from_ffi_type(data->closure_cif.arg_types[i+2]);
+          int jtype = get_java_type_from_ffi_type(data->closure_cif.arg_types[i+2]);
           jobject obj = jtype == '*'
             ? *(void **)valuep
             : new_object(env, (char)jtype, valuep, JNI_FALSE);
@@ -2059,13 +2059,13 @@ Java_com_sun_jna_Native_createNativeCallback(JNIEnv *env,
                                              jclass UNUSED(cls),
                                              jobject obj,
                                              jobject method,
-                                             jobjectArray param_types,
+                                             jobjectArray arg_types,
                                              jclass return_type,
                                              jint call_conv,
                                              jint options,
                                              jstring encoding) {
   callback* cb =
-    create_callback(env, obj, method, param_types, return_type,
+    create_callback(env, obj, method, arg_types, return_type,
                     call_conv, options, encoding);
 
   return A2L(cb);
@@ -3306,7 +3306,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   }
 
   closure = ffi_closure_alloc(sizeof(ffi_closure), &code);
-  status = ffi_prep_closure_loc(closure, closure_cif, method_handler, data, code);
+  status = ffi_prep_closure_loc(closure, closure_cif, dispatch_direct, data, code);
   if (status != FFI_OK) {
     throwByName(env, EError, "Native method linkage failed");
     goto cleanup;
@@ -3337,10 +3337,10 @@ Java_com_sun_jna_Native_ffi_1call(JNIEnv *UNUSED(env), jclass UNUSED(cls), jlong
 }
 
 JNIEXPORT jlong JNICALL
-Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi, jint nargs, jlong ffi_return_type, jlong ffi_types)
+Java_com_sun_jna_Native_ffi_1prep_1cif(JNIEnv *env, jclass UNUSED(cls), jint abi, jint nargs, jlong return_type, jlong arg_types)
 {
   ffi_cif* cif = malloc(sizeof(ffi_cif));
-  ffi_status s = ffi_prep_cif(L2A(cif), abi ? abi : FFI_DEFAULT_ABI, nargs, L2A(ffi_return_type), L2A(ffi_types));
+  ffi_status s = ffi_prep_cif(L2A(cif), abi ? abi : FFI_DEFAULT_ABI, nargs, L2A(return_type), L2A(arg_types));
   if (ffi_error(env, "ffi_prep_cif", s)) {
     return 0;
   }

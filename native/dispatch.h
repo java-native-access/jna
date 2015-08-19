@@ -179,9 +179,9 @@ typedef struct _callback {
 #define ELastError "com/sun/jna/LastErrorException"
 
 extern void throwByName(JNIEnv *env, const char *name, const char *msg);
-extern int get_jtype(JNIEnv*, jclass);
+extern int get_java_type(JNIEnv*, jclass);
 extern ffi_type* get_ffi_type(JNIEnv*, jclass, char);
-extern ffi_type* get_ffi_rtype(JNIEnv*, jclass, char);
+extern ffi_type* get_ffi_return_type(JNIEnv*, jclass, char);
 extern const char* JNA_callback_init(JNIEnv*);
 extern void JNA_set_last_error(JNIEnv*,int);
 extern int JNA_get_last_error(JNIEnv*);
