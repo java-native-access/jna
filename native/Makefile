@@ -31,9 +31,9 @@
 # "ant -Dos.prefix=android-arm(-x86)".  Put the NDK tools in the path and adjust
 # NDK_PLATFORM below or set it in your environment.
 #
-# The windows build requires a cygwin or MSYS installation.  The build may use 
-# MS tools or GCC/mingw.  Define USE_MSVC in your environment and ensure cl.exe
-# and ml.exe are in your PATH to build with MS tools. 
+# The windows build requires a cygwin installation.  The build will use MSVC
+# for compilation if cl.exe is found on the PATH, otherwise the build will fall 
+# back to mingw.
 
 # Systems which support POSIX signals may be able to support VM crash
 # protection simply by defining HAVE_PROTECTION.  This option has been only
@@ -164,9 +164,11 @@ TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 endif
 
 ifeq ($(OS),win32)
-ARCH=$(shell uname -m | sed 's/i.86/i386/g')
+ifeq ($(shell type cl >& /dev/null && echo found),found)
 USE_MSVC=true
-
+endif
+# This will be overridden when called from ant
+ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
@@ -191,6 +193,9 @@ FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
 else
+PREFIX=i686-pc-mingw32-
+CC=$(PREFIX)gcc
+LDFLAGS=-o $@ -shared -Wl,--add-stdcall-alias
 LIBS=-lpsapi
 endif
 
@@ -198,9 +203,9 @@ ifeq ($(ARCH),amd64)
 # Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
-MINGW_PREFIX?=x86_64-w64-mingw32-
+MINGW_PREFIX?=x86_64-pc-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
-# Still need windres from mingw distribution, even if building with MSVC
+# Need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
 
 ifndef USE_MSVC

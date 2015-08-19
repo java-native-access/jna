@@ -9,11 +9,10 @@ Set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`.
 
 #### Cygwin
 
-Install [cygwin](http://www.cygwin.com/) or [msys](http://mingw.org/wiki/msys).
+Install [cygwin](http://www.cygwin.com/).
 
-When installing cygwin, include ssh, git, make, autotools, and gcc3.
-
-When installing msys, include gcc packages. 
+When installing cygwin, include ssh, git, make, autotools, and mingw32-gcc-core.
+Ensure the mingw32 compiler (i686-pc-mingw32-gcc.exe) is on your path.
 
 64-bit Windows
 --------------
@@ -24,17 +23,11 @@ Set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`.
 
 #### Cygwin
 
-Install [cygwin](http://www.cygwin.com/) or [msys](http://mingw.org/wiki/msys).
+Install [cygwin](http://www.cygwin.com/).
 
-When installing cygwin, include ssh, git, make, autotools, and mingw64. 
-
-When installing msys, include gcc packages. 
-
-#### MingW64
-
-Install Mingw64 from [here](http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Automated%20Builds/).
-Download a package starting with *mingw-w64-bin_i686-mingw*. Extract the files to `c:\MinGW`
-or the path where Cygwin is located.
+When installing cygwin, include ssh, git, make, autotools, and
+mingw64-gcc-core.  Ensure the mingw64 compiler (i686-pc-mingw64-gcc.exe) is on
+your path.
 
 #### Visual Studio
 
@@ -46,7 +39,7 @@ To use the MS compiler, ensure that the 64-bit versions of
 cl.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and LIB
 environment variables are set properly (as in VCVARS.BAT). 
 
-Sample configuration, setting up INCLUDE/LIB:
+Sample configuration setting up INCLUDE/LIB:
 
 ``` shell
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
