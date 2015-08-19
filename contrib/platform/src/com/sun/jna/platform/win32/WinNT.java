@@ -1240,6 +1240,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
             super.setPointer(p);
         }
+
+        @Override
+        public String toString() {
+            return String.valueOf(getPointer());
+        }
     }
 
     /**

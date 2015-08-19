@@ -9,10 +9,13 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import java.util.Collection;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinUser.RAWINPUTDEVICELIST;
+
+import junit.framework.TestCase;
 
 /**
  * @author markus[at]headcrashing[dot]eu
@@ -47,5 +50,19 @@ public final class User32UtilTest extends TestCase {
 
     public final void testDestroyWindow() {
         User32Util.destroyWindow(User32Util.createWindow("Message", null, 0, 0, 0, 0, 0, null, null, null, null));
+    }
+
+    public final void testGetRawInputDeviceList() {
+        Collection<RAWINPUTDEVICELIST> deviceList = User32Util.GetRawInputDeviceList();
+        /*
+         * NOTE: we do do not check that deviceList.size() > 0 since theoretically
+         * we could run on a host that has no input devices (keyboard, mouse, etc...).
+         * We just want to make sure that the call succeeds
+         */
+        assertNotNull("No device list", deviceList);
+
+//        for (RAWINPUTDEVICELIST device : deviceList) {
+//            System.out.append('\t').append("Found device of type: ").println(device.dwType);
+//        }
     }
 }

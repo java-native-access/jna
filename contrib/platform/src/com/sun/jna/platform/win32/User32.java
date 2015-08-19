@@ -1983,4 +1983,28 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         error information, call {@link Kernel32#GetLastError()}.
 	 */
 	long GetClassLongPtr(HWND hWnd, int nIndex);
+
+	/**
+	 * @param pRawInputDeviceList
+	 *            An array of {@link RAWINPUTDEVICELIST} structures for the devices
+	 *            attached to the system. If (@code null}, the number of devices is
+	 *            returned in <tt>puiNumDevices</tt>
+	 * @param puiNumDevices
+	 *            If <tt>pRawInputDeviceList</tt> is {@code null}, the function populates
+	 *            this variable with the number of devices attached to the system;
+	 *            otherwise, this variable specifies the number of {@link RAWINPUTDEVICELIST}
+	 *            structures that can be contained in the buffer to which <tt>pRawInputDeviceList</tt>
+	 *            points. If this value is less than the number of devices attached to
+	 *            the system, the function returns the actual number of devices in this
+	 *            variable and fails with ERROR_INSUFFICIENT_BUFFER.
+	 * @param cbSize
+	 *            The size of a {@link RAWINPUTDEVICELIST} structure, in bytes.
+	 * @return If the function is successful, the return value is the number of devices
+	 *             stored in the buffer pointed to by <tt>pRawInputDeviceList</tt>. On
+	 *             any other error, the function returns -1 and {@code GetLastError}
+	 *             returns the error indication.
+	 * @see RAWINPUTDEVICELIST#sizeof()
+	 * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645598(v=vs.85).aspx">GetRawInputDeviceList</A>
+	 */
+	int GetRawInputDeviceList(RAWINPUTDEVICELIST[] pRawInputDeviceList, IntByReference puiNumDevices, int cbSize);
 }

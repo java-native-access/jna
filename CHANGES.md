@@ -51,6 +51,7 @@ Features
 * [#481] (https://github.com/twall/jna/pull/481): Added volume management functions to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#483] (https://github.com/twall/jna/pull/483): Found and fixed duplicate method definitions for the same API in 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#485] (https://github.com/twall/jna/pull/485): Implemented Comparable interface for many of the base types in 'com.sun.jna.platform.win32.WinDef' - [@lgoldstein](https://github.com/lgoldstein).
+* [#488] (https://github.com/twall/jna/pull/488): Added GetRawInputDeviceList definition and utility to 'com.sun.jna.platform.win32' User32 and User32Util - [@lgoldstein](https://github.com/lgoldstein).
 
 Bug Fixes
 ---------
