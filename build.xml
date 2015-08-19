@@ -873,9 +873,11 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- To allow JNLP tests to run, import the JNA testing certificate as a CA -->
     <!-- keytool -exportcert -file jna.csr -keystore jna.keystore -alias jna -->
     <!-- javaws -viewer (security tab, import CSR as CA-->
+    <!--
     <signjar alias="jna" keystore="jna.keystore" storepass="jnadev" lazy="true">
       <fileset dir="${build}/jws" includes="${jar},${testjar},junit.jar,jnidispatch.jar,clover.jar"/>
     </signjar>
+    -->
   </target>
 
   <target name="android-test-setup" depends="compile-tests"
