@@ -19,6 +19,13 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.LUID;
+import com.sun.jna.platform.win32.WinNT.LUID_AND_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES;
 import com.sun.jna.platform.win32.Winsvc.SC_ACTION;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
@@ -57,6 +64,18 @@ public class W32Service {
 		}
 	}
 
+	private void addShutdownPrivilegeToProcess() {
+		HANDLEByReference hToken = new HANDLEByReference();
+		LUID luid = new LUID();
+		Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(),
+				WinNT.TOKEN_ADJUST_PRIVILEGES, hToken);
+		Advapi32.INSTANCE.LookupPrivilegeValue("", WinNT.SE_SHUTDOWN_NAME, luid);
+		TOKEN_PRIVILEGES tp = new TOKEN_PRIVILEGES(1);
+		tp.Privileges[0] = new LUID_AND_ATTRIBUTES(luid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+		Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.getValue(), false, tp, tp.size(), null,
+				new IntByReference());
+	}
+
 	/**
 	 * Set the failure actions of the specified service. Corresponds to 
 	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">ChangeServiceConfig2</a>
@@ -82,8 +101,13 @@ public class W32Service {
 
 		actionStruct.lpsaActions = new SC_ACTION.ByReference();
 		SC_ACTION[] actionArray = (SC_ACTION[])actionStruct.lpsaActions.toArray(actions.size());
+		boolean hasShutdownPrivilege = false;
 		int i = 0;
 		for (SC_ACTION action : actions) {
+			if (!hasShutdownPrivilege && action.type == Winsvc.SC_ACTION_REBOOT) {
+				addShutdownPrivilegeToProcess();
+				hasShutdownPrivilege = true;
+			}
 			actionArray[i].type = action.type;
 			actionArray[i].delay = action.delay;
 			i++;
