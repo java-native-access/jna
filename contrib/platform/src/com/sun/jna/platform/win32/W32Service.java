@@ -19,6 +19,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -85,18 +86,8 @@ public class W32Service {
 			String command) {
 		SERVICE_FAILURE_ACTIONS.ByReference actionStruct = new SERVICE_FAILURE_ACTIONS.ByReference();
 		actionStruct.dwResetPeriod = resetPeriod;
-		if (rebootMsg != null) {
-			actionStruct.lpRebootMsg = new Memory((rebootMsg.length() + 1) * Native.WCHAR_SIZE);
-			actionStruct.lpRebootMsg.setWideString(0, rebootMsg);
-		} else {
-			actionStruct.lpRebootMsg = Pointer.NULL;
-		}
-		if (command != null) {
-			actionStruct.lpCommand = new Memory((command.length() + 1) * Native.WCHAR_SIZE);
-			actionStruct.lpCommand.setWideString(0, command);
-		} else {
-			actionStruct.lpCommand = Pointer.NULL;
-		}
+		actionStruct.lpRebootMsg = new WString(rebootMsg);
+		actionStruct.lpCommand = new WString(command);
 		actionStruct.cActions = actions.size();
 
 		actionStruct.lpsaActions = new SC_ACTION.ByReference();
@@ -113,10 +104,36 @@ public class W32Service {
 			i++;
 		}
 
-		if (!Advapi32.INSTANCE.ChangeServiceConfig2W(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS, 
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS, 
 				actionStruct)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
+	}
+
+	private Pointer queryServiceConfig2(int type) {
+		IntByReference bufferSize = new IntByReference();
+		Advapi32.INSTANCE.QueryServiceConfig2(_handle, type, Pointer.NULL, 0, bufferSize);
+
+		Pointer buffer = new Memory(bufferSize.getValue());
+
+		if (!Advapi32.INSTANCE.QueryServiceConfig2(_handle, type, buffer, bufferSize.getValue(),
+				new IntByReference())) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+
+		return buffer;
+	}
+
+	/**
+	 * Get the failure actions of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">QueryServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS. 
+	 */
+	public SERVICE_FAILURE_ACTIONS getFailureActions() {
+		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS);
+		SERVICE_FAILURE_ACTIONS result = new SERVICE_FAILURE_ACTIONS(buffer);
+		result.read();
+		return result;
 	}
 
 	/**
@@ -128,10 +145,22 @@ public class W32Service {
 		SERVICE_FAILURE_ACTIONS_FLAG flag = new SERVICE_FAILURE_ACTIONS_FLAG();
 		flag.fFailureActionsOnNonCrashFailures = flagValue ? 1 : 0;
 
-		if (!Advapi32.INSTANCE.ChangeServiceConfig2W(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG, 
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG, 
 				flag)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
+	}
+
+	/**
+	 * Get the failure actions flag of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">QueryServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS_FLAG. 
+	 */
+	public boolean getFailureActionsFlag() {
+		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG);
+		SERVICE_FAILURE_ACTIONS_FLAG result = new SERVICE_FAILURE_ACTIONS_FLAG(buffer);
+		result.read();
+		return result.fFailureActionsOnNonCrashFailures != 0;
 	}
 
 	/**

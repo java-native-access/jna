@@ -19,6 +19,7 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 
@@ -227,7 +228,7 @@ public interface Winsvc extends StdCallLibrary {
          * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
          * Vista.
          */
-        public Pointer lpRebootMsg;
+        public WString lpRebootMsg;
         /**
          * The command line of the process for the CreateProcess function to execute in response to 
          * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same 
@@ -235,7 +236,7 @@ public interface Winsvc extends StdCallLibrary {
          * If this value is NULL, the command is unchanged. If the value is an empty string (""), 
          * the command is deleted and no program is run when the service fails.
          */
-        public Pointer lpCommand;
+        public WString lpCommand;
         /**
          * The number of elements in the lpsaActions array.
          * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure 
@@ -247,6 +248,18 @@ public interface Winsvc extends StdCallLibrary {
          * If this value is NULL, the cActions and dwResetPeriod members are ignored.
          */
         public SC_ACTION.ByReference lpsaActions;
+        
+        public SERVICE_FAILURE_ACTIONS() {
+            super();
+        }
+        
+        public SERVICE_FAILURE_ACTIONS(Pointer p) {
+            super(p);
+        }
+        
+        public SERVICE_FAILURE_ACTIONS(Pointer p, int alignment) {
+            super(p, alignment);
+        }
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions" });
@@ -293,6 +306,14 @@ public interface Winsvc extends StdCallLibrary {
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "fFailureActionsOnNonCrashFailures" });
+        }
+        
+        public SERVICE_FAILURE_ACTIONS_FLAG() {
+            super();
+        }
+        
+        public SERVICE_FAILURE_ACTIONS_FLAG(Pointer p) {
+            super(p);
         }
     }
 

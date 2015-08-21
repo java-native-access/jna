@@ -1199,8 +1199,36 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
-	public boolean ChangeServiceConfig2W(SC_HANDLE hService, int dwInfoLevel,
+	public boolean ChangeServiceConfig2(SC_HANDLE hService, int dwInfoLevel,
 			Structure lpInfo);
+	
+	/**
+	 * Retrieves the optional configuration parameters of the specified service.
+	 * 
+	 * @param hService
+	 *            A handle to the service. This handle is returned by the OpenService or 
+	 *            CreateService function and must have the SERVICE_QUERY_CONFIG access right. For 
+	 *            more information, see Service Security and Access Rights.
+	 * @param dwInfoLevel
+	 *            The configuration information to be queried.
+	 * @param lpBuffer
+	 *            A pointer to the buffer that receives the service configuration information. The 
+	 *            format of this data depends on the value of the dwInfoLevel parameter.
+	 *            The maximum size of this array is 8K bytes. To determine the required size, 
+	 *            specify NULL for this parameter and 0 for the cbBufSize parameter. The function 
+	 *            fails and GetLastError returns ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded 
+	 *            parameter receives the needed size.
+	 * @param cbBufSize
+	 *            The size of the structure pointed to by the lpBuffer parameter, in bytes.
+	 * @param pcbBytesNeeded
+	 *            A pointer to a variable that receives the number of bytes required to store the 
+	 *            configuration information, if the function fails with ERROR_INSUFFICIENT_BUFFER.
+	 * @return If the function succeeds, the return value is nonzero.
+	 *         If the function fails, the return value is zero. To get extended error information, 
+	 *         call GetLastError.
+	 */
+	public boolean QueryServiceConfig2(SC_HANDLE hService, int dwInfoLevel,
+			Pointer lpBuffer, int cbBufSize, IntByReference pcbBytesNeeded);
 
 	/**
 	 * Retrieves the current status of the specified service based on the
