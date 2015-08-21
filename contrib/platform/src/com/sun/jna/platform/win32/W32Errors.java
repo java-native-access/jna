@@ -161,7 +161,7 @@ public abstract class W32Errors implements WinError {
 	/**
 	 * FACILITY_USERMODE_FILTER_MANAGER
 	 * 
-	 * Translation macro for converting: NTSTATUS --> HRESULT.
+	 * Translation macro for converting: NTSTATUS --&gt; HRESULT.
 	 *
 	 * @param x the x
 	 * @return the int

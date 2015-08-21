@@ -15,10 +15,14 @@ package com.sun.jna;
 /** Provides converters for conversion to and from native types. */
 public interface TypeMapper {
     /** Return the {@link FromNativeConverter} appropriate for the given Java class. 
+     * @param javaType Java class representation of the native type.
+     * @return Converter from the native-compatible type.
      */
     FromNativeConverter getFromNativeConverter(Class javaType);
 
     /** Return the {@link ToNativeConverter} appropriate for the given Java class. 
+     * @param javaType Java class representation of the native type.
+     * @return Converter to the native-compatible type.
      */
     ToNativeConverter getToNativeConverter(Class javaType);
 }

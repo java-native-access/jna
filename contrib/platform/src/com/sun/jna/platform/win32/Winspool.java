@@ -212,7 +212,7 @@ public interface Winspool extends StdCallLibrary {
      * The OpenPrinter function retrieves a handle to the specified printer or
      * print server or other types of handles in the print subsystem.
      * 
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx}">MSDN</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">MSDN</a>
      * 
      * @param pPrinterName
      *            [in] A pointer to a null-terminated string that specifies the
@@ -256,7 +256,7 @@ public interface Winspool extends StdCallLibrary {
      * the change, and to reset the change notification object for use in the
      * next wait operation.
      * 
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx}">MSDN</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">MSDN</a>
      * 
      * @param hPrinter
      *            [in] A handle to the printer or print server that you want to
@@ -306,7 +306,7 @@ public interface Winspool extends StdCallLibrary {
      * FindFirstPrinterChangeNotification function creates the change
      * notification object and specifies the set of changes to be monitored.
      * 
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx}">MSDN</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
      * 
      * @param hChange
      *            [in] A handle to a change notification object associated with
@@ -373,7 +373,7 @@ public interface Winspool extends StdCallLibrary {
      * associated with the change notification object will no longer be
      * monitored by that object.
      * 
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx}">MSDN</a>
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
      * 
      * @param hChange
      *            [in] A handle to the change notification object to be closed.

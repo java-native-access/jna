@@ -162,7 +162,7 @@ public interface PdhMsg {
     public static final int PDH_PLA_ERROR_TYPE_MISMATCH = 0xC0000BEF;
     /** The information specified does not resolve to a valid path name. */
     public static final int PDH_PLA_ERROR_FILEPATH = 0xC0000BF0;
-    /** The &quot;Performance Logs & Alerts&quot; service did not respond. */
+    /** The &quot;Performance Logs &amp; Alerts&quot; service did not respond. */
     public static final int PDH_PLA_SERVICE_ERROR = 0xC0000BF1;
     /** The information passed is not valid. */
     public static final int PDH_PLA_VALIDATION_ERROR = 0xC0000BF2;
@@ -170,7 +170,7 @@ public interface PdhMsg {
     public static final int PDH_PLA_VALIDATION_WARNING = 0x80000BF3;
     /** The name supplied is too long. */
     public static final int PDH_PLA_ERROR_NAME_TOO_LONG = 0xC0000BF4;
-    /** SQL log format is incorrect. Correct format is &quot;SQL:<DSN-name>!<LogSet-Name>&quot;. */
+    /** SQL log format is incorrect. Correct format is &quot;SQL:&lt;DSN-name&gt;!&lt;LogSet-Name&gt;&quot;. */
     public static final int PDH_INVALID_SQL_LOG_FORMAT = 0xC0000BF5;
     /** Performance counter in PdhAddCounter call has already been added in the performance query. */
     public static final int PDH_COUNTER_ALREADY_IN_QUERY = 0xC0000BF6;

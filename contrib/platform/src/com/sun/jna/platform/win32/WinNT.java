@@ -456,6 +456,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Specifies an array of SID_AND_ATTRIBUTES structures that contain a
          * set of SIDs and corresponding attributes.
+         * @return attributes
          */
         public SID_AND_ATTRIBUTES[] getGroups() {
             return (SID_AND_ATTRIBUTES[]) Group0.toArray(GroupCount);
@@ -490,7 +491,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             }
         }
 
-        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. */
+        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. 
+         * @param p base address
+         */
         public PRIVILEGE_SET(Pointer p) {
             super(p);
             final int count = p.getInt(0);
@@ -536,7 +539,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             Privileges = new LUID_AND_ATTRIBUTES[nbOfPrivileges];
         }
 
-        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory. */
+        /** Initialize a TOKEN_PRIVILEGES instance from initialized memory.
+         * @param p base address
+         */
         public TOKEN_PRIVILEGES(Pointer p) {
             super(p);
             int count = p.getInt(0);
@@ -776,6 +781,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * WARNING: this filename may be either the short or long form of the
          * filename.
+         * @return filename
          */
         public String getFilename() {
             return new String(FileName, 0, FileNameLength / 2);

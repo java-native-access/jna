@@ -17,7 +17,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
 /**
- * JNA wrapper for <sys/xattr.h>
+ * JNA wrapper for &lt;sys/xattr.h&gt;
  * 
  */
 interface XAttr extends Library {

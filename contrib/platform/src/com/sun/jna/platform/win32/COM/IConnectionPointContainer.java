@@ -29,7 +29,7 @@ public interface IConnectionPointContainer extends IUnknown {
 	  * }
 	  * @param riid
 	  * @param ppCP
-	  * @return
+	  * @return hresult
 	  */
 	 public HRESULT FindConnectionPoint(  REFIID riid,  PointerByReference ppCP );
 }

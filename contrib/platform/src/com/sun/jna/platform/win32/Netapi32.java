@@ -52,7 +52,7 @@ public interface Netapi32 extends StdCallLibrary {
 	/**
 	 * Frees the memory that the NetApiBufferAllocate function allocates.
 	 * 
-	 * @param buffer
+	 * @param buffer buffer
 	 * @return If the function succeeds, the return value is NERR_Success. If
 	 *         the function fails, the return value is a system error code.
 	 */

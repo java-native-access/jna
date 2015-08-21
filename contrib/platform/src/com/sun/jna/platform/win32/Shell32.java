@@ -88,11 +88,11 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *        resource once it is no longer needed by calling {@link Ole32#CoTaskMemFree}. The returned path does not include a trailing
      *        backslash. For example, "C:\Users" is returned rather than "C:\Users\".
      * @return Returns S_OK if successful, or an error value otherwise, including the following: 
-     *        <li>E_FAIL Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID which 
+     *        <ul><li>E_FAIL Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID which 
      *        does not have a path (such as a folder marked as KF_CATEGORY_VIRTUAL).</li> 
      *        <li>E_INVALIDARG Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID 
      *        that is not present on the system. Not all KNOWNFOLDERID values are present on all systems. Use 
-     *        IKnownFolderManager::GetFolderIds to retrieve the set of KNOWNFOLDERID values for the current system.</li>
+     *        IKnownFolderManager::GetFolderIds to retrieve the set of KNOWNFOLDERID values for the current system.</li></ul>
      */
     HRESULT SHGetKnownFolderPath(GUID rfid, int dwFlags, HANDLE hToken, PointerByReference ppszPath);
 
@@ -160,7 +160,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *   that indicates the cause of the failure. The return value is cast as an HINSTANCE for backward compatibility
      *   with 16-bit Windows applications. It is not a true HINSTANCE, however. It can be cast only to an int and
      *   compared to either 32 or the following error codes below.
-     * <p/>
+     * 
      * NOTE: {@link WinDef.INT_PTR} is used instead of HINSTANCE here, since
      *   the former fits the reutrn type's actual usage more closely.
      *

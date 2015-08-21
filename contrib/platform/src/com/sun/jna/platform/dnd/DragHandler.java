@@ -149,6 +149,7 @@ public abstract class DragHandler
      * this field will only be accurate when a {@link DragHandler} in
      * the same VM started the drag.  Otherwise, {@link #UNKNOWN_MODIFIERS}
      * will be returned.
+     * @return Current drag modifiers.
      */
     static int getModifiers() {
         return modifiers;
@@ -157,6 +158,8 @@ public abstract class DragHandler
     /** Used to communicate the current {@link Transferable} during a drag, 
      * if available.  Work around absence of access to the data when dragging 
      * pre-1.5. 
+     * @param e event
+     * @return {@link Transferable} representation of the item being dragged.
      */
     public static Transferable getTransferable(DropTargetEvent e) {
         if (e instanceof DropTargetDragEvent) {
@@ -185,6 +188,8 @@ public abstract class DragHandler
 
     /** Enable drags from the given component, supporting the actions in
      * the given action mask.
+     * @param dragSource source of the drag.
+     * @param actions actions which should be supported.
      */
     protected DragHandler(Component dragSource, int actions) {
         this.dragSource = dragSource;
@@ -240,6 +245,8 @@ public abstract class DragHandler
     /** Override to control whether a drag is started.  The default 
      * implementation disallows the drag if the user is applying modifiers
      * and the user-requested action is not supported.  
+     * @param e event
+     * @return Whether to allow a drag
      */
     protected boolean canDrag(DragGestureEvent e) {
         int mods = e.getTriggerEvent().getModifiersEx() & KEY_MASK;
@@ -252,24 +259,30 @@ public abstract class DragHandler
         return true;
     }
 
-    /** Update the modifiers hint. */
+    /** Update the modifiers hint.
+     * @param mods Current modifiers
+     */
     protected void setModifiers(int mods) {
         modifiers = mods;
     }
     /** Override to provide an appropriate {@link Transferable} representing
      * the data being dragged.
+     * @param e event
+     * @return {@link Transferable} representation of item being dragged.
      */
     protected abstract Transferable getTransferable(DragGestureEvent e);
 
     /** Override this to provide a custom image.  The {@link Icon}
      * returned by this method by default is <code>null</code>, which results
      * in no drag image.
+     * @param e event
      * @param srcOffset set this to be the offset from the drag source 
      * component's upper left corner to the image's upper left corner.  
      * For example, when dragging a row from a list, the offset would be the 
      * row's bounding rectangle's (x,y) coordinate.<p>
      * The default value is (0,0), so if unchanged, the image is will
      * use the same origin as the drag source component.  
+     * @return drag icon (defaults to none)
      */
     protected Icon getDragIcon(DragGestureEvent e, Point srcOffset) {
         return null; 
@@ -277,11 +290,13 @@ public abstract class DragHandler
     
     /** Override to perform any decoration of the target at the start of a drag, 
      * if desired. 
+     * @param e event
      */
     protected void dragStarted(DragGestureEvent e) { }
 
     /** Called when a user drag gesture is recognized.  This method is 
      * responsible for initiating the drag operation.
+     * @param e event
      */
     public void dragGestureRecognized(DragGestureEvent e) {
         if ((e.getDragAction() & supportedActions) != 0
@@ -329,9 +344,12 @@ public abstract class DragHandler
         }
     }
 
-    /** Reduce the size of the given drag icon, if appropriate.  When using
-     * a smaller drag icon, we also need to adjust the cursor offset within
+    /** Change the size of the given drag icon, if appropriate.  When using
+     * a differently-sized drag icon, we also need to adjust the cursor offset within
      * the icon.
+     * @param icon Icon to be scaled.
+     * @param imageOffset Modified to account for the new icon's size.
+     * @return Scaled {@link Icon}, or the original if there was no change.
      */
     protected Icon scaleDragIcon(Icon icon, Point imageOffset) {
         /*
@@ -351,6 +369,9 @@ public abstract class DragHandler
 
     /** Create an image from the given icon.  The image is provided to the
      * native handler if drag images are supported natively.
+     * @param gc current graphics configuration.
+     * @param icon Icon on which to base the drag image.
+     * @return image based on the given icon.
      */
     protected Image createDragImage(GraphicsConfiguration gc, Icon icon) {
         int w = icon.getIconWidth();
@@ -390,12 +411,18 @@ public abstract class DragHandler
         }
     }
 
-    /** Returns the first available action supported by source and target. */
+    /** Returns the first available action supported by source and target.
+     * @param targetActions current actions requested
+     * @return subset of actions supported based on the input
+     */
     protected int getAcceptableDropAction(int targetActions) {
         return reduce(supportedActions & targetActions);
     }
     
-    /** Get the currently requested drop action. */
+    /** Get the currently requested drop action.
+     * @param ev event
+     * @return effective drop action
+     */
     protected int getDropAction(DragSourceEvent ev) {
         if (ev instanceof DragSourceDragEvent) {
             DragSourceDragEvent e = (DragSourceDragEvent)ev;
@@ -409,6 +436,8 @@ public abstract class DragHandler
 
     /** Pick a different drop action if the target doesn't support the current
      * one and there are no modifiers.
+     * @param ev event
+     * @return effective drop action
      */
     protected int adjustDropAction(DragSourceEvent ev) {
         int action = getDropAction(ev);
@@ -424,6 +453,10 @@ public abstract class DragHandler
         return action;
     }
     
+    /**
+     * Hook to update the cursor on various {@link DragSourceEvent} updates.
+     * @param ev event
+     */
     protected void updateCursor(DragSourceEvent ev) {
         if (!fixCursor)
             return;

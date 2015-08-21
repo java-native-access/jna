@@ -148,11 +148,13 @@ public interface ShlObj {
          * predefined for that folder are applied. If the folder does not exist and cannot be created, the function
          * returns a failure code and no path is returned. This value can be used only with the following functions and
          * methods: 
+         * <ul>
          * <li>SHGetKnownFolderPath</li> 
          * <li>SHGetKnownFolderIDList</li> 
          * <li>IKnownFolder::GetIDList</li>
          * <li>IKnownFolder::GetPath</li> 
          * <li>IKnownFolder::GetShellItem</li>
+         * </ul>
          */
         CREATE(0x00008000),
         /**

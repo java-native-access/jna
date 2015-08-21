@@ -16,10 +16,10 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * An abstraction for a native function pointer.  An instance of 
+ * <p>An abstraction for a native function pointer.  An instance of 
  * <code>Function</code> represents a pointer to some native function.  
  * {@link #invoke(Class,Object[],Map)} is the primary means to call
- * the function. <p/>
+ * the function. </p>
  * <a name=callflags></a>
  * Function call behavior may be modified by passing one of the following call
  * flags: 
@@ -76,7 +76,7 @@ public class Function extends Pointer {
      *                  Library in which to find the native function
      * @param   functionName
      *                  Name of the native function to be linked with
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName) {
@@ -97,7 +97,7 @@ public class Function extends Pointer {
      * @param   callFlags
      *                  Function <a href="#callflags">call flags</a>
      *                  
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callFlags) {
@@ -121,7 +121,7 @@ public class Function extends Pointer {
      *                  Encoding to use for conversion between Java and native
      *                  strings.
      *                  
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callFlags, String encoding) {
@@ -188,7 +188,7 @@ public class Function extends Pointer {
      *                 Function <a href="#callflags">call flags</a>
      * @param  encoding
      *                 Encoding for conversion between Java and native strings.
-     * @throws {@link UnsatisfiedLinkError} if the given function name is
+     * @throws UnsatisfiedLinkError if the given function name is
      * not found within the library.
      */
     Function(NativeLibrary library, String functionName, int callFlags, String encoding) {

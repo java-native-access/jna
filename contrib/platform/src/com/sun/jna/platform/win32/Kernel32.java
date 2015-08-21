@@ -109,10 +109,9 @@ public interface Kernel32 extends WinNT, Wincon {
      * The system time is expressed in Coordinated Universal Time (UTC).
      *
      * @param lpSystemTime
-     *            Pointer to a {@link #SYSTEMTIME} structure to receive the current
+     *            Pointer to a {@link WinBase.SYSTEMTIME} structure to receive the current
      *            system date and time.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724390(v=vs.85).aspx">GetSystemTime</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724390(v=vs.85).aspx">GetSystemTime documentation</a>
      */
     void GetSystemTime(SYSTEMTIME lpSystemTime);
 
@@ -121,14 +120,13 @@ public interface Kernel32 extends WinNT, Wincon {
      * The system time is expressed in Coordinated Universal Time (UTC).
      *
      * @param lpSystemTime
-     *            Pointer to a {@link #SYSTEMTIME} structure holding the new
+     *            Pointer to a {@link WinBase.SYSTEMTIME} structure holding the new
      *            system date and time. <B>Note:</B> The {@code wDayOfWeek}
      *            member of the SYSTEMTIME structure is ignored.
      * @return {@code true} if the function succeeds, {@code false} otherwise.
      *         If the function fails, call {@link #GetLastError()} to get extended error
      *         information.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724942(v=vs.85).aspx">SetSystemTime</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724942(v=vs.85).aspx">SetSystemTime documentation</a>
      */
     boolean SetSystemTime(SYSTEMTIME lpSystemTime);
 
@@ -136,10 +134,9 @@ public interface Kernel32 extends WinNT, Wincon {
      * Retrieves the current local date and time.
      *
      * @param lpSystemTime
-     *            A pointer to a {@link #SYSTEMTIME} structure to receive the current
+     *            A pointer to a {@link WinBase.SYSTEMTIME} structure to receive the current
      *            local date and time.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724338(v=vs.85).aspx">GetLocalTime</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724338(v=vs.85).aspx">GetLocalTime documentation</a>
      */
     void GetLocalTime(WinBase.SYSTEMTIME lpSystemTime);
 
@@ -147,14 +144,13 @@ public interface Kernel32 extends WinNT, Wincon {
      * Sets the current local time and date
      *
      * @param lpSystemTime
-     *            Pointer to a {@link #SYSTEMTIME} structure holding the new
+     *            Pointer to a {@link WinBase.SYSTEMTIME} structure holding the new
      *            system date and time. <B>Note:</B> The {@code wDayOfWeek}
      *            member of the SYSTEMTIME structure is ignored.
      * @return {@code true} if the function succeeds, {@code false} otherwise.
      *         If the function fails, call {@link #GetLastError()} to get extended error
      *         information.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724936(v=vs.85).aspx">SetLocalTime</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724936(v=vs.85).aspx">SetLocalTime documentation</a>
      */
     boolean SetLocalTime(SYSTEMTIME lpSystemTime);
 
@@ -287,7 +283,7 @@ public interface Kernel32 extends WinNT, Wincon {
      *            backslash is required. If this parameter is NULL, the function
      *            uses the root of the current directory.
      * @return The return value specifies the type of drive.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364939(v=vs.85).aspx">GetDriveType</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364939(v=vs.85).aspx">GetDriveType</a>
      */
     int GetDriveType(String lpRootPathName);
 
@@ -308,9 +304,9 @@ public interface Kernel32 extends WinNT, Wincon {
      *            function handles line breaks in the output buffer. The
      *            low-order byte can also specify the maximum width of a
      *            formatted output line.
-     *            <p/>
+     *            <p>
      *            This version of the function assumes
-     *            FORMAT_MESSAGE_ALLOCATE_BUFFER is set.
+     *            FORMAT_MESSAGE_ALLOCATE_BUFFER is set.</p>
      * @param lpSource
      *            Location of the message definition.
      * @param dwMessageId
@@ -826,8 +822,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * has read all buffered data from the pipe.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364439(v=vs.85).aspx">FlushFileBuffers</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364439(v=vs.85).aspx">FlushFileBuffers documentation</a>
      */
     boolean FlushFileBuffers(HANDLE hFile);
 
@@ -1107,17 +1102,17 @@ public interface Kernel32 extends WinNT, Wincon {
      *            null character. If <i>lpApplicationName</i> is NULL, the
      *            module name portion of <i>lpCommandLine</i> is limited to
      *            MAX_PATH characters.
-     *            <p/>
+     *            <p>
      *            The Unicode version of this function, {@link #CreateProcessW},
      *            can modify the contents of this string. Therefore, this
      *            parameter cannot be a pointer to read-only memory (such as a
      *            const variable or a literal string). If this parameter is a
      *            constant string, the function may cause an access violation.
-     *            <p/>
+     *            </p><p>
      *            The <i>lpCommandLine</i> parameter can be NULL. In that case,
      *            the function uses the string pointed to by
      *            <i>lpApplicationName</i> as the command line.
-     *            <p/>
+     *            </p><p>
      *            If both <i>lpApplicationName</i> and <i>lpCommandLine</i> are
      *            non-NULL, the null-terminated string pointed to by
      *            <i>lpApplicationName</i> specifies the module to execute, and
@@ -1128,7 +1123,7 @@ public interface Kernel32 extends WinNT, Wincon {
      *            parse the command line. Because argv[0] is the module name, C
      *            programmers generally repeat the module name as the first
      *            token in the command line.
-     *            <p/>
+     *            </p>
      *            If <i>lpApplicationName</i> is NULL, the first white
      *            space-delimited token of the command line specifies the module
      *            name. If you are using a long file name that contains a space,
@@ -1494,7 +1489,7 @@ public interface Kernel32 extends WinNT, Wincon {
      *           may be less than the total number of clusters on the disk.
      * @return {@code true} if the function succeeds - to get extended error
      * information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364935(v=vs.85).aspx">GetDiskFreeSpace</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364935(v=vs.85).aspx">GetDiskFreeSpace</a>
      */
     boolean GetDiskFreeSpace(String lpRootPathName,
             DWORDByReference lpSectorsPerCluster,
@@ -1531,7 +1526,7 @@ public interface Kernel32 extends WinNT, Wincon {
      *            bytes on a disk. This parameter can be NULL.
      * @return {@code true} if the function succeeds - to get extended error
      * information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364937(v=vs.85).aspx">GetDiskFreeSpaceEx</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364937(v=vs.85).aspx">GetDiskFreeSpaceEx</a>
      */
     boolean GetDiskFreeSpaceEx(String lpDirectoryName,
             LARGE_INTEGER lpFreeBytesAvailable,
@@ -1587,8 +1582,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * be available.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365144(v=vs.85).aspx">CallNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365144(v=vs.85).aspx">CallNamedPipe documentation</a>
      */
     public boolean CallNamedPipe(String lpNamedPipeName,
                           byte[] lpInBuffer, int nInBufferSize,
@@ -1599,7 +1593,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * Enables a named pipe server process to wait for a client process to connect
      * to an instance of a named pipe
      * @param hNamedPipe A handle to the server end of a named pipe instance.
-     * @param lpOverlapped A pointer to an {@link OVERLAPPED} structure.
+     * @param lpOverlapped A pointer to an {@link WinBase.OVERLAPPED} structure.
      * @return <P>If the operation is synchronous, does not return until the operation
      * has completed. If the function succeeds, the return value is {@code true}. If
      * the function fails, the return value is {@code false}. To get extended error
@@ -1609,14 +1603,14 @@ public interface Kernel32 extends WinNT, Wincon {
      * returns {@link #ERROR_IO_PENDING}.</P>
      * <P>If a client connects before the function is called, the function returns
      * {@code false} and {@link #GetLastError()} returns {@link #ERROR_PIPE_CONNECTED}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365146(v=vs.85).aspx">ConnectNamedPipe</A> documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365146(v=vs.85).aspx">ConnectNamedPipe documentation</a>
      */
     public boolean ConnectNamedPipe(HANDLE hNamedPipe, OVERLAPPED lpOverlapped);
 
     int MAX_PIPE_NAME_LENGTH=256;
 
     /**
-     * @param lpName The unique pipe name. This string must have the following form:</BR>
+     * @param lpName The unique pipe name. This string must have the following form:
      * <P>
      * <code>
      *        \\.\pipe\pipename
@@ -1635,14 +1629,13 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param nInBufferSize The number of bytes to reserve for the input buffer.
      * @param nDefaultTimeOut The default time-out value, in milliseconds. A value of zero will
      * result in a default time-out of 50 milliseconds
-     * @param lpSecurityAttributes A pointer to a {@link #SECURITY_ATTRIBUTES} structure that
+     * @param lpSecurityAttributes A pointer to a {@link WinBase.SECURITY_ATTRIBUTES} structure that
      * specifies a security descriptor for the new named pipe. If {@code null} the named pipe
      * gets a default security descriptor and the handle cannot be inherited.
      * @return If the function succeeds, the return value is a handle to the server end of a
      * named pipe instance. If the function fails, the return value is {@link #INVALID_HANDLE_VALUE}.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365150(v=vs.85).aspx">CreateNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365150(v=vs.85).aspx">CreateNamedPipe documentation</a>
      */
     public HANDLE CreateNamedPipe(String lpName, int dwOpenMode, int dwPipeMode, int nMaxInstances,
                                   int nOutBufferSize, int nInBufferSize, int nDefaultTimeOut,
@@ -1653,8 +1646,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param hNamedPipe A handle to an instance of a named pipe.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365166(v=vs.85).aspx">DisconnectNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365166(v=vs.85).aspx">DisconnectNamedPipe documentation</a>
      */
     public boolean DisconnectNamedPipe(HANDLE hNamedPipe);
 
@@ -1668,8 +1660,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * buffer, in bytes.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365437(v=vs.85).aspx">GetNamedPipeClientComputerName</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365437(v=vs.85).aspx">GetNamedPipeClientComputerName documentation</a>
      */
     public boolean GetNamedPipeClientComputerName(HANDLE Pipe, char[] ClientComputerName, int ClientComputerNameLength);
 
@@ -1678,8 +1669,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param ClientProcessId Recipient of the process identifier
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365440(v=vs.85).aspx">GetNamedPipeClientProcessId</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365440(v=vs.85).aspx">GetNamedPipeClientProcessId documentation</a>
      */
     public boolean GetNamedPipeClientProcessId(HANDLE Pipe, ULONGByReference ClientProcessId);
 
@@ -1688,8 +1678,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param ClientSessionId Recipient of the session identifier
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365442(v=vs.85).aspx">GetNamedPipeClientProcessId</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365442(v=vs.85).aspx">GetNamedPipeClientProcessId documentation</a>
      */
     public boolean GetNamedPipeClientSessionId(HANDLE Pipe, ULONGByReference ClientSessionId);
 
@@ -1717,8 +1706,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * parameter. This parameter is ignored if <tt>lpUserName</tt> is {@code null}.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365443(v=vs.85).aspx">GetNamedPipeHandleState</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365443(v=vs.85).aspx">GetNamedPipeHandleState documentation</a>
      */
     public boolean GetNamedPipeHandleState(HANDLE hNamedPipe, IntByReference lpState,
               IntByReference lpCurInstances, IntByReference lpMaxCollectionCount,
@@ -1741,8 +1729,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * if this information is not needed.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365445(v=vs.85).aspx">GetNamedPipeInfo</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365445(v=vs.85).aspx">GetNamedPipeInfo documentation</a>
      */
     public boolean GetNamedPipeInfo(HANDLE hNamedPipe, IntByReference lpFlags,
               IntByReference lpOutBufferSize, IntByReference lpInBufferSize,
@@ -1753,18 +1740,16 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param ServerProcessId Recipient of the process identifier.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365446(v=vs.85).aspx">GetNamedPipeServerProcessId</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365446(v=vs.85).aspx">GetNamedPipeServerProcessId documentation</a>
      */
     public boolean GetNamedPipeServerProcessId(HANDLE Pipe, ULONGByReference ServerProcessId);
 
     /**
      * @param Pipe A handle to an instance of a named pipe.
-     * @param ServerProcessId Recipient of the session identifier.
+     * @param ServerSessionId session identifier.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365569(v=vs.85).aspx">GetNamedPipeServerSessionId</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365569(v=vs.85).aspx">GetNamedPipeServerSessionId documentation</a>
      */
     public boolean GetNamedPipeServerSessionId(HANDLE Pipe, ULONGByReference ServerSessionId);
 
@@ -1787,8 +1772,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * if no data is to be read.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365779(v=vs.85).aspx">PeekNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365779(v=vs.85).aspx">PeekNamedPipe documentation</a>
      */
     public boolean PeekNamedPipe(HANDLE hNamedPipe, byte[] lpBuffer, int nBufferSize,
               IntByReference lpBytesRead,IntByReference lpTotalBytesAvail, IntByReference lpBytesLeftThisMessage);
@@ -1807,8 +1791,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * This parameter can be {@code null} if the timeout is not being set.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365787(v=vs.85).aspx">SetNamedPipeHandleState</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365787(v=vs.85).aspx">SetNamedPipeHandleState documentation</a>
      */
     public boolean SetNamedPipeHandleState(HANDLE hNamedPipe, IntByReference lpMode,
               IntByReference lpMaxCollectionCount, IntByReference lpCollectDataTimeout);
@@ -1822,12 +1805,11 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param lpOutBuffer The buffer that receives the data read from the pipe.
      * @param nOutBufferSize The size of the output buffer, in bytes.
      * @param lpBytesRead Variable that receives the number of bytes read from the pipe.
-     * @param lpOverlapped A pointer to an {@link #OVERLAPPED} structure. Can
+     * @param lpOverlapped A pointer to an {@link WinBase.OVERLAPPED} structure. Can
      * be {@code null} if pipe not opened with {@link #FILE_FLAG_OVERLAPPED}.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365790(v=vs.85).aspx">TransactNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365790(v=vs.85).aspx">TransactNamedPipe documentation</a>
      */
     public boolean TransactNamedPipe(HANDLE hNamedPipe,
                       byte[] lpInBuffer, int nInBufferSize,
@@ -1837,11 +1819,11 @@ public interface Kernel32 extends WinNT, Wincon {
     /**
      * Waits until either a time-out interval elapses or an instance of the
      * specified named pipe is available for connection - i.e., the pipe's
-     * server process has a pending {@link #ConnectNamedPipe(HANDLE, OVERLAPPED)}
+     * server process has a pending {@link #ConnectNamedPipe}
      * operation on the pipe.
      * @param lpNamedPipeName The name of the named pipe. The string must
      * include the name of the computer on which the server process is executing.
-     * The following pipe name format is used:</BR>
+     * The following pipe name format is used:
      * <P><code>
      *         \\servername\pipe\pipename
      * </code></P>
@@ -1850,8 +1832,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * an instance of the named pipe to be available.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365800(v=vs.85).aspx">WaitNamedPipe</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365800(v=vs.85).aspx">WaitNamedPipe documentation</a>
      */
     public boolean WaitNamedPipe(String lpNamedPipeName, int nTimeOut);
 
@@ -2099,19 +2080,19 @@ public interface Kernel32 extends WinNT, Wincon {
 
     /**
      * <P>Retrieves the environment variables for the current process. The
-     * block of variables format is as follows:</P></BR>
-     * <code>
+     * block of variables format is as follows:</P>
+     * <p><code>
      *      Var1=Value1\0
      *      Var2=Value2\0
      *      Var3=Value3\0
      *      ...
      *      VarN=ValueN\0\0
-     * </code>
+     * </code></p>
      * @return If the function succeeds, the return value is a {@link Pointer}.
      * to the environment block of the current process. If fails, then
      * {@code null} is returned. When the data is no longer needed the memory
      * block must be released using {@link #FreeEnvironmentStrings(Pointer)}
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A> documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings documentation</a>
      */
     Pointer GetEnvironmentStrings();
 
@@ -2120,8 +2101,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * obtained by calling the {@link #GetEnvironmentStrings()} function
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683151(v=vs.85).aspx">FreeEnvironmentStrings</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683151(v=vs.85).aspx">FreeEnvironmentStrings documentation</a>
      */
     boolean FreeEnvironmentStrings(Pointer lpszEnvironmentBlock);
 
@@ -2384,16 +2364,17 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param lpTimeZone
      *            [in, optional] A pointer to a TIME_ZONE_INFORMATION structure
      *            that specifies the time zone of interest. If lpTimeZone is
-     *            NULL, the function uses the currently active time zone.<
+     *            NULL, the function uses the currently active time zone.
      * @param lpUniversalTime
      *            [in] A pointer to a SYSTEMTIME structure that specifies the
      *            UTC time to be converted. The function converts this universal
      *            time to the specified time zone's corresponding local time.
-     * @return lpLocalTime [out] A pointer to a SYSTEMTIME structure that
+     * @param lpLocalTime [out] A pointer to a SYSTEMTIME structure that
      *         receives the local time.
+     * @return status
      */
     boolean SystemTimeToTzSpecificLocalTime(TIME_ZONE_INFORMATION lpTimeZone,
-            SYSTEMTIME lpUniversalTime, SYSTEMTIME lpLocalTime);
+                                            SYSTEMTIME lpUniversalTime, SYSTEMTIME lpLocalTime);
 
     /**
      * Converts a system time to file time format. System time is based on
@@ -2415,13 +2396,13 @@ public interface Kernel32 extends WinNT, Wincon {
      * Creates a thread that runs in the virtual address space of another process.
      *
      * @param hProcess A handle to the process in which the thread is to be created.
-     * @param lpThreadAttributes The {@link #SECURITY_ATTRIBUTES} structure that
+     * @param lpThreadAttributes The {@link WinBase.SECURITY_ATTRIBUTES} structure that
      * specifies a security descriptor for the new thread. If {@code null}, the
      * thread gets a default security descriptor and the handle cannot be inherited.
      * @param dwStackSize The initial size of the stack, in bytes. The system rounds
      * this value to the nearest page. If this parameter is 0 (zero), the new thread
      * uses the default size for the executable.
-     * @param lpStartAddress The application-defined {@link #FOREIGN_THREAD_START_ROUTINE}
+     * @param lpStartAddress The application-defined {@link WinBase.FOREIGN_THREAD_START_ROUTINE}
      * to be executed by the thread and represents the starting address of the
      * thread in the remote process. The function must exist in the remote process.
      * @param lpParameter A pointer to a variable to be passed to the thread function.
@@ -2431,8 +2412,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @return If the function succeeds, the return value is a handle to the new thread.
      * If the function fails, the return value is {@code null}. To get extended
      * error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682437(v=vs.85).aspx">CreateRemoteThread</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682437(v=vs.85).aspx">CreateRemoteThread documentation</a>
      */
     HANDLE CreateRemoteThread(HANDLE hProcess, WinBase.SECURITY_ATTRIBUTES lpThreadAttributes, int dwStackSize, FOREIGN_THREAD_START_ROUTINE lpStartAddress, Pointer lpParameter, DWORD dwCreationFlags, Pointer lpThreadId);
 
@@ -2449,8 +2429,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * transferred into the specified process.  If {@code null} the parameter is ignored.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681674(v=vs.85).aspx">WriteProcessMemory</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681674(v=vs.85).aspx">WriteProcessMemory documentation</a>
      */
     boolean WriteProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesWritten);
 
@@ -2467,8 +2446,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * transferred into the specified buffer. If {@code null} the parameter is ignored.
      * @return {@code true} if successful, {@code false} otherwise.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">ReadProcessMemory</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">ReadProcessMemory documentation</a>
      */
     boolean ReadProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesRead);
 
@@ -2477,15 +2455,14 @@ public interface Kernel32 extends WinNT, Wincon {
      * space of a specified process.
      * @param hProcess A handle to the process whose memory information is queried.
      * @param lpAddress The base address of the region of pages to be queried.
-     * @param lpBuffer A {@link #MEMORY_BASIC_INFORMATION} structure in which
+     * @param lpBuffer A {@link WinNT.MEMORY_BASIC_INFORMATION} structure in which
      * information about the specified page range is returned.
      * @param dwLength The size of the buffer pointed to by the <tt>lpBuffer</tt>
      * parameter, in bytes.
      * @return The return value is the actual number of bytes returned in the information buffer.
      * If the function fails, the return value is zero. To get extended error information,
      * call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366907(v=vs.85).aspx">VirtualQueryEx</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366907(v=vs.85).aspx">VirtualQueryEx documentation</a>
      */
     SIZE_T VirtualQueryEx(HANDLE hProcess, Pointer lpAddress, MEMORY_BASIC_INFORMATION lpBuffer, SIZE_T dwLength);
 
@@ -2504,7 +2481,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * flag is specified, in which case this string is a path string.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx">DefineDosDevice</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx">DefineDosDevice</a>
      */
     boolean DefineDosDevice(int dwFlags, String lpDeviceName, String lpTargetPath);
 
@@ -2529,7 +2506,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * into the buffer, otherwise zero. Use {@link #GetLastError()} to get extended
      * error information. If the buffer is too small, the function fails and the last error
      * code is {@code ERROR_INSUFFICIENT_BUFFER}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365461(v=vs.85).aspx">QueryDosDevice</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365461(v=vs.85).aspx">QueryDosDevice</a>
      */
     int QueryDosDevice(String lpDeviceName, char[] lpTargetPath, int ucchMax);
 
@@ -2546,7 +2523,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * FindNextVolumeMountPoint and FindVolumeMountPointClose
      * functions. Otherwise, the return value is the {@link #INVALID_HANDLE_VALUE}.
      * To get extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364426(v=vs.85).aspx">FindFirstVolumeMountPoint</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364426(v=vs.85).aspx">FindFirstVolumeMountPoint</a>
      */
     HANDLE FindFirstVolumeMountPoint(String lpszRootPathName, char[] lpszVolumeMountPoint, int cchBufferLength);
 
@@ -2565,7 +2542,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * to get extended error information. If no more mount points found then the reported
      * error is {@code ERROR_NO_MORE_FILES}. In this case, simply call
      * {@link #FindVolumeMountPointClose(com.sun.jna.platform.win32.WinNT.HANDLE)}
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364432(v=vs.85).aspx">FindNextVolumeMountPoint</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364432(v=vs.85).aspx">FindNextVolumeMountPoint</a>
      */
     boolean FindNextVolumeMountPoint(HANDLE hFindVolumeMountPoint, char[] lpszVolumeMountPoint, int cchBufferLength);
 
@@ -2576,7 +2553,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * function.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364435(v=vs.85).aspx">FindVolumeMountPointClose</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364435(v=vs.85).aspx">FindVolumeMountPointClose</a>
      */
     boolean FindVolumeMountPointClose(HANDLE hFindVolumeMountPoint);
 
@@ -2595,7 +2572,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * at 50 characters
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364994(v=vs.85).aspx">GetVolumeNameForVolumeMountPoint</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364994(v=vs.85).aspx">GetVolumeNameForVolumeMountPoint</a>
      */
     boolean GetVolumeNameForVolumeMountPoint(String lpszVolumeMountPoint, char[] lpszVolumeName, int cchBufferLength);
 
@@ -2610,7 +2587,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * not assign a new label.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365560(v=vs.85).aspx">SetVolumeLabel</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365560(v=vs.85).aspx">SetVolumeLabel</a>
      */
     boolean SetVolumeLabel(String lpRootPathName, String lpVolumeName);
 
@@ -2623,7 +2600,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param lpszVolumeName A volume GUID path for the volume.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365561(v=vs.85).aspx">SetVolumeMountPoint</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365561(v=vs.85).aspx">SetVolumeMountPoint</a>
      */
     boolean SetVolumeMountPoint(String lpszVolumeMountPoint, String lpszVolumeName);
 
@@ -2633,7 +2610,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * A trailing backslash is required, for example, &quot;X:\&quot; or &quot;Y:\MountX\&quot;.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363927(v=vs.85).aspx">DeleteVolumeMountPoint</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa363927(v=vs.85).aspx">DeleteVolumeMountPoint</a>
      */
     boolean DeleteVolumeMountPoint(String lpszVolumeMountPoint);
 
@@ -2662,7 +2639,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * buffer provided
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364993(v=vs.85).aspx">GetVolumeInformation</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364993(v=vs.85).aspx">GetVolumeInformation</a>
      */
     boolean GetVolumeInformation(String lpRootPathName,
                     char[] lpVolumeNameBuffer, int nVolumeNameSize,
@@ -2684,7 +2661,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @param cchBufferLength The length of the output buffer
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364996(v=vs.85).aspx">GetVolumePathName</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364996(v=vs.85).aspx">GetVolumePathName</a>
      */
     boolean GetVolumePathName(String lpszFileName, char[] lpszVolumePathName, int cchBufferLength);
 
@@ -2705,7 +2682,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * to get extended error information. If the buffer is not large enough to hold
      * the complete list, the error code is {@code ERROR_MORE_DATA} and the
      * <tt>lpcchReturnLength</tt> parameter receives the required buffer size.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364998(v=vs.85).aspx">GetVolumePathNamesForVolumeName</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364998(v=vs.85).aspx">GetVolumePathNamesForVolumeName</a>
      */
     boolean GetVolumePathNamesForVolumeName(String lpszVolumeName,
                     char[] lpszVolumePathNames, int cchBufferLength,
@@ -2718,11 +2695,11 @@ public interface Kernel32 extends WinNT, Wincon {
      * specifies a volume GUID path for the first volume that is found
      * @param cchBufferLength The length of the buffer to receive the volume GUID path
      * @return If the function succeeds, the return value is a search handle
-     * used in a subsequent call to the {@link #FindNextVolume(com.sun.jna.platform.win32.WinNT.HANDLE, char[], int)
+     * used in a subsequent call to the {@link #FindNextVolume(com.sun.jna.platform.win32.WinNT.HANDLE, char[], int)}
      * and {@link #FindVolumeClose(com.sun.jna.platform.win32.WinNT.HANDLE)} functions.
      * Otherwise, the return value is the {@link #INVALID_HANDLE_VALUE}. To get
      * extended error information, call {@link #GetLastError()}.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364425(v=vs.85).aspx">FindFirstVolume</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364425(v=vs.85).aspx">FindFirstVolume</a>
      * @see Kernel32Util#extractVolumeGUID(String)
      */
     HANDLE FindFirstVolume(char[] lpszVolumeName, int cchBufferLength);
@@ -2738,7 +2715,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information. If no more volumes found then the reported
      * error is {@code ERROR_NO_MORE_FILES}. In this case, simply call {@link #FindVolumeClose(com.sun.jna.platform.win32.WinNT.HANDLE)}
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364431(v=vs.85).aspx">FindNextVolume</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364431(v=vs.85).aspx">FindNextVolume</a>
      * @see Kernel32Util#extractVolumeGUID(String)
      */
     boolean FindNextVolume(HANDLE hFindVolume, char[] lpszVolumeName, int cchBufferLength);
@@ -2749,7 +2726,7 @@ public interface Kernel32 extends WinNT, Wincon {
      * {@link #FindFirstVolume(char[], int)}.
      * @return {@code true} if succeeds. If fails then call {@link #GetLastError()}
      * to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364433(v=vs.85).aspx">FindVolumeClose</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364433(v=vs.85).aspx">FindVolumeClose</a>
      */
     boolean FindVolumeClose(HANDLE hFindVolume);
 }

@@ -67,6 +67,7 @@ public abstract class Union extends Structure {
     /** Indicates by type which field will be used to write to native memory.
      * If there are multiple fields of the same type, use {@link
      * #setType(String)} instead with the field name.
+     * @param type desired active type for the union
      * @throws IllegalArgumentException if the type does not correspond to
      * any declared union field.
      */
@@ -84,6 +85,7 @@ public abstract class Union extends Structure {
 
     /**
      * Indicates which field will be used to write to native memory.
+     * @param fieldName desired field to use for the active union type
      * @throws IllegalArgumentException if the name does not correspond to
      * any declared union field.
      */

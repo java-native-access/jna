@@ -42,6 +42,7 @@ public interface Carbon extends Library {
 
     /**
      * Obtains the event target reference for the standard toolbox dispatcher
+     * @return event dispatcher reference
      */
     public Pointer GetEventDispatcherTarget();
 

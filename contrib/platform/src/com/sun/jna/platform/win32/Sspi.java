@@ -334,8 +334,8 @@ public interface Sspi extends StdCallLibrary {
 	    
         /**
          * Create a new SecBufferDesc with one SecBuffer of a given type and size.
-         * @param type
-         * @param tokenSize
+         * @param type type
+         * @param tokenSize token size
          */
         public SecBufferDesc(int type, int tokenSize) {
             pBuffers[0] = new SecBuffer.ByReference(type, tokenSize);

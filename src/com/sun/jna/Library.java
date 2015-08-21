@@ -20,10 +20,10 @@ import java.util.WeakHashMap;
 /** Derive from this interface for all native library definitions.
  *
  * Define an instance of your library like this:
- * <code><pre>
+ * <pre><code>
  * MyNativeLibrary INSTANCE = (MyNativeLibrary)
  *     Native.loadLibrary("mylib", MyNativeLibrary.class);
- * </pre></code>
+ * </code></pre>
  * <p>
  * By convention, method names are identical to the native names, although you
  * can map java names to different native names by providing a 
@@ -73,10 +73,10 @@ public interface Library {
      * be one of the predefined alignment types in {@link Structure}. 
      */
     String OPTION_STRUCTURE_ALIGNMENT = "structure-alignment";
-    /** Option key for per-library String encoding.  This affects conversions
+    /** <p>Option key for per-library String encoding.  This affects conversions
      * between Java unicode and native (<code>const char*</code>) strings (as
      * arguments or Structure fields).
-     * <p/>
+     * </p>
      * Defaults to {@link Native#getDefaultStringEncoding()}.
      */
     String OPTION_STRING_ENCODING = "string-encoding";
@@ -91,9 +91,9 @@ public interface Library {
     String OPTION_CALLING_CONVENTION = "calling-convention";
     /** Flags to use when opening the native library (see {@link Native#open(String,int)}) */
     String OPTION_OPEN_FLAGS = "open-flags";
-    /** Class loader to use when searching for native libraries on the
+    /** <p>Class loader to use when searching for native libraries on the
      * resource path (classpath).  If not provided the current thread's
-     * context class loader is used.<p/>
+     * context class loader is used.</p>
      * If extracted from the resource path (i.e. bundled in a jar file), the
      * loaded library's lifespan will mirror that of the class loader, which
      * means you can use the same library in isolated contexts without

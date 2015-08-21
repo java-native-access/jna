@@ -55,7 +55,9 @@ public abstract class IntegerType extends Number implements NativeMapped {
         setValue(value);
     }
 
-    /** Change the value for this data. */
+    /** Change the value for this data.
+     * @param value value to set
+     */
     public void setValue(long value) {
         long truncated = value;
         this.value = value;
@@ -164,6 +166,7 @@ public abstract class IntegerType extends Number implements NativeMapped {
      * one (i.e., {@code null} values are &quot;pushed&quot; to the end
      * of a sorted array / list of values)
      *
+     * @param <T> the derived integer type
      * @param v1 The 1st value
      * @param v2 The 2nd value
      * @return 0 if values are equal - including if <U>both</U> are {@code null},

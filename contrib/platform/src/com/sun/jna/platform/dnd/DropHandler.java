@@ -37,7 +37,6 @@ import java.util.Set;
  * Component component = ...;
  * DropHandler handler = new DropHandler(component, actions);
  * </code></pre>
- * <p>
  * <ul>
  * <li>Accept drops where the action is the default (i.e. no modifiers) but
  * the intersection of source and target actions is <i>not</i> the default.
@@ -96,6 +95,8 @@ public abstract class DropHandler implements DropTargetListener {
     /** Create a handler that allows the given set of actions.  If using
      * this constructor, you will need to override {@link #isSupported} to
      * indicate which data flavors are allowed.
+     * @param c target component
+     * @param acceptedActions accepted actions
      */
     public DropHandler(Component c, int acceptedActions) {
         this(c, acceptedActions, new DataFlavor[0]);
@@ -132,11 +133,14 @@ public abstract class DropHandler implements DropTargetListener {
         return dropTarget;
     }
 
-    /** Whether this drop target is active. */
+    /** 
+     * @return Whether this drop target is active.
+     */
     public boolean isActive() { return active; }
     
     /** Set whether this handler (and thus its drop target) will accept
      * any drops.
+     * @param active whether this handler should accept drops.
      */ 
     public void setActive(boolean active) {
         this.active = active;
@@ -150,6 +154,7 @@ public abstract class DropHandler implements DropTargetListener {
      * on the currently available {@link DataFlavor}.  The default returns
      * the accepted actions passed into the constructor.
      * @param dataFlavors currently available flavors
+     * @return currently acceptable actions.
      * @see #getDropAction(DropTargetEvent, int, int, int)
      * @see #canDrop(DropTargetEvent, int, Point)
      */
@@ -164,7 +169,9 @@ public abstract class DropHandler implements DropTargetListener {
      * user-requested actions if they are not supported (rather than silently 
      * accepting a non-user-requested action, which is the Java's DnD default 
      * behavior).  The drop action is forced to {@link DnDConstants#ACTION_NONE} 
-     * if there is no supported data flavor.<p>
+     * if there is no supported data flavor.
+     * @param e {@link DropTargetEvent}
+     * @return effective drop action
      * @see #isSupported(DataFlavor[])
      * @see #getDropActionsForFlavors
      * @see #getDropAction(DropTargetEvent, int, int, int)
@@ -238,6 +245,8 @@ public abstract class DropHandler implements DropTargetListener {
      * or false if they can't be determined.
      * We use the DragHandler hint, if available, or fall back to whether
      * the drop action is other than the default (move).
+     * @param dropAction requested action.
+     * @return whether any modifiers are active.
      */
     protected boolean modifiersActive(int dropAction) {
         int mods = DragHandler.getModifiers();
@@ -281,6 +290,8 @@ public abstract class DropHandler implements DropTargetListener {
     
     /** Accept or reject the drag represented by the given event.  Returns
      * the action determined by {@link #getDropAction(DropTargetEvent)}.
+     * @param e event
+     * @return resulting action
      */
     protected int acceptOrReject(DropTargetDragEvent e) {
         int action = getDropAction(e);
@@ -345,6 +356,8 @@ public abstract class DropHandler implements DropTargetListener {
     /** Return whether any of the flavors in the given list are accepted. 
      * The list is compared against the accepted list provided in the
      * constructor.
+     * @param flavors list of transfer flavors to check
+     * @return whether any of the given flavors are supported
      */
     protected boolean isSupported(DataFlavor[] flavors) {
         Set<DataFlavor> set = new HashSet<DataFlavor>(Arrays.asList(flavors));
@@ -376,6 +389,10 @@ public abstract class DropHandler implements DropTargetListener {
      * {@link #getDropAction(DropTargetEvent)}.
      * You may override this method to refuse drops on certain areas
      * within the drop target component.  The default always returns true.
+     * @param e event
+     * @param action requested action
+     * @param location requested drop location
+     * @return whether the drop is supported
      */ 
     protected boolean canDrop(DropTargetEvent e, int action, Point location) { 
         return true;
@@ -388,6 +405,10 @@ public abstract class DropHandler implements DropTargetListener {
      * recommended as soon as the {@link Transferable} data is obtained; this
      * allows the drag source to reset the cursor and any drag images which
      * may be in effect.
+     * @param e event
+     * @param action requested drop type
+     * @throws UnsupportedFlavorException dropped item has no supported flavors
+     * @throws IOException data access failure
      */
     protected abstract void drop(DropTargetDropEvent e, int action) throws UnsupportedFlavorException, IOException;
 }

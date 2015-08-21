@@ -26,8 +26,7 @@ public interface Wincon {
      * Allocates a new console for the calling process.
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms681944(v=vs.85).aspx">AllocConsole</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms681944(v=vs.85).aspx">AllocConsole documentation</a>
      */
     boolean AllocConsole();
 
@@ -35,8 +34,7 @@ public interface Wincon {
      * Detaches the calling process from its console
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683150(v=vs.85).aspx">FreeConsole</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683150(v=vs.85).aspx">FreeConsole documentation</a>
      */
     boolean FreeConsole();
     
@@ -48,8 +46,7 @@ public interface Wincon {
      * value to indicate the console of the parent of the current process.
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms681952(v=vs.85).aspx">AttachConsole</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms681952(v=vs.85).aspx">AttachConsole documentation</a>
      */
     boolean AttachConsole(int dwProcessId);
 
@@ -60,8 +57,7 @@ public interface Wincon {
      * have the GENERIC_WRITE access right.
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683147(v=vs.85).aspx">FlushConsoleInputBuffer</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683147(v=vs.85).aspx">FlushConsoleInputBuffer documentation</a>
      */
     boolean FlushConsoleInputBuffer(HANDLE hConsoleInput);
 
@@ -76,14 +72,13 @@ public interface Wincon {
      * @param dwProcessGroupId The identifier of the process group to receive the signal
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683155(v=vs.85).aspx">GenerateConsoleCtrlEvent</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683155(v=vs.85).aspx">GenerateConsoleCtrlEvent documentation</a>
      */
     boolean GenerateConsoleCtrlEvent(int dwCtrlEvent, int dwProcessGroupId);
 
     /**
      * @return Code that identifies the code page
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/dd317756(v=vs.85).aspx">Code page identifiers</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/dd317756(v=vs.85).aspx">Code page identifiers</a>
      */
     int GetConsoleCP();
 
@@ -91,14 +86,13 @@ public interface Wincon {
      * @param wCodePageID The identifier of the code page to be set
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms686013(v=vs.85).aspx">SetConsoleCP</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms686013(v=vs.85).aspx">SetConsoleCP documentation</a>
      */
     boolean SetConsoleCP(int wCodePageID);
 
     /**
      * @return Retrieves the output code page used by the console associated with the calling process.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/dd317756(v=vs.85).aspx">Code page identifiers</A>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/dd317756(v=vs.85).aspx">Code page identifiers</a>
      */
     int GetConsoleOutputCP();
 
@@ -106,8 +100,7 @@ public interface Wincon {
      * @param wCodePageID The output code page used by the console associated with the calling process.
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms686036(v=vs.85).aspx">SetConsoleOutputCP</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms686036(v=vs.85).aspx">SetConsoleOutputCP documentation</a>
      */
     boolean SetConsoleOutputCP(int wCodePageID);
 
@@ -123,8 +116,7 @@ public interface Wincon {
      * of unread input records in the console's input buffer
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683207(v=vs.85).aspx">GetNumberOfConsoleInputEvents</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683207(v=vs.85).aspx">GetNumberOfConsoleInputEvents documentation</a>
      */
     boolean GetNumberOfConsoleInputEvents(HANDLE hConsoleInput, IntByReference lpcNumberOfEvents);
 
@@ -133,8 +125,7 @@ public interface Wincon {
      * of mouse buttons
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683208(v=vs.85).aspx">GetNumberOfConsoleMouseButtons</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683208(v=vs.85).aspx">GetNumberOfConsoleMouseButtons documentation</a>
      */
     boolean GetNumberOfConsoleMouseButtons(IntByReference lpNumberOfMouseButtons);
 
@@ -154,8 +145,7 @@ public interface Wincon {
      * @param hHandle The handle for the standard device
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms686244(v=vs.85).aspx">SetStdHandle</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms686244(v=vs.85).aspx">SetStdHandle documentation</a>
      */
     boolean SetStdHandle(int nStdHandle, HANDLE hHandle);
 
@@ -168,8 +158,7 @@ public interface Wincon {
      * @param lpModeFlags The display mode of the console
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683164(v=vs.85).aspx">GetConsoleDisplayMode</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683164(v=vs.85).aspx">GetConsoleDisplayMode documentation</a>
      */
     boolean GetConsoleDisplayMode(IntByReference lpModeFlags);
     
@@ -196,8 +185,7 @@ public interface Wincon {
      * the specified buffer
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms683167.aspx">GetConsoleMode</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms683167.aspx">GetConsoleMode documentation</a>
      */
     boolean GetConsoleMode(HANDLE hConsoleHandle, IntByReference lpMode);
 
@@ -207,8 +195,7 @@ public interface Wincon {
      * @param dwMode The input or output mode mask to be set
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms686033.aspx">SetConsoleMode</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms686033.aspx">SetConsoleMode documentation</a>
      */
     boolean SetConsoleMode(HANDLE hConsoleHandle, int dwMode);
     
@@ -225,8 +212,7 @@ public interface Wincon {
      * @return If the function succeeds, the return value is the length of the console
      * window's title, in characters. If the function fails, the return value is zero
      * and {@code GetLastError} returns the error code.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683174(v=vs.85).aspx">GetConsoleTitle</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683174(v=vs.85).aspx">GetConsoleTitle documentation</a>
      */
     int GetConsoleTitle(char[] lpConsoleTitle, int nSize);
 
@@ -240,8 +226,7 @@ public interface Wincon {
      * to store the title, the return value is zero and {@code GetLastError} returns
      * {@code ERROR_SUCCESS}. If the function fails, the return value is zero
      * and {@code GetLastError} returns the error code.
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683168(v=vs.85).aspx">GetConsoleOriginalTitle</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683168(v=vs.85).aspx">GetConsoleOriginalTitle documentation</a>
      */
     int GetConsoleOriginalTitle(char[] lpConsoleTitle, int nSize);
 
@@ -250,8 +235,7 @@ public interface Wincon {
      * The total size must be less than {@link #MAX_CONSOLE_TITLE_LENGTH}.
      * @return {@code true} if successful - if {@code false} then use
      * {@code GetLastError()} to get extended error information
-     * @see <A HREF="https://msdn.microsoft.com/en-us/library/ms686050(v=vs.85).aspx">SetConsoleTitle</A>
-     * documentation
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms686050(v=vs.85).aspx">SetConsoleTitle documentation</a>
      */
     boolean SetConsoleTitle(String lpConsoleTitle);
 }

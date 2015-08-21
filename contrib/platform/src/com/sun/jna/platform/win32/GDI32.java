@@ -322,6 +322,7 @@ public interface GDI32 extends StdCallLibrary {
      * the desired format for the DIB data.
      * @param uUsage The format of the bmiColors member of the {@link
      * BITMAPINFO} structure.  
+     * @return status
      */
     int GetDIBits(HDC hdc, HBITMAP hbmp, int uStartScan, int cScanLines, Pointer lpvBits, BITMAPINFO lpbi, int uUsage);
 
@@ -366,14 +367,15 @@ public interface GDI32 extends StdCallLibrary {
 	 *            The number of bytes of information to be written to the
 	 *            buffer.
 	 * @param lpvObject
-	 *            A pointer to a buffer that receives the information about the
+	 *            <p>A pointer to a buffer that receives the information about the
 	 *            specified graphics object.
-	 *            <p/>
+	 *            </p><p>
 	 *            The following table shows the type of information the buffer
 	 *            receives for each type of graphics object you can specify with
 	 *            hgdiobj.
-	 *            <p/>
+	 *            </p>
 	 *            <table border="1px">
+         *            <caption>Information Received</caption>
 	 *            <thead>
 	 *            <tr>
 	 *            <td><b>Object type</b></td>
@@ -389,9 +391,9 @@ public interface GDI32 extends StdCallLibrary {
 	 *            {@link HBITMAP} returned from a call to
 	 *            {@link #CreateDIBSection}
 	 *            </td>
-	 *            <td>{@link DIBSECTION}, if cbBuffer is set to sizeof(
-	 *            {@link DIBSECTION}), or {@link BITMAP}, if cbBuffer is set to
-	 *            sizeof ({@link BITMAP}).</td>
+	 *            <td>DIBSECTION, if cbBuffer is set to sizeof(DIBSECTION),
+	 *            or BITMAP, if cbBuffer is set to
+	 *            sizeof (BITMAP).</td>
 	 *            </tr>
 	 *            <tr>
 	 *            <td>{@link HPALETTE}</td>
@@ -401,29 +403,29 @@ public interface GDI32 extends StdCallLibrary {
 	 *            <tr>
 	 *            <td>
 	 *            {@link HPEN} returned from a call to ExtCreatePen</td>
-	 *            <td>{@link EXTLOGPEN}</td>
+	 *            <td><code>EXTLOGPEN</code></td>
 	 *            </tr>
 	 *            <tr>
 	 *            <td>{@link HPEN}</td>
-	 *            <td>{@link LOGPEN}</td>
+	 *            <td><code>LOGPEN</code></td>
 	 *            </tr>
 	 *            <tr>
 	 *            <td>{@link HBRUSH}</td>
-	 *            <td>{@link LOGBRUSH}</td>
+	 *            <td><code>LOGBRUSH</code></td>
 	 *            </tr>
 	 *            <tr>
 	 *            <td>{@link HFONT}</td>
-	 *            <td>{@link LOGFONT}</td>
+	 *            <td><code>LOGFONT</code></td>
 	 *            </tr>
 	 *            </tbody>
 	 *            </table>
 	 * @return If the function succeeds, and lpvObject is a valid pointer, the
 	 *         return value is the number of bytes stored into the buffer.
-	 *         <p/>
+	 *         <p>
 	 *         If the function succeeds, and lpvObject is NULL, the return value
 	 *         is the number of bytes required to hold the information the
 	 *         function would store into the buffer.
-	 *         <p/>
+	 *         </p>
 	 *         If the function fails, the return value is zero.
 	 */
 	public int GetObject(final HANDLE hgdiobj, final int cbBuffer,

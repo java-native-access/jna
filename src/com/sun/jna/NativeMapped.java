@@ -21,10 +21,17 @@ package com.sun.jna;
 public interface NativeMapped {
     /** Convert the given native object into its Java representation using
      * the given context. 
+     * @param nativeValue Java representation of the native type to be converted.
+     * @param context Context in which the conversion is taking place.
+     * @return Converted object.
      */
     Object fromNative(Object nativeValue, FromNativeContext context);
-    /** Convert this object into a supported native type. */
+    /** Convert this object into a supported native type.
+     * @return Java representation of the original Java object converted to a native type.
+     */
     Object toNative();
-    /** Indicate the native type used by this converter. */
+    /** Indicate the native type used by this converter.
+     * @return Java class representation of the native type.
+     */
     Class nativeType();
 }

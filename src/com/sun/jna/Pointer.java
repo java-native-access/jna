@@ -803,10 +803,10 @@ v     * @param wide whether to convert from a wide or standard C string
         return buf;
     }
 
-    /** Returns an array of <code>String</code> based on a native array
+    /** <p>Returns an array of <code>String</code> based on a native array
      * of <code>char *</code>.  The array length is determined by a
      * NULL-valued terminating element. 
-     * <p/>
+     * </p>
      * The strings are decoded using the encoding returned by {@link
      * Native#getDefaultStringEncoding()}.
      */
@@ -822,9 +822,9 @@ v     * @param wide whether to convert from a wide or standard C string
         return getStringArray(offset, -1, encoding);
     }
 
-    /** Returns an array of <code>String</code> based on a native array
+    /** <p>Returns an array of <code>String</code> based on a native array
      * of <code>char *</code>, using the given array length. 
-     * <p/>
+     * </p>
      * The strings are decoded using the encoding returned by {@link
      * Native#getDefaultStringEncoding()}.
      */

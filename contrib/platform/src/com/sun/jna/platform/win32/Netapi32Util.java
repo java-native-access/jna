@@ -154,7 +154,7 @@ public abstract class Netapi32Util {
 	
     /**
      * Get information about a computer.
-     * @param computerName
+     * @param computerName computer name
      * @return Domain or workgroup name.
      */
     public static String getDomainName(String computerName) {
