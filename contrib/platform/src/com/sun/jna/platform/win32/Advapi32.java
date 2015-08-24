@@ -48,7 +48,7 @@ import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
  */
 public interface Advapi32 extends StdCallLibrary {
 	Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32",
-			Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
+			Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	public static final int MAX_KEY_LENGTH = 255;
 	public static final int MAX_VALUE_NAME = 16383;

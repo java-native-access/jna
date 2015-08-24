@@ -27,7 +27,7 @@ public interface Kernel32 extends WinNT, Wincon {
 
     /** The instance. */
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32",
-            Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
+            Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Reads data from the specified file or input/output (I/O) device. Reads
