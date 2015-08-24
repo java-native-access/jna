@@ -15,7 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
@@ -1200,7 +1200,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         error information, call GetLastError.
 	 */
 	public boolean ChangeServiceConfig2(SC_HANDLE hService, int dwInfoLevel,
-			Structure lpInfo);
+			ChangeServiceConfig2Info lpInfo);
 	
 	/**
 	 * Retrieves the optional configuration parameters of the specified service.
@@ -1602,7 +1602,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            otherwise, none of the descriptor is returned.
 	 * @return whether the call succeeded
 	 */
-	public boolean GetFileSecurity(WString lpFileName,
+	public boolean GetFileSecurity(String lpFileName,
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
 
@@ -1817,7 +1817,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
-	public boolean EncryptFile(WString lpFileName);
+	public boolean EncryptFile(String lpFileName);
 
 	/**
 	 * Decrypts an encrypted file or directory.
@@ -1830,7 +1830,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
-	public boolean DecryptFile(WString lpFileName, DWORD dwReserved);
+	public boolean DecryptFile(String lpFileName, DWORD dwReserved);
 
 	/**
 	 * Retrieves the encryption status of the specified file.
@@ -1844,7 +1844,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
-	public boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
+	public boolean FileEncryptionStatus(String lpFileName, DWORDByReference lpStatus);
 
 	/**
 	 * Disables or enables encryption of the specified directory and the files in
@@ -1861,7 +1861,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
-	public boolean EncryptionDisable(WString DirPath, boolean Disable);
+	public boolean EncryptionDisable(String DirPath, boolean Disable);
 
 	/**
 	 * Opens an encrypted file in order to backup (export) or restore (import) the
@@ -1883,7 +1883,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
 	 * text description of the error.
 	 */
-	public int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags,
+	public int OpenEncryptedFileRaw(String lpFileName, ULONG ulFlags,
                                   PointerByReference pvContext);
 
 	/**
@@ -1955,4 +1955,22 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         OpenEncryptedFileRaw function returns the context block.
 	 */
 	public void CloseEncryptedFileRaw(Pointer pvContext);
+	
+	public static abstract class ChangeServiceConfig2Info extends Structure {
+		public ChangeServiceConfig2Info() {
+			super();
+		}
+
+		public ChangeServiceConfig2Info(Pointer p) {
+			super(p);
+		}
+
+		public ChangeServiceConfig2Info(TypeMapper mapper) {
+			super(mapper);
+		}
+
+		public ChangeServiceConfig2Info(Pointer p, int alignType, TypeMapper mapper) {
+			super(p, alignType, mapper);
+		}
+	}
 }

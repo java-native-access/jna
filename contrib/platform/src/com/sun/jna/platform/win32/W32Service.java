@@ -86,8 +86,8 @@ public class W32Service {
 			String command) {
 		SERVICE_FAILURE_ACTIONS.ByReference actionStruct = new SERVICE_FAILURE_ACTIONS.ByReference();
 		actionStruct.dwResetPeriod = resetPeriod;
-		actionStruct.setRebootMessage(rebootMsg);
-		actionStruct.setCommand(command);
+		actionStruct.lpRebootMsg = rebootMsg;
+		actionStruct.lpCommand = command;
 		actionStruct.cActions = actions.size();
 
 		actionStruct.lpsaActions = new SC_ACTION.ByReference();

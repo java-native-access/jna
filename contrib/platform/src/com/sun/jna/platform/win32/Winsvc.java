@@ -16,13 +16,14 @@ package com.sun.jna.platform.win32;
 import java.util.Arrays;
 import java.util.List;
 
+import com.sun.jna.platform.win32.Advapi32.ChangeServiceConfig2Info;
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -210,9 +211,8 @@ public interface Winsvc extends StdCallLibrary {
      * To configure additional circumstances under which the failure actions are to be executed, see 
      * SERVICE_FAILURE_ACTIONS_FLAG.
      */
-    public class SERVICE_FAILURE_ACTIONS extends Structure {
+    public class SERVICE_FAILURE_ACTIONS extends ChangeServiceConfig2Info {
         public static class ByReference extends SERVICE_FAILURE_ACTIONS implements Structure.ByReference {}
-        private static final boolean ASCII = Boolean.getBoolean("w32.ascii");
         /**
          * The time after which to reset the failure count to zero if there are no failures, in 
          * seconds. Specify INFINITE to indicate that this value should never be reset.
@@ -230,7 +230,7 @@ public interface Winsvc extends StdCallLibrary {
          * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
          * Vista.
          */
-        public Pointer lpRebootMsg;
+        public String lpRebootMsg;
         /**
          * The command line of the process for the CreateProcess function to execute in response to 
          * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same 
@@ -238,7 +238,7 @@ public interface Winsvc extends StdCallLibrary {
          * If this value is NULL, the command is unchanged. If the value is an empty string (""), 
          * the command is deleted and no program is run when the service fails.
          */
-        public Pointer lpCommand;
+        public String lpCommand;
         /**
          * The number of elements in the lpsaActions array.
          * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure 
@@ -251,53 +251,21 @@ public interface Winsvc extends StdCallLibrary {
          */
         public SC_ACTION.ByReference lpsaActions;
         
+        private static TypeMapper getTypeMapper() {
+            return Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE;
+        }
+        
         public SERVICE_FAILURE_ACTIONS() {
-            super();
+            super(getTypeMapper());
         }
         
         public SERVICE_FAILURE_ACTIONS(Pointer p) {
-            super(p);
+            super(p, Structure.ALIGN_DEFAULT, getTypeMapper());
             read();
         }
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions" });
-        }
-        
-        public void setRebootMessage(String s) {
-            if (ASCII) {
-                lpRebootMsg = new Memory(s.length() + 1);
-                lpRebootMsg.setString(0, s);
-            } else {
-                lpRebootMsg = new Memory((s.length() + 1) * Native.WCHAR_SIZE);
-                lpRebootMsg.setWideString(0, s);
-            }
-        }
-        
-        public String getRebootMessage() {
-            if (ASCII) {
-                return lpRebootMsg.getString(0);
-            } else {
-                return lpRebootMsg.getWideString(0);
-            }
-        }
-        
-        public void setCommand(String s) {
-            if (ASCII) {
-                lpCommand = new Memory(s.length() + 1);
-                lpCommand.setString(0, s);
-            } else {
-                lpCommand = new Memory((s.length() + 1) * Native.WCHAR_SIZE);
-                lpCommand.setWideString(0, s);
-            }
-        }
-        
-        public String getCommand() {
-            if (ASCII) {
-                return lpCommand.getString(0);
-            } else {
-                return lpCommand.getWideString(0);
-            }
         }
     }
 
@@ -325,7 +293,7 @@ public interface Winsvc extends StdCallLibrary {
      * Contains the failure actions flag setting of a service. This setting determines when failure 
      * actions are to be executed.
      */
-    public class SERVICE_FAILURE_ACTIONS_FLAG extends Structure {
+    public class SERVICE_FAILURE_ACTIONS_FLAG extends ChangeServiceConfig2Info {
         /**
          * If this member is TRUE and the service has configured failure actions, the failure 
          * actions are queued if the service process terminates without reporting a status of 
