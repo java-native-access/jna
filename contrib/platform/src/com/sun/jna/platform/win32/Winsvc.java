@@ -255,10 +255,7 @@ public interface Winsvc extends StdCallLibrary {
         
         public SERVICE_FAILURE_ACTIONS(Pointer p) {
             super(p);
-        }
-        
-        public SERVICE_FAILURE_ACTIONS(Pointer p, int alignment) {
-            super(p, alignment);
+            read();
         }
 
         protected List getFieldOrder() {
@@ -314,6 +311,7 @@ public interface Winsvc extends StdCallLibrary {
         
         public SERVICE_FAILURE_ACTIONS_FLAG(Pointer p) {
             super(p);
+            read();
         }
     }
 

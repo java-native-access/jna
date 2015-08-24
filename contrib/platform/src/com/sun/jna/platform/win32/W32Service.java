@@ -132,7 +132,6 @@ public class W32Service {
 	public SERVICE_FAILURE_ACTIONS getFailureActions() {
 		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS);
 		SERVICE_FAILURE_ACTIONS result = new SERVICE_FAILURE_ACTIONS(buffer);
-		result.read();
 		return result;
 	}
 
@@ -159,7 +158,6 @@ public class W32Service {
 	public boolean getFailureActionsFlag() {
 		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG);
 		SERVICE_FAILURE_ACTIONS_FLAG result = new SERVICE_FAILURE_ACTIONS_FLAG(buffer);
-		result.read();
 		return result.fFailureActionsOnNonCrashFailures != 0;
 	}
 
