@@ -108,8 +108,8 @@ public class W32ServiceTest extends TestCase{
 		service.setFailureActions(actions, resetPeriod, rebootMsg, command);
 
 		SERVICE_FAILURE_ACTIONS changedActions = service.getFailureActions();
-		assertEquals(changedActions.lpRebootMsg.toString(), rebootMsg);
-		assertEquals(changedActions.lpCommand.toString(), command);
+		assertEquals(changedActions.getRebootMessage(), rebootMsg);
+		assertEquals(changedActions.getCommand(), command);
 		assertEquals(changedActions.dwResetPeriod, resetPeriod);
 		assertEquals(changedActions.cActions, 4);
 		SC_ACTION[] actionArray = (SC_ACTION[])changedActions.lpsaActions.toArray(changedActions.cActions);

@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -211,6 +212,7 @@ public interface Winsvc extends StdCallLibrary {
      */
     public class SERVICE_FAILURE_ACTIONS extends Structure {
         public static class ByReference extends SERVICE_FAILURE_ACTIONS implements Structure.ByReference {}
+        private static final boolean ASCII = Boolean.getBoolean("w32.ascii");
         /**
          * The time after which to reset the failure count to zero if there are no failures, in 
          * seconds. Specify INFINITE to indicate that this value should never be reset.
@@ -228,7 +230,7 @@ public interface Winsvc extends StdCallLibrary {
          * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
          * Vista.
          */
-        public WString lpRebootMsg;
+        public Pointer lpRebootMsg;
         /**
          * The command line of the process for the CreateProcess function to execute in response to 
          * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same 
@@ -236,7 +238,7 @@ public interface Winsvc extends StdCallLibrary {
          * If this value is NULL, the command is unchanged. If the value is an empty string (""), 
          * the command is deleted and no program is run when the service fails.
          */
-        public WString lpCommand;
+        public Pointer lpCommand;
         /**
          * The number of elements in the lpsaActions array.
          * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure 
@@ -260,6 +262,42 @@ public interface Winsvc extends StdCallLibrary {
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions" });
+        }
+        
+        public void setRebootMessage(String s) {
+            if (ASCII) {
+                lpRebootMsg = new Memory(s.length() + 1);
+                lpRebootMsg.setString(0, s);
+            } else {
+                lpRebootMsg = new Memory((s.length() + 1) * Native.WCHAR_SIZE);
+                lpRebootMsg.setWideString(0, s);
+            }
+        }
+        
+        public String getRebootMessage() {
+            if (ASCII) {
+                return lpRebootMsg.getString(0);
+            } else {
+                return lpRebootMsg.getWideString(0);
+            }
+        }
+        
+        public void setCommand(String s) {
+            if (ASCII) {
+                lpCommand = new Memory(s.length() + 1);
+                lpCommand.setString(0, s);
+            } else {
+                lpCommand = new Memory((s.length() + 1) * Native.WCHAR_SIZE);
+                lpCommand.setWideString(0, s);
+            }
+        }
+        
+        public String getCommand() {
+            if (ASCII) {
+                return lpCommand.getString(0);
+            } else {
+                return lpCommand.getWideString(0);
+            }
         }
     }
 
