@@ -43,7 +43,8 @@ public class CallbacksTest extends TestCase implements Paths {
     // not attached, and the JVM never unmaps the defunct native thread.  In
     // order to avoid this situation causing tests to time out, we need to
     // explicitly detach the native thread after our Java code is done with it.
-    private static final boolean THREAD_DETACH_BUG = Platform.isMac();
+    // Also reproducible on Ubuntu 6 (x86-64), Java 6
+    private static final boolean THREAD_DETACH_BUG = Platform.isMac() || (Platform.isLinux() && Platform.is64Bit());
 
     private static final String UNICODE = "[\u0444]";
 
