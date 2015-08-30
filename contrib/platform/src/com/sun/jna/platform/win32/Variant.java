@@ -194,6 +194,24 @@ public interface Variant {
             this.setValue(VT_DATE, value);
         }
 
+        public VARIANT(byte value) {
+            this(new BYTE(value));
+        }
+        
+        public VARIANT(BYTE value) {
+            this();
+            this.setValue(Variant.VT_UI1, value);
+        }
+
+        public VARIANT(char value) {
+            this(new CHAR(value));
+        }
+
+        public VARIANT(CHAR value) {
+            this();
+            this.setValue(Variant.VT_I1, value);
+        }
+
         public VARIANT(short value) {
             this();
             this.setValue(VT_I2, new SHORT(value));
@@ -259,6 +277,9 @@ public interface Variant {
 
         public void setValue(VARTYPE vt, Object value) {
             switch (vt.intValue()) {
+            case VT_UI1:
+                this._variant.__variant.writeField("bVal", value);
+                break;
             case VT_I2:
                 this._variant.__variant.writeField("iVal", value);
                 break;

@@ -48,6 +48,7 @@ Features
 * [#434](https://github.com/twall/jna/pull/434): Added GetEnvironmentStrings to 'com.sun.jna.platform.win32.Kernel32'  - [@lgoldstein](https://github.com/lgoldstein).
 * Loosen OSGI OS name matching to accommodate Windows 8 family - Niels Bertram.
 * [#436] (https://github.com/twall/jna/pull/469): Added basic Pdh API implementation to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
+* [#451] (https://github.com/twall/jna/pull/451): Add VARIANT support for CHAR and BYTE  - [@mitkola](https://github.com/mitkola).
 * [#481] (https://github.com/twall/jna/pull/481): Added volume management functions to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#483] (https://github.com/twall/jna/pull/483): Found and fixed duplicate method definitions for the same API in 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#485] (https://github.com/twall/jna/pull/485): Implemented Comparable interface for many of the base types in 'com.sun.jna.platform.win32.WinDef' - [@lgoldstein](https://github.com/lgoldstein).
@@ -73,6 +74,7 @@ Bug Fixes
 * [#404](https://github.com/twall/jna/pull/404): Fix `VARIANT` constructors for `int`, `short`, and `long` - [@lwahonen](https://github.com/lwahonen).
 * [#420](https://github.com/twall/jna/pull/420): Fix structure leaving always one element in ThreadLocal set - [@sjappig](https://github.com/sjappig).
 * [#467](https://github.com/twall/jna/issues/467): Fix TypeMapper usage with direct-mapped libraries converting primitives to Java objects (specifically enums) - [@twall](https://github.com/twall).
+* [#475](https://github.com/twall/jna/issues/475): Avoid modifying native memory in `Structure.equals()/hashCode()`- [@twall](https://github.com/twall).
 
 Release 4.1
 ===========

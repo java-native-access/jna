@@ -71,6 +71,8 @@ public class VariantTest extends TestCase {
 
     public void testVariantConstructors() {
         VARIANT variant = new VARIANT((short) 1);
+        variant = new VARIANT((byte) 1);
+        variant = new VARIANT('1');
         variant = new VARIANT((int) 1);
         variant = new VARIANT((long) 1);
         variant = new VARIANT((float) 1);

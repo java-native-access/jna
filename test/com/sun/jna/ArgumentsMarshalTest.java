@@ -565,9 +565,9 @@ public class ArgumentsMarshalTest extends TestCase {
             null,
             new CheckFieldAlignment.ByReference(),
         };
-        assertEquals("Wrong value returned (0)", args[0], lib.returnPointerArrayElement(args, 0));
+        assertTrue("Wrong value returned (0)", args[0].dataEquals(lib.returnPointerArrayElement(args, 0)));
         assertNull("Wrong value returned (1)", lib.returnPointerArrayElement(args, 1));
-        assertEquals("Wrong value returned (2)", args[2], lib.returnPointerArrayElement(args, 2));
+        assertTrue("Wrong value returned (2)", args[2].dataEquals(lib.returnPointerArrayElement(args, 2)));
         assertNull("Native array should be null terminated", lib.returnPointerArrayElement(args, 3));
     }
 
