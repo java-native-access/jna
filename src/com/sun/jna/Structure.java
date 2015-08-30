@@ -1462,42 +1462,39 @@ public abstract class Structure {
         return getClass();
     }
 
-    /** This structure is equal to another based on the same data type
-     * and memory contents.
+    /** Return whether the given Structure's backing data is identical to
+     * this one.
      */
-    public boolean equals(Object o) {
-        if (o == this) {
+    public boolean dataEquals(Structure s) {
+        byte[] data = s.getPointer().getByteArray(0, s.size());
+        byte[] ref = getPointer().getByteArray(0, size());
+        if (data.length == ref.length) {
+            for (int i=0;i < data.length;i++) {
+                if (data[i] != ref[i]) {
+                    System.out.println("byte mismatch at offset " + i);
+                    return false;
+                }
+            }
             return true;
-        }
-        if (!(o instanceof Structure)) {
-            return false;
-        }
-        if (o.getClass() != getClass()
-            && ((Structure)o).baseClass() != baseClass()) {
-            return false;
-        }
-        Structure s = (Structure)o;
-        if (s.getPointer().equals(getPointer())) {
-            return true;
-        }
-        if (s.size() == size()) {
-            clear(); write();
-            byte[] buf = getPointer().getByteArray(0, size());
-            s.clear(); s.write();
-            byte[] sbuf = s.getPointer().getByteArray(0, s.size());
-            return Arrays.equals(buf, sbuf);
         }
         return false;
     }
 
-    /** Since {@link #equals} depends on the contents of memory, use that
-     * as the basis for the hash code.
+    /** Structures are equal if they share the same pointer. */
+    public boolean equals(Object o) {
+        return o instanceof Structure
+            && o.getClass() == getClass()
+            && ((Structure)o).getPointer().equals(getPointer());
+    }
+
+    /** Use the underlying memory pointer's hash code.
      */
     public int hashCode() {
-        clear(); write();
-        Adler32 code = new Adler32();
-        code.update(getPointer().getByteArray(0, size()));
-        return (int)code.getValue();
+        Pointer p = getPointer();
+        if (p != null) {
+            return getPointer().hashCode();
+        }
+        return getClass().hashCode();
     }
 
     /** Cache native type information for use in native code. */
