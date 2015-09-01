@@ -3203,7 +3203,8 @@ JNI_OnUnload(JavaVM *vm, void *UNUSED(reserved)) {
     }
   }
 
-  (*env)->CallStaticObjectMethod(env, classNative, MID_Native_dispose);
+  // Calls back to the Native class are unsafe at this point
+  //(*env)->CallStaticObjectMethod(env, classNative, MID_Native_dispose);
 
   if (fileEncoding) {
     (*env)->DeleteGlobalRef(env, fileEncoding);
