@@ -272,7 +272,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param rgIndices
 	 *            [in] A vector of indexes for each dimension of the array. The
 	 *            right-most (least significant) dimension is rgIndices[0]. The
-	 *            left-most dimension is stored at rgIndices[psa->cDims - 1].
+	 *            left-most dimension is stored at rgIndices[psa-&gt;cDims - 1].
 	 * @param pv
 	 *            [out] The element of the array.
 	 * 
@@ -435,6 +435,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
+         * @return status
 	 */
 	public HRESULT LoadRegTypeLib(GUID rguid, int wVerMajor, int wVerMinor,
 			LCID lcid, PointerByReference pptlib);
@@ -470,6 +471,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
+         * @return status
 	 */
 	public HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 

@@ -123,7 +123,7 @@ public interface Pdh extends StdCallLibrary {
 
     /**
      * Creates a full counter path using the members specified in the
-     * {@link #PDH_COUNTER_PATH_ELEMENTS} structure.
+     * {@link Pdh.PDH_COUNTER_PATH_ELEMENTS} structure.
      * @param pCounterPathElements Structure that contains the members
      * used to make up the path
      * @param szFullPathBuffer Caller-allocated buffer that receives a null-terminated
@@ -249,7 +249,7 @@ public interface Pdh extends StdCallLibrary {
      * query and updates the status code of each counter.
      * @param hQuery Handle to the query
      * @param pllTimeStamp Time stamp when the first counter value in the query
-     * was retrieved. The time is specified as {@link WinBase#FILETIME}.
+     * was retrieved. The time is specified as {@link WinBase.FILETIME}.
      * @return ERROR_SUCCESS if successful
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa372569(v=vs.85).aspx">PdhCollectQueryDataWithTime</A>
      */

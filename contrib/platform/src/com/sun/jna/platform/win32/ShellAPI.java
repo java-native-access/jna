@@ -112,7 +112,10 @@ public interface ShellAPI extends StdCallLibrary {
             return Arrays.asList(new String[] { "hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle" });
         }
 
-        /** Use this to encode <code>pFrom/pTo</code> paths. */
+        /** Use this to encode <code>pFrom/pTo</code> paths.
+         * @param paths Paths to encode
+         * @return Encoded paths
+         */
         public String encodePaths(String[] paths) {
             String encoded = "";
             for (int i=0; i < paths.length;i++) {

@@ -61,7 +61,7 @@ import com.sun.jna.Structure.FFIType;
  * figures out these properties based on its enclosing interface.<p>
  * <a name=library_loading></a>
  * <h2>Library Loading</h2>
- * When JNA classes are loaded, the native shared library (jnidispatch) is
+ * <p>When JNA classes are loaded, the native shared library (jnidispatch) is
  * loaded as well.  An attempt is made to load it from the any paths defined
  * in <code>jna.boot.library.path</code> (if defined), then the system library
  * path using {@link System#loadLibrary}, unless <code>jna.nosys=true</code>.
@@ -71,17 +71,17 @@ import com.sun.jna.Structure.FFIType;
  * additional security constraints regarding execution or load of files
  * (SELinux, for example), you should  probably install the native library in
  * an accessible location and configure  your system accordingly, rather than
- * relying on JNA to extract the library  from its own jar file.<p/>
- * To avoid the automatic unpacking (in situations where you want to force a
+ * relying on JNA to extract the library  from its own jar file.</p>
+ * <p>To avoid the automatic unpacking (in situations where you want to force a
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
- * <p/>
- * NOTE: all native functions are provided within this class to ensure that
+ * </p>
+ * <p>NOTE: all native functions are provided within this class to ensure that
  * all other JNA-provided classes and objects are GC'd and/or
  * finalized/disposed before this class is disposed and/or removed from
  * memory (most notably Memory and any other class which by default frees its
- * resources in a finalizer).<p/>
- * <a name=native_library_loading</a>
+ * resources in a finalizer).</p>
+ * <a name=native_library_loading></a>
  * <h2>Native Library Loading</h2>
  * Native libraries loaded via {@link #loadLibrary(Class)} may be found in
  * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
@@ -239,8 +239,8 @@ public final class Native implements Version {
      */
     public static synchronized native boolean isProtected();
 
-    /** This method is obsolete.  The last error value is always preserved.
-     * <p/>
+    /** <p>This method is obsolete.  The last error value is always preserved.
+     * </p>
      * NOTE: The preferred method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}.
      *
@@ -1977,11 +1977,11 @@ public final class Native implements Version {
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
-    /** Indicate whether the JVM should detach the current native thread when
+    /** <p>Indicate whether the JVM should detach the current native thread when
         the current Java code finishes execution.  Generally this is used to
         avoid detaching native threads when it is known that a given thread
         will be relatively long-lived and call back to Java code frequently.
-        <p/>
+        </p>
         This call is lightweight; it only results in an additional JNI
         crossing if the desired state changes from its last setting.
 

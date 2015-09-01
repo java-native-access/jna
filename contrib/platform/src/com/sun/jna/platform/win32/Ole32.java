@@ -46,7 +46,11 @@ public interface Ole32 extends StdCallLibrary {
      */
     HRESULT CoCreateGuid(GUID pguid);
 
-    /** @deprecated use {@link #CoCreateGuid(Guid.GUID)}. */
+    /**
+     * @deprecated use {@link #CoCreateGuid(Guid.GUID)}.
+     * @param pguid GUID reference
+     * @return result
+     */
     HRESULT CoCreateGuid(GUID.ByReference pguid);
 
     /**
@@ -219,10 +223,10 @@ public interface Ole32 extends StdCallLibrary {
 	 * Allocates a block of task memory in the same way that IMalloc::Alloc does. CoTaskMemAlloc uses the default
 	 * allocator to allocate a memory block in the same way that IMalloc::Alloc does. It is not necessary to call the
 	 * CoGetMalloc function before calling CoTaskMemAlloc. 
-	 * <br/><br/>The initial contents of the returned memory block are
+	 * <p>The initial contents of the returned memory block are
 	 * undefined - there is no guarantee that the block has been initialized. The allocated block may be larger than cb
 	 * bytes because of the space required for alignment and for maintenance information. 
-	 * <br/><br/>
+	 * </p>
 	 * If cb is 0, CoTaskMemAlloc
 	 * allocates a zero-length item and returns a valid pointer to that item. If there is insufficient memory available,
 	 * CoTaskMemAlloc returns NULL. Applications should always check the return value from this function, even when
@@ -236,17 +240,17 @@ public interface Ole32 extends StdCallLibrary {
 	 * Changes the size of a previously allocated block of task memory. This function changes the size of a previously
 	 * allocated memory block in the same way that IMalloc::Realloc does. It is not necessary to call the CoGetMalloc
 	 * function to get a pointer to the OLE allocator before calling CoTaskMemRealloc. 
-	 * <br/><br/>
+	 * <p>
 	 * The pv parameter points to the
 	 * beginning of the memory block. If pv is NULL, CoTaskMemRealloc allocates a new memory block in the same way as
 	 * the CoTaskMemAlloc function. If pv is not NULL, it should be a pointer returned by a prior call to
 	 * CoTaskMemAlloc. 
-	 * <br/><br>
+	 * </p><p>
 	 * The cb parameter specifies the size of the new block. The contents of the block are unchanged up
 	 * to the shorter of the new and old sizes, although the new block can be in a different location. Because the new
 	 * block can be in a different memory location, the pointer returned by CoTaskMemRealloc is not guaranteed to be the
 	 * pointer passed through the pv argument. If pv is not NULL and cb is 0, then the memory pointed to by pv is freed.
-	 * <br/><br/>
+	 * </p>
 	 * CoTaskMemRealloc returns a void pointer to the reallocated (and possibly moved) memory block. The return value is
 	 * NULL if the size is 0 and the buffer argument is not NULL, or if there is not enough memory available to expand
 	 * the block to the specified size. In the first case, the original block is freed; in the second case, the original
@@ -276,6 +280,9 @@ public interface Ole32 extends StdCallLibrary {
      *     [Out]  LPMALLOC *ppMalloc
      *   );}
      * 
+     * @param dwMemContext context
+     * @param ppMalloc returned pointer
+     * @return status
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms693395%28v=vs.85%29.aspx">MSDN</a>
      * 
      */
@@ -286,14 +293,17 @@ public interface Ole32 extends StdCallLibrary {
      * 
      * {@code
      *   HRESULT GetRunningObjectTable(
-  	 *     [In]   DWORD reserved,
-  	 *     [Out]  LPRUNNINGOBJECTTABLE *pprot
-	 *   );
-	 * }
-	 * 
-	 * 
-	 * @see <a href="">MSDN</a>
-	 */
+     *     [In]   DWORD reserved,
+     *     [Out]  LPRUNNINGOBJECTTABLE *pprot
+     *   );
+     * }
+     * 
+     * 
+     * @param reserved unused
+     * @param pprot returned pointer
+     * @return status
+     * @see <a href="msdn.com">MSDN</a>
+     */
     HRESULT GetRunningObjectTable(DWORD reserved, PointerByReference pprot);
 
     /**
@@ -304,10 +314,13 @@ public interface Ole32 extends StdCallLibrary {
      *     [In]   DWORD reserved,
      *     [Out]  LPBC *ppbc
      *   );
-	 * }
-	 * 
-	 * 
-	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms678542%28v=vs.85%29.aspx">MSDN</a>
+     * }
+     * 
+     * 
+     * @param reserved unused
+     * @param ppbc returned pointer
+     * @return status
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms678542%28v=vs.85%29.aspx">MSDN</a>
      */
     HRESULT CreateBindCtx(DWORD reserved, PointerByReference ppbc);
     
@@ -320,6 +333,8 @@ public interface Ole32 extends StdCallLibrary {
      *   );
      * }
      * 
+     * @param pUnk object
+     * @return whether the object is connected
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms694359%28v=vs.85%29.aspx">MSDN</a>
      * 
      */

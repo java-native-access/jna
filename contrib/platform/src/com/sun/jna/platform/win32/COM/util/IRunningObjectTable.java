@@ -35,7 +35,7 @@ public interface IRunningObjectTable {
 	 * those for which queryInterface(iid) gives a valid result.
 	 * 
 	 * @param comInterface
-	 * @return
+	 * @return active objects
 	 */
 	<T> List<T> getActiveObjectsByInterface(Class<T> comInterface);
 }

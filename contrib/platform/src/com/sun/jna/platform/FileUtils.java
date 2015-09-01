@@ -28,8 +28,9 @@ public abstract class FileUtils {
     }
 
     /** Move the given file to the system trash, if one is available.
-        Throws an exception on failure.
-    */
+     * @param files files to move
+     * @throws IOException on failure.
+     */
     public abstract void moveToTrash(File[] files) throws IOException;
 
     /** Canonical lazy loading of a singleton. */

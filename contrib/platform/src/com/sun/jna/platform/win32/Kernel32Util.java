@@ -87,7 +87,11 @@ public abstract class Kernel32Util implements WinDef {
         return formatMessage(code.intValue());
     }
 
-    /** @deprecated use {@link #formatMessage(WinNT.HRESULT)} instead. */
+    /**
+     * @deprecated use {@link #formatMessage(WinNT.HRESULT)} instead.
+     * @param code error code
+     * @return formatted message
+     */
     public static String formatMessageFromHR(HRESULT code) {
         return formatMessage(code.intValue());
     }
@@ -170,6 +174,9 @@ public abstract class Kernel32Util implements WinDef {
 
     /**
      * Retrieves the result of GetFileType, provided the file exists.
+     * @param fileName file name
+     * @return file type
+     * @throws FileNotFoundException if file not found
      */
     public static int getFileType(String fileName) throws FileNotFoundException {
         File f = new File(fileName);
@@ -213,6 +220,7 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
+     * @param rootName name of root drive
      * @return One of the WinBase.DRIVE_* constants.
      */
     public static int getDriveType(String rootName) {
@@ -316,8 +324,8 @@ public abstract class Kernel32Util implements WinDef {
      * instead of &quot;plain old&quot; {@code char}s
      * @return A {@link String} containing the <code>name=value</code> pair or
      * empty if reached end of block
-     * @see #isWideCharEnvironmentStringBlock(Pointer)
-     * @see #findEnvironmentStringBlockEntryEnd(Pointer, long, boolean)
+     * @see #isWideCharEnvironmentStringBlock
+     * @see #findEnvironmentStringBlockEntryEnd
      */
     public static String readEnvironmentStringBlockEntry(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
         long endOffset=findEnvironmentStringBlockEntryEnd(lpszEnvironmentBlock, offset, asWideChars);
@@ -357,7 +365,7 @@ public abstract class Kernel32Util implements WinDef {
      * @return The offset of the <U>first</U> {@code '\0'} in the data block
      * starting at the specified offset - can be the start offset itself if empty
      * string.
-     * @see #isWideCharEnvironmentStringBlock(Pointer)
+     * @see #isWideCharEnvironmentStringBlock
      */
     public static long findEnvironmentStringBlockEntryEnd(Pointer lpszEnvironmentBlock, long offset, boolean asWideChars) {
         for (long curOffset=offset, stepSize=asWideChars ? 2L : 1L; ; curOffset += stepSize) {
@@ -372,7 +380,7 @@ public abstract class Kernel32Util implements WinDef {
      * <P>Attempts to determine whether the data block uses {@code wchar_t}
      * instead of &quot;plain old&quot; {@code char}s. It does that by reading
      * 2 bytes from the specified offset - the character value and its charset
-     * indicator - and examining them as follows:</P></BR>
+     * indicator - and examining them as follows:</P>
      * <UL>
      *      <LI>
      *      If the charset indicator is non-zero then it is assumed to be
@@ -391,6 +399,7 @@ public abstract class Kernel32Util implements WinDef {
      * @param lpszEnvironmentBlock The environment block as received from the
      * <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683187(v=vs.85).aspx">GetEnvironmentStrings</A>
      * function
+     * @param offset offset
      * @return {@code true} if the block contains {@code wchar_t} instead of
      * &quot;plain old&quot; {@code char}s
      */
@@ -650,10 +659,10 @@ public abstract class Kernel32Util implements WinDef {
     /**
      * Parses and returns the pure GUID value of a volume name obtained
      * from {@link Kernel32#FindFirstVolume(char[], int)} or
-     * {@link Kernel32#FindNextVolume(HANDLE, char[], int)} calls
+     * {@link Kernel32#FindNextVolume} calls
      * 
-     * @param volumeName
-     *              The volume name as returned by on of the above mentioned calls
+     * @param volumeGUIDPath
+     *              The volume GUID path as returned by one of the above mentioned calls
      * @return The pure GUID value after stripping the &quot;\\?\&quot; prefix and
      * removing the trailing backslash.
      * @throws IllegalArgumentException if bad format encountered

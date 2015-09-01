@@ -26,7 +26,7 @@ public interface IConnectionPoint extends IUnknown {
 	 * 
 	 * 
 	 * @param iid
-	 * @return
+	 * @return interface pointer
 	 */
 	HRESULT GetConnectionInterface(IID iid);
 	
@@ -53,14 +53,14 @@ public interface IConnectionPoint extends IUnknown {
 	 * 
 	 * @param pUnkSink
 	 * @param pdwCookie
-	 * @return
+	 * @return status
 	 */
 	WinNT.HRESULT Advise(IUnknownCallback pUnkSink, DWORDByReference pdwCookie);
 	
 	/**
 	 * 
 	 * @param dwCookie
-	 * @return
+	 * @return status
 	 */
 	HRESULT Unadvise(DWORD dwCookie);
 }

@@ -354,7 +354,11 @@ public interface WinUser extends StdCallLibrary, WinDef {
     }
 
     public interface WNDENUMPROC extends StdCallCallback {
-        /** Return whether to continue enumeration. */
+        /** Return whether to continue enumeration.
+         * @param hWnd window handle
+         * @param data callback data
+         * @return FIXME
+         */
         boolean callback(HWND hWnd, Pointer data);
     }
 
@@ -1139,10 +1143,10 @@ public interface WinUser extends StdCallLibrary, WinDef {
     final int CCHDEVICENAME =  32;
 
     /**
-     * The MONITORINFO structure contains information about a display monitor.<br/>
-     * The {@link User32#GetMonitorInfo} function stores
-     * information into a MONITORINFO structure<br/><br/>
-     * The MONITORINFO structure is a subset of the MONITORINFOEX structure.
+     * <p>The MONITORINFO structure contains information about a display monitor.</p><p>
+     * The {@link User32#GetMonitorInfo} function stores 
+     * information into a MONITORINFO structure</p>
+     * The MONITORINFO structure is a subset of the MONITORINFOEX structure.      
      */
     public class MONITORINFO extends Structure
     {
@@ -1170,7 +1174,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
         /**
          * The attributes of the display monitor. This member can be the following value.
-         * <li>MONITORINFOF_PRIMARY</li>
+         * <ul><li>MONITORINFOF_PRIMARY</li></ul>
          */
         public int     dwFlags;
 
@@ -1182,11 +1186,11 @@ public interface WinUser extends StdCallLibrary, WinDef {
     }
 
     /**
-     * The MONITORINFOEX structure contains information about a display monitor.<br/>
-     * The {@link User32#GetMonitorInfo} function stores
-     * information into a MONITORINFOEX structure<br/><br/>
-     * The MONITORINFOEX structure is a superset of the MONITORINFO structure.
-     * The MONITORINFOEX structure adds a string member to contain a name for the display monitor.
+     * <p>The MONITORINFOEX structure contains information about a display monitor.</p><p>
+     * The {@link User32#GetMonitorInfo} function stores 
+     * information into a MONITORINFOEX structure</p>
+     * The MONITORINFOEX structure is a superset of the MONITORINFO structure. 
+     * The MONITORINFOEX structure adds a string member to contain a name for the display monitor. 
      */
     public class MONITORINFOEX extends Structure
     {
@@ -1214,7 +1218,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
         /**
          * The attributes of the display monitor. This member can be the following value.
-         * <li>MONITORINFOF_PRIMARY</li>
+         * <ul><li>MONITORINFOF_PRIMARY</li></ul>
          */
         public int     dwFlags;
 
@@ -1240,20 +1244,20 @@ public interface WinUser extends StdCallLibrary, WinDef {
 
     /**
      * An application-defined callback function that is called by the {@link User32#EnumDisplayMonitors} function.
-     * <br/><br/>
-     * You can use the EnumDisplayMonitors function to enumerate the set of display monitors that intersect
-     * the visible region of a specified device context and, optionally, a clipping rectangle. To do this,
+     * <p>
+     * You can use the EnumDisplayMonitors function to enumerate the set of display monitors that intersect 
+     * the visible region of a specified device context and, optionally, a clipping rectangle. To do this, 
      * set the hdc parameter to a non-NULL value, and set the lprcClip parameter as needed.
-     * <br/><br/>
-     * You can also use the EnumDisplayMonitors function to enumerate one or more of the display monitors on
-     * the desktop, without supplying a device context. To do this, set the hdc parameter of
+     * </p><p>
+     * You can also use the EnumDisplayMonitors function to enumerate one or more of the display monitors on 
+     * the desktop, without supplying a device context. To do this, set the hdc parameter of 
      * EnumDisplayMonitors to NULL and set the lprcClip parameter as needed.
-     * <br/><br/>
-     * In all cases, EnumDisplayMonitors calls a specified MonitorEnumProc function once for each display
-     * monitor in the calculated enumeration set. The MonitorEnumProc function always receives a handle to
-     * the display monitor. If the hdc parameter of EnumDisplayMonitors is non-NULL, the MonitorEnumProc
-     * function also receives a handle to a device context whose color format is appropriate for the
-     * display monitor. You can then paint into the device context in a manner that is optimal for the
+     * </p>
+     * In all cases, EnumDisplayMonitors calls a specified MonitorEnumProc function once for each display 
+     * monitor in the calculated enumeration set. The MonitorEnumProc function always receives a handle to 
+     * the display monitor. If the hdc parameter of EnumDisplayMonitors is non-NULL, the MonitorEnumProc 
+     * function also receives a handle to a device context whose color format is appropriate for the 
+     * display monitor. You can then paint into the device context in a manner that is optimal for the 
      * display monitor.
      */
     public interface MONITORENUMPROC extends Callback

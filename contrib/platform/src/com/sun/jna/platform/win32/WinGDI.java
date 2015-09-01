@@ -18,6 +18,7 @@ import java.util.List;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.win32.StdCallLibrary;
@@ -142,32 +143,43 @@ public interface WinGDI extends StdCallLibrary {
         }
     }
     
-	public class ICONINFO extends Structure {
-		public boolean fIcon;
-		public int xHotspot;
-		public int yHotspot;
-		public HBITMAP hbmMask;
-		public HBITMAP hbmColor;
-		protected List getFieldOrder() {
-			return Arrays.asList(new String[] { "fIcon", "xHotspot",
-					"yHotspot", "hbmMask", "hbmColor" });
-		}
-	}
-	
-	public class BITMAP extends Structure {
-	    public NativeLong bmType;
-	    public NativeLong bmWidth;
-	    public NativeLong bmHeight;
-	    public NativeLong bmWidthBytes;
-	    public short bmPlanes;
-	    public short bmBitsPixel;
-	    public Pointer bmBits;
-		protected List getFieldOrder() {
-			return Arrays.asList("bmType", "bmWidth", "bmHeight",
-					"bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
-		}
-	}
+    public class ICONINFO extends Structure {
+        public boolean fIcon;
+        public int xHotspot;
+        public int yHotspot;
+        public HBITMAP hbmMask;
+        public HBITMAP hbmColor;
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "fIcon", "xHotspot",
+                                                "yHotspot", "hbmMask", "hbmColor" });
+        }
+    }
     
+    public class BITMAP extends Structure {
+        public NativeLong bmType;
+        public NativeLong bmWidth;
+        public NativeLong bmHeight;
+        public NativeLong bmWidthBytes;
+        public short bmPlanes;
+        public short bmBitsPixel;
+        public Pointer bmBits;
+        protected List getFieldOrder() {
+            return Arrays.asList("bmType", "bmWidth", "bmHeight",
+                                 "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
+        }
+    }
+    
+    public class DIBSECTION extends Structure {
+        public BITMAP           dsBm;
+        public BITMAPINFOHEADER dsBmih;
+        public int[]            dsBitfields = new int[3];
+        public HANDLE           dshSection;
+        public int              dsOffset;        
+        protected List getFieldOrder() {
+            return Arrays.asList("dsBm", "dsBmih", "dsBitfields", "dshSection", "dsOffset");
+        }
+    }
+
     public int DIB_RGB_COLORS = 0;
     public int DIB_PAL_COLORS = 1;
 

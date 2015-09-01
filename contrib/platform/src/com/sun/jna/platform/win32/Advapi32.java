@@ -630,15 +630,15 @@ public interface Advapi32 extends StdCallLibrary {
 
 	/**
 	 *
-	 * @param hKey
-	 * @param lpSubKey
-	 * @param Reserved
-	 * @param lpClass
-	 * @param dwOptions
-	 * @param samDesired
-	 * @param lpSecurityAttributes
-	 * @param phkResult
-	 * @param lpdwDisposition
+	 * @param hKey registry key
+	 * @param lpSubKey subkey name
+	 * @param Reserved unused
+	 * @param lpClass class
+	 * @param dwOptions options
+	 * @param samDesired ?
+	 * @param lpSecurityAttributes security attributes
+	 * @param phkResult resulting key
+	 * @param lpdwDisposition ?
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
@@ -650,8 +650,8 @@ public interface Advapi32 extends StdCallLibrary {
 
 	/**
 	 *
-	 * @param hKey
-	 * @param name
+	 * @param hKey registry key
+	 * @param name key name
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
@@ -877,7 +877,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            If pvData is not NULL, set the contents of the buffer to
 	 *            zeroes on failure.
 	 *
-	 *            pdwType [out, optional]
+	 * @param pdwType
+         *            [out, optional]
 	 *
 	 *            A pointer to a variable that receives a code indicating the
 	 *            type of data stored in the specified value. For a list of the
@@ -938,10 +939,11 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            ERROR_SUCCESS. If the function fails, the return value is a
 	 *            system error code. If the pvData buffer is too small to
 	 *            receive the value, the function returns ERROR_MORE_DATA.
+         * @return status
 	 */
 	public int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
-			int dwFlags, IntByReference pdwType, byte[] pvData,
-			IntByReference pcbData);
+                               int dwFlags, IntByReference pdwType, byte[] pvData,
+                               IntByReference pcbData);
 
 	/**
 	 * Retrieves a registered handle to the specified event log.

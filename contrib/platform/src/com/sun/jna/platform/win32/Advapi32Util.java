@@ -1663,11 +1663,12 @@ public abstract class Advapi32Util {
 	 *
 	 * @param hKey
 	 *            Current registry key.
+         * @param lpcbSecurityDescriptor security descriptor
 	 *
 	 * @return A InfoKey value object.
 	 */
 	public static InfoKey registryQueryInfoKey(HKEY hKey,
-			int lpcbSecurityDescriptor) {
+                                                   int lpcbSecurityDescriptor) {
 
 		InfoKey infoKey = new InfoKey(hKey, lpcbSecurityDescriptor);
 		int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, infoKey.lpClass,
@@ -1711,6 +1712,7 @@ public abstract class Advapi32Util {
 	 *
 	 * @param hKey
 	 *            Current registry key.
+         * @param dwIndex
 	 *
 	 * @return A InfoKey value object.
 	 */
@@ -2128,9 +2130,10 @@ public abstract class Advapi32Util {
      * @param absoluteObjectPath
      *         A pointer to a null-terminated string that specifies the name of the object
      *         from which to retrieve security information. For descriptions of the string
-     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     *         formats for the different object types, see SE_OBJECT_TYPE in
+     *         {@link AccCtrl.SE_OBJECT_TYPE}
      * @param objectType
-     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     *         Object type referred to by the path. See  {@link AccCtrl.SE_OBJECT_TYPE} for valid definitions.
      * @param getSACL
      *         Get SACL of the object. See {@link Advapi32#GetNamedSecurityInfo} for process privilege requirements in getting the SACL.
      * @return Memory containing the self relative security descriptor
@@ -2171,9 +2174,9 @@ public abstract class Advapi32Util {
      * @param absoluteObjectPath
      *         A pointer to a null-terminated string that specifies the name of the object
      *         from which to retrieve security information. For descriptions of the string
-     *         formats for the different object types, see SE_OBJECT_TYPE in AccCtrl.java
+     *         formats for the different object types, see {@link AccCtrl.SE_OBJECT_TYPE}.
      * @param objectType
-     *         Object type referred to by the path. See  {@link AccCtrl#SE_OBJECT_TYPE} for valid definitions.
+     *         Object type referred to by the path. See  {@link AccCtrl.SE_OBJECT_TYPE} for valid definitions.
      * @param securityDescriptor
      *         A security descriptor to set.
      * @param setOwner

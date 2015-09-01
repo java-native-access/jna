@@ -10,10 +10,12 @@ import com.sun.jna.platform.win32.Guid.GUID;
 public class KnownFolders
 {
 /**
- * display name: "Network"<br/>
- * legacy display name: "My Network Places"<br/>
- * default path: <br/>
- * legacy CSIDL value: CSIDL_NETWORK<br/>
+ * <ul>
+ * <li>display name: "Network"</li>
+ * <li>legacy display name: "My Network Places"</li>
+ * <li>default path: </li>
+ * <li>legacy CSIDL value: CSIDL_NETWORK</li>
+ * </ul>
  */
 public static final GUID FOLDERID_NetworkFolder  =         GUID.fromString("{D20BEEC4-5CA8-4905-AE3B-BF251EA09B53}");
 
@@ -51,10 +53,12 @@ public static final GUID FOLDERID_ConnectionsFolder =      GUID.fromString("{6F0
 public static final GUID FOLDERID_Fonts =                  GUID.fromString("{FD228CB7-AE11-4AE3-864C-16F3910AB8FE}");
 
 /**
- * display name:        "Desktop"<br/>
- * default path:        "C:\Users\<UserName>\Desktop"
- * legacy default path: "C:\Documents and Settings\<userName>\Desktop"
- * legacy CSIDL value:  CSIDL_DESKTOP
+ * <ul>
+ * <li>display name:        "Desktop"</li>
+ * <li>default path:        "C:\Users\&lt;UserName&gt;\Desktop"</li>
+ * <li>legacy default path: "C:\Documents and Settings\&lt;userName&gt;\Desktop"</li>
+ * <li>legacy CSIDL value:  CSIDL_DESKTOP</li>
+ * </ul>
  */
 //{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}
 public static final GUID FOLDERID_Desktop =                GUID.fromString("{B4BFCC3A-DB2C-424C-B029-7FE99A87C641}");

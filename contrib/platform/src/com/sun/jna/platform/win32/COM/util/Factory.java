@@ -73,7 +73,7 @@ public class Factory {
 	 * CoInitialize must be called be fore this method. Either explicitly or
 	 * implicitly via other methods.
 	 * 
-	 * @return
+	 * @return running object table
 	 */
 	public IRunningObjectTable getRunningObjectTable() {
 		try {
@@ -117,7 +117,7 @@ public class Factory {
 	 * @param comInterface
 	 * @param unknownId
 	 * @param dispatch
-	 * @return
+	 * @return proxy object
 	 */
 	<T> T createProxy(Class<T> comInterface, long unknownId, IDispatch dispatch) {
 		ProxyObject jop = new ProxyObject(comInterface, unknownId, dispatch, this);

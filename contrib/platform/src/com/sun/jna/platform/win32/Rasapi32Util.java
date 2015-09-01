@@ -240,6 +240,7 @@ public abstract class Rasapi32Util {
 	/**
 	 * Dial a phone book entry by name (Synchronously)
 	 * @param entryName The phone book entry name
+         * @return result reference
 	 * @throws Ras32Exception errors
 	 */
 	public static HANDLE dialEntry(String entryName) throws Ras32Exception {
@@ -271,6 +272,7 @@ public abstract class Rasapi32Util {
 	/**
 	 * Dial a phone book entry by name (Asynchronously - callback type 2)
 	 * @param entryName The phone book entry name
+         * @param func2
 	 * @return the HRASCONN for this connection
 	 * @throws Ras32Exception errors
 	 */

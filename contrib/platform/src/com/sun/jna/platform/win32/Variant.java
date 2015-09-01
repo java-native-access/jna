@@ -741,6 +741,7 @@ public interface Variant {
 
         /**
          * construct VariantArg cast onto pre-allocated memory
+         * @param pointer base address
          */
         public VariantArg(Pointer pointer) {
         	super(pointer);

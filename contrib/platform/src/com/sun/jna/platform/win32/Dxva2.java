@@ -71,8 +71,8 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      *        (MC_SUPPORTED_COLOR_TEMPERATURE_*)
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is 
      *        FALSE. To get extended error information, call GetLastError. 
-     *        <br/><br/>
-     *        The function fails if the monitor does not support DDC/CI.
+     *        
+     *        <p>The function fails if the monitor does not support DDC/CI.</p>
      */
     BOOL GetMonitorCapabilities(HANDLE hMonitor, DWORDByReference pdwMonitorCapabilities, DWORDByReference pdwSupportedColorTemperatures);
 
@@ -82,9 +82,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Saves the current monitor settings to the display's nonvolatile storage.
-     * <br/><br/>
+     * <p>
      * This function takes about 200 milliseconds to return.
-     * This high-level function is identical to the low-level function SaveCurrentSettings.
+     * This high-level function is identical to the low-level function SaveCurrentSettings.</p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
@@ -114,9 +114,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's minimum, maximum, and current brightness settings.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_BRIGHTNESS flag.
-     * This function takes about 40 milliseconds to return. The brightness setting is a continuous monitor setting.
+     * This function takes about 40 milliseconds to return. The brightness setting is a continuous monitor setting.</p>
      * @param hMonitor Handle to a physical monitor
      * @param pdwMinimumBrightness Receives the monitor's minimum brightness.
      * @param pdwCurrentBrightness Receives the monitor's current brightness.
@@ -139,9 +139,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's current color temperature.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_COLOR_TEMPERATURE flag.
-     * This function takes between 0 and 80 milliseconds to return.
+     * This function takes between 0 and 80 milliseconds to return.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param pctCurrentColorTemperature Receives the monitor's current color temperature.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
@@ -150,10 +150,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's red, green, or blue drive value.
-     * <br/><br/>
+     * <p>
      * Drive settings are generally used to adjust the monitor's white point. Drive and black level are different 
      * names for the same monitor setting. If this function is supported, the GetMonitorCapabilities function returns 
-     * the MC_CAPS_RED_GREEN_BLUE_DRIVE flag.
+     * the MC_CAPS_RED_GREEN_BLUE_DRIVE flag.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param dtDriveType A member of the MC_DRIVE_TYPE enumeration, specifying whether to retrieve the red, green, or blue drive value.
      * @param pdwMinimumDrive Receives the minimum red, green, or blue drive value.
@@ -166,10 +166,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's red, green, or blue gain value.
-     * <br/><br/>
+     * <p>
      * Gain settings are generally used to adjust the monitor's white point. If this function is supported, the 
      * GetMonitorCapabilities function returns the MC_CAPS_RED_GREEN_BLUE_GAIN flag. This function takes about 40 milliseconds to return.
-     * The gain settings are continuous monitor settings.
+     * The gain settings are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param gtGainType A member of the MC_GAIN_TYPE enumeration, specifying whether to retrieve the red, green, or blue gain value.
      * @param pdwMinimumGain Receives the minimum red, green, or blue gain value.
@@ -182,10 +182,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets a monitor's brightness value.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_BRIGHTNESS flag.
      * This function takes about 50 milliseconds to return.
-     * The brightness setting is a continuous monitor setting. 
+     * The brightness setting is a continuous monitor setting. </p>
      * @param hMonitor Handle to a physical monitor.
      * @param dwNewBrightness Brightness value. To get the monitor's minimum and maximum brightness values, call GetMonitorBrightness.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
@@ -194,9 +194,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets a monitor's contrast value.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_CONTRAST flag.
-     * This function takes about 50 milliseconds to return. The brightness setting is a continuous monitor setting.
+     * This function takes about 50 milliseconds to return. The brightness setting is a continuous monitor setting.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param dwNewContrast Contrast value. To get the monitor's minimum and maximum contrast values, call GetMonitorContrast.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
@@ -205,13 +205,13 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets a monitor's color temperature.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_COLOR_TEMPERATURE flag. 
      * The GetMonitorCapabilities function also returns the range of color temperatures that the monitor supports. 
      * The ctCurrentColorTemperature parameter must correspond to one of these values. Changing the color temperature 
      * changes the monitor's white point. It can also change the current drive and gain settings. To get the new drive 
      * and gain settings, call GetMonitorRedGreenOrBlueDrive and GetMonitorRedGreenOrBlueGain, respectively.
-     * This function takes from 50 to 90 milliseconds to return.
+     * This function takes from 50 to 90 milliseconds to return.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param ctCurrentColorTemperature Color temperature, specified as a member of the MC_COLOR_TEMPERATURE enumeration.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
@@ -220,12 +220,12 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets a monitor's red, green, or blue drive value. 
-     * <br/><br/> 
+     * <p>
      * Drive settings are generally used to adjust the
      * monitor's white point. Drive and black level are different names for the same monitor setting. If this function
      * is supported, the GetMonitorCapabilities function returns the MC_CAPS_RED_GREEN_BLUE_DRIVE flag. This function
      * takes about 50 milliseconds to return. Changing the drive settings can change the color temperature. To get the
-     * new color temperature, call GetMonitorColorTemperature. The drive settings are continuous monitor settings
+     * new color temperature, call GetMonitorColorTemperature. The drive settings are continuous monitor settings</p>
      * @param hMonitor Handle to a physical monitor.
      * @param dtDriveType A member of the MC_DRIVE_TYPE enumeration, specifying whether to set the red, green, or blue
      * drive value.
@@ -237,12 +237,12 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets a monitor's red, green, or blue gain value. 
-     * <br/><br/> 
+     * <p>
      * Gain settings are generally used to adjust the
      * monitor's white point. If this function is supported, the GetMonitorCapabilities function returns the
      * MC_CAPS_RED_GREEN_BLUE_GAIN flag. This function takes about 50 milliseconds to return. Changing the gain settings
      * can change the color temperature. To get the new color temperature, call GetMonitorColorTemperature. The gain
-     * settings are continuous monitor settings.
+     * settings are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param gtGainType A member of the MC_GAIN_TYPE enumeration, specifying whether to set the red, green, or blue
      * gain.
@@ -254,11 +254,11 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Degausses a monitor.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DEGAUSS flag. Degaussing
      * is supported only by cathode ray tube (CRT) monitors. This function takes about 50 milliseconds to return. This
      * function should not be called frequently, because calling it frequently will not noticeably improve the monitor's
-     * image quality or color fidelity.
+     * image quality or color fidelity.</p>
      * @param hMonitor Handle to a physical monitor.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE
      */
@@ -270,9 +270,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's minimum, maximum, and current width or height.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
-     * This function takes about 40 milliseconds to return. The width and height settings are continuous monitor settings. 
+     * This function takes about 40 milliseconds to return. The width and height settings are continuous monitor settings. </p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to retrieve the width or the height. 
      * @param pdwMinimumWidthOrHeight Receives the minimum width or height. 
@@ -285,9 +285,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a monitor's minimum, maximum, and current horizontal or vertical position.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
-     * This function takes about 40 milliseconds to return. The horizontal and vertical position are continuous monitor settings.
+     * This function takes about 40 milliseconds to return. The horizontal and vertical position are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to retrieve the horizontal position or the vertical position. 
      * @param pdwMinimumPosition Receives the minimum horizontal or vertical position. 
@@ -301,9 +301,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets the width or height of a monitor's display area.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
-     * This function takes about 50 milliseconds to return. The width and height settings are continuous monitor settings.
+     * This function takes about 50 milliseconds to return. The width and height settings are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to set the width or the height. 
      * @param dwNewDisplayAreaWidthOrHeight Display area width or height. To get the minimum and maximum width and height, 
@@ -314,9 +314,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Sets the horizontal or vertical position of a monitor's display area.
-     * <br/><br/>
+     * <p>
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
-     * This function takes about 50 milliseconds to return. The horizontal and vertical position are continuous monitor settings. 
+     * This function takes about 50 milliseconds to return. The horizontal and vertical position are continuous monitor settings. </p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to set the horizontal position or the vertical position. 
      * @param dwNewPosition Horizontal or vertical position. To get the minimum and maximum position, call GetMonitorDisplayAreaPosition. 
@@ -337,9 +337,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      * MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS flag. This function takes about 5 seconds to return. This function might
      * reset monitor settings that are not accessible through the high-level monitor configuration functions. Whether
      * this occurs depends on the specific model of monitor. The following settings are not affected by this function:
-     * <li>Display area size</li>
+     * <ul><li>Display area size</li>
      * <li>Display area position</li>
-     * <li>Capabilities flags</li>
+     * <li>Capabilities flags</li></ul>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
@@ -368,7 +368,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves the current value, maximum value, and code type of a Virtual Control Panel (VCP) code for a monitor.
-     * This function corresponds to the "Get VCP Feature & VCP Feature Reply" command from the Display Data 
+     * This function corresponds to the "Get VCP Feature &amp; VCP Feature Reply" command from the Display Data 
      * Channel Command Interface (DDC/CI) standard. Vendor-specific VCP codes can be used with this function.
      * This function takes about 40 milliseconds to return. 
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
@@ -419,7 +419,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves a string describing a monitor's capabilities. This function corresponds to the
-     * "Capabilities Request & Capabilities Reply" command from the Display Data Channel Command Interface (DDC/CI)
+     * "Capabilities Request &amp; Capabilities Reply" command from the Display Data Channel Command Interface (DDC/CI)
      * standard. For more information about the capabilities string, refer to the DDC/CI standard. This function usually
      * returns quickly, but sometimes it can take several seconds to complete. You can update a monitor's capabilities
      * string by adding an AddReg directive to the monitor's INF file. Add a registry key named "CapabilitiesString" to

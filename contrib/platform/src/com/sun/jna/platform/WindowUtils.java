@@ -159,11 +159,11 @@ public class WindowUtils {
      * Ideally we'd have more control over {@link PopupFactory} but this
      * is a fairly simple, lightweight workaround.  Note that, at least as of
      * JDK 1.6, the following do not have the desired effect:<br>
-     * <code><pre>
+     * <pre><code>
      * ToolTipManager.sharedInstance().setLightWeightPopupEnabled(false);
      * JPopupMenu.setDefaultLightWeightPopupEnabled(false);
      * System.setProperty("JPopupMenu.defaultLWPopupEnabledKey", "false");
-     * </pre></code>
+     * </code></pre>
      */
     private static class HeavyweightForcer extends Window {
 		private static final long serialVersionUID = 1L;

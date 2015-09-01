@@ -230,6 +230,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            Pointer to a buffer that receives the error string. This parameter must not be NULL.
 	 * @param cBufSize
 	 *            Specifies the size, in characters, of the buffer pointed to by lpszErrorString.
+         * @return status
 	 */
 	public int RasGetErrorString(int uErrorValue, char[] lpszErrorString, int cBufSize);
 }

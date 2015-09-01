@@ -1278,6 +1278,7 @@ public interface OaIdl {
         /**
          * @param tdescElem
          *            C type : TYPEDESC<br>
+         * @param cDims dimensions
          * @param rgbounds
          *            [size_is]<br>
          *            C type : SAFEARRAYBOUND[1]
