@@ -170,7 +170,7 @@ ret_uint16$:
 	mov	rcx, QWORD PTR RVALUE[rbp]
 	movzx   rax, ax
 	mov	QWORD PTR [rcx], rax
-	jmp	SHORT ret_void$
+	jmp	ret_void$ ; too far with 'SHORT'
 
 ret_sint16$:
  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_SINT16
@@ -179,7 +179,7 @@ ret_sint16$:
 	mov	rcx, QWORD PTR RVALUE[rbp]
 	movsx   rax, ax
 	mov	QWORD PTR [rcx], rax
-	jmp	SHORT ret_void$
+	jmp	ret_void$ ; too far with 'SHORT'
 
 ret_uint32$:
  	cmp	DWORD PTR CIF_FLAGS[rbp], FFI_TYPE_UINT32
