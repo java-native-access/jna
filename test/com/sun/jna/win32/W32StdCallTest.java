@@ -122,7 +122,7 @@ public class W32StdCallTest extends TestCase {
     
     public void testStdCallReturnStructureByValueArgument() {
         TestLibrary.TestStructure.ByValue s = new TestLibrary.TestStructure.ByValue();
-        assertEquals("Wrong value", s, testlib.returnStructureByValueArgumentStdCall(s));
+        assertTrue("Wrong struct value", s.dataEquals(testlib.returnStructureByValueArgumentStdCall(s)));
     }
     
     public void testStdCallCallback() {

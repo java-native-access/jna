@@ -190,11 +190,11 @@ CC+= -m64
 FFI_CONFIG+=--host=x86_64-w64-mingw32
 endif
 FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
-FFI_ENV+=LD="$(LD)" CPP="$(CPP)"
+FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CXXCPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
 else
-PREFIX=i686-pc-mingw32-
-CC=$(PREFIX)gcc
+MINGW_PREFIX?=i686-pc-mingw32-
+CC=$(MINGW_PREFIX)gcc
 LDFLAGS=-o $@ -shared -Wl,--add-stdcall-alias
 LIBS=-lpsapi
 endif
@@ -203,7 +203,7 @@ ifeq ($(ARCH),amd64)
 # Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
-MINGW_PREFIX?=x86_64-pc-mingw32-
+MINGW_PREFIX?=x86_64-w64-mingw32-
 MINGW=$(MINGW_PREFIX)gcc 
 # Need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
@@ -372,8 +372,10 @@ install:
 	mkdir $(INSTALLDIR)
 	cp $(LIBRARY) $(INSTALLDIR)
 
+ifeq ($(ARCH), amd64)
 $(DLLCB): dll-callback.c 
 	$(MINGW) -DDEFINE_CALLBACKS -c $< $(COUT)
+endif
 
 $(RSRC): $(BUILD)/jnidispatch.rc $(BUILD)/$(JNA_JNI_VERSION).stamp
 	$(WINDRES) -i $< -o $@ \

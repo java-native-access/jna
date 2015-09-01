@@ -50,7 +50,9 @@
 #endif
 
 #define FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
+#ifndef _MSC_VER
 #define FFI_TARGET_HAS_COMPLEX_TYPE
+#endif
 
 /* ---- Generic type definitions ----------------------------------------- */
 

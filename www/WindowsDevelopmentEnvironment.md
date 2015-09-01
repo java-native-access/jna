@@ -29,15 +29,22 @@ When installing cygwin, include ssh, git, make, autotools, and
 mingw64-gcc-core.  Ensure the mingw64 compiler (i686-pc-mingw64-gcc.exe) is on
 your path.
 
+MSVC
+----
+
 #### Visual Studio
 
-You can optionally use the free MS Visual Studio C++ Express compiler to compile
-native bits. The MS compiler provides structured event handling (SEH),
-which allows JNA to trap native faults when run in protected mode.
+JNA uses the free MS Visual Studio C++ Express compiler to compile
+native bits if MSVC is set in the environment. The MS compiler provides
+structured event handling (SEH), which allows JNA to trap native faults when
+run in protected mode. 
 
-To use the MS compiler, ensure that the 64-bit versions of
-cl.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and LIB
-environment variables are set properly (as in VCVARS.BAT). 
+On 64-bit windows, you will still need to install mingw64-gcc-core in order to
+compile a small bit of inline assembly.
+
+To use the MS compiler, ensure that the appropriate 32-bit or 64-bit versions
+of cl.exe/ml.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and
+LIB environment variables are set properly (as in VCVARS.BAT). 
 
 Sample configuration setting up INCLUDE/LIB:
 
