@@ -378,15 +378,18 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     args[2] = &cb->methodID;
     memcpy(&args[3], cbargs, cif->nargs * sizeof(void *));
 
+    // Note that there is no support for CVT_TYPE_MAPPER here
     if (cb->conversion_flags) {
       for (i=0;i < cif->nargs;i++) {
         switch(cb->conversion_flags[i]) {
         case CVT_INTEGER_TYPE:
         case CVT_POINTER_TYPE:
         case CVT_NATIVE_MAPPED:
+        case CVT_NATIVE_MAPPED_STRING:
+        case CVT_NATIVE_MAPPED_WSTRING:
 	  // Make sure we have space enough for the new argument
 	  args[i+3] = alloca(sizeof(void *));
-	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE);
+	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE, cb->encoding);
           break;
         case CVT_POINTER:
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
@@ -410,6 +413,11 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_FLOAT:
 	  args[i+3] = alloca(sizeof(double));
 	  *((double *)args[i+3]) = *(float*)cbargs[i];
+          break;
+        case CVT_DEFAULT:
+          break;
+        default:
+          fprintf(stderr, "JNA: Unhandled arg conversion type %d\n", cb->conversion_flags[i]);
           break;
         }
       }
@@ -447,7 +455,13 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       *(void **)resp = getPointerTypeAddress(env, *(void **)resp);
       break;
     case CVT_NATIVE_MAPPED:
-      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE);
+      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE, cb->encoding);
+      break;
+    case CVT_NATIVE_MAPPED_STRING:
+    case CVT_NATIVE_MAPPED_WSTRING:
+      // TODO: getNativeString rather than allocated memory
+      fprintf(stderr, "JNA: Likely memory leak here\n");
+      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE, cb->encoding);
       break;
     case CVT_POINTER:
       *(void **)resp = getNativeAddress(env, *(void **)resp);
@@ -469,7 +483,10 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     case CVT_CALLBACK: 
       *(void **)resp = getCallbackAddress(env, *(void **)resp);
       break;
+    case CVT_DEFAULT:
+      break;
     default:
+      fprintf(stderr, "JNA: Unhandled result conversion: %d\n", cb->rflag);
       break;
     }
     if (cb->conversion_flags) {
@@ -487,7 +504,7 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     unsigned int i;
 
     for (i=0;i < cif->nargs;i++) {
-      jobject arg = new_object(env, cb->arg_jtypes[i], cbargs[i], JNI_FALSE);
+      jobject arg = new_object(env, cb->arg_jtypes[i], cbargs[i], JNI_FALSE, cb->encoding);
       (*env)->SetObjectArrayElement(env, params, i, arg);
     }
     result = (*env)->CallObjectMethod(env, self, cb->methodID, params);
@@ -501,7 +518,7 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         memset(resp, 0, cif->rtype->size);
     }
     else {
-      extract_value(env, result, resp, cif->rtype->size, JNI_TRUE);
+      extract_value(env, result, resp, cif->rtype->size, JNI_TRUE, cb->encoding);
     }
   }
 }

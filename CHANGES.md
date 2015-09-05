@@ -75,6 +75,7 @@ Bug Fixes
 * [#420](https://github.com/twall/jna/pull/420): Fix structure leaving always one element in ThreadLocal set - [@sjappig](https://github.com/sjappig).
 * [#467](https://github.com/twall/jna/issues/467): Fix TypeMapper usage with direct-mapped libraries converting primitives to Java objects (specifically enums) - [@twall](https://github.com/twall).
 * [#475](https://github.com/twall/jna/issues/475): Avoid modifying native memory in `Structure.equals()/hashCode()`- [@twall](https://github.com/twall).
+* [#496](https://github.com/twall/jna/issues/496): Properly handle direct mapping with type mappers which return String/WString - [@twall](https://github.com/twall).
 
 Release 4.1
 ===========

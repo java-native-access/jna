@@ -755,8 +755,8 @@ callCallbackWithByReferenceArgument(int (*func)(int arg, int* result), int arg, 
 }
 
 EXPORT char*
-callStringCallback(char* (*func)(char* arg), char* arg) {
-  return (*func)(arg);
+callStringCallback(char* (*func)(const char* arg, const char* arg2), const char* arg, const char* arg2) {
+  return (*func)(arg, arg2);
 }
 
 EXPORT char**
@@ -765,8 +765,8 @@ callStringArrayCallback(char** (*func)(char** arg), char** arg) {
 }
 
 EXPORT wchar_t*
-callWideStringCallback(wchar_t* (*func)(wchar_t* arg), wchar_t* arg) {
-  return (*func)(arg);
+callWideStringCallback(wchar_t* (*func)(const wchar_t* arg, const wchar_t* arg2), const wchar_t* arg, const wchar_t* arg2) {
+  return (*func)(arg, arg2);
 }
 
 struct cbstruct {

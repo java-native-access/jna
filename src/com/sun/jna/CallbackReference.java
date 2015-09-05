@@ -165,13 +165,14 @@ class CallbackReference extends WeakReference {
                     direct = false;
                     break;
                 }
-                // No TypeMapper support in native callback code
+                // Direct mode callbacks do not support TypeMapper
                 if (mapper != null
                     && mapper.getFromNativeConverter(ptypes[i]) != null) {
                     direct = false;
                     break;
                 }
             }
+            // Direct mode callbacks do not support TypeMapper
             if (mapper != null
                 && mapper.getToNativeConverter(m.getReturnType()) != null) {
                 direct = false;

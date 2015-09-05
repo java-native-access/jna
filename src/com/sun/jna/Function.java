@@ -299,26 +299,25 @@ public class Function extends Pointer {
                                       mapper, allowObjects, paramType);
         }
         
-        Class nativeType = returnType;
+        Class nativeReturnType = returnType;
         FromNativeConverter resultConverter = null;
         if (NativeMapped.class.isAssignableFrom(returnType)) {
             NativeMappedConverter tc = NativeMappedConverter.getInstance(returnType);
             resultConverter = tc;
-            nativeType = tc.nativeType();
+            nativeReturnType = tc.nativeType();
         }
         else if (mapper != null) {
             resultConverter = mapper.getFromNativeConverter(returnType);
             if (resultConverter != null) {
-                nativeType = resultConverter.nativeType();
+                nativeReturnType = resultConverter.nativeType();
             }
         }
 
-        Object result = invoke(args, nativeType, allowObjects);
+        Object result = invoke(args, nativeReturnType, allowObjects);
 
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
             FromNativeContext context;
-            
             if (invokingMethod != null) {
                 context = new MethodResultContext(returnType, this, inArgs, invokingMethod);
             } else {

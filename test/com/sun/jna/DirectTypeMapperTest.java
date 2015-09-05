@@ -19,6 +19,8 @@ import junit.framework.TestCase;
 
 public class DirectTypeMapperTest extends TestCase {
 
+    private static final String UNICODE = "[\0444]";
+
     /** Converts boolean to int when going to native. */
     public static class DirectTestLibraryBoolean {
         final static int MAGIC = 0xABEDCF23;
@@ -94,6 +96,34 @@ public class DirectTypeMapperTest extends TestCase {
             Native.register(NativeLibrary.getInstance("testlib", options));
         }
     }
+    /** Converts String to WString and back. */
+    public static class DirectTestLibraryWString {
+        public native String returnWStringArgument(String s);
+        static {
+            DefaultTypeMapper mapper = new DefaultTypeMapper();
+            mapper.addTypeConverter(String.class, new TypeConverter() {
+                public Object toNative(Object value, ToNativeContext ctx) {
+                    if (value == null) {
+                        return null;
+                    }
+                    return new WString(value.toString());
+                }
+                public Object fromNative(Object value, FromNativeContext context) {
+                    if (value == null) {
+                        return null;
+                    }
+                    return value.toString();
+                }
+                public Class nativeType() {
+                    return WString.class;
+                }
+            });
+            Map options = new HashMap();
+            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+            
+            Native.register(NativeLibrary.getInstance("testlib", options));
+        }
+    }
     public void testBooleanToIntArgumentConversion() {
         DirectTestLibraryBoolean lib = new DirectTestLibraryBoolean();
         assertEquals("Failed to convert Boolean argument to Int",
@@ -119,6 +149,13 @@ public class DirectTypeMapperTest extends TestCase {
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
+    public void testStringToWStringArgumentConversion() {
+        final String MAGIC = "magic" + UNICODE;
+        DirectTestLibraryWString lib = new DirectTestLibraryWString();
+        assertEquals("Failed to convert String argument to WString", MAGIC,
+                     lib.returnWStringArgument(MAGIC));
+    }
+
     /** Uses a type mapper to convert boolean->int and int->boolean */
     public static class DirectTestLibraryBidirectionalBoolean {
         public native boolean returnInt32Argument(boolean b);
