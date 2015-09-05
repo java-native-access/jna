@@ -155,13 +155,13 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         SmallTestStructure callStructureCallback(StructureCallback c, SmallTestStructure arg);
         interface StringCallback extends Callback {
-            String callback(String arg);
+            String callback(String arg, String arg2);
         }
-        String callStringCallback(StringCallback c, String arg);
+        String callStringCallback(StringCallback c, String arg, String arg2);
         interface WideStringCallback extends Callback {
-            WString callback(WString arg);
+            WString callback(WString arg, WString arg2);
         }
-        WString callWideStringCallback(WideStringCallback c, WString arg);
+        WString callWideStringCallback(WideStringCallback c, WString arg, WString arg2);
         interface CopyArgToByReference extends Callback {
         	int callback(int arg, IntByReference result);
         }
@@ -517,8 +517,8 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         boolean value = lib.callBooleanCallback(cb, true, false);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", true, cbargs[0]);
-        assertEquals("Wrong callback argument 2", false, cbargs[1]);
+        assertEquals("Wrong first callback argument", true, cbargs[0]);
+        assertEquals("Wrong second callback argument", false, cbargs[1]);
         assertFalse("Wrong boolean return", value);
     }
     
@@ -536,10 +536,10 @@ public class CallbacksTest extends TestCase implements Paths {
         final byte MAGIC = 0x11; 
         byte value = lib.callInt8Callback(cb, MAGIC, (byte)(MAGIC*2));
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", 
+        assertEquals("Wrong first callback argument", 
                      Integer.toHexString(MAGIC), 
                      Integer.toHexString(cbargs[0]));
-        assertEquals("Wrong callback argument 2", 
+        assertEquals("Wrong second callback argument", 
                      Integer.toHexString(MAGIC*2), 
                      Integer.toHexString(cbargs[1]));
         assertEquals("Wrong byte return", 
@@ -564,10 +564,10 @@ public class CallbacksTest extends TestCase implements Paths {
         final short MAGIC = 0x1111;
         short value = lib.callInt16Callback(cb, MAGIC, (short)(MAGIC*2));
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", 
+        assertEquals("Wrong first callback argument", 
                      Integer.toHexString(MAGIC), 
                      Integer.toHexString(cbargs[0]));
-        assertEquals("Wrong callback argument 2", 
+        assertEquals("Wrong second callback argument", 
                      Integer.toHexString(MAGIC*2), 
                      Integer.toHexString(cbargs[1]));
         assertEquals("Wrong short return", 
@@ -591,8 +591,8 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         NativeLong value = lib.callNativeLongCallback(cb, new NativeLong(1), new NativeLong(2));
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", new NativeLong(1), cbargs[0]);
-        assertEquals("Wrong callback argument 2", new NativeLong(2), cbargs[1]);
+        assertEquals("Wrong first callback argument", new NativeLong(1), cbargs[0]);
+        assertEquals("Wrong second callback argument", new NativeLong(2), cbargs[1]);
         assertEquals("Wrong boolean return", new NativeLong(3), value);
     }
     
@@ -609,32 +609,35 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         int value = lib.callInt32Callback(cb, 1, 2);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", new Custom(1), cbargs[0]);
-        assertEquals("Wrong callback argument 2", new Custom(2), cbargs[1]);
+        assertEquals("Wrong first callback argument", new Custom(1), cbargs[0]);
+        assertEquals("Wrong second callback argument", new Custom(2), cbargs[1]);
         assertEquals("Wrong NativeMapped return", 3, value);
     }
     
     public void testCallStringCallback() {
         final boolean[] called = {false};
-        final String[] cbargs = { null };
+        final String[] cbargs = { null, null };
         TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
-            public String callback(String arg) {
+            public String callback(String arg, String arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
-                return arg;
+                cbargs[1] = arg2;
+                return arg + arg2;
             }
         };
         final String VALUE = "value" + UNICODE;
-        String value = lib.callStringCallback(cb, VALUE);
+        final String VALUE2 = getName() + UNICODE;
+        String value = lib.callStringCallback(cb, VALUE, VALUE2);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong String callback argument", VALUE, cbargs[0]);
-        assertEquals("Wrong String return", VALUE, value);
+        assertEquals("Wrong String callback argument 0", VALUE, cbargs[0]);
+        assertEquals("Wrong String callback argument 1", VALUE2, cbargs[1]);
+        assertEquals("Wrong String return", VALUE + VALUE2, value);
     }
     
     public void testStringCallbackMemoryReclamation() throws InterruptedException {
         TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
-            public String callback(String arg) {
-                return arg;
+            public String callback(String arg, String arg2) {
+                return arg + arg2;
             }
         };
 
@@ -643,7 +646,8 @@ public class CallbacksTest extends TestCase implements Paths {
         m.clear();
 
         String arg = getName() + "1" + UNICODE;
-        String value = lib.callStringCallback(cb, arg);
+        String arg2 = getName() + "2" + UNICODE;
+        String value = lib.callStringCallback(cb, arg, arg2);
         WeakReference ref = new WeakReference(value);
         
         arg = null;
@@ -661,19 +665,22 @@ public class CallbacksTest extends TestCase implements Paths {
 
     public void testCallWideStringCallback() {
         final boolean[] called = {false};
-        final WString[] cbargs = { null };
+        final WString[] cbargs = { null, null };
         TestLibrary.WideStringCallback cb = new TestLibrary.WideStringCallback() {
-            public WString callback(WString arg) {
+            public WString callback(WString arg, WString arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
-                return arg;
+                cbargs[1] = arg2;
+                return new WString(arg.toString() + arg2.toString());
             }
         };
-        final WString VALUE = new WString("value" + UNICODE);
-        WString value = lib.callWideStringCallback(cb, VALUE);
+        final WString VALUE = new WString("magic" + UNICODE);
+        final WString VALUE2 = new WString(getName() + UNICODE);
+        WString value = lib.callWideStringCallback(cb, VALUE, VALUE2);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback argument 1", VALUE, cbargs[0]);
-        assertEquals("Wrong wide string return", VALUE, value);
+        assertEquals("Wrong first callback argument", VALUE, cbargs[0]);
+        assertEquals("Wrong second callback argument", VALUE2, cbargs[1]);
+        assertEquals("Wrong wide string return", new WString(VALUE.toString() + VALUE2.toString()), value);
     }
     
     public void testCallStringArrayCallback() {
@@ -943,36 +950,68 @@ public class CallbacksTest extends TestCase implements Paths {
         lib.callVoidCallback(cb);
     }
 
+    protected static class CallbackTypeMapper extends DefaultTypeMapper {
+        public int fromNativeConversions = 0;
+        public int toNativeConversions = 0;
+        public void clear() { 
+            fromNativeConversions = 0;
+            toNativeConversions = 0;
+        }
+        {
+            // Convert java doubles into native integers and back
+            TypeConverter converter = new TypeConverter() {
+                public Object fromNative(Object value, FromNativeContext context) {
+                    ++fromNativeConversions;
+                    return new Double(((Integer)value).intValue());
+                }
+                public Class nativeType() {
+                    return Integer.class;
+                }
+                public Object toNative(Object value, ToNativeContext ctx) {
+                    ++toNativeConversions;
+                    return new Integer(((Double)value).intValue());
+                }
+            };
+            addTypeConverter(double.class, converter);
+            converter = new TypeConverter() {
+                public Object fromNative(Object value, FromNativeContext context) {
+                    ++fromNativeConversions;
+                    return new Float(((Long)value).intValue());
+                }
+                public Class nativeType() {
+                    return Long.class;
+                }
+                public Object toNative(Object value, ToNativeContext ctx) {
+                    ++toNativeConversions;
+                    return new Long(((Float)value).longValue());
+                }
+            };
+            addTypeConverter(float.class, converter);
+            converter = new TypeConverter() {
+                public Object fromNative(Object value, FromNativeContext context) {
+                    ++fromNativeConversions;
+                    if (value == null) {
+                        return null;
+                    }
+                    if (value instanceof Pointer) {
+                        return ((Pointer)value).getWideString(0);
+                    }
+                    return value.toString();
+                }
+                public Class nativeType() {
+                    return WString.class;
+                }
+                public Object toNative(Object value, ToNativeContext ctx) {
+                    ++toNativeConversions;
+                    return new WString(value.toString());
+                }
+            };
+            addTypeConverter(String.class, converter);
+        }
+    }
+
     public static interface CallbackTestLibrary extends Library {
-        final TypeMapper _MAPPER = new DefaultTypeMapper() {
-            {
-                // Convert java doubles into native integers and back
-                TypeConverter converter = new TypeConverter() {
-                    public Object fromNative(Object value, FromNativeContext context) {
-                        return new Double(((Integer)value).intValue());
-                    }
-                    public Class nativeType() {
-                        return Integer.class;
-                    }
-                    public Object toNative(Object value, ToNativeContext ctx) {
-                        return new Integer(((Double)value).intValue());
-                    }
-                };
-                addTypeConverter(double.class, converter);
-                converter = new TypeConverter() {
-                    public Object fromNative(Object value, FromNativeContext context) {
-                        return new Float(((Long)value).intValue());
-                    }
-                    public Class nativeType() {
-                        return Long.class;
-                    }
-                    public Object toNative(Object value, ToNativeContext ctx) {
-                        return new Long(((Float)value).longValue());
-                    }
-                };
-                addTypeConverter(float.class, converter);
-            }
-        };
+        final CallbackTypeMapper _MAPPER = new CallbackTypeMapper();
         final Map _OPTIONS = new HashMap() {
             {
                 put(Library.OPTION_TYPE_MAPPER, _MAPPER);
@@ -986,6 +1025,10 @@ public class CallbacksTest extends TestCase implements Paths {
             float callback(float arg, float arg2);
         }
         float callInt64Callback(FloatCallback c, float arg, float arg2);
+        interface WStringCallback extends Callback {
+            String callback(String arg, String arg2);
+        }
+        String callWideStringCallback(WStringCallback c, String arg, String arg2);
     }
 
     protected CallbackTestLibrary loadCallbackTestLibrary() {
@@ -1000,6 +1043,7 @@ public class CallbacksTest extends TestCase implements Paths {
     */
     public void testCallbackUsesTypeMapper() throws Exception {
         CallbackTestLibrary lib = loadCallbackTestLibrary();
+        lib._MAPPER.clear();
 
         final double[] ARGS = new double[2];
 
@@ -1015,10 +1059,45 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong type mapper for callback object", lib._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
-        double result = lib.callInt32Callback(cb, -1, -1);
-        assertEquals("Wrong callback argument 1", -1, ARGS[0], 0);
-        assertEquals("Wrong callback argument 2", -1, ARGS[1], 0);
-        assertEquals("Incorrect result of callback invocation", -2, result, 0);
+        double result = lib.callInt32Callback(cb, -1, -2);
+        assertEquals("Wrong first callback argument", -1, ARGS[0], 0);
+        assertEquals("Wrong second callback argument", -2, ARGS[1], 0);
+        assertEquals("Incorrect result of callback invocation", -3, result, 0);
+
+        // Once per argument, then again for return value (convert native int->Java double)
+        assertEquals("Type mapper not called for arguments", 3, lib._MAPPER.fromNativeConversions);
+        // Once per argument, then again for return value (convert Java double->native int)
+        assertEquals("Type mapper not called for result", 3, lib._MAPPER.toNativeConversions);
+    }
+
+    public void testTypeMapperWithWideStrings() throws Exception {
+        CallbackTestLibrary lib = loadCallbackTestLibrary();
+        lib._MAPPER.clear();
+
+        final String[] ARGS = new String[2];
+
+        CallbackTestLibrary.WStringCallback cb = new CallbackTestLibrary.WStringCallback() {
+            public String callback(String arg, String arg2) {
+                ARGS[0] = arg;
+                ARGS[1] = arg2;
+                return arg + arg2;
+            }
+        };
+        assertEquals("Wrong type mapper for callback class", lib._MAPPER,
+                     Native.getTypeMapper(CallbackTestLibrary.WStringCallback.class));
+        assertEquals("Wrong type mapper for callback object", lib._MAPPER,
+                     Native.getTypeMapper(cb.getClass()));
+
+        final String[] EXPECTED = { "magic" + UNICODE, getName() + UNICODE };
+        String result = lib.callWideStringCallback(cb, EXPECTED[0], EXPECTED[1]);
+        assertEquals("Wrong first callback argument", EXPECTED[0], ARGS[0]);
+        assertEquals("Wrong second callback argument", EXPECTED[1], ARGS[1]);
+        assertEquals("Incorrect result of callback invocation", EXPECTED[0] + EXPECTED[1], result);
+
+        // Once per argument, then again for return value (convert const wchar_t*->Java String)
+        assertEquals("Type mapper not called for arguments", 3, lib._MAPPER.fromNativeConversions);
+        // Once per argument, then again for return value (convert Java String->const wchar_t*)
+        assertEquals("Type mapper not called for result", 3, lib._MAPPER.toNativeConversions);
     }
 
     public void testCallbackUsesTypeMapperWithDifferentReturnTypeSize() throws Exception {
@@ -1038,10 +1117,10 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong type mapper for callback object", lib._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
-        float result = lib.callInt64Callback(cb, -1, -1);
-        assertEquals("Wrong callback argument 1", -1, ARGS[0], 0);
-        assertEquals("Wrong callback argument 2", -1, ARGS[1], 0);
-        assertEquals("Incorrect result of callback invocation", -2, result, 0);
+        float result = lib.callInt64Callback(cb, -1, -2);
+        assertEquals("Wrong first callback argument", -1, ARGS[0], 0);
+        assertEquals("Wrong second callback argument", -2, ARGS[1], 0);
+        assertEquals("Incorrect result of callback invocation", -3, result, 0);
     }
 
     protected void callThreadedCallback(TestLibrary.VoidCallback cb,

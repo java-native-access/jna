@@ -20,7 +20,7 @@ JNA supports a direct mapping method which can improve performance substantially
         }
     }
 
-Direct mapping supports the same type mappings as interface mapping, except for arrays of `Pointer`/`Structure`/`String`/`WString`/`NativeMapped` as function arguments.  
+Direct mapping supports the same type mappings as interface mapping, except for arrays of `Pointer`/`Structure`/`String`/`WString`/`NativeMapped` as function arguments.  In addition, direct mapping does not support NIO Buffers or primitive arrays as types returned by type mappers or `NativeMapped`.
 
 **Varargs are not supported**.
 

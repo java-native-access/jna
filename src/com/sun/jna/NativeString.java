@@ -27,6 +27,13 @@ class NativeString implements CharSequence, Comparable {
     private Pointer pointer;
     private String encoding;
 
+    private class StringMemory extends Memory {
+        public StringMemory(long size) { super(size); }
+        public String toString() {
+            return NativeString.this.toString();
+        }
+    }
+
     /** Create a native string (NUL-terminated array of <code>char</code>).<p>
      * Uses the encoding returned by {@link Native#getDefaultStringEncoding()}.
      */
@@ -66,12 +73,12 @@ class NativeString implements CharSequence, Comparable {
         this.encoding = encoding;
         if (this.encoding == WIDE_STRING) {
             int len = (string.length() + 1 ) * Native.WCHAR_SIZE;
-            pointer = new Memory(len);
+            pointer = new StringMemory(len);
             pointer.setWideString(0, string);
         }
         else {
             byte[] data = Native.getBytes(string, encoding);
-            pointer = new Memory(data.length + 1);
+            pointer = new StringMemory(data.length + 1);
             pointer.write(0, data, 0, data.length);
             pointer.setByte(data.length, (byte)0);
         }

@@ -962,8 +962,9 @@ get_conversion_flag(JNIEnv* env, jclass cls) {
 int
 get_java_type_from_ffi_type(ffi_type* type) {
   switch(type->type) {
-    // FIXME aliases 'C' on *nix; this will cause problems if anyone
-    // ever installs a type mapper for char/Character (not a common arg type)
+    // NOTE 'Z' aliases 'C' on *nix and platforms where sizeof(wchar_t) is 4;
+    // this will cause problems if anyone ever installs a type mapper for 
+    // char/Character (not a common arg type)
   case FFI_TYPE_UINT32: return 'Z';
   case FFI_TYPE_SINT8: return 'B';
   case FFI_TYPE_SINT16: return 'S';
@@ -1113,11 +1114,11 @@ getFFITypeTypeMapped(JNIEnv* env, jobject converter) {
 }
 
 void
-toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote) {
+toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote, const char* encoding) {
   if (obj != NULL) {
     jobject arg = (*env)->CallObjectMethod(env, obj, MID_NativeMapped_toNative);
     if (!(*env)->ExceptionCheck(env)) {
-      extract_value(env, arg, valuep, size, promote);
+      extract_value(env, arg, valuep, size, promote, encoding);
     }
   }
   else {
@@ -1126,11 +1127,11 @@ toNative(JNIEnv* env, jobject obj, void* valuep, size_t size, jboolean promote) 
 }
 
 static void
-toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject to_native) {
+toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject to_native, const char* encoding) {
   if (obj != NULL) {
     jobject arg = (*env)->CallStaticObjectMethod(env, classNative, MID_Native_toNativeTypeMapped, to_native, obj);
     if (!(*env)->ExceptionCheck(env)) {
-      extract_value(env, arg, valuep, size, JNI_FALSE);
+      extract_value(env, arg, valuep, size, JNI_FALSE, encoding);
     }
   }
   else {
@@ -1141,11 +1142,11 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
 static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native,
                      void* native_return_value,
-                     ffi_type* native_return_type,
+                     int jtype, int size,
                      jclass java_return_class,
-                     void* result_storage) {
-  int jtype = get_java_type_from_ffi_type(native_return_type);
-  jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE);
+                     void* result_storage,
+                     const char* encoding) {
+  jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE, encoding);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                  MID_Native_fromNativeTypeMapped,
@@ -1160,7 +1161,7 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native,
           || (*env)->IsSameObject(env, java_return_class, classPrimitiveLong)
           || (*env)->IsSameObject(env, java_return_class, classPrimitiveFloat)
           || (*env)->IsSameObject(env, java_return_class, classPrimitiveDouble)) {
-        extract_value(env, obj, result_storage, native_return_type->size, JNI_TRUE);
+        extract_value(env, obj, result_storage, size, JNI_TRUE, encoding);
       }
       else {
         *(jobject*)result_storage = obj;
@@ -1170,9 +1171,9 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native,
 }
 
 jobject
-fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote) {
+fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote, const char* encoding) {
   int jtype = get_java_type_from_ffi_type(type);
-  jobject value = new_object(env, (char)jtype, resp, promote);
+  jobject value = new_object(env, (char)jtype, resp, promote, encoding);
   if (!(*env)->ExceptionCheck(env)) {
     return (*env)->CallStaticObjectMethod(env, classNative,
                                           MID_Native_fromNative,
@@ -1455,9 +1456,12 @@ JNA_init(JNIEnv* env) {
   return NULL;
 }
 
-/** Copy value from the given Java object into the given storage buffer. */
+/** Copy value from the given Java object into the given storage buffer.
+ * If the value is being extracted from a String or WString, you are
+ * responsible for freeing the allocated memory.
+ */
 void
-extract_value(JNIEnv* env, jobject value, void* buffer, size_t size, jboolean promote) {
+extract_value(JNIEnv* env, jobject value, void* buffer, size_t size, jboolean promote, const char* encoding) {
   if (value == NULL) {
     *(void **)buffer = NULL;
   }
@@ -1525,19 +1529,32 @@ extract_value(JNIEnv* env, jobject value, void* buffer, size_t size, jboolean pr
   else if ((*env)->IsInstanceOf(env, value, classPointer)) {
     *(void **)buffer = getNativeAddress(env, value);
   }
+  else if ((*env)->IsInstanceOf(env, value, classString)) {
+    *(void **)buffer = newCStringEncoding(env, (jstring)value, encoding);
+  }
+  else if ((*env)->IsInstanceOf(env, value, classWString)) {
+    jstring s = (*env)->CallObjectMethod(env, value, MID_Object_toString);
+    *(void **)buffer = newWideCString(env, s);
+  }
   else {
-    fprintf(stderr, "JNA: extract_value: unrecognized return type, size %d\n", (int)size);
+    char msg[MSG_SIZE];
+    snprintf(msg, sizeof(msg), "Can't convert type to native, native size %d\n", (int)size);
+    fprintf(stderr, "JNA: extract_value: %s", msg);
     memset(buffer, 0, size);
-    throwByName(env, EError, "Unrecognized return type");
+    throwByName(env, EError, msg);
   }
 }
 
 /** Construct a new Java object from a native value.  */
 jobject
-new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote) {
+new_object(JNIEnv* env, char jtype, void* valuep, jboolean promote, const char* encoding) {
     switch(jtype) {
     case 's':
       return newJavaPointer(env, valuep);
+    case 'c':
+      return newJavaString(env, *(void**)valuep, encoding);
+    case 'w':
+      return newJavaString(env, *(void **)valuep, NULL);
     case '*':
       return newJavaPointer(env, *(void**)valuep);
     case 'J':
@@ -1613,6 +1630,8 @@ get_ffi_type(JNIEnv* env, jclass cls, char jtype) {
     return NULL;
   }
   case '*':
+  case 'c':
+  case 'w':
   default:
     return &ffi_type_pointer;
   }
@@ -1706,22 +1725,27 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         *(void **)args[i] = getPointerTypeAddress(env, *(void **)args[i]);
         break;
       case CVT_TYPE_MAPPER:
+      case CVT_TYPE_MAPPER_STRING:
+      case CVT_TYPE_MAPPER_WSTRING:
         {
           void* valuep = args[i];
           int jtype = get_java_type_from_ffi_type(data->closure_cif.arg_types[i+2]);
           jobject obj = jtype == '*'
             ? *(void **)valuep
-            : new_object(env, (char)jtype, valuep, JNI_FALSE);
+            : new_object(env, (char)jtype, valuep, JNI_FALSE, data->encoding);
           if (cif->arg_types[i+2]->size < data->cif.arg_types[i]->size) {
             args[i] = alloca(data->cif.arg_types[i]->size);
           }
           toNativeTypeMapped(env, obj, args[i],
                              data->cif.arg_types[i]->size,
-                             data->to_native[i]);
+                             data->to_native[i],
+                             data->encoding);
         }
         break;
       case CVT_NATIVE_MAPPED:
-        toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE);
+      case CVT_NATIVE_MAPPED_STRING:
+      case CVT_NATIVE_MAPPED_WSTRING:
+        toNative(env, *(void **)args[i], args[i], data->cif.arg_types[i]->size, JNI_FALSE, data->encoding);
         break;
       case CVT_POINTER:
         *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
@@ -1825,12 +1849,22 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
 
   switch(data->rflag) {
   case CVT_TYPE_MAPPER:
-    fromNativeTypeMapped(env, data->from_native, resp, data->cif.rtype, data->closure_rclass, oldresp);
+  case CVT_TYPE_MAPPER_STRING:
+  case CVT_TYPE_MAPPER_WSTRING:
+    {
+      int jtype = (data->rflag == CVT_TYPE_MAPPER_STRING
+                   ? 'c' : (data->rflag == CVT_TYPE_MAPPER_WSTRING
+                            ? 'w' : get_java_type_from_ffi_type(data->cif.rtype)));
+      fromNativeTypeMapped(env, data->from_native, resp, jtype, data->cif.rtype->size,
+                           data->closure_rclass, oldresp, data->encoding);
+    }
     break;
   case CVT_INTEGER_TYPE:
   case CVT_POINTER_TYPE:
   case CVT_NATIVE_MAPPED:
-    *(void **)oldresp = fromNative(env, data->closure_rclass, data->cif.rtype, resp, JNI_TRUE);
+  case CVT_NATIVE_MAPPED_STRING:
+  case CVT_NATIVE_MAPPED_WSTRING:
+    *(void **)oldresp = fromNative(env, data->closure_rclass, data->cif.rtype, resp, JNI_TRUE, data->encoding);
     break;
   case CVT_POINTER:
     *(void **)resp = newJavaPointer(env, *(void **)resp);
@@ -1865,6 +1899,10 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         break;
       case CVT_STRING:
       case CVT_WSTRING:
+      case CVT_TYPE_MAPPER_STRING:
+      case CVT_TYPE_MAPPER_WSTRING:
+      case CVT_NATIVE_MAPPED_STRING:
+      case CVT_NATIVE_MAPPED_WSTRING:
         // Free allocated native strings
         free(*(void **)args[i]);
         break;
@@ -3281,7 +3319,9 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
     if (cvts) {
       data->flags[i] = cvts[i];
       // Type mappers only apply to non-primitive arguments
-      if (cvts[i] == CVT_TYPE_MAPPER) {
+      if (cvts[i] == CVT_TYPE_MAPPER
+          || cvts[i] == CVT_TYPE_MAPPER_STRING
+          || cvts[i] == CVT_TYPE_MAPPER_WSTRING) {
         if (!data->to_native) {
           data->to_native = calloc(argc, sizeof(jweak));
         }

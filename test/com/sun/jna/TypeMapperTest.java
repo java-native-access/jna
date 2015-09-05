@@ -22,10 +22,15 @@ import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
 public class TypeMapperTest extends TestCase {
+
+    private static final String UNICODE = "[\0444]";
+
     public static interface TestLibrary extends Library {
         int returnInt32Argument(boolean b);
         int returnInt32Argument(String s);
         int returnInt32Argument(Number n);
+        WString returnWStringArgument(String s);
+        String returnWStringArgument(WString s);
     }
 
     public void testBooleanToIntArgumentConversion() {
@@ -63,6 +68,24 @@ public class TypeMapperTest extends TestCase {
             Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
+    }
+    public void testStringToWStringArgumentConversion() {
+        DefaultTypeMapper mapper = new DefaultTypeMapper();
+        mapper.addToNativeConverter(String.class, new ToNativeConverter() {
+            public Object toNative(Object arg, ToNativeContext ctx) {
+                return new WString(arg.toString());
+            }
+            public Class nativeType() {
+                return WString.class;
+            }
+        });
+        Map options = new HashMap();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        final String MAGIC = "magic" + UNICODE;
+        TestLibrary lib = (TestLibrary) 
+            Native.loadLibrary("testlib", TestLibrary.class, options);
+        assertEquals("Failed to convert String argument to WString", new WString(MAGIC),
+                     lib.returnWStringArgument(MAGIC));
     }
     public void testCharSequenceToIntArgumentConversion() {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
@@ -102,6 +125,28 @@ public class TypeMapperTest extends TestCase {
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
+    public void testWStringToStringResultConversion() throws Exception {
+        final String MAGIC = "magic" + UNICODE;
+        DefaultTypeMapper mapper = new DefaultTypeMapper();
+        mapper.addFromNativeConverter(String.class, new FromNativeConverter() {
+            public Object fromNative(Object value, FromNativeContext ctx) {
+                if (value == null) {
+                    return null;
+                }
+                return value.toString();
+            }
+            public Class nativeType() {
+                return WString.class;
+            }
+        });
+        Map options = new HashMap();
+        options.put(Library.OPTION_TYPE_MAPPER, mapper);
+        TestLibrary lib = (TestLibrary)
+            Native.loadLibrary("testlib", TestLibrary.class, options);
+        assertEquals("Failed to convert WString result to String", MAGIC,
+                     lib.returnWStringArgument(new WString(MAGIC)));
+    }
+
     public static interface BooleanTestLibrary extends Library {
         boolean returnInt32Argument(boolean b);
     }

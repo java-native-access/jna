@@ -1402,10 +1402,14 @@ public final class Native implements Version {
     private static final int CVT_CALLBACK = 15;
     private static final int CVT_FLOAT = 16;
     private static final int CVT_NATIVE_MAPPED = 17;
-    private static final int CVT_WSTRING = 18;
-    private static final int CVT_INTEGER_TYPE = 19;
-    private static final int CVT_POINTER_TYPE = 20;
-    private static final int CVT_TYPE_MAPPER = 21;
+    private static final int CVT_NATIVE_MAPPED_STRING = 18;
+    private static final int CVT_NATIVE_MAPPED_WSTRING = 19;
+    private static final int CVT_WSTRING = 20;
+    private static final int CVT_INTEGER_TYPE = 21;
+    private static final int CVT_POINTER_TYPE = 22;
+    private static final int CVT_TYPE_MAPPER = 23;
+    private static final int CVT_TYPE_MAPPER_STRING = 24;
+    private static final int CVT_TYPE_MAPPER_WSTRING = 25;
 
     private static int getConversion(Class type, TypeMapper mapper) {
         if (type == Boolean.class) type = boolean.class;
@@ -1418,10 +1422,29 @@ public final class Native implements Version {
         else if (type == Double.class) type = double.class;
         else if (type == Void.class) type = void.class;
 
-        if (mapper != null
-            && (mapper.getFromNativeConverter(type) != null
-                || mapper.getToNativeConverter(type) != null)) {
-            return CVT_TYPE_MAPPER;
+        if (mapper != null) {
+            FromNativeConverter fromNative = mapper.getFromNativeConverter(type);
+            ToNativeConverter toNative = mapper.getToNativeConverter(type);
+            if (fromNative != null) {
+                Class nativeType = fromNative.nativeType();
+                if (nativeType == String.class) {
+                    return CVT_TYPE_MAPPER_STRING;
+                }
+                if (nativeType == WString.class) {
+                    return CVT_TYPE_MAPPER_WSTRING;
+                }
+                return CVT_TYPE_MAPPER;
+            }
+            if (toNative != null) {
+                Class nativeType = toNative.nativeType();
+                if (nativeType == String.class) {
+                    return CVT_TYPE_MAPPER_STRING;
+                }
+                if (nativeType == WString.class) {
+                    return CVT_TYPE_MAPPER_WSTRING;
+                }
+                return CVT_TYPE_MAPPER;
+            }
         }
 
         if (Pointer.class.isAssignableFrom(type)) {
@@ -1468,6 +1491,13 @@ public final class Native implements Version {
             return CVT_POINTER_TYPE;
         }
         if (NativeMapped.class.isAssignableFrom(type)) {
+            Class nativeType = NativeMappedConverter.getInstance(type).nativeType();
+            if (nativeType == String.class) {
+                return CVT_NATIVE_MAPPED_STRING;
+            }
+            if (nativeType == WString.class) {
+                return CVT_NATIVE_MAPPED_WSTRING;
+            }
             return CVT_NATIVE_MAPPED;
         }
         return CVT_UNSUPPORTED;
@@ -1527,6 +1557,8 @@ public final class Native implements Version {
             case CVT_UNSUPPORTED:
                 throw new IllegalArgumentException(rclass + " is not a supported return type (in method " + method.getName() + " in " + cls + ")");
             case CVT_TYPE_MAPPER:
+            case CVT_TYPE_MAPPER_STRING:
+            case CVT_TYPE_MAPPER_WSTRING:
                 fromNative = mapper.getFromNativeConverter(rclass);
                 // FFIType.get() always looks up the native type for any given
                 // class, so if we actually have conversion into a Java
@@ -1535,6 +1567,8 @@ public final class Native implements Version {
                 rtype = FFIType.get(fromNative.nativeType()).peer;
                 break;
             case CVT_NATIVE_MAPPED:
+            case CVT_NATIVE_MAPPED_STRING:
+            case CVT_NATIVE_MAPPED_WSTRING:
             case CVT_INTEGER_TYPE:
             case CVT_POINTER_TYPE:
                 closure_rtype = FFIType.get(Pointer.class).peer;
@@ -1559,10 +1593,14 @@ public final class Native implements Version {
                     throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
                 }
                 if (cvt[t] == CVT_NATIVE_MAPPED
+                    || cvt[t] == CVT_NATIVE_MAPPED_STRING
+                    || cvt[t] == CVT_NATIVE_MAPPED_WSTRING
                     || cvt[t] == CVT_INTEGER_TYPE) {
                     type = NativeMappedConverter.getInstance(type).nativeType();
                 }
-                else if (cvt[t] == CVT_TYPE_MAPPER) {
+                else if (cvt[t] == CVT_TYPE_MAPPER
+                         || cvt[t] == CVT_TYPE_MAPPER_STRING
+                         || cvt[t] == CVT_TYPE_MAPPER_WSTRING) {
                     toNative[t] = mapper.getToNativeConverter(type);
                 }
                 // Determine the type that will be passed to the native
@@ -1573,10 +1611,14 @@ public final class Native implements Version {
                 case CVT_INTEGER_TYPE:
                 case CVT_POINTER_TYPE:
                 case CVT_NATIVE_MAPPED:
+                case CVT_NATIVE_MAPPED_STRING:
+                case CVT_NATIVE_MAPPED_WSTRING:
                     atypes[t] = FFIType.get(type).peer;
                     closure_atypes[t] = FFIType.get(Pointer.class).peer;
                     break;
                 case CVT_TYPE_MAPPER:
+                case CVT_TYPE_MAPPER_STRING:
+                case CVT_TYPE_MAPPER_WSTRING:
                     closure_atypes[t] = FFIType.get(type.isPrimitive() ? type : Pointer.class).peer;
                     atypes[t] = FFIType.get(toNative[t].nativeType()).peer;
                     break;

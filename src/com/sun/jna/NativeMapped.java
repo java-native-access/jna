@@ -15,7 +15,8 @@ package com.sun.jna;
 /** Provide conversion for a Java type to and from a native type.  
  * {@link Function} and {@link Structure} will use this interface to determine
  * how to map a given Java object into a native type.<p>
- * Implementations of this interface must provide a no-args constructor. 
+ * Implementations of this interface must provide a no-args constructor.</p>
+ * <p>See {@link ToNativeConverter} for a list of allowable native types.</p>
  * @author wmeissner 
  */
 public interface NativeMapped {

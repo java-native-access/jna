@@ -93,10 +93,14 @@ enum {
   CVT_CALLBACK = com_sun_jna_Native_CVT_CALLBACK,
   CVT_FLOAT = com_sun_jna_Native_CVT_FLOAT,
   CVT_NATIVE_MAPPED = com_sun_jna_Native_CVT_NATIVE_MAPPED,
+  CVT_NATIVE_MAPPED_STRING = com_sun_jna_Native_CVT_NATIVE_MAPPED_STRING,
+  CVT_NATIVE_MAPPED_WSTRING = com_sun_jna_Native_CVT_NATIVE_MAPPED_WSTRING,
   CVT_WSTRING = com_sun_jna_Native_CVT_WSTRING,
   CVT_INTEGER_TYPE = com_sun_jna_Native_CVT_INTEGER_TYPE,
   CVT_POINTER_TYPE = com_sun_jna_Native_CVT_POINTER_TYPE,
   CVT_TYPE_MAPPER = com_sun_jna_Native_CVT_TYPE_MAPPER,
+  CVT_TYPE_MAPPER_STRING = com_sun_jna_Native_CVT_TYPE_MAPPER_STRING,
+  CVT_TYPE_MAPPER_WSTRING = com_sun_jna_Native_CVT_TYPE_MAPPER_WSTRING,
 };
 
 /* callback behavior flags */
@@ -191,8 +195,8 @@ extern callback* create_callback(JNIEnv*, jobject, jobject,
                                  jobjectArray, jclass,
                                  callconv_t, jint, jstring);
 extern void free_callback(JNIEnv*, callback*);
-extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean);
-extern jobject new_object(JNIEnv*, char, void*, jboolean);
+extern void extract_value(JNIEnv*, jobject, void*, size_t, jboolean, const char*);
+extern jobject new_object(JNIEnv*, char, void*, jboolean, const char*);
 extern jboolean is_protected();
 extern int get_conversion_flag(JNIEnv*, jclass);
 extern jboolean ffi_error(JNIEnv*,const char*,ffi_status);
@@ -211,8 +215,8 @@ extern jlong getIntegerTypeValue(JNIEnv*, jobject);
 extern void* getPointerTypeAddress(JNIEnv*, jobject);
 extern void writeStructure(JNIEnv*, jobject);
 extern jclass getNativeType(JNIEnv*, jclass);
-extern void toNative(JNIEnv*, jobject, void*, size_t, jboolean);
-extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean);
+extern void toNative(JNIEnv*, jobject, void*, size_t, jboolean, const char*);
+extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean, const char*);
 
 typedef struct _AttachOptions {
   int daemon;
