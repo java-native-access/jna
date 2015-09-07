@@ -76,6 +76,10 @@ import com.sun.jna.Structure.FFIType;
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
  * </p>
+ * <p>While this class and its corresponding native library are loaded, the 
+ * system property <code>jna.loaded</code> will be set.  The property will be
+ * cleared when native support has been unloaded (i.e. the Native class and
+ * its underlying native support has been GC'd).</p>
  * <p>NOTE: all native functions are provided within this class to ensure that
  * all other JNA-provided classes and objects are GC'd and/or
  * finalized/disposed before this class is disposed and/or removed from
@@ -165,6 +169,7 @@ public final class Native implements Version {
             || Platform.isAndroid()
             ? 8 : LONG_SIZE;
         MAX_PADDING = (Platform.isMac() && Platform.isPPC()) ? 8 : MAX_ALIGNMENT;
+        System.setProperty("jna.loaded", "true");
     }
 
     /** Force a dispose when the Native class is GC'd. */
@@ -185,6 +190,7 @@ public final class Native implements Version {
         NativeLibrary.disposeAll();
         unregisterAll();
         jnidispatchPath = null;
+        System.setProperty("jna.loaded", "false");
     }
 
     /** Remove any automatically unpacked native library.

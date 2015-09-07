@@ -104,6 +104,7 @@ public class JNALoadTest extends TestCase implements Paths {
         ClassLoader loader = new TestLoader(true);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
+        assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
 
         Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
@@ -127,7 +128,7 @@ public class JNALoadTest extends TestCase implements Paths {
 
         // Check for temporary file deletion
         File f = new File(path);
-        for (int i=0;i < 100 && f.exists();i++) {
+        for (int i=0;i < 100 && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
             Thread.sleep(10);
             System.gc();
         }
@@ -136,6 +137,7 @@ public class JNALoadTest extends TestCase implements Paths {
             assertTrue("Temporary jnidispatch not marked for later deletion: "
                        + f, new File(f.getAbsolutePath()+".x").exists());
         }
+        assertFalse("System property jna.loaded not cleared", Boolean.getBoolean("jna.loaded"));
 
         // Should be able to load again without complaints about library
         // already loaded in another class loader
@@ -158,6 +160,7 @@ public class JNALoadTest extends TestCase implements Paths {
         ClassLoader loader = new TestLoader(false);
         Class cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
+        assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
 
         Field field = cls.getDeclaredField("jnidispatchPath");
         field.setAccessible(true);
@@ -170,12 +173,13 @@ public class JNALoadTest extends TestCase implements Paths {
         cls = null;
         field = null;
         System.gc();
-        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
+        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null || Boolean.getBoolean("jna.loaded"));i++) {
             Thread.sleep(10);
             System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
+        assertFalse("System property jna.loaded not cleared", Boolean.getBoolean("jna.loaded"));
 
         Throwable throwable = null;
         // NOTE: IBM J9 needs some extra time to unload the native library,
@@ -205,8 +209,8 @@ public class JNALoadTest extends TestCase implements Paths {
         }
     }
 
-    // Fails on Sun JVM windows (32 and 64-bit) 
-    // Works with IBM J9 (jdk6)
+    // Fails on Sun JVM windows (32 and 64-bit) (JVM bug)
+    // Works with IBM J9 (jdk6) windows
     public void testLoadFromUnicodePath() throws Exception {
         final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
@@ -219,6 +223,8 @@ public class JNALoadTest extends TestCase implements Paths {
             ClassLoader loader = new TestLoader(true);
             Class cls = Class.forName("com.sun.jna.Native", true, loader);
             assertEquals("Wrong class loader", loader, cls.getClassLoader());
+            assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
+
             String path = System.getProperty("jnidispatch.path");
             if (path != null) {
                 File lib = new File(path);
