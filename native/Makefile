@@ -177,7 +177,13 @@ LIBPFX=
 LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 ifeq ($(ARCH),amd64)
+MINGW_PREFIX?=x86_64-w64-mingw32-
 FFI_CONFIG+=--host=x86_64-w64-mingw32
+# Need windres from mingw distribution, even if building with MSVC
+WINDRES=$(MINGW_PREFIX)windres
+MINGW=$(MINGW_PREFIX)gcc 
+else
+MINGW_PREFIX?=i686-pc-mingw32-
 endif
 
 ifeq ($(USE_MSVC),true)
@@ -202,15 +208,12 @@ LDFLAGS=-o $@ -shared
 FFI_ENV+=CXXCPP="$(CPP)"
 
 ifneq ($(ARCH),amd64)
-MINGW_PREFIX?=i686-pc-mingw32-
 CC=$(MINGW_PREFIX)gcc
 CPP=$(MINGW_PREFIX)gcc -E
 LDFLAGS+=-Wl,--add-stdcall-alias
 LIBS=-lpsapi
 else
 # mingw64 lacks SEH, so MSVC build is preferred
-MINGW_PREFIX?=x86_64-w64-mingw32-
-MINGW=$(MINGW_PREFIX)gcc 
 CC=$(MINGW)
 # No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1
@@ -218,9 +221,6 @@ LD = $(CC)
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
 endif
 endif
-
-# Need windres from mingw distribution, even if building with MSVC
-WINDRES=$(MINGW_PREFIX)windres
 
 endif
 

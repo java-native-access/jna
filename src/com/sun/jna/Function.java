@@ -55,11 +55,11 @@ public class Function extends Pointer {
     /** Standard C calling convention. */
     public static final int C_CONVENTION = 0;
     /** First alternate convention (currently used only for w32 stdcall). */
-    public static final int ALT_CONVENTION = 1;
+    public static final int ALT_CONVENTION = 0x3F;
 
-    private static final int MASK_CC = 0x3;
+    private static final int MASK_CC = 0x3F;
     /** Whether to throw an exception if last error is non-zero after call. */
-    public static final int THROW_LAST_ERROR = (1<<2);
+    public static final int THROW_LAST_ERROR = 0x40;
 
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
@@ -242,11 +242,8 @@ public class Function extends Pointer {
     
     private void checkCallingConvention(int convention)
         throws IllegalArgumentException {
-        switch(convention) {
-        case C_CONVENTION:
-        case ALT_CONVENTION:
-            break;
-        default:
+        // TODO: perform per-platform calling convention checks
+        if ((convention & MASK_CC) != convention) {
             throw new IllegalArgumentException("Unrecognized calling convention: " 
                                                + convention);
         }
@@ -255,7 +252,6 @@ public class Function extends Pointer {
     public String getName() {
         return functionName;
     }
-
 
     public int getCallingConvention() {
         return callFlags & MASK_CC;
