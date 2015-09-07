@@ -598,11 +598,15 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     break;
 #endif // _WIN32
   default:
-    snprintf(msg, sizeof(msg),
-            "Unrecognized calling convention: %d", (int)callconv);
-    throw_type = EIllegalArgument;
-    throw_msg = msg;
-    goto cleanup;
+    abi = (int)callconv;
+    if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
+      snprintf(msg, sizeof(msg),
+               "Unrecognized calling convention: %d", abi);
+      throw_type = EIllegalArgument;
+      throw_msg = msg;
+      goto cleanup;
+    }
+    break;
   }
 
   status = ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
@@ -1142,7 +1146,7 @@ toNativeTypeMapped(JNIEnv* env, jobject obj, void* valuep, size_t size, jobject 
 static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native,
                      void* native_return_value,
-                     int jtype, int size,
+                     int jtype, size_t size,
                      jclass java_return_class,
                      void* result_storage,
                      const char* encoding) {

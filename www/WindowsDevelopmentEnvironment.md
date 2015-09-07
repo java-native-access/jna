@@ -1,33 +1,11 @@
 ## Setting up a Windows Development Environment
 
-32-bit Windows
---------------
-
 #### Java
 
-Set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`. 
+For a 32-bit build, set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`. 
+For a 64-bit build, set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`. 
 
-#### Cygwin
-
-Install [cygwin](http://www.cygwin.com/).
-
-When installing cygwin, include ssh, git, make, autotools, and mingw32-gcc-core.
-Ensure the mingw32 compiler (i686-pc-mingw32-gcc.exe) is on your path.
-
-64-bit Windows
---------------
-
-#### Java
-
-Set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`. 
-
-#### Cygwin
-
-Install [cygwin](http://www.cygwin.com/).
-
-When installing cygwin, include ssh, git, make, autotools, and
-mingw64-gcc-core.  Ensure the mingw64 compiler (i686-pc-mingw64-gcc.exe) is on
-your path.
+#### Native
 
 MSVC
 ----
@@ -39,7 +17,7 @@ native bits if MSVC is set in the environment. The MS compiler provides
 structured event handling (SEH), which allows JNA to trap native faults when
 run in protected mode. 
 
-On 64-bit windows, you will still need to install mingw64-gcc-core in order to
+On 64-bit windows, you will still need to install mingw64 in order to
 compile a small bit of inline assembly.
 
 To use the MS compiler, ensure that the appropriate 32-bit or 64-bit versions
@@ -59,6 +37,16 @@ export LIB="$(cygpath -m "$MSVC")/lib/amd64;$(cygpath -m "$WSDK_64")/lib/x64"
 # for 32-bit target
 export LIB="$(cygpath -m "$MSVC")/lib;$(cygpath -m "$WSDK")/lib"
 ```
+
+#### mingw
+
+Install [cygwin](http://www.cygwin.com/).
+
+When installing cygwin, include ssh, git, make, autotools, and mingw{32|64}-g++.
+Ensure the mingw compiler (i686-pc-mingw32-gcc.exe or i686-pc-mingw64-gcc.exe) is on your path.
+
+If `cl.exe` is found on your %PATH%, you'll need to invoke `ant native
+-DUSE_MSVC=false` in order to avoid using the MS compiler.
 
 ### Issues
 

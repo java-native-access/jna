@@ -176,8 +176,18 @@ STRIP=@echo
 LIBPFX=
 LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
+ifeq ($(ARCH),amd64)
+MINGW_PREFIX?=x86_64-w64-mingw32-
+FFI_CONFIG+=--host=x86_64-w64-mingw32
+# Need windres from mingw distribution, even if building with MSVC
+WINDRES=$(MINGW_PREFIX)windres
+MINGW=$(MINGW_PREFIX)gcc 
+else
+MINGW_PREFIX?=i686-pc-mingw32-
+endif
 
-ifdef USE_MSVC
+ifeq ($(USE_MSVC),true)
+# MS compiler
 CC=$(FFI_SRC)/msvcc.sh
 COPT=
 CPP=cl -nologo -EP
@@ -187,37 +197,31 @@ LIBS=psapi.lib
 ARSFX=.lib
 ifeq ($(ARCH),amd64)
 CC+= -m64
-FFI_CONFIG+=--host=x86_64-w64-mingw32
 endif
 FFI_CONFIG+= && rm -f include/ffitarget.h && cp $(FFI_SRC)/include/*.h $(FFI_SRC)/src/x86/ffitarget.h include
 FFI_ENV+=LD="$(LD)" CPP="$(CPP)" CXXCPP="$(CPP)"
 EXTRAOBJS+=$(DLLCB)
+
 else
-MINGW_PREFIX?=i686-pc-mingw32-
+# Mingw compiler
+LDFLAGS=-o $@ -shared
+FFI_ENV+=CXXCPP="$(CPP)"
+
+ifneq ($(ARCH),amd64)
 CC=$(MINGW_PREFIX)gcc
-LDFLAGS=-o $@ -shared -Wl,--add-stdcall-alias
+CPP=$(MINGW_PREFIX)gcc -E
+LDFLAGS+=-Wl,--add-stdcall-alias
 LIBS=-lpsapi
-endif
-
-ifeq ($(ARCH),amd64)
-# Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
-# PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
-# preferred
-MINGW_PREFIX?=x86_64-w64-mingw32-
-MINGW=$(MINGW_PREFIX)gcc 
-# Need windres from mingw distribution, even if building with MSVC
-WINDRES=$(MINGW_PREFIX)windres
-
-ifndef USE_MSVC
+else
+# mingw64 lacks SEH, so MSVC build is preferred
 CC=$(MINGW)
 # No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1
 LD = $(CC)
-LDFLAGS=-o $@ -shared
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
 endif
-
 endif
+
 endif
 
 ifeq ($(OS),linux)

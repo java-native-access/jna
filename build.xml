@@ -689,6 +689,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
     <property name="ARCH" value="${os.arch}"/>
+    <condition property="make.USE_MSVC" value="USE_MSVC=${USE_MSVC}" else="IGNORE=">
+      <isset property="USE_MSVC"/>
+    </condition>
     <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
       <isset property="CC"/>
     </condition>
@@ -774,6 +777,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <arg value="CFLAGS_EXTRA=${cflags_extra.native}"/>
       <arg value="DYNAMIC_LIBFFI=${dynlink.native}"/>
       <arg value="${make.CC}"/>
+      <arg value="${make.USE_MSVC}"/>
       <arg value="${make.BUILD}"/>
       <arg value="${make.SDKROOT}"/>
       <arg value="${make.ARCH}"/>
@@ -916,8 +920,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
-    <property name="reports.junit" location="${reports}/junit"/>
-    <property name="results.junit" location="${build}/junit-results"/>
+    <property name="reports.junit" location="${reports}/junit/${os.prefix}"/>
+    <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
     <mkdir dir="${results.junit}"/>
     <echo>Saving test results in ${results.junit}</echo>
     <property name="tests.stdcall" value="**/win32/*StdCallTest.java"/>
