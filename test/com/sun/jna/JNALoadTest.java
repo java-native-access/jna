@@ -125,11 +125,10 @@ public class JNALoadTest extends TestCase implements Paths {
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
         assertNull("ClassLoader not GC'd: " + clref.get(), clref.get());
-        assertFalse("System property jna.loaded not cleared", Boolean.getBoolean("jna.loaded"));
 
         // Check for temporary file deletion
         File f = new File(path);
-        for (int i=0;i < 100 && f.exists();i++) {
+        for (int i=0;i < 100 && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
             Thread.sleep(10);
             System.gc();
         }
@@ -138,6 +137,7 @@ public class JNALoadTest extends TestCase implements Paths {
             assertTrue("Temporary jnidispatch not marked for later deletion: "
                        + f, new File(f.getAbsolutePath()+".x").exists());
         }
+        assertFalse("System property jna.loaded not cleared", Boolean.getBoolean("jna.loaded"));
 
         // Should be able to load again without complaints about library
         // already loaded in another class loader
@@ -173,7 +173,7 @@ public class JNALoadTest extends TestCase implements Paths {
         cls = null;
         field = null;
         System.gc();
-        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
+        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null || Boolean.getBoolean("jna.loaded"));i++) {
             Thread.sleep(10);
             System.gc();
         }
