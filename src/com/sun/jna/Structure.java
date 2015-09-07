@@ -1556,7 +1556,7 @@ public abstract class Structure {
 
     /** Return whether the given Structure's backing data is identical to
      * this one.
-     * @param o object to compare
+     * @param s Structure to compare
      * @return equality result
      */
     public boolean dataEquals(Structure s) {
