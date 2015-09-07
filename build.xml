@@ -279,7 +279,7 @@
     <mkdir dir="${reports}"/>
     <mkdir dir="${doc}"/>
 
-    <echo>Java version ${java.version}, compatibility: ${compatibility}</echo>
+    <echo>Java version ${java.version}, compatibility: ${compatibility}, ant: ${ant.java.version}</echo>
     <echo>JNA version ${jna.version}, native ${jni.version}</echo>
     <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
     <echo>java.home=${java.home}</echo>
@@ -1028,6 +1028,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
               value="&lt;center&gt;&lt;i&gt;${copyright}&lt;/i&gt;&lt;/center&gt;"/>
 
     <mkdir dir="${javadoc}"/>
+    <condition property="javadoc.opts" value="-Xdoclint:none" else="">
+      <matches pattern="^1.[89]$" string="${ant.java.version}"/>
+    </condition>
     <javadoc package="true"
              windowtitle="JNA API"
              sourcepathref="javadoc.src.path"
@@ -1035,7 +1038,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
              maxmemory="256m"
              packagenames="com.sun.jna,com.sun.jna.ptr,com.sun.jna.types,com.sun.jna.platform,com.sun.jna.platform.win32"
              overview="${src}/com/sun/jna/overview.html"
-             additionalparam="-Xdoclint:none"
+             additionalparam="${javadoc.opts}"
              destdir="${javadoc}">
       <!-- stylesheetfile="${stylesheet}" -->
       <doctitle>JNA API Documentation</doctitle>
