@@ -177,7 +177,7 @@ LIBPFX=
 LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
 
-ifdef USE_MSVC
+ifeq ($(USE_MSVC),true)
 CC=$(FFI_SRC)/msvcc.sh
 COPT=
 CPP=cl -nologo -EP
@@ -195,12 +195,14 @@ EXTRAOBJS+=$(DLLCB)
 else
 MINGW_PREFIX?=i686-pc-mingw32-
 CC=$(MINGW_PREFIX)gcc
+CPP=$(MINGW_PREFIX)gcc -E
 LDFLAGS=-o $@ -shared -Wl,--add-stdcall-alias
 LIBS=-lpsapi
+FFI_ENV+=CXXCPP="$(CPP)"
 endif
 
 ifeq ($(ARCH),amd64)
-# Undefine USE_MSVC to enable mingw64 cross compiler; ensure $(MINGW) is in
+# Set USE_MSVC false to enable mingw64 cross compiler; ensure $(MINGW) is in
 # PATH.  Should build properly as of 111121, but lacks SEH, so MSVC build is
 # preferred
 MINGW_PREFIX?=x86_64-w64-mingw32-
@@ -208,7 +210,7 @@ MINGW=$(MINGW_PREFIX)gcc
 # Need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
 
-ifndef USE_MSVC
+ifneq ($(USE_MSVC),true)
 CC=$(MINGW)
 # No SEH under mingw64, thus no HAVE_PROTECTION
 CDEFINES=-DPSAPI_VERSION=1

@@ -11,7 +11,7 @@ Set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`.
 
 Install [cygwin](http://www.cygwin.com/).
 
-When installing cygwin, include ssh, git, make, autotools, and mingw32-gcc-core.
+When installing cygwin, include ssh, git, make, autotools, and mingw32-g++.
 Ensure the mingw32 compiler (i686-pc-mingw32-gcc.exe) is on your path.
 
 64-bit Windows
@@ -26,7 +26,7 @@ Set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`.
 Install [cygwin](http://www.cygwin.com/).
 
 When installing cygwin, include ssh, git, make, autotools, and
-mingw64-gcc-core.  Ensure the mingw64 compiler (i686-pc-mingw64-gcc.exe) is on
+mingw64-g++.  Ensure the mingw64 compiler (i686-pc-mingw64-gcc.exe) is on
 your path.
 
 MSVC
