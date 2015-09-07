@@ -137,6 +137,7 @@ ca_jumpdata:
         dd offset ca_retint64       ;; FFI_TYPE_SINT64
         dd offset ca_epilogue       ;; FFI_TYPE_STRUCT
         dd offset ca_retint         ;; FFI_TYPE_POINTER
+        dd offset ca_epilogue       ;; FFI_TYPE_COMPLEX
         dd offset ca_retstruct1b    ;; FFI_TYPE_SMALL_STRUCT_1B
         dd offset ca_retstruct2b    ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset ca_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
@@ -268,6 +269,7 @@ cs_jumpdata:
         dd offset cs_retint64       ;; FFI_TYPE_SINT64
         dd offset cs_retstruct      ;; FFI_TYPE_STRUCT
         dd offset cs_retint         ;; FFI_TYPE_POINTER
+        dd offset cs_epilogue       ;; FFI_TYPE_COMPLEX
         dd offset cs_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
         dd offset cs_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cs_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
@@ -377,6 +379,7 @@ cr_jumpdata:
         dd offset cr_retint64       ;; FFI_TYPE_SINT64
         dd offset cr_epilogue       ;; FFI_TYPE_STRUCT
         dd offset cr_retint         ;; FFI_TYPE_POINTER
+        dd offset cr_epilogue       ;; FFI_TYPE_COMPLEX
         dd offset cr_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
         dd offset cr_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cr_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
@@ -463,6 +466,7 @@ cd_jumpdata:
         dd offset cd_retint64       ;; FFI_TYPE_SINT64
         dd offset cd_epilogue       ;; FFI_TYPE_STRUCT
         dd offset cd_retint         ;; FFI_TYPE_POINTER
+        dd offset cd_epilogue       ;; FFI_TYPE_COMPLEX
         dd offset cd_retsint8       ;; FFI_TYPE_SMALL_STRUCT_1B
         dd offset cd_retsint16      ;; FFI_TYPE_SMALL_STRUCT_2B
         dd offset cd_retint         ;; FFI_TYPE_SMALL_STRUCT_4B
@@ -624,6 +628,7 @@ USCORE_SYMBOL(ffi_call_win32):
         .long	.Lretint64-.Lstore_table	/* FFI_TYPE_SINT64 */
         .long	.Lretstruct-.Lstore_table	/* FFI_TYPE_STRUCT */
         .long	.Lretint-.Lstore_table		/* FFI_TYPE_POINTER */
+	.long   0                               /* FFI_TYPE_COMPLEX */
         .long	.Lretstruct1b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_1B */
         .long	.Lretstruct2b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_2B */
         .long	.Lretstruct4b-.Lstore_table	/* FFI_TYPE_SMALL_STRUCT_4B */
@@ -807,6 +812,7 @@ USCORE_SYMBOL(ffi_closure_SYSV):
         .long	.Lcls_retllong-.Lcls_store_table	/* FFI_TYPE_SINT64 */
         .long	.Lcls_retstruct-.Lcls_store_table	/* FFI_TYPE_STRUCT */
         .long	.Lcls_retint-.Lcls_store_table		/* FFI_TYPE_POINTER */
+        .long	0                       		/* FFI_TYPE_COMPLEX */
         .long	.Lcls_retstruct1-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
         .long	.Lcls_retstruct2-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
         .long	.Lcls_retstruct4-.Lcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
@@ -962,6 +968,7 @@ USCORE_SYMBOL(ffi_closure_raw_SYSV):
         .long	.Lrcls_retllong-.Lrcls_store_table	/* FFI_TYPE_SINT64 */
         .long	.Lrcls_retstruct-.Lrcls_store_table	/* FFI_TYPE_STRUCT */
         .long	.Lrcls_retint-.Lrcls_store_table	/* FFI_TYPE_POINTER */
+        .long	0                               	/* FFI_TYPE_COMPLEX */
         .long	.Lrcls_retstruct1-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
         .long	.Lrcls_retstruct2-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
         .long	.Lrcls_retstruct4-.Lrcls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
@@ -1097,6 +1104,7 @@ USCORE_SYMBOL(ffi_closure_STDCALL):
         .long	.Lscls_retllong-.Lscls_store_table	/* FFI_TYPE_SINT64 */
         .long	.Lscls_retstruct-.Lscls_store_table	/* FFI_TYPE_STRUCT */
         .long	.Lscls_retint-.Lscls_store_table	/* FFI_TYPE_POINTER */
+        .long	0                               	/* FFI_TYPE_COMPLEX */
         .long	.Lscls_retstruct1-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_1B */
         .long	.Lscls_retstruct2-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_2B */
         .long	.Lscls_retstruct4-.Lscls_store_table	/* FFI_TYPE_SMALL_STRUCT_4B */
