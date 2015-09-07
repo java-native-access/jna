@@ -3293,7 +3293,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   ffi_cif* closure_cif = &data->closure_cif;
   int status;
   int i;
-  int abi = FFI_DEFAULT_ABI;
+  int abi = cc == CALLCONV_C ? FFI_DEFAULT_ABI : cc;
   ffi_type* rtype = (ffi_type*)L2A(return_type);
   ffi_type* closure_rtype = (ffi_type*)L2A(closure_return_type);
   jlong* types = atypes ? (*env)->GetLongArrayElements(env, atypes, NULL) : NULL;
@@ -3302,8 +3302,13 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
 #if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
 #else
-  // avoid compiler warning
-  cc = 0;
+  if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
+    char msg[MSG_SIZE];
+    snprintf(msg, sizeof(msg), "Invalid calling convention %d\n", abi);
+    throwByName(env, EIllegalArgument, msg);
+    status = FFI_BAD_ABI;
+    goto cleanup;
+  }
 #endif
 
   data->throw_last_error = throw_last_error;
