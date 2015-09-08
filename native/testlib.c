@@ -949,15 +949,15 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
 }
 
 EXPORT int32_t __stdcall
-callBugCallback(void (__stdcall *func)(long,int,double,
-                                       const char*,const char*,
-                                       double,long,
-                                       double,long,long,long),
-                long arg1, int arg2, double arg3,
-                const char* arg4, const char* arg5,
-                double arg6, long arg7,
-                double arg8, long arg9,
-                long arg10, long arg11) {
+callManyArgsStdCallCallback(void (__stdcall *func)(long,int,double,
+                                                   const char*,const char*,
+                                                   double,long,
+                                                   double,long,long,long),
+                            long arg1, int arg2, double arg3,
+                            const char* arg4, const char* arg5,
+                            double arg6, long arg7,
+                            double arg8, long arg9,
+                            long arg10, long arg11) {
   void* sp1 = NULL;
   void* sp2 = NULL;
   int value = -1;
