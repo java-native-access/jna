@@ -62,6 +62,18 @@ public class Function extends Pointer {
 
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
+    
+    /** Creates Object[][] for arguments for this thread. */
+    private static ThreadLocal<Object[][]> argTable = new ThreadLocal<Object[][]>() {
+        @Override
+        protected Object[][] initialValue() {        
+            Object args[][] = new Object[MAX_NARGS+1][];  //+1 for zero args
+            for(int a=0;a<=MAX_NARGS;a++) {
+                args[a] = new Object[a];
+            }
+            return args;
+        }
+    };
 
     /** 
      * Obtain a <code>Function</code> representing a native 
@@ -283,12 +295,12 @@ public class Function extends Pointer {
     Object invoke(Method invokingMethod, Class[] paramTypes, Class returnType, Object[] inArgs, Map options) {
         // Clone the argument array to obtain a scratch space for modified
         // types/values
-        Object[] args = { };
+        Object[] args = argTable.get()[0];
         if (inArgs != null) {
             if (inArgs.length > MAX_NARGS) {
                 throw new UnsupportedOperationException("Maximum argument count is " + MAX_NARGS);
             }
-            args = new Object[inArgs.length];
+            args = argTable.get()[inArgs.length];
             System.arraycopy(inArgs, 0, args, 0, args.length);
         }
 
@@ -361,9 +373,11 @@ public class Function extends Pointer {
                 else if (Structure[].class.isAssignableFrom(inArg.getClass())) {
                     Structure.autoRead((Structure[])inArg);
                 }
+                /* Clear args so they will get garbage collected. */
+                args[i] = null;
             }
         }
-                        
+
         return result;
     }
 
