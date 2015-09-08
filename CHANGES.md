@@ -24,6 +24,7 @@ Features
 * [#350](https://github.com/twall/jna/pull/350): Added `jnacontrib.x11.api.X.Window.getSubwindows` - [@rm5248](https://github.com/rm5248).
 * Improved `contrib/msoffice` sample - [@wolftobias](https://github.com/wolftobias).
 * [#352](https://github.com/twall/jna/pull/352): Performance improvements due to reduced locking in `com.sun.jna.Library$Handler` and fewer vararg checks in `com.sun.jna.Function` - [@Boereck](https://github.com/Boereck).
+* [#353](https://github.com/twall/jna/pull/353): Performance improvements by improved collaboration between `com.sun.jna.Library$Handler` and `com.sun.jna.Function` - [@Boereck](https://github.com/Boereck).
 * [#357](https://github.com/twall/jna/pull/357): Added `com.sun.jna.platform.win32.Kernel32.SetSystemTime` - [@lgoldstein](https://github.com/lgoldstein), [@thomasjoulin](https://github.com/thomasjoulin).
 * [#365](https://github.com/twall/jna/pull/365): Added `com.sun.jna.platform.win32.Kernel32.GetComputerNameEx` support - [@lgoldstein](https://github.com/lgoldstein).
 * [#368](https://github.com/twall/jna/pull/368): Added `com.sun.jna.platform.win32.Kernel32.VirtualQueryEx`, `com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION` and `MEM_COMMIT`, `MEM_FREE`, `MEM_RESERVE`, `MEM_IMAGE`, `MEM_MAPPED`, `MEM_PRIVATE` constants - [@apsk](https://github.com/apsk).

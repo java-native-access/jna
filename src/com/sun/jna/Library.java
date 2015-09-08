@@ -167,18 +167,20 @@ public interface Library {
          */
         private static final class FunctionInfo {
             
-            FunctionInfo(InvocationHandler handler, Function function, boolean isVarArgs, Map options) {
+            FunctionInfo(InvocationHandler handler, Function function, Class[] parameterTypes, boolean isVarArgs, Map options) {
                 super();
                 this.handler = handler;
                 this.function = function;
                 this.isVarArgs = isVarArgs;
                 this.options = options;
+                this.parameterTypes = parameterTypes;
             }
             
             final InvocationHandler handler;
             final Function function;
             final boolean isVarArgs;
             final Map options;
+            final Class[] parameterTypes;
         }
 
         public Object invoke(Object proxy, Method method, Object[] inArgs)
@@ -211,14 +213,16 @@ public interface Library {
                             handler = invocationMapper.getInvocationHandler(nativeLibrary, method);
                         }
                         Function function = null;
+                        Class[] parameterTypes = null;
                         Map options = null;
                         if (handler == null) {
                             // Find the function to invoke
                             function = nativeLibrary.getFunction(method.getName(), method);
+                            parameterTypes = method.getParameterTypes();
                             options = new HashMap(this.options);
                             options.put(Function.OPTION_INVOKING_METHOD, method);
                         }
-                        f = new FunctionInfo(handler, function, isVarArgs, options);
+                        f = new FunctionInfo(handler, function, parameterTypes, isVarArgs, options);
                         functions.put(method, f);
                     }
                 }
@@ -229,7 +233,7 @@ public interface Library {
             if (f.handler != null) {
                 return f.handler.invoke(proxy, method, inArgs);
             }
-            return f.function.invoke(method.getReturnType(), inArgs, f.options);
+            return f.function.invoke(method, f.parameterTypes, method.getReturnType(), inArgs, f.options);
         }
     }
 }
