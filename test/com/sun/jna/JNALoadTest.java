@@ -27,6 +27,11 @@ import junit.framework.TestCase;
  */
 public class JNALoadTest extends TestCase implements Paths {
     
+    // Amount of time to wait for GC, in ms
+    private static final int GC_WAIT_TIMEOUT = 5000;
+    private static final int GC_WAIT_INTERVAL = 10;
+    private static final int GC_WAITS = GC_WAIT_TIMEOUT / GC_WAIT_INTERVAL;
+
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
@@ -119,8 +124,8 @@ public class JNALoadTest extends TestCase implements Paths {
         cls = null;
         field = null;
         System.gc();
-        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null);i++) {
-            Thread.sleep(10);
+        for (int i=0;i < GC_WAITS && (ref.get() != null || clref.get() != null);i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
@@ -128,8 +133,8 @@ public class JNALoadTest extends TestCase implements Paths {
 
         // Check for temporary file deletion
         File f = new File(path);
-        for (int i=0;i < 100 && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
-            Thread.sleep(10);
+        for (int i=0;i < GC_WAITS && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
         }
 
@@ -173,8 +178,8 @@ public class JNALoadTest extends TestCase implements Paths {
         cls = null;
         field = null;
         System.gc();
-        for (int i=0;i < 100 && (ref.get() != null || clref.get() != null || Boolean.getBoolean("jna.loaded"));i++) {
-            Thread.sleep(10);
+        for (int i=0;i < GC_WAITS && (ref.get() != null || clref.get() != null || Boolean.getBoolean("jna.loaded"));i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());
@@ -184,9 +189,9 @@ public class JNALoadTest extends TestCase implements Paths {
         Throwable throwable = null;
         // NOTE: IBM J9 needs some extra time to unload the native library,
         // so try a few times before failing
-        for (int i=0;i < 100;i++) {
+        for (int i=0;i < GC_WAITS;i++) {
             System.gc();
-            Thread.sleep(10);
+            Thread.sleep(GC_WAIT_INTERVAL);
             try {
                 loader = new TestLoader(false);
                 cls = Class.forName("com.sun.jna.Native", true, loader);
