@@ -93,24 +93,17 @@ static jclass classObject;
 
 extern void println(JNIEnv*, const char*);
 
-#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
-#define HAS_ALT_CALLING_CONVENTION 
-#endif
-
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
                 jobjectArray arg_classes, jclass return_class,
-#ifdef HAS_ALT_CALLING_CONVENTION
                 callconv_t calling_convention, 
-#else
-                callconv_t UNUSED(calling_convention),
-#endif
                 jint options,
                 jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
-  ffi_abi abi = FFI_DEFAULT_ABI;
+  ffi_abi abi = (calling_convention == CALLCONV_C
+		 ? FFI_DEFAULT_ABI : (ffi_abi)calling_convention);
   ffi_abi java_abi = FFI_DEFAULT_ABI;
   ffi_type* return_type;
   ffi_status status;
@@ -217,14 +210,25 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#ifdef HAS_ALT_CALLING_CONVENTION
-  // Currently only w32 stdcall is supported
+#if defined(_WIN32)
   if (calling_convention == CALLCONV_STDCALL) {
+#if defined(_WIN64) || defined(_WIN32_WCE)
+    // Ignore requests for stdcall on win64/wince
+    abi = FFI_DEFAULT_ABI;
+#else
     abi = FFI_STDCALL;
+    // All JNI entry points on win32 use stdcall
+    java_abi = FFI_STDCALL;
+#endif
   }
-  // All JNI entry points on win32 use stdcall
-  java_abi = FFI_STDCALL;
 #endif // _WIN32
+
+  if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
+    snprintf(msg, sizeof(msg), "Invalid calling convention %d", abi);
+    throw_type = EIllegalArgument;
+    throw_msg = msg;
+    goto failure_cleanup;
+  }
 
   rtype = get_java_type(env, return_class);
   if (rtype == -1) {

@@ -25,13 +25,8 @@ import junit.framework.TestCase;
 /** Test loading and unloading native support from various locations.  Note
  * that no JNI classes are directly referenced in these tests.
  */
-public class JNALoadTest extends TestCase implements Paths {
+public class JNALoadTest extends TestCase implements Paths, GCWaits {
     
-    // Amount of time to wait for GC, in ms
-    private static final int GC_WAIT_TIMEOUT = 5000;
-    private static final int GC_WAIT_INTERVAL = 10;
-    private static final int GC_WAITS = GC_WAIT_TIMEOUT / GC_WAIT_INTERVAL;
-
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {

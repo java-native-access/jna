@@ -3301,15 +3301,14 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   jint* cvts = conversions ? (*env)->GetIntArrayElements(env, conversions, NULL) : NULL;
 #if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
   if (cc == CALLCONV_STDCALL) abi = FFI_STDCALL;
-#else
+#endif
   if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
     char msg[MSG_SIZE];
-    snprintf(msg, sizeof(msg), "Invalid calling convention %d\n", abi);
+    snprintf(msg, sizeof(msg), "Invalid calling convention %d", abi);
     throwByName(env, EIllegalArgument, msg);
     status = FFI_BAD_ABI;
     goto cleanup;
   }
-#endif
 
   data->throw_last_error = throw_last_error;
   data->arg_types = malloc(sizeof(ffi_type*) * argc);
