@@ -55,18 +55,18 @@ public class W32StdCallTest extends TestCase {
             int callback(int arg, int arg2);
         }
         int callInt32StdCallCallback(Int32Callback c, int arg, int arg2);
-        interface BugCallback extends StdCallCallback {
+        interface ManyArgsStdCallCallback extends StdCallCallback {
             void callback(NativeLong arg1, int arg2, double arg3,
                           String arg4, String arg5,
                           double arg6, NativeLong arg7,
                           double arg8, NativeLong arg9,
                           NativeLong arg10, NativeLong arg11);
         }
-        int callBugCallback(BugCallback c, NativeLong arg1, int arg2,
-                            double arg3, String arg4, String arg5,
-                            double arg6, NativeLong arg7,
-                            double arg8, NativeLong arg9,
-                            NativeLong arg10, NativeLong arg11);
+        int callManyArgsStdCallCallback(ManyArgsStdCallCallback c, NativeLong arg1, int arg2,
+                                        double arg3, String arg4, String arg5,
+                                        double arg6, NativeLong arg7,
+                                        double arg8, NativeLong arg9,
+                                        NativeLong arg10, NativeLong arg11);
     }
     
     public static void main(java.lang.String[] argList) {
@@ -150,9 +150,9 @@ public class W32StdCallTest extends TestCase {
         assertEquals("Wrong stdcall callback return", -3, value);
     }
 
-    public void testCallBugCallback() {
+    public void testStdCallCallbackStackAlignment() {
         final boolean[] called = { false };
-        TestLibrary.BugCallback cb = new TestLibrary.BugCallback() {
+        TestLibrary.ManyArgsStdCallCallback cb = new TestLibrary.ManyArgsStdCallCallback() {
             public void callback(NativeLong arg1, int arg2, double arg3,
                                  String arg4, String arg5,
                                  double arg6, NativeLong arg7,
@@ -161,12 +161,12 @@ public class W32StdCallTest extends TestCase {
                 called[0] = true;
             }
         };
-        int value = testlib.callBugCallback(cb, new NativeLong(1),
-                                            2, 3, "four", "five",
-                                            6, new NativeLong(7),
-                                            8, new NativeLong(9),
-                                            new NativeLong(10),
-                                            new NativeLong(11));
+        int value = testlib.callManyArgsStdCallCallback(cb, new NativeLong(1),
+                                                        2, 3, "four", "five",
+                                                        6, new NativeLong(7),
+                                                        8, new NativeLong(9),
+                                                        new NativeLong(10),
+                                                        new NativeLong(11));
         assertTrue("stdcall callback not called", called[0]);
         if (value == -1) {
             fail("stdcall callback did not restore the stack pointer");
