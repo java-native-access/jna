@@ -1347,6 +1347,13 @@ public final class Native implements Version {
         }
     }
 
+    /** @return whether the given class's native components are registered. */
+    public static boolean registered(Class cls) {
+        synchronized(registeredClasses) {
+            return registeredClasses.containsKey(cls);
+        }
+    }
+
     /** Unregister the native methods for the given class. */
     private static native void unregister(Class cls, long[] handles);
 

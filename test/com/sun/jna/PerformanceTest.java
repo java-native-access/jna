@@ -29,7 +29,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
     public void testEmpty() { }
 
-    private static class JNI {
+    private static class JNIMathLibrary {
         static {
             String path = TESTPATH + NativeLibrary.mapSharedLibraryName("testlib");;
             if (!new File(path).isAbsolute()) {
@@ -168,7 +168,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
-            dresult = JNI.cos(0d);
+            dresult = JNIMathLibrary.cos(0d);
         }
         delta = System.currentTimeMillis() - start;
         System.out.println("cos (JNI): " + delta + "ms");
