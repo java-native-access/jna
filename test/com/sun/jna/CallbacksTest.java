@@ -748,8 +748,16 @@ public class CallbacksTest extends TestCase implements Paths {
                    + arg[0].getPointer(), arg[0].getPointer() instanceof Memory);
         assertTrue("ByValue result should own its own memory, instead was "
                    + result.getPointer(), result.getPointer() instanceof Memory);
-        assertTrue("Wrong value for callback argument", s.dataEquals(arg[0]));
-        assertTrue("Wrong value for callback result", s.dataEquals(result));
+	if (!s.dataEquals(arg[0], true)) {
+	    System.out.println("Mismatch: " + s);
+	    System.out.println("  versus: " + arg[0]);
+	}
+        assertTrue("Wrong value for callback argument", s.dataEquals(arg[0], true));
+	if (!s.dataEquals(result, true)) {
+	    System.out.println("Mismatch: " + s);
+	    System.out.println("  versus: " + result);
+	}
+        assertTrue("Wrong value for callback result", s.dataEquals(result, true));
     }
     
     public void testUnionByValueCallbackArgument() throws Exception{ 

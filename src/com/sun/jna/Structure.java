@@ -1554,18 +1554,33 @@ public abstract class Structure {
         return getClass();
     }
 
-    /** Return whether the given Structure's backing data is identical to
+    /** Return whether the given Structure's native backing data is identical to
      * this one.
      * @param s Structure to compare
      * @return equality result
      */
     public boolean dataEquals(Structure s) {
+	return dataEquals(s, false);
+    }
+
+    /** Return whether the given Structure's backing data is identical to
+     * this one, optionally clearing and re-writing native memory before checking. 
+     * @param s Structure to compare
+     * @param clear whether to clear native memory
+     * @return equality result
+     */
+    public boolean dataEquals(Structure s, boolean clear) {
+	if (clear) {
+	    s.getPointer().clear(s.size());
+	    s.write();
+	    getPointer().clear(size());
+	    write();
+	}
         byte[] data = s.getPointer().getByteArray(0, s.size());
         byte[] ref = getPointer().getByteArray(0, size());
         if (data.length == ref.length) {
             for (int i=0;i < data.length;i++) {
                 if (data[i] != ref[i]) {
-                    System.out.println("byte mismatch at offset " + i);
                     return false;
                 }
             }
