@@ -41,10 +41,11 @@ public class MemoryTest extends TestCase implements GCWaits {
 
         shared = null;
         System.gc();
-        while (ref.get() != null) {
-            if (System.currentTimeMillis() - start > 5000)
-                break;
-            Thread.sleep(10);
+        Memory.purge();
+        for (int i=0;i < GC_WAITS && ref.get() != null) {
+            Thread.sleep(GC_WAIT_INTERVAL);
+            System.gc();
+            Memory.purge();
         }
         assertNull("Memory not GC'd", ref.get());
     }
