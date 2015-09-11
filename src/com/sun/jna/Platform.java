@@ -186,7 +186,7 @@ public final class Platform {
     }
 
     public static final boolean isIntel() {
-        if (ARCH.equals("x86") || ARCH.equals("x86-64")) {
+        if (ARCH.startsWith("x86")) {
             return true;
         } 
         return false;
@@ -208,8 +208,6 @@ public final class Platform {
     }
 
     static String getCanonicalArchitecture(String arch) {
-	// Work around OpenJDK mis-reporting os.arch
-	// https://bugs.openjdk.java.net/browse/JDK-8073139
 	arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
@@ -223,6 +221,8 @@ public final class Platform {
         else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
             arch = "x86-64";
         }
+	// Work around OpenJDK mis-reporting os.arch
+	// https://bugs.openjdk.java.net/browse/JDK-8073139
 	if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {
 	    arch = "ppc64le";
 	}
