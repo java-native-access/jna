@@ -212,11 +212,17 @@
     <condition property="jre.arch" value="ppc">
       <matches pattern="(powerpc|power)" string="${os.arch}"/>
     </condition>
+    <condition property="jre.arch" value="ppc64le">
+      <or>
+	<matches pattern="(powerpc64le|power64le|ppc64le)" string="${os.arch}"/>
+	<and>
+	  <matches pattern="(powerpc64|power64|ppc64)" string="${os.arch}"/>
+	  <matches pattern="little" string="${sun.cpu.endian}"/>
+	</and>
+      </or>
+    </condition>
     <condition property="jre.arch" value="ppc64">
       <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
-    </condition>
-    <condition property="jre.arch" value="ppc64le">
-      <matches pattern="(powerpc64le|power64le)" string="${os.arch}"/>
     </condition>
     <property name="jre.arch" value="${os.arch}"/>
     <condition property="os.prefix" value="linux-${jre.arch}">
@@ -286,7 +292,7 @@
     <echo>java.library.path=${java.library.path}</echo>
     <echo>os.prefix=${os.prefix}</echo>
     <echo>os.name=${os.name}</echo>
-    <echo>os.arch=${os.arch}</echo>
+    <echo>os.arch=${os.arch} (${sun.cpu.endian})</echo>
     <echo>build=${build}</echo>
     <echo>build.native=${build.native}</echo>
 
