@@ -42,7 +42,7 @@ public class MemoryTest extends TestCase implements GCWaits {
         shared = null;
         System.gc();
         Memory.purge();
-        for (int i=0;i < GC_WAITS && ref.get() != null) {
+        for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
             Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
             Memory.purge();
