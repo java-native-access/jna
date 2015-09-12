@@ -16,7 +16,7 @@
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
-#   Android (arm/aarch64/x86/x86-64/mipsel/mips64el)
+#   Android (arm/armv7/aarch64/x86/x86-64/mipsel/mips64el)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
@@ -111,7 +111,7 @@ endif
 STRIP=strip -x
 # end defaults
 
-# Android build (cross-compile) requires the android SDK+NDK.
+# Android build (cross-compile) requires the android NDK.
 # Ensure the following tools are in your path and adjust NDK_PLATFORM as needed
 ifeq ($(OS),android)
 AARCH=$(ARCH)
@@ -120,6 +120,11 @@ ifeq ($(ARCH),arm)
 PREFIX=arm-linux-androideabi-
 COPT+= -mthumb-interwork -march=armv5te -mtune=xscale -msoft-float -fstack-protector 
 HOST=arm-linux-eabi
+else ifeq ($(ARCH),armv7)
+PREFIX=arm-linux-androideabi-
+COPT+= -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -Wl,--fix-cortex-a8
+HOST=arm-linux-eabi
+AARCH=arm
 else ifeq ($(ARCH),aarch64)
 PREFIX=aarch64-linux-android-
 HOST=aarch64-linux-android

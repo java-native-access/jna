@@ -10,7 +10,7 @@
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm and
-       android-{arm|aarch64|x86|x86-64|mips|mips64}) 
+       android-{arm|armv7|aarch64|x86|x86-64|mips|mips64}) 
 
        Use ANT_OPTS=-Dskip-native=false to build native parts, or directly
          invoke the native or test targets
@@ -177,7 +177,7 @@
         <not>
           <and>
             <matches pattern="^android-" string="${os.prefix}"/>
-            <not><matches patterm="64$" string="${os.prefix}"/></not>
+            <not><matches pattern="64$" string="${os.prefix}"/></not>
           </and>
         </not>
         <or>
@@ -615,6 +615,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/sunos-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-armv7.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-aarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/android-x86-64.jar" overwrite="true"/>
@@ -687,6 +688,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <condition property="ARCH" value="arm">
       <equals arg1="${os.prefix}" arg2="android-arm"/>
+    </condition>
+    <condition property="ARCH" value="armv7">
+      <equals arg1="${os.prefix}" arg2="android-armv7"/>
     </condition>
     <condition property="ARCH" value="aarch64">
       <equals arg1="${os.prefix}" arg2="android-aarch64"/>
