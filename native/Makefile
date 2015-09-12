@@ -20,7 +20,7 @@
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
-#   Linux (ppc64/ia64)
+#   Linux (ppc64/ppc64le/ia64)
 #
 # The w32ce build requires cegcc and phoneME for cross-compilation; if these
 # tools are available on the path then "ant -Dos.prefix=w32ce-arm" should
@@ -228,7 +228,12 @@ ifeq ($(OS),linux)
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
 PCFLAGS+=-fPIC
 CDEFINES+=-DHAVE_PROTECTION
+ifeq ($(DYNAMIC_LIBFFI),true)
 LDFLAGS+=-Wl,-soname,$@
+else
+# Ensure we bind to local libffi symbols
+LDFLAGS+=-Wl,-soname,$@,-Bsymbolic
+endif
 endif
 
 ifneq (,$(findstring bsd,$(OS)))
