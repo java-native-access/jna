@@ -16,7 +16,7 @@
 #   Solaris (i386/amd64/sparc/sparcv9)
 #   AIX (ppc/ppc64)
 #   FreeBSD/OpenBSD/NetBSD (i386/amd64)
-#   Android (arm/x86)
+#   Android (arm/aarch64/x86/x86-64/mipsel/mips64el)
 #
 # Built, but with outstanding bugs (not necessarily within JNA):
 #
@@ -28,7 +28,7 @@
 #
 # The android build requires the android SDK+NDK for cross-compilation;
 # make the tools available on the path and compile with
-# "ant -Dos.prefix=android-arm(-x86)".  Put the NDK tools in the path and adjust
+# "ant -Dos.prefix=android-{arm|x86}".  Put the NDK tools in the path and adjust
 # NDK_PLATFORM below or set it in your environment.
 #
 # The windows build requires a cygwin installation.  The build will use MSVC
@@ -114,26 +114,52 @@ STRIP=strip -x
 # Android build (cross-compile) requires the android SDK+NDK.
 # Ensure the following tools are in your path and adjust NDK_PLATFORM as needed
 ifeq ($(OS),android)
+AARCH=$(ARCH)
+ALIBDIR=/usr/lib
 ifeq ($(ARCH),arm)
 PREFIX=arm-linux-androideabi-
 COPT+= -mthumb-interwork -march=armv5te -mtune=xscale -msoft-float -fstack-protector 
 HOST=arm-linux-eabi
-else
-PREFIX=i686-android-linux-
+else ifeq ($(ARCH),aarch64)
+PREFIX=aarch64-linux-android-
+HOST=aarch64-linux-android
+AARCH=arm64
+ALIBDIR=/usr/lib64
+else ifeq ($(ARCH),x86)
+PREFIX=i686-linux-android-
 COPT+= -march=i686
-HOST=i686-linux
+HOST=i686-linux-android
+else ifeq ($(ARCH),x86-64)
+PREFIX=x86_64-linux-android-
+COPT+= -m64
+HOST=x86_64-linux-android
+AARCH=x86_64
+ALIBDIR=/usr/lib64
+else ifeq ($(ARCH),mips)
+PREFIX=mipsel-linux-android-
+HOST=mipsel-linux-android
+COPT+=
+else ifeq ($(ARCH),mips64)
+PREFIX=mips64el-linux-android-
+HOST=mips64el-linux-android
+COPT+=
+ALIBDIR=/usr/lib64
+else
+ERROR = $(error "Unsupported android architecture '$(ARCH)'")
 endif
-CC=$(PREFIX)gcc
+NDK?=/Developer/Applications/android-ndk-r10e
+NDK_PLATFORM?=$(NDK)/platforms/android-21
+SYSROOT=$(NDK_PLATFORM)/arch-$(AARCH)
+CC=$(PREFIX)gcc --sysroot $(SYSROOT)
 CPP=$(PREFIX)cpp
-LD=$(PREFIX)gcc
+LD=$(CC)
 RANLIB=$(PREFIX)ranlib
 STRIP=$(PREFIX)strip -x
 CDEFINES=-DNO_JAWT -DNO_WEAK_GLOBALS -DFFI_MMAP_EXEC_WRIT=1 -DFFI_MMAP_EXEC_SELINUX=0
 COPT+=-fpic -ffunction-sections -funwind-tables -fno-short-enums
-NDK_PLATFORM?=/Developer/Applications/android-ndk-r7c/platforms/android-14
 JAVA_INCLUDES=
-CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(ARCH)/usr/include" # -I/usr/include
-LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-$(ARCH)/usr/lib/" -lgcc -lc -ldl -lm
+CINCLUDES+=-I"$(NDK_PLATFORM)/arch-$(AARCH)/usr/include" # -I/usr/include
+LIBS=-nostdlib -L"$(NDK_PLATFORM)/arch-$(AARCH)$(ALIBDIR)/" -lgcc -lc -ldl -lm
 LDFLAGS+=-Wl,-shared,-Bsymbolic
 FFI_ENV=CPP="$(CPP)" CC="$(CC)" CFLAGS="$(COPT) $(CDEBUG) $(CINCLUDES)" CPPFLAGS="$(CDEFINES) $(CINCLUDES)" LIBS="$(LIBS)" RANLIB="$(RANLIB)"
 FFI_CONFIG=--enable-static --disable-shared --with-pic=yes --host=$(HOST)

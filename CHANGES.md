@@ -45,6 +45,7 @@ Features
 * [#422](https://github.com/twall/jna/pull/422): Update libffi to v3.2.1 - [@tdaitx](https://github.com/tdaitx).
 * [#425](https://github.com/twall/jna/pull/425): Add support for PPCLE - [@tdaitx](https://github.com/tdaix).
 * [#428](https://github.com/twall/jna/pull/428): Added Wincon.h related functions and definitions to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#430](https://github.com/twall/jna/issues/430): Add android `aarch64`, `x86-64`, `mips`, and `mips64` targets - [@twall](https://github.com/twall).
 * [#431](https://github.com/twall/jna/pull/431): Added named pipe API support to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
 * [#432](https://github.com/twall/jna/pull/432): Added SetLocalTime definition to 'com.sun.jna.platform.win32.Kernel32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#434](https://github.com/twall/jna/pull/434): Added GetEnvironmentStrings to 'com.sun.jna.platform.win32.Kernel32'  - [@lgoldstein](https://github.com/lgoldstein).
