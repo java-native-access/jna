@@ -1,4 +1,4 @@
-/* Copyright (c) 2009 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2009-2015 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,6 +20,9 @@ import java.io.File;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Map;
+import java.util.HashMap;
+import java.lang.reflect.Method; 
 
 import com.sun.jna.DirectTest.TestInterface;
 import com.sun.jna.DirectTest.TestLibrary;
@@ -69,7 +72,6 @@ public class PerformanceTest extends TestCase implements Paths {
             }
         }
 
-        public static native int getpid();
         public static native Pointer memset(Pointer p, int v, size_t len);
         public static native Pointer memset(Pointer p, int v, int len);
         public static native Pointer memset(Pointer p, int v, long len);
@@ -80,6 +82,20 @@ public class PerformanceTest extends TestCase implements Paths {
         public static native int strlen(byte[] b);
         public static native int strlen(Buffer b);
         
+        static {
+            Native.register(Platform.C_LIBRARY_NAME);
+        }
+    }
+
+    static class PIDLibrary {
+        public static native int getpid();
+        static {
+            Native.register(Platform.C_LIBRARY_NAME);
+        }
+    }
+
+    static class W32PIDLibrary {
+        public static native int _getpid();
         static {
             Native.register(Platform.C_LIBRARY_NAME);
         }
@@ -185,8 +201,20 @@ public class PerformanceTest extends TestCase implements Paths {
 
         Pointer presult;
         String cname = Platform.C_LIBRARY_NAME;
+        Map options = new HashMap();
+        if (Platform.isWindows()) {
+            options.put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
+                public String getFunctionName(NativeLibrary library, Method method) {
+                    String name = method.getName();
+                    if ("getpid".equals(name)) { 
+                        name = "_getpid";
+                    }
+                    return name;
+                }
+            });
+        }
         CInterface clib = (CInterface)
-            Native.loadLibrary(cname, CInterface.class);
+            Native.loadLibrary(cname, CInterface.class, options);
 
         ///////////////////////////////////////////
         // getpid
@@ -199,8 +227,15 @@ public class PerformanceTest extends TestCase implements Paths {
         System.out.println("getpid (JNA interface): " + delta + "ms");
 
         start = System.currentTimeMillis();
-        for (int i=0;i < COUNT;i++) {
-            pid = CLibrary.getpid();
+        if (Platform.isWindows()) {
+            for (int i=0;i < COUNT;i++) {
+                pid = W32PIDLibrary._getpid();
+            }
+        }
+        else {
+            for (int i=0;i < COUNT;i++) {
+                pid = PIDLibrary.getpid();
+            }
         }
         delta = System.currentTimeMillis() - start;
         System.out.println("getpid (JNA direct): " + delta + "ms");
