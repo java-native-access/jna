@@ -14,6 +14,8 @@ package com.sun.jna;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Set;
+import java.util.HashSet;
 import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
@@ -50,22 +52,30 @@ public class LastErrorTest extends TestCase {
 
     public void testLastErrorPerThreadStorage() throws Exception {
         final TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
-        final int[] errors = new int[2];
-        Thread t1 = new Thread() { public void run() {
-            lib.setLastError(-1);
-            errors[0] = Native.getLastError();
-        }};
-        Thread t2 = new Thread() { public void run() {
-            lib.setLastError(-2);
-            errors[1] = Native.getLastError();
-        }};
-        lib.setLastError(-3);
-        
-        t1.start(); t2.start();
-        t1.join(); t2.join();
-        assertEquals("Wrong error on main thread", -3, Native.getLastError());
-        assertEquals("Wrong error on first thread", -1, errors[0]);
-        assertEquals("Wrong error on second thread", -2, errors[1]);
+        final int NTHREADS = 100;
+        final int[] errors = new int[NTHREADS];
+        Set<Thread> threads = new HashSet<Thread>();
+        for (int i=0;i < NTHREADS;i++) {
+            final int idx = i;
+            Thread t = new Thread() { public void run() {
+                lib.setLastError(-idx-1);
+                errors[idx] = Native.getLastError();
+            }};
+            threads.add(t);
+        }
+        int EXPECTED = 42;
+        lib.setLastError(EXPECTED);
+        assertEquals("Wrong error on main thread (immediate)", EXPECTED, Native.getLastError());
+        for (Thread t : threads) {
+            t.start();
+        }
+        for (Thread t : threads) {
+            t.join();
+        }
+        assertEquals("Wrong error on main thread", EXPECTED, Native.getLastError());
+        for (int i=0;i < threads.size();i++) {
+            assertEquals("Wrong error on thread " + i, -i-1, errors[i]);
+        }
     }
 
     private final int ERROR = Platform.isWindows() ? 1 : -1;

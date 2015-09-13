@@ -592,6 +592,7 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
     thread_storage* tls = (thread_storage*)TlsGetValue(tls_thread_data_key);
     if (tls) {
       dispose_thread_data(tls);
+      TlsSetValue(tls_thread_data_key, 0);
     }
     break;
   }
