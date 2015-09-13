@@ -1,4 +1,4 @@
-/* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007-2015 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -245,22 +245,17 @@ public final class Native implements Version {
      */
     public static synchronized native boolean isProtected();
 
-    /** <p>This method is obsolete.  The last error value is always preserved.
-     * </p>
-     * NOTE: The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}.
-     *
-     * @deprecated Last error is always preserved
+    /** This method is obsolete.  The last error value is always preserved.
+     * @see #getLastError()
+     * @deprecated Last error is always preserved and available via {@link #getLastError()}
      */
     @Deprecated
     public static void setPreserveLastError(boolean enable) { }
 
     /** Indicates whether the system last error result is preserved
      * after every invocation.  Always returns <code>true</code><p>
-     * NOTE: The preferred method of obtaining the last error result is
-     * to declare your mapped method to throw {@link LastErrorException}.
-     *
-     * @deprecated Last error is always preserved
+     * @see #getLastError()
+     * @deprecated Last error is always preserved and available via {@link #getLastError()}
      */
     @Deprecated
     public static boolean getPreserveLastError() { return true; }
@@ -998,15 +993,18 @@ public final class Native implements Version {
     private static native String getNativeVersion();
     private static native String getAPIChecksum();
 
-    /** Retrieve the last error set by the OS.  This corresponds to
+    /** Retrieve last error set by the OS.  This corresponds to
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether
-     * the original value is per-thread depends on the underlying OS.  The
-     * result is undefined if {@link #getPreserveLastError} is
-     * <code>false</code>.<p>
-     * The preferred method of obtaining the last error result is
+     * the original value is per-thread depends on the underlying OS.  
+     * <p>
+     * An alternative method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
-     * instead.
+     * instead.  If a method's signature includes a throw of {@link
+     * LastErrorException}, the last error will be set to zero before the
+     * native call and a {@link LastErrorException} will be raised if the last
+     * error value is non-zero after the call, regardless of the actual
+     * returned value from the native function.</p>
      */
     public static native int getLastError();
 
