@@ -10,7 +10,7 @@
 
        Cross-compile by specifying -Dos.prefix={name-arch} to ant
        (cross-compile currently only configured/tested on w32ce-arm and
-       android-{arm|armv7|aarch64|x86|x86-64|mips|mips64}) 
+       android targets) 
 
        Use ANT_OPTS=-Dskip-native=false to build native parts, or directly
          invoke the native or test targets
@@ -1056,7 +1056,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 
     <mkdir dir="${javadoc}"/>
     <condition property="javadoc.opts" value="-Xdoclint:none" else="">
-      <matches pattern="^1.[89]$" string="${ant.java.version}"/>
+      <not><matches pattern="^1.[0-7]$" string="${ant.java.version}"/></not>
     </condition>
     <javadoc package="true"
              windowtitle="JNA API"
