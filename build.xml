@@ -58,7 +58,7 @@
   <property name="jna.major" value="4"/>
   <property name="jna.minor" value="2"/>
   <property name="jna.revision" value="0"/>
-  <property name="jna.build" value="${build.number}"/>
+  <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
       <isset property="release"/>
@@ -70,7 +70,7 @@
   <property name="jni.major" value="4"/>
   <property name="jni.minor" value="0"/>
   <property name="jni.revision" value="1"/>
-  <property name="jni.build" value="${build.number}"/>
+  <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="1a6047467b59e8748f975e03016ce3d9"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
