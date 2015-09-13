@@ -29,7 +29,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
     public void testEmpty() { }
 
-    private static class JNIMathLibrary {
+    private static class JNILibrary {
         static {
             String path = TESTPATH + NativeLibrary.mapSharedLibraryName("testlib");;
             if (!new File(path).isAbsolute()) {
@@ -39,6 +39,7 @@ public class PerformanceTest extends TestCase implements Paths {
         }
         
         private static native double cos(double x);
+        private static native int getpid();
     }
 
     public static void main(java.lang.String[] argList) {
@@ -68,6 +69,7 @@ public class PerformanceTest extends TestCase implements Paths {
             }
         }
 
+        public static native int getpid();
         public static native Pointer memset(Pointer p, int v, size_t len);
         public static native Pointer memset(Pointer p, int v, int len);
         public static native Pointer memset(Pointer p, int v, long len);
@@ -84,6 +86,7 @@ public class PerformanceTest extends TestCase implements Paths {
     }
 
     static interface CInterface extends Library {
+        int getpid();
         Pointer memset(Pointer p, int v, int len);
         int strlen(String s);
     }
@@ -168,7 +171,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
-            dresult = JNIMathLibrary.cos(0d);
+            dresult = JNILibrary.cos(0d);
         }
         delta = System.currentTimeMillis() - start;
         System.out.println("cos (JNI): " + delta + "ms");
@@ -180,12 +183,37 @@ public class PerformanceTest extends TestCase implements Paths {
         delta = System.currentTimeMillis() - start;
         System.out.println("cos (pure java): " + delta + "ms");
 
-        ///////////////////////////////////////////
-        // memset
         Pointer presult;
         String cname = Platform.C_LIBRARY_NAME;
         CInterface clib = (CInterface)
             Native.loadLibrary(cname, CInterface.class);
+
+        ///////////////////////////////////////////
+        // getpid
+        int pid;
+        start = System.currentTimeMillis();
+        for (int i=0;i < COUNT;i++) {
+            pid = clib.getpid();
+        }
+        delta = System.currentTimeMillis() - start;
+        System.out.println("getpid (JNA interface): " + delta + "ms");
+
+        start = System.currentTimeMillis();
+        for (int i=0;i < COUNT;i++) {
+            pid = CLibrary.getpid();
+        }
+        delta = System.currentTimeMillis() - start;
+        System.out.println("getpid (JNA direct): " + delta + "ms");
+
+        start = System.currentTimeMillis();
+        for (int i=0;i < COUNT;i++) {
+            pid = JNILibrary.getpid();
+        }
+        delta = System.currentTimeMillis() - start;
+        System.out.println("getpid (JNI): " + delta + "ms");
+
+        ///////////////////////////////////////////
+        // memset
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
             presult = clib.memset(null, 0, 0);
