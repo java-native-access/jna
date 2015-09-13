@@ -4,7 +4,7 @@ Contributing to JNA
 JNA contains work from many developers. You're encouraged to contribute to both JNA's core `jna.jar` as well as platform-specific `platform.jar` libraries.
 
 - Install Git and configure it to work with Github
-- Fork the code from [github.com/twall/jna](https://github.com/twall/jna)
+- Fork the code from [github.com/twall/jna](https://github.com/java-native-access/jna)
 - Check out the code with `git clone git@github.com:username/jna.git`
 - Ensure you can build the project with `ant dist test`
 - Make your code changes, write tests, build
@@ -27,7 +27,7 @@ For debian-style installs,
 
 For most unix-like systems:
 
-    % git clone git@github.com:twall/jna
+    % git clone git@github.com:java-native-access/jna
     % ant dist test
 
 For Windows, see [Windows Development Environment](WindowsDevelopmentEnvironment.md).
@@ -120,7 +120,7 @@ Utilities that wrap Win32 functions into more user-friendly implementations are 
 Javadoc Pages
 =============
 
-Javadoc pages are published with [gh-pages](http://pages.github.com/) to a root branch. The official repository for JNA is [here](http://twall.github.com/jna). Here's how to pull and push the root branch to your local environment.
+Javadoc pages are published with [gh-pages](http://pages.github.com/) to a root branch. The official repository for JNA is [here](http://java-native-access.github.com/jna). Here's how to pull and push the root branch to your local environment.
 
 ``` sh
 git fetch origin

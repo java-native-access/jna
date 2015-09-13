@@ -11,8 +11,6 @@ JNA Release Process
 * Run `ant -Drelease=true clean dist` target on a fully up-to-date checkout with no modifications. Commit generated files in dist.
   You will also see differences in the pom-*.xml files and src/.../Native.java.  Do not commit these files.
 
-* [Release to Maven Central](PublishingToMavenCentral.md)
-
 * Update links in README.md, commit the changes.
   * download links
   * javadoc links
@@ -22,6 +20,8 @@ JNA Release Process
   commit and push.
 
 * Tag as &lt;version>, push all changes and new tag to origin.
+
+* [Release to Maven Central](PublishingToMavenCentral.md)
 
 * Email release notice to [jna-users Google group](http://groups.google.com/group/jna-users).
 
