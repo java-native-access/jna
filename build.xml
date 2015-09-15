@@ -422,6 +422,8 @@ com/sun/jna/linux-aarch64/libjnidispatch.so;
 processor=aarch64;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
+com/sun/jna/linux-sparcv9/libjnidispatch.so;
+processor=sparcv9;osname=linux,
 
 com/sun/jna/freebsd-x86/libjnidispatch.so;
 processor=x86;osname=freebsd,
@@ -475,6 +477,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-ppc64le.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-ppc64le"/>
+      <zipfileset src="${lib.native}/linux-sparcv9.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-sparcv9"/>
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -606,6 +611,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64le.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-sparcv9.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
