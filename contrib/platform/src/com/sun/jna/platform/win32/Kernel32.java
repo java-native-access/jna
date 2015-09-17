@@ -14,9 +14,11 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
+
 
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
@@ -2729,4 +2731,88 @@ public interface Kernel32 extends WinNT, Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364433(v=vs.85).aspx">FindVolumeClose</a>
      */
     boolean FindVolumeClose(HANDLE hFindVolume);
+    
+    /**
+	 * Retrieves the current control settings for a specified communications
+	 * device.
+	 * 
+	 * @param hFile
+	 *            [in] A handle to the communications device.<br>
+	 *            The
+	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+	 *            function returns this {@link HANDLE}.
+	 * @param lpDCB
+	 *            [in, out] A pointer to a {@link WinBase.DCB} structure that
+	 *            receives the control settings information.
+	 * 
+	 * @return If the function succeeds, the return value is nonzero. <br>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 * 
+	 */
+	boolean GetCommState(HANDLE hFile, WinBase.DCB lpDCB);
+
+	/**
+	 * 
+	 * Retrieves the time-out parameters for all read and write operations on a
+	 * specified communications device.<br>
+	 * <br>
+	 * For more information about time-out values for communications devices,
+	 * see the {@link Kernel32#SetCommTimeouts} function.
+	 * 
+	 * @param hFile
+	 *            [in] A handle to the communications device. The
+	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+	 *            function returns this handle.
+	 * 
+	 * @param lpCommTimeouts
+	 *            [in] A pointer to a {@link WinBase#COMMTIMEOUTS} structure in
+	 *            which the time-out information is returned.
+	 * @return If the function succeeds, the return value is nonzero.
+	 * 
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 * 
+	 * 
+	 * 
+	 */
+	boolean GetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
+
+	/**
+	 * Configures a communications device according to the specifications in a
+	 * device-control block (a {@link WinBase.DCB} structure). The function
+	 * reinitializes all hardware and control settings, but it does not empty
+	 * output or input queues.
+	 * 
+	 * @param hFile
+	 *            [in] A handle to the communications device. The
+	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+	 *            function returns this handle.
+	 * @param lpDCB
+	 *            [in] A pointer to a {@link WinBase.DCB} structure that
+	 *            contains the configuration information for the specified
+	 *            communications device.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 *         function fails, the return value is zero. To get extended error
+	 *         information, call {@link Kernel32#GetLastError()}.
+	 */
+	boolean SetCommState(HANDLE hFile, WinBase.DCB lpDCB);
+
+	/**
+	 * Sets the time-out parameters for all read and write operations on a
+	 * specified communications device.
+	 * 
+	 * @param hFile
+	 *            [in] A handle to the communications device. The
+	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+	 *            function returns this handle.
+	 * @param LPCOMMTIMEOUTS
+	 *            [in] A pointer to a {@link WinBase#COMMTIMEOUTS} structure
+	 *            that contains the new time-out values.
+	 * @return If the function succeeds, the return value is nonzero. <br>
+	 *         If the function fails, the return value is zero. To get extended
+	 *         error information, call {@link Kernel32#GetLastError()}.
+	 */
+	boolean SetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
+
 }
