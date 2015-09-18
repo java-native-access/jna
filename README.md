@@ -5,7 +5,7 @@
 Java Native Access (JNA)
 ========================
 
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.com/jna/4.2.0).  Please read the [overview](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.0).  Please read the [overview](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
 
 JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.
 
@@ -122,12 +122,12 @@ Using the Library
 * [Platform Library](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/java-native-access/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://java-native-access.github.com/jna/4.2.0/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.com/jna/4.2.0/).
+The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.0/).
 
 Developers
 ==========
