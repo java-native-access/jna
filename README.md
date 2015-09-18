@@ -122,12 +122,12 @@ Using the Library
 * [Platform Library](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/java-native-access/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://java-native-access.github.com/jna/4.2.0/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.com/jna/4.2.0/).
+The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.0/).
 
 Developers
 ==========
