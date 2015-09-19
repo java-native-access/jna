@@ -254,6 +254,17 @@ public class ArgumentsMarshalTest extends TestCase {
 
     public interface NativeMappedLibrary extends Library {
         int returnInt32Argument(Custom arg);
+        int returnInt32Argument(size_t arg);
+        long returnInt64Argument(size_t arg);
+    }
+    public static class size_t extends IntegerType {
+        public size_t() {
+            this(0);
+        }
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, true);
+            setValue(value);
+        }
     }
     public static class Custom implements NativeMapped {
         private int value;
@@ -280,6 +291,16 @@ public class ArgumentsMarshalTest extends TestCase {
         final int MAGIC = 0x12345678;
         Custom arg = new Custom(MAGIC);
         assertEquals("Argument not mapped", MAGIC, lib.returnInt32Argument(arg));
+
+        if (Native.SIZE_T_SIZE == 4) {
+            size_t size = new size_t(MAGIC);
+            assertEquals("Argument not mapped", MAGIC, lib.returnInt32Argument(size));
+        }
+        else {
+            final long MAGIC64 = 0x123456789ABCDEFL;
+            size_t size = new size_t(MAGIC64);
+            assertEquals("Argument not mapped", MAGIC64, lib.returnInt64Argument(size));
+        }
     }
     
     public void testPointerArgumentReturn() {
