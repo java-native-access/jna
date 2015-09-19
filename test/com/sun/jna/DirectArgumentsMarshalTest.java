@@ -92,6 +92,8 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
     
     public static class DirectNativeMappedLibrary implements NativeMappedLibrary {
         public native int returnInt32Argument(Custom arg);
+        public native int returnInt32Argument(size_t arg);
+        public native long returnInt64Argument(size_t arg);
         static {
             Native.register("testlib");
         }
