@@ -75,6 +75,8 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
 
     public static class DirectNativeMappedLibrary implements NativeMappedLibrary {
         public native Custom returnInt32Argument(int arg);
+        public native size_t returnInt32Magic();
+        public native size_t returnInt64Magic();
         static {
             Native.register("testlib");
         }
