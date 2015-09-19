@@ -182,6 +182,17 @@ public class ReturnTypesTest extends TestCase {
 
     public interface NativeMappedLibrary extends Library {
         Custom returnInt32Argument(int arg);
+        size_t returnInt32Magic();
+        size_t returnInt64Magic();
+    }
+    public static class size_t extends IntegerType {
+        public size_t() {
+            this(0);
+        }
+        public size_t(long value) {
+            super(Native.SIZE_T_SIZE, true);
+            setValue(value);
+        }
     }
     public static class Custom implements NativeMapped {
         private int value;
@@ -210,8 +221,14 @@ public class ReturnTypesTest extends TestCase {
     public void testInvokeNativeMapped() {
         NativeMappedLibrary lib = loadNativeMappedLibrary();
         final int MAGIC = 0x12345678;
+        final long MAGIC64 = 0x123456789ABCDEF0L;
         final Custom EXPECTED = new Custom(MAGIC);
-        assertEquals("Argument not mapped", EXPECTED, lib.returnInt32Argument(MAGIC));
+        assertEquals("NativeMapped 'Custom' result not mapped", EXPECTED, lib.returnInt32Argument(MAGIC));
+        
+        assertEquals("NativeMapped IntegerType result not mapped (32)", 
+                     new size_t(MAGIC), lib.returnInt32Magic());
+        assertEquals("NativeMapped IntegerType result not mapped (64)", 
+                     new size_t(MAGIC64), lib.returnInt64Magic());
     }
 
     public void testInvokeFloat() {
