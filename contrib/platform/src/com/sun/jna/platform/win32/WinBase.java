@@ -1057,4 +1057,650 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     int NMPWAIT_USE_DEFAULT_WAIT=0x00000000;
     int NMPWAIT_NOWAIT=0x00000001;
     int NMPWAIT_WAIT_FOREVER=0xffffffff;
+    
+
+
+	/**
+	 * 
+	 * Contains the time-out parameters for a communications device. The
+	 * parameters determine the behavior of
+	 * {@link Kernel32#ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)}
+	 * , {@link Kernel32#WriteFile(com.sun.jna.platform.win32.WinNT.HANDLE,
+	 * byte[], int, com.sun.jna.ptr.IntByReference,
+	 * com.sun.jna.platform.win32.WinBase.OVERLAPPED))}, ReadFileEx, and
+	 * WriteFileEx operations on the device.<br>
+	 * <br>
+	 * 
+	 * <b>Remarks</b><br>
+	 * If an application sets ReadIntervalTimeout and ReadTotalTimeoutMultiplier
+	 * to MAXDWORD and sets ReadTotalTimeoutConstant to a value greater than
+	 * zero and less than MAXDWORD, one of the following occurs when the
+	 * ReadFile function is called:
+	 * <li>If there are any bytes in the input buffer, ReadFile returns
+	 * immediately with the bytes in the buffer.</li>
+	 * <li>If there are no bytes in the input buffer, ReadFile waits until a
+	 * byte arrives and then returns immediately.</li>
+	 * <li>If no bytes arrive within the time specified by
+	 * ReadTotalTimeoutConstant, ReadFile times out.</li>
+	 * 
+	 * @author Markus
+	 *
+	 */
+	public static class COMMTIMEOUTS extends Structure {
+		/**
+		 * 
+		 * The maximum time allowed to elapse before the arrival of the next
+		 * byte on the communications line, in milliseconds. If the interval
+		 * between the arrival of any two bytes exceeds this amount, the
+		 * {@link Kernel32#ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)}
+		 * operation is completed and any buffered data is returned. A value of
+		 * zero indicates that interval time-outs are not used.
+		 * 
+		 * A value of MAXDWORD, combined with zero values for both the
+		 * {@link COMMTIMEOUTS#ReadTotalTimeoutConstant} and
+		 * {@link COMMTIMEOUTS#ReadTotalTimeoutMultiplier} members, specifies
+		 * that the read operation is to return immediately with the bytes that
+		 * have already been received, even if no bytes have been received.
+		 * 
+		 */
+		public DWORD ReadIntervalTimeout;
+
+		/**
+		 * The multiplier used to calculate the total time-out period for read
+		 * operations, in milliseconds. For each read operation, this value is
+		 * multiplied by the requested number of bytes to be read.
+		 */
+		public DWORD ReadTotalTimeoutMultiplier;
+
+		/**
+		 * A constant used to calculate the total time-out period for read
+		 * operations, in milliseconds. For each read operation, this value is
+		 * added to the product of the
+		 * {@link COMMTIMEOUTS#ReadTotalTimeoutMultiplier} member and the
+		 * requested number of bytes.
+		 * 
+		 * A value of zero for both the
+		 * {@link COMMTIMEOUTS#ReadTotalTimeoutMultiplier} and
+		 * {@link COMMTIMEOUTS#ReadTotalTimeoutConstant} members indicates that
+		 * total time-outs are not used for read operations.
+		 */
+		public DWORD ReadTotalTimeoutConstant;
+
+		/**
+		 * The multiplier used to calculate the total time-out period for write
+		 * operations, in milliseconds. For each write operation, this value is
+		 * multiplied by the number of bytes to be written.
+		 */
+		public DWORD WriteTotalTimeoutMultiplier;
+
+		/**
+		 * A constant used to calculate the total time-out period for write
+		 * operations, in milliseconds. For each write operation, this value is
+		 * added to the product of the
+		 * {@link COMMTIMEOUTS#WriteTotalTimeoutMultiplier} member and the
+		 * number of bytes to be written.
+		 * 
+		 * A value of zero for both the
+		 * {@link COMMTIMEOUTS#WriteTotalTimeoutMultiplier} and
+		 * {@link COMMTIMEOUTS#WriteTotalTimeoutConstant} members indicates that
+		 * total time-outs are not used for write operations.
+		 * 
+		 */
+		public DWORD WriteTotalTimeoutConstant;
+
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "ReadIntervalTimeout", "ReadTotalTimeoutMultiplier",
+					"ReadTotalTimeoutConstant", "WriteTotalTimeoutMultiplier", "WriteTotalTimeoutConstant" });
+		}
+	}
+
+
+
+	/**
+	 * Defines the control setting for a serial communications device.
+	 */
+	public static class DCB extends Structure {
+		
+		/**
+		 * Type is used to handle the bitfield of the DBC structure.
+		 */
+		public static class DCBControllBits extends DWORD {
+			private static final long serialVersionUID = 8574966619718078579L;
+
+			@Override
+			public String toString() {
+				final StringBuilder stringBuilder = new StringBuilder();
+				stringBuilder.append('<');
+				stringBuilder.append("fBinary:1=");
+				stringBuilder.append(getfBinary() ? '1' : '0');
+				stringBuilder.append(", fParity:1=");
+				stringBuilder.append(getfParity() ? '1' : '0');
+				stringBuilder.append(", fOutxCtsFlow:1=");
+				stringBuilder.append(getfOutxCtsFlow() ? '1' : '0');
+				stringBuilder.append(", fOutxDsrFlow:1=");
+				stringBuilder.append(getfOutxDsrFlow() ? '1' : '0');
+				stringBuilder.append(", fDtrControl:2=");
+				stringBuilder.append(getfDtrControl());
+				stringBuilder.append(", fDsrSensitivity:1=");
+				stringBuilder.append(getfDsrSensitivity() ? '1' : '0');
+				stringBuilder.append(", fTXContinueOnXoff:1=");
+				stringBuilder.append(getfTXContinueOnXoff() ? '1' : '0');
+				stringBuilder.append(", fOutX:1=");
+				stringBuilder.append(getfOutX() ? '1' : '0');
+				stringBuilder.append(", fInX:1=");
+				stringBuilder.append(getfInX() ? '1' : '0');
+				stringBuilder.append(", fErrorChar:1=");
+				stringBuilder.append(getfErrorChar() ? '1' : '0');
+				stringBuilder.append(", fNull:1=");
+				stringBuilder.append(getfNull() ? '1' : '0');
+				stringBuilder.append(", fRtsControl:2=");
+				stringBuilder.append(getfRtsControl());
+				stringBuilder.append(", fAbortOnError:1=");
+				stringBuilder.append(getfAbortOnError() ? '1' : '0');
+				stringBuilder.append(", fDummy2:17=");
+				stringBuilder.append(getfDummy2());
+				stringBuilder.append('>');
+				return stringBuilder.toString();
+			}
+
+			public boolean getfAbortOnError() {
+				return (this.intValue() & (0x01 << 14)) != 0x00;
+			}
+
+			public boolean getfBinary() {
+				return (this.intValue() & 0x01) != 0x00;
+			}
+
+			public boolean getfDsrSensitivity() {
+				return (this.intValue() & (0x01 << 6)) != 0x00;
+			}
+
+			public int getfDtrControl() {
+				return (this.intValue() >>> 4) & 0x03;
+			}
+
+			public boolean getfErrorChar() {
+				return (this.intValue() & (0x01 << 10)) != 0x00;
+			}
+
+			public boolean getfInX() {
+				return (this.intValue() & (0x01 << 9)) != 0x00;
+			}
+
+			public boolean getfNull() {
+				return (this.intValue() & (0x01 << 11)) != 0x00;
+			}
+
+			public boolean getfOutX() {
+				return (this.intValue() & (0x01 << 8)) != 0x00;
+			}
+
+			public boolean getfOutxCtsFlow() {
+				return (this.intValue() & (0x01 << 2)) != 0x00;
+			}
+
+			public boolean getfOutxDsrFlow() {
+				return (this.intValue() & (0x01 << 3)) != 0x00;
+			}
+
+			public boolean getfParity() {
+				return (this.intValue() & (0x01 << 1)) != 0x00;
+			}
+
+			public int getfRtsControl() {
+				return (this.intValue() >>> 12) & 0x03;
+			}
+
+			public int getfDummy2() {
+				return (this.intValue()>>>15) & 0x1FFFF;
+			}
+
+			public boolean getfTXContinueOnXoff() {
+				return (this.intValue() & (0x01 << 7)) != 0x00;
+			}
+
+			/**
+			 * If this member is TRUE, the driver terminates all read and write
+			 * operations with an error status if an error occurs.<br>
+			 * The driver will not accept any further communications operations
+			 * until the application has acknowledged the error by calling the
+			 * ClearCommError function.
+			 * 
+			 * @param fAbortOnError
+			 */
+			public void setfAbortOnError(boolean fAbortOnError) {				
+				int tmp = leftShiftMask(fAbortOnError ? 1 : 0, (byte)14, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, binary mode is enabled.<br>
+			 * Windows does not support nonbinary mode transfers, so this member
+			 * must be TRUE.
+			 * 
+			 * @param fBinary
+			 */
+			public void setfBinary(boolean fBinary) {			
+				int tmp = leftShiftMask(fBinary ? 1 : 0, (byte)0, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, the communications driver is sensitive to the
+			 * state of the DSR signal.<br>
+			 * The driver ignores any bytes received, unless the DSR modem input
+			 * line is high.
+			 * 
+			 * @param fDsrSensitivity
+			 */
+			public void setfDsrSensitivity(boolean fDsrSensitivity) {			
+				int tmp = leftShiftMask(fDsrSensitivity ? 1 : 0, (byte)6, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * The DTR (data-terminal-ready) flow control. This member can be one of
+			 * the following values.
+			 * <li>{@link WinBase#DTR_CONTROL_DISABLE}</li>
+			 * <li>{@link WinBase#DTR_CONTROL_ENABLE}</li>
+			 * <li>{@link WinBase#DTR_CONTROL_HANDSHAKE}</li>
+			 * 
+			 * @param fOutxDsrFlow
+			 *            value to set
+			 */
+			public void setfDtrControl(int fOutxDsrFlow) {
+				int tmp = leftShiftMask(fOutxDsrFlow, (byte)4, 0x03, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * Indicates whether bytes received with parity errors are replaced with
+			 * the character specified by the ErrorChar member.<br>
+			 * If this member is TRUE and the fParity member is TRUE, replacement
+			 * occurs.
+			 * 
+			 * @param fErrorChar
+			 */
+			public void setfErrorChar(boolean fErrorChar) {
+				int tmp = leftShiftMask(fErrorChar ? 1 : 0, (byte)10, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * Indicates whether XON/XOFF flow control is used during reception.<br>
+			 * If this member is TRUE, the XoffChar character is sent when the input
+			 * buffer comes within XoffLim bytes of being full, and the XonChar
+			 * character is sent when the input buffer comes within XonLim bytes of
+			 * being empty.
+			 * 
+			 * @param fInX
+			 */
+			public void setfInX(boolean fInX) {			
+				int tmp = leftShiftMask(fInX ? 1 : 0, (byte)9, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, null bytes are discarded when received.
+			 * 
+			 * @param fNull
+			 */
+			public void setfNull(boolean fNull) {			
+				int tmp = leftShiftMask(fNull ? 1 : 0, (byte)11, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * Indicates whether XON/XOFF flow control is used during transmission.
+			 * <br>
+			 * If this member is TRUE, transmission stops when the XoffChar
+			 * character is received and starts again when the XonChar character is
+			 * received.
+			 * 
+			 * @param fOutX
+			 */
+			public void setfOutX(boolean fOutX) {
+				int tmp = leftShiftMask(fOutX ? 1 : 0, (byte)8, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, the CTS (clear-to-send) signal is monitored
+			 * for output flow control.<br>
+			 * If this member is TRUE and CTS is turned off, output is suspended
+			 * until CTS is sent again.
+			 * 
+			 * @param fOutxCtsFlow
+			 */
+			public void setfOutxCtsFlow(boolean fOutxCtsFlow) {
+				int tmp = leftShiftMask(fOutxCtsFlow ? 1 : 0, (byte)2, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, the DSR (data-set-ready) signal is monitored
+			 * for output flow control.<br>
+			 * If this member is TRUE and DSR is turned off, output is suspended
+			 * until DSR is sent again.
+			 * 
+			 * @param fOutxDsrFlow
+			 */
+			public void setfOutxDsrFlow(boolean fOutxDsrFlow) {
+				int tmp = leftShiftMask(fOutxDsrFlow ? 1 : 0, (byte)3, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, parity checking is performed and errors are
+			 * reported.
+			 * 
+			 * @param fParity
+			 */
+			public void setfParity(boolean fParity) {				
+				int tmp = leftShiftMask(fParity ? 1 : 0, (byte)1, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * 
+			 * The RTS (request-to-send) flow control. This member can be one of the
+			 * following values.
+			 * <li>{@link WinBase#RTS_CONTROL_DISABLE}</li>
+			 * <li>{@link WinBase#RTS_CONTROL_ENABLE}</li>
+			 * <li>{@link WinBase#RTS_CONTROL_HANDSHAKE}</li>
+			 * <li>{@link WinBase#RTS_CONTROL_TOGGLE}</li>
+			 * 
+			 * @param fRtsControl
+			 */
+			public void setfRtsControl(int fRtsControl) {
+				int tmp = leftShiftMask(fRtsControl, (byte)12, 0x03, this.intValue());
+				this.setValue(tmp);
+			}
+
+			/**
+			 * If this member is TRUE, transmission continues after the input buffer
+			 * has come within XoffLim bytes of being full and the driver has
+			 * transmitted the XoffChar character to stop receiving bytes.<br>
+			 * If this member is FALSE, transmission does not continue until the
+			 * input buffer is within XonLim bytes of being empty and the driver has
+			 * transmitted the XonChar character to resume reception.
+			 * 
+			 * @param fTXContinueOnXoff
+			 */
+			public void setfTXContinueOnXoff(boolean fTXContinueOnXoff) {				
+				int tmp = leftShiftMask(fTXContinueOnXoff ? 1 : 0, (byte)7, 0x01, this.intValue());
+				this.setValue(tmp);
+			}
+			
+			
+			private static  int leftShiftMask(int valuetoset, byte shift, int mask, int storage) {
+				int tmp = storage;
+				tmp &= ~(mask << shift);
+				tmp |= ((valuetoset & mask) << shift);
+				return tmp;
+			}
+		}
+		/**
+		 * The length of the structure, in bytes. The caller must set this
+		 * member to sizeof(DCB).
+		 */
+		public DWORD DCBlength;
+
+		/**
+		 * 
+		 * The baud rate at which the communications device operates. This
+		 * member can be an actual baud rate value, or one of the following
+		 * indexes.
+		 * <li>{@link WinBase#CBR_110}</li>
+		 * <li>{@link WinBase#CBR_300}</li>
+		 * <li>{@link WinBase#CBR_600}</li>
+		 * <li>{@link WinBase#CBR_1200}</li>
+		 * <li>{@link WinBase#CBR_2400}</li>
+		 * <li>{@link WinBase#CBR_4800}</li>
+		 * <li>{@link WinBase#CBR_9600}</li>
+		 * <li>{@link WinBase#CBR_14400}</li>
+		 * <li>{@link WinBase#CBR_19200}</li>
+		 * <li>{@link WinBase#CBR_38400}</li>
+		 * <li>{@link WinBase#CBR_56000}</li>
+		 * <li>{@link WinBase#CBR_128000}</li>
+		 * <li>{@link WinBase#CBR_256000}</li>
+		 * 
+		 */
+		public DWORD BaudRate;
+
+		/**
+		 * Contains all the bit wise setting entries.
+		 */
+		public DCBControllBits controllBits;
+
+		/**
+		 * Reserved; must be zero.
+		 */
+		public WORD wReserved;
+
+		/**
+		 * The minimum number of bytes in use allowed in the input buffer before
+		 * flow control is activated to allow transmission by the sender. This
+		 * assumes that either XON/XOFF, RTS, or DTR input flow control is
+		 * specified in the fInX, fRtsControl, or fDtrControl members.
+		 */
+		public WORD XonLim;
+
+		/**
+		 * The minimum number of free bytes allowed in the input buffer before
+		 * flow control is activated to inhibit the sender. Note that the sender
+		 * may transmit characters after the flow control signal has been
+		 * activated, so this value should never be zero. This assumes that
+		 * either XON/XOFF, RTS, or DTR input flow control is specified in the
+		 * fInX, fRtsControl, or fDtrControl members. The maximum number of
+		 * bytes in use allowed is calculated by subtracting this value from the
+		 * size, in bytes, of the input buffer.
+		 */
+		public WORD XoffLim;
+
+		/**
+		 * The number of bits in the bytes transmitted and received.
+		 */
+		public BYTE ByteSize;
+
+		/**
+		 * 
+		 * The parity scheme to be used. This member can be one of the following
+		 * values.
+		 * <li>{@link WinBase#EVENPARITY}</li>
+		 * <li>{@link WinBase#ODDPARITY}</li>
+		 * <li>{@link WinBase#NOPARITY}</li>
+		 * <li>{@link WinBase#SPACEPARITY}</li>
+		 * <li>{@link WinBase#MARKPARITY}</li>
+		 */
+		public BYTE Parity;
+
+		/**
+		 * The number of stop bits to be used. This member can be one of the
+		 * following values.
+		 * <li>{@link WinBase#ONESTOPBIT}</li>
+		 * <li>{@link WinBase#ONE5STOPBITS}</li>
+		 * <li>{@link WinBase#TWOSTOPBITS}</li>
+		 */
+		public BYTE StopBits;
+
+		/**
+		 * The value of the XON character for both transmission and reception.
+		 */
+		public char XonChar;
+
+		/**
+		 * The value of the XOFF character for both transmission and reception.
+		 */
+		public char XoffChar;
+
+		/**
+		 * The value of the character used to replace bytes received with a
+		 * parity error.
+		 */
+		public char ErrorChar;
+
+		/**
+		 * The value of the character used to signal the end of data.
+		 */
+		public char EofChar;
+
+		/**
+		 * The value of the character used to signal an event.
+		 */
+		public char EvtChar;
+
+		/**
+		 * Reserved; do not use.
+		 */
+		public WORD wReserved1;
+
+		public DCB() {
+			DCBlength = new DWORD(size());
+		}
+
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "DCBlength", "BaudRate", "controllBits", "wReserved", "XonLim",
+					"XoffLim", "ByteSize", "Parity", "StopBits", "XonChar", "XoffChar", "ErrorChar", "EofChar",
+					"EvtChar", "wReserved1" });
+		}
+	}
+
+	/**
+	 * No parity.
+	 */
+	int NOPARITY = 0;
+
+	/**
+	 * Odd parity.
+	 */
+	int ODDPARITY = 1;
+
+	/**
+	 * Even parity.
+	 */
+	int EVENPARITY = 2;
+
+	/**
+	 * Mark parity.
+	 */
+	int MARKPARITY = 3;
+
+	/**
+	 * Space parity.
+	 */
+	int SPACEPARITY = 4;
+
+	/**
+	 * 1 stop bit.
+	 */
+	int ONESTOPBIT = 0;
+
+	/**
+	 * 1.5 stop bits.
+	 */
+	int ONE5STOPBITS = 1;
+	/**
+	 * 2 stop bits.
+	 */
+	int TWOSTOPBITS = 2;
+	/**
+	 * 110 bps.
+	 */
+	int CBR_110 = 110;
+	/**
+	 * 300 bps.
+	 */
+	int CBR_300 = 300;
+	/**
+	 * 600 bps.
+	 */
+	int CBR_600 = 600;
+	/**
+	 * 1200 bps.
+	 */
+	int CBR_1200 = 1200;
+	/**
+	 * 2400 bps.
+	 */
+	int CBR_2400 = 2400;
+	/**
+	 * 4800 bps.
+	 */
+	int CBR_4800 = 4800;
+	/**
+	 * 9600 bps.
+	 */
+	int CBR_9600 = 9600;
+	/**
+	 * 14400 bps.
+	 */
+	int CBR_14400 = 14400;
+	/**
+	 * 19200 bps.
+	 */
+	int CBR_19200 = 19200;
+	/**
+	 * 38400 bps.
+	 */
+	int CBR_38400 = 38400;
+	/**
+	 * 56000 bps.
+	 */
+	int CBR_56000 = 56000;
+
+	/**
+	 * 128000 bps.
+	 */
+	int CBR_128000 = 128000;
+
+	/**
+	 * 256000 bps.
+	 */
+	int CBR_256000 = 256000;
+
+	/**
+	 * Disables the DTR line when the device is opened and leaves it disabled.
+	 */
+	int DTR_CONTROL_DISABLE = 0;
+
+	/**
+	 * Enables the DTR line when the device is opened and leaves it on.
+	 */
+	int DTR_CONTROL_ENABLE = 1;
+
+	/**
+	 * Enables DTR handshaking.<br>
+	 * If handshaking is enabled, it is an error for the application to adjust
+	 * the line by using the EscapeCommFunction function.
+	 */
+	int DTR_CONTROL_HANDSHAKE = 2;
+
+	/**
+	 * Disables the RTS line when the device is opened and leaves it disabled.
+	 */
+	int RTS_CONTROL_DISABLE = 0;
+
+	/**
+	 * Enables the RTS line when the device is opened and leaves it on.
+	 */
+	int RTS_CONTROL_ENABLE = 1;
+
+	/**
+	 * Enables RTS handshaking.<br>
+	 * The driver raises the RTS line when the "type-ahead" (input) buffer is
+	 * less than one-half full and lowers the RTS line when the buffer is more
+	 * than three-quarters full.<br>
+	 * If handshaking is enabled, it is an error for the application to adjust
+	 * the line by using the EscapeCommFunction function.
+	 */
+	int RTS_CONTROL_HANDSHAKE = 2;
+
+	/**
+	 * Specifies that the RTS line will be high if bytes are available for
+	 * transmission.<br>
+	 * After all buffered bytes have been sent, the RTS line will be low.
+	 */
+	int RTS_CONTROL_TOGGLE = 3;;
+
 }
