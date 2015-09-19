@@ -227,8 +227,10 @@ public class ReturnTypesTest extends TestCase {
         
         assertEquals("NativeMapped IntegerType result not mapped (32)", 
                      new size_t(MAGIC), lib.returnInt32Magic());
-        assertEquals("NativeMapped IntegerType result not mapped (64)", 
-                     new size_t(MAGIC64), lib.returnInt64Magic());
+        if (Native.SIZE_T_SIZE == 8) {
+            assertEquals("NativeMapped IntegerType result not mapped (64)", 
+                         new size_t(MAGIC64), lib.returnInt64Magic());
+        }
     }
 
     public void testInvokeFloat() {
