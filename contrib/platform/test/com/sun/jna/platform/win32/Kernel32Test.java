@@ -767,4 +767,167 @@ public class Kernel32Test extends TestCase {
         SIZE_T bytesRead = Kernel32.INSTANCE.VirtualQueryEx(selfHandle, Pointer.NULL, mbi, new SIZE_T(mbi.size()));
         assertTrue(bytesRead.intValue() > 0);
     }
+    
+	public void testGetCommState() {
+		WinBase.DCB lpDCB = new WinBase.DCB();
+		// Here we test a com port that definitely does not exist!
+		HANDLE handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\comDummy",
+				WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0, null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL,
+				null);
+
+		int lastError = Kernel32.INSTANCE.GetLastError();
+		assertEquals(lastError, WinNT.ERROR_FILE_NOT_FOUND);
+		//try to read the com port state using the invalid handle
+		assertFalse(Kernel32.INSTANCE.GetCommState(handleSerialPort, lpDCB));
+		// Check if we can open a connection to com port1
+		// If yes, we try to read the com state
+		// If no com port exists we have to skip this test
+		handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\com1", WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0,
+				null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+		lastError = Kernel32.INSTANCE.GetLastError();
+		if (WinNT.NO_ERROR == lastError) {
+			assertFalse(WinNT.INVALID_HANDLE_VALUE.equals(handleSerialPort));
+			try {				
+				lpDCB = new WinBase.DCB();
+				assertTrue(Kernel32.INSTANCE.GetCommState(handleSerialPort, lpDCB));				
+				switch (lpDCB.BaudRate.intValue()) {
+					case WinBase.CBR_110:
+					case WinBase.CBR_1200:
+					case WinBase.CBR_128000:
+					case WinBase.CBR_14400:
+					case WinBase.CBR_19200:
+					case WinBase.CBR_2400:
+					case WinBase.CBR_256000:
+					case WinBase.CBR_300:
+					case WinBase.CBR_38400:
+					case WinBase.CBR_4800:
+					case WinBase.CBR_56000:
+					case WinBase.CBR_600:
+					case WinBase.CBR_9600:
+					break;
+					default:
+						fail("Received value of WinBase.DCB.BaudRate is not valid");
+				}
+			} finally {
+				Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+			}
+		}
+	}
+	
+	public void testSetCommState() {
+		WinBase.DCB lpDCB = new WinBase.DCB();
+		// Here we test a com port that definitely does not exist!
+		HANDLE handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\comDummy",
+				WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0, null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL,
+				null);
+
+		int lastError = Kernel32.INSTANCE.GetLastError();
+		assertEquals(lastError, WinNT.ERROR_FILE_NOT_FOUND);
+		// try to read the com port state using the invalid handle
+		assertFalse(Kernel32.INSTANCE.SetCommState(handleSerialPort, lpDCB));
+		// Check if we can open a connection to com port1
+		// If yes, we try to read the com state
+		// If no com port exists we have to skip this test
+		handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\com1", WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0,
+				null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+		lastError = Kernel32.INSTANCE.GetLastError();
+		if (WinNT.NO_ERROR == lastError) {
+			assertFalse(WinNT.INVALID_HANDLE_VALUE.equals(handleSerialPort));
+			try {
+				lpDCB = new WinBase.DCB();
+				assertTrue(Kernel32.INSTANCE.GetCommState(handleSerialPort, lpDCB));
+				DWORD oldBaudRate = new DWORD(lpDCB.BaudRate.longValue());
+
+				lpDCB.BaudRate = new DWORD(WinBase.CBR_110);
+
+				assertTrue(Kernel32.INSTANCE.SetCommState(handleSerialPort, lpDCB));
+				WinBase.DCB lpNewDCB = new WinBase.DCB();
+				assertTrue(Kernel32.INSTANCE.GetCommState(handleSerialPort, lpNewDCB));
+
+				assertEquals(WinBase.CBR_110, lpNewDCB.BaudRate.intValue()); 
+
+				lpDCB.BaudRate = oldBaudRate;
+				assertTrue(Kernel32.INSTANCE.SetCommState(handleSerialPort, lpDCB));
+
+			} finally {
+				Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+			}
+		}
+	}
+		
+	public void testGetCommTimeouts() {
+		WinBase.COMMTIMEOUTS lpCommTimeouts = new WinBase.COMMTIMEOUTS();
+
+		// Here we test a com port that definitely does not exist!
+		HANDLE handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\comDummy",
+				WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0, null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL,
+				null);
+
+		int lastError = Kernel32.INSTANCE.GetLastError();
+		assertEquals(lastError, WinNT.ERROR_FILE_NOT_FOUND);
+		// try to read the com port timeouts using the invalid handle
+		assertFalse(Kernel32.INSTANCE.GetCommTimeouts(handleSerialPort, lpCommTimeouts));
+
+		// Check if we can open a connection to com port1
+		// If yes, we try to read the com state
+		// If no com port exists we have to skip this test
+		handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\com1", WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0,
+				null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+		lastError = Kernel32.INSTANCE.GetLastError();
+		if (WinNT.NO_ERROR == lastError) {
+			assertFalse(WinNT.INVALID_HANDLE_VALUE.equals(handleSerialPort));
+			try {
+				lpCommTimeouts = new WinBase.COMMTIMEOUTS();
+				assertTrue(Kernel32.INSTANCE.GetCommTimeouts(handleSerialPort, lpCommTimeouts));
+			} finally {
+				Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+			}
+		}
+	}
+	
+	public void testSetCommTimeouts() {
+		WinBase.COMMTIMEOUTS lpCommTimeouts = new WinBase.COMMTIMEOUTS();
+
+		// Here we test a com port that definitely does not exist!
+		HANDLE handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\comDummy",
+				WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0, null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL,
+				null);
+
+		int lastError = Kernel32.INSTANCE.GetLastError();
+		assertEquals(lastError, WinNT.ERROR_FILE_NOT_FOUND);
+		// try to store the com port timeouts using the invalid handle
+		assertFalse(Kernel32.INSTANCE.SetCommTimeouts(handleSerialPort, lpCommTimeouts));
+
+		// Check if we can open a connection to com port1
+		// If yes, we try to store the com timeouts
+		// If no com port exists we have to skip this test
+		handleSerialPort = Kernel32.INSTANCE.CreateFile("\\\\.\\com1", WinNT.GENERIC_READ | WinNT.GENERIC_WRITE, 0,
+				null, WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+		lastError = Kernel32.INSTANCE.GetLastError();
+		if (WinNT.NO_ERROR == lastError) {
+			assertFalse(WinNT.INVALID_HANDLE_VALUE.equals(handleSerialPort));
+			try {
+				lpCommTimeouts = new WinBase.COMMTIMEOUTS();
+				assertTrue(Kernel32.INSTANCE.GetCommTimeouts(handleSerialPort, lpCommTimeouts));
+
+				DWORD oldReadIntervalTimeout = new DWORD(lpCommTimeouts.ReadIntervalTimeout.longValue());
+
+				lpCommTimeouts.ReadIntervalTimeout = new DWORD(20);
+
+				assertTrue(Kernel32.INSTANCE.SetCommTimeouts(handleSerialPort, lpCommTimeouts));
+
+				WinBase.COMMTIMEOUTS lpNewCommTimeouts = new WinBase.COMMTIMEOUTS();
+				assertTrue(Kernel32.INSTANCE.GetCommTimeouts(handleSerialPort, lpNewCommTimeouts));
+
+				assertEquals(20, lpNewCommTimeouts.ReadIntervalTimeout.intValue());
+
+				lpCommTimeouts.ReadIntervalTimeout = oldReadIntervalTimeout;
+
+				assertTrue(Kernel32.INSTANCE.SetCommTimeouts(handleSerialPort, lpCommTimeouts));
+
+			} finally {
+				Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+			}
+		}
+	}
 }
