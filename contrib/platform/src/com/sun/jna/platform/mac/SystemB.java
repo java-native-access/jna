@@ -26,6 +26,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Author: Daniel Widdis Date: 6/5/15
@@ -49,6 +50,10 @@ public interface SystemB extends Library {
     static int CPU_STATE_SYSTEM = 1;
     static int CPU_STATE_IDLE = 2;
     static int CPU_STATE_NICE = 3;
+
+    // host_processor_info() flavor
+    static int PROCESSOR_BASIC_INFO = 1;
+    static int PROCESSOR_CPU_LOAD_INFO = 2;
 
     // Data size
     static int UINT64_SIZE = Native.getNativeSize(long.class);
@@ -304,4 +309,23 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      */
     int sysctlnametomib(String name, Pointer mibp, IntByReference size);
+    
+    /**
+     * The host_processor_info function returns information about processors.
+     * 
+     * @param machPort
+     *            The control port for the host for which information is to be
+     *            obtained.
+     * @param flavor
+     *            The type of information requested.
+     * @param procCount
+     *            Pointer to the number of processors
+     * @param procInfo
+     *            Pointer to the structure corresponding to the requested flavor
+     * @param procInfoCount
+     *            Pointer to number of elements in the returned structure
+     * @return 0 on success; sets errno on failure
+     */
+    int host_processor_info(int machPort, int flavor, IntByReference procCount,
+        PointerByReference procInfo, IntByReference procInfoCount);
 }
