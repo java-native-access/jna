@@ -736,6 +736,13 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <property name="xcode" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform"/>
     <condition property="make.SDKROOT"
+	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.11.sdk">
+      <and>
+        <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+        <available file="${xcode}/Developer/SDKs/MacOSX10.11.sdk"/>
+      </and>
+    </condition>
+    <condition property="make.SDKROOT"
 	       value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.9.sdk">
       <and>
         <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
