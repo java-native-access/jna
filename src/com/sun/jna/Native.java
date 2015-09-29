@@ -96,8 +96,8 @@ import com.sun.jna.Structure.FFIType;
 public final class Native implements Version {
 
     public static final String DEFAULT_ENCODING = "utf8";
-    static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
-    static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
+    public static boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
+    public static boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
     // Used by tests, do not remove
     static String jnidispatchPath = null;
