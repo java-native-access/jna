@@ -17,16 +17,19 @@
 package com.sun.jna.platform.mac;
 
 import junit.framework.TestCase;
+
 import com.sun.jna.platform.mac.SystemB.HostCpuLoadInfo;
 import com.sun.jna.platform.mac.SystemB.HostLoadInfo;
 import com.sun.jna.platform.mac.SystemB.VMStatistics;
 import com.sun.jna.platform.mac.SystemB.VMStatistics64;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Exercise the {@link SystemB} class.
@@ -132,6 +135,23 @@ public class SystemBTest extends TestCase {
 		assertEquals(hostLoadInfo.mach_factor.length, 3);
 		// Load factor can't be zero
 		assertTrue(hostLoadInfo.avenrun[0] > 0);
+	}
+
+	public void testHostProcessorInfo() {
+		int machPort = SystemB.INSTANCE.mach_host_self();
+		assertTrue(machPort > 0);
+
+		IntByReference procCount = new IntByReference();
+		PointerByReference procCpuLoadInfo = new PointerByReference();
+		IntByReference procInfoCount = new IntByReference();
+		int ret = SystemB.INSTANCE.host_processor_info(machPort,
+				SystemB.PROCESSOR_CPU_LOAD_INFO, procCount, procCpuLoadInfo,
+        			procInfoCount);
+		assertEquals(ret, 0);
+
+		assertTrue(procCount.getValue() > 0);
+		assertEquals(procCpuLoadInfo.getValue().getIntArray(0,
+				procInfoCount.getValue()).length, procInfoCount.getValue());
 	}
 
 	public static void main(java.lang.String[] argList) {
