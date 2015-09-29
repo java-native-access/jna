@@ -7,11 +7,13 @@ Next Release (4.2.1)
 
 Features
 --------
-* [#510](https://github.com/java-native-access/jna/pull/510): Added `GetCommState`, `GetCommTimeouts` `SetCommState` and `SetCommTimeouts` to `com.sun.jna.platform.win32.Kernel32`. Added `DCB` structure to `com.sun.jna.platform.win32.WinBase` - [@MBollig](https://github.com/MBollig)
+* [#504](https://github.com/java-native-access/jna/pull/504): Add support for linux-sparcv9 [@alexvsimon](https://github.com/alexvsimon).
+* [#510](https://github.com/java-native-access/jna/pull/510): Added `GetCommState`, `GetCommTimeouts` `SetCommState` and `SetCommTimeouts` to `com.sun.jna.platform.win32.Kernel32`. Added `DCB` structure to `com.sun.jna.platform.win32.WinBase` - [@MBollig](https://github.com/MBollig).
+* [#512](https://github.com/java-native-access/jna/pull/512): Make loading debug flags mutable [@lwahonen](https://github.com/lwahonen).
 
 Bug Fixes
 ---------
-
+* [#515](https://github.com/java-native-access/jna/issues/515): Update linux-arm natives omitted in 4.2 [@twall](https://github.com/twall).
 
 Release 4.2
 ===========
