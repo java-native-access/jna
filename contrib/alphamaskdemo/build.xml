@@ -58,7 +58,7 @@
                 <attribute name="Main-Class" value="${main-class}"/>
             </manifest>
             <!-- platform -->
-            <fileset dir="../platform/build/classes/com"/>
+            <fileset dir="../platform/build/classes"/>
             <!-- jna -->
             <zipfileset src="${file.reference.jna.jar}"/>
         </jar>
