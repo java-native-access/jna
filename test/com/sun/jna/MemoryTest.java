@@ -155,6 +155,25 @@ public class MemoryTest extends TestCase implements GCWaits {
         assertNull("Memory not GC'd after buffer GC'd\n", ref.get());
     }
 
+    public void testDump() {
+        // test with 15 bytes so last line has less than 4 bytes
+        int n = 15;
+
+        Memory m = new Memory(n);
+
+        for (int i = 0; i < n; i++) {
+            m.setByte(i, (byte) i);
+        }
+
+        String ls = System.getProperty("line.separator");
+
+        assertEquals("memory dump" + ls +
+            "[00010203]" + ls +
+            "[04050607]" + ls +
+            "[08090a0b]" + ls +
+            "[0c0d0e]" + ls, m.dump());
+    }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(MemoryTest.class);
     }

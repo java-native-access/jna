@@ -10,6 +10,8 @@
  */
 package com.sun.jna;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
@@ -1271,22 +1273,27 @@ v     * @param wide whether to convert from a wide or standard C string
     
     /** Dump memory for debugging purposes. */
     public String dump(long offset, int size) {
-        String LS = System.getProperty("line.separator");
-        String contents = "memory dump" + LS;
         final int BYTES_PER_ROW = 4;
-        byte[] buf = getByteArray(offset, size);
-        for (int i=0;i < buf.length;i++) {
-            if ((i % BYTES_PER_ROW) == 0) contents += "[";
-            if (buf[i] >=0 && buf[i] < 16)
-                contents += "0";
-            contents += Integer.toHexString(buf[i] & 0xFF);
-            if ((i % BYTES_PER_ROW) == BYTES_PER_ROW-1 && i < buf.length-1)
-                contents += "]" + LS;
+        final String TITLE = "memory dump";
+        // estimate initial size assuming a 2 char line separator
+        StringWriter sw = new StringWriter(TITLE.length() + 2 + size * 2 + (size / BYTES_PER_ROW * 4));
+        PrintWriter out = new PrintWriter(sw);
+        out.println(TITLE);
+//        byte[] buf = getByteArray(offset, size);
+        for (int i=0;i < size;i++) {
+//            byte b = buf[i];
+            byte b = getByte(offset + i);
+            if ((i % BYTES_PER_ROW) == 0) out.print("[");
+            if (b >=0 && b < 16)
+                out.print("0");
+            out.print(Integer.toHexString(b & 0xFF));
+            if ((i % BYTES_PER_ROW) == BYTES_PER_ROW-1 && i < size-1)
+                out.println("]");
         }
-        if (!contents.endsWith("]" + LS)) {
-            contents += "]" + LS;
+        if (sw.getBuffer().charAt(sw.getBuffer().length() - 2) != ']') {
+            out.println("]");
         }
-        return contents;
+        return sw.toString();
     }
 
     public String toString() {
