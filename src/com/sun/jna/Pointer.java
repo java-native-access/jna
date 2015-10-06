@@ -1437,7 +1437,9 @@ v     * @param wide whether to convert from a wide or standard C string
         public void setMemory(long offset, long size, byte value) {
             throw new UnsupportedOperationException(MSG); 
         }
-        public String dump(long offset, int size) { throw new UnsupportedOperationException(MSG); }
+        public String dump(long offset, int size) {
+            throw new UnsupportedOperationException(MSG);
+        }
         public String toString() {
             return "const@0x" + Long.toHexString(peer);
         }
