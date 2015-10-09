@@ -61,16 +61,16 @@ Features
 * [#428](https://github.com/java-native-access/jna/pull/428): Added Wincon.h related functions and definitions to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
 * [#430](https://github.com/java-native-access/jna/issues/430): Add android `aarch64`, `x86-64`, `mips`, and `mips64` targets - [@twall](https://github.com/twall).
 * [#431](https://github.com/java-native-access/jna/pull/431): Added named pipe API support to `com.sun.jna.platform.win32.Kernel32` - [@lgoldstein](https://github.com/lgoldstein).
-* [#432](https://github.com/java-native-access/jna/pull/432): Added SetLocalTime definition to 'com.sun.jna.platform.win32.Kernel32' - [@lgoldstein](https://github.com/lgoldstein).
-* [#434](https://github.com/java-native-access/jna/pull/434): Added GetEnvironmentStrings to 'com.sun.jna.platform.win32.Kernel32'  - [@lgoldstein](https://github.com/lgoldstein).
+* [#432](https://github.com/java-native-access/jna/pull/432): Added `com.sun.jna.platform.win32.Kernel32.SetLocalTime` - [@lgoldstein](https://github.com/lgoldstein).
+* [#434](https://github.com/java-native-access/jna/pull/434): Added `com.sun.jna.platform.win32.Kernel32.GetEnvironmentStrings`  - [@lgoldstein](https://github.com/lgoldstein).
 * Loosen OSGI OS name matching to accommodate Windows 8 family - Niels Bertram.
 * [#436] (https://github.com/java-native-access/jna/pull/469): Added basic Pdh API implementation to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
 * [#451] (https://github.com/java-native-access/jna/pull/451): Add VARIANT support for CHAR and BYTE  - [@mitkola](https://github.com/mitkola).
 * [#478] (https://github.com/java-native-access/jna/issues/451): Ask ldconfig for more places to search for libraries  - [@gohal](https://github.com/gohal).
-* [#481] (https://github.com/java-native-access/jna/pull/481): Added volume management functions to 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
-* [#483] (https://github.com/java-native-access/jna/pull/483): Found and fixed duplicate method definitions for the same API in 'com.sun.jna.platform.win32' - [@lgoldstein](https://github.com/lgoldstein).
-* [#485] (https://github.com/java-native-access/jna/pull/485): Implemented Comparable interface for many of the base types in 'com.sun.jna.platform.win32.WinDef' - [@lgoldstein](https://github.com/lgoldstein).
-* [#488] (https://github.com/java-native-access/jna/pull/488): Added GetRawInputDeviceList definition and utility to 'com.sun.jna.platform.win32' User32 and User32Util - [@lgoldstein](https://github.com/lgoldstein).
+* [#481] (https://github.com/java-native-access/jna/pull/481): Added volume management functions to `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#483] (https://github.com/java-native-access/jna/pull/483): Found and fixed duplicate method definitions for the same API in `com.sun.jna.platform.win32` - [@lgoldstein](https://github.com/lgoldstein).
+* [#485] (https://github.com/java-native-access/jna/pull/485): Implemented `Comparable` interface for many of the base types in `com.sun.jna.platform.win32.WinDef` - [@lgoldstein](https://github.com/lgoldstein).
+* [#488] (https://github.com/java-native-access/jna/pull/488): Added `GetRawInputDeviceList` to `com.sun.jna.platform.win32.User32` and `User32Util` - [@lgoldstein](https://github.com/lgoldstein).
 * [#490](https://github.com/java-native-access/jna/issues/490): Allow arbitrary calling convention specification, including FFI_MS_CDECL which alters handling of struct return values, and multiple Linux/PowerPC conventions - [@twall](https://github.com/twall).
 
 Bug Fixes
@@ -175,7 +175,7 @@ Features
 * [PR#192](https://github.com/java-native-access/jna/pull/192): Added Win32 `SHGetSpecialFolderPath()` and initialization file (.ini) API functions from `kernel32.dll` - [@headcrashing](https://github.com/headcrashing).
 * [PR#194](https://github.com/java-native-access/jna/pull/194): Added Unit Test for `CLSIDFromProgID()` - [@headcrashing](https://github.com/headcrashing).
 * [PR#196](https://github.com/java-native-access/jna/pull/196): Added Win32 `RegisterWindowMessage()` and new wrapper `User32Util` for convenient use of `RegisterWindowMessage`, `CreateWindow` and `CreateWindowEx` - [@headcrashing](https://github.com/headcrashing).
-* [PR#187](https://github.com/java-native-access/jna/pull/187): Allow StructureFieldOrderTest unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
+* [PR#187](https://github.com/java-native-access/jna/pull/187): Allow `StructureFieldOrderTest` unit test in platform project to run on Linux. - [@bhamail](https://github.com/bhamail).
 
 Bug Fixes
 ---------
