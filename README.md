@@ -11,7 +11,7 @@ JNA provides Java programs easy access to native shared libraries without writin
 
 JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like the call does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
 
-JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.
+JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.  Read this [more in-depth description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
 
 While significant attention has been paid to performance, correctness and ease of use take priority.
 
@@ -112,6 +112,7 @@ Using the Library
 =================
 
 * [Getting Started](https://github.com/java-native-access/jna/blob/master/www/GettingStarted.md)
+* [Functional Description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
 * [Mapping between Java and Native](https://github.com/java-native-access/jna/blob/master/www/Mappings.md)
 * [Using Pointers and Arrays](https://github.com/java-native-access/jna/blob/master/www/PointersAndArrays.md)
 * [Using Structures and Unions](https://github.com/java-native-access/jna/blob/master/www/StructuresAndUnions.md)
