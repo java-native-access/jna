@@ -11,17 +11,17 @@ JNA Release Process
 * Run `ant -Drelease=true clean dist` target on a fully up-to-date checkout with no modifications. Commit generated files in `dist`.
   * You will also see differences in the pom-*.xml files and src/.../Native.java.  Do not commit these files.
 
-* Update links in README.md, commit the changes.
-  * download links
-  * javadoc links
-
 * Update Javadoc
   * Check out gh-pages branch
   * Copy latest doc/javadoc into {version}/javadoc
   * Commit and push
 
-* Tag
+* Update versioned links
   * Switch back to master branch
+  * Update links in README.md (download and javadoc)
+  * Commit and push
+
+* Tag
   * Tag using the new version number (e.g. `git tag 4.2.1`)
   * Push new tag to origin (`git push --tags`)
 
