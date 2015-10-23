@@ -38,7 +38,9 @@ public interface Guid {
     public static class GUID extends Structure {
 
     	public static class ByValue extends GUID implements Structure.ByValue {
-    		public ByValue() {}
+    		public ByValue() {
+                super();
+            }
             public ByValue(GUID guid) {
                 super(guid.getPointer());
 
@@ -64,6 +66,7 @@ public interface Guid {
              * Instantiates a new by reference.
              */
             public ByReference() {
+                super();
             }
 
             /**
@@ -108,6 +111,7 @@ public interface Guid {
          * Instantiates a new guid.
          */
         public GUID() {
+            super();
         }
 
         /**
@@ -117,6 +121,7 @@ public interface Guid {
          *            the guid
          */
         public GUID(GUID guid) {
+            super();
             this.Data1 = guid.Data1;
             this.Data2 = guid.Data2;
             this.Data3 = guid.Data3;
@@ -392,6 +397,7 @@ public interface Guid {
              * Instantiates a new by reference.
              */
             public ByReference() {
+                super();
             }
 
             /**
@@ -411,7 +417,7 @@ public interface Guid {
              *            the memory
              */
             public ByReference(Pointer memory) {
-
+                super(memory);
             }
         }
 
@@ -419,6 +425,7 @@ public interface Guid {
          * Instantiates a new clsid.
          */
         public CLSID() {
+            super();
         }
         
         /**
@@ -451,7 +458,7 @@ public interface Guid {
          * Instantiates a new refiid.
          */
         public REFIID() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
@@ -462,7 +469,6 @@ public interface Guid {
          */
         public REFIID(Pointer memory) {
             super(memory);
-            // TODO Auto-generated constructor stub
         }
 
         /**
@@ -473,9 +479,11 @@ public interface Guid {
          */
         public REFIID(byte[] data) {
             super(data);
-            // TODO Auto-generated constructor stub
         }
 
+        public REFIID(GUID guid) {
+            super(guid);
+        }
     }
 
     /**
@@ -489,7 +497,7 @@ public interface Guid {
          * Instantiates a new iid.
          */
         public IID() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
@@ -500,7 +508,6 @@ public interface Guid {
          */
         public IID(Pointer memory) {
             super(memory);
-            // TODO Auto-generated constructor stub
         }
 
         /**
@@ -510,7 +517,6 @@ public interface Guid {
          */
         public IID(String iid) {
             super(iid);
-            // TODO Auto-generated constructor stub
         }
 
         /**
@@ -521,7 +527,11 @@ public interface Guid {
          */
         public IID(byte[] data) {
             super(data);
-            // TODO Auto-generated constructor stub
         }
+
+        public IID(GUID guid) {
+            this(guid.toGuidString());
+        }
+
     }
 }
