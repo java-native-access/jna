@@ -1,9 +1,7 @@
 package com.sun.jna.platform.win32.COM;
 
 /*
- * Copyright (c) 2015 L W Ahonen, All Rights Reserved
- *
- *
+ * @author L W Ahonen, lwahonen@iki.fi
  */
 
 import com.sun.jna.Function;
