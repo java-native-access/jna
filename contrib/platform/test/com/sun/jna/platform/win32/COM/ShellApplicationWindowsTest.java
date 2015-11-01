@@ -3,67 +3,60 @@ package com.sun.jna.platform.win32.COM;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
-import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.LONGLONG;
 
 import junit.framework.TestCase;
 
-public class ShellApplicationWindowsTest extends TestCase {
-
-	@Override
-	protected void setUp() throws Exception {
-		String[] commands = {"cmd", "/c", "start", "iexplore.exe","-nohome", "\"http://www.srh.noaa.gov/jax\""};
-		Runtime.getRuntime().exec(commands);
-		Thread.sleep(30000);
-	}
-
-	public void testWindowsCount() {
-        System.out.println("java.vendor: " + System.getProperty("java.vendor"));
-        System.out.println("java.version: " + System.getProperty("java.version"));
-        System.out.println("os.version: " + System.getProperty("os.version"));
-        System.out.println("os.arch: " + System.getProperty("os.arch"));
-        System.out.println("os.name: " + System.getProperty("os.name"));
+public class ShellApplicationWindowsTest extends TestCase
+{
+    
+    @Override
+    public void setUp() throws Exception
+    {
+        // Launch IE in a manner that should ensure it opens even if the system default browser is Chrome, Firefox, or something else.
+    	Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
         
+        // Even when going to "about:blank", IE still needs a few seconds to start up and add itself to Shell.Application.Windows
+        // Removing this delay will cause the test to fail even on the fastest boxes I can find.
+        Thread.sleep(3000);
+    }
+    
+    public void testWindowsCount()
+    {
         ShellApplication sa = new ShellApplication();
-        System.out.println("Shell.Application.Windows found: " + sa.Windows().Count());
+        
+        // IE is open, so there should be at least one present.
+        // More may exist if Windows Explorer windows are open.
         assertTrue(sa.Windows().Count() > 0);
+        
+        boolean pageFound = false;
         for (InternetExplorer ie : sa.Windows())
-        {            
-            System.out.println();
-            System.out.println("============================================");
-            if (ie != null)
+        {
+        	// For reasons unknown, Shell.Application.Windows can have null members inside it.
+        	// All I care about is whether or not the collection contains the window I opened.
+            if (ie != null && "about:blank".equals(ie.getURL()))
             {
-                System.out.println("Title: " + ie.getTitle());
-                System.out.println("URL: " + ie.getURL());
-                System.out.println("App Name: " + ie.getName());
-                System.out.println("Window Handle: " + ie.getWindowHandle());
+                pageFound = true;
             }
-            else
-            {
-                System.out.println("Null encountered.");
-            }
-            System.out.println("============================================");
-            System.out.println();
         }
-	}
-	
-	@Override
-	protected void tearDown() throws Exception {
-		Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe");
-	}
-
-	
-	   
+        
+        // Finally, did we find our page in the collection?
+        assertTrue(pageFound);
+    }
+    
+    @Override
+    protected void tearDown() throws Exception
+    {
+        Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe");
+    }
+    
     /**
      * A COM representation of the Windows shell.
      */
     private static class ShellApplication extends COMLateBindingObject
-    {        
+    {
         public ShellApplication() throws COMException
         {
             super("Shell.Application", false);
@@ -89,11 +82,11 @@ public class ShellApplicationWindowsTest extends TestCase {
             {
                 
                 private ShellWindows source;
-                
+                                     
                 private int          count;
-                
+                                     
                 private int          max;
-                
+                                     
                 public ShellWindowsIterator(ShellWindows collection)
                 {
                     source = collection;
@@ -179,14 +172,6 @@ public class ShellApplicationWindowsTest extends TestCase {
         }
         
         /**
-         * @return the title of the browser window. This may not always be the title of the main document
-         */
-        public String getTitle()
-        {
-            return getStringProperty("LocationName");
-        }
-        
-        /**
          * IWebBrowser2::get_LocationURL<br>
          * Read-only COM property.<br>
          * 
@@ -196,37 +181,6 @@ public class ShellApplicationWindowsTest extends TestCase {
         {
             return getStringProperty("LocationURL");
         }
-        
-        /**
-         * IWebBrowser2::get_Name<br>
-         * Read-only COM property.<br>
-         * 
-         * @return the frame name or application name of the object.
-         */
-        public String getName()
-        {
-            return getStringProperty("Name");
-        }
-        
-        /**
-         * IWebBrowser2::HWND<br>
-         * Read-only COM property.<br>
-         * 
-         * @return the handle of the Internet Explorer main window.
-         */
-        public long getWindowHandle()
-        {
-            VARIANT.ByReference result = new VARIANT.ByReference();
-            this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getIDispatch(), "HWND");
-            
-            if (result.getVarType().intValue() == Variant.VT_I8)
-            {
-                return ((LONGLONG) result.getValue()).longValue();
-            }
-            return ((LONG) result.getValue()).longValue();
-            
-        }
     }
-
-	
+    
 }
