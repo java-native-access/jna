@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
@@ -426,6 +427,40 @@ public interface Netapi32 extends StdCallLibrary {
 	 * @return
 	 *  If the function succeeds, the return value is NERR_Success.
 	 */
-	public int NetUserGetInfo( String servername, String username, int level, PointerByReference bufptr );
+	public int NetUserGetInfo(String servername, String username, int level, PointerByReference bufptr );
 	
+	/**
+	 * Shares a server resource.
+	 * @param servername [in]
+	 * 			Pointer to a string that specifies the DNS or NetBIOS name of the remote server on which the function is to execute.
+	 * 			If this parameter is NULL, the local computer is used.
+	 * @param level [in]
+	 * 			Specifies the information level of the data. This parameter can be one of the following values:
+	 * 			2 - Specifies information about the shared resource, including the name of the resource, type and permissions, and number of connections.
+	 * 				The buf parameter points to a SHARE_INFO_2 structure.
+	 * 			502 - Specifies information about the shared resource, including the name of the resource, type and permissions, number of connections,
+	 * 				and other pertinent information. The buf parameter points to a SHARE_INFO_502 structure.
+	 * 			503 - Specifies information about the shared resource, including the name of the resource, type and permissions, number of connections,
+	 * 				and other pertinent information. The buf parameter points to a SHARE_INFO_503 structure.
+	 * @param buf [in]
+	 * 			Pointer to the buffer that specifies the data. The format of this data depends on the value of the <code>level</code> parameter.
+	 * 			For more information, see Network Management Function Buffers (https://msdn.microsoft.com/en-us/library/windows/desktop/aa370676(v=vs.85).aspx)
+	 * @param parm_err [out]
+	 * 			Pointer to a value that receives the index of the first member of the share information structure that causes the ERROR_INVALID_PARAMETER error.
+	 * 			If this parameter is NULL, the index is not returned on error. For more information, see the NetShareSetInfo function.
+	 * @return If the function succeeds, the return value is NERR_Success. If the function fails, the return value can be an error code as seen on MSDN.
+	 */
+	public int NetShareAdd(WString servername, int level, Pointer buf, IntByReference parm_err);
+	
+	/**
+	 * Deletes a share name from a server's list of shared resources, disconnecting all connections to the shared resource.
+	 * @param servername [in]
+	 * 			Pointer to a string that specifies the DNS or NetBIOS name of the remote server on which the function is to execute. If this parameter is NULL, the local computer is used.
+	 * @param netname [in]
+	 * 			Pointer to a string that specifies the name of the share to delete.
+	 * @param reserved
+	 * 			Reserved, must be zero.
+	 * @return If the function succeeds, the return value is LMErr.NERR_Success. If the function fails, the return value can be an error code as seen on MSDN.
+	 */
+	public int NetShareDel(WString servername, WString netname, int reserved);	
 }
