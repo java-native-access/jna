@@ -74,7 +74,7 @@ public interface Mpr extends StdCallLibrary {
 	 * @param hEnum [in]
 	 * 			Handle that identifies an enumeration instance. This handle must be returned by the WNetOpenEnum function.
 	 * @param lpcCount [in, out]
-	 * 			Pointer to a variable specifying the number of entries requested. If the number requested is –1, the function returns as
+	 * 			Pointer to a variable specifying the number of entries requested. If the number requested is -1, the function returns as
 	 * 			many entries as possible.
 	 * 			If the function succeeds, on return the variable pointed to by this parameter contains the number of entries actually read.
 	 * @param lpBuffer [out]

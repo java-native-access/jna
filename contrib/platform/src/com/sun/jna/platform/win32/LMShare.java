@@ -103,7 +103,7 @@ public interface LMShare extends StdCallLibrary {
         
         /**
          * Specifies a DWORD value that indicates the maximum number of concurrent connections that the shared resource can accommodate.
-         * The number of connections is unlimited if the value specified in this member is –1.
+         * The number of connections is unlimited if the value specified in this member is -1.
          */
         public int shi2_max_uses;
         
@@ -178,7 +178,7 @@ public interface LMShare extends StdCallLibrary {
         
         /**
          * Specifies a DWORD value that indicates the maximum number of concurrent connections that the shared resource can accommodate.
-         * The number of connections is unlimited if the value specified in this member is –1.
+         * The number of connections is unlimited if the value specified in this member is -1.
          */
         public int shi502_max_uses;
         
