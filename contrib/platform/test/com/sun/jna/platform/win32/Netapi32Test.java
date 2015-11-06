@@ -263,104 +263,96 @@ public class Netapi32Test extends TestCase {
 
     public void testNetShareAddShareInfo2() throws Exception {
 
-    	File fileShareFolder = createTempFolder();
-    	
-    	SHARE_INFO_2 shi = new SHARE_INFO_2();
-    	shi.shi2_netname = new WString(fileShareFolder.getName());
-    	shi.shi2_type = LMShare.STYPE_DISKTREE;
-    	shi.shi2_remark = new WString("");
-    	shi.shi2_permissions = LMAccess.ACCESS_ALL;
-    	shi.shi2_max_uses = -1;
-    	shi.shi2_current_uses = 0;
-    	shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
-    	shi.shi2_passwd = new WString("");
+        File fileShareFolder = createTempFolder();
 
-    	// Write from struct to native memory.
-    	shi.write();
-    	
-    	IntByReference parm_err = new IntByReference(0);
-    	int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
-    								  				 2,
-    								  				 shi.getPointer(),
-    								  				 parm_err);
-    	
-    	if (winError == W32Errors.ERROR_INVALID_PARAMETER)
-    	{
-    		// fail with offset.
-    		throw new Exception("testNetShareAddShareInfo2 failed with invalid parameter on structure offset: " + parm_err.getValue());    		
-    	}
-    	
-    	assertEquals(LMErr.NERR_Success, winError);
-    	
-    	Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0);
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = new WString(fileShareFolder.getName());
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = new WString("");
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
+        shi.shi2_passwd = new WString("");
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo2 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals(LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0);
     }
-    
+
     public void testNetShareAddShareInfo502() throws Exception {
 
-    	File fileShareFolder = createTempFolder();
-    	
-    	SHARE_INFO_502 shi = new SHARE_INFO_502();
-    	shi.shi502_netname = new WString(fileShareFolder.getName());
-    	shi.shi502_type = LMShare.STYPE_DISKTREE;
-    	shi.shi502_remark = new WString("");
-    	shi.shi502_permissions = LMAccess.ACCESS_ALL;
-    	shi.shi502_max_uses = -1;
-    	shi.shi502_current_uses = 0;
-    	shi.shi502_path = new WString(fileShareFolder.getAbsolutePath());
-    	shi.shi502_passwd = null;
-    	shi.shi502_reserved = 0;
-    	shi.shi502_security_descriptor = null;
-    	
-    	// Write from struct to native memory.
-    	shi.write();
-    	    	
-    	IntByReference parm_err = new IntByReference(0);
-    	int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
-    								  				 502,
-    								  				 shi.getPointer(),
-    								  				 parm_err);
-    	
-    	if (winError == W32Errors.ERROR_INVALID_PARAMETER)
-    	{
-    		// fail with offset.
-    		throw new Exception("testNetShareAddShareInfo502 failed with invalid parameter on structure offset: " + parm_err.getValue());    		
-    	}
-    	
-    	assertEquals(LMErr.NERR_Success, winError);
-    	
-    	Netapi32.INSTANCE.NetShareDel(null, shi.shi502_netname, 0);
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_502 shi = new SHARE_INFO_502();
+        shi.shi502_netname = new WString(fileShareFolder.getName());
+        shi.shi502_type = LMShare.STYPE_DISKTREE;
+        shi.shi502_remark = new WString("");
+        shi.shi502_permissions = LMAccess.ACCESS_ALL;
+        shi.shi502_max_uses = -1;
+        shi.shi502_current_uses = 0;
+        shi.shi502_path = new WString(fileShareFolder.getAbsolutePath());
+        shi.shi502_passwd = null;
+        shi.shi502_reserved = 0;
+        shi.shi502_security_descriptor = null;
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                502, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo502 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals(LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi502_netname, 0);
     }
-    
+
     public void testNetShareDel() throws Exception {
 
-    	File fileShareFolder = createTempFolder();
-    	
-    	SHARE_INFO_2 shi = new SHARE_INFO_2();
-    	shi.shi2_netname = new WString(fileShareFolder.getName());
-    	shi.shi2_type = LMShare.STYPE_DISKTREE;
-    	shi.shi2_remark = new WString("");
-    	shi.shi2_permissions = LMAccess.ACCESS_ALL;
-    	shi.shi2_max_uses = -1;
-    	shi.shi2_current_uses = 0;
-    	shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
-    	shi.shi2_passwd = new WString("");
+        File fileShareFolder = createTempFolder();
 
-    	// Write from struct to native memory.
-    	shi.write();
-    	
-    	IntByReference parm_err = new IntByReference(0);
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
-    								  				 				   2,
-    								  				 				   shi.getPointer(),
-    								  				 				   parm_err));
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = new WString(fileShareFolder.getName());
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = new WString("");
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
+        shi.shi2_passwd = new WString("");
 
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0));
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err));
+
+        assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0));
     }
 
-    private File createTempFolder() throws Exception{
+    private File createTempFolder() throws Exception {
         String folderPath = System.getProperty("java.io.tmpdir") + File.separatorChar + System.nanoTime();
         File file = new File(folderPath);
-        file.mkdir();        
+        file.mkdir();
         return file;
     }
 }
