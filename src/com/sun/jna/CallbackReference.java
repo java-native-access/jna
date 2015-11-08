@@ -39,7 +39,9 @@ class CallbackReference extends WeakReference {
     static final Map callbackMap = new WeakHashMap();
     static final Map directCallbackMap = new WeakHashMap();
     static final Map pointerCallbackMap = new WeakHashMap();
+    // Track memory allocations associated with this closure (usually String args)
     static final Map allocations = new WeakHashMap();
+    // Global map of allocated closures to facilitate centralized cleanup
     private static final Map allocatedMemory = Collections.synchronizedMap(new WeakHashMap());
 
     private static final Method PROXY_CALLBACK_METHOD;
@@ -146,9 +148,11 @@ class CallbackReference extends WeakReference {
     // Keep a reference to the proxy to avoid premature GC of it
     CallbackProxy proxy;
     Method method;
+    int callingConvention;
     private CallbackReference(Callback callback, int callingConvention, boolean direct) {
         super(callback);
         TypeMapper mapper = Native.getTypeMapper(callback.getClass());
+        this.callingConvention = callingConvention;
         Class[] nativeParamTypes;
         Class returnType;
 
@@ -180,6 +184,7 @@ class CallbackReference extends WeakReference {
         }
 
         String encoding = Native.getStringEncoding(callback.getClass());
+        long peer = 0;
         if (direct) {
             method = getCallbackMethod(callback);
             nativeParamTypes = method.getParameterTypes();
@@ -188,12 +193,10 @@ class CallbackReference extends WeakReference {
             if (callback instanceof DLLCallback) {
                 flags |= Native.CB_OPTION_IN_DLL;
             }
-            long peer = Native.createNativeCallback(callback, method,
-                                                    nativeParamTypes, returnType,
-                                                    callingConvention, flags,
-                                                    encoding);
-            cbstruct = peer != 0 ? new Pointer(peer) : null;
-            allocatedMemory.put(this, new WeakReference(this));
+            peer = Native.createNativeCallback(callback, method,
+                                               nativeParamTypes, returnType,
+                                               callingConvention, flags,
+                                               encoding);
         }
         else {
             if (callback instanceof CallbackProxy) {
@@ -236,12 +239,13 @@ class CallbackReference extends WeakReference {
             }
             int flags = callback instanceof DLLCallback
                 ? Native.CB_OPTION_IN_DLL : 0;
-            long peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
-                                                    nativeParamTypes, returnType,
-                                                    callingConvention, flags,
-                                                    encoding);
-            cbstruct = peer != 0 ? new Pointer(peer) : null;
+            peer = Native.createNativeCallback(proxy, PROXY_CALLBACK_METHOD,  
+                                               nativeParamTypes, returnType,
+                                               callingConvention, flags,
+                                               encoding);
         }
+        cbstruct = peer != 0 ? new Pointer(peer) : null;
+        allocatedMemory.put(this, new WeakReference(this));
     }
     
     private Class getNativeType(Class cls) {
@@ -404,8 +408,13 @@ class CallbackReference extends WeakReference {
         if ((fp = getNativeFunctionPointer(cb)) != null) {
             return fp;
         }
+        Map options = Native.getLibraryOptions(cb.getClass());
         int callingConvention = cb instanceof AltCallingConvention
-            ? Function.ALT_CONVENTION : Function.C_CONVENTION;
+            ? Function.ALT_CONVENTION
+            : (options != null && options.containsKey(Library.OPTION_CALLING_CONVENTION)
+               ? ((Integer)options.get(Library.OPTION_CALLING_CONVENTION)).intValue()
+               : Function.C_CONVENTION);
+
         Map map = direct ? directCallbackMap : callbackMap;
         synchronized(callbackMap) {
             CallbackReference cbref = (CallbackReference)map.get(cb);
