@@ -25,8 +25,8 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.Kernel32.EnumResNameProc;
-import com.sun.jna.platform.win32.Kernel32.MODULEENTRY32;
+import com.sun.jna.platform.win32.TIHelp32.MODULEENTRY32;
+import com.sun.jna.platform.win32.WinBase.EnumResNameProc;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -746,7 +746,7 @@ public abstract class Kernel32Util implements WinDef {
 		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
 
 		final List<String> types = new ArrayList<String>();
-		Kernel32.EnumResTypeProc ertp = new Kernel32.EnumResTypeProc() {
+		WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
 			@Override
 			public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
@@ -775,7 +775,7 @@ public abstract class Kernel32Util implements WinDef {
 				pointer.setWideString(0, typeName);
 			}
 
-			Kernel32.INSTANCE.EnumResourceNames(target, pointer, new EnumResNameProc() {
+			Kernel32.INSTANCE.EnumResourceNames(target, pointer, new WinBase.EnumResNameProc() {
 
 				@Override
 				public boolean invoke(HMODULE module, Pointer t, Pointer name, Pointer lParam) {
@@ -805,24 +805,24 @@ public abstract class Kernel32Util implements WinDef {
 	 *            The process ID to get executable modules for
 	 * @return All the modules in the process.
 	 */
-	public static List<MODULEENTRY32> getModules(int processID) {
+	public static List<TIHelp32.MODULEENTRY32> getModules(int processID) {
 		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new DWORD(Kernel32.TH32CS_SNAPMODULE),
 				new DWORD(processID));
 
-		List<MODULEENTRY32.ByReference> modules = new ArrayList<Kernel32.MODULEENTRY32.ByReference>();
-		MODULEENTRY32.ByReference first = new MODULEENTRY32.ByReference();
+		List<TIHelp32.MODULEENTRY32.ByReference> modules = new ArrayList<TIHelp32.MODULEENTRY32.ByReference>();
+		TIHelp32.MODULEENTRY32.ByReference first = new TIHelp32.MODULEENTRY32.ByReference();
 		modules.add(first);
 
 		Kernel32.INSTANCE.Module32Next(snapshot, first);
 
-		MODULEENTRY32.ByReference next = new MODULEENTRY32.ByReference();
+		TIHelp32.MODULEENTRY32.ByReference next = new TIHelp32.MODULEENTRY32.ByReference();
 		while (Kernel32.INSTANCE.Module32Next(snapshot, next)) {
 			modules.add(next);
-			next = new MODULEENTRY32.ByReference();
+			next = new TIHelp32.MODULEENTRY32.ByReference();
 		}
 
-		List<MODULEENTRY32> results = new ArrayList<MODULEENTRY32>();
-		for (MODULEENTRY32.ByReference mbr : modules) {
+		List<TIHelp32.MODULEENTRY32> results = new ArrayList<TIHelp32.MODULEENTRY32>();
+		for (TIHelp32.MODULEENTRY32.ByReference mbr : modules) {
 			results.add(mbr);
 		}
 

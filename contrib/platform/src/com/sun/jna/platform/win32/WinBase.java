@@ -1637,6 +1637,84 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
 	}
 
 	/**
+	 * An application-defined callback function used with the EnumResourceTypes
+	 * and EnumResourceTypesEx functions. <br>
+	 * It receives resource types. <br>
+	 * The ENUMRESTYPEPROC type defines a pointer to this callback function.
+	 * <br>
+	 * EnumResTypeProc is a placeholder for the application-defined function
+	 * name.
+	 */
+	interface EnumResTypeProc extends Callback {
+		/**
+		 * @param module
+		 *            A handle to the module whose executable file contains the
+		 *            resources for which the types are to be enumerated. <br>
+		 *            If this parameter is NULL, the function enumerates the
+		 *            resource types in the module used to create the current
+		 *            process.
+		 * @param type
+		 *            The type of resource for which the type is being
+		 *            enumerated. <br>
+		 *            Alternately, rather than a pointer, this parameter can be
+		 *            MAKEINTRESOURCE(ID), where ID is the integer identifier of
+		 *            the given resource type. <br>
+		 *            For standard resource types, see Resource Types.<br>
+		 *            For more information, see the Remarks section below.
+		 * @param lParam
+		 *            An application-defined parameter passed to the
+		 *            EnumResourceTypes or EnumResourceTypesEx function.<br>
+		 *            This parameter can be used in error checking.
+		 * @return Returns TRUE to continue enumeration or FALSE to stop
+		 *         enumeration.
+		 */
+		boolean invoke(HMODULE module, Pointer type, Pointer lParam);
+	}
+
+	/**
+	 * An application-defined callback function used with the EnumResourceNames
+	 * and EnumResourceNamesEx functions. <br>
+	 * It receives the type and name of a resource. <br>
+	 * The ENUMRESNAMEPROC type defines a pointer to this callback function.
+	 * <br>
+	 * EnumResNameProc is a placeholder for the application-defined function
+	 * name.
+	 */
+	interface EnumResNameProc extends Callback {
+		/**
+		 * @param module
+		 *            A handle to the module whose executable file contains the
+		 *            resources that are being enumerated. <br>
+		 *            If this parameter is NULL, the function enumerates the
+		 *            resource names in the module used to create the current
+		 *            process.
+		 * @param type
+		 *            The type of resource for which the name is being
+		 *            enumerated. <br>
+		 *            Alternately, rather than a pointer, this parameter can be
+		 *            <code>MAKEINTRESOURCE(ID)</code>, where ID is an integer
+		 *            value representing a predefined resource type. <br>
+		 *            For standard resource types, see <a href=
+		 *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms648009(v=vs.85).aspx">
+		 *            Resource Types</a>. <br>
+		 *            For more information, see the Remarks section below.
+		 * @param name
+		 *            The name of a resource of the type being enumerated.<br>
+		 *            Alternately, rather than a pointer, this parameter can be
+		 *            <code>MAKEINTRESOURCE(ID)</code>, where ID is the integer
+		 *            identifier of the resource.<br>
+		 *            For more information, see the Remarks section below.
+		 * @param lParam
+		 *            An application-defined parameter passed to the
+		 *            EnumResourceNames or EnumResourceNamesEx function. <br>
+		 *            This parameter can be used in error checking.
+		 * @return Returns TRUE to continue enumeration or FALSE to stop
+		 *         enumeration.
+		 */
+		boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam);
+	}
+
+	/**
 	 * No parity.
 	 */
 	int NOPARITY = 0;

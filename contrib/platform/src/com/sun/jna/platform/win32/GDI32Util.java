@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.sun.jna.Memory;
@@ -39,39 +40,42 @@ public class GDI32Util {
 	 *            the height of the window
 	 * @return the window captured as a screenshot
 	 */
-	public static BufferedImage getScreenshot(HWND target, int windowWidth, int windowHeight) {
+	public static BufferedImage getScreenshot(HWND target) {
 		GDI32 gdi32 = GDI32.INSTANCE;
 		User32 user32 = User32.INSTANCE;
 
 		RECT rect = new RECT();
+
 		user32.GetWindowRect(target, rect);
+
+		Rectangle rectangle = rect.toRectangle();
 
 		HDC hdcTarget = user32.GetDC(target);
 
 		HDC hdcTargetMem = gdi32.CreateCompatibleDC(hdcTarget);
 
-		HBITMAP hBitmap = gdi32.CreateCompatibleBitmap(hdcTarget, windowWidth, windowHeight);
+		HBITMAP hBitmap = gdi32.CreateCompatibleBitmap(hdcTarget, rectangle.width, rect.toRectangle().height);
 
 		HANDLE hdcTargetOld = gdi32.SelectObject(hdcTargetMem, hBitmap);
 
-		gdi32.BitBlt(hdcTargetMem, 0, 0, windowWidth, windowHeight, hdcTarget, 0, 0, GDI32.SRCCOPY);
+		gdi32.BitBlt(hdcTargetMem, 0, 0, rectangle.width, rect.toRectangle().height, hdcTarget, 0, 0, GDI32.SRCCOPY);
 
 		gdi32.SelectObject(hdcTargetMem, hdcTargetOld);
 		gdi32.DeleteDC(hdcTargetMem);
 
 		BITMAPINFO bmi = new BITMAPINFO();
-		bmi.bmiHeader.biWidth = windowWidth;
-		bmi.bmiHeader.biHeight = -windowHeight;
+		bmi.bmiHeader.biWidth = rectangle.width;
+		bmi.bmiHeader.biHeight = -rect.toRectangle().height;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
 
-		Memory buffer = new Memory(windowWidth * windowHeight * 4);
-		gdi32.GetDIBits(hdcTarget, hBitmap, 0, windowHeight, buffer, bmi, WinGDI.DIB_RGB_COLORS);
+		Memory buffer = new Memory(rectangle.width * rect.toRectangle().height * 4);
+		gdi32.GetDIBits(hdcTarget, hBitmap, 0, rect.toRectangle().height, buffer, bmi, WinGDI.DIB_RGB_COLORS);
 
-		BufferedImage image = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
-		image.setRGB(0, 0, windowWidth, windowHeight, buffer.getIntArray(0, windowWidth * windowHeight), 0,
-				windowWidth);
+		BufferedImage image = new BufferedImage(rectangle.width, rect.toRectangle().height, BufferedImage.TYPE_INT_RGB);
+		image.setRGB(0, 0, rectangle.width, rect.toRectangle().height,
+				buffer.getIntArray(0, rectangle.width * rect.toRectangle().height), 0, rectangle.width);
 
 		gdi32.DeleteObject(hBitmap);
 		user32.ReleaseDC(target, hdcTarget);

@@ -12,13 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
-import java.util.List;
-
-import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
@@ -78,189 +73,6 @@ public interface Kernel32 extends WinNT, Wincon {
     
 	
 	/**
-	 * An application-defined callback function used with the EnumResourceTypes
-	 * and EnumResourceTypesEx functions. <br>
-	 * It receives resource types. <br>
-	 * The ENUMRESTYPEPROC type defines a pointer to this callback function.
-	 * <br>
-	 * EnumResTypeProc is a placeholder for the application-defined function
-	 * name.
-	 */
-	public static interface EnumResTypeProc extends Callback {
-		/**
-		 * @param module
-		 *            A handle to the module whose executable file contains the
-		 *            resources for which the types are to be enumerated. <br>
-		 *            If this parameter is NULL, the function enumerates the
-		 *            resource types in the module used to create the current
-		 *            process.
-		 * @param type
-		 *            The type of resource for which the type is being
-		 *            enumerated. <br>
-		 *            Alternately, rather than a pointer, this parameter can be
-		 *            MAKEINTRESOURCE(ID), where ID is the integer identifier of
-		 *            the given resource type. <br>
-		 *            For standard resource types, see Resource Types.<br>
-		 *            For more information, see the Remarks section below.
-		 * @param lParam
-		 *            An application-defined parameter passed to the
-		 *            EnumResourceTypes or EnumResourceTypesEx function.<br>
-		 *            This parameter can be used in error checking.
-		 * @return Returns TRUE to continue enumeration or FALSE to stop
-		 *         enumeration.
-		 */
-		boolean invoke(HMODULE module, Pointer type, Pointer lParam);
-	}
-    
-	/**
-	 * An application-defined callback function used with the EnumResourceNames
-	 * and EnumResourceNamesEx functions. <br>
-	 * It receives the type and name of a resource. <br>
-	 * The ENUMRESNAMEPROC type defines a pointer to this callback function.
-	 * <br>
-	 * EnumResNameProc is a placeholder for the application-defined function
-	 * name.
-	 */
-	public static interface EnumResNameProc extends Callback {
-		/**
-		 * @param module
-		 *            A handle to the module whose executable file contains the
-		 *            resources that are being enumerated. <br>
-		 *            If this parameter is NULL, the function enumerates the
-		 *            resource names in the module used to create the current
-		 *            process.
-		 * @param type
-		 *            The type of resource for which the name is being
-		 *            enumerated. <br>
-		 *            Alternately, rather than a pointer, this parameter can be
-		 *            <code>MAKEINTRESOURCE(ID)</code>, where ID is an integer
-		 *            value representing a predefined resource type. <br>
-		 *            For standard resource types, see <a href=
-		 *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms648009(v=vs.85).aspx">
-		 *            Resource Types</a>. <br>
-		 *            For more information, see the Remarks section below.
-		 * @param name
-		 *            The name of a resource of the type being enumerated.<br>
-		 *            Alternately, rather than a pointer, this parameter can be
-		 *            <code>MAKEINTRESOURCE(ID)</code>, where ID is the integer
-		 *            identifier of the resource.<br>
-		 *            For more information, see the Remarks section below.
-		 * @param lParam
-		 *            An application-defined parameter passed to the
-		 *            EnumResourceNames or EnumResourceNamesEx function. <br>
-		 *            This parameter can be used in error checking.
-		 * @return Returns TRUE to continue enumeration or FALSE to stop
-		 *         enumeration.
-		 */
-		boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam);
-	}
-	
-	/**
-	 * Describes an entry from a list of the modules belonging to the specified
-	 * process.
-	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=
-	 *      vs.85).aspx
-	 */
-	public static class MODULEENTRY32 extends Structure {
-
-		/**
-		 * A representation of a MODULEENTRY32 structure as a reference
-		 */
-		public static class ByReference extends MODULEENTRY32 implements Structure.ByReference {
-			public ByReference() {
-			}
-
-			public ByReference(Pointer memory) {
-				super(memory);
-			}
-		}
-
-		public MODULEENTRY32() {
-			dwSize = new WinDef.DWORD(size());
-		}
-
-		public MODULEENTRY32(Pointer memory) {
-			super(memory);
-			read();
-		}
-
-		/**
-		 * The size of the structure, in bytes. Before calling the Module32First
-		 * function, set this member to sizeof(MODULEENTRY32). If you do not
-		 * initialize dwSize, Module32First fails.
-		 */
-		public DWORD dwSize;
-
-		/**
-		 * This member is no longer used, and is always set to one.
-		 */
-		public DWORD th32ModuleID;
-
-		/**
-		 * The identifier of the process whose modules are to be examined.
-		 */
-		public DWORD th32ProcessID;
-
-		/**
-		 * The load count of the module, which is not generally meaningful, and
-		 * usually equal to 0xFFFF.
-		 */
-		public DWORD GlblcntUsage;
-
-		/**
-		 * The load count of the module (same as GlblcntUsage), which is not
-		 * generally meaningful, and usually equal to 0xFFFF.
-		 */
-		public DWORD ProccntUsage;
-
-		/**
-		 * The base address of the module in the context of the owning process.
-		 */
-		public Pointer modBaseAddr;
-
-		/**
-		 * The size of the module, in bytes.
-		 */
-		public DWORD modBaseSize;
-
-		/**
-		 * A handle to the module in the context of the owning process.
-		 */
-		public HMODULE hModule;
-
-		/**
-		 * The module name.
-		 */
-		public char[] szModule = new char[256]; // MAX_MODULE_NAME32 (255) + 1
-
-		/**
-		 * The module path.
-		 */
-		public char[] szExePath = new char[Kernel32.MAX_PATH];
-
-		/**
-		 * @return The module name.
-		 */
-		public String szModule() {
-			return Native.toString(this.szModule);
-		}
-
-		/**
-		 * @return The module path.
-		 */
-		public String szExePath() {
-			return Native.toString(this.szExePath);
-		}
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
-					"ProccntUsage", "modBaseAddr", "modBaseSize", "hModule", "szModule", "szExePath" });
-		}
-	}
-    
-    /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the
      * device.
@@ -3562,7 +3374,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 * @return Returns TRUE if successful; otherwise, FALSE. To get extended
 	 *         error information, call GetLastError.
 	 */
-	boolean EnumResourceTypes(HMODULE hModule, EnumResTypeProc proc, Pointer lParam);
+	boolean EnumResourceTypes(HMODULE hModule, WinBase.EnumResTypeProc proc, Pointer lParam);
 
 	/**
 	 * Enumerates resources of a specified type within a binary module. <br>
@@ -3600,7 +3412,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         the function fails for another reason. To get extended error
 	 *         information, call GetLastError.
 	 */
-	boolean EnumResourceNames(HMODULE hModule, Pointer type, EnumResNameProc proc, Pointer lParam);
+	boolean EnumResourceNames(HMODULE hModule, Pointer type, WinBase.EnumResNameProc proc, Pointer lParam);
 
 	/**
 	 * Determines the location of a resource with the specified type and name in
@@ -3699,7 +3511,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         GetLastError function if no modules exist or the snapshot does
 	 *         not contain module information.
 	 */
-	boolean Module32First(HANDLE hSnapshot, MODULEENTRY32.ByReference lpme);
+	boolean Module32First(HANDLE hSnapshot, TIHelp32.MODULEENTRY32.ByReference lpme);
 
 	/**
 	 * Retrieves information about the next module associated with a process or
@@ -3718,5 +3530,5 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         GetLastError function if no modules exist or the snapshot does
 	 *         not contain module information.
 	 */
-	boolean Module32Next(HANDLE hSnapshot, MODULEENTRY32.ByReference lpme);
+	boolean Module32Next(HANDLE hSnapshot, TIHelp32.MODULEENTRY32.ByReference lpme);
 }
