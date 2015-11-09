@@ -54,28 +54,28 @@ public class GDI32Util {
 
 		HDC hdcTargetMem = gdi32.CreateCompatibleDC(hdcTarget);
 
-		HBITMAP hBitmap = gdi32.CreateCompatibleBitmap(hdcTarget, rectangle.width, rect.toRectangle().height);
+		HBITMAP hBitmap = gdi32.CreateCompatibleBitmap(hdcTarget, rectangle.width, rectangle.height);
 
 		HANDLE hdcTargetOld = gdi32.SelectObject(hdcTargetMem, hBitmap);
 
-		gdi32.BitBlt(hdcTargetMem, 0, 0, rectangle.width, rect.toRectangle().height, hdcTarget, 0, 0, GDI32.SRCCOPY);
+		gdi32.BitBlt(hdcTargetMem, 0, 0, rectangle.width, rectangle.height, hdcTarget, 0, 0, GDI32.SRCCOPY);
 
 		gdi32.SelectObject(hdcTargetMem, hdcTargetOld);
 		gdi32.DeleteDC(hdcTargetMem);
 
 		BITMAPINFO bmi = new BITMAPINFO();
 		bmi.bmiHeader.biWidth = rectangle.width;
-		bmi.bmiHeader.biHeight = -rect.toRectangle().height;
+		bmi.bmiHeader.biHeight = -rectangle.height;
 		bmi.bmiHeader.biPlanes = 1;
 		bmi.bmiHeader.biBitCount = 32;
 		bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
 
-		Memory buffer = new Memory(rectangle.width * rect.toRectangle().height * 4);
-		gdi32.GetDIBits(hdcTarget, hBitmap, 0, rect.toRectangle().height, buffer, bmi, WinGDI.DIB_RGB_COLORS);
+		Memory buffer = new Memory(rectangle.width * rectangle.height * 4);
+		gdi32.GetDIBits(hdcTarget, hBitmap, 0, rectangle.height, buffer, bmi, WinGDI.DIB_RGB_COLORS);
 
-		BufferedImage image = new BufferedImage(rectangle.width, rect.toRectangle().height, BufferedImage.TYPE_INT_RGB);
-		image.setRGB(0, 0, rectangle.width, rect.toRectangle().height,
-				buffer.getIntArray(0, rectangle.width * rect.toRectangle().height), 0, rectangle.width);
+		BufferedImage image = new BufferedImage(rectangle.width, rectangle.height, BufferedImage.TYPE_INT_RGB);
+		image.setRGB(0, 0, rectangle.width, rectangle.height,
+				buffer.getIntArray(0, rectangle.width * rectangle.height), 0, rectangle.width);
 
 		gdi32.DeleteObject(hBitmap);
 		user32.ReleaseDC(target, hdcTarget);
