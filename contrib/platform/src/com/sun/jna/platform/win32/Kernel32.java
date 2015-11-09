@@ -3352,7 +3352,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 * Starting with Windows Vista, this is typically a language-neutral
 	 * Portable Executable (LN file), and the enumeration also includes
 	 * resources from one of the corresponding language-specific resource files
-	 * (.mui files)—if one exists—that contain localizable language resources.
+	 * (.mui files)-if one exists-that contain localizable language resources.
 	 * It is also possible to use hModule to specify a .mui file, in which case
 	 * only that file is searched for resource types.<br>
 	 * Alternately, applications can call EnumResourceTypesEx, which provides

@@ -275,8 +275,8 @@ public interface ShellAPI extends StdCallLibrary {
 	 * outside of the Program menu. Therefore, setting <strong>lpFile</strong>
 	 * to myfile.exe would affect the count for the Windows&nbsp;XP-style menu
 	 * regardless of whether that file was launched directly or through a
-	 * shortcut. The classic style—which would require <strong>lpFile</strong>
-	 * to contain a .lnk file name—would not be affected.
+	 * shortcut. The classic style-which would require <strong>lpFile</strong>
+	 * to contain a .lnk file name-would not be affected.
 	 * </p>
 	 * <p>
 	 * To include double quotation marks in <strong>lpParameters</strong>,
@@ -730,8 +730,8 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <strong>SEE_MASK_INVOKEIDLIST</strong> flag is set, you can use
 		 * either <strong>lpFile</strong> or <strong>lpIDList</strong> to
 		 * identify the item by its file system path or its PIDL respectively.
-		 * One of the two values—<strong>lpFile</strong> or
-		 * <strong>lpIDList</strong>—must be set.</div>
+		 * One of the two values-<strong>lpFile</strong> or
+		 * <strong>lpIDList</strong>-must be set.</div>
 		 * <div class="note"><strong>Note</strong>&nbsp;&nbsp;If the path is not
 		 * included with the name, the current directory is assumed.</div>
 		 */

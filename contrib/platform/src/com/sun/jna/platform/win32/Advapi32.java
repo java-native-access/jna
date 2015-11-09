@@ -2059,7 +2059,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            The function does not use the search path. This parameter must
 	 *            include the file name extension; no default extension is
 	 *            assumed. The lpApplicationName parameter can be NULL, and the
-	 *            module name must be the first white space–delimited token in
+	 *            module name must be the first white space-delimited token in
 	 *            the lpCommandLine string.<br>
 	 *            If you are using a long file name that contains a space, use
 	 *            quoted strings to indicate where the file name ends and the
@@ -2104,7 +2104,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            Because argv[0] is the module name, C programmers typically
 	 *            repeat the module name as the first token in the command line.
 	 *            <br>
-	 *            If lpApplicationName is NULL, the first white space–delimited
+	 *            If lpApplicationName is NULL, the first white space-delimited
 	 *            token of the command line specifies the module name.<br>
 	 *            If you are using a long file name that contains a space, use
 	 *            quoted strings to indicate where the file name ends and the
