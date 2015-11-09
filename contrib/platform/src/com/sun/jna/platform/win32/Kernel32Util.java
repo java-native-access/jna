@@ -15,6 +15,8 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -23,6 +25,8 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Kernel32.EnumResNameProc;
+import com.sun.jna.platform.win32.Kernel32.MODULEENTRY32;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -678,4 +682,151 @@ public abstract class Kernel32Util implements WinDef {
         
         return volumeGUIDPath.substring(VOLUME_GUID_PATH_PREFIX.length(), volumeGUIDPath.length() - VOLUME_GUID_PATH_SUFFIX.length());
     }
+
+	/**
+	 * Gets the specified resource out of the specified executable file
+	 * 
+	 * @param path
+	 *            The path to the executable file
+	 * @param type
+	 *            The type of the resource (either a type name or type ID is
+	 *            allowed)
+	 * @param name
+	 *            The name or ID of the resource
+	 * @return The resource bytes, or null if no such resource exists.
+	 */
+	public static byte[] getResource(String path, String type, String name) {
+		Kernel32 kernel32 = Kernel32.INSTANCE;
+
+		final HMODULE target = kernel32.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+
+		Pointer t = null;
+		try {
+			t = new Pointer(Long.parseLong(type));
+		} catch (Exception e) {
+			t = new Memory(Native.WCHAR_SIZE * (type.length() + 1));
+			t.setWideString(0, type);
+		}
+
+		Pointer n = null;
+		try {
+			n = new Pointer(Long.parseLong(name));
+		} catch (Exception e) {
+			n = new Memory(Native.WCHAR_SIZE * (name.length() + 1));
+			n.setWideString(0, name);
+		}
+
+		HRSRC hRsrc = kernel32.FindResource(target, n, t);
+
+		if (hRsrc == null) {
+			return null;
+		}
+
+		HANDLE loaded = kernel32.LoadResource(target, hRsrc);
+
+		DWORD length = kernel32.SizeofResource(target, hRsrc);
+
+		Pointer start = kernel32.LockResource(loaded);
+
+		byte[] buf = start.getByteArray(0, length.intValue());
+
+		return buf;
+	}
+
+	/**
+	 * Gets a list of all resources from the specified executable file
+	 * 
+	 * @param path
+	 *            The path to the executable file
+	 * @return A map of resource type name/ID => resources.<br>
+	 *         A map key + a single list item + the path to the executable can
+	 *         be handed off to getResource() to actually get the resource.
+	 */
+	public static final Map<String, List<String>> getResourceNames(String path) {
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+
+		final List<String> types = new ArrayList<String>();
+		Kernel32.EnumResTypeProc ertp = new Kernel32.EnumResTypeProc() {
+
+			@Override
+			public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
+				// simulate IS_INTRESOURCE
+				if (Pointer.nativeValue(type) < 65535) {
+					types.add(Pointer.nativeValue(type) + "");
+				} else {
+					types.add(type.getWideString(0));
+				}
+				return true;
+			}
+		};
+
+		Kernel32.INSTANCE.EnumResourceTypes(target, ertp, null);
+
+		final Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
+
+		for (final String typeName : types) {
+			result.put(typeName, new ArrayList<String>());
+
+			Pointer pointer = null;
+			try {
+				pointer = new Pointer(Long.parseLong(typeName));
+			} catch (Exception e) {
+				pointer = new Memory(Native.WCHAR_SIZE * (typeName.length() + 1));
+				pointer.setWideString(0, typeName);
+			}
+
+			Kernel32.INSTANCE.EnumResourceNames(target, pointer, new EnumResNameProc() {
+
+				@Override
+				public boolean invoke(HMODULE module, Pointer t, Pointer name, Pointer lParam) {
+					// simulate IS_INTRESOURCE
+					if (Pointer.nativeValue(name) < 65535) {
+						result.get(typeName).add(Pointer.nativeValue(name) + "");
+					} else {
+						result.get(typeName).add(name.getWideString(0));
+					}
+
+					return true;
+				}
+			}, null);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Returns all the executable modules for a given process ID.<br>
+	 * 
+	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=
+	 *      vs.85).aspx
+	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=
+	 *      vs.85).aspx
+	 * @param processID
+	 *            The process ID to get executable modules for
+	 * @return All the modules in the process.
+	 */
+	public static List<MODULEENTRY32> getModules(int processID) {
+		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new DWORD(Kernel32.TH32CS_SNAPMODULE),
+				new DWORD(processID));
+
+		List<MODULEENTRY32.ByReference> modules = new ArrayList<Kernel32.MODULEENTRY32.ByReference>();
+		MODULEENTRY32.ByReference first = new MODULEENTRY32.ByReference();
+		modules.add(first);
+
+		Kernel32.INSTANCE.Module32Next(snapshot, first);
+
+		MODULEENTRY32.ByReference next = new MODULEENTRY32.ByReference();
+		while (Kernel32.INSTANCE.Module32Next(snapshot, next)) {
+			modules.add(next);
+			next = new MODULEENTRY32.ByReference();
+		}
+
+		List<MODULEENTRY32> results = new ArrayList<MODULEENTRY32>();
+		for (MODULEENTRY32.ByReference mbr : modules) {
+			results.add(mbr);
+		}
+
+		Kernel32.INSTANCE.CloseHandle(snapshot);
+		return results;
+	}
 }
