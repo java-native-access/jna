@@ -797,10 +797,8 @@ public abstract class Kernel32Util implements WinDef {
 	/**
 	 * Returns all the executable modules for a given process ID.<br>
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=
-	 *      vs.85).aspx
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx }
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx }
 	 * @param processID
 	 *            The process ID to get executable modules for
 	 * @return All the modules in the process.

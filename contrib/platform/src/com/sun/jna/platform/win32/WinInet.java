@@ -293,8 +293,7 @@ public interface WinInet extends StdCallLibrary {
 	 *     </code>
 	 * </pre>
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=vs.85).aspx }
 	 */
 	public static class INTERNET_CACHE_ENTRY_INFO extends Structure {
 		/**

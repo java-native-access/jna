@@ -32,8 +32,7 @@ public interface TIHelp32 {
 	 * Describes an entry from a list of the modules belonging to the specified
 	 * process.
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx }
 	 */
 	public class MODULEENTRY32 extends Structure {
 

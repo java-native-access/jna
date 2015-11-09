@@ -30,19 +30,20 @@ public interface Kernel32 extends WinNT, Wincon {
             Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
 
 	/**
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=
-	 *      vs.85).aspx Used with Kernel32.CreateToolhelp32Snapshot<br>
-	 *      Includes all modules of the process specified in th32ProcessID in
-	 *      the snapshot. <br>
-	 *      To enumerate the modules, see Module32First.<br>
-	 *      If the function fails with ERROR_BAD_LENGTH, retry the function
-	 *      until it succeeds. <br>
-	 *      64-bit Windows: Using this flag in a 32-bit process includes the
-	 *      32-bit modules of the process specified in th32ProcessID, while
-	 *      using it in a 64-bit process includes the 64-bit modules.<br>
-	 *      To include the 32-bit modules of the process specified in
-	 *      th32ProcessID from a 64-bit process, use the TH32CS_SNAPMODULE32
-	 *      flag.
+	 *
+	 * Used with Kernel32.CreateToolhelp32Snapshot<br>
+	 * Includes all modules of the process specified in th32ProcessID in the
+	 * snapshot. <br>
+	 * To enumerate the modules, see Module32First.<br>
+	 * If the function fails with ERROR_BAD_LENGTH, retry the function until it
+	 * succeeds. <br>
+	 * 64-bit Windows: Using this flag in a 32-bit process includes the 32-bit
+	 * modules of the process specified in th32ProcessID, while using it in a
+	 * 64-bit process includes the 64-bit modules.<br>
+	 * To include the 32-bit modules of the process specified in th32ProcessID
+	 * from a 64-bit process, use the TH32CS_SNAPMODULE32 flag.
+	 * 
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx }
 	 */
 	static final int TH32CS_SNAPMODULE = 0x8;
 
@@ -2480,8 +2481,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 * Reads data from an area of memory in a specified process. The entire area
 	 * to be read must be accessible or the operation fails.
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx }
 	 * @param hProcess
 	 *            A handle to the process with memory that is being read. The
 	 *            handle must have PROCESS_VM_READ access to the process.
@@ -3498,8 +3498,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	/**
 	 * Retrieves information about the first module associated with a process.
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684218(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms684218(v=vs.85).aspx }
 	 * @param hSnapshot
 	 *            A handle to the snapshot returned from a previous call to the
 	 *            CreateToolhelp32Snapshot function.
@@ -3517,8 +3516,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 * Retrieves information about the next module associated with a process or
 	 * thread.
 	 * 
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/ms684221(v=
-	 *      vs.85).aspx
+	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms684221(v=vs.85).aspx }
 	 * @param hSnapshot
 	 *            A handle to the snapshot returned from a previous call to the
 	 *            CreateToolhelp32Snapshot function.
