@@ -20,7 +20,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
+import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
 import junit.framework.TestCase;
@@ -252,5 +255,35 @@ public class Kernel32UtilTest extends TestCase {
         } finally {
             reader.close();
         }        
+    }
+    
+    public void testGetResource() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+    	byte[] results = Kernel32Util.getResource("c:\\windows\\explorer.exe", "14", "ICO_MYCOMPUTER");
+    	
+    	assertNotNull(results);
+    	assertTrue(results.length == 272);
+    }
+    
+    public void testGetResourceNames() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+    	Map<String, List<String>> names =Kernel32Util.getResourceNames("c:\\windows\\explorer.exe");
+    	
+    	assertNotNull(names);
+    	assertTrue(names.size() > 0);
+    	assertTrue(names.containsKey("14"));
+    	assertTrue(names.get("14").contains("ICO_MYCOMPUTER"));
+    }
+    
+    public void testGetModules() {
+    	List<MODULEENTRY32> results = Kernel32Util.getModules(Kernel32.INSTANCE.GetCurrentProcessId());
+    	
+		// not sure if this will be run against java.exe or javaw.exe but this
+		// check tests both
+    	assertNotNull(results);
+		assertTrue(results.get(0).szModule().startsWith("java"));
+		assertTrue(results.size() > 1);
     }
 }

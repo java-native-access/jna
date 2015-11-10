@@ -28,14 +28,18 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HMODULE;
+import com.sun.jna.platform.win32.WinDef.HRSRC;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -929,5 +933,300 @@ public class Kernel32Test extends TestCase {
 				Kernel32.INSTANCE.CloseHandle(handleSerialPort);
 			}
 		}
+	}
+
+	public void testProcessIdToSessionId() {
+		int myProcessID = Kernel32.INSTANCE.GetCurrentProcessId();
+
+		IntByReference pSessionId = new IntByReference();
+		boolean result = Kernel32.INSTANCE.ProcessIdToSessionId(myProcessID, pSessionId);
+
+		// should give us our session ID
+		assertTrue(result);
+
+		// on Win Vista and later we'll never be session 0 due to service
+		// isolation
+		// anything negative would be a definite error.
+		assertTrue(pSessionId.getValue() > 0);
+	}
+
+	public void testLoadLibraryEx() {
+		assertNotNull(
+				Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null, Kernel32.LOAD_LIBRARY_AS_DATAFILE));
+	}
+
+	public void testEnumResourceTypes() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		final List<String> types = new ArrayList<String>();
+		WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
+
+			@Override
+			public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
+				// simulate IS_INTRESOURCE
+				if (Pointer.nativeValue(type) < 65535) {
+					types.add(Pointer.nativeValue(type) + "");
+				} else {
+					types.add(type.getWideString(0));
+				}
+				return true;
+			}
+		};
+
+		Kernel32.INSTANCE.EnumResourceTypes(target, ertp, null);
+
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		assertTrue(types.contains(TYPE_NAME));
+	}
+
+	public void testEnumResourceNames() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+		final String RESOURCE_NAME = "ICO_MYCOMPUTER";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		final List<String> types = new ArrayList<String>();
+		WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
+
+			@Override
+			public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
+				// simulate IS_INTRESOURCE
+				if (Pointer.nativeValue(type) < 65535) {
+					types.add(Pointer.nativeValue(type) + "");
+				} else {
+					types.add(type.getWideString(0));
+				}
+				return true;
+			}
+		};
+
+		Kernel32.INSTANCE.EnumResourceTypes(target, ertp, null);
+
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		assertTrue(types.contains(TYPE_NAME));
+
+		Pointer pointer = new Pointer(Long.parseLong(TYPE_NAME));
+
+		final List<String> names = new ArrayList<String>();
+		Kernel32.INSTANCE.EnumResourceNames(target, pointer, new WinBase.EnumResNameProc() {
+
+			@Override
+			public boolean invoke(HMODULE module, Pointer t, Pointer name, Pointer lParam) {
+				// simulate IS_INTRESOURCE
+				if (Pointer.nativeValue(name) < 65535) {
+					names.add(Pointer.nativeValue(name) + "");
+				} else {
+					names.add(name.getWideString(0));
+				}
+
+				return true;
+			}
+		}, null);
+
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		assertTrue(names.contains(RESOURCE_NAME));
+	}
+
+	public void testFindResource() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+		final String RESOURCE_NAME = "ICO_MYCOMPUTER";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		Pointer t = null;
+		try {
+			t = new Pointer(Long.parseLong(TYPE_NAME));
+		} catch (Exception e) {
+			t = new Memory(Native.WCHAR_SIZE * (TYPE_NAME.length() + 1));
+			t.setWideString(0, TYPE_NAME);
+		}
+		assertNotNull(t);
+
+		Pointer n = null;
+		try {
+			n = new Pointer(Long.parseLong(RESOURCE_NAME));
+		} catch (Exception e) {
+			n = new Memory(Native.WCHAR_SIZE * (RESOURCE_NAME.length() + 1));
+			n.setWideString(0, RESOURCE_NAME);
+		}
+		assertNotNull(n);
+
+		HRSRC hRsrc = Kernel32.INSTANCE.FindResource(target, n, t);
+		assertNotNull(hRsrc);
+	}
+
+	public void testLoadResource() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+		final String RESOURCE_NAME = "ICO_MYCOMPUTER";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		Pointer t = null;
+		try {
+			t = new Pointer(Long.parseLong(TYPE_NAME));
+		} catch (Exception e) {
+			t = new Memory(Native.WCHAR_SIZE * (TYPE_NAME.length() + 1));
+			t.setWideString(0, TYPE_NAME);
+		}
+		assertNotNull(t);
+
+		Pointer n = null;
+		try {
+			n = new Pointer(Long.parseLong(RESOURCE_NAME));
+		} catch (Exception e) {
+			n = new Memory(Native.WCHAR_SIZE * (RESOURCE_NAME.length() + 1));
+			n.setWideString(0, RESOURCE_NAME);
+		}
+		assertNotNull(n);
+
+		HRSRC hRsrc = Kernel32.INSTANCE.FindResource(target, n, t);
+		assertNotNull(hRsrc);
+
+		HANDLE loaded = Kernel32.INSTANCE.LoadResource(target, hRsrc);
+		assertNotNull(loaded);
+	}
+
+	public void testSizeofResource() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+		final String RESOURCE_NAME = "ICO_MYCOMPUTER";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		Pointer t = null;
+		try {
+			t = new Pointer(Long.parseLong(TYPE_NAME));
+		} catch (Exception e) {
+			t = new Memory(Native.WCHAR_SIZE * (TYPE_NAME.length() + 1));
+			t.setWideString(0, TYPE_NAME);
+		}
+		assertNotNull(t);
+
+		Pointer n = null;
+		try {
+			n = new Pointer(Long.parseLong(RESOURCE_NAME));
+		} catch (Exception e) {
+			n = new Memory(Native.WCHAR_SIZE * (RESOURCE_NAME.length() + 1));
+			n.setWideString(0, RESOURCE_NAME);
+		}
+		assertNotNull(n);
+
+		HRSRC hRsrc = Kernel32.INSTANCE.FindResource(target, n, t);
+		assertNotNull(hRsrc);
+
+		HANDLE loaded = Kernel32.INSTANCE.LoadResource(target, hRsrc);
+		assertNotNull(loaded);
+
+		int length = Kernel32.INSTANCE.SizeofResource(target, hRsrc);
+		assertTrue(length == 272);
+	}
+
+	public void testLockResource() {
+		// On Windows 7, "14" is the type assigned to the "My Computer" icon
+		// (which is named "ICO_MYCOMPUTER")
+		final String TYPE_NAME = "14";
+		final String RESOURCE_NAME = "ICO_MYCOMPUTER";
+
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx("c:\\windows\\explorer.exe", null,
+				Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		assertNotNull(target);
+
+		Pointer t = null;
+		try {
+			t = new Pointer(Long.parseLong(TYPE_NAME));
+		} catch (Exception e) {
+			t = new Memory(Native.WCHAR_SIZE * (TYPE_NAME.length() + 1));
+			t.setWideString(0, TYPE_NAME);
+		}
+		assertNotNull(t);
+
+		Pointer n = null;
+		try {
+			n = new Pointer(Long.parseLong(RESOURCE_NAME));
+		} catch (Exception e) {
+			n = new Memory(Native.WCHAR_SIZE * (RESOURCE_NAME.length() + 1));
+			n.setWideString(0, RESOURCE_NAME);
+		}
+		assertNotNull(n);
+
+		HRSRC hRsrc = Kernel32.INSTANCE.FindResource(target, n, t);
+		assertNotNull(hRsrc);
+
+		HANDLE loaded = Kernel32.INSTANCE.LoadResource(target, hRsrc);
+		assertNotNull(loaded);
+
+		int length = Kernel32.INSTANCE.SizeofResource(target, hRsrc);
+		assertTrue(length == 272);
+
+		Pointer start = Kernel32.INSTANCE.LockResource(loaded);
+		assertNotNull(start);
+
+		byte[] bytes = start.getByteArray(0, length);
+		assertTrue(bytes.length == 272);
+	}
+
+	public void testModule32First() {
+		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE,
+				new DWORD(Kernel32.INSTANCE.GetCurrentProcessId()));
+		MODULEENTRY32.ByReference first = new MODULEENTRY32.ByReference();
+		assertTrue(Kernel32.INSTANCE.Module32First(snapshot, first));
+		assertTrue(Kernel32.INSTANCE.CloseHandle(snapshot));
+
+		// not sure if this will be run against java.exe or javaw.exe but this
+		// check tests both
+		assertTrue(first.szModule().startsWith("java"));
+	}
+	
+	public void testModule32Next() {
+		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE,
+				new DWORD(Kernel32.INSTANCE.GetCurrentProcessId()));
+
+		List<Tlhelp32.MODULEENTRY32.ByReference> modules = new ArrayList<Tlhelp32.MODULEENTRY32.ByReference>();
+		Tlhelp32.MODULEENTRY32.ByReference first = new Tlhelp32.MODULEENTRY32.ByReference();
+		modules.add(first);
+
+		Kernel32.INSTANCE.Module32Next(snapshot, first);
+
+		Tlhelp32.MODULEENTRY32.ByReference next = new Tlhelp32.MODULEENTRY32.ByReference();
+		while (Kernel32.INSTANCE.Module32Next(snapshot, next)) {
+			modules.add(next);
+			next = new Tlhelp32.MODULEENTRY32.ByReference();
+		}
+
+		List<Tlhelp32.MODULEENTRY32> results = new ArrayList<Tlhelp32.MODULEENTRY32>();
+		for (Tlhelp32.MODULEENTRY32.ByReference mbr : modules) {
+			results.add(mbr);
+		}
+
+		assertTrue(Kernel32.INSTANCE.CloseHandle(snapshot));
+
+		// not sure if this will be run against java.exe or javaw.exe but this
+		// check tests both
+		assertTrue(results.get(0).szModule().startsWith("java"));
+		assertTrue(results.size() > 1);
 	}
 }
