@@ -37,19 +37,19 @@ public class VersionUtil {
 		IntByReference dwDummy = new IntByReference();
 		dwDummy.setValue(0);
 
-		int versionlength = Version.INSTANCE.GetFileVersionInfoSize(filePath, dwDummy);
+		int versionLength = Version.INSTANCE.GetFileVersionInfoSize(filePath, dwDummy);
 
 		// no version info to read
-		if (versionlength == 0) {
+		if (versionLength == 0) {
 			return null;
 		}
 
-		byte[] bufferarray = new byte[versionlength];
+		byte[] bufferarray = new byte[versionLength];
 		Pointer lpData = new Memory(bufferarray.length);
 		PointerByReference lplpBuffer = new PointerByReference();
 		IntByReference puLen = new IntByReference();
 
-		if (Version.INSTANCE.GetFileVersionInfo(filePath, 0, versionlength, lpData)
+		if (Version.INSTANCE.GetFileVersionInfo(filePath, 0, versionLength, lpData)
 				&& Version.INSTANCE.VerQueryValue(lpData, "\\", lplpBuffer, puLen)) {
 			VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(lplpBuffer.getValue());
 			lplpBufStructure.read();

@@ -41,27 +41,17 @@ public class GDI32Util {
 	 * @return the window captured as a screenshot
 	 */
 	public static BufferedImage getScreenshot(HWND target) {
-		GDI32 gdi32 = GDI32.INSTANCE;
-		User32 user32 = User32.INSTANCE;
-
 		RECT rect = new RECT();
-
-		user32.GetWindowRect(target, rect);
-
+		User32.INSTANCE.GetWindowRect(target, rect);
 		Rectangle rectangle = rect.toRectangle();
+		HDC hdcTarget = User32.INSTANCE.GetDC(target);
+		HDC hdcTargetMem = GDI32.INSTANCE.CreateCompatibleDC(hdcTarget);
+		HBITMAP hBitmap = GDI32.INSTANCE.CreateCompatibleBitmap(hdcTarget, rectangle.width, rectangle.height);
+		HANDLE hdcTargetOld = GDI32.INSTANCE.SelectObject(hdcTargetMem, hBitmap);
 
-		HDC hdcTarget = user32.GetDC(target);
-
-		HDC hdcTargetMem = gdi32.CreateCompatibleDC(hdcTarget);
-
-		HBITMAP hBitmap = gdi32.CreateCompatibleBitmap(hdcTarget, rectangle.width, rectangle.height);
-
-		HANDLE hdcTargetOld = gdi32.SelectObject(hdcTargetMem, hBitmap);
-
-		gdi32.BitBlt(hdcTargetMem, 0, 0, rectangle.width, rectangle.height, hdcTarget, 0, 0, GDI32.SRCCOPY);
-
-		gdi32.SelectObject(hdcTargetMem, hdcTargetOld);
-		gdi32.DeleteDC(hdcTargetMem);
+		GDI32.INSTANCE.BitBlt(hdcTargetMem, 0, 0, rectangle.width, rectangle.height, hdcTarget, 0, 0, GDI32.SRCCOPY);
+		GDI32.INSTANCE.SelectObject(hdcTargetMem, hdcTargetOld);
+		GDI32.INSTANCE.DeleteDC(hdcTargetMem);
 
 		BITMAPINFO bmi = new BITMAPINFO();
 		bmi.bmiHeader.biWidth = rectangle.width;
@@ -71,14 +61,14 @@ public class GDI32Util {
 		bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
 
 		Memory buffer = new Memory(rectangle.width * rectangle.height * 4);
-		gdi32.GetDIBits(hdcTarget, hBitmap, 0, rectangle.height, buffer, bmi, WinGDI.DIB_RGB_COLORS);
+		GDI32.INSTANCE.GetDIBits(hdcTarget, hBitmap, 0, rectangle.height, buffer, bmi, WinGDI.DIB_RGB_COLORS);
 
 		BufferedImage image = new BufferedImage(rectangle.width, rectangle.height, BufferedImage.TYPE_INT_RGB);
 		image.setRGB(0, 0, rectangle.width, rectangle.height,
 				buffer.getIntArray(0, rectangle.width * rectangle.height), 0, rectangle.width);
 
-		gdi32.DeleteObject(hBitmap);
-		user32.ReleaseDC(target, hdcTarget);
+		GDI32.INSTANCE.DeleteObject(hBitmap);
+		User32.INSTANCE.ReleaseDC(target, hdcTarget);
 
 		return image;
 	}

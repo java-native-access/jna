@@ -25,8 +25,6 @@ import com.sun.jna.LastErrorException;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.TIHelp32.MODULEENTRY32;
-import com.sun.jna.platform.win32.WinBase.EnumResNameProc;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -696,9 +694,7 @@ public abstract class Kernel32Util implements WinDef {
 	 * @return The resource bytes, or null if no such resource exists.
 	 */
 	public static byte[] getResource(String path, String type, String name) {
-		Kernel32 kernel32 = Kernel32.INSTANCE;
-
-		final HMODULE target = kernel32.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
 
 		Pointer t = null;
 		try {
@@ -716,21 +712,15 @@ public abstract class Kernel32Util implements WinDef {
 			n.setWideString(0, name);
 		}
 
-		HRSRC hRsrc = kernel32.FindResource(target, n, t);
-
+		HRSRC hRsrc = Kernel32.INSTANCE.FindResource(target, n, t);
 		if (hRsrc == null) {
 			return null;
 		}
 
-		HANDLE loaded = kernel32.LoadResource(target, hRsrc);
-
-		DWORD length = kernel32.SizeofResource(target, hRsrc);
-
-		Pointer start = kernel32.LockResource(loaded);
-
-		byte[] buf = start.getByteArray(0, length.intValue());
-
-		return buf;
+		HANDLE loaded = Kernel32.INSTANCE.LoadResource(target, hRsrc);
+		int length = Kernel32.INSTANCE.SizeofResource(target, hRsrc);
+		Pointer start = Kernel32.INSTANCE.LockResource(loaded);
+		return start.getByteArray(0, length);
 	}
 
 	/**
@@ -742,7 +732,7 @@ public abstract class Kernel32Util implements WinDef {
 	 *         A map key + a single list item + the path to the executable can
 	 *         be handed off to getResource() to actually get the resource.
 	 */
-	public static final Map<String, List<String>> getResourceNames(String path) {
+	public static Map<String, List<String>> getResourceNames(String path) {
 		final HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
 
 		final List<String> types = new ArrayList<String>();
@@ -803,24 +793,24 @@ public abstract class Kernel32Util implements WinDef {
 	 *            The process ID to get executable modules for
 	 * @return All the modules in the process.
 	 */
-	public static List<TIHelp32.MODULEENTRY32> getModules(int processID) {
-		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(new DWORD(Kernel32.TH32CS_SNAPMODULE),
+	public static List<Tlhelp32.MODULEENTRY32> getModules(int processID) {
+		HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE,
 				new DWORD(processID));
 
-		List<TIHelp32.MODULEENTRY32.ByReference> modules = new ArrayList<TIHelp32.MODULEENTRY32.ByReference>();
-		TIHelp32.MODULEENTRY32.ByReference first = new TIHelp32.MODULEENTRY32.ByReference();
+		List<Tlhelp32.MODULEENTRY32.ByReference> modules = new ArrayList<Tlhelp32.MODULEENTRY32.ByReference>();
+		Tlhelp32.MODULEENTRY32.ByReference first = new Tlhelp32.MODULEENTRY32.ByReference();
 		modules.add(first);
 
 		Kernel32.INSTANCE.Module32Next(snapshot, first);
 
-		TIHelp32.MODULEENTRY32.ByReference next = new TIHelp32.MODULEENTRY32.ByReference();
+		Tlhelp32.MODULEENTRY32.ByReference next = new Tlhelp32.MODULEENTRY32.ByReference();
 		while (Kernel32.INSTANCE.Module32Next(snapshot, next)) {
 			modules.add(next);
-			next = new TIHelp32.MODULEENTRY32.ByReference();
+			next = new Tlhelp32.MODULEENTRY32.ByReference();
 		}
 
-		List<TIHelp32.MODULEENTRY32> results = new ArrayList<TIHelp32.MODULEENTRY32>();
-		for (TIHelp32.MODULEENTRY32.ByReference mbr : modules) {
+		List<Tlhelp32.MODULEENTRY32> results = new ArrayList<Tlhelp32.MODULEENTRY32>();
+		for (Tlhelp32.MODULEENTRY32.ByReference mbr : modules) {
 			results.add(mbr);
 		}
 

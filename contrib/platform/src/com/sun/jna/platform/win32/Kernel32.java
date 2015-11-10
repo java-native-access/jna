@@ -30,24 +30,6 @@ public interface Kernel32 extends WinNT, Wincon {
             Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
 
 	/**
-	 *
-	 * Used with Kernel32.CreateToolhelp32Snapshot<br>
-	 * Includes all modules of the process specified in th32ProcessID in the
-	 * snapshot. <br>
-	 * To enumerate the modules, see Module32First.<br>
-	 * If the function fails with ERROR_BAD_LENGTH, retry the function until it
-	 * succeeds. <br>
-	 * 64-bit Windows: Using this flag in a 32-bit process includes the 32-bit
-	 * modules of the process specified in th32ProcessID, while using it in a
-	 * 64-bit process includes the 64-bit modules.<br>
-	 * To include the 32-bit modules of the process specified in th32ProcessID
-	 * from a 64-bit process, use the TH32CS_SNAPMODULE32 flag.
-	 * 
-	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx }
-	 */
-	static final int TH32CS_SNAPMODULE = 0x8;
-
-	/**
 	 * <strong>LOAD_LIBRARY_AS_DATAFILE</strong> <br>
 	 * 0x00000002<br>
 	 * If this value is used, the system maps the file into the calling
@@ -70,7 +52,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 * <strong>LOAD_LIBRARY_AS_IMAGE_RESOURCE</strong>. For more information,
 	 * see Remarks.
 	 */
-	static final int LOAD_LIBRARY_AS_DATAFILE = 0x2;
+	int LOAD_LIBRARY_AS_DATAFILE = 0x2;
     
 	
 	/**
@@ -2892,7 +2874,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *            To retrieve the identifier of the session currently attached
 	 *            to the console, use the WTSGetActiveConsoleSessionId function.
 	 * @return If the function succeeds, the return value is true. <br>
-	 *         If the function fails, the return value is zero. To get extended
+	 *         If the function fails, the return value is false. To get extended
 	 *         error information, call GetLastError.
 	 */
 	boolean ProcessIdToSessionId(int dwProcessId, IntByReference pSessionId);
@@ -3493,7 +3475,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         If the function fails, the return value is zero. To get extended
 	 *         error information, call GetLastError.
 	 */
-	DWORD SizeofResource(HMODULE hModule, HANDLE hResource);
+	int SizeofResource(HMODULE hModule, HANDLE hResource);
 
 	/**
 	 * Retrieves information about the first module associated with a process.
@@ -3510,7 +3492,7 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         GetLastError function if no modules exist or the snapshot does
 	 *         not contain module information.
 	 */
-	boolean Module32First(HANDLE hSnapshot, TIHelp32.MODULEENTRY32.ByReference lpme);
+	boolean Module32First(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32.ByReference lpme);
 
 	/**
 	 * Retrieves information about the next module associated with a process or
@@ -3528,5 +3510,5 @@ public interface Kernel32 extends WinNT, Wincon {
 	 *         GetLastError function if no modules exist or the snapshot does
 	 *         not contain module information.
 	 */
-	boolean Module32Next(HANDLE hSnapshot, TIHelp32.MODULEENTRY32.ByReference lpme);
+	boolean Module32Next(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32.ByReference lpme);
 }

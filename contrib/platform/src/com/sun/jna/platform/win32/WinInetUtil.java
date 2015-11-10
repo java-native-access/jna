@@ -59,17 +59,22 @@ public final class WinInetUtil {
 		INTERNET_CACHE_ENTRY_INFO entry = new INTERNET_CACHE_ENTRY_INFO(size.getValue());
 		entryHandle = WinInet.INSTANCE.FindFirstUrlCacheEntry(null, entry, size);
 
-		if (entryHandle == null || Native.getLastError() != 0) {
-			return null;
+		if (entryHandle == null) {
+			return new LinkedHashMap<String, String>();
 		}
 
+		int lastError = Native.getLastError();
+		if (lastError != 0) {
+			throw new Win32Exception(lastError);
+		}
+		
 		items.add(entry);
 
 		while (true) {
 			size = new IntByReference();
 			WinInet.INSTANCE.FindNextUrlCacheEntry(entryHandle, null, size);
 
-			if (Native.getLastError() == 259) {
+			if (Native.getLastError() == WinError.ERROR_NO_MORE_ITEMS) {
 				WinInet.INSTANCE.FindCloseUrlCache(entryHandle);
 				break;
 			}
@@ -77,9 +82,14 @@ public final class WinInetUtil {
 			entry = new INTERNET_CACHE_ENTRY_INFO(size.getValue());
 			boolean result = WinInet.INSTANCE.FindNextUrlCacheEntry(entryHandle, entry, size);
 
-			if (!result || Native.getLastError() == 259) {
+			lastError = Native.getLastError();
+			if (!result || lastError == WinError.ERROR_NO_MORE_ITEMS) {
 				WinInet.INSTANCE.FindCloseUrlCache(entryHandle);
 				break;
+			}
+			
+			if (lastError != 0) {
+				throw new Win32Exception(lastError);
 			}
 			items.add(entry);
 		}

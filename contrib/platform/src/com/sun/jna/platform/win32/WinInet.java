@@ -35,7 +35,7 @@ public interface WinInet extends StdCallLibrary {
 	/**
 	 * Normal cache entry; can be deleted to recover space for new entries.
 	 */
-	public static final int NORMAL_CACHE_ENTRY = 1;
+	int NORMAL_CACHE_ENTRY = 1;
 
 	/**
 	 * Sticky cache entry that is exempt from scavenging for the amount of time
@@ -43,38 +43,38 @@ public interface WinInet extends StdCallLibrary {
 	 * The default value set by CommitUrlCacheEntryA and CommitUrlCacheEntryW is
 	 * one day.
 	 */
-	public static final int STICKY_CACHE_ENTRY = 4;
+	int STICKY_CACHE_ENTRY = 4;
 
 	/**
 	 * Cache entry file that has been edited externally. This cache entry type
 	 * is exempt from scavenging.
 	 */
-	public static final int EDITED_CACHE_ENTRY = 8;
+	int EDITED_CACHE_ENTRY = 8;
 
 	/**
 	 * Not currently implemented.
 	 */
-	public static final int TRACK_OFFLINE_CACHE_ENTRY = 16;
+	int TRACK_OFFLINE_CACHE_ENTRY = 16;
 
 	/**
 	 * Not currently implemented.
 	 */
-	public static final int TRACK_ONLINE_CACHE_ENTRY = 32;
+	int TRACK_ONLINE_CACHE_ENTRY = 32;
 
 	/**
 	 * Partial response cache entry.
 	 */
-	public static final int SPARSE_CACHE_ENTRY = 65536;
+	int SPARSE_CACHE_ENTRY = 65536;
 
 	/**
 	 * Cookie cache entry.
 	 */
-	public static final int COOKIE_CACHE_ENTRY = 1048576;
+	int COOKIE_CACHE_ENTRY = 1048576;
 
 	/**
 	 * Visited link cache entry.
 	 */
-	public static final int URLHISTORY_CACHE_ENTRY = 2097152;
+	int URLHISTORY_CACHE_ENTRY = 2097152;
 
 	/**
 	 * Indicates that all of the cache groups in the user's system should be
@@ -127,7 +127,7 @@ public interface WinInet extends StdCallLibrary {
 	 *         function finds no matching files, GetLastError returns
 	 *         ERROR_NO_MORE_FILES.
 	 */
-	public HANDLE FindFirstUrlCacheGroup(int dwFlags, int dwFilter, Pointer lpSearchCondition, int dwSearchCondition,
+	HANDLE FindFirstUrlCacheGroup(int dwFlags, int dwFilter, Pointer lpSearchCondition, int dwSearchCondition,
 			LONGByReference lpGroupID, Pointer lpReserved);
 
 	/**
@@ -147,7 +147,7 @@ public interface WinInet extends StdCallLibrary {
 	 *         Continue to call FindNextUrlCacheGroup until the last item in the
 	 *         cache is returned.
 	 */
-	public boolean FindNextUrlCacheGroup(HANDLE hFind, LONGByReference lpGroupID, Pointer lpReserved);
+	boolean FindNextUrlCacheGroup(HANDLE hFind, LONGByReference lpGroupID, Pointer lpReserved);
 
 	/**
 	 * Releases the specified GROUPID and any associated state in the cache
@@ -169,7 +169,7 @@ public interface WinInet extends StdCallLibrary {
 	 * @return Returns TRUE if successful, or FALSE otherwise. To get specific
 	 *         error information, call GetLastError.
 	 */
-	public boolean DeleteUrlCacheGroup(LONGByReference GroupID, int dwFlags, Pointer lpReserved);
+	boolean DeleteUrlCacheGroup(LONGByReference GroupID, int dwFlags, Pointer lpReserved);
 
 	/**
 	 * Closes the specified cache enumeration handle.
@@ -180,7 +180,7 @@ public interface WinInet extends StdCallLibrary {
 	 * @return Returns TRUE if successful, or FALSE otherwise. To get extended
 	 *         error information, call GetLastError.
 	 */
-	public boolean FindCloseUrlCache(HANDLE hFind);
+	boolean FindCloseUrlCache(HANDLE hFind);
 
 	/**
 	 * @param lpszUrlName
@@ -196,7 +196,7 @@ public interface WinInet extends StdCallLibrary {
 	 *         </li>
 	 *         </ul>
 	 */
-	public boolean DeleteUrlCacheEntry(String lpszUrlName);
+	boolean DeleteUrlCacheEntry(String lpszUrlName);
 
 	/**
 	 * Begins the enumeration of the Internet cache.
@@ -231,7 +231,7 @@ public interface WinInet extends StdCallLibrary {
 	 *         The value returned in lpdwFirstCacheEntryInfoBufferSize indicates
 	 *         the buffer size necessary to contain all the information.
 	 */
-	public HANDLE FindFirstUrlCacheEntry(String lpszUrlSearchPattern, INTERNET_CACHE_ENTRY_INFO lpFirstCacheEntryInfo,
+	HANDLE FindFirstUrlCacheEntry(String lpszUrlSearchPattern, INTERNET_CACHE_ENTRY_INFO lpFirstCacheEntryInfo,
 			IntByReference lpcbCacheEntryInfo);
 
 	/**
@@ -260,7 +260,7 @@ public interface WinInet extends StdCallLibrary {
 	 *         <li><b>ERROR_NO_MORE_ITEMS:</b>The enumeration completed.</li>
 	 *         </ul>
 	 */
-	public boolean FindNextUrlCacheEntry(HANDLE hEnumHandle, INTERNET_CACHE_ENTRY_INFO lpNextCacheEntryInfo,
+	boolean FindNextUrlCacheEntry(HANDLE hEnumHandle, INTERNET_CACHE_ENTRY_INFO lpNextCacheEntryInfo,
 			IntByReference lpcbCacheEntryInfo);
 
 	/**
@@ -295,7 +295,7 @@ public interface WinInet extends StdCallLibrary {
 	 * 
 	 * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=vs.85).aspx }
 	 */
-	public static class INTERNET_CACHE_ENTRY_INFO extends Structure {
+	class INTERNET_CACHE_ENTRY_INFO extends Structure {
 		/**
 		 * Size of this structure, in bytes. This value can be used to help
 		 * determine the version of the cache system.
@@ -444,7 +444,14 @@ public interface WinInet extends StdCallLibrary {
 			public int dwExemptDelta;
 		}
 
-		@SuppressWarnings("rawtypes")
+		public String getLocalFileName() {
+			return (lpszLocalFileName == null) ? "" : lpszLocalFileName.getWideString(0);
+		}
+
+		public String getSourceUrlName() {
+			return (lpszSourceUrlName == null) ? "" : lpszSourceUrlName.getWideString(0);
+		}
+		
 		@Override
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "dwStructSize", "lpszSourceUrlName", "lpszLocalFileName",

@@ -707,7 +707,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * </dd>
 		 * </dl>
 		 */
-		public WString lpVerb;
+		public String lpVerb;
 	
 		/**
 		 * <p>
@@ -735,7 +735,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <div class="note"><strong>Note</strong>&nbsp;&nbsp;If the path is not
 		 * included with the name, the current directory is assumed.</div>
 		 */
-		public WString lpFile;
+		public String lpFile;
 	
 		/**
 		 * <p>
@@ -748,7 +748,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <strong>lpParameters</strong> should be <strong>NULL</strong>.
 		 * </p>
 		 */
-		public WString lpParameters;
+		public String lpParameters;
 	
 		/**
 		 * <p>
@@ -761,7 +761,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * directory.
 		 * </p>
 		 */
-		public WString lpDirectory;
+		public String lpDirectory;
 	
 		/**
 		 * <p>
@@ -1052,7 +1052,6 @@ public interface ShellAPI extends StdCallLibrary {
 		 */
 		public HANDLE hProcess;
 	
-		@SuppressWarnings("rawtypes")
 		protected List getFieldOrder() {
 			return Arrays.asList(new String[] { "cbSize", "fMask", "hwnd", "lpVerb", "lpFile", "lpParameters",
 					"lpDirectory", "nShow", "hInstApp", "lpIDList", "lpClass", "hKeyClass", "dwHotKey", "hMonitor",

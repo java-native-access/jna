@@ -2279,8 +2279,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         GetExitCodeProcess.
 	 * @see MSDN {@link http://msdn.microsoft.com/en-us/library/windows/desktop/ms682431%28v=vs.85%29.aspx }
 	 */
-	boolean CreateProcessWithLogonW(WString lpUsername, WString lpDomain, WString lpPassword, int dwLogonFlags,
-			WString lpApplicationName, WString lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
-			WString lpCurrentDirectory, STARTUPINFO lpStartupInfo, PROCESS_INFORMATION lpProcessInfo);
+	boolean CreateProcessWithLogonW(String lpUsername, String lpDomain, String lpPassword, int dwLogonFlags,
+			String lpApplicationName, String lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
+			String lpCurrentDirectory, STARTUPINFO lpStartupInfo, PROCESS_INFORMATION lpProcessInfo);
 
 }
