@@ -41,7 +41,6 @@ public class GDI32UtilTest extends TestCase {
 				int pixel = image.getRGB(x, y);
 				if (!distinctPixels.contains(pixel)) {
 					distinctPixels.add(pixel);
-					System.out.println(x + " " + y);
 				}
 				if (distinctPixels.size() > 20) {
 					break;
