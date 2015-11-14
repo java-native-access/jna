@@ -299,4 +299,9 @@ public class User32Test extends AbstractWin32TestSupport {
 
 		assertNotEquals(0, result);
 	}
+
+	public void testGetDesktopWindow() {
+		HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+		assertNotNull(desktopWindow);
+	}
 }

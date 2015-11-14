@@ -42,6 +42,12 @@ public interface GDI32 extends StdCallLibrary {
     GDI32 INSTANCE = (GDI32) Native.loadLibrary("gdi32", GDI32.class,
                                                 W32APIOptions.DEFAULT_OPTIONS);
 
+	/**
+	 * Used with BitBlt. Copies the source rectangle directly to the destination
+	 * rectangle.
+	 */
+	int SRCCOPY = 0xCC0020;
+    
     /**
      * The ExtCreateRegion function creates a region from the specified region and transformation data.
      * @param lpXform
@@ -430,4 +436,148 @@ public interface GDI32 extends StdCallLibrary {
 	 */
 	public int GetObject(final HANDLE hgdiobj, final int cbBuffer,
 			final Pointer lpvObject);
+	
+	/**
+	 * The BitBlt function performs a bit-block transfer of the color data
+	 * corresponding to a rectangle of pixels from the specified source device
+	 * context into a destination device context.
+	 * 
+	 * @param hdcDest
+	 *            A handle to the destination device context.
+	 * @param nXDest
+	 *            The x-coordinate, in logical units, of the upper-left corner
+	 *            of the destination rectangle.
+	 * @param nYDest
+	 *            The y-coordinate, in logical units, of the upper-left corner
+	 *            of the destination rectangle.
+	 * @param nWidth
+	 *            The width, in logical units, of the source and destination
+	 *            rectangles.
+	 * @param nHeight
+	 *            The height, in logical units, of the source and the
+	 *            destination rectangles.
+	 * @param hdcSrc
+	 *            A handle to the source device context.
+	 * @param nXSrc
+	 *            The x-coordinate, in logical units, of the upper-left corner
+	 *            of the source rectangle.
+	 * @param nYSrc
+	 *            The y-coordinate, in logical units, of the upper-left corner
+	 *            of the source rectangle.
+	 * @param dwRop
+	 *            A raster-operation code.<br>
+	 *            These codes define how the color data for the source rectangle
+	 *            is to be combined with the color data for the destination
+	 *            rectangle to achieve the final color.<br>
+	 *            The following list shows some common raster operation codes.
+	 *            <br>
+	 *            <table>
+	 *            <tbody>
+	 *            <tr>
+	 *            <th>Value</th>
+	 *            <th>Meaning</th>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>BLACKNESS</strong></td>
+	 *            <td>Fills the destination rectangle using the color associated
+	 *            with index 0 in the physical palette. (This color is black for
+	 *            the default physical palette.)</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>CAPTUREBLT</strong></td>
+	 *            <td>Includes any windows that are layered on top of your
+	 *            window in the resulting image. By default, the image only
+	 *            contains your window. Note that this generally cannot be used
+	 *            for printing device contexts.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>DSTINVERT</strong></td>
+	 *            <td>Inverts the destination rectangle.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>MERGECOPY</strong></td>
+	 *            <td>Merges the colors of the source rectangle with the brush
+	 *            currently selected in <em>hdcDest</em>, by using the Boolean
+	 *            AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>MERGEPAINT</strong></td>
+	 *            <td>Merges the colors of the inverted source rectangle with
+	 *            the colors of the destination rectangle by using the Boolean
+	 *            OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOMIRRORBITMAP</strong</td>
+	 *            <td>Prevents the bitmap from being mirrored.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOTSRCCOPY</strong></td>
+	 *            <td>Copies the inverted source rectangle to the destination.
+	 *            </td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOTSRCERASE</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean OR operator and then inverts
+	 *            the resultant color.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATCOPY</strong></td>
+	 *            <td>Copies the brush currently selected in <em>hdcDest</em>,
+	 *            into the destination bitmap.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATINVERT</strong></td>
+	 *            <td>Combines the colors of the brush currently selected in
+	 *            <em>hdcDest</em>, with the colors of the destination rectangle
+	 *            by using the Boolean XOR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATPAINT</strong></td>
+	 *            <td>Combines the colors of the brush currently selected in
+	 *            <em>hdcDest</em>, with the colors of the inverted source
+	 *            rectangle by using the Boolean OR operator. The result of this
+	 *            operation is combined with the colors of the destination
+	 *            rectangle by using the Boolean OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCAND</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCCOPY</strong></td>
+	 *            <td>Copies the source rectangle directly to the destination
+	 *            rectangle.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCERASE</strong></td>
+	 *            <td>Combines the inverted colors of the destination rectangle
+	 *            with the colors of the source rectangle by using the Boolean
+	 *            AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCINVERT</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean XOR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCPAINT</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>WHITENESS</strong></td>
+	 *            <td>Fills the destination rectangle using the color associated
+	 *            with index 1 in the physical palette. (This color is white for
+	 *            the default physical palette.)</td>
+	 *            </tr>
+	 *            </tbody>
+	 *            </table>
+	 * @return True if the function succeeded, False if not. To get extended
+	 *         error information, call GetLastError.
+	 */
+	boolean BitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC hdcSrc, int nXSrc, int nYSrc,
+			int dwRop);
+
 }
