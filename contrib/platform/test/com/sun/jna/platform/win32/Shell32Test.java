@@ -12,18 +12,22 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import com.sun.jna.Native;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
+import com.sun.jna.platform.win32.ShellAPI.SHELLEXECUTEINFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinDef.LPVOID;
-import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 
 /**
@@ -131,16 +135,63 @@ public class Shell32Test extends TestCase {
 
     }
 
-    public void testSHGetKnownFolderPath()
-    {
-        int flags = ShlObj.KNOWN_FOLDER_FLAG.NONE.getFlag();
-        PointerByReference outPath = new PointerByReference();
-        HANDLE token = null;
-        GUID guid = KnownFolders.FOLDERID_Fonts;
-        HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
+	public void testSHGetKnownFolderPath() {
+		int flags = ShlObj.KNOWN_FOLDER_FLAG.NONE.getFlag();
+		PointerByReference outPath = new PointerByReference();
+		HANDLE token = null;
+		GUID guid = KnownFolders.FOLDERID_Fonts;
+		HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
 
-        Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
+		Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
 
-        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+		assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+	}
+    
+	public void testSHEmptyRecycleBin() {
+		try {
+			File f = createTempFile();
+			W32FileUtils.getInstance().moveToTrash(new File[] { f });
+			int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
+					Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
+			// for reasons I can not find documented, the function returns the following:
+			// -2147418113 when the recycle bin has no items in it
+			// 0 when the recycle bin has something in it and this call deletes
+			// it.
+			assertTrue(result == 0);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+    
+    public void testShellExecuteEx() {
+    	try {
+	        File f = createTempFile();
+	        f.deleteOnExit();
+	        
+	    	SHELLEXECUTEINFO lpExecInfo = new SHELLEXECUTEINFO();
+	        // to avoid opening something and having hProcess come up null (meaning we opened something but can't close it)
+	    	// we will do a negative test with a bogus action.
+	        lpExecInfo.lpVerb = new WString("0p3n");
+	        lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
+	        lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
+	        lpExecInfo.lpFile = new WString(f.getAbsolutePath());
+	        
+	        assertFalse(Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
+	        assertTrue(Native.getLastError() == W32Errors.ERROR_NO_ASSOCIATION);
+    	} catch (Exception e) {
+    		throw new RuntimeException(e);
+    	}
+        
+    }
+    
+    private File createTempFile() throws IOException {
+        File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        for (int i = 0; i < 1000; i++) {
+            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+        }
+        fileWriter.close();
+        return file;
     }
 }

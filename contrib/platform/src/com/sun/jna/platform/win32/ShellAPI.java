@@ -707,7 +707,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * </dd>
 		 * </dl>
 		 */
-		public String lpVerb;
+		public WString lpVerb;
 	
 		/**
 		 * <p>
@@ -735,7 +735,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <div class="note"><strong>Note</strong>&nbsp;&nbsp;If the path is not
 		 * included with the name, the current directory is assumed.</div>
 		 */
-		public String lpFile;
+		public WString lpFile;
 	
 		/**
 		 * <p>
@@ -748,7 +748,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <strong>lpParameters</strong> should be <strong>NULL</strong>.
 		 * </p>
 		 */
-		public String lpParameters;
+		public WString lpParameters;
 	
 		/**
 		 * <p>
@@ -761,7 +761,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * directory.
 		 * </p>
 		 */
-		public String lpDirectory;
+		public WString lpDirectory;
 	
 		/**
 		 * <p>

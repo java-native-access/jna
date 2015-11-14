@@ -62,6 +62,11 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
 	 */
 	int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
 	
+	/**
+	 * Do not display an error message box if an error occurs.
+	 */
+	int SEE_MASK_FLAG_NO_UI = 0x00000400;
+	
     /**
      * This function can be used to copy, move, rename, or delete a file system object.
      * @param fileop
