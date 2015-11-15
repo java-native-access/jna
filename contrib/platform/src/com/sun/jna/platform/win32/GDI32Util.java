@@ -35,7 +35,7 @@ public class GDI32Util {
 	 * 
 	 * @param target
 	 *            The window to target
-	 * @return the window captured as a screenshot
+	 * @return the window captured as a screenshot, or null if the BufferedImage doesn't construct properly
 	 * @throws IllegalStateException
 	 *             if the rectangle from GetWindowRect has a width and/or height
 	 *             of 0. <br>
@@ -62,9 +62,6 @@ public class GDI32Util {
 
 		Win32Exception we = null;
 
-		// final java image structure we're returning.
-		final BufferedImage image = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
-
 		// device context used for drawing
 		HDC hdcTargetMem = null;
 
@@ -74,7 +71,12 @@ public class GDI32Util {
 		// original display surface associated with the device context
 		HANDLE hOriginal = null;
 
+		// final java image structure we're returning.
+		BufferedImage image = null;
+		
 		try {
+			image = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
+			
 			hdcTargetMem = GDI32.INSTANCE.CreateCompatibleDC(hdcTarget);
 			if (hdcTargetMem == null) {
 				throw new Win32Exception(Native.getLastError());
@@ -119,7 +121,7 @@ public class GDI32Util {
 				// per MSDN, set the display surface back when done drawing
 				HANDLE result = GDI32.INSTANCE.SelectObject(hdcTargetMem, hOriginal);
 				// failure modes are null or equal to HGDI_ERROR
-				if (result == null || result == WinGDI.HGDI_ERROR) {
+				if (result == null || WinGDI.HGDI_ERROR.equals(result)) {
 					Win32Exception ex = new Win32Exception(Native.getLastError());
 					if (we != null) {
 						ex.addSuppressed(we);

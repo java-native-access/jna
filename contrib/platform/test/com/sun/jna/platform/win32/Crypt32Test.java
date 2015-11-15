@@ -75,8 +75,8 @@ public class Crypt32Test extends TestCase {
 
 	public void testCertAddEncodedCertificateToSystemStore() {
 		// try to install a non-existent certificate
-		assertFalse(Crypt32.INSTANCE.CertAddEncodedCertificateToSystemStore("ROOT", null, new DWORD(0)));
+		assertFalse("Attempting to install a non-existent certificate should have returned false and set GetLastError()", Crypt32.INSTANCE.CertAddEncodedCertificateToSystemStore("ROOT", null, 0));
 		// should fail with "unexpected end of data"
-		assertEquals(WinCrypt.CRYPT_E_ASN1_EOD, Native.getLastError());
+		assertEquals("GetLastError() should have been set to CRYPT_E_ASN1_EOD ('ASN.1 unexpected end of data' in WinCrypt.h)", WinCrypt.CRYPT_E_ASN1_EOD, Native.getLastError());
 	}
 }

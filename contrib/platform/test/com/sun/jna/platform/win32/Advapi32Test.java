@@ -1527,9 +1527,8 @@ public class Advapi32Test extends TestCase {
     
     public void testCreateProcessWithLogonW() {
     	String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
-    	if (winDir == null || !(new File(winDir).exists())) {
-    		throw new IllegalStateException("WINDIR environment variable did not properly resolve to a directory.");
-    	}
+    	assertNotNull("No WINDIR value returned", winDir);
+    	assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
     	
     	STARTUPINFO si = new STARTUPINFO();
     	si.lpDesktop = null;
@@ -1539,9 +1538,9 @@ public class Advapi32Test extends TestCase {
     	boolean result = Advapi32.INSTANCE.CreateProcessWithLogonW("A" + System.currentTimeMillis(), "localhost", "12345", Advapi32.LOGON_WITH_PROFILE, new File(winDir, "notepad.exe").getAbsolutePath(), "", 0, null, "", si, results); 
     
     	// we tried to run notepad as a bogus user, so it should fail.
-    	assertFalse(result);
+    	assertFalse("CreateProcessWithLogonW should have returned false because the username was bogus.", result);
     	
     	// should fail with "the user name or password is incorrect" (error 1326)
-    	assertEquals(Native.getLastError(), W32Errors.ERROR_LOGON_FAILURE);
+    	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", Native.getLastError(), W32Errors.ERROR_LOGON_FAILURE);
     }
 }

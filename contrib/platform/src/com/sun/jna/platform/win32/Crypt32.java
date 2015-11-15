@@ -132,5 +132,5 @@ public interface Crypt32 extends StdCallLibrary {
 	 *         For extended error information, call GetLastError.
 	 * @see MSDN {@link http://msdn.microsoft.com/en-us/library/bb736347(v=vs.85).aspx }
 	 */
-	boolean CertAddEncodedCertificateToSystemStore(String szCertStoreName, Pointer pbCertEncoded, DWORD cbCertEncoded);
+	boolean CertAddEncodedCertificateToSystemStore(String szCertStoreName, Pointer pbCertEncoded, int cbCertEncoded);
 }

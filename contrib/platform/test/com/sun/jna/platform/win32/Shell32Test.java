@@ -146,52 +146,78 @@ public class Shell32Test extends TestCase {
 
 		assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
 	}
-    
+
 	public void testSHEmptyRecycleBin() {
+		File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
 		try {
-			File f = createTempFile();
-			W32FileUtils.getInstance().moveToTrash(new File[] { f });
+			// Create a file and immediately send it to the recycle bin.
+			try {
+				fillTempFile(file);
+				W32FileUtils.getInstance().moveToTrash(new File[] { file });
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
 			int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
 					Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
-			// for reasons I can not find documented, the function returns the following:
+			// for reasons I can not find documented, the function returns the
+			// following:
 			// -2147418113 when the recycle bin has no items in it
-			// 0 when the recycle bin has something in it and this call deletes
-			// it.
-			assertTrue(result == 0);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+			// 0 when the recycle bin has items in it
+			assertTrue("Result should have been 0 when emptying Recycle Bin - there should have been a file in it.",
+					result == 0);
+		} finally {
+			// if the file wasn't sent to the recycle bin, delete it.
+			if (file.exists()) {
+				file.delete();
+			}
 		}
 	}
-    
-    public void testShellExecuteEx() {
-    	try {
-	        File f = createTempFile();
-	        f.deleteOnExit();
-	        
-	    	SHELLEXECUTEINFO lpExecInfo = new SHELLEXECUTEINFO();
-	        // to avoid opening something and having hProcess come up null (meaning we opened something but can't close it)
-	    	// we will do a negative test with a bogus action.
-	        lpExecInfo.lpVerb = new WString("0p3n");
-	        lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
-	        lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
-	        lpExecInfo.lpFile = new WString(f.getAbsolutePath());
-	        
-	        assertFalse(Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
-	        assertTrue(Native.getLastError() == W32Errors.ERROR_NO_ASSOCIATION);
-    	} catch (Exception e) {
-    		throw new RuntimeException(e);
-    	}
-        
-    }
-    
-    private File createTempFile() throws IOException {
-        File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
-        file.createNewFile();
-        FileWriter fileWriter = new FileWriter(file);
-        for (int i = 0; i < 1000; i++) {
-            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
-        }
-        fileWriter.close();
-        return file;
-    }
+
+	public void testShellExecuteEx() {
+		File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
+		try {
+			try {
+				fillTempFile(file);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			SHELLEXECUTEINFO lpExecInfo = new SHELLEXECUTEINFO();
+			// to avoid opening something and having hProcess come up null
+			// (meaning we opened something but can't close it)
+			// we will do a negative test with a bogus action.
+			lpExecInfo.lpVerb = new WString("0p3n");
+			lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
+			lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
+			lpExecInfo.lpFile = new WString(file.getAbsolutePath());
+
+			assertFalse("ShellExecuteEx should have returned false - action verb was bogus.",
+					Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
+			assertTrue("GetLastError() should have been set to ERROR_NO_ASSOCIATION because of bogus action",
+					Native.getLastError() == W32Errors.ERROR_NO_ASSOCIATION);
+		} finally {
+			if (file.exists()) {
+				file.delete();
+			}
+		}
+
+	}
+
+	/**
+	 * Creates (if needed) and fills the specified file with some content
+	 * 
+	 * @param file
+	 *            The file to fill with content
+	 * @throws IOException
+	 *             If writing the content fails
+	 */
+	private void fillTempFile(File file) throws IOException {
+		file.createNewFile();
+		FileWriter fileWriter = new FileWriter(file);
+		for (int i = 0; i < 10; i++) {
+			fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+		}
+		fileWriter.close();
+	}
 }
