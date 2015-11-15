@@ -33,10 +33,12 @@ public class GDI32UtilTest extends AbstractWin32TestSupport {
 		HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
 		assertNotNull("Failed to obtain desktop window handle", desktopWindow);
 		BufferedImage image = GDI32Util.getScreenshot(desktopWindow);
-		// We'll validate that the image is "good" by checking for 20 distinct
-		// colors.
-		// BufferedImages normally start life as one uniform color so if that's
-		// not the case then something copied over - but since this is a whole-desktop screenshot we can't be sure what.
+		// Since this test involves taking a whole-desktop screenshot
+		// we can't be sure what the image will be exactly.
+		// We'll validate that the image is "good" 
+		// by checking for 20 distinct colors.
+		// BufferedImages normally start life as one uniform color 
+		// so if that's not the case then some data was indeed copied over as a result of the getScreenshot() function.
 		List<Integer> distinctPixels = new ArrayList<Integer>();
 		for (int x = 0; x < image.getWidth(); x++) {
 			for (int y = 0; y < image.getHeight(); y++) {
@@ -49,6 +51,6 @@ public class GDI32UtilTest extends AbstractWin32TestSupport {
 				}
 			}
 		}
-		assertTrue("Number of distinct pixels was below 20. It was " + distinctPixels.size(), distinctPixels.size() > 20);
+		assertTrue("Number of distinct pixels was not above 20.", distinctPixels.size() > 20);
 	}
 }

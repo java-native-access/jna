@@ -1541,6 +1541,6 @@ public class Advapi32Test extends TestCase {
     	assertFalse("CreateProcessWithLogonW should have returned false because the username was bogus.", result);
     	
     	// should fail with "the user name or password is incorrect" (error 1326)
-    	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", Native.getLastError(), W32Errors.ERROR_LOGON_FAILURE);
+    	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", W32Errors.ERROR_LOGON_FAILURE, Native.getLastError());
     }
 }

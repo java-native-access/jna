@@ -148,7 +148,7 @@ public class Shell32Test extends TestCase {
 	}
 
 	public void testSHEmptyRecycleBin() {
-		File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
+		File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
 		try {
 			// Create a file and immediately send it to the recycle bin.
 			try {
@@ -160,12 +160,12 @@ public class Shell32Test extends TestCase {
 
 			int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
 					Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
-			// for reasons I can not find documented, the function returns the
-			// following:
-			// -2147418113 when the recycle bin has no items in it
+			// for reasons I can not find documented on MSDN, 
+			// the function returns the following:
 			// 0 when the recycle bin has items in it
-			assertTrue("Result should have been 0 when emptying Recycle Bin - there should have been a file in it.",
-					result == 0);
+			// -2147418113 when the recycle bin has no items in it
+			assertEquals("Result should have been ERROR_SUCCESS when emptying Recycle Bin - there should have been a file in it.",
+					 W32Errors.ERROR_SUCCESS, result);
 		} finally {
 			// if the file wasn't sent to the recycle bin, delete it.
 			if (file.exists()) {
@@ -175,7 +175,7 @@ public class Shell32Test extends TestCase {
 	}
 
 	public void testShellExecuteEx() {
-		File file = new File(System.getProperty("java.io.tmpdir") + System.nanoTime() + ".txt");
+		File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
 		try {
 			try {
 				fillTempFile(file);
@@ -194,8 +194,8 @@ public class Shell32Test extends TestCase {
 
 			assertFalse("ShellExecuteEx should have returned false - action verb was bogus.",
 					Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
-			assertTrue("GetLastError() should have been set to ERROR_NO_ASSOCIATION because of bogus action",
-					Native.getLastError() == W32Errors.ERROR_NO_ASSOCIATION);
+			assertEquals("GetLastError() should have been set to ERROR_NO_ASSOCIATION because of bogus action",
+					W32Errors.ERROR_NO_ASSOCIATION, Native.getLastError());
 		} finally {
 			if (file.exists()) {
 				file.delete();
@@ -205,7 +205,7 @@ public class Shell32Test extends TestCase {
 	}
 
 	/**
-	 * Creates (if needed) and fills the specified file with some content
+	 * Creates (if needed) and fills the specified file with some content (10 lines of the same text)
 	 * 
 	 * @param file
 	 *            The file to fill with content
@@ -215,9 +215,13 @@ public class Shell32Test extends TestCase {
 	private void fillTempFile(File file) throws IOException {
 		file.createNewFile();
 		FileWriter fileWriter = new FileWriter(file);
-		for (int i = 0; i < 10; i++) {
-			fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+		try {
+			for (int i = 0; i < 10; i++) {
+				fileWriter.write("Sample line of text");
+				fileWriter.write(System.getProperty("line.separator"));
+			}
+		} finally {
+			fileWriter.close();
 		}
-		fileWriter.close();
 	}
 }
