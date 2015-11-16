@@ -58,6 +58,19 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /** The device notify all interface classes. */
     int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004;
 
+	/**
+	 * <p>
+	 * Sets the show state based on the SW_ value specified in the <a href=
+	 * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms686331(v=vs.85).aspx">
+	 * <strong xmlns="http://www.w3.org/1999/xhtml">STARTUPINFO</strong></a>
+	 * structure passed to the <a href=
+	 * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx">
+	 * <strong xmlns="http://www.w3.org/1999/xhtml">CreateProcess</strong></a>
+	 * function by the program that started the application.
+	 * </p>
+	 */
+	int SW_SHOWDEFAULT = 10;
+    
     /**
      * This function retrieves a handle to a display device context (DC) for the
      * client area of the specified window. The display device context can be
@@ -2011,4 +2024,14 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645598(v=vs.85).aspx">GetRawInputDeviceList</A>
 	 */
 	int GetRawInputDeviceList(RAWINPUTDEVICELIST[] pRawInputDeviceList, IntByReference puiNumDevices, int cbSize);
+	
+	
+	/**
+	 * Retrieves a handle to the desktop window. The desktop window covers the
+	 * entire screen. The desktop window is the area on top of which other
+	 * windows are painted.
+	 * 
+	 * @return Type: HWND The return value is a handle to the desktop window.
+	 */
+	HWND GetDesktopWindow();
 }
