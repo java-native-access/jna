@@ -24,6 +24,7 @@ Features
 Bug Fixes
 ---------
 * [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
+* [#536](https://github.com/java-native-access/jna/pull/536): Fixed bug in determining the Library and options associated with types defined outside of a Library - [@twall](https://github.com/twall).
 
 Release 4.2.1
 =============
