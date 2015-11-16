@@ -11,6 +11,11 @@ Features
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `com.sun.jna.platform.win32.Mpr`, `com.sun.jna.platform.win32.LmShare`, and `com.sun.jna.platform.win32.Winnetwk` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `ACCESS_*` definitions to `com.sun.jna.platform.win32.LmAccess` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `NetShareAdd` and `NetShareDel` to `com.sun.jna.platform.win32.Netapi32` - [@amarcionek](https://github.com/amarcionek).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CreateProcessWithLogonW` to `com.sun.jna.platform.win32.Advapi32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CertAddEncodedCertificateToSystemStore` to `com.sun.jna.platform.win32.Crypt32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `BitBlt` to `com.sun.jna.platform.win32.GDI32`, Added `com.sun.jna.platform.win32.GDI32Util` and added `getScreenshot()` to it - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `SHEmptyRecycleBin`, `ShellExecuteEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `GetDesktopWindow` to `com.sun.jna.platform.win32.User32` - [@mlfreeman2](https://github.com/mlfreeman2).
 
 Bug Fixes
 ---------
@@ -99,10 +104,10 @@ Bug Fixes
 * Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
 * Disable WebStart tests - [@twall](https://github.com/twall).
 * Dispose all native resources when JNA's native library is unloaded - Paul Grütter,  [@twall](https://github.com/twall).
-* Weakly hold registered direct-mapped classes - [@twall](https://github.com/twall).  
+* Weakly hold registered direct-mapped classes - [@twall](https://github.com/twall).
 * [#382](https://github.com/java-native-access/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).
-* [#388](https://github.com/java-native-access/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).  
+* [#388](https://github.com/java-native-access/jna/issues/388): Ensure native library always opened with provided flags - [@zolyfarkas](https://github.com/zolyfarkas).
 * [#403](https://github.com/java-native-access/jna/pull/403): Fix `com.sun.jna.platform.win32.COM.COMUtils.SUCCEEDED` and `FAILED` - [@lwahonen](https://github.com/lwahonen).
 * [#404](https://github.com/java-native-access/jna/pull/404): Fix `VARIANT` constructors for `int`, `short`, and `long` - [@lwahonen](https://github.com/lwahonen).
 * [#420](https://github.com/java-native-access/jna/pull/420): Fix structure leaving always one element in ThreadLocal set - [@sjappig](https://github.com/sjappig).

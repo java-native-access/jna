@@ -12,24 +12,55 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinBase.CREATE_FOR_IMPORT;
+import static com.sun.jna.platform.win32.WinBase.FILE_DIR_DISALOWED;
+import static com.sun.jna.platform.win32.WinBase.FILE_ENCRYPTABLE;
+import static com.sun.jna.platform.win32.WinBase.FILE_IS_ENCRYPTED;
+import static com.sun.jna.platform.win32.WinBase.FILE_READ_ONLY;
+import static com.sun.jna.platform.win32.WinNT.DACL_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.FILE_ALL_ACCESS;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_EXECUTE;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_READ;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_WRITE;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_ALL;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_EXECUTE;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_READ;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_WRITE;
+import static com.sun.jna.platform.win32.WinNT.GROUP_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.SACL_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.SE_RESTORE_NAME;
+import static com.sun.jna.platform.win32.WinNT.SE_SECURITY_NAME;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_ADJUST_PRIVILEGES;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_DUPLICATE;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_IMPERSONATE;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
+import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
+import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
@@ -46,7 +77,7 @@ import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-import static com.sun.jna.platform.win32.WinNT.*;
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -1492,5 +1523,24 @@ public class Advapi32Test extends TestCase {
         }
         fileWriter.close();
         return file;
+    }
+    
+    public void testCreateProcessWithLogonW() {
+    	String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
+    	assertNotNull("No WINDIR value returned", winDir);
+    	assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
+    	
+    	STARTUPINFO si = new STARTUPINFO();
+    	si.lpDesktop = null;
+    	PROCESS_INFORMATION results = new PROCESS_INFORMATION();
+    	
+    	// i have the same combination on my luggage
+    	boolean result = Advapi32.INSTANCE.CreateProcessWithLogonW("A" + System.currentTimeMillis(), "localhost", "12345", Advapi32.LOGON_WITH_PROFILE, new File(winDir, "notepad.exe").getAbsolutePath(), "", 0, null, "", si, results); 
+    
+    	// we tried to run notepad as a bogus user, so it should fail.
+    	assertFalse("CreateProcessWithLogonW should have returned false because the username was bogus.", result);
+    	
+    	// should fail with "the user name or password is incorrect" (error 1326)
+    	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", W32Errors.ERROR_LOGON_FAILURE, Native.getLastError());
     }
 }

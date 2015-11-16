@@ -243,7 +243,7 @@ public class User32Test extends AbstractWin32TestSupport {
 		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
     }
 
-    @Ignore("Shutsdown the workstation")
+    @Ignore("Shuts down the workstation")
     @Test
     public final void testExitWindows() {
 		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
@@ -298,5 +298,11 @@ public class User32Test extends AbstractWin32TestSupport {
 				WinUser.GCLP_HMODULE);
 
 		assertNotEquals(0, result);
+	}
+
+	@Test
+	public void testGetDesktopWindow() {
+		HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+		assertNotNull("Failed to get desktop window HWND", desktopWindow);
 	}
 }
