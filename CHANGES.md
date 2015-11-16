@@ -11,6 +11,11 @@ Features
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `com.sun.jna.platform.win32.Mpr`, `com.sun.jna.platform.win32.LmShare`, and `com.sun.jna.platform.win32.Winnetwk` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `ACCESS_*` definitions to `com.sun.jna.platform.win32.LmAccess` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `NetShareAdd` and `NetShareDel` to `com.sun.jna.platform.win32.Netapi32` - [@amarcionek](https://github.com/amarcionek).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CreateProcessWithLogonW` to `com.sun.jna.platform.win32.Advapi32` - [@mlfreeman2](https://github.com/mlfreeman2}
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CertAddEncodedCertificateToSystemStore` to `com.sun.jna.platform.win32.Crypt32` - [@mlfreeman2](https://github.com/mlfreeman2}
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `BitBlt` to `com.sun.jna.platform.win32.GDI32`, Added `com.sun.jna.platform.win32.GDI32Util` and added `getScreenshot()` to it - [@mlfreeman2](https://github.com/mlfreeman2}
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `SHEmptyRecycleBin`, `ShellExecuteEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2}
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `GetDesktopWindow` to `com.sun.jna.platform.win32.User32` - [@mlfreeman2](https://github.com/mlfreeman2}
 
 Bug Fixes
 ---------
