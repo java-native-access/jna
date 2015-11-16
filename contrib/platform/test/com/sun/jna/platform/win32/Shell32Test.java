@@ -187,10 +187,10 @@ public class Shell32Test extends TestCase {
 			// to avoid opening something and having hProcess come up null
 			// (meaning we opened something but can't close it)
 			// we will do a negative test with a bogus action.
-			lpExecInfo.lpVerb = new WString("0p3n");
+			lpExecInfo.lpVerb = "0p3n";
 			lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
 			lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
-			lpExecInfo.lpFile = new WString(file.getAbsolutePath());
+			lpExecInfo.lpFile = file.getAbsolutePath();
 
 			assertFalse("ShellExecuteEx should have returned false - action verb was bogus.",
 					Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));

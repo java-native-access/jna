@@ -18,6 +18,7 @@ import java.util.List;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
@@ -26,9 +27,9 @@ import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from ShellAPI.h.
@@ -38,6 +39,7 @@ import com.sun.jna.win32.StdCallLibrary;
 public interface ShellAPI extends StdCallLibrary {
 
     int STRUCTURE_ALIGNMENT = Platform.is64Bit() ? Structure.ALIGN_DEFAULT : Structure.ALIGN_NONE;
+	TypeMapper TYPE_MAPPER = Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE;
 	
     int FO_MOVE = 0x0001;
     int FO_COPY = 0x0002;
@@ -707,7 +709,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * </dd>
 		 * </dl>
 		 */
-		public WString lpVerb;
+		public String lpVerb;
 	
 		/**
 		 * <p>
@@ -735,7 +737,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <div class="note"><strong>Note</strong>&nbsp;&nbsp;If the path is not
 		 * included with the name, the current directory is assumed.</div>
 		 */
-		public WString lpFile;
+		public String lpFile;
 	
 		/**
 		 * <p>
@@ -748,7 +750,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <strong>lpParameters</strong> should be <strong>NULL</strong>.
 		 * </p>
 		 */
-		public WString lpParameters;
+		public String lpParameters;
 	
 		/**
 		 * <p>
@@ -761,7 +763,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * directory.
 		 * </p>
 		 */
-		public WString lpDirectory;
+		public String lpDirectory;
 	
 		/**
 		 * <p>
@@ -950,7 +952,7 @@ public interface ShellAPI extends StdCallLibrary {
 		 * <strong>SEE_MASK_CLASSNAME</strong>.
 		 * </p>
 		 */
-		public WString lpClass;
+		public String lpClass;
 	
 		/**
 		 * <p>
