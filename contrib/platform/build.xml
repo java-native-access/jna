@@ -111,13 +111,13 @@ com.sun.jna.platform.wince
       <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
       <mkdir dir="${build.test.results.dir.abs}"/>
       <echo>Saving test results in ${build.test.results.dir.abs}</echo>
-      <condition property="tests.platform" value="**/mac/**Test.java">
+      <condition property="tests.platform" value="**/mac/**/*Test.java">
         <os family="mac"/>
       </condition>
-      <condition property="tests.platform" value="**/win32/**Test.java">
+      <condition property="tests.platform" value="**/win32/**/*Test.java">
         <os family="windows"/>
       </condition>
-      <condition property="tests.platform" value="**/unix/**Test.java">
+      <condition property="tests.platform" value="**/unix/**/*Test.java">
         <os family="unix"/>
       </condition>
       <property name="tests.platform" value=""/>

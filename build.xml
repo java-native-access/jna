@@ -975,7 +975,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="tests.platform" value="**/mac/**/*Test.java">
       <os family="mac"/>
     </condition>
-    <condition property="tests.platform" value="**/unix/*Test.java">
+    <condition property="tests.platform" value="**/unix/**/*Test.java">
       <and>
         <os family="unix"/>
         <not><os family="mac"/></not>
