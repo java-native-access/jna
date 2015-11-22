@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
@@ -31,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Netapi32 extends StdCallLibrary {
 	
 	Netapi32 INSTANCE = (Netapi32) Native.loadLibrary("Netapi32",
-			Netapi32.class, W32APIOptions.UNICODE_OPTIONS);
+			Netapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * Retrieves join status information for the specified computer.
@@ -451,7 +450,7 @@ public interface Netapi32 extends StdCallLibrary {
      *  index is not returned on error. For more information, see the NetShareSetInfo function.
      * @return If the function succeeds, the return value is NERR_Success. If the function fails, the return value can be an error code as seen on MSDN.
      */
-    public int NetShareAdd(WString servername, int level, Pointer buf, IntByReference parm_err);
+    public int NetShareAdd(String servername, int level, Pointer buf, IntByReference parm_err);
 
     /**
      * Deletes a share name from a server's list of shared resources, disconnecting all connections to the shared resource.
@@ -466,5 +465,5 @@ public interface Netapi32 extends StdCallLibrary {
      * @return If the function succeeds, the return value is LMErr.NERR_Success.
      *  If the function fails, the return value can be an error code as seen on MSDN.
      */
-    public int NetShareDel(WString servername, WString netname, int reserved);
+    public int NetShareDel(String servername, String netname, int reserved);
 }

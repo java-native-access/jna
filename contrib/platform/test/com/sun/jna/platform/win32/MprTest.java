@@ -17,7 +17,6 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 
 import com.sun.jna.Memory;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMShare.SHARE_INFO_2;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winnetwk.ConnectFlag;
@@ -43,14 +42,14 @@ public class MprTest extends TestCase {
     public void testWNetUseConnection() throws Exception {
         // First create a share on the local machine
         File fileShareFolder = createTempFolder();
-        WString share = createLocalShare(fileShareFolder);
+        String share = createLocalShare(fileShareFolder);
 
         NETRESOURCE resource = new NETRESOURCE();
 
         resource.dwDisplayType = 0;
         resource.dwScope = 0;
         resource.dwType = RESOURCETYPE.RESOURCETYPE_DISK;
-        resource.lpRemoteName = new WString("\\\\" + getLocalComputerName() + "\\" + share);
+        resource.lpRemoteName = "\\\\" + getLocalComputerName() + "\\" + share;
 
         try {
             // Cancel any existing connections of the same name
@@ -68,14 +67,14 @@ public class MprTest extends TestCase {
     public void testWNetAddConnection3() throws Exception {
         // First create a share on the local machine
         File fileShareFolder = createTempFolder();
-        WString share = createLocalShare(fileShareFolder);
+        String share = createLocalShare(fileShareFolder);
 
         NETRESOURCE resource = new NETRESOURCE();
 
         resource.dwDisplayType = 0;
         resource.dwScope = 0;
         resource.dwType = RESOURCETYPE.RESOURCETYPE_DISK;
-        resource.lpRemoteName = new WString("\\\\" + getLocalComputerName() + "\\" + share);
+        resource.lpRemoteName = "\\\\" + getLocalComputerName() + "\\" + share;
 
         try {
             // Cancel any existing connections of the same name
@@ -104,7 +103,7 @@ public class MprTest extends TestCase {
         // Create a local share and connect to it. This ensures the enum will
         // find at least one entry.
         File fileShareFolder = createTempFolder();
-        WString share = createLocalShare(fileShareFolder);
+        String share = createLocalShare(fileShareFolder);
         // Connect to local share
         connectToLocalShare(share, null);
 
@@ -155,7 +154,7 @@ public class MprTest extends TestCase {
         } finally {
             // Clean up resources
             Mpr.INSTANCE.WNetCloseEnum(lphEnum.getValue());
-            disconnectFromLocalShare(new WString("\\\\" + getLocalComputerName() + "\\" + share));
+            disconnectFromLocalShare("\\\\" + getLocalComputerName() + "\\" + share);
             deleteLocalShare(share);
             fileShareFolder.delete();
         }
@@ -166,7 +165,7 @@ public class MprTest extends TestCase {
         Memory memory = new Memory(bufferSize);
         IntByReference lpBufferSize = new IntByReference(bufferSize);
         File file = null;
-        WString share = null;
+        String share = null;
         String driveLetter = new String("x:");
         File fileShareFolder = createTempFolder();
 
@@ -174,7 +173,7 @@ public class MprTest extends TestCase {
             // Create a local share and connect to it.
             share = createLocalShare(fileShareFolder);
             // Connect to share using a drive letter.
-            connectToLocalShare(share, new WString(driveLetter));
+            connectToLocalShare(share, driveLetter);
 
             // Create a path on local device redirected to the share.
             String filePath = new String(driveLetter + "\\testfile.txt");
@@ -183,14 +182,14 @@ public class MprTest extends TestCase {
 
             // Test WNetGetUniversalName using UNIVERSAL_NAME_INFO_LEVEL
             assertEquals(WinError.ERROR_SUCCESS,
-                    Mpr.INSTANCE.WNetGetUniversalName(new WString(filePath), Winnetwk.UNIVERSAL_NAME_INFO_LEVEL, memory, lpBufferSize));
+                    Mpr.INSTANCE.WNetGetUniversalName(filePath, Winnetwk.UNIVERSAL_NAME_INFO_LEVEL, memory, lpBufferSize));
 
             UNIVERSAL_NAME_INFO uinfo = new UNIVERSAL_NAME_INFO(memory);
             assertNotNull(uinfo.lpUniversalName);
 
             // Test WNetGetUniversalName using REMOTE_NAME_INFO_LEVEL
             assertEquals(WinError.ERROR_SUCCESS,
-                    Mpr.INSTANCE.WNetGetUniversalName(new WString(filePath), Winnetwk.REMOTE_NAME_INFO_LEVEL, memory, lpBufferSize));
+                    Mpr.INSTANCE.WNetGetUniversalName(filePath, Winnetwk.REMOTE_NAME_INFO_LEVEL, memory, lpBufferSize));
 
             REMOTE_NAME_INFO rinfo = new REMOTE_NAME_INFO(memory);
             assertNotNull(rinfo.lpUniversalName);
@@ -201,7 +200,7 @@ public class MprTest extends TestCase {
             if (file != null)
                 file.delete();
             if (share != null) {
-                disconnectFromLocalShare(new WString(driveLetter));
+                disconnectFromLocalShare(driveLetter);
                 deleteLocalShare(share);
                 fileShareFolder.delete();
             }
@@ -242,22 +241,22 @@ public class MprTest extends TestCase {
      *
      * @param shareFolder
      *            the full path local folder to share
-     * @return WString with the share name, essentially the top level folder
+     * @return String with the share name, essentially the top level folder
      *         name.
      * @throws Exception
      *             the exception
      */
-    private WString createLocalShare(File shareFolder) throws Exception {
+    private String createLocalShare(File shareFolder) throws Exception {
 
         SHARE_INFO_2 shi = new SHARE_INFO_2();
-        shi.shi2_netname = new WString(shareFolder.getName());
+        shi.shi2_netname = shareFolder.getName();
         shi.shi2_type = LMShare.STYPE_DISKTREE;
-        shi.shi2_remark = new WString("");
+        shi.shi2_remark = "";
         shi.shi2_permissions = LMAccess.ACCESS_ALL;
         shi.shi2_max_uses = -1;
         shi.shi2_current_uses = 0;
-        shi.shi2_path = new WString(shareFolder.getAbsolutePath());
-        shi.shi2_passwd = new WString("");
+        shi.shi2_path = shareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
 
         // Write from struct to native memory.
         shi.write();
@@ -268,7 +267,7 @@ public class MprTest extends TestCase {
                                                                              // computer
                 2, shi.getPointer(), parm_err));
 
-        return new WString(shareFolder.getName());
+        return shareFolder.getName();
     }
 
     /**
@@ -276,7 +275,7 @@ public class MprTest extends TestCase {
      * 
      * @param share
      */
-    private void deleteLocalShare(WString share) {
+    private void deleteLocalShare(String share) {
         Netapi32.INSTANCE.NetShareDel(null, share, 0);
     }
 
@@ -292,14 +291,14 @@ public class MprTest extends TestCase {
      * @throws Exception
      *             the exception
      */
-    private void connectToLocalShare(WString share, WString lpLocalName) throws Exception {
+    private void connectToLocalShare(String share, String lpLocalName) throws Exception {
         NETRESOURCE resource = new NETRESOURCE();
 
         resource.dwDisplayType = 0;
         resource.dwScope = 0;
         resource.dwType = RESOURCETYPE.RESOURCETYPE_DISK;
         resource.lpLocalName = lpLocalName;
-        resource.lpRemoteName = new WString("\\\\" + getLocalComputerName() + "\\" + share);
+        resource.lpRemoteName = "\\\\" + getLocalComputerName() + "\\" + share;
 
         // Establish connection
         assertEquals(WinError.ERROR_SUCCESS, Mpr.INSTANCE.WNetAddConnection3(null, resource, null, null, 0));
@@ -317,7 +316,7 @@ public class MprTest extends TestCase {
      *            parameter specifies a remote network resource, all connections
      *            without devices are canceled.
      */
-    private void disconnectFromLocalShare(WString lpName) {
+    private void disconnectFromLocalShare(String lpName) {
         // Remove connection
         Mpr.INSTANCE.WNetCancelConnection2(lpName, ConnectFlag.CONNECT_UPDATE_PROFILE, true);
     }

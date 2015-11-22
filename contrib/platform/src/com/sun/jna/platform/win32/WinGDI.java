@@ -21,7 +21,6 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from WinGDI.h. 
@@ -29,7 +28,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author dblock[at]dblock.org
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
-public interface WinGDI extends StdCallLibrary {
+public interface WinGDI {
     int RDH_RECTANGLES = 1;
 
     class RGNDATAHEADER extends Structure {

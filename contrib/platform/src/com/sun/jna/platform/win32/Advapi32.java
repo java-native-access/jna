@@ -50,7 +50,7 @@ import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
  */
 public interface Advapi32 extends StdCallLibrary {
 	Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32",
-			Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
+			Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	public static final int MAX_KEY_LENGTH = 255;
 	public static final int MAX_VALUE_NAME = 16383;
@@ -1581,6 +1581,10 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            otherwise, none of the descriptor is returned.
 	 * @return whether the call succeeded
 	 */
+	public boolean GetFileSecurity(String lpFileName,
+			int RequestedInformation, Pointer pointer, int nLength,
+			IntByReference lpnLengthNeeded);
+        /** @deprecated Use the String version */
 	public boolean GetFileSecurity(WString lpFileName,
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
@@ -1796,6 +1800,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean EncryptFile(String lpFileName);
+        /** @deprecated Use the String version */
 	public boolean EncryptFile(WString lpFileName);
 
 	/**
@@ -1809,6 +1815,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean DecryptFile(String lpFileName, DWORD dwReserved);
+        /** @deprecated Use the String version */
 	public boolean DecryptFile(WString lpFileName, DWORD dwReserved);
 
 	/**
@@ -1823,6 +1831,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean FileEncryptionStatus(String lpFileName, DWORDByReference lpStatus);
+        /** @deprecated Use the String version */
 	public boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
 
 	/**
@@ -1840,6 +1850,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean EncryptionDisable(String DirPath, boolean Disable);
+        /** @deprecated Use the String version */
 	public boolean EncryptionDisable(WString DirPath, boolean Disable);
 
 	/**
@@ -1862,8 +1874,11 @@ public interface Advapi32 extends StdCallLibrary {
 	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
 	 * text description of the error.
 	 */
+	public int OpenEncryptedFileRaw(String lpFileName, ULONG ulFlags,
+                                        PointerByReference pvContext);
+        /** @deprecated Use the String version */
 	public int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags,
-                                  PointerByReference pvContext);
+                                        PointerByReference pvContext);
 
 	/**
 	 * Backs up (export) encrypted files. This is one of a group of Encrypted File

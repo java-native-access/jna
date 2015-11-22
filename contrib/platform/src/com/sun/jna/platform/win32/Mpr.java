@@ -16,7 +16,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -34,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 public interface Mpr extends StdCallLibrary {
 
-    Mpr INSTANCE = (Mpr) Native.loadLibrary("Mpr", Mpr.class, W32APIOptions.UNICODE_OPTIONS);
+    Mpr INSTANCE = (Mpr) Native.loadLibrary("Mpr", Mpr.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The WNetOpenEnum function starts an enumeration of network resources or
@@ -182,7 +181,7 @@ public interface Mpr extends StdCallLibrary {
      *         https://msdn.microsoft.com/en-us/library/windows/desktop/aa385474
      *         (v=vs.85).aspx
      */
-    int WNetGetUniversalName(WString lpLocalPath, int dwInfoLevel, Pointer lpBuffer, IntByReference lpBufferSize);
+    int WNetGetUniversalName(String lpLocalPath, int dwInfoLevel, Pointer lpBuffer, IntByReference lpBufferSize);
 
     /**
      * The WNetUseConnection function makes a connection to a network resource.
@@ -299,7 +298,7 @@ public interface Mpr extends StdCallLibrary {
      *         https://msdn.microsoft.com/en-us/library/windows/desktop/aa385482
      *         (v=vs.85).aspx
      */
-    public int WNetUseConnection(HWND hwndOwner, NETRESOURCE lpNETRESOURCE, WString lpPassword, WString lpUserID, int dwFlags,
+    public int WNetUseConnection(HWND hwndOwner, NETRESOURCE lpNETRESOURCE, String lpPassword, String lpUserID, int dwFlags,
             PointerByReference lpAccessName, IntByReference lpBufferSize, IntByReference lpResult);
 
     /**
@@ -380,7 +379,7 @@ public interface Mpr extends StdCallLibrary {
      *            [in] Set of bit flags describing the connection. This
      *            parameter can be any combination of the values in ConnectFlag.
      */
-    public int WNetAddConnection3(HWND hwndOwner, NETRESOURCE lpNETRESOURCE, WString lpPassword, WString lpUserID, int dwFlags);
+    public int WNetAddConnection3(HWND hwndOwner, NETRESOURCE lpNETRESOURCE, String lpPassword, String lpUserID, int dwFlags);
 
     /**
      * The WNetCancelConnection2 function cancels an existing network
@@ -417,5 +416,5 @@ public interface Mpr extends StdCallLibrary {
      *         https://msdn.microsoft.com/en-us/library/windows/desktop/aa385482
      *         (v=vs.85).aspx
      */
-    public int WNetCancelConnection2(WString lpName, int dwFlags, boolean fForce);
+    public int WNetCancelConnection2(String lpName, int dwFlags, boolean fForce);
 }

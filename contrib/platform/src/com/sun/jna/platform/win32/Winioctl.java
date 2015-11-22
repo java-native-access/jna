@@ -15,12 +15,11 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface for the Winioctl.h header file.
  */
-public interface Winioctl extends StdCallLibrary {
+public interface Winioctl {
 
     /**
      * Retrieves the device type, device number, and, for a partitionable device, the partition number of a device.

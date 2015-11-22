@@ -44,7 +44,6 @@ import java.util.Collection;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
@@ -73,7 +72,6 @@ import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
-import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -387,8 +385,8 @@ public class Advapi32Test extends TestCase {
 
     public void testImpersonateLoggedOnUser() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNAAdvapi32TestImp";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
     	if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
@@ -1306,7 +1304,7 @@ public class Advapi32Test extends TestCase {
     public void testEncryptFile() throws Exception {
         // create a temp file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
 
         // encrypt a read only file
         file.setWritable(false);
@@ -1323,7 +1321,7 @@ public class Advapi32Test extends TestCase {
     public void testDecryptFile() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // decrypt a read only file
@@ -1343,7 +1341,7 @@ public class Advapi32Test extends TestCase {
 
         // create a temp file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
 
         // unencrypted file
         assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, lpStatus));
@@ -1369,7 +1367,7 @@ public class Advapi32Test extends TestCase {
         // create a temp dir
         String filePath = System.getProperty("java.io.tmpdir") + File.separator +
                 System.nanoTime();
-        WString DirPath = new WString(filePath);
+        String DirPath = filePath;
         File dir = new File(filePath);
         dir.mkdir();
 
@@ -1397,7 +1395,7 @@ public class Advapi32Test extends TestCase {
     public void testOpenEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1413,7 +1411,7 @@ public class Advapi32Test extends TestCase {
     public void testReadEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1426,9 +1424,12 @@ public class Advapi32Test extends TestCase {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer
+            public DWORD callback(Pointer pbData, Pointer
                     pvCallbackContext, ULONG ulLength) {
-                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                if (pbData == null) {
+                    throw new NullPointerException("Callback data unexpectedly missing");
+                }
+                byte[] arr = pbData.getByteArray(0, ulLength.intValue());
                 try {
                     outputStream.write(arr);
                 } catch (IOException e) {
@@ -1449,7 +1450,7 @@ public class Advapi32Test extends TestCase {
     public void testWriteEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1462,9 +1463,12 @@ public class Advapi32Test extends TestCase {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer
+            public DWORD callback(Pointer pbData, Pointer
                     pvCallbackContext, ULONG ulLength) {
-                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                if (pbData == null) {
+                    throw new NullPointerException("Callback data unexpectedly null");
+                }
+                byte[] arr = pbData.getByteArray(0, ulLength.intValue());
                 try {
                     outputStream.write(arr);
                 } catch (IOException e) {
@@ -1480,8 +1484,8 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
 
         // open file for import
-        WString lbFileName2 = new WString(System.getProperty("java.io.tmpdir") +
-                File.separator + "backup-" + file.getName());
+        String lbFileName2 = System.getProperty("java.io.tmpdir") +
+                File.separator + "backup-" + file.getName();
         ULONG ulFlags2 = new ULONG(CREATE_FOR_IMPORT);
         PointerByReference pvContext2 = new PointerByReference();
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
@@ -1491,13 +1495,12 @@ public class Advapi32Test extends TestCase {
         final IntByReference elementsReadWrapper = new IntByReference(0);
         FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+            public DWORD callback(Pointer pbData, Pointer pvCallbackContext,
                                   ULONGByReference ulLength) {
                 int elementsRead = elementsReadWrapper.getValue();
                 int remainingElements = outputStream.size() - elementsRead;
                 int length = Math.min(remainingElements, ulLength.getValue().intValue());
-                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead,
-                        length);
+                pbData.write(0, outputStream.toByteArray(), elementsRead, length);
                 elementsReadWrapper.setValue(elementsRead + length);
                 ulLength.setValue(new ULONG(length));
                 return new DWORD(W32Errors.ERROR_SUCCESS);

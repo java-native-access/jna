@@ -15,12 +15,11 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface for the Tlhelp32.h header file.
  */
-public interface Tlhelp32 extends StdCallLibrary {
+public interface Tlhelp32 {
 
     /**
      * Includes all heaps of the process specified in th32ProcessID in the snapshot. To enumerate the heaps, see

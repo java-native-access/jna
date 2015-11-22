@@ -33,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Pdh extends StdCallLibrary {
     Pdh INSTANCE = (Pdh) Native.loadLibrary("Pdh",
-            Pdh.class, W32APIOptions.UNICODE_OPTIONS);
+            Pdh.class, W32APIOptions.DEFAULT_OPTIONS);
 
 
     /** Maximum counter name length. */

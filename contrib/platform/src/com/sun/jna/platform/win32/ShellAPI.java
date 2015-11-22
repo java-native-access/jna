@@ -19,7 +19,6 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.TypeMapper;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -39,7 +38,7 @@ import com.sun.jna.win32.W32APITypeMapper;
 public interface ShellAPI extends StdCallLibrary {
 
     int STRUCTURE_ALIGNMENT = Platform.is64Bit() ? Structure.ALIGN_DEFAULT : Structure.ALIGN_NONE;
-	TypeMapper TYPE_MAPPER = Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE;
+    TypeMapper TYPE_MAPPER = Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE;
 	
     int FO_MOVE = 0x0001;
     int FO_COPY = 0x0002;
@@ -85,11 +84,11 @@ public interface ShellAPI extends StdCallLibrary {
         /**
          * A pointer to one or more source file names, double null-terminated. 
          */
-        public WString pFrom;
+        public String pFrom;
         /**
          * A pointer to the destination file or directory name.
          */
-        public WString pTo;
+        public String pTo;
         /**
          * Flags that control the file operation.
          */
@@ -110,7 +109,7 @@ public interface ShellAPI extends StdCallLibrary {
         /**
          * A pointer to the title of a progress dialog box. This is a null-terminated string. 
          */
-        public WString lpszProgressTitle;
+        public String lpszProgressTitle;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle" });

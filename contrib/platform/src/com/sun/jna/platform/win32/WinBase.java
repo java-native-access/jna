@@ -26,13 +26,14 @@ import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * Ported from Winbase.h (kernel32.dll/kernel services).
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
+public interface WinBase extends WinDef, BaseTSD {
 
     /** Constant value representing an invalid HANDLE. */
     HANDLE INVALID_HANDLE_VALUE =
@@ -992,7 +993,7 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
     /**
      * Represents a thread entry point local to this process, as a Callback.
      */
-    public interface THREAD_START_ROUTINE extends Callback{
+    public interface THREAD_START_ROUTINE extends StdCallCallback{
     	public DWORD apply( LPVOID lpParameter );
     }
 
@@ -1079,8 +1080,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      * ExportCallback writes the encrypted file's data to another storage media,
      * usually for purposes of backing up the file.
      */
-    public interface FE_EXPORT_FUNC extends Callback {
-        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+    public interface FE_EXPORT_FUNC extends StdCallCallback {
+        public DWORD callback(Pointer pbData, Pointer pvCallbackContext,
                               ULONG ulLength);
     }
 
@@ -1091,8 +1092,8 @@ public interface WinBase extends StdCallLibrary, WinDef, BaseTSD {
      * backup file sequentially and restores the data, and the system continues
      * calling it until it has read all of the backup file data.
      */
-    public interface FE_IMPORT_FUNC extends Callback {
-        public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+    public interface FE_IMPORT_FUNC extends StdCallCallback {
+        public DWORD callback(Pointer pbData, Pointer pvCallbackContext,
                               ULONGByReference ulLength);
     }
 

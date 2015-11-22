@@ -19,7 +19,6 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -28,7 +27,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Microsoft Windows SDK 7.0A.
  * @author EugineLev
  */
-public interface Winsvc extends StdCallLibrary {	
+public interface Winsvc {	
 
     /**
      *  Contains status information for a service. The ControlService, EnumDependentServices,

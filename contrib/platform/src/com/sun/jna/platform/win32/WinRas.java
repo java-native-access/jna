@@ -26,12 +26,12 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LUID;
-import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * Definitions for RASAPI32
  */
-public interface WinRas extends StdCallLibrary {
+public interface WinRas {
 	public static final int ERROR_BUFFER_TOO_SMALL = 603;
 	public static final int ERROR_CANNOT_FIND_PHONEBOOK_ENTRY = 623;
 
