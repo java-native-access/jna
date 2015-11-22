@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32;
 
 import java.io.File;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
@@ -150,8 +149,8 @@ public class Netapi32Test extends TestCase {
     
     public void testNetUserAdd() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -163,8 +162,8 @@ public class Netapi32Test extends TestCase {
     
     public void testNetUserChangePassword() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -266,14 +265,14 @@ public class Netapi32Test extends TestCase {
         File fileShareFolder = createTempFolder();
 
         SHARE_INFO_2 shi = new SHARE_INFO_2();
-        shi.shi2_netname = new WString(fileShareFolder.getName());
+        shi.shi2_netname = fileShareFolder.getName();
         shi.shi2_type = LMShare.STYPE_DISKTREE;
-        shi.shi2_remark = new WString("");
+        shi.shi2_remark = "";
         shi.shi2_permissions = LMAccess.ACCESS_ALL;
         shi.shi2_max_uses = -1;
         shi.shi2_current_uses = 0;
-        shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
-        shi.shi2_passwd = new WString("");
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
 
         // Write from struct to native memory.
         shi.write();
@@ -297,13 +296,13 @@ public class Netapi32Test extends TestCase {
         File fileShareFolder = createTempFolder();
 
         SHARE_INFO_502 shi = new SHARE_INFO_502();
-        shi.shi502_netname = new WString(fileShareFolder.getName());
+        shi.shi502_netname = fileShareFolder.getName();
         shi.shi502_type = LMShare.STYPE_DISKTREE;
-        shi.shi502_remark = new WString("");
+        shi.shi502_remark = "";
         shi.shi502_permissions = LMAccess.ACCESS_ALL;
         shi.shi502_max_uses = -1;
         shi.shi502_current_uses = 0;
-        shi.shi502_path = new WString(fileShareFolder.getAbsolutePath());
+        shi.shi502_path = fileShareFolder.getAbsolutePath();
         shi.shi502_passwd = null;
         shi.shi502_reserved = 0;
         shi.shi502_security_descriptor = null;
@@ -330,14 +329,14 @@ public class Netapi32Test extends TestCase {
         File fileShareFolder = createTempFolder();
 
         SHARE_INFO_2 shi = new SHARE_INFO_2();
-        shi.shi2_netname = new WString(fileShareFolder.getName());
+        shi.shi2_netname = fileShareFolder.getName();
         shi.shi2_type = LMShare.STYPE_DISKTREE;
-        shi.shi2_remark = new WString("");
+        shi.shi2_remark = "";
         shi.shi2_permissions = LMAccess.ACCESS_ALL;
         shi.shi2_max_uses = -1;
         shi.shi2_current_uses = 0;
-        shi.shi2_path = new WString(fileShareFolder.getAbsolutePath());
-        shi.shi2_passwd = new WString("");
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
 
         // Write from struct to native memory.
         shi.write();

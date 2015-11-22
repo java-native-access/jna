@@ -111,13 +111,13 @@ com.sun.jna.platform.wince
       <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
       <mkdir dir="${build.test.results.dir.abs}"/>
       <echo>Saving test results in ${build.test.results.dir.abs}</echo>
-      <condition property="tests.platform" value="**/mac/**">
+      <condition property="tests.platform" value="**/mac/**Test.java">
         <os family="mac"/>
       </condition>
-      <condition property="tests.platform" value="**/win32/**">
+      <condition property="tests.platform" value="**/win32/**Test.java">
         <os family="windows"/>
       </condition>
-      <condition property="tests.platform" value="**/unix/**">
+      <condition property="tests.platform" value="**/unix/**Test.java">
         <os family="unix"/>
       </condition>
       <property name="tests.platform" value=""/>
@@ -155,7 +155,7 @@ com.sun.jna.platform.wince
           <fileset dir="${test.src.dir}" excludes="${tests.exclude-patterns}">
             <!-- Until StructureFieldOrderTest gets fixed up a little -->
             <exclude name="**/StructureFieldOrderTest.java"/>
-            <include name="com/sun/jna/platform/*Test.java"/>
+            <exclude name="com/sun/jna/platform/AbstractWin32TestSupport.java"/>
             <include name="${tests.platform}"/>
             <exclude name="${tests.exclude}"/>
           </fileset>

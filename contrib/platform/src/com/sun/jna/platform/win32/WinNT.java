@@ -26,6 +26,7 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined

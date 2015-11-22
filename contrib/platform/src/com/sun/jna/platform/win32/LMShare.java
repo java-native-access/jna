@@ -17,7 +17,6 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.win32.StdCallLibrary;
 
 /**
@@ -25,7 +24,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Windows SDK 7.1
  * @author amarcionek[at]seven10storage.com
  */
-public interface LMShare extends StdCallLibrary {
+public interface LMShare {
 
     //
     // Share types (shi1_type and shi2_type fields).
@@ -78,7 +77,7 @@ public interface LMShare extends StdCallLibrary {
         /**
          * Pointer to a Unicode string specifying the name of a shared resource. Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi2_netname;
+        public String shi2_netname;
 
         /**
          * A combination of values that specify the type of share. Calls to the NetShareSetInfo function ignore this member.
@@ -90,7 +89,7 @@ public interface LMShare extends StdCallLibrary {
         /**
          * Pointer to a Unicode string specifying an optional comment about the shared resource.
          */
-        public WString shi2_remark;
+        public String shi2_remark;
 
         /**
          * Specifies a DWORD value that indicates the shared resource's permissions for servers running with share-level security.
@@ -116,14 +115,14 @@ public interface LMShare extends StdCallLibrary {
          * Pointer to a Unicode string that contains the local path for the shared resource. For disks, this member is the path being shared.
          * For print queues, this member is the name of the print queue being shared. Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi2_path;
+        public String shi2_path;
 
         /**
          * Pointer to a Unicode string that specifies the share's password (when the server is running with share-level security). If the server is
          * running with user-level security, this member is ignored. Note that Windows does not support share-level security.
          * This member can be no longer than SHPWLEN+1 bytes (including a terminating null character). Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi2_passwd;
+        public String shi2_passwd;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "shi2_netname",
@@ -153,7 +152,7 @@ public interface LMShare extends StdCallLibrary {
         /**
          * Pointer to a Unicode string specifying the name of a shared resource. Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi502_netname;
+        public String shi502_netname;
 
         /**
          * A combination of values that specify the type of share. Calls to the NetShareSetInfo function ignore this member.
@@ -165,7 +164,7 @@ public interface LMShare extends StdCallLibrary {
         /**
          * Pointer to a Unicode string specifying an optional comment about the shared resource.
          */
-        public WString shi502_remark;
+        public String shi502_remark;
 
         /**
          * Specifies a DWORD value that indicates the shared resource's permissions for servers running with share-level security.
@@ -191,14 +190,14 @@ public interface LMShare extends StdCallLibrary {
          * Pointer to a Unicode string that contains the local path for the shared resource. For disks, this member is the path being shared.
          * For print queues, this member is the name of the print queue being shared. Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi502_path;
+        public String shi502_path;
 
         /**
          * Pointer to a Unicode string that specifies the share's password (when the server is running with share-level security). If the server is
          * running with user-level security, this member is ignored. Note that Windows does not support share-level security.
          * This member can be no longer than SHPWLEN+1 bytes (including a terminating null character). Calls to the NetShareSetInfo function ignore this member.
          */
-        public WString shi502_passwd;
+        public String shi502_passwd;
 
         /**
          * Reserved; must be zero. Calls to the NetShareSetInfo function ignore this member.

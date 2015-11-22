@@ -1303,6 +1303,8 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
+    public boolean UnregisterClass(String lpClassName, HINSTANCE hInstance);
+    /** @deprecated use the String version */
     public boolean UnregisterClass(WString lpClassName, HINSTANCE hInstance);
 
     /**
@@ -1471,6 +1473,11 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         WM_NCCREATE</li>
      *         </ul>
      */
+    public HWND CreateWindowEx(int dwExStyle, String lpClassName,
+                               String lpWindowName, int dwStyle, int x, int y, int nWidth,
+                               int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
+                               LPVOID lpParam);
+    /** @deprecated use the String version */
     public HWND CreateWindowEx(int dwExStyle, WString lpClassName,
                                String lpWindowName, int dwStyle, int x, int y, int nWidth,
                                int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
@@ -1537,7 +1544,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError} .
      */
-    public boolean GetClassInfoEx(HINSTANCE hinst, WString lpszClass,
+    public boolean GetClassInfoEx(HINSTANCE hinst, String lpszClass,
                                   WNDCLASSEX lpwcx);
 
     /**

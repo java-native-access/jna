@@ -307,6 +307,7 @@
       <path id="test.libs">
         <fileset dir="lib">
           <include name="junit.jar"/>
+          <include name="hamcrest-core-1.3.jar"/>
         </fileset>
         <fileset dir="lib/test"/>
         <pathelement path="${classes}"/>
@@ -520,7 +521,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <property name="javac.source" value="${platform.compatibility}"/>
       <property name="javac.target" value="${platform.compatibility}"/>
       <!-- OSGi manifest properties -->
@@ -543,7 +544,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
   </target>
@@ -971,6 +972,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="tests.exclude" value="${tests.stdcall}">
       <and><os family="windows"/><not><os arch="x86"/></not></and>
     </condition>
+    <condition property="tests.platform" value="**/mac/**/*Test.java">
+      <os family="mac"/>
+    </condition>
     <condition property="tests.platform" value="**/unix/*Test.java">
       <and>
         <os family="unix"/>
@@ -1025,7 +1029,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <property name="javac.source" value="${test.compatibility}"/>
       <property name="javac.target" value="${test.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>

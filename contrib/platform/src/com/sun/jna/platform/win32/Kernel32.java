@@ -18,17 +18,18 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
  * alternate mappings from {@link WinNT} which make use of NIO buffers,
  * {@link Wincon} for console API.
  */
-public interface Kernel32 extends WinNT, Wincon {
+public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /** The instance. */
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32",
-            Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
+            Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Reads data from the specified file or input/output (I/O) device. Reads
