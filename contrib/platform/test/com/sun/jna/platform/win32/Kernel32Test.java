@@ -329,11 +329,10 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testQueryFullProcessImageName() {
-    	HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false,
-    			Kernel32.INSTANCE.GetCurrentProcessId());
-    	assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
+        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
     	
-    	char[] path = new char[WinDef.MAX_PATH];
+        char[] path = new char[WinDef.MAX_PATH];
         IntByReference lpdwSize = new IntByReference(path.length);
         boolean b = Kernel32.INSTANCE.QueryFullProcessImageName(h, 0, path, lpdwSize);
         assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
