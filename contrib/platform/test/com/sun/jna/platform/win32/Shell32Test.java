@@ -36,7 +36,8 @@ import junit.framework.TestCase;
  */
 public class Shell32Test extends TestCase {
 
-    private static final int RESIZE_HEIGHT = 500;
+    // avoid disrupting the screen _too_ much
+    private static final int RESIZE_DELTA = 10;
     private static final int WM_USER = 0x0400;
 
     public static void main(String[] args) {
@@ -46,8 +47,8 @@ public class Shell32Test extends TestCase {
     public void testSHGetFolderPath() {
     	char[] pszPath = new char[WinDef.MAX_PATH];
     	assertEquals(W32Errors.S_OK, Shell32.INSTANCE.SHGetFolderPath(null, 
-    			ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, 
-    			pszPath));
+                                                                      ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, 
+                                                                      pszPath));
     	assertTrue(Native.toString(pszPath).length() > 0);
     }
 
@@ -98,7 +99,7 @@ public class Shell32Test extends TestCase {
         APPBARDATA data = new APPBARDATA.ByReference();
 
         data.uEdge.setValue(ShellAPI.ABE_BOTTOM);
-        data.rc.top = User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_HEIGHT;
+        data.rc.top = User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN) - RESIZE_DELTA;
         data.rc.left = 0;
         data.rc.bottom = User32.INSTANCE.GetSystemMetrics(User32.SM_CYFULLSCREEN);
         data.rc.right = User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
@@ -121,7 +122,7 @@ public class Shell32Test extends TestCase {
         data.uEdge.setValue(ShellAPI.ABE_TOP);
         data.rc.top = 0;
         data.rc.left = 0;
-        data.rc.bottom = RESIZE_HEIGHT;
+        data.rc.bottom = User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN) - RESIZE_DELTA;
         data.rc.right = User32.INSTANCE.GetSystemMetrics(User32.SM_CXFULLSCREEN);
 
         queryPos(data);
@@ -135,93 +136,93 @@ public class Shell32Test extends TestCase {
 
     }
 
-	public void testSHGetKnownFolderPath() {
-		int flags = ShlObj.KNOWN_FOLDER_FLAG.NONE.getFlag();
-		PointerByReference outPath = new PointerByReference();
-		HANDLE token = null;
-		GUID guid = KnownFolders.FOLDERID_Fonts;
-		HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
+    public void testSHGetKnownFolderPath() {
+        int flags = ShlObj.KNOWN_FOLDER_FLAG.NONE.getFlag();
+        PointerByReference outPath = new PointerByReference();
+        HANDLE token = null;
+        GUID guid = KnownFolders.FOLDERID_Fonts;
+        HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
+        
+        Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
+        
+        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
+    }
+    
+    public void testSHEmptyRecycleBin() {
+        File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
+        try {
+            // Create a file and immediately send it to the recycle bin.
+            try {
+                fillTempFile(file);
+                W32FileUtils.getInstance().moveToTrash(new File[] { file });
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-		Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
+            int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
+                                                            Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
+            // for reasons I can not find documented on MSDN, 
+            // the function returns the following:
+            // 0 when the recycle bin has items in it
+            // -2147418113 when the recycle bin has no items in it
+            assertEquals("Result should have been ERROR_SUCCESS when emptying Recycle Bin - there should have been a file in it.",
+                         W32Errors.ERROR_SUCCESS, result);
+        } finally {
+            // if the file wasn't sent to the recycle bin, delete it.
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+    }
 
-		assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
-	}
+    public void testShellExecuteEx() {
+        File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
+        try {
+            try {
+                fillTempFile(file);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-	public void testSHEmptyRecycleBin() {
-		File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
-		try {
-			// Create a file and immediately send it to the recycle bin.
-			try {
-				fillTempFile(file);
-				W32FileUtils.getInstance().moveToTrash(new File[] { file });
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+            SHELLEXECUTEINFO lpExecInfo = new SHELLEXECUTEINFO();
+            // to avoid opening something and having hProcess come up null
+            // (meaning we opened something but can't close it)
+            // we will do a negative test with a bogus action.
+            lpExecInfo.lpVerb = "0p3n";
+            lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
+            lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
+            lpExecInfo.lpFile = file.getAbsolutePath();
 
-			int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
-					Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
-			// for reasons I can not find documented on MSDN, 
-			// the function returns the following:
-			// 0 when the recycle bin has items in it
-			// -2147418113 when the recycle bin has no items in it
-			assertEquals("Result should have been ERROR_SUCCESS when emptying Recycle Bin - there should have been a file in it.",
-					 W32Errors.ERROR_SUCCESS, result);
-		} finally {
-			// if the file wasn't sent to the recycle bin, delete it.
-			if (file.exists()) {
-				file.delete();
-			}
-		}
-	}
+            assertFalse("ShellExecuteEx should have returned false - action verb was bogus.",
+                        Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
+            assertEquals("GetLastError() should have been set to ERROR_NO_ASSOCIATION because of bogus action",
+                         W32Errors.ERROR_NO_ASSOCIATION, Native.getLastError());
+        } finally {
+            if (file.exists()) {
+                file.delete();
+            }
+        }
 
-	public void testShellExecuteEx() {
-		File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
-		try {
-			try {
-				fillTempFile(file);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
+    }
 
-			SHELLEXECUTEINFO lpExecInfo = new SHELLEXECUTEINFO();
-			// to avoid opening something and having hProcess come up null
-			// (meaning we opened something but can't close it)
-			// we will do a negative test with a bogus action.
-			lpExecInfo.lpVerb = "0p3n";
-			lpExecInfo.nShow = User32.SW_SHOWDEFAULT;
-			lpExecInfo.fMask = Shell32.SEE_MASK_NOCLOSEPROCESS | Shell32.SEE_MASK_FLAG_NO_UI;
-			lpExecInfo.lpFile = file.getAbsolutePath();
-
-			assertFalse("ShellExecuteEx should have returned false - action verb was bogus.",
-					Shell32.INSTANCE.ShellExecuteEx(lpExecInfo));
-			assertEquals("GetLastError() should have been set to ERROR_NO_ASSOCIATION because of bogus action",
-					W32Errors.ERROR_NO_ASSOCIATION, Native.getLastError());
-		} finally {
-			if (file.exists()) {
-				file.delete();
-			}
-		}
-
-	}
-
-	/**
-	 * Creates (if needed) and fills the specified file with some content (10 lines of the same text)
-	 * 
-	 * @param file
-	 *            The file to fill with content
-	 * @throws IOException
-	 *             If writing the content fails
-	 */
-	private void fillTempFile(File file) throws IOException {
-		file.createNewFile();
-		FileWriter fileWriter = new FileWriter(file);
-		try {
-			for (int i = 0; i < 10; i++) {
-				fileWriter.write("Sample line of text");
-				fileWriter.write(System.getProperty("line.separator"));
-			}
-		} finally {
-			fileWriter.close();
-		}
-	}
+    /**
+     * Creates (if needed) and fills the specified file with some content (10 lines of the same text)
+     * 
+     * @param file
+     *            The file to fill with content
+     * @throws IOException
+     *             If writing the content fails
+     */
+    private void fillTempFile(File file) throws IOException {
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        try {
+            for (int i = 0; i < 10; i++) {
+                fileWriter.write("Sample line of text");
+                fileWriter.write(System.getProperty("line.separator"));
+            }
+        } finally {
+            fileWriter.close();
+        }
+    }
 }
