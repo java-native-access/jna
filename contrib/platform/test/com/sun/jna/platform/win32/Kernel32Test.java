@@ -384,6 +384,22 @@ public class Kernel32Test extends TestCase {
         assertTrue(lpSystemInfo.dwNumberOfProcessors.intValue() > 0);
     }
 
+    public void testGetSystemTimes() {
+      Kernel32 kernel = Kernel32.INSTANCE;
+      WinBase.FILETIME lpIdleTime = new WinBase.FILETIME();
+      WinBase.FILETIME lpKernelTime = new WinBase.FILETIME();
+      WinBase.FILETIME lpUserTime = new WinBase.FILETIME();
+      boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
+      assertTrue(succ);
+      long idleTime = WinBase.FILETIME.dateToFileTime(lpIdleTime.toDate());
+      long kernelTime = WinBase.FILETIME.dateToFileTime(lpKernelTime.toDate());
+      long userTime = WinBase.FILETIME.dateToFileTime(lpUserTime.toDate());
+      // All should be >= 0.  kernel includes idle.
+      assertTrue(idleTime >= 0);
+      assertTrue(kernelTime >= idleTime);
+      assertTrue(userTime >= 0);
+    }
+    
     public void testIsWow64Process() {
         try {
             IntByReference isWow64 = new IntByReference(42);
