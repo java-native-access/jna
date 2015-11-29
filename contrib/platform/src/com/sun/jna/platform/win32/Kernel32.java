@@ -3202,4 +3202,71 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         information, call the GetLastError function.
      */
     boolean FreeLibrary(HMODULE module);
+    
+    /**
+     * Enumerates resource types within a binary module.<br>
+     * Starting with Windows Vista, this is typically a language-neutral
+     * Portable Executable (LN file), and the enumeration also includes
+     * resources from one of the corresponding language-specific resource files
+     * (.mui files)-if one exists-that contain localizable language resources.
+     * It is also possible to use hModule to specify a .mui file, in which case
+     * only that file is searched for resource types.<br>
+     * Alternately, applications can call EnumResourceTypesEx, which provides
+     * more precise control over which resource files to enumerate.
+     * 
+     * @param hModule
+     *            A handle to a module to be searched.<br>
+     *            This handle must be obtained through LoadLibrary or
+     *            LoadLibraryEx.<br>
+     *            See Remarks for more information. If this parameter is NULL,
+     *            that is equivalent to passing in a handle to the module used
+     *            to create the current process.
+     * @param proc
+     *            A pointer to the callback function to be called for each
+     *            enumerated resource type.<br>
+     *            For more information, see the EnumResTypeProc function.
+     * @param lParam
+     *            An application-defined value passed to the callback function.
+     * @return Returns TRUE if successful; otherwise, FALSE. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean EnumResourceTypes(HMODULE hModule, WinBase.EnumResTypeProc proc, Pointer lParam);
+    
+    /**
+     * Enumerates resources of a specified type within a binary module. <br>
+     * For Windows Vista and later, this is typically a language-neutral
+     * Portable Executable (LN file), and the enumeration will also include
+     * resources from the corresponding language-specific resource files (.mui
+     * files) that contain localizable language resources.<br>
+     * It is also possible for hModule to specify an .mui file, in which case
+     * only that file is searched for resources.
+     * 
+     * @param hModule
+     *            A handle to a module to be searched. <br>
+     *            Starting with Windows Vista, if this is an LN file, then
+     *            appropriate .mui files (if any exist) are included in the
+     *            search.<br>
+     *            If this parameter is NULL, that is equivalent to passing in a
+     *            handle to the module used to create the current process.
+     * @param type
+     *            The type of the resource for which the name is being
+     *            enumerated.<br>
+     *            Alternately, rather than a pointer, this parameter can be
+     *            MAKEINTRESOURCE(ID), where ID is an integer value representing
+     *            a predefined resource type.<br>
+     *            For a list of predefined resource types, see Resource Types.
+     *            For more information, see the Remarks section below.
+     * @param proc
+     *            A pointer to the callback function to be called for each
+     *            enumerated resource name or ID. For more information, see
+     *            EnumResNameProc.
+     * @param lParam
+     *            An application-defined value passed to the callback function.
+     *            This parameter can be used in error checking.
+     * @return The return value is TRUE if the function succeeds or FALSE if the
+     *         function does not find a resource of the type specified, or if
+     *         the function fails for another reason. To get extended error
+     *         information, call GetLastError.
+     */
+    boolean EnumResourceNames(HMODULE hModule, Pointer type, WinBase.EnumResNameProc proc, Pointer lParam);
 }

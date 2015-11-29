@@ -20,6 +20,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
@@ -265,5 +267,20 @@ public class Kernel32UtilTest extends TestCase {
                 "ICO_MYCOMPUTER");
         assertNotNull("The 'ICO_MYCOMPUTER' resource in explorer.exe should have some content.", results);
         assertTrue("The 'ICO_MYCOMPUTER' resource in explorer.exe should have some content.", results.length > 0);
+    }
+    
+    public void testGetResourceNames() {
+        String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
+        assertNotNull("No WINDIR value returned", winDir);
+        assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
+        
+        // On Windows 7, "14" is the type assigned to the "My Computer" icon
+        // (which is named "ICO_MYCOMPUTER")
+        Map<String, List<String>> names = Kernel32Util.getResourceNames(new File(winDir, "explorer.exe").getAbsolutePath());
+        
+        assertNotNull("explorer.exe should contain some resources in it.", names);
+        assertTrue("explorer.exe should contain some resource types in it.", names.size() > 0);
+        assertTrue("explorer.exe should contain a resource of type '14' in it.", names.containsKey("14"));
+        assertTrue("resource type 14 should have a name named ICO_MYCOMPUTER associated with it.", names.get("14").contains("ICO_MYCOMPUTER"));
     }
 }

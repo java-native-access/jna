@@ -15,6 +15,8 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -702,6 +704,7 @@ public abstract class Kernel32Util implements WinDef {
         Win32Exception err = null;
         Pointer start = null;
         int length = 0;
+        byte[] results = null;
         try {
             Pointer t = null;
             try {
@@ -741,6 +744,8 @@ public abstract class Kernel32Util implements WinDef {
             if (start == null) {
                 throw new IllegalStateException("LockResource returned null.");
             }
+            // have to capture it into a byte array before you free the library, otherwise bad things happen.
+            results = start.getByteArray(0, length);
         } catch (Win32Exception we) {
             err = we;
         } finally {
@@ -760,7 +765,114 @@ public abstract class Kernel32Util implements WinDef {
             throw err;
         }
 
-        return start.getByteArray(0, length);
+        return results;
     }
 
+    /**
+     * Gets a list of all resources from the specified executable file
+     * 
+     * @param path
+     *            The path to the executable file
+     * @return A map of resource type name/ID => resources.<br>
+     *         A map key + a single list item + the path to the executable can
+     *         be handed off to getResource() to actually get the resource.
+     */
+    public static Map<String, List<String>> getResourceNames(String path) {
+        HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+
+        if (target == null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        final List<String> types = new ArrayList<String>();
+        final Map<String, List<String>> result = new LinkedHashMap<String, List<String>>();
+
+        WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
+
+            @Override
+            public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
+                // simulate IS_INTRESOURCE macro defined in WinUser.h
+                // basically that means that if "type" is less than or equal to 65,535 
+                // it assumes it's an ID.
+                // otherwise it assumes it's a pointer to a string
+                if (Pointer.nativeValue(type) <= 65535) {
+                    types.add(Pointer.nativeValue(type) + "");
+                } else {
+                    types.add(type.getWideString(0));
+                }
+                return true;
+            }
+        };
+
+        WinBase.EnumResNameProc ernp = new WinBase.EnumResNameProc() {
+
+            @Override
+            public boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam) {
+                String typeName = "";
+                
+                if (Pointer.nativeValue(type) <= 65535) {
+                    typeName = Pointer.nativeValue(type) + "";
+                } else {
+                    typeName = type.getWideString(0);
+                }
+                
+                if (Pointer.nativeValue(name) < 65535) {
+                    result.get(typeName).add(Pointer.nativeValue(name) + "");
+                } else {
+                    result.get(typeName).add(name.getWideString(0));
+                }
+
+                return true;
+            }
+        };
+        
+
+        Win32Exception err = null;
+        try {
+            if (!Kernel32.INSTANCE.EnumResourceTypes(target, ertp, null)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            for (final String typeName : types) {
+                result.put(typeName, new ArrayList<String>());
+
+                // simulate MAKEINTRESOURCE macro in WinUser.h
+                // basically, if the value passed in can be parsed as a number then convert it into one and run with that.
+                // otherwise, assume it's a string and construct a pointer to said string.
+                Pointer pointer = null;
+                try {
+                    pointer = new Pointer(Long.parseLong(typeName));
+                } catch (NumberFormatException e) {
+                    pointer = new Memory(Native.WCHAR_SIZE * (typeName.length() + 1));
+                    pointer.setWideString(0, typeName);
+                }
+                   
+                boolean callResult = Kernel32.INSTANCE.EnumResourceNames(target, pointer, ernp, null);
+
+                if (!callResult) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+            }
+        } catch (Win32Exception e) {
+            err = e;
+        } finally {
+            // from what I can tell on MSDN, the only thing that needs cleanup
+            // on this is the HMODULE from LoadLibrary
+            if (target != null) {
+                if (!Kernel32.INSTANCE.FreeLibrary(target)) {
+                    Win32Exception we = new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                    if (err != null) {
+                        we.addSuppressed(err);
+                    }
+                    throw we;
+                }
+            }
+        }
+
+        if (err != null) {
+            throw err;
+        }
+        return result;
+    }
+    
 }

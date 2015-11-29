@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
@@ -985,4 +986,49 @@ public class Kernel32Test extends TestCase {
         }
     }
 
+    public void testEnumResourceNames() {
+        // "14" is the type name of the My Computer icon in explorer.exe
+        Pointer pointer = new Memory(Native.WCHAR_SIZE * 3);
+        pointer.setWideString(0, "14");
+        WinBase.EnumResNameProc ernp = new WinBase.EnumResNameProc() {
+
+            @Override
+            public boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam) {
+
+                return true;
+            }
+        };
+        // null HMODULE means use this process / its EXE
+        // there are no type "14" resources in it.
+        boolean result = Kernel32.INSTANCE.EnumResourceNames(null, pointer, ernp, null);
+        assertFalse("EnumResourceNames should have failed.", result);
+        assertEquals("GetLastError should be set to 1813", WinError.ERROR_RESOURCE_TYPE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
+    }
+    
+    
+    public void testEnumResourceTypes() {
+        final List<String> types = new ArrayList<String>();
+        WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
+
+            @Override
+            public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
+                // simulate IS_INTRESOURCE macro defined in WinUser.h
+                // basically that means that if "type" is less than or equal to 65,535 
+                // it assumes it's an ID.
+                // otherwise it assumes it's a pointer to a string
+                if (Pointer.nativeValue(type) <= 65535) {
+                    types.add(Pointer.nativeValue(type) + "");
+                } else {
+                    types.add(type.getWideString(0));
+                }
+                return true;
+            }
+        };
+        // null HMODULE means use this process / its EXE
+        // there are no type "14" resources in it.
+        boolean result = Kernel32.INSTANCE.EnumResourceTypes(null, ertp, null);
+        assertTrue("EnumResourceTypes should not have failed.", result);
+        assertEquals("GetLastError should be set to 0", WinError.ERROR_SUCCESS, Kernel32.INSTANCE.GetLastError());
+        assertTrue("EnumResourceTypes should return some resource type names", types.size() > 0);
+    }
 }
