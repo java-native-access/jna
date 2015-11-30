@@ -1133,10 +1133,7 @@ public interface WinBase extends WinDef, BaseTSD {
 	 *
 	 * Contains the time-out parameters for a communications device. The
 	 * parameters determine the behavior of
-	 * {@link Kernel32#ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)}
-	 * , {@link Kernel32#WriteFile(com.sun.jna.platform.win32.WinNT.HANDLE,
-	 * byte[], int, com.sun.jna.ptr.IntByReference,
-	 * com.sun.jna.platform.win32.WinBase.OVERLAPPED))}, ReadFileEx, and
+	 * {@link Kernel32#ReadFile}, {@link Kernel32#WriteFile}, ReadFileEx, and
 	 * WriteFileEx operations on the device.<br>
 	 * <br>
 	 *
@@ -1161,7 +1158,7 @@ public interface WinBase extends WinDef, BaseTSD {
 		 * The maximum time allowed to elapse before the arrival of the next
 		 * byte on the communications line, in milliseconds. If the interval
 		 * between the arrival of any two bytes exceeds this amount, the
-		 * {@link Kernel32#ReadFile(com.sun.jna.platform.win32.WinNT.HANDLE, java.nio.Buffer, int, com.sun.jna.ptr.IntByReference, com.sun.jna.platform.win32.WinBase.OVERLAPPED)}
+		 * {@link Kernel32#ReadFile}
 		 * operation is completed and any buffered data is returned. A value of
 		 * zero indicates that interval time-outs are not used.
 		 *

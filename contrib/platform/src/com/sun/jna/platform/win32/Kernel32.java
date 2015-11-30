@@ -2464,7 +2464,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Reads data from an area of memory in a specified process. The entire area
      * to be read must be accessible or the operation fails.
      * 
-     * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx }
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">MSDN</a>
      * @param hProcess
      *            A handle to the process with memory that is being read. The
      *            handle must have PROCESS_VM_READ access to the process.
@@ -2780,7 +2780,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            [in] A handle to the communications device.<br>
      *            The
      *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
-     *            function returns this {@link HANDLE}.
+     *            function returns this {@link WinNT.HANDLE}.
      * @param lpDCB
      *            [in, out] A pointer to a {@link WinBase.DCB} structure that
      *            receives the control settings information.
@@ -2846,7 +2846,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            [in] A handle to the communications device. The
      *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
      *            function returns this handle.
-     * @param LPCOMMTIMEOUTS
+     * @param lpCommTimeouts
      *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure
      *            that contains the new time-out values.
      * @return If the function succeeds, the return value is nonzero. <br>

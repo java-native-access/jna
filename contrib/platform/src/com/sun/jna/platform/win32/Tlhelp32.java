@@ -51,7 +51,7 @@ public interface Tlhelp32 {
      * To include the 32-bit modules of the process specified in th32ProcessID
      * from a 64-bit process, use the TH32CS_SNAPMODULE32 flag.
      *
-     * @see MSDN {@link https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx }
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx">MSDN</a>
      */
     WinDef.DWORD TH32CS_SNAPMODULE   = new WinDef.DWORD(0x00000008);
 

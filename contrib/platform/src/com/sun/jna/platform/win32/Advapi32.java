@@ -2250,7 +2250,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         process is terminated.<br>
 	 *         To get the termination status of a process, call
 	 *         GetExitCodeProcess.
-	 * @see MSDN {@link http://msdn.microsoft.com/en-us/library/windows/desktop/ms682431%28v=vs.85%29.aspx }
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682431%28v=vs.85%29.aspx">MSDN</a>
 	 */
 	boolean CreateProcessWithLogonW(String lpUsername, String lpDomain, String lpPassword, int dwLogonFlags,
 			String lpApplicationName, String lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
