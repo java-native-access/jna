@@ -19,10 +19,9 @@ import com.sun.jna.Callback;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * Ported from WinUser.h Microsoft Windows SDK 6.0A.
@@ -30,7 +29,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author dblock[at]dblock.org
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
-public interface WinUser extends StdCallLibrary, WinDef {
+public interface WinUser extends WinDef {
     HWND HWND_BROADCAST = new HWND(Pointer.createConstant(0xFFFF));
     HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
 
@@ -1039,7 +1038,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
         public String lpszMenuName;
 
         /** The lpsz class name. */
-        public WString lpszClassName;
+        public String lpszClassName;
 
         /** The h icon sm. */
         public HICON hIconSm;
@@ -1059,7 +1058,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
      *
      * WindowProc is a placeholder for the application-defined function name.
      */
-    public interface WindowProc extends Callback {
+    public interface WindowProc extends StdCallCallback {
 
         /**
          * @param hwnd
@@ -1260,7 +1259,7 @@ public interface WinUser extends StdCallLibrary, WinDef {
      * display monitor. You can then paint into the device context in a manner that is optimal for the 
      * display monitor.
      */
-    public interface MONITORENUMPROC extends Callback
+    public interface MONITORENUMPROC extends StdCallCallback
     {
         /**
          * @param hMonitor A handle to the display monitor. This value will always be non-NULL.

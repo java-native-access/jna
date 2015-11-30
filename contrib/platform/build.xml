@@ -108,16 +108,17 @@ com.sun.jna.platform.wince
     <target name="test" depends="init,compile,compile-test,-pre-test-run" description="Run platform unit tests.">
       <echo>Running platform tests: ${test.src.dir}</echo>
       <property name="test.fork" value="yes"/>
-      <property name="build.test.results.dir.abs" location="${build.test.results.dir}"/>
-      <mkdir dir="${build.test.results.dir.abs}"/>
-      <echo>Saving test results in ${build.test.results.dir.abs}</echo>
-      <condition property="tests.platform" value="**/mac/**">
+      <property name="reports.junit" location="${build}/reports/junit/${os.prefix}"/>
+      <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
+      <mkdir dir="${results.junit}"/>
+      <echo>Saving test results in ${results.junit}</echo>
+      <condition property="tests.platform" value="**/mac/**/*Test.java">
         <os family="mac"/>
       </condition>
-      <condition property="tests.platform" value="**/win32/**">
+      <condition property="tests.platform" value="**/win32/**/*Test.java">
         <os family="windows"/>
       </condition>
-      <condition property="tests.platform" value="**/unix/**">
+      <condition property="tests.platform" value="**/unix/**/*Test.java">
         <os family="unix"/>
       </condition>
       <property name="tests.platform" value=""/>
@@ -151,23 +152,23 @@ com.sun.jna.platform.wince
         <classpath><path path="${run.test.classpath}"/><path path="${file.reference.jna.build}/test-classes"/></classpath>
         <formatter type="brief" usefile="false"/>
         <formatter type="xml"/>
-        <batchtest todir="${build.test.results.dir}">
+        <batchtest todir="${results.junit}">
           <fileset dir="${test.src.dir}" excludes="${tests.exclude-patterns}">
             <!-- Until StructureFieldOrderTest gets fixed up a little -->
             <exclude name="**/StructureFieldOrderTest.java"/>
-            <include name="com/sun/jna/platform/*Test.java"/>
+            <exclude name="com/sun/jna/platform/AbstractWin32TestSupport.java"/>
             <include name="${tests.platform}"/>
             <exclude name="${tests.exclude}"/>
           </fileset>
         </batchtest>
       </junit>
-      <junitreport todir="${build.test.results.dir}">
-	<fileset dir="${build.test.results.dir}">
+      <junitreport todir="${results.junit}">
+	<fileset dir="${results.junit}">
 	  <include name="TEST-*.xml"/>
 	</fileset>
-	<report todir="${build.test.results.dir}"/>
+	<report todir="${reports.junit}"/>
       </junitreport>
-      <echo message="View test report in file://${build.test.results.dir.abs}/index.html" />
+      <echo message="View test report in file://${reports.junit}/index.html" />
       <fail if="testfailure">One or more tests failed</fail>
     </target>
 

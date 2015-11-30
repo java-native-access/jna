@@ -19,8 +19,6 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from AccCtrl.h. Microsoft Windows SDK 7.1
@@ -28,7 +26,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author amarcionek[at]gmail.com
  */
 
-public abstract class Winnetwk implements StdCallLibrary {
+public abstract class Winnetwk {
 
     /**
      * The scope of the enumeration. This member can be one of the following
@@ -329,7 +327,7 @@ public abstract class Winnetwk implements StdCallLibrary {
          * character string that specifies the name of a local device. This
          * member is NULL if the connection does not use a device.
          */
-        public WString lpLocalName;
+        public String lpLocalName;
 
         /**
          * If the entry is a network resource, this member is a pointer to a
@@ -343,13 +341,13 @@ public abstract class Winnetwk implements StdCallLibrary {
          * The string can be MAX_PATH characters in length, and it must follow
          * the network provider's naming conventions
          */
-        public WString lpRemoteName;
+        public String lpRemoteName;
 
         /**
          * A pointer to a NULL-terminated string that contains a comment
          * supplied by the network provider.
          */
-        public WString lpComment;
+        public String lpComment;
 
         /**
          * A pointer to a NULL-terminated string that contains the name of the
@@ -357,7 +355,7 @@ public abstract class Winnetwk implements StdCallLibrary {
          * provider name is unknown. To retrieve the provider name, you can call
          * the WNetGetProviderName function.
          */
-        public WString lpProvider;
+        public String lpProvider;
     }
 
     //
@@ -396,7 +394,7 @@ public abstract class Winnetwk implements StdCallLibrary {
          * Pointer to the null-terminated UNC name string that identifies a
          * network resource.
          */
-        public WString lpUniversalName;
+        public String lpUniversalName;
 
         @Override
         protected List getFieldOrder() {
@@ -436,18 +434,18 @@ public abstract class Winnetwk implements StdCallLibrary {
          * Pointer to the null-terminated UNC name string that identifies a
          * network resource.
          */
-        public WString lpUniversalName;
+        public String lpUniversalName;
 
         /**
          * Pointer to a null-terminated string that is the name of a network
          * connection.
          */
-        public WString lpConnectionName;
+        public String lpConnectionName;
 
         /**
          * Pointer to a null-terminated name string.
          */
-        public WString lpRemainingPath;
+        public String lpRemainingPath;
 
         @Override
         protected List getFieldOrder() {

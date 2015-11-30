@@ -15,12 +15,11 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface for the VerRsrc.h header file.
  */
-public interface VerRsrc extends StdCallLibrary {
+public interface VerRsrc {
 
     /**
      * Contains version information for a file. This information is language and code page independent.

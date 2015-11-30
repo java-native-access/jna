@@ -12,7 +12,6 @@ package com.sun.jna.platform.win32;
 import java.util.Arrays;
 import java.util.List;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
 import com.sun.jna.platform.win32.WinDef.HMENU;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -43,7 +42,7 @@ public final class User32Util {
     public static final HWND createWindowEx(final int exStyle, final String className, final String windowName, final int style, final int x, final int y,
             final int width, final int height, final HWND parent, final HMENU menu, final HINSTANCE instance, final LPVOID param) {
         final HWND hWnd = User32.INSTANCE
-                .CreateWindowEx(exStyle, new WString(className), windowName, style, x, y, width, height, parent, menu, instance, param);
+                .CreateWindowEx(exStyle, className, windowName, style, x, y, width, height, parent, menu, instance, param);
         if (hWnd == null)
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         return hWnd;

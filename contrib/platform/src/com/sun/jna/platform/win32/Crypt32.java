@@ -28,7 +28,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Crypt32 extends StdCallLibrary {
 	
 	Crypt32 INSTANCE = (Crypt32) Native.loadLibrary("Crypt32",
-			Crypt32.class, W32APIOptions.UNICODE_OPTIONS);
+			Crypt32.class, W32APIOptions.DEFAULT_OPTIONS);
 	
 	/**
 	 * The CryptProtectData function performs encryption on the data in a DATA_BLOB
@@ -130,7 +130,7 @@ public interface Crypt32 extends StdCallLibrary {
 	 *         Refer to those function topics for their respective error
 	 *         handling behaviors.<br>
 	 *         For extended error information, call GetLastError.
-	 * @see MSDN {@link http://msdn.microsoft.com/en-us/library/bb736347(v=vs.85).aspx }
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/bb736347(v=vs.85).aspx">MSDN</a>
 	 */
 	boolean CertAddEncodedCertificateToSystemStore(String szCertStoreName, Pointer pbCertEncoded, int cbCertEncoded);
 }

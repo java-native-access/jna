@@ -20,14 +20,13 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from WinCrypt.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface WinCrypt extends StdCallLibrary {
+public interface WinCrypt {
 	
     /**
      * The CryptoAPI CRYPTOAPI_BLOB structure is used for an arbitrary array of bytes.
@@ -173,118 +172,117 @@ public interface WinCrypt extends StdCallLibrary {
      */
     int CRYPTPROTECT_CRED_REGENERATE = 0x80;
 
-	/**
-	 * ASN.1 Certificate encode/decode return value base
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_ERROR = 0x80093100;
-
-	/**
-	 * ASN.1 internal encode or decode error
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_INTERNAL = 0x80093101;
-
-	/**
-	 * ASN.1 unexpected end of data
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_EOD = 0x80093102;
-
-	/**
-	 * ASN.1 corrupted data
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_CORRUPT = 0x80093103;
-
-	/**
-	 * ASN.1 value too large
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_LARGE = 0x80093104;
-
-	/**
-	 * ASN.1 constraint violated
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_CONSTRAINT = 0x80093105;
-
-	/**
-	 * ASN.1 out of memory
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_MEMORY = 0x80093106;
-
-	/**
-	 * ASN.1 buffer overflow
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_OVERFLOW = 0x80093107;
-
-	/**
-	 * ASN.1 function not supported for this PDU
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_BADPDU = 0x80093108;
-
-	/**
-	 * ASN.1 bad arguments to function call
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_BADARGS = 0x80093109;
-
-	/**
-	 * ASN.1 bad real value
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_BADREAL = 0x8009310A;
-
-	/**
-	 * ASN.1 bad tag value met
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_BADTAG = 0x8009310B;
-
-	/**
-	 * ASN.1 bad choice value
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_CHOICE = 0x8009310C;
-
-	/**
-	 * ASN.1 bad encoding rule
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_RULE = 0x8009310D;
-
-	/**
-	 * ASN.1 bad Unicode (UTF8)
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_UTF8 = 0x8009310E;
-
-	/**
-	 * ASN.1 bad PDU type
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_PDU_TYPE = 0x80093133;
-
-	/**
-	 * ASN.1 not yet implemented
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_NYI = 0x80093134;
-
-	/**
-	 * ASN.1 skipped unknown extensions
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_EXTENDED = 0x80093201;
-
-	/**
-	 * ASN.1 end of data expected
-	 * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx
-	 */
-	int CRYPT_E_ASN1_NOEOD = 0x80093202;
+    /**
+     * ASN.1 Certificate encode/decode return value base
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_ERROR = 0x80093100;
     
+    /**
+     * ASN.1 internal encode or decode error
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_INTERNAL = 0x80093101;
+    
+    /**
+     * ASN.1 unexpected end of data
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_EOD = 0x80093102;
+    
+    /**
+     * ASN.1 corrupted data
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_CORRUPT = 0x80093103;
+    
+    /**
+     * ASN.1 value too large
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_LARGE = 0x80093104;
+    
+    /**
+     * ASN.1 constraint violated
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_CONSTRAINT = 0x80093105;
+    
+    /**
+     * ASN.1 out of memory
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_MEMORY = 0x80093106;
+    
+    /**
+     * ASN.1 buffer overflow
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_OVERFLOW = 0x80093107;
+    
+    /**
+     * ASN.1 function not supported for this PDU
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_BADPDU = 0x80093108;
+    
+    /**
+     * ASN.1 bad arguments to function call
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_BADARGS = 0x80093109;
+    
+    /**
+     * ASN.1 bad real value
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_BADREAL = 0x8009310A;
+    
+    /**
+     * ASN.1 bad tag value met
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_BADTAG = 0x8009310B;
+    
+    /**
+     * ASN.1 bad choice value
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_CHOICE = 0x8009310C;
+    
+    /**
+     * ASN.1 bad encoding rule
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_RULE = 0x8009310D;
+    
+    /**
+     * ASN.1 bad Unicode (UTF8)
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_UTF8 = 0x8009310E;
+    
+    /**
+     * ASN.1 bad PDU type
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_PDU_TYPE = 0x80093133;
+    
+    /**
+     * ASN.1 not yet implemented
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_NYI = 0x80093134;
+    
+    /**
+     * ASN.1 skipped unknown extensions
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_EXTENDED = 0x80093201;
+    
+    /**
+     * ASN.1 end of data expected
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_E_ASN1_NOEOD = 0x80093202;   
 }

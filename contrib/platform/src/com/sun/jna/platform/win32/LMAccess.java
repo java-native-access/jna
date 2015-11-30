@@ -17,16 +17,14 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinNT.PSID;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from LMAccess.h.
  * Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface LMAccess extends StdCallLibrary {
+public interface LMAccess {
 	
     public static class LOCALGROUP_INFO_0 extends Structure {
         public LOCALGROUP_INFO_0() {
@@ -38,7 +36,7 @@ public interface LMAccess extends StdCallLibrary {
             read();
         }
                     
-        public WString lgrui0_name;
+        public String lgrui0_name;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "lgrui0_name" });
@@ -55,8 +53,8 @@ public interface LMAccess extends StdCallLibrary {
             read();
         }
 
-        public WString lgrui1_name;
-        public WString lgrui1_comment;
+        public String lgrui1_name;
+        public String lgrui1_comment;
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "lgrui1_name", "lgrui1_comment" });
         }
@@ -89,7 +87,7 @@ public interface LMAccess extends StdCallLibrary {
         /**
          * Pointer to a Unicode string that specifies the name of the user account. 
          */
-        public WString usri0_name;
+        public String usri0_name;
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "usri0_name" });
         }
@@ -114,12 +112,12 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a Unicode string that specifies the name of the user 
          * account.
          */
-        public WString usri1_name;
+        public String usri1_name;
         /**
          * Pointer to a Unicode string that specifies the password of the user
          * indicated by the usri1_name member. 
          */
-        public WString usri1_password;
+        public String usri1_password;
         /**
          * Specifies a DWORD value that indicates the number of seconds that have 
          * elapsed since the usri1_password member was last changed.
@@ -134,12 +132,12 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a Unicode string specifying the path of the home directory 
          * for the user specified in the usri1_name member. 
          */
-        public WString usri1_home_dir;
+        public String usri1_home_dir;
         /**
          * Pointer to a Unicode string that contains a comment to associate with 
          * the user account.
          */
-        public WString usri1_comment;
+        public String usri1_comment;
         /**
          * Specifies a DWORD value that determines several features.
          */
@@ -148,7 +146,7 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a Unicode string specifying the path for the user's 
          * logon script file. 
          */
-        public WString usri1_script_path;
+        public String usri1_script_path;
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "usri1_name", "usri1_password", "usri1_password_age", "usri1_priv", "usri1_home_dir", "usri1_comment", "usri1_flags", "usri1_script_path" });
@@ -178,17 +176,17 @@ public interface LMAccess extends StdCallLibrary {
          * A pointer to a Unicode string that specifies the name of the user account. 
          * Calls to the NetUserSetInfo function ignore this member.
          */
-        public WString usri23_name;
+        public String usri23_name;
         /** 
          * A pointer to a Unicode string that contains the full name of the user. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        public WString usri23_full_name;
+        public String usri23_full_name;
         /** 
          * A pointer to a Unicode string that contains a comment associated with the user account. 
          * This string can be a null string, or it can have any number of characters before the terminating null character.
          */
-        public WString usri23_comment;
+        public String usri23_comment;
         /** 
          * This member can be one or more of the following values. 
          * Note that setting user account control flags may require certain privileges and control access rights. 
@@ -246,7 +244,7 @@ public interface LMAccess extends StdCallLibrary {
         /**
          * Pointer to a null-terminated Unicode character string that specifies a name. 
          */
-        public WString grui0_name;
+        public String grui0_name;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "grui0_name" });
@@ -269,7 +267,7 @@ public interface LMAccess extends StdCallLibrary {
         /**
          * Pointer to a Unicode string specifying the name of a local group to which the user belongs. 
          */
-        public WString lgrui0_name;
+        public String lgrui0_name;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "lgrui0_name" });
@@ -295,7 +293,7 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a null-terminated Unicode character string that specifies 
          * the name of the global group.
          */
-        public WString grpi0_name;
+        public String grpi0_name;
         
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "grpi0_name" });
@@ -320,13 +318,13 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a null-terminated Unicode character string that specifies 
          * the name of the global group. 
          */
-        public WString grpi1_name;
+        public String grpi1_name;
         /**
          * Pointer to a null-terminated Unicode character string that specifies 
          * a remark associated with the global group. This member can be a null 
          * string. The comment can contain MAXCOMMENTSZ characters. 
          */
-        public WString grpi1_comment;
+        public String grpi1_comment;
 
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "grpi1_name", "grpi1_comment" });
@@ -351,13 +349,13 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a null-terminated Unicode character string that 
          * specifies the name of the global group.
          */
-        public WString grpi2_name;
+        public String grpi2_name;
         /**
          * Pointer to a null-terminated Unicode character string that contains a 
          * remark associated with the global group. This member can be a null string. 
          * The comment can contain MAXCOMMENTSZ characters. 
          */
-        public WString grpi2_comment;
+        public String grpi2_comment;
         /**
          * Specifies a DWORD value that contains the relative identifier (RID) of 
          * the global group.
@@ -392,13 +390,13 @@ public interface LMAccess extends StdCallLibrary {
          * Pointer to a null-terminated Unicode character string that 
          * specifies the name of the global group. 
          */
-        public WString grpi3_name;
+        public String grpi3_name;
         /**
          * Pointer to a null-terminated Unicode character string that 
          * contains a remark associated with the global group. This member can be 
          * a null string. The comment can contain MAXCOMMENTSZ characters. 
          */
-        public WString grpi3_comment;
+        public String grpi3_comment;
         /**
          * Pointer to a SID structure that contains the security identifier (SID) that 
          * uniquely identifies the global group.

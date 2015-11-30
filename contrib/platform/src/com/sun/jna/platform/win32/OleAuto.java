@@ -100,7 +100,7 @@ public interface OleAuto extends StdCallLibrary {
 
 	/** The instance. */
 	OleAuto INSTANCE = (OleAuto) Native.loadLibrary("OleAut32", OleAuto.class,
-			W32APIOptions.UNICODE_OPTIONS);
+			W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * This function allocates a new string and copies the passed string into
@@ -473,6 +473,8 @@ public interface OleAuto extends StdCallLibrary {
 	 *            loaded.
          * @return status
 	 */
+	public HRESULT LoadTypeLib(String szFile, PointerByReference pptlib);
+        /** @deprecated use the String version */
 	public HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 
 	/**

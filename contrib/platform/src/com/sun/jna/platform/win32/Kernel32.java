@@ -14,22 +14,48 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
  * alternate mappings from {@link WinNT} which make use of NIO buffers,
  * {@link Wincon} for console API.
  */
-public interface Kernel32 extends WinNT, Wincon {
+public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /** The instance. */
     Kernel32 INSTANCE = (Kernel32) Native.loadLibrary("kernel32",
-            Kernel32.class, W32APIOptions.UNICODE_OPTIONS);
+            Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
+    /**
+     * <strong>LOAD_LIBRARY_AS_DATAFILE</strong> <br>
+     * 0x00000002<br>
+     * If this value is used, the system maps the file into the calling
+     * process's virtual address space as if it were a data file.<br>
+     * Nothing is done to execute or prepare to execute the mapped file.<br>
+     * Therefore, you cannot call functions like <a href=
+     * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms683197(v=vs.85).aspx">
+     * <strong xmlns="http://www.w3.org/1999/xhtml">GetModuleFileName</strong>
+     * </a>, <a href=
+     * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms683199(v=vs.85).aspx">
+     * <strong xmlns="http://www.w3.org/1999/xhtml">GetModuleHandle</strong></a>
+     * or <a href=
+     * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms683212(v=vs.85).aspx">
+     * <strong xmlns="http://www.w3.org/1999/xhtml">GetProcAddress</strong></a>
+     * with this DLL. Using this value causes writes to read-only memory to
+     * raise an access violation.<br>
+     * Use this flag when you want to load a DLL only to extract messages or
+     * resources from it.<br>
+     * This value can be used with
+     * <strong>LOAD_LIBRARY_AS_IMAGE_RESOURCE</strong>. For more information,
+     * see Remarks.
+     */
+    int LOAD_LIBRARY_AS_DATAFILE = 0x2;
+    
+    
     /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the
@@ -2457,17 +2483,32 @@ public interface Kernel32 extends WinNT, Wincon {
     /**
      * Reads data from an area of memory in a specified process. The entire area
      * to be read must be accessible or the operation fails.
-     * @param hProcess A handle to the process with memory that is being read.
-     * @param lpBaseAddress The base address in the specified process from which
-     * to read.
-     * @param lpBuffer A buffer that receives the contents from the address space
-     * of the specified process.
-     * @param nSize The number of bytes to be read from the specified process.
-     * @param lpNumberOfBytesRead A variable that receives the number of bytes
-     * transferred into the specified buffer. If {@code null} the parameter is ignored.
-     * @return {@code true} if successful, {@code false} otherwise.
-     * To get extended error information, call {@link #GetLastError()}.
-     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">ReadProcessMemory documentation</a>
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">MSDN</a>
+     * @param hProcess
+     *            A handle to the process with memory that is being read. The
+     *            handle must have PROCESS_VM_READ access to the process.
+     * @param lpBaseAddress
+     *            A pointer to the base address in the specified process from
+     *            which to read. <br>
+     *            Before any data transfer occurs, the system verifies that all
+     *            data in the base address and memory of the specified size is
+     *            accessible for read access, and if it is not accessible the
+     *            function fails.
+     * @param lpBuffer
+     *            A pointer to a buffer that receives the contents from the
+     *            address space of the specified process.
+     * @param nSize
+     *            The number of bytes to be read from the specified process.
+     * @param lpNumberOfBytesRead
+     *            A pointer to a variable that receives the number of bytes
+     *            transferred into the specified buffer. If lpNumberOfBytesRead
+     *            is NULL, the parameter is ignored.
+     * @return If the function succeeds, the return value is nonzero.<br>
+     *         If the function fails, the return value is 0 (zero). To get
+     *         extended error information, call GetLastError.<br>
+     *         The function fails if the requested read operation crosses into
+     *         an area of the process that is inaccessible.
      */
     boolean ReadProcessMemory(HANDLE hProcess, Pointer lpBaseAddress, Pointer lpBuffer, int nSize, IntByReference lpNumberOfBytesRead);
 
@@ -2752,85 +2793,407 @@ public interface Kernel32 extends WinNT, Wincon {
     boolean FindVolumeClose(HANDLE hFindVolume);
     
     /**
-	 * Retrieves the current control settings for a specified communications
-	 * device.
-	 * 
-	 * @param hFile
-	 *            [in] A handle to the communications device.<br>
-	 *            The
-	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
-	 *            function returns this {@link HANDLE}.
-	 * @param lpDCB
-	 *            [in, out] A pointer to a {@link WinBase.DCB} structure that
-	 *            receives the control settings information.
-	 * 
-	 * @return If the function succeeds, the return value is nonzero. <br>
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.
-	 * 
-	 */
-	boolean GetCommState(HANDLE hFile, WinBase.DCB lpDCB);
+     * Retrieves the current control settings for a specified communications
+     * device.
+     * 
+     * @param hFile
+     *            [in] A handle to the communications device.<br>
+     *            The
+     *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+     *            function returns this {@link WinNT.HANDLE}.
+     * @param lpDCB
+     *            [in, out] A pointer to a {@link WinBase.DCB} structure that
+     *            receives the control settings information.
+     * 
+     * @return If the function succeeds, the return value is nonzero. <br>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError()}.
+     * 
+     */
+    boolean GetCommState(HANDLE hFile, WinBase.DCB lpDCB);
 
-	/**
-	 * 
-	 * Retrieves the time-out parameters for all read and write operations on a
-	 * specified communications device.<br>
-	 * <br>
-	 * For more information about time-out values for communications devices,
-	 * see the {@link Kernel32#SetCommTimeouts} function.
-	 * 
-	 * @param hFile
-	 *            [in] A handle to the communications device. The
-	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
-	 *            function returns this handle.
-	 * 
-	 * @param lpCommTimeouts
-	 *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure in
-	 *            which the time-out information is returned.
-	 * @return If the function succeeds, the return value is nonzero.
-	 * 
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.
-	 * 
-	 * 
-	 * 
-	 */
-	boolean GetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
+    /**
+     * 
+     * Retrieves the time-out parameters for all read and write operations on a
+     * specified communications device.<br>
+     * <br>
+     * For more information about time-out values for communications devices,
+     * see the {@link Kernel32#SetCommTimeouts} function.
+     * 
+     * @param hFile
+     *            [in] A handle to the communications device. The
+     *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+     *            function returns this handle.
+     * 
+     * @param lpCommTimeouts
+     *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure in
+     *            which the time-out information is returned.
+     * @return If the function succeeds, the return value is nonzero.
+     * 
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError()}.
+     * 
+     * 
+     * 
+     */
+    boolean GetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
 
-	/**
-	 * Configures a communications device according to the specifications in a
-	 * device-control block (a {@link WinBase.DCB} structure). The function
-	 * reinitializes all hardware and control settings, but it does not empty
-	 * output or input queues.
-	 * 
-	 * @param hFile
-	 *            [in] A handle to the communications device. The
-	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
-	 *            function returns this handle.
-	 * @param lpDCB
-	 *            [in] A pointer to a {@link WinBase.DCB} structure that
-	 *            contains the configuration information for the specified
-	 *            communications device.
-	 * @return If the function succeeds, the return value is nonzero. If the
-	 *         function fails, the return value is zero. To get extended error
-	 *         information, call {@link Kernel32#GetLastError()}.
-	 */
-	boolean SetCommState(HANDLE hFile, WinBase.DCB lpDCB);
+    /**
+     * Configures a communications device according to the specifications in a
+     * device-control block (a {@link WinBase.DCB} structure). The function
+     * reinitializes all hardware and control settings, but it does not empty
+     * output or input queues.
+     * 
+     * @param hFile
+     *            [in] A handle to the communications device. The
+     *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+     *            function returns this handle.
+     * @param lpDCB
+     *            [in] A pointer to a {@link WinBase.DCB} structure that
+     *            contains the configuration information for the specified
+     *            communications device.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. To get extended error
+     *         information, call {@link Kernel32#GetLastError()}.
+     */
+    boolean SetCommState(HANDLE hFile, WinBase.DCB lpDCB);
 
-	/**
-	 * Sets the time-out parameters for all read and write operations on a
-	 * specified communications device.
-	 * 
-	 * @param hFile
-	 *            [in] A handle to the communications device. The
-	 *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
-	 *            function returns this handle.
-	 * @param LPCOMMTIMEOUTS
-	 *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure
-	 *            that contains the new time-out values.
-	 * @return If the function succeeds, the return value is nonzero. <br>
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.
-	 */
-	boolean SetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
+    /**
+     * Sets the time-out parameters for all read and write operations on a
+     * specified communications device.
+     * 
+     * @param hFile
+     *            [in] A handle to the communications device. The
+     *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
+     *            function returns this handle.
+     * @param lpCommTimeouts
+     *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure
+     *            that contains the new time-out values.
+     * @return If the function succeeds, the return value is nonzero. <br>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError()}.
+     */
+    boolean SetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
+
+    /**
+     * http://msdn.microsoft.com/en-us/library/aa382990(v=vs.85).aspx<br>
+     * <br>
+     * Retrieves the Remote Desktop Services session associated with a specified
+     * process.<br>
+     * <br>
+     * <pre><code>BOOL ProcessIdToSessionId(_In_ DWORD dwProcessId, _Out_ DWORD *pSessionId);</code></pre><br>
+     * 
+     * @param dwProcessId
+     *            Specifies a process identifier.<br>
+     *            Use the GetCurrentProcessId function to retrieve the process
+     *            identifier for the current process.
+     * @param pSessionId
+     *            Pointer to a variable that receives the identifier of the
+     *            Remote Desktop Services session under which the specified
+     *            process is running.<br>
+     *            To retrieve the identifier of the session currently attached
+     *            to the console, use the WTSGetActiveConsoleSessionId function.
+     * @return If the function succeeds, the return value is true. <br>
+     *         If the function fails, the return value is false. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean ProcessIdToSessionId(int dwProcessId, IntByReference pSessionId);
+
+    /**
+     * Loads the specified module into the address space of the calling process.
+     * The specified module may cause other modules to be loaded.
+     * 
+     * <pre>
+     * <code>
+     * HMODULE WINAPI LoadLibraryEx(
+     *   _In_       LPCTSTR lpFileName,
+     *   _Reserved_ HANDLE  hFile,
+     *   _In_       DWORD   dwFlags
+     * );
+     * </code>
+     * </pre>
+     * 
+     * @param lpFileName
+     *            A string that specifies the file name of the module to load.
+     *            This name is not related to the name stored in a library
+     *            module itself, as specified by the LIBRARY keyword in the
+     *            module-definition (.def) file. <br>
+     *            The module can be a library module (a .dll file) or an
+     *            executable module (an .exe file). If the specified module is
+     *            an executable module, static imports are not loaded; instead,
+     *            the module is loaded as if DONT_RESOLVE_DLL_REFERENCES was
+     *            specified. See the <em>dwFlags</em> parameter for more
+     *            information. <br>
+     *            If the string specifies a module name without a path and the
+     *            file name extension is omitted, the function appends the
+     *            default library extension .dll to the module name. To prevent
+     *            the function from appending .dll to the module name, include a
+     *            trailing point character (.) in the module name string. <br>
+     *            If the string specifies a fully qualified path, the function
+     *            searches only that path for the module. When specifying a
+     *            path, be sure to use backslashes (\), not forward slashes (/).
+     *            For more information about paths, see "Naming Files, Paths, and Namespaces" on MSDN. <br>
+     *            If the string specifies a module name without a path and more
+     *            than one loaded module has the same base name and extension,
+     *            the function returns a handle to the module that was loaded
+     *            first. <br>
+     *            If the string specifies a module name without a path and a
+     *            module of the same name is not already loaded, or if the
+     *            string specifies a module name with a relative path, the
+     *            function searches for the specified module. The function also
+     *            searches for modules if loading the specified module causes
+     *            the system to load other associated modules (that is, if the
+     *            module has dependencies). The directories that are searched
+     *            and the order in which they are searched depend on the
+     *            specified path and the <em>dwFlags</em> parameter. For more
+     *            information, see Remarks. <br>
+     *            If the function cannot find the module or one of its
+     *            dependencies, the function fails.
+     * @param hFile
+     *            This parameter is reserved for future use. It must be NULL.
+     * @param flags
+     *            The action to be taken when loading the module.<br>
+     *            If no flags are specified, the behavior of this function is
+     *            identical to that of the LoadLibrary function.<br>
+     *            This parameter can be one of the following values. <br>
+     *            <br>
+     *            DONT_RESOLVE_DLL_REFERENCES: 0x00000001<br>
+     *            If this value is used, and the executable module is a DLL, the
+     *            system does not call DllMain for process and thread
+     *            initialization and termination. Also, the system does not load
+     *            additional executable modules that are referenced by the
+     *            specified module. <br>
+     *            Do not use this value; it is provided only for backward
+     *            compatibility. If you are planning to access only data or
+     *            resources in the DLL, use LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE
+     *            or LOAD_LIBRARY_AS_IMAGE_RESOURCE or both. Otherwise, load the
+     *            library as a DLL or executable module using the LoadLibrary
+     *            function.<br>
+     *            <br>
+     *            LOAD_IGNORE_CODE_AUTHZ_LEVEL: 0x00000010<br>
+     *            If this value is used, the system does not check AppLocker
+     *            rules or apply Software Restriction Policies for the DLL.
+     *            AppLocker was introduced in Windows 7 and Windows Server 2008
+     *            R2. This action applies only to the DLL being loaded and not
+     *            to its dependencies. This value is recommended for use in
+     *            setup programs that must run extracted DLLs during
+     *            installation. <br>
+     *            Windows Server 2008 R2 and Windows 7: On systems with
+     *            KB2532445 installed, the caller must be running as
+     *            "LocalSystem" or "TrustedInstaller"; otherwise the system
+     *            ignores this flag.<br>
+     *            <br>
+     *            LOAD_LIBRARY_AS_DATAFILE: 0x00000002<br>
+     *            If this value is used, the system maps the file into the
+     *            calling process's virtual address space as if it were a data
+     *            file. Nothing is done to execute or prepare to execute the
+     *            mapped file. Therefore, you cannot call functions like
+     *            GetModuleFileName, GetModuleHandle or GetProcAddress with this
+     *            DLL. Using this value causes writes to read-only memory to
+     *            raise an access violation. Use this flag when you want to load
+     *            a DLL only to extract messages or resources from it. <br>
+     *            This value can be used with LOAD_LIBRARY_AS_IMAGE_RESOURCE.
+     *            For more information, see Remarks <br>
+     *            <br>
+     *            LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE: 0x00000040<br>
+     *            Similar to LOAD_LIBRARY_AS_DATAFILE, except that the DLL file
+     *            is opened with exclusive write access for the calling process.
+     *            Other processes cannot open the DLL file for write access
+     *            while it is in use. However, the DLL can still be opened by
+     *            other processes. <br>
+     *            This value can be used with LOAD_LIBRARY_AS_IMAGE_RESOURCE.
+     *            This value is not supported until Windows Vista. <br>
+     *            <br>
+     *            LOAD_LIBRARY_AS_IMAGE_RESOURCE: 0x00000020 <br>
+     *            If this value is used, the system maps the file into the
+     *            process's virtual address space as an image file. However, the
+     *            loader does not load the static imports or perform the other
+     *            usual initialization steps. Use this flag when you want to
+     *            load a DLL only to extract messages or resources from it. <br>
+     *            Unless the application depends on the file having the
+     *            in-memory layout of an image, this value should be used with
+     *            either LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE or
+     *            LOAD_LIBRARY_AS_DATAFILE. This value is not supported until
+     *            Windows Vista. <br>
+     *            <br>
+     *            LOAD_LIBRARY_SEARCH_APPLICATION_DIR: 0x00000200<br>
+     *            If this value is used, the application's installation
+     *            directory is searched for the DLL and its dependencies.
+     *            Directories in the standard search path are not searched. This
+     *            value cannot be combined with LOAD_WITH_ALTERED_SEARCH_PATH.
+     *            <br>
+     *            Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
+     *            Server 2008: This value requires KB2533623 to be installed.
+     *            <br>
+     *            <br>
+     *            LOAD_LIBRARY_SEARCH_DEFAULT_DIRS: 0x00001000 <br>
+     *            This value is a combination of
+     *            LOAD_LIBRARY_SEARCH_APPLICATION_DIR,
+     *            LOAD_LIBRARY_SEARCH_SYSTEM32, and
+     *            LOAD_LIBRARY_SEARCH_USER_DIRS. Directories in the standard
+     *            search path are not searched. This value cannot be combined
+     *            with LOAD_WITH_ALTERED_SEARCH_PATH. <br>
+     *            This value represents the recommended maximum number of
+     *            directories an application should include in its DLL search
+     *            path. <br>
+     *            Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
+     *            Server 2008: This value requires KB2533623 to be installed.
+     *            <br>
+     *            <br>
+     *            LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR: 0x00000100<br>
+     * 
+     *            If this value is used, the directory that contains the DLL is
+     *            temporarily added to the beginning of the list of directories
+     *            that are searched for the DLL's dependencies. Directories in
+     *            the standard search path are not searched. <br>
+     *            The lpFileName parameter must specify a fully qualified path.
+     *            This value cannot be combined with
+     *            LOAD_WITH_ALTERED_SEARCH_PATH. <br>
+     *            For example, if Lib2.dll is a dependency of C:\Dir1\Lib1.dll,
+     *            loading Lib1.dll with this value causes the system to search
+     *            for Lib2.dll only in C:\Dir1. To search for Lib2.dll in
+     *            C:\Dir1 and all of the directories in the DLL search path,
+     *            combine this value with LOAD_LIBRARY_DEFAULT_DIRS. <br>
+     *            Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
+     *            Server 2008: This value requires KB2533623 to be installed.
+     *            <br>
+     *            <br>
+     *            LOAD_LIBRARY_SEARCH_SYSTEM32: 0x00000800<br>
+     *            If this value is used, %windows%\system32 is searched for the
+     *            DLL and its dependencies. Directories in the standard search
+     *            path are not searched. This value cannot be combined with
+     *            LOAD_WITH_ALTERED_SEARCH_PATH. <br>
+     *            Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
+     *            Server 2008: This value requires KB2533623 to be installed.
+     *            <br>
+     *            <br>
+     *            LOAD_LIBRARY_SEARCH_USER_DIRS: 0x00000400<br>
+     *            If this value is used, directories added using the
+     *            AddDllDirectory or the SetDllDirectory function are searched
+     *            for the DLL and its dependencies. If more than one directory
+     *            has been added, the order in which the directories are
+     *            searched is unspecified. Directories in the standard search
+     *            path are not searched. This value cannot be combined with
+     *            LOAD_WITH_ALTERED_SEARCH_PATH. <br>
+     *            Windows 7, Windows Server 2008 R2, Windows Vista, and Windows
+     *            Server 2008: This value requires KB2533623 to be installed.
+     *            <br>
+     *            <br>
+     *            LOAD_WITH_ALTERED_SEARCH_PATH: 0x00000008<br>
+     *            If this value is used and <em>lpFileName</em> specifies an
+     *            absolute path, the system uses the alternate file search
+     *            strategy discussed in the Remarks section to find associated
+     *            executable modules that the specified module causes to be
+     *            loaded. If this value is used and <em>lpFileName</em>
+     *            specifies a relative path, the behavior is undefined. <br>
+     *            If this value is not used, or if <em>lpFileName</em> does not
+     *            specify a path, the system uses the standard search strategy
+     *            discussed in the Remarks section to find associated executable
+     *            modules that the specified module causes to be loaded. <br>
+     *            This value cannot be combined with any LOAD_LIBRARY_SEARCH
+     *            flag.
+     * @return If the function succeeds, the return value is a handle to the
+     *         loaded module.<br>
+     *         If the function fails, the return value is NULL. To get extended
+     *         error information, call GetLastError.
+     */
+    HMODULE LoadLibraryEx(String lpFileName, HANDLE hFile, int flags);
+
+    /**
+     * Determines the location of a resource with the specified type and name in
+     * the specified module.<br>
+     * To specify a language, use the FindResourceEx function.
+     * 
+     * @param hModule
+     *            A handle to the module whose portable executable file or an
+     *            accompanying MUI file contains the resource. <br>
+     *            If this parameter is NULL, the function searches the module
+     *            used to create the current process.
+     * @param name
+     *            The name of the resource.<br>
+     *            Alternately, rather than a pointer, this parameter can be
+     *            MAKEINTRESOURCE(ID), where ID is the integer identifier of the
+     *            resource. <br>
+     *            For more information, see the Remarks section below.
+     * @param type
+     *            The resource type.<br>
+     *            Alternately, rather than a pointer, this parameter can be
+     *            MAKEINTRESOURCE(ID), where ID is the integer identifier of the
+     *            given resource type.<br>
+     *            For standard resource types, see Resource Types. For more
+     *            information, see the Remarks section below.
+     * @return If the function succeeds, the return value is a handle to the
+     *         specified resource's information block.<br>
+     *         To obtain a handle to the resource, pass this handle to the
+     *         LoadResource function. <br>
+     *         If the function fails, the return value is NULL.<br>
+     *         To get extended error information, call GetLastError.
+     */
+    HRSRC FindResource(HMODULE hModule, Pointer name, Pointer type);
+
+    /**
+     * Retrieves a handle that can be used to obtain a pointer to the first byte
+     * of the specified resource in memory.
+     * 
+     * @param hModule
+     *            A handle to the module whose executable file contains the
+     *            resource. <br>
+     *            If hModule is NULL, the system loads the resource from the
+     *            module that was used to create the current process.
+     * @param hResource
+     *            A handle to the resource to be loaded. <br>
+     *            This handle is returned by the FindResource or FindResourceEx
+     *            function.
+     * @return If the function succeeds, the return value is a handle to the
+     *         data associated with the resource.<br>
+     *         If the function fails, the return value is NULL. <br>
+     *         To get extended error information, call GetLastError.
+     */
+    HANDLE LoadResource(HMODULE hModule, HRSRC hResource);
+
+    /**
+     * Retrieves a pointer to the specified resource in memory.
+     * 
+     * @param hResource
+     *            A handle to the resource to be accessed. <br>
+     *            The LoadResource function returns this handle.<br>
+     *            Note that this parameter is listed as an HGLOBAL variable only
+     *            for backward compatibility.<br>
+     *            Do not pass any value as a parameter other than a successful
+     *            return value from the LoadResource function.
+     * @return If the loaded resource is available, the return value is a
+     *         pointer to the first byte of the resource; otherwise, it is NULL.
+     */
+    Pointer LockResource(HANDLE hResource);
+
+    /**
+     * @param hModule
+     *            A handle to the module whose executable file contains the
+     *            resource.
+     * @param hResource
+     *            A handle to the resource. This handle must be created by using
+     *            the FindResource or FindResourceEx function.
+     * @return If the function succeeds, the return value is the number of bytes
+     *         in the resource. <br>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call GetLastError.
+     */
+    int SizeofResource(HMODULE hModule, HANDLE hResource);
+
+    
+    /**
+     * Frees the loaded dynamic-link library (DLL) module and, if necessary,
+     * decrements its reference count. When the reference count reaches zero,
+     * the module is unloaded from the address space of the calling process and
+     * the handle is no longer valid.
+     * 
+     * @param module
+     *            A handle to the loaded library module. The LoadLibrary,
+     *            LoadLibraryEx, GetModuleHandle, or GetModuleHandleEx function
+     *            returns this handle.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. To get extended error
+     *         information, call the GetLastError function.
+     */
+    boolean FreeLibrary(HMODULE module);
 }

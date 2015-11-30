@@ -29,7 +29,8 @@ public class ShellApplicationWindowsTest extends TestCase
         
         // IE is open, so there should be at least one present.
         // More may exist if Windows Explorer windows are open.
-        assertTrue(sa.Windows().Count() > 0);
+        assertTrue("No shell application windows found",
+                   sa.Windows().Count() > 0);
         
         boolean pageFound = false;
         for (InternetExplorer ie : sa.Windows())
@@ -43,7 +44,7 @@ public class ShellApplicationWindowsTest extends TestCase
         }
         
         // Finally, did we find our page in the collection?
-        assertTrue(pageFound);
+        assertTrue("No IE page was found", pageFound);
     }
     
     @Override
@@ -183,4 +184,7 @@ public class ShellApplicationWindowsTest extends TestCase
         }
     }
     
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(ShellApplicationWindowsTest.class);
+    }
 }

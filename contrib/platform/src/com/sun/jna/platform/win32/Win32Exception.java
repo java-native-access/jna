@@ -20,9 +20,9 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  */
 public class Win32Exception extends RuntimeException {
 	
-	private static final long serialVersionUID = 1L;
-	
-	private HRESULT _hr;
+    private static final long serialVersionUID = 1L;
+    
+    private HRESULT _hr;
     
     /**
      * Returns the error code of the error.
