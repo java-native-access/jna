@@ -16,7 +16,7 @@ Features
 * [#535](https://github.com/java-native-access/jna/pull/535): Added `BitBlt` to `com.sun.jna.platform.win32.GDI32`, Added `com.sun.jna.platform.win32.GDI32Util` and added `getScreenshot()` to it - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#535](https://github.com/java-native-access/jna/pull/535): Added `SHEmptyRecycleBin`, `ShellExecuteEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#535](https://github.com/java-native-access/jna/pull/535): Added `GetDesktopWindow` to `com.sun.jna.platform.win32.User32` - [@mlfreeman2](https://github.com/mlfreeman2).
-* [#539](https://github.com/java-native-access/jna/pull/539): Added Missing Windows kernel32 method: QueryFullProcessImageName
+* [#540](https://github.com/java-native-access/jna/pull/539): Added Missing Windows kernel32 method: QueryFullProcessImageName - [@yossieilaty](https://github.com/yossieilaty).
 
 Bug Fixes
 ---------

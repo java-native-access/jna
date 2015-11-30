@@ -697,6 +697,6 @@ public abstract class Kernel32Util implements WinDef {
         IntByReference lpdwSize = new IntByReference(path.length);
         if (Kernel32.INSTANCE.QueryFullProcessImageName(hProcess, 0, path, lpdwSize))
             return new String(path).substring(0, lpdwSize.getValue());
-    	return null;
+        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
     }
 }
