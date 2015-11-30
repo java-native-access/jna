@@ -1246,7 +1246,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * 			Handle for the running process
      * @param dwFlags
      * 			0 - The name should use the Win32 path format.
-     * 			1(PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
      * @param lpExeName
      * 			pre-allocated character buffer for the returned path
      * @param lpdwSize

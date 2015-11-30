@@ -687,7 +687,7 @@ public abstract class Kernel32Util implements WinDef {
      * 			Handle for the running process
      * @param dwFlags
      * 			0 - The name should use the Win32 path format.
-     * 			1(PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
      * 
      * @return the full path of the process's executable file of null if failed. To get extended error information, 
      * 		   call GetLastError. 
