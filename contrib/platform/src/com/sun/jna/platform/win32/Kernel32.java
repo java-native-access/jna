@@ -182,6 +182,32 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean SetLocalTime(SYSTEMTIME lpSystemTime);
 
     /**
+     * Retrieves system timing information. On a multiprocessor system, the
+     * values returned are the sum of the designated times across all
+     * processors.
+     * 
+     * @param lpIdleTime
+     *            A pointer to a {@link WinBase.FILETIME} structure that
+     *            receives the amount of time that the system has been idle.
+     * @param lpKernelTime
+     *            A pointer to a {@link WinBase.FILETIME} structure that 
+     *            receives the amount of time that the system has spent
+     *            executing in Kernel mode (including all threads in all
+     *            processes, on all processors). This time value also includes
+     *            the amount of time the system has been idle.
+     * @param lpUserTime
+     *            A pointer to a {@link WinBase.FILETIME} structure that
+     *            receives the amount of time that the system has spent
+     *            executing in User mode (including all threads in all
+     *            processes, on all processors).
+     * @return {@code true} if the function succeeds, {@code false} otherwise.
+     *         If the function fails, call {@link #GetLastError()} to get extended error
+     *         information.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724400(v=vs.85).aspx">GetSystemTimes documentation</a>
+     */
+    boolean GetSystemTimes(WinBase.FILETIME lpIdleTime, WinBase.FILETIME lpKernelTime, WinBase.FILETIME lpUserTime);
+    
+    /**
      * The GetTickCount function retrieves the number of milliseconds that have
      * elapsed since the system was started, up to 49.7 days.
      *
