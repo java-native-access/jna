@@ -18,6 +18,7 @@ Features
 * [#535](https://github.com/java-native-access/jna/pull/535): Added `GetDesktopWindow` to `com.sun.jna.platform.win32.User32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#543](https://github.com/java-native-access/jna/pull/543): Added `ProcessIdToSessionId`, `LoadLibraryEx`, `FreeLibrary` and `Find/Load/Lock/SizeofResource` to `com.sun.jna.platform.win32.Kernel32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#547](https://github.com/java-native-access/jna/pull/547): Added `GetSystemTimes` to `com.sun.jna.platform.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
+* [#545](https://github.com/java-native-access/jna/pull/545): Added `EnumResourceTypes` and `EnumResourceNames` to `com.sun.jna.platform.win32.Kernel32` - [@mlfreeman2](https://github.com/mlfreeman2).
 
 Bug Fixes
 ---------
