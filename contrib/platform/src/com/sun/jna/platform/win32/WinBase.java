@@ -23,6 +23,7 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.platform.win32.WinDef.DWORDLONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -264,12 +265,45 @@ public interface WinBase extends WinDef, BaseTSD {
             return ms_since_16010101 * 1000 * 10;
         }
 
+        /**
+         * <p>Converts this filetime into a {@link Date}</p>
+         * @return The {@link Date} represented by this filetime.
+         */
         public Date toDate() {
             return filetimeToDate(dwHighDateTime, dwLowDateTime);
         }
 
+        /**
+         * <p>Converts this filetime into a number of milliseconds which have
+         * passed since January 1, 1970 (UTC).</p>
+         * @return This filetime as a number of milliseconds which have passed
+         * since January 1, 1970 (UTC)
+         */
+        public long toTime() {
+            return toDate().getTime();
+        }
+
+        /**
+         * <p>Converts this filetime into a number of milliseconds which have
+         * passed since January 1, 1970 (UTC).</p>
+         * @return This filetime as a number of milliseconds which have passed
+         * since January 1, 1970 (UTC)
+         * @deprecated Replaced by {@link #toTime()}
+         */
+        @Deprecated
         public long toLong() {
             return toDate().getTime();
+        }
+        
+        /**
+         * <p>Converts the two 32-bit unsigned integer parts of this filetime
+         * into a 64-bit unsigned integer representing the number of
+         * 100-nanosecond intervals since January 1, 1601 (UTC).</p>
+         * @return This filetime as a 64-bit unsigned integer number of
+         * 100-nanosecond intervals since January 1, 1601 (UTC).
+         */
+        public DWORDLONG toDWordLong() {
+            return new DWORDLONG((long) dwHighDateTime << 32 | dwLowDateTime & 0xffffffffL);
         }
 
         @Override

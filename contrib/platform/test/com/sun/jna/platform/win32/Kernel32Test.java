@@ -34,6 +34,7 @@ import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -387,14 +388,14 @@ public class Kernel32Test extends TestCase {
 
     public void testGetSystemTimes() {
       Kernel32 kernel = Kernel32.INSTANCE;
-      WinBase.FILETIME lpIdleTime = new WinBase.FILETIME();
-      WinBase.FILETIME lpKernelTime = new WinBase.FILETIME();
-      WinBase.FILETIME lpUserTime = new WinBase.FILETIME();
+      FILETIME lpIdleTime = new FILETIME();
+      FILETIME lpKernelTime = new FILETIME();
+      FILETIME lpUserTime = new FILETIME();
       boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
       assertTrue(succ);
-      long idleTime = WinBase.FILETIME.dateToFileTime(lpIdleTime.toDate());
-      long kernelTime = WinBase.FILETIME.dateToFileTime(lpKernelTime.toDate());
-      long userTime = WinBase.FILETIME.dateToFileTime(lpUserTime.toDate());
+      long idleTime = lpIdleTime.toDWordLong().longValue();
+      long kernelTime = lpKernelTime.toDWordLong().longValue();
+      long userTime = lpUserTime.toDWordLong().longValue();
       // All should be >= 0.  kernel includes idle.
       assertTrue(idleTime >= 0);
       assertTrue(kernelTime >= idleTime);
