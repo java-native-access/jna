@@ -13,8 +13,10 @@
 package com.sun.jna.platform.win32;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import com.sun.jna.platform.win32.WinBase.DCB;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 
 import junit.framework.TestCase;
@@ -26,6 +28,16 @@ public class WinBaseTest extends TestCase {
 
     public WinBaseTest(String name) {
         super(name);
+    }
+
+    public void testFiletime() {
+        // subtract to convert ms after 1/1/1970 to ms after 1/1/1601
+        long epochDiff = 11644473600000L;
+        // Construct filetimes for ms after 1/1/1601, check for 100-ns after
+        assertEquals("Mismatched filetime for 2ms", (new FILETIME(new Date(2L - epochDiff))).toDWordLong().longValue(), 2L * 10000);
+        assertEquals("Mismatched filetime for 2^16ms", (new FILETIME(new Date((1L << 16) - epochDiff))).toDWordLong().longValue(), (1L << 16) * 10000);
+        assertEquals("Mismatched filetime for 2^32ms", (new FILETIME(new Date((1L << 32) - epochDiff))).toDWordLong().longValue(), (1L << 32) * 10000);
+        assertEquals("Mismatched filetime for 2^49ms", (new FILETIME(new Date((1L << 49) - epochDiff))).toDWordLong().longValue(), (1L << 49) * 10000);
     }
 
     public void testCalendarToSystemTimeConversion() {
