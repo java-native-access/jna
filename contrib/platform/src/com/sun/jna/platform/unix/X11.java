@@ -35,8 +35,19 @@ public interface X11 extends Library {
 
     class VisualID extends NativeLong {
         private static final long serialVersionUID = 1L;
+        public static final VisualID None = null;
         public VisualID() { this(0); }
         public VisualID(long value) { super(value, true); }
+        protected boolean isNone(Object o) {
+            return o == null
+                || (o instanceof Number
+                    && ((Number)o).longValue() == X11.None);
+        }
+        public Object fromNative(Object nativeValue, FromNativeContext context) {
+            if (isNone(nativeValue))
+                return None;
+            return new VisualID(((Number)nativeValue).longValue());
+        }
     }
 
     class XID extends NativeLong {
@@ -286,8 +297,14 @@ public interface X11 extends Library {
         }
         class PictFormat extends XID {
             private static final long serialVersionUID = 1L;
+            public static final PictFormat None = null;
             public PictFormat(long value) { super(value); }
             public PictFormat() { this(0); }
+            public Object fromNative(Object nativeValue, FromNativeContext context) {
+                if (isNone(nativeValue))
+                    return None;
+                return new PictFormat(((Number)nativeValue).longValue());
+            }
         }
         class XRenderPictFormat extends Structure {
             public PictFormat id;
