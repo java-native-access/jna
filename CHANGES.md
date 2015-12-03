@@ -2,6 +2,13 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
+Release 4.2.2
+============
+
+Bug Fixes
+---------
+* [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
+
 Release 4.2.1
 =============
 
