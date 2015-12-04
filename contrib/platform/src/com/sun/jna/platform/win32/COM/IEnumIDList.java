@@ -65,7 +65,7 @@ public interface IEnumIDList {
      *            the server every time a client does a query.
      */
     HRESULT QueryInterface(
-            Guid.GUID.ByReference riid,
+            REFIID riid,
             PointerByReference ppvObject);
 
     /**
@@ -184,7 +184,7 @@ public interface IEnumIDList {
             return new IEnumIDList() {
 
                 @Override
-                public WinNT.HRESULT QueryInterface(Guid.GUID.ByReference byValue, PointerByReference pointerByReference) {
+                public WinNT.HRESULT QueryInterface(REFIID byValue, PointerByReference pointerByReference) {
                     Function f = Function.getFunction(vTable[0], Function.ALT_CONVENTION);
                     return new WinNT.HRESULT(f.invokeInt(new Object[]{interfacePointer, byValue, pointerByReference}));
                 }
