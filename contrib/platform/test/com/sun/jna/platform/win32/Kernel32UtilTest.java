@@ -23,9 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32W;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
-import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
 
@@ -292,5 +292,17 @@ public class Kernel32UtilTest extends TestCase {
         assertTrue("explorer.exe should contain some resource types in it.", names.size() > 0);
         assertTrue("explorer.exe should contain a resource of type '14' in it.", names.containsKey("14"));
         assertTrue("resource type 14 should have a name named ICO_MYCOMPUTER associated with it.", names.get("14").contains("ICO_MYCOMPUTER"));
+    }
+    
+    public void testGetModules() {
+        List<MODULEENTRY32W> results = Kernel32Util.getModules(Kernel32.INSTANCE.GetCurrentProcessId());
+        
+        // not sure if this will be run against java.exe or javaw.exe but these checks should work with both
+        assertNotNull("There should be some modules returned from this helper", results);
+        assertTrue("The first module in this process should be java.exe or javaw.exe", results.get(0).szModule().startsWith("java"));
+        
+        // since this is supposed to return all the modules in a process, there should be an EXE and at least 1 Windows DLL
+        // so assert total count is at least two
+        assertTrue("This is supposed to return all the modules in a process, so there should be an EXE and at least 1 Windows API DLL.", results.size() > 2);
     }
 }

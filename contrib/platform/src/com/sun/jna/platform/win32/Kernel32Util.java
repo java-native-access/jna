@@ -686,13 +686,13 @@ public abstract class Kernel32Util implements WinDef {
      * This function retrieves the full path of the executable file of a given process.
      * 
      * @param hProcess
-     * 			Handle for the running process
+     *          Handle for the running process
      * @param dwFlags
-     * 			0 - The name should use the Win32 path format.
-     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     *          0 - The name should use the Win32 path format.
+     *          1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
      * 
      * @return the full path of the process's executable file of null if failed. To get extended error information, 
-     * 		   call GetLastError. 
+     *         call GetLastError. 
      */
     public static final String QueryFullProcessImageName(HANDLE hProcess, int dwFlags) {
         char[] path = new char[WinDef.MAX_PATH];
@@ -894,5 +894,61 @@ public abstract class Kernel32Util implements WinDef {
             throw err;
         }
         return result;
+    }
+    
+    /**
+     * Returns all the executable modules for a given process ID.<br>
+     * 
+     * @param processID
+     *            The process ID to get executable modules for
+     * @return All the modules in the process.
+     */
+    public static List<Tlhelp32.MODULEENTRY32W> getModules(int processID) {
+        HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE, new DWORD(processID));
+        if (snapshot == null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        List<Tlhelp32.MODULEENTRY32W> modules = new ArrayList<Tlhelp32.MODULEENTRY32W>();
+        Win32Exception we = null;
+        try {
+            Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();
+            modules.add(first);
+
+            if (!Kernel32.INSTANCE.Module32FirstW(snapshot, first)) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+
+            Tlhelp32.MODULEENTRY32W next = new Tlhelp32.MODULEENTRY32W();
+            while (Kernel32.INSTANCE.Module32NextW(snapshot, next)) {
+                modules.add(next);
+                next = new Tlhelp32.MODULEENTRY32W();
+            }
+            
+            int lastError = Kernel32.INSTANCE.GetLastError();
+            // if we got a false from Module32Next, 
+            // check to see if it returned false because we're genuinely done
+            // or if something went wrong.
+            if (lastError != W32Errors.ERROR_SUCCESS && lastError != W32Errors.ERROR_NO_MORE_FILES) {
+                throw new Win32Exception(lastError);
+            }
+        } catch (Win32Exception e) {
+            we = e;
+        } finally {
+            if (snapshot != null) {
+                if (!Kernel32.INSTANCE.CloseHandle(snapshot)) {
+                    Win32Exception e = new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                    if (we != null) {
+                        e.addSuppressed(we);
+                    }
+                    we = e;
+                }
+            }
+        }
+        
+        if (we != null) {
+            throw we;
+        }
+        return modules;
     }
 }
