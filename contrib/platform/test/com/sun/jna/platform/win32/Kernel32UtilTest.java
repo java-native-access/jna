@@ -23,7 +23,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
+import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
 
@@ -254,6 +256,14 @@ public class Kernel32UtilTest extends TestCase {
         } finally {
             reader.close();
         }
+    }
+
+    public final void testQueryFullProcessImageName() {
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
+        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
+
+        String name = Kernel32Util.QueryFullProcessImageName(h, 0);
+        assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
     }
 
     public void testGetResource() {

@@ -680,6 +680,27 @@ public abstract class Kernel32Util implements WinDef {
 
         return volumeGUIDPath.substring(VOLUME_GUID_PATH_PREFIX.length(), volumeGUIDPath.length() - VOLUME_GUID_PATH_SUFFIX.length());
     }
+    
+    /**
+     * 
+     * This function retrieves the full path of the executable file of a given process.
+     * 
+     * @param hProcess
+     * 			Handle for the running process
+     * @param dwFlags
+     * 			0 - The name should use the Win32 path format.
+     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     * 
+     * @return the full path of the process's executable file of null if failed. To get extended error information, 
+     * 		   call GetLastError. 
+     */
+    public static final String QueryFullProcessImageName(HANDLE hProcess, int dwFlags) {
+        char[] path = new char[WinDef.MAX_PATH];
+        IntByReference lpdwSize = new IntByReference(path.length);
+        if (Kernel32.INSTANCE.QueryFullProcessImageName(hProcess, 0, path, lpdwSize))
+            return new String(path).substring(0, lpdwSize.getValue());
+        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    }
 
     /**
      * Gets the specified resource out of the specified executable file
@@ -874,5 +895,4 @@ public abstract class Kernel32Util implements WinDef {
         }
         return result;
     }
-    
 }

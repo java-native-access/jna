@@ -1264,6 +1264,26 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         GetLastError.
      */
     HANDLE OpenProcess(int fdwAccess, boolean fInherit, int IDProcess);
+    
+    /**
+     * This function retrieves the full path of the executable file of a given process.
+     * 
+     * @param hProcess
+     * 			Handle for the running process
+     * @param dwFlags
+     * 			0 - The name should use the Win32 path format.
+     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     * @param lpExeName
+     * 			pre-allocated character buffer for the returned path
+     * @param lpdwSize
+     * 			input: the size of the allocated buffer
+     * 			output: the length of the returned path in characters 
+     * 
+     * @return true if successful false if not. To get extended error information, 
+     * 		   call GetLastError. 
+     */
+    boolean QueryFullProcessImageName(HANDLE hProcess, int dwFlags, char[] lpExeName, IntByReference lpdwSize);
+
 
     /**
      * The GetTempPath function retrieves the path of the directory designated
