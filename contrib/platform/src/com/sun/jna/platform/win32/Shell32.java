@@ -321,4 +321,18 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
 	 */
 	boolean ShellExecuteEx(ShellAPI.SHELLEXECUTEINFO lpExecInfo);
 
+    /*
+     * SHGetSpecialFolderLocation function for getting PIDL reference to My Computer etc
+     *
+     * @param hwndOwner
+     *            Reserved.
+     * @param nFolder
+     *            A CSIDL value that identifies the folder of interest.
+     * @param        ppidl
+     *            A PIDL specifying the folder's location relative to the root of the namespace (the desktop). It is the responsibility of the calling application to free the returned IDList by using CoTaskMemFree.
+     *
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     *
+     */
+    WinNT.HRESULT SHGetSpecialFolderLocation(WinDef.HWND hwndOwner, int nFolder, PointerByReference ppidl);
 }
