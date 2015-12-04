@@ -549,6 +549,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </subant>
   </target>
 
+  <target name="idea-jar" depends="jar" description="Build Intellij Idea convenience jar">
+    <jar destfile="${dist}/idea-dispatch.jar">
+      <zipfileset src="${dist-jar}" excludes="**/*.class"/>
+    </jar>
+  </target>
+
   <target name="javah" depends="compile" unless="-native">
     <javah classpath="${classes}" destdir="${build.native}" force="yes">
       <class name="com.sun.jna.Function"/>
