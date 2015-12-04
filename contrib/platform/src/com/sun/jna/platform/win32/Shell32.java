@@ -274,51 +274,66 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      */
     UINT_PTR SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
 
-	/**
-	 * Empties the Recycle Bin on the specified drive.
-	 * 
-	 * @param hwnd
-	 *            A handle to the parent window of any dialog boxes that might
-	 *            be displayed during the operation.<br>
-	 *            This parameter can be NULL.
-	 * @param pszRootPath
-	 *            a null-terminated string of maximum length MAX_PATH that
-	 *            contains the path of the root<br>
-	 *            drive on which the Recycle Bin is located. This parameter can
-	 *            contain a string formatted with the drive,<br>
-	 *            folder, and subfolder names, for example c:\windows\system\,
-	 *            etc. It can also contain an empty string or<br>
-	 *            NULL. If this value is an empty string or NULL, all Recycle
-	 *            Bins on all drives will be emptied.
-	 * @param dwFlags
-	 *            a bitwise combination of SHERB_NOCONFIRMATION,
-	 *            SHERB_NOPROGRESSUI and SHERB_NOSOUND.<br>
-	 * @return Returns S_OK (0) if successful, or a COM-defined error value
-	 *         otherwise.<br>
-	 */
-	int SHEmptyRecycleBin(HANDLE hwnd, String pszRootPath, int dwFlags);
+    /**
+     * Empties the Recycle Bin on the specified drive.
+     * 
+     * @param hwnd
+     *            A handle to the parent window of any dialog boxes that might
+     *            be displayed during the operation.<br>
+     *            This parameter can be NULL.
+     * @param pszRootPath
+     *            a null-terminated string of maximum length MAX_PATH that
+     *            contains the path of the root<br>
+     *            drive on which the Recycle Bin is located. This parameter can
+     *            contain a string formatted with the drive,<br>
+     *            folder, and subfolder names, for example c:\windows\system\,
+     *            etc. It can also contain an empty string or<br>
+     *            NULL. If this value is an empty string or NULL, all Recycle
+     *            Bins on all drives will be emptied.
+     * @param dwFlags
+     *            a bitwise combination of SHERB_NOCONFIRMATION,
+     *            SHERB_NOPROGRESSUI and SHERB_NOSOUND.<br>
+     * @return Returns S_OK (0) if successful, or a COM-defined error value
+     *         otherwise.<br>
+     */
+    int SHEmptyRecycleBin(HANDLE hwnd, String pszRootPath, int dwFlags);
+    
+    /**
+     * @param lpExecInfo
+     *            <p>
+     *            Type: <strong>SHELLEXECUTEINFO*</strong>
+     *            </p>
+     *            <p>
+     *            A pointer to a <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/bb759784(v=vs.85).aspx">
+     *            <strong xmlns="http://www.w3.org/1999/xhtml">SHELLEXECUTEINFO
+     *            </strong></a> structure that contains and receives information
+     *            about the application being executed.
+     *            </p>
+     * @return
+     * 		<p>
+     *         Returns <strong>TRUE</strong> if successful; otherwise,
+     *         <strong>FALSE</strong>. Call <a href=
+     *         "https://msdn.microsoft.com/en-us/library/windows/desktop/ms679360(v=vs.85).aspx">
+     *         <strong xmlns="http://www.w3.org/1999/xhtml">GetLastError
+     *         </strong></a> for extended error information.
+     *         </p>
+     */
+    boolean ShellExecuteEx(ShellAPI.SHELLEXECUTEINFO lpExecInfo);
 
-	/**
-	 * @param lpExecInfo
-	 *            <p>
-	 *            Type: <strong>SHELLEXECUTEINFO*</strong>
-	 *            </p>
-	 *            <p>
-	 *            A pointer to a <a href=
-	 *            "https://msdn.microsoft.com/en-us/library/windows/desktop/bb759784(v=vs.85).aspx">
-	 *            <strong xmlns="http://www.w3.org/1999/xhtml">SHELLEXECUTEINFO
-	 *            </strong></a> structure that contains and receives information
-	 *            about the application being executed.
-	 *            </p>
-	 * @return
-	 * 		<p>
-	 *         Returns <strong>TRUE</strong> if successful; otherwise,
-	 *         <strong>FALSE</strong>. Call <a href=
-	 *         "https://msdn.microsoft.com/en-us/library/windows/desktop/ms679360(v=vs.85).aspx">
-	 *         <strong xmlns="http://www.w3.org/1999/xhtml">GetLastError
-	 *         </strong></a> for extended error information.
-	 *         </p>
-	 */
-	boolean ShellExecuteEx(ShellAPI.SHELLEXECUTEINFO lpExecInfo);
-
+    /**
+     * SHGetSpecialFolderLocation function for getting PIDL reference to My Computer etc
+     *
+     * @param hwndOwner
+     *            Reserved.
+     * @param nFolder
+     *            A CSIDL value that identifies the folder of interest.
+     * @param        ppidl
+     *            A PIDL specifying the folder's location relative to the root of the namespace (the desktop). It is the responsibility of the calling application to free the returned IDList by using CoTaskMemFree.
+     *
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     *
+     */
+    WinNT.HRESULT SHGetSpecialFolderLocation(WinDef.HWND hwndOwner, int nFolder, PointerByReference ppidl);
 }
+
