@@ -103,6 +103,7 @@ public final class Native implements Version {
     static String jnidispatchPath = null;
     private static Map options = new WeakHashMap();
     private static Map libraries = new WeakHashMap();
+    private static final String _OPTION_ENCLOSING_LIBRARY = "enclosing-library";
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
         new UncaughtExceptionHandler() {
             @Override
@@ -549,6 +550,11 @@ public final class Native implements Version {
         // implement com.sun.jna.Library.
         synchronized(libraries) {
             if (options.containsKey(cls)) {
+                Map libOptions = (Map)options.get(cls);
+                Class enclosingClass = (Class)libOptions.get(_OPTION_ENCLOSING_LIBRARY);
+                if (enclosingClass != null) {
+                    return enclosingClass;
+                }
                 return cls;
             }
         }
@@ -620,7 +626,7 @@ public final class Native implements Version {
             if (!libraryOptions.containsKey(Library.OPTION_STRING_ENCODING)) {
                 libraryOptions.put(Library.OPTION_STRING_ENCODING, lookupField(mappingClass, "STRING_ENCODING", String.class));
             }
-            options.put(mappingClass, libraryOptions);
+            libraryOptions = cacheOptions(mappingClass, libraryOptions, null);
             // Store the original lookup class, if different from the mapping class
             if (type != mappingClass) {
                 options.put(type, libraryOptions);
@@ -1677,8 +1683,9 @@ public final class Native implements Version {
     /** Take note of options used for a given library mapping, to facilitate
         looking them up later.
     */
-    private static void cacheOptions(Class cls, Map libOptions, Object proxy) {
+    private static Map cacheOptions(Class cls, Map libOptions, Object proxy) {
         libOptions = new HashMap(libOptions);
+        libOptions.put(_OPTION_ENCLOSING_LIBRARY, cls);
         synchronized(libraries) {
             options.put(cls, libOptions);
             if (proxy != null) {
@@ -1699,6 +1706,7 @@ public final class Native implements Version {
                 }
             }
         }
+        return libOptions;
     }
 
     private static native long registerMethod(Class cls,

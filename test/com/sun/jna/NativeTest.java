@@ -206,10 +206,6 @@ public class NativeTest extends TestCase {
         Class[] classes = { TestInterfaceWithInstance.class, TestInterfaceWithInstance.TestStructure.class };
         String[] desc = { "interface", "structure from interface" };
         for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong options found for " + desc[i]
-                         + " which provides an instance", 
-                         TestInterfaceWithInstance.TEST_OPTS,
-                         Native.getLibraryOptions(classes[i]));
             assertEquals("Wrong type mapper found for " + desc[i], 
                          TestInterfaceWithInstance.TEST_MAPPER,
                          Native.getTypeMapper(classes[i]));
@@ -236,9 +232,6 @@ public class NativeTest extends TestCase {
     public void testOptionsInferenceFromOptionsField() {
         Class[] classes = { TestInterfaceWithOptions.class, TestInterfaceWithOptions.TestStructure.class };
         for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong options found for interface which provides OPTIONS", 
-                         TestInterfaceWithOptions.OPTIONS,
-                         Native.getLibraryOptions(classes[i]));
             assertEquals("Wrong type mapper found", 
                          TestInterfaceWithOptions.TEST_MAPPER,
                          Native.getTypeMapper(classes[i]));
@@ -289,6 +282,26 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong encoding found for structure from interface which provides STRING_ENCODING", 
                      TestInterfaceWithEncoding.STRING_ENCODING,
                      Native.getStringEncoding(TestInterfaceWithEncoding.TestStructure.class));
+    }
+
+    public interface OptionsBase extends Library {
+        int STRUCTURE_ALIGNMENT = Structure.ALIGN_NONE;
+        TypeMapper TYPE_MAPPER = new DefaultTypeMapper();
+        class TypeMappedStructure extends Structure {
+            public String stringField;
+            protected List getFieldOrder() { return Arrays.asList("stringField"); }
+        }
+    }
+    public interface OptionsSubclass extends OptionsBase, Library {
+        TypeMapper _MAPPER = new DefaultTypeMapper();
+        Map _OPTIONS = new HashMap() { { put(Library.OPTION_TYPE_MAPPER, _MAPPER); } };
+        OptionsSubclass INSTANCE = (OptionsSubclass)Native.loadLibrary("testlib", OptionsSubclass.class, _OPTIONS);
+    }
+    public void testStructureOptionsInference() {
+        Structure s = new OptionsBase.TypeMappedStructure();
+        assertEquals("Wrong structure alignment for base structure",
+                     Structure.ALIGN_NONE, Native.getStructureAlignment(s.getClass()));
+        assertEquals("Wrong type mapper for base structure", OptionsBase.TYPE_MAPPER, s.getTypeMapper());
     }
 
     public void testCharArrayToString() {
