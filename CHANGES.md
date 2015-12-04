@@ -23,6 +23,7 @@ Features
 
 Bug Fixes
 ---------
+* [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
 
 Release 4.2.1
 =============
