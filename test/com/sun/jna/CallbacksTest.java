@@ -1439,6 +1439,54 @@ public class CallbacksTest extends TestCase implements Paths {
         }
     }
 
+    public interface TaggedCallingConventionTestLibrary extends Library, AltCallingConvention {
+        interface TestCallbackTagged extends Callback, AltCallingConvention {
+            void invoke();
+        }
+    }
+
+    public void testCallingConventionFromInterface() {
+        TaggedCallingConventionTestLibrary lib = (TaggedCallingConventionTestLibrary)
+            Native.loadLibrary("testlib", TaggedCallingConventionTestLibrary.class);
+        TaggedCallingConventionTestLibrary.TestCallbackTagged cb = new TaggedCallingConventionTestLibrary.TestCallbackTagged() {
+            public void invoke() { }
+        };
+        try {
+            Pointer p = CallbackReference.getFunctionPointer(cb);
+            CallbackReference ref = (CallbackReference)CallbackReference.callbackMap.get(cb);
+            assertNotNull("CallbackReference not found", ref);
+            assertEquals("Tag-based calling convention not applied", Function.ALT_CONVENTION, ref.callingConvention);
+        }
+        catch (IllegalArgumentException e) {
+            // Alt convention not supported
+        }
+    }
+
+    public interface OptionCallingConventionTestLibrary extends Library {
+        interface TestCallback extends Callback {
+            void invoke();
+        }
+    }
+
+    public void testCallingConventionFromOptions() {
+        Map options = new HashMap();
+        options.put(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION);
+        OptionCallingConventionTestLibrary lib = (OptionCallingConventionTestLibrary)
+            Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, options);
+        OptionCallingConventionTestLibrary.TestCallback cb = new OptionCallingConventionTestLibrary.TestCallback() {
+            public void invoke() { }
+        };
+        try {
+            Pointer p = CallbackReference.getFunctionPointer(cb);
+            CallbackReference ref = (CallbackReference)CallbackReference.callbackMap.get(cb);
+            assertNotNull("CallbackReference not found", ref);
+            assertEquals("Option-based calling convention not applied", Function.ALT_CONVENTION, ref.callingConvention);
+        }
+        catch(IllegalArgumentException e) {
+            // Alt convention not supported
+        }
+    }
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(CallbacksTest.class);
     }
