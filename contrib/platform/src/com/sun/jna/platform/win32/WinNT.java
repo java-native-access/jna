@@ -2177,6 +2177,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 	 */
 	int PROCESS_TERMINATE = 0x00000001;
 
+    /**
+	 * Required for getting process exe path in native system path format
+	 * {@code Kernel32.QueryFullProcessImageName()}.
+	 */
+	int PROCESS_NAME_NATIVE = 0x00000001;
+	
 	/**
 	 * Required to perform an operation on the address space of a process (see
 	 * {@code Kernel32.VirtualProtectEx()} and
