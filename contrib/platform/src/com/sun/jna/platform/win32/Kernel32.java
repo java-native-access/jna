@@ -55,7 +55,6 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      */
     int LOAD_LIBRARY_AS_DATAFILE = 0x2;
     
-    
     /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the

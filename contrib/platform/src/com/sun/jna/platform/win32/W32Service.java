@@ -13,10 +13,28 @@
 
 package com.sun.jna.platform.win32;
 
+import java.util.List;
+
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.WString;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinNT;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.LUID;
+import com.sun.jna.platform.win32.WinNT.LUID_AND_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES;
+import com.sun.jna.platform.win32.Winsvc.SC_ACTION;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS_FLAG;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
+
 
 /**
  * Win32 Service wrapper 
@@ -46,7 +64,103 @@ public class W32Service {
 			_handle = null;
 		}
 	}
-	
+
+	private void addShutdownPrivilegeToProcess() {
+		HANDLEByReference hToken = new HANDLEByReference();
+		LUID luid = new LUID();
+		Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(),
+				WinNT.TOKEN_ADJUST_PRIVILEGES, hToken);
+		Advapi32.INSTANCE.LookupPrivilegeValue("", WinNT.SE_SHUTDOWN_NAME, luid);
+		TOKEN_PRIVILEGES tp = new TOKEN_PRIVILEGES(1);
+		tp.Privileges[0] = new LUID_AND_ATTRIBUTES(luid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+		Advapi32.INSTANCE.AdjustTokenPrivileges(hToken.getValue(), false, tp, tp.size(), null,
+				new IntByReference());
+	}
+
+	/**
+	 * Set the failure actions of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">ChangeServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS. 
+	 */
+	public void setFailureActions(List<SC_ACTION> actions, int resetPeriod, String rebootMsg, 
+			String command) {
+		SERVICE_FAILURE_ACTIONS.ByReference actionStruct = new SERVICE_FAILURE_ACTIONS.ByReference();
+		actionStruct.dwResetPeriod = resetPeriod;
+		actionStruct.lpRebootMsg = rebootMsg;
+		actionStruct.lpCommand = command;
+		actionStruct.cActions = actions.size();
+
+		actionStruct.lpsaActions = new SC_ACTION.ByReference();
+		SC_ACTION[] actionArray = (SC_ACTION[])actionStruct.lpsaActions.toArray(actions.size());
+		boolean hasShutdownPrivilege = false;
+		int i = 0;
+		for (SC_ACTION action : actions) {
+			if (!hasShutdownPrivilege && action.type == Winsvc.SC_ACTION_REBOOT) {
+				addShutdownPrivilegeToProcess();
+				hasShutdownPrivilege = true;
+			}
+			actionArray[i].type = action.type;
+			actionArray[i].delay = action.delay;
+			i++;
+		}
+
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS, 
+				actionStruct)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+	}
+
+	private Pointer queryServiceConfig2(int type) {
+		IntByReference bufferSize = new IntByReference();
+		Advapi32.INSTANCE.QueryServiceConfig2(_handle, type, Pointer.NULL, 0, bufferSize);
+
+		Pointer buffer = new Memory(bufferSize.getValue());
+
+		if (!Advapi32.INSTANCE.QueryServiceConfig2(_handle, type, buffer, bufferSize.getValue(),
+				new IntByReference())) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+
+		return buffer;
+	}
+
+	/**
+	 * Get the failure actions of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">QueryServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS. 
+	 */
+	public SERVICE_FAILURE_ACTIONS getFailureActions() {
+		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS);
+		SERVICE_FAILURE_ACTIONS result = new SERVICE_FAILURE_ACTIONS(buffer);
+		return result;
+	}
+
+	/**
+	 * Set the failure action flag of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">ChangeServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS_FLAG. 
+	 */
+	public void setFailureActionsFlag(boolean flagValue) {
+		SERVICE_FAILURE_ACTIONS_FLAG flag = new SERVICE_FAILURE_ACTIONS_FLAG();
+		flag.fFailureActionsOnNonCrashFailures = flagValue ? 1 : 0;
+
+		if (!Advapi32.INSTANCE.ChangeServiceConfig2(_handle, Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG, 
+				flag)) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+	}
+
+	/**
+	 * Get the failure actions flag of the specified service. Corresponds to 
+	 * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms681988.aspx">QueryServiceConfig2</a>
+	 * with parameter dwInfoLevel set to SERVICE_CONFIG_FAILURE_ACTIONS_FLAG. 
+	 */
+	public boolean getFailureActionsFlag() {
+		Pointer buffer = queryServiceConfig2(Winsvc.SERVICE_CONFIG_FAILURE_ACTIONS_FLAG);
+		SERVICE_FAILURE_ACTIONS_FLAG result = new SERVICE_FAILURE_ACTIONS_FLAG(buffer);
+		return result.fFailureActionsOnNonCrashFailures != 0;
+	}
+
 	/**
 	 * Retrieves the current status of the specified service based on the specified information level.
 	 * @return 

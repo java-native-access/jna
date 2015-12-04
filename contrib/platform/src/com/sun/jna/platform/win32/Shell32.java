@@ -32,40 +32,40 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
     Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
     		W32APIOptions.DEFAULT_OPTIONS);
 
-	/**
-	 * No dialog box confirming the deletion of the objects will be displayed.
-	 */
-	int SHERB_NOCONFIRMATION = 0x00000001;
-
-	/**
-	 * No dialog box indicating the progress will be displayed.
-	 */
-	int SHERB_NOPROGRESSUI = 0x00000002;
-
-	/**
-	 * No sound will be played when the operation is complete.
-	 */
-	int SHERB_NOSOUND = 0x00000004;
-
-	/**
-	 * <p>
-	 * <strong>SEE_MASK_NOCLOSEPROCESS</strong> (0x00000040)
-	 * </p>
-	 * <p>
-	 * Use to indicate that the <strong>hProcess</strong> member receives the
-	 * process handle. This handle is typically used to allow an application to
-	 * find out when a process created with terminates. In some cases, such as
-	 * when execution is satisfied through a DDE conversation, no handle will be
-	 * returned. The calling application is responsible for closing the handle
-	 * when it is no longer needed.
-	 * </p>
-	 */
-	int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
-	
-	/**
-	 * Do not display an error message box if an error occurs.
-	 */
-	int SEE_MASK_FLAG_NO_UI = 0x00000400;
+    /**
+     * No dialog box confirming the deletion of the objects will be displayed.
+     */
+    int SHERB_NOCONFIRMATION = 0x00000001;
+    
+    /**
+     * No dialog box indicating the progress will be displayed.
+     */
+    int SHERB_NOPROGRESSUI = 0x00000002;
+    
+    /**
+     * No sound will be played when the operation is complete.
+     */
+    int SHERB_NOSOUND = 0x00000004;
+    
+    /**
+     * <p>
+     * <strong>SEE_MASK_NOCLOSEPROCESS</strong> (0x00000040)
+     * </p>
+     * <p>
+     * Use to indicate that the <strong>hProcess</strong> member receives the
+     * process handle. This handle is typically used to allow an application to
+     * find out when a process created with terminates. In some cases, such as
+     * when execution is satisfied through a DDE conversation, no handle will be
+     * returned. The calling application is responsible for closing the handle
+     * when it is no longer needed.
+     * </p>
+     */
+    int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
+    
+    /**
+     * Do not display an error message box if an error occurs.
+     */
+    int SEE_MASK_FLAG_NO_UI = 0x00000400;
 	
     /**
      * This function can be used to copy, move, rename, or delete a file system object.

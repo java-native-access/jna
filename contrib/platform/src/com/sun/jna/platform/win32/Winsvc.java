@@ -17,7 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
@@ -199,6 +201,128 @@ public interface Winsvc {
         }
     }
 	
+    public abstract class ChangeServiceConfig2Info extends Structure {
+        public ChangeServiceConfig2Info() {
+            super();
+        }
+        
+        public ChangeServiceConfig2Info(Pointer p) {
+            super(p);
+        }
+    }
+
+    /**
+     * Represents the action the service controller should take on each failure of a service. A 
+     * service is considered failed when it terminates without reporting a status of SERVICE_STOPPED 
+     * to the service controller.
+     * To configure additional circumstances under which the failure actions are to be executed, see 
+     * SERVICE_FAILURE_ACTIONS_FLAG.
+     */
+    public class SERVICE_FAILURE_ACTIONS extends ChangeServiceConfig2Info {
+        public static class ByReference extends SERVICE_FAILURE_ACTIONS implements Structure.ByReference {}
+        /**
+         * The time after which to reset the failure count to zero if there are no failures, in 
+         * seconds. Specify INFINITE to indicate that this value should never be reset.
+         */
+        public int dwResetPeriod;
+        /**
+         * The message to be broadcast to server users before rebooting in response to the 
+         * SC_ACTION_REBOOT service controller action.
+         * If this value is NULL, the reboot message is unchanged. If the value is an empty string 
+         * (""), the reboot message is deleted and no message is broadcast.
+         * This member can specify a localized string using the following format:
+         * @[path\]dllname,-strID
+         * The string with identifier strID is loaded from dllname; the path is optional. For more 
+         * information, see RegLoadMUIString.
+         * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
+         * Vista.
+         */
+        public String lpRebootMsg;
+        /**
+         * The command line of the process for the CreateProcess function to execute in response to 
+         * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same 
+         * account as the service.
+         * If this value is NULL, the command is unchanged. If the value is an empty string (""), 
+         * the command is deleted and no program is run when the service fails.
+         */
+        public String lpCommand;
+        /**
+         * The number of elements in the lpsaActions array.
+         * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure 
+         * actions are deleted.
+         */
+        public int cActions;
+        /**
+         * A pointer to an array of SC_ACTION structures.
+         * If this value is NULL, the cActions and dwResetPeriod members are ignored.
+         */
+        public SC_ACTION.ByReference lpsaActions;
+        
+        public SERVICE_FAILURE_ACTIONS() {
+        }
+        
+        public SERVICE_FAILURE_ACTIONS(Pointer p) {
+            super(p);
+            read();
+        }
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions" });
+        }
+    }
+
+    /**
+     * Represents an action that the service control manager can perform.
+     */
+    public class SC_ACTION extends Structure {
+        public static class ByReference extends SC_ACTION implements Structure.ByReference {}
+        /**
+         * The action to be performed. This member can be one of the following values from the 
+         * SC_ACTION_TYPE enumeration type.
+         */
+        public int type;
+        /**
+         * The time to wait before performing the specified action, in milliseconds.
+         */
+        public int delay;
+
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "type", "delay" });
+        }
+    }
+
+    /**
+     * Contains the failure actions flag setting of a service. This setting determines when failure 
+     * actions are to be executed.
+     */
+    public class SERVICE_FAILURE_ACTIONS_FLAG extends ChangeServiceConfig2Info {
+        /**
+         * If this member is TRUE and the service has configured failure actions, the failure 
+         * actions are queued if the service process terminates without reporting a status of 
+         * SERVICE_STOPPED or if it enters the SERVICE_STOPPED state but the dwWin32ExitCode member 
+         * of the SERVICE_STATUS structure is not ERROR_SUCCESS (0).
+         * If this member is FALSE and the service has configured failure actions, the failure 
+         * actions are queued only if the service terminates without reporting a status of 
+         * SERVICE_STOPPED.
+         * This setting is ignored unless the service has configured failure actions. For 
+         * information on configuring failure actions, see ChangeServiceConfig2.
+         */
+        public int fFailureActionsOnNonCrashFailures;
+        
+        protected List getFieldOrder() {
+            return Arrays.asList(new String[] { "fFailureActionsOnNonCrashFailures" });
+        }
+        
+        public SERVICE_FAILURE_ACTIONS_FLAG() {
+            super();
+        }
+        
+        public SERVICE_FAILURE_ACTIONS_FLAG(Pointer p) {
+            super(p);
+            read();
+        }
+    }
+
     //
     // Service flags for QueryServiceStatusEx
     //
@@ -288,6 +412,28 @@ public interface Winsvc {
     int SERVICE_ACCEPT_PRESHUTDOWN				= 0x00000100;
     int SERVICE_ACCEPT_TIMECHANGE				= 0x00000200;
     int SERVICE_ACCEPT_TRIGGEREVENT				= 0x00000400;
+
+    //
+    // ChangeServiceConfig2 dwInfoLevel values
+    //
+    int SERVICE_CONFIG_DESCRIPTION			= 0x00000001;
+    int SERVICE_CONFIG_FAILURE_ACTIONS			= 0x00000002;
+    int SERVICE_CONFIG_DELAYED_AUTO_START_INFO		= 0x00000003;
+    int SERVICE_CONFIG_FAILURE_ACTIONS_FLAG		= 0x00000004;
+    int SERVICE_CONFIG_SERVICE_SID_INFO		= 0x00000005;
+    int SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO	= 0x00000006;
+    int SERVICE_CONFIG_PRESHUTDOWN_INFO		= 0x00000007;
+    int SERVICE_CONFIG_TRIGGER_INFO			= 0x00000008;
+    int SERVICE_CONFIG_PREFERRED_NODE			= 0x00000009;
+    int SERVICE_CONFIG_LAUNCH_PROTECTED		= 0x0000000c;
+
+    //
+    // Service failure actions
+    //
+    int SC_ACTION_NONE					= 0x00000000;
+    int SC_ACTION_RESTART				= 0x00000001;
+    int SC_ACTION_REBOOT				= 0x00000002;
+    int SC_ACTION_RUN_COMMAND				= 0x00000003;
 	
     /**
      * The SC_STATUS_TYPE enumeration type contains values 
