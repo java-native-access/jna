@@ -25,7 +25,6 @@ import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
@@ -33,7 +32,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
-public interface WinDef extends StdCallLibrary {
+public interface WinDef {
 
     /** The max path. */
     int MAX_PATH = 260;

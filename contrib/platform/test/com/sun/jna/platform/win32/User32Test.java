@@ -35,6 +35,8 @@ import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.LRESULT;
+import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -45,6 +47,7 @@ import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -243,7 +246,7 @@ public class User32Test extends AbstractWin32TestSupport {
 		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
     }
 
-    @Ignore("Shutsdown the workstation")
+    @Ignore("Shuts down the workstation")
     @Test
     public final void testExitWindows() {
 		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
@@ -281,9 +284,12 @@ public class User32Test extends AbstractWin32TestSupport {
 		assertNotNull(explorerProc);
 
 		final DWORDByReference hIconNumber = new DWORDByReference();
-		long result = User32.INSTANCE.SendMessageTimeout(
-				explorerProc.getHWND(), WinUser.WM_GETICON, WinUser.ICON_BIG,
-				0, WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
+		LRESULT result = User32.INSTANCE
+                    .SendMessageTimeout(explorerProc.getHWND(),
+                                        WinUser.WM_GETICON,
+                                        new WPARAM(WinUser.ICON_BIG),
+                                        new LPARAM(0),
+                                        WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 
 		assertNotEquals(0, result);
 	}
@@ -292,11 +298,19 @@ public class User32Test extends AbstractWin32TestSupport {
 	public void testGetClassLongPtr() {
 		DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-		assertNotNull(explorerProc);
+		assertNotNull("Could not find explorer.exe process",
+                              explorerProc);
 
-		long result = User32.INSTANCE.GetClassLongPtr(explorerProc.getHWND(),
-				WinUser.GCLP_HMODULE);
+		ULONG_PTR result = User32.INSTANCE
+                    .GetClassLongPtr(explorerProc.getHWND(),
+                                     WinUser.GCLP_HMODULE);
 
-		assertNotEquals(0, result);
+		assertNotEquals(0, result.intValue());
+	}
+
+	@Test
+	public void testGetDesktopWindow() {
+		HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+		assertNotNull("Failed to get desktop window HWND", desktopWindow);
 	}
 }

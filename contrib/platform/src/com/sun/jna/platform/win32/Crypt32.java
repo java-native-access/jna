@@ -16,6 +16,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -27,7 +28,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Crypt32 extends StdCallLibrary {
 	
 	Crypt32 INSTANCE = (Crypt32) Native.loadLibrary("Crypt32",
-			Crypt32.class, W32APIOptions.UNICODE_OPTIONS);
+			Crypt32.class, W32APIOptions.DEFAULT_OPTIONS);
 	
 	/**
 	 * The CryptProtectData function performs encryption on the data in a DATA_BLOB
@@ -109,4 +110,27 @@ public interface Crypt32 extends StdCallLibrary {
 			CRYPTPROTECT_PROMPTSTRUCT pPromptStruct,
 			int dwFlags,
 			DATA_BLOB pDataOut);
+
+	/**
+	 * The CertAddEncodedCertificateToSystemStore function opens the specified
+	 * system store and adds the encoded certificate to it.
+	 * 
+	 * @param szCertStoreName
+	 *            A null-terminated string that contains the name of the system
+	 *            store for the encoded certificate.
+	 * @param pbCertEncoded
+	 *            A pointer to a buffer that contains the encoded certificate to
+	 *            add.
+	 * @param cbCertEncoded
+	 *            The size, in bytes, of the pbCertEncoded buffer.
+	 * @return If the function succeeds, the return value is TRUE.<br>
+	 *         If the function fails, the return value is FALSE.<br>
+	 *         CertAddEncodedCertificateToSystemStore depends on the functions
+	 *         listed in the following remarks for error handling. <br>
+	 *         Refer to those function topics for their respective error
+	 *         handling behaviors.<br>
+	 *         For extended error information, call GetLastError.
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/bb736347(v=vs.85).aspx">MSDN</a>
+	 */
+	boolean CertAddEncodedCertificateToSystemStore(String szCertStoreName, Pointer pbCertEncoded, int cbCertEncoded);
 }

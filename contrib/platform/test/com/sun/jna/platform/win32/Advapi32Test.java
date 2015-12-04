@@ -12,24 +12,54 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinBase.CREATE_FOR_IMPORT;
+import static com.sun.jna.platform.win32.WinBase.FILE_DIR_DISALOWED;
+import static com.sun.jna.platform.win32.WinBase.FILE_ENCRYPTABLE;
+import static com.sun.jna.platform.win32.WinBase.FILE_IS_ENCRYPTED;
+import static com.sun.jna.platform.win32.WinBase.FILE_READ_ONLY;
+import static com.sun.jna.platform.win32.WinNT.DACL_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.FILE_ALL_ACCESS;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_EXECUTE;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_READ;
+import static com.sun.jna.platform.win32.WinNT.FILE_GENERIC_WRITE;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_ALL;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_EXECUTE;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_READ;
+import static com.sun.jna.platform.win32.WinNT.GENERIC_WRITE;
+import static com.sun.jna.platform.win32.WinNT.GROUP_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.SACL_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.SE_RESTORE_NAME;
+import static com.sun.jna.platform.win32.WinNT.SE_SECURITY_NAME;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_ADJUST_PRIVILEGES;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_DUPLICATE;
+import static com.sun.jna.platform.win32.WinNT.TOKEN_IMPERSONATE;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
+import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
+import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
@@ -42,11 +72,10 @@ import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
-import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-import static com.sun.jna.platform.win32.WinNT.*;
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -356,8 +385,8 @@ public class Advapi32Test extends TestCase {
 
     public void testImpersonateLoggedOnUser() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNAAdvapi32TestImp");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNAAdvapi32TestImp";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
     	if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
@@ -1275,7 +1304,7 @@ public class Advapi32Test extends TestCase {
     public void testEncryptFile() throws Exception {
         // create a temp file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
 
         // encrypt a read only file
         file.setWritable(false);
@@ -1292,7 +1321,7 @@ public class Advapi32Test extends TestCase {
     public void testDecryptFile() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // decrypt a read only file
@@ -1312,7 +1341,7 @@ public class Advapi32Test extends TestCase {
 
         // create a temp file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
 
         // unencrypted file
         assertTrue(Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, lpStatus));
@@ -1338,7 +1367,7 @@ public class Advapi32Test extends TestCase {
         // create a temp dir
         String filePath = System.getProperty("java.io.tmpdir") + File.separator +
                 System.nanoTime();
-        WString DirPath = new WString(filePath);
+        String DirPath = filePath;
         File dir = new File(filePath);
         dir.mkdir();
 
@@ -1366,7 +1395,7 @@ public class Advapi32Test extends TestCase {
     public void testOpenEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1382,7 +1411,7 @@ public class Advapi32Test extends TestCase {
     public void testReadEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1395,9 +1424,12 @@ public class Advapi32Test extends TestCase {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer
+            public DWORD callback(Pointer pbData, Pointer
                     pvCallbackContext, ULONG ulLength) {
-                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                if (pbData == null) {
+                    throw new NullPointerException("Callback data unexpectedly missing");
+                }
+                byte[] arr = pbData.getByteArray(0, ulLength.intValue());
                 try {
                     outputStream.write(arr);
                 } catch (IOException e) {
@@ -1418,7 +1450,7 @@ public class Advapi32Test extends TestCase {
     public void testWriteEncryptedFileRaw() throws Exception {
         // create an encrypted file
         File file = createTempFile();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
@@ -1431,9 +1463,12 @@ public class Advapi32Test extends TestCase {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer
+            public DWORD callback(Pointer pbData, Pointer
                     pvCallbackContext, ULONG ulLength) {
-                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                if (pbData == null) {
+                    throw new NullPointerException("Callback data unexpectedly null");
+                }
+                byte[] arr = pbData.getByteArray(0, ulLength.intValue());
                 try {
                     outputStream.write(arr);
                 } catch (IOException e) {
@@ -1449,8 +1484,8 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
 
         // open file for import
-        WString lbFileName2 = new WString(System.getProperty("java.io.tmpdir") +
-                File.separator + "backup-" + file.getName());
+        String lbFileName2 = System.getProperty("java.io.tmpdir") +
+                File.separator + "backup-" + file.getName();
         ULONG ulFlags2 = new ULONG(CREATE_FOR_IMPORT);
         PointerByReference pvContext2 = new PointerByReference();
         assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.OpenEncryptedFileRaw(
@@ -1460,13 +1495,12 @@ public class Advapi32Test extends TestCase {
         final IntByReference elementsReadWrapper = new IntByReference(0);
         FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+            public DWORD callback(Pointer pbData, Pointer pvCallbackContext,
                                   ULONGByReference ulLength) {
                 int elementsRead = elementsReadWrapper.getValue();
                 int remainingElements = outputStream.size() - elementsRead;
                 int length = Math.min(remainingElements, ulLength.getValue().intValue());
-                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead,
-                        length);
+                pbData.write(0, outputStream.toByteArray(), elementsRead, length);
                 elementsReadWrapper.setValue(elementsRead + length);
                 ulLength.setValue(new ULONG(length));
                 return new DWORD(W32Errors.ERROR_SUCCESS);
@@ -1492,5 +1526,24 @@ public class Advapi32Test extends TestCase {
         }
         fileWriter.close();
         return file;
+    }
+    
+    public void testCreateProcessWithLogonW() {
+    	String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
+    	assertNotNull("No WINDIR value returned", winDir);
+    	assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
+    	
+    	STARTUPINFO si = new STARTUPINFO();
+    	si.lpDesktop = null;
+    	PROCESS_INFORMATION results = new PROCESS_INFORMATION();
+    	
+    	// i have the same combination on my luggage
+    	boolean result = Advapi32.INSTANCE.CreateProcessWithLogonW("A" + System.currentTimeMillis(), "localhost", "12345", Advapi32.LOGON_WITH_PROFILE, new File(winDir, "notepad.exe").getAbsolutePath(), "", 0, null, "", si, results); 
+    
+    	// we tried to run notepad as a bogus user, so it should fail.
+    	assertFalse("CreateProcessWithLogonW should have returned false because the username was bogus.", result);
+    	
+    	// should fail with "the user name or password is incorrect" (error 1326)
+    	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", W32Errors.ERROR_LOGON_FAILURE, Native.getLastError());
     }
 }

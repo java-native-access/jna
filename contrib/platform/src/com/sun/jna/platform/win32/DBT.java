@@ -22,7 +22,6 @@ import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Based on dbt.h (various types)
@@ -30,7 +29,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 @SuppressWarnings("serial")
-public interface DBT extends StdCallLibrary {
+public interface DBT {
 
     /** The dbt no disk space. */
     int DBT_NO_DISK_SPACE = 0x0047;

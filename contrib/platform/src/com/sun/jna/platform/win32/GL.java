@@ -12,12 +12,10 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.win32.StdCallLibrary;
-
 /**
  * Definitions for WinOpenGL
  */
-public interface GL extends StdCallLibrary {
+public interface GL {
     public final int GL_VENDOR = 0x1F00;
     public final int GL_RENDERER = 0x1F01;
     public final int GL_VERSION = 0x1F02;

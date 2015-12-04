@@ -30,8 +30,43 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Shell32 extends ShellAPI, StdCallLibrary {
 	
     Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
-    		W32APIOptions.UNICODE_OPTIONS);
-    
+    		W32APIOptions.DEFAULT_OPTIONS);
+
+	/**
+	 * No dialog box confirming the deletion of the objects will be displayed.
+	 */
+	int SHERB_NOCONFIRMATION = 0x00000001;
+
+	/**
+	 * No dialog box indicating the progress will be displayed.
+	 */
+	int SHERB_NOPROGRESSUI = 0x00000002;
+
+	/**
+	 * No sound will be played when the operation is complete.
+	 */
+	int SHERB_NOSOUND = 0x00000004;
+
+	/**
+	 * <p>
+	 * <strong>SEE_MASK_NOCLOSEPROCESS</strong> (0x00000040)
+	 * </p>
+	 * <p>
+	 * Use to indicate that the <strong>hProcess</strong> member receives the
+	 * process handle. This handle is typically used to allow an application to
+	 * find out when a process created with terminates. In some cases, such as
+	 * when execution is satisfied through a DDE conversation, no handle will be
+	 * returned. The calling application is responsible for closing the handle
+	 * when it is no longer needed.
+	 * </p>
+	 */
+	int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
+	
+	/**
+	 * Do not display an error message box if an error occurs.
+	 */
+	int SEE_MASK_FLAG_NO_UI = 0x00000400;
+	
     /**
      * This function can be used to copy, move, rename, or delete a file system object.
      * @param fileop
@@ -238,4 +273,52 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * 
      */
     UINT_PTR SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
+
+	/**
+	 * Empties the Recycle Bin on the specified drive.
+	 * 
+	 * @param hwnd
+	 *            A handle to the parent window of any dialog boxes that might
+	 *            be displayed during the operation.<br>
+	 *            This parameter can be NULL.
+	 * @param pszRootPath
+	 *            a null-terminated string of maximum length MAX_PATH that
+	 *            contains the path of the root<br>
+	 *            drive on which the Recycle Bin is located. This parameter can
+	 *            contain a string formatted with the drive,<br>
+	 *            folder, and subfolder names, for example c:\windows\system\,
+	 *            etc. It can also contain an empty string or<br>
+	 *            NULL. If this value is an empty string or NULL, all Recycle
+	 *            Bins on all drives will be emptied.
+	 * @param dwFlags
+	 *            a bitwise combination of SHERB_NOCONFIRMATION,
+	 *            SHERB_NOPROGRESSUI and SHERB_NOSOUND.<br>
+	 * @return Returns S_OK (0) if successful, or a COM-defined error value
+	 *         otherwise.<br>
+	 */
+	int SHEmptyRecycleBin(HANDLE hwnd, String pszRootPath, int dwFlags);
+
+	/**
+	 * @param lpExecInfo
+	 *            <p>
+	 *            Type: <strong>SHELLEXECUTEINFO*</strong>
+	 *            </p>
+	 *            <p>
+	 *            A pointer to a <a href=
+	 *            "https://msdn.microsoft.com/en-us/library/windows/desktop/bb759784(v=vs.85).aspx">
+	 *            <strong xmlns="http://www.w3.org/1999/xhtml">SHELLEXECUTEINFO
+	 *            </strong></a> structure that contains and receives information
+	 *            about the application being executed.
+	 *            </p>
+	 * @return
+	 * 		<p>
+	 *         Returns <strong>TRUE</strong> if successful; otherwise,
+	 *         <strong>FALSE</strong>. Call <a href=
+	 *         "https://msdn.microsoft.com/en-us/library/windows/desktop/ms679360(v=vs.85).aspx">
+	 *         <strong xmlns="http://www.w3.org/1999/xhtml">GetLastError
+	 *         </strong></a> for extended error information.
+	 *         </p>
+	 */
+	boolean ShellExecuteEx(ShellAPI.SHELLEXECUTEINFO lpExecInfo);
+
 }

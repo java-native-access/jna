@@ -2032,8 +2032,8 @@ public abstract class Advapi32Util {
 			repeat = false;
 			memory = new Memory(nLength);
 			IntByReference lpnSize = new IntByReference();
-			boolean succeded = Advapi32.INSTANCE.GetFileSecurity(new WString(
-					fileName), infoType, memory, nLength, lpnSize);
+			boolean succeded = Advapi32.INSTANCE.GetFileSecurity(
+					fileName, infoType, memory, nLength, lpnSize);
 
 			if (!succeded) {
 				int lastError = Kernel32.INSTANCE.GetLastError();
@@ -2100,7 +2100,7 @@ public abstract class Advapi32Util {
 
         final IntByReference lpnSize = new IntByReference();
         boolean succeeded = Advapi32.INSTANCE.GetFileSecurity(
-                new WString(absoluteFilePath),
+                absoluteFilePath,
                 infoType,
                 null,
                 0, lpnSize);
@@ -2114,8 +2114,8 @@ public abstract class Advapi32Util {
 
         final int nLength = lpnSize.getValue();
         final Memory securityDescriptorMemoryPointer = new Memory(nLength);
-        succeeded = Advapi32.INSTANCE.GetFileSecurity(new WString(
-                absoluteFilePath), infoType, securityDescriptorMemoryPointer, nLength, lpnSize);
+        succeeded = Advapi32.INSTANCE.GetFileSecurity(
+                absoluteFilePath, infoType, securityDescriptorMemoryPointer, nLength, lpnSize);
 
         if (!succeeded) {
             securityDescriptorMemoryPointer.clear();
@@ -2407,7 +2407,7 @@ public abstract class Advapi32Util {
      *         The file or directory to encrypt.
      */
     public static void encryptFile(File file) {
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         if (!Advapi32.INSTANCE.EncryptFile(lpFileName)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
@@ -2420,7 +2420,7 @@ public abstract class Advapi32Util {
      *         The file or directory to decrypt.
      */
     public static void decryptFile(File file) {
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         if (!Advapi32.INSTANCE.DecryptFile(lpFileName, new DWORD(0))) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
@@ -2435,7 +2435,7 @@ public abstract class Advapi32Util {
      */ 
     public static int fileEncryptionStatus(File file) {
         DWORDByReference status = new DWORDByReference();
-        WString lpFileName = new WString(file.getAbsolutePath());
+        String lpFileName = file.getAbsolutePath();
         if (!Advapi32.INSTANCE.FileEncryptionStatus(lpFileName, status)) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
@@ -2452,7 +2452,7 @@ public abstract class Advapi32Util {
      *         TRUE to disable encryption. FALSE to enable it.
      */
     public static void disableEncryption(File directory, boolean disable) {
-        WString dirPath = new WString(directory.getAbsolutePath());
+        String dirPath = directory.getAbsolutePath();
         if (!Advapi32.INSTANCE.EncryptionDisable(dirPath, disable)) {
             throw new Win32Exception(Native.getLastError());
         }
@@ -2484,7 +2484,7 @@ public abstract class Advapi32Util {
         }
         
         // open encrypted file for export
-        WString srcFileName = new WString(src.getAbsolutePath());
+        String srcFileName = src.getAbsolutePath();
         PointerByReference pvContext = new PointerByReference();
         if (Advapi32.INSTANCE.OpenEncryptedFileRaw(srcFileName, readFlag,
                 pvContext) != W32Errors.ERROR_SUCCESS) {
@@ -2495,9 +2495,9 @@ public abstract class Advapi32Util {
         final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         FE_EXPORT_FUNC pfExportCallback = new FE_EXPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext,
+            public DWORD callback(Pointer pbData, Pointer pvCallbackContext,
                                   ULONG ulLength) {
-                byte[] arr = pbData.getPointer().getByteArray(0, ulLength.intValue());
+                byte[] arr = pbData.getByteArray(0, ulLength.intValue());
                 try {
                     outputStream.write(arr);
                 } catch (IOException e) {
@@ -2521,8 +2521,8 @@ public abstract class Advapi32Util {
         Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext.getValue());
 
         // open file for import
-        WString destFileName = new WString(destDir.getAbsolutePath() + File.separator
-                        + src.getName());
+        String destFileName = destDir.getAbsolutePath() + File.separator
+                        + src.getName();
         pvContext = new PointerByReference();
         if (Advapi32.INSTANCE.OpenEncryptedFileRaw(destFileName, writeFlag,
                 pvContext) != W32Errors.ERROR_SUCCESS) {
@@ -2533,12 +2533,12 @@ public abstract class Advapi32Util {
         final IntByReference elementsReadWrapper = new IntByReference(0);
         FE_IMPORT_FUNC pfImportCallback = new FE_IMPORT_FUNC() {
             @Override
-            public DWORD callback(ByteByReference pbData, Pointer pvCallbackContext, 
+            public DWORD callback(Pointer pbData, Pointer pvCallbackContext, 
                                   ULONGByReference ulLength) {
                 int elementsRead = elementsReadWrapper.getValue();
                 int remainingElements = outputStream.size() - elementsRead;
                 int length = Math.min(remainingElements, ulLength.getValue().intValue());
-                pbData.getPointer().write(0, outputStream.toByteArray(), elementsRead, 
+                pbData.write(0, outputStream.toByteArray(), elementsRead, 
                         length);
                 elementsReadWrapper.setValue(elementsRead + length);
                 ulLength.setValue(new ULONG(length));

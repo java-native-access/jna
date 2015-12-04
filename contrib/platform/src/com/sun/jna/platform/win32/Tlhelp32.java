@@ -15,12 +15,11 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Interface for the Tlhelp32.h header file.
  */
-public interface Tlhelp32 extends StdCallLibrary {
+public interface Tlhelp32 {
 
     /**
      * Includes all heaps of the process specified in th32ProcessID in the snapshot. To enumerate the heaps, see
@@ -39,8 +38,20 @@ public interface Tlhelp32 extends StdCallLibrary {
     WinDef.DWORD TH32CS_SNAPTHREAD   = new WinDef.DWORD(0x00000004);
 
     /**
-     * Includes all modules of the process specified in th32ProcessID in the snapshot. To enumerate the modules, see
-     * Module32First. If the function fails with ERROR_BAD_LENGTH, retry the function until it succeeds.
+     *
+     * Used with Kernel32.CreateToolhelp32Snapshot<br>
+     * Includes all modules of the process specified in th32ProcessID in the
+     * snapshot. <br>
+     * To enumerate the modules, see Module32First.<br>
+     * If the function fails with ERROR_BAD_LENGTH, retry the function until it
+     * succeeds. <br>
+     * 64-bit Windows: Using this flag in a 32-bit process includes the 32-bit
+     * modules of the process specified in th32ProcessID, while using it in a
+     * 64-bit process includes the 64-bit modules.<br>
+     * To include the 32-bit modules of the process specified in th32ProcessID
+     * from a 64-bit process, use the TH32CS_SNAPMODULE32 flag.
+     *
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms682489(v=vs.85).aspx">MSDN</a>
      */
     WinDef.DWORD TH32CS_SNAPMODULE   = new WinDef.DWORD(0x00000008);
 
@@ -61,6 +72,8 @@ public interface Tlhelp32 extends StdCallLibrary {
      * Indicates that the snapshot handle is to be inheritable.
      */
     WinDef.DWORD TH32CS_INHERIT      = new WinDef.DWORD(0x80000000);
+
+    int MAX_MODULE_NAME32 = 255;
 
     /**
      * Describes an entry from a list of the processes residing in the system address space when a snapshot was taken.
@@ -138,7 +151,7 @@ public interface Tlhelp32 extends StdCallLibrary {
          * retrieve the full path of the executable file for a 64-bit process.
          */
         public char[] szExeFile = new char[WinDef.MAX_PATH];
-        
+
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID", "th32ModuleID", "cntThreads", "th32ParentProcessID", "pcPriClassBase", "dwFlags", "szExeFile" });
         }

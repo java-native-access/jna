@@ -18,14 +18,13 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Wdm.h.
  * Microsoft Windows DDK.
  * @author dblock[at]dblock.org
  */
-public interface Wdm extends StdCallLibrary {
+public interface Wdm {
 	
     /**
      * The KEY_BASIC_INFORMATION structure defines a subset of 

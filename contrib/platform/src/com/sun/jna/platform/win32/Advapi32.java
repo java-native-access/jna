@@ -17,8 +17,10 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -48,7 +50,7 @@ import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
  */
 public interface Advapi32 extends StdCallLibrary {
 	Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32",
-			Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
+			Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	public static final int MAX_KEY_LENGTH = 255;
 	public static final int MAX_VALUE_NAME = 16383;
@@ -63,6 +65,36 @@ public interface Advapi32 extends StdCallLibrary {
 	public static final int RRF_RT_REG_NONE = 0x00000001;
 	public static final int RRF_RT_REG_QWORD = 0x00000040;
 	public static final int RRF_RT_REG_SZ = 0x00000002;
+
+	/**
+	 * LOGON_WITH_PROFILE: 0x00000001<br>
+	 * Log on, then load the user profile in the HKEY_USERS registry key.<br>
+	 * The function returns after the profile is loaded. <br>
+	 * Loading the profile can be time-consuming, so it is best to use this
+	 * value only if you must access the information in the HKEY_CURRENT_USER
+	 * registry key.<br>
+	 * Windows Server 2003: The profile is unloaded after the new process is
+	 * terminated, whether or not it has created child processes.<br>
+	 * Windows XP: The profile is unloaded after the new process and all child
+	 * processes it has created are terminated.<br>
+	 */
+	int LOGON_WITH_PROFILE = 0x00000001;
+
+	/**
+	 * LOGON_NETCREDENTIALS_ONLY: 0x00000002<br>
+	 * Log on, but use the specified credentials on the network only.<br>
+	 * The new process uses the same token as the caller, but the system creates
+	 * a new logon session within LSA, and the process uses the specified
+	 * credentials as the default credentials. <br>
+	 * This value can be used to create a process that uses a different set of
+	 * credentials locally than it does remotely.<br>
+	 * This is useful in inter-domain scenarios where there is no trust
+	 * relationship.<br>
+	 * The system does not validate the specified credentials.<br>
+	 * Therefore, the process can start, but it may not have access to network
+	 * resources.
+	 */
+	int LOGON_NETCREDENTIALS_ONLY = 0x00000002;
 
 	/**
 	 * Retrieves the name of the user associated with the current thread.
@@ -1549,6 +1581,10 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            otherwise, none of the descriptor is returned.
 	 * @return whether the call succeeded
 	 */
+	public boolean GetFileSecurity(String lpFileName,
+			int RequestedInformation, Pointer pointer, int nLength,
+			IntByReference lpnLengthNeeded);
+        /** @deprecated Use the String version */
 	public boolean GetFileSecurity(WString lpFileName,
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
@@ -1764,6 +1800,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean EncryptFile(String lpFileName);
+        /** @deprecated Use the String version */
 	public boolean EncryptFile(WString lpFileName);
 
 	/**
@@ -1777,6 +1815,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean DecryptFile(String lpFileName, DWORD dwReserved);
+        /** @deprecated Use the String version */
 	public boolean DecryptFile(WString lpFileName, DWORD dwReserved);
 
 	/**
@@ -1791,6 +1831,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean FileEncryptionStatus(String lpFileName, DWORDByReference lpStatus);
+        /** @deprecated Use the String version */
 	public boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
 
 	/**
@@ -1808,6 +1850,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 * function fails, the return value is zero. To get extended error
 	 * information, call GetLastError.
 	 */
+	public boolean EncryptionDisable(String DirPath, boolean Disable);
+        /** @deprecated Use the String version */
 	public boolean EncryptionDisable(WString DirPath, boolean Disable);
 
 	/**
@@ -1830,8 +1874,11 @@ public interface Advapi32 extends StdCallLibrary {
 	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
 	 * text description of the error.
 	 */
+	public int OpenEncryptedFileRaw(String lpFileName, ULONG ulFlags,
+                                        PointerByReference pvContext);
+        /** @deprecated Use the String version */
 	public int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags,
-                                  PointerByReference pvContext);
+                                        PointerByReference pvContext);
 
 	/**
 	 * Backs up (export) encrypted files. This is one of a group of Encrypted File
@@ -1902,4 +1949,311 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         OpenEncryptedFileRaw function returns the context block.
 	 */
 	public void CloseEncryptedFileRaw(Pointer pvContext);
+	
+	/**
+	 * <code>
+	        BOOL WINAPI CreateProcessWithLogonW(
+	          _In_         LPCWSTR lpUsername,
+	          _In_opt_     LPCWSTR lpDomain,
+	          _In_         LPCWSTR lpPassword,
+	          _In_         DWORD dwLogonFlags,
+	          _In_opt_     LPCWSTR lpApplicationName,
+	          _Inout_opt_  LPWSTR lpCommandLine,
+	          _In_         DWORD dwCreationFlags,
+	          _In_opt_     LPVOID lpEnvironment,
+	          _In_opt_     LPCWSTR lpCurrentDirectory,
+	          _In_         LPSTARTUPINFOW lpStartupInfo,
+	          _Out_        LPPROCESS_INFORMATION lpProcessInfo
+	        );
+	 * </code>
+	 * 
+	 * @param lpUsername
+	 *            [in]<br>
+	 *            The name of the user. This is the name of the user account to
+	 *            log on to. <br>
+	 *            If you use the UPN format, user@DNS_domain_name, the lpDomain
+	 *            parameter must be NULL.<br>
+	 *            The user account must have the Log On Locally permission on
+	 *            the local computer. <br>
+	 *            This permission is granted to all users on workstations and
+	 *            servers, but only to administrators on domain controllers.
+	 * @param lpDomain
+	 *            [in, optional]<br>
+	 *            The name of the domain or server whose account database
+	 *            contains the lpUsername account. <br>
+	 *            If this parameter is NULL, the user name must be specified in
+	 *            UPN format.
+	 * @param lpPassword
+	 *            [in]<br>
+	 *            The clear-text password for the lpUsername account.
+	 * @param dwLogonFlags
+	 *            [in]<br>
+	 *            The logon option. This parameter can be 0 (zero) or one of the
+	 *            following values. <br>
+	 *            LOGON_WITH_PROFILE: 0x00000001<br>
+	 *            Log on, then load the user profile in the HKEY_USERS registry
+	 *            key.<br>
+	 *            The function returns after the profile is loaded. <br>
+	 *            Loading the profile can be time-consuming, so it is best to
+	 *            use this value only if you must access the information in the
+	 *            HKEY_CURRENT_USER registry key.<br>
+	 *            Windows Server 2003: The profile is unloaded after the new
+	 *            process is terminated, whether or not it has created child
+	 *            processes.<br>
+	 *            Windows XP: The profile is unloaded after the new process and
+	 *            all child processes it has created are terminated.<br>
+	 *            <br>
+	 *            LOGON_NETCREDENTIALS_ONLY: 0x00000002<br>
+	 *            Log on, but use the specified credentials on the network only.
+	 *            <br>
+	 *            The new process uses the same token as the caller, but the
+	 *            system creates a new logon session within LSA, and the process
+	 *            uses the specified credentials as the default credentials.
+	 *            <br>
+	 *            This value can be used to create a process that uses a
+	 *            different set of credentials locally than it does remotely.
+	 *            <br>
+	 *            This is useful in inter-domain scenarios where there is no
+	 *            trust relationship.<br>
+	 *            The system does not validate the specified credentials.<br>
+	 *            Therefore, the process can start, but it may not have access
+	 *            to network resources.
+	 * @param lpApplicationName
+	 *            [in, optional]<br>
+	 *            The name of the module to be executed. This module can be a
+	 *            Windows-based application.<br>
+	 *            It can be some other type of module (for example, MS-DOS or
+	 *            OS/2) if the appropriate subsystem is available on the local
+	 *            computer. The string can specify the full path and file name
+	 *            of the module to execute or it can specify a partial name.
+	 *            <br>
+	 *            If it is a partial name, the function uses the current drive
+	 *            and current directory to complete the specification. <br>
+	 *            The function does not use the search path. This parameter must
+	 *            include the file name extension; no default extension is
+	 *            assumed. The lpApplicationName parameter can be NULL, and the
+	 *            module name must be the first white space-delimited token in
+	 *            the lpCommandLine string.<br>
+	 *            If you are using a long file name that contains a space, use
+	 *            quoted strings to indicate where the file name ends and the
+	 *            arguments begin; otherwise, the file name is ambiguous. For
+	 *            example, the following string can be interpreted in different
+	 *            ways:<br>
+	 *            "c:\program files\sub dir\program name"<br>
+	 *            The system tries to interpret the possibilities in the
+	 *            following order:<br>
+	 *            <br>
+	 *            c:\program.exe files\sub dir\program name<br>
+	 *            c:\program files\sub.exe dir\program name<br>
+	 *            c:\program files\sub dir\program.exe name<br>
+	 *            c:\program files\sub dir\program name.exe<br>
+	 *            <br>
+	 *            If the executable module is a 16-bit application,
+	 *            lpApplicationName should be NULL, and the string pointed to by
+	 *            lpCommandLine should specify the executable module and its
+	 *            arguments.
+	 * @param lpCommandLine
+	 *            [in, out, optional]<br>
+	 *            The command line to be executed. The maximum length of this
+	 *            string is 1024 characters. <br>
+	 *            If lpApplicationName is NULL, the module name portion of
+	 *            lpCommandLine is limited to MAX_PATH characters.<br>
+	 *            The function can modify the contents of this string. <br>
+	 *            Therefore, this parameter cannot be a pointer to read-only
+	 *            memory (such as a const variable or a literal string).<br>
+	 *            If this parameter is a constant string, the function may cause
+	 *            an access violation.<br>
+	 *            The lpCommandLine parameter can be NULL, and the function uses
+	 *            the string pointed to by lpApplicationNameas the command line.
+	 *            <br>
+	 *            <br>
+	 *            If both lpApplicationName and lpCommandLine are non-NULL,
+	 *            *lpApplicationName specifies the module to execute, and
+	 *            *lpCommandLine specifies the command line.<br>
+	 *            The new process can use GetCommandLine to retrieve the entire
+	 *            command line.<br>
+	 *            Console processes written in C can use the argc and argv
+	 *            arguments to parse the command line. <br>
+	 *            Because argv[0] is the module name, C programmers typically
+	 *            repeat the module name as the first token in the command line.
+	 *            <br>
+	 *            If lpApplicationName is NULL, the first white space-delimited
+	 *            token of the command line specifies the module name.<br>
+	 *            If you are using a long file name that contains a space, use
+	 *            quoted strings to indicate where the file name ends and the
+	 *            arguments begin (see the explanation for the lpApplicationName
+	 *            parameter). If the file name does not contain an extension,
+	 *            .exe is appended. Therefore, if the file name extension is
+	 *            .com, this parameter must include the .com extension. If the
+	 *            file name ends in a period with no extension, or if the file
+	 *            name contains a path, .exe is not appended. If the file name
+	 *            does not contain a directory path, the system searches for the
+	 *            executable file in the following sequence:<br>
+	 *            <br>
+	 *            1. The directory from which the application loaded.<br>
+	 *            2. The current directory for the parent process.<br>
+	 *            3. The 32-bit Windows system directory. Use the
+	 *            GetSystemDirectory function to get the path of this directory.
+	 *            <br>
+	 *            4. The 16-bit Windows system directory. There is no function
+	 *            that obtains the path of this directory, but it is searched.
+	 *            <br>
+	 *            5. The Windows directory. Use the GetWindowsDirectory function
+	 *            to get the path of this directory.<br>
+	 *            6. The directories that are listed in the PATH environment
+	 *            variable. Note that this function does not search the
+	 *            per-application path specified by the App Paths registry key.
+	 *            To include this per-application path in the search sequence,
+	 *            use the ShellExecute function.<br>
+	 *            <br>
+	 *            The system adds a null character to the command line string to
+	 *            separate the file name from the arguments. This divides the
+	 *            original string into two strings for internal processing.<br>
+	 * @param dwCreationFlags
+	 *            The flags that control how the process is created. <br>
+	 *            The CREATE_DEFAULT_ERROR_MODE, CREATE_NEW_CONSOLE, and
+	 *            CREATE_NEW_PROCESS_GROUP flags are enabled by default. <br>
+	 *            Even if you do not set the flag, the system functions as if it
+	 *            were set. You can specify additional flags as noted.<br>
+	 *            <br>
+	 *            CREATE_DEFAULT_ERROR_MODE: 0x04000000<br>
+	 *            The new process does not inherit the error mode of the calling
+	 *            process. <br>
+	 *            Instead, CreateProcessWithLogonW gives the new process the
+	 *            current default error mode. <br>
+	 *            An application sets the current default error mode by calling
+	 *            SetErrorMode. This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_NEW_CONSOLE: 0x00000010<br>
+	 *            The new process has a new console, instead of inheriting the
+	 *            parent's console. This flag cannot be used with the
+	 *            DETACHED_PROCESS flag.<br>
+	 *            This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_NEW_PROCESS_GROUP: 0x00000200<br>
+	 *            The new process is the root process of a new process group.
+	 *            <br>
+	 *            The process group includes all processes that are descendants
+	 *            of this root process.<br>
+	 *            The process identifier of the new process group is the same as
+	 *            the process identifier, which is returned in the lpProcessInfo
+	 *            parameter.<br>
+	 *            Process groups are used by the GenerateConsoleCtrlEvent
+	 *            function to enable sending a CTRL+C or CTRL+BREAK signal to a
+	 *            group of console processes.<br>
+	 *            This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_SEPARATE_WOW_VDM: 0x00000800<br>
+	 *            This flag is only valid starting a 16-bit Windows-based
+	 *            application.<br>
+	 *            If set, the new process runs in a private Virtual DOS Machine
+	 *            (VDM).<br>
+	 *            By default, all 16-bit Windows-based applications run in a
+	 *            single, shared VDM.<br>
+	 *            The advantage of running separately is that a crash only
+	 *            terminates the single VDM; any other programs running in
+	 *            distinct VDMs continue to function normally.<br>
+	 *            Also, 16-bit Windows-based applications that run in separate
+	 *            VDMs have separate input queues, which means that if one
+	 *            application stops responding momentarily, applications in
+	 *            separate VDMs continue to receive input. <br>
+	 *            CREATE_SUSPENDED: 0x00000004<br>
+	 *            The primary thread of the new process is created in a
+	 *            suspended state, and does not run until the ResumeThread
+	 *            function is called.<br>
+	 *            <br>
+	 *            CREATE_UNICODE_ENVIRONMENT: 0x00000400<br>
+	 *            Indicates the format of the lpEnvironment parameter.<br>
+	 *            If this flag is set, the environment block pointed to by
+	 *            lpEnvironment uses Unicode characters. <br>
+	 *            Otherwise, the environment block uses ANSI characters. <br>
+	 *            EXTENDED_STARTUPINFO_PRESENT: 0x00080000<br>
+	 *            The process is created with extended startup information; the
+	 *            lpStartupInfo parameter specifies a STARTUPINFOEX structure.
+	 *            <br>
+	 *            Windows Server 2003 and Windows XP: This value is not
+	 *            supported.<br>
+	 * @param lpEnvironment
+	 *            [in, optional]<br>
+	 *            A pointer to an environment block for the new process.<br>
+	 *            If this parameter is NULL, the new process uses an environment
+	 *            created from the profile of the user specified by lpUsername.
+	 *            An environment block consists of a null-terminated block of
+	 *            null-terminated strings.<br>
+	 *            Each string is in the following form:<br>
+	 *            name=value<br>
+	 *            Because the equal sign (=) is used as a separator, it must not
+	 *            be used in the name of an environment variable.<br>
+	 *            An environment block can contain Unicode or ANSI characters.
+	 *            <br>
+	 *            If the environment block pointed to by lpEnvironment contains
+	 *            Unicode characters, ensure that dwCreationFlags includes
+	 *            CREATE_UNICODE_ENVIRONMENT.<br>
+	 *            If this parameter is NULL and the environment block of the
+	 *            parent process contains Unicode characters, you must also
+	 *            ensure that dwCreationFlags includes
+	 *            CREATE_UNICODE_ENVIRONMENT.<br>
+	 *            An ANSI environment block is terminated by two 0 (zero) bytes:
+	 *            one for the last string and one more to terminate the block.
+	 *            <br>
+	 *            A Unicode environment block is terminated by four zero bytes:
+	 *            two for the last string and two more to terminate the block.
+	 *            <br>
+	 *            To retrieve a copy of the environment block for a specific
+	 *            user, use the CreateEnvironmentBlock function.<br>
+	 * @param lpCurrentDirectory
+	 *            [in, optional]<br>
+	 *            The full path to the current directory for the process.<br>
+	 *            The string can also specify a UNC path.<br>
+	 *            If this parameter is NULL, the new process has the same
+	 *            current drive and directory as the calling process.<br>
+	 *            This feature is provided primarily for shells that need to
+	 *            start an application, and specify its initial drive and
+	 *            working directory.<br>
+	 * @param lpStartupInfo
+	 *            [in]<br>
+	 *            A pointer to a STARTUPINFO or STARTUPINFOEX structure. <br>
+	 *            The application must add permission for the specified user
+	 *            account to the specified window station and desktop, even for
+	 *            WinSta0\Default.<br>
+	 *            If the lpDesktop member is NULL or an empty string, the new
+	 *            process inherits the desktop and window station of its parent
+	 *            process.<br>
+	 *            The application must add permission for the specified user
+	 *            account to the inherited window station and desktop.<br>
+	 *            Windows XP: CreateProcessWithLogonW adds permission for the
+	 *            specified user account to the inherited window station and
+	 *            desktop.<br>
+	 *            Handles in STARTUPINFO or STARTUPINFOEX must be closed with
+	 *            CloseHandle when they are no longer needed.<br>
+	 *            Important If the dwFlags member of the STARTUPINFO structure
+	 *            specifies STARTF_USESTDHANDLES, the standard handle fields are
+	 *            copied unchanged to the child process without validation.<br>
+	 *            The caller is responsible for ensuring that these fields
+	 *            contain valid handle values. Incorrect values can cause the
+	 *            child process to misbehave or crash.<br>
+	 *            Use the Application Verifier runtime verification tool to
+	 *            detect invalid handles.
+	 * @param lpProcessInfo
+	 *            [out]<br>
+	 *            A pointer to a PROCESS_INFORMATION structure that receives
+	 *            identification information for the new process, including a
+	 *            handle to the process.<br>
+	 *            Handles in PROCESS_INFORMATION must be closed with the
+	 *            CloseHandle function when they are not needed.<br>
+	 * @return If the function succeeds, the return value is nonzero.<br>
+	 *         If the function fails, the return value is 0 (zero).<br>
+	 *         To get extended error information, call GetLastError.<br>
+	 *         Note that the function returns before the process has finished
+	 *         initialization.<br>
+	 *         If a required DLL cannot be located or fails to initialize, the
+	 *         process is terminated.<br>
+	 *         To get the termination status of a process, call
+	 *         GetExitCodeProcess.
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682431%28v=vs.85%29.aspx">MSDN</a>
+	 */
+	boolean CreateProcessWithLogonW(String lpUsername, String lpDomain, String lpPassword, int dwLogonFlags,
+			String lpApplicationName, String lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
+			String lpCurrentDirectory, STARTUPINFO lpStartupInfo, PROCESS_INFORMATION lpProcessInfo);
+
 }

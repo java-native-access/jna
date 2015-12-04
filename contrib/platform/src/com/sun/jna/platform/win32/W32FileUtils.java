@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 import java.io.IOException;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.FileUtils;
 
 public class W32FileUtils extends FileUtils {
@@ -32,7 +31,7 @@ public class W32FileUtils extends FileUtils {
         for (int i=0;i < paths.length;i++) {
             paths[i] = files[i].getAbsolutePath();
         }
-        fileop.pFrom = new WString(fileop.encodePaths(paths));
+        fileop.pFrom = fileop.encodePaths(paths);
         fileop.fFlags = ShellAPI.FOF_ALLOWUNDO|ShellAPI.FOF_NO_UI;
         int ret = shell.SHFileOperation(fileop);
         if (ret != 0) {

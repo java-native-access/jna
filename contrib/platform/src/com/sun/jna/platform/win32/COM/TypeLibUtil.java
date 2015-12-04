@@ -520,7 +520,7 @@ public class TypeLibUtil {
      * 
      * @return the help context
      */
-    public long getHelpContext() {
+    public int getHelpContext() {
         return helpContext;
     }
 

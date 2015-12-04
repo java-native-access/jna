@@ -93,7 +93,7 @@ public interface Winspool extends StdCallLibrary {
     int PRINTER_ENUM_HIDE = 0x01000000;
 
     Winspool INSTANCE = (Winspool) Native.loadLibrary("Winspool.drv",
-            Winspool.class, W32APIOptions.UNICODE_OPTIONS);
+            Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The EnumPrinters function enumerates available printers, print servers,

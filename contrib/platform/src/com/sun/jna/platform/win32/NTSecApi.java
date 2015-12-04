@@ -21,14 +21,13 @@ import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.PSID;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from NTSecApi.h
  * Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface NTSecApi extends StdCallLibrary {
+public interface NTSecApi {
 	
     /**
      * The LSA_UNICODE_STRING structure is used by various Local Security Authority (LSA) 
