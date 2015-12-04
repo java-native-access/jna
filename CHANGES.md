@@ -12,7 +12,7 @@ Features
 * [#512](https://github.com/java-native-access/jna/pull/512): Make loading debug flags mutable [@lwahonen](https://github.com/lwahonen).
 * [#514](https://github.com/java-native-access/jna/pull/514): Added `host_processor_info` to `com.sun.jna.platform.mac.SystemB`  - [@dbwiddis](https://github.com/dbwiddis).
 * [#519](https://github.com/java-native-access/jna/pull/519): Added JNA functional overview - [@twall](https://github.com/twall).
-* [#528](https://github.com/java-native-access/jna/pull/528): Add an ant task (idea-jar) that creates a convenience jar that contains all native dispatch libraries. If you want to hacking on JNA with an IDE, just include idea-dispatch.jar to your classpath and create a module from the JNA src directory. - [@lwahonen](https://github.com/lwahonen).
+* [#528](https://github.com/java-native-access/jna/pull/528): Added idea-jar ant task that creates a convenience jar that contains all native dispatch libraries - [@lwahonen](https://github.com/lwahonen).
 
 Bug Fixes
 ---------
