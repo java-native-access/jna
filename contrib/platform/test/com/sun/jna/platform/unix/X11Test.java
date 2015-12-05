@@ -14,6 +14,9 @@ package com.sun.jna.platform.unix;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
+
 /**
  * Exercise the {@link X11} class.
  *
@@ -22,10 +25,43 @@ import junit.framework.TestCase;
 // @SuppressWarnings("unused")
 public class X11Test extends TestCase {
 
+    private X11.Display display = null;
+    private X11.Window root = null;
+
+    protected void setUp() {
+        display = X11.INSTANCE.XOpenDisplay(null);
+        if (display == null) {
+            throw new IllegalStateException("Can't open default display");
+        }
+        root = X11.INSTANCE.XRootWindow(display, X11.INSTANCE.XDefaultScreen(display));
+        if (root == null) {
+            throw new IllegalStateException("Can't find root window");
+        }
+    }
+
+    protected void tearDown() {
+        if (display != null) {
+            X11.INSTANCE.XCloseDisplay(display);
+        }
+    }
+
     public void testXrender() {
         X11.Xrender.XRenderPictFormat s = new X11.Xrender.XRenderPictFormat();
         s.getPointer().setInt(0, 25);
         s.read();
+    }
+
+    public void testXFetchName() {
+        PointerByReference pref = new PointerByReference();
+        int status = X11.INSTANCE.XFetchName(display, root, pref);
+        try {
+            assertEquals("Bad status for XFetchName", 0, status);
+        }
+        finally {
+            if (pref.getValue() != null) {
+                X11.INSTANCE.XFree(pref.getValue());
+            }
+        }
     }
 
     public static void main(java.lang.String[] argList) {
