@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.unix;
 
+import java.awt.GraphicsEnvironment;
 import junit.framework.TestCase;
 
 import com.sun.jna.Pointer;
@@ -42,6 +43,13 @@ public class X11Test extends TestCase {
     protected void tearDown() {
         if (display != null) {
             X11.INSTANCE.XCloseDisplay(display);
+        }
+    }
+
+    @Override
+    protected void runTest() throws Throwable {
+        if (!GraphicsEnvironment.isHeadless()) {
+            super.runTest();
         }
     }
 
