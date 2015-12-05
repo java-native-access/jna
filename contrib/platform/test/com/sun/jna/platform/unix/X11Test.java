@@ -30,13 +30,15 @@ public class X11Test extends TestCase {
     private X11.Window root = null;
 
     protected void setUp() {
-        display = X11.INSTANCE.XOpenDisplay(null);
-        if (display == null) {
-            throw new IllegalStateException("Can't open default display");
-        }
-        root = X11.INSTANCE.XRootWindow(display, X11.INSTANCE.XDefaultScreen(display));
-        if (root == null) {
-            throw new IllegalStateException("Can't find root window");
+        if (!GraphicsEnvironment.isHeadless()) {
+            display = X11.INSTANCE.XOpenDisplay(null);
+            if (display == null) {
+                throw new IllegalStateException("Can't open default display");
+            }
+            root = X11.INSTANCE.XRootWindow(display, X11.INSTANCE.XDefaultScreen(display));
+            if (root == null) {
+                throw new IllegalStateException("Can't find root window");
+            }
         }
     }
 
