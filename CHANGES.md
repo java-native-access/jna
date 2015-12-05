@@ -22,6 +22,7 @@ Features
 * [#547](https://github.com/java-native-access/jna/pull/547): Added `GetSystemTimes` to `com.sun.jna.platform.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#548](https://github.com/java-native-access/jna/pull/548): Return 64-bit unsigned integer from `com.sun.jna.platform.win32.WinBase.FILETIME` - [@dbwiddis](https://github.com/dbwiddis).
 * [#524](https://github.com/java-native-access/jna/pull/524): Added IShellFolder interface plus necessary utility functions to Windows platform, and a sample for enumerating objects in My Computer - [@lwahonen](https://github.com/lwahonen).
+* [#484](https://github.com/twall/jna/pull/484): Added `XFetchName` to `X11` interface - [@pinaf](https://github.com/pinaf).
 
 Bug Fixes
 ---------
