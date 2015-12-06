@@ -40,7 +40,7 @@ public class StdCallFunctionMapper implements FunctionMapper {
             return Pointer.SIZE;
         }
         try {
-            return Native.getNativeSize(cls);
+            return Math.max(4, Native.getNativeSize(cls));
         }
         catch(IllegalArgumentException e) {
             throw new IllegalArgumentException("Unknown native stack allocation size for " + cls);
@@ -59,12 +59,18 @@ public class StdCallFunctionMapper implements FunctionMapper {
         String decorated = name + "@" + pop;
         int conv = StdCallLibrary.STDCALL_CONVENTION;
         try {
+            if (Native.DEBUG_LOAD) {
+                System.out.println("Trying " + decorated);
+            }
             name = library.getFunction(decorated, conv).getName();
 
         }
         catch(UnsatisfiedLinkError e) {
             // try with an explicit underscore
             try {
+                if (Native.DEBUG_LOAD) {
+                    System.out.println("Trying _" + decorated);
+                }
                 name = library.getFunction("_" + decorated, conv).getName();
             }
             catch(UnsatisfiedLinkError e2) {

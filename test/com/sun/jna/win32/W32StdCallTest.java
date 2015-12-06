@@ -24,6 +24,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 /**
@@ -50,6 +51,7 @@ public class W32StdCallTest extends TestCase {
             }
         }
         int returnInt32ArgumentStdCall(int arg);
+        short returnInt16ArgumentStdCall(short arg1, short arg2, Pointer buf, short len);
         TestStructure.ByValue returnStructureByValueArgumentStdCall(TestStructure.ByValue arg);
         interface Int32Callback extends StdCallCallback {
             int callback(int arg, int arg2);
@@ -125,6 +127,13 @@ public class W32StdCallTest extends TestCase {
         assertTrue("Wrong struct value", s.dataEquals(testlib.returnStructureByValueArgumentStdCall(s)));
     }
     
+    public void testStdCallStackAlignment() {
+        final short MAGIC = 0x1234;
+        assertEquals("Incorrect stdcall stack alignment", MAGIC,
+                     testlib.returnInt16ArgumentStdCall((short)1, (short)2,
+                                                        null, MAGIC));
+    }
+
     public void testStdCallCallback() {
         final int MAGIC = 0x11111111;
         final boolean[] called = { false };
