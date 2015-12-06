@@ -13,10 +13,10 @@
 package com.sun.jna.platform.unix;
 
 import java.awt.GraphicsEnvironment;
-import junit.framework.TestCase;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 /**
  * Exercise the {@link X11} class.
@@ -29,6 +29,7 @@ public class X11Test extends TestCase {
     private X11.Display display = null;
     private X11.Window root = null;
 
+    @Override
     protected void setUp() {
         if (!GraphicsEnvironment.isHeadless()) {
             display = X11.INSTANCE.XOpenDisplay(null);
@@ -42,6 +43,7 @@ public class X11Test extends TestCase {
         }
     }
 
+    @Override
     protected void tearDown() {
         if (display != null) {
             X11.INSTANCE.XCloseDisplay(display);
