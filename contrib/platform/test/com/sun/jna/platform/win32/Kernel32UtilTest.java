@@ -259,12 +259,18 @@ public class Kernel32UtilTest extends TestCase {
     }
 
     public final void testQueryFullProcessImageName() {
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
-        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
-
-        String name = Kernel32Util.QueryFullProcessImageName(h, 0);
-        Kernel32.INSTANCE.CloseHandle(h);
-        assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
+        HANDLE h = null;
+        try {
+	        h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
+	        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
+	
+	        String name = Kernel32Util.QueryFullProcessImageName(h, 0);
+	        Kernel32.INSTANCE.CloseHandle(h);
+	        assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
+        } finally {
+        	if (h != null)
+        		Kernel32.INSTANCE.CloseHandle(h);
+        }
     }
 
     public void testGetResource() {
