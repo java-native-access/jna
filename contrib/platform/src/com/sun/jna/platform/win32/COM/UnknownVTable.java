@@ -36,7 +36,7 @@ public class UnknownVTable extends Structure {
 	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject);
+		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
 	}
 
 	public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {

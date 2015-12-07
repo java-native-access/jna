@@ -99,7 +99,7 @@ public class Dispatch extends Unknown implements IDispatch {
      *            the rg disp id
      * @return the hresult
      */
-    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return (HRESULT) this._invokeNativeObject(5,
                 new Object[] { this.getPointer(), riid, rgszNames, cNames,
@@ -127,7 +127,7 @@ public class Dispatch extends Unknown implements IDispatch {
      *            the pu arg err
      * @return the hresult
      */
-    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
             WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {

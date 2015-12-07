@@ -54,7 +54,7 @@ public class DispatchListener extends Structure {
 	protected void initVTable(final IDispatchCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new DispatchVTable.QueryInterfaceCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject) {
+			public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
 				return callback.QueryInterface(refid, ppvObject);
 			}
 		};
@@ -84,14 +84,14 @@ public class DispatchListener extends Structure {
 		};
 		this.vtbl.GetIDsOfNamesCallback = new DispatchVTable.GetIDsOfNamesCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+			public HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 					DISPIDByReference rgDispId) {
 				return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
 			}
 		};
 		this.vtbl.InvokeCallback = new DispatchVTable.InvokeCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 					DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 		            IntByReference puArgErr) {
 

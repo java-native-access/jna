@@ -71,7 +71,7 @@ public interface ITypeLib extends IUnknown {
     /* [annotation][out][in] */
     BSTRByReference szNameBuf,
     /* [in] */ULONG lHashVal,
-    /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+    /* [length_is][size_is][out] */PointerByReference ppTInfo,
     /* [length_is][size_is][out] */MEMBERID[] rgMemId,
     /* [out][in] */USHORTByReference pcFound);
 

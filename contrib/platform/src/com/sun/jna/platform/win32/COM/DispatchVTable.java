@@ -57,7 +57,7 @@ public class DispatchVTable extends Structure {
 	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject);
+		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
 	}
 
 	public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
@@ -77,12 +77,12 @@ public class DispatchVTable extends Structure {
 	}
 
 	public static interface GetIDsOfNamesCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+		WinNT.HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 				DISPIDByReference rgDispId);
 	}
 
 	public static interface InvokeCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 				IntByReference puArgErr);
 	}
