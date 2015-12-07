@@ -56,7 +56,7 @@ public class Unknown extends COMInvoker implements IUnknown {
      *            the ppv object
      * @return the hresult
      */
-    public HRESULT QueryInterface(REFIID.ByValue riid, PointerByReference ppvObject) {
+    public HRESULT QueryInterface(REFIID riid, PointerByReference ppvObject) {
         return (HRESULT) this._invokeNativeObject(0,
                 new Object[] { this.getPointer(), riid, ppvObject },
                 HRESULT.class);

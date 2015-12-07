@@ -86,7 +86,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(new REFIID.ByValue( IDispatch.IID_IDISPATCH),
+                hr = iUnknown.QueryInterface(new REFIID( IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -129,7 +129,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(new REFIID.ByValue(IDispatch.IID_IDISPATCH),
+                hr = iUnknown.QueryInterface(new REFIID(IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -211,7 +211,7 @@ public class COMBindingBaseObject extends COMInvoker {
         DISPIDByReference pdispID = new DISPIDByReference();
 
         // Get DISPID for name passed...
-        HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1,
+        HRESULT hr = pDisp.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
         COMUtils.checkRC(hr);
@@ -263,7 +263,7 @@ public class COMBindingBaseObject extends COMInvoker {
         }
 
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+        HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
                 new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
