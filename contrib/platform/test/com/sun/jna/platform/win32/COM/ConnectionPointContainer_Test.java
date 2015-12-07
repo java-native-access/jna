@@ -67,7 +67,7 @@ public class ConnectionPointContainer_Test {
 		// Close Word
 		Dispatch d = new Dispatch(this.ppWordApp.getValue());
 		DISPID dispIdMember = new DISPID(1105); // Quit
-		REFIID.ByValue riid = new REFIID.ByValue(Guid.IID_NULL);
+		REFIID riid = new REFIID(Guid.IID_NULL);
 		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
 		WinDef.WORD wFlags = new WinDef.WORD(1);
 		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
@@ -84,7 +84,7 @@ public class ConnectionPointContainer_Test {
 		Unknown unk = new Unknown(this.ppWordApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		HRESULT hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
+		HRESULT hr = unk.QueryInterface(new REFIID(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 	}
@@ -95,7 +95,7 @@ public class ConnectionPointContainer_Test {
 		Unknown unk = new Unknown(this.ppWordApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		HRESULT hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
+		HRESULT hr = unk.QueryInterface(new REFIID(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 
@@ -114,7 +114,7 @@ public class ConnectionPointContainer_Test {
 		Unknown unk = new Unknown(this.ppWordApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		HRESULT hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
+		HRESULT hr = unk.QueryInterface(new REFIID(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 
@@ -153,13 +153,13 @@ public class ConnectionPointContainer_Test {
 		}
 
 		@Override
-		public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid, DISPIDByReference rgDispId) {
+		public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames, LCID lcid, DISPIDByReference rgDispId) {
 			return new HRESULT(WinError.E_NOTIMPL);
 		}
 
 		public boolean Invoke_called = false;
 		@Override
-		public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+		public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 	            IntByReference puArgErr) {
 			this.Invoke_called = true;
@@ -170,7 +170,7 @@ public class ConnectionPointContainer_Test {
 		//------------------------ IUnknown ------------------------------
 		public boolean QueryInterface_called = false;
 		@Override
-		public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
+		public HRESULT QueryInterface(REFIID refid, PointerByReference ppvObject) {
 			this.QueryInterface_called = true;
 			if (null==ppvObject) {
 				return new HRESULT(WinError.E_POINTER);
@@ -178,7 +178,7 @@ public class ConnectionPointContainer_Test {
 
 			String s = refid.toGuidString();
 			IID appEvnts4 = new IID("{00020A01-0000-0000-C000-000000000046}");
-			REFIID.ByValue riid = new REFIID.ByValue(appEvnts4.getPointer());
+			REFIID riid = new REFIID(appEvnts4.getPointer());
 
 			if (refid.equals(riid)) {
 				return WinError.S_OK;
@@ -214,7 +214,7 @@ public class ConnectionPointContainer_Test {
 		Unknown unk = new Unknown(this.ppWordApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		HRESULT hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
+		HRESULT hr = unk.QueryInterface(new REFIID(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 

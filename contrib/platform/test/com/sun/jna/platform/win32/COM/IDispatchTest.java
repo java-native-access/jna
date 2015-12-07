@@ -102,7 +102,7 @@ public class IDispatchTest extends TestCase {
         WString[] ptName = new WString[] { new WString("Application") };
         DISPIDByReference pdispID = new DISPIDByReference();
 
-        HRESULT hr = dispatch.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
+        HRESULT hr = dispatch.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
     }
