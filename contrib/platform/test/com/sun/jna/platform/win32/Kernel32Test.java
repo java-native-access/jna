@@ -338,6 +338,7 @@ public class Kernel32Test extends TestCase {
         char[] path = new char[WinDef.MAX_PATH];
         IntByReference lpdwSize = new IntByReference(path.length);
         boolean b = Kernel32.INSTANCE.QueryFullProcessImageName(h, 0, path, lpdwSize);
+        Kernel32.INSTANCE.CloseHandle(h);
         assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
         assertTrue("Failed to query process image name, empty path returned", lpdwSize.getValue() > 0);
     }
