@@ -59,7 +59,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT QueryInterface(REFIID.ByValue riid, PointerByReference ppvObject) {
+    public HRESULT QueryInterface(REFIID riid, PointerByReference ppvObject) {
         return this.getIDispatch().QueryInterface(riid, ppvObject);
     }
 
@@ -85,14 +85,14 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid,
                 rgDispId);
     }
 
     @Override
-    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
             WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {

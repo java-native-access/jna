@@ -116,7 +116,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					@Override
 					public HRESULT call() throws Exception {
 						IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-						return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
+						return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID(iid), ppvObject);
 					}
 				});
 				
@@ -439,7 +439,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID.ByValue(iid), ppvObject);
+					return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID(iid), ppvObject);
 				}
 			});
 
@@ -564,7 +564,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT,
+					HRESULT hr = pDisp.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT,
 							pdispID);
 					return hr;
 				}
@@ -630,7 +630,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 				@Override
 				public HRESULT call() throws Exception {
-					return pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+					return pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
 							new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 				}
 			});

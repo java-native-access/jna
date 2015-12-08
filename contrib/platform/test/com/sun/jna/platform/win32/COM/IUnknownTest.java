@@ -66,7 +66,7 @@ public class IUnknownTest extends TestCase {
     public void testQueryInterface() {
         Unknown iUnknown = this.createIUnknown();
         PointerByReference ppvObject = new PointerByReference();
-        iUnknown.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
+        iUnknown.QueryInterface(new REFIID(IUnknown.IID_IUNKNOWN), ppvObject);
 
         assertTrue("ppvObject:" + ppvObject.toString(), ppvObject != null);
     }

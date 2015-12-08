@@ -130,8 +130,9 @@ public class ITypeLibTest extends TestCase {
         BSTRByReference szNameBuf = new BSTRByReference(OleAuto.INSTANCE.SysAllocString("Application"));
         ULONG lHashVal = new ULONG(0);
         USHORTByReference pcFound = new USHORTByReference((short)20);
-
-        HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, null, null, pcFound);
+        PointerByReference ppTInfo = new PointerByReference();
+        MEMBERID[] rgMemId = new MEMBERID[20];
+        HRESULT hr = shellTypeLib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId, pcFound);
 
         COMUtils.checkRC(hr);
         //System.out.println("szNameBuf: " + szNameBuf);

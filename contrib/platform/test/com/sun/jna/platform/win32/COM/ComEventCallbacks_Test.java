@@ -80,13 +80,13 @@ public class ComEventCallbacks_Test {
 		}
 
 		@Override
-		public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid, DISPIDByReference rgDispId) {
+		public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames, LCID lcid, DISPIDByReference rgDispId) {
 			return new HRESULT(WinError.E_NOTIMPL);
 		}
 
 		public boolean Invoke_called = false;
 		@Override
-		public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+		public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
 	            WORD wFlags, DISPPARAMS.ByReference pDispParams,
 	            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 	            IntByReference puArgErr) {
@@ -99,7 +99,7 @@ public class ComEventCallbacks_Test {
 		//------------------------ IUnknown ------------------------------
 		public boolean QueryInterface_called = false;
 		@Override
-		public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
+		public HRESULT QueryInterface(REFIID refid, PointerByReference ppvObject) {
 			this.QueryInterface_called = true;
 			if (null==ppvObject) {
 				return new HRESULT(WinError.E_POINTER);
@@ -107,7 +107,7 @@ public class ComEventCallbacks_Test {
 
 			String s = refid.toGuidString();
 			IID appEvnts4 = new IID(APPLICATION_EVENTS_4);
-			REFIID.ByValue riid = new REFIID.ByValue(appEvnts4.getPointer());
+			REFIID riid = new REFIID(appEvnts4.getPointer());
 
 			if (refid.equals(riid)) {
 				ppvObject.setValue(this.getPointer());
@@ -151,7 +151,7 @@ public class ComEventCallbacks_Test {
 		Unknown unk = new Unknown(ppWordApp.getValue());
 		PointerByReference ppCpc = new PointerByReference();
 		IID cpcIID = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
-		hr = unk.QueryInterface(new REFIID.ByValue(cpcIID), ppCpc);
+		hr = unk.QueryInterface(new REFIID(cpcIID), ppCpc);
 		COMUtils.checkRC(hr);
 		ConnectionPointContainer cpc = new ConnectionPointContainer(ppCpc.getValue());
 
@@ -176,7 +176,7 @@ public class ComEventCallbacks_Test {
 		// Call Quit
 		Dispatch d = new Dispatch(ppWordApp.getValue());
 		DISPID dispIdMember = new DISPID(1105); // Quit
-		REFIID.ByValue niid = new REFIID.ByValue(Guid.IID_NULL);
+		REFIID niid = new REFIID(Guid.IID_NULL);
 		LCID lcid = Kernel32.INSTANCE.GetSystemDefaultLCID();
 		WinDef.WORD wFlags = new WinDef.WORD(1);
 		DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();

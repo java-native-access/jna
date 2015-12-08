@@ -217,7 +217,7 @@ public class TypeLib extends Unknown implements ITypeLib {
     /* [annotation][out][in] */
     BSTRByReference szNameBuf,
     /* [in] */ULONG lHashVal,
-    /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+    /* [length_is][size_is][out] */PointerByReference ppTInfo,
     /* [length_is][size_is][out] */MEMBERID[] rgMemId,
     /* [out][in] */USHORTByReference pcFound) {
 

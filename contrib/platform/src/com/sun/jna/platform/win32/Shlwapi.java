@@ -6,12 +6,12 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.Shell32;
-import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.platform.win32.WinNT.*;
 
-public interface Shlwapi extends WinNT {
+public interface Shlwapi extends StdCallLibrary {
     Shlwapi INSTANCE = (Shlwapi) Native.loadLibrary("Shlwapi", Shlwapi.class, W32APIOptions.UNICODE_OPTIONS);
 
 

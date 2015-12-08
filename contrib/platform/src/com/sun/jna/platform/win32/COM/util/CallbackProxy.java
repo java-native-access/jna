@@ -85,12 +85,12 @@ public class CallbackProxy implements IDispatchCallback {
 	Factory factory;
 	Class<?> comEventCallbackInterface;
 	IComEventCallbackListener comEventCallbackListener;
-	REFIID.ByValue listenedToRiid;
+	REFIID listenedToRiid;
 	public DispatchListener dispatchListener;
 	Map<DISPID, Method> dsipIdMap;
 	ExecutorService executorService;
 
-	REFIID.ByValue createRIID(Class<?> comEventCallbackInterface) {
+	REFIID createRIID(Class<?> comEventCallbackInterface) {
 		ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
 		if (null == comInterfaceAnnotation) {
 			throw new COMException(
@@ -100,7 +100,7 @@ public class CallbackProxy implements IDispatchCallback {
 		if (null == iidStr || iidStr.isEmpty()) {
 			throw new COMException("ComInterface must define a value for iid");
 		}
-		return new REFIID.ByValue(new IID(iidStr).getPointer());
+		return new REFIID(new IID(iidStr).getPointer());
 	}
 
 	Map<DISPID, Method> createDispIdMap(Class<?> comEventCallbackInterface) {
@@ -125,7 +125,7 @@ public class CallbackProxy implements IDispatchCallback {
 		return -1;
 	}
 
-	void invokeOnThread(final DISPID dispIdMember, final REFIID.ByValue riid, LCID lcid, WORD wFlags,
+	void invokeOnThread(final DISPID dispIdMember, final REFIID riid, LCID lcid, WORD wFlags,
 			final DISPPARAMS.ByReference pDispParams) {
 		// decode arguments
 		// must decode them on this thread, and create a proxy for any COM objects (IDispatch)
@@ -142,7 +142,7 @@ public class CallbackProxy implements IDispatchCallback {
 					//get raw IUnknown interface
 					PointerByReference ppvObject = new PointerByReference();
 					IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-					dispatch.QueryInterface(new REFIID.ByValue(iid), ppvObject);
+					dispatch.QueryInterface(new REFIID(iid), ppvObject);
 					Unknown rawUnk = new Unknown(ppvObject.getValue());
 					long unknownId = Pointer.nativeValue( rawUnk.getPointer() );
 					int n = rawUnk.Release();
@@ -222,13 +222,13 @@ public class CallbackProxy implements IDispatchCallback {
 	}
 
 	@Override
-	public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+	public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 			DISPIDByReference rgDispId) {
 		return new HRESULT(WinError.E_NOTIMPL);
 	}
 
 	@Override
-	public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+	public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 			DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
 
@@ -239,7 +239,7 @@ public class CallbackProxy implements IDispatchCallback {
 
 	// ------------------------ IUnknown ------------------------------
 	@Override
-	public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
+	public HRESULT QueryInterface(REFIID refid, PointerByReference ppvObject) {
 		if (null == ppvObject) {
 			return new HRESULT(WinError.E_POINTER);
 		}

@@ -45,7 +45,7 @@ public class UnknownListener extends Structure {
 	protected void initVTable(final IUnknownCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject) {
+			public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
 				return callback.QueryInterface(refid, ppvObject);
 			}
 		};
