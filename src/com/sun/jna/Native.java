@@ -445,7 +445,7 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(Class interfaceClass) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
         return loadLibrary(null, interfaceClass);
     }
 
@@ -462,7 +462,7 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(Class interfaceClass, Map options) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map options) {
         return loadLibrary(null, interfaceClass, options);
     }
 
@@ -478,7 +478,7 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(String name, Class interfaceClass) {
+    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.EMPTY_MAP);
     }
 
@@ -497,13 +497,13 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(String name,
-                                     Class interfaceClass,
+    public static <T extends Library> T loadLibrary(String name,
+                                     Class<T> interfaceClass,
                                      Map options) {
         Library.Handler handler =
             new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
-        Library proxy = (Library)
+        T proxy = (T)
             Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
                                    handler);
         cacheOptions(interfaceClass, options, proxy);
