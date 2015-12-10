@@ -77,6 +77,7 @@ public class NativeLibrary {
 
     private static final Map libraries = new HashMap();
     private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
+    private static final Map pathSuffixes = Collections.synchronizedMap(new HashMap());
     private static final List librarySearchPath = new LinkedList();
 
     static {
@@ -159,6 +160,19 @@ public class NativeLibrary {
 	    System.out.println("Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
 	}
         searchPath.addAll(initPaths("jna.library.path"));
+
+        // Take all search paths and add suffix
+    	if (Native.DEBUG_LOAD) {
+    	    System.out.println("Adding suffixes to search paths.");
+    	}
+    	List suffixes = (List) pathSuffixes.get(libraryName);
+    	if (suffixes != null) {
+	        List suffixSearchPath = expandPathsWithSuffix(searchPath, suffixes);
+	        suffixSearchPath.addAll(expandPathsWithSuffix(librarySearchPath, suffixes));
+	        // update searchPath binding to use expanded version
+	        searchPath = suffixSearchPath;
+    	}
+
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
         //
@@ -453,6 +467,33 @@ public class NativeLibrary {
             customPaths.add(path);
         }
     }
+
+    /**
+     * Add a search path suffix for the specified library.
+     * This suffix is appended to the system load paths when the library is
+     * loaded. This makes it easier to locate libraries which are installed in
+     * subdirectories of the system search paths.
+     *
+     * @param libraryName The name of the library to use the path for
+     * @param pathSuffix The path suffix to add to the search path when trying
+     *   to load the library
+     */
+    public static final void addSearchPathSuffix(String libraryName, String pathSuffix) {
+        File ps = new File(pathSuffix);
+        // only accept the suffix if it is not an absolute path
+        if (!ps.isAbsolute()) {
+            synchronized (pathSuffixes) {
+                List customPaths = (List) pathSuffixes.get(libraryName);
+                if (customPaths == null) {
+                    customPaths = Collections.synchronizedList(new LinkedList());
+                    pathSuffixes.put(libraryName, customPaths);
+                }
+
+                customPaths.add(pathSuffix);
+            }
+        }
+    }
+
     /**
      * Create a new {@link Function} that is linked with a native
      * function that follows the NativeLibrary's calling convention.
@@ -945,4 +986,23 @@ public class NativeLibrary {
         }
         return ldPaths;
     }
+
+    /**
+     * Expand the given search path with the given suffixes.
+     */
+    private static List expandPathsWithSuffix(List searchPath, List suffixes) {
+        List suffixSearchPath = new LinkedList();
+        for (int i=0; i < searchPath.size(); i++) {
+        	String nextPath = (String) searchPath.get(i);
+        	suffixSearchPath.add(nextPath);
+        	for (int j=0; j < suffixes.size(); j++) {
+        		String suffix = (String) suffixes.get(j);
+        		File f = new File(nextPath, suffix);
+        		suffixSearchPath.add(f.getPath());
+        	}
+        }
+
+        return suffixSearchPath;
+    }
+
 }
