@@ -1269,18 +1269,18 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * This function retrieves the full path of the executable file of a given process.
      * 
      * @param hProcess
-     * 			Handle for the running process
+     *          Handle for the running process
      * @param dwFlags
-     * 			0 - The name should use the Win32 path format.
-     * 			1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     *          0 - The name should use the Win32 path format.
+     *          1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
      * @param lpExeName
-     * 			pre-allocated character buffer for the returned path
+     *          pre-allocated character buffer for the returned path
      * @param lpdwSize
-     * 			input: the size of the allocated buffer
-     * 			output: the length of the returned path in characters 
+     *          input: the size of the allocated buffer
+     *          output: the length of the returned path in characters 
      * 
      * @return true if successful false if not. To get extended error information, 
-     * 		   call GetLastError. 
+     *         call GetLastError. 
      */
     boolean QueryFullProcessImageName(HANDLE hProcess, int dwFlags, char[] lpExeName, IntByReference lpdwSize);
 
@@ -3289,4 +3289,39 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         information, call GetLastError.
      */
     boolean EnumResourceNames(HMODULE hModule, Pointer type, WinBase.EnumResNameProc proc, Pointer lParam);
+    
+    /**
+     * Retrieves information about the first module associated with a process.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684218(v=vs.85).aspx">MSDN</a>
+     * @param hSnapshot
+     *            A handle to the snapshot returned from a previous call to the
+     *            CreateToolhelp32Snapshot function.
+     * @param lpme
+     *            A pointer to a MODULEENTRY32 structure.
+     * @return Returns TRUE if the first entry of the module list has been
+     *         copied to the buffer or FALSE otherwise.<br>
+     *         The ERROR_NO_MORE_FILES error value is returned by the
+     *         GetLastError function if no modules exist or the snapshot does
+     *         not contain module information.
+     */
+    boolean Module32FirstW(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32W lpme);
+
+    /**
+     * Retrieves information about the next module associated with a process or
+     * thread.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684221(v=vs.85).aspx">MSDN</a> 
+     * @param hSnapshot
+     *            A handle to the snapshot returned from a previous call to the
+     *            CreateToolhelp32Snapshot function.
+     * @param lpme
+     *            A pointer to a MODULEENTRY32 structure.
+     * @return Returns TRUE if the first entry of the module list has been
+     *         copied to the buffer or FALSE otherwise.<br>
+     *         The ERROR_NO_MORE_FILES error value is returned by the
+     *         GetLastError function if no modules exist or the snapshot does
+     *         not contain module information.
+     */
+    boolean Module32NextW(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32W lpme);
 }
