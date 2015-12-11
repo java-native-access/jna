@@ -161,9 +161,10 @@ public class NativeLibrary {
 	}
         searchPath.addAll(initPaths("jna.library.path"));
 
-        // Take all search paths and add suffix
+        // Take all search paths and expand them with suffixes. Each suffix
+        // creates an additional entry for each search path with the suffix appended.
     	if (Native.DEBUG_LOAD) {
-    	    System.out.println("Adding suffixes to search paths.");
+    	    System.out.println("Expanding search path with suffixes.");
     	}
     	List suffixes = (List) pathSuffixes.get(libraryName);
     	if (suffixes != null) {
@@ -473,6 +474,18 @@ public class NativeLibrary {
      * This suffix is appended to the system load paths when the library is
      * loaded. This makes it easier to locate libraries which are installed in
      * subdirectories of the system search paths.
+     * <p>
+     * The following example illustrates the use of search path suffixes:
+     * </p>
+     * The search path looks as follows: <br>
+     * {@code /lib:/usr/lib} <br>
+     * The library which should be loaded is located in: <br>
+     * {@code /usr/lib/foo/libbar.so} <br>
+     * Instead of adding the whole path to the search paths, a suffix {@code foo}
+     * can be added. The suffix is then used to create a wider set of search
+     * paths. <br>
+     * By adding the suffix {@code foo}, the search path is expanded to: <br>
+     * {@code /lib:/lib/foo:/usr/lib:/usr/lib/foo}
      *
      * @param libraryName The name of the library to use the path for
      * @param pathSuffix The path suffix to add to the search path when trying
