@@ -25,9 +25,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.DesktopWindow;
 import com.sun.jna.platform.WindowUtils;
+import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -36,10 +38,10 @@ import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
-import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinGDI.ICONINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
@@ -47,7 +49,6 @@ import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
-import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -55,33 +56,33 @@ import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 public class User32Test extends AbstractWin32TestSupport {
 
     public static void main(String[] args) {
-    	JUnitCore.runClasses(User32Test.class);
+        JUnitCore.runClasses(User32Test.class);
     }
 
-	/**
-	 * Iterates over all currently available Desktop windows and searches for
-	 * the window with the associated process whose full PE file path ends with
-	 * the specified string (case insensitive).
-	 *
-	 * @param filePathEnd
-	 *            The requested end of the process' full file path.
-	 * @return Either the found window or {@code null} if nothing was found.
-	 */
-	private static DesktopWindow getWindowByProcessPath(final String filePathEnd) {
-		final List<DesktopWindow> allWindows = WindowUtils.getAllWindows(false);
-		for (final DesktopWindow wnd : allWindows) {
-			if (wnd.getFilePath().toLowerCase()
-					.endsWith(filePathEnd.toLowerCase())) {
-				return wnd;
-			}
-		}
+    /**
+     * Iterates over all currently available Desktop windows and searches for
+     * the window with the associated process whose full PE file path ends with
+     * the specified string (case insensitive).
+     *
+     * @param filePathEnd
+     *            The requested end of the process' full file path.
+     * @return Either the found window or {@code null} if nothing was found.
+     */
+    private static DesktopWindow getWindowByProcessPath(final String filePathEnd) {
+        final List<DesktopWindow> allWindows = WindowUtils.getAllWindows(false);
+        for (final DesktopWindow wnd : allWindows) {
+            if (wnd.getFilePath().toLowerCase()
+                    .endsWith(filePathEnd.toLowerCase())) {
+                return wnd;
+            }
+        }
 
-		return null;
+        return null;
     }
 
-	@Test
+    @Test
     public void testNoDuplicateMethodsNames() {
-	    // see https://github.com/twall/jna/issues/482
+        // see https://github.com/twall/jna/issues/482
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(User32.class);
         if (dupSet.size() > 0) {
             for (String name : new String[] {
@@ -226,91 +227,182 @@ public class User32Test extends AbstractWin32TestSupport {
 
     @Test
     public final void testAdjustWindowRect() {
-    	RECT lpRect = new RECT();
-    	lpRect.left = 100;
-    	lpRect.top = 200;
-    	lpRect.bottom = 300;
-    	lpRect.right = 500;
+        RECT lpRect = new RECT();
+        lpRect.left = 100;
+        lpRect.top = 200;
+        lpRect.bottom = 300;
+        lpRect.right = 500;
 
-    	assertTrue(User32.INSTANCE.AdjustWindowRect(lpRect, new DWORD(WinUser.WS_THICKFRAME), new BOOL(1)).booleanValue());
+        assertTrue(User32.INSTANCE.AdjustWindowRect(lpRect, new DWORD(WinUser.WS_THICKFRAME), new BOOL(1)).booleanValue());
 
-    	assertTrue(lpRect.left < 100);
-    	assertTrue(lpRect.top < 200);
-    	assertTrue(lpRect.bottom > 300);
-    	assertTrue(lpRect.right > 500);
+        assertTrue(lpRect.left < 100);
+        assertTrue(lpRect.top < 200);
+        assertTrue(lpRect.bottom > 300);
+        assertTrue(lpRect.right > 500);
     }
 
     @Ignore("Locks the workstation")
     @Test
     public final void testLockWorkStation() {
-		assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
+        assertTrue(User32.INSTANCE.LockWorkStation().booleanValue());
     }
 
     @Ignore("Shuts down the workstation")
     @Test
     public final void testExitWindows() {
-		assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
+        assertTrue(User32.INSTANCE.ExitWindowsEx(new UINT(WinUser.EWX_LOGOFF), new DWORD(0x00030000)).booleanValue()); //This only tries to log off.
     }
 
     @Test
-	public void testGetIconInfo() throws Exception {
-		final ICONINFO iconInfo = new ICONINFO();
-		final HANDLE hImage = User32.INSTANCE.LoadImage(null, new File(
-				getClass().getResource("/res/test_icon.ico").toURI())
-				.getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
-				WinUser.LR_LOADFROMFILE);
+    public void testGetIconInfo() throws Exception {
+        final ICONINFO iconInfo = new ICONINFO();
+        final HANDLE hImage = User32.INSTANCE.LoadImage(null, new File(
+                getClass().getResource("/res/test_icon.ico").toURI())
+                .getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
+                WinUser.LR_LOADFROMFILE);
 
-		try {
-			// obtain test icon from classpath
-			if (!User32.INSTANCE.GetIconInfo(new HICON(hImage), iconInfo))
-				throw new Exception(
-						"Invocation of User32.GetIconInfo() failed: "
-								+ Kernel32Util.getLastErrorMessage());
-			iconInfo.read();
-		} finally {
-			if (iconInfo.hbmColor != null
-					&& iconInfo.hbmColor.getPointer() != Pointer.NULL)
-				GDI32.INSTANCE.DeleteObject(iconInfo.hbmColor);
-			if (iconInfo.hbmMask != null
-					&& iconInfo.hbmMask.getPointer() != Pointer.NULL)
-				GDI32.INSTANCE.DeleteObject(iconInfo.hbmMask);
-		}
-	}
+        try {
+            // obtain test icon from classpath
+            if (!User32.INSTANCE.GetIconInfo(new HICON(hImage), iconInfo))
+                throw new Exception(
+                        "Invocation of User32.GetIconInfo() failed: "
+                                + Kernel32Util.getLastErrorMessage());
+            iconInfo.read();
+        } finally {
+            if (iconInfo.hbmColor != null
+                    && iconInfo.hbmColor.getPointer() != Pointer.NULL)
+                GDI32.INSTANCE.DeleteObject(iconInfo.hbmColor);
+            if (iconInfo.hbmMask != null
+                    && iconInfo.hbmMask.getPointer() != Pointer.NULL)
+                GDI32.INSTANCE.DeleteObject(iconInfo.hbmMask);
+        }
+    }
 
-	@Test
-	public void testSendMessageTimeout() {
-		DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+    @Test
+    public void testSendMessageTimeout() {
+        DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-		assertNotNull(explorerProc);
+        assertNotNull(explorerProc);
 
-		final DWORDByReference hIconNumber = new DWORDByReference();
-		LRESULT result = User32.INSTANCE
+        final DWORDByReference hIconNumber = new DWORDByReference();
+        LRESULT result = User32.INSTANCE
                     .SendMessageTimeout(explorerProc.getHWND(),
                                         WinUser.WM_GETICON,
                                         new WPARAM(WinUser.ICON_BIG),
                                         new LPARAM(0),
                                         WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
 
-		assertNotEquals(0, result);
-	}
+        assertNotEquals(0, result);
+    }
 
-	@Test
-	public void testGetClassLongPtr() {
-		DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+    @Test
+    public void testGetClassLongPtr() {
+        DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-		assertNotNull("Could not find explorer.exe process",
+        assertNotNull("Could not find explorer.exe process",
                               explorerProc);
 
-		ULONG_PTR result = User32.INSTANCE
+        ULONG_PTR result = User32.INSTANCE
                     .GetClassLongPtr(explorerProc.getHWND(),
                                      WinUser.GCLP_HMODULE);
 
-		assertNotEquals(0, result.intValue());
-	}
+        assertNotEquals(0, result.intValue());
+    }
 
-	@Test
-	public void testGetDesktopWindow() {
-		HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
-		assertNotNull("Failed to get desktop window HWND", desktopWindow);
-	}
+    @Test
+    public void testGetDesktopWindow() {
+        HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+        assertNotNull("Failed to get desktop window HWND", desktopWindow);
+    }
+    
+    @Test
+    public void testPrintWindow() {
+        boolean pwResult = User32.INSTANCE.PrintWindow(null, null, 0);
+        assertFalse("PrintWindow result should be false", pwResult);
+        assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.",  WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
+    }
+    
+    @Test
+    public void testIsWindowEnabled() {
+        boolean iweResult = User32.INSTANCE.IsWindowEnabled(null);
+        assertFalse("IsWindowEnabled result should be false", iweResult);
+        assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.", WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
+    }
+    
+    @Test
+    public void testIsWindow() {
+        boolean iwResult = User32.INSTANCE.IsWindow(null);
+        assertFalse("IsWindow result should be false", iwResult);
+        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
+    }
+    
+    @Test
+    public void testFindWindowEx() {
+        HWND result = User32.INSTANCE.FindWindowEx(null, null, null, null);
+        assertNotNull("FindWindowEx result should not be null", result);
+        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
+    }
+    
+    @Test
+    public void testGetAncestor() {
+        HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
+        assertNotNull("Failed to get desktop window HWND", desktopWindow);
+        
+        HWND result = User32.INSTANCE.GetAncestor(desktopWindow, WinUser.GA_PARENT);
+        assertNull("GetAncestor result should be null", result);
+        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
+    }
+    
+    @Test
+    public void testGetCursorPos() {
+        POINT cursorPos = new POINT();
+        boolean result = User32.INSTANCE.GetCursorPos(cursorPos);
+        assertTrue("GetCursorPos should return true", result);
+        assertTrue("X coordinate in POINT should be >= 0", cursorPos.x >= 0);
+        assertTrue("Y coordinate in POINT should be >= 0", cursorPos.y >= 0);
+    }
+    
+    @Test
+    public void testSetCursorPos() {
+        POINT cursorPos = new POINT();
+        boolean result = User32.INSTANCE.GetCursorPos(cursorPos);
+        assertTrue("GetCursorPos should return true", result);
+        assertTrue("X coordinate in POINT should be >= 0", cursorPos.x >= 0);
+        
+        boolean scpResult = User32.INSTANCE.SetCursorPos(cursorPos.x - 20, cursorPos.y);
+        assertTrue("SetCursorPos should return true", scpResult);
+        
+        POINT cursorPos2 = new POINT();
+        boolean result2 = User32.INSTANCE.GetCursorPos(cursorPos2);
+        assertTrue("GetCursorPos should return true", result2);
+        assertTrue("X coordinate in POINT should be original cursor position - 20", cursorPos2.x  == cursorPos.x - 20);
+    }
+    
+    @Test
+    public void testSetWinEventHook() {
+        HANDLE result = User32.INSTANCE.SetWinEventHook(0, 0, null, null, 0, 0, 0);
+        assertNull("SetWinEventHook result should be null", result);
+        assertEquals("GetLastError should be ERROR_INVALID_FILTER_PROC.", WinError.ERROR_INVALID_FILTER_PROC, Native.getLastError());
+    }
+    
+    @Test
+    public void testUnhookWinEvent() {
+        boolean iwResult = User32.INSTANCE.UnhookWinEvent(null);
+        assertFalse("UnhookWinEvent result should be false", iwResult);
+        assertEquals("GetLastError should be ERROR_INVALID_HANDLE.", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
+    }
+    
+    @Test
+    public void testCopyIcon() {
+        HICON result = User32.INSTANCE.CopyIcon(null);
+        assertNull("CopyIcon result should be false", result);
+        assertEquals("GetLastError should be ERROR_INVALID_CURSOR_HANDLE.", WinError.ERROR_INVALID_CURSOR_HANDLE, Native.getLastError());
+    }
+    
+    @Test
+    public void testGetClassLong() {
+        int result = User32.INSTANCE.GetClassLong(null, 0);
+        assertEquals("GetClassLong result should be 0", 0, result);
+        assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.", WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
+    }
 }

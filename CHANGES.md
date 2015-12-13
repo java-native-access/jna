@@ -28,6 +28,8 @@ Features
 * [#564](https://github.com/java-native-access/jna/pull/564): Use generic definition of Native#loadLibrary [@lgoldstein](https://github.com/lgoldstein)
 * [#562](https://github.com/java-native-access/jna/pull/562): Added `com.sun.jna.platform.win32.VersionUtil` with `getFileVersionInfo` utility method to get file major, minor, revision, and build version parts - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#563](https://github.com/java-native-access/jna/pull/563): Added `com.sun.jna.platform.win32.Wininet` with the following 4 methods: `FindFirstUrlCacheEntry`, `DeleteUrlCacheEntry`, `FindCloseUrlCache`, `FindNextUrlCacheEntry`, and the `INTERNET_CACHE_ENTRY_INFO` structure, and a helper in `com.sun.jna.platform.win32.WininetUtil` for parsing WinInet's cache - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#567](https://github.com/java-native-access/jna/pull/567): Added `PrintWindow`, `IsWindowEnabled`, `IsWindow`, `FindWindowEx`, `GetAncestor`, `GetCursorPos`, `SetCursorPos`, `SetWinEventHook`, `UnhookWinEvent`, `CopyIcon`, and `GetClassLong` to `com.sun.jna.platform.win32.User32` and supporting constants to `com.sun.jna.platform.win32.WinUser` - [@mlfreeman2](https://github.com/mlfreeman2).
+
 
 Bug Fixes
 ---------
