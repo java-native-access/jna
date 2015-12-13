@@ -26,8 +26,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface Psapi extends StdCallLibrary {
-	public static final Psapi INSTANCE = (Psapi) Native.loadLibrary("psapi",
-			Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
+	Psapi INSTANCE = Native.loadLibrary("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
 	
 	/**
 	 * Retrieves the fully qualified path for the file containing the specified
@@ -51,8 +50,7 @@ public interface Psapi extends StdCallLibrary {
 	 *         return value is zero. To get extended error information, call
 	 *         {@link Kernel32Util#getLastErrorMessage()}.
 	 */
-	int GetModuleFileNameExA(final HANDLE process, final HANDLE module,
-			final byte[] lpFilename, final int nSize);
+	int GetModuleFileNameExA(HANDLE process, HANDLE module, byte[] lpFilename, int nSize);
 	
 	/**
 	 * Retrieves the fully qualified path for the file containing the specified
@@ -76,8 +74,7 @@ public interface Psapi extends StdCallLibrary {
 	 *         return value is zero. To get extended error information, call
 	 *         {@link Kernel32Util#getLastErrorMessage()}.
 	 */
-	int GetModuleFileNameExW(final HANDLE process, final HANDLE module,
-			final char[] lpFilename, final int nSize);
+	int GetModuleFileNameExW(HANDLE process, HANDLE module, char[] lpFilename, int nSize);
 
 	/**
 	 * Retrieves the fully qualified path for the file containing the specified
@@ -101,6 +98,5 @@ public interface Psapi extends StdCallLibrary {
 	 *         return value is zero. To get extended error information, call
 	 *         {@link Kernel32Util#getLastErrorMessage()}.
 	 */
-	int GetModuleFileNameEx(final HANDLE process, final HANDLE module,
-			final Pointer lpFilename, final int nSize);
+	int GetModuleFileNameEx(HANDLE process, HANDLE module, Pointer lpFilename, int nSize);
 }

@@ -76,7 +76,7 @@ import com.sun.jna.Structure.FFIType;
  * failure if the JNA native library is not properly installed on the system),
  * set the system property <code>jna.nounpack=true</code>.
  * </p>
- * <p>While this class and its corresponding native library are loaded, the 
+ * <p>While this class and its corresponding native library are loaded, the
  * system property <code>jna.loaded</code> will be set.  The property will be
  * cleared when native support has been unloaded (i.e. the Native class and
  * its underlying native support has been GC'd).</p>
@@ -101,8 +101,8 @@ public final class Native implements Version {
 
     // Used by tests, do not remove
     static String jnidispatchPath = null;
-    private static Map options = new WeakHashMap();
-    private static Map libraries = new WeakHashMap();
+    private static final Map options = new WeakHashMap();
+    private static final Map libraries = new WeakHashMap();
     private static final String _OPTION_ENCLOSING_LIBRARY = "enclosing-library";
     private static final UncaughtExceptionHandler DEFAULT_HANDLER =
         new UncaughtExceptionHandler() {
@@ -439,13 +439,14 @@ public final class Native implements Version {
      * the explicit interface class.
      * Native libraries loaded via this method may be found in
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
-     * @param interfaceClass
+     * @param <T> Type of expected wrapper
+     * @param interfaceClass The implementation wrapper interface
      * @return an instance of the requested interface, mapped to the current
      * process.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(Class interfaceClass) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
         return loadLibrary(null, interfaceClass);
     }
 
@@ -455,14 +456,16 @@ public final class Native implements Version {
      * structures and/or functions.
      * Native libraries loaded via this method may be found in
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
-     * @param interfaceClass
+     * @param <T> Type of expected wrapper
+     * @param interfaceClass The implementation wrapper interface
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the current
      * process.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
+     * @see #loadLibrary(String, Class, Map)
      */
-    public static Object loadLibrary(Class interfaceClass, Map options) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map options) {
         return loadLibrary(null, interfaceClass, options);
     }
 
@@ -471,15 +474,17 @@ public final class Native implements Version {
      * If <code>name</code> is null, attempts to map onto the current process.
      * Native libraries loaded via this method may be found in
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
-     * @param name
-     * @param interfaceClass
+     * @param <T> Type of expected wrapper
+     * @param name Library base name
+     * @param interfaceClass The implementation wrapper interface
      * @return an instance of the requested interface, mapped to the indicated
      * native library.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
+     * @see #loadLibrary(String, Class, Map)
      */
-    public static Object loadLibrary(String name, Class interfaceClass) {
-        return loadLibrary(name, interfaceClass, Collections.EMPTY_MAP);
+    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass) {
+        return loadLibrary(name, interfaceClass, Collections.emptyMap());
     }
 
     /** Load a library interface from the given shared library, providing
@@ -489,25 +494,21 @@ public final class Native implements Version {
      * If <code>name</code> is null, attempts to map onto the current process.
      * Native libraries loaded via this method may be found in
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
-     * @param name
-     * @param interfaceClass
+     * @param <T> Type of expected wrapper
+     * @param name Library base name
+     * @param interfaceClass The implementation wrapper interface
      * @param options Map of library options
      * @return an instance of the requested interface, mapped to the indicated
      * native library.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static Object loadLibrary(String name,
-                                     Class interfaceClass,
-                                     Map options) {
-        Library.Handler handler =
-            new Library.Handler(name, interfaceClass, options);
+    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass, Map options) {
+        Library.Handler handler = new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
-        Library proxy = (Library)
-            Proxy.newProxyInstance(loader, new Class[] {interfaceClass},
-                                   handler);
+        Object proxy = Proxy.newProxyInstance(loader, new Class[] {interfaceClass}, handler);
         cacheOptions(interfaceClass, options, proxy);
-        return proxy;
+        return interfaceClass.cast(proxy);
     }
 
     /** Attempts to force initialization of an instance of the library interface
@@ -515,7 +516,7 @@ public final class Native implements Version {
      * Returns whether an instance variable was instantiated.
      * Expects that lock on libraries is already held
      */
-    private static void loadLibraryInstance(Class cls) {
+    private static void loadLibraryInstance(Class<?> cls) {
         synchronized(libraries) {
             if (cls != null && !libraries.containsKey(cls)) {
                 try {
@@ -538,11 +539,14 @@ public final class Native implements Version {
         }
     }
 
-    /** Find the library interface corresponding to the given class.  Checks
+    /**
+     * Find the library interface corresponding to the given class.  Checks
      * all ancestor classes and interfaces for a declaring class which
      * implements {@link Library}.
+     * @param cls The given class
+     * @param Tge enclosing class
      */
-    static Class findEnclosingLibraryClass(Class cls) {
+    static Class<?> findEnclosingLibraryClass(Class<?> cls) {
         if (cls == null) {
             return null;
         }
@@ -551,7 +555,7 @@ public final class Native implements Version {
         synchronized(libraries) {
             if (options.containsKey(cls)) {
                 Map libOptions = (Map)options.get(cls);
-                Class enclosingClass = (Class)libOptions.get(_OPTION_ENCLOSING_LIBRARY);
+                Class<?> enclosingClass = (Class<?>)libOptions.get(_OPTION_ENCLOSING_LIBRARY);
                 if (enclosingClass != null) {
                     return enclosingClass;
                 }
@@ -564,8 +568,8 @@ public final class Native implements Version {
         if (Callback.class.isAssignableFrom(cls)) {
             cls = CallbackReference.findCallbackClass(cls);
         }
-        Class declaring = cls.getDeclaringClass();
-        Class fromDeclaring = findEnclosingLibraryClass(declaring);
+        Class<?> declaring = cls.getDeclaringClass();
+        Class<?> fromDeclaring = findEnclosingLibraryClass(declaring);
         if (fromDeclaring != null) {
             return fromDeclaring;
         }
@@ -581,15 +585,17 @@ public final class Native implements Version {
      * Map}), <code>TYPE_MAPPER</code> (a {@link TypeMapper}),
      * <code>STRUCTURE_ALIGNMENT</code> (an {@link Integer}), and
      * <code>STRING_ENCODING</code> (a {@link String}).
-     * @see Library
+     *
+     * @param type The type class
+     * @return The options map
      */
-    public static Map getLibraryOptions(Class type) {
+    public static Map getLibraryOptions(Class<?> type) {
         synchronized(libraries) {
             if (options.containsKey(type)) {
                 return (Map)options.get(type);
             }
         }
-        Class mappingClass = findEnclosingLibraryClass(type);
+        Class<?> mappingClass = findEnclosingLibraryClass(type);
         if (mappingClass != null) {
             loadLibraryInstance(mappingClass);
         }
@@ -635,7 +641,7 @@ public final class Native implements Version {
         }
     }
 
-    private static Object lookupField(Class mappingClass, String fieldName, Class resultClass) {
+    private static Object lookupField(Class<?> mappingClass, String fieldName, Class<?> resultClass) {
         try {
             Field field = mappingClass.getField(fieldName);
             field.setAccessible(true);
@@ -654,45 +660,55 @@ public final class Native implements Version {
     /** Return the preferred {@link TypeMapper} for the given native interface.
      * See {@link com.sun.jna.Library#OPTION_TYPE_MAPPER}.
      */
-    public static TypeMapper getTypeMapper(Class cls) {
+    public static TypeMapper getTypeMapper(Class<?> cls) {
         return (TypeMapper)getLibraryOptions(cls).get(Library.OPTION_TYPE_MAPPER);
     }
 
-    /** Return the preferred Strring encoding for the given native interface.
-     * If there is no setting, defaults to the {@link
-     * #getDefaultStringEncoding()}.
-     * See {@link com.sun.jna.Library#OPTION_STRING_ENCODING}.
+    /**
+     * @param cls The native interface type
+     * @return The preferred string encoding for the given native interface.
+     * If there is no setting, defaults to the {@link #getDefaultStringEncoding()}.
+     * @see com.sun.jna.Library#OPTION_STRING_ENCODING
      */
-    public static String getStringEncoding(Class cls) {
+    public static String getStringEncoding(Class<?> cls) {
         String encoding = (String)getLibraryOptions(cls).get(Library.OPTION_STRING_ENCODING);
         return encoding != null ? encoding : getDefaultStringEncoding();
     }
 
-    /** Return the default string encoding.  Returns the value of the system
+    /**
+     * @return The default string encoding.  Returns the value of the system
      * property <code>jna.encoding</code> or {@link Native#DEFAULT_ENCODING}.
      */
     public static String getDefaultStringEncoding() {
         return System.getProperty("jna.encoding", DEFAULT_ENCODING);
     }
 
-    /** Return the preferred structure alignment for the given native interface.
-     * See {@link com.sun.jna.Library#OPTION_STRUCTURE_ALIGNMENT}.
+    /**
+     * @param cls The native interface type
+     * @return The preferred structure alignment for the given native interface.
+     * @see com.sun.jna.Library#OPTION_STRUCTURE_ALIGNMENT
      */
-    public static int getStructureAlignment(Class cls) {
+    public static int getStructureAlignment(Class<?> cls) {
         Integer alignment = (Integer)getLibraryOptions(cls).get(Library.OPTION_STRUCTURE_ALIGNMENT);
         return alignment == null ? Structure.ALIGN_DEFAULT : alignment.intValue();
     }
 
-    /** Return a byte array corresponding to the given String.  The encoding
+    /**
+     * @param s The input string
+     * @return A byte array corresponding to the given String.  The encoding
      * used is obtained from {@link #getDefaultStringEncoding()}.
      */
     static byte[] getBytes(String s) {
         return getBytes(s, getDefaultStringEncoding());
     }
 
-    /** Return a byte array corresponding to the given String, using the given
-        encoding.  If the encoding is not found default to the platform native
-        encoding.
+    /**
+     * @param s The string
+     * @param encoding The encoding - if {@code null} then the default platform
+     * encoding is used
+     * @return A byte array corresponding to the given String, using the given
+     * encoding.  If the encoding is not found default to the platform native
+     * encoding.
     */
     static byte[] getBytes(String s, String encoding) {
         if (encoding != null) {
@@ -709,15 +725,21 @@ public final class Native implements Version {
         return s.getBytes();
     }
 
-    /** Obtain a NUL-terminated byte buffer equivalent to the given String,
-        using the encoding returned by {@link #getDefaultStringEncoding()}.
-    */
+    /**
+     * @param s The string
+     * @return A NUL-terminated byte buffer equivalent to the given String,
+     * using the encoding returned by {@link #getDefaultStringEncoding()}.
+     * @see #toByteArray(String, String)
+     */
     public static byte[] toByteArray(String s) {
         return toByteArray(s, getDefaultStringEncoding());
     }
 
-    /** Obtain a NUL-terminated byte buffer equivalent to the given String,
-        using the given encoding.
+    /**
+     * @param s The string
+     * @return A NUL-terminated byte buffer equivalent to the given String,
+     * using the given encoding.
+     * @see #getBytes(String, String)
      */
     public static byte[] toByteArray(String s, String encoding) {
         byte[] bytes = getBytes(s, encoding);
@@ -726,8 +748,9 @@ public final class Native implements Version {
         return buf;
     }
 
-    /** Obtain a NUL-terminated wide character buffer equivalent to the given
-        String.
+    /**
+     * @param s The string
+     * @return A NUL-terminated wide character buffer equivalent to the given string.
     */
     public static char[] toCharArray(String s) {
         char[] chars = s.toCharArray();
@@ -742,7 +765,6 @@ public final class Native implements Version {
      * jar file.
      */
     private static void loadNativeDispatchLibrary() {
-
         if (!Boolean.getBoolean("jna.nounpack")) {
             try {
                 removeTemporaryFiles();
@@ -1002,7 +1024,7 @@ public final class Native implements Version {
     /** Retrieve last error set by the OS.  This corresponds to
      * <code>GetLastError()</code> on Windows, and <code>errno</code> on
      * most other platforms.  The value is preserved per-thread, but whether
-     * the original value is per-thread depends on the underlying OS.  
+     * the original value is per-thread depends on the underlying OS.
      * <p>
      * An alternative method of obtaining the last error result is
      * to declare your mapped method to throw {@link LastErrorException}
@@ -1030,7 +1052,7 @@ public final class Native implements Version {
      * @return a synchronized view of the specified library.
      */
     public static Library synchronizedLibrary(final Library library) {
-        Class cls = library.getClass();
+        Class<?> cls = library.getClass();
         if (!Proxy.isProxyClass(cls)) {
             throw new IllegalArgumentException("Library must be a proxy class");
         }
@@ -1073,9 +1095,9 @@ public final class Native implements Version {
         try {
 
             final ClassLoader cl = Native.class.getClassLoader();
-            Method m = (Method)AccessController.doPrivileged(new PrivilegedAction() {
+            Method m = AccessController.doPrivileged(new PrivilegedAction<Method>() {
                 @Override
-                public Object run() {
+                public Method run() {
                     try {
                         Method m = ClassLoader.class.getDeclaredMethod("findLibrary", new Class[] { String.class });
                         m.setAccessible(true);
@@ -1160,10 +1182,13 @@ public final class Native implements Version {
         }
     }
 
-    /** Returns the native size of the given class, in bytes.
+    /**
+     * @param The type class
+     * @param The object instance
+     * @return the native size of the given class, in bytes.
      * For use with arrays.
      */
-    public static int getNativeSize(Class type, Object value) {
+    public static int getNativeSize(Class<?> type, Object value) {
         if (type.isArray()) {
             int len = Array.getLength(value);
             if (len > 0) {
@@ -1187,11 +1212,15 @@ public final class Native implements Version {
         }
     }
 
-    /** Returns the native size for a given Java class.  Structures are
+    /**
+     * Returns the native size for a given Java class.  Structures are
      * assumed to be <code>struct</code> pointers unless they implement
      * {@link Structure.ByValue}.
+     *
+     * @param cls The Java class
+     * @return The native size for the class
      */
-    public static int getNativeSize(Class cls) {
+    public static int getNativeSize(Class<?> cls) {
         if (NativeMapped.class.isAssignableFrom(cls)) {
             cls = NativeMappedConverter.getInstance(cls).nativeType();
         }
@@ -1221,10 +1250,11 @@ public final class Native implements Version {
                                            + "\" is unknown");
     }
 
-    /** Indicate whether the given class is supported as a native argument
-     * type.
+    /**
+     * @param cls The Java class
+     * @return {@code true) whether the given class is supported as a native argument type.
      */
-    public static boolean isSupportedNativeType(Class cls) {
+    public static boolean isSupportedNativeType(Class<?> cls) {
         if (Structure.class.isAssignableFrom(cls)) {
             return true;
         }
@@ -1236,20 +1266,24 @@ public final class Native implements Version {
         }
     }
 
-    /** Set the default handler invoked when a callback throws an uncaught
+    /**
+     * Set the default handler invoked when a callback throws an uncaught
      * exception.  If the given handler is <code>null</code>, the default
      * handler will be reinstated.
+     *
+     * @param eh The default handler
      */
     public static void setCallbackExceptionHandler(UncaughtExceptionHandler eh) {
         callbackExceptionHandler = eh == null ? DEFAULT_HANDLER : eh;
     }
 
-    /** Returns the current handler for callback uncaught exceptions. */
+    /** @return the current handler for callback uncaught exceptions. */
     public static UncaughtExceptionHandler getCallbackExceptionHandler() {
         return callbackExceptionHandler;
     }
 
-    /** When called from a class static initializer, maps all native methods
+    /**
+     * When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
      * interface.
      * @param libName library name to which functions should be bound
@@ -1258,7 +1292,8 @@ public final class Native implements Version {
         register(findDirectMappedClass(getCallingClass()), libName);
     }
 
-    /** When called from a class static initializer, maps all native methods
+    /**
+     * When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
      * interface.
      * @param lib native library to which functions should be bound
@@ -1268,10 +1303,10 @@ public final class Native implements Version {
     }
 
     /** Find the nearest enclosing class with native methods. */
-    static Class findDirectMappedClass(Class cls) {
+    static Class<?> findDirectMappedClass(Class<?> cls) {
         Method[] methods = cls.getDeclaredMethods();
-        for (int i=0;i < methods.length;i++) {
-            if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
+        for (Method m : methods) {
+            if ((m.getModifiers() & Modifier.NATIVE) != 0) {
                 return cls;
             }
         }
@@ -1280,8 +1315,8 @@ public final class Native implements Version {
             String name = cls.getName().substring(0, idx);
             try {
                 return findDirectMappedClass(Class.forName(name, true, cls.getClassLoader()));
-            }
-            catch(ClassNotFoundException e) {
+            } catch(ClassNotFoundException e) {
+                // ignored
             }
         }
         throw new IllegalArgumentException("Can't determine class with native methods from the current context (" + cls + ")");
@@ -1290,7 +1325,7 @@ public final class Native implements Version {
     /** Try to determine the class context in which a {@link #register(String)} call
         was made.
     */
-    static Class getCallingClass() {
+    static Class<?> getCallingClass() {
         Class[] context = new SecurityManager() {
             @Override
             public Class[] getClassContext() {
@@ -1306,15 +1341,15 @@ public final class Native implements Version {
         return context[3];
     }
 
-    /** Set a thread initializer for the given callback.
-        The thread initializer indicates desired thread configuration when the
-        given Callback is invoked on a native thread not yet attached to the
-        VM.
+    /**
+     * Set a thread initializer for the given callback.
+     * @param cb The callback to invoke
+     * @param initializer The thread initializer indicates desired thread configuration when the
+     * given Callback is invoked on a native thread not yet attached to the VM.
      */
     public static void setCallbackThreadInitializer(Callback cb, CallbackThreadInitializer initializer) {
         CallbackReference.setCallbackThreadInitializer(cb, initializer);
     }
-
 
     private static Map registeredClasses = new WeakHashMap();
     private static Map registeredLibraries = new WeakHashMap();
@@ -1323,7 +1358,7 @@ public final class Native implements Version {
         synchronized(registeredClasses) {
             for (Iterator i=registeredClasses.entrySet().iterator();i.hasNext();) {
                 Map.Entry e = (Map.Entry)i.next();
-                unregister((Class)e.getKey(), (long[])e.getValue());
+                unregister((Class<?>)e.getKey(), (long[])e.getValue());
                 i.remove();
             }
         }
@@ -1341,7 +1376,7 @@ public final class Native implements Version {
         Should only be called if the class is no longer referenced and about
         to be garbage collected.
      */
-    public static void unregister(Class cls) {
+    public static void unregister(Class<?> cls) {
         synchronized(registeredClasses) {
             if (registeredClasses.containsKey(cls)) {
                 unregister(cls, (long[])registeredClasses.get(cls));
@@ -1352,16 +1387,16 @@ public final class Native implements Version {
     }
 
     /** @return whether the given class's native components are registered. */
-    public static boolean registered(Class cls) {
+    public static boolean registered(Class<?> cls) {
         synchronized(registeredClasses) {
             return registeredClasses.containsKey(cls);
         }
     }
 
     /** Unregister the native methods for the given class. */
-    private static native void unregister(Class cls, long[] handles);
+    private static native void unregister(Class<?> cls, long[] handles);
 
-    private static String getSignature(Class cls) {
+    private static String getSignature(Class<?> cls) {
         if (cls.isArray()) {
             return "[" + getSignature(cls.getComponentType());
         }
@@ -1428,7 +1463,7 @@ public final class Native implements Version {
     private static final int CVT_TYPE_MAPPER_STRING = 24;
     private static final int CVT_TYPE_MAPPER_WSTRING = 25;
 
-    private static int getConversion(Class type, TypeMapper mapper) {
+    private static int getConversion(Class<?> type, TypeMapper mapper) {
         if (type == Boolean.class) type = boolean.class;
         else if (type == Byte.class) type = byte.class;
         else if (type == Short.class) type = short.class;
@@ -1443,7 +1478,7 @@ public final class Native implements Version {
             FromNativeConverter fromNative = mapper.getFromNativeConverter(type);
             ToNativeConverter toNative = mapper.getToNativeConverter(type);
             if (fromNative != null) {
-                Class nativeType = fromNative.nativeType();
+                Class<?> nativeType = fromNative.nativeType();
                 if (nativeType == String.class) {
                     return CVT_TYPE_MAPPER_STRING;
                 }
@@ -1453,7 +1488,7 @@ public final class Native implements Version {
                 return CVT_TYPE_MAPPER;
             }
             if (toNative != null) {
-                Class nativeType = toNative.nativeType();
+                Class<?> nativeType = toNative.nativeType();
                 if (nativeType == String.class) {
                     return CVT_TYPE_MAPPER_STRING;
                 }
@@ -1508,7 +1543,7 @@ public final class Native implements Version {
             return CVT_POINTER_TYPE;
         }
         if (NativeMapped.class.isAssignableFrom(type)) {
-            Class nativeType = NativeMappedConverter.getInstance(type).nativeType();
+            Class<?> nativeType = NativeMappedConverter.getInstance(type).nativeType();
             if (nativeType == String.class) {
                 return CVT_NATIVE_MAPPED_STRING;
             }
@@ -1520,7 +1555,8 @@ public final class Native implements Version {
         return CVT_UNSUPPORTED;
     }
 
-    /** When called from a class static initializer, maps all native methods
+    /**
+     * When called from a class static initializer, maps all native methods
      * found within that class to native libraries via the JNA raw calling
      * interface.  Uses the class loader of the given class to search for the
      * native library in the resource path if it is not found in the system
@@ -1529,7 +1565,7 @@ public final class Native implements Version {
      * @param libName name of or path to native library to which functions
      * should be bound
      */
-    public static void register(Class cls, String libName) {
+    public static void register(Class<?> cls, String libName) {
         Map options = new HashMap();
         options.put(Library.OPTION_CLASSLOADER, cls.getClassLoader());
         register(cls, NativeLibrary.getInstance(libName, options));
@@ -1544,25 +1580,25 @@ public final class Native implements Version {
     // TODO: derive options from annotations (per-class or per-method)
     // options: read parameter type mapping (long/native long),
     // method name, library name, call conv
-    public static void register(Class cls, NativeLibrary lib) {
+    public static void register(Class<?> cls, NativeLibrary lib) {
         Method[] methods = cls.getDeclaredMethods();
-        List mlist = new ArrayList();
+        List<Method> mlist = new ArrayList<Method>();
         TypeMapper mapper = (TypeMapper)
             lib.getOptions().get(Library.OPTION_TYPE_MAPPER);
         cacheOptions(cls, lib.getOptions(), null);
 
-        for (int i=0;i < methods.length;i++) {
-            if ((methods[i].getModifiers() & Modifier.NATIVE) != 0) {
-                mlist.add(methods[i]);
+        for (Method m : methods) {
+            if ((m.getModifiers() & Modifier.NATIVE) != 0) {
+                mlist.add(m);
             }
         }
         long[] handles = new long[mlist.size()];
         for (int i=0;i < handles.length;i++) {
-            Method method = (Method)mlist.get(i);
+            Method method = mlist.get(i);
             String sig = "(";
-            Class rclass = method.getReturnType();
+            Class<?> rclass = method.getReturnType();
             long rtype, closure_rtype;
-            Class[] ptypes = method.getParameterTypes();
+            Class<?>[] ptypes = method.getParameterTypes();
             long[] atypes = new long[ptypes.length];
             long[] closure_atypes = new long[ptypes.length];
             int[] cvt = new int[ptypes.length];
@@ -1603,7 +1639,7 @@ public final class Native implements Version {
                 break;
             }
             for (int t=0;t < ptypes.length;t++) {
-                Class type = ptypes[t];
+                Class<?> type = ptypes[t];
                 sig += getSignature(type);
                 cvt[t] = getConversion(type, mapper);
                 if (cvt[t] == CVT_UNSUPPORTED) {
@@ -1650,7 +1686,7 @@ public final class Native implements Version {
             sig += ")";
             sig += getSignature(rclass);
 
-            Class[] etypes = method.getExceptionTypes();
+            Class<?>[] etypes = method.getExceptionTypes();
             for (int e=0;e < etypes.length;e++) {
                 if (LastErrorException.class.isAssignableFrom(etypes[e])) {
                     throwLastError = true;
@@ -1683,7 +1719,7 @@ public final class Native implements Version {
     /** Take note of options used for a given library mapping, to facilitate
         looking them up later.
     */
-    private static Map cacheOptions(Class cls, Map libOptions, Object proxy) {
+    private static Map cacheOptions(Class<?> cls, Map libOptions, Object proxy) {
         libOptions = new HashMap(libOptions);
         libOptions.put(_OPTION_ENCLOSING_LIBRARY, cls);
         synchronized(libraries) {
@@ -1697,7 +1733,7 @@ public final class Native implements Version {
             // classes get the appropriate associated options
             if (!cls.isInterface()
                 && Library.class.isAssignableFrom(cls)) {
-                Class ifaces[] = cls.getInterfaces();
+                Class<?> ifaces[] = cls.getInterfaces();
                 for (int i=0;i < ifaces.length;i++) {
                     if (Library.class.isAssignableFrom(ifaces[i])) {
                         cacheOptions(ifaces[i], libOptions, proxy);
@@ -1709,7 +1745,7 @@ public final class Native implements Version {
         return libOptions;
     }
 
-    private static native long registerMethod(Class cls,
+    private static native long registerMethod(Class<?> cls,
                                               String name,
                                               String signature,
                                               int[] conversions,
@@ -1718,7 +1754,7 @@ public final class Native implements Version {
                                               int rconversion,
                                               long closure_rtype,
                                               long rtype,
-                                              Class rclass,
+                                              Class<?> rclass,
                                               long fptr,
                                               int callingConvention,
                                               boolean throwLastError,
@@ -1728,13 +1764,13 @@ public final class Native implements Version {
 
 
     // Called from native code
-    private static NativeMapped fromNative(Class cls, Object value) {
+    private static NativeMapped fromNative(Class<?> cls, Object value) {
         // NOTE: technically should be either CallbackParameterContext or
         // FunctionResultContext
         return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, new FromNativeContext(cls));
     }
     // Called from native code
-    private static Class nativeType(Class cls) {
+    private static Class<?> nativeType(Class<?> cls) {
         return NativeMappedConverter.getInstance(cls).nativeType();
     }
     // Called from native code
@@ -1744,7 +1780,7 @@ public final class Native implements Version {
         return cvt.toNative(o, new ToNativeContext());
     }
     // Called from native code
-    private static Object fromNative(FromNativeConverter cvt, Object o, Class cls) {
+    private static Object fromNative(FromNativeConverter cvt, Object o, Class<?> cls) {
         // NOTE: technically should be FunctionResultContext
         return cvt.fromNative(o, new FromNativeContext(cls));
     }
@@ -1799,7 +1835,7 @@ public final class Native implements Version {
     static synchronized native long createNativeCallback(Callback callback,
                                                          Method method,
                                                          Class[] parameterTypes,
-                                                         Class returnType,
+                                                         Class<?> returnType,
                                                          int callingConvention,
                                                          int flags,
                                                          String encoding);
@@ -2038,6 +2074,17 @@ public final class Native implements Version {
      */
     public static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
+    private static final ThreadLocal<Memory> nativeThreadTerminationFlag =
+        new ThreadLocal<Memory>() {
+            @Override
+            protected Memory initialValue() {
+                Memory m = new Memory(4);
+                m.clear();
+                return m;
+            }
+        };
+    private static final Map<Thread, Pointer> nativeThreads = Collections.synchronizedMap(new WeakHashMap<Thread, Pointer>());
+
     /** <p>Indicate whether the JVM should detach the current native thread when
         the current Java code finishes execution.  Generally this is used to
         avoid detaching native threads when it is known that a given thread
@@ -2059,12 +2106,12 @@ public final class Native implements Version {
             // state every time.  Clear the termination flag, since it's not
             // needed when the native thread is detached normally.
             nativeThreads.remove(thread);
-            Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+            Pointer p = nativeThreadTerminationFlag.get();
             setDetachState(true, 0);
         }
         else {
             if (!nativeThreads.containsKey(thread)) {
-                Pointer p = (Pointer)nativeThreadTerminationFlag.get();
+                Pointer p = nativeThreadTerminationFlag.get();
                 nativeThreads.put(thread, p);
                 setDetachState(false, p.peer);
             }
@@ -2072,25 +2119,13 @@ public final class Native implements Version {
     }
 
     static Pointer getTerminationFlag(Thread t) {
-        return (Pointer)nativeThreads.get(t);
+        return nativeThreads.get(t);
     }
-
-    private static Map nativeThreads = Collections.synchronizedMap(new WeakHashMap());
-
-    private static ThreadLocal nativeThreadTerminationFlag =
-        new ThreadLocal() {
-            @Override
-            protected Object initialValue() {
-                Memory m = new Memory(4);
-                m.clear();
-                return m;
-            }
-        };
 
     private static native void setDetachState(boolean detach, long terminationFlag);
 
     private static class Buffers {
-        static boolean isBuffer(Class cls) {
+        static boolean isBuffer(Class<?> cls) {
             return Buffer.class.isAssignableFrom(cls);
         }
     }

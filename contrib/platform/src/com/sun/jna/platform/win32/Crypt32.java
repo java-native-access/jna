@@ -27,8 +27,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Crypt32 extends StdCallLibrary {
 	
-	Crypt32 INSTANCE = (Crypt32) Native.loadLibrary("Crypt32",
-			Crypt32.class, W32APIOptions.DEFAULT_OPTIONS);
+	Crypt32 INSTANCE = Native.loadLibrary("Crypt32", Crypt32.class, W32APIOptions.DEFAULT_OPTIONS);
 	
 	/**
 	 * The CryptProtectData function performs encryption on the data in a DATA_BLOB

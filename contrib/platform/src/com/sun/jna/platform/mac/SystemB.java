@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Daniel Widdis 
+ * Copyright (c) 2015 Daniel Widdis
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -33,46 +33,47 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface SystemB extends Library {
 
-    public static SystemB INSTANCE = (SystemB) Native.loadLibrary("System",
-                                                                  SystemB.class);
+    SystemB INSTANCE = Native.loadLibrary("System", SystemB.class);
 
     // host_statistics()
-    static int HOST_LOAD_INFO = 1;// System loading stats
-    static int HOST_VM_INFO = 2; // Virtual memory stats
-    static int HOST_CPU_LOAD_INFO = 3;// CPU load stats
+    int HOST_LOAD_INFO = 1;// System loading stats
+    int HOST_VM_INFO = 2; // Virtual memory stats
+    int HOST_CPU_LOAD_INFO = 3;// CPU load stats
 
     // host_statistics64()
-    static int HOST_VM_INFO64 = 4; // 64-bit virtual memory stats
+    int HOST_VM_INFO64 = 4; // 64-bit virtual memory stats
 
     // host_cpu_load_info()
-    static int CPU_STATE_MAX = 4;
-    static int CPU_STATE_USER = 0;
-    static int CPU_STATE_SYSTEM = 1;
-    static int CPU_STATE_IDLE = 2;
-    static int CPU_STATE_NICE = 3;
+    int CPU_STATE_MAX = 4;
+    int CPU_STATE_USER = 0;
+    int CPU_STATE_SYSTEM = 1;
+    int CPU_STATE_IDLE = 2;
+    int CPU_STATE_NICE = 3;
 
     // host_processor_info() flavor
-    static int PROCESSOR_BASIC_INFO = 1;
-    static int PROCESSOR_CPU_LOAD_INFO = 2;
+    int PROCESSOR_BASIC_INFO = 1;
+    int PROCESSOR_CPU_LOAD_INFO = 2;
 
     // Data size
-    static int UINT64_SIZE = Native.getNativeSize(long.class);
-    static int INT_SIZE = Native.getNativeSize(int.class);
+    int UINT64_SIZE = Native.getNativeSize(long.class);
+    int INT_SIZE = Native.getNativeSize(int.class);
 
     public static class HostCpuLoadInfo extends Structure {
         public int cpu_ticks[] = new int[CPU_STATE_MAX];
-		
+
+        @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cpu_ticks" });
+            return Arrays.asList("cpu_ticks");
         }
     }
 
     public static class HostLoadInfo extends Structure {
         public int[] avenrun = new int[3]; // scaled by LOAD_SCALE
         public int[] mach_factor = new int[3]; // scaled by LOAD_SCALE
-		
+
+        @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "avenrun", "mach_factor" });
+            return Arrays.asList("avenrun", "mach_factor");
         }
     }
 
@@ -94,12 +95,13 @@ public interface SystemB extends Library {
         // # of pages speculative (included in free_count)
         public int speculative_count;
 
+        @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "free_count", "active_count",
-                                                "inactive_count", "wire_count", "zero_fill_count",
-                                                "reactivations", "pageins", "pageouts", "faults",
-                                                "cow_faults", "lookups", "hits", "purgeable_count",
-                                                "purges", "speculative_count" });
+            return Arrays.asList("free_count", "active_count",
+                                 "inactive_count", "wire_count", "zero_fill_count",
+                                 "reactivations", "pageins", "pageouts", "faults",
+                                 "cow_faults", "lookups", "hits", "purgeable_count",
+                                 "purges", "speculative_count");
         }
     }
 
@@ -137,19 +139,19 @@ public interface SystemB extends Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "free_count", "active_count", 
-                                                "inactive_count", "wire_count", 
-                                                "zero_fill_count", "reactivations",
-                                                "pageins", "pageouts",
-                                                "faults", "cow_faults",
-                                                "lookups", "hits",
-                                                "purges",
-                                                "purgeable_count", "speculative_count", 
-                                                "decompressions", "compressions",
-                                                "swapins", "swapouts",
-                                                "compressor_page_count", "throttled_count",
-                                                "external_page_count", "internal_page_count",
-                                                "total_uncompressed_pages_in_compressor" });
+            return Arrays.asList("free_count", "active_count",
+                                 "inactive_count", "wire_count",
+                                 "zero_fill_count", "reactivations",
+                                 "pageins", "pageouts",
+                                 "faults", "cow_faults",
+                                 "lookups", "hits",
+                                 "purges",
+                                 "purgeable_count", "speculative_count",
+                                 "decompressions", "compressions",
+                                 "swapins", "swapouts",
+                                 "compressor_page_count", "throttled_count",
+                                 "external_page_count", "internal_page_count",
+                                 "total_uncompressed_pages_in_compressor");
         }
     }
 
@@ -157,14 +159,14 @@ public interface SystemB extends Library {
      * The mach_host_self system call returns the calling thread's host name
      * port. It has an effect equivalent to receiving a send right for the host
      * port.
-     * 
+     *
      * @return the host's name port
      */
     int mach_host_self();
 
     /**
      * The host_page_size function returns the page size for the given host.
-     * 
+     *
      * @param machPort
      *            The name (or control) port for the host for which the page
      *            size is desired.
@@ -177,7 +179,7 @@ public interface SystemB extends Library {
     /**
      * The host_statistics function returns scheduling and virtual memory
      * statistics concerning the host as specified by hostStat.
-     * 
+     *
      * @param machPort
      *            The control port for the host for which information is to be
      *            obtained.
@@ -191,13 +193,12 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
-    int host_statistics(int machPort, int hostStat, Structure stats,
-			IntByReference count);
+    int host_statistics(int machPort, int hostStat, Structure stats, IntByReference count);
 
     /**
      * The host_statistics64 function returns 64-bit virtual memory statistics
      * concerning the host as specified by hostStat.
-     * 
+     *
      * @param machPort
      *            The control port for the host for which information is to be
      *            obtained.
@@ -210,17 +211,16 @@ public interface SystemB extends Library {
      *            returned (in natural-sized units).
      * @return 0 on success; sets errno on failure
      */
-    int host_statistics64(int machPort, int hostStat, Structure stats,
-                          IntByReference count);
+    int host_statistics64(int machPort, int hostStat, Structure stats, IntByReference count);
 
     /**
      * The sysctl() function retrieves system information and allows processes
      * with appropriate privileges to set system information. The information
      * available from sysctl() consists of integers, strings, and tables.
-     * 
+     *
      * The state is described using a "Management Information Base" (MIB) style
      * name, listed in name, which is a namelen length array of integers.
-     * 
+     *
      * The information is copied into the buffer specified by oldp. The size of
      * the buffer is given by the location specified by oldlenp before the call,
      * and that location gives the amount of data copied after a successful call
@@ -229,18 +229,18 @@ public interface SystemB extends Library {
      * call supplies as much data as fits in the buffer provided and returns
      * with the error code ENOMEM. If the old value is not desired, oldp and
      * oldlenp should be set to NULL.
-     * 
+     *
      * The size of the available data can be determined by calling sysctl() with
      * the NULL argument for oldp. The size of the available data will be
      * returned in the location pointed to by oldlenp. For some operations, the
      * amount of space may change often. For these operations, the system
      * attempts to round up so that the returned size is large enough for a call
      * to return the data shortly thereafter.
-     * 
+     *
      * To set a new value, newp is set to point to a buffer of length newlen
      * from which the requested value is to be taken. If a new value is not to
      * be set, newp should be set to NULL and newlen set to 0.
-     * 
+     *
      * @param name
      *            MIB array of integers
      * @param namelen
@@ -262,7 +262,7 @@ public interface SystemB extends Library {
      * The sysctlbyname() function accepts an ASCII representation of the name
      * and internally looks up the integer name vector. Apart from that, it
      * behaves the same as the standard sysctl() function.
-     * 
+     *
      * @param name
      *            ASCII representation of the MIB name
      * @param oldp
@@ -290,15 +290,15 @@ public interface SystemB extends Library {
      * to repeatedly request the same variable (the sysctl() function runs in
      * about a third the time as the same request made via the sysctlbyname()
      * function).
-     * 
+     *
      * The number of elements in the mib array can be determined by calling
      * sysctlnametomib() with the NULL argument for mibp.
-     * 
+     *
      * The sysctlnametomib() function is also useful for fetching mib prefixes.
      * If size on input is greater than the number of elements written, the
      * array still contains the additional elements which may be written
      * programmatically.
-     * 
+     *
      * @param name
      *            ASCII representation of the name
      * @param mibp
@@ -309,10 +309,10 @@ public interface SystemB extends Library {
      * @return 0 on success; sets errno on failure
      */
     int sysctlnametomib(String name, Pointer mibp, IntByReference size);
-    
+
     /**
      * The host_processor_info function returns information about processors.
-     * 
+     *
      * @param machPort
      *            The control port for the host for which information is to be
      *            obtained.

@@ -29,8 +29,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Netapi32 extends StdCallLibrary {
 	
-	Netapi32 INSTANCE = (Netapi32) Native.loadLibrary("Netapi32",
-			Netapi32.class, W32APIOptions.DEFAULT_OPTIONS);
+	Netapi32 INSTANCE = Native.loadLibrary("Netapi32", Netapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * Retrieves join status information for the specified computer.

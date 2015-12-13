@@ -45,62 +45,60 @@ import com.sun.jna.win32.W32APIOptions;
  * @author scott.palmer
  */
 public interface OleAuto extends StdCallLibrary {
+	/** The instance. */
+	OleAuto INSTANCE = Native.loadLibrary("OleAut32", OleAuto.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/* Flags for IDispatch::Invoke */
 	/** The Constant DISPATCH_METHOD. */
-	public final static int DISPATCH_METHOD = 0x1;
+	int DISPATCH_METHOD = 0x1;
 
 	/** The Constant DISPATCH_PROPERTYGET. */
-	public final static int DISPATCH_PROPERTYGET = 0x2;
+	int DISPATCH_PROPERTYGET = 0x2;
 
 	/** The Constant DISPATCH_PROPERTYPUT. */
-	public final static int DISPATCH_PROPERTYPUT = 0x4;
+	int DISPATCH_PROPERTYPUT = 0x4;
 
 	/** The Constant DISPATCH_PROPERTYPUTREF. */
-	public final static int DISPATCH_PROPERTYPUTREF = 0x8;
+	int DISPATCH_PROPERTYPUTREF = 0x8;
 
 	/** An array that is allocated on the stac. */
-	public final static int FADF_AUTO = 0x0001;
+	int FADF_AUTO = 0x0001;
 
 	/** An array that is statically allocated. */
-	public final static int FADF_STATIC = 0x0002;
+	int FADF_STATIC = 0x0002;
 
 	/** An array that is embedded in a structure. */
-	public final static int FADF_EMBEDDED = 0x0004;
+	int FADF_EMBEDDED = 0x0004;
 
 	/** An array that is embedded in a structure. */
-	public final static int FADF_FIXEDSIZE = 0x0010;
+	int FADF_FIXEDSIZE = 0x0010;
 
 	/** An array that is embedded in a structure. */
-	public final static int FADF_RECORD = 0x0020;
+	int FADF_RECORD = 0x0020;
 
 	/** An array that is embedded in a structure. */
-	public final static int FADF_HAVEIID = 0x0040;
+	int FADF_HAVEIID = 0x0040;
 
 	/**
 	 * An array that has a variant type. The variant type can be retrieved with
 	 * SafeArrayGetVartype.
 	 */
-	public final static int FADF_HAVEVARTYPE = 0x0080;
+	int FADF_HAVEVARTYPE = 0x0080;
 
 	/** An array of BSTRs. */
-	public final static int FADF_BSTR = 0x0100;
+	int FADF_BSTR = 0x0100;
 
 	/** An array of IUnknown*. */
-	public final static int FADF_UNKNOWN = 0x0200;
+	int FADF_UNKNOWN = 0x0200;
 
 	/** An array of IDispatch*. */
-	public final static int FADF_DISPATCH = 0x0400;
+	int FADF_DISPATCH = 0x0400;
 
 	/** An array of VARIANTs. */
-	public final static int FADF_VARIANT = 0x0800;
+	int FADF_VARIANT = 0x0800;
 
 	/** Bits reserved for future use. */
-	public final static int FADF_RESERVED = 0xF008;
-
-	/** The instance. */
-	OleAuto INSTANCE = (OleAuto) Native.loadLibrary("OleAut32", OleAuto.class,
-			W32APIOptions.DEFAULT_OPTIONS);
+	int FADF_RESERVED = 0xF008;
 
 	/**
 	 * This function allocates a new string and copies the passed string into
@@ -111,7 +109,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @return Null if there is insufficient memory or if a null pointer is
 	 *         passed in.
 	 */
-	public BSTR SysAllocString(String sz);
+	BSTR SysAllocString(String sz);
 
 	/**
 	 * This function frees a string allocated previously by SysAllocString,
@@ -122,7 +120,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            Unicode string that was allocated previously, or NULL. Setting
 	 *            this parameter to NULL causes the function to simply return.
 	 */
-	public void SysFreeString(BSTR bstr);
+	void SysFreeString(BSTR bstr);
 
 	/**
 	 * The VariantInit function initializes the VARIANTARG by setting the vt
@@ -133,7 +131,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param pvarg
 	 *            The variant to initialize.
 	 */
-	public void VariantInit(VARIANT.ByReference pvarg);
+	void VariantInit(VARIANT.ByReference pvarg);
 
 	/**
 	 * The VariantInit function initializes the VARIANTARG by setting the vt
@@ -144,7 +142,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * @param pvarg
 	 *            The variant to initialize.
 	 */
-	public void VariantInit(VARIANT pvarg);
+	void VariantInit(VARIANT pvarg);
 
 	/**
 	 * First, free any memory that is owned by pvargDest, such as VariantClear
@@ -173,7 +171,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            [in] The source variant.
 	 * @return the hresult
 	 */
-	public HRESULT VariantCopy(Pointer pvargDest, VARIANT pvargSrc);
+	HRESULT VariantCopy(Pointer pvargDest, VARIANT pvargSrc);
 
 	/**
 	 * Use this function to clear variables of type VARIANTARG (or VARIANT)
@@ -236,7 +234,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *         A safe array descriptor, or null if the array could not be
 	 *         created.
 	 */
-	public SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
+	SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
@@ -262,7 +260,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *         E_OUTOFMEMORY Memory could not be allocated for the element.
 	 */
-	public HRESULT SafeArrayPutElement(SAFEARRAY psa, long[] idx, VARIANT pv);
+	HRESULT SafeArrayPutElement(SAFEARRAY psa, long[] idx, VARIANT pv);
 
 	/**
 	 * Retrieves a single element of the array.
@@ -288,8 +286,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *         E_OUTOFMEMORY Memory could not be allocated for the element.
 	 */
-	public HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices,
-			Pointer pv);
+	HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices, Pointer pv);
 
 	/**
 	 * Increments the lock count of an array, and places a pointer to the array
@@ -308,7 +305,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *         E_UNEXPECTED The array could not be locked.
 	 */
-	public HRESULT SafeArrayLock(SAFEARRAY psa);
+	HRESULT SafeArrayLock(SAFEARRAY psa);
 
 	/**
 	 * Decrements the lock count of an array so it can be freed or resized.
@@ -326,7 +323,7 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *         E_UNEXPECTED The array could not be locked.
 	 */
-	public HRESULT SafeArrayUnLock(SAFEARRAY psa);
+	HRESULT SafeArrayUnLock(SAFEARRAY psa);
 
 	/**
 	 * Retrieves a pointer to a running object that has been registered with
@@ -345,8 +342,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *         If this function succeeds, it returns S_OK. Otherwise, it returns
 	 *         an HRESULT error code.
 	 */
-	HRESULT GetActiveObject(GUID rclsid, PVOID pvReserved,
-			PointerByReference ppunk);
+	HRESULT GetActiveObject(GUID rclsid, PVOID pvReserved, PointerByReference ppunk);
 
 	/**
 	 * The Class DISPPARAMS.
@@ -435,10 +431,9 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 *            TYPE_E_CANTLOADLIBRARY The type library or DLL could not be
 	 *            loaded.
-         * @return status
+     * @return status
 	 */
-	public HRESULT LoadRegTypeLib(GUID rguid, int wVerMajor, int wVerMinor,
-			LCID lcid, PointerByReference pptlib);
+	HRESULT LoadRegTypeLib(GUID rguid, int wVerMajor, int wVerMinor, LCID lcid, PointerByReference pptlib);
 
 	/**
 	 * Loads and registers a type library.
@@ -473,9 +468,9 @@ public interface OleAuto extends StdCallLibrary {
 	 *            loaded.
          * @return status
 	 */
-	public HRESULT LoadTypeLib(String szFile, PointerByReference pptlib);
+	HRESULT LoadTypeLib(String szFile, PointerByReference pptlib);
         /** @deprecated use the String version */
-	public HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
+	HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 
 	/**
 	 * Converts a system time to a variant representation.
@@ -488,6 +483,5 @@ public interface OleAuto extends StdCallLibrary {
 	 * 
 	 * @return The function returns TRUE on success and FALSE otherwise.
 	 */
-	public int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime,
-			DoubleByReference pvtime);
+	int SystemTimeToVariantTime(SYSTEMTIME lpSystemTime, DoubleByReference pvtime);
 }

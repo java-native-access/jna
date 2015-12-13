@@ -33,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 public interface Mpr extends StdCallLibrary {
 
-    Mpr INSTANCE = (Mpr) Native.loadLibrary("Mpr", Mpr.class, W32APIOptions.DEFAULT_OPTIONS);
+    Mpr INSTANCE = Native.loadLibrary("Mpr", Mpr.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The WNetOpenEnum function starts an enumeration of network resources or

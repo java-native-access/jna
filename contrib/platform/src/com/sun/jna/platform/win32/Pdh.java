@@ -32,18 +32,16 @@ import com.sun.jna.win32.W32APIOptions;
  * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373083(v=vs.85).aspx">Performance Counters</A>
  */
 public interface Pdh extends StdCallLibrary {
-    Pdh INSTANCE = (Pdh) Native.loadLibrary("Pdh",
-            Pdh.class, W32APIOptions.DEFAULT_OPTIONS);
-
+    Pdh INSTANCE = Native.loadLibrary("Pdh", Pdh.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /** Maximum counter name length. */
-    public static final int PDH_MAX_COUNTER_NAME = 1024;
+    int PDH_MAX_COUNTER_NAME = 1024;
     /** Maximum counter instance name length. */
-    public static final int PDH_MAX_INSTANCE_NAME = 1024;
+    int PDH_MAX_INSTANCE_NAME = 1024;
     /** Maximum full counter path length. */
-    public static final int PDH_MAX_COUNTER_PATH = 2048;
+    int PDH_MAX_COUNTER_PATH = 2048;
     /** Maximum full counter log name length. */
-    public static final int PDH_MAX_DATASOURCE_PATH = 1024;
+    int PDH_MAX_DATASOURCE_PATH = 1024;
 
     /* TODO
      * LPVOID CALLBACK AllocateMemory(_In_ SIZE_T AllocSize,_In_ LPVOID pContext)
@@ -60,13 +58,13 @@ public interface Pdh extends StdCallLibrary {
     int PdhConnectMachine(String szMachineName);
 
     // Known values for the PdhGetDllVersion result
-    public static final int PDH_CVERSION_WIN40 = 0x0400;
-    public static final int PDH_CVERSION_WIN50 = 0x0500;
+    int PDH_CVERSION_WIN40 = 0x0400;
+    int PDH_CVERSION_WIN50 = 0x0500;
     // v1.1 revision of PDH -- basic log functions
     // v1.2 of the PDH -- adds variable instance counters
     // v1.3 of the PDH -- adds log service control & stubs for NT5/PDH v2 fn's
     // v2.0 of the PDH -- is the NT v 5.0 B2 version
-    public static final int PDH_VERSION = PDH_CVERSION_WIN50 + 0x0003;
+    int PDH_VERSION = PDH_CVERSION_WIN50 + 0x0003;
 
     /**
      * Returns the version of the currently installed Pdh.dll file.
@@ -118,8 +116,8 @@ public interface Pdh extends StdCallLibrary {
     }
 
     // flags for the PdhMakeCounterPath
-    public static final int PDH_PATH_WBEM_RESULT = 0x00000001;
-    public static final int PDH_PATH_WBEM_INPUT  = 0x00000002;
+    int PDH_PATH_WBEM_RESULT = 0x00000001;
+    int PDH_PATH_WBEM_INPUT  = 0x00000002;
 
     /**
      * Creates a full counter path using the members specified in the
@@ -199,18 +197,18 @@ public interface Pdh extends StdCallLibrary {
     int PdhGetRawCounterValue(HANDLE hCounter, DWORDByReference lpdwType, PDH_RAW_COUNTER pValue);
 
     // counter value types
-    public static final int PDH_FMT_RAW          = 0x00000010;
-    public static final int PDH_FMT_ANSI         = 0x00000020;
-    public static final int PDH_FMT_UNICODE      = 0x00000040;
-    public static final int PDH_FMT_LONG         = 0x00000100;
-    public static final int PDH_FMT_DOUBLE       = 0x00000200;
-    public static final int PDH_FMT_LARGE        = 0x00000400;
-    public static final int PDH_FMT_NOSCALE      = 0x00001000;
-    public static final int PDH_FMT_1000         = 0x00002000;
-    public static final int PDH_FMT_NODATA       = 0x00004000;
-    public static final int PDH_FMT_NOCAP100     = 0x00008000;
-    public static final int PERF_DETAIL_COSTLY   = 0x00010000;
-    public static final int PERF_DETAIL_STANDARD = 0x0000FFFF;
+    int PDH_FMT_RAW          = 0x00000010;
+    int PDH_FMT_ANSI         = 0x00000020;
+    int PDH_FMT_UNICODE      = 0x00000040;
+    int PDH_FMT_LONG         = 0x00000100;
+    int PDH_FMT_DOUBLE       = 0x00000200;
+    int PDH_FMT_LARGE        = 0x00000400;
+    int PDH_FMT_NOSCALE      = 0x00001000;
+    int PDH_FMT_1000         = 0x00002000;
+    int PDH_FMT_NODATA       = 0x00004000;
+    int PDH_FMT_NOCAP100     = 0x00008000;
+    int PERF_DETAIL_COSTLY   = 0x00010000;
+    int PERF_DETAIL_STANDARD = 0x0000FFFF;
 
     /**
      * Validates that the counter is present on the computer specified in the counter path.
