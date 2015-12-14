@@ -16,7 +16,9 @@
 
 package com.sun.jna.platform.win32;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import com.sun.jna.DefaultTypeMapper;
 import com.sun.jna.Library;
@@ -35,49 +37,49 @@ import com.sun.jna.win32.StdCallLibrary;
  * A port of dxva2.dll
  * @author Martin Steiger
  */
-public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, HighLevelMonitorConfigurationAPI, LowLevelMonitorConfigurationAPI
-{
+public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, HighLevelMonitorConfigurationAPI, LowLevelMonitorConfigurationAPI {
+	Map<String, Object> DXVA_OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
+		private static final long serialVersionUID = -1987971664975780480L;
+
+		{
+			put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper()
+			{
+				{
+					addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
+					addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
+					addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
+					addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
+				}
+			});
+		}
+	});
+
     /**
      * The only instance of the library
      */
-    Dxva2 INSTANCE = (Dxva2) Native.loadLibrary("Dxva2", Dxva2.class, new HashMap<String, Object>() 
-        {
-            private static final long serialVersionUID = -1987971664975780480L;
-
-            {
-                put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper() 
-                {
-                    {
-                        addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
-                        addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
-                        addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
-                        addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
-                    }
-                });
-            }
-        });
+    Dxva2 INSTANCE = Native.loadLibrary("Dxva2", Dxva2.class, DXVA_OPTIONS);
 
 
     /******************************************************************************
-        Monitor capability functions 
+        Monitor capability functions
     ******************************************************************************/
     /**
-     * Retrieves the configuration capabilities of a monitor. Call this function to find out which high-level 
+     * Retrieves the configuration capabilities of a monitor. Call this function to find out which high-level
      * monitor configuration functions are supported by the monitor.
-     * @param hMonitor Handle to a physical monitor. To get the monitor handle, call 
+     * @param hMonitor Handle to a physical monitor. To get the monitor handle, call
      *        {@link #GetPhysicalMonitorsFromHMONITOR}
      * @param pdwMonitorCapabilities Receives a bitwise OR of capabilities flags. (MC_CAPS_*)
-     * @param pdwSupportedColorTemperatures Receives a bitwise OR of color temperature flags. 
+     * @param pdwSupportedColorTemperatures Receives a bitwise OR of color temperature flags.
      *        (MC_SUPPORTED_COLOR_TEMPERATURE_*)
-     * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is 
-     *        FALSE. To get extended error information, call GetLastError. 
-     *        
+     * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is
+     *        FALSE. To get extended error information, call GetLastError.
+     *
      *        <p>The function fails if the monitor does not support DDC/CI.</p>
      */
     BOOL GetMonitorCapabilities(HANDLE hMonitor, DWORDByReference pdwMonitorCapabilities, DWORDByReference pdwSupportedColorTemperatures);
 
     /******************************************************************************
-        Monitor setting persistence functions 
+        Monitor setting persistence functions
     ******************************************************************************/
 
     /**
@@ -96,11 +98,11 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves the type of technology used by a monitor.
-     * This function does not support every display technology. If a monitor uses a display technology that is 
-     * supported by this function, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_TECHNOLOGY_TYPE 
+     * This function does not support every display technology. If a monitor uses a display technology that is
+     * supported by this function, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_TECHNOLOGY_TYPE
      * flag. If that flag is absent, the GetMonitorTechnologyType function fails.
-     * Some monitor technologies do not support certain monitor configuration functions. For example, 
-     * the DegaussMonitor function is supported only for cathode ray tube (CRT) monitors. To find out whether a 
+     * Some monitor technologies do not support certain monitor configuration functions. For example,
+     * the DegaussMonitor function is supported only for cathode ray tube (CRT) monitors. To find out whether a
      * specific function is supported, call GetMonitorCapabilities.
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param pdtyDisplayTechnologyType Receives the technology type as defined in {@link HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE}.
@@ -109,7 +111,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     BOOL GetMonitorTechnologyType(HANDLE hMonitor, MC_DISPLAY_TECHNOLOGY_TYPE.ByReference pdtyDisplayTechnologyType);
 
     /******************************************************************************
-        Monitor image calibration functions 
+        Monitor image calibration functions
     ******************************************************************************/
 
     /**
@@ -151,8 +153,8 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     /**
      * Retrieves a monitor's red, green, or blue drive value.
      * <p>
-     * Drive settings are generally used to adjust the monitor's white point. Drive and black level are different 
-     * names for the same monitor setting. If this function is supported, the GetMonitorCapabilities function returns 
+     * Drive settings are generally used to adjust the monitor's white point. Drive and black level are different
+     * names for the same monitor setting. If this function is supported, the GetMonitorCapabilities function returns
      * the MC_CAPS_RED_GREEN_BLUE_DRIVE flag.</p>
      * @param hMonitor Handle to a physical monitor.
      * @param dtDriveType A member of the MC_DRIVE_TYPE enumeration, specifying whether to retrieve the red, green, or blue drive value.
@@ -167,7 +169,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     /**
      * Retrieves a monitor's red, green, or blue gain value.
      * <p>
-     * Gain settings are generally used to adjust the monitor's white point. If this function is supported, the 
+     * Gain settings are generally used to adjust the monitor's white point. If this function is supported, the
      * GetMonitorCapabilities function returns the MC_CAPS_RED_GREEN_BLUE_GAIN flag. This function takes about 40 milliseconds to return.
      * The gain settings are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor.
@@ -206,10 +208,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     /**
      * Sets a monitor's color temperature.
      * <p>
-     * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_COLOR_TEMPERATURE flag. 
-     * The GetMonitorCapabilities function also returns the range of color temperatures that the monitor supports. 
-     * The ctCurrentColorTemperature parameter must correspond to one of these values. Changing the color temperature 
-     * changes the monitor's white point. It can also change the current drive and gain settings. To get the new drive 
+     * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_COLOR_TEMPERATURE flag.
+     * The GetMonitorCapabilities function also returns the range of color temperatures that the monitor supports.
+     * The ctCurrentColorTemperature parameter must correspond to one of these values. Changing the color temperature
+     * changes the monitor's white point. It can also change the current drive and gain settings. To get the new drive
      * and gain settings, call GetMonitorRedGreenOrBlueDrive and GetMonitorRedGreenOrBlueGain, respectively.
      * This function takes from 50 to 90 milliseconds to return.</p>
      * @param hMonitor Handle to a physical monitor.
@@ -219,7 +221,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     BOOL SetMonitorColorTemperature(HANDLE hMonitor, MC_COLOR_TEMPERATURE ctCurrentColorTemperature);
 
     /**
-     * Sets a monitor's red, green, or blue drive value. 
+     * Sets a monitor's red, green, or blue drive value.
      * <p>
      * Drive settings are generally used to adjust the
      * monitor's white point. Drive and black level are different names for the same monitor setting. If this function
@@ -236,7 +238,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     BOOL SetMonitorRedGreenOrBlueDrive(HANDLE hMonitor, MC_DRIVE_TYPE dtDriveType, int dwNewDrive);
 
     /**
-     * Sets a monitor's red, green, or blue gain value. 
+     * Sets a monitor's red, green, or blue gain value.
      * <p>
      * Gain settings are generally used to adjust the
      * monitor's white point. If this function is supported, the GetMonitorCapabilities function returns the
@@ -274,10 +276,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
      * This function takes about 40 milliseconds to return. The width and height settings are continuous monitor settings. </p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
-     * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to retrieve the width or the height. 
-     * @param pdwMinimumWidthOrHeight Receives the minimum width or height. 
-     * @param pdwCurrentWidthOrHeight Receives the current width or height. 
-     * @param pdwMaximumWidthOrHeight Receives the maximum width or height. 
+     * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to retrieve the width or the height.
+     * @param pdwMinimumWidthOrHeight Receives the minimum width or height.
+     * @param pdwCurrentWidthOrHeight Receives the current width or height.
+     * @param pdwMaximumWidthOrHeight Receives the maximum width or height.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL GetMonitorDisplayAreaSize(HANDLE hMonitor, MC_SIZE_TYPE stSizeType, DWORDByReference pdwMinimumWidthOrHeight,
@@ -289,10 +291,10 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
      * This function takes about 40 milliseconds to return. The horizontal and vertical position are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
-     * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to retrieve the horizontal position or the vertical position. 
-     * @param pdwMinimumPosition Receives the minimum horizontal or vertical position. 
-     * @param pdwCurrentPosition Receives the current horizontal or vertical position. 
-     * @param pdwMaximumPosition Receives the maximum horizontal or vertical position. 
+     * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to retrieve the horizontal position or the vertical position.
+     * @param pdwMinimumPosition Receives the minimum horizontal or vertical position.
+     * @param pdwCurrentPosition Receives the current horizontal or vertical position.
+     * @param pdwMaximumPosition Receives the maximum horizontal or vertical position.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL GetMonitorDisplayAreaPosition(HANDLE hMonitor, MC_POSITION_TYPE ptPositionType,
@@ -305,9 +307,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_SIZE flag.
      * This function takes about 50 milliseconds to return. The width and height settings are continuous monitor settings.</p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
-     * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to set the width or the height. 
-     * @param dwNewDisplayAreaWidthOrHeight Display area width or height. To get the minimum and maximum width and height, 
-     *        call GetMonitorDisplayAreaSize. 
+     * @param stSizeType A member of the MC_SIZE_TYPE enumeration, specifying whether to set the width or the height.
+     * @param dwNewDisplayAreaWidthOrHeight Display area width or height. To get the minimum and maximum width and height,
+     *        call GetMonitorDisplayAreaSize.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL SetMonitorDisplayAreaSize(HANDLE hMonitor, MC_SIZE_TYPE stSizeType, int dwNewDisplayAreaWidthOrHeight);
@@ -318,8 +320,8 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
      * If this function is supported, the GetMonitorCapabilities function returns the MC_CAPS_DISPLAY_AREA_POSITION flag.
      * This function takes about 50 milliseconds to return. The horizontal and vertical position are continuous monitor settings. </p>
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
-     * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to set the horizontal position or the vertical position. 
-     * @param dwNewPosition Horizontal or vertical position. To get the minimum and maximum position, call GetMonitorDisplayAreaPosition. 
+     * @param ptPositionType A member of the MC_POSITION_TYPE enumeration, specifying whether to set the horizontal position or the vertical position.
+     * @param dwNewPosition Horizontal or vertical position. To get the minimum and maximum position, call GetMonitorDisplayAreaPosition.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL SetMonitorDisplayAreaPosition(HANDLE hMonitor, MC_POSITION_TYPE ptPositionType, int dwNewPosition);
@@ -368,18 +370,18 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves the current value, maximum value, and code type of a Virtual Control Panel (VCP) code for a monitor.
-     * This function corresponds to the "Get VCP Feature &amp; VCP Feature Reply" command from the Display Data 
+     * This function corresponds to the "Get VCP Feature &amp; VCP Feature Reply" command from the Display Data
      * Channel Command Interface (DDC/CI) standard. Vendor-specific VCP codes can be used with this function.
-     * This function takes about 40 milliseconds to return. 
+     * This function takes about 40 milliseconds to return.
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
      * @param bVCPCode VCP code to query. The VCP codes are Include the VESA Monitor Control Command Set (MCCS)
-     *        standard, versions 1.0 and 2.0. This parameter must specify a continuous or non-continuous VCP, or a 
+     *        standard, versions 1.0 and 2.0. This parameter must specify a continuous or non-continuous VCP, or a
      *        vendor-specific code. It should not be a table control code.
-     * @param pvct Receives the VCP code type, as a member of the MC_VCP_CODE_TYPE enumeration. This parameter can be NULL. 
-     * @param pdwCurrentValue Receives the current value of the VCP code. This parameter can be NULL. 
-     * @param pdwMaximumValue If bVCPCode specifies a continuous VCP code, this parameter receives the maximum value of 
-     *        the VCP code. If bVCPCode specifies a non-continuous VCP code, the value received in this parameter 
-     *        is undefined. This parameter can be NULL. 
+     * @param pvct Receives the VCP code type, as a member of the MC_VCP_CODE_TYPE enumeration. This parameter can be NULL.
+     * @param pdwCurrentValue Receives the current value of the VCP code. This parameter can be NULL.
+     * @param pdwMaximumValue If bVCPCode specifies a continuous VCP code, this parameter receives the maximum value of
+     *        the VCP code. If bVCPCode specifies a non-continuous VCP code, the value received in this parameter
+     *        is undefined. This parameter can be NULL.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL GetVCPFeatureAndVCPFeatureReply(HANDLE hMonitor, BYTE bVCPCode, MC_VCP_CODE_TYPE.ByReference pvct,
@@ -410,9 +412,9 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Retrieves the length of a monitor's capabilities string.
-     * This function usually returns quickly, but sometimes it can take several seconds to complete. 
+     * This function usually returns quickly, but sometimes it can take several seconds to complete.
      * @param hMonitor Handle to a physical monitor. To get the monitor handle, call GetPhysicalMonitorsFromHMONITOR
-     * @param pdwCapabilitiesStringLengthInCharacters Receives the length of the capabilities string, in characters, including the terminating null character. 
+     * @param pdwCapabilitiesStringLengthInCharacters Receives the length of the capabilities string, in characters, including the terminating null character.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE.
      */
     BOOL GetCapabilitiesStringLength(HANDLE hMonitor, DWORDByReference pdwCapabilitiesStringLengthInCharacters);
@@ -499,7 +501,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
 
     /**
      * Closes an array of physical monitor handles.
-     * Call this function to close an array of monitor handles obtained from the GetPhysicalMonitorsFromHMONITOR 
+     * Call this function to close an array of monitor handles obtained from the GetPhysicalMonitorsFromHMONITOR
      * @param dwPhysicalMonitorArraySize Number of elements in the pPhysicalMonitorArray array.
      * @param pPhysicalMonitorArray Pointer to an array of PHYSICAL_MONITOR structures.
      * @return If the function succeeds, the return value is TRUE. If the function fails, the return value is FALSE

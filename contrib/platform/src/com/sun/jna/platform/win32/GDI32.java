@@ -39,8 +39,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface GDI32 extends StdCallLibrary {
 
-    GDI32 INSTANCE = (GDI32) Native.loadLibrary("gdi32", GDI32.class,
-                                                W32APIOptions.DEFAULT_OPTIONS);
+    GDI32 INSTANCE = Native.loadLibrary("gdi32", GDI32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * Used with BitBlt. Copies the source rectangle directly to the destination

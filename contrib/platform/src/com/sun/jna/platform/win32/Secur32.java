@@ -30,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author dblock[at]dblock.org
  */
 public interface Secur32 extends StdCallLibrary {
-    Secur32 INSTANCE = (Secur32) Native.loadLibrary("Secur32", Secur32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Secur32 INSTANCE = Native.loadLibrary("Secur32", Secur32.class, W32APIOptions.DEFAULT_OPTIONS);
 	
     /**
      * Specifies a format for a directory service object name.
@@ -57,7 +57,7 @@ public interface Secur32 extends StdCallLibrary {
      * @param len On input, the size of the buffer, on output the number of characters copied into the buffer, not including the terminating null character.
      * @return True if the function succeeds. False otherwise.
      */
-    public boolean GetUserNameEx(int nameFormat, char[] lpNameBuffer, IntByReference len);
+    boolean GetUserNameEx(int nameFormat, char[] lpNameBuffer, IntByReference len);
 
     /**
      * The AcquireCredentialsHandle function acquires a handle to preexisting credentials 
@@ -94,7 +94,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the function returns one of the SEC_I_ success codes.
      *  If the function fails, the function returns one of the SEC_E_ error codes.
      */
-    public int AcquireCredentialsHandle(String pszPrincipal, String pszPackage,
+    int AcquireCredentialsHandle(String pszPrincipal, String pszPackage,
                                         int fCredentialUse, LUID pvLogonID,
                                         Pointer pAuthData, Pointer pGetKeyFn, // TODO: SEC_GET_KEY_FN
                                         Pointer pvGetKeyArgument, CredHandle phCredential, 
@@ -161,7 +161,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the function returns one of the SEC_I_ success codes.
      *  If the function fails, the function returns one of the SEC_E_ error codes.
      */
-    public int InitializeSecurityContext(CredHandle phCredential, CtxtHandle phContext,
+    int InitializeSecurityContext(CredHandle phCredential, CtxtHandle phContext,
                                          String pszTargetName, int fContextReq, int Reserved1,
                                          int TargetDataRep, SecBufferDesc pInput, int Reserved2,
                                          CtxtHandle phNewContext, SecBufferDesc pOutput, IntByReference pfContextAttr,
@@ -176,7 +176,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the return value is SEC_E_OK.
      *  If the function fails, the return value is SEC_E_INVALID_HANDLE;
      */
-    public int DeleteSecurityContext(CtxtHandle phContext);
+    int DeleteSecurityContext(CtxtHandle phContext);
 	
     /**
      * The FreeCredentialsHandle function notifies the security system that the 
@@ -191,7 +191,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the return value is SEC_E_OK.
      *  If the function fails, the return value is SEC_E_INVALID_HANDLE;
      */
-    public int FreeCredentialsHandle(CredHandle phCredential);
+    int FreeCredentialsHandle(CredHandle phCredential);
 	
     /**
      * The AcceptSecurityContext function enables the server component of a transport 
@@ -235,7 +235,7 @@ public interface Secur32 extends StdCallLibrary {
      * @return
      *  This function returns one of SEC_* values.
      */
-    public int AcceptSecurityContext(CredHandle phCredential, CtxtHandle phContext,
+    int AcceptSecurityContext(CredHandle phCredential, CtxtHandle phContext,
                                      SecBufferDesc pInput, int fContextReq, int TargetDataRep,
                                      CtxtHandle phNewContext, SecBufferDesc pOutput, IntByReference pfContextAttr,
                                      TimeStamp ptsTimeStamp);
@@ -253,8 +253,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the function returns SEC_E_OK.
      *  If the function fails, it returns a nonzero error code.
      */
-    public int EnumerateSecurityPackages(IntByReference pcPackages, 
-                                         PSecPkgInfo ppPackageInfo);
+    int EnumerateSecurityPackages(IntByReference pcPackages,  PSecPkgInfo ppPackageInfo);
 	
     /**
      * The FreeContextBuffer function enables callers of security package functions to free a memory 
@@ -266,7 +265,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the function returns SEC_E_OK.
      *  If the function fails, it returns a nonzero error code.
      */
-    public int FreeContextBuffer(Pointer buffer);
+    int FreeContextBuffer(Pointer buffer);
 	
     /**
      * The QuerySecurityContextToken function obtains the access token for a client security context
@@ -280,8 +279,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, it returns a nonzero error code. One possible error code return is 
      *  SEC_E_INVALID_HANDLE.
      */
-    public int QuerySecurityContextToken(CtxtHandle phContext, 
-                                         HANDLEByReference phToken);
+    int QuerySecurityContextToken(CtxtHandle phContext, HANDLEByReference phToken);
 	
     /**
      * The ImpersonateSecurityContext function allows a server to impersonate a client by using 
@@ -296,7 +294,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, it returns a SEC_E_INVALID_HANDLE, SEC_E_NO_IMPERSONATION or 
      *  SEC_E_UNSUPPORTED_FUNCTION error code.
      */
-    public int ImpersonateSecurityContext(CtxtHandle phContext);
+    int ImpersonateSecurityContext(CtxtHandle phContext);
 	
     /**
      * Allows a security package to discontinue the impersonation of the caller and restore its 
@@ -309,5 +307,5 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function succeeds, the return value is SEC_E_OK.
      *  If the function fails, the return value can be either SEC_E_INVALID_HANDLE or SEC_E_UNSUPPORTED_FUNCTION.
      */
-    public int RevertSecurityContext(CtxtHandle phContext);
+    int RevertSecurityContext(CtxtHandle phContext);
 }

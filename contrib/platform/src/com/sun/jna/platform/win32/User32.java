@@ -35,13 +35,12 @@ import com.sun.jna.win32.W32APIOptions;
 public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /** The instance. */
-    User32 INSTANCE = (User32) Native.loadLibrary("user32", User32.class,
-                                                  W32APIOptions.DEFAULT_OPTIONS);
+    User32 INSTANCE = Native.loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Handle for message-only window.
      */
-    public static final HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
+    HWND HWND_MESSAGE = new HWND(Pointer.createConstant(-3));
 
     /** The cs globalclass. */
     int CS_GLOBALCLASS = 0x4000;
@@ -247,8 +246,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @return The return value is the total number of TCHARs copied into the
      *         buffer.
      */
-    int GetWindowModuleFileName(HWND hWnd, char[] lpszFileName,
-                                int cchFileNameMax);
+    int GetWindowModuleFileName(HWND hWnd, char[] lpszFileName, int cchFileNameMax);
 
     /**
      * This function retrieves the identifier of the thread that created the
@@ -329,8 +327,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         there are no windows found in the thread specified by dwThreadId,
      *         the return value is FALSE.
      */
-    boolean EnumThreadWindows(int dwThreadId, WNDENUMPROC lpEnumFunc,
-                              Pointer data);
+    boolean EnumThreadWindows(int dwThreadId, WNDENUMPROC lpEnumFunc, Pointer data);
 
     /**
      * The FlashWindowEx function flashes the specified window. It does not
@@ -505,8 +502,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         function fails, the return value is zero. To get extended error
      *         information, call GetLastError.
      */
-    boolean SetLayeredWindowAttributes(HWND hwnd, int crKey, byte bAlpha,
-                                       int dwFlags);
+    boolean SetLayeredWindowAttributes(HWND hwnd, int crKey, byte bAlpha, int dwFlags);
 
     /**
      * The GetLayeredWindowAttributes function retrieves the opacity and
@@ -538,7 +534,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         information, call GetLastError.
      */
     boolean GetLayeredWindowAttributes(HWND hwnd, IntByReference pcrKey,
-                                       ByteByReference pbAlpha, IntByReference pdwFlags);
+						ByteByReference pbAlpha, IntByReference pdwFlags);
 
     /**
      * The UpdateLayeredWindow function updates the position, size, shape,
@@ -659,8 +655,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         hook procedure. If the function fails, the return value is NULL.
      *         To get extended error information, call GetLastError.
      */
-    HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn, HINSTANCE hMod,
-                           int dwThreadId);
+    HHOOK SetWindowsHookEx(int idHook, HOOKPROC lpfn, HINSTANCE hMod, int dwThreadId);
 
     /**
      * The CallNextHookEx function passes the hook information to the next hook
@@ -822,7 +817,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         the return value is zero. GetLastError does not provide extended
      *         error information.
      */
-    public int GetSystemMetrics(int nIndex);
+    int GetSystemMetrics(int nIndex);
 
     /**
      * Changes the parent window of the specified child window.
@@ -893,8 +888,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call GetLastError.
      */
-    boolean MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight,
-                       boolean bRepaint);
+    boolean MoveWindow(HWND hWnd, int X, int Y, int nWidth, int nHeight, boolean bRepaint);
 
     /**
      * Changes the size, position, and Z order of a child, pop-up, or top-level
@@ -1121,8 +1115,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @return If the function succeeds, the return value is nonzero. If the
      *         function fails, the return value is zero.
      */
-    boolean RedrawWindow(HWND hWnd, RECT lprcUpdate,
-                         HRGN hrgnUpdate, DWORD flags);
+    boolean RedrawWindow(HWND hWnd, RECT lprcUpdate, HRGN hrgnUpdate, DWORD flags);
 
     /**
      * Retrieves a handle to a window that has the specified relationship
@@ -1276,7 +1269,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
-    public ATOM RegisterClassEx(WNDCLASSEX lpwcx);
+    ATOM RegisterClassEx(WNDCLASSEX lpwcx);
 
     /**
      * Unregisters a window class, freeing the memory required for the class.
@@ -1303,9 +1296,9 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
-    public boolean UnregisterClass(String lpClassName, HINSTANCE hInstance);
+    boolean UnregisterClass(String lpClassName, HINSTANCE hInstance);
     /** @deprecated use the String version */
-    public boolean UnregisterClass(WString lpClassName, HINSTANCE hInstance);
+    boolean UnregisterClass(WString lpClassName, HINSTANCE hInstance);
 
     /**
      * Creates an overlapped, pop-up, or child window with an extended window
@@ -1473,12 +1466,12 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         WM_NCCREATE</li>
      *         </ul>
      */
-    public HWND CreateWindowEx(int dwExStyle, String lpClassName,
+    HWND CreateWindowEx(int dwExStyle, String lpClassName,
                                String lpWindowName, int dwStyle, int x, int y, int nWidth,
                                int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
                                LPVOID lpParam);
     /** @deprecated use the String version */
-    public HWND CreateWindowEx(int dwExStyle, WString lpClassName,
+    HWND CreateWindowEx(int dwExStyle, WString lpClassName,
                                String lpWindowName, int dwStyle, int x, int y, int nWidth,
                                int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
                                LPVOID lpParam);
@@ -1507,7 +1500,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
-    public boolean DestroyWindow(HWND hWnd);
+    boolean DestroyWindow(HWND hWnd);
 
     /**
      * Retrieves information about a window class, including a handle to the
@@ -1544,8 +1537,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError} .
      */
-    public boolean GetClassInfoEx(HINSTANCE hinst, String lpszClass,
-                                  WNDCLASSEX lpwcx);
+    boolean GetClassInfoEx(HINSTANCE hinst, String lpszClass, WNDCLASSEX lpwcx);
 
     /**
      * Calls the default window procedure to provide default processing for any
@@ -1581,8 +1573,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError}.
      */
-    public LRESULT DefWindowProc(HWND hWnd, int Msg, WPARAM wParam,
-                                 LPARAM lParam);
+    LRESULT DefWindowProc(HWND hWnd, int Msg, WPARAM wParam, LPARAM lParam);
 
     /**
      * Registers the device or type of device for which a window will receive
@@ -1630,8 +1621,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         If the function fails, the return value is NULL. To get extended
      *         error information, call GetLastError.
      */
-    HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient,
-                                          Structure notificationFilter, int Flags);
+    HDEVNOTIFY RegisterDeviceNotification(HANDLE hRecipient, Structure notificationFilter, int Flags);
 
     /**
      * Closes the specified device notification handle.

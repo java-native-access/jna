@@ -37,37 +37,39 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Winspool extends StdCallLibrary {
 
-    public final static int CCHDEVICENAME = 32;
+    Winspool INSTANCE = Native.loadLibrary("Winspool.drv", Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
 
-    public final static int PRINTER_CHANGE_ADD_PRINTER = 0x00000001;
-    public final static int PRINTER_CHANGE_SET_PRINTER = 0x00000002;
-    public final static int PRINTER_CHANGE_DELETE_PRINTER = 0x00000004;
-    public final static int PRINTER_CHANGE_FAILED_CONNECTION_PRINTER = 0x00000008;
-    public final static int PRINTER_CHANGE_PRINTER = 0x000000FF;
-    public final static int PRINTER_CHANGE_ADD_JOB = 0x00000100;
-    public final static int PRINTER_CHANGE_SET_JOB = 0x00000200;
-    public final static int PRINTER_CHANGE_DELETE_JOB = 0x00000400;
-    public final static int PRINTER_CHANGE_WRITE_JOB = 0x00000800;
-    public final static int PRINTER_CHANGE_JOB = 0x0000FF00;
-    public final static int PRINTER_CHANGE_ADD_FORM = 0x00010000;
-    public final static int PRINTER_CHANGE_SET_FORM = 0x00020000;
-    public final static int PRINTER_CHANGE_DELETE_FORM = 0x00040000;
-    public final static int PRINTER_CHANGE_FORM = 0x00070000;
-    public final static int PRINTER_CHANGE_ADD_PORT = 0x00100000;
-    public final static int PRINTER_CHANGE_CONFIGURE_PORT = 0x00200000;
-    public final static int PRINTER_CHANGE_DELETE_PORT = 0x00400000;
-    public final static int PRINTER_CHANGE_PORT = 0x00700000;
-    public final static int PRINTER_CHANGE_ADD_PRINT_PROCESSOR = 0x01000000;
-    public final static int PRINTER_CHANGE_DELETE_PRINT_PROCESSOR = 0x04000000;
-    public final static int PRINTER_CHANGE_PRINT_PROCESSOR = 0x07000000;
-    public final static int PRINTER_CHANGE_SERVER = 0x08000000;
-    public final static int PRINTER_CHANGE_ADD_PRINTER_DRIVER = 0x10000000;
-    public final static int PRINTER_CHANGE_SET_PRINTER_DRIVER = 0x20000000;
-    public final static int PRINTER_CHANGE_DELETE_PRINTER_DRIVER = 0x40000000;
-    public final static int PRINTER_CHANGE_PRINTER_DRIVER = 0x70000000;
-    public final static int PRINTER_CHANGE_TIMEOUT = 0x80000000;
-    public final static int PRINTER_CHANGE_ALL_WIN7 = 0x7F77FFFF;
-    public final static int PRINTER_CHANGE_ALL = 0x7777FFFF;
+    int CCHDEVICENAME = 32;
+
+    int PRINTER_CHANGE_ADD_PRINTER = 0x00000001;
+    int PRINTER_CHANGE_SET_PRINTER = 0x00000002;
+    int PRINTER_CHANGE_DELETE_PRINTER = 0x00000004;
+    int PRINTER_CHANGE_FAILED_CONNECTION_PRINTER = 0x00000008;
+    int PRINTER_CHANGE_PRINTER = 0x000000FF;
+    int PRINTER_CHANGE_ADD_JOB = 0x00000100;
+    int PRINTER_CHANGE_SET_JOB = 0x00000200;
+    int PRINTER_CHANGE_DELETE_JOB = 0x00000400;
+    int PRINTER_CHANGE_WRITE_JOB = 0x00000800;
+    int PRINTER_CHANGE_JOB = 0x0000FF00;
+    int PRINTER_CHANGE_ADD_FORM = 0x00010000;
+    int PRINTER_CHANGE_SET_FORM = 0x00020000;
+    int PRINTER_CHANGE_DELETE_FORM = 0x00040000;
+    int PRINTER_CHANGE_FORM = 0x00070000;
+    int PRINTER_CHANGE_ADD_PORT = 0x00100000;
+    int PRINTER_CHANGE_CONFIGURE_PORT = 0x00200000;
+    int PRINTER_CHANGE_DELETE_PORT = 0x00400000;
+    int PRINTER_CHANGE_PORT = 0x00700000;
+    int PRINTER_CHANGE_ADD_PRINT_PROCESSOR = 0x01000000;
+    int PRINTER_CHANGE_DELETE_PRINT_PROCESSOR = 0x04000000;
+    int PRINTER_CHANGE_PRINT_PROCESSOR = 0x07000000;
+    int PRINTER_CHANGE_SERVER = 0x08000000;
+    int PRINTER_CHANGE_ADD_PRINTER_DRIVER = 0x10000000;
+    int PRINTER_CHANGE_SET_PRINTER_DRIVER = 0x20000000;
+    int PRINTER_CHANGE_DELETE_PRINTER_DRIVER = 0x40000000;
+    int PRINTER_CHANGE_PRINTER_DRIVER = 0x70000000;
+    int PRINTER_CHANGE_TIMEOUT = 0x80000000;
+    int PRINTER_CHANGE_ALL_WIN7 = 0x7F77FFFF;
+    int PRINTER_CHANGE_ALL = 0x7777FFFF;
 
     int PRINTER_ENUM_DEFAULT = 0x00000001;
     int PRINTER_ENUM_LOCAL = 0x00000002;
@@ -91,9 +93,6 @@ public interface Winspool extends StdCallLibrary {
     int PRINTER_ENUM_ICON7 = 0x00400000;
     int PRINTER_ENUM_ICON8 = 0x00800000;
     int PRINTER_ENUM_HIDE = 0x01000000;
-
-    Winspool INSTANCE = (Winspool) Native.loadLibrary("Winspool.drv",
-            Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The EnumPrinters function enumerates available printers, print servers,

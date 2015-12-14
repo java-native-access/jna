@@ -28,9 +28,8 @@ import com.sun.jna.win32.W32APIOptions;
  * Shell32.dll Interface.
  */
 public interface Shell32 extends ShellAPI, StdCallLibrary {
-	
-    Shell32 INSTANCE = (Shell32) Native.loadLibrary("shell32", Shell32.class, 
-    		W32APIOptions.DEFAULT_OPTIONS);
+    /** The instance **/
+    Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * No dialog box confirming the deletion of the objects will be displayed.
@@ -98,8 +97,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @return
      *  Returns standard HRESULT codes.
      */
-    HRESULT SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, 
-    		char[] pszPath);
+    HRESULT SHGetFolderPath(HWND hwndOwner, int nFolder, HANDLE hToken, DWORD dwFlags, char[] pszPath);
 
     /**
      * Retrieves the full path of a known folder identified by the folder's KNOWNFOLDERID. This function replaces
@@ -138,7 +136,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @param ppshf A place to put the IShellFolder interface pointer
      * @return If the function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
      */
-    HRESULT SHGetDesktopFolder( PointerByReference ppshf );
+    HRESULT SHGetDesktopFolder(PointerByReference ppshf);
 
     /**
      * Performs an operation on a specified file.
@@ -216,8 +214,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *   SE_ERR_PNF The specified path was not found.
      *   SE_ERR_SHARE A sharing violation occurred.
      */
-    INT_PTR ShellExecute(HWND hwnd, String lpOperation, String lpFile, String lpParameters, String lpDirectory,
-                                  int nShowCmd);
+    INT_PTR ShellExecute(HWND hwnd, String lpOperation, String lpFile, String lpParameters, String lpDirectory, int nShowCmd);
 
     /**
      * Retrieves the path of a special folder, identified by its CSIDL.
@@ -235,7 +232,6 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @return {@code true} if successful; otherwise, {@code false}.
      */
     boolean SHGetSpecialFolderPath(HWND owner, char[] path, int csidl, boolean create);
-    
     
     /**
      * SHAppBarMessage function
@@ -272,7 +268,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787961(v=vs.85).aspx">ABM_SETSTATE</a>
      * 
      */
-    UINT_PTR SHAppBarMessage( DWORD dwMessage, APPBARDATA pData );
+    UINT_PTR SHAppBarMessage(DWORD dwMessage, APPBARDATA pData);
 
     /**
      * Empties the Recycle Bin on the specified drive.

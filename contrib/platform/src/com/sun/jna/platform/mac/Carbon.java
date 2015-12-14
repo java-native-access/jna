@@ -33,49 +33,51 @@ import com.sun.jna.ptr.PointerByReference;
  * Date: 7/25/11
  */
 public interface Carbon extends Library {
-    public static Carbon INSTANCE = (Carbon) Native.loadLibrary("Carbon", Carbon.class);
+    Carbon INSTANCE = Native.loadLibrary("Carbon", Carbon.class);
 
-    public static final int cmdKey = 0x0100;
-    public static final int shiftKey = 0x0200;
-    public static final int optionKey = 0x0800;
-    public static final int controlKey = 0x1000;
+    int cmdKey = 0x0100;
+    int shiftKey = 0x0200;
+    int optionKey = 0x0800;
+    int controlKey = 0x1000;
 
     /**
      * Obtains the event target reference for the standard toolbox dispatcher
      * @return event dispatcher reference
      */
-    public Pointer GetEventDispatcherTarget();
+    Pointer GetEventDispatcherTarget();
 
     /**
      * Installs an event handler on a specified event target.
      */
-    public int InstallEventHandler(Pointer inTarget, EventHandlerProcPtr inHandler, int inNumTypes, EventTypeSpec[] inList, Pointer inUserData, PointerByReference outRef);
+    int InstallEventHandler(Pointer inTarget, EventHandlerProcPtr inHandler, int inNumTypes, EventTypeSpec[] inList, Pointer inUserData, PointerByReference outRef);
 
     /**
      * Registers a global hot key.
      */
-    public int RegisterEventHotKey(int inHotKeyCode, int inHotKeyModifiers, EventHotKeyID.ByValue inHotKeyID, Pointer inTarget, int inOptions, PointerByReference outRef);
+    int RegisterEventHotKey(int inHotKeyCode, int inHotKeyModifiers, EventHotKeyID.ByValue inHotKeyID, Pointer inTarget, int inOptions, PointerByReference outRef);
 
     /**
      * Obtains a parameter from the specified event.
      */
-    public int GetEventParameter(Pointer inEvent, int inName, int inDesiredType, Pointer outActualType, int inBufferSize, IntBuffer outActualSize, EventHotKeyID outData);
+    int GetEventParameter(Pointer inEvent, int inName, int inDesiredType, Pointer outActualType, int inBufferSize, IntBuffer outActualSize, EventHotKeyID outData);
 
     /**
      * Removes the specified event handler
      */
-    public int RemoveEventHandler(Pointer inHandlerRef);
+    int RemoveEventHandler(Pointer inHandlerRef);
 
     /**
      * Unregisters a global hot key.
      */
-    public int UnregisterEventHotKey(Pointer inHotKey);
+    int UnregisterEventHotKey(Pointer inHotKey);
 
     public class EventTypeSpec extends Structure {
         public int eventClass;
         public int eventKind;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "eventClass", "eventKind" }); }
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("eventClass", "eventKind");
+        }
     }
 
     public static class EventHotKeyID extends Structure {
@@ -83,8 +85,10 @@ public interface Carbon extends Library {
         public int id;
 
         public static class ByValue extends EventHotKeyID implements Structure.ByValue { }
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "signature", "id" }); }
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("signature", "id");
+        }
     }
 
     public static interface EventHandlerProcPtr extends Callback {
