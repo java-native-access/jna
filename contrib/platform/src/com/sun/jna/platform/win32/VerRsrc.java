@@ -116,6 +116,38 @@ public interface VerRsrc {
          */
         public WinDef.DWORD dwFileDateLS;
         
+        public int getFileVersionMajor() {
+            return dwFileVersionMS.intValue() >>> 16;
+        }
+        
+        public int getFileVersionMinor() {
+            return dwFileVersionMS.intValue() & 0xffff;
+        }
+        
+        public int getFileVersionRevision() {
+            return dwFileVersionLS.intValue() >>> 16;
+        }
+        
+        public int getFileVersionBuild() {
+            return dwFileVersionLS.intValue() & 0xffff;
+        }
+        
+        public int getProductVersionMajor() {
+            return dwProductVersionMS.intValue() >>> 16;
+        }
+        
+        public int getProductVersionMinor() {
+            return dwProductVersionMS.intValue() & 0xffff;
+        }
+        
+        public int getProductVersionRevision() {
+            return dwProductVersionLS.intValue() >>> 16;
+        }
+        
+        public int getProductVersionBuild() {
+            return dwProductVersionLS.intValue() & 0xffff;
+        }
+        
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFileFlagsMask", "dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS" });
         }
