@@ -1,14 +1,14 @@
 /* Copyright (c) 2007-2009 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -26,11 +26,11 @@ import junit.framework.TestCase;
  * that no JNI classes are directly referenced in these tests.
  */
 public class JNALoadTest extends TestCase implements Paths, GCWaits {
-    
+
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
             super(new URL[] {
-                    Platform.isWindowsCE() 
+                    Platform.isWindowsCE()
                     ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
                     : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
                   }, new CloverLoader());
@@ -41,12 +41,14 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
                 assertLibraryExists();
             }
         }
-        protected Class findClass(String name) throws ClassNotFoundException {
+
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
             if (boot != null) {
                 System.setProperty("jna.boot.library.path", "");
             }
-            Class cls = super.findClass(name);
+            Class<?> cls = super.findClass(name);
             if (boot != null) {
                 System.setProperty("jna.boot.library.path", boot);
             }
@@ -60,7 +62,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
             throw new Error("Expected JNA jar file at " + jar + " is missing");
         }
     }
-    
+
     protected void assertLibraryExists() {
         String osPrefix = Platform.getNativeLibraryResourcePrefix();
         String name = System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
@@ -73,7 +75,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
     public void testAvoidJarUnpacking() throws Exception {
         System.setProperty("jna.nounpack", "true");
         try {
-            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(true));
+            Class<?> cls = Class.forName("com.sun.jna.Native", true, new TestLoader(true));
 
             fail("Class com.sun.jna.Native should not be loadable if jna.nounpack=true: "
                  + cls.getClassLoader());
@@ -88,7 +90,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
     public void testAvoidResourcePathLoading() throws Exception {
         System.setProperty("jna.noclasspath", "true");
         try {
-            Class cls = Class.forName("com.sun.jna.Native", true, new TestLoader(false));
+            Class<?> cls = Class.forName("com.sun.jna.Native", true, new TestLoader(false));
 
             fail("Class com.sun.jna.Native should not be loadable if jna.noclasspath=true: "
                  + cls.getClassLoader());
@@ -102,7 +104,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
 
     public void testLoadAndUnloadFromJar() throws Exception {
         ClassLoader loader = new TestLoader(true);
-        Class cls = Class.forName("com.sun.jna.Native", true, loader);
+        Class<?> cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
         assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
 
@@ -158,7 +160,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
     // GC Fails under OpenJDK(linux/ppc)
     public void testLoadAndUnloadFromResourcePath() throws Exception {
         ClassLoader loader = new TestLoader(false);
-        Class cls = Class.forName("com.sun.jna.Native", true, loader);
+        Class<?> cls = Class.forName("com.sun.jna.Native", true, loader);
         assertEquals("Wrong class loader", loader, cls.getClassLoader());
         assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
 
@@ -209,9 +211,18 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         }
     }
 
-    // Fails on Sun JVM windows (32 and 64-bit) (JVM bug)
-    // Works with IBM J9 (jdk6) windows
     public void testLoadFromUnicodePath() throws Exception {
+        if (Platform.isWindows()) {
+            String vendor = System.getProperty("java.vendor");
+            if (vendor != null) {
+                vendor = vendor.toLowerCase();
+                if (vendor.contains("oracle") || vendor.contains("sun")) {
+                    System.out.println("Skip " + getName() + " - Fails on Sun JVM windows (32 and 64-bit) (JVM bug), Works with IBM J9 (jdk6) windows");
+                    return;
+                }
+            }
+        }
+
         final String UNICODE = getName() + "-\u0444\u043b\u0441\u0432\u0443";
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
         File unicodeDir = new File(tmpdir, UNICODE);
@@ -221,7 +232,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
             System.setProperty("jnidispatch.preserve", "true");
             System.setProperty("jna.tmpdir", unicodeDir.getAbsolutePath());
             ClassLoader loader = new TestLoader(true);
-            Class cls = Class.forName("com.sun.jna.Native", true, loader);
+            Class<?> cls = Class.forName("com.sun.jna.Native", true, loader);
             assertEquals("Wrong class loader", loader, cls.getClassLoader());
             assertTrue("System property jna.loaded not set", Boolean.getBoolean("jna.loaded"));
 

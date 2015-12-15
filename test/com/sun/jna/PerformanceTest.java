@@ -13,16 +13,13 @@
 package com.sun.jna;
 
 import junit.framework.*;
-import com.sun.jna.*;
-import com.sun.jna.ptr.PointerByReference;
-import java.lang.ref.*;
 import java.io.File;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Map;
 import java.util.HashMap;
-import java.lang.reflect.Method; 
+import java.lang.reflect.Method;
 
 import com.sun.jna.DirectTest.TestInterface;
 import com.sun.jna.DirectTest.TestLibrary;
@@ -40,7 +37,7 @@ public class PerformanceTest extends TestCase implements Paths {
             }
             System.load(path);
         }
-        
+
         private static native double cos(double x);
         private static native int getpid();
     }
@@ -52,7 +49,7 @@ public class PerformanceTest extends TestCase implements Paths {
     static class MathLibrary {
 
         public static native double cos(double x);
-        
+
         static {
             Native.register(Platform.MATH_LIBRARY_NAME);
         }
@@ -81,7 +78,7 @@ public class PerformanceTest extends TestCase implements Paths {
         public static native int strlen(Pointer p);
         public static native int strlen(byte[] b);
         public static native int strlen(Buffer b);
-        
+
         static {
             Native.register(Platform.C_LIBRARY_NAME);
         }
@@ -120,8 +117,7 @@ public class PerformanceTest extends TestCase implements Paths {
         Pointer pb = Native.getDirectBufferPointer(b);
 
         String mname = Platform.MATH_LIBRARY_NAME;
-        MathInterface mlib = (MathInterface)
-            Native.loadLibrary(mname, MathInterface.class);
+        MathInterface mlib = Native.loadLibrary(mname, MathInterface.class);
         Function f = NativeLibrary.getInstance(mname).getFunction("cos");
 
         ///////////////////////////////////////////
@@ -204,17 +200,17 @@ public class PerformanceTest extends TestCase implements Paths {
         Map options = new HashMap();
         if (Platform.isWindows()) {
             options.put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
+                @Override
                 public String getFunctionName(NativeLibrary library, Method method) {
                     String name = method.getName();
-                    if ("getpid".equals(name)) { 
+                    if ("getpid".equals(name)) {
                         name = "_getpid";
                     }
                     return name;
                 }
             });
         }
-        CInterface clib = (CInterface)
-            Native.loadLibrary(cname, CInterface.class, options);
+        CInterface clib = Native.loadLibrary(cname, CInterface.class, options);
 
         ///////////////////////////////////////////
         // getpid
@@ -473,9 +469,10 @@ public class PerformanceTest extends TestCase implements Paths {
 
         ///////////////////////////////////////////
         // Callbacks
-        TestInterface tlib = (TestInterface)Native.loadLibrary("testlib", TestInterface.class);
+        TestInterface tlib = Native.loadLibrary("testlib", TestInterface.class);
         start = System.currentTimeMillis();
         TestInterface.Int32Callback cb = new TestInterface.Int32Callback() {
+            @Override
             public int invoke(int arg1, int arg2) {
                 return arg1 + arg2;
             }
@@ -492,6 +489,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
         start = System.currentTimeMillis();
         TestInterface.NativeLongCallback nlcb = new TestInterface.NativeLongCallback() {
+            @Override
             public NativeLong invoke(NativeLong arg1, NativeLong arg2) {
                 return new NativeLong(arg1.longValue() + arg2.longValue());
             }

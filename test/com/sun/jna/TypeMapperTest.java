@@ -46,8 +46,7 @@ public class TypeMapperTest extends TestCase {
             }
         });
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        TestLibrary lib = (TestLibrary) 
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert Boolean argument to Int", MAGIC,
                      lib.returnInt32Argument(true));
     }
@@ -64,8 +63,7 @@ public class TypeMapperTest extends TestCase {
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = (TestLibrary) 
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
@@ -82,8 +80,7 @@ public class TypeMapperTest extends TestCase {
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         final String MAGIC = "magic" + UNICODE;
-        TestLibrary lib = (TestLibrary) 
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert String argument to WString", new WString(MAGIC),
                      lib.returnWStringArgument(MAGIC));
     }
@@ -101,8 +98,7 @@ public class TypeMapperTest extends TestCase {
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = (TestLibrary) 
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
@@ -120,8 +116,7 @@ public class TypeMapperTest extends TestCase {
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
         
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = (TestLibrary) 
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(new Double(MAGIC)));
     }
@@ -141,8 +136,7 @@ public class TypeMapperTest extends TestCase {
         });
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        TestLibrary lib = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class, options);
+        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, options);
         assertEquals("Failed to convert WString result to String", MAGIC,
                      lib.returnWStringArgument(new WString(MAGIC)));
     }
@@ -171,8 +165,7 @@ public class TypeMapperTest extends TestCase {
             }
         });
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        BooleanTestLibrary lib = (BooleanTestLibrary) 
-            Native.loadLibrary("testlib", BooleanTestLibrary.class, options);
+        BooleanTestLibrary lib = Native.loadLibrary("testlib", BooleanTestLibrary.class, options);
         assertEquals("Failed to convert integer return to boolean TRUE", true,
                      lib.returnInt32Argument(true));
         assertEquals("Failed to convert integer return to boolean FALSE", false,
@@ -205,8 +198,7 @@ public class TypeMapperTest extends TestCase {
         mapper.addTypeConverter(Boolean.class, converter);
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-		StructureTestLibrary lib = (StructureTestLibrary)
-            Native.loadLibrary("testlib", StructureTestLibrary.class, options);
+		StructureTestLibrary lib = Native.loadLibrary("testlib", StructureTestLibrary.class, options);
         StructureTestLibrary.TestStructure s = new StructureTestLibrary.TestStructure(mapper);
         assertEquals("Wrong native size", 4, s.size());
         
@@ -251,8 +243,7 @@ public class TypeMapperTest extends TestCase {
         mapper.addTypeConverter(Enumeration.class, converter);
         Map options = new HashMap();
         options.put(Library.OPTION_TYPE_MAPPER, mapper);
-        EnumerationTestLibrary lib = (EnumerationTestLibrary)
-            Native.loadLibrary("testlib", EnumerationTestLibrary.class, options);
+        EnumerationTestLibrary lib = Native.loadLibrary("testlib", EnumerationTestLibrary.class, options);
         assertEquals("Enumeration improperly converted", Enumeration.STATUS_1, lib.returnInt32Argument(Enumeration.STATUS_1));
     }
     

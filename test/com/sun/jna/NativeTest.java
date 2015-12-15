@@ -1,18 +1,19 @@
 /* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +25,37 @@ import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
 public class NativeTest extends TestCase {
-    
+
     private static final String UNICODE = "[\u0444]";
 
+    public void testLoadLibraryMethods() throws Exception {
+        Class<?>[][] params = {
+                { Class.class },
+                { Class.class, Map.class },
+                { String.class, Class.class },
+                { String.class, Class.class, Map.class }
+        };
+
+        StringBuilder signature = new StringBuilder(Long.SIZE);
+        for (Class<?>[] paramTypes : params) {
+            signature.setLength(0);
+            signature.append('(');
+            for (Class<?> p : paramTypes) {
+                signature.append(Native.getSignature(p));
+            }
+            signature.append(')');
+
+            try {
+                Method m = Native.class.getMethod("loadLibrary", paramTypes);
+                Class<?> returnType = m.getReturnType();
+                signature.append(Native.getSignature(returnType));
+                assertSame("Mismatched return type for signature=" + signature, Object.class, returnType);
+//                System.out.println("===>" + m.getName() + ": " + signature);
+            } catch(NoSuchMethodError err) {
+                fail("No method for signature=" + signature);
+            }
+        }
+    }
     public void testVersion() {
         String[] INPUTS = { "1.0", "1.0.1", "2.1.3" };
         float[] EXPECTED = { 1.0f, 1.0f, 2.1f };
@@ -55,9 +84,9 @@ public class NativeTest extends TestCase {
         // Keep stuff within the extended ASCII range so we work with more
         // limited native encodings
         String UNICODE = "Un \u00e9l\u00e9ment gr\u00e2ce \u00e0 l'index";
-        
+
         if (!UNICODE.equals(new String(UNICODE.getBytes()))) {
-            // If the extended characters aren't encodable in the default 
+            // If the extended characters aren't encodable in the default
             // encoding, punt and use straight ASCII
             UNICODE = "";
             for (char ch=1;ch < 128;ch++) {
@@ -65,23 +94,23 @@ public class NativeTest extends TestCase {
             }
         }
         final String UNICODEZ = UNICODE + "\0more stuff";
-        
+
         byte[] customEncoded = Native.getBytes(UNICODE, ENCODING);
         byte[] expected = UNICODE.getBytes(ENCODING);
         for (int i=0;i < Math.min(customEncoded.length, expected.length);i++) {
-            assertEquals("Improperly encoded (" + ENCODING + ") from Java at " + i, 
+            assertEquals("Improperly encoded (" + ENCODING + ") from Java at " + i,
                          expected[i], customEncoded[i]);
         }
-        assertEquals("Wrong number of encoded characters (" + ENCODING + ")", 
+        assertEquals("Wrong number of encoded characters (" + ENCODING + ")",
                      expected.length, customEncoded.length);
         String result = Native.toString(customEncoded, ENCODING);
-        assertEquals("Improperly decoded from native bytes (" + ENCODING + ")", 
+        assertEquals("Improperly decoded from native bytes (" + ENCODING + ")",
                      UNICODE, result);
-        
+
         assertEquals("Should truncate bytes at NUL terminator",
                      UNICODE, Native.toString(UNICODEZ.getBytes(ENCODING), ENCODING));
     }
-    
+
     public void testToStringList() {
         List<String> expected = Arrays.asList(getClass().getPackage().getName(), getClass().getSimpleName(), "testToStringList");
         StringBuilder sb = new StringBuilder();
@@ -89,7 +118,7 @@ public class NativeTest extends TestCase {
             sb.append(value).append('\0');
         }
         sb.append('\0');
-        
+
         List<String> actual = Native.toStringList(sb.toString().toCharArray());
         assertEquals("Mismatched result size", expected.size(), actual.size());
         for (int index = 0; index < expected.size(); index++) {
@@ -105,17 +134,17 @@ public class NativeTest extends TestCase {
         byte[] utf8 = Native.getBytes(UNICODE);
         byte[] expected = UNICODE.getBytes(Native.DEFAULT_ENCODING);
         for (int i=0;i < Math.min(utf8.length, expected.length);i++) {
-            assertEquals("Improperly encoded at " + i, 
+            assertEquals("Improperly encoded at " + i,
                          expected[i], utf8[i]);
         }
         assertEquals("Wrong number of encoded characters", expected.length, utf8.length);
         String result = Native.toString(utf8);
         assertEquals("Improperly decoded", UNICODE, result);
-        
+
         assertEquals("Should truncate bytes at NUL terminator",
                      UNICODE, Native.toString(UNICODEZ.getBytes(Native.DEFAULT_ENCODING)));
     }
-    
+
     public void testCustomizeDefaultStringEncoding() {
         Properties oldprops = (Properties)System.getProperties().clone();
         final String ENCODING = System.getProperty("file.encoding");
@@ -137,14 +166,16 @@ public class NativeTest extends TestCase {
     public void testSynchronizedAccess() throws Exception {
         final boolean[] lockHeld = { false };
         final NativeLibrary nlib = NativeLibrary.getInstance("testlib", TestLib.class.getClassLoader());
-        final TestLib lib = (TestLib)Native.loadLibrary("testlib", TestLib.class);
-        final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib); 
+        final TestLib lib = Native.loadLibrary("testlib", TestLib.class);
+        final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib);
         final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
+            @Override
             public void callback() {
                 lockHeld[0] = Thread.holdsLock(nlib);
             }
         };
         Thread t0 = new Thread() {
+            @Override
             public void run() {
                 lib.callVoidCallback(cb);
             }
@@ -155,6 +186,7 @@ public class NativeTest extends TestCase {
                    lockHeld[0]);
 
         Thread t1 = new Thread() {
+            @Override
             public void run() {
                 synchlib.callVoidCallback(cb);
             }
@@ -169,12 +201,13 @@ public class NativeTest extends TestCase {
         static class InnerTestClass extends Structure {
             interface TestCallback extends Callback { }
             static class InnerSubclass extends InnerTestClass implements Structure.ByReference { }
-            protected List getFieldOrder() { 
+            @Override
+            protected List getFieldOrder() {
                 return Collections.EMPTY_LIST;
             }
         }
     }
-    
+
     public void testFindInterfaceClass() throws Exception {
         Class interfaceClass = TestInterface.class;
         Class cls = TestInterface.InnerTestClass.class;
@@ -198,26 +231,25 @@ public class NativeTest extends TestCase {
             put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
             put(OPTION_STRING_ENCODING, TEST_ENCODING);
         }};
-        TestInterfaceWithInstance ARBITRARY = (TestInterfaceWithInstance) 
-            Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
+        TestInterfaceWithInstance ARBITRARY = Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
         abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromInstanceField() {
         Class[] classes = { TestInterfaceWithInstance.class, TestInterfaceWithInstance.TestStructure.class };
         String[] desc = { "interface", "structure from interface" };
         for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong type mapper found for " + desc[i], 
+            assertEquals("Wrong type mapper found for " + desc[i],
                          TestInterfaceWithInstance.TEST_MAPPER,
                          Native.getTypeMapper(classes[i]));
-            assertEquals("Wrong alignment found for " + desc[i], 
+            assertEquals("Wrong alignment found for " + desc[i],
                          TestInterfaceWithInstance.TEST_ALIGNMENT,
                          Native.getStructureAlignment(classes[i]));
-            assertEquals("Wrong string encoding found for " + desc[i], 
+            assertEquals("Wrong string encoding found for " + desc[i],
                          TestInterfaceWithInstance.TEST_ENCODING,
                          Native.getStringEncoding(classes[i]));
         }
     }
-    
+
     public interface TestInterfaceWithOptions extends Library {
         int TEST_ALIGNMENT = Structure.ALIGN_NONE;
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
@@ -232,13 +264,13 @@ public class NativeTest extends TestCase {
     public void testOptionsInferenceFromOptionsField() {
         Class[] classes = { TestInterfaceWithOptions.class, TestInterfaceWithOptions.TestStructure.class };
         for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong type mapper found", 
+            assertEquals("Wrong type mapper found",
                          TestInterfaceWithOptions.TEST_MAPPER,
                          Native.getTypeMapper(classes[i]));
-            assertEquals("Wrong alignment found", 
+            assertEquals("Wrong alignment found",
                          TestInterfaceWithOptions.TEST_ALIGNMENT,
                          Native.getStructureAlignment(classes[i]));
-            assertEquals("Wrong encoding found", 
+            assertEquals("Wrong encoding found",
                          TestInterfaceWithOptions.TEST_ENCODING,
                          Native.getStringEncoding(classes[i]));
         }
@@ -250,10 +282,10 @@ public class NativeTest extends TestCase {
         abstract class TestStructure extends Structure { }
     }
     public void testOptionsInferenceFromTypeMapperField() {
-        assertEquals("Wrong type mapper found for interface which provides TYPE_MAPPER", 
+        assertEquals("Wrong type mapper found for interface which provides TYPE_MAPPER",
                      TestInterfaceWithTypeMapper.TEST_MAPPER,
                      Native.getTypeMapper(TestInterfaceWithTypeMapper.class));
-        assertEquals("Wrong type mapper found for structure from interface which provides TYPE_MAPPER", 
+        assertEquals("Wrong type mapper found for structure from interface which provides TYPE_MAPPER",
                      TestInterfaceWithTypeMapper.TEST_MAPPER,
                      Native.getTypeMapper(TestInterfaceWithTypeMapper.TestStructure.class));
     }
@@ -263,10 +295,10 @@ public class NativeTest extends TestCase {
         abstract class TestStructure extends Structure { }
     }
     public void testOptionsInferenceFromAlignmentField() {
-        assertEquals("Wrong alignment found for interface which provides STRUCTURE_ALIGNMENT", 
+        assertEquals("Wrong alignment found for interface which provides STRUCTURE_ALIGNMENT",
                      Structure.ALIGN_NONE,
                      Native.getStructureAlignment(TestInterfaceWithAlignment.class));
-        assertEquals("Wrong alignment found for structure from interface which provides STRUCTURE_ALIGNMENT", 
+        assertEquals("Wrong alignment found for structure from interface which provides STRUCTURE_ALIGNMENT",
                      Structure.ALIGN_NONE,
                      Native.getStructureAlignment(TestInterfaceWithAlignment.TestStructure.class));
     }
@@ -276,10 +308,10 @@ public class NativeTest extends TestCase {
         abstract class TestStructure extends Structure { }
     }
     public void testOptionsInferenceFromEncodingField() {
-        assertEquals("Wrong encoding found for interface which provides STRING_ENCODING", 
+        assertEquals("Wrong encoding found for interface which provides STRING_ENCODING",
                      TestInterfaceWithEncoding.STRING_ENCODING,
                      Native.getStringEncoding(TestInterfaceWithEncoding.class));
-        assertEquals("Wrong encoding found for structure from interface which provides STRING_ENCODING", 
+        assertEquals("Wrong encoding found for structure from interface which provides STRING_ENCODING",
                      TestInterfaceWithEncoding.STRING_ENCODING,
                      Native.getStringEncoding(TestInterfaceWithEncoding.TestStructure.class));
     }
@@ -289,13 +321,14 @@ public class NativeTest extends TestCase {
         TypeMapper TYPE_MAPPER = new DefaultTypeMapper();
         class TypeMappedStructure extends Structure {
             public String stringField;
+            @Override
             protected List getFieldOrder() { return Arrays.asList("stringField"); }
         }
     }
     public interface OptionsSubclass extends OptionsBase, Library {
         TypeMapper _MAPPER = new DefaultTypeMapper();
         Map _OPTIONS = new HashMap() { { put(Library.OPTION_TYPE_MAPPER, _MAPPER); } };
-        OptionsSubclass INSTANCE = (OptionsSubclass)Native.loadLibrary("testlib", OptionsSubclass.class, _OPTIONS);
+        OptionsSubclass INSTANCE = Native.loadLibrary("testlib", OptionsSubclass.class, _OPTIONS);
     }
     public void testStructureOptionsInference() {
         Structure s = new OptionsBase.TypeMappedStructure();
@@ -422,18 +455,18 @@ public class NativeTest extends TestCase {
                     "com.sun.jna.NativeLibraryTest",
                     "com.sun.jna.PointerTest",
                     "com.sun.jna.MemoryTest",
-                    "com.sun.jna.LibraryLoadTest", 
+                    "com.sun.jna.LibraryLoadTest",
                     "com.sun.jna.ArgumentsMarshalTest",
                     "com.sun.jna.ReturnTypesTest",
-                    "com.sun.jna.TypeMapperTest", 
+                    "com.sun.jna.TypeMapperTest",
                     "com.sun.jna.ByReferenceArgumentsTest",
-                    "com.sun.jna.LastErrorTest", 
+                    "com.sun.jna.LastErrorTest",
                     "com.sun.jna.StructureTest",// 1 wce failure (RO fields)
                     "com.sun.jna.StructureByValueTest",
                     "com.sun.jna.UnionTest",
-                    "com.sun.jna.IntegerTypeTest", 
+                    "com.sun.jna.IntegerTypeTest",
                     "com.sun.jna.VMCrashProtectionTest",
-                    "com.sun.jna.CallbacksTest", 
+                    "com.sun.jna.CallbacksTest",
                     "com.sun.jna.JNAUnloadTest",
                     "com.sun.jna.DirectTest",
                     "com.sun.jna.DirectArgumentsMarshalTest",

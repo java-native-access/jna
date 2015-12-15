@@ -8,12 +8,11 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.PrintStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -39,7 +38,7 @@ import com.sun.jna.win32.W32APIOptions;
 //@SuppressWarnings("unused")
 public class CallbacksTest extends TestCase implements Paths {
 
-    // On OSX, on Oracle JVM 1.8+, pthread cleanup thinks the native thread is 
+    // On OSX, on Oracle JVM 1.8+, pthread cleanup thinks the native thread is
     // not attached, and the JVM never unmaps the defunct native thread.  In
     // order to avoid this situation causing tests to time out, we need to
     // explicitly detach the native thread after our Java code is done with it.
@@ -67,12 +66,14 @@ public class CallbacksTest extends TestCase implements Paths {
     public static class SmallTestStructure extends Structure {
         public double value;
         public static int allocations = 0;
+        @Override
         protected void allocateMemory(int size) {
             super.allocateMemory(size);
             ++allocations;
         }
         public SmallTestStructure() { }
         public SmallTestStructure(Pointer p) { super(p); read(); }
+        @Override
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "value" });
         }
@@ -87,8 +88,9 @@ public class CallbacksTest extends TestCase implements Paths {
         public int i;
         public long j;
         public SmallTestStructure inner;
+        @Override
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" }); 
+            return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
         }
     }
     public static interface TestLibrary extends Library {
@@ -114,6 +116,7 @@ public class CallbacksTest extends TestCase implements Paths {
             void customMethodName();
         }
         abstract class VoidCallbackCustomAbstract implements VoidCallbackCustom {
+            @Override
             public void customMethodName() { }
         }
         class VoidCallbackCustomDerived extends VoidCallbackCustomAbstract { }
@@ -189,6 +192,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         class CbStruct extends Structure {
             public Callback cb;
+            @Override
             protected List getFieldOrder() {
                 return Arrays.asList(new String[] { "cb" });
             }
@@ -208,10 +212,12 @@ public class CallbacksTest extends TestCase implements Paths {
 
     TestLibrary lib;
 
+    @Override
     protected void setUp() {
-        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.loadLibrary("testlib", TestLibrary.class);
     }
-    
+
+    @Override
     protected void tearDown() {
         lib = null;
     }
@@ -222,15 +228,19 @@ public class CallbacksTest extends TestCase implements Paths {
         public Custom(int value) {
             this.value = value;
         }
+        @Override
         public Object fromNative(Object nativeValue, FromNativeContext context) {
             return new Custom(((Integer)nativeValue).intValue());
         }
+        @Override
         public Class nativeType() {
             return Integer.class;
         }
+        @Override
         public Object toNative() {
             return new Integer(value);
         }
+        @Override
         public boolean equals(Object o) {
             return o instanceof Custom && ((Custom)o).value == value;
         }
@@ -303,7 +313,7 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testLookupSameCallback() {
         Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
         Callback cb2 = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
-        
+
         assertEquals("Callback lookups for same pointer should return same Callback object", cb, cb2);
     }
 
@@ -316,19 +326,20 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testGCCallbackOnFinalize() throws Exception {
         final boolean[] called = { false };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 called[0] = true;
             }
         };
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
-        
+
         Map refs = new WeakHashMap(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = (CallbackReference)refs.get(cb);
         refs = callbackCache();
         Pointer cbstruct = ref.cbstruct;
-        
+
         cb = null;
         System.gc();
         for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
@@ -339,7 +350,7 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
-        
+
         ref = null;
         System.gc();
         for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
@@ -352,9 +363,10 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         assertEquals("Callback trampoline not freed", 0, cbstruct.peer);
     }
-    
+
     public void testFindCallbackInterface() {
         TestLibrary.Int32Callback cb = new TestLibrary.Int32Callback() {
+            @Override
             public int callback(int arg, int arg2) {
                 return arg + arg2;
             }
@@ -367,6 +379,7 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testCallVoidCallback() {
         final boolean[] called = { false };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 called[0] = true;
             }
@@ -379,6 +392,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final int MAGIC = 0x11111111;
         final boolean[] called = { false };
         TestLibrary.Int32Callback cb = new TestLibrary.Int32Callback() {
+            @Override
             public int callback(int arg, int arg2) {
                 called[0] = true;
                 return arg + arg2;
@@ -387,17 +401,18 @@ public class CallbacksTest extends TestCase implements Paths {
         final int EXPECTED = MAGIC*3;
         int value = lib.callInt32Callback(cb, MAGIC, MAGIC*2);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback value", Integer.toHexString(EXPECTED), 
+        assertEquals("Wrong callback value", Integer.toHexString(EXPECTED),
                      Integer.toHexString(value));
-        
+
         value = lib.callInt32Callback(cb, -1, -2);
         assertEquals("Wrong callback return", -3, value);
     }
-    
+
     public void testCallInt64Callback() {
         final long MAGIC = 0x1111111111111111L;
         final boolean[] called = { false };
         TestLibrary.Int64Callback cb = new TestLibrary.Int64Callback() {
+            @Override
             public long callback(long arg, long arg2) {
                 called[0] = true;
                 return arg + arg2;
@@ -406,17 +421,18 @@ public class CallbacksTest extends TestCase implements Paths {
         final long EXPECTED = MAGIC*3;
         long value = lib.callInt64Callback(cb, MAGIC, MAGIC*2);
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong callback value", Long.toHexString(EXPECTED), 
+        assertEquals("Wrong callback value", Long.toHexString(EXPECTED),
                      Long.toHexString(value));
-        
+
         value = lib.callInt64Callback(cb, -1, -2);
         assertEquals("Wrong callback return", -3, value);
     }
-    
+
     public void testCallFloatCallback() {
         final boolean[] called = { false };
         final float[] args = { 0, 0 };
         TestLibrary.FloatCallback cb = new TestLibrary.FloatCallback() {
+            @Override
             public float callback(float arg, float arg2) {
                 called[0] = true;
                 args[0] = arg;
@@ -430,15 +446,16 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong first argument", FLOAT_MAGIC, args[0], 0);
         assertEquals("Wrong second argument", FLOAT_MAGIC*2, args[1], 0);
         assertEquals("Wrong callback value", EXPECTED, value, 0);
-        
+
         value = lib.callFloatCallback(cb, -1f, -2f);
         assertEquals("Wrong callback return", -3f, value, 0);
     }
-    
+
     public void testCallDoubleCallback() {
         final boolean[] called = { false };
         final double[] args = { 0, 0 };
         TestLibrary.DoubleCallback cb = new TestLibrary.DoubleCallback() {
+            @Override
             public double callback(double arg, double arg2) {
                 called[0] = true;
                 args[0] = arg;
@@ -451,18 +468,19 @@ public class CallbacksTest extends TestCase implements Paths {
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong first argument", DOUBLE_MAGIC, args[0], 0);
         assertEquals("Wrong second argument", DOUBLE_MAGIC*2, args[1], 0);
-        assertEquals("Wrong callback value", EXPECTED, value, 0); 
-        
+        assertEquals("Wrong callback value", EXPECTED, value, 0);
+
         value = lib.callDoubleCallback(cb, -1d, -2d);
         assertEquals("Wrong callback return", -3d, value, 0);
     }
-    
+
     public void testCallStructureCallback() {
         final boolean[] called = {false};
         final Pointer[] cbarg = { null };
         final SmallTestStructure s = new SmallTestStructure();
         final double MAGIC = 118.625;
         TestLibrary.StructureCallback cb = new TestLibrary.StructureCallback() {
+            @Override
             public SmallTestStructure callback(SmallTestStructure arg) {
                 called[0] = true;
                 cbarg[0] = arg.getPointer();
@@ -480,15 +498,16 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Structure return not synched",
                      MAGIC, value.value, 0d);
         // All structures involved should be created from pointers, with no
-        // memory allocation at all.  
+        // memory allocation at all.
         assertEquals("No structure memory should be allocated", 0, SmallTestStructure.allocations);
     }
-    
+
     public void testCallStructureArrayCallback() {
         final SmallTestStructure s = new SmallTestStructure();
         final SmallTestStructure[] array = (SmallTestStructure[])s.toArray(2);
         final double MAGIC = 118.625;
         TestLibrary.StructureCallback cb = new TestLibrary.StructureCallback() {
+            @Override
             public SmallTestStructure callback(SmallTestStructure arg) {
                 SmallTestStructure[] array =
                     (SmallTestStructure[])arg.toArray(2);
@@ -503,11 +522,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Structure array element 1 not synched on callback return",
                      MAGIC*2, array[1].value, 0d);
     }
-    
+
     public void testCallBooleanCallback() {
         final boolean[] called = {false};
         final boolean[] cbargs = { false, false };
         TestLibrary.BooleanCallback cb = new TestLibrary.BooleanCallback() {
+            @Override
             public boolean callback(boolean arg, boolean arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -521,11 +541,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong second callback argument", false, cbargs[1]);
         assertFalse("Wrong boolean return", value);
     }
-    
+
     public void testCallInt8Callback() {
         final boolean[] called = {false};
         final byte[] cbargs = { 0, 0 };
         TestLibrary.ByteCallback cb = new TestLibrary.ByteCallback() {
+            @Override
             public byte callback(byte arg, byte arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -533,27 +554,28 @@ public class CallbacksTest extends TestCase implements Paths {
                 return (byte)(arg + arg2);
             }
         };
-        final byte MAGIC = 0x11; 
+        final byte MAGIC = 0x11;
         byte value = lib.callInt8Callback(cb, MAGIC, (byte)(MAGIC*2));
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong first callback argument", 
-                     Integer.toHexString(MAGIC), 
+        assertEquals("Wrong first callback argument",
+                     Integer.toHexString(MAGIC),
                      Integer.toHexString(cbargs[0]));
-        assertEquals("Wrong second callback argument", 
-                     Integer.toHexString(MAGIC*2), 
+        assertEquals("Wrong second callback argument",
+                     Integer.toHexString(MAGIC*2),
                      Integer.toHexString(cbargs[1]));
-        assertEquals("Wrong byte return", 
-                     Integer.toHexString(MAGIC*3), 
+        assertEquals("Wrong byte return",
+                     Integer.toHexString(MAGIC*3),
                      Integer.toHexString(value));
-        
+
         value = lib.callInt8Callback(cb, (byte)-1, (byte)-2);
         assertEquals("Wrong byte return (hi bit)", (byte)-3, value);
     }
-    
+
     public void testCallInt16Callback() {
         final boolean[] called = {false};
         final short[] cbargs = { 0, 0 };
         TestLibrary.ShortCallback cb = new TestLibrary.ShortCallback() {
+            @Override
             public short callback(short arg, short arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -564,24 +586,25 @@ public class CallbacksTest extends TestCase implements Paths {
         final short MAGIC = 0x1111;
         short value = lib.callInt16Callback(cb, MAGIC, (short)(MAGIC*2));
         assertTrue("Callback not called", called[0]);
-        assertEquals("Wrong first callback argument", 
-                     Integer.toHexString(MAGIC), 
+        assertEquals("Wrong first callback argument",
+                     Integer.toHexString(MAGIC),
                      Integer.toHexString(cbargs[0]));
-        assertEquals("Wrong second callback argument", 
-                     Integer.toHexString(MAGIC*2), 
+        assertEquals("Wrong second callback argument",
+                     Integer.toHexString(MAGIC*2),
                      Integer.toHexString(cbargs[1]));
-        assertEquals("Wrong short return", 
-                     Integer.toHexString(MAGIC*3), 
+        assertEquals("Wrong short return",
+                     Integer.toHexString(MAGIC*3),
                      Integer.toHexString(value));
 
         value = lib.callInt16Callback(cb, (short)-1, (short)-2);
         assertEquals("Wrong short return (hi bit)", (short)-3, value);
     }
-    
+
     public void testCallNativeLongCallback() {
         final boolean[] called = {false};
         final NativeLong[] cbargs = { null, null};
         TestLibrary.NativeLongCallback cb = new TestLibrary.NativeLongCallback() {
+            @Override
             public NativeLong callback(NativeLong arg, NativeLong arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -595,11 +618,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong second callback argument", new NativeLong(2), cbargs[1]);
         assertEquals("Wrong boolean return", new NativeLong(3), value);
     }
-    
+
     public void testCallNativeMappedCallback() {
         final boolean[] called = {false};
         final Custom[] cbargs = { null, null};
         TestLibrary.CustomCallback cb = new TestLibrary.CustomCallback() {
+            @Override
             public Custom callback(Custom arg, Custom arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -613,11 +637,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong second callback argument", new Custom(2), cbargs[1]);
         assertEquals("Wrong NativeMapped return", 3, value);
     }
-    
+
     public void testCallStringCallback() {
         final boolean[] called = {false};
         final String[] cbargs = { null, null };
         TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
+            @Override
             public String callback(String arg, String arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -633,9 +658,10 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong String callback argument 1", VALUE2, cbargs[1]);
         assertEquals("Wrong String return", VALUE + VALUE2, value);
     }
-    
+
     public void testStringCallbackMemoryReclamation() throws InterruptedException {
         TestLibrary.StringCallback cb = new TestLibrary.StringCallback() {
+            @Override
             public String callback(String arg, String arg2) {
                 return arg + arg2;
             }
@@ -649,7 +675,7 @@ public class CallbacksTest extends TestCase implements Paths {
         String arg2 = getName() + "2" + UNICODE;
         String value = lib.callStringCallback(cb, arg, arg2);
         WeakReference ref = new WeakReference(value);
-        
+
         arg = null;
         value = null;
         System.gc();
@@ -667,6 +693,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final boolean[] called = {false};
         final WString[] cbargs = { null, null };
         TestLibrary.WideStringCallback cb = new TestLibrary.WideStringCallback() {
+            @Override
             public WString callback(WString arg, WString arg2) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -682,11 +709,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong second callback argument", VALUE2, cbargs[1]);
         assertEquals("Wrong wide string return", new WString(VALUE.toString() + VALUE2.toString()), value);
     }
-    
+
     public void testCallStringArrayCallback() {
         final boolean[] called = {false};
         final String[][] cbargs = { null };
         TestLibrary.StringArrayCallback cb = new TestLibrary.StringArrayCallback() {
+            @Override
             public String[] callback(String[] arg) {
                 called[0] = true;
                 cbargs[0] = arg;
@@ -708,10 +736,11 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Terminating null should be removed from return value",
                      VALUE_ARRAY.length-1, result.length);
     }
-    
+
     public void testCallCallbackWithByReferenceArgument() {
     	final boolean[] called = {false};
         TestLibrary.CopyArgToByReference cb = new TestLibrary.CopyArgToByReference() {
+            @Override
             public int callback(int arg, IntByReference result) {
                 called[0] = true;
                 result.setValue(arg);
@@ -724,12 +753,13 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong value returned", VALUE, value);
         assertEquals("Wrong value in by reference memory", VALUE, ref.getValue());
     }
-    
+
     public void testCallCallbackWithStructByValue() throws Exception {
         final boolean[] called = { false };
         final TestStructure.ByValue[] arg = { null };
         final TestStructure.ByValue s = new TestStructure.ByValue();
         TestStructure.TestCallback cb = new TestStructure.TestCallback() {
+            @Override
             public TestStructure.ByValue callback(TestStructure.ByValue s) {
                 // Copy the argument value for later comparison
                 called[0] = true;
@@ -741,7 +771,7 @@ public class CallbacksTest extends TestCase implements Paths {
         s.i = 0x33333333;
         s.j = 0x4444444444444444L;
         s.inner.value = 5;
-        
+
         TestStructure result = lib.callCallbackWithStructByValue(cb, s);
         assertTrue("Callback not called", called[0]);
         assertTrue("ByValue argument should own its own memory, instead was "
@@ -759,8 +789,8 @@ public class CallbacksTest extends TestCase implements Paths {
 	}
         assertTrue("Wrong value for callback result", s.dataEquals(result, true));
     }
-    
-    public void testUnionByValueCallbackArgument() throws Exception{ 
+
+    public void testUnionByValueCallbackArgument() throws Exception{
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
         final String VALUE = getName() + UNICODE;
@@ -768,6 +798,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final boolean[] called = { false };
         final TestLibrary.TestUnion[] cbvalue = { null };
         TestLibrary.TestUnion result = lib.testUnionByValueCallbackArgument(new TestLibrary.UnionCallback() {
+            @Override
             public TestLibrary.TestUnion invoke(TestLibrary.TestUnion v) {
                 called[0] = true;
                 v.setType(String.class);
@@ -786,6 +817,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
     public void testCallCallbackWithCallbackArgumentAndResult() {
         TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
+            @Override
             public CbCallback callback(CbCallback arg) {
                 return arg;
             }
@@ -793,7 +825,7 @@ public class CallbacksTest extends TestCase implements Paths {
         TestLibrary.CbCallback cb2 = lib.callCallbackWithCallback(cb);
         assertEquals("Callback reference should be reused", cb, cb2);
     }
-    
+
     public void testDefaultCallbackExceptionHandler() {
         final RuntimeException ERROR = new RuntimeException(getName());
         PrintStream ps = System.err;
@@ -801,6 +833,7 @@ public class CallbacksTest extends TestCase implements Paths {
         System.setErr(new PrintStream(s));
         try {
             TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
+                @Override
                 public CbCallback callback(CbCallback arg) {
                     throw ERROR;
                 }
@@ -822,6 +855,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final Callback CALLBACK[] = { null };
         UncaughtExceptionHandler old = Native.getCallbackExceptionHandler();
         UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
+            @Override
             public void uncaughtException(Callback cb, Throwable e) {
                 CALLBACK[0] = cb;
                 CAUGHT[0] = e;
@@ -830,6 +864,7 @@ public class CallbacksTest extends TestCase implements Paths {
         Native.setCallbackExceptionHandler(handler);
         try {
             TestLibrary.CbCallback cb = new TestLibrary.CbCallback() {
+                @Override
                 public CbCallback callback(CbCallback arg) {
                     throw ERROR;
                 }
@@ -852,6 +887,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final Callback CALLBACK[] = { null };
         UncaughtExceptionHandler old = Native.getCallbackExceptionHandler();
         UncaughtExceptionHandler handler = new UncaughtExceptionHandler() {
+            @Override
             public void uncaughtException(Callback cb, Throwable e) {
                 CALLBACK[0] = cb;
                 CAUGHT[0] = e;
@@ -860,15 +896,19 @@ public class CallbacksTest extends TestCase implements Paths {
         Native.setCallbackExceptionHandler(handler);
         try {
             class TestProxy implements CallbackProxy, TestLibrary.CbCallback {
+                @Override
                 public CbCallback callback(CbCallback arg) {
                     throw new Error("Should never be called");
                 }
+                @Override
                 public Object callback(Object[] args) {
                     throw ERROR;
                 }
+                @Override
                 public Class[] getParameterTypes() {
                     return new Class[] { CbCallback.class };
                 }
+                @Override
                 public Class getReturnType() {
                     return CbCallback.class;
                 }
@@ -895,8 +935,9 @@ public class CallbacksTest extends TestCase implements Paths {
         TestLibrary.Int32CallbackX cb = lib.returnCallback();
         assertNotNull("Callback should not be null", cb);
         assertEquals("Callback should be callable", 1, cb.callback(1));
-        
+
         TestLibrary.Int32CallbackX cb2 = new TestLibrary.Int32CallbackX() {
+            @Override
             public int callback(int arg) {
                 return 0;
             }
@@ -906,7 +947,7 @@ public class CallbacksTest extends TestCase implements Paths {
         assertSame("Existing native function wrapper should be reused",
                    cb, lib.returnCallbackArgument(cb));
     }
-    
+
     public void testCallCallbackInStructure() {
         final boolean[] flag = {false};
         final TestLibrary.CbStruct s = new TestLibrary.CbStruct();
@@ -922,9 +963,11 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testCustomCallbackMethodName() {
     	final boolean[] called = {false};
         TestLibrary.VoidCallbackCustom cb = new TestLibrary.VoidCallbackCustom() {
+            @Override
             public void customMethodName() {
                 called[0] = true;
             }
+            @Override
             public String toString() {
                 return "Some debug output";
             }
@@ -937,6 +980,7 @@ public class CallbacksTest extends TestCase implements Paths {
     	final boolean[] called = {false};
         final boolean[] exceptionThrown = {true};
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 called[0] = true;
                 try {
@@ -961,20 +1005,23 @@ public class CallbacksTest extends TestCase implements Paths {
     protected static class CallbackTypeMapper extends DefaultTypeMapper {
         public int fromNativeConversions = 0;
         public int toNativeConversions = 0;
-        public void clear() { 
+        public void clear() {
             fromNativeConversions = 0;
             toNativeConversions = 0;
         }
         {
             // Convert java doubles into native integers and back
             TypeConverter converter = new TypeConverter() {
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     ++fromNativeConversions;
                     return new Double(((Integer)value).intValue());
                 }
+                @Override
                 public Class nativeType() {
                     return Integer.class;
                 }
+                @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     ++toNativeConversions;
                     return new Integer(((Double)value).intValue());
@@ -982,13 +1029,16 @@ public class CallbacksTest extends TestCase implements Paths {
             };
             addTypeConverter(double.class, converter);
             converter = new TypeConverter() {
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     ++fromNativeConversions;
                     return new Float(((Long)value).intValue());
                 }
+                @Override
                 public Class nativeType() {
                     return Long.class;
                 }
+                @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     ++toNativeConversions;
                     return new Long(((Float)value).longValue());
@@ -996,6 +1046,7 @@ public class CallbacksTest extends TestCase implements Paths {
             };
             addTypeConverter(float.class, converter);
             converter = new TypeConverter() {
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     ++fromNativeConversions;
                     if (value == null) {
@@ -1006,9 +1057,11 @@ public class CallbacksTest extends TestCase implements Paths {
                     }
                     return value.toString();
                 }
+                @Override
                 public Class nativeType() {
                     return WString.class;
                 }
+                @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     ++toNativeConversions;
                     return new WString(value.toString());
@@ -1040,14 +1093,13 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     protected CallbackTestLibrary loadCallbackTestLibrary() {
-        return (CallbackTestLibrary)
-            Native.loadLibrary("testlib", CallbackTestLibrary.class, CallbackTestLibrary._OPTIONS);
+        return Native.loadLibrary("testlib", CallbackTestLibrary.class, CallbackTestLibrary._OPTIONS);
     }
 
     /** This test is here instead of NativeTest in order to facilitate running
         the exact same test on a direct-mapped library without the tests
         interfering with one another due to persistent/cached state in library
-        loading. 
+        loading.
     */
     public void testCallbackUsesTypeMapper() throws Exception {
         CallbackTestLibrary lib = loadCallbackTestLibrary();
@@ -1056,6 +1108,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final double[] ARGS = new double[2];
 
         CallbackTestLibrary.DoubleCallback cb = new CallbackTestLibrary.DoubleCallback() {
+            @Override
             public double callback(double arg, double arg2) {
                 ARGS[0] = arg;
                 ARGS[1] = arg2;
@@ -1085,6 +1138,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final String[] ARGS = new String[2];
 
         CallbackTestLibrary.WStringCallback cb = new CallbackTestLibrary.WStringCallback() {
+            @Override
             public String callback(String arg, String arg2) {
                 ARGS[0] = arg;
                 ARGS[1] = arg2;
@@ -1114,6 +1168,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final float[] ARGS = new float[2];
 
         CallbackTestLibrary.FloatCallback cb = new CallbackTestLibrary.FloatCallback() {
+            @Override
             public float callback(float arg, float arg2) {
                 ARGS[0] = arg;
                 ARGS[1] = arg2;
@@ -1165,6 +1220,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         ThreadGroup testGroup = new ThreadGroup(getName() + UNICODE);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 Thread thread = Thread.currentThread();
                 daemon[0] = thread.isDaemon();
@@ -1193,6 +1249,7 @@ public class CallbacksTest extends TestCase implements Paths {
         ThreadGroup testGroup = new ThreadGroup("Thread group for " + getName());
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false, tname, testGroup);
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 Thread thread = Thread.currentThread();
                 daemon[0] = thread.isDaemon();
@@ -1240,11 +1297,13 @@ public class CallbacksTest extends TestCase implements Paths {
 
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
+            @Override
             public String getName(Callback cb) {
                 return "Test thread (native) for " + CallbacksTest.this.getName() + " (call count: " + called[0] + ")";
             }
         };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 threads.add(Thread.currentThread());
                 ++called[0];
@@ -1266,6 +1325,7 @@ public class CallbacksTest extends TestCase implements Paths {
         final Set threads = new HashSet();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 threads.add(new WeakReference(Thread.currentThread()));
                 if (++called[0] == 1) {
@@ -1276,7 +1336,8 @@ public class CallbacksTest extends TestCase implements Paths {
         };
 	// Always attach as daemon to ensure tests will exit
         CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
-	    public String getName(Callback cb) {
+	    @Override
+        public String getName(Callback cb) {
 		return "Test thread (native) for " + CallbacksTest.this.getName();
 	    }
 	};
@@ -1312,13 +1373,14 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     // Callback indicates detach preference (instead of
-    // CallbackThreadInitializer); thread is non-daemon (default), 
+    // CallbackThreadInitializer); thread is non-daemon (default),
     // but callback explicitly detaches it on final invocation.
     public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
         final Set threads = new HashSet();
         final int COUNT = 5;
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
             public void callback() {
                 threads.add(Thread.currentThread());
                 // detach on final invocation
@@ -1348,6 +1410,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         final boolean[] called = { false };
         class TestCallback implements TestLibrary.VoidCallback, com.sun.jna.win32.DLLCallback {
+            @Override
             public void callback() {
                 called[0] = true;
             }
@@ -1383,7 +1446,7 @@ public class CallbacksTest extends TestCase implements Paths {
         refs = callbackCache();
         Pointer cbstruct = ref.cbstruct;
         Pointer first_fptr = cbstruct.getPointer(0);
-        
+
         cb = null;
         System.gc();
         for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
@@ -1392,7 +1455,7 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
-        
+
         ref = null;
         System.gc();
         for (int i = 0; i < 100 && (cbstruct.peer != 0 || refs.size() > 0); ++i) {
@@ -1423,6 +1486,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
         final boolean[] called = { false };
         class TestCallback implements TestLibrary.VoidCallback, com.sun.jna.win32.DLLCallback {
+            @Override
             public void callback() {
                 called[0] = true;
             }
@@ -1446,9 +1510,9 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCallingConventionFromInterface() {
-        TaggedCallingConventionTestLibrary lib = (TaggedCallingConventionTestLibrary)
-            Native.loadLibrary("testlib", TaggedCallingConventionTestLibrary.class);
+        TaggedCallingConventionTestLibrary lib = Native.loadLibrary("testlib", TaggedCallingConventionTestLibrary.class);
         TaggedCallingConventionTestLibrary.TestCallbackTagged cb = new TaggedCallingConventionTestLibrary.TestCallbackTagged() {
+            @Override
             public void invoke() { }
         };
         try {
@@ -1471,9 +1535,9 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testCallingConventionFromOptions() {
         Map options = new HashMap();
         options.put(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION);
-        OptionCallingConventionTestLibrary lib = (OptionCallingConventionTestLibrary)
-            Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, options);
+        OptionCallingConventionTestLibrary lib = Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, options);
         OptionCallingConventionTestLibrary.TestCallback cb = new OptionCallingConventionTestLibrary.TestCallback() {
+            @Override
             public void invoke() { }
         };
         try {

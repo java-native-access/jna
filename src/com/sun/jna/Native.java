@@ -446,7 +446,7 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
+    public static <T> T loadLibrary(Class<T> interfaceClass) {
         return loadLibrary(null, interfaceClass);
     }
 
@@ -465,7 +465,7 @@ public final class Native implements Version {
      * dependent libraries are missing.
      * @see #loadLibrary(String, Class, Map)
      */
-    public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map options) {
+    public static <T> T loadLibrary(Class<T> interfaceClass, Map options) {
         return loadLibrary(null, interfaceClass, options);
     }
 
@@ -483,7 +483,7 @@ public final class Native implements Version {
      * dependent libraries are missing.
      * @see #loadLibrary(String, Class, Map)
      */
-    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass) {
+    public static <T> T loadLibrary(String name, Class<T> interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.emptyMap());
     }
 
@@ -503,7 +503,12 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass, Map options) {
+    public static <T> T loadLibrary(String name, Class<T> interfaceClass, Map options) {
+        if (!Library.class.isAssignableFrom(interfaceClass)) {
+            throw new IllegalArgumentException("Interface (" + interfaceClass.getSimpleName() + ")"
+                    + " of library=" + name + " does not extend " + Library.class.getSimpleName());
+        }
+
         Library.Handler handler = new Library.Handler(name, interfaceClass, options);
         ClassLoader loader = interfaceClass.getClassLoader();
         Object proxy = Proxy.newProxyInstance(loader, new Class[] {interfaceClass}, handler);
@@ -1396,7 +1401,7 @@ public final class Native implements Version {
     /** Unregister the native methods for the given class. */
     private static native void unregister(Class<?> cls, long[] handles);
 
-    private static String getSignature(Class<?> cls) {
+    static String getSignature(Class<?> cls) {
         if (cls.isArray()) {
             return "[" + getSignature(cls.getComponentType());
         }
