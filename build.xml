@@ -834,6 +834,15 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <arg value="JNA_JNI_VERSION=${jni.version}"/>
       <arg value="CHECKSUM=${jni.md5}"/>
     </exec>
+
+  	<!-- Copy testlib to subdir for suffix search path tests  -->
+  	<mkdir dir="${build.native}/subdir"/>
+  	<copy todir="${build.native}/subdir" >
+        <fileset dir="${build.native}"
+                 includes="testlib.dll,libtestlib.*"/>
+  		<regexpmapper from="(.*)testlib(.*)" to="\1testlib_sd\2"/>
+    </copy>
+
     <mkdir dir="${classes}/${native.path}"/>
     <copy todir="${classes}/${native.path}">
       <fileset dir="${build.native}"

@@ -70,19 +70,25 @@ public class NativeLibrary {
     private long handle;
     private final String libraryName;
     private final String libraryPath;
-    private final Map functions = new HashMap();
+    private final Map<String, Function> functions = new HashMap<String, Function>();
     final int callFlags;
     private String encoding;
     final Map options;
 
-    private static final Map libraries = new HashMap();
-    private static final Map searchPaths = Collections.synchronizedMap(new HashMap());
-    private static final List librarySearchPath = new LinkedList();
+    private static final Map<String, WeakReference<NativeLibrary>> libraries;
+    private static final Map<String, List<String>> searchPaths;
+    private static final Map<String, List<String>> pathSuffixes;
+    private static final List<String> librarySearchPath;
 
     static {
         // Force initialization of native library
         if (Native.POINTER_SIZE == 0)
             throw new Error("Native library not initialized");
+
+        libraries = new HashMap<String, WeakReference<NativeLibrary>>();
+        searchPaths = Collections.synchronizedMap(new HashMap<String, List<String>>());
+        pathSuffixes = Collections.synchronizedMap(new HashMap<String, List<String>>());
+        librarySearchPath = new LinkedList<String>();
     }
 
     private static String functionKey(String name, int flags, String encoding) {
@@ -132,7 +138,7 @@ public class NativeLibrary {
 	}
 
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
-        List searchPath = new LinkedList();
+        List<String> searchPath = new LinkedList<String>();
         int openFlags = openFlags(options);
 
         // Append web start path, if available.  Note that this does not
@@ -148,7 +154,7 @@ public class NativeLibrary {
         //
         // Prepend any custom search paths specifically for this library
         //
-        List customPaths = (List) searchPaths.get(libraryName);
+        List<String> customPaths = searchPaths.get(libraryName);
         if (customPaths != null) {
             synchronized (customPaths) {
                 searchPath.addAll(0, customPaths);
@@ -159,6 +165,20 @@ public class NativeLibrary {
 	    System.out.println("Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
 	}
         searchPath.addAll(initPaths("jna.library.path"));
+
+        // Take all search paths and expand them with suffixes. Each suffix
+        // creates an additional entry for each search path with the suffix appended.
+    	if (Native.DEBUG_LOAD) {
+    	    System.out.println("Expanding search path with suffixes.");
+    	}
+    	List<String> suffixes = pathSuffixes.get(libraryName);
+    	if (suffixes != null) {
+	        List<String> suffixSearchPath = expandPathsWithSuffix(searchPath, suffixes);
+	        suffixSearchPath.addAll(expandPathsWithSuffix(librarySearchPath, suffixes));
+	        // update searchPath binding to use expanded version
+	        searchPath = suffixSearchPath;
+    	}
+
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
         //
@@ -392,8 +412,8 @@ public class NativeLibrary {
             libraryName = null;
         }
         synchronized (libraries) {
-            WeakReference ref = (WeakReference)libraries.get(libraryName + options);
-            NativeLibrary library = ref != null ? (NativeLibrary)ref.get() : null;
+            WeakReference<NativeLibrary> ref = libraries.get(libraryName + options);
+            NativeLibrary library = ref != null ? ref.get() : null;
 
             if (library == null) {
                 if (libraryName == null) {
@@ -402,7 +422,7 @@ public class NativeLibrary {
                 else {
                     library = loadLibrary(libraryName, options);
                 }
-                ref = new WeakReference(library);
+                ref = new WeakReference<NativeLibrary>(library);
                 libraries.put(library.getName() + options, ref);
                 File file = library.getFile();
                 if (file != null) {
@@ -444,15 +464,54 @@ public class NativeLibrary {
      */
     public static final void addSearchPath(String libraryName, String path) {
         synchronized (searchPaths) {
-            List customPaths = (List) searchPaths.get(libraryName);
+            List<String> customPaths = searchPaths.get(libraryName);
             if (customPaths == null) {
-                customPaths = Collections.synchronizedList(new LinkedList());
+                customPaths = Collections.synchronizedList(new LinkedList<String>());
                 searchPaths.put(libraryName, customPaths);
             }
 
             customPaths.add(path);
         }
     }
+
+    /**
+     * Add a search path suffix for the specified library.
+     * This suffix is appended to the system load paths when the library is
+     * loaded. This makes it easier to locate libraries which are installed in
+     * subdirectories of the system search paths.
+     * <p>
+     * The following example illustrates the use of search path suffixes:
+     * </p>
+     * The search path looks as follows: <br>
+     * {@code /lib:/usr/lib} <br>
+     * The library which should be loaded is located in: <br>
+     * {@code /usr/lib/foo/libbar.so} <br>
+     * Instead of adding the whole path to the search paths, a suffix {@code foo}
+     * can be added. The suffix is then used to create a wider set of search
+     * paths. <br>
+     * By adding the suffix {@code foo}, the search path is expanded to: <br>
+     * {@code /lib:/lib/foo:/usr/lib:/usr/lib/foo}
+     *
+     * @param libraryName The name of the library to use the path for
+     * @param pathSuffix The path suffix to add to the search path when trying
+     *   to load the library
+     */
+    public static final void addSearchPathSuffix(String libraryName, String pathSuffix) {
+        File ps = new File(pathSuffix);
+        // only accept the suffix if it is not an absolute path
+        if (!ps.isAbsolute()) {
+            synchronized (pathSuffixes) {
+                List<String> customPaths = pathSuffixes.get(libraryName);
+                if (customPaths == null) {
+                    customPaths = Collections.synchronizedList(new LinkedList<String>());
+                    pathSuffixes.put(libraryName, customPaths);
+                }
+
+                customPaths.add(pathSuffix);
+            }
+        }
+    }
+
     /**
      * Create a new {@link Function} that is linked with a native
      * function that follows the NativeLibrary's calling convention.
@@ -599,13 +658,12 @@ public class NativeLibrary {
 
     /** Close all open native libraries. */
     static void disposeAll() {
-        Set values;
+        Set<WeakReference<NativeLibrary>> values;
         synchronized(libraries) {
-            values = new HashSet(libraries.values());
+            values = new HashSet<WeakReference<NativeLibrary>>(libraries.values());
         }
-        for (Iterator i=values.iterator();i.hasNext();) {
-            Reference ref = (WeakReference)i.next();
-            NativeLibrary lib = (NativeLibrary)ref.get();
+        for (Reference<NativeLibrary> ref : values) {
+            NativeLibrary lib = ref.get();
             if (lib != null) {
                 lib.dispose();
             }
@@ -615,8 +673,8 @@ public class NativeLibrary {
     /** Close the native library we're mapped to. */
     public void dispose() {
         synchronized(libraries) {
-            for (Iterator i=libraries.values().iterator();i.hasNext();) {
-                Reference ref = (WeakReference)i.next();
+            for (Iterator<WeakReference<NativeLibrary>> i=libraries.values().iterator();i.hasNext();) {
+                Reference<NativeLibrary> ref = i.next();
                 if (ref.get() == this) {
                     i.remove();
                 }
@@ -630,13 +688,13 @@ public class NativeLibrary {
         }
     }
 
-    private static List initPaths(String key) {
+    private static List<String> initPaths(String key) {
         String value = System.getProperty(key, "");
         if ("".equals(value)) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         StringTokenizer st = new StringTokenizer(value, File.pathSeparator);
-        List list = new ArrayList();
+        List<String> list = new ArrayList<String>();
         while (st.hasMoreTokens()) {
             String path = st.nextToken();
             if (!"".equals(path)) {
@@ -647,7 +705,7 @@ public class NativeLibrary {
     }
 
     /** Use standard library search paths to find the library. */
-    private static String findLibraryPath(String libName, List searchPath) {
+    private static String findLibraryPath(String libName, List<String> searchPath) {
 
         //
         // If a full path to the library was specified, don't search for it
@@ -662,8 +720,7 @@ public class NativeLibrary {
         String name = mapSharedLibraryName(libName);
 
         // Search in the JNA paths for it
-        for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
-            String path = (String)it.next();
+        for (String path : searchPath) {
             File file = new File(path, name);
             if (file.exists()) {
                 return file.getAbsolutePath();
@@ -748,7 +805,7 @@ public class NativeLibrary {
      * where /usr/lib/libc.so does not exist, or it is not a valid symlink to
      * a versioned file (e.g. /lib/libc.so.6).
      */
-    static String matchLibrary(final String libName, List searchPath) {
+    static String matchLibrary(final String libName, List<String> searchPath) {
     	File lib = new File(libName);
         if (lib.isAbsolute()) {
             searchPath = Arrays.asList(new String[] { lib.getParent() });
@@ -762,9 +819,9 @@ public class NativeLibrary {
                 }
             };
 
-        List matches = new LinkedList();
-        for (Iterator it = searchPath.iterator(); it.hasNext(); ) {
-            File[] files = new File((String) it.next()).listFiles(filter);
+        List<File> matches = new LinkedList<File>();
+        for (String next : searchPath) {
+            File[] files = new File(next).listFiles(filter);
             if (files != null && files.length > 0) {
                 matches.addAll(Arrays.asList(files));
             }
@@ -775,8 +832,8 @@ public class NativeLibrary {
         // i.e. libc.so.6 is preferred over libc.so.5
         double bestVersion = -1;
         String bestMatch = null;
-        for (Iterator it = matches.iterator(); it.hasNext(); ) {
-            String path = ((File) it.next()).getAbsolutePath();
+        for (File next : matches) {
+            String path = next.getAbsolutePath();
             String ver = path.substring(path.lastIndexOf(".so.") + 4);
             double version = parseVersion(ver);
             if (version > bestVersion) {
@@ -945,4 +1002,21 @@ public class NativeLibrary {
         }
         return ldPaths;
     }
+
+    /**
+     * Expand the given search path with the given suffixes.
+     */
+    private static List<String> expandPathsWithSuffix(List<String> searchPath, List<String> suffixes) {
+        List<String> suffixSearchPath = new LinkedList<String>();
+        for (String nextPath : searchPath) {
+        	suffixSearchPath.add(nextPath);
+        	for (String suffix : suffixes) {
+        		File f = new File(nextPath, suffix);
+        		suffixSearchPath.add(f.getPath());
+        	}
+        }
+
+        return suffixSearchPath;
+    }
+
 }

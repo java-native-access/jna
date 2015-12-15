@@ -112,6 +112,28 @@ public class NativeLibraryTest extends TestCase {
         assertEquals("Full pathname load not aliased", count + 1, count2);
     }
     
+    public void testAliasLibrarySuffixFilename() {
+    	NativeLibrary.addSearchPathSuffix("testlib_sd", "subdir");
+
+        TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib_sd", TestLibrary.class);
+        int count = lib.callCount();
+        NativeLibrary nl = NativeLibrary.getInstance("testlib_sd");
+        TestLibrary lib2 = (TestLibrary)Native.loadLibrary(nl.getFile().getName(), TestLibrary.class);
+        int count2 = lib2.callCount();
+        assertEquals("Simple filename load not aliased", count + 1, count2);
+    }
+
+    public void testAliasLibrarySuffixFullPath() {
+    	NativeLibrary.addSearchPathSuffix("testlib_sd", "subdir");
+
+        TestLibrary lib = (TestLibrary)Native.loadLibrary("testlib_sd", TestLibrary.class);
+        int count = lib.callCount();
+        NativeLibrary nl = NativeLibrary.getInstance("testlib_sd");
+        TestLibrary lib2 = (TestLibrary)Native.loadLibrary(nl.getFile().getName(), TestLibrary.class);
+        int count2 = lib2.callCount();
+        assertEquals("Full pathname load not aliased", count + 1, count2);
+    }
+
     public void testAliasSimpleLibraryName() throws Exception {
         NativeLibrary nl = NativeLibrary.getInstance("testlib");
         File file = nl.getFile();
