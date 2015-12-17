@@ -34,6 +34,7 @@ Bug Fixes
 * [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
 * [#536](https://github.com/java-native-access/jna/pull/536): Fixed bug in determining the Library and options associated with types defined outside of a Library - [@twall](https://github.com/twall).
 * [#531](https://github.com/java-native-access/jna/pull/531): Ensure direct-mapped callbacks use the right calling convention - [@twall](https://github.com/twall).
+* [#566](https://github.com/java-native-access/jna/pull/566): Fix return type of Native#loadLibrary to match unconstrained generic [@lgoldstein](https://github.com/lgoldstein)
 
 Release 4.2.1
 =============

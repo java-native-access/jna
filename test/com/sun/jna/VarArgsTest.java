@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -24,8 +24,9 @@ public class VarArgsTest extends TestCase {
     public static interface TestLibrary extends Library {
         public static class TestStructure extends Structure {
             public int magic = 0;
+            @Override
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "magic" }); 
+                return Arrays.asList(new String[] { "magic" });
             }
         }
         public int addInt32VarArgs(String fmt, Number... args);
@@ -33,12 +34,14 @@ public class VarArgsTest extends TestCase {
         public void modifyStructureVarArgs(String fmt, Object arg1, Object... args);
     }
     TestLibrary lib;
+    @Override
     protected void setUp() {
-        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.loadLibrary("testlib", TestLibrary.class);
     }
+    @Override
     protected void tearDown() {
         lib = null;
-    }   
+    }
     public void testIntVarArgs() {
         int arg1 = 1;
         int arg2 = 2;
@@ -62,24 +65,24 @@ public class VarArgsTest extends TestCase {
         assertEquals("Did not return correct string", args[0],
                      lib.returnStringVarArgs("", args));
     }
-    
+
     public void testAppendNullToVarargs() {
         Number[] args = new Number[] { new Integer(1) };
         assertEquals("No trailing NULL was appended to varargs list",
                      1, lib.addInt32VarArgs("dd", args));
     }
-    
+
     public void testModifyStructureInVarargs() {
         TestStructure arg1 = new TestStructure();
         TestStructure[] varargs = new TestStructure[] { new TestStructure() };
         lib.modifyStructureVarArgs("ss", arg1, varargs[0]);
         assertEquals("Structure memory not read in fixed arg w/varargs",
-                     MAGIC32, arg1.magic); 
+                     MAGIC32, arg1.magic);
         assertEquals("Structure memory not read in varargs",
-                     MAGIC32, varargs[0].magic); 
-                     
+                     MAGIC32, varargs[0].magic);
+
     }
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(VarArgsTest.class);
     }

@@ -290,8 +290,7 @@ public class WebStartTest extends TestCase implements Paths {
             }
             // NOTE: win64 only includes javaws in the system path
             if (Platform.isWindows()) {
-                FolderInfo info = (FolderInfo)
-                    Native.loadLibrary("shell32", FolderInfo.class);
+                FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
                 //int result =
                         info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
@@ -321,8 +320,7 @@ public class WebStartTest extends TestCase implements Paths {
             vendor = vendor.substring(0, vendor.indexOf(" "));
         }
         if (Platform.isWindows()) {
-            FolderInfo info = (FolderInfo)
-                Native.loadLibrary("shell32", FolderInfo.class);
+            FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
             char[] buf = new char[FolderInfo.MAX_PATH];
             info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
                                   null, 0, buf);

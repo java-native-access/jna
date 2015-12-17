@@ -29,8 +29,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface SetupApi extends StdCallLibrary {
 
-    SetupApi INSTANCE = (SetupApi)
-        Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.DEFAULT_OPTIONS);
+    SetupApi INSTANCE = Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The GUID_DEVINTERFACE_DISK device interface class is defined for hard disk storage devices.
@@ -82,7 +81,6 @@ public interface SetupApi extends StdCallLibrary {
      * Removable.
      */
     int CM_DEVCAP_REMOVABLE = 0x00000004;
-    
 
 	/** make change in all hardware profiles */
 	int DICS_FLAG_GLOBAL = 0x00000001;
@@ -94,23 +92,22 @@ public interface SetupApi extends StdCallLibrary {
 	/**
 	 * Open/Create/Delete device key.
 	 * 
-         * @see #SetupDiOpenDevRegKey
+     * @see #SetupDiOpenDevRegKey
 	 */
-
 	int DIREG_DEV = 0x00000001;
+
 	/**
 	 * Open/Create/Delete driver key
 	 * 
-         * @see #SetupDiOpenDevRegKey
+     * @see #SetupDiOpenDevRegKey
 	 */
-
 	int DIREG_DRV = 0x00000002;
+
 	/**
 	 * Delete both driver and Device key
 	 * 
-         * @see #SetupDiOpenDevRegKey
+     * @see #SetupDiOpenDevRegKey
 	 */
-
 	int DIREG_BOTH = 0x00000004;
 
 	/**
@@ -123,7 +120,6 @@ public interface SetupApi extends StdCallLibrary {
 	 * by the CM_DRP codes in cfgmgr32.h.
 	 */
 	int SPDRP_DEVICEDESC = 0x00000000;
-
 
     /**
      * The SetupDiGetClassDevs function returns a handle to a device information set that contains requested device

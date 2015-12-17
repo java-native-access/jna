@@ -278,7 +278,7 @@ public interface X11 extends Library {
 
     /** Definition (incomplete) of the Xext library. */
     interface Xext extends Library {
-        Xext INSTANCE = (Xext)Native.loadLibrary("Xext", Xext.class);
+        Xext INSTANCE = Native.loadLibrary("Xext", Xext.class);
         // Shape Kinds
         int ShapeBounding = 0;
         int ShapeClip = 1;
@@ -296,7 +296,7 @@ public interface X11 extends Library {
 
     /** Definition (incomplete) of the Xrender library. */
     interface Xrender extends Library {
-        Xrender INSTANCE = (Xrender)Native.loadLibrary("Xrender", Xrender.class);
+        Xrender INSTANCE = Native.loadLibrary("Xrender", Xrender.class);
         class XRenderDirectFormat extends Structure {
             public short red, redMask;
             public short green, greenMask;
@@ -338,7 +338,7 @@ public interface X11 extends Library {
     /** Definition of the Xevie library. */
     interface Xevie extends Library {
         /** Instance of Xevie. Note: This extension has been removed from xorg/xserver on Oct 22, 2008 because it is broken and maintainerless. */
-        Xevie INSTANCE = (Xevie)Native.loadLibrary("Xevie", Xevie.class);
+        Xevie INSTANCE = Native.loadLibrary("Xevie", Xevie.class);
         int XEVIE_UNMODIFIED = 0;
         int XEVIE_MODIFIED   = 1;
         // Bool XevieQueryVersion (Display* display, int* major_version, int* minor_version);
@@ -355,7 +355,7 @@ public interface X11 extends Library {
 
     /** Definition of the XTest library. */
     interface XTest extends Library {
-        XTest INSTANCE = (XTest)Native.loadLibrary("Xtst", XTest.class);///usr/lib/libxcb-xtest.so.0
+        XTest INSTANCE = Native.loadLibrary("Xtst", XTest.class);///usr/lib/libxcb-xtest.so.0
         boolean XTestQueryExtension(Display display, IntByReference event_basep, IntByReference error_basep, IntByReference majorp, IntByReference minorp);
         boolean XTestCompareCursorWithWindow(Display display, Window window, Cursor cursor);
         boolean XTestCompareCurrentCursorWithWindow(Display display, Window window);
@@ -393,7 +393,7 @@ public interface X11 extends Library {
         }
     }
 
-    X11 INSTANCE = (X11)Native.loadLibrary("X11", X11.class);
+    X11 INSTANCE = Native.loadLibrary("X11", X11.class);
 
     /*
       typedef struct {

@@ -23,21 +23,20 @@ public class VersionUtilTest extends TestCase {
     }
 
     public void testGetFileVersionNumbers() {
-        String testFileName = "regedit.exe";
-        File file = new File(System.getenv("SystemRoot"), testFileName);
-        assertTrue("Test file with version info in it should exist.", file.exists());
+        File file = new File(System.getenv("SystemRoot"), "regedit.exe");
+        assertTrue("Test file with version info in it should exist: " + file, file.exists());
 
         VS_FIXEDFILEINFO version = VersionUtil.getFileVersionInfo(file.getAbsolutePath());
         assertNotNull("Version info should have been returned.", version);
 
-        assertTrue("The major file version number should be greater than 0 when pulling version from \"" + testFileName + "\"", version.getFileVersionMajor() > 0);
-        assertTrue("The minor file version number should be greater than or equal to 0 when pulling version from \"" + testFileName + "\"", version.getFileVersionMinor() >= 0);
-        assertTrue("The revision file version number should be greater than or equal to 0 when pulling version from \"" + testFileName + "\"", version.getFileVersionRevision() >= 0);
-        assertTrue("The build file version number should be greater than or equal to 0  when pulling version from \"" + testFileName + "\"", version.getFileVersionBuild() > 0);
-        
-        assertTrue("The major product version number should be greater than 0 when pulling version from \"" + testFileName + "\"", version.getProductVersionMajor() > 0);
-        assertTrue("The minor product version number should be greater than or equal to 0 when pulling version from \"" + testFileName + "\"", version.getProductVersionMinor() >= 0);
-        assertTrue("The revision product version number should be greater than or equal to 0 when pulling version from \"" + testFileName + "\"", version.getProductVersionRevision() >= 0);
-        assertTrue("The build product version number should be greater than or equal to 0  when pulling version from \"" + testFileName + "\"", version.getProductVersionBuild() > 0);
+        assertTrue("The major file version number should be greater than 0 when pulling version from \"" + file + "\"", version.getFileVersionMajor() > 0);
+        assertTrue("The minor file version number should be greater than or equal to 0 when pulling version from \"" + file + "\"", version.getFileVersionMinor() >= 0);
+        assertTrue("The revision file version number should be greater than or equal to 0 when pulling version from \"" + file + "\"", version.getFileVersionRevision() >= 0);
+        assertTrue("The build file version number should be greater than or equal to 0  when pulling version from \"" + file + "\"", version.getFileVersionBuild() > 0);
+
+        assertTrue("The major product version number should be greater than 0 when pulling version from \"" + file + "\"", version.getProductVersionMajor() > 0);
+        assertTrue("The minor product version number should be greater than or equal to 0 when pulling version from \"" + file + "\"", version.getProductVersionMinor() >= 0);
+        assertTrue("The revision product version number should be greater than or equal to 0 when pulling version from \"" + file + "\"", version.getProductVersionRevision() >= 0);
+        assertTrue("The build product version number should be greater than or equal to 0  when pulling version from \"" + file + "\"", version.getProductVersionBuild() > 0);
     }
 }

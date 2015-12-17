@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -41,10 +41,12 @@ public class ByReferenceArgumentsTest extends TestCase {
     }
 
     TestLibrary lib;
+    @Override
     protected void setUp() {
-        lib = (TestLibrary)Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.loadLibrary("testlib", TestLibrary.class);
     }
-    
+
+    @Override
     protected void tearDown() {
         lib = null;
     }
@@ -93,9 +95,9 @@ public class ByReferenceArgumentsTest extends TestCase {
         lib.setPointerByReferenceNull(pref);
         assertNull("Default pointer should be NULL after call", pref.getValue());
     }
-    
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(ByReferenceArgumentsTest.class);
     }
-    
+
 }

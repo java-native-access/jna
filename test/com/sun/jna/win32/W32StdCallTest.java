@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.win32;
 
@@ -34,8 +34,9 @@ public class W32StdCallTest extends TestCase {
     public static interface TestLibrary extends StdCallLibrary {
         public static class Inner extends Structure {
             public double value;
+            @Override
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "value" }); 
+                return Arrays.asList(new String[] { "value" });
             }
         }
         public static class TestStructure extends Structure {
@@ -45,8 +46,9 @@ public class W32StdCallTest extends TestCase {
             public int i;
             public long j;
             public Inner inner;
+            @Override
             protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" }); 
+                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
             }
         }
         int returnInt32ArgumentStdCall(int arg);
@@ -68,20 +70,23 @@ public class W32StdCallTest extends TestCase {
                                         double arg8, NativeLong arg9,
                                         NativeLong arg10, NativeLong arg11);
     }
-    
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(W32StdCallTest.class);
     }
 
     private TestLibrary testlib;
-    
+
+    @Override
     protected void setUp() {
-        testlib = (TestLibrary)
-            Native.loadLibrary("testlib", TestLibrary.class, new HashMap() {
-                { put(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER); }
-            });
+        testlib = Native.loadLibrary("testlib", TestLibrary.class, new HashMap() {
+						{
+						    put(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER);
+					    }
+                    });
     }
-    
+
+    @Override
     protected void tearDown() {
         testlib = null;
     }
@@ -113,22 +118,23 @@ public class W32StdCallTest extends TestCase {
                          name, lib.getFunction(name, StdCallLibrary.STDCALL_CONVENTION).getName());
         }
     }
-    
+
     public void testStdCallReturnInt32Argument() {
         final int MAGIC = 0x12345678;
         assertEquals("Expect zero return", 0, testlib.returnInt32ArgumentStdCall(0));
         assertEquals("Expect magic return", MAGIC, testlib.returnInt32ArgumentStdCall(MAGIC));
     }
-    
+
     public void testStdCallReturnStructureByValueArgument() {
         TestLibrary.TestStructure.ByValue s = new TestLibrary.TestStructure.ByValue();
         assertTrue("Wrong struct value", s.dataEquals(testlib.returnStructureByValueArgumentStdCall(s)));
     }
-    
+
     public void testStdCallCallback() {
         final int MAGIC = 0x11111111;
         final boolean[] called = { false };
         TestLibrary.Int32Callback cb = new TestLibrary.Int32Callback() {
+            @Override
             public int callback(int arg, int arg2) {
                 called[0] = true;
                 return arg + arg2;
@@ -140,9 +146,9 @@ public class W32StdCallTest extends TestCase {
         if (value == -1) {
             fail("stdcall callback did not restore the stack pointer");
         }
-        assertEquals("Wrong stdcall callback value", Integer.toHexString(EXPECTED), 
+        assertEquals("Wrong stdcall callback value", Integer.toHexString(EXPECTED),
                      Integer.toHexString(value));
-        
+
         value = testlib.callInt32StdCallCallback(cb, -1, -2);
         if (value == -1) {
             fail("stdcall callback did not restore the stack pointer");
@@ -153,6 +159,7 @@ public class W32StdCallTest extends TestCase {
     public void testStdCallCallbackStackAlignment() {
         final boolean[] called = { false };
         TestLibrary.ManyArgsStdCallCallback cb = new TestLibrary.ManyArgsStdCallCallback() {
+            @Override
             public void callback(NativeLong arg1, int arg2, double arg3,
                                  String arg4, String arg5,
                                  double arg6, NativeLong arg7,
