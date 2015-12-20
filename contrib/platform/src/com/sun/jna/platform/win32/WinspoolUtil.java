@@ -15,13 +15,14 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winspool.JOB_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
+import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 import com.sun.jna.ptr.IntByReference;
 
 /**
  * Winspool Utility API.
  * 
- * @author dblock[at]dblock.org
+ * @author dblock[at]dblock.org, Ivan Ridao Freitas, Padrus
  */
 public abstract class WinspoolUtil {
 
@@ -45,6 +46,59 @@ public abstract class WinspoolUtil {
 
         return (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
     }
+    
+    public static PRINTER_INFO_2[] getPrinterInfo2() {
+		return getPrinterInfo2(Winspool.PRINTER_ENUM_LOCAL);
+	}
+	
+	/**
+	 * Returns printers that are physically attached to the local machine as
+	 * well as remote printers to which it has a network connection.
+	 */
+	public static PRINTER_INFO_2[] getAllPrinterInfo2() {
+		// When Name is NULL, setting Flags to PRINTER_ENUM_LOCAL | PRINTER_ENUM_CONNECTIONS
+		// enumerates printers that are installed on the local machine.
+		// These printers include those that are physically attached to the local machine 
+		// as well as remote printers to which it has a network connection.
+		// See https://msdn.microsoft.com/en-us/library/windows/desktop/dd162692(v=vs.85).aspx
+		return getPrinterInfo2(Winspool.PRINTER_ENUM_LOCAL | Winspool.PRINTER_ENUM_CONNECTIONS);
+	}
+	
+	private static PRINTER_INFO_2[] getPrinterInfo2(int flags) {
+		IntByReference pcbNeeded = new IntByReference();
+		IntByReference pcReturned = new IntByReference();
+		Winspool.INSTANCE.EnumPrinters(flags, null, 2, null, 0, pcbNeeded, pcReturned);
+		if (pcbNeeded.getValue() <= 0)
+			return new PRINTER_INFO_2[0];
+
+		PRINTER_INFO_2 pPrinterEnum = new PRINTER_INFO_2(pcbNeeded.getValue());
+		if (!Winspool.INSTANCE.EnumPrinters(flags, null, 2, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded,
+				pcReturned))
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+
+		pPrinterEnum.read();
+		return (PRINTER_INFO_2[]) pPrinterEnum.toArray(pcReturned.getValue());
+	}
+
+	public static PRINTER_INFO_2 getPrinterInfo2(String printerName) {
+		IntByReference pcbNeeded = new IntByReference();
+		IntByReference pcReturned = new IntByReference();
+		HANDLEByReference pHandle = new HANDLEByReference();
+
+		if (!Winspool.INSTANCE.OpenPrinter(printerName, pHandle, null))
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+
+		Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, null, 0, pcbNeeded);
+		if (pcbNeeded.getValue() <= 0)
+			return new PRINTER_INFO_2();
+
+		PRINTER_INFO_2 pinfo2 = new PRINTER_INFO_2(pcbNeeded.getValue());
+		if (!Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, pinfo2.getPointer(), pcbNeeded.getValue(), pcReturned))
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+
+		pinfo2.read();
+		return pinfo2;
+	}
 
     public static PRINTER_INFO_4[] getPrinterInfo4() {
         IntByReference pcbNeeded = new IntByReference();
