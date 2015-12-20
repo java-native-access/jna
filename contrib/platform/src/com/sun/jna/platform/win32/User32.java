@@ -57,18 +57,18 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /** The device notify all interface classes. */
     int DEVICE_NOTIFY_ALL_INTERFACE_CLASSES = 0x00000004;
 
-	/**
-	 * <p>
-	 * Sets the show state based on the SW_ value specified in the <a href=
-	 * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms686331(v=vs.85).aspx">
-	 * <strong xmlns="http://www.w3.org/1999/xhtml">STARTUPINFO</strong></a>
-	 * structure passed to the <a href=
-	 * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx">
-	 * <strong xmlns="http://www.w3.org/1999/xhtml">CreateProcess</strong></a>
-	 * function by the program that started the application.
-	 * </p>
-	 */
-	int SW_SHOWDEFAULT = 10;
+    /**
+     * <p>
+     * Sets the show state based on the SW_ value specified in the <a href=
+     * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms686331(v=vs.85).aspx">
+     * <strong xmlns="http://www.w3.org/1999/xhtml">STARTUPINFO</strong></a>
+     * structure passed to the <a href=
+     * "https://msdn.microsoft.com/en-us/library/windows/desktop/ms682425(v=vs.85).aspx">
+     * <strong xmlns="http://www.w3.org/1999/xhtml">CreateProcess</strong></a>
+     * function by the program that started the application.
+     * </p>
+     */
+    int SW_SHOWDEFAULT = 10;
     
     /**
      * This function retrieves a handle to a display device context (DC) for the
@@ -343,27 +343,27 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     boolean FlashWindowEx(FLASHWINFO pfwi);
 
     /**
-	 * This function loads the specified icon resource from the executable
-	 * (.exe) file associated with an application instance.
-	 *
-	 * @param hInstance
-	 *            Handle to an instance of the module whose executable file
-	 *            contains the icon to be loaded. This parameter must be NULL
-	 *            when a standard icon is being loaded.
-	 * @param iconName
-	 *            Long pointer to a null-terminated string that contains the
-	 *            name of the icon resource to be loaded. Alternatively, this
-	 *            parameter can contain the resource identifier in the low-order
-	 *            word and zero in the high-order word. Use the MAKEINTRESOURCE
-	 *            macro to create this value.
-	 *            <p>
-	 *            To use one of the predefined icons, set the hInstance
-	 *            parameter to NULL and the lpIconName parameter to one of the
-	 *            following values: {@link WinUser#IDC_APPSTARTING} etc.</p>
-	 * @return A handle to the newly loaded icon indicates success. NULL
-	 *         indicates failure. To get extended error information, call
-	 *         GetLastError.
-	 */
+     * This function loads the specified icon resource from the executable
+     * (.exe) file associated with an application instance.
+     *
+     * @param hInstance
+     *            Handle to an instance of the module whose executable file
+     *            contains the icon to be loaded. This parameter must be NULL
+     *            when a standard icon is being loaded.
+     * @param iconName
+     *            Long pointer to a null-terminated string that contains the
+     *            name of the icon resource to be loaded. Alternatively, this
+     *            parameter can contain the resource identifier in the low-order
+     *            word and zero in the high-order word. Use the MAKEINTRESOURCE
+     *            macro to create this value.
+     *            <p>
+     *            To use one of the predefined icons, set the hInstance
+     *            parameter to NULL and the lpIconName parameter to one of the
+     *            following values: {@link WinUser#IDC_APPSTARTING} etc.</p>
+     * @return A handle to the newly loaded icon indicates success. NULL
+     *         indicates failure. To get extended error information, call
+     *         GetLastError.
+     */
     HICON LoadIcon(HINSTANCE hInstance, String iconName);
 
     /**
@@ -534,7 +534,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         information, call GetLastError.
      */
     boolean GetLayeredWindowAttributes(HWND hwnd, IntByReference pcrKey,
-						ByteByReference pbAlpha, IntByReference pdwFlags);
+                        ByteByReference pbAlpha, IntByReference pdwFlags);
 
     /**
      * The UpdateLayeredWindow function updates the position, size, shape,
@@ -738,7 +738,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @return Nonzero indicates success. Zero indicates failure.
      */
     boolean PeekMessage(MSG lpMsg, HWND hWnd, int wMsgFilterMin,
-			int wMsgFilterMax, int wRemoveMsg);
+            int wMsgFilterMax, int wRemoveMsg);
 
     /**
      * This function translates virtual-key messages into character messages.
@@ -1904,131 +1904,465 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      */
     BOOL LockWorkStation();
 
-	/**
-	 * Retrieves information about the specified icon or cursor.
-	 *
-	 * @param hIcon
-	 *            A handle to the icon or cursor.
-	 *            <p>
-	 *            To retrieve information about a standard icon or cursor,
-	 *            specify one of the following values and use the
-	 *            MAKEINTRESOURCE macro to create this value:
-	 *            {@link WinUser#IDC_APPSTARTING} etc.</p>
-	 * @param piconinfo
-	 *            A pointer to an ICONINFO structure. The function fills in the
-	 *            structure's members.
-	 * @return If the function succeeds, the return value is {@code true} and
-	 *         the function fills in the members of the specified ICONINFO
-	 *         structure.
-	 *         <p>
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.</p>
-	 */
-	boolean GetIconInfo(HICON hIcon, ICONINFO piconinfo);
+    /**
+     * Retrieves information about the specified icon or cursor.
+     *
+     * @param hIcon
+     *            A handle to the icon or cursor.
+     *            <p>
+     *            To retrieve information about a standard icon or cursor,
+     *            specify one of the following values and use the
+     *            MAKEINTRESOURCE macro to create this value:
+     *            {@link WinUser#IDC_APPSTARTING} etc.</p>
+     * @param piconinfo
+     *            A pointer to an ICONINFO structure. The function fills in the
+     *            structure's members.
+     * @return If the function succeeds, the return value is {@code true} and
+     *         the function fills in the members of the specified ICONINFO
+     *         structure.
+     *         <p>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError()}.</p>
+     */
+    boolean GetIconInfo(HICON hIcon, ICONINFO piconinfo);
 
-	/**
-	 * Sends the specified message to one or more windows.
-	 *
-	 * @param hWnd
-	 *            A handle to the window whose window procedure will receive the
-	 *            message.
-	 *            <p>
-	 *            If this parameter is HWND_BROADCAST ((HWND)0xffff), the
-	 *            message is sent to all top-level windows in the system,
-	 *            including disabled or invisible unowned windows. The function
-	 *            does not return until each window has timed out. Therefore,
-	 *            the total wait time can be up to the value of uTimeout
-	 *            multiplied by the number of top-level windows.</p>
-	 * @param msg
-	 *            The message to be sent.
-	 * @param wParam
-	 *            Any additional message-specific information.
-	 * @param lParam
-	 *            Any additional message-specific information.
-	 * @param fuFlags
-	 *            The behavior of this function. This parameter can be one or
-	 *            more of the following values: {@link WinUser#SMTO_ABORTIFHUNG}
-	 *            etc.
-	 * @param uTimeout
-	 *            The duration of the time-out period, in milliseconds. If the
-	 *            message is a broadcast message, each window can use the full
-	 *            time-out period. For example, if you specify a five second
-	 *            time-out period and there are three top-level windows that
-	 *            fail to process the message, you could have up to a 15 second
-	 *            delay.
-	 * @param lpdwResult
-	 *            The result of the message processing. The value of this
-	 *            parameter depends on the message that is specified.
-	 * @return If the function succeeds, the return value is nonzero.
-	 *         SendMessageTimeout does not provide information about individual
-	 *         windows timing out if HWND_BROADCAST is used.
-	 *         <p>
-	 *         If the function fails or times out, the return value is 0. To get
-	 *         extended error information, call GetLastError. If GetLastError
-	 *         returns ERROR_TIMEOUT, then the function timed out.
-	 *         </p>
-	 *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
-	 *         the function timed out.
-	 */
+    /**
+     * Sends the specified message to one or more windows.
+     *
+     * @param hWnd
+     *            A handle to the window whose window procedure will receive the
+     *            message.
+     *            <p>
+     *            If this parameter is HWND_BROADCAST ((HWND)0xffff), the
+     *            message is sent to all top-level windows in the system,
+     *            including disabled or invisible unowned windows. The function
+     *            does not return until each window has timed out. Therefore,
+     *            the total wait time can be up to the value of uTimeout
+     *            multiplied by the number of top-level windows.</p>
+     * @param msg
+     *            The message to be sent.
+     * @param wParam
+     *            Any additional message-specific information.
+     * @param lParam
+     *            Any additional message-specific information.
+     * @param fuFlags
+     *            The behavior of this function. This parameter can be one or
+     *            more of the following values: {@link WinUser#SMTO_ABORTIFHUNG}
+     *            etc.
+     * @param uTimeout
+     *            The duration of the time-out period, in milliseconds. If the
+     *            message is a broadcast message, each window can use the full
+     *            time-out period. For example, if you specify a five second
+     *            time-out period and there are three top-level windows that
+     *            fail to process the message, you could have up to a 15 second
+     *            delay.
+     * @param lpdwResult
+     *            The result of the message processing. The value of this
+     *            parameter depends on the message that is specified.
+     * @return If the function succeeds, the return value is nonzero.
+     *         SendMessageTimeout does not provide information about individual
+     *         windows timing out if HWND_BROADCAST is used.
+     *         <p>
+     *         If the function fails or times out, the return value is 0. To get
+     *         extended error information, call GetLastError. If GetLastError
+     *         returns ERROR_TIMEOUT, then the function timed out.
+     *         </p>
+     *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
+     *         the function timed out.
+     */
         LRESULT SendMessageTimeout(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam,
-			int fuFlags, int uTimeout, DWORDByReference lpdwResult);
+            int fuFlags, int uTimeout, DWORDByReference lpdwResult);
 
-	/**
-	 * Retrieves the specified value from the WNDCLASSEX structure associated
-	 * with the specified window.
-	 *
-	 * @param hWnd
-	 *            A handle to the window and, indirectly, the class to which the
-	 *            window belongs.
-	 * @param nIndex
-	 *            The value to be retrieved. To retrieve a value from the extra
-	 *            class memory, specify the positive, zero-based byte offset of
-	 *            the value to be retrieved. Valid values are in the range zero
-	 *            through the number of bytes of extra class memory, minus
-	 *            eight; for example, if you specified 24 or more bytes of extra
-	 *            class memory, a value of 16 would be an index to the third
-	 *            integer.To retrieve any other value from the WNDCLASSEX
-	 *            structure, specify one of the following values:
-	 *            {@link WinUser#GCW_ATOM} etc.
-	 * @return If the function succeeds, the return value is the requested
-	 *         value.
-	 *         <p>
-	 *         If the function fails, the return value is zero. To get extended
-	 *         error information, call {@link Kernel32#GetLastError()}.</p>
-	 */
-	ULONG_PTR GetClassLongPtr(HWND hWnd, int nIndex);
+    /**
+     * Retrieves the specified value from the WNDCLASSEX structure associated
+     * with the specified window.
+     *
+     * @param hWnd
+     *            A handle to the window and, indirectly, the class to which the
+     *            window belongs.
+     * @param nIndex
+     *            The value to be retrieved. To retrieve a value from the extra
+     *            class memory, specify the positive, zero-based byte offset of
+     *            the value to be retrieved. Valid values are in the range zero
+     *            through the number of bytes of extra class memory, minus
+     *            eight; for example, if you specified 24 or more bytes of extra
+     *            class memory, a value of 16 would be an index to the third
+     *            integer.To retrieve any other value from the WNDCLASSEX
+     *            structure, specify one of the following values:
+     *            {@link WinUser#GCW_ATOM} etc.
+     * @return If the function succeeds, the return value is the requested
+     *         value.
+     *         <p>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call {@link Kernel32#GetLastError()}.</p>
+     */
+    ULONG_PTR GetClassLongPtr(HWND hWnd, int nIndex);
 
-	/**
-	 * @param pRawInputDeviceList
-	 *            An array of {@link WinUser.RAWINPUTDEVICELIST} structures for the devices
-	 *            attached to the system. If (@code null}, the number of devices is
-	 *            returned in <tt>puiNumDevices</tt>
-	 * @param puiNumDevices
-	 *            If <tt>pRawInputDeviceList</tt> is {@code null}, the function populates
-	 *            this variable with the number of devices attached to the system;
-	 *            otherwise, this variable specifies the number of {@link WinUser.RAWINPUTDEVICELIST}
-	 *            structures that can be contained in the buffer to which <tt>pRawInputDeviceList</tt>
-	 *            points. If this value is less than the number of devices attached to
-	 *            the system, the function returns the actual number of devices in this
-	 *            variable and fails with ERROR_INSUFFICIENT_BUFFER.
-	 * @param cbSize
-	 *            The size of a {@link WinUser.RAWINPUTDEVICELIST} structure, in bytes.
-	 * @return If the function is successful, the return value is the number of devices
-	 *             stored in the buffer pointed to by <tt>pRawInputDeviceList</tt>. On
-	 *             any other error, the function returns -1 and {@code GetLastError}
-	 *             returns the error indication.
-	 * @see WinUser.RAWINPUTDEVICELIST#sizeof()
-	 * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645598(v=vs.85).aspx">GetRawInputDeviceList</A>
-	 */
-	int GetRawInputDeviceList(RAWINPUTDEVICELIST[] pRawInputDeviceList, IntByReference puiNumDevices, int cbSize);
-	
-	
-	/**
-	 * Retrieves a handle to the desktop window. The desktop window covers the
-	 * entire screen. The desktop window is the area on top of which other
-	 * windows are painted.
-	 * 
-	 * @return Type: HWND The return value is a handle to the desktop window.
-	 */
-	HWND GetDesktopWindow();
+    /**
+     * @param pRawInputDeviceList
+     *            An array of {@link WinUser.RAWINPUTDEVICELIST} structures for the devices
+     *            attached to the system. If (@code null}, the number of devices is
+     *            returned in <tt>puiNumDevices</tt>
+     * @param puiNumDevices
+     *            If <tt>pRawInputDeviceList</tt> is {@code null}, the function populates
+     *            this variable with the number of devices attached to the system;
+     *            otherwise, this variable specifies the number of {@link WinUser.RAWINPUTDEVICELIST}
+     *            structures that can be contained in the buffer to which <tt>pRawInputDeviceList</tt>
+     *            points. If this value is less than the number of devices attached to
+     *            the system, the function returns the actual number of devices in this
+     *            variable and fails with ERROR_INSUFFICIENT_BUFFER.
+     * @param cbSize
+     *            The size of a {@link WinUser.RAWINPUTDEVICELIST} structure, in bytes.
+     * @return If the function is successful, the return value is the number of devices
+     *             stored in the buffer pointed to by <tt>pRawInputDeviceList</tt>. On
+     *             any other error, the function returns -1 and {@code GetLastError}
+     *             returns the error indication.
+     * @see WinUser.RAWINPUTDEVICELIST#sizeof()
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645598(v=vs.85).aspx">GetRawInputDeviceList</A>
+     */
+    int GetRawInputDeviceList(RAWINPUTDEVICELIST[] pRawInputDeviceList, IntByReference puiNumDevices, int cbSize);
+    
+    
+    /**
+     * Retrieves a handle to the desktop window. The desktop window covers the
+     * entire screen. The desktop window is the area on top of which other
+     * windows are painted.
+     * 
+     * @return Type: HWND The return value is a handle to the desktop window.
+     */
+    HWND GetDesktopWindow();
+
+    /**
+     * The PrintWindow function copies a visual window into the specified device
+     * context (DC), typically a printer DC.
+     * 
+     * @param hWnd
+     *            A handle to the window that will be copied.
+     * @param dest
+     *            A handle to the destination device context.
+     * @param flags
+     *            The drawing options. It can be one of the following values:
+     *            <br>
+     *            PW_CLIENTONLY:<br>
+     *            Only the client area of the window is copied to hdcBlt. By
+     *            default, the entire window is copied.
+     * @return If the function succeeds, it returns true (MSDN: a nonzero
+     *         value). If the function fails, it returns false (MSDN: zero).
+     */
+    boolean PrintWindow(HWND hWnd, HDC dest, int flags);
+
+    /**
+     * Determines whether the specified window is enabled for mouse and keyboard
+     * input.
+     * 
+     * @param hWnd
+     *            A handle to the window to be tested.
+     * @return If the window is enabled, the return value is true (nonzero).<br>
+     *         If the window is not enabled, the return value is false (zero).
+     */
+    boolean IsWindowEnabled(HWND hWnd);
+
+    /**
+     * Determines whether the specified window handle identifies an existing
+     * window. <br>
+     * A thread should not use IsWindow for a window that it did not create
+     * because the window could be destroyed after this function was called.<br>
+     * Further, because window handles are recycled the handle could even point
+     * to a different window.
+     * 
+     * @param hWnd
+     *            A handle to the window to be tested.
+     * @return If the window handle identifies an existing window, the return
+     *         value is true (nonzero).<br>
+     *         If the window handle does not identify an existing window, the
+     *         return value is false (zero).
+     */
+    boolean IsWindow(HWND hWnd);
+
+    /**
+     * @param parent
+     *            Type: <strong>HWND</strong><br>
+     *            A handle to the parent window whose child windows are to be
+     *            searched.<br>
+     *            If <em>hwndParent</em> is <strong>NULL</strong>, the function
+     *            uses the desktop window as the parent window. The function
+     *            searches among windows that are child windows of the desktop.
+     *            <br>
+     *            If <em>hwndParent</em> is <strong>HWND_MESSAGE</strong>, the
+     *            function searches all <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms632599(v=vs.85).aspx#message_only">
+     *            message-only windows</a>.<br>
+     * @param child
+     *            Type: <strong>HWND</strong><br>
+     *            A handle to a child window. The search begins with the next
+     *            child window in the Z order. The child window must be a direct
+     *            child window of <em>hwndParent</em>, not just a descendant
+     *            window.<br>
+     *            If <em>hwndChildAfter</em> is <strong>NULL</strong>, the
+     *            search begins with the first child window of
+     *            <em>hwndParent</em>.<br>
+     *            Note that if both <em>hwndParent</em> and
+     *            <em>hwndChildAfter</em> are <strong>NULL</strong>, the
+     *            function searches all top-level and message-only windows.<br>
+     * @param className
+     *            Type: <strong>LPCTSTR</strong><br>
+     *            The class name or a class atom created by a previous call to
+     *            the <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms633586(v=vs.85).aspx">
+     *            <strong xmlns="http://www.w3.org/1999/xhtml">RegisterClass
+     *            </strong></a> or <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms633587(v=vs.85).aspx">
+     *            <strong xmlns="http://www.w3.org/1999/xhtml">RegisterClassEx
+     *            </strong></a> function. The atom must be placed in the
+     *            low-order word of <em>lpszClass</em>; the high-order word must
+     *            be zero.<br>
+     *            If <em>lpszClass</em> is a string, it specifies the window
+     *            class name. The class name can be any name registered with
+     *            <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms633586(v=vs.85).aspx">
+     *            <strong xmlns="http://www.w3.org/1999/xhtml">RegisterClass
+     *            </strong></a> or <a href=
+     *            "https://msdn.microsoft.com/en-us/library/windows/desktop/ms633587(v=vs.85).aspx">
+     *            <strong xmlns="http://www.w3.org/1999/xhtml">RegisterClassEx
+     *            </strong></a>, or any of the predefined control-class names,
+     *            or it can be <code>MAKEINTATOM(0x8000)</code>. In this latter
+     *            case, 0x8000 is the atom for a menu class. For more
+     *            information, see the Remarks section of this topic.<br>
+     * @param window
+     *            Type: <strong>LPCTSTR</strong><br>
+     *            The window name (the window's title). If this parameter is
+     *            <strong>NULL</strong>, all window names match.
+     * @return If the function succeeds, the return value is a handle to the
+     *         window that has the specified class and window names. <br>
+     *         If the function fails, the return value is NULL. To get extended
+     *         error information, call GetLastError.
+     */
+    HWND FindWindowEx(HWND parent, HWND child, String className, String window);
+
+    /**
+     * Retrieves the handle to the ancestor of the specified window.
+     * 
+     * @param hwnd
+     *            A handle to the window whose ancestor is to be retrieved. If
+     *            this parameter is the desktop window, the function returns
+     *            NULL.
+     * @param gaFlags
+     *            The ancestor to be retrieved. This parameter can be one of the
+     *            following values:<br>
+     *            <ul>
+     *            <li>GA_PARENT (1) -- Retrieves the parent window. This does
+     *            not include the owner, as it does with the GetParent function.
+     *            </li>
+     *            <li>GA_ROOT (2) -- Retrieves the root window by walking the
+     *            chain of parent windows..</li>
+     *            <li>GA_ROOTOWNER (3) -- Retrieves the owned root window by
+     *            walking the chain of parent and owner windows returned by
+     *            GetParent..</li>
+     *            </ul>
+     * @return The return value is the handle to the ancestor window.
+     */
+    HWND GetAncestor(HWND hwnd, int gaFlags);
+
+    /**
+     * Retrieves the position of the mouse cursor, in screen coordinates.
+     * 
+     * @param p
+     *            lpPoint [out]<br>
+     *            Type: LPPOINT<br>
+     *            A pointer to a POINT structure that receives the screen
+     *            coordinates of the cursor.
+     * @return Type: BOOL.<br>
+     *         Returns nonzero if successful or zero otherwise. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean GetCursorPos(POINT p);
+
+    /**
+     * Moves the cursor to the specified screen coordinates.<br>
+     * If the new coordinates are not within the screen rectangle set by the
+     * most recent ClipCursor function call, the system automatically adjusts
+     * the coordinates so that the cursor stays within the rectangle.
+     * 
+     * @param x
+     *            The new x-coordinate of the cursor, in screen coordinates.
+     * @param y
+     *            The new y-coordinate of the cursor, in screen coordinates.
+     * @return Type: BOOL.<br>
+     *         Returns nonzero if successful or zero otherwise. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean SetCursorPos(long x, long y);
+
+    /**
+     * @param eventMin
+     *            Type: UINT<br>
+     *            Specifies the event constant for the lowest event value in the
+     *            range of events that are handled by the hook function.<br>
+     *            This parameter can be set to EVENT_MIN to indicate the lowest
+     *            possible event value.
+     * @param eventMax
+     *            Type: UINT<br>
+     *            Specifies the event constant for the highest event value in
+     *            the range of events that are handled by the hook function.<br>
+     *            This parameter can be set to EVENT_MAX to indicate the highest
+     *            possible event value.
+     * @param hmodWinEventProc
+     *            Type: HMODULE<br>
+     *            Handle to the DLL that contains the hook function at
+     *            lpfnWinEventProc, if the WINEVENT_INCONTEXT flag is specified
+     *            in the dwFlags parameter.<br>
+     *            If the hook function is not located in a DLL, or if the
+     *            WINEVENT_OUTOFCONTEXT flag is specified, this parameter is
+     *            NULL.
+     * @param winEventProc
+     *            Type: WINEVENTPROC<br>
+     *            Pointer to the event hook function. For more information about
+     *            this function, see WinEventProc.
+     * @param processID
+     *            Type: DWORD<br>
+     *            Specifies the ID of the process from which the hook function
+     *            receives events.<br>
+     *            Specify zero (0) to receive events from all processes on the
+     *            current desktop.
+     * @param threadID
+     *            Type: DWORD<br>
+     *            Specifies the ID of the thread from which the hook function
+     *            receives events.<br>
+     *            If this parameter is zero, the hook function is associated
+     *            with all existing threads on the current desktop.
+     * @param flags
+     *            Type: UINT<br>
+     *            Flag values that specify the location of the hook function and
+     *            of the events to be skipped.<br>
+     *            The following flags are valid:<br>
+     *            <ul>
+     *            <li><b> WINEVENT_INCONTEXT:</b> The DLL that contains the
+     *            callback function is mapped into the address space of the
+     *            process that generates the event.<br>
+     *            With this flag, the system sends event notifications to the
+     *            callback function as they occur.<br>
+     *            The hook function must be in a DLL when this flag is
+     *            specified. <br>
+     *            This flag has no effect when both the calling process and the
+     *            generating process are not 32-bit or 64-bit processes, or when
+     *            the generating process is a console application.<br>
+     *            For more information, see In-Context Hook Functions.</li>
+     *            <li><b>WINEVENT_OUTOFCONTEXT:</b> The callback function is not
+     *            mapped into the address space of the process that generates
+     *            the event.<br>
+     *            Because the hook function is called across process boundaries,
+     *            the system must queue events.<br>
+     *            Although this method is asynchronous, events are guaranteed to
+     *            be in sequential order. <br>
+     *            For more information, see Out-of-Context Hook Functions.</li>
+     *            <li><b>WINEVENT_SKIPOWNPROCESS:</b><br>
+     *            Prevents this instance of the hook from receiving the events
+     *            that are generated by threads in this process. <br>
+     *            This flag does not prevent threads from generating events.
+     *            </li>
+     *            <li><b>WINEVENT_SKIPOWNTHREAD:</b><br>
+     *            Prevents this instance of the hook from receiving the events
+     *            that are generated by the thread that is registering this
+     *            hook.</li>
+     *            </ul>
+     * @return Type: HWINEVENTHOOK<br>
+     *         If successful, returns an HWINEVENTHOOK value that identifies
+     *         this event hook instance. Applications save this return value to
+     *         use it with the UnhookWinEvent function.<br>
+     *         If unsuccessful, returns zero.<br>
+     */
+    HANDLE SetWinEventHook(int eventMin, int eventMax, HMODULE hmodWinEventProc, WinEventProc winEventProc,
+            int processID, int threadID, int flags);
+
+    /**
+     * Removes an event hook function created by a previous call to
+     * SetWinEventHook.
+     * 
+     * @param hook
+     *            Type: HWINEVENTHOOK<br>
+     *            Handle to the event hook returned in the previous call to
+     *            SetWinEventHook.
+     * @return Type: BOOL If successful, returns TRUE; otherwise, returns FALSE.
+     *         <br>
+     *         Three common errors cause this function to fail:<br>
+     *         The hWinEventHook parameter is NULL or not valid.<br>
+     *         The event hook specified by hWinEventHook was already removed.
+     *         <br>
+     *         UnhookWinEvent is called from a thread that is different from the
+     *         original call to SetWinEventHook.<br>
+     */
+    boolean UnhookWinEvent(HANDLE hook);
+
+    /**
+     * Copies the specified icon from another module to the current module.
+     * 
+     * @param hIcon
+     *            A handle to the icon to be copied.
+     * @return If the function succeeds, the return value is a handle to the
+     *         duplicate icon. <br>
+     *         If the function fails, the return value is NULL. To get extended
+     *         error information, call GetLastError.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms648058(S.85).aspx">MSDN</a>
+     */
+    HICON CopyIcon(HICON hIcon);
+
+    /**
+     * Retrieves the specified 32-bit (DWORD) value from the WNDCLASSEX
+     * structure associated with the specified window. Note If you are
+     * retrieving a pointer or a handle, this function has been superseded by
+     * the GetClassLongPtr function. <br>
+     * (Pointers and handles are 32 bits on 32-bit Windows and 64 bits on 64-bit
+     * Windows.)
+     * 
+     * @param hWnd
+     *            A handle to the window and, indirectly, the class to which the
+     *            window belongs.
+     * @param nIndex
+     *            The value to be retrieved. To retrieve a value from the extra
+     *            class memory, specify the positive, zero-based byte offset of
+     *            the value to be retrieved. Valid values are in the range zero
+     *            through the number of bytes of extra class memory, minus four;
+     *            for example, if you specified 12 or more bytes of extra class
+     *            memory, a value of 8 would be an index to the third integer.
+     *            To retrieve any other value from the WNDCLASSEX structure,
+     *            specify one of the following values.<br? GCW_ATOM: -32<br>
+     *            Retrieves an ATOM value that uniquely identifies the window
+     *            class. This is the same atom that the RegisterClassEx function
+     *            returns.<br>
+     *            GCL_CBCLSEXTRA: -20<br>
+     *            Retrieves the size, in bytes, of the extra memory associated
+     *            with the class.<br>
+     *            GCL_CBWNDEXTRA: -18<br>
+     *            Retrieves the size, in bytes, of the extra window memory
+     *            associated with each window in the class. For information on
+     *            how to access this memory, see GetWindowLong.<br>
+     *            GCL_HBRBACKGROUND: -10<br>
+     *            Retrieves a handle to the background brush associated with the
+     *            class.<br>
+     *            GCL_HCURSOR: -12<br>
+     *            Retrieves a handle to the cursor associated with the class.
+     *            <br>
+     *            GCL_HICON: -14<br>
+     *            Retrieves a handle to the icon associated with the class.<br>
+     *            GCL_HICONSM: -34<br>
+     *            Retrieves a handle to the small icon associated with the
+     *            class.<br>
+     *            GCL_HMODULE: -16<br>
+     *            Retrieves a handle to the module that registered the class.
+     *            <br>
+     *            GCL_MENUNAME: -8<br>
+     *            Retrieves the address of the menu name string. The string
+     *            identifies the menu resource associated with the class.<br>
+     *            GCL_STYLE: -26<br>
+     *            Retrieves the window-class style bits.<br>
+     *            GCL_WNDPROC: -24<br>
+     *            Retrieves the address of the window procedure, or a handle
+     *            representing the address of the window procedure. You must use
+     *            the CallWindowProc function to call the window procedure.
+     * @return Type: DWORD If the function succeeds, the return value is the
+     *         requested value.<br>
+     *         If the function fails, the return value is zero. To get extended
+     *         error information, call GetLastError.<br>
+     */
+    int GetClassLong(HWND hWnd, int nIndex);
 }
