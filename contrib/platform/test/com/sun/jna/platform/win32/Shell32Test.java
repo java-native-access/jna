@@ -225,4 +225,13 @@ public class Shell32Test extends TestCase {
             fileWriter.close();
         }
     }
+    
+    public void testExtractIconEx() {
+        String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
+        assertNotNull("No WINDIR value returned", winDir);
+        assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
+        
+        int iconCount = Shell32.INSTANCE.ExtractIconEx(new File(winDir, "explorer.exe").getAbsolutePath(), -1, null, null, 1);
+        assertTrue("Should be at least two icons in explorer.exe", iconCount > 1);
+    }
 }

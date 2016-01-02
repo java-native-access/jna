@@ -382,13 +382,13 @@ public class Kernel32Test extends TestCase {
         OSVERSIONINFOEX lpVersionInfo = new OSVERSIONINFOEX();
         assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
         assertTrue(Kernel32.INSTANCE.GetVersionEx(lpVersionInfo));
-        assertTrue(lpVersionInfo.dwMajorVersion.longValue() > 0);
-        assertTrue(lpVersionInfo.dwMinorVersion.longValue() >= 0);
+        assertTrue(lpVersionInfo.getMajor() > 0);
+        assertTrue(lpVersionInfo.getMinor() >= 0);
         assertEquals(lpVersionInfo.size(), lpVersionInfo.dwOSVersionInfoSize.longValue());
-        assertTrue(lpVersionInfo.dwPlatformId.longValue() > 0);
-        assertTrue(lpVersionInfo.dwBuildNumber.longValue() > 0);
-        assertTrue(Native.toString(lpVersionInfo.szCSDVersion).length() >= 0);
-        assertTrue(lpVersionInfo.wProductType >= 0);
+        assertTrue(lpVersionInfo.getPlatformId() > 0);
+        assertTrue(lpVersionInfo.getBuildNumber() > 0);
+        assertTrue(lpVersionInfo.getServicePack().length() >= 0);
+        assertTrue(lpVersionInfo.getProductType() >= 0);
     }
 
     public void testGetSystemInfo() {
