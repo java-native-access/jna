@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.INT_PTR;
 import com.sun.jna.platform.win32.WinDef.UINT_PTR;
@@ -31,41 +32,41 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
     /** The instance **/
     Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class, W32APIOptions.DEFAULT_OPTIONS);
 
-	/**
-	 * No dialog box confirming the deletion of the objects will be displayed.
-	 */
-	int SHERB_NOCONFIRMATION = 0x00000001;
+    /**
+     * No dialog box confirming the deletion of the objects will be displayed.
+     */
+    int SHERB_NOCONFIRMATION = 0x00000001;
 
-	/**
-	 * No dialog box indicating the progress will be displayed.
-	 */
-	int SHERB_NOPROGRESSUI = 0x00000002;
+    /**
+     * No dialog box indicating the progress will be displayed.
+     */
+    int SHERB_NOPROGRESSUI = 0x00000002;
 
-	/**
-	 * No sound will be played when the operation is complete.
-	 */
-	int SHERB_NOSOUND = 0x00000004;
+    /**
+     * No sound will be played when the operation is complete.
+     */
+    int SHERB_NOSOUND = 0x00000004;
 
-	/**
-	 * <p>
-	 * <strong>SEE_MASK_NOCLOSEPROCESS</strong> (0x00000040)
-	 * </p>
-	 * <p>
-	 * Use to indicate that the <strong>hProcess</strong> member receives the
-	 * process handle. This handle is typically used to allow an application to
-	 * find out when a process created with terminates. In some cases, such as
-	 * when execution is satisfied through a DDE conversation, no handle will be
-	 * returned. The calling application is responsible for closing the handle
-	 * when it is no longer needed.
-	 * </p>
-	 */
-	int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
-	
-	/**
-	 * Do not display an error message box if an error occurs.
-	 */
-	int SEE_MASK_FLAG_NO_UI = 0x00000400;
-	
+    /**
+     * <p>
+     * <strong>SEE_MASK_NOCLOSEPROCESS</strong> (0x00000040)
+     * </p>
+     * <p>
+     * Use to indicate that the <strong>hProcess</strong> member receives the
+     * process handle. This handle is typically used to allow an application to
+     * find out when a process created with terminates. In some cases, such as
+     * when execution is satisfied through a DDE conversation, no handle will be
+     * returned. The calling application is responsible for closing the handle
+     * when it is no longer needed.
+     * </p>
+     */
+    int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
+    
+    /**
+     * Do not display an error message box if an error occurs.
+     */
+    int SEE_MASK_FLAG_NO_UI = 0x00000400;
+    
     /**
      * This function can be used to copy, move, rename, or delete a file system object.
      * @param fileop
@@ -239,15 +240,15 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @param dwMessage 
      *   Appbar message value to send. This parameter can be one of the following values.
      *    {@link ShellAPI#ABM_NEW} Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
-     * 	  {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
-     * 	  {@link ShellAPI#ABM_QUERYPOS} Requests a size and screen position for an appbar.
+     *    {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
+     *    {@link ShellAPI#ABM_QUERYPOS} Requests a size and screen position for an appbar.
      *    {@link ShellAPI#ABM_SETPOS} Sets the size and screen position of an appbar.
-     * 	  {@link ShellAPI#ABM_GETSTATE} Retrieves the autohide and always-on-top states of the Windows taskbar.
-     * 	  {@link ShellAPI#ABM_GETTASKBARPOS} Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars -- the working area available to your application --, use the GetMonitorInfo function.
-     * 	  {@link ShellAPI#ABM_ACTIVATE} Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
-     * 	  {@link ShellAPI#ABM_GETAUTOHIDEBAR} Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
-     * 	  {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
-     * 	  {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
+     *    {@link ShellAPI#ABM_GETSTATE} Retrieves the autohide and always-on-top states of the Windows taskbar.
+     *    {@link ShellAPI#ABM_GETTASKBARPOS} Retrieves the bounding rectangle of the Windows taskbar. Note that this applies only to the system taskbar. Other objects, particularly toolbars supplied with third-party software, also can be present. As a result, some of the screen area not covered by the Windows taskbar might not be visible to the user. To retrieve the area of the screen not covered by both the taskbar and other app bars -- the working area available to your application --, use the GetMonitorInfo function.
+     *    {@link ShellAPI#ABM_ACTIVATE} Notifies the system to activate or deactivate an appbar. The lParam member of the APPBARDATA pointed to by pData is set to TRUE to activate or FALSE to deactivate.
+     *    {@link ShellAPI#ABM_GETAUTOHIDEBAR} Retrieves the handle to the autohide appbar associated with a particular edge of the screen.
+     *    {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
+     *    {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
      *    {@link ShellAPI#ABM_SETSTATE} Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
      * 
      * @param pData
@@ -307,7 +308,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *            about the application being executed.
      *            </p>
      * @return
-     * 		<p>
+     *      <p>
      *         Returns <strong>TRUE</strong> if successful; otherwise,
      *         <strong>FALSE</strong>. Call <a href=
      *         "https://msdn.microsoft.com/en-us/library/windows/desktop/ms679360(v=vs.85).aspx">
@@ -330,6 +331,50 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
      *
      */
-    WinNT.HRESULT SHGetSpecialFolderLocation(WinDef.HWND hwndOwner, int nFolder, PointerByReference ppidl);
+    HRESULT SHGetSpecialFolderLocation(WinDef.HWND hwndOwner, int nFolder, PointerByReference ppidl);
+    
+    /**
+     * @param lpszFile
+     *            Type: LPCTSTR<br>
+     *            The name of an executable file, DLL, or icon file from which
+     *            icons will be extracted.
+     * @param nIconIndex
+     *            Type: int<br>
+     *            The zero-based index of the first icon to extract. For
+     *            example, if this value is zero, the function extracts the
+     *            first icon in the specified file.<br>
+     *            If this value is -1 and phiconLarge and phiconSmall are both
+     *            NULL, the function returns the total number of icons in the
+     *            specified file.<br>
+     *            If the file is an executable file or DLL, the return value is
+     *            the number of RT_GROUP_ICON resources.<br>
+     *            If the file is an .ico file, the return value is 1. If this
+     *            value is a negative number and either phiconLarge or
+     *            phiconSmall is not NULL, the function begins by extracting the
+     *            icon whose resource identifier is equal to the absolute value
+     *            of nIconIndex. For example, use -3 to extract the icon whose
+     *            resource identifier is 3.
+     * @param phiconLarge
+     *            Type: HICON*<br>
+     *            An array of icon handles that receives handles to the large
+     *            icons extracted from the file. If this parameter is NULL, no
+     *            large icons are extracted from the file.
+     * @param phiconSmall
+     *            Type: HICON*<br>
+     *            An array of icon handles that receives handles to the small
+     *            icons extracted from the file. If this parameter is NULL, no
+     *            small icons are extracted from the file.
+     * @param nIcons
+     *            Type: UINT<br>
+     *            The number of icons to be extracted from the file.
+     * @return Type: UINT <br>
+     *         If the nIconIndex parameter is -1, the phiconLarge parameter is
+     *         NULL, and the phiconSmall parameter is NULL, then the return
+     *         value is the number of icons contained in the specified file.
+     *         Otherwise, the return value is the number of icons successfully
+     *         extracted from the file.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms648069(VS.85).aspx">MSDN</a>
+     */
+    int ExtractIconEx(String lpszFile, int nIconIndex, HICON[] phiconLarge, HICON[] phiconSmall, int nIcons);
 }
 

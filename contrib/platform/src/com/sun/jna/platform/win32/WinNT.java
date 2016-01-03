@@ -20,6 +20,7 @@ import java.util.List;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
@@ -666,14 +667,99 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     // AccessSystemAcl access type
     //
 
-    int ACCESS_SYSTEM_SECURITY = 0x01000000;
+    int ACCESS_SYSTEM_SECURITY             = 0x01000000;
 
-    int PAGE_READONLY = 0x02;
-    int PAGE_READWRITE = 0x04;
+    /**
+     * Pages in the region become guard pages. <br>
+     * Any attempt to access a guard page causes the system to raise a
+     * STATUS_GUARD_PAGE_VIOLATION exception and turn off the guard page status.
+     * <br>
+     * Guard pages thus act as a one-time access alarm. <br>
+     * For more information, see Creating Guard Pages. <br>
+     * When an access attempt leads the system to turn off guard page status,
+     * the underlying page protection takes over.<br>
+     * If a guard page exception occurs during a system service, the service
+     * typically returns a failure status indicator. <br>
+     * This value cannot be used with PAGE_NOACCESS. This flag is not supported
+     * by the CreateFileMapping function.
+     * 
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">
+     *      MSDN</a>
+     */
+    int PAGE_GUARD                         = 0x100;
+
+    /**
+     * Disables all access to the committed region of pages.<br>
+     * An attempt to read from, write to, or execute the committed region
+     * results in an access violation.<br>
+     * This flag is not supported by the CreateFileMapping function.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_NOACCESS                      = 0x01;
+
+    /**
+     * Enables read-only access to the committed region of pages.<br>
+     * An attempt to write to the committed region results in an access
+     * violation. <br>
+     * If Data Execution Prevention is enabled, an attempt to execute code in
+     * the committed region results in an access violation.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_READONLY                      = 0x02;
+
+    /**
+     * Enables read-only or read/write access to the committed region of pages. <br>
+     * If Data Execution Prevention is enabled, attempting to execute code in
+     * the committed region results in an access violation.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_READWRITE                     = 0x04;
+    
+    /**
+     * Enables read-only or copy-on-write access to a mapped view of a file
+     * mapping object. An attempt to write to a committed copy-on-write page
+     * results in a private copy of the page being made for the process. The
+     * private page is marked as PAGE_READWRITE, and the change is written to
+     * the new page. If Data Execution Prevention is enabled, attempting to
+     * execute code in the committed region results in an access violation.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx"> MSDN</a>
+     */
     int PAGE_WRITECOPY = 0x08;
-    int PAGE_EXECUTE = 0x10;
-    int PAGE_EXECUTE_READ = 0x20;
-    int PAGE_EXECUTE_READWRITE = 0x40;
+    
+    /**
+     * Enables execute access to the committed region of pages. An attempt to
+     * write to the committed region results in an access violation. This flag
+     * is not supported by the CreateFileMapping function.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_EXECUTE                       = 0x10;
+
+    /**
+     * Enables execute or read-only access to the committed region of pages. An
+     * attempt to write to the committed region results in an access violation.
+     * Windows Server 2003 and Windows XP: This attribute is not supported by
+     * the CreateFileMapping function until Windows XP with SP2 and Windows
+     * Server 2003 with SP1.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_EXECUTE_READ                  = 0x20;
+
+    /**
+     * Enables execute, read-only, or read/write access to the committed region
+     * of pages. Windows Server 2003 and Windows XP: This attribute is not
+     * supported by the CreateFileMapping function until Windows XP with SP2 and
+     * Windows Server 2003 with SP1.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366786(v=vs.85).aspx">MSDN</a>
+     */
+    int PAGE_EXECUTE_READWRITE             = 0x40;
 
     int SECTION_QUERY = 0x0001;
     int SECTION_MAP_WRITE = 0x0002;
@@ -1864,6 +1950,59 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(memory);
             read();
         }
+        
+        
+
+        /**
+         * @return The major version number of the operating system.
+         */
+        public int getMajor() {
+            return dwMajorVersion.intValue();
+        }
+
+        /**
+         * @return The minor version number of the operating system.
+         */
+        public int getMinor() {
+            return dwMinorVersion.intValue();
+        }
+
+        /**
+         * @return The build number of the operating system.
+         */
+        public int getBuildNumber() {
+            return dwBuildNumber.intValue();
+        }
+
+        /**
+         * @return  The operating system platform. This member can be VER_PLATFORM_WIN32_NT.
+         */
+        public int getPlatformId() {
+            return dwPlatformId.intValue();
+        }
+
+        /**
+         * @return String, such as "Service Pack 3", that indicates the latest
+         *         Service Pack installed on the system.<br>
+         *         If no Service Pack has been installed, the string is empty.
+         */
+        public String getServicePack() {
+            return Native.toString(szCSDVersion);
+        }
+
+        /**
+         * @return A bit mask that identifies the product suites available on the system.
+         */
+        public int getSuiteMask() {
+            return wSuiteMask.intValue();
+        }
+
+        /**
+         * @return Any additional information about the system.
+         */
+        public byte getProductType() {
+            return wProductType;
+        }
     }
 
     int VER_EQUAL = 1;
@@ -2137,6 +2276,42 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 	 */
 	int PROCESS_DUP_HANDLE = 0x0040;
 
+    /**
+     * All possible access rights for a process object. Windows Server 2003 and
+     * Windows XP: The size of the PROCESS_ALL_ACCESS flag increased on Windows
+     * Server 2008 and Windows Vista. <br>
+     * If an application compiled for Windows Server 2008 and Windows Vista is
+     * run on Windows Server 2003 or Windows XP, the PROCESS_ALL_ACCESS flag is
+     * too large and the function specifying this flag fails with
+     * ERROR_ACCESS_DENIED.<br>
+     * To avoid this problem, specify the minimum set of access rights required
+     * for the operation.<br>
+     * If PROCESS_ALL_ACCESS must be used, set _WIN32_WINNT to the minimum
+     * operating system targeted by your application (for example, #define
+     * _WIN32_WINNT _WIN32_WINNT_WINXP).<br>
+     * For more information, see Using the Windows Headers.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/ms684880(v=VS.85).aspx">MSDN</a>
+     */
+    int PROCESS_ALL_ACCESS = WinNT.PROCESS_CREATE_PROCESS 
+            | WinNT.PROCESS_CREATE_THREAD
+            | WinNT.PROCESS_DUP_HANDLE
+            | WinNT.PROCESS_QUERY_INFORMATION 
+            | WinNT.PROCESS_QUERY_LIMITED_INFORMATION
+            | WinNT.PROCESS_SET_INFORMATION 
+            | WinNT.PROCESS_SET_QUOTA
+            | WinNT.PROCESS_SUSPEND_RESUME
+            | WinNT.PROCESS_SYNCHRONIZE 
+            | WinNT.PROCESS_TERMINATE
+            | WinNT.PROCESS_VM_OPERATION 
+            | WinNT.PROCESS_VM_READ
+            | WinNT.PROCESS_VM_WRITE 
+            | WinNT.DELETE 
+            | WinNT.READ_CONTROL 
+            | WinNT.WRITE_DAC
+            | WinNT.WRITE_OWNER
+            | WinNT.SYNCHRONIZE;  
+	
 	/**
 	 * Required to retrieve certain information about a process, such as its
 	 * token, exit code, and priority class (see

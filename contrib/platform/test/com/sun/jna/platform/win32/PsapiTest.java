@@ -14,12 +14,17 @@ package com.sun.jna.platform.win32;
 
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.JFrame;
 
 import org.junit.Test;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.Psapi.MODULEINFO;
+import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
@@ -94,4 +99,129 @@ public class PsapiTest {
 			w.dispose();
 		}
 	}
+	
+	@Test
+    public void testEnumProcessModules() {
+        HANDLE me = null;
+        Win32Exception we = null;
+
+        try {
+            me = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_ALL_ACCESS, false, Kernel32.INSTANCE.GetCurrentProcessId());
+            assertTrue("Handle to my process should not be null", me != null);
+            
+            List<HMODULE> list = new LinkedList<HMODULE>();
+
+            HMODULE[] lphModule = new HMODULE[100 * 4];
+            IntByReference lpcbNeeded = new IntByReference();
+
+            if (!Psapi.INSTANCE.EnumProcessModules(me, lphModule, lphModule.length, lpcbNeeded)) {
+                throw new Win32Exception(Native.getLastError());
+            }
+
+            for (int i = 0; i < lpcbNeeded.getValue() / 4; i++) {
+                list.add(lphModule[i]);
+            }
+
+            assertTrue("List should have at least 1 item in it.", list.size() > 0);
+        } catch (Win32Exception e) {
+            we = e;
+        } finally {
+            if (me != null) {
+                if (!Kernel32.INSTANCE.CloseHandle(me)) {
+                    Win32Exception e = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        e.addSuppressed(we);
+                    }
+                    we = e;
+                }
+            }
+        }
+        if (we != null) {
+            throw we;
+        }
+
+    }
+	
+	@Test
+    public void testGetModuleInformation() {
+        HANDLE me = null;
+        Win32Exception we = null;
+
+        try {
+            me = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_ALL_ACCESS, false, Kernel32.INSTANCE.GetCurrentProcessId());
+            assertTrue("Handle to my process should not be null", me != null);
+            
+            List<HMODULE> list = new LinkedList<HMODULE>();
+
+            HMODULE[] lphModule = new HMODULE[100 * 4];
+            IntByReference lpcbNeeded = new IntByReference();
+
+            if (!Psapi.INSTANCE.EnumProcessModules(me, lphModule, lphModule.length, lpcbNeeded)) {
+                throw new Win32Exception(Native.getLastError());
+            }
+
+            for (int i = 0; i < lpcbNeeded.getValue() / 4; i++) {
+                list.add(lphModule[i]);
+            }
+
+            assertTrue("List should have at least 1 item in it.", list.size() > 0);
+            
+            MODULEINFO lpmodinfo = new MODULEINFO();
+            
+            if (!Psapi.INSTANCE.GetModuleInformation(me, list.get(0), lpmodinfo, lpmodinfo.size())) {
+                throw new Win32Exception(Native.getLastError());
+            }
+            
+            assertTrue("MODULEINFO.EntryPoint should not be null.", lpmodinfo.EntryPoint != null);
+            
+        } catch (Win32Exception e) {
+            we = e;
+        } finally {
+            if (me != null) {
+                if (!Kernel32.INSTANCE.CloseHandle(me)) {
+                    Win32Exception e = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        e.addSuppressed(we);
+                    }
+                    we = e;
+                }
+            }
+        }
+        if (we != null) {
+            throw we;
+        }
+
+    }
+	
+	@Test
+    public void testGetProcessImageFileName() {
+        HANDLE me = null;
+        Win32Exception we = null;
+
+        try {
+            me = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_ALL_ACCESS, false, Kernel32.INSTANCE.GetCurrentProcessId());
+            assertTrue("Handle to my process should not be null", me != null);
+            
+            char[] buffer = new char[256];
+            Psapi.INSTANCE.GetProcessImageFileName(me, buffer, 256);
+            String path = new String(buffer);
+            assertTrue("Image path should contain 'java' and '.exe'", path.contains("java") && path.contains(".exe"));
+        } catch (Win32Exception e) {
+            we = e;
+        } finally {
+            if (me != null) {
+                if (!Kernel32.INSTANCE.CloseHandle(me)) {
+                    Win32Exception e = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        e.addSuppressed(we);
+                    }
+                    we = e;
+                }
+            }
+        }
+        if (we != null) {
+            throw we;
+        }
+
+    }
 }
