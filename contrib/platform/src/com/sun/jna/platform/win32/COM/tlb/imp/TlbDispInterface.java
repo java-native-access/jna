@@ -13,12 +13,9 @@
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
-import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.COM.ITypeInfo;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;

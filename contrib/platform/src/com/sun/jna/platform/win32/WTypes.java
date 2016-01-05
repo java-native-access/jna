@@ -25,7 +25,7 @@ import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- * 
+ *
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -233,6 +233,8 @@ public interface WTypes {
     }
 
     public static class VARTYPE extends USHORT {
+        private static final long serialVersionUID = 1L;
+
         public VARTYPE() {
             this(0);
         }

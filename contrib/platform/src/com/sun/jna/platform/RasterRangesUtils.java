@@ -30,7 +30,7 @@ import java.util.TreeSet;
 
 /**
  * Methods that are useful to decompose a raster into a set of rectangles.
- * An occupied pixel has two possible meanings, depending on the raster : 
+ * An occupied pixel has two possible meanings, depending on the raster :
  * <ul>
  * <li>if the raster has an alpha layer, occupied means with alpha not null</li>
  * <li>if the raster doesn't have any alpha layer, occupied means not completely black</li>
@@ -45,6 +45,7 @@ public class RasterRangesUtils {
     };
 
     private static final Comparator<Object> COMPARATOR = new Comparator<Object>() {
+        @Override
         public int compare(Object o1, Object o2) {
             return ((Rectangle)o1).x - ((Rectangle)o2).x;
         }
@@ -117,7 +118,7 @@ public class RasterRangesUtils {
      */
     public static boolean outputOccupiedRangesOfBinaryPixels(byte[] binaryBits, int w, int h, RangesOutput out) {
         Set<Rectangle> rects = new HashSet<Rectangle>();
-        Set<Rectangle> prevLine = Collections.EMPTY_SET;
+        Set<Rectangle> prevLine = Collections.<Rectangle>emptySet();
         int scanlineBytes = binaryBits.length / h;
         for (int row = 0; row < h; row++) {
             Set<Rectangle> curLine = new TreeSet<Rectangle>(COMPARATOR);
@@ -190,7 +191,7 @@ public class RasterRangesUtils {
      */
     public static boolean outputOccupiedRanges(int[] pixels, int w, int h, int occupationMask, RangesOutput out) {
         Set<Rectangle> rects = new HashSet<Rectangle>();
-        Set<Rectangle> prevLine = Collections.EMPTY_SET;
+        Set<Rectangle> prevLine = Collections.<Rectangle>emptySet();
         for (int row = 0; row < h; row++) {
             Set<Rectangle> curLine = new TreeSet<Rectangle>(COMPARATOR);
             int idxOffset = row * w;

@@ -297,16 +297,20 @@ public interface X11 extends Library {
     /** Definition (incomplete) of the Xrender library. */
     interface Xrender extends Library {
         Xrender INSTANCE = Native.loadLibrary("Xrender", Xrender.class);
+
         class XRenderDirectFormat extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask");
             public short red, redMask;
             public short green, greenMask;
             public short blue, blueMask;
             public short alpha, alphaMask;
+
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "red", "redMask", "green", "greenMask", "blue", "blueMask", "alpha", "alphaMask" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
+
         class PictFormat extends XID {
             private static final long serialVersionUID = 1L;
             public static final PictFormat None = null;
@@ -320,14 +324,16 @@ public interface X11 extends Library {
             }
         }
         class XRenderPictFormat extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("id", "type", "depth", "direct", "colormap");
             public PictFormat id;
             public int type;
             public int depth;
             public XRenderDirectFormat direct;
             public Colormap colormap;
+
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "id", "type", "depth", "direct", "colormap" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         int PictTypeIndexed = 0x0;
@@ -375,21 +381,25 @@ public interface X11 extends Library {
     }
 
     class XInputClassInfoByReference extends Structure implements Structure.ByReference {
+        public static final List<String> FIELDS = createFieldsOrder("input_class", "event_type_base");
         public byte input_class;
         public byte event_type_base;
+
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "input_class", "event_type_base" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     class XDeviceByReference extends Structure implements Structure.ByReference {
+        public static final List<String> FIELDS = createFieldsOrder("device_id", "num_classes", "classes");
         public XID device_id;
         public int num_classes;
         public XInputClassInfoByReference classes;
+
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "device_id", "num_classes", "classes" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -410,6 +420,9 @@ public interface X11 extends Library {
       } XWMHints;
     */
     class XWMHints extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "flags", "input", "initial_state", "icon_pixmap", "icon_window", "icon_x", "icon_y", "icon_mask", "window_group");
+
         public NativeLong flags;
         public boolean input;
         public int initial_state;
@@ -419,8 +432,8 @@ public interface X11 extends Library {
         public Pixmap icon_mask;
         public XID window_group;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "flags", "input", "initial_state", "icon_pixmap", "icon_window", "icon_x", "icon_y", "icon_mask", "window_group" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -433,13 +446,15 @@ public interface X11 extends Library {
       } XTextProperty;
     */
     class XTextProperty extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("value", "encoding", "format", "nitems");
         public String value;
         public Atom encoding;
         public int format;
         public NativeLong nitems;
+
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value", "encoding", "format", "nitems" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -460,25 +475,41 @@ public interface X11 extends Library {
       } XSizeHints;
      */
     class XSizeHints extends Structure {
+        public static class Aspect extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("x", "y");
+            public int x; // numerator
+            public int y; // denominator
+            @Override
+            protected List<String> getFieldOrder() {
+                return FIELDS;
+            }
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder(
+                "flags",
+                "x", "y",
+                "width", "height",
+                "min_width", "min_height",
+                "max_width", "max_height",
+                "width_inc", "height_inc",
+                "min_aspect", "max_aspect",
+                "base_width", "base_height",
+                "win_gravity");
+
         public NativeLong flags;
         public int x, y;
         public int width, height;
         public int min_width, min_height;
         public int max_width, max_height;
         public int width_inc, height_inc;
-        public static class Aspect extends Structure {
-            public int x; // numerator
-            public int y; // denominator
-            @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "x", "y" }); }
-        }
+
         public Aspect min_aspect, max_aspect;
         public int base_width, base_height;
         public int win_gravity;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "flags", "x", "y", "width", "height", "min_width", "min_height", "max_width", "max_height", "width_inc", "height_inc", "min_aspect", "max_aspect", "base_width", "base_height", "win_gravity" }); }
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
 
     /*
@@ -511,6 +542,18 @@ public interface X11 extends Library {
       } XWindowAttributes;
      */
     class XWindowAttributes extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "x", "y",
+                "width", "height",
+                "border_width",
+                "depth", "visual", "root", "c_class",
+                "bit_gravity", "win_gravity",
+                "backing_store", "backing_planes", "backing_pixel",
+                "save_under", "colormap",
+                "map_installed", "map_state",
+                "all_event_masks", "your_event_mask", "do_not_propagate_mask",
+                "override_redirect", "screen");
+
         public int x, y;
         public int width, height;
         public int border_width;
@@ -533,8 +576,8 @@ public interface X11 extends Library {
         public boolean override_redirect;
         public Screen screen;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "x", "y", "width", "height", "border_width", "depth", "visual", "root", "c_class", "bit_gravity", "win_gravity", "backing_store", "backing_planes", "backing_pixel", "save_under", "colormap", "map_installed", "map_state", "all_event_masks", "your_event_mask", "do_not_propagate_mask", "override_redirect", "screen" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -558,6 +601,15 @@ public interface X11 extends Library {
       } XSetWindowAttributes;
      */
     class XSetWindowAttributes extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "background_pixmap", "background_pixel",
+                "border_pixmap", "border_pixel",
+                "bit_gravity", "win_gravity",
+                "backing_store", "backing_planes", "backing_pixel",
+                "save_under",
+                "event_mask", "do_not_propagate_mask",
+                "override_redirect", "colormap", "cursor");
+
         public Pixmap background_pixmap;
         public NativeLong background_pixel;
         public Pixmap border_pixmap;
@@ -574,8 +626,8 @@ public interface X11 extends Library {
         public Colormap colormap;
         public Cursor cursor;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "background_pixmap", "background_pixel", "border_pixmap", "border_pixel", "bit_gravity", "win_gravity", "backing_store", "backing_planes", "backing_pixel", "save_under", "event_mask", "do_not_propagate_mask", "override_redirect", "colormap", "cursor" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -609,6 +661,9 @@ public interface X11 extends Library {
     int VisualAllMask = 0x1FF;
 
     class XVisualInfo extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "visual", "visualid", "screen", "depth", "c_class", "red_mask", "green_mask", "blue_mask", "colormap_size", "bits_per_rgb");
+
         public Visual visual;
         public VisualID visualid;
         public int screen;
@@ -620,15 +675,16 @@ public interface X11 extends Library {
         public int colormap_size;
         public int bits_per_rgb;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "visual", "visualid", "screen", "depth", "c_class", "red_mask", "green_mask", "blue_mask", "colormap_size", "bits_per_rgb" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     class XPoint extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("x", "y");
         public short x, y;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "x", "y" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
         public XPoint() { this((short)0, (short)0); }
         public XPoint(short x, short y) {
@@ -637,11 +693,13 @@ public interface X11 extends Library {
         }
     }
     class XRectangle extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("x", "y", "width", "height");
+
         public short x, y;
         public short width, height;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "x", "y", "width", "height" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
         public XRectangle() { this((short)0, (short)0, (short)0, (short)0); }
         public XRectangle(short x, short y, short width, short height) {
@@ -808,6 +866,18 @@ public interface X11 extends Library {
     Pixmap XCreatePixmap(Display display, Drawable drawable, int width, int height, int depth);
     int XFreePixmap(Display display, Pixmap pixmap);
     class XGCValues extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "function", "plane_mask",
+                "foreground", "background",
+                "line_width", "line_style",
+                "cap_style", "join_style",
+                "fill_style", "fill_rule",
+                "arc_mode", "tile", "stipple",
+                "ts_x_origin", "ts_y_origin",
+                "font", "subwindow_mode", "graphics_exposures",
+                "clip_x_origin", "clip_y_origin", "clip_mask",
+                "dash_offset", "dashes");
+
         public int function;            /* logical operation */
         public NativeLong plane_mask;/* plane mask */
         public NativeLong foreground;/* foreground pixel */
@@ -832,8 +902,8 @@ public interface X11 extends Library {
         public int dash_offset;         /* patterned/dashed line information */
         public byte dashes;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "function", "plane_mask", "foreground", "background", "line_width", "line_style", "cap_style", "join_style", "fill_style", "fill_rule", "arc_mode", "tile", "stipple", "ts_x_origin", "ts_y_origin", "font", "subwindow_mode", "graphics_exposures", "clip_x_origin", "clip_y_origin", "clip_mask", "dash_offset", "dashes" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     GC XCreateGC(Display display, Drawable drawable, NativeLong mask, XGCValues values);
@@ -1455,14 +1525,15 @@ public interface X11 extends Library {
     }
 
     public static class XAnyEvent extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("type", "serial", "send_event", "display", "window");
         public int type;
         public NativeLong serial;   // # of last request processed by server
         public int send_event;      // true if this came from a SendEvent request
         public Display display;     // Display the event was read from
         public Window window;       // window on which event was requested in event mask
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "serial", "send_event", "display", "window" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 

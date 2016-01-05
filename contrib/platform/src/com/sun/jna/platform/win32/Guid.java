@@ -22,7 +22,7 @@ import com.sun.jna.Structure;
 // TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
- * 
+ *
  * @author dblock[at]dblock.org
  */
 public interface Guid {
@@ -53,14 +53,13 @@ public interface Guid {
                 super(memory);
             }
     	}
-    	
+
         /**
          * The Class ByReference.
          *
          * @author Tobias Wolf, wolf.tobias@gmx.net
          */
-        public static class ByReference extends GUID implements
-                Structure.ByReference {
+        public static class ByReference extends GUID implements Structure.ByReference {
 
             /**
              * Instantiates a new by reference.
@@ -71,7 +70,7 @@ public interface Guid {
 
             /**
              * Instantiates a new by reference.
-             * 
+             *
              * @param guid
              *            the guid
              */
@@ -86,7 +85,7 @@ public interface Guid {
 
             /**
              * Instantiates a new by reference.
-             * 
+             *
              * @param memory
              *            the memory
              */
@@ -94,6 +93,8 @@ public interface Guid {
                 super(memory);
             }
         }
+
+        public static final List<String> FIELDS = createFieldsOrder("Data1", "Data2", "Data3", "Data4");
 
         /** The Data1. */
         public int Data1;
@@ -116,12 +117,10 @@ public interface Guid {
 
         /**
          * Instantiates a new guid.
-         * 
-         * @param guid
-         *            the guid
+         *
+         * @param guid the guid
          */
         public GUID(GUID guid) {
-            super();
             this.Data1 = guid.Data1;
             this.Data2 = guid.Data2;
             this.Data3 = guid.Data3;
@@ -132,7 +131,7 @@ public interface Guid {
 
         /**
          * Instantiates a new guid.
-         * 
+         *
          * @param guid
          *            the guid
          */
@@ -142,7 +141,7 @@ public interface Guid {
 
         /**
          * Instantiates a new guid.
-         * 
+         *
          * @param data
          *            the data
          */
@@ -152,7 +151,7 @@ public interface Guid {
 
         /**
          * Instantiates a new guid.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -161,9 +160,33 @@ public interface Guid {
             read();
         }
 
+        @Override
+        public boolean equals(Object o) {
+            if (o == null) {
+                return false;
+            }
+            if (this == o) {
+                return true;
+            }
+            if (getClass() != o.getClass()) {
+                return false;
+            }
+
+            GUID other = (GUID) o;
+            return (this.Data1 == other.Data1)
+                && (this.Data2 == other.Data2)
+                && (this.Data3 == other.Data3)
+                && Arrays.equals(this.Data4, other.Data4);
+        }
+
+        @Override
+        public int hashCode() {
+            return this.Data1 + this.Data2 & 0xFFFF + this.Data3 & 0xFFFF + Arrays.hashCode(this.Data4);
+        }
+
         /**
          * From binary.
-         * 
+         *
          * @param data
          *            the data
          * @return the guid
@@ -210,7 +233,7 @@ public interface Guid {
 
         /**
          * From string.
-         * 
+         *
          * @param guid
          *            the guid
          * @return the guid
@@ -282,7 +305,7 @@ public interface Guid {
         /**
          * Generates a new guid. Code taken from the standard jdk implementation
          * (see UUID class).
-         * 
+         *
          * @return the guid
          */
         public static GUID newGuid() {
@@ -300,7 +323,7 @@ public interface Guid {
 
         /**
          * To byte array.
-         * 
+         *
          * @return the byte[]
          */
         public byte[] toByteArray() {
@@ -335,7 +358,7 @@ public interface Guid {
         /**
          * The value of this Guid, formatted as follows:
          * xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.
-         * 
+         *
          * @return the string
          */
         public String toGuidString() {
@@ -362,20 +385,14 @@ public interface Guid {
          * Write fields to backing memory.
          */
         protected void writeFieldsToMemory() {
-            this.writeField("Data1");
-            this.writeField("Data2");
-            this.writeField("Data3");
-            this.writeField("Data4");
+            for (String name : FIELDS) {
+                this.writeField(name);
+            }
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "Data1", "Data2", "Data3",
-                    "Data4" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -402,17 +419,17 @@ public interface Guid {
 
             /**
              * Instantiates a new by reference.
-             * 
+             *
              * @param guid
              *            the guid
              */
             public ByReference(GUID guid) {
                 super(guid);
             }
-             
+
             /**
              * Instantiates a new by reference.
-             * 
+             *
              * @param memory
              *            the memory
              */
@@ -427,7 +444,7 @@ public interface Guid {
         public CLSID() {
             super();
         }
-        
+
         /**
          * Instantiates a new clsid.
          *
@@ -436,7 +453,7 @@ public interface Guid {
         public CLSID(String guid) {
             super(guid);
         }
-        
+
         /**
          * Instantiates a new clsid.
          *
@@ -463,7 +480,7 @@ public interface Guid {
 
         /**
          * Instantiates a new refiid.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -473,7 +490,7 @@ public interface Guid {
 
         /**
          * Instantiates a new refiid.
-         * 
+         *
          * @param data
          *            the data
          */
@@ -502,7 +519,7 @@ public interface Guid {
 
         /**
          * Instantiates a new iid.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -521,7 +538,7 @@ public interface Guid {
 
         /**
          * Instantiates a new iid.
-         * 
+         *
          * @param data
          *            the data
          */

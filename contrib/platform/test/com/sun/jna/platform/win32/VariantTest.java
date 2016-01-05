@@ -2,7 +2,6 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
@@ -19,6 +18,7 @@ public class VariantTest extends TestCase {
     }
 
     public VariantTest() {
+        super();
     }
 
     public void testVariantClear() {
@@ -73,7 +73,7 @@ public class VariantTest extends TestCase {
         VARIANT variant = new VARIANT((short) 1);
         variant = new VARIANT((byte) 1);
         variant = new VARIANT('1');
-        variant = new VARIANT((int) 1);
+        variant = new VARIANT(1);
         variant = new VARIANT((long) 1);
         variant = new VARIANT((float) 1);
         variant = new VARIANT((double) 1);

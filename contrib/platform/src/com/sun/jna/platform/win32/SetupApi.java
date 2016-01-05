@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -36,14 +35,14 @@ public interface SetupApi extends StdCallLibrary {
      */
     GUID GUID_DEVINTERFACE_DISK = new GUID("53F56307-B6BF-11D0-94F2-00A0C91EFB8B");
 
-    
+
 	/**
 	 * Drivers for serial ports register instances of this device interface
 	 * class to notify the operating system and applications of the presence of
 	 * COM ports.
 	 */
 	GUID GUID_DEVINTERFACE_COMPORT = new GUID("86E0D1E0-8089-11D0-9CE4-08003E301F73");
-	
+
     /**
      * Return only the device that is associated with the system default device interface, if one is set, for the
      * specified device interface classes.
@@ -91,21 +90,21 @@ public interface SetupApi extends StdCallLibrary {
 
 	/**
 	 * Open/Create/Delete device key.
-	 * 
+	 *
      * @see #SetupDiOpenDevRegKey
 	 */
 	int DIREG_DEV = 0x00000001;
 
 	/**
 	 * Open/Create/Delete driver key
-	 * 
+	 *
      * @see #SetupDiOpenDevRegKey
 	 */
 	int DIREG_DRV = 0x00000002;
 
 	/**
 	 * Delete both driver and Device key
-	 * 
+	 *
      * @see #SetupDiOpenDevRegKey
 	 */
 	int DIREG_BOTH = 0x00000004;
@@ -297,7 +296,7 @@ public interface SetupApi extends StdCallLibrary {
 	 * The specified device instance must be registered before this function is called. However, be aware that the
 	 * operating system automatically registers PnP device instances. For information about how to register non-PnP
 	 * device instances, see SetupDiRegisterDeviceInfo.
-	 * 
+	 *
 	 * @param deviceInfoSet
 	 *            A handle to the device information set that contains a device information element that represents the
 	 *            device for which to open a registry key.
@@ -355,8 +354,8 @@ public interface SetupApi extends StdCallLibrary {
 	 * <p>
 	 * Call SetupDiEnumDeviceInterfaces to get a context structure for a device interface element (versus a device
 	 * information element).
-	 * 
-	 * 
+	 *
+	 *
 	 * @param deviceInfoSet
 	 *            A handle to the device information set for which to return an {@link SP_DEVINFO_DATA} structure that
 	 *            represents a device information element.
@@ -384,14 +383,7 @@ public interface SetupApi extends StdCallLibrary {
             }
         }
 
-        public SP_DEVICE_INTERFACE_DATA() {
-            cbSize = size();
-        }
-
-        public SP_DEVICE_INTERFACE_DATA(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder("cbSize", "InterfaceClassGuid", "Flags", "Reserved");
 
         /**
          * The size, in bytes, of the SP_DEVICE_INTERFACE_DATA structure.
@@ -415,9 +407,19 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. Do not use.
          */
         public Pointer Reserved;
-        
+
+        public SP_DEVICE_INTERFACE_DATA() {
+            cbSize = size();
+        }
+
+        public SP_DEVICE_INTERFACE_DATA(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "InterfaceClassGuid", "Flags", "Reserved" });
+            return FIELDS;
         }
     }
 
@@ -435,14 +437,7 @@ public interface SetupApi extends StdCallLibrary {
             }
         }
 
-        public SP_DEVINFO_DATA() {
-            cbSize = size();
-        }
-
-        public SP_DEVINFO_DATA(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder("cbSize", "InterfaceClassGuid", "DevInst", "Reserved");
 
         /**
          * The size, in bytes, of the SP_DEVINFO_DATA structure.
@@ -467,9 +462,19 @@ public interface SetupApi extends StdCallLibrary {
          * Reserved. For internal use only.
          */
         public Pointer Reserved;
-        
+
+        public SP_DEVINFO_DATA() {
+            cbSize = size();
+        }
+
+        public SP_DEVINFO_DATA(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "InterfaceClassGuid", "DevInst", "Reserved" });
+            return FIELDS;
         }
     }
 }

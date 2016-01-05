@@ -32,13 +32,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.List;
-
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -50,14 +45,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinDef.HICON;
-import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinUser;
 
 // NOTE: java.awt.Robot can't properly capture transparent pixels
 // Transparency tests are disabled until this can be resolved

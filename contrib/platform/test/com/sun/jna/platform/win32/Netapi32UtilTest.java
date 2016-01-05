@@ -1,14 +1,14 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -61,24 +61,24 @@ public class Netapi32UtilTest extends TestCase {
 			System.out.println("    site: " + dc.clientSiteName);
 			System.out.println("  forest: " + dc.dnsForestName);
 			System.out.println("    guid: " + Ole32Util.getStringFromGUID(dc.domainGuid));
-		}		
+		}
 		// domain trusts
 		if (Netapi32Util.getJoinStatus() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
 			DomainTrust[] trusts = Netapi32Util.getDomainTrusts();
 			System.out.println("Domain trusts: (" + trusts.length + ")");
 			for(DomainTrust trust : trusts) {
-				System.out.println(" " + trust.NetbiosDomainName + ": " + trust.DnsDomainName 
+				System.out.println(" " + trust.NetbiosDomainName + ": " + trust.DnsDomainName
 						+ " (" + trust.DomainSidString + ")");
 			}
 		}
     }
-    
+
 	public void testGetDomain() {
 		String computerName = System.getenv("COMPUTERNAME");
 		String domain = Netapi32Util.getDomainName(computerName);
 		assertTrue(domain.length() > 0);
 	}
-	
+
 	public void testGetLocalGroups() {
 		Netapi32Util.LocalGroup[] localGroups = Netapi32Util.getLocalGroups();
 		assertNotNull(localGroups);
@@ -96,7 +96,7 @@ public class Netapi32UtilTest extends TestCase {
 		}
 		assertTrue(users.length > 0);
 	}
-	
+
 	public void testGetUserInfo() {
 		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
 			return;
@@ -104,12 +104,11 @@ public class Netapi32UtilTest extends TestCase {
 	}
 
 	public void testGetUserInfoWithDomainSpecified() {
-		UserInfo userInfo = Netapi32Util.getUserInfo(Advapi32Util.getUserName(), 
-				System.getenv("USERDOMAIN"));
-		assertNotNull(userInfo);
-		assertTrue(Advapi32.INSTANCE.IsValidSid(userInfo.sid));
+		UserInfo userInfo = Netapi32Util.getUserInfo(Advapi32Util.getUserName(), System.getenv("USERDOMAIN"));
+		assertNotNull("No user info retrieved", userInfo);
+		assertTrue("Invalid user SID", Advapi32.INSTANCE.IsValidSid(userInfo.sid));
 	}
-    
+
 	public void testGetGlobalGroups() {
 		Netapi32Util.Group[] groups = Netapi32Util.getGlobalGroups();
 		assertNotNull(groups);
@@ -118,7 +117,7 @@ public class Netapi32UtilTest extends TestCase {
 		}
 		assertTrue(groups.length > 0);
 	}
-	
+
 	public void testGetCurrentUserLocalGroups() {
 		Netapi32Util.Group[] localGroups = Netapi32Util.getCurrentUserLocalGroups();
 		assertNotNull(localGroups);
@@ -134,25 +133,25 @@ public class Netapi32UtilTest extends TestCase {
 				|| joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupUnjoined
 				|| joinStatus == LMJoin.NETSETUP_JOIN_STATUS.NetSetupWorkgroupName);
 	}
-	
+
 	public void testGetDCName() {
 		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
 			return;
-		
+
 		String domainController = Netapi32Util.getDCName();
 		assertTrue(domainController.length() > 0);
 		assertTrue(domainController.startsWith("\\\\"));
 	}
-	
+
 	public void testGetDC() {
 		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
 			return;
-			
+
 		DomainController dc = Netapi32Util.getDC();
-		assertTrue(dc.address.startsWith("\\\\"));
-		assertTrue(dc.domainName.length() > 0);
+		assertTrue("Invalid address prefix: " + dc.address, dc.address.startsWith("\\\\"));
+		assertTrue("Empty domain name", dc.domainName.length() > 0);
 	}
-	
+
 	public void testGetDomainTrusts() {
 		if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
 			return;

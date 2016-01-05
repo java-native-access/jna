@@ -12,7 +12,6 @@
  */
 package com.sun.jna;
 
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -26,10 +25,11 @@ public class StructureByValueTest extends TestCase {
 
     public static class TestNativeMappedInStructure extends Structure {
         public static class ByValue extends TestNativeMappedInStructure implements Structure.ByValue { }
+        public static final List<String> FIELDS = createFieldsOrder("field");
         public NativeLong field;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public void testNativeMappedInByValue() {
@@ -58,38 +58,43 @@ public class StructureByValueTest extends TestCase {
 
     public static abstract class ByValueStruct extends Structure implements Structure.ByValue { }
     public static class ByValue8 extends ByValueStruct {
+        public static final List<String> FIELDS = createFieldsOrder("data");
         public byte data;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "data" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static class ByValue16 extends ByValueStruct {
+        public static final List<String> FIELDS = createFieldsOrder("data");
         public short data;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "data" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static class ByValue32 extends ByValueStruct {
+        public static final List<String> FIELDS = createFieldsOrder("data");
         public int data;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "data" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static class ByValue64 extends ByValueStruct {
+        public static final List<String> FIELDS = createFieldsOrder("data");
         public long data;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "data" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static class ByValue128 extends ByValueStruct {
+        public static final List<String> FIELDS = createFieldsOrder("data", "data1");
         public long data, data1;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "data", "data1" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     final long MAGIC = 0x0123456789ABCDEFL;

@@ -68,14 +68,15 @@ class CallbackReference extends WeakReference {
     }
 
     static class AttachOptions extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("daemon", "detach", "name");
         public boolean daemon;
         public boolean detach;
         public String name;
         // Thread name must be UTF8-encoded
         { setStringEncoding("utf8"); }
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "daemon", "detach", "name", });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 

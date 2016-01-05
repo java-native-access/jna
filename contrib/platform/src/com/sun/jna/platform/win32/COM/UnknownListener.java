@@ -12,18 +12,17 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.REFIID;
-import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class UnknownListener extends Structure {
+    public static final List<String> FIELDS = createFieldsOrder("vtbl");
+    public UnknownVTable.ByReference vtbl;
 
 	public UnknownListener(IUnknownCallback callback) {
 		this.vtbl = this.constructVTable();
@@ -31,17 +30,15 @@ public class UnknownListener extends Structure {
 		super.write();
 	}
 
-	public UnknownVTable.ByReference vtbl;
-	
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "vtbl" });
+		return FIELDS;
 	}
-	
+
 	protected UnknownVTable.ByReference constructVTable() {
 		return new UnknownVTable.ByReference();
 	}
-	
+
 	protected void initVTable(final IUnknownCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
 			@Override

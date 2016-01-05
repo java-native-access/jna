@@ -44,7 +44,7 @@ public class ArgumentsMarshalTest extends TestCase {
             public double doubleField;
 
             @Override
-            public List getFieldOrder() {
+            public List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "int8Field", "int16Field", "int32Field", "int64Field", "floatField", "doubleField" });
             }
             public CheckFieldAlignment() {
@@ -105,7 +105,7 @@ public class ArgumentsMarshalTest extends TestCase {
         class MinTestStructure extends Structure {
             public int field;
             @Override
-            protected List getFieldOrder() {
+            protected List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "field" });
             }
         }
@@ -115,7 +115,7 @@ public class ArgumentsMarshalTest extends TestCase {
             public int length;
             public byte[] buffer;
             @Override
-            protected List getFieldOrder() {
+            protected List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "length", "buffer" });
             }
             public VariableSizedStructure(String arg) {
@@ -131,7 +131,7 @@ public class ArgumentsMarshalTest extends TestCase {
             }
             public TestCallback cb;
             @Override
-            protected List getFieldOrder() {
+            protected List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "cb" });
             }
         }
@@ -264,6 +264,7 @@ public class ArgumentsMarshalTest extends TestCase {
         long returnInt64Argument(size_t arg);
     }
     public static class size_t extends IntegerType {
+        private static final long serialVersionUID = 1L;
         public size_t() {
             this(0);
         }
@@ -283,7 +284,7 @@ public class ArgumentsMarshalTest extends TestCase {
             return new Custom(((Integer)nativeValue).intValue());
         }
         @Override
-        public Class nativeType() {
+        public Class<?> nativeType() {
             return Integer.class;
         }
         @Override
@@ -381,7 +382,7 @@ public class ArgumentsMarshalTest extends TestCase {
             public Pointer[] parray = new Pointer[2];
             public byte[] barray = new byte[2];
             @Override
-            protected List getFieldOrder() {
+            protected List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "b", "c", "s", "i", "j", "f", "d", "parray", "barray" });
             }
         }

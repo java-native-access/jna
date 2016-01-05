@@ -14,7 +14,6 @@ package com.sun.jna;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /** Represents a native union.  When writing to native memory, the field
@@ -54,11 +53,11 @@ public abstract class Union extends Structure {
     /** Unions do not need a field order, so automatically provide a value to
      * satisfy checking in the Structure superclass.
      */
-    protected List getFieldOrder() {
-        List flist = getFieldList();
-        ArrayList list = new ArrayList();
-        for (Iterator i=flist.iterator();i.hasNext();) {
-            Field f = (Field)i.next();
+    @Override
+    protected List<String> getFieldOrder() {
+        List<Field> flist = getFieldList();
+        List<String> list = new ArrayList<String>(flist.size());
+        for (Field f : flist) {
             list.add(f.getName());
         }
         return list;
@@ -71,10 +70,9 @@ public abstract class Union extends Structure {
      * @throws IllegalArgumentException if the type does not correspond to
      * any declared union field.
      */
-    public void setType(Class type) {
+    public void setType(Class<?> type) {
         ensureAllocated();
-        for (Iterator i=fields().values().iterator();i.hasNext();) {
-            StructField f = (StructField)i.next();
+        for (StructField f : fields().values()) {
             if (f.type == type) {
                 activeField = f;
                 return;
@@ -91,7 +89,7 @@ public abstract class Union extends Structure {
      */
     public void setType(String fieldName) {
         ensureAllocated();
-        StructField f = (StructField) fields().get(fieldName);
+        StructField f = fields().get(fieldName);
         if (f != null) {
             activeField = f;
         }
@@ -105,6 +103,7 @@ public abstract class Union extends Structure {
      * @return the new field value, after updating
      * @throws IllegalArgumentException if no field exists with the given name
      */
+    @Override
     public Object readField(String fieldName) {
         ensureAllocated();
         setType(fieldName);
@@ -115,6 +114,7 @@ public abstract class Union extends Structure {
      * The given field will become the active one.
      * @throws IllegalArgumentException if no field exists with the given name
      */
+    @Override
     public void writeField(String fieldName) {
         ensureAllocated();
         setType(fieldName);
@@ -125,6 +125,7 @@ public abstract class Union extends Structure {
      * The given field will become the active one.
      * @throws IllegalArgumentException if no field exists with the given name
      */
+    @Override
     public void writeField(String fieldName, Object value) {
         ensureAllocated();
         setType(fieldName);
@@ -143,10 +144,9 @@ public abstract class Union extends Structure {
      * @param type class type of the Structure field to read
      * @return the Structure field with the given type
      */
-    public Object getTypedValue(Class type) {
+    public Object getTypedValue(Class<?> type) {
         ensureAllocated();
-        for (Iterator i=fields().values().iterator();i.hasNext();) {
-            StructField f = (StructField)i.next();
+        for (StructField f : fields().values()) {
             if (f.type == type) {
                 activeField = f;
                 read();
@@ -181,10 +181,9 @@ public abstract class Union extends Structure {
      * @param type type to search for
      * @return StructField of matching type
      */
-    private StructField findField(Class type) {
+    private StructField findField(Class<?> type) {
         ensureAllocated();
-        for (Iterator i=fields().values().iterator();i.hasNext();) {
-            StructField f = (StructField)i.next();
+        for (StructField f : fields().values()) {
             if (f.type.isAssignableFrom(type)) {
                 return f;
             }
@@ -193,6 +192,7 @@ public abstract class Union extends Structure {
     }
 
     /** Only the currently selected field will be written. */
+    @Override
     protected void writeField(StructField field) {
         if (field == activeField) {
             super.writeField(field);
@@ -203,6 +203,7 @@ public abstract class Union extends Structure {
      * selected.  Structures may contain pointer-based fields which can
      * crash the VM if not properly initialized.
      */
+    @Override
     protected Object readField(StructField field) {
         if (field == activeField
             || (!Structure.class.isAssignableFrom(field.type)
@@ -213,12 +214,13 @@ public abstract class Union extends Structure {
         // Field not accessible
         // TODO: read by-value structures, to the extent possible; need a
         // "read cautiously" method to "read" to indicate we want to avoid
-        // pointer-based fields 
+        // pointer-based fields
         return null;
     }
 
     /** All fields are considered the "first" element. */
-    protected int getNativeAlignment(Class type, Object value, boolean isFirstElement) {
+    @Override
+    protected int getNativeAlignment(Class<?> type, Object value, boolean isFirstElement) {
         return super.getNativeAlignment(type, value, true);
     }
 }

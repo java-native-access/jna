@@ -1,18 +1,17 @@
 /* Copyright (c) 2015 Andreas "PAX" L\u00FCck, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -28,16 +27,16 @@ import com.sun.jna.win32.W32APIOptions;
  * The process status application programming interface (PSAPI) is a helper
  * library that makes it easier for you to obtain information about processes
  * and device drivers.
- * 
+ *
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface Psapi extends StdCallLibrary {
     Psapi INSTANCE = Native.loadLibrary("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
-    
+
     /**
      * Retrieves the fully qualified path for the file containing the specified
      * module.
-     * 
+     *
      * @param process
      *            A handle to the process that contains the module.
      * @param module
@@ -57,11 +56,11 @@ public interface Psapi extends StdCallLibrary {
      *         {@link Kernel32Util#getLastErrorMessage()}.
      */
     int GetModuleFileNameExA(HANDLE process, HANDLE module, byte[] lpFilename, int nSize);
-    
+
     /**
      * Retrieves the fully qualified path for the file containing the specified
      * module.
-     * 
+     *
      * @param process
      *            A handle to the process that contains the module.
      * @param module
@@ -85,7 +84,7 @@ public interface Psapi extends StdCallLibrary {
     /**
      * Retrieves the fully qualified path for the file containing the specified
      * module.
-     * 
+     *
      * @param process
      *            A handle to the process that contains the module.
      * @param module
@@ -105,9 +104,9 @@ public interface Psapi extends StdCallLibrary {
      *         {@link Kernel32Util#getLastErrorMessage()}.
      */
     int GetModuleFileNameEx(HANDLE process, HANDLE module, Pointer lpFilename, int nSize);
-    
+
     /**
-     * 
+     *
      * The EnumProcessModules function is primarily designed for use by
      * debuggers and similar applications that must extract module information
      * from another process.<br>
@@ -154,7 +153,7 @@ public interface Psapi extends StdCallLibrary {
      * To ensure correct resolution of symbols, add Psapi.lib to the TARGETLIBS
      * macro and compile the program with -DPSAPI_VERSION=1.<br>
      * To use run-time dynamic linking, load Psapi.dll.
-     * 
+     *
      * @param hProcess
      *            A handle to the process.
      * @param lphModule
@@ -170,7 +169,7 @@ public interface Psapi extends StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/ms682631(VS.85).aspx">MSDN/a>
      */
     boolean EnumProcessModules(HANDLE hProcess, HMODULE[] lphModule, int cb, IntByReference lpcbNeeded);
-    
+
     /**
      * To get information for the calling process, pass the handle returned by
      * GetCurrentProcess.<br>
@@ -193,7 +192,7 @@ public interface Psapi extends StdCallLibrary {
      * To ensure correct resolution of symbols, add Psapi.lib to the TARGETLIBS
      * macro and compile the program with -DPSAPI_VERSION=1. <br>
      * To use run-time dynamic linking, load Psapi.dll.
-     * 
+     *
      * @param hProcess
      *            A handle to the process that contains the module. The handle
      *            must have the PROCESS_QUERY_INFORMATION and PROCESS_VM_READ
@@ -201,7 +200,7 @@ public interface Psapi extends StdCallLibrary {
      *            Access Rights.
      * @param hModule
      *            A handle to the module.
-     * 
+     *
      * @param lpmodinfo
      *            A pointer to the MODULEINFO structure that receives
      *            information about the module.
@@ -213,7 +212,7 @@ public interface Psapi extends StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/ms683201(VS.85).aspx">MSDN</a>
      */
     boolean GetModuleInformation(HANDLE hProcess, HMODULE hModule, MODULEINFO lpmodinfo, int cb);
-    
+
     /**
      * @param hProcess
      *            A handle to the process. The handle must have the
@@ -236,13 +235,15 @@ public interface Psapi extends StdCallLibrary {
     int GetProcessImageFileName(HANDLE hProcess, char[] lpImageFileName, int nSize);
 
     class MODULEINFO extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("lpBaseOfDll", "SizeOfImage", "EntryPoint");
+
         public Pointer EntryPoint;
         public Pointer lpBaseOfDll;
         public int     SizeOfImage;
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "lpBaseOfDll", "SizeOfImage", "EntryPoint" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

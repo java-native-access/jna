@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32.COM;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;

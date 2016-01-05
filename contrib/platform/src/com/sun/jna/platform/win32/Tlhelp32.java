@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -92,14 +91,9 @@ public interface Tlhelp32 {
             }
         }
 
-        public PROCESSENTRY32() {
-            dwSize = new WinDef.DWORD(size());
-        }
-
-        public PROCESSENTRY32(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID", "th32ModuleID",
+                "cntThreads", "th32ParentProcessID", "pcPriClassBase", "dwFlags", "szExeFile");
 
         /**
          * The size of the structure, in bytes. Before calling the Process32First function, set this member to
@@ -155,113 +149,125 @@ public interface Tlhelp32 {
          */
         public char[] szExeFile = new char[WinDef.MAX_PATH];
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID", "th32ModuleID", "cntThreads", "th32ParentProcessID", "pcPriClassBase", "dwFlags", "szExeFile" });
+        public PROCESSENTRY32() {
+            dwSize = new WinDef.DWORD(size());
+        }
+
+        public PROCESSENTRY32(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
 
     /**
      * Describes an entry from a list of the modules belonging to the specified
      * process.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx">MSDN</a>
      */
     public class MODULEENTRY32W extends Structure {
-    
+
         /**
          * A representation of a MODULEENTRY32 structure as a reference
          */
         public static class ByReference extends MODULEENTRY32W implements Structure.ByReference {
             public ByReference() {
             }
-    
+
             public ByReference(Pointer memory) {
                 super(memory);
             }
         }
-    
-        public MODULEENTRY32W() {
-            dwSize = new WinDef.DWORD(size());
-        }
-    
-        public MODULEENTRY32W(Pointer memory) {
-            super(memory);
-            read();
-        }
-    
+
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
+                "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule", "szModule", "szExePath");
+
         /**
          * The size of the structure, in bytes. Before calling the Module32First
          * function, set this member to sizeof(MODULEENTRY32). If you do not
          * initialize dwSize, Module32First fails.
          */
         public DWORD dwSize;
-    
+
         /**
          * This member is no longer used, and is always set to one.
          */
         public DWORD th32ModuleID;
-    
+
         /**
          * The identifier of the process whose modules are to be examined.
          */
         public DWORD th32ProcessID;
-    
+
         /**
          * The load count of the module, which is not generally meaningful, and
          * usually equal to 0xFFFF.
          */
         public DWORD GlblcntUsage;
-    
+
         /**
          * The load count of the module (same as GlblcntUsage), which is not
          * generally meaningful, and usually equal to 0xFFFF.
          */
         public DWORD ProccntUsage;
-    
+
         /**
          * The base address of the module in the context of the owning process.
          */
         public Pointer modBaseAddr;
-    
+
         /**
          * The size of the module, in bytes.
          */
         public DWORD modBaseSize;
-    
+
         /**
          * A handle to the module in the context of the owning process.
          */
         public HMODULE hModule;
-    
+
         /**
          * The module name.
          */
         public char[] szModule = new char[MAX_MODULE_NAME32 + 1];
-    
+
         /**
          * The module path.
          */
         public char[] szExePath = new char[Kernel32.MAX_PATH];
-    
+
+        public MODULEENTRY32W() {
+            dwSize = new WinDef.DWORD(size());
+        }
+
+        public MODULEENTRY32W(Pointer memory) {
+            super(memory);
+            read();
+        }
+
         /**
          * @return The module name.
          */
         public String szModule() {
             return Native.toString(this.szModule);
         }
-    
+
         /**
          * @return The module path.
          */
         public String szExePath() {
             return Native.toString(this.szExePath);
         }
-    
+
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
-                    "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule", "szModule", "szExePath" });
+            return FIELDS;
         }
     }
 }
