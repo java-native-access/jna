@@ -10,12 +10,12 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 /**
  * Interface for the Winioctl.h header file.
