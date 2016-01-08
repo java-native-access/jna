@@ -77,6 +77,11 @@ public interface SetupApi extends StdCallLibrary {
      */
     int SPDRP_REMOVAL_POLICY = 0x0000001F;
 
+	/**
+	 * Eject supported.
+	 */
+	int CM_DEVCAP_EJECTSUPPORTED = 0x00000002;
+
     /**
      * Removable.
      */
@@ -120,6 +125,11 @@ public interface SetupApi extends StdCallLibrary {
 	 * by the CM_DRP codes in cfgmgr32.h.
 	 */
 	int SPDRP_DEVICEDESC = 0x00000000;
+
+	/**
+	 * The function retrieves a REG_SZ string that contains the friendly name of a device.
+	 */
+	int SPDRP_FRIENDLYNAME = 0xc;
 
     /**
      * The SetupDiGetClassDevs function returns a handle to a device information set that contains requested device

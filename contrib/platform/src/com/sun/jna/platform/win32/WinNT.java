@@ -12,22 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.*;
+import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.IntegerType;
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
-import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -2840,6 +2832,108 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         int RelationAll = 0xFFFF;
     }
 
+    /**
+     * Contains information about the relationships of logical processors and related hardware. The
+     * GetLogicalProcessorInformationEx function uses this structure.
+     */
+    class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX extends Structure {
+        /**
+         * The type of relationship between the logical processors.
+         */
+        public WinDef.DWORD relationship;
+
+        /**
+         * The size of the structure.
+         */
+        public WinDef.DWORD size;
+
+        /**
+         * A PROCESSOR_RELATIONSHIP structure that describes processor affinity. This structure contains valid data only if
+         * the Relationship member is RelationProcessorCore or RelationProcessorPackage.
+         *
+         * This is actually a union with the NUMA and other data types.
+         */
+        public PROCESSOR_RELATIONSHIP processor;
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX()
+        {}
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer pointer, int offset) {
+            useMemory(pointer, offset);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder()
+        {
+            return Arrays.asList("relationship", "size", "processor");
+        }
+    }
+
+    /**
+     * Represents information about affinity within a processor group. This structure is used with the
+     * GetLogicalProcessorInformationEx function.
+     */
+    class PROCESSOR_RELATIONSHIP extends Structure {
+        /**
+         * <p>If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore,
+         * this member is LTP_PC_SMT if the core has more than one logical processor, or 0 if the core has one logical
+         * processor.</p>
+         *
+         * <p>If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is
+         * RelationProcessorPackage, this member is always 0.</p>
+         */
+        public byte flags;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[21];
+
+        /**
+         * This member specifies the number of entries in the GroupMask array.
+         */
+        public WinDef.WORD groupCount;
+
+        /**
+         * An array of GROUP_AFFINITY structures. The GroupCount member specifies the number of structures in the array.
+         * Each structure in the array specifies a group number and processor affinity within the group.
+         */
+        public GROUP_AFFINITY[] groupMask = new GROUP_AFFINITY[1];
+
+        @Override
+        protected List<String> getFieldOrder()
+        {
+            return Arrays.asList("flags", "reserved", "groupCount", "groupMask");
+        }
+    }
+
+    /**
+     * Represents a processor group-specific affinity, such as the affinity of a thread.
+     */
+    public class GROUP_AFFINITY extends Structure {
+        /**
+         * A bitmap that specifies the affinity for zero or more processors within the specified group.
+         */
+        public BaseTSD.ULONG_PTR mask;
+
+        /**
+         * The processor group number.
+         */
+        public WinDef.WORD group;
+
+        /**
+         * This member is reserved.
+         */
+        public WinDef.WORD[] reserved = new WinDef.WORD[3];
+
+        @Override
+        protected List<String> getFieldOrder()
+        {
+            return Arrays.asList("mask", "group", "reserved");
+        }
+    }
+
     byte CACHE_FULLY_ASSOCIATIVE = (byte)0xFF;
 
     /**
@@ -2994,6 +3088,76 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                 "baseAddress", "allocationBase", "allocationProtect",
                 "regionSize", "state", "protect", "type"
             });
+        }
+    }
+
+    /**
+     * Contains information about a range of pages in the virtual address space of a process.
+     */
+    class MEMORY_BASIC_INFORMATION64 extends Structure {
+        /**
+         * A pointer to the base address of the region of pages.
+         */
+        public ULONGLONG baseAddress;
+
+        /**
+         * A pointer to the base address of a range of pages allocated by the VirtualAlloc function.
+         * The page pointed to by the BaseAddress member is contained within this allocation range.
+         */
+        public ULONGLONG allocationBase;
+
+        /**
+         * The memory protection option when the region was initially allocated. This member can be
+         * one of the memory protection constants or 0 if the caller does not have access.
+         */
+        public DWORD allocationProtect;
+
+        public DWORD __alignment1;
+
+        /**
+         * The size of the region beginning at the base address in which all pages have identical
+         * attributes, in bytes.
+         */
+        public ULONGLONG regionSize;
+
+        /**
+         * The state of the pages in the region.
+         */
+        public DWORD state;
+
+        /**
+         * The access protection of the pages in the region. This member is one of the values listed
+         * for the AllocationProtect member.
+         */
+        public DWORD protect;
+
+        /**
+         * The type of pages in the region.
+         */
+        public DWORD type;
+        public DWORD __alignment2;
+
+        public static class ByReference extends MEMORY_BASIC_INFORMATION64 implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public MEMORY_BASIC_INFORMATION64() {
+        }
+
+        public MEMORY_BASIC_INFORMATION64(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList("baseAddress", "allocationBase", "allocationProtect", "__alignment1", "regionSize",
+                    "state", "protect", "type", "__alignment2");
         }
     }
 }
