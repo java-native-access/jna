@@ -12,14 +12,22 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.*;
-import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.sun.jna.FromNativeContext;
+import com.sun.jna.IntegerType;
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.NativeLong;
+import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
+import com.sun.jna.Structure;
+import com.sun.jna.Union;
+import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
