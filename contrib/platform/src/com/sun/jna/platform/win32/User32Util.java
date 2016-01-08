@@ -9,11 +9,15 @@
  */
 
 package com.sun.jna.platform.win32;
-import com.sun.jna.WString;
+import java.util.Arrays;
+import java.util.List;
+
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
 import com.sun.jna.platform.win32.WinDef.HMENU;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
+import com.sun.jna.platform.win32.WinUser.RAWINPUTDEVICELIST;
+import com.sun.jna.ptr.IntByReference;
 
 
 /**
@@ -38,7 +42,7 @@ public final class User32Util {
     public static final HWND createWindowEx(final int exStyle, final String className, final String windowName, final int style, final int x, final int y,
             final int width, final int height, final HWND parent, final HMENU menu, final HINSTANCE instance, final LPVOID param) {
         final HWND hWnd = User32.INSTANCE
-                .CreateWindowEx(exStyle, new WString(className), windowName, style, x, y, width, height, parent, menu, instance, param);
+                .CreateWindowEx(exStyle, className, windowName, style, x, y, width, height, parent, menu, instance, param);
         if (hWnd == null)
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         return hWnd;
@@ -47,5 +51,29 @@ public final class User32Util {
     public static final void destroyWindow(final HWND hWnd) {
         if (!User32.INSTANCE.DestroyWindow(hWnd))
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    }
+
+    public static final List<RAWINPUTDEVICELIST> GetRawInputDeviceList() {
+        IntByReference puiNumDevices = new IntByReference(0);
+        RAWINPUTDEVICELIST placeholder = new RAWINPUTDEVICELIST();
+        int cbSize = placeholder.sizeof();
+        // first call is with NULL so we query the expected number of devices
+        int returnValue = User32.INSTANCE.GetRawInputDeviceList(null, puiNumDevices, cbSize);
+        if (returnValue != 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        int deviceCount = puiNumDevices.getValue();
+        RAWINPUTDEVICELIST[] records = (RAWINPUTDEVICELIST[]) placeholder.toArray(deviceCount);
+        returnValue = User32.INSTANCE.GetRawInputDeviceList(records, puiNumDevices, cbSize);
+        if (returnValue == (-1)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+
+        if (returnValue != records.length) {
+            throw new IllegalStateException("Mismatched allocated (" + records.length + ") vs. received devices count (" + returnValue + ")");
+        }
+
+        return Arrays.asList(records);
     }
 }

@@ -14,8 +14,10 @@
 
 package com.sun.jna;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
@@ -257,11 +259,14 @@ public class NativeLibrary {
             if (handle == 0) {
                 try {
                     File embedded = Native.extractFromResourcePath(libraryName, (ClassLoader)options.get(Library.OPTION_CLASSLOADER));
-                    handle = Native.open(embedded.getAbsolutePath());
-                    libraryPath = embedded.getAbsolutePath();
-                    // Don't leave temporary files around
-                    if (Native.isUnpacked(embedded)) {
-                        Native.deleteLibrary(embedded);
+                    try {
+                        handle = Native.open(embedded.getAbsolutePath(), openFlags);
+                        libraryPath = embedded.getAbsolutePath();
+                    } finally {
+                        // Don't leave temporary files around
+                        if (Native.isUnpacked(embedded)) {
+                            Native.deleteLibrary(embedded);
+                        }
                     }
                 }
                 catch(IOException e2) { e = new UnsatisfiedLinkError(e2.getMessage()); }
@@ -861,6 +866,26 @@ public class NativeLibrary {
                     "/lib",
                 };
             }
+
+            // We might be wrong with the multiArchPath above. Raspbian,
+            // the Raspberry Pi flavor of Debian, for example, uses
+            // uses arm-linux-gnuabihf since it's using the hard-float
+            // ABI for armv6. Other distributions might use a different
+            // tuple for the same thing. Query ldconfig to get the additional
+            // library paths it knows about.
+            if (Platform.isLinux()) {
+                ArrayList<String> ldPaths = getLinuxLdPaths();
+                // prepend the paths we already have
+                for (int i=paths.length-1; 0 <= i; i--) {
+                    int found = ldPaths.indexOf(paths[i]);
+                    if (found != -1) {
+                        ldPaths.remove(found);
+                    }
+                    ldPaths.add(0, paths[i]);
+                }
+                paths = ldPaths.toArray(new String[ldPaths.size()]);
+            }
+
             for (int i=0;i < paths.length;i++) {
                 File dir = new File(paths[i]);
                 if (dir.exists() && dir.isDirectory()) {
@@ -894,5 +919,30 @@ public class NativeLibrary {
         }
         
         return cpu + kernel + libc;
+    }
+
+    /**
+     * Get the library paths from ldconfig cache. Tested against ldconfig 2.13.
+     */
+    private static ArrayList<String> getLinuxLdPaths() {
+        ArrayList<String> ldPaths = new ArrayList<String>();
+        try {
+                Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                String buffer = "";
+                while ((buffer = reader.readLine()) != null) {
+                        int startPath = buffer.indexOf(" => ");
+                        int endPath = buffer.lastIndexOf('/');
+                        if (startPath != -1 && endPath != -1 && startPath < endPath) {
+                                String path =  buffer.substring(startPath+4, endPath);
+                                if (ldPaths.contains(path) == false) {
+                                        ldPaths.add(path);
+                                }
+                        }
+                }
+                reader.close();
+        } catch (Exception e) {
+        }
+        return ldPaths;
     }
 }

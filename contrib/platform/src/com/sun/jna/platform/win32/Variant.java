@@ -116,6 +116,32 @@ public interface Variant {
 
         public static class ByReference extends VARIANT implements
                 Structure.ByReference {
+            public ByReference(VARIANT variant) {
+                setValue(variant.getVarType(), variant.getValue());
+            }
+
+            public ByReference(Pointer variant) {
+                super(variant);
+            }
+
+            public ByReference() {
+                super();
+            }
+        }
+
+        public static class ByValue extends VARIANT implements
+                Structure.ByValue {
+            public ByValue(VARIANT variant) {
+                setValue(variant.getVarType(), variant.getValue());
+            }
+
+            public ByValue(Pointer variant) {
+                super(variant);
+            }
+
+            public ByValue() {
+                super();
+            }
         }
 
         public _VARIANT _variant;
@@ -168,19 +194,37 @@ public interface Variant {
             this.setValue(VT_DATE, value);
         }
 
+        public VARIANT(byte value) {
+            this(new BYTE(value));
+        }
+        
+        public VARIANT(BYTE value) {
+            this();
+            this.setValue(Variant.VT_UI1, value);
+        }
+
+        public VARIANT(char value) {
+            this(new CHAR(value));
+        }
+
+        public VARIANT(CHAR value) {
+            this();
+            this.setValue(Variant.VT_I1, value);
+        }
+
         public VARIANT(short value) {
             this();
-            this.setValue(VT_I2, value);
+            this.setValue(VT_I2, new SHORT(value));
         }
 
         public VARIANT(int value) {
             this();
-            this.setValue(VT_I4, value);
+            this.setValue(VT_I4, new LONG(value));
         }
 
         public VARIANT(long value) {
             this();
-            this.setValue(VT_I8, value);
+            this.setValue(VT_I8, new LONGLONG(value));
         }
 
         public VARIANT(float value) {
@@ -233,6 +277,9 @@ public interface Variant {
 
         public void setValue(VARTYPE vt, Object value) {
             switch (vt.intValue()) {
+            case VT_UI1:
+                this._variant.__variant.writeField("bVal", value);
+                break;
             case VT_I2:
                 this._variant.__variant.writeField("iVal", value);
                 break;
@@ -362,6 +409,9 @@ public interface Variant {
             case VT_BYREF | VT_UINT:
                 this._variant.__variant.writeField("puintVal", value);
                 break;
+            case VT_RECORD:
+                this._variant.__variant.writeField("pvRecord", value);
+                break;
             }
 
             this._variant.writeField("vt", vt);
@@ -457,6 +507,8 @@ public interface Variant {
                 return this._variant.__variant.readField("pintVal");
             case VT_BYREF | VT_UINT:
                 return this._variant.__variant.readField("puintVal");
+            case VT_RECORD:
+                return this._variant.__variant.readField("pvRecord");
             default:
                 return null;
             }
@@ -625,7 +677,9 @@ public interface Variant {
                 public IntByReference pintVal;
                 // UINT * VT_BYREF|VT_UINT
                 public UINTByReference puintVal;
-
+                // BRECORD VT_RECORD
+                public BRECORD pvRecord;
+                
                 public static class BRECORD extends Structure {
                     public static class ByReference extends BRECORD implements
                             Structure.ByReference {
@@ -633,7 +687,7 @@ public interface Variant {
 
                     public PVOID pvRecord;
 
-                    public IRecordInfo pRecInfo;
+                    public Pointer pRecInfo;
 
                     public BRECORD() {
                     }
@@ -685,6 +739,14 @@ public interface Variant {
         public VariantArg() {
         }
 
+        /**
+         * construct VariantArg cast onto pre-allocated memory
+         * @param pointer base address
+         */
+        public VariantArg(Pointer pointer) {
+        	super(pointer);
+        }
+        
         public VariantArg(VARIANT[] variantArg) {
             this.variantArg = variantArg;
         }
@@ -693,5 +755,12 @@ public interface Variant {
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "variantArg" });
         }
+        
+        public void setArraySize(int size) {
+        	this.variantArg = new VARIANT[size];
+        	this.read();
+        }
+        
+
     }
 }

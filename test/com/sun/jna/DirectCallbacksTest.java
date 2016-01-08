@@ -33,8 +33,8 @@ public class DirectCallbacksTest extends CallbacksTest {
         public native float callFloatCallback(FloatCallback c, float arg, float arg2);
         public native double callDoubleCallback(DoubleCallback c, double arg, double arg2);
         public native SmallTestStructure callStructureCallback(StructureCallback c, SmallTestStructure arg);
-        public native String callStringCallback(StringCallback c, String arg);
-        public native WString callWideStringCallback(WideStringCallback c, WString arg);
+        public native String callStringCallback(StringCallback c, String arg, String arg2);
+        public native WString callWideStringCallback(WideStringCallback c, WString arg, WString arg2);
         public Pointer callStringArrayCallback(StringArrayCallback c, String[] arg) { throw new UnsupportedOperationException(); }
         public native int callCallbackWithByReferenceArgument(CopyArgToByReference cb, int arg, IntByReference result);
         public native TestStructure.ByValue callCallbackWithStructByValue(TestStructure.TestCallback callback, TestStructure.ByValue cbstruct);
@@ -64,6 +64,7 @@ public class DirectCallbacksTest extends CallbacksTest {
     public static class DirectCallbackTestLibrary implements CallbackTestLibrary {
         public native double callInt32Callback(DoubleCallback c, double arg, double arg2);
         public native float callInt64Callback(FloatCallback c, float arg, float arg2);
+        public native String callWideStringCallback(WStringCallback c, String arg, String arg2);
         static {
             Native.register(NativeLibrary.getInstance("testlib", _OPTIONS));
         }

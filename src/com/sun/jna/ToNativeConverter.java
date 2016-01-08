@@ -32,8 +32,8 @@ public interface ToNativeConverter {
      * <li>{@link Structure}
      * <li>String
      * <li>{@link WString}
-     * <li>{@link java.nio.Buffer}
-     * <li>primitive array
+     * <li>{@link java.nio.Buffer} (unsupported in direct mode)
+     * <li>primitive array (unsupported in direct mode)
      * </ul>
      */
     Object toNative(Object value, ToNativeContext context);

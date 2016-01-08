@@ -46,8 +46,10 @@ public class GhostedDragImage {
     private Point origin;
 
     /** Create a ghosted drag image, using the given icon.
+     * @param dragSource source of the drag
      * @param icon image to be drawn
      * @param initialScreenLoc initial screen location of the image
+     * @param cursorOffset offset of the cursor from the image origin
      */
     public GhostedDragImage(Component dragSource, final Icon icon, Point initialScreenLoc, 
                             final Point cursorOffset) {
@@ -97,7 +99,9 @@ public class GhostedDragImage {
         dragImage.setVisible(true);
     }
 
-    /** Set the transparency of the ghosted image. */
+    /** Set the transparency of the ghosted image.
+     * @param alpha transparency level
+     */
     public void setAlpha(float alpha) {
         WindowUtils.setWindowAlpha(dragImage, alpha);
     }

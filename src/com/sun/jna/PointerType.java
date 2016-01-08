@@ -43,7 +43,9 @@ public abstract class PointerType implements NativeMapped {
         return getPointer();
     }
 
-    /** Returns the associated native {@link Pointer}. */
+    /** Returns the associated native {@link Pointer}.
+        @return Native pointer representation for this object.
+     */
     public Pointer getPointer() {
         return pointer;
     }

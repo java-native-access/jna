@@ -38,6 +38,8 @@ public abstract class COMUtils {
 
     /** The Constant CO_E_NOTINITIALIZED. */
     public static final int S_OK = 0;
+    public static final int S_FALSE = 1;
+    public static final int E_UNEXPECTED=0x8000FFFF;
 
     /**
      * Succeeded.
@@ -58,10 +60,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean SUCCEEDED(int hr) {
-        if (hr == S_OK)
-            return true;
-        else
-            return false;
+        return hr >= 0;
     }
 
     /**
@@ -83,10 +82,7 @@ public abstract class COMUtils {
      * @return true, if successful
      */
     public static boolean FAILED(int hr) {
-        if (hr != S_OK)
-            return true;
-        else
-            return false;
+        return hr < 0;
     }
 
     /**
@@ -131,10 +127,10 @@ public abstract class COMUtils {
         try {
             // open root key
             phkResult = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT,
-                    "CLSID", WinNT.KEY_ALL_ACCESS);
+                    "CLSID", WinNT.KEY_READ);
             // open subkey
             InfoKey infoKey = Advapi32Util.registryQueryInfoKey(
-                    phkResult.getValue(), WinNT.KEY_ALL_ACCESS);
+                    phkResult.getValue(), WinNT.KEY_READ);
 
             for (int i = 0; i < infoKey.lpcSubKeys.getValue(); i++) {
                 EnumKey enumKey = Advapi32Util.registryRegEnumKey(
@@ -144,9 +140,9 @@ public abstract class COMUtils {
                 COMInfo comInfo = new COMInfo(subKey);
 
                 phkResult2 = Advapi32Util.registryGetKey(phkResult.getValue(),
-                        subKey, WinNT.KEY_ALL_ACCESS);
+                        subKey, WinNT.KEY_READ);
                 InfoKey infoKey2 = Advapi32Util.registryQueryInfoKey(
-                        phkResult2.getValue(), WinNT.KEY_ALL_ACCESS);
+                        phkResult2.getValue(), WinNT.KEY_READ);
 
                 for (int y = 0; y < infoKey2.lpcSubKeys.getValue(); y++) {
                     EnumKey enumKey2 = Advapi32Util.registryRegEnumKey(

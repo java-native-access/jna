@@ -33,6 +33,8 @@ public final class Platform {
      * running headless.
      */
     public static final boolean HAS_AWT;
+    /** Whether this platform supports the JAWT library. */
+    public static final boolean HAS_JAWT;
     /** Canonical name of this platform's math library. */
     public static final String MATH_LIBRARY_NAME;
     /** Canonical name of this platform's C runtime library. */
@@ -104,13 +106,14 @@ public final class Platform {
         // has the unintended side effect of actually loading AWT native libs,
         // which can be problematic
         HAS_AWT = osType != WINDOWSCE && osType != ANDROID && osType != AIX;
+        HAS_JAWT = HAS_AWT && osType != MAC;
         HAS_BUFFERS = hasBuffers;
         RO_FIELDS = osType != WINDOWSCE;
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
+	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"));
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
-        ARCH = System.getProperty("os.arch").toLowerCase().trim();
     }
     private Platform() { }
     public static final int getOSType() {
@@ -172,9 +175,9 @@ public final class Platform {
         if (model != null) {
             return "64".equals(model);
         }
-        if ("x86_64".equals(ARCH)
+        if ("x86-64".equals(ARCH)
             || "ia64".equals(ARCH)
-            || "ppc64".equals(ARCH)
+            || "ppc64".equals(ARCH) || "ppc64le".equals(ARCH)
             || "sparcv9".equals(ARCH)
             || "amd64".equals(ARCH)) {
             return true;
@@ -183,21 +186,14 @@ public final class Platform {
     }
 
     public static final boolean isIntel() {
-        if (ARCH.equals("i386")
-            || ARCH.startsWith("i686")
-            || ARCH.equals("x86")
-            || ARCH.equals("x86_64")
-            || ARCH.equals("amd64")) {
+        if (ARCH.startsWith("x86")) {
             return true;
         } 
         return false;
     }
 
     public static final boolean isPPC() {
-        if (ARCH.equals("ppc")
-            || ARCH.equals("ppc64")
-            || ARCH.equals("powerpc")
-            || ARCH.equals("powerpc64")) {
+        if (ARCH.startsWith("ppc")) {
             return true;
         } 
         return false;
@@ -209,6 +205,28 @@ public final class Platform {
 
     public static final boolean isSPARC() {
         return ARCH.startsWith("sparc");
+    }
+
+    static String getCanonicalArchitecture(String arch) {
+	arch = arch.toLowerCase().trim();
+        if ("powerpc".equals(arch)) {
+            arch = "ppc";
+        }
+        else if ("powerpc64".equals(arch)) {
+            arch = "ppc64";
+        }
+        else if ("i386".equals(arch) || "i686".equals(arch)) {
+            arch = "x86";
+        }
+        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
+            arch = "x86-64";
+        }
+	// Work around OpenJDK mis-reporting os.arch
+	// https://bugs.openjdk.java.net/browse/JDK-8073139
+	if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {
+	    arch = "ppc64le";
+	}
+	return arch;
     }
 
     /** Generate a canonical String prefix based on the current OS 
@@ -226,19 +244,7 @@ public final class Platform {
     */
     static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
         String osPrefix;
-        arch = arch.toLowerCase().trim();
-        if ("powerpc".equals(arch)) {
-            arch = "ppc";
-        }
-        else if ("powerpc64".equals(arch)) {
-            arch = "ppc64";
-        }
-        else if ("i386".equals(arch)) {
-            arch = "x86";
-        }
-        else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
-            arch = "x86-64";
-        }
+        arch = getCanonicalArchitecture(arch);
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {

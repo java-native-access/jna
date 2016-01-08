@@ -31,9 +31,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Area;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -45,7 +50,14 @@ import javax.swing.event.MouseInputAdapter;
 
 import junit.framework.TestCase;
 
+import com.sun.jna.Native;
 import com.sun.jna.Platform;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.HICON;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinUser;
 
 // NOTE: java.awt.Robot can't properly capture transparent pixels
 // Transparency tests are disabled until this can be resolved
@@ -101,6 +113,44 @@ public class WindowUtilsTest extends TestCase {
     private static final int Y = 100;
     private static final int W = 100;
     private static final int H = 100;
+
+    /**
+     * Verfies that the specified pixel within the image has the expected color component values.
+     * 
+     * @param img The image to be checked.
+     * @param x The X coordinate of the pixel to be checked.
+     * @param y The Y coordinate of the pixel to be checked.
+     * @param expectedRed The expected value of the red color component.
+     * @param expectedGreen The expected value of the green color component.
+     * @param expectedBlue The expected value of the blue color component.
+     */
+    public static void assertPixelColor(final BufferedImage img, final int x, final int y, final int expectedRed, final int expectedGreen, final int expectedBlue){
+        int rgb = img.getRGB(x, y);
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = (rgb & 0xFF);
+	
+        assertEquals(expectedRed, r);
+        assertEquals(expectedGreen, g);
+        assertEquals(expectedBlue, b);
+    }
+    
+    /**
+     * Extracts the values of the color components at the specified pixel.
+     * 
+     * @param img The concerning image.
+     * @param x The X coordinate of the concerning pixel.
+     * @param y The Y coordinate of the concerning pixel.
+     * @return An array with three elements that represents the color components of the pixel: Red, green, blue.
+     */
+    public static int[] getPixelColor(final BufferedImage img, final int x, final int y){
+        int rgb = img.getRGB(x, y);
+        int r = (rgb >> 16) & 0xFF;
+        int g = (rgb >> 8) & 0xFF;
+        int b = (rgb & 0xFF);
+	
+        return new int[]{r,g,b};
+    }
     
     public void xtestReveal() throws Exception {
         final int SIZE = 200;
@@ -417,7 +467,7 @@ public class WindowUtilsTest extends TestCase {
             });
         }
     }
-    
+	
     public static void main(String[] args) {
         junit.textui.TestRunner.run(WindowUtilsTest.class);
     }

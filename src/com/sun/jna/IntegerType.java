@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 package com.sun.jna;
@@ -16,12 +16,12 @@ package com.sun.jna;
 /**
  * Represents a native integer value, which may have a platform-specific size
  * (e.g. <code>long</code> on unix-based platforms).
- * 
+ *
  * May optionally indicate an unsigned attribute, such that when a value is
  * extracted into a larger-sized container (e.g. <code>int</code> retrieved
  * via {@link Number#longValue}, the value will be unsigned.  Default behavior
  * is signed.
- * 
+ *
  * @author wmeissner@gmail.com
  * @author twalljava@java.net
  */
@@ -55,7 +55,9 @@ public abstract class IntegerType extends Number implements NativeMapped {
         setValue(value);
     }
 
-    /** Change the value for this data. */
+    /** Change the value for this data.
+     * @param value value to set
+     */
     public void setValue(long value) {
         long truncated = value;
         this.value = value;
@@ -92,16 +94,18 @@ public abstract class IntegerType extends Number implements NativeMapped {
         }
     }
 
+    @Override
     public Object toNative() {
         return number;
     }
 
+    @Override
     public Object fromNative(Object nativeValue, FromNativeContext context) {
         // be forgiving of null values read from memory
         long value = nativeValue == null
             ? 0 : ((Number) nativeValue).longValue();
         try {
-            IntegerType number = (IntegerType) getClass().newInstance();
+            IntegerType number = getClass().newInstance();
             number.setValue(value);
             return number;
         }
@@ -115,36 +119,100 @@ public abstract class IntegerType extends Number implements NativeMapped {
         }
     }
 
+    @Override
     public Class nativeType() {
         return number.getClass();
     }
 
+    @Override
     public int intValue() {
         return (int)value;
     }
 
+    @Override
     public long longValue() {
         return value;
     }
 
+    @Override
     public float floatValue() {
         return number.floatValue();
     }
 
+    @Override
     public double doubleValue() {
         return number.doubleValue();
     }
 
+    @Override
     public boolean equals(Object rhs) {
         return rhs instanceof IntegerType
             && number.equals(((IntegerType)rhs).number);
     }
 
+    @Override
     public String toString() {
         return number.toString();
     }
 
+    @Override
     public int hashCode() {
         return number.hashCode();
+    }
+
+    /**
+     * Compares 2 derived {@link IntegerType} values - <B>Note:</B> a
+     * {@code null} value is considered <U>greater</U> than any non-{@code null}
+     * one (i.e., {@code null} values are &quot;pushed&quot; to the end
+     * of a sorted array / list of values)
+     *
+     * @param <T> the derived integer type
+     * @param v1 The 1st value
+     * @param v2 The 2nd value
+     * @return 0 if values are equal - including if <U>both</U> are {@code null},
+     * negative if 1st value less than 2nd one, positive otherwise. <B>Note:</B>
+     * the comparison uses the {@link #longValue()}.
+     * @see #compare(long, long)
+     */
+    public static <T extends IntegerType> int compare(T v1, T v2) {
+        if (v1 == v2) {
+            return 0;
+        } else if (v1 == null) {
+            return 1;   // v2 cannot be null or v1 == v2 would hold
+        } else if (v2 == null) {
+            return (-1);
+        } else {
+            return compare(v1.longValue(), v2.longValue());
+        }
+    }
+
+    /**
+     * Compares a IntegerType value with a {@code long} one. <B>Note:</B> if
+     * the IntegerType value is {@code null} then it is consider <U>greater</U>
+     * than any {@code long} value.
+     *
+     * @param v1 The {@link IntegerType} value
+     * @param v2 The {@code long} value
+     * @return 0 if values are equal, negative if 1st value less than 2nd one,
+     * positive otherwise. <B>Note:</B> the comparison uses the {@link #longValue()}.
+     * @see #compare(long, long)
+     */
+    public static int compare(IntegerType v1, long v2) {
+        if (v1 == null) {
+            return 1;
+        } else {
+            return compare(v1.longValue(), v2);
+        }
+    }
+
+    // TODO if JDK 7 becomes the min. required use Long#compare(long,long)
+    public static final int compare(long v1, long v2) {
+        if (v1 == v2) {
+            return 0;
+        } else if (v1 < v2) {
+            return (-1);
+        } else {
+            return 1;
+        }
     }
 }

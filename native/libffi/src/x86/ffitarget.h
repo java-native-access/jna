@@ -1,5 +1,5 @@
 /* -----------------------------------------------------------------*-C-*-
-   ffitarget.h - Copyright (c) 2012  Anthony Green
+   ffitarget.h - Copyright (c) 2012, 2014  Anthony Green
                  Copyright (c) 1996-2003, 2010  Red Hat, Inc.
                  Copyright (C) 2008  Free Software Foundation, Inc.
 
@@ -49,6 +49,11 @@
 #define USE_BUILTIN_FFS 0 /* not yet implemented in mingw-64 */
 #endif
 
+#define FFI_TARGET_SPECIFIC_STACK_SPACE_ALLOCATION
+#ifndef _MSC_VER
+#define FFI_TARGET_HAS_COMPLEX_TYPE
+#endif
+
 /* ---- Generic type definitions ----------------------------------------- */
 
 #ifndef LIBFFI_ASM
@@ -82,6 +87,8 @@ typedef enum ffi_abi {
   FFI_THISCALL,
   FFI_FASTCALL,
   FFI_MS_CDECL,
+  FFI_PASCAL,
+  FFI_REGISTER,
   FFI_LAST_ABI,
 #ifdef _MSC_VER
   FFI_DEFAULT_ABI = FFI_MS_CDECL
@@ -98,6 +105,11 @@ typedef enum ffi_abi {
   /* ---- Intel x86 and AMD x86-64 - */
   FFI_SYSV,
   FFI_UNIX64,   /* Unix variants all use the same ABI for x86-64  */
+  FFI_THISCALL,
+  FFI_FASTCALL,
+  FFI_STDCALL,
+  FFI_PASCAL,
+  FFI_REGISTER,
   FFI_LAST_ABI,
 #if defined(__i386__) || defined(__i386)
   FFI_DEFAULT_ABI = FFI_SYSV
@@ -132,7 +144,7 @@ typedef enum ffi_abi {
 #endif
 #endif
 #ifndef X86_WIN64
-#define FFI_NATIVE_RAW_API 1	/* x86 has native raw api support */
+#define FFI_NATIVE_RAW_API 1  /* x86 has native raw api support */
 #endif
 #endif
 

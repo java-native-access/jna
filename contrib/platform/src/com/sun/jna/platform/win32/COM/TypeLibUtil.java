@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
@@ -380,7 +381,7 @@ public class TypeLibUtil {
         COMUtils.checkRC(hr);
 
         found = pcFound.getValue().shortValue();
-        /* [length_is][size_is][out] */ITypeInfo[] ppTInfo = new ITypeInfo[found];
+        /* [length_is][size_is][out] */PointerByReference ppTInfo = new PointerByReference();
         /* [length_is][size_is][out] */MEMBERID[] rgMemId = new MEMBERID[found];
         hr = this.typelib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId,
                 pcFound);
@@ -404,7 +405,7 @@ public class TypeLibUtil {
         private String nameBuf;
 
         /** The p t info. */
-        private ITypeInfo[] pTInfo;
+        private PointerByReference pTInfo;
 
         /** The rg mem id. */
         private MEMBERID[] rgMemId;
@@ -414,18 +415,16 @@ public class TypeLibUtil {
 
         /**
          * Instantiates a new find name.
-         * 
-         * @param nameBuf
+         *  @param nameBuf
          *            the name buf
          * @param pTInfo
          *            the t info
          * @param rgMemId
-         *            the rg mem id
+ *            the rg mem id
          * @param pcFound
-         *            the pc found
          */
-        public FindName(String nameBuf, ITypeInfo[] pTInfo, MEMBERID[] rgMemId,
-                short pcFound) {
+        public FindName(String nameBuf, PointerByReference pTInfo, MEMBERID[] rgMemId,
+                        short pcFound) {
             this.nameBuf = nameBuf;
             this.pTInfo = pTInfo;
             this.rgMemId = rgMemId;
@@ -447,7 +446,14 @@ public class TypeLibUtil {
          * @return the t info
          */
         public ITypeInfo[] getTInfo() {
-            return pTInfo;
+
+            Pointer pVals = pTInfo.getValue();
+            ITypeInfo[] values=new ITypeInfo[pcFound];
+            for(int i=0;i<pcFound;i++)
+            {
+                values[i]=new TypeInfo(pVals.getPointer(i*Pointer.SIZE));
+            }
+            return values;
         }
 
         /**
@@ -520,7 +526,7 @@ public class TypeLibUtil {
      * 
      * @return the help context
      */
-    public long getHelpContext() {
+    public int getHelpContext() {
         return helpContext;
     }
 

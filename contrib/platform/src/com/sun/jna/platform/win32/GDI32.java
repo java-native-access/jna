@@ -1,4 +1,4 @@
-/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,8 +15,14 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
+import com.sun.jna.platform.win32.WinDef.HBRUSH;
 import com.sun.jna.platform.win32.WinDef.HDC;
+import com.sun.jna.platform.win32.WinDef.HFONT;
+import com.sun.jna.platform.win32.WinDef.HPALETTE;
+import com.sun.jna.platform.win32.WinDef.HPEN;
 import com.sun.jna.platform.win32.WinDef.HRGN;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinGDI.BITMAP;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFOHEADER;
 import com.sun.jna.platform.win32.WinGDI.PIXELFORMATDESCRIPTOR;
@@ -26,12 +32,21 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-/** Definition (incomplete) of <code>gdi32.dll</code>. */
+/** 
+ * Definition (incomplete) of <code>gdi32.dll</code>. 
+ * 
+ * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
+ */
 public interface GDI32 extends StdCallLibrary {
 
-    GDI32 INSTANCE = (GDI32) Native.loadLibrary("gdi32", GDI32.class,
-                                                W32APIOptions.DEFAULT_OPTIONS);
+    GDI32 INSTANCE = Native.loadLibrary("gdi32", GDI32.class, W32APIOptions.DEFAULT_OPTIONS);
 
+	/**
+	 * Used with BitBlt. Copies the source rectangle directly to the destination
+	 * rectangle.
+	 */
+	int SRCCOPY = 0xCC0020;
+    
     /**
      * The ExtCreateRegion function creates a region from the specified region and transformation data.
      * @param lpXform
@@ -312,6 +327,7 @@ public interface GDI32 extends StdCallLibrary {
      * the desired format for the DIB data.
      * @param uUsage The format of the bmiColors member of the {@link
      * BITMAPINFO} structure.  
+     * @return status
      */
     int GetDIBits(HDC hdc, HBITMAP hbmp, int uStartScan, int cScanLines, Pointer lpvBits, BITMAPINFO lpbi, int uUsage);
 
@@ -343,4 +359,224 @@ public interface GDI32 extends StdCallLibrary {
      * @return true if successful
      */
     public boolean SetPixelFormat(HDC hdc, int iPixelFormat, PIXELFORMATDESCRIPTOR.ByReference ppfd);
+
+	/**
+	 * Retrieves information for the specified graphics object.
+	 * 
+	 * @param hgdiobj
+	 *            A handle to the graphics object of interest. This can be a
+	 *            handle to one of the following: a logical bitmap, a brush, a
+	 *            font, a palette, a pen, or a device independent bitmap created
+	 *            by calling the {@link #CreateDIBSection} function.
+	 * @param cbBuffer
+	 *            The number of bytes of information to be written to the
+	 *            buffer.
+	 * @param lpvObject
+	 *            <p>A pointer to a buffer that receives the information about the
+	 *            specified graphics object.
+	 *            </p><p>
+	 *            The following table shows the type of information the buffer
+	 *            receives for each type of graphics object you can specify with
+	 *            hgdiobj.
+	 *            </p>
+	 *            <table border="1px">
+         *            <caption>Information Received</caption>
+	 *            <thead>
+	 *            <tr>
+	 *            <td><b>Object type</b></td>
+	 *            <td><b>Data written to buffer</b></td>
+	 *            </tr>
+	 *            </thead> <tbody>
+	 *            <tr>
+	 *            <td>{@link HBITMAP}</td>
+	 *            <td>{@link BITMAP}</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>
+	 *            {@link HBITMAP} returned from a call to
+	 *            {@link #CreateDIBSection}
+	 *            </td>
+	 *            <td>DIBSECTION, if cbBuffer is set to sizeof(DIBSECTION),
+	 *            or BITMAP, if cbBuffer is set to
+	 *            sizeof (BITMAP).</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HPALETTE}</td>
+	 *            <td>A {@link WORD} count of the number of entries in the
+	 *            logical palette</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>
+	 *            {@link HPEN} returned from a call to ExtCreatePen</td>
+	 *            <td><code>EXTLOGPEN</code></td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HPEN}</td>
+	 *            <td><code>LOGPEN</code></td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HBRUSH}</td>
+	 *            <td><code>LOGBRUSH</code></td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td>{@link HFONT}</td>
+	 *            <td><code>LOGFONT</code></td>
+	 *            </tr>
+	 *            </tbody>
+	 *            </table>
+	 * @return If the function succeeds, and lpvObject is a valid pointer, the
+	 *         return value is the number of bytes stored into the buffer.
+	 *         <p>
+	 *         If the function succeeds, and lpvObject is NULL, the return value
+	 *         is the number of bytes required to hold the information the
+	 *         function would store into the buffer.
+	 *         </p>
+	 *         If the function fails, the return value is zero.
+	 */
+	public int GetObject(final HANDLE hgdiobj, final int cbBuffer,
+			final Pointer lpvObject);
+	
+	/**
+	 * The BitBlt function performs a bit-block transfer of the color data
+	 * corresponding to a rectangle of pixels from the specified source device
+	 * context into a destination device context.
+	 * 
+	 * @param hdcDest
+	 *            A handle to the destination device context.
+	 * @param nXDest
+	 *            The x-coordinate, in logical units, of the upper-left corner
+	 *            of the destination rectangle.
+	 * @param nYDest
+	 *            The y-coordinate, in logical units, of the upper-left corner
+	 *            of the destination rectangle.
+	 * @param nWidth
+	 *            The width, in logical units, of the source and destination
+	 *            rectangles.
+	 * @param nHeight
+	 *            The height, in logical units, of the source and the
+	 *            destination rectangles.
+	 * @param hdcSrc
+	 *            A handle to the source device context.
+	 * @param nXSrc
+	 *            The x-coordinate, in logical units, of the upper-left corner
+	 *            of the source rectangle.
+	 * @param nYSrc
+	 *            The y-coordinate, in logical units, of the upper-left corner
+	 *            of the source rectangle.
+	 * @param dwRop
+	 *            A raster-operation code.<br>
+	 *            These codes define how the color data for the source rectangle
+	 *            is to be combined with the color data for the destination
+	 *            rectangle to achieve the final color.<br>
+	 *            The following list shows some common raster operation codes.
+	 *            <br>
+	 *            <table>
+	 *            <tbody>
+	 *            <tr>
+	 *            <th>Value</th>
+	 *            <th>Meaning</th>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>BLACKNESS</strong></td>
+	 *            <td>Fills the destination rectangle using the color associated
+	 *            with index 0 in the physical palette. (This color is black for
+	 *            the default physical palette.)</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>CAPTUREBLT</strong></td>
+	 *            <td>Includes any windows that are layered on top of your
+	 *            window in the resulting image. By default, the image only
+	 *            contains your window. Note that this generally cannot be used
+	 *            for printing device contexts.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>DSTINVERT</strong></td>
+	 *            <td>Inverts the destination rectangle.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>MERGECOPY</strong></td>
+	 *            <td>Merges the colors of the source rectangle with the brush
+	 *            currently selected in <em>hdcDest</em>, by using the Boolean
+	 *            AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>MERGEPAINT</strong></td>
+	 *            <td>Merges the colors of the inverted source rectangle with
+	 *            the colors of the destination rectangle by using the Boolean
+	 *            OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOMIRRORBITMAP</strong</td>
+	 *            <td>Prevents the bitmap from being mirrored.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOTSRCCOPY</strong></td>
+	 *            <td>Copies the inverted source rectangle to the destination.
+	 *            </td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>NOTSRCERASE</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean OR operator and then inverts
+	 *            the resultant color.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATCOPY</strong></td>
+	 *            <td>Copies the brush currently selected in <em>hdcDest</em>,
+	 *            into the destination bitmap.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATINVERT</strong></td>
+	 *            <td>Combines the colors of the brush currently selected in
+	 *            <em>hdcDest</em>, with the colors of the destination rectangle
+	 *            by using the Boolean XOR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>PATPAINT</strong></td>
+	 *            <td>Combines the colors of the brush currently selected in
+	 *            <em>hdcDest</em>, with the colors of the inverted source
+	 *            rectangle by using the Boolean OR operator. The result of this
+	 *            operation is combined with the colors of the destination
+	 *            rectangle by using the Boolean OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCAND</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCCOPY</strong></td>
+	 *            <td>Copies the source rectangle directly to the destination
+	 *            rectangle.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCERASE</strong></td>
+	 *            <td>Combines the inverted colors of the destination rectangle
+	 *            with the colors of the source rectangle by using the Boolean
+	 *            AND operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCINVERT</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean XOR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>SRCPAINT</strong></td>
+	 *            <td>Combines the colors of the source and destination
+	 *            rectangles by using the Boolean OR operator.</td>
+	 *            </tr>
+	 *            <tr>
+	 *            <td><strong>WHITENESS</strong></td>
+	 *            <td>Fills the destination rectangle using the color associated
+	 *            with index 1 in the physical palette. (This color is white for
+	 *            the default physical palette.)</td>
+	 *            </tr>
+	 *            </tbody>
+	 *            </table>
+	 * @return True if the function succeeded, False if not. To get extended
+	 *         error information, call GetLastError.
+	 */
+	boolean BitBlt(HDC hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, HDC hdcSrc, int nXSrc, int nYSrc,
+			int dwRop);
+
 }

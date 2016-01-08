@@ -43,10 +43,15 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements
         if (args.length < 2)
             this.showCmdHelp();
 
-        for (int i = 0; i < args.length; i++) {
-            String cmd = args[i];
-            if (cmd.startsWith("-")) {
-                this.put(args[i].substring(1), args[i + 1]);
+        for (int i = 0; i < args.length;) {
+            String cmdName = args[i];
+            String cmdValue = args[i+1];
+            if (cmdName.startsWith("-") && !cmdValue.startsWith("-")) {
+                this.put(cmdName.substring(1), cmdValue);
+                i+=2;
+            }else {
+                this.showCmdHelp();
+                break;
             }
         }
     }

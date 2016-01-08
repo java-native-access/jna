@@ -49,11 +49,19 @@ public class MSWord extends COMLateBindingObject {
         this.invokeNoReply("TypeText", pSelection, new VARIANT(text));
     }
 
+    public void Save(boolean bNoPrompt, LONG originalFormat) throws COMException {
+        VARIANT vtNoPrompt = new VARIANT(bNoPrompt);
+        VARIANT vtOriginalFormat = new VARIANT(originalFormat);
+
+        this.invokeNoReply("Save", this.getDocuments(),
+                vtNoPrompt, vtOriginalFormat);
+    }
+
     public void SaveAs(String FileName, LONG FileFormat) throws COMException {
         VARIANT vtFileName = new VARIANT(FileName);
         VARIANT vtFileFormat = new VARIANT(FileFormat);
 
-        this.invokeNoReply("SaveAs", this.getActiveDocument().getIDispatch(),
+        this.invokeNoReply("SaveAs", this.getActiveDocument(),
                 vtFileName, vtFileFormat);
     }
 
@@ -63,7 +71,10 @@ public class MSWord extends COMLateBindingObject {
 
     public Documents getDocuments() {
         // GetDocuments
-        return new Documents(this.getAutomationProperty("Documents"));
+        Documents pDocuments = new Documents(this.getAutomationProperty(
+                "Documents", this.getApplication().getIDispatch()));
+
+        return pDocuments;
     }
 
     public Application getApplication() {

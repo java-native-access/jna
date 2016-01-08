@@ -1,52 +1,30 @@
 ## Setting up a Windows Development Environment
 
-32-bit Windows
---------------
-
 #### Java
 
-Set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`. 
+For a 32-bit build, set `JAVA_HOME` to a 32-bit JDK, eg. `C:\Program Files (x86)\java\jdk1.6.0_24`. 
+For a 64-bit build, set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`. 
 
-#### Cygwin
+#### Native
 
-Install [cygwin](http://www.cygwin.com/) or [msys](http://mingw.org/wiki/msys).
-
-When installing cygwin, include ssh, git, make, autotools, and gcc3.
-
-When installing msys, include gcc packages. 
-
-64-bit Windows
---------------
-
-#### Java
-
-Set `JAVA_HOME` to a 64-bit JDK, eg. `C:\Program Files\java\jdk1.6.0_24`. 
-
-#### Cygwin
-
-Install [cygwin](http://www.cygwin.com/) or [msys](http://mingw.org/wiki/msys).
-
-When installing cygwin, include ssh, git, make, autotools, and mingw64. 
-
-When installing msys, include gcc packages. 
-
-#### MingW64
-
-Install Mingw64 from [here](http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Automated%20Builds/).
-Download a package starting with *mingw-w64-bin_i686-mingw*. Extract the files to `c:\MinGW`
-or the path where Cygwin is located.
+MSVC
+----
 
 #### Visual Studio
 
-You can optionally use the free MS Visual Studio C++ Express compiler to compile
-native bits. The MS compiler provides structured event handling (SEH),
-which allows JNA to trap native faults when run in protected mode.
+JNA uses the free MS Visual Studio C++ Express compiler to compile
+native bits if MSVC is set in the environment. The MS compiler provides
+structured event handling (SEH), which allows JNA to trap native faults when
+run in protected mode. 
 
-To use the MS compiler, ensure that the 64-bit versions of
-cl.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and LIB
-environment variables are set properly (as in VCVARS.BAT). 
+On 64-bit windows, you will still need to install mingw64 in order to
+compile a small bit of inline assembly.
 
-Sample configuration, setting up INCLUDE/LIB:
+To use the MS compiler, ensure that the appropriate 32-bit or 64-bit versions
+of cl.exe/ml.exe/ml64.exe/link.exe are in your PATH and that the INCLUDE and
+LIB environment variables are set properly (as in VCVARS.BAT). 
+
+Sample configuration setting up INCLUDE/LIB:
 
 ``` shell
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
@@ -59,6 +37,16 @@ export LIB="$(cygpath -m "$MSVC")/lib/amd64;$(cygpath -m "$WSDK_64")/lib/x64"
 # for 32-bit target
 export LIB="$(cygpath -m "$MSVC")/lib;$(cygpath -m "$WSDK")/lib"
 ```
+
+#### mingw
+
+Install [cygwin](http://www.cygwin.com/).
+
+When installing cygwin, include ssh, git, make, autotools, and mingw{32|64}-g++.
+Ensure the mingw compiler (i686-pc-mingw32-gcc.exe or i686-pc-mingw64-gcc.exe) is on your path.
+
+If `cl.exe` is found on your %PATH%, you'll need to invoke `ant native
+-DUSE_MSVC=false` in order to avoid using the MS compiler.
 
 ### Issues
 

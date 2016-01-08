@@ -96,6 +96,9 @@ public class DefaultTypeMapper implements TypeMapper {
     /** Add a {@link ToNativeConverter} to define the conversion into a native
      * type from arguments of the given Java type.  Converters are
      * checked for in the order added.
+     * @param cls Java class requiring conversion
+     * @param converter {@link ToNativeConverter} to transform an object of
+     * the given Java class into its native-compatible form.
      */
     public void addToNativeConverter(Class cls, ToNativeConverter converter) {
         toNativeConverters.add(new Entry(cls, converter));
@@ -106,6 +109,9 @@ public class DefaultTypeMapper implements TypeMapper {
     }
     /** Add a {@link FromNativeConverter} to convert a native result type into the 
      * given Java type.  Converters are checked for in the order added.
+     * @param cls Java class for the Java representation of a native type.
+     * @param converter {@link FromNativeConverter} to transform a
+     * native-compatible type into its Java equivalent.
      */
     public void addFromNativeConverter(Class cls, FromNativeConverter converter) {
         fromNativeConverters.add(new Entry(cls, converter));
@@ -116,8 +122,11 @@ public class DefaultTypeMapper implements TypeMapper {
     }
     /** Add a {@link TypeConverter} to provide bidirectional mapping between
      * a native and Java type.  
+     * @param cls Java class representation for a native type
+     * @param converter {@link TypeConverter} to translate between native and
+     * Java types.
      */
-    protected void addTypeConverter(Class cls, TypeConverter converter) {
+    public void addTypeConverter(Class cls, TypeConverter converter) {
         addFromNativeConverter(cls, converter);
         addToNativeConverter(cls, converter);
     }

@@ -33,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
  * Rasapi32.dll Interface.
  */
 public interface Rasapi32 extends StdCallLibrary {
-	Rasapi32 INSTANCE = (Rasapi32) Native.loadLibrary("Rasapi32", Rasapi32.class, W32APIOptions.UNICODE_OPTIONS);
+	Rasapi32 INSTANCE = Native.loadLibrary("Rasapi32", Rasapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * The RasDial function establishes a RAS connection between a RAS client and a RAS server.
@@ -62,7 +62,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            If RasDial succeeds, it stores a handle to the RAS connection into *lphRasConn.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasDial(RASDIALEXTENSIONS.ByReference lpRasDialExtensions, String lpszPhonebook, RASDIALPARAMS.ByReference lpRasDialParams, int dwNotifierType, RasDialFunc2 lpvNotifier, HANDLEByReference lphRasConn);
+	int RasDial(RASDIALEXTENSIONS.ByReference lpRasDialExtensions, String lpszPhonebook, RASDIALPARAMS.ByReference lpRasDialParams, int dwNotifierType, RasDialFunc2 lpvNotifier, HANDLEByReference lphRasConn);
 
 	/**
 	 * The RasEnumConnections function lists all active RAS connections. It returns each connection's handle and phone-book entry name.
@@ -78,7 +78,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            Pointer to a variable that receives the number of RASCONN structures written to the buffer specified by lprasconn.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasEnumConnections(RASCONN[] lprasconn, IntByReference lpcb, IntByReference lpcConnections);
+	int RasEnumConnections(RASCONN[] lprasconn, IntByReference lpcb, IntByReference lpcConnections);
 
 	/**
 	 * The RasGetConnectionStatistics function retrieves accumulated connection statistics for the specified connection.
@@ -90,7 +90,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            On input, set the dwSize member of the structure to sizeof(RASCONNSTATUS) in order to identify the version of the structure being passed.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetConnectionStatistics(HANDLE hrasconn, RAS_STATS.ByReference lpStatistics);
+	int RasGetConnectionStatistics(HANDLE hrasconn, RAS_STATS.ByReference lpStatistics);
 
 	/**
 	 * The RasGetConnectionStatistics function retrieves accumulated connection statistics for the specified connection.
@@ -103,7 +103,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            On input, set the dwSize member of the structure to sizeof(RASCONNSTATUS) in order to identify the version of the structure being passed.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetConnectStatus(HANDLE hrasconn, RASCONNSTATUS.ByReference lprasconnstatus);
+	int RasGetConnectStatus(HANDLE hrasconn, RASCONNSTATUS.ByReference lprasconnstatus);
 
 	/**
 	 * The RasGetCredentials function retrieves the user credentials associated with a specified RAS phone-book entry.
@@ -121,7 +121,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            credential information to retrieve. When the function returns, dwMask indicates the members that were successfully retrieved.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetCredentials(String lpszPhonebook, String lpszEntry, RASCREDENTIALS.ByReference lpCredentials);
+	int RasGetCredentials(String lpszPhonebook, String lpszEntry, RASCREDENTIALS.ByReference lpCredentials);
 
 	/**
 	 * The RasGetEntryProperties function retrieves the properties of a phone-book entry.
@@ -145,7 +145,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            This parameter is unused. The calling function should set this parameter to NULL.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetEntryProperties(String lpszPhonebook, String lpszEntry, RASENTRY.ByReference lpRasEntry, IntByReference lpdwEntryInfoSize, Pointer lpbDeviceInfo, Pointer lpdwDeviceInfoSize);
+	int RasGetEntryProperties(String lpszPhonebook, String lpszEntry, RASENTRY.ByReference lpRasEntry, IntByReference lpdwEntryInfoSize, Pointer lpbDeviceInfo, Pointer lpdwDeviceInfoSize);
 
 	/**
 	 * The RasGetProjectionInfo function obtains information about a remote access projection operation for a specified remote access
@@ -164,7 +164,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            On output, this variable receives the size, in bytes, of the lpprojection buffer.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetProjectionInfo(HANDLE hrasconn, int rasprojection, Pointer lpprojection, IntByReference lpcb);
+	int RasGetProjectionInfo(HANDLE hrasconn, int rasprojection, Pointer lpprojection, IntByReference lpcb);
 
 	/**
 	 * The RasHangUp function terminates a remote access connection. The connection is specified with a RAS connection handle.
@@ -174,7 +174,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            Specifies the remote access connection to terminate. This is a handle returned from a previous call to RasDial or RasEnumConnections.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasHangUp(HANDLE hrasconn);
+	int RasHangUp(HANDLE hrasconn);
 
 	/**
 	 * The RasSetEntryProperties function changes the connection information for an entry in the phone book or creates a new phone-book entry.
@@ -199,7 +199,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            Specifies the size, in bytes, of the lpbDeviceInfo buffer.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasSetEntryProperties(String lpszPhonebook, String lpszEntry, RASENTRY.ByReference lpRasEntry, int dwEntryInfoSize, byte[] lpbDeviceInfo, int dwDeviceInfoSize);
+	int RasSetEntryProperties(String lpszPhonebook, String lpszEntry, RASENTRY.ByReference lpRasEntry, int dwEntryInfoSize, byte[] lpbDeviceInfo, int dwDeviceInfoSize);
 
 	/**
 	 * The RasGetEntryDialParams function retrieves the connection information saved by the last successful call to the RasDial or
@@ -218,7 +218,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            the specified entry. If the system has no password saved for this entry, lpfPassword is FALSE.
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS.
 	 */
-	public int RasGetEntryDialParams(String lpszPhonebook, RASDIALPARAMS.ByReference lprasdialparams, BOOLByReference lpfPassword);
+	int RasGetEntryDialParams(String lpszPhonebook, RASDIALPARAMS.ByReference lprasdialparams, BOOLByReference lpfPassword);
 
 	/**
 	 * The RasGetErrorString function obtains an error message string for a specified RAS error value.
@@ -230,6 +230,7 @@ public interface Rasapi32 extends StdCallLibrary {
 	 *            Pointer to a buffer that receives the error string. This parameter must not be NULL.
 	 * @param cBufSize
 	 *            Specifies the size, in characters, of the buffer pointed to by lpszErrorString.
+         * @return status
 	 */
-	public int RasGetErrorString(int uErrorValue, char[] lpszErrorString, int cBufSize);
+	int RasGetErrorString(int uErrorValue, char[] lpszErrorString, int cBufSize);
 }

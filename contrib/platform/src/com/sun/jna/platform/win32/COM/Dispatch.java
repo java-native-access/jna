@@ -16,6 +16,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
@@ -24,6 +25,7 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -97,7 +99,7 @@ public class Dispatch extends Unknown implements IDispatch {
      *            the rg disp id
      * @return the hresult
      */
-    public HRESULT GetIDsOfNames(IID riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return (HRESULT) this._invokeNativeObject(5,
                 new Object[] { this.getPointer(), riid, rgszNames, cNames,
@@ -125,8 +127,8 @@ public class Dispatch extends Unknown implements IDispatch {
      *            the pu arg err
      * @return the hresult
      */
-    public HRESULT Invoke(DISPID dispIdMember, IID riid, LCID lcid,
-            DISPID wFlags, DISPPARAMS pDispParams,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
+            WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {
         return (HRESULT) this

@@ -28,7 +28,10 @@ import com.sun.jna.Pointer;
  * override {@link #getArgumentNativeStackSize(Class)}.
  */
 public class StdCallFunctionMapper implements FunctionMapper {
-    /** Override this to handle any custom class mappings. */
+    /** Override this to handle any custom class mappings.
+     * @param cls Java class of a parameter
+     * @return number of native bytes used for this class on the stack
+     */
     protected int getArgumentNativeStackSize(Class cls) {
         if (NativeMapped.class.isAssignableFrom(cls)) {
             cls = NativeMappedConverter.getInstance(cls).nativeType();

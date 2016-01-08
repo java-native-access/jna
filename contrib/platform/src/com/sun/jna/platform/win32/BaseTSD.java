@@ -15,18 +15,18 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
 * Based on basetsd.h (various types)
 * @author dblock[at]dblock[dot]org
 */
 @SuppressWarnings("serial")
-public interface BaseTSD extends StdCallLibrary {
+public interface BaseTSD {
+
     /**
-* Signed long type for pointer precision.
-* Use when casting a pointer to a long to perform pointer arithmetic.
-*/
+     * Signed long type for pointer precision.
+     * Use when casting a pointer to a long to perform pointer arithmetic.
+     */
     public static class LONG_PTR extends IntegerType {
         public LONG_PTR() {
             this(0);

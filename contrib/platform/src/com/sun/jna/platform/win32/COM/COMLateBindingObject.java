@@ -373,6 +373,12 @@ public class COMLateBindingObject extends COMBindingBaseObject {
                 new VARIANT[] { arg1, arg2 });
     }
 
+    protected void invokeNoReply(String methodName, COMLateBindingObject comObject,
+            VARIANT arg1, VARIANT arg2) {
+        this.oleMethod(OleAuto.DISPATCH_METHOD, null, comObject.getIDispatch(), methodName,
+                new VARIANT[] { arg1, arg2 });
+    }
+
     /**
      * Invoke no reply.
      * 

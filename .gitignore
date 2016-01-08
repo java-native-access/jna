@@ -19,3 +19,5 @@ dist/out-of-date.jar
 perf*.txt
 native/libffi/doc/libffi.info
 junit-*
+pom-jna.xml.asc
+pom-jna-platform.xml.asc

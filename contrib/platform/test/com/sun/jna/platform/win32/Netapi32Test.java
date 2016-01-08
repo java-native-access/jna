@@ -12,15 +12,16 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import java.io.File;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.LMShare.SHARE_INFO_2;
+import com.sun.jna.platform.win32.LMShare.SHARE_INFO_502;
 import com.sun.jna.platform.win32.NTSecApi.LSA_FOREST_TRUST_RECORD;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_RECORD;
@@ -28,6 +29,8 @@ import com.sun.jna.platform.win32.Netapi32Util.User;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -146,8 +149,8 @@ public class Netapi32Test extends TestCase {
     
     public void testNetUserAdd() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -159,8 +162,8 @@ public class Netapi32Test extends TestCase {
     
     public void testNetUserChangePassword() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -257,4 +260,98 @@ public class Netapi32Test extends TestCase {
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(domainTrustRefs.getPointer()));   	    	
     }
 
+    public void testNetShareAddShareInfo2() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = fileShareFolder.getName();
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = "";
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo2 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals(LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0);
+    }
+
+    public void testNetShareAddShareInfo502() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_502 shi = new SHARE_INFO_502();
+        shi.shi502_netname = fileShareFolder.getName();
+        shi.shi502_type = LMShare.STYPE_DISKTREE;
+        shi.shi502_remark = "";
+        shi.shi502_permissions = LMAccess.ACCESS_ALL;
+        shi.shi502_max_uses = -1;
+        shi.shi502_current_uses = 0;
+        shi.shi502_path = fileShareFolder.getAbsolutePath();
+        shi.shi502_passwd = null;
+        shi.shi502_reserved = 0;
+        shi.shi502_security_descriptor = null;
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                502, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo502 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals(LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi502_netname, 0);
+    }
+
+    public void testNetShareDel() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = fileShareFolder.getName();
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = "";
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err));
+
+        assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0));
+    }
+
+    private File createTempFolder() throws Exception {
+        String folderPath = System.getProperty("java.io.tmpdir") + File.separatorChar + System.nanoTime();
+        File file = new File(folderPath);
+        file.mkdir();
+        return file;
+    }
 }

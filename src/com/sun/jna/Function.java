@@ -10,16 +10,15 @@
  */
 package com.sun.jna;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
 /**
- * An abstraction for a native function pointer.  An instance of 
+ * <p>An abstraction for a native function pointer.  An instance of 
  * <code>Function</code> represents a pointer to some native function.  
  * {@link #invoke(Class,Object[],Map)} is the primary means to call
- * the function. <p/>
+ * the function. </p>
  * <a name=callflags></a>
  * Function call behavior may be modified by passing one of the following call
  * flags: 
@@ -55,11 +54,11 @@ public class Function extends Pointer {
     /** Standard C calling convention. */
     public static final int C_CONVENTION = 0;
     /** First alternate convention (currently used only for w32 stdcall). */
-    public static final int ALT_CONVENTION = 1;
+    public static final int ALT_CONVENTION = 0x3F;
 
-    private static final int MASK_CC = 0x3;
+    private static final int MASK_CC = 0x3F;
     /** Whether to throw an exception if last error is non-zero after call. */
-    public static final int THROW_LAST_ERROR = (1<<2);
+    public static final int THROW_LAST_ERROR = 0x40;
 
     static final Integer INTEGER_TRUE = new Integer(-1);
     static final Integer INTEGER_FALSE = new Integer(0);
@@ -76,7 +75,7 @@ public class Function extends Pointer {
      *                  Library in which to find the native function
      * @param   functionName
      *                  Name of the native function to be linked with
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName) {
@@ -97,7 +96,7 @@ public class Function extends Pointer {
      * @param   callFlags
      *                  Function <a href="#callflags">call flags</a>
      *                  
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callFlags) {
@@ -121,7 +120,7 @@ public class Function extends Pointer {
      *                  Encoding to use for conversion between Java and native
      *                  strings.
      *                  
-     * @throws {@link UnsatisfiedLinkError} if the library is not found or
+     * @throws UnsatisfiedLinkError if the library is not found or
      * the given function name is not found within the library.
      */
     public static Function getFunction(String libraryName, String functionName, int callFlags, String encoding) {
@@ -172,6 +171,9 @@ public class Function extends Pointer {
     /** For internal JNA use. */
     static final String OPTION_INVOKING_METHOD = "invoking-method";
 
+    /** For checking if methods declare varargs */
+    private static final VarArgsChecker IS_VARARGS = VarArgsChecker.create();
+
     /**
      * Create a new <code>Function</code> that is linked with a native 
      * function that follows the given calling convention.
@@ -188,7 +190,7 @@ public class Function extends Pointer {
      *                 Function <a href="#callflags">call flags</a>
      * @param  encoding
      *                 Encoding for conversion between Java and native strings.
-     * @throws {@link UnsatisfiedLinkError} if the given function name is
+     * @throws UnsatisfiedLinkError if the given function name is
      * not found within the library.
      */
     Function(NativeLibrary library, String functionName, int callFlags, String encoding) {
@@ -242,11 +244,8 @@ public class Function extends Pointer {
     
     private void checkCallingConvention(int convention)
         throws IllegalArgumentException {
-        switch(convention) {
-        case C_CONVENTION:
-        case ALT_CONVENTION:
-            break;
-        default:
+        // TODO: perform per-platform calling convention checks
+        if ((convention & MASK_CC) != convention) {
             throw new IllegalArgumentException("Unrecognized calling convention: " 
                                                + convention);
         }
@@ -255,7 +254,6 @@ public class Function extends Pointer {
     public String getName() {
         return functionName;
     }
-
 
     public int getCallingConvention() {
         return callFlags & MASK_CC;
@@ -272,6 +270,17 @@ public class Function extends Pointer {
      * native result as an Object.
      */
     public Object invoke(Class returnType, Object[] inArgs, Map options) {
+        Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
+        Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
+        return invoke(invokingMethod, paramTypes, returnType, inArgs, options);
+    }
+
+    /** Invoke the native function with the given arguments, returning the
+     * native result as an Object. This method can be called if invoking method and parameter
+     * types are already at hand. When calling {@link Function#invoke(Class, Object[], Map)},
+     * the method has to be in the options under key {@link Function#OPTION_INVOKING_METHOD}.
+     */
+    Object invoke(Method invokingMethod, Class[] paramTypes, Class returnType, Object[] inArgs, Map options) {
         // Clone the argument array to obtain a scratch space for modified
         // types/values
         Object[] args = { };
@@ -285,12 +294,11 @@ public class Function extends Pointer {
 
         TypeMapper mapper = 
             (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
-        Method invokingMethod = (Method)options.get(OPTION_INVOKING_METHOD);
-        Class[] paramTypes = invokingMethod != null ? invokingMethod.getParameterTypes() : null;
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
+        boolean isVarArgs = args.length > 0 && invokingMethod != null ? isVarArgs(invokingMethod) : false;
         for (int i=0; i < args.length; i++) {
             Class paramType = invokingMethod != null
-                ? (isVarArgs(invokingMethod) && i >= paramTypes.length-1
+                ? (isVarArgs && i >= paramTypes.length-1
                    ? paramTypes[paramTypes.length-1].getComponentType()
                    : paramTypes[i])
                 : null;
@@ -298,26 +306,25 @@ public class Function extends Pointer {
                                       mapper, allowObjects, paramType);
         }
         
-        Class nativeType = returnType;
+        Class nativeReturnType = returnType;
         FromNativeConverter resultConverter = null;
         if (NativeMapped.class.isAssignableFrom(returnType)) {
             NativeMappedConverter tc = NativeMappedConverter.getInstance(returnType);
             resultConverter = tc;
-            nativeType = tc.nativeType();
+            nativeReturnType = tc.nativeType();
         }
         else if (mapper != null) {
             resultConverter = mapper.getFromNativeConverter(returnType);
             if (resultConverter != null) {
-                nativeType = resultConverter.nativeType();
+                nativeReturnType = resultConverter.nativeType();
             }
         }
 
-        Object result = invoke(args, nativeType, allowObjects);
+        Object result = invoke(args, nativeReturnType, allowObjects);
 
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
             FromNativeContext context;
-            
             if (invokingMethod != null) {
                 context = new MethodResultContext(returnType, this, inArgs, invokingMethod);
             } else {
@@ -508,7 +515,7 @@ public class Function extends Pointer {
                 Class ptype = struct.getClass();
             	if (invokingMethod != null) {
                     Class[] ptypes = invokingMethod.getParameterTypes();
-                    if (isVarArgs(invokingMethod)) {
+                    if (IS_VARARGS.isVarArgs(invokingMethod)) {
                         if (index < ptypes.length-1) {
                             ptype = ptypes[index];
                         }
@@ -775,24 +782,10 @@ public class Function extends Pointer {
         }
         return inArgs;
     }
-
+    
     /** Varargs are only supported on 1.5+. */
     static boolean isVarArgs(Method m) {
-        try {
-            Method v = m.getClass().getMethod("isVarArgs", new Class[0]);
-            return Boolean.TRUE.equals(v.invoke(m, new Object[0]));
-        }
-        catch (SecurityException e) {
-        }
-        catch (NoSuchMethodException e) {
-        }
-        catch (IllegalArgumentException e) {
-        }
-        catch (IllegalAccessException e) {
-        }
-        catch (InvocationTargetException e) {
-        }
-        return false;
+        return IS_VARARGS.isVarArgs(m);
     }
     
     private static class NativeMappedArray extends Memory implements PostCallRead {

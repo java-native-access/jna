@@ -25,6 +25,8 @@ public class CoreDLLTest extends TestCase {
     }
 
     public interface CoreDLL extends StdCallLibrary {
+        CoreDLL INSTANCE = Native.loadLibrary("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
+
         public static class SECURITY_ATTRIBUTES extends Structure {
             public int dwLength;
             public Pointer lpSecurityDescriptor;
@@ -88,8 +90,7 @@ public class CoreDLLTest extends TestCase {
                 return Arrays.asList(new String[] { "hProcess", "hThread", "dwProcessId", "dwThreadId" });
             }
         }
-        CoreDLL INSTANCE = (CoreDLL)Native.loadLibrary("coredll", CoreDLL.class,
-                                                       W32APIOptions.UNICODE_OPTIONS);
+
         boolean CreateProcess(String lpApplicationName, String lpCommandLine,
                               SECURITY_ATTRIBUTES lpProcessAttributes,
                               SECURITY_ATTRIBUTES lpThreadAttributes,

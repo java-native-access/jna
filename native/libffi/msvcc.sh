@@ -42,8 +42,10 @@
 # format and translated into something sensible for cl or ml.
 #
 
+args_orig=$@
 args="-nologo -W3"
-md=-MD
+static_crt=
+debug_crt=
 cl="cl"
 ml="ml"
 safeseh="-safeseh"
@@ -62,8 +64,12 @@ do
       shift 1
     ;;
     -m64)
-      cl="cl"   # "$MSVC/x86_amd64/cl"
       ml="ml64" # "$MSVC/x86_amd64/ml64"
+      safeseh=
+      shift 1
+    ;;
+    -clang-cl)
+      cl="clang-cl"
       safeseh=
       shift 1
     ;;
@@ -72,21 +78,51 @@ do
       shift 1
     ;;
     -O*)
-      # If we're optimizing, make sure we explicitly turn on some optimizations
-      # that are implicitly disabled by debug symbols (-Zi).
-      args="$args $1 -OPT:REF -OPT:ICF -INCREMENTAL:NO"
+      # Runtime error checks (enabled by setting -RTC1 in the -DFFI_DEBUG
+      # case below) are not compatible with optimization flags and will
+      # cause the build to fail. Therefore, drop the optimization flag if
+      # -DFFI_DEBUG is also set.
+      case $args_orig in
+        *-DFFI_DEBUG*)
+          args="$args"
+        ;;
+        *)
+          # The ax_cc_maxopt.m4 macro from the upstream autoconf-archive
+          # project doesn't support MSVC and therefore ends up trying to
+          # use -O3. Use the equivalent "max optimization" flag for MSVC
+          # instead of erroring out.
+          case $1 in
+            -O3)
+              args="$args -O2"
+            ;;
+            *)
+              args="$args $1"
+            ;;
+          esac
+          opt="true"
+        ;;
+      esac
       shift 1
     ;;
     -g)
       # Enable debug symbol generation.
-      args="$args -Zi -DEBUG"
+      args="$args -Zi"
       shift 1
     ;;
     -DFFI_DEBUG)
-      # Link against debug CRT and enable runtime error checks.
+      # Enable runtime error checks.
       args="$args -RTC1"
       defines="$defines $1"
-      md=-MDd
+      shift 1
+    ;;
+    -DUSE_STATIC_RTL)
+      # Link against static CRT.
+      static_crt=1
+      shift 1
+    ;;
+    -DUSE_DEBUG_RTL)
+      # Link against debug CRT.
+      debug_crt=1
       shift 1
     ;;
     -c)
@@ -108,13 +144,13 @@ do
       shift 1
     ;;
     -I)
-      args="$args -I$2"
-      includes="$includes -I$2"
+      args="$args -I\"$2\""
+      includes="$includes -I\"$2\""
       shift 2
     ;;
     -I*)
-      args="$args $1"
-      includes="$includes $1"
+      args="$args -I\"$(echo $1|sed 's/^-I//g')\""
+      includes="$includes -I\"$(echo $1|sed 's/^-I//g')\""
       shift 1
     ;;
     -W|-Wextra)
@@ -126,6 +162,10 @@ do
       # to do here.
       shift 1
     ;;
+    -pedantic)
+      # libffi tests -pedantic with -Wall, so drop it also.
+      shift 1
+    ;;
     -Werror)
       args="$args -WX"
       shift 1
@@ -134,12 +174,16 @@ do
       # TODO map specific warnings
       shift 1
     ;;
+    -warn)
+      # Ignore "-warn all"
+      shift 2
+    ;;
     -S)
       args="$args -FAs"
       shift 1
     ;;
     -o)
-      outdir="$(dirname $2)"
+      outdir="$(cygpath -m $(dirname $2))"
       base="$(basename $2|sed 's/\.[^.]*//g')"
       if [ -n "$single" ]; then 
         output="-Fo$2"
@@ -154,12 +198,12 @@ do
       shift 2
     ;;
     *.S)
-      src=$1
+      src="$(cygpath -m $1)"
       assembly="true"
       shift 1
     ;;
     *.c)
-      args="$args $1"
+      args="$args $(cygpath -m $1)"
       shift 1
     ;;
     *)
@@ -169,6 +213,23 @@ do
     ;;
   esac
 done
+
+# If -Zi is specified, certain optimizations are implicitly disabled
+# by MSVC. Add back those optimizations if this is an optimized build.
+# NOTE: These arguments must come after all others.
+if [ -n "$opt" ]; then
+    args="$args -link -OPT:REF -OPT:ICF -INCREMENTAL:NO"
+fi
+
+if [ -n "$static_crt" ]; then
+    md=-MT
+else
+    md=-MD
+fi
+
+if [ -n "$debug_crt" ]; then
+    md="${md}d"
+fi
 
 if [ -n "$assembly" ]; then
     if [ -z "$outdir" ]; then
@@ -189,7 +250,10 @@ if [ -n "$assembly" ]; then
 else
     args="$md $args"
     echo "$cl $args"
-    eval "\"$cl\" $args"
+    # Return an error code of 1 if an invalid command line parameter is passed
+    # instead of just ignoring it.
+    eval "(\"$cl\" $args 2>&1 1>&3 | \
+          awk '{print \$0} /D9002/ {error=1} END{exit error}' >&2) 3>&1"
     result=$?
 fi
 

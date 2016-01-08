@@ -18,15 +18,13 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Sspi.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface Sspi extends StdCallLibrary {
+public interface Sspi {
 
     /**
      * Maximum size in bytes of a security token.
@@ -334,8 +332,8 @@ public interface Sspi extends StdCallLibrary {
 	    
         /**
          * Create a new SecBufferDesc with one SecBuffer of a given type and size.
-         * @param type
-         * @param tokenSize
+         * @param type type
+         * @param tokenSize token size
          */
         public SecBufferDesc(int type, int tokenSize) {
             pBuffers[0] = new SecBuffer.ByReference(type, tokenSize);
@@ -431,12 +429,12 @@ public interface Sspi extends StdCallLibrary {
         /**
          * Pointer to a null-terminated string that contains the name of the security package.
          */
-        public WString Name;
+        public String Name;
         /**
          * Pointer to a null-terminated string. This can be any additional string passed 
          * back by the package. 
          */
-        public WString Comment;
+        public String Comment;
 		
         protected List getFieldOrder() {
             return Arrays.asList(new String[] { "fCapabilities", "wVersion", "wRPCID", "cbMaxToken", "Name", "Comment" }); 

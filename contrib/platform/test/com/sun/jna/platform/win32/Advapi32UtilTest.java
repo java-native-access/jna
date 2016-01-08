@@ -13,22 +13,25 @@
 package com.sun.jna.platform.win32;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Map;
 import java.util.TreeMap;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
 import com.sun.jna.platform.win32.WinNT.WELL_KNOWN_SID_TYPE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+
+import static com.sun.jna.platform.win32.WinBase.*;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -123,8 +126,8 @@ public class Advapi32UtilTest extends TestCase {
 	
     public void testGetUserGroups() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
@@ -157,8 +160,8 @@ public class Advapi32UtilTest extends TestCase {
 	
     public void testGetUserAccount() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
@@ -482,5 +485,106 @@ public class Advapi32UtilTest extends TestCase {
 
         String block = Advapi32Util.getEnvironmentBlock(mockEnvironment);
         assertEquals("Environment block must comprise key=value pairs separated by NUL characters", expected, block);
+    }
+	
+    public void testGetFileSecurityDescriptor() throws Exception {
+        File file = createTempFile();        
+        SECURITY_DESCRIPTOR_RELATIVE sdr = Advapi32Util.getFileSecurityDescriptor(file, false);
+        assertTrue(Advapi32.INSTANCE.IsValidSecurityDescriptor(sdr.getPointer()));
+        file.delete();
+    }
+    
+    public void testSetFileSecurityDescriptor() throws Exception {
+        File file = createTempFile();        
+        SECURITY_DESCRIPTOR_RELATIVE sdr = Advapi32Util.getFileSecurityDescriptor(file, false);        
+        Advapi32Util.setFileSecurityDescriptor(file, sdr, false, true, true, false, true, false);
+        sdr = Advapi32Util.getFileSecurityDescriptor(file, false);
+        assertTrue(Advapi32.INSTANCE.IsValidSecurityDescriptor(sdr.getPointer()));        
+        file.delete();
+    }
+    
+    public void testEncryptFile() throws Exception {
+        File file = createTempFile();
+        assertEquals(FILE_ENCRYPTABLE, Advapi32Util.fileEncryptionStatus(file));
+        Advapi32Util.encryptFile(file);
+        assertEquals(FILE_IS_ENCRYPTED, Advapi32Util.fileEncryptionStatus(file));
+        file.delete();
+    }
+
+    public void testDecryptFile() throws Exception {
+        File file = createTempFile();
+        Advapi32Util.encryptFile(file);
+        assertEquals(FILE_IS_ENCRYPTED, Advapi32Util.fileEncryptionStatus(file));
+        Advapi32Util.decryptFile(file);
+        assertEquals(FILE_ENCRYPTABLE, Advapi32Util.fileEncryptionStatus(file));
+        file.delete();
+    }
+
+    public void testDisableEncryption() throws Exception {
+        File dir = new File(System.getProperty("java.io.tmpdir") + File.separator 
+                + System.nanoTime());
+        dir.mkdir();
+        assertEquals(FILE_ENCRYPTABLE, Advapi32Util.fileEncryptionStatus(dir));
+        Advapi32Util.disableEncryption(dir, true);
+        assertEquals(FILE_DIR_DISALOWED, Advapi32Util.fileEncryptionStatus(dir));
+        Advapi32Util.disableEncryption(dir, false);
+        assertEquals(FILE_ENCRYPTABLE, Advapi32Util.fileEncryptionStatus(dir));
+        for (File file : dir.listFiles()) {
+            file.delete();
+        }
+        dir.delete();
+    }
+    
+    public void testBackupEncryptedFile() throws Exception {
+        // backup an encrypted file
+        File srcFile = createTempFile();
+        Advapi32Util.encryptFile(srcFile);
+        File dest = new File(System.getProperty("java.io.tmpdir") + File.separator 
+                + "backup" + System.nanoTime());
+        dest.mkdir();
+
+        Advapi32Util.backupEncryptedFile(srcFile, dest);
+
+        // simple check to see if a backup file exist
+        File backupFile = new File(dest.getAbsolutePath() + File.separator + 
+                srcFile.getName());
+        assertTrue(backupFile.exists());
+        assertEquals(srcFile.length(), backupFile.length());
+
+        // backup an encrypted directory
+        File srcDir = new File(System.getProperty("java.io.tmpdir") + File.separator 
+                + System.nanoTime());
+        srcDir.mkdir();
+        Advapi32Util.encryptFile(srcDir);
+        
+        Advapi32Util.backupEncryptedFile(srcDir, dest);
+
+        // Check to see if a backup directory exist
+        File backupDir = new File(dest.getAbsolutePath() + File.separator + srcDir.getName());
+        assertTrue(backupDir.exists());
+
+        // clean up
+        srcFile.delete();
+        for (File file : srcDir.listFiles()) {
+            file.delete();
+        }
+        srcDir.delete();
+        for (File file : dest.listFiles()) {
+            file.delete();
+        }
+        dest.delete();
+    }
+
+    private File createTempFile() throws Exception{
+        String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime() 
+                + ".text";
+        File file = new File(filePath);
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        for (int i = 0; i < 1000; i++) {
+            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+        }
+        fileWriter.close();
+        return file;
     }
 }

@@ -17,7 +17,7 @@ import java.lang.reflect.Method;
  * into a call to <code>_xstat</code> with a slight rearrangement of arguments.
  * A mapper for the GNU C library might look like the following:<br>
  * <blockquote>
- * <code><pre>
+ * <pre><code>
  * new InvocationMapper() {
  *     public InvocationHandler getInvocationHandler(NativeLibrary lib, Method m) {
  *         if (m.getName().equals("stat")) {
@@ -34,12 +34,12 @@ import java.lang.reflect.Method;
  *         return null;
  *     } 
  * } 
- * </pre></code>
+ * </code></pre>
  * </blockquote>
  * Another situation is where a header provides a function-like macro or
  * inline function definition.  
  * <blockquote>
- * <code><pre>
+ * <pre><code>
  * // Original C code (macro and inline variations)
  * #define allocblock(x) malloc(x * 1024)
  * static inline void* allocblock(size_t x) { return malloc(x * 1024); }
@@ -59,7 +59,7 @@ import java.lang.reflect.Method;
  *         return null;
  *     } 
  * } 
- * </pre></code>
+ * </code></pre>
  * </blockquote>
  * @author twall
  */

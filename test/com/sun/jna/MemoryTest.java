@@ -18,7 +18,8 @@ import java.nio.ByteBuffer;
 
 import junit.framework.TestCase;
 
-public class MemoryTest extends TestCase {
+public class MemoryTest extends TestCase implements GCWaits {
+
     public void testAutoFreeMemory() throws Exception {
         final boolean[] flag = { false };
         Memory core = new Memory(10) {
@@ -40,10 +41,11 @@ public class MemoryTest extends TestCase {
 
         shared = null;
         System.gc();
-        while (ref.get() != null) {
-            if (System.currentTimeMillis() - start > 5000)
-                break;
-            Thread.sleep(10);
+        Memory.purge();
+        for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
+            System.gc();
+            Memory.purge();
         }
         assertNull("Memory not GC'd", ref.get());
     }
@@ -131,8 +133,8 @@ public class MemoryTest extends TestCase {
         m = null;
         System.gc();
         Memory.purge();
-        for (int i=0;i < 100 && ref.get() != null;i++) {
-            Thread.sleep(10);
+        for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
             Memory.purge();
         }
@@ -144,8 +146,8 @@ public class MemoryTest extends TestCase {
         b = null;
         System.gc();
         Memory.purge();
-        for (int i=0;i < 100 && (bref.get() != null || ref.get() != null);i++) {
-            Thread.sleep(10);
+        for (int i=0;i < GC_WAITS && (bref.get() != null || ref.get() != null);i++) {
+            Thread.sleep(GC_WAIT_INTERVAL);
             System.gc();
             Memory.purge();
         }

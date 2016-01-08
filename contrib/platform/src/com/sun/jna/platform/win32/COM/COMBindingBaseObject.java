@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -26,6 +27,7 @@ import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -35,7 +37,7 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class COMBindingBaseObject extends COMInvoker {
@@ -72,7 +74,7 @@ public class COMBindingBaseObject extends COMInvoker {
     public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
 
         if (COMUtils.FAILED(hr)) {
             Ole32.INSTANCE.CoUninitialize();
@@ -84,7 +86,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID( IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -106,7 +108,7 @@ public class COMBindingBaseObject extends COMInvoker {
     public COMBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
 
         if (COMUtils.FAILED(hr)) {
             this.release();
@@ -127,7 +129,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(IDispatch.IID_IDISPATCH,
+                hr = iUnknown.QueryInterface(new REFIID(IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -154,7 +156,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i dispatch.
-     * 
+     *
      * @return the i dispatch
      */
     public IDispatch getIDispatch() {
@@ -163,7 +165,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i dispatch pointer.
-     * 
+     *
      * @return the i dispatch pointer
      */
     public PointerByReference getIDispatchPointer() {
@@ -172,7 +174,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i unknown.
-     * 
+     *
      * @return the i unknown
      */
     public IUnknown getIUnknown() {
@@ -181,7 +183,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Gets the i unknown pointer.
-     * 
+     *
      * @return the i unknown pointer
      */
     public PointerByReference getIUnknownPointer() {
@@ -209,7 +211,7 @@ public class COMBindingBaseObject extends COMInvoker {
         DISPIDByReference pdispID = new DISPIDByReference();
 
         // Get DISPID for name passed...
-        HRESULT hr = pDisp.GetIDsOfNames(Guid.IID_NULL, ptName, 1,
+        HRESULT hr = pDisp.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
         COMUtils.checkRC(hr);
@@ -228,7 +230,7 @@ public class COMBindingBaseObject extends COMInvoker {
         // variable declaration
         int _argsLen = 0;
         VARIANT[] _args = null;
-        DISPPARAMS dp = new DISPPARAMS();
+        DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
         IntByReference puArgErr = new IntByReference();
 
@@ -261,8 +263,8 @@ public class COMBindingBaseObject extends COMInvoker {
         }
 
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, Guid.IID_NULL, LOCALE_SYSTEM_DEFAULT,
-                new DISPID(nType), dp, pvResult, pExcepInfo, puArgErr);
+        HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;
@@ -270,7 +272,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Ole method.
-     * 
+     *
      * @param nType
      *            the n type
      * @param pvResult
@@ -301,7 +303,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Ole method.
-     * 
+     *
      * @param nType
      *            the n type
      * @param pvResult
@@ -328,7 +330,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
     /**
      * Check failed.
-     * 
+     *
      * @param hr
      *            the hr
      */

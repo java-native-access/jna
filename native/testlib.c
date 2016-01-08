@@ -158,6 +158,14 @@ returnInt32Argument(int32_t arg) {
   return arg;
 }
 
+EXPORT int*
+returnPoint(int x, int y) {
+  int *p = malloc(2 * sizeof(int));
+  p[0] = x;
+  p[1] = y;
+  return p;
+}
+
 EXPORT int64_t  
 returnInt64Zero() {
   int64_t value = 0;
@@ -551,7 +559,6 @@ getStructureSize(unsigned index) {
   return STRUCT_SIZES[index];
 }
 
-extern void exit(int);
 #define FIELD(T,X,N) (((T*)X)->field ## N)
 #define OFFSET(T,X,N) (int)(((char*)&FIELD(T,X,N))-((char*)&FIELD(T,X,0)))
 #define V8(N) (N+1)
@@ -748,8 +755,8 @@ callCallbackWithByReferenceArgument(int (*func)(int arg, int* result), int arg, 
 }
 
 EXPORT char*
-callStringCallback(char* (*func)(char* arg), char* arg) {
-  return (*func)(arg);
+callStringCallback(char* (*func)(const char* arg, const char* arg2), const char* arg, const char* arg2) {
+  return (*func)(arg, arg2);
 }
 
 EXPORT char**
@@ -758,8 +765,8 @@ callStringArrayCallback(char** (*func)(char** arg), char** arg) {
 }
 
 EXPORT wchar_t*
-callWideStringCallback(wchar_t* (*func)(wchar_t* arg), wchar_t* arg) {
-  return (*func)(arg);
+callWideStringCallback(wchar_t* (*func)(const wchar_t* arg, const wchar_t* arg2), const wchar_t* arg, const wchar_t* arg2) {
+  return (*func)(arg, arg2);
 }
 
 struct cbstruct {
@@ -942,15 +949,15 @@ callInt32StdCallCallback(int32_t (__stdcall *func)(int32_t arg, int32_t arg2),
 }
 
 EXPORT int32_t __stdcall
-callBugCallback(void (__stdcall *func)(long,int,double,
-                                       const char*,const char*,
-                                       double,long,
-                                       double,long,long,long),
-                long arg1, int arg2, double arg3,
-                const char* arg4, const char* arg5,
-                double arg6, long arg7,
-                double arg8, long arg9,
-                long arg10, long arg11) {
+callManyArgsStdCallCallback(void (__stdcall *func)(long,int,double,
+                                                   const char*,const char*,
+                                                   double,long,
+                                                   double,long,long,long),
+                            long arg1, int arg2, double arg3,
+                            const char* arg4, const char* arg5,
+                            double arg6, long arg7,
+                            double arg8, long arg9,
+                            long arg10, long arg11) {
   void* sp1 = NULL;
   void* sp2 = NULL;
   int value = -1;
@@ -975,9 +982,21 @@ callBugCallback(void (__stdcall *func)(long,int,double,
 
 #include <jni.h>
 #include <math.h>
+#include <sys/types.h>
+#include "dispatch.h"
 JNIEXPORT jdouble JNICALL
-Java_com_sun_jna_PerformanceTest_00024JNI_cos(JNIEnv *env, jclass cls, jdouble x) {
+Java_com_sun_jna_PerformanceTest_00024JNILibrary_cos(JNIEnv *UNUSED(env), jclass UNUSED(cls), jdouble x) {
   return cos(x);
+}
+
+JNIEXPORT jint JNICALL
+Java_com_sun_jna_PerformanceTest_00024JNILibrary_getpid(JNIEnv *UNUSED(env), jclass UNUSED(cls)) {
+#ifdef _WIN32
+  extern int _getpid();
+  return _getpid();
+#else
+  return getpid();
+#endif
 }
 
 #ifdef __cplusplus

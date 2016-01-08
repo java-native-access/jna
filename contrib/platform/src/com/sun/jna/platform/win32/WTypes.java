@@ -135,7 +135,7 @@ public interface WTypes {
         }
 
         public LPSTR(String value) {
-            this();
+            this(new Memory((value.length() + 1L) * Native.WCHAR_SIZE));
             this.setValue(value);
         }
 
@@ -172,7 +172,7 @@ public interface WTypes {
         }
 
         public LPWSTR(String value) {
-            this();
+            this(new Memory((value.length() + 1L) * Native.WCHAR_SIZE));
             this.setValue(value);
         }
 

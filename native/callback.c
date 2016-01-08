@@ -84,26 +84,28 @@ typedef struct _tls {
   // Contents set to JNI_TRUE if thread has terminated and detached properly
   int* termination_flag;
   jboolean jvm_thread;
-  jboolean detach;
+  jboolean needs_detach;
   char name[256];
 } thread_storage;
 
-static void callback_dispatch(ffi_cif*, void*, void**, void*);
+static void dispatch_callback(ffi_cif*, void*, void**, void*);
 static jclass classObject;
 
 extern void println(JNIEnv*, const char*);
 
 callback*
 create_callback(JNIEnv* env, jobject obj, jobject method,
-                jobjectArray param_types, jclass return_type,
-                callconv_t calling_convention, jint options,
+                jobjectArray arg_classes, jclass return_class,
+                callconv_t calling_convention, 
+                jint options,
                 jstring encoding) {
   jboolean direct = options & CB_OPTION_DIRECT;
   jboolean in_dll = options & CB_OPTION_IN_DLL;
   callback* cb;
-  ffi_abi abi = FFI_DEFAULT_ABI;
+  ffi_abi abi = (calling_convention == CALLCONV_C
+		 ? FFI_DEFAULT_ABI : (ffi_abi)calling_convention);
   ffi_abi java_abi = FFI_DEFAULT_ABI;
-  ffi_type* ffi_rtype;
+  ffi_type* return_type;
   ffi_status status;
   jsize argc;
   JavaVM* vm;
@@ -115,10 +117,10 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
   const char* throw_msg = NULL;
 
   if ((*env)->GetJavaVM(env, &vm) != JNI_OK) {
-    throwByName(env, EUnsatisfiedLink, "Can't get Java VM to create native callback");
+    throwByName(env, EUnsatisfiedLink, "Couldn't obtain Java VM reference when creating native callback");
     return NULL;
   }
-  argc = (*env)->GetArrayLength(env, param_types);
+  argc = (*env)->GetArrayLength(env, arg_classes);
 
   cb = (callback *)malloc(sizeof(callback));
   cb->closure = ffi_closure_alloc(sizeof(ffi_closure), &cb->x_closure);
@@ -140,7 +142,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
 
   for (i=0;i < argc;i++) {
     int jtype;
-    jclass cls = (*env)->GetObjectArrayElement(env, param_types, i);
+    jclass cls = (*env)->GetObjectArrayElement(env, arg_classes, i);
     if ((cb->conversion_flags[i] = get_conversion_flag(env, cls)) != CVT_DEFAULT) {
       cb->arg_classes[i] = (*env)->NewWeakGlobalRef(env, cls);
       cvt = 1;
@@ -149,7 +151,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
       cb->arg_classes[i] = NULL;
     }
 
-    jtype = get_jtype(env, cls);
+    jtype = get_java_type(env, cls);
     if (jtype == -1) {
       snprintf(msg, sizeof(msg), "Unsupported callback argument at index %d", i);
       throw_type = EIllegalArgument;
@@ -166,7 +168,7 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
         || cb->conversion_flags[i] == CVT_INTEGER_TYPE) {
       jclass ncls;
       ncls = getNativeType(env, cls);
-      jtype = get_jtype(env, ncls);
+      jtype = get_java_type(env, ncls);
       if (jtype == -1) {
         snprintf(msg, sizeof(msg), "Unsupported NativeMapped callback argument native type at argument %d", i);
         throw_type = EIllegalArgument;
@@ -200,44 +202,56 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     cb->arg_classes = NULL;
   }
   if (direct) {
-    cb->rflag = get_conversion_flag(env, return_type);
+    cb->rflag = get_conversion_flag(env, return_class);
     if (cb->rflag == CVT_NATIVE_MAPPED
         || cb->rflag == CVT_INTEGER_TYPE
         || cb->rflag == CVT_POINTER_TYPE) {
-      return_type = getNativeType(env, return_type);
+      return_class = getNativeType(env, return_class);
     }
   }
 
-#if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
+#if defined(_WIN32)
   if (calling_convention == CALLCONV_STDCALL) {
+#if defined(_WIN64) || defined(_WIN32_WCE)
+    // Ignore requests for stdcall on win64/wince
+    abi = FFI_DEFAULT_ABI;
+#else
     abi = FFI_STDCALL;
+    // All JNI entry points on win32 use stdcall
+    java_abi = FFI_STDCALL;
+#endif
   }
-  // Calling into Java on win32 *always* uses stdcall
-  java_abi = FFI_STDCALL;
 #endif // _WIN32
 
-  rtype = get_jtype(env, return_type);
+  if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
+    snprintf(msg, sizeof(msg), "Invalid calling convention %d", abi);
+    throw_type = EIllegalArgument;
+    throw_msg = msg;
+    goto failure_cleanup;
+  }
+
+  rtype = get_java_type(env, return_class);
   if (rtype == -1) {
     throw_type = EIllegalArgument;
     throw_msg = "Unsupported callback return type";
     goto failure_cleanup;
   }
-  ffi_rtype = get_ffi_rtype(env, return_type, (char)rtype);
-  if (!ffi_rtype) {
+  return_type = get_ffi_return_type(env, return_class, (char)rtype);
+  if (!return_type) {
     throw_type = EIllegalArgument;
     throw_msg = "Error in callback return type";
     goto failure_cleanup;
   }
-  status = ffi_prep_cif(&cb->cif, abi, argc, ffi_rtype, cb->arg_types);
+  status = ffi_prep_cif(&cb->cif, abi, argc, return_type, cb->arg_types);
   if (!ffi_error(env, "callback setup", status)) {
-    ffi_type* java_ffi_rtype = ffi_rtype;
+    ffi_type* java_return_type = return_type;
 
     if (cb->rflag == CVT_STRUCTURE_BYVAL
         || cb->rflag == CVT_NATIVE_MAPPED
         || cb->rflag == CVT_POINTER_TYPE
         || cb->rflag == CVT_INTEGER_TYPE) {
       // Java method returns a jobject, not a struct
-      java_ffi_rtype = &ffi_type_pointer;
+      java_return_type = &ffi_type_pointer;
       rtype = '*';
     }
     switch(rtype) {
@@ -253,9 +267,9 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     case 'D': cb->fptr_offset = OFFSETOF(env, CallDoubleMethod); break;
     default: cb->fptr_offset = OFFSETOF(env, CallObjectMethod); break;
     }
-    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_ffi_rtype, cb->java_arg_types);
+    status = ffi_prep_cif_var(&cb->java_cif, java_abi, 2, argc+3, java_return_type, cb->java_arg_types);
     if (!ffi_error(env, "callback setup (2)", status)) {
-      ffi_prep_closure_loc(cb->closure, &cb->cif, callback_dispatch, cb,
+      ffi_prep_closure_loc(cb->closure, &cb->cif, dispatch_callback, cb,
                            cb->x_closure);
 #ifdef DLL_FPTRS
       // Find an available function pointer and assign it
@@ -348,7 +362,7 @@ handle_exception(JNIEnv* env, jobject cb, jthrowable throwable) {
 }
 
 static void
-callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbargs) {
+invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbargs) {
   jobject self;
   void *oldresp = resp;
 
@@ -368,15 +382,18 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     args[2] = &cb->methodID;
     memcpy(&args[3], cbargs, cif->nargs * sizeof(void *));
 
+    // Note that there is no support for CVT_TYPE_MAPPER here
     if (cb->conversion_flags) {
       for (i=0;i < cif->nargs;i++) {
         switch(cb->conversion_flags[i]) {
         case CVT_INTEGER_TYPE:
         case CVT_POINTER_TYPE:
         case CVT_NATIVE_MAPPED:
+        case CVT_NATIVE_MAPPED_STRING:
+        case CVT_NATIVE_MAPPED_WSTRING:
 	  // Make sure we have space enough for the new argument
 	  args[i+3] = alloca(sizeof(void *));
-	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE);
+	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE, cb->encoding);
           break;
         case CVT_POINTER:
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
@@ -400,6 +417,11 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_FLOAT:
 	  args[i+3] = alloca(sizeof(double));
 	  *((double *)args[i+3]) = *(float*)cbargs[i];
+          break;
+        case CVT_DEFAULT:
+          break;
+        default:
+          fprintf(stderr, "JNA: Unhandled arg conversion type %d\n", cb->conversion_flags[i]);
           break;
         }
       }
@@ -437,7 +459,13 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
       *(void **)resp = getPointerTypeAddress(env, *(void **)resp);
       break;
     case CVT_NATIVE_MAPPED:
-      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE);
+      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE, cb->encoding);
+      break;
+    case CVT_NATIVE_MAPPED_STRING:
+    case CVT_NATIVE_MAPPED_WSTRING:
+      // TODO: getNativeString rather than allocated memory
+      fprintf(stderr, "JNA: Likely memory leak here\n");
+      toNative(env, *(void **)resp, oldresp, cb->cif.rtype->size, JNI_TRUE, cb->encoding);
       break;
     case CVT_POINTER:
       *(void **)resp = getNativeAddress(env, *(void **)resp);
@@ -459,7 +487,11 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
     case CVT_CALLBACK: 
       *(void **)resp = getCallbackAddress(env, *(void **)resp);
       break;
-    default: break;
+    case CVT_DEFAULT:
+      break;
+    default:
+      fprintf(stderr, "JNA: Unhandled result conversion: %d\n", cb->rflag);
+      break;
     }
     if (cb->conversion_flags) {
       for (i=0;i < cif->nargs;i++) {
@@ -471,26 +503,26 @@ callback_invoke(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
   }
   else {
     jobject result;
-    jobjectArray array =
+    jobjectArray params =
       (*env)->NewObjectArray(env, cif->nargs, classObject, NULL);
     unsigned int i;
 
     for (i=0;i < cif->nargs;i++) {
-      jobject arg = new_object(env, cb->arg_jtypes[i], cbargs[i], JNI_FALSE);
-      (*env)->SetObjectArrayElement(env, array, i, arg);
+      jobject arg = new_object(env, cb->arg_jtypes[i], cbargs[i], JNI_FALSE, cb->encoding);
+      (*env)->SetObjectArrayElement(env, params, i, arg);
     }
-    result = (*env)->CallObjectMethod(env, self, cb->methodID, array);
+    result = (*env)->CallObjectMethod(env, self, cb->methodID, params);
     if ((*env)->ExceptionCheck(env)) {
       jthrowable throwable = (*env)->ExceptionOccurred(env);
       (*env)->ExceptionClear(env);
       if (!handle_exception(env, self, throwable)) {
-        fprintf(stderr, "JNA: error handling callback exception, continuing\n");
+        fprintf(stderr, "JNA: error while handling callback exception, continuing\n");
       }
       if (cif->rtype->type != FFI_TYPE_VOID)
         memset(resp, 0, cif->rtype->size);
     }
     else {
-      extract_value(env, result, resp, cif->rtype->size, JNI_TRUE);
+      extract_value(env, result, resp, cif->rtype->size, JNI_TRUE, cb->encoding);
     }
   }
 }
@@ -560,6 +592,7 @@ BOOL WINAPI DllMain(HINSTANCE hDLL, DWORD fdwReason, LPVOID lpvReserved) {
     thread_storage* tls = (thread_storage*)TlsGetValue(tls_thread_data_key);
     if (tls) {
       dispose_thread_data(tls);
+      TlsSetValue(tls_thread_data_key, 0);
     }
     break;
   }
@@ -579,12 +612,12 @@ static void make_thread_data_key() {
 
 /** Store the requested detach state for the current thread. */
 void
-JNA_detach(JNIEnv* env, jboolean detach, void* termination_flag) {
+JNA_detach(JNIEnv* env, jboolean needs_detach, void* termination_flag) {
   thread_storage* tls = get_thread_storage(env);
   if (tls) {
-    tls->detach = detach;
+    tls->needs_detach = needs_detach;
     tls->termination_flag = (int *)termination_flag;
-    if (detach && tls->jvm_thread) {
+    if (needs_detach && tls->jvm_thread) {
       throwByName(env, EIllegalState, "Can not detach from a JVM thread");
     }
   }
@@ -610,12 +643,12 @@ JNA_get_last_error(JNIEnv* env) {
 }
 
 static void
-callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
+dispatch_callback(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
   callback* cb = ((callback *)user_data); 
   JavaVM* jvm = cb->vm;
   JNIEnv* env = NULL;
   int was_attached = (*jvm)->GetEnv(jvm, (void *)&env, JNI_VERSION_1_4) == JNI_OK;
-  jboolean detach = was_attached ? JNI_FALSE : JNI_TRUE;
+  jboolean needs_detach = was_attached ? JNI_FALSE : JNI_TRUE;
   thread_storage* tls = was_attached ? get_thread_storage(env) : NULL;
 
   if (!was_attached) {
@@ -633,7 +666,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       options.name = NULL;
       args.group = initializeThread(cb, &options);
       daemon = options.daemon ? JNI_TRUE : JNI_FALSE;
-      detach = options.detach ? JNI_TRUE : JNI_FALSE;
+      needs_detach = options.detach ? JNI_TRUE : JNI_FALSE;
       args.name = options.name;
     }
     if (daemon) {
@@ -645,7 +678,7 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     tls = get_thread_storage(env);
     if (tls) {
       snprintf(tls->name, sizeof(tls->name), "%s", args.name ? args.name : "<unconfigured native thread>");
-      tls->detach = detach;
+      tls->needs_detach = needs_detach;
       tls->jvm_thread = JNI_FALSE;
     }
     // Dispose of allocated memory
@@ -670,13 +703,13 @@ callback_dispatch(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     fprintf(stderr, "JNA: Out of memory: Can't allocate local frame\n");
   }
   else {
-    callback_invoke(env, cb, cif, resp, cbargs);
+    invoke_callback(env, cb, cif, resp, cbargs);
     // Make note of whether the callback wants to avoid detach
-    detach = tls->detach && !tls->jvm_thread;
+    needs_detach = tls->needs_detach && !tls->jvm_thread;
     (*env)->PopLocalFrame(env, NULL);
   }
   
-  if (detach) {
+  if (needs_detach) {
     if ((*jvm)->DetachCurrentThread(jvm) != 0) {
       fprintf(stderr, "JNA: could not detach thread\n");
     }

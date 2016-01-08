@@ -10,6 +10,8 @@ import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.DoubleByReference;
 
+import java.util.Date;
+
 public class VariantTest extends TestCase {
 
     public static void main(String[] args) {
@@ -55,5 +57,28 @@ public class VariantTest extends TestCase {
         OleAuto.INSTANCE.SystemTimeToVariantTime(lpSystemTime, pvtime);
 
         VARIANT variantDate = new VARIANT(new DATE(pvtime.getValue()));
+    }
+
+    public void testVariantRecord() {
+        VARIANT._VARIANT.__VARIANT.BRECORD pvRecord = new VARIANT._VARIANT.__VARIANT.BRECORD();
+        VARIANT._VARIANT.__VARIANT.BRECORD pvRecord2;
+
+        VARIANT variant = new VARIANT();
+        variant.setValue(Variant.VT_RECORD, pvRecord);
+
+        pvRecord2 = (VARIANT._VARIANT.__VARIANT.BRECORD)variant.getValue();
+    }
+
+    public void testVariantConstructors() {
+        VARIANT variant = new VARIANT((short) 1);
+        variant = new VARIANT((byte) 1);
+        variant = new VARIANT('1');
+        variant = new VARIANT((int) 1);
+        variant = new VARIANT((long) 1);
+        variant = new VARIANT((float) 1);
+        variant = new VARIANT((double) 1);
+        variant = new VARIANT("1");
+        variant = new VARIANT(true);
+        variant = new VARIANT(new Date());
     }
 }

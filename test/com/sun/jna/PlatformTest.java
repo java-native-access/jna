@@ -57,6 +57,9 @@ public class PlatformTest extends TestCase {
         assertEquals("Wrong resource path Linux/ppc", "linux-ppc",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
                                                              "powerpc", "Linux"));
+        assertEquals("Wrong resource path Linux/sparcv9", "linux-sparcv9",
+                     Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
+                                                             "sparcv9", "Linux"));
         assertEquals("Wrong resource path OpenBSD/x86", "openbsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.OPENBSD,
                                                              "x86", "OpenBSD"));

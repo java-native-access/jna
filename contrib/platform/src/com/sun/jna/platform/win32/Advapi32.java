@@ -17,6 +17,10 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
+import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -35,6 +39,7 @@ import com.sun.jna.win32.W32APIOptions;
 import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import static com.sun.jna.platform.win32.WinDef.DWORD;
 import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import static com.sun.jna.platform.win32.WinDef.ULONG;
 import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 
@@ -44,22 +49,51 @@ import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
  * @author dblock[at]dblock.org
  */
 public interface Advapi32 extends StdCallLibrary {
-	Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32",
-			Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
+	Advapi32 INSTANCE = Native.loadLibrary("Advapi32", Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
-	public static final int MAX_KEY_LENGTH = 255;
-	public static final int MAX_VALUE_NAME = 16383;
+	int MAX_KEY_LENGTH = 255;
+	int MAX_VALUE_NAME = 16383;
 
-	public static final int RRF_RT_ANY = 0x0000ffff;
-	public static final int RRF_RT_DWORD = 0x00000018;
-	public static final int RRF_RT_QWORD = 0x00000048;
-	public static final int RRF_RT_REG_BINARY = 0x00000008;
-	public static final int RRF_RT_REG_DWORD = 0x00000010;
-	public static final int RRF_RT_REG_EXPAND_SZ = 0x00000004;
-	public static final int RRF_RT_REG_MULTI_SZ = 0x00000020;
-	public static final int RRF_RT_REG_NONE = 0x00000001;
-	public static final int RRF_RT_REG_QWORD = 0x00000040;
-	public static final int RRF_RT_REG_SZ = 0x00000002;
+	int RRF_RT_ANY = 0x0000ffff;
+	int RRF_RT_DWORD = 0x00000018;
+	int RRF_RT_QWORD = 0x00000048;
+	int RRF_RT_REG_BINARY = 0x00000008;
+	int RRF_RT_REG_DWORD = 0x00000010;
+	int RRF_RT_REG_EXPAND_SZ = 0x00000004;
+	int RRF_RT_REG_MULTI_SZ = 0x00000020;
+	int RRF_RT_REG_NONE = 0x00000001;
+	int RRF_RT_REG_QWORD = 0x00000040;
+	int RRF_RT_REG_SZ = 0x00000002;
+
+	/**
+	 * LOGON_WITH_PROFILE: 0x00000001<br>
+	 * Log on, then load the user profile in the HKEY_USERS registry key.<br>
+	 * The function returns after the profile is loaded. <br>
+	 * Loading the profile can be time-consuming, so it is best to use this
+	 * value only if you must access the information in the HKEY_CURRENT_USER
+	 * registry key.<br>
+	 * Windows Server 2003: The profile is unloaded after the new process is
+	 * terminated, whether or not it has created child processes.<br>
+	 * Windows XP: The profile is unloaded after the new process and all child
+	 * processes it has created are terminated.<br>
+	 */
+	int LOGON_WITH_PROFILE = 0x00000001;
+
+	/**
+	 * LOGON_NETCREDENTIALS_ONLY: 0x00000002<br>
+	 * Log on, but use the specified credentials on the network only.<br>
+	 * The new process uses the same token as the caller, but the system creates
+	 * a new logon session within LSA, and the process uses the specified
+	 * credentials as the default credentials. <br>
+	 * This value can be used to create a process that uses a different set of
+	 * credentials locally than it does remotely.<br>
+	 * This is useful in inter-domain scenarios where there is no trust
+	 * relationship.<br>
+	 * The system does not validate the specified credentials.<br>
+	 * Therefore, the process can start, but it may not have access to network
+	 * resources.
+	 */
+	int LOGON_NETCREDENTIALS_ONLY = 0x00000002;
 
 	/**
 	 * Retrieves the name of the user associated with the current thread.
@@ -73,7 +107,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            null character.
 	 * @return True if succeeded.
 	 */
-	public boolean GetUserNameW(char[] buffer, IntByReference len);
+	boolean GetUserNameW(char[] buffer, IntByReference len);
 
 	/**
 	 * Accepts the name of a system and anaccount as input and retrieves a
@@ -106,7 +140,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            account when the function returns.
 	 * @return True if the function was successful, False otherwise.
 	 */
-	public boolean LookupAccountName(String lpSystemName, String lpAccountName,
+	boolean LookupAccountName(String lpSystemName, String lpAccountName,
 			PSID Sid, IntByReference cbSid, char[] ReferencedDomainName,
 			IntByReference cchReferencedDomainName, PointerByReference peUse);
 
@@ -143,7 +177,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, it returns zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean LookupAccountSid(String lpSystemName, PSID Sid,
+	boolean LookupAccountSid(String lpSystemName, PSID Sid,
 			char[] lpName, IntByReference cchName, char[] ReferencedDomainName,
 			IntByReference cchReferencedDomainName, PointerByReference peUse);
 
@@ -160,7 +194,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            the LocalFree function.
 	 * @return True if the function was successful, False otherwise.
 	 */
-	public boolean ConvertSidToStringSid(PSID Sid, PointerByReference StringSid);
+	boolean ConvertSidToStringSid(PSID Sid, PointerByReference StringSid);
 
 	/**
 	 * Convert a string-format security identifier (SID) into a valid,
@@ -173,7 +207,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            Receives a pointer to the converted SID.
 	 * @return True if the function was successful, False otherwise.
 	 */
-	public boolean ConvertStringSidToSid(String StringSid, PSIDByReference Sid);
+	boolean ConvertStringSidToSid(String StringSid, PSIDByReference Sid);
 
 	/**
 	 * Returns the length, in bytes, of a valid security identifier (SID).
@@ -183,7 +217,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            A pointer to the SID structure whose length is returned.
 	 * @return Length of the SID.
 	 */
-	public int GetLengthSid(PSID pSid);
+	int GetLengthSid(PSID pSid);
 
 	/**
 	 * The IsValidSid function validates a security identifier (SID) by
@@ -198,7 +232,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         is no extended error information for this function; do not call
 	 *         GetLastError.
 	 */
-	public boolean IsValidSid(PSID pSid);
+	boolean IsValidSid(PSID pSid);
 
 	/**
 	 * Compares a SID to a well known SID and returns TRUE if they match.
@@ -210,7 +244,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            the SID at pSid.
 	 * @return True if the SID is of a given well known type, false otherwise.
 	 */
-	public boolean IsWellKnownSid(PSID pSid, int wellKnownSidType);
+	boolean IsWellKnownSid(PSID pSid, int wellKnownSidType);
 
 	/**
 	 * The CreateWellKnownSid function creates a SID for predefined aliases.
@@ -232,7 +266,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. For extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean CreateWellKnownSid(int wellKnownSidType, PSID domainSid,
+	boolean CreateWellKnownSid(int wellKnownSidType, PSID domainSid,
 			PSID pSid, IntByReference cbSid);
 
 	/**
@@ -272,7 +306,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, it returns zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean LogonUser(String lpszUsername, String lpszDomain,
+	boolean LogonUser(String lpszUsername, String lpszDomain,
 			String lpszPassword, int logonType, int logonProvider,
 			HANDLEByReference phToken);
 
@@ -299,8 +333,27 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean OpenThreadToken(HANDLE ThreadHandle, int DesiredAccess,
+	boolean OpenThreadToken(HANDLE ThreadHandle, int DesiredAccess,
 			boolean OpenAsSelf, HANDLEByReference TokenHandle);
+
+	/**
+	 * The SetThreadToken function assigns an impersonation token to a thread.
+	 * The function can also cause a thread to stop using an impersonation token.
+	 * @param ThreadHandle [in, optional]
+	 *                     A pointer to a handle to the thread to which the function
+	 *                     assigns the impersonation token. If ThreadHandle is NULL, the
+	 *                     function assigns the impersonation token to the calling thread.
+	 * @param TokenHandle [in, optional]
+	 *                     A handle to the impersonation token to assign to the thread.
+	 *                     This handle must have been opened with TOKEN_IMPERSONATE access
+	 *                     rights. For more information, see Access Rights for Access-Token
+	 *                     Objects. If Token is NULL, the function causes the
+	 *                     thread to stop using an impersonation token.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 *         function fails, the return value is zero. To get extended error
+	 *         information, call GetLastError.
+	 */
+	boolean SetThreadToken(HANDLEByReference ThreadHandle, HANDLE TokenHandle);
 
 	/**
 	 * The OpenProcessToken function opens the access token associated with a
@@ -322,7 +375,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean OpenProcessToken(HANDLE ProcessHandle, int DesiredAccess,
+	boolean OpenProcessToken(HANDLE ProcessHandle, int DesiredAccess,
 			HANDLEByReference TokenHandle);
 
 	/**
@@ -342,7 +395,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean DuplicateToken(HANDLE ExistingTokenHandle,
+	boolean DuplicateToken(HANDLE ExistingTokenHandle,
 			int ImpersonationLevel, HANDLEByReference DuplicateTokenHandle);
 
 	/**
@@ -372,7 +425,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         If the function fails, it returns zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean DuplicateTokenEx(HANDLE hExistingToken, int dwDesiredAccess,
+	boolean DuplicateTokenEx(HANDLE hExistingToken, int dwDesiredAccess,
 			WinBase.SECURITY_ATTRIBUTES lpTokenAttributes,
 			int ImpersonationLevel, int TokenType, HANDLEByReference phNewToken);
 
@@ -410,7 +463,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean GetTokenInformation(HANDLE tokenHandle,
+	boolean GetTokenInformation(HANDLE tokenHandle,
 			int tokenInformationClass, Structure tokenInformation,
 			int tokenInformationLength, IntByReference returnLength);
 
@@ -430,7 +483,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            TOKEN_IMPERSONATE access.
 	 * @return If the function succeeds, the return value is nonzero.
 	 */
-	public boolean ImpersonateLoggedOnUser(HANDLE hToken);
+	boolean ImpersonateLoggedOnUser(HANDLE hToken);
 
 	/**
 	 * The ImpersonateSelf function obtains an access token that impersonates
@@ -442,7 +495,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            supplies the impersonation level of the new token.
 	 * @return If the function succeeds, the return value is nonzero.
 	 */
-	public boolean ImpersonateSelf(int ImpersonationLevel);
+	boolean ImpersonateSelf(int ImpersonationLevel);
 
 	/**
 	 * The RevertToSelf function terminates the impersonation of a client
@@ -450,7 +503,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *
 	 * @return If the function succeeds, the return value is nonzero.
 	 */
-	public boolean RevertToSelf();
+	boolean RevertToSelf();
 
 	/**
 	 * The RegOpenKeyEx function opens the specified registry key. Note that key
@@ -476,7 +529,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegOpenKeyEx(HKEY hKey, String lpSubKey, int ulOptions,
+	int RegOpenKeyEx(HKEY hKey, String lpSubKey, int ulOptions,
 			int samDesired, HKEYByReference phkResult);
 
 	/**
@@ -524,21 +577,21 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
+	int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
 			IntByReference lpType, char[] lpData, IntByReference lpcbData);
 
-	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
+	int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
 			IntByReference lpType, byte[] lpData, IntByReference lpcbData);
 
-	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
+	int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
 			IntByReference lpType, IntByReference lpData,
 			IntByReference lpcbData);
 
-	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
+	int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
 			IntByReference lpType, LongByReference lpData,
 			IntByReference lpcbData);
 
-	public int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
+	int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
 			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
 
 	/**
@@ -552,7 +605,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegCloseKey(HKEY hKey);
+	int RegCloseKey(HKEY hKey);
 
 	/**
 	 * The RegDeleteValue function removes a named value from the specified
@@ -569,7 +622,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegDeleteValue(HKEY hKey, String lpValueName);
+	int RegDeleteValue(HKEY hKey, String lpValueName);
 
 	/**
 	 * The RegSetValueEx function sets the data and type of a specified value
@@ -600,41 +653,41 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
+	int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
 			int dwType, char[] lpData, int cbData);
 
-	public int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
+	int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
 			int dwType, byte[] lpData, int cbData);
 
 	/**
 	 *
-	 * @param hKey
-	 * @param lpSubKey
-	 * @param Reserved
-	 * @param lpClass
-	 * @param dwOptions
-	 * @param samDesired
-	 * @param lpSecurityAttributes
-	 * @param phkResult
-	 * @param lpdwDisposition
+	 * @param hKey registry key
+	 * @param lpSubKey subkey name
+	 * @param Reserved unused
+	 * @param lpClass class
+	 * @param dwOptions options
+	 * @param samDesired ?
+	 * @param lpSecurityAttributes security attributes
+	 * @param phkResult resulting key
+	 * @param lpdwDisposition ?
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegCreateKeyEx(HKEY hKey, String lpSubKey, int Reserved,
+	int RegCreateKeyEx(HKEY hKey, String lpSubKey, int Reserved,
 			String lpClass, int dwOptions, int samDesired,
 			SECURITY_ATTRIBUTES lpSecurityAttributes,
 			HKEYByReference phkResult, IntByReference lpdwDisposition);
 
 	/**
 	 *
-	 * @param hKey
-	 * @param name
+	 * @param hKey registry key
+	 * @param name key name
 	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegDeleteKey(HKEY hKey, String name);
+	int RegDeleteKey(HKEY hKey, String name);
 
 	/**
 	 * The RegEnumKeyEx function enumerates subkeys of the specified open
@@ -682,7 +735,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegEnumKeyEx(HKEY hKey, int dwIndex, char[] lpName,
+	int RegEnumKeyEx(HKEY hKey, int dwIndex, char[] lpName,
 			IntByReference lpcName, IntByReference reserved, char[] lpClass,
 			IntByReference lpcClass, WinBase.FILETIME lpftLastWriteTime);
 
@@ -726,7 +779,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName,
+	int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName,
 			IntByReference lpcchValueName, IntByReference reserved,
 			IntByReference lpType, byte[] lpData, IntByReference lpcbData);
 
@@ -780,7 +833,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         the function fails, the return value is a nonzero error code
 	 *         defined in Winerror.h.
 	 */
-	public int RegQueryInfoKey(HKEY hKey, char[] lpClass,
+	int RegQueryInfoKey(HKEY hKey, char[] lpClass,
 			IntByReference lpcClass, IntByReference lpReserved,
 			IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
 			IntByReference lpcMaxClassLen, IntByReference lpcValues,
@@ -855,7 +908,8 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            If pvData is not NULL, set the contents of the buffer to
 	 *            zeroes on failure.
 	 *
-	 *            pdwType [out, optional]
+	 * @param pdwType
+         *            [out, optional]
 	 *
 	 *            A pointer to a variable that receives a code indicating the
 	 *            type of data stored in the specified value. For a list of the
@@ -916,10 +970,11 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            ERROR_SUCCESS. If the function fails, the return value is a
 	 *            system error code. If the pvData buffer is too small to
 	 *            receive the value, the function returns ERROR_MORE_DATA.
+     * @return status
 	 */
-	public int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
-			int dwFlags, IntByReference pdwType, byte[] pvData,
-			IntByReference pcbData);
+	int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
+                               int dwFlags, IntByReference pdwType, byte[] pvData,
+                               IntByReference pcbData);
 
 	/**
 	 * Retrieves a registered handle to the specified event log.
@@ -939,8 +994,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         returns ERROR_ACCESS_DENIED if lpSourceName specifies the
 	 *         Security event log.
 	 */
-	public HANDLE RegisterEventSource(String lpUNCServerName,
-			String lpSourceName);
+	HANDLE RegisterEventSource(String lpUNCServerName, String lpSourceName);
 
 	/**
 	 * Closes the specified event log.
@@ -952,7 +1006,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean DeregisterEventSource(HANDLE hEventLog);
+	boolean DeregisterEventSource(HANDLE hEventLog);
 
 	/**
 	 * Opens a handle to the specified event log.
@@ -970,7 +1024,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         event log. If the function fails, the return value is NULL. To
 	 *         get extended error information, call GetLastError.
 	 */
-	public HANDLE OpenEventLog(String lpUNCServerName, String lpSourceName);
+	HANDLE OpenEventLog(String lpUNCServerName, String lpSourceName);
 
 	/**
 	 * Closes the specified event log.
@@ -982,7 +1036,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean CloseEventLog(HANDLE hEventLog);
+	boolean CloseEventLog(HANDLE hEventLog);
 
 	/**
 	 * Retrieves the number of records in the specified event log.
@@ -997,8 +1051,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean GetNumberOfEventLogRecords(HANDLE hEventLog,
-			IntByReference NumberOfRecords);
+	boolean GetNumberOfEventLogRecords(HANDLE hEventLog, IntByReference NumberOfRecords);
 
 	/**
 	 * Writes an entry at the end of the specified event log.
@@ -1043,7 +1096,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         return value is zero. To get extended error information, call
 	 *         GetLastError.
 	 */
-	public boolean ReportEvent(HANDLE hEventLog, int wType, int wCategory,
+	boolean ReportEvent(HANDLE hEventLog, int wType, int wCategory,
 			int dwEventID, PSID lpUserSid, int wNumStrings, int dwDataSize,
 			String[] lpStrings, Pointer lpRawData);
 
@@ -1063,7 +1116,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. The ClearEventLog function can
 	 *         fail if the event log is empty or the backup file already exists.
 	 */
-	public boolean ClearEventLog(HANDLE hEventLog, String lpBackupFileName);
+	boolean ClearEventLog(HANDLE hEventLog, String lpBackupFileName);
 
 	/**
 	 * Saves the specified event log to a backup file. The function does not
@@ -1078,7 +1131,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean BackupEventLog(HANDLE hEventLog, String lpBackupFileName);
+	boolean BackupEventLog(HANDLE hEventLog, String lpBackupFileName);
 
 	/**
 	 * Opens a handle to a backup event log created by the BackupEventLog
@@ -1094,7 +1147,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         backup event log. If the function fails, the return value is
 	 *         NULL. To get extended error information, call GetLastError.
 	 */
-	public HANDLE OpenBackupEventLog(String lpUNCServerName, String lpFileName);
+	HANDLE OpenBackupEventLog(String lpUNCServerName, String lpFileName);
 
 	/**
 	 * Reads the specified number of entries from the specified event log. The
@@ -1132,7 +1185,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean ReadEventLog(HANDLE hEventLog, int dwReadFlags,
+	boolean ReadEventLog(HANDLE hEventLog, int dwReadFlags,
 			int dwRecordOffset, Pointer lpBuffer, int nNumberOfBytesToRead,
 			IntByReference pnBytesRead, IntByReference pnMinNumberOfBytesNeeded);
 
@@ -1150,8 +1203,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean GetOldestEventLogRecord(HANDLE hEventLog,
-			IntByReference OldestRecord);
+	boolean GetOldestEventLogRecord(HANDLE hEventLog, IntByReference OldestRecord);
 
 	/**
 	 * Retrieves the current status of the specified service based on the
@@ -1190,7 +1242,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. This value is a nonzero error
 	 *         code defined in Winerror.h.
 	 */
-	public boolean QueryServiceStatusEx(SC_HANDLE hService, int InfoLevel,
+	boolean QueryServiceStatusEx(SC_HANDLE hService, int InfoLevel,
 			SERVICE_STATUS_PROCESS lpBuffer, int cbBufSize,
 			IntByReference pcbBytesNeeded);
 
@@ -1229,8 +1281,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. This value is a nonzero error
 	 *         code defined in Winerror.h.
 	 */
-	public boolean ControlService(SC_HANDLE hService, int dwControl,
-			SERVICE_STATUS lpServiceStatus);
+	boolean ControlService(SC_HANDLE hService, int dwControl, SERVICE_STATUS lpServiceStatus);
 
 	/**
 	 * Starts a service.
@@ -1258,8 +1309,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. This value is a nonzero error
 	 *         code defined in Winerror.h.
 	 */
-	public boolean StartService(SC_HANDLE hService, int dwNumServiceArgs,
-			String[] lpServiceArgVectors);
+	boolean StartService(SC_HANDLE hService, int dwNumServiceArgs, String[] lpServiceArgVectors);
 
 	/**
 	 * Closes a handle to a service control manager or service object.
@@ -1276,7 +1326,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. This value is a nonzero error
 	 *         code defined in Winerror.h.
 	 */
-	public boolean CloseServiceHandle(SC_HANDLE hSCObject);
+	boolean CloseServiceHandle(SC_HANDLE hSCObject);
 
 	/**
 	 * Opens an existing service.
@@ -1307,8 +1357,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         extended error information, call GetLastError. This value is a
 	 *         nonzero error code defined in Winerror.h.
 	 */
-	public SC_HANDLE OpenService(SC_HANDLE hSCManager, String lpServiceName,
-			int dwDesiredAccess);
+	SC_HANDLE OpenService(SC_HANDLE hSCManager, String lpServiceName, int dwDesiredAccess);
 
 	/**
 	 * Establishes a connection to the service control manager on the specified
@@ -1339,8 +1388,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         information, call GetLastError. This value is a nonzero error
 	 *         code defined in Winerror.h.
 	 */
-	public SC_HANDLE OpenSCManager(String lpMachineName, String lpDatabaseName,
-			int dwDesiredAccess);
+	SC_HANDLE OpenSCManager(String lpMachineName, String lpDatabaseName, int dwDesiredAccess);
 
 	/**
 	 * Creates a new process and its primary thread. The new process runs in the
@@ -1400,7 +1448,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean CreateProcessAsUser(HANDLE hToken, String lpApplicationName,
+	boolean CreateProcessAsUser(HANDLE hToken, String lpApplicationName,
 			String lpCommandLine, SECURITY_ATTRIBUTES lpProcessAttributes,
 			SECURITY_ATTRIBUTES lpThreadAttributes, boolean bInheritHandles,
 			int dwCreationFlags, String lpEnvironment,
@@ -1437,7 +1485,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean AdjustTokenPrivileges(HANDLE TokenHandle,
+	boolean AdjustTokenPrivileges(HANDLE TokenHandle,
 			boolean DisableAllPrivileges, WinNT.TOKEN_PRIVILEGES NewState,
 			int BufferLength, WinNT.TOKEN_PRIVILEGES PreviousState,
 			IntByReference ReturnLength);
@@ -1466,7 +1514,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean LookupPrivilegeName(String lpSystemName, WinNT.LUID lpLuid,
+	boolean LookupPrivilegeName(String lpSystemName, WinNT.LUID lpLuid,
 			char[] lpName, IntByReference cchName);
 
 	/**
@@ -1493,8 +1541,7 @@ public interface Advapi32 extends StdCallLibrary {
 	 *         function fails, the return value is zero. To get extended error
 	 *         information, call GetLastError.
 	 */
-	public boolean LookupPrivilegeValue(String lpSystemName, String lpName,
-			WinNT.LUID lpLuid);
+	boolean LookupPrivilegeValue(String lpSystemName, String lpName, WinNT.LUID lpLuid);
 
 	/**
 	 * The function obtains specified information about the security of a file
@@ -1525,17 +1572,193 @@ public interface Advapi32 extends StdCallLibrary {
 	 *            otherwise, none of the descriptor is returned.
 	 * @return whether the call succeeded
 	 */
-	public boolean GetFileSecurity(WString lpFileName,
+	boolean GetFileSecurity(String lpFileName,
+			int RequestedInformation, Pointer pointer, int nLength,
+			IntByReference lpnLengthNeeded);
+        /** @deprecated Use the String version */
+	@Deprecated
+    boolean GetFileSecurity(WString lpFileName,
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
 
+	/**
+	 * The GetNamedSecurityInfo function retrieves a copy of the security
+	 * descriptor for an object specified by name
+	 *
+	 * @param pObjectName
+	 *            A pointer to a that specifies the name of the object from
+	 *            which to retrieve security information.
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType
+	 *            Specifies a value from the SE_OBJECT_TYPE enumeration that
+	 *            indicates the type of object named by the pObjectName parameter.
+	 * @param SecurityInfo
+	 *            A set of bit flags that indicate the type of security
+	 *            information to retrieve. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [out, optional]
+	 *            A pointer to a variable that receives a pointer to the owner SID
+	 *            in the security descriptor returned in ppSecurityDescriptor
+	 *            or NULL if the security descriptor has no owner SID.
+	 *            The returned pointer is valid only if you set the
+	 *            OWNER_SECURITY_INFORMATION flag. Also, this parameter can be
+	 *            NULL if you do not need the owner SID.
+	 * @param ppsidGroup [out, optional]
+	 *            A pointer to a variable that receives a pointer to the primary
+	 *            group SID in the returned security descriptor or NULL if the
+	 *            security descriptor has no group SID. The returned pointer is
+	 *            valid only if you set the GROUP_SECURITY_INFORMATION flag.
+	 *            Also, this parameter can be NULL if you do not need the group SID.
+	 * @param ppDacl [out, optional]
+	 *            A pointer to a variable that receives a pointer to the DACL in
+	 *            the returned security descriptor or NULL if the security
+	 *            descriptor has no DACL. The returned pointer is valid only if
+	 *            you set the DACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *            can be NULL if you do not need the DACL.
+	 * @param ppSacl [out, optional]
+	 *             A pointer to a variable that receives a pointer to the SACL in
+	 *             the returned security descriptor or NULL if the security
+	 *             descriptor has no SACL. The returned pointer is valid only if
+	 *             you set the SACL_SECURITY_INFORMATION flag. Also, this parameter
+	 *             can be NULL if you do not need the SACL.
+	 * @param ppSecurityDescriptor
+	 *            A pointer to a variable that receives a pointer to the security
+	 *            descriptor of the object. When you have finished using the
+	 *            pointer, free the returned buffer by calling the LocalFree
+	 *            function.
+	 *
+	 *            This parameter is required if any one of the ppsidOwner,
+	 *            ppsidGroup, ppDacl, or ppSacl parameters is not NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 *
+	 * NOTES:
+	 * 1. To read the owner, group, or DACL from the object's security descriptor,
+	 * the object's DACL must grant READ_CONTROL access to the caller, or the caller
+	 * must be the owner of the object.
+	 * 2. To read the system access control list of the object, the SE_SECURITY_NAME
+	 * privilege must be enabled for the calling process. For information about the
+	 * security implications of enabling privileges, see Running with Special Privileges.
+	 */
+	int GetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			PointerByReference ppsidOwner,
+			PointerByReference ppsidGroup,
+			PointerByReference ppDacl,
+			PointerByReference ppSacl,
+			PointerByReference ppSecurityDescriptor);
+
+	/**
+	 * The SetNamedSecurityInfo function sets specified security information in
+	 * the security descriptor of a specified object. The caller identifies the
+	 * object by name.
+	 *
+	 * @param pObjectName [in]
+	 *            A pointer to a string that specifies the name of the object for
+	 *            which to set security information. This can be
+	 *            the name of a local or remote file or directory on an NTFS file
+	 *            system, network share, registry key, semaphore, event, mutex,
+	 *            file mapping, or waitable timer.	 *
+	 *            For descriptions of the string formats for the different
+	 *            object types, see SE_OBJECT_TYPE.
+	 * @param ObjectType [in]
+	 *            A value of the SE_OBJECT_TYPE enumeration that indicates the type
+	 *            of object named by the pObjectName parameter.
+	 * @param SecurityInfo [in]
+	 *            A set of bit flags that indicate the type of security
+	 *            information to set. See WinNT *_SECURITY_INFORMATION
+	 * @param ppsidOwner [in, optional]
+	 *            A pointer to a SID structure that identifies the owner of the object.
+	 *            If the caller does not have the SeRestorePrivilege constant
+	 *            (see Privilege Constants), this SID must be contained in the
+	 *            caller's token, and must have the SE_GROUP_OWNER permission enabled.
+	 *            The SecurityInfo parameter must include the OWNER_SECURITY_INFORMATION
+	 *            flag. To set the owner, the caller must have WRITE_OWNER access to
+	 *            the object or have the SE_TAKE_OWNERSHIP_NAME privilege enabled.
+	 *            If you are not setting the owner SID, this parameter can be NULL.
+	 * @param ppsidGroup [in, optional]
+	 *            A pointer to a SID that identifies the primary group of the object.
+	 *            The SecurityInfo parameter must include the GROUP_SECURITY_INFORMATION
+	 *            flag. If you are not setting the primary group SID, this parameter
+	 *            can be NULL.
+	 * @param ppDacl [in, optional]
+	 *            A pointer to the new DACL for the object. The SecurityInfo parameter
+	 *            must include the DACL_SECURITY_INFORMATION flag. The caller must have
+	 *            WRITE_DAC access to the object or be the owner of the object. If you
+	 *            are not setting the DACL, this parameter can be NULL.
+	 * @param ppSacl [in, optional]
+	 *             A pointer to the new SACL for the object. The SecurityInfo parameter
+	 *             must include any of the following flags: SACL_SECURITY_INFORMATION,
+	 *             LABEL_SECURITY_INFORMATION, ATTRIBUTE_SECURITY_INFORMATION,
+	 *             SCOPE_SECURITY_INFORMATION, or BACKUP_SECURITY_INFORMATION.
+	 *             If setting SACL_SECURITY_INFORMATION or SCOPE_SECURITY_INFORMATION,
+	 *             the caller must have the SE_SECURITY_NAME privilege enabled. If
+	 *             you are not setting the SACL, this parameter can be NULL.
+	 * @return whether the call succeeded. A nonzero return is a failure.
+	 *
+	 * NOTES:
+	 * 1. The SetNamedSecurityInfo function does not reorder access-allowed or access-denied
+	 * ACEs based on the preferred order. When propagating inheritable ACEs to existing
+	 * child objects, SetNamedSecurityInfo puts inherited ACEs in order after all of the
+	 * noninherited ACEs in the DACLs of the child objects.
+	 * 2. This function transfers information in plaintext. The information transferred by
+	 * this function is signed unless signing has been turned off for the system, but no
+	 * encryption is performed.
+	 * 3. When you update access rights of a folder indicated by an UNC path, for example
+	 * \\Test\TestFolder, the original inherited ACE is removed and the full volume path
+	 * is not included.
+	 */
+	int SetNamedSecurityInfo(
+			String pObjectName,
+			int ObjectType,
+			int SecurityInfo,
+			Pointer ppsidOwner,
+			Pointer ppsidGroup,
+			Pointer ppDacl,
+			Pointer ppSacl);
+
+	/**
+	 * The GetSecurityDescriptorLength function returns the length, in bytes, of a structurally
+	 * valid security descriptor. The length includes the length of all associated structures.
+	 *
+	 * @param ppSecurityDescriptor
+	 *            A pointer to the SECURITY_DESCRIPTOR structure whose length the function returns.
+	 *            The pointer is assumed to be valid.
+	 * @return If the function succeeds, the function returns the length, in bytes, of the SECURITY_DESCRIPTOR structure.
+     *         If the SECURITY_DESCRIPTOR structure is not valid, the return value is undefined.
+	 */
+	int GetSecurityDescriptorLength(Pointer ppSecurityDescriptor);
+
+	/**
+	 * The IsValidSecurityDescriptor function determines whether the components of a security descriptor are valid.
+	 *
+	 * @param ppSecurityDescriptor [in]
+     *            A pointer to a SECURITY_DESCRIPTOR structure that the function validates.
+	 * @return If the components of the security descriptor are valid, the return value is nonzero.
+	 */
+	boolean IsValidSecurityDescriptor(Pointer ppSecurityDescriptor);
+
+	/**
+	 * The IsValidAcl function validates an access control list (ACL).
+	 *
+	 * @param pAcl [in]
+     *            A pointer to an ACL structure validated by this function. This value must not be NULL.
+	 * @return If the ACL is valid, the function returns nonzero. If the ACL is not valid, the function returns zero.
+	 * There is no extended error information for this function; do not call GetLastError.
+	 *
+	 * This function checks the revision level of the ACL and verifies that the number of access control entries
+	 * (ACEs) specified in the AceCount member of the ACL structure fits the space specified by the AclSize member
+	 * of the ACL structure.If pAcl is NULL, the application will fail with an access violation.
+	 */
+	boolean IsValidAcl(Pointer pAcl);
 
     /**
      * Applies the given mapping of generic access rights to the given access mask.
      * @param AccessMask [in, out] A pointer to an access mask.
      * @param GenericMapping [in] A pointer to a GENERIC_MAPPING structure specifying a mapping of generic access types to specific and standard access types.
      */
-    public void MapGenericMask(DWORDByReference AccessMask, GENERIC_MAPPING GenericMapping);
+    void MapGenericMask(DWORDByReference AccessMask, GENERIC_MAPPING GenericMapping);
 
 
     /**
@@ -1552,10 +1775,480 @@ public interface Advapi32 extends StdCallLibrary {
      * @param AccessStatus [out] A pointer to a variable that receives the results of the access check. If the security descriptor allows the requested access rights to the client identified by the access token, AccessStatus is set to TRUE. Otherwise, AccessStatus is set to FALSE, and you can call GetLastError to get extended error information.
      * @return true on success; false on failure (use GetLastError to get extended error information)
      */
-    public boolean AccessCheck(Pointer pSecurityDescriptor,
+    boolean AccessCheck(Pointer pSecurityDescriptor,
                                HANDLE ClientToken, DWORD DesiredAccess,
                                GENERIC_MAPPING GenericMapping,
                                PRIVILEGE_SET PrivilegeSet,
                                DWORDByReference PrivilegeSetLength,
                                DWORDByReference GrantedAccess, BOOLByReference AccessStatus);
+
+	/**
+	 * Encrypts a file or directory. All data streams in a file are encrypted. All
+	 * new files created in an encrypted directory are encrypted.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be encrypted.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	boolean EncryptFile(String lpFileName);
+        /** @deprecated Use the String version */
+	@Deprecated
+    boolean EncryptFile(WString lpFileName);
+
+	/**
+	 * Decrypts an encrypted file or directory.
+	 *
+	 * @param lpFileName
+	 *         The name of the file or directory to be decrypted.
+	 * @param dwReserved
+	 *         Reserved; must be zero.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	boolean DecryptFile(String lpFileName, DWORD dwReserved);
+        /** @deprecated Use the String version */
+	@Deprecated
+    boolean DecryptFile(WString lpFileName, DWORD dwReserved);
+
+	/**
+	 * Retrieves the encryption status of the specified file.
+	 *
+	 * @param lpFileName
+	 *         The name of the file.
+	 * @param lpStatus
+	 *         A pointer to a variable that receives the encryption status of the
+	 *         file.
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	boolean FileEncryptionStatus(String lpFileName, DWORDByReference lpStatus);
+        /** @deprecated Use the String version */
+	@Deprecated
+    boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
+
+	/**
+	 * Disables or enables encryption of the specified directory and the files in
+	 * it. It does not affect encryption of subdirectories below the indicated
+	 * directory.
+	 *
+	 * @param DirPath
+	 *         The name of the directory for which to enable or disable
+	 *         encryption.
+	 * @param Disable
+	 *         Indicates whether to disable encryption (TRUE) or enable it
+	 *         (FALSE).
+	 * @return If the function succeeds, the return value is nonzero. If the
+	 * function fails, the return value is zero. To get extended error
+	 * information, call GetLastError.
+	 */
+	boolean EncryptionDisable(String DirPath, boolean Disable);
+        /** @deprecated Use the String version */
+	@Deprecated
+    boolean EncryptionDisable(WString DirPath, boolean Disable);
+
+	/**
+	 * Opens an encrypted file in order to backup (export) or restore (import) the
+	 * file. This is one of a group of Encrypted File System (EFS) functions that
+	 * is intended to implement backup and restore functionality, while
+	 * maintaining files in their encrypted state.
+	 *
+	 * @param lpFileName
+	 *         The name of the file to be opened. The string must consist of
+	 *         characters from the Windows character set.
+	 * @param ulFlags
+	 *         The operation to be performed.
+	 * @param pvContext
+	 *         The address of a context block that must be presented in subsequent
+	 *         calls to ReadEncryptedFileRaw, WriteEncryptedFileRaw, or
+	 *         CloseEncryptedFileRaw. Do not modify it.
+	 * @return If the function succeeds, it returns ERROR_SUCCESS. If the function
+	 * fails, it returns a nonzero error code defined in WinError.h. You can use
+	 * FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a generic
+	 * text description of the error.
+	 */
+	int OpenEncryptedFileRaw(String lpFileName, ULONG ulFlags, PointerByReference pvContext);
+        /** @deprecated Use the String version */
+	@Deprecated
+    int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags, PointerByReference pvContext);
+
+	/**
+	 * Backs up (export) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pfExportCallback
+	 *         A pointer to the export callback function. The system calls the
+	 *         callback function multiple times, each time passing a block of the
+	 *         file's data to the callback function until the entire file has been
+	 *         read. For more information, see ExportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	int ReadEncryptedFileRaw(FE_EXPORT_FUNC pfExportCallback,
+                                  Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Restores (import) encrypted files. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in.
+	 *
+	 * @param pfImportCallback
+	 *         A pointer to the import callback function. The system calls the
+	 *         callback function multiple times, each time passing a buffer that
+	 *         will be filled by the callback function with a portion of backed-up
+	 *         file's data. When the callback function signals that the entire
+	 *         file has been processed, it tells the system that the restore
+	 *         operation is finished. For more information, see ImportCallback.
+	 * @param pvCallbackContext
+	 *         A pointer to an application-defined and allocated context block.
+	 *         The system passes this pointer to the callback function as a
+	 *         parameter so that the callback function can have access to
+	 *         application-specific data. This can be a structure and can contain
+	 *         any data the application needs, such as the handle to the file that
+	 *         will contain the backup copy of the encrypted file.
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The context block is
+	 *         returned by the OpenEncryptedFileRaw function. Do not modify it.
+	 * @return If the function succeeds, the return value is ERROR_SUCCESS. If the
+	 * function fails, it returns a nonzero error code defined in WinError.h. You
+	 * can use FormatMessage with the FORMAT_MESSAGE_FROM_SYSTEM flag to get a
+	 * generic text description of the error.
+	 */
+	int WriteEncryptedFileRaw(FE_IMPORT_FUNC pfImportCallback,
+                                   Pointer pvCallbackContext, Pointer pvContext);
+
+	/**
+	 * Closes an encrypted file after a backup or restore operation, and frees
+	 * associated system resources. This is one of a group of Encrypted File
+	 * System (EFS) functions that is intended to implement backup and restore
+	 * functionality, while maintaining files in their encrypted state.
+	 *
+	 * @param pvContext
+	 *         A pointer to a system-defined context block. The
+	 *         OpenEncryptedFileRaw function returns the context block.
+	 */
+	void CloseEncryptedFileRaw(Pointer pvContext);
+
+	/**
+	 * <code>
+	        BOOL WINAPI CreateProcessWithLogonW(
+	          _In_         LPCWSTR lpUsername,
+	          _In_opt_     LPCWSTR lpDomain,
+	          _In_         LPCWSTR lpPassword,
+	          _In_         DWORD dwLogonFlags,
+	          _In_opt_     LPCWSTR lpApplicationName,
+	          _Inout_opt_  LPWSTR lpCommandLine,
+	          _In_         DWORD dwCreationFlags,
+	          _In_opt_     LPVOID lpEnvironment,
+	          _In_opt_     LPCWSTR lpCurrentDirectory,
+	          _In_         LPSTARTUPINFOW lpStartupInfo,
+	          _Out_        LPPROCESS_INFORMATION lpProcessInfo
+	        );
+	 * </code>
+	 *
+	 * @param lpUsername
+	 *            [in]<br>
+	 *            The name of the user. This is the name of the user account to
+	 *            log on to. <br>
+	 *            If you use the UPN format, user@DNS_domain_name, the lpDomain
+	 *            parameter must be NULL.<br>
+	 *            The user account must have the Log On Locally permission on
+	 *            the local computer. <br>
+	 *            This permission is granted to all users on workstations and
+	 *            servers, but only to administrators on domain controllers.
+	 * @param lpDomain
+	 *            [in, optional]<br>
+	 *            The name of the domain or server whose account database
+	 *            contains the lpUsername account. <br>
+	 *            If this parameter is NULL, the user name must be specified in
+	 *            UPN format.
+	 * @param lpPassword
+	 *            [in]<br>
+	 *            The clear-text password for the lpUsername account.
+	 * @param dwLogonFlags
+	 *            [in]<br>
+	 *            The logon option. This parameter can be 0 (zero) or one of the
+	 *            following values. <br>
+	 *            LOGON_WITH_PROFILE: 0x00000001<br>
+	 *            Log on, then load the user profile in the HKEY_USERS registry
+	 *            key.<br>
+	 *            The function returns after the profile is loaded. <br>
+	 *            Loading the profile can be time-consuming, so it is best to
+	 *            use this value only if you must access the information in the
+	 *            HKEY_CURRENT_USER registry key.<br>
+	 *            Windows Server 2003: The profile is unloaded after the new
+	 *            process is terminated, whether or not it has created child
+	 *            processes.<br>
+	 *            Windows XP: The profile is unloaded after the new process and
+	 *            all child processes it has created are terminated.<br>
+	 *            <br>
+	 *            LOGON_NETCREDENTIALS_ONLY: 0x00000002<br>
+	 *            Log on, but use the specified credentials on the network only.
+	 *            <br>
+	 *            The new process uses the same token as the caller, but the
+	 *            system creates a new logon session within LSA, and the process
+	 *            uses the specified credentials as the default credentials.
+	 *            <br>
+	 *            This value can be used to create a process that uses a
+	 *            different set of credentials locally than it does remotely.
+	 *            <br>
+	 *            This is useful in inter-domain scenarios where there is no
+	 *            trust relationship.<br>
+	 *            The system does not validate the specified credentials.<br>
+	 *            Therefore, the process can start, but it may not have access
+	 *            to network resources.
+	 * @param lpApplicationName
+	 *            [in, optional]<br>
+	 *            The name of the module to be executed. This module can be a
+	 *            Windows-based application.<br>
+	 *            It can be some other type of module (for example, MS-DOS or
+	 *            OS/2) if the appropriate subsystem is available on the local
+	 *            computer. The string can specify the full path and file name
+	 *            of the module to execute or it can specify a partial name.
+	 *            <br>
+	 *            If it is a partial name, the function uses the current drive
+	 *            and current directory to complete the specification. <br>
+	 *            The function does not use the search path. This parameter must
+	 *            include the file name extension; no default extension is
+	 *            assumed. The lpApplicationName parameter can be NULL, and the
+	 *            module name must be the first white space-delimited token in
+	 *            the lpCommandLine string.<br>
+	 *            If you are using a long file name that contains a space, use
+	 *            quoted strings to indicate where the file name ends and the
+	 *            arguments begin; otherwise, the file name is ambiguous. For
+	 *            example, the following string can be interpreted in different
+	 *            ways:<br>
+	 *            "c:\program files\sub dir\program name"<br>
+	 *            The system tries to interpret the possibilities in the
+	 *            following order:<br>
+	 *            <br>
+	 *            c:\program.exe files\sub dir\program name<br>
+	 *            c:\program files\sub.exe dir\program name<br>
+	 *            c:\program files\sub dir\program.exe name<br>
+	 *            c:\program files\sub dir\program name.exe<br>
+	 *            <br>
+	 *            If the executable module is a 16-bit application,
+	 *            lpApplicationName should be NULL, and the string pointed to by
+	 *            lpCommandLine should specify the executable module and its
+	 *            arguments.
+	 * @param lpCommandLine
+	 *            [in, out, optional]<br>
+	 *            The command line to be executed. The maximum length of this
+	 *            string is 1024 characters. <br>
+	 *            If lpApplicationName is NULL, the module name portion of
+	 *            lpCommandLine is limited to MAX_PATH characters.<br>
+	 *            The function can modify the contents of this string. <br>
+	 *            Therefore, this parameter cannot be a pointer to read-only
+	 *            memory (such as a const variable or a literal string).<br>
+	 *            If this parameter is a constant string, the function may cause
+	 *            an access violation.<br>
+	 *            The lpCommandLine parameter can be NULL, and the function uses
+	 *            the string pointed to by lpApplicationNameas the command line.
+	 *            <br>
+	 *            <br>
+	 *            If both lpApplicationName and lpCommandLine are non-NULL,
+	 *            *lpApplicationName specifies the module to execute, and
+	 *            *lpCommandLine specifies the command line.<br>
+	 *            The new process can use GetCommandLine to retrieve the entire
+	 *            command line.<br>
+	 *            Console processes written in C can use the argc and argv
+	 *            arguments to parse the command line. <br>
+	 *            Because argv[0] is the module name, C programmers typically
+	 *            repeat the module name as the first token in the command line.
+	 *            <br>
+	 *            If lpApplicationName is NULL, the first white space-delimited
+	 *            token of the command line specifies the module name.<br>
+	 *            If you are using a long file name that contains a space, use
+	 *            quoted strings to indicate where the file name ends and the
+	 *            arguments begin (see the explanation for the lpApplicationName
+	 *            parameter). If the file name does not contain an extension,
+	 *            .exe is appended. Therefore, if the file name extension is
+	 *            .com, this parameter must include the .com extension. If the
+	 *            file name ends in a period with no extension, or if the file
+	 *            name contains a path, .exe is not appended. If the file name
+	 *            does not contain a directory path, the system searches for the
+	 *            executable file in the following sequence:<br>
+	 *            <br>
+	 *            1. The directory from which the application loaded.<br>
+	 *            2. The current directory for the parent process.<br>
+	 *            3. The 32-bit Windows system directory. Use the
+	 *            GetSystemDirectory function to get the path of this directory.
+	 *            <br>
+	 *            4. The 16-bit Windows system directory. There is no function
+	 *            that obtains the path of this directory, but it is searched.
+	 *            <br>
+	 *            5. The Windows directory. Use the GetWindowsDirectory function
+	 *            to get the path of this directory.<br>
+	 *            6. The directories that are listed in the PATH environment
+	 *            variable. Note that this function does not search the
+	 *            per-application path specified by the App Paths registry key.
+	 *            To include this per-application path in the search sequence,
+	 *            use the ShellExecute function.<br>
+	 *            <br>
+	 *            The system adds a null character to the command line string to
+	 *            separate the file name from the arguments. This divides the
+	 *            original string into two strings for internal processing.<br>
+	 * @param dwCreationFlags
+	 *            The flags that control how the process is created. <br>
+	 *            The CREATE_DEFAULT_ERROR_MODE, CREATE_NEW_CONSOLE, and
+	 *            CREATE_NEW_PROCESS_GROUP flags are enabled by default. <br>
+	 *            Even if you do not set the flag, the system functions as if it
+	 *            were set. You can specify additional flags as noted.<br>
+	 *            <br>
+	 *            CREATE_DEFAULT_ERROR_MODE: 0x04000000<br>
+	 *            The new process does not inherit the error mode of the calling
+	 *            process. <br>
+	 *            Instead, CreateProcessWithLogonW gives the new process the
+	 *            current default error mode. <br>
+	 *            An application sets the current default error mode by calling
+	 *            SetErrorMode. This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_NEW_CONSOLE: 0x00000010<br>
+	 *            The new process has a new console, instead of inheriting the
+	 *            parent's console. This flag cannot be used with the
+	 *            DETACHED_PROCESS flag.<br>
+	 *            This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_NEW_PROCESS_GROUP: 0x00000200<br>
+	 *            The new process is the root process of a new process group.
+	 *            <br>
+	 *            The process group includes all processes that are descendants
+	 *            of this root process.<br>
+	 *            The process identifier of the new process group is the same as
+	 *            the process identifier, which is returned in the lpProcessInfo
+	 *            parameter.<br>
+	 *            Process groups are used by the GenerateConsoleCtrlEvent
+	 *            function to enable sending a CTRL+C or CTRL+BREAK signal to a
+	 *            group of console processes.<br>
+	 *            This flag is enabled by default.<br>
+	 *            <br>
+	 *            CREATE_SEPARATE_WOW_VDM: 0x00000800<br>
+	 *            This flag is only valid starting a 16-bit Windows-based
+	 *            application.<br>
+	 *            If set, the new process runs in a private Virtual DOS Machine
+	 *            (VDM).<br>
+	 *            By default, all 16-bit Windows-based applications run in a
+	 *            single, shared VDM.<br>
+	 *            The advantage of running separately is that a crash only
+	 *            terminates the single VDM; any other programs running in
+	 *            distinct VDMs continue to function normally.<br>
+	 *            Also, 16-bit Windows-based applications that run in separate
+	 *            VDMs have separate input queues, which means that if one
+	 *            application stops responding momentarily, applications in
+	 *            separate VDMs continue to receive input. <br>
+	 *            CREATE_SUSPENDED: 0x00000004<br>
+	 *            The primary thread of the new process is created in a
+	 *            suspended state, and does not run until the ResumeThread
+	 *            function is called.<br>
+	 *            <br>
+	 *            CREATE_UNICODE_ENVIRONMENT: 0x00000400<br>
+	 *            Indicates the format of the lpEnvironment parameter.<br>
+	 *            If this flag is set, the environment block pointed to by
+	 *            lpEnvironment uses Unicode characters. <br>
+	 *            Otherwise, the environment block uses ANSI characters. <br>
+	 *            EXTENDED_STARTUPINFO_PRESENT: 0x00080000<br>
+	 *            The process is created with extended startup information; the
+	 *            lpStartupInfo parameter specifies a STARTUPINFOEX structure.
+	 *            <br>
+	 *            Windows Server 2003 and Windows XP: This value is not
+	 *            supported.<br>
+	 * @param lpEnvironment
+	 *            [in, optional]<br>
+	 *            A pointer to an environment block for the new process.<br>
+	 *            If this parameter is NULL, the new process uses an environment
+	 *            created from the profile of the user specified by lpUsername.
+	 *            An environment block consists of a null-terminated block of
+	 *            null-terminated strings.<br>
+	 *            Each string is in the following form:<br>
+	 *            name=value<br>
+	 *            Because the equal sign (=) is used as a separator, it must not
+	 *            be used in the name of an environment variable.<br>
+	 *            An environment block can contain Unicode or ANSI characters.
+	 *            <br>
+	 *            If the environment block pointed to by lpEnvironment contains
+	 *            Unicode characters, ensure that dwCreationFlags includes
+	 *            CREATE_UNICODE_ENVIRONMENT.<br>
+	 *            If this parameter is NULL and the environment block of the
+	 *            parent process contains Unicode characters, you must also
+	 *            ensure that dwCreationFlags includes
+	 *            CREATE_UNICODE_ENVIRONMENT.<br>
+	 *            An ANSI environment block is terminated by two 0 (zero) bytes:
+	 *            one for the last string and one more to terminate the block.
+	 *            <br>
+	 *            A Unicode environment block is terminated by four zero bytes:
+	 *            two for the last string and two more to terminate the block.
+	 *            <br>
+	 *            To retrieve a copy of the environment block for a specific
+	 *            user, use the CreateEnvironmentBlock function.<br>
+	 * @param lpCurrentDirectory
+	 *            [in, optional]<br>
+	 *            The full path to the current directory for the process.<br>
+	 *            The string can also specify a UNC path.<br>
+	 *            If this parameter is NULL, the new process has the same
+	 *            current drive and directory as the calling process.<br>
+	 *            This feature is provided primarily for shells that need to
+	 *            start an application, and specify its initial drive and
+	 *            working directory.<br>
+	 * @param lpStartupInfo
+	 *            [in]<br>
+	 *            A pointer to a STARTUPINFO or STARTUPINFOEX structure. <br>
+	 *            The application must add permission for the specified user
+	 *            account to the specified window station and desktop, even for
+	 *            WinSta0\Default.<br>
+	 *            If the lpDesktop member is NULL or an empty string, the new
+	 *            process inherits the desktop and window station of its parent
+	 *            process.<br>
+	 *            The application must add permission for the specified user
+	 *            account to the inherited window station and desktop.<br>
+	 *            Windows XP: CreateProcessWithLogonW adds permission for the
+	 *            specified user account to the inherited window station and
+	 *            desktop.<br>
+	 *            Handles in STARTUPINFO or STARTUPINFOEX must be closed with
+	 *            CloseHandle when they are no longer needed.<br>
+	 *            Important If the dwFlags member of the STARTUPINFO structure
+	 *            specifies STARTF_USESTDHANDLES, the standard handle fields are
+	 *            copied unchanged to the child process without validation.<br>
+	 *            The caller is responsible for ensuring that these fields
+	 *            contain valid handle values. Incorrect values can cause the
+	 *            child process to misbehave or crash.<br>
+	 *            Use the Application Verifier runtime verification tool to
+	 *            detect invalid handles.
+	 * @param lpProcessInfo
+	 *            [out]<br>
+	 *            A pointer to a PROCESS_INFORMATION structure that receives
+	 *            identification information for the new process, including a
+	 *            handle to the process.<br>
+	 *            Handles in PROCESS_INFORMATION must be closed with the
+	 *            CloseHandle function when they are not needed.<br>
+	 * @return If the function succeeds, the return value is nonzero.<br>
+	 *         If the function fails, the return value is 0 (zero).<br>
+	 *         To get extended error information, call GetLastError.<br>
+	 *         Note that the function returns before the process has finished
+	 *         initialization.<br>
+	 *         If a required DLL cannot be located or fails to initialize, the
+	 *         process is terminated.<br>
+	 *         To get the termination status of a process, call
+	 *         GetExitCodeProcess.
+	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms682431%28v=vs.85%29.aspx">MSDN</a>
+	 */
+	boolean CreateProcessWithLogonW(String lpUsername, String lpDomain, String lpPassword, int dwLogonFlags,
+			String lpApplicationName, String lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
+			String lpCurrentDirectory, STARTUPINFO lpStartupInfo, PROCESS_INFORMATION lpProcessInfo);
+
 }

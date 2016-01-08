@@ -27,19 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 //@SuppressWarnings("unused")
-public class DirectTest extends TestCase implements Paths {
-
-    private static class JNI {
-        static {
-            String path = TESTPATH + NativeLibrary.mapSharedLibraryName("testlib");
-            if (!new File(path).isAbsolute()) {
-                path = new File(path).getAbsolutePath();
-            }
-            System.load(path);
-        }
-        
-        private static native double cos(double x);
-    }
+public class DirectTest extends TestCase implements Paths, GCWaits {
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(DirectTest.class);
@@ -108,6 +96,9 @@ public class DirectTest extends TestCase implements Paths {
 
     private static class TestLoader extends URLClassLoader {
         public TestLoader() throws MalformedURLException {
+            this(null);
+        }
+        public TestLoader(ClassLoader parent) throws MalformedURLException {
             super(Platform.isWindowsCE()
                   ? new URL[] {
                       new File("/Storage Card/test.jar").toURI().toURL()
@@ -115,7 +106,7 @@ public class DirectTest extends TestCase implements Paths {
                   : new URL[] {
                       new File(BUILDDIR + "/classes").toURI().toURL(),
                       new File(BUILDDIR + "/test-classes").toURI().toURL(),
-                  }, new CloverLoader());
+                  }, new CloverLoader(parent));
         }
         protected Class findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
@@ -131,24 +122,12 @@ public class DirectTest extends TestCase implements Paths {
     }
 
     public void testRegisterMethods() throws Exception {
-        // Use a dedicated class loader to ensure the class can be gc'd
-        String name = "com.sun.jna.DirectTest$MathLibrary";
-        ClassLoader loader = new TestLoader();
-        Class cls = Class.forName(name, true, loader);
-        assertNotNull("Failed loading class", cls);
-        WeakReference ref = new WeakReference(cls);
-        loader = null;
-        cls = null;
-        System.gc();
-
-        for (int i=0;i < 100 && ref.get() != null;i++) {
-            try {
-                Thread.sleep(10); // Give the GC a chance to run
-		System.gc();
-            } finally {}
-        }
-        // TODO: need a real check to ensure native memory is freed
-        assertNull("Registered methods not GC'd: " + ref.get(), ref.get());
+        assertEquals("Math library call failed", 1., MathLibrary.cos(0), .01);
+        assertTrue("Library not registered",
+                   Native.registered(MathLibrary.class));
+        Native.unregister(MathLibrary.class);
+        assertFalse("Registered methods not unregistered",
+                    Native.registered(MathLibrary.class));
     }
 
     private Class returnCallingClass() {

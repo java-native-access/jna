@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Guid;
@@ -101,7 +102,7 @@ public class IDispatchTest extends TestCase {
         WString[] ptName = new WString[] { new WString("Application") };
         DISPIDByReference pdispID = new DISPIDByReference();
 
-        HRESULT hr = dispatch.GetIDsOfNames(Guid.IID_NULL, ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
+        HRESULT hr = dispatch.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
     }

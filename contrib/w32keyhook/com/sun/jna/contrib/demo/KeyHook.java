@@ -5,20 +5,22 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.contrib.demo;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HHOOK;
 import com.sun.jna.platform.win32.WinUser.KBDLLHOOKSTRUCT;
 import com.sun.jna.platform.win32.WinUser.LowLevelKeyboardProc;
@@ -34,6 +36,7 @@ public class KeyHook {
         final User32 lib = User32.INSTANCE;
         HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         keyboardHook = new LowLevelKeyboardProc() {
+            @Override
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
                     switch(wParam.intValue()) {
@@ -47,12 +50,16 @@ public class KeyHook {
                         }
                     }
                 }
-                return lib.CallNextHookEx(hhk, nCode, wParam, info.getPointer());
+
+                Pointer ptr = info.getPointer();
+                long peer = Pointer.nativeValue(ptr);
+                return lib.CallNextHookEx(hhk, nCode, wParam, new LPARAM(peer));
             }
         };
         hhk = lib.SetWindowsHookEx(WinUser.WH_KEYBOARD_LL, keyboardHook, hMod, 0);
         System.out.println("Keyboard hook installed, type anywhere, 'q' to quit");
         new Thread() {
+            @Override
             public void run() {
                 while (!quit) {
                     try { Thread.sleep(10); } catch(Exception e) { }
