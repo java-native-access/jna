@@ -549,7 +549,7 @@ public final class Native implements Version {
      * all ancestor classes and interfaces for a declaring class which
      * implements {@link Library}.
      * @param cls The given class
-     * @param Tge enclosing class
+     * @return The enclosing class
      */
     static Class<?> findEnclosingLibraryClass(Class<?> cls) {
         if (cls == null) {
@@ -1188,8 +1188,8 @@ public final class Native implements Version {
     }
 
     /**
-     * @param The type class
-     * @param The object instance
+     * @param type The Java class for which the native size is to be determined
+     * @param value an instance of said class (if available)
      * @return the native size of the given class, in bytes.
      * For use with arrays.
      */
@@ -1257,7 +1257,7 @@ public final class Native implements Version {
 
     /**
      * @param cls The Java class
-     * @return {@code true) whether the given class is supported as a native argument type.
+     * @return {@code true} whether the given class is supported as a native argument type.
      */
     public static boolean isSupportedNativeType(Class<?> cls) {
         if (Structure.class.isAssignableFrom(cls)) {

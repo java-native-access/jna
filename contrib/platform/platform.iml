@@ -8,6 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="jna" level="project" />
+    <orderEntry type="library" name="hamcrest-core-1.3" level="project" />
   </component>
 </module>
-

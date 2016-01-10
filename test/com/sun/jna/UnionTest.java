@@ -12,7 +12,6 @@
  */
 package com.sun.jna;
 
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -21,24 +20,30 @@ import junit.framework.TestCase;
 public class UnionTest extends TestCase {
 
     public static class TestStructure extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public String value;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     public static class BigTestStructure extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("field1", "field2");
         public long field1;
         public long field2;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "field1", "field2" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     public static class IntStructure extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -132,6 +137,7 @@ public class UnionTest extends TestCase {
         // write an instance of an interface
         u = new StructUnion();
         Func1 func1 = new Func1() {
+            @Override
             public void callback() {
                 System.out.println("hi");
             }

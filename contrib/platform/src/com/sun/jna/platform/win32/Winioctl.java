@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -54,8 +53,8 @@ public interface Winioctl {
      */
     class STORAGE_DEVICE_NUMBER extends Structure {
 
-        public static class ByReference extends STORAGE_DEVICE_NUMBER implements
-                Structure.ByReference {
+        public static class ByReference extends STORAGE_DEVICE_NUMBER
+                implements Structure.ByReference {
             public ByReference() {
             }
 
@@ -64,13 +63,7 @@ public interface Winioctl {
             }
         }
 
-        public STORAGE_DEVICE_NUMBER() {
-        }
-
-        public STORAGE_DEVICE_NUMBER(Pointer memory) {
-            super(memory);
-            read();
-        }
+		public static final List<String> FIELDS = createFieldsOrder("DeviceType", "DeviceNumber", "PartitionNumber");
 
         /**
          * The type of device. Values from 0 through 32,767 are reserved for use by Microsoft. Values from 32,768
@@ -88,8 +81,18 @@ public interface Winioctl {
          */
         public int PartitionNumber;
 
-        protected List getFieldOrder() {
-            return Arrays.asList("DeviceType", "DeviceNumber", "PartitionNumber");
+        public STORAGE_DEVICE_NUMBER() {
+            super();
+        }
+
+        public STORAGE_DEVICE_NUMBER(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -98,6 +101,9 @@ public interface Winioctl {
      * IOCTL_STORAGE_QUERY_PROPERTY control code.
      */
     class STORAGE_PROPERTY_QUERY extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder("propertyId", "queryType", "additionalParameters");
+
         /**
          * Indicates whether the caller is requesting a device descriptor, an adapter descriptor, a write cache
          * property, a device unique ID (DUID), or the device identifiers
@@ -126,7 +132,7 @@ public interface Winioctl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("propertyId", "queryType", "additionalParameters");
+            return FIELDS;
         }
     }
 
@@ -134,6 +140,9 @@ public interface Winioctl {
      * Contains information about the media types supported by a device.
      */
     class GET_MEDIA_TYPES extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder("deviceType", "mediaInfoCount", "mediaInfo");
+
         /**
          * The type of device. Values from 0 through 32,767 are reserved for use by Microsoft Corporation. Values from
          * 32,768 through 65,535 are reserved for use by other vendors.
@@ -170,7 +179,7 @@ public interface Winioctl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("deviceType", "mediaInfoCount", "mediaInfo");
+            return FIELDS;
         }
     }
 
@@ -179,6 +188,11 @@ public interface Winioctl {
      * data for a device.
      */
     class STORAGE_DEVICE_DESCRIPTOR extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder("version", "size", "deviceType",
+                "deviceTypeModifier", "removableMedia", "commandQueueing", "vendorIdOffset", "productIdOffset",
+                "productRevisionOffset", "serialNumberOffset", "busType", "rawPropertiesLength", "rawDeviceProperties");
+
         /**
          * Contains the size of this structure, in bytes. The value of this member will change as members are added to
          * the structure.
@@ -278,9 +292,7 @@ public interface Winioctl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("version", "size", "deviceType", "deviceTypeModifier", "removableMedia",
-                    "commandQueueing", "vendorIdOffset", "productIdOffset", "productRevisionOffset",
-                    "serialNumberOffset", "busType", "rawPropertiesLength", "rawDeviceProperties");
+            return FIELDS;
         }
     }
 
@@ -296,6 +308,8 @@ public interface Winioctl {
                 super(memory);
             }
         }
+
+        public static final List<String> FIELDS = createFieldsOrder("geometry", "diskSize", "data");
 
         public DISK_GEOMETRY_EX() {
         }
@@ -331,7 +345,7 @@ public interface Winioctl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("geometry", "diskSize", "data");
+            return FIELDS;
         }
     }
 
@@ -347,6 +361,9 @@ public interface Winioctl {
                 super(memory);
             }
         }
+
+        public static final List<String> FIELDS = createFieldsOrder("cylinders", "mediaType", "tracksPerCylinder",
+                "sectorsPerTrack", "bytesPerSector");
 
         public DISK_GEOMETRY() {
         }
@@ -391,7 +408,7 @@ public interface Winioctl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("cylinders", "mediaType", "tracksPerCylinder", "sectorsPerTrack", "bytesPerSector");
+            return FIELDS;
         }
     }
 }

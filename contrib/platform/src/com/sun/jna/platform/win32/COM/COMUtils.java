@@ -21,7 +21,6 @@ import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;

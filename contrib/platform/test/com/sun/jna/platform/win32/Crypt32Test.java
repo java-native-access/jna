@@ -12,17 +12,8 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
-import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.ptr.PointerByReference;
 
 import junit.framework.TestCase;

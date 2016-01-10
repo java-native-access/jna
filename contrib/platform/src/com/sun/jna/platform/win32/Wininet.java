@@ -1,18 +1,17 @@
 /* Copyright (c) 2015 Michael Freeman, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -79,7 +78,7 @@ public interface Wininet extends StdCallLibrary {
 
     /**
      * Closes the specified cache enumeration handle.
-     * 
+     *
      * @param hFind
      *            Handle returned by a previous call to the
      *            FindFirstUrlCacheEntry function.
@@ -106,7 +105,7 @@ public interface Wininet extends StdCallLibrary {
 
     /**
      * Begins the enumeration of the Internet cache.
-     * 
+     *
      * @param lpszUrlSearchPattern
      *            A pointer to a string that contains the source name pattern to
      *            search for.<br>
@@ -171,7 +170,7 @@ public interface Wininet extends StdCallLibrary {
 
     /**
      * Contains information about an entry in the Internet cache.
-     * 
+     *
      * <pre>
      * <code>
      * typedef struct _INTERNET_CACHE_ENTRY_INFO {
@@ -195,14 +194,19 @@ public interface Wininet extends StdCallLibrary {
      *     DWORD dwExemptDelta;
      *   };
      * } INTERNET_CACHE_ENTRY_INFO, *LPINTERNET_CACHE_ENTRY_INFO;
-     * 
+     *
      *     </code>
      * </pre>
-     * 
-     * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=
-     *      vs.85).aspx
+     *
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=vs.85).aspx">MSDN</a>
      */
     static class INTERNET_CACHE_ENTRY_INFO extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwStructSize", "lpszSourceUrlName", "lpszLocalFileName",
+                "CacheEntryType", "dwUseCount", "dwHitRate", "dwSizeLow", "dwSizeHigh", "LastModifiedTime",
+                "ExpireTime", "LastAccessTime", "LastSyncTime", "lpHeaderInfo", "dwHeaderInfoSize",
+                "lpszFileExtension", "u", "additional");
+
         /**
          * Size of this structure, in bytes. This value can be used to help
          * determine the version of the cache system.
@@ -330,7 +334,7 @@ public interface Wininet extends StdCallLibrary {
 
         /**
          * A union of the last two distinct fields in INTERNET_CACHE_ENTRY_INFO
-         * 
+         *
          * <pre>
          * <code>
          *             union {
@@ -352,11 +356,8 @@ public interface Wininet extends StdCallLibrary {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList("dwStructSize", "lpszSourceUrlName", "lpszLocalFileName",
-                    "CacheEntryType", "dwUseCount", "dwHitRate", "dwSizeLow", "dwSizeHigh", "LastModifiedTime",
-                    "ExpireTime", "LastAccessTime", "LastSyncTime", "lpHeaderInfo", "dwHeaderInfoSize",
-                    "lpszFileExtension", "u", "additional");
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
 
         @Override

@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
@@ -22,7 +21,6 @@ import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;

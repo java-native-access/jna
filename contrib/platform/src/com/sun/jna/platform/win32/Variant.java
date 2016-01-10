@@ -1,10 +1,8 @@
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.jna.IntegerType;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
@@ -40,7 +38,6 @@ import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.IRecordInfo;
 import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.DoubleByReference;
@@ -197,7 +194,7 @@ public interface Variant {
         public VARIANT(byte value) {
             this(new BYTE(value));
         }
-        
+
         public VARIANT(BYTE value) {
             this();
             this.setValue(Variant.VT_UI1, value);
@@ -573,22 +570,34 @@ public interface Variant {
         }
 
         public static class _VARIANT extends Structure {
-
-            public VARTYPE vt;
-            public short wReserved1;
-            public short wReserved2;
-            public short wReserved3;
-            public __VARIANT __variant;
-
-            public _VARIANT() {
-            }
-
-            public _VARIANT(Pointer pointer) {
-                super(pointer);
-                this.read();
-            }
+            public static final List<String> FIELDS = createFieldsOrder("vt",
+                    "wReserved1", "wReserved2", "wReserved3", "__variant");
 
             public static class __VARIANT extends Union {
+                public static class BRECORD extends Structure {
+                    public static class ByReference extends BRECORD implements
+                            Structure.ByReference {
+                    }
+
+                    public static final List<String> FIELDS = createFieldsOrder("pvRecord", "pRecInfo");
+
+                    public PVOID pvRecord;
+                    public Pointer pRecInfo;
+
+                    public BRECORD() {
+                        super();
+                    }
+
+                    public BRECORD(Pointer pointer) {
+                        super(pointer);
+                    }
+
+                    @Override
+                    protected List<String> getFieldOrder() {
+                        return FIELDS;
+                    }
+                }
+
                 // LONGLONG VT_I8
                 public LONGLONG llVal;
                 // LONG VT_I4
@@ -679,29 +688,6 @@ public interface Variant {
                 public UINTByReference puintVal;
                 // BRECORD VT_RECORD
                 public BRECORD pvRecord;
-                
-                public static class BRECORD extends Structure {
-                    public static class ByReference extends BRECORD implements
-                            Structure.ByReference {
-                    }
-
-                    public PVOID pvRecord;
-
-                    public Pointer pRecInfo;
-
-                    public BRECORD() {
-                    }
-
-                    public BRECORD(Pointer pointer) {
-                        super(pointer);
-                    }
-
-                    @Override
-                    protected List getFieldOrder() {
-                        return Arrays.asList(new String[] { "pvRecord",
-                                "pRecInfo" });
-                    }
-                }
 
                 public __VARIANT() {
                     super();
@@ -714,10 +700,24 @@ public interface Variant {
                 }
             }
 
+            public VARTYPE vt;
+            public short wReserved1;
+            public short wReserved2;
+            public short wReserved3;
+            public __VARIANT __variant;
+
+            public _VARIANT() {
+                super();
+            }
+
+            public _VARIANT(Pointer pointer) {
+                super(pointer);
+                this.read();
+            }
+
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "vt", "wReserved1",
-                        "wReserved2", "wReserved3", "__variant" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
     }
@@ -734,9 +734,11 @@ public interface Variant {
             }
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("variantArg");
         public VARIANT[] variantArg = new VARIANT[1];
 
         public VariantArg() {
+            super();
         }
 
         /**
@@ -746,21 +748,21 @@ public interface Variant {
         public VariantArg(Pointer pointer) {
         	super(pointer);
         }
-        
+
         public VariantArg(VARIANT[] variantArg) {
             this.variantArg = variantArg;
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "variantArg" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
-        
+
         public void setArraySize(int size) {
         	this.variantArg = new VARIANT[size];
         	this.read();
         }
-        
+
 
     }
 }

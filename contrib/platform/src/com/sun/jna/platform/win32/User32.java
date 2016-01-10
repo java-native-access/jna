@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinGDI.ICONINFO;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -69,7 +68,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * </p>
      */
     int SW_SHOWDEFAULT = 10;
-    
+
     /**
      * This function retrieves a handle to a display device context (DC) for the
      * client area of the specified window. The display device context can be
@@ -1297,8 +1296,6 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         error information, call {@link Kernel32#GetLastError}.
      */
     boolean UnregisterClass(String lpClassName, HINSTANCE hInstance);
-    /** @deprecated use the String version */
-    boolean UnregisterClass(WString lpClassName, HINSTANCE hInstance);
 
     /**
      * Creates an overlapped, pop-up, or child window with an extended window
@@ -1467,11 +1464,6 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         </ul>
      */
     HWND CreateWindowEx(int dwExStyle, String lpClassName,
-                               String lpWindowName, int dwStyle, int x, int y, int nWidth,
-                               int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
-                               LPVOID lpParam);
-    /** @deprecated use the String version */
-    HWND CreateWindowEx(int dwExStyle, WString lpClassName,
                                String lpWindowName, int dwStyle, int x, int y, int nWidth,
                                int nHeight, HWND hWndParent, HMENU hMenu, HINSTANCE hInstance,
                                LPVOID lpParam);
@@ -2021,13 +2013,13 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645598(v=vs.85).aspx">GetRawInputDeviceList</A>
      */
     int GetRawInputDeviceList(RAWINPUTDEVICELIST[] pRawInputDeviceList, IntByReference puiNumDevices, int cbSize);
-    
-    
+
+
     /**
      * Retrieves a handle to the desktop window. The desktop window covers the
      * entire screen. The desktop window is the area on top of which other
      * windows are painted.
-     * 
+     *
      * @return Type: HWND The return value is a handle to the desktop window.
      */
     HWND GetDesktopWindow();
@@ -2035,7 +2027,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /**
      * The PrintWindow function copies a visual window into the specified device
      * context (DC), typically a printer DC.
-     * 
+     *
      * @param hWnd
      *            A handle to the window that will be copied.
      * @param dest
@@ -2054,7 +2046,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /**
      * Determines whether the specified window is enabled for mouse and keyboard
      * input.
-     * 
+     *
      * @param hWnd
      *            A handle to the window to be tested.
      * @return If the window is enabled, the return value is true (nonzero).<br>
@@ -2069,7 +2061,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * because the window could be destroyed after this function was called.<br>
      * Further, because window handles are recycled the handle could even point
      * to a different window.
-     * 
+     *
      * @param hWnd
      *            A handle to the window to be tested.
      * @return If the window handle identifies an existing window, the return
@@ -2141,7 +2133,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /**
      * Retrieves the handle to the ancestor of the specified window.
-     * 
+     *
      * @param hwnd
      *            A handle to the window whose ancestor is to be retrieved. If
      *            this parameter is the desktop window, the function returns
@@ -2165,7 +2157,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /**
      * Retrieves the position of the mouse cursor, in screen coordinates.
-     * 
+     *
      * @param p
      *            lpPoint [out]<br>
      *            Type: LPPOINT<br>
@@ -2182,7 +2174,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * If the new coordinates are not within the screen rectangle set by the
      * most recent ClipCursor function call, the system automatically adjusts
      * the coordinates so that the cursor stays within the rectangle.
-     * 
+     *
      * @param x
      *            The new x-coordinate of the cursor, in screen coordinates.
      * @param y
@@ -2277,7 +2269,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     /**
      * Removes an event hook function created by a previous call to
      * SetWinEventHook.
-     * 
+     *
      * @param hook
      *            Type: HWINEVENTHOOK<br>
      *            Handle to the event hook returned in the previous call to
@@ -2295,7 +2287,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /**
      * Copies the specified icon from another module to the current module.
-     * 
+     *
      * @param hIcon
      *            A handle to the icon to be copied.
      * @return If the function succeeds, the return value is a handle to the
@@ -2313,7 +2305,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * the GetClassLongPtr function. <br>
      * (Pointers and handles are 32 bits on 32-bit Windows and 64 bits on 64-bit
      * Windows.)
-     * 
+     *
      * @param hWnd
      *            A handle to the window and, indirectly, the class to which the
      *            window belongs.

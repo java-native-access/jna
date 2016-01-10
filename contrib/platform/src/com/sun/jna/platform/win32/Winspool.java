@@ -1,18 +1,17 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
@@ -32,7 +31,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Ported from Winspool.h. Windows SDK 6.0a
- * 
+ *
  * @author dblock[at]dblock.org
  */
 public interface Winspool extends StdCallLibrary {
@@ -97,7 +96,7 @@ public interface Winspool extends StdCallLibrary {
     /**
      * The EnumPrinters function enumerates available printers, print servers,
      * domains, or print providers.
-     * 
+     *
      * @param Flags
      *            The types of print objects that the function should enumerate.
      * @param Name
@@ -160,59 +159,67 @@ public interface Winspool extends StdCallLibrary {
             IntByReference pcReturned);
 
     public static class PRINTER_INFO_1 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("Flags", "pDescription", "pName", "pComment");
+
         public int Flags;
         public String pDescription;
         public String pName;
         public String pComment;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "Flags", "pDescription",
-                    "pName", "pComment" });
-        }
-
         public PRINTER_INFO_1() {
+            super();
         }
 
         public PRINTER_INFO_1(int size) {
             super(new Memory(size));
         }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
 
     public static class PRINTER_INFO_4 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("pPrinterName", "pServerName", "Attributes");
+
         public String pPrinterName;
         public String pServerName;
         public DWORD Attributes;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "pPrinterName", "pServerName",
-                    "Attributes" });
-        }
-
         public PRINTER_INFO_4() {
+            super();
         }
 
         public PRINTER_INFO_4(int size) {
             super(new Memory(size));
         }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
 
     public class LPPRINTER_DEFAULTS extends Structure {
-        public String pDatatype;
-        PVOID pDevMode;
-        int DesiredAccess;
+        public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "pDatatype", "pDevMode",
-                    "DesiredAccess" });
+        public String pDatatype;
+        public PVOID pDevMode;
+        public int DesiredAccess;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     /**
      * The OpenPrinter function retrieves a handle to the specified printer or
      * print server or other types of handles in the print subsystem.
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param pPrinterName
      *            [in] A pointer to a null-terminated string that specifies the
      *            name of the printer or print server, the printer object, the
@@ -254,9 +261,9 @@ public interface Winspool extends StdCallLibrary {
      * FindNextPrinterChangeNotification function to retrieve information about
      * the change, and to reset the change notification object for use in the
      * next wait operation.
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param hPrinter
      *            [in] A handle to the printer or print server that you want to
      *            monitor. Use the OpenPrinter or AddPrinter function to
@@ -266,12 +273,12 @@ public interface Winspool extends StdCallLibrary {
      *            to enter a signaled state. A change notification occurs when
      *            one or more of the specified conditions are met. The fdwFilter
      *            parameter can be zero if pPrinterNotifyOptions is non-NULL.
-     * 
+     *
      * @param fdwOptions
-     *            Reserved; must be zero. 
-     * @param pPrinterNotifyOptions 
+     *            Reserved; must be zero.
+     * @param pPrinterNotifyOptions
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
-     *            structure. The pTypes member of this structure is an array of 
+     *            structure. The pTypes member of this structure is an array of
      *            one or more PRINTER_NOTIFY_OPTIONS_TYPE structures, each of which
      *            specifies a printer information field to monitor. A change
      *            notification occurs when one or more of the specified fields
@@ -280,7 +287,7 @@ public interface Winspool extends StdCallLibrary {
      *            new printer information. This parameter can be NULL if
      *            fdwFilter is nonzero. For a list of fields that can be
      *            monitored, see PRINTER_NOTIFY_OPTIONS_TYPE.
-     * 
+     *
      * @return If the function succeeds, the return value is a handle to a
      *         change notification object associated with the specified printer
      *         or print server. If the function fails, the return value is
@@ -304,9 +311,9 @@ public interface Winspool extends StdCallLibrary {
      * changes occurs to the printer or print server. The
      * FindFirstPrinterChangeNotification function creates the change
      * notification object and specifies the set of changes to be monitored.
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param hChange
      *            [in] A handle to a change notification object associated with
      *            a printer or print server. You obtain such a handle by calling
@@ -321,7 +328,7 @@ public interface Winspool extends StdCallLibrary {
      *            those specified in the fdwFilter parameter of the
      *            FindFirstPrinterChangeNotification call. The system sets one
      *            or more of the following bit flags.
-     * 
+     *
      * @param pPrinterNotifyOptions
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
      *            structure. Set the Flags member of this structure to
@@ -329,7 +336,7 @@ public interface Winspool extends StdCallLibrary {
      *            return the current data for all monitored printer information
      *            fields. The function ignores all other members of the
      *            structure. This parameter can be NULL.
-     * 
+     *
      * @param ppPrinterNotifyInfo
      *            [out, optional] A pointer to a pointer variable that receives
      *            a pointer to a system-allocated, read-only buffer. Call the
@@ -351,7 +358,7 @@ public interface Winspool extends StdCallLibrary {
      *            no additional notifications will be sent until you make a
      *            second FindNextPrinterChangeNotification call that specifies
      *            PRINTER_NOTIFY_OPTIONS_REFRESH.
-     * 
+     *
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
      */
@@ -371,14 +378,14 @@ public interface Winspool extends StdCallLibrary {
      * FindFirstPrinterChangeNotification function. The printer or print server
      * associated with the change notification object will no longer be
      * monitored by that object.
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param hChange
      *            [in] A handle to the change notification object to be closed.
      *            This is a handle created by calling the
      *            FindFirstPrinterChangeNotification function.
-     * 
+     *
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
      */
@@ -405,6 +412,12 @@ public interface Winspool extends StdCallLibrary {
             IntByReference pcReturned);
 
     public static class JOB_INFO_1 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "JobId", "pPrinterName",
+                "pMachineName", "pUserName", "pDocument", "pDatatype",
+                "pStatus", "Status", "Priority", "Position", "TotalPages",
+                "PagesPrinted", "Submitted");
+
         public int JobId;
         public String pPrinterName;
         public String pMachineName;
@@ -419,14 +432,13 @@ public interface Winspool extends StdCallLibrary {
         public int PagesPrinted;
         public SYSTEMTIME Submitted;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "JobId", "pPrinterName",
-                    "pMachineName", "pUserName", "pDocument", "pDatatype",
-                    "pStatus", "Status", "Priority", "Position", "TotalPages",
-                    "PagesPrinted", "Submitted" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
 
         public JOB_INFO_1() {
+            super();
         }
 
         public JOB_INFO_1(int size) {

@@ -14,8 +14,8 @@ package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import java.util.Hashtable;
 
-public class TlbCmdlineArgs extends Hashtable<String, String> implements
-        TlbConst {
+public class TlbCmdlineArgs extends Hashtable<String, String> implements TlbConst {
+    private static final long serialVersionUID = 1L;
 
     public TlbCmdlineArgs(String[] args) {
         this.readCmdArgs(args);
@@ -70,7 +70,7 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements
         else
             return BINDING_MODE_VTABLE;
     }
-    
+
     public void showCmdHelp() {
         String helpStr = "usage: TlbImp [-tlb.id -tlb.major.version -tlb.minor.version] [-tlb.file] [-bind.mode vTable, dispId] [-output.dir]"
                 + CRCR

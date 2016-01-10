@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.unix;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
@@ -83,6 +82,8 @@ public interface Resource {
     int RLIMIT_NLIMITS = 16;
 
     public static class Rlimit extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("rlim_cur", "rlim_max");
+
         /** The current (soft) limit.  */
         public long rlim_cur;
 
@@ -91,7 +92,7 @@ public interface Resource {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "rlim_cur", "rlim_max" });
+            return FIELDS;
         }
     }
 
