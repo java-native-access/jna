@@ -18,7 +18,6 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
-import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Ole32;

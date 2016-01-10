@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -25,10 +24,9 @@ import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
 
 /**
  * Based on dbt.h (various types)
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
-@SuppressWarnings("serial")
 public interface DBT {
 
     /** The dbt no disk space. */
@@ -65,29 +63,26 @@ public interface DBT {
     int DBT_CUSTOMEVENT = 0x8006;
 
     /** The guid devinterface usb device. */
-    public GUID GUID_DEVINTERFACE_USB_DEVICE = new GUID(
+    GUID GUID_DEVINTERFACE_USB_DEVICE = new GUID(
             "{A5DCBF10-6530-11D2-901F-00C04FB951ED}");
 
     /** The guid devinterface hid. */
-    public GUID GUID_DEVINTERFACE_HID = new GUID(
-            "{4D1E55B2-F16F-11CF-88CB-001111000030}");
+    GUID GUID_DEVINTERFACE_HID = new GUID("{4D1E55B2-F16F-11CF-88CB-001111000030}");
 
     /** The guid devinterface volume. */
-    public GUID GUID_DEVINTERFACE_VOLUME = new GUID(
-            "{53F5630D-B6BF-11D0-94F2-00A0C91EFB8B}");
+    GUID GUID_DEVINTERFACE_VOLUME = new GUID("{53F5630D-B6BF-11D0-94F2-00A0C91EFB8B}");
 
     /** The guid devinterface keyboard. */
-    public GUID GUID_DEVINTERFACE_KEYBOARD = new GUID(
-            "{884b96c3-56ef-11d1-bc8c-00a0c91405dd}");
+    GUID GUID_DEVINTERFACE_KEYBOARD = new GUID("{884b96c3-56ef-11d1-bc8c-00a0c91405dd}");
 
     /** The guid devinterface mouse. */
-    public GUID GUID_DEVINTERFACE_MOUSE = new GUID(
-            "{378DE44C-56EF-11D1-BC8C-00A0C91405DD}");
+    GUID GUID_DEVINTERFACE_MOUSE = new GUID("{378DE44C-56EF-11D1-BC8C-00A0C91405DD}");
 
     /**
      * The Class DEV_BROADCAST_HDR.
      */
     public class DEV_BROADCAST_HDR extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbch_size", "dbch_devicetype", "dbch_reserved");
 
         /** The dbch_size. */
         public int dbch_size = size();
@@ -102,11 +97,12 @@ public interface DBT {
          * Instantiates a new dev broadcast hdr.
          */
         public DEV_BROADCAST_HDR() {
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast hdr.
-         * 
+         *
          * @param pointer
          *            the pointer
          */
@@ -116,7 +112,7 @@ public interface DBT {
 
         /**
          * Instantiates a new dev broadcast hdr.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -125,14 +121,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbch_size", "dbch_devicetype",
-                    "dbch_reserved" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -161,6 +152,8 @@ public interface DBT {
      * The Class DEV_BROADCAST_OEM.
      */
     public class DEV_BROADCAST_OEM extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbco_size", "dbco_devicetype",
+                "dbco_reserved", "dbco_identifier", "dbco_suppfunc");
 
         /** The dbco_size. */
         public int dbco_size = size();
@@ -181,12 +174,12 @@ public interface DBT {
          * Instantiates a new dev broadcast oem.
          */
         public DEV_BROADCAST_OEM() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast oem.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -195,14 +188,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbco_size", "dbco_devicetype",
-                    "dbco_reserved", "dbco_identifier", "dbco_suppfunc" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -210,7 +198,8 @@ public interface DBT {
      * The Class DEV_BROADCAST_DEVNODE.
      */
     public class DEV_BROADCAST_DEVNODE extends Structure {
-
+        public static final List<String> FIELDS = createFieldsOrder("dbcd_size", "dbcd_devicetype",
+                "dbcd_reserved", "dbcd_devnode");
         /** The dbcd_size. */
         public int dbcd_size = size();
 
@@ -227,12 +216,12 @@ public interface DBT {
          * Instantiates a new dev broadcast devnode.
          */
         public DEV_BROADCAST_DEVNODE() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast devnode.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -241,14 +230,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbcd_size", "dbcd_devicetype",
-                    "dbcd_reserved", "dbcd_devnode" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -256,6 +240,8 @@ public interface DBT {
      * The Class DEV_BROADCAST_VOLUME.
      */
     public class DEV_BROADCAST_VOLUME extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbcv_size", "dbcv_devicetype",
+                "dbcv_reserved", "dbcv_unitmask", "dbcv_flags");
 
         /** The dbcv_size. */
         public int dbcv_size = size();
@@ -276,12 +262,12 @@ public interface DBT {
          * Instantiates a new dev broadcast volume.
          */
         public DEV_BROADCAST_VOLUME() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast volume.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -290,14 +276,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbcv_size", "dbcv_devicetype",
-                    "dbcv_reserved", "dbcv_unitmask", "dbcv_flags" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -311,6 +292,7 @@ public interface DBT {
      * The Class DEV_BROADCAST_PORT.
      */
     public class DEV_BROADCAST_PORT extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbcp_size", "dbcp_devicetype", "dbcp_reserved", "dbcp_name");
 
         /** The dbcp_size. */
         public int dbcp_size = size();
@@ -328,12 +310,12 @@ public interface DBT {
          * Instantiates a new dev broadcast port.
          */
         public DEV_BROADCAST_PORT() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast port.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -342,14 +324,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbcp_size", "dbcp_devicetype",
-                    "dbcp_reserved", "dbcp_name" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -357,6 +334,8 @@ public interface DBT {
      * The Class DEV_BROADCAST_NET.
      */
     public class DEV_BROADCAST_NET extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbcn_size", "dbcn_devicetype",
+                "dbcn_reserved", "dbcn_resource", "dbcn_flags");
 
         /** The dbcn_size. */
         public int dbcn_size = size();
@@ -377,12 +356,12 @@ public interface DBT {
          * Instantiates a new dev broadcast net.
          */
         public DEV_BROADCAST_NET() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast net.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -391,14 +370,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbcn_size", "dbcn_devicetype",
-                    "dbcn_reserved", "dbcn_resource", "dbcn_flags" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -406,6 +380,8 @@ public interface DBT {
      * The Class DEV_BROADCAST_DEVICEINTERFACE.
      */
     public class DEV_BROADCAST_DEVICEINTERFACE extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbcc_size", "dbcc_devicetype",
+                "dbcc_reserved", "dbcc_classguid", "dbcc_name");
 
         /** The dbcc_size. */
         public int dbcc_size;
@@ -426,12 +402,12 @@ public interface DBT {
          * Instantiates a new dev broadcast deviceinterface.
          */
         public DEV_BROADCAST_DEVICEINTERFACE() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Dev broadcast hdr.
-         * 
+         *
          * @param pointer
          *            the pointer
          */
@@ -441,7 +417,7 @@ public interface DBT {
 
         /**
          * Instantiates a new dev broadcast deviceinterface.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -456,21 +432,16 @@ public interface DBT {
 
         /**
          * Gets the dbcc_name.
-         * 
+         *
          * @return the dbcc_name
          */
         public String getDbcc_name() {
             return Native.toString(this.dbcc_name);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbcc_size", "dbcc_devicetype",
-                    "dbcc_reserved", "dbcc_classguid", "dbcc_name" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -478,6 +449,9 @@ public interface DBT {
      * The Class DEV_BROADCAST_HANDLE.
      */
     public class DEV_BROADCAST_HANDLE extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dbch_size", "dbch_devicetype",
+                "dbch_reserved", "dbch_handle", "dbch_hdevnotify",
+                "dbch_eventguid", "dbch_nameoffset", "dbch_data");
 
         /** The dbch_size. */
         public int dbch_size = size();
@@ -507,12 +481,12 @@ public interface DBT {
          * Instantiates a new dev broadcast handle.
          */
         public DEV_BROADCAST_HANDLE() {
-            // TODO Auto-generated constructor stub
+            super();
         }
 
         /**
          * Instantiates a new dev broadcast handle.
-         * 
+         *
          * @param memory
          *            the memory
          */
@@ -521,15 +495,9 @@ public interface DBT {
             read();
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dbch_size", "dbch_devicetype",
-                    "dbch_reserved", "dbch_handle", "dbch_hdevnotify",
-                    "dbch_eventguid", "dbch_nameoffset", "dbch_data" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

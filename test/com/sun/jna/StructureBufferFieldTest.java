@@ -15,7 +15,6 @@ package com.sun.jna;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
-import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -31,10 +30,12 @@ public class StructureBufferFieldTest extends TestCase {
     }
 
     static class BufferStructure extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("buffer", "dbuffer");
         public Buffer buffer;
         public DoubleBuffer dbuffer;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "buffer", "dbuffer" }); 
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public void testBufferFieldWriteNULL() {

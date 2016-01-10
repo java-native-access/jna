@@ -27,8 +27,7 @@ public abstract class COMInvoker extends PointerType {
         return func.invokeInt(args);
     }
 
-    protected Object _invokeNativeObject(int vtableId, Object[] args,
-            Class returnType) {
+    protected Object _invokeNativeObject(int vtableId, Object[] args, Class<?> returnType) {
         Pointer vptr = this.getPointer().getPointer(0);
         // we take the vtable id and multiply with the pointer size (4 bytes on
         // 32bit OS)
@@ -36,7 +35,7 @@ public abstract class COMInvoker extends PointerType {
                 * Pointer.SIZE));
         return func.invoke(returnType, args);
     }
-    
+
     protected void _invokeNativeVoid(int vtableId, Object[] args) {
         Pointer vptr = this.getPointer().getPointer(0);
         // we take the vtable id and multiply with the pointer size (4 bytes on
@@ -45,5 +44,5 @@ public abstract class COMInvoker extends PointerType {
                 * Pointer.SIZE));
         func.invokeVoid(args);
     }
-    
+
 }

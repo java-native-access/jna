@@ -17,7 +17,6 @@
 
 package com.sun.jna.platform.mac;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Library;
@@ -59,25 +58,33 @@ public interface SystemB extends Library {
     int INT_SIZE = Native.getNativeSize(int.class);
 
     public static class HostCpuLoadInfo extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("cpu_ticks");
         public int cpu_ticks[] = new int[CPU_STATE_MAX];
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("cpu_ticks");
+            return FIELDS;
         }
     }
 
     public static class HostLoadInfo extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("avenrun", "mach_factor");
         public int[] avenrun = new int[3]; // scaled by LOAD_SCALE
         public int[] mach_factor = new int[3]; // scaled by LOAD_SCALE
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("avenrun", "mach_factor");
+            return FIELDS;
         }
     }
 
     public static class VMStatistics extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("free_count", "active_count",
+                "inactive_count", "wire_count", "zero_fill_count",
+                "reactivations", "pageins", "pageouts", "faults",
+                "cow_faults", "lookups", "hits", "purgeable_count",
+                "purges", "speculative_count");
+
         public int free_count; // # of pages free
         public int active_count; // # of pages active
         public int inactive_count; // # of pages inactive
@@ -97,15 +104,25 @@ public interface SystemB extends Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("free_count", "active_count",
-                                 "inactive_count", "wire_count", "zero_fill_count",
-                                 "reactivations", "pageins", "pageouts", "faults",
-                                 "cow_faults", "lookups", "hits", "purgeable_count",
-                                 "purges", "speculative_count");
+            return FIELDS;
         }
     }
 
     public static class VMStatistics64 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("free_count", "active_count",
+                "inactive_count", "wire_count",
+                "zero_fill_count", "reactivations",
+                "pageins", "pageouts",
+                "faults", "cow_faults",
+                "lookups", "hits",
+                "purges",
+                "purgeable_count", "speculative_count",
+                "decompressions", "compressions",
+                "swapins", "swapouts",
+                "compressor_page_count", "throttled_count",
+                "external_page_count", "internal_page_count",
+                "total_uncompressed_pages_in_compressor");
+
         public int free_count; // # of pages free
         public int active_count; // # of pages active
         public int inactive_count; // # of pages inactive
@@ -139,19 +156,7 @@ public interface SystemB extends Library {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("free_count", "active_count",
-                                 "inactive_count", "wire_count",
-                                 "zero_fill_count", "reactivations",
-                                 "pageins", "pageouts",
-                                 "faults", "cow_faults",
-                                 "lookups", "hits",
-                                 "purges",
-                                 "purgeable_count", "speculative_count",
-                                 "decompressions", "compressions",
-                                 "swapins", "swapouts",
-                                 "compressor_page_count", "throttled_count",
-                                 "external_page_count", "internal_page_count",
-                                 "total_uncompressed_pages_in_compressor");
+            return FIELDS;
         }
     }
 

@@ -1,19 +1,18 @@
 /* Copyright (c) 2010 EugineLev, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
@@ -27,42 +26,44 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
  * Microsoft Windows SDK 7.0A.
  * @author EugineLev
  */
-public interface Winsvc {	
+public interface Winsvc {
 
     /**
      *  Contains status information for a service. The ControlService, EnumDependentServices,
      *  EnumServicesStatus, and QueryServiceStatus functions use this structure. A service
-     *  uses this structure in the SetServiceStatus function to report its current status 
+     *  uses this structure in the SetServiceStatus function to report its current status
      *  to the service control manager.
      */
     public static class SERVICE_STATUS extends Structure {
-		
-        /**
-         * dwServiceType - the type of service. This member can be one 
-         * of the following values:
-         * SERVICE_KERNEL_DRIVER, SERVICE_FILE_SYSTEM_DRIVER, 
-         * SERVICE_WIN32_OWN_PROCESS, SERVICE_WIN32_SHARE_PROCESS, 
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint");
 
-         * If the service type is either SERVICE_WIN32_OWN_PROCESS or 
-         * SERVICE_WIN32_SHARE_PROCESS, and the service is running in the 
-         * context of the LocalSystem account, the following type may also 
+        /**
+         * dwServiceType - the type of service. This member can be one
+         * of the following values:
+         * SERVICE_KERNEL_DRIVER, SERVICE_FILE_SYSTEM_DRIVER,
+         * SERVICE_WIN32_OWN_PROCESS, SERVICE_WIN32_SHARE_PROCESS,
+
+         * If the service type is either SERVICE_WIN32_OWN_PROCESS or
+         * SERVICE_WIN32_SHARE_PROCESS, and the service is running in the
+         * context of the LocalSystem account, the following type may also
          * be specified:
          * SERVICE_INTERACTIVE_PROCESS
-         * 
+         *
          * These values can be found in WinNT.h
          */
         public int dwServiceType;
-		
+
         /**
-         * dwCurrentState - The current state of the service. 
+         * dwCurrentState - The current state of the service.
          * This member can be one of the following values:
          * SERVICE_STOPPED, SERVICE_START_PENDING, SERVICE_STOP_PENDING, SERVICE_RUNNING,
-         * SERVICE_CONTINUE_PENDING, SERVICE_PAUSE_PENDING, SERVICE_PAUSED	
+         * SERVICE_CONTINUE_PENDING, SERVICE_PAUSE_PENDING, SERVICE_PAUSED
          */
         public int dwCurrentState;
-		
+
         /**
-         * dwControlsAccepted - The control codes the service accepts and processes 
+         * dwControlsAccepted - The control codes the service accepts and processes
          * in its handler function:
          * SERVICE_ACCEPT_STOP, SERVICE_ACCEPT_PAUSE_CONTINUE, SERVICE_ACCEPT_SHUTDOWN,
          * SERVICE_ACCEPT_PARAMCHANGE,  SERVICE_ACCEPT_NETBINDCHANGE, SERVICE_ACCEPT_HARDWAREPROFILECHANGE,
@@ -70,77 +71,82 @@ public interface Winsvc {
          * SERVICE_ACCEPT_TIMECHANGE, SERVICE_ACCEPT_TRIGGEREVENT
          */
         public int dwControlsAccepted;
-		
+
         /**
-         * dwWin32ExitCode - The error code the service uses to report an error that occurs 
+         * dwWin32ExitCode - The error code the service uses to report an error that occurs
          * when it is starting or stopping. To return an error code specific to the service,
          * the service must set this value to ERROR_SERVICE_SPECIFIC_ERROR to indicate that
          * the dwServiceSpecificExitCode member contains the error code. The service should
          * set this value to NO_ERROR when it is running and on normal termination.
          */
         public int dwWin32ExitCode;
-		
+
         /**
          * dwServiceSpecificExitCode - A service-specific error code that the service returns
          * when an error occurs while the service is starting or stopping. This value is
          * ignored unless the dwWin32ExitCode member is set to ERROR_SERVICE_SPECIFIC_ERROR.
          */
         public int dwServiceSpecificExitCode;
-		
+
         /**
          * dwCheckPoint - The check-point value the service increments periodically to report
          * its progress during a lengthy start, stop, pause, or continue operation.
          */
         public int dwCheckPoint;
-		
+
         /**
-         * dwWaitHint - The estimated time required for a pending start, stop, pause, or continue 
+         * dwWaitHint - The estimated time required for a pending start, stop, pause, or continue
          * operation, in milliseconds.
          */
         public int dwWaitHint;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint" });
-        }
-        
         public SERVICE_STATUS() {
             super();
         }
 
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
 
     /**
-     * Contains process status information for a service. The ControlServiceEx, 
+     * Contains process status information for a service. The ControlServiceEx,
      * EnumServicesStatusEx, NotifyServiceStatusChange, and QueryServiceStatusEx
      * functions use this structure.
      */
     public class SERVICE_STATUS_PROCESS extends Structure {
-        /**
-         * dwServiceType - the type of service. This member can be one 
-         * of the following values:
-         * SERVICE_KERNEL_DRIVER, SERVICE_FILE_SYSTEM_DRIVER, 
-         * SERVICE_WIN32_OWN_PROCESS, SERVICE_WIN32_SHARE_PROCESS, 
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwServiceType", "dwCurrentState", "dwControlsAccepted",
+                "dwWin32ExitCode", "dwServiceSpecificExitCode",
+                "dwCheckPoint", "dwWaitHint", "dwProcessId", "dwServiceFlags");
 
-         * If the service type is either SERVICE_WIN32_OWN_PROCESS or 
-         * SERVICE_WIN32_SHARE_PROCESS, and the service is running in the 
-         * context of the LocalSystem account, the following type may also 
+        /**
+         * dwServiceType - the type of service. This member can be one
+         * of the following values:
+         * SERVICE_KERNEL_DRIVER, SERVICE_FILE_SYSTEM_DRIVER,
+         * SERVICE_WIN32_OWN_PROCESS, SERVICE_WIN32_SHARE_PROCESS,
+
+         * If the service type is either SERVICE_WIN32_OWN_PROCESS or
+         * SERVICE_WIN32_SHARE_PROCESS, and the service is running in the
+         * context of the LocalSystem account, the following type may also
          * be specified:
          * SERVICE_INTERACTIVE_PROCESS
-         * 
+         *
          * These values can be found in WinNT.h
          */
         public int   dwServiceType;
-		
+
         /**
-         * dwCurrentState - The current state of the service. 
+         * dwCurrentState - The current state of the service.
          * This member can be one of the following values:
          * SERVICE_STOPPED, SERVICE_START_PENDING, SERVICE_STOP_PENDING, SERVICE_RUNNING,
-         * SERVICE_CONTINUE_PENDING, SERVICE_PAUSE_PENDING, SERVICE_PAUSED	
+         * SERVICE_CONTINUE_PENDING, SERVICE_PAUSE_PENDING, SERVICE_PAUSED
          */
         public int   dwCurrentState;
-		
+
         /**
-         * dwControlsAccepted - The control codes the service accepts and processes 
+         * dwControlsAccepted - The control codes the service accepts and processes
          * in its handler function:
          * SERVICE_ACCEPT_STOP, SERVICE_ACCEPT_PAUSE_CONTINUE, SERVICE_ACCEPT_SHUTDOWN,
          * SERVICE_ACCEPT_PARAMCHANGE,  SERVICE_ACCEPT_NETBINDCHANGE, SERVICE_ACCEPT_HARDWAREPROFILECHANGE,
@@ -148,64 +154,66 @@ public interface Winsvc {
          * SERVICE_ACCEPT_TIMECHANGE, SERVICE_ACCEPT_TRIGGEREVENT
          */
         public int   dwControlsAccepted;
-		
+
         /**
-         * dwWin32ExitCode - The error code the service uses to report an error that occurs 
+         * dwWin32ExitCode - The error code the service uses to report an error that occurs
          * when it is starting or stopping. To return an error code specific to the service,
          * the service must set this value to ERROR_SERVICE_SPECIFIC_ERROR to indicate that
          * the dwServiceSpecificExitCode member contains the error code. The service should
          * set this value to NO_ERROR when it is running and on normal termination.
          */
         public int   dwWin32ExitCode;
-		
+
         /**
          * dwServiceSpecificExitCode - A service-specific error code that the service returns
          * when an error occurs while the service is starting or stopping. This value is
          * ignored unless the dwWin32ExitCode member is set to ERROR_SERVICE_SPECIFIC_ERROR.
          */
         public int   dwServiceSpecificExitCode;
-		
+
         /**
          * dwCheckPoint - The check-point value the service increments periodically to report
          * its progress during a lengthy start, stop, pause, or continue operation.
          */
         public int   dwCheckPoint;
-		
+
         /**
-         * dwWaitHint - The estimated time required for a pending start, stop, pause, or continue 
+         * dwWaitHint - The estimated time required for a pending start, stop, pause, or continue
          * operation, in milliseconds.
          */
         public int   dwWaitHint;
-		
+
         /**
          * dwProcessId - The process identifier of the service.
          */
         public int   dwProcessId;
-		
+
         /**
          * This member can be one of the following values: 0, or SERVICE_RUNS_IN_SYSTEM_PROCESS
          */
         public int   dwServiceFlags;
-		
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint", "dwProcessId", "dwServiceFlags" });
-        }
-        
+
         public SERVICE_STATUS_PROCESS() {
+            super();
         }
-		
+
         public SERVICE_STATUS_PROCESS(int size) {
             super(new Memory(size));
         }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
-	
+
     //
     // Service flags for QueryServiceStatusEx
     //
     int SERVICE_RUNS_IN_SYSTEM_PROCESS = 0x00000001;
-	
+
     public static class SC_HANDLE extends HANDLE { }
-	
+
     //
     // Service Control Manager object specific access types
     //
@@ -216,10 +224,10 @@ public interface Winsvc {
     int SC_MANAGER_QUERY_LOCK_STATUS	= 0x0010;
     int SC_MANAGER_MODIFY_BOOT_CONFIG	= 0x0020;
 
-    int SC_MANAGER_ALL_ACCESS = 
-        WinNT.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT 
-        | SC_MANAGER_CREATE_SERVICE | SC_MANAGER_ENUMERATE_SERVICE 
-        | SC_MANAGER_LOCK | SC_MANAGER_QUERY_LOCK_STATUS  
+    int SC_MANAGER_ALL_ACCESS =
+        WinNT.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT
+        | SC_MANAGER_CREATE_SERVICE | SC_MANAGER_ENUMERATE_SERVICE
+        | SC_MANAGER_LOCK | SC_MANAGER_QUERY_LOCK_STATUS
         | SC_MANAGER_MODIFY_BOOT_CONFIG;
 
     //
@@ -236,10 +244,10 @@ public interface Winsvc {
     int SERVICE_USER_DEFINED_CONTROL	= 0x0100;
 
     int SERVICE_ALL_ACCESS =
-        WinNT.STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG 
-        | SERVICE_CHANGE_CONFIG | SERVICE_QUERY_STATUS 
-        | SERVICE_ENUMERATE_DEPENDENTS | SERVICE_START | SERVICE_STOP 
-        | SERVICE_PAUSE_CONTINUE | SERVICE_INTERROGATE 
+        WinNT.STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG
+        | SERVICE_CHANGE_CONFIG | SERVICE_QUERY_STATUS
+        | SERVICE_ENUMERATE_DEPENDENTS | SERVICE_START | SERVICE_STOP
+        | SERVICE_PAUSE_CONTINUE | SERVICE_INTERROGATE
         | SERVICE_USER_DEFINED_CONTROL;
 
     //
@@ -262,7 +270,7 @@ public interface Winsvc {
     //	int SERVICE_CONTROL_PRESHUTDOWN		= 0x0000000F;
     //	int SERVICE_CONTROL_TIMECHANGE		= 0x00000010;
     //	int SERVICE_CONTROL_TRIGGEREVENT	= 0x00000020;
-	
+
     //
     // Service State -- for CurrentState
     //
@@ -288,11 +296,11 @@ public interface Winsvc {
     int SERVICE_ACCEPT_PRESHUTDOWN				= 0x00000100;
     int SERVICE_ACCEPT_TIMECHANGE				= 0x00000200;
     int SERVICE_ACCEPT_TRIGGEREVENT				= 0x00000400;
-	
+
     /**
-     * The SC_STATUS_TYPE enumeration type contains values 
+     * The SC_STATUS_TYPE enumeration type contains values
      */
-    public abstract class SC_STATUS_TYPE { 
+    public abstract class SC_STATUS_TYPE {
         public static final int SC_STATUS_PROCESS_INFO = 0;
     }
 

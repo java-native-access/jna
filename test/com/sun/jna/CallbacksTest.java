@@ -193,7 +193,7 @@ public class CallbacksTest extends TestCase implements Paths {
         class CbStruct extends Structure {
             public Callback cb;
             @Override
-            protected List getFieldOrder() {
+            protected List<String> getFieldOrder() {
                 return Arrays.asList(new String[] { "cb" });
             }
         }

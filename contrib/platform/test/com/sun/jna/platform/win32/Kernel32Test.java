@@ -334,12 +334,16 @@ public class Kernel32Test extends TestCase {
     public void testQueryFullProcessImageName() {
         HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
         assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
-        
-        char[] path = new char[WinDef.MAX_PATH];
-        IntByReference lpdwSize = new IntByReference(path.length);
-        boolean b = Kernel32.INSTANCE.QueryFullProcessImageName(h, 0, path, lpdwSize);
-        assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
-        assertTrue("Failed to query process image name, empty path returned", lpdwSize.getValue() > 0);
+
+        try {
+            char[] path = new char[WinDef.MAX_PATH];
+            IntByReference lpdwSize = new IntByReference(path.length);
+            boolean b = Kernel32.INSTANCE.QueryFullProcessImageName(h, 0, path, lpdwSize);
+            assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
+            assertTrue("Failed to query process image name, empty path returned", lpdwSize.getValue() > 0);
+        } finally {
+            assertTrue("CloseHandle", Kernel32.INSTANCE.CloseHandle(h));
+        }
     }
 
     public void testGetTempPath() {
@@ -412,7 +416,7 @@ public class Kernel32Test extends TestCase {
       assertTrue(kernelTime >= idleTime);
       assertTrue(userTime >= 0);
     }
-    
+
     public void testIsWow64Process() {
         try {
             IntByReference isWow64 = new IntByReference(42);
@@ -1016,8 +1020,8 @@ public class Kernel32Test extends TestCase {
         assertFalse("EnumResourceNames should have failed.", result);
         assertEquals("GetLastError should be set to 1813", WinError.ERROR_RESOURCE_TYPE_NOT_FOUND, Kernel32.INSTANCE.GetLastError());
     }
-    
-    
+
+
     public void testEnumResourceTypes() {
         final List<String> types = new ArrayList<String>();
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
@@ -1025,7 +1029,7 @@ public class Kernel32Test extends TestCase {
             @Override
             public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
                 // simulate IS_INTRESOURCE macro defined in WinUser.h
-                // basically that means that if "type" is less than or equal to 65,535 
+                // basically that means that if "type" is less than or equal to 65,535
                 // it assumes it's an ID.
                 // otherwise it assumes it's a pointer to a string
                 if (Pointer.nativeValue(type) <= 65535) {
@@ -1043,7 +1047,7 @@ public class Kernel32Test extends TestCase {
         assertEquals("GetLastError should be set to 0", WinError.ERROR_SUCCESS, Kernel32.INSTANCE.GetLastError());
         assertTrue("EnumResourceTypes should return some resource type names", types.size() > 0);
     }
-    
+
     public void testModule32FirstW() {
         HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE, new DWORD(Kernel32.INSTANCE.GetCurrentProcessId()));
         if (snapshot == null) {
@@ -1051,7 +1055,7 @@ public class Kernel32Test extends TestCase {
         }
 
         Win32Exception we = null;
-        Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();        
+        Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();
         try {
             if (!Kernel32.INSTANCE.Module32FirstW(snapshot, first)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
@@ -1069,17 +1073,17 @@ public class Kernel32Test extends TestCase {
                 }
             }
         }
-        
+
         if (we != null) {
             throw we;
         }
-        
+
         // not sure if this will be run against java.exe or javaw.exe but this
         // check tests both
         assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));
         assertEquals("The process ID of the module ID should be our process ID", Kernel32.INSTANCE.GetCurrentProcessId(), first.th32ProcessID.intValue());
     }
-    
+
     public void testModule32NextW() {
         HANDLE snapshot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPMODULE, new DWORD(Kernel32.INSTANCE.GetCurrentProcessId()));
         if (snapshot == null) {
@@ -1087,7 +1091,7 @@ public class Kernel32Test extends TestCase {
         }
 
         Win32Exception we = null;
-        Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();        
+        Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();
         try {
             if (!Kernel32.INSTANCE.Module32NextW(snapshot, first)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
@@ -1105,11 +1109,11 @@ public class Kernel32Test extends TestCase {
                 }
             }
         }
-        
+
         if (we != null) {
             throw we;
         }
-        
+
         // not sure if this will be run against java.exe or javaw.exe but this
         // check tests both
         assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));

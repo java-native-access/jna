@@ -151,6 +151,9 @@ public interface Advapi32 extends StdCallLibrary {
      * SERVICE_STATUS,LPSERVICE_STATUS;
      */
     public static class SERVICE_STATUS extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint");
+
         public int dwServiceType;
         public int dwCurrentState;
         public int dwControlsAccepted;
@@ -159,8 +162,9 @@ public interface Advapi32 extends StdCallLibrary {
         public int dwCheckPoint;
         public int dwWaitHint;
         
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwServiceType", "dwCurrentState", "dwControlsAccepted", "dwWin32ExitCode", "dwServiceSpecificExitCode", "dwCheckPoint", "dwWaitHint" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -170,11 +174,13 @@ public interface Advapi32 extends StdCallLibrary {
      * LPSERVICE_TABLE_ENTRY;
      */
     public static class SERVICE_TABLE_ENTRY extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("lpServiceName", "lpServiceProc");
         public String lpServiceName;
         public SERVICE_MAIN_FUNCTION lpServiceProc;
         
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "lpServiceName", "lpServiceProc" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -186,10 +192,12 @@ public interface Advapi32 extends StdCallLibrary {
      * SERVICE_DESCRIPTION,LPSERVICE_DESCRIPTION;
      */
     public static class SERVICE_DESCRIPTION extends ChangeServiceConfig2Info {
+        public static final List<String> FIELDS = createFieldsOrder("lpDescription");
         public String lpDescription;
         
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "lpDescription" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }
