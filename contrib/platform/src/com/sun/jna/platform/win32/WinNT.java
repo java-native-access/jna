@@ -2910,6 +2910,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * GetLogicalProcessorInformationEx function uses this structure.
      */
     class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("relationship", "size", "processor");
+
         /**
          * The type of relationship between the logical processors.
          */
@@ -2939,7 +2941,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         @Override
         protected List<String> getFieldOrder()
         {
-            return Arrays.asList("relationship", "size", "processor");
+            return FIELDS;
         }
     }
 
@@ -2948,6 +2950,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * GetLogicalProcessorInformationEx function.
      */
     class PROCESSOR_RELATIONSHIP extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("flags", "reserved", "groupCount", "groupMask");
+
         /**
          * <p>If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore,
          * this member is LTP_PC_SMT if the core has more than one logical processor, or 0 if the core has one logical
@@ -2977,7 +2981,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         @Override
         protected List<String> getFieldOrder()
         {
-            return Arrays.asList("flags", "reserved", "groupCount", "groupMask");
+            return FIELDS;
         }
     }
 
@@ -2985,6 +2989,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Represents a processor group-specific affinity, such as the affinity of a thread.
      */
     public class GROUP_AFFINITY extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("mask", "group", "reserved");
+
         /**
          * A bitmap that specifies the affinity for zero or more processors within the specified group.
          */
@@ -3003,7 +3009,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         @Override
         protected List<String> getFieldOrder()
         {
-            return Arrays.asList("mask", "group", "reserved");
+            return FIELDS;
         }
     }
 
@@ -3168,6 +3174,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Contains information about a range of pages in the virtual address space of a process.
      */
     class MEMORY_BASIC_INFORMATION64 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("baseAddress", "allocationBase",
+                "allocationProtect", "__alignment1", "regionSize", "state", "protect", "type", "__alignment2");
+
         /**
          * A pointer to the base address of the region of pages.
          */
@@ -3229,8 +3238,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("baseAddress", "allocationBase", "allocationProtect", "__alignment1", "regionSize",
-                    "state", "protect", "type", "__alignment2");
+            return FIELDS;
         }
     }
 }
