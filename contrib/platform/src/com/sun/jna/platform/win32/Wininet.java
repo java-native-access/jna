@@ -198,8 +198,7 @@ public interface Wininet extends StdCallLibrary {
      *     </code>
      * </pre>
      *
-     * @see https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=
-     *      vs.85).aspx
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa385134(v=vs.85).aspx">MSDN</a>
      */
     static class INTERNET_CACHE_ENTRY_INFO extends Structure {
         public static final List<String> FIELDS = createFieldsOrder(

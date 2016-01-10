@@ -81,7 +81,7 @@ public interface IDispatch extends IUnknown {
      * @param lcid      The locale context in which to interpret the names.
      * @param rgDispId  Caller-allocated array, each element of which contains an identifier (ID) corresponding to one of the names passed in
      *                  the rgszNames array. The first element represents the member name. The subsequent elements represent each of the member's parameters.
-     * @return
+     * @return status of the operation
      */
     public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId);
