@@ -13,8 +13,7 @@
 package com.sun.jna.win32;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -33,22 +32,24 @@ public class W32StdCallTest extends TestCase {
 
     public static interface TestLibrary extends StdCallLibrary {
         public static class Inner extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("value");
             public double value;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "value" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
+            public static final List<String> FIELDS = createFieldsOrder("c", "s", "i", "j", "inner");
             public byte c;
             public short s;
             public int i;
             public long j;
             public Inner inner;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         int returnInt32ArgumentStdCall(int arg);
@@ -79,11 +80,8 @@ public class W32StdCallTest extends TestCase {
 
     @Override
     protected void setUp() {
-        testlib = Native.loadLibrary("testlib", TestLibrary.class, new HashMap() {
-						{
-						    put(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER);
-					    }
-                    });
+        testlib = Native.loadLibrary("testlib", TestLibrary.class,
+                Collections.singletonMap(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER));
     }
 
     @Override
@@ -96,23 +94,15 @@ public class W32StdCallTest extends TestCase {
         NativeLibrary lib = NativeLibrary.getInstance("testlib");
 
         Method[] methods = {
-            TestLibrary.class.getMethod("returnInt32ArgumentStdCall",
-                                        new Class[] { int.class }),
-            TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall",
-                                        new Class[] {
-                                            TestLibrary.TestStructure.ByValue.class
-                                        }),
-            TestLibrary.class.getMethod("callInt32StdCallCallback",
-                                        new Class[] {
-                                            TestLibrary.Int32Callback.class,
-                                            int.class, int.class,
-                                        }),
+            TestLibrary.class.getMethod("returnInt32ArgumentStdCall", int.class),
+            TestLibrary.class.getMethod("returnStructureByValueArgumentStdCall", TestLibrary.TestStructure.ByValue.class),
+            TestLibrary.class.getMethod("callInt32StdCallCallback", TestLibrary.Int32Callback.class, int.class, int.class)
         };
 
-        for (int i=0;i < methods.length;i++) {
-            String name = mapper.getFunctionName(lib, methods[i]);
+        for (Method m : methods) {
+            String name = mapper.getFunctionName(lib, m);
             assertTrue("Function name not decorated for method "
-                       + methods[i].getName()
+                       + m.getName()
                        + ": " + name, name.indexOf("@") != -1);
             assertEquals("Wrong name in mapped function",
                          name, lib.getFunction(name, StdCallLibrary.STDCALL_CONVENTION).getName());

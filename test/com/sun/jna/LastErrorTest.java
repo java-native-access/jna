@@ -12,29 +12,29 @@
  */
 package com.sun.jna;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Set;
-import java.util.HashSet;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
 //@SuppressWarnings("unused")
 public class LastErrorTest extends TestCase {
 
-    private static final Map OPTIONS = new HashMap() {{
-        put(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
-            @Override
-            public String getFunctionName(NativeLibrary library, Method m) {
-                if (m.getName().equals("noThrowLastError")
-                    || m.getName().equals("throwLastError")) {
-                    return "setLastError";
+    private static final Map<String, ?> OPTIONS =
+            Collections.singletonMap(Library.OPTION_FUNCTION_MAPPER, new FunctionMapper() {
+                @Override
+                public String getFunctionName(NativeLibrary library, Method m) {
+                    if (m.getName().equals("noThrowLastError")
+                        || m.getName().equals("throwLastError")) {
+                        return "setLastError";
+                    }
+                    return m.getName();
                 }
-                return m.getName();
-            }
-        });
-    }};
+            });
 
     public interface TestLibrary extends Library {
         void setLastError(int code);
@@ -58,14 +58,17 @@ public class LastErrorTest extends TestCase {
         final TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
         final int NTHREADS = 100;
         final int[] errors = new int[NTHREADS];
-        Set<Thread> threads = new HashSet<Thread>();
+        List<Thread> threads = new ArrayList<Thread>(NTHREADS);
         for (int i=0;i < NTHREADS;i++) {
             final int idx = i;
-            Thread t = new Thread() { @Override
-            public void run() {
-                lib.setLastError(-idx-1);
-                errors[idx] = Native.getLastError();
-            }};
+            Thread t = new Thread("tLastErrorSetter-" + i) {
+                @Override
+                public void run() {
+                    lib.setLastError(-idx-1);
+                    errors[idx] = Native.getLastError();
+                }
+            };
+            t.setDaemon(true);  // so we can stop the main thread if necessary
             threads.add(t);
         }
         int EXPECTED = 42;
@@ -75,8 +78,10 @@ public class LastErrorTest extends TestCase {
             t.start();
         }
         for (Thread t : threads) {
-            t.join();
+            t.join(TimeUnit.SECONDS.toMillis(7L));
+            assertFalse("Thread " + t.getName() + " still alive", t.isAlive());
         }
+
         assertEquals("Wrong error on main thread", EXPECTED, Native.getLastError());
         for (int i=0;i < threads.size();i++) {
             assertEquals("Wrong error on thread " + i, -i-1, errors[i]);
@@ -92,8 +97,7 @@ public class LastErrorTest extends TestCase {
         try {
             lib.throwLastError(ERROR);
             fail("Method should throw LastErrorException");
-        }
-        catch(LastErrorException e) {
+        } catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
             assertTrue("Exception should include error message: '" + e.getMessage() + "'", e.getMessage().length() > 0);
         }
@@ -107,8 +111,7 @@ public class LastErrorTest extends TestCase {
         try {
             lib.throwLastError(ERROR);
             fail("Method should throw LastErrorException");
-        }
-        catch(LastErrorException e) {
+        } catch(LastErrorException e) {
             assertEquals("Exception should contain error code", ERROR, e.getErrorCode());
             assertTrue("Exception should include error message: " + e.getMessage(), e.getMessage().length() > 0);
         }

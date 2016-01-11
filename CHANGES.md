@@ -31,6 +31,7 @@ Features
 * [#567](https://github.com/java-native-access/jna/pull/567): Added `PrintWindow`, `IsWindowEnabled`, `IsWindow`, `FindWindowEx`, `GetAncestor`, `GetCursorPos`, `SetCursorPos`, `SetWinEventHook`, `UnhookWinEvent`, `CopyIcon`, and `GetClassLong` to `com.sun.jna.platform.win32.User32` and supporting constants to `com.sun.jna.platform.win32.WinUser` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#573](https://github.com/java-native-access/jna/pull/573): Added `EnumProcessModules`, `GetModuleInformation`, and `GetProcessImageFileName` to `com.sun.jna.platform.win32.Psapi` and added `ExtractIconEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) [@lgoldstein](https://github.com/lgoldstein)
+* [#577](https://github.com/java-native-access/jna/pull/577): Apply generic definitions wherever applicable [@lgoldstein](https://github.com/lgoldstein)
 
 Bug Fixes
 ---------

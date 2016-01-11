@@ -1,5 +1,5 @@
 /* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/** Handle native array of <code>char*</code> or <code>wchar_t*</code> type 
- * by managing allocation/disposal of native strings within an array of 
+/** Handle native array of <code>char*</code> or <code>wchar_t*</code> type
+ * by managing allocation/disposal of native strings within an array of
  * pointers.  An extra NULL pointer is always added to the end of the native
- * pointer array for convenience. 
+ * pointer array for convenience.
  */
 public class StringArray extends Memory implements Function.PostCallRead {
     private String encoding;
-    private List natives = new ArrayList();
+    private List<NativeString> natives = new ArrayList<NativeString>();
     private Object[] original;
     /** Create a native array of strings. */
     public StringArray(String[] strings) {
@@ -41,7 +41,7 @@ public class StringArray extends Memory implements Function.PostCallRead {
     public StringArray(WString[] strings) {
         this(strings, NativeString.WIDE_STRING);
     }
-    private StringArray(Object[] strings, String encoding) { 
+    private StringArray(Object[] strings, String encoding) {
         super((strings.length + 1) * Pointer.SIZE);
         this.original = strings;
         this.encoding = encoding;
@@ -57,9 +57,10 @@ public class StringArray extends Memory implements Function.PostCallRead {
         setPointer(Pointer.SIZE * strings.length, null);
     }
     /** Read back from native memory. */
+    @Override
     public void read() {
         boolean returnWide = original instanceof WString[];
-        boolean wide = encoding == NativeString.WIDE_STRING;
+        boolean wide = NativeString.WIDE_STRING.equals(encoding);
         for (int si=0;si < original.length;si++) {
             Pointer p = getPointer(si * Pointer.SIZE);
             Object s = null;
@@ -71,8 +72,9 @@ public class StringArray extends Memory implements Function.PostCallRead {
         }
     }
 
+    @Override
     public String toString() {
-        boolean wide = encoding == NativeString.WIDE_STRING;
+        boolean wide = NativeString.WIDE_STRING.equals(encoding);
         String s = wide ? "const wchar_t*[]" : "const char*[]";
         s += Arrays.asList(original);
         return s;

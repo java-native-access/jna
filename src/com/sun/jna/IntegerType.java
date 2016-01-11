@@ -26,6 +26,7 @@ package com.sun.jna;
  * @author twalljava@java.net
  */
 public abstract class IntegerType extends Number implements NativeMapped {
+    private static final long serialVersionUID = 1L;
 
     private int size;
     private Number number;
@@ -65,20 +66,20 @@ public abstract class IntegerType extends Number implements NativeMapped {
         case 1:
             if (unsigned) this.value = value & 0xFFL;
             truncated = (byte) value;
-            this.number = new Byte((byte) value);
+            this.number = Byte.valueOf((byte) value);
             break;
         case 2:
             if (unsigned) this.value = value & 0xFFFFL;
             truncated = (short) value;
-            this.number = new Short((short) value);
+            this.number = Short.valueOf((short) value);
             break;
         case 4:
             if (unsigned) this.value = value & 0xFFFFFFFFL;
             truncated = (int) value;
-            this.number = new Integer((int) value);
+            this.number = Integer.valueOf((int) value);
             break;
         case 8:
-            this.number = new Long(value);
+            this.number = Long.valueOf(value);
             break;
         default:
             throw new IllegalArgumentException("Unsupported size: " + size);
@@ -120,7 +121,7 @@ public abstract class IntegerType extends Number implements NativeMapped {
     }
 
     @Override
-    public Class nativeType() {
+    public Class<?> nativeType() {
         return number.getClass();
     }
 

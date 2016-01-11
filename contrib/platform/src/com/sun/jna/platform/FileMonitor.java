@@ -79,7 +79,7 @@ public abstract class FileMonitor {
     }
     
     public void addWatch(File dir, int mask, boolean recursive) throws IOException {
-        watched.put(dir, new Integer(mask));
+        watched.put(dir, Integer.valueOf(mask));
         watch(dir, mask, recursive);
     }
 

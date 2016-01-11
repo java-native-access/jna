@@ -289,7 +289,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
         @Override
         public Object toNative() {
-            return new Integer(value);
+            return Integer.valueOf(value);
         }
     }
     protected NativeMappedLibrary loadNativeMappedLibrary() {

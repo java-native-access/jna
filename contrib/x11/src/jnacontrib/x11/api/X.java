@@ -455,7 +455,7 @@ public class X {
                 for (int keyNr = 0; keyNr < count; keyNr++) {
                     byte key = keys[modNr*count + keyNr];
                     if (key != 0) {
-                        modifier.add(new Byte(key));
+                        modifier.add(Byte.valueOf(key));
                     }
                 }
             }

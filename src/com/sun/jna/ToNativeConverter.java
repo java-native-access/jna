@@ -38,5 +38,5 @@ public interface ToNativeConverter {
      */
     Object toNative(Object value, ToNativeContext context);
     /** Indicate the type expected from {@link #toNative}. */
-    Class nativeType();
+    Class<?> nativeType();
 }

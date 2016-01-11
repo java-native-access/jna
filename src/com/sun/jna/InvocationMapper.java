@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
  *                 public Object invoke(Object proxy, Method method, Object[] args) {
  *                     Object[] newArgs = new Object[args.length+1];
  *                     System.arraycopy(args, 0, newArgs, 1, args.length);
- *                     newArgs[0] = new Integer(3); // _xstat version
+ *                     newArgs[0] = Integer.valueOf(3); // _xstat version
  *                     return f.invoke(newArgs);
  *                 }
  *             };
