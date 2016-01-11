@@ -2734,7 +2734,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Defines the mapping of generic access rights to specific and standard access rights for an object
      */
-    public static class GENERIC_MAPPING extends Structure {
+    class GENERIC_MAPPING extends Structure {
         public static class ByReference extends GENERIC_MAPPING implements Structure.ByReference {
         }
 
@@ -2756,7 +2756,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Describes the relationship between the specified processor set. This structure is used with the
      * {@link Kernel32#GetLogicalProcessorInformation} function.
      */
-    public static class SYSTEM_LOGICAL_PROCESSOR_INFORMATION extends Structure {
+    class SYSTEM_LOGICAL_PROCESSOR_INFORMATION extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("processorMask", "relationship", "payload");
 
         /**
@@ -2863,7 +2863,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Represents the relationship between the processor set identified in the corresponding
      * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or <code>SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX</code> structure.
      */
-    public interface LOGICAL_PROCESSOR_RELATIONSHIP {
+    interface LOGICAL_PROCESSOR_RELATIONSHIP {
         /**
          * The specified logical processors share a single processor core.
          */
@@ -2930,8 +2930,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         public PROCESSOR_RELATIONSHIP processor;
 
-        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX()
-        {}
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX() {
+            super();
+        }
 
         public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer pointer, int offset) {
             useMemory(pointer, offset);
@@ -2939,8 +2940,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         @Override
-        protected List<String> getFieldOrder()
-        {
+        protected List<String> getFieldOrder() {
             return FIELDS;
         }
     }
@@ -2979,8 +2979,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public GROUP_AFFINITY[] groupMask = new GROUP_AFFINITY[1];
 
         @Override
-        protected List<String> getFieldOrder()
-        {
+        protected List<String> getFieldOrder() {
             return FIELDS;
         }
     }
@@ -2988,7 +2987,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Represents a processor group-specific affinity, such as the affinity of a thread.
      */
-    public class GROUP_AFFINITY extends Structure {
+    class GROUP_AFFINITY extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("mask", "group", "reserved");
 
         /**
@@ -3018,7 +3017,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Describes the cache attributes.
      */
-    public static class CACHE_DESCRIPTOR extends Structure {
+    class CACHE_DESCRIPTOR extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("level", "associativity", "lineSize", "size", "type");
         /**
          * The cache level. This member can be 1, 2 or 3, corresponding to L1, L2 or L3 cache, respectively (other
@@ -3058,7 +3057,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Represents the type of processor cache identifier in the corresponding {@link CACHE_DESCRIPTOR} structure.
      */
-    public static abstract class PROCESSOR_CACHE_TYPE {
+    abstract class PROCESSOR_CACHE_TYPE {
         /**
          * The cache is unified.
          */
@@ -3112,7 +3111,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     int MEM_PRIVATE = 0x20000;
 
-    public static class MEMORY_BASIC_INFORMATION extends Structure {
+    class MEMORY_BASIC_INFORMATION extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("baseAddress", "allocationBase", "allocationProtect",
                 "regionSize", "state", "protect", "type");
 
@@ -3221,6 +3220,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public static class ByReference extends MEMORY_BASIC_INFORMATION64 implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -3229,6 +3229,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public MEMORY_BASIC_INFORMATION64() {
+            super();
         }
 
         public MEMORY_BASIC_INFORMATION64(Pointer memory) {

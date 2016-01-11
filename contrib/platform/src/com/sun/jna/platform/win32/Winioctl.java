@@ -56,6 +56,7 @@ public interface Winioctl {
         public static class ByReference extends STORAGE_DEVICE_NUMBER
                 implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -124,10 +125,12 @@ public interface Winioctl {
 
         public static class ByReference extends STORAGE_PROPERTY_QUERY implements Structure.ByReference {
             public ByReference() {
+                super();
             }
         }
 
         public STORAGE_PROPERTY_QUERY() {
+            super();
         }
 
         @Override
@@ -162,6 +165,7 @@ public interface Winioctl {
 
         public static class ByReference extends GET_MEDIA_TYPES implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -170,6 +174,7 @@ public interface Winioctl {
         }
 
         public GET_MEDIA_TYPES() {
+            super();
         }
 
         public GET_MEDIA_TYPES(Pointer memory) {
@@ -271,6 +276,7 @@ public interface Winioctl {
 
         public static class ByReference extends STORAGE_DEVICE_DESCRIPTOR implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -279,6 +285,7 @@ public interface Winioctl {
         }
 
         public STORAGE_DEVICE_DESCRIPTOR() {
+            super();
         }
 
         public STORAGE_DEVICE_DESCRIPTOR(Pointer memory) {
@@ -302,6 +309,7 @@ public interface Winioctl {
     class DISK_GEOMETRY_EX extends Structure {
         public static class ByReference extends DISK_GEOMETRY_EX implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -312,6 +320,7 @@ public interface Winioctl {
         public static final List<String> FIELDS = createFieldsOrder("geometry", "diskSize", "data");
 
         public DISK_GEOMETRY_EX() {
+            super();
         }
 
         public DISK_GEOMETRY_EX(Pointer memory) {
@@ -355,6 +364,7 @@ public interface Winioctl {
     class DISK_GEOMETRY extends Structure {
         public static class ByReference extends DISK_GEOMETRY implements Structure.ByReference {
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer memory) {
@@ -366,6 +376,7 @@ public interface Winioctl {
                 "sectorsPerTrack", "bytesPerSector");
 
         public DISK_GEOMETRY() {
+            super();
         }
 
         public DISK_GEOMETRY(Pointer memory) {
