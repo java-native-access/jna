@@ -70,7 +70,7 @@ public class CallbackProxy implements IDispatchCallback {
 					@Override
 					public void uncaughtException(Thread t, Throwable e) {
 						CallbackProxy.this.factory.comThread.uncaughtExceptionHandler.uncaughtException(t, e);
-					}
+	}
 				});
 				return thread;
 			}
@@ -121,84 +121,94 @@ public class CallbackProxy implements IDispatchCallback {
 	}
 
 	void invokeOnThread(final DISPID dispIdMember, final REFIID riid, LCID lcid, WORD wFlags,
-			final DISPPARAMS.ByReference pDispParams) {
-		// decode arguments
-		// must decode them on this thread, and create a proxy for any COM objects (IDispatch)
-		// this will AddRef on the COM object so that it is not cleaned up before we can use it
-		// on the thread that does the java callback.
-		List<Object> rjargs = new ArrayList<Object>();
-		if (pDispParams.cArgs.intValue() > 0) {
-			VariantArg vargs = pDispParams.rgvarg;
-			vargs.setArraySize(pDispParams.cArgs.intValue());
-			for (Variant.VARIANT varg : vargs.variantArg) {
-				Object jarg = Convert.toJavaObject(varg);
-				if (jarg instanceof IDispatch) {
-					IDispatch dispatch = (IDispatch) jarg;
-					//get raw IUnknown interface
-					PointerByReference ppvObject = new PointerByReference();
-					IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-					dispatch.QueryInterface(new REFIID(iid), ppvObject);
-					Unknown rawUnk = new Unknown(ppvObject.getValue());
+            final DISPPARAMS.ByReference pDispParams) {
+            
+            final Method eventMethod;
+            if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
+                eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
+                if (eventMethod.getParameterTypes().length != pDispParams.cArgs.intValue()) {
+                    CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                            "Trying to invoke method " + eventMethod + " with " + pDispParams.cArgs.intValue() + " arguments",
+                            null);
+                    return;
+                }
+            } else {
+                CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                        "No method found with dispId = " + dispIdMember, null);
+                return;
+            }
+            
+            // decode arguments
+            // must decode them on this thread, and create a proxy for any COM objects (IDispatch)
+            // this will AddRef on the COM object so that it is not cleaned up before we can use it
+            // on the thread that does the java callback.
+            final Class<?>[] params = eventMethod.getParameterTypes();
+            List<Object> rjargs = new ArrayList<Object>();
+            if (pDispParams.cArgs.intValue() > 0) {
+                VariantArg vargs = pDispParams.rgvarg;
+                vargs.setArraySize(pDispParams.cArgs.intValue());
+                for ( int i = 0; i < vargs.variantArg.length; i++) {
+                    Variant.VARIANT varg = vargs.variantArg[i];
+                    Object jarg = Convert.toJavaObject(varg, params[vargs.variantArg.length - 1 - i]);
+                    if (jarg instanceof IDispatch) {
+                        IDispatch dispatch = (IDispatch) jarg;
+                        //get raw IUnknown interface
+                        PointerByReference ppvObject = new PointerByReference();
+                        IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+                        dispatch.QueryInterface(new REFIID(iid), ppvObject);
+                        Unknown rawUnk = new Unknown(ppvObject.getValue());
 					long unknownId = Pointer.nativeValue( rawUnk.getPointer() );
-					int n = rawUnk.Release();
-					//Note: unlike in other places, there is currently no COM ref already added for this pointer 
-					IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, unknownId, dispatch);
-					rjargs.add(unk);
-				} else {
-					rjargs.add(jarg);
-				}
-			}
-		}
-		final List<Object> jargs = new ArrayList<Object>(rjargs);
-		Runnable invokation = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
-						Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
-						if (eventMethod.getParameterTypes().length != jargs.size()) {
-							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-									"Trying to invoke method " + eventMethod + " with " + jargs.size() + " arguments",
-									null);
-						} else {
-							try {
-								// need to convert arguments maybe
-								List<Object> margs = new ArrayList<Object>();
-								Class<?>[] params = eventMethod.getParameterTypes();
-								for (int i = 0; i < eventMethod.getParameterTypes().length; ++i) {
-									Class<?> paramType = params[i];
-									Object jobj = jargs.get(i);
-									if (jobj != null && paramType.getAnnotation(ComInterface.class) != null) {
-										if (jobj instanceof IUnknown) {
-											IUnknown unk = (IUnknown) jobj;
-											Object mobj = unk.queryInterface(paramType);
-											margs.add(mobj);
-										} else {
-											throw new RuntimeException("Cannot convert argument " + jobj.getClass()
-													+ " to ComInterface " + paramType);
-										}
-									} else {
-										margs.add(jobj);
-									}
-								}
-								eventMethod.invoke(comEventCallbackListener, margs.toArray());
-							} catch (Exception e) {
-								CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-										"Exception invoking method " + eventMethod, e);
-							}
-						}
-					} else {
-						CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-								"No method found with dispId = " + dispIdMember, null);
-					}
-				} catch (Exception e) {
-					CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-							"Exception receiving callback event ", e);
-				}
-			}
-		};
+                        int n = rawUnk.Release();
+                        //Note: unlike in other places, there is currently no COM ref already added for this pointer 
+                        IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, unknownId, dispatch);
+                        rjargs.add(unk);
+                    } else {
+                        rjargs.add(jarg);
+                    }
+                }
+            }
+            final List<Object> jargs = new ArrayList<Object>(rjargs);
+            Runnable invokation = new Runnable() {
+                @Override
+                public void run() {
+                    // need to convert arguments maybe
+                    List<Object> margs = new ArrayList<Object>();
+                    try {
+                        // Reverse order from calling convention
+                        int lastParamIdx = eventMethod.getParameterTypes().length - 1;
+                        for (int i = lastParamIdx; i >= 0; i--) {
+                            Class<?> paramType = params[lastParamIdx - i];
+                            Object jobj = jargs.get(i);
+                            if (jobj != null && paramType.getAnnotation(ComInterface.class) != null) {
+                                if (jobj instanceof IUnknown) {
+                                    IUnknown unk = (IUnknown) jobj;
+                                    Object mobj = unk.queryInterface(paramType);
+                                    margs.add(mobj);
+                                } else {
+                                    throw new RuntimeException("Cannot convert argument " + jobj.getClass()
+                                            + " to ComInterface " + paramType);
+                                }
+                            } else {
+                                margs.add(jobj);
+                            }
+                        }
+                        eventMethod.invoke(comEventCallbackListener, margs.toArray());
+                    } catch (Exception e) {
+                        List<String> decodedClassNames = new ArrayList<String>(margs.size());
+                        for(Object o: margs) {
+                            if(o == null) {
+                                decodedClassNames.add("NULL");
+                            } else {
+                                decodedClassNames.add(o.getClass().getName());
+                            }
+                        }
+                        CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                                "Exception invoking method " + eventMethod + " supplied: " + decodedClassNames.toString(), e);
+                    }
+                }
+            };
 		this.executorService.execute(invokation);
-	}
+        }
 
 	@Override
 	public Pointer getPointer() {

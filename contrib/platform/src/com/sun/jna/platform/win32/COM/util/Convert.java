@@ -25,7 +25,9 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 public class Convert {
 	
 	public static VARIANT toVariant(Object value) {
-		if (value instanceof Boolean) {
+                if (value instanceof VARIANT) {
+                        return (VARIANT) value;
+                } else if (value instanceof Boolean) {
 			return new VARIANT((Boolean) value);
 		} else if (value instanceof Long) {
 			return new VARIANT(new WinDef.LONG((Long) value));
@@ -45,8 +47,7 @@ public class Convert {
 			InvocationHandler ih = Proxy.getInvocationHandler(value);
 			ProxyObject pobj = (ProxyObject) ih;
 			return new VARIANT(pobj.getRawDispatch());
-		}
-		if (value instanceof IComEnum) {
+		} else if (value instanceof IComEnum) {
 			IComEnum enm = (IComEnum) value;
 			return new VARIANT(new WinDef.LONG(enm.getValue()));
 		} else {
@@ -54,10 +55,28 @@ public class Convert {
 		}
 	}
 	
-	public static Object toJavaObject(VARIANT value) {
-		if (null==value) return null;
-		Object vobj = value.getValue();
-		if (vobj instanceof WinDef.BOOL) {
+	public static Object toJavaObject(VARIANT value, Class targetClass) {
+		if (null==value) {
+                    return null;
+                }
+                
+                // Passing null or Object.class as targetClass switch to default
+                // handling
+                boolean concreteClassRequested = targetClass != null
+                        && (! targetClass.isAssignableFrom(Object.class));
+                
+                if (concreteClassRequested && targetClass.isAssignableFrom(value.getClass())) {
+                        return value;
+                }
+                Object vobj = value.getValue();
+                if (vobj != null && concreteClassRequested && targetClass.isAssignableFrom(vobj.getClass())) {
+                        return vobj;
+                }
+                // Handle VARIANTByRef
+                if(vobj instanceof VARIANT) {
+                    vobj = ((VARIANT) vobj).getValue();
+                }
+                if (vobj instanceof WinDef.BOOL) {
 			return ((WinDef.BOOL) vobj).booleanValue();
 		} else if (vobj instanceof WinDef.LONG) {
 			return ((WinDef.LONG) vobj).longValue();

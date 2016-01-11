@@ -378,7 +378,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
-		Object jobj = Convert.toJavaObject(result);
+		Object jobj = Convert.toJavaObject(result, returnType);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
 			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
 		}
@@ -408,7 +408,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), name, vargs);
 		COMUtils.checkRC(hr);
 
-		Object jobj = Convert.toJavaObject(result);
+		Object jobj = Convert.toJavaObject(result, returnType);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
 			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
 		}
