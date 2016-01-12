@@ -12,21 +12,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.*;
+import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.IntegerType;
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
-import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -3006,8 +2998,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public WinDef.WORD[] reserved = new WinDef.WORD[3];
 
         @Override
-        protected List<String> getFieldOrder()
-        {
+        protected List<String> getFieldOrder() {
             return FIELDS;
         }
     }
