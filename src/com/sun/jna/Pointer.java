@@ -1269,6 +1269,83 @@ v     * @param wide whether to convert from a wide or standard C string
         setByte(offset + data.length, (byte)0);
     }
     
+    public Pointer putBoolean(boolean value) {
+		setByte(0, (byte) (value ? 1 : 0));
+		return this;
+	}
+	
+	public Pointer putByte(int value) {
+		setByte(0, (byte) value);
+		return this;
+	}
+	
+	public Pointer putShort(int value) {
+		setShort(0, (short) value);
+		return this;
+	}
+	
+	public Pointer putInt(int value) {
+		setInt(0, value);
+		return this;
+	}
+	
+	public Pointer putLong(long value) {
+		setLong(0, value);
+		return this;
+	}
+	
+	public Pointer putFloat(float value) {
+		setFloat(0, value);
+		return this;
+	}
+	
+	public Pointer putDouble(double value) {
+		setDouble(0, value);
+		return this;
+	}
+
+	public void get(byte[] dest) {
+		read(0, dest, 0, dest.length);
+	}
+
+	public boolean getBoolean() {
+		return getByte() == 1;
+	}
+
+	public int getByte() {
+		return getByte(0);
+	}
+
+	public int getShort() {
+		return getShort(0);
+	}
+
+	public int getInt() {
+		return getInt(0);
+	}
+
+	public long getLong() {
+		return getLong(0);
+	}
+
+	public float getFloat() {
+		return getFloat(0);
+	}
+
+	public double getDouble() {
+		return getDouble(0);
+	}
+
+	public int size() {
+		return size;
+	}
+
+	public byte[] array() {
+		byte[] data = new byte[size];
+		get(data);
+		return data;
+	}
+    
     /** Dump memory for debugging purposes. */
     public String dump(long offset, int size) {
         String LS = System.getProperty("line.separator");
