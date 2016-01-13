@@ -31,6 +31,7 @@ Features
 * [#567](https://github.com/java-native-access/jna/pull/567): Added `PrintWindow`, `IsWindowEnabled`, `IsWindow`, `FindWindowEx`, `GetAncestor`, `GetCursorPos`, `SetCursorPos`, `SetWinEventHook`, `UnhookWinEvent`, `CopyIcon`, and `GetClassLong` to `com.sun.jna.platform.win32.User32` and supporting constants to `com.sun.jna.platform.win32.WinUser` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#573](https://github.com/java-native-access/jna/pull/573): Added `EnumProcessModules`, `GetModuleInformation`, and `GetProcessImageFileName` to `com.sun.jna.platform.win32.Psapi` and added `ExtractIconEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) [@lgoldstein](https://github.com/lgoldstein)
+* [#251](https://github.com/java-native-access/jna/pull/251): Added CfgMgr32 constants, Ntddk constants, SetupApi constants CM_DEVCAP_EJECTSUPPORTED and SPDRP_FRIENDLYNAME. Added SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX, MEMORY_BASIC_INFORMATION64, STORAGE_DEVICE_DESCRIPTOR, DISK_GEOMETRY_EX, and related structures - [@tmyroadctfig](https://github.com/tmyroadctfig)
 
 Bug Fixes
 ---------
@@ -123,7 +124,7 @@ Bug Fixes
 * Fix compiler warnings OSX - [@twall](https://github.com/twall).
 * Remove unsupported JAWT from OSX build - [@twall](https://github.com/twall).
 * Disable WebStart tests - [@twall](https://github.com/twall).
-* Dispose all native resources when JNA's native library is unloaded - Paul GrÃ¼tter,  [@twall](https://github.com/twall).
+* Dispose all native resources when JNA's native library is unloaded - Paul Grütter,  [@twall](https://github.com/twall).
 * Weakly hold registered direct-mapped classes - [@twall](https://github.com/twall).
 * [#382](https://github.com/java-native-access/jna/pull/382): Fixed memory allocation in `com.sun.jna.platform.win32.WTypes.LPWSTR` and `LPSTR` constructors - [@junak-michal](https://github.com/junak-michal).
 * Fix publish doc links - [@bhamail](https://github.com/bhamail).

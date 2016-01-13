@@ -45,6 +45,21 @@ public interface WinBase extends WinDef, BaseTSD {
     int WAIT_ABANDONED_0 = ((NTStatus.STATUS_ABANDONED_WAIT_0 ) + 0 );
 
     /**
+     * The standard input device. Initially, this is the console input buffer, CONIN$.
+     */
+    DWORD STD_INPUT_HANDLE = new DWORD(-10);
+
+    /**
+     * The standard output device. Initially, this is the active console screen buffer, CONOUT$.
+     */
+    DWORD STD_OUTPUT_HANDLE = new DWORD(-11);
+
+    /**
+     * The standard error device. Initially, this is the active console screen buffer, CONOUT$.
+     */
+    DWORD STD_ERROR_HANDLE = new DWORD(-12);
+
+    /**
      * Maximum computer name length.
      * The value is 15 on Mac, 31 on everything else.
      */

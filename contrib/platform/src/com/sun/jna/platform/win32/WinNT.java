@@ -12,21 +12,13 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.*;
+import com.sun.jna.ptr.ByReference;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.sun.jna.FromNativeContext;
-import com.sun.jna.IntegerType;
-import com.sun.jna.Memory;
-import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
-import com.sun.jna.Pointer;
-import com.sun.jna.PointerType;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
-import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -2734,7 +2726,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Defines the mapping of generic access rights to specific and standard access rights for an object
      */
-    public static class GENERIC_MAPPING extends Structure {
+    class GENERIC_MAPPING extends Structure {
         public static class ByReference extends GENERIC_MAPPING implements Structure.ByReference {
         }
 
@@ -2756,7 +2748,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Describes the relationship between the specified processor set. This structure is used with the
      * {@link Kernel32#GetLogicalProcessorInformation} function.
      */
-    public static class SYSTEM_LOGICAL_PROCESSOR_INFORMATION extends Structure {
+    class SYSTEM_LOGICAL_PROCESSOR_INFORMATION extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("processorMask", "relationship", "payload");
 
         /**
@@ -2863,7 +2855,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * Represents the relationship between the processor set identified in the corresponding
      * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION} or <code>SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX</code> structure.
      */
-    public interface LOGICAL_PROCESSOR_RELATIONSHIP {
+    interface LOGICAL_PROCESSOR_RELATIONSHIP {
         /**
          * The specified logical processors share a single processor core.
          */
@@ -2905,12 +2897,118 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         int RelationAll = 0xFFFF;
     }
 
+    /**
+     * Contains information about the relationships of logical processors and related hardware. The
+     * GetLogicalProcessorInformationEx function uses this structure.
+     */
+    class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("relationship", "size", "processor");
+
+        /**
+         * The type of relationship between the logical processors.
+         */
+        public WinDef.DWORD relationship;
+
+        /**
+         * The size of the structure.
+         */
+        public WinDef.DWORD size;
+
+        /**
+         * A PROCESSOR_RELATIONSHIP structure that describes processor affinity. This structure contains valid data only if
+         * the Relationship member is RelationProcessorCore or RelationProcessorPackage.
+         *
+         * This is actually a union with the NUMA and other data types.
+         */
+        public PROCESSOR_RELATIONSHIP processor;
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX() {
+            super();
+        }
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer pointer, int offset) {
+            useMemory(pointer, offset);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+
+    /**
+     * Represents information about affinity within a processor group. This structure is used with the
+     * GetLogicalProcessorInformationEx function.
+     */
+    class PROCESSOR_RELATIONSHIP extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("flags", "reserved", "groupCount", "groupMask");
+
+        /**
+         * <p>If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is RelationProcessorCore,
+         * this member is LTP_PC_SMT if the core has more than one logical processor, or 0 if the core has one logical
+         * processor.</p>
+         *
+         * <p>If the Relationship member of the SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX structure is
+         * RelationProcessorPackage, this member is always 0.</p>
+         */
+        public byte flags;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[21];
+
+        /**
+         * This member specifies the number of entries in the GroupMask array.
+         */
+        public WinDef.WORD groupCount;
+
+        /**
+         * An array of GROUP_AFFINITY structures. The GroupCount member specifies the number of structures in the array.
+         * Each structure in the array specifies a group number and processor affinity within the group.
+         */
+        public GROUP_AFFINITY[] groupMask = new GROUP_AFFINITY[1];
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+
+    /**
+     * Represents a processor group-specific affinity, such as the affinity of a thread.
+     */
+    class GROUP_AFFINITY extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("mask", "group", "reserved");
+
+        /**
+         * A bitmap that specifies the affinity for zero or more processors within the specified group.
+         */
+        public BaseTSD.ULONG_PTR mask;
+
+        /**
+         * The processor group number.
+         */
+        public WinDef.WORD group;
+
+        /**
+         * This member is reserved.
+         */
+        public WinDef.WORD[] reserved = new WinDef.WORD[3];
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+
     byte CACHE_FULLY_ASSOCIATIVE = (byte)0xFF;
 
     /**
      * Describes the cache attributes.
      */
-    public static class CACHE_DESCRIPTOR extends Structure {
+    class CACHE_DESCRIPTOR extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("level", "associativity", "lineSize", "size", "type");
         /**
          * The cache level. This member can be 1, 2 or 3, corresponding to L1, L2 or L3 cache, respectively (other
@@ -2950,7 +3048,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     /**
      * Represents the type of processor cache identifier in the corresponding {@link CACHE_DESCRIPTOR} structure.
      */
-    public static abstract class PROCESSOR_CACHE_TYPE {
+    abstract class PROCESSOR_CACHE_TYPE {
         /**
          * The cache is unified.
          */
@@ -3004,7 +3102,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     int MEM_PRIVATE = 0x20000;
 
-    public static class MEMORY_BASIC_INFORMATION extends Structure {
+    class MEMORY_BASIC_INFORMATION extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("baseAddress", "allocationBase", "allocationProtect",
                 "regionSize", "state", "protect", "type");
 
@@ -3055,6 +3153,80 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * MEM_PRIVATE
          */
         public DWORD type;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+
+    /**
+     * Contains information about a range of pages in the virtual address space of a process.
+     */
+    class MEMORY_BASIC_INFORMATION64 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("baseAddress", "allocationBase",
+                "allocationProtect", "__alignment1", "regionSize", "state", "protect", "type", "__alignment2");
+
+        /**
+         * A pointer to the base address of the region of pages.
+         */
+        public ULONGLONG baseAddress;
+
+        /**
+         * A pointer to the base address of a range of pages allocated by the VirtualAlloc function.
+         * The page pointed to by the BaseAddress member is contained within this allocation range.
+         */
+        public ULONGLONG allocationBase;
+
+        /**
+         * The memory protection option when the region was initially allocated. This member can be
+         * one of the memory protection constants or 0 if the caller does not have access.
+         */
+        public DWORD allocationProtect;
+
+        public DWORD __alignment1;
+
+        /**
+         * The size of the region beginning at the base address in which all pages have identical
+         * attributes, in bytes.
+         */
+        public ULONGLONG regionSize;
+
+        /**
+         * The state of the pages in the region.
+         */
+        public DWORD state;
+
+        /**
+         * The access protection of the pages in the region. This member is one of the values listed
+         * for the AllocationProtect member.
+         */
+        public DWORD protect;
+
+        /**
+         * The type of pages in the region.
+         */
+        public DWORD type;
+        public DWORD __alignment2;
+
+        public static class ByReference extends MEMORY_BASIC_INFORMATION64 implements Structure.ByReference {
+            public ByReference() {
+                super();
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public MEMORY_BASIC_INFORMATION64() {
+            super();
+        }
+
+        public MEMORY_BASIC_INFORMATION64(Pointer memory) {
+            super(memory);
+            read();
+        }
 
         @Override
         protected List<String> getFieldOrder() {
