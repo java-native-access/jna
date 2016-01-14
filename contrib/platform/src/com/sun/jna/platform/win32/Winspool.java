@@ -1,10 +1,10 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- *
+ * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- *
+ * 
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
@@ -21,6 +22,7 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.INT_PTR;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -31,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Ported from Winspool.h. Windows SDK 6.0a
- *
+ * 
  * @author dblock[at]dblock.org
  */
 public interface Winspool extends StdCallLibrary {
@@ -96,7 +98,7 @@ public interface Winspool extends StdCallLibrary {
     /**
      * The EnumPrinters function enumerates available printers, print servers,
      * domains, or print providers.
-     *
+     * 
      * @param Flags
      *            The types of print objects that the function should enumerate.
      * @param Name
@@ -153,20 +155,85 @@ public interface Winspool extends StdCallLibrary {
      *            array to which pPrinterEnum points.
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     */
+	 * 
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162692(v=vs.85).aspx">
+	 *      EnumPrinters function</a>
+	 */
     boolean EnumPrinters(int Flags, String Name, int Level,
             Pointer pPrinterEnum, int cbBuf, IntByReference pcbNeeded,
             IntByReference pcReturned);
+    
+    /**
+	 * The GetPrinter function retrieves information about a specified printer.
+	 * 
+	 * @param hPrinter
+	 *            A handle to the printer for which the function retrieves
+	 *            information. Use the OpenPrinter or AddPrinter function to
+	 *            retrieve a printer handle.
+	 * @param Level
+	 *            The level or type of structure that the function stores into
+	 *            the buffer pointed to by pPrinter. This value can be 1, 2, 3,
+	 *            4, 5, 6, 7, 8 or 9.
+	 * @param pPrinter
+	 *            A pointer to a buffer that receives a structure containing
+	 *            information about the specified printer. The buffer must be
+	 *            large enough to receive the structure and any strings or other
+	 *            data to which the structure members point. If the buffer is
+	 *            too small, the pcbNeeded parameter returns the required buffer
+	 *            size. The type of structure is determined by the value of
+	 *            Level.
+	 * @param cbBuf
+	 *            The size, in bytes, of the buffer pointed to by pPrinter.
+	 * @param pcbNeeded
+	 *            A pointer to a variable that the function sets to the size, in
+	 *            bytes, of the printer information. If cbBuf is smaller than
+	 *            this value, GetPrinter fails, and the value represents the
+	 *            required buffer size. If cbBuf is equal to or greater than
+	 *            this value, GetPrinter succeeds, and the value represents the
+	 *            number of bytes stored in the buffer.
+	 * @return If the function succeeds, the return value is a nonzero value. If
+	 *         the function fails, the return value is zero.
+	 * 
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd144911(v=vs.85).aspx">
+	 *      GetPrinter function</a>
+	 */
+	boolean GetPrinter(HANDLE hPrinter, int Level, Pointer pPrinter, int cbBuf, IntByReference pcbNeeded);
 
-    public static class PRINTER_INFO_1 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("Flags", "pDescription", "pName", "pComment");
+	/**
+	 * The PRINTER_INFO_1 structure specifies general printer information.
+	 *
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162844(v=vs.85).aspx">
+	 *      PRINTER_INFO_1 structure</a>
+	 */
+	public static class PRINTER_INFO_1 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("Flags", "pDescription", "pName", "pComment");
+		
+		/**
+		 * Specifies information about the returned data. Following are the
+		 * values for this member.
+		 */
+		public int Flags;
+		/**
+		 * Pointer to a null-terminated string that describes the contents of
+		 * the structure.
+		 */
+		public String pDescription;
+		/**
+		 * Pointer to a null-terminated string that names the contents of the
+		 * structure.
+		 */
+		public String pName;
+		/**
+		 * Pointer to a null-terminated string that contains additional data
+		 * describing the structure.
+		 */
+		public String pComment;
 
-        public int Flags;
-        public String pDescription;
-        public String pName;
-        public String pComment;
-
-        public PRINTER_INFO_1() {
+		public PRINTER_INFO_1() {
             super();
         }
 
@@ -179,15 +246,181 @@ public interface Winspool extends StdCallLibrary {
             return FIELDS;
         }
     }
+	
+	/**
+	 * The PRINTER_INFO_2 structure specifies detailed printer information.
+	 * 
+	 * @author Ivan Ridao Freitas, Padrus
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162845(v=vs.85).aspx">
+	 *      PRINTER_INFO_2 structure</a>
+	 */
+	public static class PRINTER_INFO_2 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pServerName", "pPrinterName", "pShareName",
+				"pPortName", "pDriverName", "pComment", "pLocation", "pDevMode", "pSepFile", "pPrintProcessor",
+				"pDatatype", "pParameters", "pSecurityDescriptor", "Attributes", "Priority", "DefaultPriority",
+				"StartTime", "UntilTime", "Status", "cJobs", "AveragePPM");
+		
+		/**
+		 * A pointer to a null-terminated string identifying the server that
+		 * controls the printer. If this string is NULL, the printer is
+		 * controlled locally.
+		 */
+		public String pServerName;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * printer.
+		 */
+		public String pPrinterName;
+		/**
+		 * A pointer to a null-terminated string that identifies the share point
+		 * for the printer. (This string is used only if the
+		 * PRINTER_ATTRIBUTE_SHARED constant was set for the Attributes member.)
+		 */
+		public String pShareName;
+		/**
+		 * A pointer to a null-terminated string that identifies the port(s)
+		 * used to transmit data to the printer. If a printer is connected to
+		 * more than one port, the names of each port must be separated by
+		 * commas (for example, "LPT1:,LPT2:,LPT3:").
+		 */
+		public String pPortName;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * printer driver.
+		 */
+		public String pDriverName;
+		/**
+		 * A pointer to a null-terminated string that provides a brief
+		 * description of the printer.
+		 */
+		public String pComment;
+		/**
+		 * A pointer to a null-terminated string that specifies the physical
+		 * location of the printer (for example, "Bldg. 38, Room 1164").
+		 */
+		public String pLocation;
+		/**
+		 * A pointer to a DEVMODE structure that defines default printer data
+		 * such as the paper orientation and the resolution.
+		 */
+		public INT_PTR pDevMode;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * file used to create the separator page. This page is used to separate
+		 * print jobs sent to the printer.
+		 */
+		public String pSepFile;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * print processor used by the printer. You can use the
+		 * EnumPrintProcessors function to obtain a list of print processors
+		 * installed on a server.
+		 */
+		public String pPrintProcessor;
+		/**
+		 * A pointer to a null-terminated string that specifies the data type
+		 * used to record the print job. You can use the
+		 * EnumPrintProcessorDatatypes function to obtain a list of data types
+		 * supported by a specific print processor.
+		 */
+		public String pDatatype;
+		/**
+		 * A pointer to a null-terminated string that specifies the default
+		 * print-processor parameters.
+		 */
+		public String pParameters;
+		/**
+		 * A pointer to a SECURITY_DESCRIPTOR structure for the printer. This
+		 * member may be NULL.
+		 */
+		public INT_PTR pSecurityDescriptor;
+		/**
+		 * The printer attributes. This member can be any reasonable combination
+		 * of the values PRINTER_ATTRIBUTE_XXX.
+		 */
+		public int Attributes;
+		/**
+		 * A priority value that the spooler uses to route print jobs.
+		 */
+		public int Priority;
+		/**
+		 * The default priority value assigned to each print job.
+		 */
+		public int DefaultPriority;
+		/**
+		 * The earliest time at which the printer will print a job. This value
+		 * is expressed as minutes elapsed since 12:00 AM GMT (Greenwich Mean
+		 * Time).
+		 */
+		public int StartTime;
+		/**
+		 * The latest time at which the printer will print a job. This value is
+		 * expressed as minutes elapsed since 12:00 AM GMT (Greenwich Mean
+		 * Time).
+		 */
+		public int UntilTime;
+		/**
+		 * The printer status. This member can be any reasonable combination of
+		 * the values PRINTER_STATUS_XXX.
+		 */
+		public int Status;
+		/**
+		 * The number of print jobs that have been queued for the printer.
+		 */
+		public int cJobs;
+		/**
+		 * The average number of pages per minute that have been printed on the
+		 * printer.
+		 */
+		public int AveragePPM;
 
-    public static class PRINTER_INFO_4 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("pPrinterName", "pServerName", "Attributes");
+		public PRINTER_INFO_2() {
+			super();
+		}
 
-        public String pPrinterName;
-        public String pServerName;
-        public DWORD Attributes;
+		public PRINTER_INFO_2(int size) {
+			super(new Memory(size));
+		}
+		
+		@Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+	}
 
-        public PRINTER_INFO_4() {
+	/**
+	 * The PRINTER_INFO_4 structure specifies general printer information.
+	 * <p>
+	 * The structure can be used to retrieve minimal printer information on a
+	 * call to EnumPrinters. Such a call is a fast and easy way to retrieve the
+	 * names and attributes of all locally installed printers on a system and
+	 * all remote printer connections that a user has established.
+	 * 
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162847(v=vs.85).aspx">
+	 *      PRINTER_INFO_4 structure</a>
+	 */
+	public static class PRINTER_INFO_4 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pPrinterName", "pServerName", "Attributes");
+		
+		/**
+		 * Pointer to a null-terminated string that specifies the name of the
+		 * printer (local or remote).
+		 */
+		public String pPrinterName;
+		/**
+		 * Pointer to a null-terminated string that is the name of the server.
+		 */
+		public String pServerName;
+		/**
+		 * Specifies information about the returned data.
+		 */
+		public DWORD Attributes;
+
+		public PRINTER_INFO_4() {
             super();
         }
 
@@ -201,14 +434,37 @@ public interface Winspool extends StdCallLibrary {
         }
     }
 
-    public class LPPRINTER_DEFAULTS extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
+	/**
+	 * The PRINTER_DEFAULTS structure specifies the default data type,
+	 * environment, initialization data, and access rights for a printer.
+	 * 
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">
+	 *      PRINTER_DEFAULTS structure</a>
+	 */
+	public class LPPRINTER_DEFAULTS extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
+		
+		/**
+		 * Pointer to a null-terminated string that specifies the default data
+		 * type for a printer.
+		 */
+		public String pDatatype;
+		/**
+		 * Pointer to a DEVMODE structure that identifies the default
+		 * environment and initialization data for a printer.
+		 */
+		PVOID pDevMode;
+		/**
+		 * Specifies desired access rights for a printer. The OpenPrinter
+		 * function uses this member to set access rights to the printer. These
+		 * rights can affect the operation of the SetPrinter and DeletePrinter
+		 * functions.
+		 */
+		int DesiredAccess;
 
-        public String pDatatype;
-        public PVOID pDevMode;
-        public int DesiredAccess;
-
-        @Override
+		@Override
         protected List<String> getFieldOrder() {
             return FIELDS;
         }
@@ -217,9 +473,7 @@ public interface Winspool extends StdCallLibrary {
     /**
      * The OpenPrinter function retrieves a handle to the specified printer or
      * print server or other types of handles in the print subsystem.
-     *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">MSDN</a>
-     *
+     * 
      * @param pPrinterName
      *            [in] A pointer to a null-terminated string that specifies the
      *            name of the printer or print server, the printer object, the
@@ -239,14 +493,44 @@ public interface Winspool extends StdCallLibrary {
      *            be NULL.
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     */
+     * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">
+	 *      OpenPrinter function</a>
+	 */
     boolean OpenPrinter(
-    // _In_
+    	    // _In_
             String pPrinterName,
             // _Out_
             HANDLEByReference phPrinter,
             // _In_
             LPPRINTER_DEFAULTS pDefault);
+
+	/**
+	 * The ClosePrinter function closes the specified printer object.<br>
+	 * Note This is a blocking or synchronous function and might not return
+	 * immediately.<br>
+	 * How quickly this function returns depends on run-time factors such as
+	 * network status, print server configuration, and printer driver
+	 * implementation-factors that are difficult to predict when writing an
+	 * application. Calling this function from a thread that manages interaction
+	 * with the user interface could make the application appear to be
+	 * unresponsive.
+	 * 
+	 * When the ClosePrinter function returns, the handle hPrinter is invalid,
+	 * regardless of whether the function has succeeded or failed.
+	 * 
+	 * @param hPrinter
+	 *            A handle to the printer object to be closed. This handle is
+	 *            returned by the OpenPrinter or AddPrinter function.
+	 * @return If the function succeeds, the return value is a nonzero value. If
+	 *         the function fails, the return value is zero.
+	 * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">
+	 *      ClosePrinter function</a>
+	 */
+	boolean ClosePrinter(HANDLE hPrinter);
 
     /**
      * The FindFirstPrinterChangeNotification function creates a change
@@ -261,9 +545,7 @@ public interface Winspool extends StdCallLibrary {
      * FindNextPrinterChangeNotification function to retrieve information about
      * the change, and to reset the change notification object for use in the
      * next wait operation.
-     *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">MSDN</a>
-     *
+     * 
      * @param hPrinter
      *            [in] A handle to the printer or print server that you want to
      *            monitor. Use the OpenPrinter or AddPrinter function to
@@ -273,12 +555,12 @@ public interface Winspool extends StdCallLibrary {
      *            to enter a signaled state. A change notification occurs when
      *            one or more of the specified conditions are met. The fdwFilter
      *            parameter can be zero if pPrinterNotifyOptions is non-NULL.
-     *
+     * 
      * @param fdwOptions
-     *            Reserved; must be zero.
-     * @param pPrinterNotifyOptions
+     *            Reserved; must be zero. 
+     * @param pPrinterNotifyOptions 
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
-     *            structure. The pTypes member of this structure is an array of
+     *            structure. The pTypes member of this structure is an array of 
      *            one or more PRINTER_NOTIFY_OPTIONS_TYPE structures, each of which
      *            specifies a printer information field to monitor. A change
      *            notification occurs when one or more of the specified fields
@@ -287,14 +569,18 @@ public interface Winspool extends StdCallLibrary {
      *            new printer information. This parameter can be NULL if
      *            fdwFilter is nonzero. For a list of fields that can be
      *            monitored, see PRINTER_NOTIFY_OPTIONS_TYPE.
-     *
+     * 
      * @return If the function succeeds, the return value is a handle to a
      *         change notification object associated with the specified printer
      *         or print server. If the function fails, the return value is
      *         INVALID_HANDLE_VALUE.
-     */
+     * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">
+	 *      FindFirstPrinterChangeNotification function</a>
+	 */
     HANDLE FindFirstPrinterChangeNotification(
-    // _In_
+    	    // _In_
             HANDLE hPrinter, int fdwFilter, int fdwOptions,
             // _In_opt_
             LPVOID pPrinterNotifyOptions);
@@ -311,9 +597,7 @@ public interface Winspool extends StdCallLibrary {
      * changes occurs to the printer or print server. The
      * FindFirstPrinterChangeNotification function creates the change
      * notification object and specifies the set of changes to be monitored.
-     *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
-     *
+     * 
      * @param hChange
      *            [in] A handle to a change notification object associated with
      *            a printer or print server. You obtain such a handle by calling
@@ -328,7 +612,7 @@ public interface Winspool extends StdCallLibrary {
      *            those specified in the fdwFilter parameter of the
      *            FindFirstPrinterChangeNotification call. The system sets one
      *            or more of the following bit flags.
-     *
+     * 
      * @param pPrinterNotifyOptions
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
      *            structure. Set the Flags member of this structure to
@@ -336,7 +620,7 @@ public interface Winspool extends StdCallLibrary {
      *            return the current data for all monitored printer information
      *            fields. The function ignores all other members of the
      *            structure. This parameter can be NULL.
-     *
+     * 
      * @param ppPrinterNotifyInfo
      *            [out, optional] A pointer to a pointer variable that receives
      *            a pointer to a system-allocated, read-only buffer. Call the
@@ -358,12 +642,16 @@ public interface Winspool extends StdCallLibrary {
      *            no additional notifications will be sent until you make a
      *            second FindNextPrinterChangeNotification call that specifies
      *            PRINTER_NOTIFY_OPTIONS_REFRESH.
-     *
+     * 
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     */
+     * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">
+	 *      FindClosePrinterChangeNotification function</a>
+	 */
     boolean FindNextPrinterChangeNotification(
-    // _In_
+    	    // _In_
             HANDLE hChange,
             // _Out_opt_
             DWORDByReference pdwChange,
@@ -378,23 +666,65 @@ public interface Winspool extends StdCallLibrary {
      * FindFirstPrinterChangeNotification function. The printer or print server
      * associated with the change notification object will no longer be
      * monitored by that object.
-     *
-     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">MSDN</a>
-     *
+     * 
      * @param hChange
      *            [in] A handle to the change notification object to be closed.
      *            This is a handle created by calling the
      *            FindFirstPrinterChangeNotification function.
-     *
+     * 
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     */
+     * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">
+	 *      FindClosePrinterChangeNotification function</a>
+	 */
     boolean FindClosePrinterChangeNotification(
-    // _In_
+    	    // _In_
             HANDLE hChange);
 
+	/**
+	 * The EnumJobs function retrieves information about a specified set of
+	 * print jobs for a specified printer.
+	 * 
+	 * @param hPrinter
+	 *            A handle to the printer object whose print jobs the function
+	 *            enumerates. Use the OpenPrinter or AddPrinter function to
+	 *            retrieve a printer handle.
+	 * @param FirstJob
+	 *            The zero-based position within the print queue of the first
+	 *            print job to enumerate. For example, a value of 0 specifies
+	 *            that enumeration should begin at the first print job in the
+	 *            print queue; a value of 9 specifies that enumeration should
+	 *            begin at the tenth print job in the print queue.
+	 * @param NoJobs
+	 *            The total number of print jobs to enumerate.
+	 * @param Level
+	 *            The type of information returned in the pJob buffer.
+	 * @param pJob
+	 *            A pointer to a buffer that receives an array of JOB_INFO_1,
+	 *            JOB_INFO_2, or JOB_INFO_3 structures. The buffer must be large
+	 *            enough to receive the array of structures and any strings or
+	 *            other data to which the structure members point.
+	 * @param cbBuf
+	 *            The size, in bytes, of the pJob buffer.
+	 * @param pcbNeeded
+	 *            A pointer to a variable that receives the number of bytes
+	 *            copied if the function succeeds. If the function fails, the
+	 *            variable receives the number of bytes required.
+	 * @param pcReturned
+	 *            A pointer to a variable that receives the number of
+	 *            JOB_INFO_1, JOB_INFO_2, or JOB_INFO_3 structures returned in
+	 *            the pJob buffer.
+	 * @return If the function succeeds, the return value is a nonzero value. If
+	 *         the function fails, the return value is zero.
+	 * 
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162625(v=vs.85).aspx">
+	 *      EnumJobs function</a>
+	 */
     boolean EnumJobs(
-    // _In_
+    	    // _In_
             HANDLE hPrinter,
             // _In_
             int FirstJob,
@@ -411,31 +741,96 @@ public interface Winspool extends StdCallLibrary {
             // _Out_
             IntByReference pcReturned);
 
-    public static class JOB_INFO_1 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder(
+	/**
+	 * The JOB_INFO_1 structure specifies print-job information such as the
+	 * job-identifier value, the name of the printer for which the job is
+	 * spooled, the name of the machine that created the print job, the name of
+	 * the user that owns the print job, and so on.
+	 *
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd145019(v=vs.85).aspx">
+	 *      JOB_INFO_1 structure</a>
+	 */
+	public static class JOB_INFO_1 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder(
                 "JobId", "pPrinterName",
                 "pMachineName", "pUserName", "pDocument", "pDatatype",
                 "pStatus", "Status", "Priority", "Position", "TotalPages",
                 "PagesPrinted", "Submitted");
-
-        public int JobId;
-        public String pPrinterName;
-        public String pMachineName;
-        public String pUserName;
-        public String pDocument;
-        public String pDatatype;
-        public String pStatus;
-        public int Status;
-        public int Priority;
-        public int Position;
-        public int TotalPages;
-        public int PagesPrinted;
-        public SYSTEMTIME Submitted;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
+		
+		/**
+		 * A job identifier.
+		 */
+		public int JobId;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * printer for which the job is spooled.
+		 */
+		public String pPrinterName;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * machine that created the print job.
+		 */
+		public String pMachineName;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * user that owns the print job.
+		 */
+		public String pUserName;
+		/**
+		 * A pointer to a null-terminated string that specifies the name of the
+		 * print job (for example, "MS-WORD: Review.doc").
+		 */
+		public String pDocument;
+		/**
+		 * A pointer to a null-terminated string that specifies the type of data
+		 * used to record the print job.
+		 */
+		public String pDatatype;
+		/**
+		 * A pointer to a null-terminated string that specifies the status of
+		 * the print job. This member should be checked prior to Status and, if
+		 * pStatus is NULL, the status is defined by the contents of the Status
+		 * member.
+		 */
+		public String pStatus;
+		/**
+		 * The job status. The value of this member can be zero or a combination
+		 * of one or more of the following values. A value of zero indicates
+		 * that the print queue was paused after the document finished spooling.
+		 */
+		public int Status;
+		/**
+		 * The job priority. This member can be one of the following values or
+		 * in the range between 1 through 99 (MIN_PRIORITY through
+		 * MAX_PRIORITY).
+		 */
+		public int Priority;
+		/**
+		 * The job's position in the print queue.
+		 */
+		public int Position;
+		/**
+		 * The total number of pages that the document contains. This value may
+		 * be zero if the print job does not contain page delimiting
+		 * information.
+		 */
+		public int TotalPages;
+		/**
+		 * The number of pages that have printed. This value may be zero if the
+		 * print job does not contain page delimiting information.
+		 */
+		public int PagesPrinted;
+		/**
+		 * A SYSTEMTIME structure that specifies the time that this document was
+		 * spooled.
+		 * <p>
+		 * This time value is in Universal Time Coordinate (UTC) format. You
+		 * should convert it to a local time value before displaying it. You can
+		 * use the FileTimeToLocalFileTime function to perform the conversion.
+		 */
+		public SYSTEMTIME Submitted;
 
         public JOB_INFO_1() {
             super();
@@ -443,6 +838,11 @@ public interface Winspool extends StdCallLibrary {
 
         public JOB_INFO_1(int size) {
             super(new Memory(size));
+        }
+        
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }
