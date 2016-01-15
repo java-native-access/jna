@@ -1,19 +1,19 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 
 import junit.framework.TestCase;
@@ -23,23 +23,24 @@ public class MemoryTest extends TestCase implements GCWaits {
     public void testAutoFreeMemory() throws Exception {
         final boolean[] flag = { false };
         Memory core = new Memory(10) {
+            @Override
             protected void finalize() {
                 super.finalize();
                 flag[0] = true;
             }
         };
         Pointer shared = core.share(0, 5);
-        WeakReference ref = new WeakReference(core);
-        
+        Reference<Memory> ref = new WeakReference<Memory>(core);
+
         core = null;
         System.gc();
-        long start = System.currentTimeMillis();
         assertFalse("Memory prematurely GC'd", flag[0]);
         assertNotNull("Base memory GC'd while shared memory extant", ref.get());
         // Avoid having IBM J9 prematurely nullify "shared"
         shared.setInt(0, 0);
 
         shared = null;
+        long start = System.currentTimeMillis();
         System.gc();
         Memory.purge();
         for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
@@ -47,7 +48,8 @@ public class MemoryTest extends TestCase implements GCWaits {
             System.gc();
             Memory.purge();
         }
-        assertNull("Memory not GC'd", ref.get());
+        long end = System.currentTimeMillis();
+        assertNull("Memory not GC'd after " + (end - start) + " millis", ref.get());
     }
 
     public void testShareMemory() {
@@ -122,8 +124,8 @@ public class MemoryTest extends TestCase implements GCWaits {
         m.clear();
 
         ByteBuffer b = m.getByteBuffer(0, m.size());
-        WeakReference ref = new WeakReference(m);
-        WeakReference bref = new WeakReference(b);
+        Reference<Memory> ref = new WeakReference<Memory>(m);
+        Reference<ByteBuffer> bref = new WeakReference<ByteBuffer>(b);
 
         // Create a second byte buffer "equal" to the first
         m = new Memory(1024);
@@ -138,7 +140,7 @@ public class MemoryTest extends TestCase implements GCWaits {
             System.gc();
             Memory.purge();
         }
-        assertNotNull("Memory GC'd while NIO Buffer still extant", ref.get());
+        assertNotNull("Memory GC'd while NIO Buffer still exists", ref.get());
 
         // Avoid IBM J9 optimization resulting in premature GC of buffer
         b.put((byte)0);

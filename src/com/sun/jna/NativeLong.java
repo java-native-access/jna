@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 package com.sun.jna;
@@ -19,6 +19,7 @@ package com.sun.jna;
  * @author wmeissner@gmail.com
  */
 public class NativeLong extends IntegerType {
+    private static final long serialVersionUID = 1L;
     /** Size of a native long, in bytes. */
     public static final int SIZE = Native.LONG_SIZE;
 
@@ -26,7 +27,7 @@ public class NativeLong extends IntegerType {
     public NativeLong() {
         this(0);
     }
-    
+
     /** Create a NativeLong with the given value. */
     public NativeLong(long value) {
         this(value, false);

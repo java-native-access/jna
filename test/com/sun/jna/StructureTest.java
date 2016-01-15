@@ -875,9 +875,9 @@ public class StructureTest extends TestCase {
         s.write();
         Pointer func = s.getPointer().getPointer(0);
         assertNotNull("Callback trampoline not set", func);
-        Map refs = CallbackReference.callbackMap;
+        Map<Callback, CallbackReference> refs = CallbackReference.callbackMap;
         assertTrue("Callback not cached", refs.containsKey(s.cb));
-        CallbackReference ref = (CallbackReference)refs.get(s.cb);
+        CallbackReference ref = refs.get(s.cb);
         assertEquals("Wrong trampoline", ref.getTrampoline(), func);
     }
 
@@ -893,8 +893,8 @@ public class StructureTest extends TestCase {
             Structure s = new UninitializedArrayFieldStructure();
             assertTrue("Invalid size: " + s.size(), s.size() > 0);
             fail("Uninitialized array field should cause write failure");
-        }
-        catch(IllegalStateException e) {
+        } catch(IllegalStateException e) {
+            // expected
         }
     }
 
@@ -1242,7 +1242,7 @@ public class StructureTest extends TestCase {
         assertEquals("Wrong type information for 'inner' field",
                      inner, els.getPointer(0));
         assertEquals("Wrong type information for integer field",
-                     Structure.getTypeInfo(new Integer(0)),
+                     Structure.getTypeInfo(Integer.valueOf(0)),
                      els.getPointer(Pointer.SIZE));
         assertNull("Type element list should be null-terminated",
                    els.getPointer(Pointer.SIZE*2));
@@ -1902,11 +1902,11 @@ public class StructureTest extends TestCase {
                     public Class<?> nativeType() { return int.class; }
                     @Override
                     public Object fromNative(Object nativeValue, FromNativeContext c) {
-                        return new Boolean(nativeValue.equals(new Integer(0)));
+                        return Boolean.valueOf(nativeValue.equals(Integer.valueOf(0)));
                     }
                     @Override
                     public Object toNative(Object value, ToNativeContext c) {
-                        return new Integer(Boolean.TRUE.equals(value) ? -1 : 0);
+                        return Integer.valueOf(Boolean.TRUE.equals(value) ? -1 : 0);
                     }
                 };
                 addTypeConverter(boolean.class, tc);
@@ -1965,7 +1965,7 @@ public class StructureTest extends TestCase {
     public void testFFITypeCalculationWithTypeMappedFields() {
         final TypeMapper mapper = new TypeMapper() {
             @Override
-            public FromNativeConverter getFromNativeConverter(Class cls) {
+            public FromNativeConverter getFromNativeConverter(Class<?> cls) {
                 if (Boolean.class.equals(cls)
                     || boolean.class.equals(cls)) {
                     return new FromNativeConverter() {
@@ -1975,7 +1975,7 @@ public class StructureTest extends TestCase {
                         }
                         @Override
                         public Object fromNative(Object nativeValue, FromNativeContext context) {
-                            return nativeValue.equals(new Byte((byte)0))
+                            return nativeValue.equals(Byte.valueOf((byte)0))
                                 ? Boolean.FALSE : Boolean.TRUE;
                         }
                     };
@@ -1983,13 +1983,13 @@ public class StructureTest extends TestCase {
                 return null;
             }
             @Override
-            public ToNativeConverter getToNativeConverter(Class javaType) {
+            public ToNativeConverter getToNativeConverter(Class<?> javaType) {
                 if (Boolean.class.equals(javaType)
                     || boolean.class.equals(javaType)) {
                     return new ToNativeConverter() {
                         @Override
                         public Object toNative(Object value, ToNativeContext context) {
-                            return new Byte(Boolean.TRUE.equals(value) ? (byte)1 : (byte)0);
+                            return Byte.valueOf(Boolean.TRUE.equals(value) ? (byte)1 : (byte)0);
                         }
                         @Override
                         public Class<?> nativeType() {

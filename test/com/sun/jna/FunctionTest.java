@@ -8,12 +8,9 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
-
-import java.util.Arrays;
-import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -30,11 +27,11 @@ public class FunctionTest extends TestCase {
         Object[] args = new Object[Function.MAX_NARGS+1];
         // Make sure we don't break 'printf'
         args[0] = getName();
-        try { 
+        try {
             f.invokeInt(args);
             fail("Arguments should be limited to " + Function.MAX_NARGS);
-        }
-        catch(UnsupportedOperationException e) {
+        } catch(UnsupportedOperationException e) {
+            // expected
         }
         assertEquals("Wrong result from 'printf'", getName().length(), f.invokeInt(new Object[] { getName() }));
     }
@@ -45,13 +42,13 @@ public class FunctionTest extends TestCase {
         try {
             f.invoke(getClass(), new Object[] { getName() });
             fail("Invalid return types should throw an exception");
-        }
-        catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
+            // expected
         }
     }
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(FunctionTest.class);
     }
-    
+
 }

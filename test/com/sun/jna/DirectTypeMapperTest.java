@@ -8,13 +8,12 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 package com.sun.jna;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Collections;
 import junit.framework.TestCase;
 
 public class DirectTypeMapperTest extends TestCase {
@@ -26,18 +25,19 @@ public class DirectTypeMapperTest extends TestCase {
         final static int MAGIC = 0xABEDCF23;
         public native int returnInt32Argument(boolean b);
         static {
-            Map options = new HashMap();
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addToNativeConverter(Boolean.class, new ToNativeConverter() {
+                @Override
                 public Object toNative(Object arg, ToNativeContext ctx) {
-                    return new Integer(Boolean.TRUE.equals(arg) ? MAGIC : 0);
+                    return Integer.valueOf(Boolean.TRUE.equals(arg) ? MAGIC : 0);
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            Native.register(NativeLibrary.getInstance("testlib", options));
+
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     /** Converts String to int when going to native. */
@@ -46,16 +46,16 @@ public class DirectTypeMapperTest extends TestCase {
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addToNativeConverter(String.class, new ToNativeConverter() {
+                @Override
                 public Object toNative(Object arg, ToNativeContext ctx) {
                     return Integer.valueOf((String) arg, 16);
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            Map options = new HashMap();
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     /** Converts CharSequence to int when going to native. */
@@ -64,17 +64,16 @@ public class DirectTypeMapperTest extends TestCase {
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addToNativeConverter(CharSequence.class, new ToNativeConverter() {
+                @Override
                 public Object toNative(Object arg, ToNativeContext ctx) {
                     return Integer.valueOf(((CharSequence)arg).toString(), 16);
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            Map options = new HashMap();
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     /** Converts Number to int when going to native. */
@@ -83,17 +82,16 @@ public class DirectTypeMapperTest extends TestCase {
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addToNativeConverter(Number.class, new ToNativeConverter() {
+                @Override
                 public Object toNative(Object arg, ToNativeContext ctx) {
-                    return new Integer(((Number)arg).intValue());
+                    return Integer.valueOf(((Number)arg).intValue());
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            Map options = new HashMap();
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     /** Converts String to WString and back. */
@@ -102,32 +100,32 @@ public class DirectTypeMapperTest extends TestCase {
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addTypeConverter(String.class, new TypeConverter() {
+                @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     if (value == null) {
                         return null;
                     }
                     return new WString(value.toString());
                 }
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     if (value == null) {
                         return null;
                     }
                     return value.toString();
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return WString.class;
                 }
             });
-            Map options = new HashMap();
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     public void testBooleanToIntArgumentConversion() {
         DirectTestLibraryBoolean lib = new DirectTestLibraryBoolean();
         assertEquals("Failed to convert Boolean argument to Int",
-                     lib.MAGIC,
+                     DirectTestLibraryBoolean.MAGIC,
                      lib.returnInt32Argument(true));
     }
     public void testStringToIntArgumentConversion() {
@@ -143,11 +141,11 @@ public class DirectTypeMapperTest extends TestCase {
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
     public void testNumberToIntArgumentConversion() {
-        
+
         final int MAGIC = 0x7BEDCF23;
         DirectTestLibraryNumber lib = new DirectTestLibraryNumber();
         assertEquals("Failed to convert Double argument to Int", MAGIC,
-                     lib.returnInt32Argument(new Double(MAGIC)));
+                     lib.returnInt32Argument(Double.valueOf(MAGIC)));
     }
     public void testStringToWStringArgumentConversion() {
         final String MAGIC = "magic" + UNICODE;
@@ -161,36 +159,38 @@ public class DirectTypeMapperTest extends TestCase {
         public native boolean returnInt32Argument(boolean b);
         static {
             final int MAGIC = 0xABEDCF23;
-            Map options = new HashMap();
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             // Use opposite sense of default int<-->boolean conversions
             mapper.addToNativeConverter(Boolean.class, new ToNativeConverter() {
+                @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
-                    return new Integer(Boolean.TRUE.equals(value) ? 0 : MAGIC);
+                    return Integer.valueOf(Boolean.TRUE.equals(value) ? 0 : MAGIC);
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
             mapper.addFromNativeConverter(Boolean.class, new FromNativeConverter() {
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     return Boolean.valueOf(((Integer) value).intValue() != MAGIC);
                 }
-                public Class nativeType() { 
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     public void testIntegerToBooleanResultConversion() throws Exception {
         DirectTestLibraryBidirectionalBoolean lib = new DirectTestLibraryBidirectionalBoolean();
         // argument "true" converts to zero; result zero converts to "true"
-        assertTrue("Failed to convert integer return to boolean TRUE", 
+        assertTrue("Failed to convert integer return to boolean TRUE",
                    lib.returnInt32Argument(true));
         // argument "true" converts to MAGIC; result MAGIC converts to "false"
-        assertFalse("Failed to convert integer return to boolean FALSE", 
+        assertFalse("Failed to convert integer return to boolean FALSE",
                     lib.returnInt32Argument(false));
     }
     public static class PointTestClass {
@@ -200,9 +200,9 @@ public class DirectTypeMapperTest extends TestCase {
     public static class DirectTypeMappedResultTypeTestLibrary {
         public native PointTestClass returnPoint(int x, int y);
         static {
-            Map options = new HashMap();
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addTypeConverter(PointTestClass.class, new TypeConverter() {
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     Pointer p = (Pointer) value;
                     PointTestClass pc = new PointTestClass();
@@ -211,16 +211,18 @@ public class DirectTypeMapperTest extends TestCase {
                     Native.free(Pointer.nativeValue(p));
                     return pc;
                 }
+                @Override
                 public Object toNative(Object value, ToNativeContext context) {
                     return Pointer.NULL; // dummy implementation (not called)
                 }
-                public Class nativeType() { 
+                @Override
+                public Class<?> nativeType() {
                     return Pointer.class;
                 }
             });
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
+
             PointTestClass.TYPE_MAPPER = mapper;
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     public void testTypeMapperResultTypeConversion() throws Exception {
@@ -247,20 +249,20 @@ public class DirectTypeMapperTest extends TestCase {
         static {
             DefaultTypeMapper mapper = new DefaultTypeMapper();
             mapper.addTypeConverter(Enumeration.class, new TypeConverter() {
+                @Override
                 public Object toNative(Object arg, ToNativeContext ctx) {
-                    return new Integer(((Enumeration)arg).getCode());
+                    return Integer.valueOf(((Enumeration)arg).getCode());
                 }
+                @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     return Enumeration.fromCode(((Integer)value).intValue());
                 }
-                public Class nativeType() {
+                @Override
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
             });
-            Map options = new HashMap();
-            options.put(Library.OPTION_TYPE_MAPPER, mapper);
-            
-            Native.register(NativeLibrary.getInstance("testlib", options));
+            Native.register(NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper)));
         }
     }
     public void testEnumerationConversion() {

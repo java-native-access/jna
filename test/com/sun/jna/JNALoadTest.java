@@ -13,6 +13,7 @@
 package com.sun.jna;
 
 import java.io.File;
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
@@ -115,8 +116,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         assertTrue("Native library not unpacked from jar: " + path,
                    path.startsWith(System.getProperty("java.io.tmpdir")));
 
-        WeakReference ref = new WeakReference(cls);
-        WeakReference clref = new WeakReference(loader);
+        Reference<Class<?>> ref = new WeakReference<Class<?>>(cls);
+        Reference<ClassLoader> clref = new WeakReference<ClassLoader>(loader);
         loader = null;
         cls = null;
         field = null;
@@ -136,8 +137,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         }
 
         if (f.exists()) {
-            assertTrue("Temporary jnidispatch not marked for later deletion: "
-                       + f, new File(f.getAbsolutePath()+".x").exists());
+            assertTrue("Temporary jnidispatch not marked for later deletion: " + f,
+                       new File(f.getAbsolutePath()+".x").exists());
         }
         assertFalse("System property jna.loaded not cleared", Boolean.getBoolean("jna.loaded"));
 
@@ -146,11 +147,9 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         try {
             loader = new TestLoader(true);
             cls = Class.forName("com.sun.jna.Native", true, loader);
-        }
-        catch(Throwable t) {
+        } catch(Throwable t) {
             fail("Couldn't load class again after discarding first load: " + t.getMessage());
-        }
-        finally {
+        } finally {
             loader = null;
             cls = null;
             System.gc();
@@ -169,8 +168,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         String path = (String)field.get(null);
         assertNotNull("Native library not found", path);
 
-        WeakReference ref = new WeakReference(cls);
-        WeakReference clref = new WeakReference(loader);
+        Reference<Class<?>> ref = new WeakReference<Class<?>>(cls);
+        Reference<ClassLoader> clref = new WeakReference<ClassLoader>(loader);
         loader = null;
         cls = null;
         field = null;

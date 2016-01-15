@@ -14,22 +14,23 @@ package com.sun.jna;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-import junit.framework.TestCase;
-
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.CallbacksTest.TestLibrary.CbCallback;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APIOptions;
+
+import junit.framework.TestCase;
 
 /** Exercise callback-related functionality.
  *
@@ -64,6 +65,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public static class SmallTestStructure extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public double value;
         public static int allocations = 0;
         @Override
@@ -74,8 +76,8 @@ public class CallbacksTest extends TestCase implements Paths {
         public SmallTestStructure() { }
         public SmallTestStructure(Pointer p) { super(p); read(); }
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static class TestStructure extends Structure {
@@ -83,14 +85,16 @@ public class CallbacksTest extends TestCase implements Paths {
         public static interface TestCallback extends Callback {
             TestStructure.ByValue callback(TestStructure.ByValue s);
         }
+
+        public static final List<String> FIELDS = createFieldsOrder("c", "s", "i", "j", "inner");
         public byte c;
         public short s;
         public int i;
         public long j;
         public SmallTestStructure inner;
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
     public static interface TestLibrary extends Library {
@@ -233,12 +237,12 @@ public class CallbacksTest extends TestCase implements Paths {
             return new Custom(((Integer)nativeValue).intValue());
         }
         @Override
-        public Class nativeType() {
+        public Class<?> nativeType() {
             return Integer.class;
         }
         @Override
         public Object toNative() {
-            return new Integer(value);
+            return Integer.valueOf(value);
         }
         @Override
         public boolean equals(Object o) {
@@ -252,8 +256,8 @@ public class CallbacksTest extends TestCase implements Paths {
         try {
             CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(0));
             fail("Null pointer lookup should fail");
-        }
-        catch(NullPointerException e) {
+        } catch(NullPointerException e) {
+            // expected
         }
     }
 
@@ -305,7 +309,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
     public void testNativeFunctionPointerStringValue() {
         Callback cb = CallbackReference.getCallback(TestLibrary.VoidCallback.class, new Pointer(getName().hashCode()));
-        Class cls = CallbackReference.findCallbackClass(cb.getClass());
+        Class<?> cls = CallbackReference.findCallbackClass(cb.getClass());
         assertTrue("toString should include Java Callback type: " + cb + " ("
                    + cls + ")", cb.toString().indexOf(cls.getName()) != -1);
     }
@@ -318,7 +322,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     // Allow direct tests to override
-    protected Map callbackCache() {
+    protected Map<Callback, CallbackReference> callbackCache() {
         return CallbackReference.callbackMap;
     }
 
@@ -334,19 +338,17 @@ public class CallbacksTest extends TestCase implements Paths {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
 
-        Map refs = new WeakHashMap(callbackCache());
+        Map<Callback, CallbackReference> refs = new WeakHashMap<Callback, CallbackReference>(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
-        CallbackReference ref = (CallbackReference)refs.get(cb);
+        CallbackReference ref = refs.get(cb);
         refs = callbackCache();
         Pointer cbstruct = ref.cbstruct;
 
         cb = null;
         System.gc();
         for (int i = 0; i < 100 && (ref.get() != null || refs.containsValue(ref)); ++i) {
-            try {
-                Thread.sleep(10); // Give the GC a chance to run
-                System.gc();
-            } finally {}
+            Thread.sleep(10); // Give the GC a chance to run
+            System.gc();
         }
         assertNull("Callback not GC'd", ref.get());
         assertFalse("Callback still in map", refs.containsValue(ref));
@@ -668,13 +670,13 @@ public class CallbacksTest extends TestCase implements Paths {
         };
 
         // A little internal groping
-        Map m = CallbackReference.allocations;
+        Map<?, ?> m = CallbackReference.allocations;
         m.clear();
 
         String arg = getName() + "1" + UNICODE;
         String arg2 = getName() + "2" + UNICODE;
         String value = lib.callStringCallback(cb, arg, arg2);
-        WeakReference ref = new WeakReference(value);
+        WeakReference<Object> ref = new WeakReference<Object>(value);
 
         arg = null;
         value = null;
@@ -905,11 +907,11 @@ public class CallbacksTest extends TestCase implements Paths {
                     throw ERROR;
                 }
                 @Override
-                public Class[] getParameterTypes() {
+                public Class<?>[] getParameterTypes() {
                     return new Class[] { CbCallback.class };
                 }
                 @Override
-                public Class getReturnType() {
+                public Class<?> getReturnType() {
                     return CbCallback.class;
                 }
             };
@@ -1015,16 +1017,16 @@ public class CallbacksTest extends TestCase implements Paths {
                 @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     ++fromNativeConversions;
-                    return new Double(((Integer)value).intValue());
+                    return Double.valueOf(((Integer)value).intValue());
                 }
                 @Override
-                public Class nativeType() {
+                public Class<?> nativeType() {
                     return Integer.class;
                 }
                 @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     ++toNativeConversions;
-                    return new Integer(((Double)value).intValue());
+                    return Integer.valueOf(((Double)value).intValue());
                 }
             };
             addTypeConverter(double.class, converter);
@@ -1032,16 +1034,16 @@ public class CallbacksTest extends TestCase implements Paths {
                 @Override
                 public Object fromNative(Object value, FromNativeContext context) {
                     ++fromNativeConversions;
-                    return new Float(((Long)value).intValue());
+                    return Float.valueOf(((Long)value).intValue());
                 }
                 @Override
-                public Class nativeType() {
+                public Class<?> nativeType() {
                     return Long.class;
                 }
                 @Override
                 public Object toNative(Object value, ToNativeContext ctx) {
                     ++toNativeConversions;
-                    return new Long(((Float)value).longValue());
+                    return Long.valueOf(((Float)value).longValue());
                 }
             };
             addTypeConverter(float.class, converter);
@@ -1058,7 +1060,7 @@ public class CallbacksTest extends TestCase implements Paths {
                     return value.toString();
                 }
                 @Override
-                public Class nativeType() {
+                public Class<?> nativeType() {
                     return WString.class;
                 }
                 @Override
@@ -1073,11 +1075,8 @@ public class CallbacksTest extends TestCase implements Paths {
 
     public static interface CallbackTestLibrary extends Library {
         final CallbackTypeMapper _MAPPER = new CallbackTypeMapper();
-        final Map _OPTIONS = new HashMap() {
-            {
-                put(Library.OPTION_TYPE_MAPPER, _MAPPER);
-            }
-        };
+        final Map<String, ?> _OPTIONS = Collections.singletonMap(Library.OPTION_TYPE_MAPPER, _MAPPER);
+
         interface DoubleCallback extends Callback {
             double callback(double arg, double arg2);
         }
@@ -1103,7 +1102,7 @@ public class CallbacksTest extends TestCase implements Paths {
     */
     public void testCallbackUsesTypeMapper() throws Exception {
         CallbackTestLibrary lib = loadCallbackTestLibrary();
-        lib._MAPPER.clear();
+        CallbackTestLibrary._MAPPER.clear();
 
         final double[] ARGS = new double[2];
 
@@ -1115,9 +1114,9 @@ public class CallbacksTest extends TestCase implements Paths {
                 return arg + arg2;
             }
         };
-        assertEquals("Wrong type mapper for callback class", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback class", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(CallbackTestLibrary.DoubleCallback.class));
-        assertEquals("Wrong type mapper for callback object", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback object", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
         double result = lib.callInt32Callback(cb, -1, -2);
@@ -1126,14 +1125,14 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Incorrect result of callback invocation", -3, result, 0);
 
         // Once per argument, then again for return value (convert native int->Java double)
-        assertEquals("Type mapper not called for arguments", 3, lib._MAPPER.fromNativeConversions);
+        assertEquals("Type mapper not called for arguments", 3, CallbackTestLibrary._MAPPER.fromNativeConversions);
         // Once per argument, then again for return value (convert Java double->native int)
-        assertEquals("Type mapper not called for result", 3, lib._MAPPER.toNativeConversions);
+        assertEquals("Type mapper not called for result", 3, CallbackTestLibrary._MAPPER.toNativeConversions);
     }
 
     public void testTypeMapperWithWideStrings() throws Exception {
         CallbackTestLibrary lib = loadCallbackTestLibrary();
-        lib._MAPPER.clear();
+        CallbackTestLibrary._MAPPER.clear();
 
         final String[] ARGS = new String[2];
 
@@ -1145,9 +1144,9 @@ public class CallbacksTest extends TestCase implements Paths {
                 return arg + arg2;
             }
         };
-        assertEquals("Wrong type mapper for callback class", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback class", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(CallbackTestLibrary.WStringCallback.class));
-        assertEquals("Wrong type mapper for callback object", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback object", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
         final String[] EXPECTED = { "magic" + UNICODE, getName() + UNICODE };
@@ -1157,9 +1156,9 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Incorrect result of callback invocation", EXPECTED[0] + EXPECTED[1], result);
 
         // Once per argument, then again for return value (convert const wchar_t*->Java String)
-        assertEquals("Type mapper not called for arguments", 3, lib._MAPPER.fromNativeConversions);
+        assertEquals("Type mapper not called for arguments", 3, CallbackTestLibrary._MAPPER.fromNativeConversions);
         // Once per argument, then again for return value (convert Java String->const wchar_t*)
-        assertEquals("Type mapper not called for result", 3, lib._MAPPER.toNativeConversions);
+        assertEquals("Type mapper not called for result", 3, CallbackTestLibrary._MAPPER.toNativeConversions);
     }
 
     public void testCallbackUsesTypeMapperWithDifferentReturnTypeSize() throws Exception {
@@ -1175,9 +1174,9 @@ public class CallbacksTest extends TestCase implements Paths {
                 return arg + arg2;
             }
         };
-        assertEquals("Wrong type mapper for callback class", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback class", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(CallbackTestLibrary.FloatCallback.class));
-        assertEquals("Wrong type mapper for callback object", lib._MAPPER,
+        assertEquals("Wrong type mapper for callback object", CallbackTestLibrary._MAPPER,
                      Native.getTypeMapper(cb.getClass()));
 
         float result = lib.callInt64Callback(cb, -1, -2);
@@ -1293,7 +1292,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // as daemon to avoid VM having to wait for it.
     public void testCallbackThreadPersistence() throws Exception {
     	final int[] called = {0};
-        final Set threads = new HashSet();
+        final Set<Thread> threads = new HashSet<Thread>();
 
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
@@ -1317,49 +1316,48 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Multiple callbacks on a given native thread should use the same Thread mapping: " + threads,
                      1, threads.size());
 
-        waitFor((Thread)threads.iterator().next());
+        waitFor(threads.iterator().next());
     }
 
     // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
     public void testCleanupUndetachedThreadOnThreadExit() throws Exception {
-        final Set threads = new HashSet();
+        final Set<Reference<Thread>> threads = new HashSet<Reference<Thread>>();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             @Override
             public void callback() {
-                threads.add(new WeakReference(Thread.currentThread()));
+                threads.add(new WeakReference<Thread>(Thread.currentThread()));
                 if (++called[0] == 1) {
                     Thread.currentThread().setName(getName() + " (Thread to be cleaned up)");
                 }
-		Native.detach(false);
+                Native.detach(false);
             }
         };
-	// Always attach as daemon to ensure tests will exit
+        // Always attach as daemon to ensure tests will exit
         CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
-	    @Override
-        public String getName(Callback cb) {
-		return "Test thread (native) for " + CallbacksTest.this.getName();
-	    }
-	};
+    	    @Override
+            public String getName(Callback cb) {
+    	        return "Test thread (native) for " + CallbacksTest.this.getName();
+    	    }
+        };
         callThreadedCallback(cb, asDaemon, 2, 100, called);
-	// Wait for it to start up
+        // Wait for it to start up
         long start = System.currentTimeMillis();
         while (threads.size() == 0 && called[0] == 0) {
-            Thread.sleep(10);
-	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-		fail("Timed out waiting for thread to detach and terminate");
-	    }
+            Thread.sleep(10L);
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+                fail("Timed out waiting for thread to detach and terminate");
+            }
         }
         start = System.currentTimeMillis();
-        WeakReference ref = (WeakReference)threads.iterator().next();
-
+        Reference<Thread> ref = threads.iterator().next();
         while (ref.get() != null) {
             System.gc();
             Thread.sleep(100);
-	    Thread[] remaining = new Thread[Thread.activeCount()];
-	    Thread.enumerate(remaining);
+    	    Thread[] remaining = new Thread[Thread.activeCount()];
+    	    Thread.enumerate(remaining);
             if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-                Thread t = (Thread)ref.get();
+                Thread t = ref.get();
                 Pointer terminationFlag = Native.getTerminationFlag(t);
                 assertNotNull("Native thread termination flag is missing", terminationFlag);
                 if (terminationFlag.getInt(0) == 0) {
@@ -1377,7 +1375,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // but callback explicitly detaches it on final invocation.
     public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
-        final Set threads = new HashSet();
+        final Set<Thread> threads = new HashSet<Thread>();
         final int COUNT = 5;
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             @Override
@@ -1400,7 +1398,7 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Multiple callbacks in the same native thread should use the same Thread mapping: "
                      + threads, 1, threads.size());
 
-        waitFor((Thread)threads.iterator().next());
+        waitFor(threads.iterator().next());
     }
 
     public void testDLLCallback() throws Exception {
@@ -1426,7 +1424,7 @@ public class CallbacksTest extends TestCase implements Paths {
         Function f = kernel32.getFunction("GetModuleHandleExW");
         final int GET_MODULE_HANDLE_FROM_ADDRESS = 0x4;
         PointerByReference pref = new PointerByReference();
-        int result = f.invokeInt(new Object[] { new Integer(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
+        int result = f.invokeInt(new Object[] { Integer.valueOf(GET_MODULE_HANDLE_FROM_ADDRESS), fp, pref });
         assertTrue("GetModuleHandleEx(fptr) failed: " + Native.getLastError(), result != 0);
 
         f = kernel32.getFunction("GetModuleFileNameW");
@@ -1440,9 +1438,9 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use
-        Map refs = new WeakHashMap(callbackCache());
+        Map<Callback, CallbackReference> refs = new WeakHashMap<Callback, CallbackReference>(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
-        CallbackReference ref = (CallbackReference)refs.get(cb);
+        CallbackReference ref = refs.get(cb);
         refs = callbackCache();
         Pointer cbstruct = ref.cbstruct;
         Pointer first_fptr = cbstruct.getPointer(0);
@@ -1471,7 +1469,7 @@ public class CallbacksTest extends TestCase implements Paths {
         cb = new TestCallback();
 
         lib.callVoidCallback(cb);
-        ref = (CallbackReference)refs.get(cb);
+        ref = refs.get(cb);
         cbstruct = ref.cbstruct;
 
         assertTrue("Callback not called", called[0]);
@@ -1517,7 +1515,7 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         try {
             Pointer p = CallbackReference.getFunctionPointer(cb);
-            CallbackReference ref = (CallbackReference)CallbackReference.callbackMap.get(cb);
+            CallbackReference ref = CallbackReference.callbackMap.get(cb);
             assertNotNull("CallbackReference not found", ref);
             assertEquals("Tag-based calling convention not applied", Function.ALT_CONVENTION, ref.callingConvention);
         }
@@ -1533,20 +1531,20 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCallingConventionFromOptions() {
-        Map options = new HashMap();
-        options.put(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION);
-        OptionCallingConventionTestLibrary lib = Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, options);
+        OptionCallingConventionTestLibrary lib =
+                Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, Collections.singletonMap(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION));
+        assertNotNull("Library not loaded", lib);
         OptionCallingConventionTestLibrary.TestCallback cb = new OptionCallingConventionTestLibrary.TestCallback() {
             @Override
             public void invoke() { }
         };
         try {
             Pointer p = CallbackReference.getFunctionPointer(cb);
-            CallbackReference ref = (CallbackReference)CallbackReference.callbackMap.get(cb);
+            assertNotNull("No function pointer", p);
+            CallbackReference ref = CallbackReference.callbackMap.get(cb);
             assertNotNull("CallbackReference not found", ref);
             assertEquals("Option-based calling convention not applied", Function.ALT_CONVENTION, ref.callingConvention);
-        }
-        catch(IllegalArgumentException e) {
+        } catch(IllegalArgumentException e) {
             // Alt convention not supported
         }
     }

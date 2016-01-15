@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import com.sun.jna.*;
 import com.sun.jna.ptr.*;
 import com.sun.jna.win32.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class CoreDLLTest extends TestCase {
@@ -28,18 +27,24 @@ public class CoreDLLTest extends TestCase {
         CoreDLL INSTANCE = Native.loadLibrary("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
 
         public static class SECURITY_ATTRIBUTES extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("dwLength", "lpSecurityDescriptor", "bInheritHandle");
             public int dwLength;
             public Pointer lpSecurityDescriptor;
             public boolean bInheritHandle;
             public SECURITY_ATTRIBUTES() {
                 dwLength = size();
             }
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "dwLength", "lpSecurityDescriptor", "bInheritHandle" });
+            @Override
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
         public static class STARTUPINFO extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder(
+                    "cb", "lpReserved", "lpDesktop", "lpTitle", "dwX", "dwY", "dwXSize", "dwYSize",
+                    "dwXCountChars", "dwYCountChars", "dwFillAttribute", "dwFlags", "wShowWindow",
+                    "cbReserved2", "lpReserved2", "hStdInput", "hStdOutput", "hStdError");
             public int cb;
             public String lpReserved;
             public String lpDesktop;
@@ -61,11 +66,13 @@ public class CoreDLLTest extends TestCase {
             public STARTUPINFO() {
                 cb = size();
             }
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "cb", "lpReserved", "lpDesktop", "lpTitle", "dwX", "dwY", "dwXSize", "dwYSize", "dwXCountChars", "dwYCountChars", "dwFillAttribute", "dwFlags", "wShowWindow", "cbReserved2", "lpReserved2", "hStdInput", "hStdOutput", "hStdError" });
+            @Override
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         public static class PROCESS_INFORMATION extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("hProcess", "hThread", "dwProcessId", "dwThreadId");
             public Pointer hProcess;
             public Pointer hThread;
             public int dwProcessId;
@@ -74,20 +81,22 @@ public class CoreDLLTest extends TestCase {
             public static class ByReference extends PROCESS_INFORMATION implements Structure.ByReference {
                 public ByReference() {
                 }
-                
+
                 public ByReference(Pointer memory) {
                     super(memory);
                 }
             }
-            
+
             public PROCESS_INFORMATION() {
+                super();
             }
-            
+
             public PROCESS_INFORMATION(Pointer memory) {
                 super(memory);
             }
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "hProcess", "hThread", "dwProcessId", "dwThreadId" });
+            @Override
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
@@ -109,6 +118,3 @@ public class CoreDLLTest extends TestCase {
         assertTrue("Process launch failed", status);
     }
 }
-
-
-

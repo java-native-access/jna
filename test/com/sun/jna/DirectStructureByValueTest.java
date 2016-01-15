@@ -12,12 +12,6 @@
  */
 package com.sun.jna;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.util.Map;
-
-import junit.framework.TestCase;
-
 /** General structure by value functionality tests. */
 public class DirectStructureByValueTest extends StructureByValueTest {
 

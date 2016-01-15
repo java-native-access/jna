@@ -8,19 +8,20 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
-/** 
+/**
  * Exception representing a non-zero error code returned in either
- * <code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> 
+ * <code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code>
  * or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>.
 */
 public class LastErrorException extends RuntimeException {
-    
+    private static final long serialVersionUID = 1L;
+
     private int errorCode;
-    
+
     private static String formatMessage(int code) {
         return Platform.isWindows()
             ? "GetLastError() returned " + code
@@ -35,7 +36,7 @@ public class LastErrorException extends RuntimeException {
             return m;
         }
     }
-    
+
     public LastErrorException(String msg) {
         super(parseMessage(msg.trim()));
         try {
@@ -48,7 +49,7 @@ public class LastErrorException extends RuntimeException {
             this.errorCode = -1;
         }
     }
-    
+
     /**
      * Returns the error code of the error.
      * @return
@@ -57,7 +58,7 @@ public class LastErrorException extends RuntimeException {
     public int getErrorCode() {
     	return errorCode;
     }
-    
+
     public LastErrorException(int code) {
         super(formatMessage(code));
         this.errorCode = code;
