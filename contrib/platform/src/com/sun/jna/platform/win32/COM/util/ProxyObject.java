@@ -74,10 +74,10 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		factory.register(this);
 	}
 
-	/** when proxy is created for arguments on a call back, they are already on the 
+	/** when proxy is created for arguments on a call back, they are already on the
 	 * com thread, and hence calling 'getUnknownId' will not work as it uses the ComThread
 	 * however, the unknown pointer value is passed in;
-	 * 
+	 *
 	 * @param theInterface
 	 * @param unknownId
 	 * @param rawDispatch
@@ -94,7 +94,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		int n = this.rawDispatch.AddRef();
 		factory.register(this);
 	}
-	
+
 	// cached value of the IUnknown interface pointer
 	// Rules of COM state that querying for the IUnknown interface must return
 	// an identical pointer value
@@ -108,7 +108,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 				Thread current = Thread.currentThread();
 				String tn = current.getName();
-				
+
 				HRESULT hr = this.comThread.execute(new Callable<HRESULT>() {
 					@Override
 					public HRESULT call() throws Exception {
@@ -116,7 +116,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 						return ProxyObject.this.getRawDispatch().QueryInterface(new REFIID(iid), ppvObject);
 					}
 				});
-				
+
 				if (WinNT.S_OK.equals(hr)) {
 					Dispatch dispatch = new Dispatch(ppvObject.getValue());
 					this.unknownId = Pointer.nativeValue(dispatch.getPointer());
@@ -159,7 +159,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	ComThread comThread;
 	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
 
-	public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
+	@Override
+    public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
 		return this.rawDispatch;
 	}
 
@@ -168,12 +169,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	/*
 	 * The QueryInterface rule state that 'a call to QueryInterface with
 	 * IID_IUnknown must always return the same physical pointer value.'
-	 * 
+	 *
 	 * [http://msdn.microsoft.com/en-us/library/ms686590%28VS.85%29.aspx]
-	 * 
+	 *
 	 * therefore we can compare the pointers
 	 */
-	public boolean equals(Object arg) {
+	@Override
+    public boolean equals(Object arg) {
 		if (null == arg) {
 			return false;
 		} else if (arg instanceof ProxyObject) {
@@ -200,9 +202,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	@Override
 	public int hashCode() {
-		return Long.valueOf(this.getUnknownId()).intValue();
-		// this returns the native pointer peer value
-		// return this.getRawDispatch().hashCode();
+	    long id = this.getUnknownId();
+		return (int) ((id >>> 32) & 0xFFFFFFFF) + (int) (id & 0xFFFFFFFF);
 	}
 
 	@Override
@@ -379,7 +380,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		COMUtils.checkRC(hr);
 		Object jobj = Convert.toJavaObject(result);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return (T) Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj);
+			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
 		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
@@ -389,7 +390,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			int n = d.Release();
 			return t;
 		}
-		return (T) jobj;
+		return returnType.cast(jobj);
 	}
 
 	@Override
@@ -409,7 +410,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		Object jobj = Convert.toJavaObject(result);
 		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return (T) Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj);
+			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
 		}
 		if (jobj instanceof IDispatch) {
 			IDispatch d = (IDispatch) jobj;
@@ -419,7 +420,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			int n = d.Release();
 			return t;
 		}
-		return (T) jobj;
+		return returnType.cast(jobj);
 	}
 
 	@Override

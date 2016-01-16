@@ -237,7 +237,7 @@ public interface WinDef {
          * Instantiates a new LONG by reference.
          */
         public LONGByReference() {
-            this(new LONG(0));
+            this(new LONG(0L));
         }
 
         /**

@@ -12,10 +12,8 @@
  */
 package com.sun.jna;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-
 import junit.framework.TestCase;
 
 import com.sun.jna.ReturnTypesTest.TestLibrary.SimpleStructure;
@@ -130,10 +128,7 @@ public class ReturnTypesTest extends TestCase {
     }
 
     public void testReturnObject() throws Exception {
-        Map options = new HashMap() { {
-            put(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE);
-        }};
-        lib = Native.loadLibrary("testlib", TestLibrary.class, options);
+        lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
         assertNull("null value not returned", lib.returnObjectArgument(null));
         final Object VALUE = new Object() {
             @Override
@@ -224,7 +219,7 @@ public class ReturnTypesTest extends TestCase {
         }
         @Override
         public Object toNative() {
-            return new Integer(value);
+            return Integer.valueOf(value);
         }
         @Override
         public boolean equals(Object o) {

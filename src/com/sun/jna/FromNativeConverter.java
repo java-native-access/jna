@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 package com.sun.jna;
@@ -16,9 +16,9 @@ package com.sun.jna;
 /** Define conversion from a native type to the appropriate Java type. */
 public interface FromNativeConverter {
     /** Convert the given native object into its Java representation using
-     * the given context. 
+     * the given context.
      */
     Object fromNative(Object nativeValue, FromNativeContext context);
     /** Indicate the native type used by this converter. */
-    Class nativeType();
+    Class<?> nativeType();
 }

@@ -202,17 +202,17 @@ public class NativeTest extends TestCase {
             interface TestCallback extends Callback { }
             static class InnerSubclass extends InnerTestClass implements Structure.ByReference { }
             @Override
-            protected List getFieldOrder() {
-                return Collections.EMPTY_LIST;
+            protected List<String> getFieldOrder() {
+                return Collections.<String>emptyList();
             }
         }
     }
 
     public void testFindInterfaceClass() throws Exception {
-        Class interfaceClass = TestInterface.class;
-        Class cls = TestInterface.InnerTestClass.class;
-        Class subClass = TestInterface.InnerTestClass.InnerSubclass.class;
-        Class callbackClass = TestInterface.InnerTestClass.TestCallback.class;
+        Class<?> interfaceClass = TestInterface.class;
+        Class<?> cls = TestInterface.InnerTestClass.class;
+        Class<?> subClass = TestInterface.InnerTestClass.InnerSubclass.class;
+        Class<?> callbackClass = TestInterface.InnerTestClass.TestCallback.class;
         assertEquals("Enclosing interface not found for class",
                      interfaceClass, Native.findEnclosingLibraryClass(cls));
         assertEquals("Enclosing interface not found for derived class",
@@ -225,17 +225,21 @@ public class NativeTest extends TestCase {
         int TEST_ALIGNMENT = Structure.ALIGN_NONE;
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         String TEST_ENCODING = "test-encoding";
-        Map TEST_OPTS = new HashMap() { {
-            put(OPTION_CLASSLOADER, TestInterfaceWithInstance.class.getClassLoader());
-            put(OPTION_TYPE_MAPPER, TEST_MAPPER);
-            put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
-            put(OPTION_STRING_ENCODING, TEST_ENCODING);
-        }};
+        Map<String, Object> TEST_OPTS = new HashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;    // we're not serializing it
+
+            {
+                put(OPTION_CLASSLOADER, TestInterfaceWithInstance.class.getClassLoader());
+                put(OPTION_TYPE_MAPPER, TEST_MAPPER);
+                put(OPTION_STRUCTURE_ALIGNMENT, Integer.valueOf(TEST_ALIGNMENT));
+                put(OPTION_STRING_ENCODING, TEST_ENCODING);
+            }
+        };
         TestInterfaceWithInstance ARBITRARY = Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
         abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromInstanceField() {
-        Class[] classes = { TestInterfaceWithInstance.class, TestInterfaceWithInstance.TestStructure.class };
+        Class<?>[] classes = { TestInterfaceWithInstance.class, TestInterfaceWithInstance.TestStructure.class };
         String[] desc = { "interface", "structure from interface" };
         for (int i=0;i < classes.length;i++) {
             assertEquals("Wrong type mapper found for " + desc[i],
@@ -254,25 +258,23 @@ public class NativeTest extends TestCase {
         int TEST_ALIGNMENT = Structure.ALIGN_NONE;
         TypeMapper TEST_MAPPER = new DefaultTypeMapper();
         String TEST_ENCODING = "test-encoding";
-        Map OPTIONS = new HashMap() { {
-            put(OPTION_TYPE_MAPPER, TEST_MAPPER);
-            put(OPTION_STRUCTURE_ALIGNMENT, new Integer(TEST_ALIGNMENT));
-            put(OPTION_STRING_ENCODING, TEST_ENCODING);
-        }};
+        Map<String, Object> OPTIONS = new HashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;    // we're not serializing it
+
+            {
+                put(OPTION_TYPE_MAPPER, TEST_MAPPER);
+                put(OPTION_STRUCTURE_ALIGNMENT, Integer.valueOf(TEST_ALIGNMENT));
+                put(OPTION_STRING_ENCODING, TEST_ENCODING);
+            }
+        };
         abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromOptionsField() {
-        Class[] classes = { TestInterfaceWithOptions.class, TestInterfaceWithOptions.TestStructure.class };
-        for (int i=0;i < classes.length;i++) {
-            assertEquals("Wrong type mapper found",
-                         TestInterfaceWithOptions.TEST_MAPPER,
-                         Native.getTypeMapper(classes[i]));
-            assertEquals("Wrong alignment found",
-                         TestInterfaceWithOptions.TEST_ALIGNMENT,
-                         Native.getStructureAlignment(classes[i]));
-            assertEquals("Wrong encoding found",
-                         TestInterfaceWithOptions.TEST_ENCODING,
-                         Native.getStringEncoding(classes[i]));
+        Class<?>[] classes = { TestInterfaceWithOptions.class, TestInterfaceWithOptions.TestStructure.class };
+        for (Class<?> cls : classes) {
+            assertEquals("Wrong type mapper found", TestInterfaceWithOptions.TEST_MAPPER, Native.getTypeMapper(cls));
+            assertEquals("Wrong alignment found", TestInterfaceWithOptions.TEST_ALIGNMENT, Native.getStructureAlignment(cls));
+            assertEquals("Wrong encoding found", TestInterfaceWithOptions.TEST_ENCODING, Native.getStringEncoding(cls));
         }
     }
 
@@ -322,12 +324,14 @@ public class NativeTest extends TestCase {
         class TypeMappedStructure extends Structure {
             public String stringField;
             @Override
-            protected List getFieldOrder() { return Arrays.asList("stringField"); }
+            protected List <String>getFieldOrder() {
+                return Arrays.asList("stringField");
+            }
         }
     }
     public interface OptionsSubclass extends OptionsBase, Library {
         TypeMapper _MAPPER = new DefaultTypeMapper();
-        Map _OPTIONS = new HashMap() { { put(Library.OPTION_TYPE_MAPPER, _MAPPER); } };
+        Map<String, ?> _OPTIONS = Collections.singletonMap(Library.OPTION_TYPE_MAPPER, _MAPPER);
         OptionsSubclass INSTANCE = Native.loadLibrary("testlib", OptionsSubclass.class, _OPTIONS);
     }
     public void testStructureOptionsInference() {
@@ -482,8 +486,7 @@ public class NativeTest extends TestCase {
                 System.out.println("Running tests on class " + args[i]);
                 try {
                     junit.textui.TestRunner.run((Class<? extends TestCase>) Class.forName(args[i]));
-                }
-                catch(Throwable e) {
+                } catch(Throwable e) {
                     e.printStackTrace();
                 }
             }

@@ -229,7 +229,7 @@ public class XDesktopDemo extends JFrame {
             X.Window window = windows[i];
             X.Window.Geometry geo = window.getGeometry();
             int windowId = window.getID();
-            data[i][0] = String.format("0x%08X", new Object[]{new Integer(windowId)});
+            data[i][0] = String.format("0x%08X", new Object[]{Integer.valueOf(windowId)});
             data[i][1] = "" + window.getDesktop();
             data[i][2] = window.getTitle();
             data[i][3] = "" + geo.x;

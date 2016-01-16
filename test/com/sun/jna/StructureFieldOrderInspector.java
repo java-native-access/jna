@@ -32,7 +32,7 @@ public final class StructureFieldOrderInspector {
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
      * @param ignoreConstructorError list of classname prefixes for which to ignore construction errors.
      */
-    public static void batchCheckStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
+    public static void batchCheckStructureGetFieldOrder(final Class<?> classDeclaredInSourceTreeToSearch,
                                                    final List<String> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
@@ -62,7 +62,7 @@ public final class StructureFieldOrderInspector {
      * @param classDeclaredInSourceTreeToSearch a class who's source tree will be searched for Structure sub types.
      * @param ignoreConstructorError list of classname prefixes for which to ignore construction errors.
      */
-    public static void checkStructureGetFieldOrder(final Class classDeclaredInSourceTreeToSearch,
+    public static void checkStructureGetFieldOrder(final Class<?> classDeclaredInSourceTreeToSearch,
                                                    final List<String> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
@@ -74,7 +74,7 @@ public final class StructureFieldOrderInspector {
     /**
      * Find all classes that extend {@link Structure}.
      */
-    public static Set<Class<? extends Structure>> findSubTypesOfStructure(final Class classDeclaredInSourceTreeToSearch) {
+    public static Set<Class<? extends Structure>> findSubTypesOfStructure(final Class<?> classDeclaredInSourceTreeToSearch) {
 
         // use: http://code.google.com/p/reflections/
 
@@ -142,9 +142,9 @@ public final class StructureFieldOrderInspector {
         if (!methodGetFieldOrder.isAccessible()) {
             methodGetFieldOrder.setAccessible(true);
         }
-        final List methodCallFieldList;
+        final List<?> methodCallFieldList;
         try {
-            methodCallFieldList = (List) methodGetFieldOrder.invoke(structure);
+            methodCallFieldList = (List<?>) methodGetFieldOrder.invoke(structure);
         } catch (IllegalAccessException e) {
             throw new RuntimeException("Could not invoke getFieldOrder() on Structure sub type: " + structureSubType.getName(), e);
         } catch (InvocationTargetException e) {
@@ -152,7 +152,7 @@ public final class StructureFieldOrderInspector {
         }
 
         final Field[] actualFields = structureSubType.getFields(); // include fields from super classes
-        final List actualFieldNames = new ArrayList(actualFields.length);
+        final List<String> actualFieldNames = new ArrayList<String>(actualFields.length);
         for (final Field field : actualFields) {
             // ignore static fields
             if (!Modifier.isStatic(field.getModifiers())) {

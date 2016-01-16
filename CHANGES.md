@@ -30,7 +30,8 @@ Features
 * [#563](https://github.com/java-native-access/jna/pull/563): Added `com.sun.jna.platform.win32.Wininet` with the following 4 methods: `FindFirstUrlCacheEntry`, `DeleteUrlCacheEntry`, `FindCloseUrlCache`, `FindNextUrlCacheEntry`, and the `INTERNET_CACHE_ENTRY_INFO` structure, and a helper in `com.sun.jna.platform.win32.WininetUtil` for parsing WinInet's cache - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#567](https://github.com/java-native-access/jna/pull/567): Added `PrintWindow`, `IsWindowEnabled`, `IsWindow`, `FindWindowEx`, `GetAncestor`, `GetCursorPos`, `SetCursorPos`, `SetWinEventHook`, `UnhookWinEvent`, `CopyIcon`, and `GetClassLong` to `com.sun.jna.platform.win32.User32` and supporting constants to `com.sun.jna.platform.win32.WinUser` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#573](https://github.com/java-native-access/jna/pull/573): Added `EnumProcessModules`, `GetModuleInformation`, and `GetProcessImageFileName` to `com.sun.jna.platform.win32.Psapi` and added `ExtractIconEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
-* [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) [@lgoldstein](https://github.com/lgoldstein)
+* [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) - [@lgoldstein](https://github.com/lgoldstein).
+* [#577](https://github.com/java-native-access/jna/pull/577): Apply generic definitions wherever applicable - [@lgoldstein](https://github.com/lgoldstein).
 * [#569](https://github.com/java-native-access/jna/pull/569): Added `com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2` support. Added GetPrinter and ClosePrinter functions in `com.sun.jna.platform.win32.Winspool` - [@IvanRF](https://github.com/IvanRF).
 
 Bug Fixes

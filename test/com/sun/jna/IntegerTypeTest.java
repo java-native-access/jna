@@ -8,6 +8,7 @@ import junit.framework.TestCase;
 public class IntegerTypeTest extends TestCase {
 
     public static class Sized extends IntegerType {
+        private static final long serialVersionUID = 1L;
         public Sized() { this(4, 0); }
         public Sized(int size, long value) { super(size, value); }
     }
@@ -16,8 +17,8 @@ public class IntegerTypeTest extends TestCase {
         class NTStruct extends Structure {
             public Sized field;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("field");
             }
         }
         NTStruct s = new NTStruct();
@@ -27,8 +28,8 @@ public class IntegerTypeTest extends TestCase {
         class NTStruct extends Structure {
             public Sized field;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("field");
             }
         }
         NTStruct s = new NTStruct();
@@ -78,6 +79,8 @@ public class IntegerTypeTest extends TestCase {
 
     public void testValueBoundaries() {
         class TestType extends IntegerType {
+            private static final long serialVersionUID = 1L;
+
             public TestType(int size, long value) {
                 super(size, value);
             }
@@ -104,6 +107,8 @@ public class IntegerTypeTest extends TestCase {
 
     public void testUnsignedValues() {
         class TestType extends IntegerType {
+            private static final long serialVersionUID = 1L;
+
             public TestType(int size, long value) {
                 super(size, value);
             }
@@ -116,6 +121,8 @@ public class IntegerTypeTest extends TestCase {
         assertEquals("Wrong unsigned int value", VALUE, new TestType(4, VALUE).longValue());
 
         class UnsignedTestType extends IntegerType {
+            private static final long serialVersionUID = 1L;
+
             public UnsignedTestType(int size, long value) {
                 super(size, value, true);
             }

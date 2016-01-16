@@ -25,8 +25,8 @@ public class VarArgsTest extends TestCase {
         public static class TestStructure extends Structure {
             public int magic = 0;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "magic" });
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("magic");
             }
         }
         public int addInt32VarArgs(String fmt, Number... args);
@@ -46,19 +46,19 @@ public class VarArgsTest extends TestCase {
         int arg1 = 1;
         int arg2 = 2;
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", new Integer(arg1), new Integer(arg2)));
+                     lib.addInt32VarArgs("dd", Integer.valueOf(arg1), Integer.valueOf(arg2)));
     }
     public void testShortVarArgs() {
         short arg1 = 1;
         short arg2 = 2;
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", new Short(arg1), new Short(arg2)));
+                     lib.addInt32VarArgs("dd", Short.valueOf(arg1), Short.valueOf(arg2)));
     }
     public void testLongVarArgs() {
         short arg1 = 1;
         short arg2 = 2;
         assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("ll", new Long(arg1), new Long(arg2)));
+                     lib.addInt32VarArgs("ll", Long.valueOf(arg1), Long.valueOf(arg2)));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
@@ -67,7 +67,7 @@ public class VarArgsTest extends TestCase {
     }
 
     public void testAppendNullToVarargs() {
-        Number[] args = new Number[] { new Integer(1) };
+        Number[] args = new Number[] { Integer.valueOf(1) };
         assertEquals("No trailing NULL was appended to varargs list",
                      1, lib.addInt32VarArgs("dd", args));
     }

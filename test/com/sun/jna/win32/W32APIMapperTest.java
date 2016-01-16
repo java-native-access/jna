@@ -33,13 +33,14 @@ public class W32APIMapperTest extends TestCase {
 
     public interface UnicodeLibrary extends Library {
         public static class TestStructure extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("string", "string2", "bool", "bool2");
             public String string;
             public String string2;
             public boolean bool;
             public boolean bool2;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "string", "string2", "bool", "bool2" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         String returnWStringArgument(String arg);
@@ -48,13 +49,14 @@ public class W32APIMapperTest extends TestCase {
     }
     public interface ASCIILibrary extends Library {
         public static class TestStructure extends Structure {
+            public static final List<String> FIELDS = Arrays.asList("string", "string2", "bool", "bool2");
             public String string;
             public String string2;
             public boolean bool;
             public boolean bool2;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "string", "string2", "bool", "bool2" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
         String returnStringArgument(String arg);

@@ -39,7 +39,7 @@ public class W32FileMonitorTest extends TestCase {
         events = new HashMap<Integer, FileEvent>();
         final FileListener listener = new FileListener() {
             public void fileChanged(FileEvent e) {
-                events.put(new Integer(e.getType()), e);
+                events.put(Integer.valueOf(e.getType()), e);
             }
         };
         monitor = FileMonitor.getInstance();
@@ -190,7 +190,7 @@ public class W32FileMonitorTest extends TestCase {
     private FileEvent waitForFileEvent(final int expectedFileEvent)
             throws InterruptedException {
 
-        final Integer expectedFileEventInteger = new Integer(expectedFileEvent);
+        final Integer expectedFileEventInteger = Integer.valueOf(expectedFileEvent);
 
         FileEvent actualEvent = (FileEvent)events.get(expectedFileEventInteger);
         final long start = System.currentTimeMillis();

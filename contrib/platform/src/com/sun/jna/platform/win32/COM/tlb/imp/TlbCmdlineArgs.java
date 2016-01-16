@@ -23,7 +23,7 @@ public class TlbCmdlineArgs extends Hashtable<String, String> implements TlbCons
 
     public int getIntParam(String key) {
         String param = this.getRequiredParam(key);
-        return new Integer(param).intValue();
+        return Integer.parseInt(param);
     }
 
     public String getParam(String key) {

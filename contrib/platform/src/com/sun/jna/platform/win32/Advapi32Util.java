@@ -131,12 +131,12 @@ public abstract class Advapi32Util {
 
 		if (!result) {
 			switch (Kernel32.INSTANCE.GetLastError()) {
-			case W32Errors.ERROR_INSUFFICIENT_BUFFER:
-				buffer = new char[len.getValue()];
-				break;
+    			case W32Errors.ERROR_INSUFFICIENT_BUFFER:
+    				buffer = new char[len.getValue()];
+    				break;
 
-			default:
-				throw new Win32Exception(Native.getLastError());
+    			default:
+    				throw new Win32Exception(Native.getLastError());
 			}
 
 			result = Advapi32.INSTANCE.GetUserNameW(buffer, len);
@@ -975,9 +975,9 @@ public abstract class Advapi32Util {
 		byteData.write(0, lpData, 0, lpcbData.getValue());
 
 		if (lpType.getValue() == WinNT.REG_DWORD) {
-			result = new Integer(byteData.getInt(0));
+			result = Integer.valueOf(byteData.getInt(0));
 		} else if (lpType.getValue() == WinNT.REG_QWORD) {
-			result = new Long(byteData.getLong(0));
+			result = Long.valueOf(byteData.getLong(0));
 		} else if (lpType.getValue() == WinNT.REG_BINARY) {
 			result = byteData.getByteArray(0, lpcbData.getValue());
 		} else if ((lpType.getValue() == WinNT.REG_SZ)
