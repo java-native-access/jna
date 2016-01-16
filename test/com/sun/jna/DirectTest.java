@@ -13,9 +13,6 @@
 package com.sun.jna;
 
 import junit.framework.*;
-import com.sun.jna.*;
-import com.sun.jna.ptr.PointerByReference;
-import java.lang.ref.*;
 import java.lang.reflect.Method;
 import java.io.File;
 import java.net.MalformedURLException;
@@ -36,7 +33,7 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
     static class MathLibrary {
 
         public static native double cos(double x);
-        
+
         static {
             Native.register(Platform.MATH_LIBRARY_NAME);
         }
@@ -48,6 +45,8 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
 
     static class CLibrary {
         public static class size_t extends IntegerType {
+            private static final long serialVersionUID = 1L;
+
             public size_t() {
                 super(Native.POINTER_SIZE);
             }
@@ -64,7 +63,7 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
         public static native int strlen(String s1);
         public static native int strlen(Pointer p);
         public static native int strlen(byte[] b);
-        
+
         static {
             Native.register(Platform.C_LIBRARY_NAME);
         }
@@ -87,7 +86,9 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
     }
 
     static class TestLibrary implements TestInterface {
+        @Override
         public native int callInt32CallbackRepeatedly(Int32Callback cb, int arg1, int arg2, int count);
+        @Override
         public native NativeLong callLongCallbackRepeatedly(NativeLongCallback cb, NativeLong arg1, NativeLong arg2, int count);
         static {
             Native.register("testlib");
@@ -108,12 +109,13 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
                       new File(BUILDDIR + "/test-classes").toURI().toURL(),
                   }, new CloverLoader(parent));
         }
-        protected Class findClass(String name) throws ClassNotFoundException {
+        @Override
+        protected Class<?> findClass(String name) throws ClassNotFoundException {
             String boot = System.getProperty("jna.boot.library.path");
             if (boot != null) {
                 System.setProperty("jna.boot.library.path", "");
             }
-            Class cls = super.findClass(name);
+            Class<?> cls = super.findClass(name);
             if (boot != null) {
                 System.setProperty("jna.boot.library.path", boot);
             }
@@ -130,7 +132,7 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
                     Native.registered(MathLibrary.class));
     }
 
-    private Class returnCallingClass() {
+    private Class<?> returnCallingClass() {
         return Native.getCallingClass();
     }
 
@@ -142,15 +144,15 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
     public void testFindNativeClass() {
         class UnregisterLibrary {
             class Inner {
-                public Class findDirectMappedClass() {
+                public Class<?> findDirectMappedClass() {
                     return findDirectMappedClassInner();
                 }
-                public Class findDirectMappedClassInner() {
+                public Class<?> findDirectMappedClassInner() {
                     return Native.findDirectMappedClass(Native.getCallingClass());
                 };
             }
             public native double cos(double x);
-            public Class findDirectMappedClass() {
+            public Class<?> findDirectMappedClass() {
                 return new Inner().findDirectMappedClass();
             };
         }
@@ -161,8 +163,9 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
     public static class DirectMapping {
         public static class DirectStructure extends Structure {
             public int field;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
+            @Override
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("field");
             }
         }
         public static interface DirectCallback extends Callback {
@@ -215,8 +218,9 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
         }
         public static class DirectStructure extends Structure {
             public int field;
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "field" });
+            @Override
+            protected List<String> getFieldOrder() {
+                return Arrays.asList("field");
             }
         }
         public static interface DirectCallback extends Callback {
@@ -249,6 +253,7 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
 
     public void testDirectMappingFunctionMapper() {
         FunctionMapper MAPPER = new FunctionMapper() {
+            @Override
             public String getFunctionName(NativeLibrary lib, Method method) {
                 String name = method.getName();
                 if (name.startsWith("_prefixed_")) {

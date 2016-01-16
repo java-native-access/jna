@@ -10,7 +10,6 @@ import junit.framework.TestCase;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.PointerByReference;
-import junit.framework.TestCase;
 
 public class IShellFolderTest extends TestCase {
 

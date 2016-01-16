@@ -1,14 +1,14 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -17,7 +17,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.sun.jna.Native;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
 import com.sun.jna.platform.win32.ShellAPI.SHELLEXECUTEINFO;
@@ -46,27 +45,26 @@ public class Shell32Test extends TestCase {
 
     public void testSHGetFolderPath() {
     	char[] pszPath = new char[WinDef.MAX_PATH];
-    	assertEquals(W32Errors.S_OK, Shell32.INSTANCE.SHGetFolderPath(null, 
-                                                                      ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, 
-                                                                      pszPath));
-    	assertTrue(Native.toString(pszPath).length() > 0);
+    	assertEquals("Failed to retrieve path", W32Errors.S_OK,
+    	        Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, pszPath));
+    	assertTrue("Empty path", Native.toString(pszPath).length() > 0);
     }
 
     public void testSHGetDesktopFolder() {
         PointerByReference ppshf = new PointerByReference();
         WinNT.HRESULT hr = Shell32.INSTANCE.SHGetDesktopFolder(ppshf);
-        assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
-        assertTrue(ppshf.getValue() != null);
+        assertTrue("Failed to get folder: " + hr.intValue(), W32Errors.SUCCEEDED(hr.intValue()));
+        assertTrue("No folder value", ppshf.getValue() != null);
         // should release the interface, but we need Com4JNA to do that.
     }
 
     public final void testSHGetSpecialFolderPath() {
         final char[] pszPath = new char[WinDef.MAX_PATH];
-        assertTrue(Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, ShlObj.CSIDL_APPDATA, false));
-        assertFalse(Native.toString(pszPath).isEmpty());
+        assertTrue("SHGetSpecialFolderPath", Shell32.INSTANCE.SHGetSpecialFolderPath(null, pszPath, ShlObj.CSIDL_APPDATA, false));
+        assertFalse("No path", Native.toString(pszPath).isEmpty());
     }
 
-    
+
     private void newAppBar() {
         APPBARDATA data = new APPBARDATA.ByReference();
         data.cbSize.setValue(data.size());
@@ -115,7 +113,7 @@ public class Shell32Test extends TestCase {
     }
 
     public void testResizeDesktopFromTop() throws InterruptedException {
-        
+
         newAppBar();
 
         APPBARDATA data = new APPBARDATA.ByReference();
@@ -142,12 +140,12 @@ public class Shell32Test extends TestCase {
         HANDLE token = null;
         GUID guid = KnownFolders.FOLDERID_Fonts;
         HRESULT hr = Shell32.INSTANCE.SHGetKnownFolderPath(guid, flags, token, outPath);
-        
+
         Ole32.INSTANCE.CoTaskMemFree(outPath.getValue());
-        
+
         assertTrue(W32Errors.SUCCEEDED(hr.intValue()));
     }
-    
+
     public void testSHEmptyRecycleBin() {
         File file = new File(System.getProperty("java.io.tmpdir"), System.nanoTime() + ".txt");
         try {
@@ -161,7 +159,7 @@ public class Shell32Test extends TestCase {
 
             int result = Shell32.INSTANCE.SHEmptyRecycleBin(null, null,
                                                             Shell32.SHERB_NOCONFIRMATION | Shell32.SHERB_NOPROGRESSUI | Shell32.SHERB_NOSOUND);
-            // for reasons I can not find documented on MSDN, 
+            // for reasons I can not find documented on MSDN,
             // the function returns the following:
             // 0 when the recycle bin has items in it
             // -2147418113 when the recycle bin has no items in it
@@ -207,7 +205,7 @@ public class Shell32Test extends TestCase {
 
     /**
      * Creates (if needed) and fills the specified file with some content (10 lines of the same text)
-     * 
+     *
      * @param file
      *            The file to fill with content
      * @throws IOException
@@ -224,5 +222,14 @@ public class Shell32Test extends TestCase {
         } finally {
             fileWriter.close();
         }
+    }
+
+    public void testExtractIconEx() {
+        String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
+        assertNotNull("No WINDIR value returned", winDir);
+        assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
+
+        int iconCount = Shell32.INSTANCE.ExtractIconEx(new File(winDir, "explorer.exe").getAbsolutePath(), -1, null, null, 1);
+        assertTrue("Should be at least two icons in explorer.exe", iconCount > 1);
     }
 }

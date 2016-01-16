@@ -12,7 +12,6 @@
  */
 package com.sun.jna;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,7 @@ public class ReturnTypesTest extends TestCase {
     public static interface TestLibrary extends Library {
 
         public static class SimpleStructure extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("value");
             public double value;
             public static int allocations = 0;
             public SimpleStructure() { }
@@ -46,43 +46,48 @@ public class ReturnTypesTest extends TestCase {
                 ++allocations;
             }
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "value" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
         public static class TestSmallStructure extends Structure {
             public static class ByValue extends TestSmallStructure implements Structure.ByValue { }
+
+            public static final List<String> FIELDS = createFieldsOrder("c1", "c2", "s");
             public byte c1;
             public byte c2;
             public short s;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "c1", "c2", "s" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
         public static class TestStructure extends Structure {
             public static class ByValue extends TestStructure implements Structure.ByValue { }
+
+            public static final List<String> FIELDS = createFieldsOrder("c", "s", "i", "j", "inner");
             public byte c;
             public short s;
             public int i;
             public long j;
             public SimpleStructure inner;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "c", "s", "i", "j", "inner" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
-        class CheckFieldAlignment extends Structure {
+        public static class CheckFieldAlignment extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("int32Field", "int64Field", "floatField", "doubleField");
             public int int32Field = 1;
             public long int64Field = 2;
             public float floatField = 3f;
             public double doubleField = 4d;
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "int32Field", "int64Field", "floatField", "doubleField" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
 
@@ -194,6 +199,7 @@ public class ReturnTypesTest extends TestCase {
         size_t returnInt64Magic();
     }
     public static class size_t extends IntegerType {
+        private static final long serialVersionUID = 1L;
         public size_t() {
             this(0);
         }
@@ -213,7 +219,7 @@ public class ReturnTypesTest extends TestCase {
             return new Custom(((Integer)nativeValue).intValue());
         }
         @Override
-        public Class nativeType() {
+        public Class<?> nativeType() {
             return Integer.class;
         }
         @Override

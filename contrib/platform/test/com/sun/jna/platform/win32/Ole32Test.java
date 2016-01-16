@@ -16,9 +16,7 @@ import junit.framework.TestCase;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 

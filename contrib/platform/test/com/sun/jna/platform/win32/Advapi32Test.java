@@ -1008,9 +1008,6 @@ public class Advapi32Test extends TestCase {
         tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
         assertTrue(Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null));
 
-        // create a temp file
-        File file = createTempFile();
-
         int infoType = OWNER_SECURITY_INFORMATION
                        | GROUP_SECURITY_INFORMATION
                        | DACL_SECURITY_INFORMATION
@@ -1021,20 +1018,25 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppDacl = new PointerByReference();
         PointerByReference ppSacl = new PointerByReference();
         PointerByReference ppSecurityDescriptor = new PointerByReference();
-
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                     file.getAbsolutePath(),
-                     AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                     infoType,
-                     ppsidOwner,
-                     ppsidGroup,
-                     ppDacl,
-                     ppSacl,
-                     ppSecurityDescriptor), 0);
-
-        // Clean up resources
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
+        // create a temp file
+        File file = createTempFile();
+        String filePath = file.getAbsolutePath();
+        try {
+            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                         Advapi32.INSTANCE.GetNamedSecurityInfo(
+                                 filePath,
+                                 AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                 infoType,
+                                 ppsidOwner,
+                                 ppsidGroup,
+                                 ppDacl,
+                                 ppSacl,
+                                 ppSecurityDescriptor));
+            // Clean up resources
+            Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+        } finally {
+            file.delete();
+        }
         if (impersontating) {
         	Advapi32.INSTANCE.SetThreadToken(null, null);
         }
@@ -1049,9 +1051,6 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testSetNamedSecurityInfoForFileNoSACL() throws Exception {
-        // create a temp file
-        File file = createTempFile();
-
         int infoType = OWNER_SECURITY_INFORMATION
                        | GROUP_SECURITY_INFORMATION
                        | DACL_SECURITY_INFORMATION;
@@ -1060,28 +1059,37 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppsidGroup = new PointerByReference();
         PointerByReference ppDacl = new PointerByReference();
         PointerByReference ppSecurityDescriptor = new PointerByReference();
+        // create a temp file
+        File file = createTempFile();
+        String filePath = file.getAbsolutePath();
+        try {
+            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                         Advapi32.INSTANCE.GetNamedSecurityInfo(
+                                 filePath,
+                                 AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                 infoType,
+                                 ppsidOwner,
+                                 ppsidGroup,
+                                 ppDacl,
+                                 null,
+                                 ppSecurityDescriptor));
 
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      ppsidOwner,
-                      ppsidGroup,
-                      ppDacl,
-                      null,
-                      ppSecurityDescriptor), 0);
-
-        assertEquals(Advapi32.INSTANCE.SetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      ppsidOwner.getValue(),
-                      ppsidGroup.getValue(),
-                      ppDacl.getValue(),
-                      null), 0);
-
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
+            try {
+                assertEquals("SetNamedSecurityInfo(" + filePath + ")", 0,
+                             Advapi32.INSTANCE.SetNamedSecurityInfo(
+                                     filePath,
+                                     AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                     infoType,
+                                     ppsidOwner.getValue(),
+                                     ppsidGroup.getValue(),
+                                     ppDacl.getValue(),
+                                     null));
+            } finally {
+                Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+            }
+        } finally {
+            file.delete();
+        }
     }
 
     public void testSetNamedSecurityInfoForFileWithSACL() throws Exception {
@@ -1139,36 +1147,44 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppDacl = new PointerByReference();
         PointerByReference ppSacl = new PointerByReference();
         PointerByReference ppSecurityDescriptor = new PointerByReference();
+        String filePath = file.getAbsolutePath();
+        try {
+            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                    Advapi32.INSTANCE.GetNamedSecurityInfo(
+                          filePath,
+                          AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                          infoType,
+                          ppsidOwner,
+                          ppsidGroup,
+                          ppDacl,
+                          ppSacl,
+                          ppSecurityDescriptor));
 
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      ppsidOwner,
-                      ppsidGroup,
-                      ppDacl,
-                      ppSacl,
-                      ppSecurityDescriptor), 0);
+            try {
+                // Send the DACL as a SACL
+                assertEquals("SetNamedSecurityInfo(" + filePath + ")", 0,
+                        Advapi32.INSTANCE.SetNamedSecurityInfo(
+                              filePath,
+                              AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                              infoType,
+                              ppsidOwner.getValue(),
+                              ppsidGroup.getValue(),
+                              ppDacl.getValue(),
+                              ppDacl.getValue()));
+            } finally {
+                // Clean up resources
+                Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+            }
+        } finally {
+            file.delete();
+        }
 
-        // Send the DACL as a SACL
-        assertEquals(Advapi32.INSTANCE.SetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      ppsidOwner.getValue(),
-                      ppsidGroup.getValue(),
-                      ppDacl.getValue(),
-                      ppDacl.getValue()), 0);
-
-        // Clean up resources
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
         if (impersontating) {
-            Advapi32.INSTANCE.SetThreadToken(null, null);
+            assertTrue("SetThreadToken", Advapi32.INSTANCE.SetThreadToken(null, null));
         }
         else {
             tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(0));
-            Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null);
+            assertTrue("AdjustTokenPrivileges", Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null));
         }
         if (phToken.getValue() != null)
             Kernel32.INSTANCE.CloseHandle(phToken.getValue());
@@ -1527,22 +1543,22 @@ public class Advapi32Test extends TestCase {
         fileWriter.close();
         return file;
     }
-    
+
     public void testCreateProcessWithLogonW() {
     	String winDir = Kernel32Util.getEnvironmentVariable("WINDIR");
     	assertNotNull("No WINDIR value returned", winDir);
     	assertTrue("Specified WINDIR does not exist: " + winDir, new File(winDir).exists());
-    	
+
     	STARTUPINFO si = new STARTUPINFO();
     	si.lpDesktop = null;
     	PROCESS_INFORMATION results = new PROCESS_INFORMATION();
-    	
+
     	// i have the same combination on my luggage
-    	boolean result = Advapi32.INSTANCE.CreateProcessWithLogonW("A" + System.currentTimeMillis(), "localhost", "12345", Advapi32.LOGON_WITH_PROFILE, new File(winDir, "notepad.exe").getAbsolutePath(), "", 0, null, "", si, results); 
-    
+    	boolean result = Advapi32.INSTANCE.CreateProcessWithLogonW("A" + System.currentTimeMillis(), "localhost", "12345", Advapi32.LOGON_WITH_PROFILE, new File(winDir, "notepad.exe").getAbsolutePath(), "", 0, null, "", si, results);
+
     	// we tried to run notepad as a bogus user, so it should fail.
     	assertFalse("CreateProcessWithLogonW should have returned false because the username was bogus.", result);
-    	
+
     	// should fail with "the user name or password is incorrect" (error 1326)
     	assertEquals("GetLastError() should have returned ERROR_LOGON_FAILURE because the username was bogus.", W32Errors.ERROR_LOGON_FAILURE, Native.getLastError());
     }

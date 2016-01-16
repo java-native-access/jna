@@ -29,7 +29,6 @@ import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
@@ -40,7 +39,6 @@ import com.sun.jna.platform.win32.WinDef.UINTByReference;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 

@@ -1,29 +1,27 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.PSID;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from DsGetDC.h. Windows SDK 6.0a
- * 
+ *
  * @author dblock[at]dblock.org
  */
 public interface DsGetDC {
@@ -38,13 +36,10 @@ public interface DsGetDC {
                 implements Structure.ByReference {
         }
 
-        public DOMAIN_CONTROLLER_INFO() {
-        }
-
-        public DOMAIN_CONTROLLER_INFO(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder("DomainControllerName",
+                "DomainControllerAddress", "DomainControllerAddressType",
+                "DomainGuid", "DomainName", "DnsForestName", "Flags",
+                "DcSiteName", "ClientSiteName");
 
         /**
          * Pointer to a null-terminated string that specifies the computer name
@@ -111,11 +106,18 @@ public interface DsGetDC {
          */
         public String ClientSiteName;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "DomainControllerName",
-                    "DomainControllerAddress", "DomainControllerAddressType",
-                    "DomainGuid", "DomainName", "DnsForestName", "Flags",
-                    "DcSiteName", "ClientSiteName" });
+        public DOMAIN_CONTROLLER_INFO() {
+            super();
+        }
+
+        public DOMAIN_CONTROLLER_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -129,10 +131,13 @@ public interface DsGetDC {
 
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("dci");
+
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dci" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -177,6 +182,10 @@ public interface DsGetDC {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("NetbiosDomainName",
+                "DnsDomainName", "Flags", "ParentIndex", "TrustType",
+                "TrustAttributes", "DomainSid", "DomainGuid");
+
         /**
          * Pointer to a null-terminated string that contains the NetBIOS name of
          * the domain.
@@ -220,13 +229,13 @@ public interface DsGetDC {
          */
         public GUID DomainGuid;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "NetbiosDomainName",
-                    "DnsDomainName", "Flags", "ParentIndex", "TrustType",
-                    "TrustAttributes", "DomainSid", "DomainGuid" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
 
         public DS_DOMAIN_TRUSTS() {
+            super();
         }
 
         public DS_DOMAIN_TRUSTS(Pointer p) {

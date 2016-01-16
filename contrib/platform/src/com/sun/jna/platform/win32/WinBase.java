@@ -23,10 +23,8 @@ import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.platform.win32.WinDef.DWORDLONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
-import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
@@ -294,7 +292,7 @@ public interface WinBase extends WinDef, BaseTSD {
         public long toLong() {
             return toDate().getTime();
         }
-        
+
         /**
          * <p>Converts the two 32-bit unsigned integer parts of this filetime
          * into a 64-bit unsigned integer representing the number of
@@ -1184,9 +1182,11 @@ public interface WinBase extends WinDef, BaseTSD {
      * ReadTotalTimeoutConstant, ReadFile times out.</li>
      *
      * @author Markus
-     *
      */
     public static class COMMTIMEOUTS extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("ReadIntervalTimeout", "ReadTotalTimeoutMultiplier",
+                "ReadTotalTimeoutConstant", "WriteTotalTimeoutMultiplier", "WriteTotalTimeoutConstant");
+
         /**
          *
          * The maximum time allowed to elapse before the arrival of the next
@@ -1250,12 +1250,9 @@ public interface WinBase extends WinDef, BaseTSD {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "ReadIntervalTimeout", "ReadTotalTimeoutMultiplier",
-                    "ReadTotalTimeoutConstant", "WriteTotalTimeoutMultiplier", "WriteTotalTimeoutConstant" });
+            return FIELDS;
         }
     }
-
-
 
     /**
      * Defines the control setting for a serial communications device.

@@ -24,7 +24,6 @@ import com.sun.jna.platform.mac.SystemB.VMStatistics;
 import com.sun.jna.platform.mac.SystemB.VMStatistics64;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;

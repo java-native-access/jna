@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -209,6 +209,9 @@ public interface Winspool extends StdCallLibrary {
 	 *      PRINTER_INFO_1 structure</a>
 	 */
 	public static class PRINTER_INFO_1 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("Flags", "pDescription", "pName", "pComment");
+		
 		/**
 		 * Specifies information about the returned data. Following are the
 		 * values for this member.
@@ -230,16 +233,17 @@ public interface Winspool extends StdCallLibrary {
 		 */
 		public String pComment;
 
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "Flags", "pDescription",
-                    "pName", "pComment" });
-        }
-
-        public PRINTER_INFO_1() {
+		public PRINTER_INFO_1() {
+            super();
         }
 
         public PRINTER_INFO_1(int size) {
             super(new Memory(size));
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 	
@@ -252,6 +256,11 @@ public interface Winspool extends StdCallLibrary {
 	 *      PRINTER_INFO_2 structure</a>
 	 */
 	public static class PRINTER_INFO_2 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pServerName", "pPrinterName", "pShareName",
+				"pPortName", "pDriverName", "pComment", "pLocation", "pDevMode", "pSepFile", "pPrintProcessor",
+				"pDatatype", "pParameters", "pSecurityDescriptor", "Attributes", "Priority", "DefaultPriority",
+				"StartTime", "UntilTime", "Status", "cJobs", "AveragePPM");
 		
 		/**
 		 * A pointer to a null-terminated string identifying the server that
@@ -367,19 +376,18 @@ public interface Winspool extends StdCallLibrary {
 		 */
 		public int AveragePPM;
 
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "pServerName", "pPrinterName", "pShareName", "pPortName", "pDriverName",
-					"pComment", "pLocation", "pDevMode", "pSepFile", "pPrintProcessor", "pDatatype", "pParameters",
-					"pSecurityDescriptor", "Attributes", "Priority", "DefaultPriority", "StartTime", "UntilTime",
-					"Status", "cJobs", "AveragePPM" });
-		}
-
 		public PRINTER_INFO_2() {
+			super();
 		}
 
 		public PRINTER_INFO_2(int size) {
 			super(new Memory(size));
 		}
+		
+		@Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
 	}
 
 	/**
@@ -395,6 +403,9 @@ public interface Winspool extends StdCallLibrary {
 	 *      PRINTER_INFO_4 structure</a>
 	 */
 	public static class PRINTER_INFO_4 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pPrinterName", "pServerName", "Attributes");
+		
 		/**
 		 * Pointer to a null-terminated string that specifies the name of the
 		 * printer (local or remote).
@@ -409,16 +420,17 @@ public interface Winspool extends StdCallLibrary {
 		 */
 		public DWORD Attributes;
 
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "pPrinterName", "pServerName",
-                    "Attributes" });
-        }
-
-        public PRINTER_INFO_4() {
+		public PRINTER_INFO_4() {
+            super();
         }
 
         public PRINTER_INFO_4(int size) {
             super(new Memory(size));
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -431,6 +443,9 @@ public interface Winspool extends StdCallLibrary {
 	 *      PRINTER_DEFAULTS structure</a>
 	 */
 	public class LPPRINTER_DEFAULTS extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
+		
 		/**
 		 * Pointer to a null-terminated string that specifies the default data
 		 * type for a printer.
@@ -449,9 +464,9 @@ public interface Winspool extends StdCallLibrary {
 		 */
 		int DesiredAccess;
 
+		@Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "pDatatype", "pDevMode",
-                    "DesiredAccess" });
+            return FIELDS;
         }
     }
 
@@ -490,6 +505,32 @@ public interface Winspool extends StdCallLibrary {
             HANDLEByReference phPrinter,
             // _In_
             LPPRINTER_DEFAULTS pDefault);
+
+	/**
+	 * The ClosePrinter function closes the specified printer object.<br>
+	 * Note This is a blocking or synchronous function and might not return
+	 * immediately.<br>
+	 * How quickly this function returns depends on run-time factors such as
+	 * network status, print server configuration, and printer driver
+	 * implementation-factors that are difficult to predict when writing an
+	 * application. Calling this function from a thread that manages interaction
+	 * with the user interface could make the application appear to be
+	 * unresponsive.
+	 * 
+	 * When the ClosePrinter function returns, the handle hPrinter is invalid,
+	 * regardless of whether the function has succeeded or failed.
+	 * 
+	 * @param hPrinter
+	 *            A handle to the printer object to be closed. This handle is
+	 *            returned by the OpenPrinter or AddPrinter function.
+	 * @return If the function succeeds, the return value is a nonzero value. If
+	 *         the function fails, the return value is zero.
+	 * 
+	 * @see <a href=
+	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">
+	 *      ClosePrinter function</a>
+	 */
+	boolean ClosePrinter(HANDLE hPrinter);
 
     /**
      * The FindFirstPrinterChangeNotification function creates a change
@@ -711,6 +752,13 @@ public interface Winspool extends StdCallLibrary {
 	 *      JOB_INFO_1 structure</a>
 	 */
 	public static class JOB_INFO_1 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder(
+                "JobId", "pPrinterName",
+                "pMachineName", "pUserName", "pDocument", "pDatatype",
+                "pStatus", "Status", "Priority", "Position", "TotalPages",
+                "PagesPrinted", "Submitted");
+		
 		/**
 		 * A job identifier.
 		 */
@@ -784,18 +832,17 @@ public interface Winspool extends StdCallLibrary {
 		 */
 		public SYSTEMTIME Submitted;
 
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "JobId", "pPrinterName",
-                    "pMachineName", "pUserName", "pDocument", "pDatatype",
-                    "pStatus", "Status", "Priority", "Position", "TotalPages",
-                    "PagesPrinted", "Submitted" });
-        }
-
         public JOB_INFO_1() {
+            super();
         }
 
         public JOB_INFO_1(int size) {
             super(new Memory(size));
+        }
+        
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

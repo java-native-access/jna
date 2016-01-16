@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
@@ -35,13 +34,13 @@ public interface VerRsrc {
             }
         }
 
-        public VS_FIXEDFILEINFO() {
-        }
-
-        public VS_FIXEDFILEINFO(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder(
+                "dwSignature", "dwStrucVersion",
+                "dwFileVersionMS", "dwFileVersionLS",
+                "dwProductVersionMS", "dwProductVersionLS",
+                "dwFileFlagsMask", "dwFileFlags", "dwFileOS",
+                "dwFileType", "dwFileSubtype",
+                "dwFileDateMS", "dwFileDateLS");
 
         /**
          * Contains the value 0xFEEF04BD. This is used with the szKey member of the VS_VERSIONINFO structure when
@@ -115,41 +114,51 @@ public interface VerRsrc {
          * The least significant 32 bits of the file's 64-bit binary creation date and time stamp.
          */
         public WinDef.DWORD dwFileDateLS;
-        
+
+        public VS_FIXEDFILEINFO() {
+            super();
+        }
+
+        public VS_FIXEDFILEINFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
         public int getFileVersionMajor() {
             return dwFileVersionMS.intValue() >>> 16;
         }
-        
+
         public int getFileVersionMinor() {
             return dwFileVersionMS.intValue() & 0xffff;
         }
-        
+
         public int getFileVersionRevision() {
             return dwFileVersionLS.intValue() >>> 16;
         }
-        
+
         public int getFileVersionBuild() {
             return dwFileVersionLS.intValue() & 0xffff;
         }
-        
+
         public int getProductVersionMajor() {
             return dwProductVersionMS.intValue() >>> 16;
         }
-        
+
         public int getProductVersionMinor() {
             return dwProductVersionMS.intValue() & 0xffff;
         }
-        
+
         public int getProductVersionRevision() {
             return dwProductVersionLS.intValue() >>> 16;
         }
-        
+
         public int getProductVersionBuild() {
             return dwProductVersionLS.intValue() & 0xffff;
         }
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwSignature", "dwStrucVersion", "dwFileVersionMS", "dwFileVersionLS", "dwProductVersionMS", "dwProductVersionLS", "dwFileFlagsMask", "dwFileFlags", "dwFileOS", "dwFileType", "dwFileSubtype", "dwFileDateMS", "dwFileDateLS" });
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

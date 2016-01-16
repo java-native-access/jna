@@ -88,15 +88,34 @@ public abstract class WinspoolUtil {
 		if (!Winspool.INSTANCE.OpenPrinter(printerName, pHandle, null))
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 
-		Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, null, 0, pcbNeeded);
-		if (pcbNeeded.getValue() <= 0)
-			return new PRINTER_INFO_2();
+		Win32Exception we = null;
+		PRINTER_INFO_2 pinfo2 = null;
 
-		PRINTER_INFO_2 pinfo2 = new PRINTER_INFO_2(pcbNeeded.getValue());
-		if (!Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, pinfo2.getPointer(), pcbNeeded.getValue(), pcReturned))
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		try {
+			Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, null, 0, pcbNeeded);
+			if (pcbNeeded.getValue() <= 0)
+				return new PRINTER_INFO_2();
 
-		pinfo2.read();
+			pinfo2 = new PRINTER_INFO_2(pcbNeeded.getValue());
+			if (!Winspool.INSTANCE.GetPrinter(pHandle.getValue(), 2, pinfo2.getPointer(), pcbNeeded.getValue(), pcReturned))
+				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+
+			pinfo2.read();
+		} catch (Win32Exception e) {
+			we = e;
+		} finally {
+			if (!Winspool.INSTANCE.ClosePrinter(pHandle.getValue())) {
+				Win32Exception ex = new Win32Exception(Kernel32.INSTANCE.GetLastError());
+				if (we != null) {
+					ex.addSuppressed(we);
+				}
+			}
+		}
+
+		if (we != null) {
+			throw we;
+		}
+
 		return pinfo2;
 	}
 

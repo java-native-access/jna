@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
@@ -1575,11 +1574,6 @@ public interface Advapi32 extends StdCallLibrary {
 	boolean GetFileSecurity(String lpFileName,
 			int RequestedInformation, Pointer pointer, int nLength,
 			IntByReference lpnLengthNeeded);
-        /** @deprecated Use the String version */
-	@Deprecated
-    boolean GetFileSecurity(WString lpFileName,
-			int RequestedInformation, Pointer pointer, int nLength,
-			IntByReference lpnLengthNeeded);
 
 	/**
 	 * The GetNamedSecurityInfo function retrieves a copy of the security
@@ -1793,9 +1787,6 @@ public interface Advapi32 extends StdCallLibrary {
 	 * information, call GetLastError.
 	 */
 	boolean EncryptFile(String lpFileName);
-        /** @deprecated Use the String version */
-	@Deprecated
-    boolean EncryptFile(WString lpFileName);
 
 	/**
 	 * Decrypts an encrypted file or directory.
@@ -1809,9 +1800,6 @@ public interface Advapi32 extends StdCallLibrary {
 	 * information, call GetLastError.
 	 */
 	boolean DecryptFile(String lpFileName, DWORD dwReserved);
-        /** @deprecated Use the String version */
-	@Deprecated
-    boolean DecryptFile(WString lpFileName, DWORD dwReserved);
 
 	/**
 	 * Retrieves the encryption status of the specified file.
@@ -1826,9 +1814,6 @@ public interface Advapi32 extends StdCallLibrary {
 	 * information, call GetLastError.
 	 */
 	boolean FileEncryptionStatus(String lpFileName, DWORDByReference lpStatus);
-        /** @deprecated Use the String version */
-	@Deprecated
-    boolean FileEncryptionStatus(WString lpFileName, DWORDByReference lpStatus);
 
 	/**
 	 * Disables or enables encryption of the specified directory and the files in
@@ -1846,9 +1831,6 @@ public interface Advapi32 extends StdCallLibrary {
 	 * information, call GetLastError.
 	 */
 	boolean EncryptionDisable(String DirPath, boolean Disable);
-        /** @deprecated Use the String version */
-	@Deprecated
-    boolean EncryptionDisable(WString DirPath, boolean Disable);
 
 	/**
 	 * Opens an encrypted file in order to backup (export) or restore (import) the
@@ -1871,9 +1853,6 @@ public interface Advapi32 extends StdCallLibrary {
 	 * text description of the error.
 	 */
 	int OpenEncryptedFileRaw(String lpFileName, ULONG ulFlags, PointerByReference pvContext);
-        /** @deprecated Use the String version */
-	@Deprecated
-    int OpenEncryptedFileRaw(WString lpFileName, ULONG ulFlags, PointerByReference pvContext);
 
 	/**
 	 * Backs up (export) encrypted files. This is one of a group of Encrypted File

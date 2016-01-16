@@ -3,7 +3,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.IntegerType;
@@ -52,6 +51,10 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("wCode", "wReserved", "bstrSource",
+                "bstrDescription", "bstrHelpFile", "dwHelpContext",
+                "pvReserved", "pfnDeferredFillIn", "scode");
+
         /** The w code. */
         public WORD wCode;
 
@@ -83,11 +86,12 @@ public interface OaIdl {
          * Instantiates a new excepinfo.
          */
         public EXCEPINFO() {
+            super();
         }
 
         /**
          * Instantiates a new excepinfo.
-         * 
+         *
          * @param p
          *            the p
          */
@@ -95,21 +99,14 @@ public interface OaIdl {
             super(p);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
         @Override
-        protected List getFieldOrder() {
-            return Arrays
-                    .asList(new String[] { "wCode", "wReserved", "bstrSource",
-                            "bstrDescription", "bstrHelpFile", "dwHelpContext",
-                            "pvReserved", "pfnDeferredFillIn", "scode" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     public static class VARIANT_BOOL extends IntegerType {
+        private static final long serialVersionUID = 1L;
         public static final int SIZE = 2;
 
         public VARIANT_BOOL() {
@@ -122,6 +119,7 @@ public interface OaIdl {
     }
 
     public static class _VARIANT_BOOL extends VARIANT_BOOL {
+        private static final long serialVersionUID = 1L;
 
         public _VARIANT_BOOL() {
             this(0);
@@ -175,23 +173,20 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("date");
         public double date;
 
         public DATE() {
+            super();
         }
 
         public DATE(double date) {
             this.date = date;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see com.sun.jna.Structure#getFieldOrder()
-         */
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "date" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -199,6 +194,8 @@ public interface OaIdl {
      * The Class DISPID.
      */
     public static class DISPID extends LONG {
+        private static final long serialVersionUID = 1L;
+
         public DISPID() {
             this(0);
         }
@@ -228,6 +225,8 @@ public interface OaIdl {
     }
 
     public static class MEMBERID extends DISPID {
+        private static final long serialVersionUID = 1L;
+
         public MEMBERID() {
             this(0);
         }
@@ -362,9 +361,11 @@ public interface OaIdl {
             }
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public TYPEKIND() {
+            super();
         }
 
         public TYPEKIND(int value) {
@@ -396,8 +397,8 @@ public interface OaIdl {
         public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -406,9 +407,12 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
+
         public int value;
 
         public DESCKIND() {
+            super();
         }
 
         public DESCKIND(int value) {
@@ -434,8 +438,8 @@ public interface OaIdl {
         public static final int DESCKIND_MAX = DESCKIND.DESCKIND_IMPLICITAPPOBJ + 1;
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -443,6 +447,9 @@ public interface OaIdl {
         public static class ByReference extends SAFEARRAY implements
                 Structure.ByReference {
         }
+
+        public static final List<String> FIELDS = createFieldsOrder(
+                "cDims", "fFeatures", "cbElements", "cLocks", "pvData", "rgsabound");
 
         public USHORT cDims;
         public USHORT fFeatures;
@@ -454,6 +461,7 @@ public interface OaIdl {
         public SAFEARRAYBOUND[] rgsabound = { new SAFEARRAYBOUND() };
 
         public SAFEARRAY() {
+            super();
         }
 
         public SAFEARRAY(Pointer pointer) {
@@ -462,9 +470,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "cDims", "fFeatures",
-                    "cbElements", "cLocks", "pvData", "rgsabound" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -473,11 +480,13 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public ULONG cElements;
+        public static final List<String> FIELDS = createFieldsOrder("cElements", "lLbound");
 
+        public ULONG cElements;
         public LONG lLbound;
 
         public SAFEARRAYBOUND() {
+            super();
         }
 
         public SAFEARRAYBOUND(Pointer pointer) {
@@ -492,8 +501,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "cElements", "lLbound" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -516,6 +525,8 @@ public interface OaIdl {
         }
 
         public static class _CURRENCY extends Structure {
+            public static final List<String> FIELDS = createFieldsOrder("Lo", "Hi");
+
             public ULONG Lo;
             public LONG Hi;
 
@@ -529,30 +540,19 @@ public interface OaIdl {
             }
 
             @Override
-            protected List getFieldOrder() {
-                return Arrays.asList(new String[] { "Lo", "Hi" });
+            protected List<String> getFieldOrder() {
+                return FIELDS;
             }
         }
     }
 
     public static class DECIMAL extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("wReserved", "decimal1", "Hi32", "decimal2");
 
         public static class ByReference extends DECIMAL implements
                 Structure.ByReference {
         };
 
-        public DECIMAL() {
-            super();
-        }
-
-        public DECIMAL(Pointer pointer) {
-            super(pointer);
-        }
-
-        public short wReserved;
-        public _DECIMAL1 decimal1;
-        public NativeLong Hi32;
-        public _DECIMAL2 decimal2;
 
         public static class _DECIMAL1 extends Union {
 
@@ -560,7 +560,6 @@ public interface OaIdl {
             public _DECIMAL1_DECIMAL decimal1_DECIMAL;
 
             public _DECIMAL1() {
-                super();
                 this.setType("signscale");
             }
 
@@ -571,6 +570,7 @@ public interface OaIdl {
             }
 
             public static class _DECIMAL1_DECIMAL extends Structure {
+                public static final List<String> FIELDS = createFieldsOrder("scale", "sign");
                 public BYTE scale;
                 public BYTE sign;
 
@@ -583,14 +583,13 @@ public interface OaIdl {
                 }
 
                 @Override
-                protected List getFieldOrder() {
-                    return Arrays.asList(new String[] { "scale", "sign" });
+                protected List<String> getFieldOrder() {
+                    return FIELDS;
                 }
             }
         }
 
         public static class _DECIMAL2 extends Union {
-
             public ULONGLONG Lo64;
             public _DECIMAL2_DECIMAL decimal2_DECIMAL;
 
@@ -605,6 +604,8 @@ public interface OaIdl {
             }
 
             public static class _DECIMAL2_DECIMAL extends Structure {
+                public static final List<String> FIELDS = createFieldsOrder("Lo32", "Mid32");
+
                 public BYTE Lo32;
                 public BYTE Mid32;
 
@@ -617,16 +618,28 @@ public interface OaIdl {
                 }
 
                 @Override
-                protected List getFieldOrder() {
-                    return Arrays.asList(new String[] { "Lo32", "Mid32" });
+                protected List<String> getFieldOrder() {
+                    return FIELDS;
                 }
             }
         }
 
+        public short wReserved;
+        public _DECIMAL1 decimal1;
+        public NativeLong Hi32;
+        public _DECIMAL2 decimal2;
+
+        public DECIMAL() {
+            super();
+        }
+
+        public DECIMAL(Pointer pointer) {
+            super(pointer);
+        }
+
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "wReserved", "decimal1",
-                    "Hi32", "decimal2" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -635,9 +648,11 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
-        public int value;
+        public static final List<String> FIELDS = createFieldsOrder("value");
 
+        public int value;
         public SYSKIND() {
+            super();
         }
 
         public SYSKIND(int value) {
@@ -655,8 +670,8 @@ public interface OaIdl {
         public static final int SYS_WIN64 = SYSKIND.SYS_MAC + 1;
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -665,9 +680,11 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public LIBFLAGS() {
+            super();
         }
 
         public LIBFLAGS(int value) {
@@ -685,8 +702,8 @@ public interface OaIdl {
         public static final int LIBFLAG_FHASDISKIMAGE = 0x8;
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -695,6 +712,7 @@ public interface OaIdl {
                 Structure.ByReference {
 
             public ByReference() {
+                super();
             }
 
             public ByReference(Pointer pointer) {
@@ -702,6 +720,9 @@ public interface OaIdl {
                 this.read();
             }
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("guid", "lcid", "syskind",
+                "wMajorVerNum", "wMinorVerNum", "wLibFlags");
 
         public GUID guid;
         public LCID lcid;
@@ -720,9 +741,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "guid", "lcid", "syskind",
-                    "wMajorVerNum", "wMinorVerNum", "wLibFlags" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -769,6 +789,11 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
+        public static final List<String> FIELDS = createFieldsOrder("memid", "lprgscode",
+                "lprgelemdescParam", "funckind", "invkind", "callconv",
+                "cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
+                "wFuncFlags");
+
         public MEMBERID memid;
         public ScodeArg.ByReference lprgscode;
         public ElemDescArg.ByReference lprgelemdescParam;
@@ -783,6 +808,7 @@ public interface OaIdl {
         public WORD wFuncFlags;
 
         public FUNCDESC() {
+            super();
         }
 
         public FUNCDESC(Pointer pointer) {
@@ -798,10 +824,7 @@ public interface OaIdl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "memid", "lprgscode",
-                    "lprgelemdescParam", "funckind", "invkind", "callconv",
-                    "cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
-                    "wFuncFlags" });
+            return FIELDS;
         }
     }
 
@@ -810,9 +833,12 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("elemDescArg");
+
         public ELEMDESC[] elemDescArg = { new ELEMDESC() };
 
         public ElemDescArg() {
+            super();
         }
 
         public ElemDescArg(Pointer pointer) {
@@ -821,8 +847,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "elemDescArg" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -831,9 +857,12 @@ public interface OaIdl {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("scodeArg");
+
         public SCODE[] scodeArg = { new SCODE() };
 
         public ScodeArg() {
+            super();
         }
 
         public ScodeArg(Pointer pointer) {
@@ -842,8 +871,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "scodeArg" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -851,6 +880,9 @@ public interface OaIdl {
         public static class ByReference extends VARDESC implements
                 Structure.ByReference {
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("memid", "lpstrSchema", "_vardesc",
+                "elemdescVar", "wVarFlags", "varkind");
 
         // / C type : MEMBERID
         public MEMBERID memid;
@@ -883,7 +915,6 @@ public interface OaIdl {
             public VARIANT.ByReference lpvarValue;
 
             public _VARDESC() {
-                super();
                 setType("lpvarValue");
                 this.read();
             }
@@ -900,14 +931,12 @@ public interface OaIdl {
              *            C type : VARIANT*
              */
             public _VARDESC(VARIANT.ByReference lpvarValue) {
-                super();
                 this.lpvarValue = lpvarValue;
                 setType("lpvarValue");
             }
 
             // / @param oInst [case()]
             public _VARDESC(NativeLong oInst) {
-                super();
                 this.oInst = oInst;
                 setType("oInst");
             }
@@ -924,9 +953,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList("memid", "lpstrSchema", "_vardesc",
-                    "elemdescVar", "wVarFlags", "varkind");
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -935,6 +963,7 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
+        public static final List<String> FIELDS = createFieldsOrder("tdesc", "_elemdesc");
         /**
          * the type of the element<br>
          * C type : TYPEDESC
@@ -991,17 +1020,18 @@ public interface OaIdl {
             }
         };
 
-        @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "tdesc", "_elemdesc" });
-        }
-
         public ELEMDESC() {
+            super();
         }
 
         public ELEMDESC(Pointer pointer) {
             super(pointer);
             this.read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -1021,9 +1051,12 @@ public interface OaIdl {
         // / <i>native declaration : line 24</i>
         public static final int FUNC_DISPATCH = FUNC_STATIC + 1;
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
+
         public int value;
 
         public FUNCKIND() {
+            super();
         }
 
         public FUNCKIND(int value) {
@@ -1032,8 +1065,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -1051,9 +1084,11 @@ public interface OaIdl {
         // / <i>native declaration : line 33</i>
         public static final INVOKEKIND INVOKE_PROPERTYPUTREF = new INVOKEKIND(8);
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public INVOKEKIND() {
+            super();
         }
 
         public INVOKEKIND(int value) {
@@ -1062,8 +1097,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -1071,6 +1106,8 @@ public interface OaIdl {
         public static class ByReference extends CALLCONV implements
                 Structure.ByReference {
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("value");
 
         // / <i>native declaration : line 4</i>
         public static final int CC_FASTCALL = 0;
@@ -1106,7 +1143,7 @@ public interface OaIdl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+            return FIELDS;
         }
     };
 
@@ -1124,9 +1161,12 @@ public interface OaIdl {
         // / <i>native declaration : line 7</i>
         public static final int VAR_DISPATCH = VAR_CONST + 1;
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
+
         public int value;
 
         public VARKIND() {
+            super();
         }
 
         public VARKIND(int value) {
@@ -1134,8 +1174,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "value" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     };
 
@@ -1144,23 +1184,6 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
-        public _TYPEDESC _typedesc;
-
-        public VARTYPE vt;
-
-        public TYPEDESC() {
-            this.read();
-        }
-
-        public TYPEDESC(Pointer pointer) {
-            super(pointer);
-            this.read();
-        }
-
-        public TYPEDESC(_TYPEDESC _typedesc, VARTYPE vt) {
-            this._typedesc = _typedesc;
-            this.vt = vt;
-        }
 
         public static class _TYPEDESC extends Union {
             /**
@@ -1209,8 +1232,27 @@ public interface OaIdl {
             }
         };
 
-        protected List getFieldOrder() {
-            return Arrays.asList("_typedesc", "vt");
+        public static final List<String> FIELDS = createFieldsOrder("_typedesc", "vt");
+        public _TYPEDESC _typedesc;
+        public VARTYPE vt;
+
+        public TYPEDESC() {
+            this.read();
+        }
+
+        public TYPEDESC(Pointer pointer) {
+            super(pointer);
+            this.read();
+        }
+
+        public TYPEDESC(_TYPEDESC _typedesc, VARTYPE vt) {
+            this._typedesc = _typedesc;
+            this.vt = vt;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -1219,12 +1261,15 @@ public interface OaIdl {
                 Structure.ByReference {
 
             public ByReference() {
+                super();
             }
 
             public ByReference(IDLDESC idldesc) {
                 super(idldesc.dwReserved, idldesc.wIDLFlags);
             }
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("dwReserved", "wIDLFlags");
 
         // / C type : ULONG_PTR
         public ULONG_PTR dwReserved;
@@ -1241,18 +1286,18 @@ public interface OaIdl {
 
         // / @param dwReserved C type : ULONG_PTR
         public IDLDESC(ULONG_PTR dwReserved, USHORT wIDLFlags) {
-            super();
             this.dwReserved = dwReserved;
             this.wIDLFlags = wIDLFlags;
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwReserved", "wIDLFlags" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
     public class ARRAYDESC extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("tdescElem", "cDims", "rgbounds");
         // / C type : TYPEDESC
         public TYPEDESC tdescElem;
         public short cDims;
@@ -1271,8 +1316,9 @@ public interface OaIdl {
             this.read();
         }
 
-        protected List getFieldOrder() {
-            return Arrays.asList("tdescElem", "cDims", "rgbounds");
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
 
         /**
@@ -1283,9 +1329,7 @@ public interface OaIdl {
          *            [size_is]<br>
          *            C type : SAFEARRAYBOUND[1]
          */
-        public ARRAYDESC(TYPEDESC tdescElem, short cDims,
-                SAFEARRAYBOUND rgbounds[]) {
-            super();
+        public ARRAYDESC(TYPEDESC tdescElem, short cDims, SAFEARRAYBOUND rgbounds[]) {
             this.tdescElem = tdescElem;
             this.cDims = cDims;
             if (rgbounds.length != this.rgbounds.length)
@@ -1304,6 +1348,8 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
+        public static final List<String> FIELDS = createFieldsOrder("pparamdescex", "wParamFlags");
+
         // replaced PARAMDESCEX.ByReference with Pointer
         // because of JNA 4 has a problem with ByReference
         public Pointer pparamdescex;
@@ -1319,9 +1365,8 @@ public interface OaIdl {
         }
 
         @Override
-        protected List getFieldOrder() {
-            return Arrays
-                    .asList(new String[] { "pparamdescex", "wParamFlags" });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -1329,6 +1374,8 @@ public interface OaIdl {
         public static class ByReference extends PARAMDESCEX implements
                 Structure.ByReference {
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("cBytes", "varDefaultValue");
 
         public ULONG cBytes;
         public VariantArg varDefaultValue;
@@ -1344,11 +1391,13 @@ public interface OaIdl {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cBytes", "varDefaultValue" });
+            return FIELDS;
         }
     }
 
     public static class HREFTYPE extends DWORD {
+        private static final long serialVersionUID = 1L;
+
         public HREFTYPE() {
             super();
         }
@@ -1371,6 +1420,7 @@ public interface OaIdl {
             getPointer().setInt(0, value.intValue());
         }
 
+        @Override
         public HREFTYPE getValue() {
             return new HREFTYPE(getPointer().getInt(0));
         }
@@ -1380,6 +1430,13 @@ public interface OaIdl {
         public static class ByReference extends TYPEATTR implements
                 Structure.ByReference {
         };
+
+        public static final List<String> FIELDS = createFieldsOrder("guid", "lcid", "dwReserved", "memidConstructor",
+                "memidDestructor", "lpstrSchema", "cbSizeInstance",
+                "typekind", "cFuncs", "cVars", "cImplTypes",
+                "cbSizeVft", "cbAlignment", "wTypeFlags",
+                "wMajorVerNum", "wMinorVerNum", "tdescAlias",
+                "idldescType");
 
         // / C type : GUID
         public GUID guid;
@@ -1417,14 +1474,9 @@ public interface OaIdl {
             this.read();
         }
 
-        protected List getFieldOrder() {
-            return Arrays
-                    .asList("guid", "lcid", "dwReserved", "memidConstructor",
-                            "memidDestructor", "lpstrSchema", "cbSizeInstance",
-                            "typekind", "cFuncs", "cVars", "cImplTypes",
-                            "cbSizeVft", "cbAlignment", "wTypeFlags",
-                            "wMajorVerNum", "wMinorVerNum", "tdescAlias",
-                            "idldescType");
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

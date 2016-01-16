@@ -14,9 +14,7 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
-import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;

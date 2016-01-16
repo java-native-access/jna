@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
@@ -26,13 +25,14 @@ public class UnknownVTable extends Structure {
 	public static class ByReference extends UnknownVTable implements Structure.ByReference {
 	}
 
+	public static final List<String> FIELDS = createFieldsOrder("QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback");
 	public QueryInterfaceCallback QueryInterfaceCallback;
 	public AddRefCallback AddRefCallback;
 	public ReleaseCallback ReleaseCallback;
 
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback" });
+		return FIELDS;
 	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {

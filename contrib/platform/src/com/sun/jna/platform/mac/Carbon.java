@@ -18,7 +18,6 @@
 package com.sun.jna.platform.mac;
 
 import java.nio.IntBuffer;
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Library;
@@ -72,22 +71,28 @@ public interface Carbon extends Library {
     int UnregisterEventHotKey(Pointer inHotKey);
 
     public class EventTypeSpec extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("eventClass", "eventKind");
+
         public int eventClass;
         public int eventKind;
+
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("eventClass", "eventKind");
+            return FIELDS;
         }
     }
 
     public static class EventHotKeyID extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("signature", "id");
+
         public int signature;
         public int id;
 
         public static class ByValue extends EventHotKeyID implements Structure.ByValue { }
+
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("signature", "id");
+            return FIELDS;
         }
     }
 

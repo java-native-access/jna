@@ -10,7 +10,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
@@ -41,13 +40,7 @@ public interface Winioctl {
             }
         }
 
-        public STORAGE_DEVICE_NUMBER() {
-        }
-
-        public STORAGE_DEVICE_NUMBER(Pointer memory) {
-            super(memory);
-            read();
-        }
+		public static final List<String> FIELDS = createFieldsOrder("DeviceType", "DeviceNumber", "PartitionNumber");
 
         /**
          * The type of device. Values from 0 through 32,767 are reserved for use by Microsoft. Values from 32,768
@@ -64,9 +57,19 @@ public interface Winioctl {
          * The partition number of the device, if the device can be partitioned. Otherwise, this member is -1.
          */
         public int PartitionNumber;
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "DeviceType", "DeviceNumber", "PartitionNumber" });
+
+        public STORAGE_DEVICE_NUMBER() {
+            super();
+        }
+
+        public STORAGE_DEVICE_NUMBER(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

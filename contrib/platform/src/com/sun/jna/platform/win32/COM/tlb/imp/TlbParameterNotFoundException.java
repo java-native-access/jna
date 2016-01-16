@@ -13,8 +13,10 @@
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 public class TlbParameterNotFoundException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
     public TlbParameterNotFoundException() {
+        super();
     }
 
     public TlbParameterNotFoundException(String msg) {

@@ -16,7 +16,6 @@
 
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
@@ -33,8 +32,8 @@ public interface LowLevelMonitorConfigurationAPI
     /**
      * Contains information from a monitor's timing report.
      */
-    class MC_TIMING_REPORT extends Structure
-    {
+    class MC_TIMING_REPORT extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dwHorizontalFrequencyInHZ", "dwVerticalFrequencyInHZ", "bTimingStatusByte");
         /**
          * The monitor's horizontal synchronization frequency in Hz.
          */
@@ -46,15 +45,14 @@ public interface LowLevelMonitorConfigurationAPI
         public DWORD dwVerticalFrequencyInHZ;
 
         /**
-         * Timing status byte. For more information about this value, see the Display Data Channel Command 
+         * Timing status byte. For more information about this value, see the Display Data Channel Command
          * Interface (DDC/CI) standard.
          */
         public BYTE bTimingStatusByte;
 
         @Override
-        protected List<String> getFieldOrder()
-        {
-            return Arrays.asList("dwHorizontalFrequencyInHZ", "dwVerticalFrequencyInHZ", "bTimingStatusByte");
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -64,7 +62,7 @@ public interface LowLevelMonitorConfigurationAPI
     enum MC_VCP_CODE_TYPE
     {
         /**
-         * Momentary VCP code. Sending a command of this type causes the monitor to initiate a self-timed 
+         * Momentary VCP code. Sending a command of this type causes the monitor to initiate a self-timed
          * operation and then revert to its original state. Examples include display tests and degaussing.
          */
         MC_MOMENTARY,

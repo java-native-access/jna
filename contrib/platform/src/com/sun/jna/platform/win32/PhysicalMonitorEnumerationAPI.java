@@ -16,7 +16,6 @@
 
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
@@ -40,14 +39,14 @@ public interface PhysicalMonitorEnumerationAPI
     final int PHYSICAL_MONITOR_DESCRIPTION_SIZE =                   128;
 
     /******************************************************************************
-      Physical Monitor Structures 
+      Physical Monitor Structures
     ******************************************************************************/
 
     /**
      * Contains a handle and text description corresponding to a physical monitor.
      */
-    public class PHYSICAL_MONITOR extends Structure
-    {
+    public class PHYSICAL_MONITOR extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("hPhysicalMonitor", "szPhysicalMonitorDescription");
         /**
          * Handle to the physical monitor.
          */
@@ -59,9 +58,8 @@ public interface PhysicalMonitorEnumerationAPI
         public char[] szPhysicalMonitorDescription = new char[PHYSICAL_MONITOR_DESCRIPTION_SIZE];
 
         @Override
-        protected List<String> getFieldOrder()
-        {
-            return Arrays.asList("hPhysicalMonitor", "szPhysicalMonitorDescription");
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

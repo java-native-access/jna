@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import java.awt.Rectangle;
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.IntegerType;
@@ -755,7 +754,7 @@ public interface WinDef {
      * The Class RECT.
      */
     public class RECT extends Structure {
-
+        public static final List<String> FIELDS = createFieldsOrder("left", "top", "right", "bottom");
         /** The left. */
         public int left;
 
@@ -770,7 +769,7 @@ public interface WinDef {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("left", "top", "right", "bottom");
+            return FIELDS;
         }
 
         /**
@@ -1056,14 +1055,21 @@ public interface WinDef {
         /**
          * The Class ByReference.
          */
-        public static class ByReference extends POINT implements
-                                                          Structure.ByReference {
+        public static class ByReference extends POINT implements Structure.ByReference {
+
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("x", "y");
+
+        /** The x. */
+        public int x;
+        /** The y. */
+        public int y;
         /**
          * Instantiates a new point.
          */
         public POINT() {
+            super();
         }
 
         /**
@@ -1076,9 +1082,6 @@ public interface WinDef {
             super(memory);
             read();
         }
-
-        /** The y. */
-        public int x, y;
 
         /**
          * Instantiates a new point.
@@ -1095,7 +1098,7 @@ public interface WinDef {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("x", "y");
+            return FIELDS;
         }
     }
 
