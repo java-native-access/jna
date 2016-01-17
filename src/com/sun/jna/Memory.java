@@ -171,8 +171,12 @@ public class Memory extends Pointer {
 
     /** Properly dispose of native memory when this object is GC'd. */
     @Override
-    protected void finalize() {
-        dispose();
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
     }
 
     /** Free the native memory and set peer to zero */

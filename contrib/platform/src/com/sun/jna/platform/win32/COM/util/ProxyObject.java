@@ -137,7 +137,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.dispose(1);
+	    try {
+	        this.dispose(1);
+        } finally {
+            super.finalize();
+        }
 	}
 
 	public void dispose(int r) {
