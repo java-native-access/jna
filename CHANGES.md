@@ -32,6 +32,7 @@ Features
 * [#573](https://github.com/java-native-access/jna/pull/573): Added `EnumProcessModules`, `GetModuleInformation`, and `GetProcessImageFileName` to `com.sun.jna.platform.win32.Psapi` and added `ExtractIconEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
 * [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) [@lgoldstein](https://github.com/lgoldstein)
 * [#577](https://github.com/java-native-access/jna/pull/577): Apply generic definitions wherever applicable [@lgoldstein](https://github.com/lgoldstein)
+* [#582](https://github.com/java-native-access/jna/pull/582): Mavenize the build process - Phase 1: building the native code via Maven [@lgoldstein](https://github.com/lgoldstein)
 
 Bug Fixes
 ---------
