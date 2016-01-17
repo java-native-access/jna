@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform;
 
@@ -47,7 +47,7 @@ public abstract class FileMonitor {
     public interface FileListener {
         public void fileChanged(FileEvent e);
     }
-    
+
 	public class FileEvent extends EventObject {
         private final File file;
         private final int type;
@@ -58,14 +58,15 @@ public abstract class FileMonitor {
         }
         public File getFile() { return file; }
         public int getType() { return type; }
+        @Override
         public String toString() {
             return "FileEvent: " + file + ":" + type;
         }
     }
-    
+
     private final Map<File, Integer> watched = new HashMap<File, Integer>();
     private List<FileListener> listeners = new ArrayList<FileListener>();
-    
+
     protected abstract void watch(File file, int mask, boolean recursive) throws IOException ;
     protected abstract void unwatch(File file);
     public abstract void dispose();
@@ -73,11 +74,11 @@ public abstract class FileMonitor {
     public void addWatch(File dir) throws IOException {
         addWatch(dir, FILE_ANY);
     }
-    
+
     public void addWatch(File dir, int mask) throws IOException {
         addWatch(dir, mask, dir.isDirectory());
     }
-    
+
     public void addWatch(File dir, int mask, boolean recursive) throws IOException {
         watched.put(dir, Integer.valueOf(mask));
         watch(dir, mask, recursive);
@@ -88,33 +89,38 @@ public abstract class FileMonitor {
             unwatch(file);
         }
     }
-    
+
     protected void notify(FileEvent e) {
     	for (FileListener listener : listeners) {
     		listener.fileChanged(e);
     	}
     }
-    
+
     public synchronized void addFileListener(FileListener listener) {
         List<FileListener> list = new ArrayList<FileListener>(listeners);
         list.add(listener);
         listeners = list;
     }
-    
+
     public synchronized void removeFileListener(FileListener x) {
         List<FileListener> list = new ArrayList<FileListener>(listeners);
         list.remove(x);
         listeners = list;
     }
-    
-    protected void finalize() {
-    	for (File watchedFile : watched.keySet()) {
-    		removeWatch(watchedFile);
-    	}
-    	
-        dispose();
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+        	for (File watchedFile : watched.keySet()) {
+        		removeWatch(watchedFile);
+        	}
+
+            dispose();
+        } finally {
+            super.finalize();
+        }
     }
-    
+
     /** Canonical lazy loading of a singleton. */
     private static class Holder {
         public static final FileMonitor INSTANCE;
@@ -128,7 +134,7 @@ public abstract class FileMonitor {
             }
         }
     }
-    
+
     public static FileMonitor getInstance() {
         return Holder.INSTANCE;
     }

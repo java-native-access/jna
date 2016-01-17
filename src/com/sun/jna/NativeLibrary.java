@@ -602,8 +602,12 @@ public class NativeLibrary {
     }
     /** Close the library when it is no longer referenced. */
     @Override
-    protected void finalize() {
-        dispose();
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
     }
 
     /** Close all open native libraries. */

@@ -32,11 +32,11 @@ public class ComThread {
 	boolean requiresInitialisation;
 	long timeoutMilliseconds;
 	UncaughtExceptionHandler uncaughtExceptionHandler;
-	
+
 	public ComThread(final String threadName, long timeoutMilliseconds, UncaughtExceptionHandler uncaughtExceptionHandler) {
 		this(threadName, timeoutMilliseconds, uncaughtExceptionHandler, Ole32.COINIT_MULTITHREADED);
 	}
-	
+
 	public ComThread(final String threadName, long timeoutMilliseconds, UncaughtExceptionHandler uncaughtExceptionHandler, final int coinitialiseExFlag) {
 		this.requiresInitialisation = true;
 		this.timeoutMilliseconds = timeoutMilliseconds;
@@ -67,7 +67,7 @@ public class ComThread {
 				}
 				Thread thread = new Thread(r, threadName);
 				//make sure this is a daemon thread, or it will stop JVM existing
-				// if program does not call terminate(); 
+				// if program does not call terminate();
 				thread.setDaemon(true);
 
 				thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -86,7 +86,7 @@ public class ComThread {
 
 	/**
 	 * Stop the COM Thread.
-	 * 
+	 *
 	 * @param timeoutMilliseconds
 	 *            number of milliseconds to wait for a clean shutdown before a
 	 *            forced shutdown is attempted
@@ -114,9 +114,13 @@ public class ComThread {
 
 	@Override
 	protected void finalize() throws Throwable {
-		if (!executor.isShutdown()) {
-			this.terminate(100);
-		}
+	    try {
+    		if (!executor.isShutdown()) {
+    			this.terminate(100);
+    		}
+	    } finally {
+	        super.finalize();
+	    }
 	}
 
 	public <T> T execute(Callable<T> task) throws TimeoutException, InterruptedException, ExecutionException {

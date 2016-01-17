@@ -24,9 +24,12 @@ public class MemoryTest extends TestCase implements GCWaits {
         final boolean[] flag = { false };
         Memory core = new Memory(10) {
             @Override
-            protected void finalize() {
-                super.finalize();
-                flag[0] = true;
+            protected void finalize() throws Throwable{
+                try {
+                    flag[0] = true;
+                } finally {
+                    super.finalize();
+                }
             }
         };
         Pointer shared = core.share(0, 5);

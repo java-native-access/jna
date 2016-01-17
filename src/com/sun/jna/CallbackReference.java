@@ -365,8 +365,12 @@ class CallbackReference extends WeakReference<Callback> {
 
     /** Free native resources associated with this callback when GC'd. */
     @Override
-    protected void finalize() {
-        dispose();
+    protected void finalize() throws Throwable {
+        try {
+            dispose();
+        } finally {
+            super.finalize();
+        }
     }
 
     /** Free native resources associated with this callback. */

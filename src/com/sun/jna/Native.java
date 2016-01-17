@@ -176,8 +176,12 @@ public final class Native implements Version {
     /** Force a dispose when the Native class is GC'd. */
     private static final Object finalizer = new Object() {
         @Override
-        protected void finalize() {
-            dispose();
+        protected void finalize() throws Throwable {
+            try {
+                dispose();
+            } finally {
+                super.finalize();
+            }
         }
     };
 
