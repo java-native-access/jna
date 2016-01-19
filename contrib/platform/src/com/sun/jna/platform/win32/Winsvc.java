@@ -20,6 +20,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * This module defines the 32-Bit Windows types and constants that are defined
@@ -211,11 +212,11 @@ public interface Winsvc {
 	
     public abstract class ChangeServiceConfig2Info extends Structure {
         public ChangeServiceConfig2Info() {
-            super();
+            super(Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE);
         }
         
         public ChangeServiceConfig2Info(Pointer p) {
-            super(p);
+            super(p, ALIGN_DEFAULT, Boolean.getBoolean("w32.ascii") ? W32APITypeMapper.ASCII : W32APITypeMapper.UNICODE);
         }
     }
 
@@ -268,6 +269,7 @@ public interface Winsvc {
         public SC_ACTION.ByReference lpsaActions;
         
         public SERVICE_FAILURE_ACTIONS() {
+            super();
         }
         
         public SERVICE_FAILURE_ACTIONS(Pointer p) {
