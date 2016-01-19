@@ -228,6 +228,7 @@ public interface Winsvc {
      */
     public class SERVICE_FAILURE_ACTIONS extends ChangeServiceConfig2Info {
         public static class ByReference extends SERVICE_FAILURE_ACTIONS implements Structure.ByReference {}
+
         /**
          * The time after which to reset the failure count to zero if there are no failures, in 
          * seconds. Specify INFINITE to indicate that this value should never be reset.
@@ -274,8 +275,11 @@ public interface Winsvc {
             read();
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions");
+                                                                    
+        @Override
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions" });
+            return FIELDS;
         }
     }
 
@@ -294,8 +298,11 @@ public interface Winsvc {
          */
         public int delay;
 
+        public static final List<String> FIELDS = createFieldsOrder("type", "delay");
+
+        @Override
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "delay" });
+            return FIELDS;
         }
     }
 
@@ -317,8 +324,11 @@ public interface Winsvc {
          */
         public int fFailureActionsOnNonCrashFailures;
         
+        public static final List<String> FIELDS = createFieldsOrder("fFailureActionsOnNonCrashFailures");
+
+        @Override
         protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "fFailureActionsOnNonCrashFailures" });
+            return FIELDS;
         }
         
         public SERVICE_FAILURE_ACTIONS_FLAG() {
