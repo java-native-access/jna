@@ -243,4 +243,28 @@ public interface WTypes {
             super(value);
         }
     }
+    
+    public static class VARTYPEByReference extends ByReference {
+        public VARTYPEByReference() {
+            super(VARTYPE.SIZE);
+        }
+
+        public VARTYPEByReference(VARTYPE type) {
+            super(VARTYPE.SIZE);
+            setValue(type);
+        }
+        
+        public VARTYPEByReference(short type) {
+            super(VARTYPE.SIZE);
+            getPointer().setShort(0, type);
+        }
+        
+        public void setValue(VARTYPE value) {
+            getPointer().setShort(0, value.shortValue());
+        }
+
+        public VARTYPE getValue() {
+            return new VARTYPE(getPointer().getShort(0));
+        }
+    }
 }

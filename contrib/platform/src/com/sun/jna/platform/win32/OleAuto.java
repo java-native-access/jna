@@ -26,8 +26,10 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WTypes.VARTYPEByReference;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.LCID;
+import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -36,7 +38,6 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-// TODO: Auto-generated Javadoc
 /**
  * Oleaut32.dll Interface.
  *
@@ -209,7 +210,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            [in, out] The variant to clear.
 	 * @return the hresult
 	 */
-	HRESULT VariantClear(Pointer pvarg);
+	HRESULT VariantClear(VARIANT pvarg);
 
 	/**
 	 * Creates a new array descriptor, allocates and initializes the data for
@@ -223,7 +224,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *            array. All other types are legal. cDims
 	 *
 	 * @param cDims
-	 *            the c dims
+	 *            the number of dims
 	 * @param rgsabound
 	 *            the rgsabound
 	 *
@@ -232,7 +233,7 @@ public interface OleAuto extends StdCallLibrary {
 	 *         A safe array descriptor, or null if the array could not be
 	 *         created.
 	 */
-	SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, int cDims,
+	SAFEARRAY.ByReference SafeArrayCreate(VARTYPE vt, UINT cDims,
 			SAFEARRAYBOUND[] rgsabound);
 
 	/**
@@ -250,19 +251,65 @@ public interface OleAuto extends StdCallLibrary {
 	 *
 	 *         This function can return one of these values.
 	 *
-	 *         S_OK Success.
-	 *
-	 *         DISP_E_BADINDEX The specified index is not valid.
-	 *
-	 *         E_INVALIDARG One of the arguments is not valid.
-	 *
-	 *         E_OUTOFMEMORY Memory could not be allocated for the element.
+         *         <dl>
+	 *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>DISP_E_BADINDEX</dt><dd>The specified index is not valid.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>One of the arguments is not valid.</dd>
+         *             <dt>E_OUTOFMEMORY</dt><dd>Memory could not be allocated for the element.</dd>
+         *         </dl>
 	 */
-	HRESULT SafeArrayPutElement(SAFEARRAY psa, long[] idx, VARIANT pv);
+	HRESULT SafeArrayPutElement(SAFEARRAY psa, LONG[] idx, Pointer pv);
 
+	/**
+	 * Retrieve the upper bound for the specified dimension of the supplied array
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 * @param nDim
+	 *            [in] the dimension, one based
+	 * @param bound
+	 *            [out] upper bound for the supplied dimension
+         * 
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>DISP_E_BADINDEX</dt><dd>The specified index is not valid.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>One of the arguments is not valid.</dd>
+         *         </dl>
+	 */
+        HRESULT SafeArrayGetUBound(SAFEARRAY psa, UINT nDim, WinDef.LONGByReference bound);
+        
+	/**
+	 * Retrieve the lower bound for the specified dimension of the supplied array
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 * @param nDim
+	 *            [in] the dimension, one based
+	 * @param bound
+	 *            [out] lower bound for the supplied dimension
+         * 
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>DISP_E_BADINDEX</dt><dd>The specified index is not valid.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>One of the arguments is not valid.</dd>
+         *         </dl>
+	 */
+        HRESULT SafeArrayGetLBound(SAFEARRAY psa, UINT nDim, WinDef.LONGByReference bound);
+        
+        
 	/**
 	 * Retrieves a single element of the array.
 	 *
+         * The array is automaticly locked via SafeArrayLock and SafeArrayUnlock.
+         * 
 	 * @param psa
 	 *            [in] An array descriptor created by SafeArrayCreate.
 	 * @param rgIndices
@@ -276,16 +323,41 @@ public interface OleAuto extends StdCallLibrary {
 	 *
 	 *         This function can return one of these values.
 	 *
-	 *         S_OK Success.
-	 *
-	 *         DISP_E_BADINDEX The specified index is not valid.
-	 *
-	 *         E_INVALIDARG One of the arguments is not valid.
-	 *
-	 *         E_OUTOFMEMORY Memory could not be allocated for the element.
+         *         <dl>
+	 *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>DISP_E_BADINDEX</dt><dd>The specified index is not valid.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>One of the arguments is not valid.</dd>
+         *             <dt>E_OUTOFMEMORY</dt><dd>Memory could not be allocated for the element.</dd>
+         *         </dl>
 	 */
-	HRESULT SafeArrayGetElement(SAFEARRAY psa, long[] rgIndices, Pointer pv);
+	HRESULT SafeArrayGetElement(SAFEARRAY psa, LONG[] rgIndices, Pointer pv);
 
+	/**
+	 * Retrieves the pointer to a single element of the array.
+         * 
+         * <p>The caller is responsible for locking.</p>
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 * @param rgIndices
+	 *            [in] A vector of indexes for each dimension of the array. The
+	 *            right-most (least significant) dimension is rgIndices[0]. The
+	 *            left-most dimension is stored at rgIndices[psa-&gt;cDims - 1].
+	 * @param ppv
+	 *            [out] The element of the array.
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>DISP_E_BADINDEX</dt><dd>The specified index is not valid.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>One of the arguments is not valid.</dd>
+         *         </dl>
+	 */
+        HRESULT SafeArrayPtrOfIndex(SAFEARRAY psa, LONG[] rgIndices, PointerByReference ppv);
+        
 	/**
 	 * Increments the lock count of an array, and places a pointer to the array
 	 * data in pvData of the array descriptor.
@@ -297,11 +369,11 @@ public interface OleAuto extends StdCallLibrary {
 	 *
 	 *         This function can return one of these values.
 	 *
-	 *         S_OK Success.
-	 *
-	 *         E_INVALIDARG The argument psa is not valid.
-	 *
-	 *         E_UNEXPECTED The array could not be locked.
+	 *         <dl>
+         *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *             <dt>E_UNEXPECTED</dt><dd>The array could not be locked.</dd>
+         *         </dl>
 	 */
 	HRESULT SafeArrayLock(SAFEARRAY psa);
 
@@ -315,14 +387,131 @@ public interface OleAuto extends StdCallLibrary {
 	 *
 	 *         This function can return one of these values.
 	 *
-	 *         S_OK Success.
-	 *
-	 *         E_INVALIDARG The argument psa is not valid.
-	 *
-	 *         E_UNEXPECTED The array could not be locked.
+	 *         <dl>
+         *             <dt>S_OK</dt><dd>Success.</dd>
+         *             <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *             <dt>E_UNEXPECTED</dt><dd>The array could not be locked.</dd>
+         *         </dl>
 	 */
-	HRESULT SafeArrayUnLock(SAFEARRAY psa);
+	HRESULT SafeArrayUnlock(SAFEARRAY psa);
 
+	/**
+	 * Destroys an existing array descriptor and all of the data in the array.
+         * If objects are stored in the array, Release is called on each object 
+         * in the array.
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *              <dt>DISP_E_ARRAYISLOCKED</dt><dd>The array could not be locked.</dd>
+         *         </dl>  
+	 */
+        HRESULT SafeArrayDestroy(SAFEARRAY psa);
+        
+	/**
+	 * Changes the right-most (least significant) bound of the specified safe array.
+	 *
+	 * @param psa
+	 *            [in, out] An array descriptor created by SafeArrayCreate.
+	 * @param psaboundNew
+	 *            [in] New bounds for the least significant dimension
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *              <dt>DISP_E_ARRAYISLOCKED</dt><dd>The array could not be locked.</dd>
+         *         </dl>  
+	 */
+        HRESULT SafeArrayRedim(SAFEARRAY psa, SAFEARRAYBOUND psaboundNew);
+        
+	/**
+	 * Return VARTYPE of the SAFEARRAY
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 * @param pvt
+	 *            [in] Vartype of the SAFEARRAY
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *         </dl>  
+	 */
+        HRESULT SafeArrayGetVartype(SAFEARRAY psa, VARTYPEByReference pvt);
+        
+	/**
+	 * Return number of dimensions of the SAFEARRAY
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+         * 
+	 * @return Return count of dimensions
+	 */
+        UINT SafeArrayGetDim(SAFEARRAY psa);
+        
+	/**
+	 * Lock array and retrieve pointer to data
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 * @param ppvData
+	 *            [in] pointer to the data array
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *              <dt>E_UNEXPECTED</dt><dd>The array could not be locked.</dd>
+         *         </dl>  
+	 */
+        HRESULT SafeArrayAccessData(SAFEARRAY psa, PointerByReference ppvData);
+        
+	/**
+	 * Unlock array and invalidate the pointer retrieved via SafeArrayAccessData
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 *
+	 * @return Return value
+	 *
+	 *         This function can return one of these values.
+	 *
+	 *         <dl>
+         *              <dt>S_OK</dt><dd>Success.</dd>
+	 *              <dt>E_INVALIDARG</dt><dd>The argument psa is not valid.</dd>
+         *              <dt>E_UNEXPECTED</dt><dd>The array could not be locked.</dd>
+         *         </dl>  
+	 */
+        HRESULT SafeArrayUnaccessData(SAFEARRAY psa);
+        
+	/**
+	 * Get size of one element in bytes
+	 *
+	 * @param psa
+	 *            [in] An array descriptor created by SafeArrayCreate.
+	 *
+	 * @return size in bytes
+	 */
+        UINT SafeArrayGetElemsize(SAFEARRAY psa);
+        
 	/**
 	 * Retrieves a pointer to a running object that has been registered with
 	 * OLE.

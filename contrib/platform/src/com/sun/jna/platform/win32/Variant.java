@@ -144,6 +144,13 @@ public interface Variant {
             }
         }
 
+        public static final VARIANT VARIANT_MISSING;
+
+        static {
+                VARIANT_MISSING = new VARIANT();
+                VARIANT_MISSING.setValue(VT_ERROR, new SCODE(WinError.DISP_E_PARAMNOTFOUND));
+        }
+        
         public _VARIANT _variant;
 
         public DECIMAL decVal;
@@ -283,7 +290,8 @@ public interface Variant {
         }
 
         public void setValue(VARTYPE vt, Object value) {
-            switch (vt.intValue()) {
+            int varType = vt.intValue();
+            switch (varType) {
             case VT_UI1:
                 this._variant.__variant.writeField("bVal", value);
                 break;
@@ -323,12 +331,6 @@ public interface Variant {
             case VT_DISPATCH:
                 this._variant.__variant.writeField("pdispVal", value);
                 break;
-            case VT_SAFEARRAY:
-                this._variant.__variant.writeField("parray", value);
-                break;
-            case VT_ARRAY:
-                this._variant.__variant.writeField("parray", value);
-                break;
             case VT_BYREF | VT_UI1:
                 this._variant.__variant.writeField("pbVal", value);
                 break;
@@ -367,9 +369,6 @@ public interface Variant {
                 break;
             case VT_BYREF | VT_DISPATCH:
                 this._variant.__variant.writeField("ppdispVal", value);
-                break;
-            case VT_BYREF | VT_ARRAY:
-                this._variant.__variant.writeField("pparray", value);
                 break;
             case VT_BYREF | VT_VARIANT:
                 this._variant.__variant.writeField("pvarVal", value);
@@ -419,6 +418,14 @@ public interface Variant {
             case VT_RECORD:
                 this._variant.__variant.writeField("pvRecord", value);
                 break;
+            default:
+                if ((varType & VT_ARRAY) > 0 || (varType & VT_SAFEARRAY) > 0) {
+                    if ((varType & VT_BYREF) > 0) {
+                        this._variant.__variant.writeField("pparray", value);
+                    } else {
+                        this._variant.__variant.writeField("parray", value);
+                    }
+                }
             }
 
             this._variant.writeField("vt", vt);
@@ -427,6 +434,7 @@ public interface Variant {
 
         public Object getValue() {
             this.read();
+            int varType = this.getVarType().intValue();
             switch (this.getVarType().intValue()) {
             case VT_UI1:
                 return this._variant.__variant.readField("bVal");
@@ -454,10 +462,6 @@ public interface Variant {
                 return this._variant.__variant.readField("punkVal");
             case VT_DISPATCH:
                 return this._variant.__variant.readField("pdispVal");
-            case VT_SAFEARRAY:
-                return this._variant.__variant.readField("parray");
-            case VT_ARRAY:
-                return this._variant.__variant.readField("parray");
             case VT_BYREF | VT_UI1:
                 return this._variant.__variant.readField("pbVal");
             case VT_BYREF | VT_I2:
@@ -484,8 +488,6 @@ public interface Variant {
                 return this._variant.__variant.readField("ppunkVal");
             case VT_BYREF | VT_DISPATCH:
                 return this._variant.__variant.readField("ppdispVal");
-            case VT_BYREF | VT_ARRAY:
-                return this._variant.__variant.readField("pparray");
             case VT_BYREF | VT_VARIANT:
                 return this._variant.__variant.readField("pvarVal");
             case VT_BYREF:
@@ -519,6 +521,13 @@ public interface Variant {
             case VT_RECORD:
                 return this._variant.__variant.readField("pvRecord");
             default:
+                if((varType & VT_ARRAY) > 0 || ((varType & VT_SAFEARRAY) > 0)) {
+                    if((varType & VT_BYREF) > 0) {
+                        return this._variant.__variant.readField("pparray");
+                    } else {
+                        return this._variant.__variant.readField("parray");
+                    }
+                }
                 return null;
             }
         }

@@ -34,7 +34,7 @@ public class VariantTest extends TestCase {
 
     public void testVariantClear() {
         VARIANT variant = new VARIANT(new SHORT(33333));
-        HRESULT hr = OleAuto.INSTANCE.VariantClear(variant.getPointer());
+        HRESULT hr = OleAuto.INSTANCE.VariantClear(variant);
 
         assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
     }
