@@ -26,7 +26,6 @@ import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 
 public class ComThread {
-
 	ExecutorService executor;
 	Runnable firstTask;
 	boolean requiresInitialisation;
@@ -44,6 +43,8 @@ public class ComThread {
 		this.firstTask = new Runnable() {
 			@Override
 			public void run() {
+                                // By definition this is a COM thread
+                                ComThread.setCurrentThreadIsCOM(true);
 				try {
 					//If we do not use COINIT_MULTITHREADED, it is necessary to have
 					// a message loop see -
@@ -119,11 +120,38 @@ public class ComThread {
 		}
 	}
 
+        // The currentThreadIsCOM is used if wrapper are used in a callback
+        // the callback is called in a new thread by the JNA runtime. As the
+        // call comes from COM it is asumed, that the thread is correctly
+        // initialized and can be used for COM calls (see MTA assumption above)
+        private static ThreadLocal<Boolean> currentThreadIsCOM = new ThreadLocal<Boolean>();
+    
+        static void setCurrentThreadIsCOM(boolean isCOM) {
+            currentThreadIsCOM.set(isCOM);
+        }
+        
+        static boolean getCurrentThreadIsCOM() {
+            Boolean res = currentThreadIsCOM.get();
+            if(res == null) {
+                return false;
+            } else {
+                return currentThreadIsCOM.get();
+            }
+        }
+        
 	public <T> T execute(Callable<T> task) throws TimeoutException, InterruptedException, ExecutionException {
-		if (this.requiresInitialisation) {
-			executor.execute(firstTask);
-		}
-		return executor.submit(task).get(this.timeoutMilliseconds, TimeUnit.MILLISECONDS);
+                if(getCurrentThreadIsCOM()) {
+                        try {
+                                return task.call();
+                        } catch (Exception ex) {
+                                throw new ExecutionException(ex);
+                        }
+                } else {
+                        if (this.requiresInitialisation) {
+                                executor.execute(firstTask);
+                        }
+                        return executor.submit(task).get(this.timeoutMilliseconds, TimeUnit.MILLISECONDS);
+                }
 	}
 
 }

@@ -121,11 +121,6 @@ public class ComEventCallbacks_Test {
                         VARIANT.ByReference PostData, 
                         VARIANT.ByReference Headers, 
                         OaIdl.VARIANT_BOOLByReference Cancel) {
-                    // This is todo: Event is called not on the event creating
-                    // thread - there are multiple side effects COM demarshalling
-                    // has to happend outside this method and return values
-                    // from event don't work
-                    //
                     // The utilizing unittest is adviseBeforeNavigate
                     if(blockNavigate){
                         Cancel.setValue(Variant.VARIANT_TRUE);
@@ -212,7 +207,6 @@ public class ComEventCallbacks_Test {
 	}
         
 	@Test
-        @Ignore("Known bug - events are currently dispatched out of the event handler, so this fails because return value not reach IE")
 	public void adviseBeforeNavigate() throws InterruptedException {
 		ComInternetExplorer ieApp = factory.createObject(ComInternetExplorer.class);
 		ComIWebBrowser2 iWebBrowser2 = ieApp.queryInterface(ComIWebBrowser2.class);

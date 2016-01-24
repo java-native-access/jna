@@ -60,7 +60,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
 		IRawDispatchHandle {
-
+        
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
@@ -95,6 +95,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		factory.register(this);
 	}
 
+        
 	// cached value of the IUnknown interface pointer
 	// Rules of COM state that querying for the IUnknown interface must return
 	// an identical pointer value
@@ -137,20 +138,14 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 	@Override
 	protected void finalize() throws Throwable {
-		this.dispose(1);
+		this.dispose();
 	}
 
-	public void dispose(int r) {
-		if (((Dispatch) this.rawDispatch).getPointer().equals(Pointer.NULL)) {
-			// do nothing, already disposed
-		} else {
-			for (int i = 0; i < r; ++i) {
-				// catch result to help with debug
-				int n = this.rawDispatch.Release();
-				int n2 = n;
-			}
-			this.factory.unregister(this, r);
-			((Dispatch) this.rawDispatch).setPointer(Pointer.NULL);
+	public synchronized void dispose() {
+		if (! ((Dispatch) this.rawDispatch).getPointer().equals(Pointer.NULL)) {
+			this.rawDispatch.Release();
+                        ((Dispatch) this.rawDispatch).setPointer(Pointer.NULL);
+                        factory.unregister(this);
 		}
 	}
 
