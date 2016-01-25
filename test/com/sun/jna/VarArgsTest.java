@@ -60,6 +60,18 @@ public class VarArgsTest extends TestCase {
         assertEquals("VarArgs not added correctly", arg1 + arg2,
                      lib.addInt32VarArgs("ll", Long.valueOf(arg1), Long.valueOf(arg2)));
     }
+    public void testFloatVarArgs() {
+        float arg1 = 1;
+        float arg2 = 2;
+        assertEquals("VarArgs not added correctly", (int)arg1 + (int)arg2,
+                     lib.addInt32VarArgs("ff", Float.valueOf(arg1), Float.valueOf(arg2)));
+    }
+    public void testDoubleVarArgs() {
+        double arg1 = 1;
+        double arg2 = 2;
+        assertEquals("VarArgs not added correctly", (int)arg1 + (int)arg2,
+                     lib.addInt32VarArgs("ff", Double.valueOf(arg1), Double.valueOf(arg2)));
+    }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
         assertEquals("Did not return correct string", args[0],
