@@ -70,7 +70,7 @@ public class VarArgsTest extends TestCase {
         double arg1 = 1;
         double arg2 = 2;
         assertEquals("VarArgs not added correctly", (int)arg1 + (int)arg2,
-                     lib.addInt32VarArgs("ff", Double.valueOf(arg1), Double.valueOf(arg2)));
+                     lib.addInt32VarArgs("FF", Double.valueOf(arg1), Double.valueOf(arg2)));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
