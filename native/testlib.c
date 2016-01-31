@@ -855,12 +855,14 @@ fillDoubleBuffer(double *buf, int len, double value) {
   return len;
 }
 
+#include "ffi.h"
+
 EXPORT int32_t
-addInt32VarArgs(const char *fmt, ...) {
+addVarArgs(const char *fmt, ...) {
   va_list ap;
   int32_t sum = 0;
   va_start(ap, fmt);
-  
+
   while (*fmt) {
     switch (*fmt++) {
     case 'd':
@@ -873,7 +875,7 @@ addInt32VarArgs(const char *fmt, ...) {
       sum += (int) va_arg(ap, int);
       break;
     case 'f': // float (promoted to ‘double’ when passed through ‘...’)
-    case 'F': // double
+    case 'g': // double
       sum += va_arg(ap, double);
       break;
     default:
