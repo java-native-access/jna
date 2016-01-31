@@ -108,6 +108,7 @@ extern "C" {
 
 #define MASK_CC          com_sun_jna_Function_MASK_CC
 #define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
+#define USE_VARARGS      com_sun_jna_Function_USE_VARARGS
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -435,6 +436,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
+  int fixed_args = (flags & USE_VARARGS) >> 7;
 
   nargs = (*env)->GetArrayLength(env, args);
 
@@ -609,7 +611,9 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     break;
   }
 
-  status = ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
+  status = fixed_args
+    ? ffi_prep_cif_var(&cif, abi, fixed_args, nargs, return_type, arg_types)
+    : ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
   if (!ffi_error(env, "Native call setup", status)) {
     PSTART();
     if ((flags & THROW_LAST_ERROR) != 0) {

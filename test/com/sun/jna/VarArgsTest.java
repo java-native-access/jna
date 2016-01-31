@@ -29,7 +29,7 @@ public class VarArgsTest extends TestCase {
                 return Arrays.asList("magic");
             }
         }
-        public int addInt32VarArgs(String fmt, Number... args);
+        public int addVarArgs(String fmt, Number... args);
         public String returnStringVarArgs(String fmt, Object... args);
         public void modifyStructureVarArgs(String fmt, Object arg1, Object... args);
     }
@@ -45,32 +45,32 @@ public class VarArgsTest extends TestCase {
     public void testIntVarArgs() {
         int arg1 = 1;
         int arg2 = 2;
-        assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", Integer.valueOf(arg1), Integer.valueOf(arg2)));
+        assertEquals("32-bit integer varargs not added correctly", arg1 + arg2,
+                     lib.addVarArgs("dd", Integer.valueOf(arg1), Integer.valueOf(arg2)));
     }
     public void testShortVarArgs() {
         short arg1 = 1;
         short arg2 = 2;
-        assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("dd", Short.valueOf(arg1), Short.valueOf(arg2)));
+        assertEquals("16-bit integer varargs not added correctly", arg1 + arg2,
+                     lib.addVarArgs("dd", Short.valueOf(arg1), Short.valueOf(arg2)));
     }
     public void testLongVarArgs() {
         short arg1 = 1;
         short arg2 = 2;
-        assertEquals("VarArgs not added correctly", arg1 + arg2,
-                     lib.addInt32VarArgs("ll", Long.valueOf(arg1), Long.valueOf(arg2)));
+        assertEquals("64-bit integer varargs not added correctly", arg1 + arg2,
+                     lib.addVarArgs("ll", Long.valueOf(arg1), Long.valueOf(arg2)));
     }
     public void testFloatVarArgs() {
         float arg1 = 1;
         float arg2 = 2;
-        assertEquals("VarArgs not added correctly", (int)arg1 + (int)arg2,
-                     lib.addInt32VarArgs("ff", Float.valueOf(arg1), Float.valueOf(arg2)));
+        assertEquals("float varargs not added correctly", (int)arg1 + (int)arg2,
+                     lib.addVarArgs("ff", Float.valueOf(arg1), Float.valueOf(arg2)));
     }
     public void testDoubleVarArgs() {
         double arg1 = 1;
         double arg2 = 2;
-        assertEquals("VarArgs not added correctly", (int)arg1 + (int)arg2,
-                     lib.addInt32VarArgs("FF", Double.valueOf(arg1), Double.valueOf(arg2)));
+        assertEquals("double varargs not added correctly", (int)arg1 + (int)arg2,
+                     lib.addVarArgs("gg", Double.valueOf(arg1), Double.valueOf(arg2)));
     }
     public void testStringVarArgs() {
         Object[] args = new Object[] { "Test" };
@@ -81,7 +81,7 @@ public class VarArgsTest extends TestCase {
     public void testAppendNullToVarargs() {
         Number[] args = new Number[] { Integer.valueOf(1) };
         assertEquals("No trailing NULL was appended to varargs list",
-                     1, lib.addInt32VarArgs("dd", args));
+                     1, lib.addVarArgs("dd", args));
     }
 
     public void testModifyStructureInVarargs() {

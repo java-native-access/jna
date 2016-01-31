@@ -59,6 +59,8 @@ public class Function extends Pointer {
     private static final int MASK_CC = 0x3F;
     /** Whether to throw an exception if last error is non-zero after call. */
     public static final int THROW_LAST_ERROR = 0x40;
+    /** Mask for number of fixed args (1-3) for varargs calls. */
+    public static final int USE_VARARGS = 0x180;
 
     static final Integer INTEGER_TRUE = Integer.valueOf(-1);
     static final Integer INTEGER_FALSE = Integer.valueOf(0);
@@ -293,10 +295,10 @@ public class Function extends Pointer {
 
         TypeMapper mapper = (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
-        boolean isVarArgs = args.length > 0 && invokingMethod != null ? isVarArgs(invokingMethod) : false;
+        int fixedArgs = args.length > 0 && invokingMethod != null ? fixedArgs(invokingMethod) : 0;
         for (int i=0; i < args.length; i++) {
             Class<?> paramType = invokingMethod != null
-                ? (isVarArgs && i >= paramTypes.length-1
+                ? (fixedArgs > 0 && i >= paramTypes.length-1
                    ? paramTypes[paramTypes.length-1].getComponentType()
                    : paramTypes[i])
                 : null;
@@ -316,7 +318,7 @@ public class Function extends Pointer {
             }
         }
 
-        Object result = invoke(args, nativeReturnType, allowObjects);
+        Object result = invoke(args, nativeReturnType, allowObjects, fixedArgs);
         // Convert the result to a custom value/type if appropriate
         if (resultConverter != null) {
             FromNativeContext context;
@@ -362,7 +364,13 @@ public class Function extends Pointer {
 
     /* @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
     Object invoke(Object[] args, Class<?> returnType, boolean allowObjects) {
+	return invoke(args, returnType, allowObjects, 0);
+    }
+
+    /* @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
+    Object invoke(Object[] args, Class<?> returnType, boolean allowObjects, int fixedArgs) {
         Object result = null;
+	int callFlags = this.callFlags | ((fixedArgs & 0x3) << 7);
         if (returnType == null || returnType==void.class || returnType==Void.class) {
             Native.invokeVoid(peer, callFlags, args);
             result = null;
@@ -750,6 +758,11 @@ public class Function extends Pointer {
     /** Varargs are only supported on 1.5+. */
     static boolean isVarArgs(Method m) {
         return IS_VARARGS.isVarArgs(m);
+    }
+
+    /** Varargs are only supported on 1.5+. */
+    static int fixedArgs(Method m) {
+        return IS_VARARGS.fixedArgs(m);
     }
 
     private static class NativeMappedArray extends Memory implements PostCallRead {
