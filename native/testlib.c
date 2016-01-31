@@ -872,6 +872,10 @@ addInt32VarArgs(const char *fmt, ...) {
     case 'c':
       sum += (int) va_arg(ap, int);
       break;
+    case 'f': // float (promoted to ‘double’ when passed through ‘...’)
+    case 'F': // double
+      sum += va_arg(ap, double);
+      break;
     default:
       break;
     }

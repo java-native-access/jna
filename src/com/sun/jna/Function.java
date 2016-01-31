@@ -726,6 +726,12 @@ public class Function extends Pointer {
             Class<?> argType = lastArg != null ? lastArg.getClass() : null;
             if (argType != null && argType.isArray()) {
                 Object[] varArgs = (Object[])lastArg;
+                // Promote float varargs to double (https://github.com/java-native-access/jna/issues/463).
+                for (int i=0; i < varArgs.length; i++) {
+                    if (varArgs[i] instanceof Float) {
+                        varArgs[i] = (double)(Float)varArgs[i];
+                    }
+                }
                 Object[] fullArgs = new Object[inArgs.length+varArgs.length];
                 System.arraycopy(inArgs, 0, fullArgs, 0, inArgs.length-1);
                 System.arraycopy(varArgs, 0, fullArgs, inArgs.length-1, varArgs.length);
