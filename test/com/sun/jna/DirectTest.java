@@ -282,5 +282,52 @@ public class DirectTest extends TestCase implements Paths, GCWaits {
             fail("Native method was not properly mapped: " + e);
         }
     }
+
+    public static class PointerNativeMapped implements NativeMapped {
+        String nativeMethodName;
+        @Override
+        public PointerNativeMapped fromNative(Object nativeValue, FromNativeContext context) {
+            nativeMethodName = ((MethodResultContext)context).getMethod().getName();
+            return this;
+        }
+        @Override
+        public Object toNative() {
+            return null;
+        }
+        @Override
+        public Class<?> nativeType() {
+            return Pointer.class;
+        }
+    }
+    public static class PointerTypeMapped {
+        String nativeMethodName;
+    }
+    public static class FromNativeTests {
+        static native PointerNativeMapped returnPointerArgument(PointerNativeMapped arg);
+        static native PointerTypeMapped returnPointerArgument(PointerTypeMapped arg);
+    }
+    public void testDirectMappingFromNative() {
+        DefaultTypeMapper mapper = new DefaultTypeMapper();
+        mapper.addTypeConverter(PointerTypeMapped.class, new TypeConverter() {
+            @Override
+            public PointerTypeMapped fromNative(Object nativeValue, FromNativeContext context) {
+                PointerTypeMapped ret = new PointerTypeMapped();
+                ret.nativeMethodName = ((MethodResultContext)context).getMethod().getName();
+                return ret;
+            }
+            @Override
+            public Object toNative(Object value, ToNativeContext context) {
+                return null;
+            }
+            @Override
+            public Class<?> nativeType() {
+                return Pointer.class;
+            }
+        });
+        NativeLibrary lib = NativeLibrary.getInstance("testlib", Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        Native.register(FromNativeTests.class, lib);
+        assertEquals("Failed to access MethodResultContext", "returnPointerArgument", FromNativeTests.returnPointerArgument(new PointerNativeMapped()).nativeMethodName);
+        assertEquals("Failed to access MethodResultContext", "returnPointerArgument", FromNativeTests.returnPointerArgument(new PointerTypeMapped()).nativeMethodName);
+    }
 }
 
