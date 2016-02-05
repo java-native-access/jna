@@ -67,7 +67,7 @@
   </condition>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
-  <property name="jni.major" value="4"/>
+  <property name="jni.major" value="5"/>
   <property name="jni.minor" value="0"/>
   <property name="jni.revision" value="1"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
