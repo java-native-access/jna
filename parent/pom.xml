@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- ### TODO find some way to import build.version.properties ### -->
 
-          <!-- expected JVM versions -->
+        <!-- expected JVM versions -->
         <jvm.major.version>1</jvm.major.version>
         <jvm.minor.version>5</jvm.minor.version>
         <jvm.release.version>0</jvm.release.version>
@@ -31,17 +31,14 @@
 
         <min.required.maven.version>3.2</min.required.maven.version>
         <surefire.plugin.version>2.19</surefire.plugin.version>
-            <groovy.major.version>2</groovy.major.version>
-            <groovy.minor.version>4</groovy.minor.version>
-            <groovy.release.version>5</groovy.release.version>
-            <groovy.compliance.level>2.0</groovy.compliance.level>
-        <groovy.version>${groovy.major.version}.${groovy.minor.version}.${groovy.release.version}</groovy.version>
-        <gmaven.plugin.version>1.5</gmaven.plugin.version>
 
         <ant.version>1.9.6</ant.version>
-        <xmltask.version>1.16</xmltask.version>       
+        <xmltask.version>1.16</xmltask.version>
         <ant-contrib.version>1.0b3</ant-contrib.version>
+
         <junit.version>4.12</junit.version>
+
+        <javadoc.plugin.version>2.10.1</javadoc.plugin.version>
     </properties>
 
     <prerequisites>
@@ -54,13 +51,7 @@
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
                 <version>${junit.version}</version>
-				<scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>1.10.19</version>
-				<scope>test</scope>
+                <scope>test</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -93,13 +84,13 @@
             </roles>
         </developer>
     </developers>
-    
+
     <build>
-        <defaultGoal>install</defaultGoal>
+        <defaultGoal>package</defaultGoal>
 
         <pluginManagement>
             <plugins>
-                <!--This plugin's configuration is used to store Eclipse 
+                <!--This plugin's configuration is used to store Eclipse
                     m2e settings only. It has no influence on the Maven build itself. -->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -148,7 +139,6 @@
                     <configuration>
                         <source>${javac.source}</source>
                         <target>${javac.target}</target>
-                        <compilerArgument>-g</compilerArgument>
                         <compilerArgument>-Xlint:-serial</compilerArgument>
                     </configuration>
                 </plugin>
@@ -157,7 +147,7 @@
                     <artifactId>maven-jar-plugin</artifactId>
                     <version>2.6</version>
                     <configuration>
-                            <!-- see http://maven.apache.org/shared/maven-archiver/index.html -->
+                        <!-- see http://maven.apache.org/shared/maven-archiver/index.html -->
                         <archive>
                             <index>true</index>
                             <addMavenDescriptor>true</addMavenDescriptor>
@@ -165,7 +155,7 @@
                                 <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                                 <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
                             </manifest>
-                                <!-- Extra attributes added to the MANIFEST.MF file -->
+                            <!-- Extra attributes added to the MANIFEST.MF file -->
                             <manifestEntries>
                                 <Java-Version>${java.version}</Java-Version>
                                 <Java-VM-Version>${java.vm.version}</Java-VM-Version>
@@ -186,18 +176,15 @@
                 <plugin>
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>2.10</version>
-					<executions>
-						<execution>
-							<id>install</id>
-							<phase>install</phase>
-							<goals>	<!-- automatically download dependecies sources - useful for debugging -->
-								<goal>sources</goal>
-							</goals>
-							<configuration>
-								<markersDirectory>${settings.localRepository}/net/java/dev/jna/dependency-maven-plugin-markers</markersDirectory>
-							</configuration>
-						</execution>
-					</executions>
+                    <executions>
+                        <execution>
+                            <id>install</id>
+                            <phase>install</phase>
+                            <goals>        <!-- automatically download dependency sources - useful for debugging -->
+                                <goal>sources</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
 
                 <plugin>
@@ -211,86 +198,24 @@
                 </plugin>
 
                 <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.7</version>
-                    <configuration>
-                        <nonFilteredFileExtensions>
-                            <nonFilteredFileExtension>pdf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>swf</nonFilteredFileExtension>
-                            <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                        </nonFilteredFileExtensions>
-                    </configuration>
-                </plugin>
-
-                <plugin>
                     <artifactId>maven-antrun-plugin</artifactId>
                     <version>1.8</version>
-                    <dependencies>  <!-- enforce same version as the external tool used for build -->
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant</artifactId>
-                            <version>${ant.version}</version>
+                    <dependencies>
+                        <dependency>    <!--Artificial dependency for tools.jar in case we invoke javac or javah -->
+                            <groupId>com.sun</groupId>
+                            <artifactId>tools</artifactId>
+                            <version>${javac.source}</version>
+                            <scope>system</scope>
+                            <systemPath>${java.home}/../lib/tools.jar</systemPath>
                         </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-launcher</artifactId>
-                            <version>${ant.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.apache.ant</groupId>
-                            <artifactId>ant-junit4</artifactId>
-                            <version>${ant.version}</version>
-                        </dependency>
-                        <!-- dependency>
-                            <groupId>com.oopsconsultancy</groupId>
-                            <artifactId>xmltask</artifactId>
-                            <version>${xmltask.version}</version>
-                        </dependency -->
-                        <dependency>
-                            <groupId>ant-contrib</groupId>
-                            <artifactId>ant-contrib</artifactId>
-                            <version>${ant-contrib.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>junit</groupId>
-                            <artifactId>junit</artifactId>
-                            <version>${junit.version}</version>
-                        </dependency>
-						<dependency>    <!--Artificial dependency for tools.jar in case we invoke javac or javah -->
-							<groupId>com.sun</groupId>
-							<artifactId>tools</artifactId>
-							<version>${javac.source}</version>
-							<scope>system</scope>
-							<systemPath>${java.home}/../lib/tools.jar</systemPath>
-						</dependency>
                     </dependencies>
                 </plugin>
 
                 <plugin>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.2</version>
-                    <configuration>
-                        <links>
-                            <link>http://docs.oracle.com/javase/7/docs/api</link>
-                            <link>http://junit.sourceforge.net/javadoc</link>
-                            <link>http://www.jfree.org/jcommon/api</link>
-                            <link>http://www.jfree.org/jfreechart/api/javadoc</link>
-                            <link>http://docs.jboss.org/hibernate/core/3.5/api</link>
-                            <link>http://www.jajakarta.org/ant/ant-1.6.1/docs/en/manual/api</link>
-                        </links>
-                        <quiet>true</quiet>
-                        <!-- see http://jdpgrailsdev.github.io/blog/2014/04/03/maven_java8_javadoc.html -->
-                        <additionalparam>-Xdoclint:none</additionalparam>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>jar</goal>
-                            </goals>
-                        </execution>
-                    </executions>
+                    <version>${javadoc.plugin.version}</version>
                 </plugin>
-           </plugins>
+            </plugins>
         </pluginManagement>
 
         <plugins>
@@ -317,59 +242,6 @@
                 </configuration>
             </plugin>
 
-                <!-- based (with changes) on http://timezra.blogspot.com/2009/06/setting-maven-properties-with-groovy.html -->
-            <plugin>
-                <groupId>org.codehaus.gmaven</groupId>
-                <artifactId>gmaven-plugin</artifactId>
-                <version>${gmaven.plugin.version}</version>
-                <configuration>
-                    <providerSelection>${groovy.compliance.level}</providerSelection>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.codehaus.gmaven.runtime</groupId>
-                        <artifactId>gmaven-runtime-${groovy.compliance.level}</artifactId>
-                        <version>${gmaven.plugin.version}</version>
-                        <exclusions>
-                            <exclusion> <!-- we provide our own -->
-                                <groupId>org.codehaus.groovy</groupId>
-                                <artifactId>groovy-all</artifactId>
-                            </exclusion>
-                            <exclusion> <!-- we provide our own -->
-                                <groupId>org.apache.ant</groupId>
-                                <artifactId>ant</artifactId>
-                            </exclusion>
-                        </exclusions>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.codehaus.groovy</groupId>
-                        <artifactId>groovy-all</artifactId>
-                        <version>${groovy.version}</version>
-                    </dependency>
-                      <!-- referenced indirectly by groovy-all -->
-                    <dependency>
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant</artifactId>
-                        <version>${ant.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant-launcher</artifactId>
-                        <version>${ant.version}</version>
-                    </dependency>
-                    <dependency>    <!-- replace ant-junit artifact -->
-                        <groupId>org.apache.ant</groupId>
-                        <artifactId>ant-junit4</artifactId>
-                        <version>${ant.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.4</version>
@@ -391,61 +263,30 @@
                     <includes>
                         <include>**/*Test.java</include>
                     </includes>
-                    <runOrder>alphabetical</runOrder>
-                    <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
-                        <!-- avoid inherent multi-threaded tests -->
-                    <perCoreThreadCount>false</perCoreThreadCount>
-                    <threadCount>1</threadCount>
-                    <excludedGroups>${excluded.tests.group}</excludedGroups>
-                    <systemPropertyVariables>
-                        <java.io.tmpdir>${project.build.directory}${file.separator}temp</java.io.tmpdir>
-                        <java.awt.headless>true</java.awt.headless>
-                    </systemPropertyVariables>
                 </configuration>
-                <dependencies>
-                    <!-- make sure using OUR version -->
-                    <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>${junit.version}</version>
-                    </dependency>
-
-                    <!-- need to include it to ensure grouping detection -->
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${surefire.plugin.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-                <!-- Automatically remove artifacts from local repository on clean -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.9.1</version>
-                 <executions>
-                      <execution>
-                        <id>remove-previous-artifact</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>remove-project-artifact</goal>
-                        </goals>
-                        <configuration>
-                            <removeAll>false</removeAll>
-                        </configuration>
-                      </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>
 
+    <modules>
+        <module>../native</module>
+    </modules>
+
     <reporting>
         <plugins>
             <plugin>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.2</version>
+            </plugin>
+
+            <plugin>
                 <artifactId>maven-surefire-report-plugin</artifactId>
                 <version>${surefire.plugin.version}</version>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${javadoc.plugin.version}</version>
             </plugin>
         </plugins>
     </reporting>
