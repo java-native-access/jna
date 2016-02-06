@@ -50,9 +50,6 @@
 
     <property name="module.artifact.version" value="${project.version}" />
     <property name="module.artifact.jar.name" value="${module.artifact.name}-${module.artifact.version}.${jar.file.suffix}" />
-    <property name="module.artifact.war.name" value="${module.artifact.name}-${module.artifact.version}.${war.file.suffix}" />
-        <property name="module.artifact.war.deploy.name" value="${module.artifact.name}" />
-        <property name="module.artifact.war.deploy.file" value="${module.artifact.war.deploy.name}.${war.file.suffix}" />
     <property name="module.artifact.zip.name" value="${module.artifact.name}-${module.artifact.version}.${zip.file.suffix}" />
 
     <!-- some useful module(s) sub-folders names -->
@@ -96,7 +93,6 @@
     <property name="module.target.classes" value="${module.target.folder}${file.separator}${classes.sub.folder.name}" />
 
     <property name="module.artifact.jar.path" value="${module.target.folder}${file.separator}${module.artifact.jar.name}" />
-    <property name="module.artifact.war.path" value="${module.target.folder}${file.separator}${module.artifact.war.name}" />
     <property name="module.artifact.zip.path" value="${module.target.folder}${file.separator}${module.artifact.zip.name}" />
 
     <target name="workspace-base" />
