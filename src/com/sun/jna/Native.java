@@ -1716,7 +1716,7 @@ public final class Native implements Version {
                                             sig, cvt,
                                             closure_atypes, atypes, rcvt,
                                             closure_rtype, rtype,
-                                            rclass,
+                                            method,
                                             f.peer, f.getCallingConvention(),
                                             throwLastError,
                                             toNative, fromNative,
@@ -1769,7 +1769,7 @@ public final class Native implements Version {
                                               int rconversion,
                                               long closure_rtype,
                                               long rtype,
-                                              Class<?> rclass,
+                                              Method method,
                                               long fptr,
                                               int callingConvention,
                                               boolean throwLastError,
@@ -1780,9 +1780,13 @@ public final class Native implements Version {
 
     // Called from native code
     private static NativeMapped fromNative(Class<?> cls, Object value) {
-        // NOTE: technically should be either CallbackParameterContext or
-        // FunctionResultContext
+        // NOTE: technically should be CallbackParameterContext
         return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, new FromNativeContext(cls));
+    }
+    // Called from native code
+    private static NativeMapped fromNative(Method m, Object value) {
+    	Class<?> cls = m.getReturnType();
+        return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, new MethodResultContext(cls, null, null, m));
     }
     // Called from native code
     private static Class<?> nativeType(Class<?> cls) {
@@ -1795,9 +1799,8 @@ public final class Native implements Version {
         return cvt.toNative(o, new ToNativeContext());
     }
     // Called from native code
-    private static Object fromNative(FromNativeConverter cvt, Object o, Class<?> cls) {
-        // NOTE: technically should be FunctionResultContext
-        return cvt.fromNative(o, new FromNativeContext(cls));
+    private static Object fromNative(FromNativeConverter cvt, Object o, Method m) {
+        return cvt.fromNative(o, new MethodResultContext(m.getReturnType(), null, null, m));
     }
 
     /** Create a new cif structure. */

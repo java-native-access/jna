@@ -393,7 +393,7 @@ invoke_callback(JNIEnv* env, callback *cb, ffi_cif* cif, void *resp, void **cbar
         case CVT_NATIVE_MAPPED_WSTRING:
 	  // Make sure we have space enough for the new argument
 	  args[i+3] = alloca(sizeof(void *));
-	  *((void **)args[i+3]) = fromNative(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE, cb->encoding);
+	  *((void **)args[i+3]) = fromNativeCallbackParam(env, cb->arg_classes[i], cif->arg_types[i], cbargs[i], JNI_FALSE, cb->encoding);
           break;
         case CVT_POINTER:
           *((void **)args[i+3]) = newJavaPointer(env, *(void **)cbargs[i]);
