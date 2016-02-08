@@ -27,7 +27,7 @@ abstract class VarArgsChecker {
         
 	int fixedArgs(Method m) {
 	    // In Java, final argument contains all "varargs"
-	    return m.getParameterTypes().length - 1;
+	    return m.isVarArgs() ? m.getParameterTypes().length - 1 : 0;
 	}
     }
     
