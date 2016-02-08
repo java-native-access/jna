@@ -7,22 +7,23 @@ import junit.framework.TestCase;
 public class VarArgsCheckerTest extends TestCase {
 
     public void testCreation() throws Exception {
-        final VarArgsChecker sut = VarArgsChecker.create();
-        assertNotNull(sut);
+        final VarArgsChecker checker = VarArgsChecker.create();
+        assertNotNull(checker);
     }
     
     public void testNoVarArgs() throws Exception {
-        final VarArgsChecker sut = VarArgsChecker.create();
-        final Method toCheckForVarArgs = VarArgsCheckerTest.class.getMethod("testNoVarArgs", new Class[0]);
-        final boolean res = sut.isVarArgs(toCheckForVarArgs);
+        final VarArgsChecker checker = VarArgsChecker.create();
+        final Method method = VarArgsCheckerTest.class.getMethod("testNoVarArgs", new Class[0]);
+        final boolean res = checker.isVarArgs(method);
         // no matter if JVM 1.4 or 1.5+, the result should always be false
         assertFalse("Method should not be detected as varargs", res);
+	assertEquals("Non-varargs should return fixed args of zero", 0, checker.fixedArgs(method));
     }
     
     public void testVarArgsExist() throws Exception {
-        final VarArgsChecker sut = VarArgsChecker.create();
-        final Method toCheckForVarArgs = VarArgsCheckerTest.class.getMethod("methodWithVarArgs", new Class[]{String[].class});
-        final boolean res = sut.isVarArgs(toCheckForVarArgs);
+        final VarArgsChecker checker = VarArgsChecker.create();
+        final Method method = VarArgsCheckerTest.class.getMethod("methodWithVarArgs", new Class[]{String[].class});
+        final boolean res = checker.isVarArgs(method);
         // this test has to run with Java 1.5+, because this has a method with
         // varargs. So the result has to be true.
         assertTrue("Method should be detected as varargs", res);
