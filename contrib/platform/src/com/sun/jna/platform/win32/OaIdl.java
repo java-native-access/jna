@@ -1075,6 +1075,8 @@ public interface OaIdl {
                 Structure.ByReference {
         };
 
+        public static final List<String> FIELDS = createFieldsOrder("value");
+        
         // / <i>native declaration : line 30</i>
         public static final INVOKEKIND INVOKE_FUNC = new INVOKEKIND(1);
         // / <i>native declaration : line 31</i>
@@ -1084,7 +1086,6 @@ public interface OaIdl {
         // / <i>native declaration : line 33</i>
         public static final INVOKEKIND INVOKE_PROPERTYPUTREF = new INVOKEKIND(8);
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public INVOKEKIND() {
