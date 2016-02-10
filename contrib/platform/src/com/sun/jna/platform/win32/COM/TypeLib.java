@@ -188,8 +188,7 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT IsName(
-    /* [annotation][out][in] */
-    LPOLESTR szNameBuf,
+    /* [annotation][out][in] */ LPOLESTR szNameBuf,
     /* [in] */ULONG lHashVal,
     /* [out] */BOOLByReference pfName) {
 
@@ -214,10 +213,9 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT FindName(
-    /* [annotation][out][in] */
-    BSTRByReference szNameBuf,
+    /* [annotation][out][in] */ LPOLESTR szNameBuf,
     /* [in] */ULONG lHashVal,
-    /* [length_is][size_is][out] */PointerByReference ppTInfo,
+    /* [length_is][size_is][out] */Pointer[] ppTInfo,
     /* [length_is][size_is][out] */MEMBERID[] rgMemId,
     /* [out][in] */USHORTByReference pcFound) {
 
@@ -233,7 +231,7 @@ public class TypeLib extends Unknown implements ITypeLib {
      *            the t lib attr
      */
     public void ReleaseTLibAttr(/* [in] */TLIBATTR pTLibAttr) {
-        this._invokeNativeObject(12, new Object[] { this.getPointer() },
-                HRESULT.class);
+        this._invokeNativeObject(12, new Object[] { this.getPointer(), 
+            pTLibAttr.getPointer() },  HRESULT.class);
     }
 }

@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
@@ -21,6 +22,7 @@ import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
 import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WinDef.BOOLByReference;
@@ -364,32 +366,29 @@ public class TypeLibUtil {
      * @param name
      *            the name
      * @param hashVal
-     *            the hash val
-     * @param found
-     *            the found
+     *            the hash val or 0 if unknown
+     * @param maxResult
+     *            maximum number of items to search
      * @return the find name
      */
-    public FindName FindName(String name, int hashVal, short found) {
-        /* [annotation][out][in] */
-        BSTRByReference szNameBuf = new BSTRByReference(
-                OleAuto.INSTANCE.SysAllocString(name));
-        /* [in] */ULONG lHashVal = new ULONG(hashVal);
-        /* [out][in] */USHORTByReference pcFound = new USHORTByReference(found);
+    public FindName FindName(String name, int hashVal, short maxResult) {
+        Pointer p = Ole32.INSTANCE.CoTaskMemAlloc((name.length() + 1L) * Native.WCHAR_SIZE);
+        WTypes.LPOLESTR olestr = new WTypes.LPOLESTR(p);
+        olestr.setValue(name);
 
-        HRESULT hr = this.typelib.FindName(szNameBuf, lHashVal, null, null,
+        ULONG lHashVal = new ULONG(hashVal);
+        USHORTByReference pcFound = new USHORTByReference(maxResult);
+
+        Pointer[] ppTInfo = new Pointer[maxResult];
+        MEMBERID[] rgMemId = new MEMBERID[maxResult];
+        HRESULT hr = this.typelib.FindName(olestr, lHashVal, ppTInfo, rgMemId,
                 pcFound);
         COMUtils.checkRC(hr);
 
-        found = pcFound.getValue().shortValue();
-        /* [length_is][size_is][out] */PointerByReference ppTInfo = new PointerByReference();
-        /* [length_is][size_is][out] */MEMBERID[] rgMemId = new MEMBERID[found];
-        hr = this.typelib.FindName(szNameBuf, lHashVal, ppTInfo, rgMemId,
-                pcFound);
-        COMUtils.checkRC(hr);
-
-        FindName findName = new FindName(szNameBuf.getString(), ppTInfo,
-                rgMemId, found);
-        OLEAUTO.SysFreeString(szNameBuf.getValue());
+        FindName findName = new FindName(olestr.getValue(), ppTInfo,
+                rgMemId, pcFound.getValue().shortValue());
+        
+        Ole32.INSTANCE.CoTaskMemFree(p);
 
         return findName;
     }
@@ -405,7 +404,7 @@ public class TypeLibUtil {
         private String nameBuf;
 
         /** The p t info. */
-        private PointerByReference pTInfo;
+        private Pointer[] pTInfo;
 
         /** The rg mem id. */
         private MEMBERID[] rgMemId;
@@ -423,12 +422,14 @@ public class TypeLibUtil {
  *            the rg mem id
          * @param pcFound
          */
-        public FindName(String nameBuf, PointerByReference pTInfo, MEMBERID[] rgMemId,
+        FindName(String nameBuf, Pointer[] pTInfo, MEMBERID[] rgMemId,
                         short pcFound) {
             this.nameBuf = nameBuf;
-            this.pTInfo = pTInfo;
-            this.rgMemId = rgMemId;
+            this.pTInfo = new Pointer[pcFound];
+            this.rgMemId = new MEMBERID[pcFound];
             this.pcFound = pcFound;
+            System.arraycopy(pTInfo, 0, this.pTInfo, 0, pcFound);
+            System.arraycopy(rgMemId, 0, this.rgMemId, 0, pcFound);
         }
 
         /**
@@ -446,12 +447,10 @@ public class TypeLibUtil {
          * @return the t info
          */
         public ITypeInfo[] getTInfo() {
-
-            Pointer pVals = pTInfo.getValue();
             ITypeInfo[] values=new ITypeInfo[pcFound];
             for(int i=0;i<pcFound;i++)
             {
-                values[i]=new TypeInfo(pVals.getPointer(i*Pointer.SIZE));
+                values[i]=new TypeInfo(pTInfo[i]);
             }
             return values;
         }

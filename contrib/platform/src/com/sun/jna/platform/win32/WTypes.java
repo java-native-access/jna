@@ -196,7 +196,7 @@ public interface WTypes {
     }
 
     public static class LPOLESTR extends PointerType {
-        public static class ByReference extends BSTR implements
+        public static class ByReference extends LPOLESTR implements
                 Structure.ByReference {
         }
 
