@@ -161,7 +161,7 @@
                                 <Java-VM-Version>${java.vm.version}</Java-VM-Version>
                                 <User-Name>${user.name}</User-Name>
                                 <!-- see Package constructor using Manifest -->
-                                <Release-Timestamp>${project.buildtimestamp}</Release-Timestamp>
+                                <Release-Timestamp>${maven.build.timestamp}</Release-Timestamp>
                                 <Maven-Version>${maven.version}</Maven-Version>
                             </manifestEntries>
                         </archive>
