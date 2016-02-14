@@ -7,11 +7,72 @@ Release 4.2 (Next)
 
 Features
 --------
-* [#452](https://github.com/twall/jna/pull/452): Added Mac OS X System.B library at `com.sun.jna.platform.mac.SystemB`  including support for `sysctl`, `sysctlbyname`, `sysctlnametomib`, `mach_host_self`, `host_page_size`, `host_statistics` and `host_statistics64` - [@dbwiddis](https://github.com/dbwiddis).
-* [#446](https://github.com/twall/jna/pull/446): Added `com.sun.jna.platform.win32.Advapi32.GetNamedSecurityInfo`, `SetNamedSecurityInfo`, `GetSecurityDescriptorLength`, `IsValidSecurityDescriptor`, `IsValidAcl` - [@amarcionek](https://github.com/amarcionek).
-* [#387](https://github.com/twall/jna/pull/397): Use of interfaces and annotations to provide easier implementation of COM interfaces (with `InvocationHandler`) - [@dhakehurst](https://github.com/dhakehurst).
-* [#387](https://github.com/twall/jna/pull/397): Support for COM event callbacks - [@dhakehurst](https://github.com/dhakehurst).
-* [#387](https://github.com/twall/jna/pull/397): Support for COM interface discovery by iteration over `RunningObjectTable` - [@dhakehurst](https://github.com/dhakehurst).
+* [#526](https://github.com/java-native-access/jna/pull/526): Added initialization and conversion between Windows SYSTEMTIME and Java Calendar - [@lgoldstein](https://github.com/lgoldstein).
+* [#532](https://github.com/java-native-access/jna/pull/529): Added `com.sun.jna.platform.win32.Mpr`, `com.sun.jna.platform.win32.LmShare`, and `com.sun.jna.platform.win32.Winnetwk` - [@amarcionek](https://github.com/amarcionek).
+* [#532](https://github.com/java-native-access/jna/pull/529): Added `ACCESS_*` definitions to `com.sun.jna.platform.win32.LmAccess` - [@amarcionek](https://github.com/amarcionek).
+* [#532](https://github.com/java-native-access/jna/pull/529): Added `NetShareAdd` and `NetShareDel` to `com.sun.jna.platform.win32.Netapi32` - [@amarcionek](https://github.com/amarcionek).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CreateProcessWithLogonW` to `com.sun.jna.platform.win32.Advapi32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `CertAddEncodedCertificateToSystemStore` to `com.sun.jna.platform.win32.Crypt32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `BitBlt` to `com.sun.jna.platform.win32.GDI32`, Added `com.sun.jna.platform.win32.GDI32Util` and added `getScreenshot()` to it - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `SHEmptyRecycleBin`, `ShellExecuteEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#535](https://github.com/java-native-access/jna/pull/535): Added `GetDesktopWindow` to `com.sun.jna.platform.win32.User32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#540](https://github.com/java-native-access/jna/pull/539): Added Missing Windows kernel32 method: QueryFullProcessImageName - [@yossieilaty](https://github.com/yossieilaty).
+* [#543](https://github.com/java-native-access/jna/pull/543): Added `ProcessIdToSessionId`, `LoadLibraryEx`, `FreeLibrary` and `Find/Load/Lock/SizeofResource` to `com.sun.jna.platform.win32.Kernel32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#545](https://github.com/java-native-access/jna/pull/545): Added `EnumResourceTypes` and `EnumResourceNames` to `com.sun.jna.platform.win32.Kernel32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#547](https://github.com/java-native-access/jna/pull/547): Added `GetSystemTimes` to `com.sun.jna.platform.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
+* [#548](https://github.com/java-native-access/jna/pull/548): Return 64-bit unsigned integer from `com.sun.jna.platform.win32.WinBase.FILETIME` - [@dbwiddis](https://github.com/dbwiddis).
+* [#524](https://github.com/java-native-access/jna/pull/524): Added IShellFolder interface plus necessary utility functions to Windows platform, and a sample for enumerating objects in My Computer - [@lwahonen](https://github.com/lwahonen).
+* [#471](https://github.com/java-native-access/jna/issues/471): Determine size of native `bool` - [@twall](https://github.com/twall).
+* [#484](https://github.com/java-native-access/jna/pull/484): Added `XFetchName` to `X11` interface - [@pinaf](https://github.com/pinaf).
+* [#554](https://github.com/java-native-access/jna/pull/554): Initial code for a few Unix 'libc' API(s) [@lgoldstein](https://github.com/lgoldstein)
+* [#552](https://github.com/java-native-access/jna/pull/552): Added `Module32FirstW` and `Module32NextW` to `com.sun.jna.platform.win32.Kernel32` (and helper to `com.sun.jna.platform.win32.Kernel32Util`) and `MODULEENTRY32W` structure to `com.sun.jna.platform.win32.Tlhelp32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#564](https://github.com/java-native-access/jna/pull/564): Use generic definition of Native#loadLibrary [@lgoldstein](https://github.com/lgoldstein)
+* [#562](https://github.com/java-native-access/jna/pull/562): Added `com.sun.jna.platform.win32.VersionUtil` with `getFileVersionInfo` utility method to get file major, minor, revision, and build version parts - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#563](https://github.com/java-native-access/jna/pull/563): Added `com.sun.jna.platform.win32.Wininet` with the following 4 methods: `FindFirstUrlCacheEntry`, `DeleteUrlCacheEntry`, `FindCloseUrlCache`, `FindNextUrlCacheEntry`, and the `INTERNET_CACHE_ENTRY_INFO` structure, and a helper in `com.sun.jna.platform.win32.WininetUtil` for parsing WinInet's cache - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#567](https://github.com/java-native-access/jna/pull/567): Added `PrintWindow`, `IsWindowEnabled`, `IsWindow`, `FindWindowEx`, `GetAncestor`, `GetCursorPos`, `SetCursorPos`, `SetWinEventHook`, `UnhookWinEvent`, `CopyIcon`, and `GetClassLong` to `com.sun.jna.platform.win32.User32` and supporting constants to `com.sun.jna.platform.win32.WinUser` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#573](https://github.com/java-native-access/jna/pull/573): Added `EnumProcessModules`, `GetModuleInformation`, and `GetProcessImageFileName` to `com.sun.jna.platform.win32.Psapi` and added `ExtractIconEx` to `com.sun.jna.platform.win32.Shell32` - [@mlfreeman2](https://github.com/mlfreeman2).
+* [#574](https://github.com/java-native-access/jna/pull/574): Using static final un-modifiable List of field names for structure(s) - [@lgoldstein](https://github.com/lgoldstein).
+* [#577](https://github.com/java-native-access/jna/pull/577): Apply generic definitions wherever applicable - [@lgoldstein](https://github.com/lgoldstein).
+* [#569](https://github.com/java-native-access/jna/pull/569): Added `com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2` support. Added GetPrinter and ClosePrinter functions in `com.sun.jna.platform.win32.Winspool` - [@IvanRF](https://github.com/IvanRF).
+* [#583](https://github.com/java-native-access/jna/pull/583): Added printer attributes and status - [@IvanRF](https://github.com/IvanRF).
+* [#589](https://github.com/java-native-access/jna/pull/589): Use MethodResultContext in direct mapping (as done in interface mapping) - [@marco2357](https://github.com/marco2357).
+
+Bug Fixes
+---------
+* [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
+* [#536](https://github.com/java-native-access/jna/pull/536): Fixed bug in determining the Library and options associated with types defined outside of a Library - [@twall](https://github.com/twall).
+* [#531](https://github.com/java-native-access/jna/pull/531): Ensure direct-mapped callbacks use the right calling convention - [@twall](https://github.com/twall).
+* [#566](https://github.com/java-native-access/jna/pull/566): Fix return type of Native#loadLibrary to match unconstrained generic [@lgoldstein](https://github.com/lgoldstein)
+* [#584](https://github.com/java-native-access/jna/pull/584): Promote float varargs to double - [@marco2357](https://github.com/marco2357).
+* [#588](https://github.com/java-native-access/jna/pull/588): Fix varargs calls on arm - [@twall](https://github.com/twall).
+* [#593](https://github.com/java-native-access/jna/pull/593): Improve binding of TypeLib bindings - [@matthiasblaesing](https://github.com/matthiasblaesing).
+
+Release 4.2.1
+=============
+
+Features
+--------
+* [#504](https://github.com/java-native-access/jna/pull/504): Add support for linux-sparcv9 - [@alexvsimon](https://github.com/alexvsimon).
+* [#510](https://github.com/java-native-access/jna/pull/510): Added `GetCommState`, `GetCommTimeouts` `SetCommState` and `SetCommTimeouts` to `com.sun.jna.platform.win32.Kernel32`. Added `DCB` structure to `com.sun.jna.platform.win32.WinBase` - [@MBollig](https://github.com/MBollig).
+* [#512](https://github.com/java-native-access/jna/pull/512): Make loading debug flags mutable [@lwahonen](https://github.com/lwahonen).
+* [#514](https://github.com/java-native-access/jna/pull/514): Added `host_processor_info` to `com.sun.jna.platform.mac.SystemB`  - [@dbwiddis](https://github.com/dbwiddis).
+* [#519](https://github.com/java-native-access/jna/pull/519): Added JNA functional overview - [@twall](https://github.com/twall).
+* [#528](https://github.com/java-native-access/jna/pull/528): Added idea-jar ant task that creates a convenience jar that contains all native dispatch libraries - [@lwahonen](https://github.com/lwahonen).
+
+Bug Fixes
+---------
+* [#515](https://github.com/java-native-access/jna/issues/515): Update linux-arm natives omitted in 4.2 [@twall](https://github.com/twall).
+
+Release 4.2
+===========
+
+Features
+--------
+* [#452](https://github.com/java-native-access/jna/pull/452): Added Mac OS X System.B library at `com.sun.jna.platform.mac.SystemB`  including support for `sysctl`, `sysctlbyname`, `sysctlnametomib`, `mach_host_self`, `host_page_size`, `host_statistics` and `host_statistics64` - [@dbwiddis](https://github.com/dbwiddis).
+* [#446](https://github.com/java-native-access/jna/pull/446): Added `com.sun.jna.platform.win32.Advapi32.GetNamedSecurityInfo`, `SetNamedSecurityInfo`, `GetSecurityDescriptorLength`, `IsValidSecurityDescriptor`, `IsValidAcl` - [@amarcionek](https://github.com/amarcionek).
+* [#387](https://github.com/java-native-access/jna/pull/397): Use of interfaces and annotations to provide easier implementation of COM interfaces (with `InvocationHandler`) - [@dhakehurst](https://github.com/dhakehurst).
+* [#387](https://github.com/java-native-access/jna/pull/397): Support for COM event callbacks - [@dhakehurst](https://github.com/dhakehurst).
+* [#387](https://github.com/java-native-access/jna/pull/397): Support for COM interface discovery by iteration over `RunningObjectTable` - [@dhakehurst](https://github.com/dhakehurst).
 * Updated AIX natives and build - [@twall](https://github.com/twall).
 * [#290](https://github.com/twall/jna/pull/290): Improved the stacktrace for the exceptions thrown by `com.sun.jna.Structure` - [@ebourg](https://github.com/ebourg).
 * [#332](https://github.com/twall/jna/pull/332): Added Win32 Monitor Configuration API in `com.sun.jna.platform.win32.Dxva2` - [@msteiger](https://github.com/msteiger).

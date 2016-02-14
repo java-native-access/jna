@@ -118,11 +118,14 @@ public final class Native implements Version {
     public static final int WCHAR_SIZE;
     /** Size of a native <code>size_t</code> type, in bytes. */
     public static final int SIZE_T_SIZE;
+    /** Size of a native <code>bool</code> type (C99 and later), in bytes. */
+    public static final int BOOL_SIZE;
 
     private static final int TYPE_VOIDP = 0;
     private static final int TYPE_LONG = 1;
     private static final int TYPE_WCHAR_T = 2;
     private static final int TYPE_SIZE_T = 3;
+    private static final int TYPE_BOOL = 4;
 
     static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
@@ -137,6 +140,7 @@ public final class Native implements Version {
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
+        BOOL_SIZE = sizeof(TYPE_BOOL);
 
         // Perform initialization of other JNA classes until *after*
         // initializing the above final fields

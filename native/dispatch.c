@@ -97,6 +97,8 @@ static int _protect;
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#include <stdbool.h>
 #endif
 
 #define MEMCPY(ENV,D,S,L) do {     \
@@ -2669,6 +2671,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
   case com_sun_jna_Native_TYPE_LONG: return sizeof(long);
   case com_sun_jna_Native_TYPE_WCHAR_T: return sizeof(wchar_t);
   case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
+  case com_sun_jna_Native_TYPE_BOOL: return sizeof(bool);
   default:
     {
       char msg[MSG_SIZE];
