@@ -157,6 +157,10 @@ public class NativeTest extends TestCase {
         }
     }
 
+    public void testSizeof() {
+        assertEquals("Wrong bool size", 1, Native.BOOL_SIZE);
+    }
+
     public static interface TestLib extends Library {
         interface VoidCallback extends Callback {
             void callback();
