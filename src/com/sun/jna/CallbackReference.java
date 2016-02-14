@@ -36,7 +36,7 @@ import com.sun.jna.win32.DLLCallback;
  * and a Java {@link Callback} closure.
  */
 
-class CallbackReference extends WeakReference<Callback> {
+public class CallbackReference extends WeakReference<Callback> {
 
     static final Map<Callback, CallbackReference> callbackMap = new WeakHashMap<Callback, CallbackReference>();
     static final Map<Callback, CallbackReference> directCallbackMap = new WeakHashMap<Callback, CallbackReference>();
