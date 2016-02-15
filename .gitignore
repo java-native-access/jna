@@ -1,4 +1,17 @@
-build
+target/
+Servers/
+.metadata/
+.recommenders/
+.settings/
+RemoteSystemsTempFiles/
+_ajdump/
+.project
+.classpath
+.springBeans
+.externalToolBuilders
+.svn/
+dependency-reduced-pom.xml
+build/
 build-d64
 build.eclipse
 build.number
@@ -21,3 +34,6 @@ native/libffi/doc/libffi.info
 junit-*
 pom-jna.xml.asc
 pom-jna-platform.xml.asc
+# IntelliJ IDEA
+.idea
+*.iml
