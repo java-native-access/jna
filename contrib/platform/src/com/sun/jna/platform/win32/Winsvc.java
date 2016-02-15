@@ -241,7 +241,7 @@ public interface Winsvc {
          * If this value is NULL, the reboot message is unchanged. If the value is an empty string 
          * (""), the reboot message is deleted and no message is broadcast.
          * This member can specify a localized string using the following format:
-         * @[path\]dllname,-strID
+         * "@[path]dllname,-strID"
          * The string with identifier strID is loaded from dllname; the path is optional. For more 
          * information, see RegLoadMUIString.
          * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
