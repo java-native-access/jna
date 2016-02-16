@@ -262,9 +262,40 @@ public class COMBindingBaseObject extends COMInvoker {
             dp.write();
         }
 
+        // Apply "fix" according to
+        // https://www.delphitools.info/2013/04/30/gaining-visual-basic-ole-super-powers/
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms221486(v=vs.85).aspx
+        //
+        // Summary: there are methods in the word typelibrary that require both
+        // PROPERTYGET _and_ METHOD to be set. With only one of these set the call
+        // fails.
+        //
+        // The article from delphitools argues, that automation compatible libraries
+        // need to be compatible with VisualBasic which does not distingish methods
+        // and property getters and will set both flags always.
+        //
+        // The MSDN article advises this behaviour: "[...] Some languages cannot 
+        // distinguish between retrieving a property and calling a method. In this 
+        //case, you should set the flags DISPATCH_PROPERTYGET and DISPATCH_METHOD.
+        // [...]"))
+        //
+        // This was found when trying to bind InchesToPoints from the _Application 
+        // dispatch interface of the MS Word 15 type library
+        //
+        // The signature according the ITypeLib Viewer (OLE/COM Object Viewer):
+        // [id(0x00000172), helpcontext(0x09700172)]
+        // single InchesToPoints([in] single Inches);
+
+        final int finalNType;
+        if (nType == OleAuto.DISPATCH_METHOD || nType == OleAuto.DISPATCH_PROPERTYGET) {
+            finalNType = OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET;
+        } else {
+            finalNType = nType;
+        }
+
         // Make the call!
         HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
-                new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
+                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;

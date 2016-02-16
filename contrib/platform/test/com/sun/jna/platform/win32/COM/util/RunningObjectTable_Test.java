@@ -31,10 +31,10 @@ public class RunningObjectTable_Test {
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application extends IUnknown {
 		@ComProperty
-		boolean getVisible();
+		Boolean getVisible();
 		
 		@ComProperty
-		void setVisible(boolean value);
+		void setVisible(Boolean value);
 		
 		@ComMethod
 		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);

@@ -1,0 +1,170 @@
+package com.sun.jna.platform.win32.COM.util;
+
+import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMLateBindingObject;
+import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Dispatch;
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.Guid;
+import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.OaIdl;
+import com.sun.jna.platform.win32.OaIdl.DISPID;
+import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.Variant;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.WinDef;
+import com.sun.jna.platform.win32.WinDef.UINT;
+import com.sun.jna.platform.win32.WinDef.WORD;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import junit.framework.TestCase;
+import org.junit.Test;
+import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
+
+/**
+ * In the word COM bindings it was determined, that some methods can't be called
+ * with only wFlags OleAuto.DISPATCH_METHOD or OleAuto.DISPATCH_PROPERTYGET.
+ *
+ * For these methods both flags need to be set.
+ *
+ * https://www.delphitools.info/2013/04/30/gaining-visual-basic-ole-super-powers/
+ * https://msdn.microsoft.com/en-us/library/windows/desktop/ms221486(v=vs.85).aspx
+ *
+ * A sample function is InchesToPoints from thw word typelibrary
+ */
+public class HybdridCOMInvocationTest extends TestCase {
+
+    private static final Logger LOG = Logger.getLogger(HybdridCOMInvocationTest.class.getName());
+    
+    private static final String CLSID_WORD_STRING = "{000209FF-0000-0000-C000-000000000046}";
+    private static final String IID_APPLICATION_STRING = "{00020970-0000-0000-C000-000000000046}";
+    private static final GUID CLSID_WORD = new GUID(CLSID_WORD_STRING);
+    private static final IID IID_APPLICATION = new IID(new GUID(IID_APPLICATION_STRING));
+    
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        Ole32.INSTANCE.CoUninitialize();
+    }
+    
+    @Override
+    protected void setUp() throws Exception {
+        // Initialize COM for this thread...
+        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+    }
+    
+    @Test
+    public void testOfficeInvocationProblemCOMUtil() {
+        Factory fact = new Factory();
+        Application app;
+        try {
+            app = fact.createObject(Application.class);
+        } catch (COMException ex)  {
+            LOG.log(Level.INFO, "HybdridCOMInvocationTest test was not run, MS Word object could not be instantiated.", ex);
+            return;
+        }
+        // If this fails: remember: floats are not exact, if this happens replace
+        // with a range check
+        assertEquals(72.0f, app.InchesToPoints(1F));
+    }
+    
+    @Test
+    public void testOfficeInvocationProblemCOMBindingObject() {
+        WordApplication app;
+        try {
+            app = new WordApplication(false);
+        } catch (COMException ex)  {
+            LOG.log(Level.INFO, "HybdridCOMInvocationTest test was not run, MS Word object could not be instantiated.", ex);
+            return;
+        }
+        assertEquals(72.0f, app.InchesToPoints(1F));
+    }
+    
+    
+    public void testOfficeInvocationDemonstration() {
+        // THIS IS NOT A TEST
+        //
+        // This reproduces the problem by using the dispatch directly.
+        
+        PointerByReference pDispatch = new PointerByReference();
+
+        HRESULT hr = Ole32.INSTANCE.CoCreateInstance(CLSID_WORD, null,
+                WTypes.CLSCTX_SERVER, IID_APPLICATION, pDispatch);
+
+        if(! COMUtils.SUCCEEDED(hr)) {
+            LOG.log(Level.INFO, "HybdridCOMInvocationTest test was not run, MS Word object could not be instantiated.");
+            return;
+        }
+
+        Dispatch dp = new Dispatch(pDispatch.getValue());
+        
+        // DispID of InchesToPoints
+        DISPID dispId = new OaIdl.DISPID(0x00000172);
+        // Interface _Application of MS Word type library
+        WinDef.LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE.GetSystemDefaultLCID();
+        Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
+        OaIdl.EXCEPINFO.ByReference pExcepInfo = new OaIdl.EXCEPINFO.ByReference();
+        IntByReference puArgErr = new IntByReference();
+        
+        WORD wFlagsMethod = new WinDef.WORD(OleAuto.DISPATCH_METHOD);
+        WORD wFlagsGet = new WinDef.WORD(OleAuto.DISPATCH_PROPERTYGET);
+        WORD wFlagsCombined = new WinDef.WORD(OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET);
+        
+        OleAuto.DISPPARAMS.ByReference pDispParams = new OleAuto.DISPPARAMS.ByReference();
+        VARIANT[] params = new VARIANT[1];
+        params[0] = new VARIANT(1f);
+        pDispParams.cArgs = new UINT(1);
+        pDispParams.cNamedArgs = new UINT(0);
+        pDispParams.rgvarg = new Variant.VariantArg.ByReference(params);
+        pDispParams.rgdispidNamedArgs = new OaIdl.DISPIDByReference();
+        
+        // Call InchesToPoints as a method
+        hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsMethod, pDispParams, result, pExcepInfo, puArgErr);
+        assertTrue(COMUtils.FAILED(hr));
+        
+        // Call InchesToPoints as a property getter
+        hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsGet, pDispParams, result, pExcepInfo, puArgErr);
+        assertTrue(COMUtils.FAILED(hr));
+       
+        // Call InchesToPoints as a hybrid
+        hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsCombined, pDispParams, result, pExcepInfo, puArgErr);
+        assertTrue(COMUtils.SUCCEEDED(hr));
+        
+        assertEquals(72.0f, result.floatValue());
+    }
+
+    @ComObject(clsId = CLSID_WORD_STRING)
+    public static interface Application extends IDispatch, _Application {
+    }
+
+    @ComInterface(iid = IID_APPLICATION_STRING)
+    public static interface _Application {
+        @ComMethod
+        Float InchesToPoints(Float value);
+    }
+    
+    public static class WordApplication extends COMLateBindingObject {
+
+        public WordApplication(boolean useActiveInstance) {
+            super(new CLSID(CLSID_WORD), useActiveInstance);
+        }
+
+        public Float InchesToPoints(Float value) {
+            VARIANT.ByReference pvResult = new VARIANT.ByReference();
+            this.oleMethod(OleAuto.DISPATCH_METHOD , pvResult, this.getIDispatch(), "InchesToPoints", new VARIANT[] {new VARIANT(value)});
+            return pvResult.floatValue();
+        } 
+    }
+}

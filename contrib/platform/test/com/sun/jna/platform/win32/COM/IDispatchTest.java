@@ -39,7 +39,7 @@ public class IDispatchTest extends TestCase {
         try {
             PointerByReference pDispatch = new PointerByReference();
 
-            // Get CLSID for Word.Application...
+            // Get CLSID for Shell.Application...
             CLSID.ByReference clsid = new CLSID.ByReference();
             HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application",
                     clsid);
