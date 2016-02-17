@@ -3,12 +3,50 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>net.java.dev.jna</groupId>
     <artifactId>parent</artifactId>
     <version>4.3.0-SNAPHSOT</version>
     <packaging>pom</packaging>
+
     <name>net.java.dev.jna:parent</name>
     <url>https://github.com/java-native-access/jna</url>
+    <licenses>
+        <license>
+            <name>LGPL, version 2.1</name>
+            <url>http://www.gnu.org/licenses/licenses.html</url>
+            <distribution>repo</distribution>
+        </license>
+        <license>
+            <name>ASL, version 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>twall</id>
+            <name>Timothy Wall</name>
+            <roles>
+                <role>Owner</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <prerequisites>
+        <maven>${min.required.maven.version}</maven>
+    </prerequisites>
+
+    <modules>
+        <module>../native</module>
+    </modules>
+
+    <scm>
+        <connection>scm:git:https://github.com/java-native-access/jna</connection>
+        <developerConnection>scm:git:ssh://git@github.com/java-native-access/jna.git</developerConnection>
+        <url>https://github.com/java-native-access/jna</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,10 +79,6 @@
         <javadoc.plugin.version>2.10.1</javadoc.plugin.version>
     </properties>
 
-    <prerequisites>
-        <maven>${min.required.maven.version}</maven>
-    </prerequisites>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -56,38 +90,8 @@
         </dependencies>
     </dependencyManagement>
 
-    <licenses>
-        <license>
-            <name>LGPL, version 2.1</name>
-            <url>http://www.gnu.org/licenses/licenses.html</url>
-            <distribution>repo</distribution>
-        </license>
-        <license>
-            <name>ASL, version 2</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:https://github.com/java-native-access/jna</connection>
-        <developerConnection>scm:git:ssh://git@github.com/java-native-access/jna.git</developerConnection>
-        <url>https://github.com/java-native-access/jna</url>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>twall</id>
-            <name>Timothy Wall</name>
-            <roles>
-                <role>Owner</role>
-            </roles>
-        </developer>
-    </developers>
-
     <build>
         <defaultGoal>package</defaultGoal>
-
         <pluginManagement>
             <plugins>
                 <!--This plugin's configuration is used to store Eclipse
@@ -110,7 +114,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                                 <pluginExecution>
@@ -125,7 +129,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -222,7 +226,6 @@
                 </plugin>
             </plugins>
         </pluginManagement>
-
         <plugins>
             <plugin>
                 <artifactId>maven-enforcer-plugin</artifactId>
@@ -272,10 +275,6 @@
             </plugin>
         </plugins>
     </build>
-
-    <modules>
-        <module>../native</module>
-    </modules>
 
     <reporting>
         <plugins>
