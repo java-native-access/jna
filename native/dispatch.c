@@ -98,7 +98,14 @@ static int _protect;
 #ifdef __cplusplus
 extern "C" {
 #else
+#if defined(_MSC_VER)
+// At least until I upgrace to 2013-era MSVS
+typedef int bool;
+#define true 1
+#define false 0
+#else
 #include <stdbool.h>
+#endif
 #endif
 
 #define MEMCPY(ENV,D,S,L) do {     \
