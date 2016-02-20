@@ -234,6 +234,16 @@ public interface Variant {
             this.setValue(VT_R8, value);
         }
 
+        /**
+         * Create a new VARIANT wrapping the supplied string.
+         * 
+         * <p><i>Implementation note:</i> the string is wrapped as a BSTR value,
+         * that is allocated using {@see com.sun.jna.platform.win32.OleAuto#SysAllocString}
+         * and needs to be freed using
+         * {@see com.sun.jna.platform.win32.OleAuto#SysFreeString} by the user</p>
+         * 
+         * @param value  to be wrapped
+         */
         public VARIANT(String value) {
             this();
             BSTR bstrValue = OleAuto.INSTANCE.SysAllocString(value);

@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.Variant;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -21,9 +23,29 @@ import java.util.Date;
 import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 
-public class Convert {
-	
+/**
+ * This class is considered internal to the package.
+ */
+class Convert {
+        /**
+         * Convert a java value into a VARIANT suitable for passing in a COM
+         * invocation.
+         * 
+         * <p><i>Implementation notes</i></p>
+         * 
+         * <ul>
+         * <li>VARIANTs are not rewrapped, but passed through unmodified</li>
+         * <li>A string is wrapped into a BSTR, that is wrapped into the VARIANT.
+         *  The string is allocated as native memory by the VARIANT constructor.
+         *  The BSTR needs to be freed by {@see com.sun.jna.platform.win32.OleAuto#SysFreeString}.</li>
+         * </ul>
+         * 
+         * @see com.sun.jna.platform.win32.Variant.VARIANT#VARIANT(java.lang.String)
+         * @param value to be wrapped
+         * @return wrapped VARIANT
+         */
 	public static VARIANT toVariant(Object value) {
                 if (value instanceof VARIANT) {
                         return (VARIANT) value;
@@ -108,4 +130,39 @@ public class Convert {
 		}
 		return null;
 	}
+        
+        /**
+         * Free the contents of the supplied VARIANT.
+         * 
+         * <p>This method is a companion to {@see #toVariant}. Primary usage is
+         * to free BSTRs contained in VARIANTs.</p>
+         * 
+         * @param variant to be cleared
+         * @param javaType type before/after conversion
+         */
+        public static void free(VARIANT variant, Class<?> javaType) {
+            if(javaType == null) {
+                return;
+            }
+            if(javaType.isAssignableFrom(String.class) 
+                    && variant.getVarType().intValue() == Variant.VT_BSTR) {
+                Object value = variant.getValue();
+                if(value instanceof BSTR) {
+                    OleAuto.INSTANCE.SysFreeString((BSTR) value);
+                }
+            }
+        }
+        
+        /**
+         * Free the contents of the supplied VARIANT.
+         * 
+         * <p>This method is a companion to {@see #toVariant}. Primary usage is
+         * to free BSTRs contained in VARIANTs.</p>
+         * 
+         * @param variant to be cleared
+         * @param value value before/after conversion
+         */
+        public static void free(VARIANT variant, Object value) {
+            free(variant, value == null ? null : value.getClass());
+        }
 }

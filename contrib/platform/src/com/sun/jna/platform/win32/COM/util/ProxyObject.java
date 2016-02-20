@@ -354,9 +354,10 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	// --------------------- IDispatch ------------------------------
 	@Override
 	public <T> void setProperty(String name, T value) {
-		VARIANT v = Convert.toVariant(value);
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), name, v);
-		COMUtils.checkRC(hr);
+            VARIANT v = Convert.toVariant(value);
+            WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), name, v);
+            Convert.free(v, value); // Free value allocated by Convert#toVariant
+            COMUtils.checkRC(hr);
 	}
 
 	@Override
@@ -372,20 +373,15 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name, vargs);
+                
+                for (int i = 0; i < vargs.length; i++) {
+                        // Free value allocated by Convert#toVariant
+                        Convert.free(vargs[i], args[i]);
+                }
+                
 		COMUtils.checkRC(hr);
-		Object jobj = Convert.toJavaObject(result, returnType);
-		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
-		}
-		if (jobj instanceof IDispatch) {
-			IDispatch d = (IDispatch) jobj;
-			T t = this.factory.createProxy(returnType, d);
-			// must release a COM reference, createProxy adds one, as does the
-			// call
-			int n = d.Release();
-			return t;
-		}
-		return returnType.cast(jobj);
+		
+                return convertAndFreeReturn(result, returnType);
 	}
 
 	@Override
@@ -401,22 +397,33 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
 		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), name, vargs);
+                
+                for (int i = 0; i < vargs.length; i++) {
+                        // Free value allocated by Convert#toVariant
+                        Convert.free(vargs[i], args[i]);
+                }
+                
 		COMUtils.checkRC(hr);
 
-		Object jobj = Convert.toJavaObject(result, returnType);
-		if (IComEnum.class.isAssignableFrom(returnType)) {
-			return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
-		}
-		if (jobj instanceof IDispatch) {
-			IDispatch d = (IDispatch) jobj;
-			T t = this.factory.createProxy(returnType, d);
-			// must release a COM reference, createProxy adds one, as does the
-			// call
-			int n = d.Release();
-			return t;
-		}
-		return returnType.cast(jobj);
+                return convertAndFreeReturn(result, returnType);
 	}
+
+        private <T> T convertAndFreeReturn(VARIANT.ByReference result, Class<T> returnType) {
+            Object jobj = Convert.toJavaObject(result, returnType);
+            if (IComEnum.class.isAssignableFrom(returnType)) {
+                return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
+            } else if (jobj instanceof IDispatch) {
+                IDispatch d = (IDispatch) jobj;
+                T t = this.factory.createProxy(returnType, d);
+                // must release a COM reference, createProxy adds one, as does the
+                // call
+                int n = d.Release();
+                return t;
+            } else {
+                Convert.free(result, returnType);
+                return returnType.cast(jobj);
+            }
+        }
 
 	@Override
 	public <T> T queryInterface(Class<T> comInterface) throws COMException {
