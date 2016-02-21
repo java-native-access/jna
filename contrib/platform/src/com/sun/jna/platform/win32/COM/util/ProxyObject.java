@@ -52,6 +52,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This object acts as the invocation handler for interfaces annotated with
@@ -59,7 +60,7 @@ import com.sun.jna.ptr.PointerByReference;
  * on a 'ComThread' held by the Factory object.
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
-		IRawDispatchHandle {
+		IRawDispatchHandle, IConnectionPoint {
         
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.unknownId = -1;
@@ -204,33 +205,21 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	@Override
 	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
 			throws Throwable {
-		return this.invokeSynchronised(proxy, method, args);
-	}
-
-	/*
-	 * may not necessary for this method to be synchronised as all calls to COM
-	 * are on their own , single, thread. However, might be best not to overlap
-	 * calls to COM object with advise, unadvise, queryInterface, etc.
-	 */
-	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method,
-			final Object[] args) throws Throwable {
-		if (method.equals(Object.class.getMethod("toString"))) {
-			return this.toString();
-		} else if (method.equals(Object.class.getMethod("equals", Object.class))) {
-			return this.equals(args[0]);
-		} else if (method.equals(Object.class.getMethod("hashCode"))) {
-			return this.hashCode();
-		} else if (method.equals(IRawDispatchHandle.class.getMethod("getRawDispatch"))) {
-			return this.getRawDispatch();
-		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
-			return this.queryInterface((Class<?>) args[0]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("advise", Class.class,
-				IComEventCallbackListener.class))) {
-			return this.advise((Class<?>) args[0], (IComEventCallbackListener) args[1]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("unadvise", Class.class,
-				IComEventCallbackCookie.class))) {
-			this.unadvise((Class<?>) args[0], (IComEventCallbackCookie) args[1]);
-			return null;
+                boolean declaredAsInterface = 
+                        (method.getAnnotation(ComMethod.class) != null)
+                        ||(method.getAnnotation(ComProperty.class) != null);
+            
+		if ((! declaredAsInterface) && (method.getDeclaringClass().equals(Object.class)
+                        || method.getDeclaringClass().equals(IRawDispatchHandle.class)
+                        || method.getDeclaringClass().equals(com.sun.jna.platform.win32.COM.util.IUnknown.class)
+                        || method.getDeclaringClass().equals(com.sun.jna.platform.win32.COM.util.IDispatch.class)
+                        || method.getDeclaringClass().equals(IConnectionPoint.class)
+                        )) {
+                        try {
+                            return method.invoke(this, args);
+                        } catch (InvocationTargetException ex) {
+                            throw ex.getCause();
+                        }
 		}
 
 		Class<?> returnType = method.getReturnType();
@@ -562,7 +551,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult, final IDispatch pDisp,
 			final DISPID dispId, VARIANT[] pArgs) throws COMException {
 
-                assert COMUtils.comIsInitialized() : "COM not initialized";
+               assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		if (pDisp == null)
 			throw new COMException("pDisp (IDispatch) parameter is null!");
