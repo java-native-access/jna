@@ -3131,15 +3131,17 @@ Java_com_sun_jna_Native__1getDirectBufferPointer(JNIEnv *env, jclass UNUSED(clas
   return A2L(addr);
 }
 
+#ifdef HAVE_PROTECTION
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp), jboolean protect_access) {
-#ifdef HAVE_PROTECTION
   _protect = protect_access;
-#else
-  // avoid compiler warning
-  protect_access = 0;
-#endif
 }
+#else
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp), jboolean UNUSED(protect_access)) {
+  /* Unsupported */
+}
+#endif
 
 jboolean
 is_protected() {

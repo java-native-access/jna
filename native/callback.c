@@ -682,7 +682,7 @@ dispatch_callback(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
       tls->jvm_thread = JNI_FALSE;
     }
     // Dispose of allocated memory
-    free(args.name);
+    free((void *)args.name);
     if (attach_status != JNI_OK) {
       fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
       return;
