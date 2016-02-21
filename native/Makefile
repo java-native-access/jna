@@ -279,7 +279,7 @@ ifeq ($(OS),solaris)
 ifeq ($(ARCH),)
 ARCH=$(shell uname -p)
 endif
-PCFLAGS+=-fPIC
+PCFLAGS+=-fPIC -std=gnu99
 CDEFINES+=-DHAVE_PROTECTION -DFFI_MMAP_EXEC_WRIT -DUSE_DEFAULT_LIBNAME_ENCODING
 ifeq ($(ARCH), sparcv9)
   # alter CC instead of PCFLAGS, since we need to pass it down to libffi
