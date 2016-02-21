@@ -17,9 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 
-// TODO: Auto-generated Javadoc
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
  *
@@ -465,17 +465,30 @@ public interface Guid {
     }
 
     /**
-     * The Class REFIID.
-     *
-     * @author Tobias Wolf, wolf.tobias@gmx.net
+     * REFIID is a pointer to an IID.
+     * 
+     * This type needs to be seperate from IID, as the REFIID can be passed in
+     * from external code, that does not allow writes to memory.
+     * 
+     * With the normal JNA behaviour a structure, that crosses the native<->Java
+     * border will be autowritten, which causes a fault when written.
+     * Observed was this behaviour in COM-Callbacks, which get the REFIID passed
+     * into Invoke-method.
+     * 
+     * So a IID can't be used directly, although the typedef of REFIID (from MSDN):
+     * 
+     * typedef IID* REFIID;
+     * 
+     * and the jna behaviour is described as:
+     * 
+     * "When a function requires a pointer to a struct, a Java Structure should be used."
      */
-    public class REFIID extends IID {
+    public class REFIID extends PointerType {
 
         /**
          * Instantiates a new refiid.
          */
         public REFIID() {
-            super();
         }
 
         /**
@@ -488,21 +501,20 @@ public interface Guid {
             super(memory);
         }
 
-        /**
-         * Instantiates a new refiid.
-         *
-         * @param data
-         *            the data
-         */
-        public REFIID(byte[] data) {
-            super(data);
+        public REFIID(IID guid) {
+            super(guid.getPointer());
+        }
+        
+        public void setValue(IID value) {
+            setPointer(value.getPointer());
         }
 
-        public REFIID(GUID guid) {
-            super(guid);
+        public IID getValue() {
+            return new IID(getPointer());
         }
+        
     }
-
+    
     /**
      * The Class IID.
      *
