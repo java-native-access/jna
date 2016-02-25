@@ -34,7 +34,6 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-// TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
  *
@@ -73,14 +72,10 @@ public class COMBindingBaseObject extends COMInvoker {
 
     public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
-        // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-
-        if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
-            throw new COMException("CoInitialize() failed!");
-        }
-
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+        
+        HRESULT hr;
+        
         if (useActiveInstance) {
             hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
@@ -107,20 +102,15 @@ public class COMBindingBaseObject extends COMInvoker {
 
     public COMBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
-        // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-
-        if (COMUtils.FAILED(hr)) {
-            this.release();
-            throw new COMException("CoInitialize() failed!");
-        }
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+        
+        HRESULT hr;
 
         // Get CLSID for Word.Application...
         CLSID.ByReference clsid = new CLSID.ByReference();
         hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
 
         if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
             throw new COMException("CLSIDFromProgID() failed!");
         }
 
@@ -194,10 +184,9 @@ public class COMBindingBaseObject extends COMInvoker {
      * Release.
      */
     public void release() {
-        if (this.iDispatch != null)
+        if (this.iDispatch != null) {
             this.iDispatch.Release();
-
-        Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,

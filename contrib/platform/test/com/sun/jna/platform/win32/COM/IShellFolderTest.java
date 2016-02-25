@@ -12,7 +12,10 @@ import com.sun.jna.platform.win32.*;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IShellFolderTest extends TestCase {
-
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+        
     private IShellFolder psfMyComputer;
 
     public static WinNT.HRESULT BindToCsidl(int csidl, Guid.REFIID riid, PointerByReference ppv) {
@@ -36,7 +39,6 @@ public class IShellFolderTest extends TestCase {
     }
 
     public void setUp() throws Exception {
-        Ole32.INSTANCE.CoInitialize(null);
         int CSIDL_DRIVES = 0x0011;
         WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
         assertTrue(COMUtils.SUCCEEDED(hr));

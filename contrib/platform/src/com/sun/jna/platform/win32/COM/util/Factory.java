@@ -29,6 +29,7 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -44,17 +45,9 @@ public class Factory {
 	 * 
 	 */
 	public Factory() {
-		this(new ComThread("Default Factory COM Thread", 5000, new Thread.UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				//ignore
-			}
-		}));
+            assert COMUtils.comIsInitialized() : "COM not initialized";
 	}
 
-	public Factory(ComThread comThread) {
-		this.comThread = comThread;
-	}
 	
 	@Override
 	protected void finalize() throws Throwable {
@@ -64,11 +57,6 @@ public class Factory {
 			super.finalize();
 		}
 	}
-	
-	ComThread comThread;
-	public ComThread getComThread() {
-		return this.comThread;
-	}
 
 	/**
 	 * CoInitialize must be called be fore this method. Either explicitly or
@@ -77,36 +65,26 @@ public class Factory {
 	 * @return running object table
 	 */
 	public IRunningObjectTable getRunningObjectTable() {
-		try {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                final PointerByReference rotPtr = new PointerByReference();
 
-			final PointerByReference rotPtr = new PointerByReference();
+                HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
 
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
-				}
-			});
-			COMUtils.checkRC(hr);
-			com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
-					rotPtr.getValue());
-			IRunningObjectTable rot = new RunningObjectTable(raw, this);
-			return rot;
-
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
-	}
+                COMUtils.checkRC(hr);
+                com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
+                        rotPtr.getValue());
+                IRunningObjectTable rot = new RunningObjectTable(raw, this);
+                return rot;
+        }
 
 	/**
 	 * Creates a ProxyObject for the given interface and IDispatch pointer.
 	 * 
 	 */
 	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
 		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
@@ -121,6 +99,8 @@ public class Factory {
 	 * @return proxy object
 	 */
 	<T> T createProxy(Class<T> comInterface, long unknownId, IDispatch dispatch) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
 		ProxyObject jop = new ProxyObject(comInterface, unknownId, dispatch, this);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
@@ -132,38 +112,26 @@ public class Factory {
 	 * returns a ProxyObject for the given interface.
 	 */
 	public <T> T createObject(Class<T> comInterface) {
-		try {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+                if (null == comObectAnnotation) {
+                        throw new COMException(
+                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+                }
+                final GUID guid = this.discoverClsId(comObectAnnotation);
 
-			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-			if (null == comObectAnnotation) {
-				throw new COMException(
-						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-			}
-			final GUID guid = this.discoverClsId(comObectAnnotation);
+                final PointerByReference ptrDisp = new PointerByReference();
+                WinNT.HRESULT hr = Ole32.INSTANCE.CoCreateInstance(guid, null,
+                        WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp);
 
-			final PointerByReference ptrDisp = new PointerByReference();
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return Ole32.INSTANCE.CoCreateInstance(guid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH,
-							ptrDisp);
-				}
-			});
-			COMUtils.checkRC(hr);
-			Dispatch d = new Dispatch(ptrDisp.getValue());
-			T t = this.createProxy(comInterface,d);
-			//CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
-			//Note: the createProxy adds one
-			int n = d.Release();
-			return t;
-
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                COMUtils.checkRC(hr);
+                Dispatch d = new Dispatch(ptrDisp.getValue());
+                T t = this.createProxy(comInterface,d);
+                //CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
+                //Note: the createProxy adds one
+                int n = d.Release();
+                return t;
 	}
 
 	/**
@@ -171,66 +139,45 @@ public class Factory {
 	 * returns a ProxyObject for the given interface.
 	 */
 	public <T> T fetchObject(Class<T> comInterface) {
-		try {
-			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-			if (null == comObectAnnotation) {
-				throw new COMException(
-						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-			}
-			final GUID guid = this.discoverClsId(comObectAnnotation);
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+                if (null == comObectAnnotation) {
+                        throw new COMException(
+                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+                }
+                final GUID guid = this.discoverClsId(comObectAnnotation);
 
-			final PointerByReference ptrDisp = new PointerByReference();
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
-				}
-			});
-			COMUtils.checkRC(hr);
-			Dispatch d = new Dispatch(ptrDisp.getValue());
-			T t = this.createProxy(comInterface, d);
-			//GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
-			//Note: the createProxy adds one
-			d.Release();
-			
-			return t;
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                final PointerByReference ptrDisp = new PointerByReference();
+                WinNT.HRESULT hr = OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
+
+                COMUtils.checkRC(hr);
+                Dispatch d = new Dispatch(ptrDisp.getValue());
+                T t = this.createProxy(comInterface, d);
+                //GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
+                //Note: the createProxy adds one
+                d.Release();
+
+                return t;
 	}
 
 	GUID discoverClsId(ComObject annotation) {
-		try {
-			String clsIdStr = annotation.clsId();
-			final String progIdStr = annotation.progId();
-			if (null != clsIdStr && !clsIdStr.isEmpty()) {
-				return new CLSID(clsIdStr);
-			} else if (null != progIdStr && !progIdStr.isEmpty()) {
-				final CLSID.ByReference rclsid = new CLSID.ByReference();
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                String clsIdStr = annotation.clsId();
+                final String progIdStr = annotation.progId();
+                if (null != clsIdStr && !clsIdStr.isEmpty()) {
+                        return new CLSID(clsIdStr);
+                } else if (null != progIdStr && !progIdStr.isEmpty()) {
+                        final CLSID.ByReference rclsid = new CLSID.ByReference();
 
-				WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-					@Override
-					public WinNT.HRESULT call() throws Exception {
-						return Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
-					}
-				});
+                        WinNT.HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
 
-				COMUtils.checkRC(hr);
-				return rclsid;
-			} else {
-				throw new COMException("ComObject must define a value for either clsId or progId");
-			}
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                        COMUtils.checkRC(hr);
+                        return rclsid;
+                } else {
+                        throw new COMException("ComObject must define a value for either clsId or progId");
+                }
 	}
 
 	// Proxy object release their COM interface reference latest in the

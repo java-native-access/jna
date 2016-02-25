@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.Pointer;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,24 +24,29 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.OaIdl;
+import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import org.hamcrest.CoreMatchers;
-import org.junit.Ignore;
 
 public class ComEventCallbacks_Test {
 
+        static {
+                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        }
+    
 	Factory factory;
 	
 	@Before
 	public void before() {
+                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		this.factory = new Factory();
 	}
 
 	@After
 	public void after() {
 		this.factory.disposeAll();
-		this.factory.getComThread().terminate(1000);
+                Ole32.INSTANCE.CoUninitialize();
 	}
 	
 	
