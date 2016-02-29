@@ -39,6 +39,10 @@ import com.sun.jna.ptr.PointerByReference;
  * @author dblock[at]dblock[dot]org
  */
 public class ITypeLibTest extends TestCase {
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+    
     // Microsoft Shell Controls And Automation
     private static final String SHELL_CLSID = "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}";
     // Version 1.0

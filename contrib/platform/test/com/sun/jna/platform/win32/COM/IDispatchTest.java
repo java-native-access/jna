@@ -30,7 +30,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IDispatchTest extends TestCase {
-
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+        
     /** The Constant LOCALE_SYSTEM_DEFAULT. */
     public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
             .GetSystemDefaultLCID();

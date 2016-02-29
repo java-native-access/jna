@@ -1,5 +1,7 @@
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Ole32;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -7,14 +9,22 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
-import junit.framework.TestCase;
+import static junit.framework.TestCase.assertTrue;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ShellApplicationWindowsTest extends TestCase
-{
+public class ShellApplicationWindowsTest {
 
-    @Override
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+
+    @Before
     public void setUp() throws Exception
     {
+        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        
         // Launch IE in a manner that should ensure it opens even if the system default browser is Chrome, Firefox, or something else.
     	Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
 
@@ -23,6 +33,7 @@ public class ShellApplicationWindowsTest extends TestCase
         Thread.sleep(3000);
     }
 
+    @Test
     public void testWindowsCount()
     {
         ShellApplication sa = new ShellApplication();
@@ -45,10 +56,12 @@ public class ShellApplicationWindowsTest extends TestCase
 
         // Finally, did we find our page in the collection?
         assertTrue("No IE page was found", pageFound);
+        
+        Ole32.INSTANCE.CoUninitialize();
     }
 
-    @Override
-    protected void tearDown() throws Exception
+    @After
+    public void tearDown() throws Exception
     {
         Runtime.getRuntime().exec("taskkill.exe /f /im iexplore.exe");
     }
@@ -182,9 +195,5 @@ public class ShellApplicationWindowsTest extends TestCase
         {
             return getStringProperty("LocationURL");
         }
-    }
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(ShellApplicationWindowsTest.class);
     }
 }

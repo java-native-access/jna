@@ -28,7 +28,10 @@ import com.sun.jna.ptr.PointerByReference;
  * @author dblock[at]dblock[dot]org
  */
 public class TypeLibUtilTest extends TestCase {
-
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(TypeLibUtilTest.class);
     }

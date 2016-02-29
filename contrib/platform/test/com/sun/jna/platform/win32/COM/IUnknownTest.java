@@ -23,7 +23,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IUnknownTest extends TestCase {
-    
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+
     private Unknown createIUnknown() {
         try {
             PointerByReference pUnknown = new PointerByReference();

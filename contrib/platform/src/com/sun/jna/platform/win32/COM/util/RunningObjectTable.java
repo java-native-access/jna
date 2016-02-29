@@ -28,44 +28,30 @@ public class RunningObjectTable implements IRunningObjectTable {
 	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, Factory factory) {
 		this.raw = raw;
 		this.factory = factory;
-		this.comThread = factory.getComThread();
 	}
 
 	Factory factory;
-	ComThread comThread;
 	com.sun.jna.platform.win32.COM.RunningObjectTable raw;
 
 	@Override
 	public Iterable<IDispatch> enumRunning() {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                final PointerByReference ppenumMoniker = new PointerByReference();
 
-		try {
+                WinNT.HRESULT hr = this.raw.EnumRunning(ppenumMoniker);
 
-			final PointerByReference ppenumMoniker = new PointerByReference();
+                COMUtils.checkRC(hr);
+                com.sun.jna.platform.win32.COM.EnumMoniker raw = new com.sun.jna.platform.win32.COM.EnumMoniker(
+                                ppenumMoniker.getValue());
 
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return RunningObjectTable.this.raw.EnumRunning(ppenumMoniker);
-				}
-			});
-			COMUtils.checkRC(hr);
-			com.sun.jna.platform.win32.COM.EnumMoniker raw = new com.sun.jna.platform.win32.COM.EnumMoniker(
-					ppenumMoniker.getValue());
-
-			return new EnumMoniker(raw, this.raw, this.factory);
-
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
-
+                return new EnumMoniker(raw, this.raw, this.factory);
 	}
 
 	@Override
 	public <T> List<T> getActiveObjectsByInterface(Class<T> comInterface) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
 		List<T> result = new ArrayList<T>();
 
 		for (IDispatch obj : this.enumRunning()) {

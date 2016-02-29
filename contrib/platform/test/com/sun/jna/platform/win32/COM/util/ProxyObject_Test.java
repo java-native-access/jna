@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
 import org.junit.After;
@@ -22,9 +23,14 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
+import com.sun.jna.platform.win32.Ole32;
 
 public class ProxyObject_Test {
 
+        static {
+                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        }
+    
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application extends IUnknown {
 		@ComProperty
@@ -42,9 +48,10 @@ public class ProxyObject_Test {
 	}
 	
 	Factory factory;
-	
+        
 	@Before
 	public void before() {
+                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		this.factory = new Factory();
 		//ensure there are no word applications running.
 		while(true) {
@@ -70,12 +77,8 @@ public class ProxyObject_Test {
 	
 	@After
 	public void after() {
-		try {
-			//wait for it to quit
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+                factory.disposeAll();
+		Ole32.INSTANCE.CoUninitialize();
 	}
 	
 	

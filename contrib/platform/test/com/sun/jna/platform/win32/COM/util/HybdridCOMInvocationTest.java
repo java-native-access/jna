@@ -1,5 +1,6 @@
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMLateBindingObject;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -28,10 +29,11 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.TestCase;
+import static org.hamcrest.CoreMatchers.is;
+import org.junit.After;
 import org.junit.Test;
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  * In the word COM bindings it was determined, that some methods can't be called
@@ -44,7 +46,11 @@ import static junit.framework.TestCase.assertTrue;
  *
  * A sample function is InchesToPoints from thw word typelibrary
  */
-public class HybdridCOMInvocationTest extends TestCase {
+public class HybdridCOMInvocationTest {
+
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
 
     private static final Logger LOG = Logger.getLogger(HybdridCOMInvocationTest.class.getName());
     
@@ -53,16 +59,15 @@ public class HybdridCOMInvocationTest extends TestCase {
     private static final GUID CLSID_WORD = new GUID(CLSID_WORD_STRING);
     private static final IID IID_APPLICATION = new IID(new GUID(IID_APPLICATION_STRING));
     
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    @After
+    public void tearDown() throws Exception {
         Ole32.INSTANCE.CoUninitialize();
     }
     
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
+        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
     }
     
     @Test
@@ -77,7 +82,8 @@ public class HybdridCOMInvocationTest extends TestCase {
         }
         // If this fails: remember: floats are not exact, if this happens replace
         // with a range check
-        assertEquals(72.0f, app.InchesToPoints(1F));
+        assertThat(app.InchesToPoints(1F), is(72.0f));
+        fact.disposeAll();
     }
     
     @Test
@@ -89,7 +95,7 @@ public class HybdridCOMInvocationTest extends TestCase {
             LOG.log(Level.INFO, "HybdridCOMInvocationTest test was not run, MS Word object could not be instantiated.", ex);
             return;
         }
-        assertEquals(72.0f, app.InchesToPoints(1F));
+        assertThat(app.InchesToPoints(1F), is(72.0f));
     }
     
     

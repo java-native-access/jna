@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -25,9 +26,14 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
+import com.sun.jna.platform.win32.Ole32;
 
 public class RunningObjectTable_Test {
 
+        static {
+                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        }
+    
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application extends IUnknown {
 		@ComProperty
@@ -46,9 +52,10 @@ public class RunningObjectTable_Test {
 	
 	Factory factory;
 	MsWordApp msWord;
-	
+
 	@Before
 	public void before() {
+                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		this.factory = new Factory();
 		//ensure there is only one word application running.
 		while(true) {
@@ -85,6 +92,8 @@ public class RunningObjectTable_Test {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+                factory.disposeAll();
+                Ole32.INSTANCE.CoUninitialize();
 	}
 	
 	@Test

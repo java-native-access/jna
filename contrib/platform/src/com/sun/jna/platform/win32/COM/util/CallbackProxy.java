@@ -37,6 +37,7 @@ import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.DispatchListener;
 import com.sun.jna.platform.win32.COM.IDispatch;
@@ -103,7 +104,7 @@ public class CallbackProxy implements IDispatchCallback {
 
 	void invokeOnThread(final DISPID dispIdMember, final REFIID riid, LCID lcid, WORD wFlags,
             final DISPPARAMS.ByReference pDispParams) {
-            
+
             final Method eventMethod;
             if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
                 eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
@@ -204,13 +205,9 @@ public class CallbackProxy implements IDispatchCallback {
 			DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
 
-                assert (! ComThread.getCurrentThreadIsCOM()) : "Assumption about COM threading broken.";
-                ComThread.setCurrentThreadIsCOM(true);
-                try {
-                    this.invokeOnThread(dispIdMember, riid, lcid, wFlags, pDispParams);
-                } finally {
-                    ComThread.setCurrentThreadIsCOM(false);
-                }
+                assert COMUtils.comIsInitialized() : "Assumption about COM threading broken.";
+                
+                this.invokeOnThread(dispIdMember, riid, lcid, wFlags, pDispParams);
 
 		return WinError.S_OK;
 	}
