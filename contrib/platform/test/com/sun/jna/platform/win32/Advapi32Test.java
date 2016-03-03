@@ -145,7 +145,8 @@ public class Advapi32Test extends TestCase {
         	assertTrue("Non positive sid length", sidLength > 0);
         	assertTrue("Invalid sid", Advapi32.INSTANCE.IsValidSid(value));
     	} finally {
-    	    assertNull("Failed to release SID", Kernel32.INSTANCE.LocalFree(value.getPointer()));
+    	    assertEquals("Failed to release SID",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
     	}
     }
 
@@ -158,7 +159,8 @@ public class Advapi32Test extends TestCase {
     	try {
     	    assertEquals("Wrong SID length", 12, Advapi32.INSTANCE.GetLengthSid(value));
     	} finally {
-    	    assertNull("Failed to free SID", Kernel32.INSTANCE.LocalFree(value.getPointer()));
+    	    assertEquals("Failed to free SID",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
     	}
     }
 
@@ -192,7 +194,8 @@ public class Advapi32Test extends TestCase {
     		assertEquals("Everyone", nameString);
     		assertTrue(referencedDomainNameString.length() == 0);
     	} finally {
-    	    assertNull("Failed to release sid", Kernel32.INSTANCE.LocalFree(value.getPointer()));
+    	    assertEquals("Failed to release sid",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
     	}
     }
 
@@ -211,10 +214,12 @@ public class Advapi32Test extends TestCase {
             	String convertedSidString = conv.getWideString(0);
             	assertEquals("Mismatched SID string", convertedSidString, sidString);
         	} finally {
-        	    assertNull("Failed to release string value", Kernel32.INSTANCE.LocalFree(conv));
+        	    assertEquals("Failed to release string value",
+        	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(conv));
         	}
     	} finally {
-    	    assertNull("Failed to release sid", Kernel32.INSTANCE.LocalFree(value.getPointer()));
+    	    assertEquals("Failed to release sid",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
     	}
     }
 
@@ -626,7 +631,8 @@ public class Advapi32Test extends TestCase {
     	    assertTrue("Not a world sid", Advapi32.INSTANCE.IsWellKnownSid(value, WELL_KNOWN_SID_TYPE.WinWorldSid));
     	    assertFalse("Unexpected admin sid", Advapi32.INSTANCE.IsWellKnownSid(value, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
     	} finally {
-    	    assertNull("Failed to release sid", Kernel32.INSTANCE.LocalFree(value.getPointer()));
+    	    assertEquals("Failed to release sid",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
     	}
     }
 
@@ -646,7 +652,8 @@ public class Advapi32Test extends TestCase {
     	    String convertedSidString = conv.getWideString(0);
     	    assertEquals("Mismatched SID string", EVERYONE, convertedSidString);
     	} finally {
-    	    assertNull("Failed to release string", Kernel32.INSTANCE.LocalFree(conv));
+    	    assertEquals("Failed to release string",
+    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(conv));
     	}
     }
 
@@ -978,8 +985,6 @@ public class Advapi32Test extends TestCase {
 
 
     public void testGetNamedSecurityInfoForFileNoSACL() throws Exception {
-    	// create a temp file
-        File file = createTempFile();
         int infoType = OWNER_SECURITY_INFORMATION
                        | GROUP_SECURITY_INFORMATION
                        | DACL_SECURITY_INFORMATION;
@@ -989,18 +994,26 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppDacl = new PointerByReference();
         PointerByReference ppSecurityDescriptor = new PointerByReference();
 
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      ppsidOwner,
-                      ppsidGroup,
-                      ppDacl,
-                      null,
-                      ppSecurityDescriptor), 0);
-
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
+        File file = createTempFile();
+        try {
+            try {
+                assertEquals("GetNamedSecurityInfo(" + file + ")", 0,
+                        Advapi32.INSTANCE.GetNamedSecurityInfo(
+                              file.getAbsolutePath(),
+                              AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                              infoType,
+                              ppsidOwner,
+                              ppsidGroup,
+                              ppDacl,
+                              null,
+                              ppSecurityDescriptor));
+            } finally {
+                file.delete();
+            }
+        } finally {
+            assertEquals("Failed to free security descriptor of " + file,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+        }
     }
 
     public void testGetNamedSecurityInfoForFileWithSACL() throws Exception {
@@ -1052,24 +1065,27 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppDacl = new PointerByReference();
         PointerByReference ppSacl = new PointerByReference();
         PointerByReference ppSecurityDescriptor = new PointerByReference();
-        // create a temp file
+
         File file = createTempFile();
         String filePath = file.getAbsolutePath();
         try {
-            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
-                         Advapi32.INSTANCE.GetNamedSecurityInfo(
-                                 filePath,
-                                 AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                                 infoType,
-                                 ppsidOwner,
-                                 ppsidGroup,
-                                 ppDacl,
-                                 ppSacl,
-                                 ppSecurityDescriptor));
-            // Clean up resources
-            Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+            try {
+                assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                             Advapi32.INSTANCE.GetNamedSecurityInfo(
+                                     filePath,
+                                     AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                     infoType,
+                                     ppsidOwner,
+                                     ppsidGroup,
+                                     ppDacl,
+                                     ppSacl,
+                                     ppSecurityDescriptor));
+            } finally {
+                file.delete();
+            }
         } finally {
-            file.delete();
+            assertEquals("Failed to free security descriptor of " + filePath,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
         }
         if (impersontating) {
         	Advapi32.INSTANCE.SetThreadToken(null, null);
@@ -1097,18 +1113,17 @@ public class Advapi32Test extends TestCase {
         File file = createTempFile();
         String filePath = file.getAbsolutePath();
         try {
-            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
-                         Advapi32.INSTANCE.GetNamedSecurityInfo(
-                                 filePath,
-                                 AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                                 infoType,
-                                 ppsidOwner,
-                                 ppsidGroup,
-                                 ppDacl,
-                                 null,
-                                 ppSecurityDescriptor));
-
             try {
+                assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                             Advapi32.INSTANCE.GetNamedSecurityInfo(
+                                     filePath,
+                                     AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                     infoType,
+                                     ppsidOwner,
+                                     ppsidGroup,
+                                     ppDacl,
+                                     null,
+                                     ppSecurityDescriptor));
                 assertEquals("SetNamedSecurityInfo(" + filePath + ")", 0,
                              Advapi32.INSTANCE.SetNamedSecurityInfo(
                                      filePath,
@@ -1119,10 +1134,11 @@ public class Advapi32Test extends TestCase {
                                      ppDacl.getValue(),
                                      null));
             } finally {
-                Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+                file.delete();
             }
         } finally {
-            file.delete();
+            assertEquals("Failed to release security descriptor of " + file,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
         }
     }
 
@@ -1183,18 +1199,18 @@ public class Advapi32Test extends TestCase {
         PointerByReference ppSecurityDescriptor = new PointerByReference();
         String filePath = file.getAbsolutePath();
         try {
-            assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
-                    Advapi32.INSTANCE.GetNamedSecurityInfo(
-                          filePath,
-                          AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                          infoType,
-                          ppsidOwner,
-                          ppsidGroup,
-                          ppDacl,
-                          ppSacl,
-                          ppSecurityDescriptor));
-
             try {
+                assertEquals("GetNamedSecurityInfo(" + filePath + ")", 0,
+                        Advapi32.INSTANCE.GetNamedSecurityInfo(
+                              filePath,
+                              AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                              infoType,
+                              ppsidOwner,
+                              ppsidGroup,
+                              ppDacl,
+                              ppSacl,
+                              ppSecurityDescriptor));
+
                 // Send the DACL as a SACL
                 assertEquals("SetNamedSecurityInfo(" + filePath + ")", 0,
                         Advapi32.INSTANCE.SetNamedSecurityInfo(
@@ -1206,11 +1222,11 @@ public class Advapi32Test extends TestCase {
                               ppDacl.getValue(),
                               ppDacl.getValue()));
             } finally {
-                // Clean up resources
-                Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
+                file.delete();
             }
         } finally {
-            file.delete();
+            assertEquals("Failed to release security descriptor of " + file,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
         }
 
         if (impersontating) {
@@ -1227,51 +1243,67 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testGetSecurityDescriptorLength() throws Exception {
-        // create a temp file
-        File file = createTempFile();
         int infoType = OWNER_SECURITY_INFORMATION
                        | GROUP_SECURITY_INFORMATION
                        | DACL_SECURITY_INFORMATION;
 
         PointerByReference ppSecurityDescriptor = new PointerByReference();
 
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      null,
-                      null,
-                      null,
-                      null,
-                      ppSecurityDescriptor), 0);
+        File file = createTempFile();
+        try {
+            try {
+                assertEquals("GetNamedSecurityInfo(" + file + ")", 0,
+                        Advapi32.INSTANCE.GetNamedSecurityInfo(
+                              file.getAbsolutePath(),
+                              AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                              infoType,
+                              null,
+                              null,
+                              null,
+                              null,
+                              ppSecurityDescriptor));
 
-        assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorLength(ppSecurityDescriptor.getValue()) > 0);
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
+                assertTrue("GetSecurityDescriptorLength(" + file + ")",
+                        Advapi32.INSTANCE.GetSecurityDescriptorLength(ppSecurityDescriptor.getValue()) > 0);
+            } finally {
+                file.delete();
+            }
+        } finally {
+            assertEquals("Failed to release security descriptor of " + file,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+        }
     }
 
     public void testIsValidSecurityDescriptor() throws Exception {
-        // create a temp file
-        File file = createTempFile();
         int infoType = OWNER_SECURITY_INFORMATION
                        | GROUP_SECURITY_INFORMATION
                        | DACL_SECURITY_INFORMATION;
 
         PointerByReference ppSecurityDescriptor = new PointerByReference();
 
-        assertEquals(Advapi32.INSTANCE.GetNamedSecurityInfo(
-                      file.getAbsolutePath(),
-                      AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                      infoType,
-                      null,
-                      null,
-                      null,
-                      null,
-                      ppSecurityDescriptor), 0);
+        File file = createTempFile();
+        try {
+            try {
+                assertEquals("GetNamedSecurityInfo(" + file + ")",
+                        Advapi32.INSTANCE.GetNamedSecurityInfo(
+                              file.getAbsolutePath(),
+                              AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                              infoType,
+                              null,
+                              null,
+                              null,
+                              null,
+                              ppSecurityDescriptor), 0);
 
-        assertTrue(Advapi32.INSTANCE.IsValidSecurityDescriptor(ppSecurityDescriptor.getValue()));
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        file.delete();
+                assertTrue("IsValidSecurityDescriptor(" + file + ")",
+                        Advapi32.INSTANCE.IsValidSecurityDescriptor(ppSecurityDescriptor.getValue()));
+            } finally {
+                file.delete();
+            }
+        } finally {
+            assertEquals("Failed to release security descriptor of " + file,
+                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+        }
     }
 
     public void testMapGenericReadMask() {
@@ -1462,7 +1494,7 @@ public class Advapi32Test extends TestCase {
         // create an encrypted file
         File file = createTempFile();
         String lpFileName = file.getAbsolutePath();
-        assertTrue(Advapi32.INSTANCE.EncryptFile(lpFileName));
+        assertTrue("EncryptFile(" + lpFileName + ")", Advapi32.INSTANCE.EncryptFile(lpFileName));
 
         // open file for export
         ULONG ulFlags = new ULONG(0);

@@ -37,20 +37,21 @@ Features
 * [#583](https://github.com/java-native-access/jna/pull/583): Added printer attributes and status - [@IvanRF](https://github.com/IvanRF).
 * [#589](https://github.com/java-native-access/jna/pull/589): Use MethodResultContext in direct mapping (as done in interface mapping) - [@marco2357](https://github.com/marco2357).
 * [#595](https://github.com/java-native-access/jna/pull/595): Allow calling COM methods/getters requiring hybrid calling (METHOD+PROPERTYGET) - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#582](https://github.com/java-native-access/jna/pull/582): Mavenize the build process - Phase 1: building the native code via Maven [@lgoldstein](https://github.com/lgoldstein)
+* [#582](https://github.com/java-native-access/jna/pull/582): Mavenize the build process - Phase 1: building the native code via Maven [@lgoldstein](https://github.com/lgoldstein).
+* [#606](https://github.com/java-native-access/jna/pull/606): Added Kerne32Util method to facilitate checking that calls to LocalFree/GlobalFree are successful [@lgoldstein](https://github.com/lgoldstein).
 
 Bug Fixes
 ---------
 * [#549](https://github.com/java-native-access/jna/pull/549): Fixed bug in types derived from XID - [@twall](https://github.com/twall).
 * [#536](https://github.com/java-native-access/jna/pull/536): Fixed bug in determining the Library and options associated with types defined outside of a Library - [@twall](https://github.com/twall).
 * [#531](https://github.com/java-native-access/jna/pull/531): Ensure direct-mapped callbacks use the right calling convention - [@twall](https://github.com/twall).
-* [#566](https://github.com/java-native-access/jna/pull/566): Fix return type of Native#loadLibrary to match unconstrained generic [@lgoldstein](https://github.com/lgoldstein)
+* [#566](https://github.com/java-native-access/jna/pull/566): Fix return type of Native#loadLibrary to match unconstrained generic [@lgoldstein](https://github.com/lgoldstein).
 * [#584](https://github.com/java-native-access/jna/pull/584): Promote float varargs to double - [@marco2357](https://github.com/marco2357).
 * [#588](https://github.com/java-native-access/jna/pull/588): Fix varargs calls on arm - [@twall](https://github.com/twall).
 * [#593](https://github.com/java-native-access/jna/pull/593): Improve binding of TypeLib bindings - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#578](https://github.com/java-native-access/jna/pull/578): Fix COM CallbackHandlers, allow usage of VARIANTs directly in c.s.j.p.w.COM.util.ProxyObject and fix native memory leak in c.s.j.p.w.COM.util.ProxyObject - [@matthiasblaesing](https://github.com/matthiasblaesing)
 * [#601](https://github.com/java-native-access/jna/pull/601): Remove COMThread and COM initialization from objects and require callers to initialize COM themselves. Asserts are added to guard correct usage. - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#602] https://github.com/java-native-access/jna/pull/602): Make sure SID related memory is properly released once no longer required [@lgoldstein](https://github.com/lgoldstein)
+* [#602] https://github.com/java-native-access/jna/pull/602): Make sure SID related memory is properly released once no longer required [@lgoldstein](https://github.com/lgoldstein).
 
 Release 4.2.1
 =============

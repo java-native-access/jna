@@ -301,7 +301,7 @@ public abstract class Advapi32Util {
 		try {
 			return ptr.getWideString(0);
 		} finally {
-			Kernel32.INSTANCE.LocalFree(ptr);
+		    Kernel32Util.validateFreeLocalMemory(ptr);
 		}
 	}
 
@@ -323,7 +323,7 @@ public abstract class Advapi32Util {
 		try {
 			return value.getBytes();
 		} finally {
-			Kernel32.INSTANCE.LocalFree(value.getPointer());
+		    Kernel32Util.validateFreeLocalMemory(value.getPointer());
 		}
 	}
 
@@ -347,7 +347,7 @@ public abstract class Advapi32Util {
 		try {
 			return Advapi32.INSTANCE.IsWellKnownSid(value, wellKnownSidType);
 		} finally {
-			Kernel32.INSTANCE.LocalFree(value.getPointer());
+		    Kernel32Util.validateFreeLocalMemory(value.getPointer());
 		}
 	}
 
@@ -2207,10 +2207,15 @@ public abstract class Advapi32Util {
         }
 
         int nLength = Advapi32.INSTANCE.GetSecurityDescriptorLength(ppSecurityDescriptor.getValue());
-        final Memory memory = new Memory(nLength);
-        memory.write(0, ppSecurityDescriptor.getValue().getByteArray(0, nLength), 0, nLength);
-        Kernel32.INSTANCE.LocalFree(ppSecurityDescriptor.getValue());
-        return memory;
+        Memory memory = new Memory(nLength);
+        Pointer secValue = ppSecurityDescriptor.getValue();
+        try {
+            byte[] data = secValue.getByteArray(0, nLength);
+            memory.write(0, data, 0, nLength);
+            return memory;
+        } finally {
+            Kernel32Util.validateFreeLocalMemory(secValue);
+        }
     }
 
     /**

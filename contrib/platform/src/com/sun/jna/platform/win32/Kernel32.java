@@ -16,8 +16,8 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.win32.W32APIOptions;
 import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Interface definitions for <code>kernel32.dll</code>. Includes additional
@@ -53,7 +53,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * see Remarks.
      */
     int LOAD_LIBRARY_AS_DATAFILE = 0x2;
-    
+
     /**
      * Reads data from the specified file or input/output (I/O) device. Reads
      * occur at the position specified by the file pointer if supported by the
@@ -94,14 +94,16 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Frees the specified local memory object and invalidates its handle.
      *
-     * @param hLocal
-     *            A handle to the local memory object.
+     * @param hMem
+     *            A handle to the local memory object. If the <tt>hMem</tt> parameter
+     *            is NULL, {@code LocalFree} ignores the parameter and returns NULL.
      * @return If the function succeeds, the return value is NULL. If the
      *         function fails, the return value is equal to a handle to the
      *         local memory object. To get extended error information, call
-     *         GetLastError.
+     *         {@code GetLastError}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366730(v=vs.85).aspx">LocalFree</A>
      */
-    Pointer LocalFree(Pointer hLocal);
+    Pointer LocalFree(Pointer hMem);
 
     /**
      * Frees the specified global memory object and invalidates its handle.
@@ -111,7 +113,8 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return If the function succeeds, the return value is NULL If the
      *         function fails, the return value is equal to a handle to the
      *         global memory object. To get extended error information, call
-     *         GetLastError.
+     *         {@code GetLastError}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa366579(v=vs.85).aspx">GlobalFree</A>
      */
     Pointer GlobalFree(Pointer hGlobal);
 
@@ -183,12 +186,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Retrieves system timing information. On a multiprocessor system, the
      * values returned are the sum of the designated times across all
      * processors.
-     * 
+     *
      * @param lpIdleTime
      *            A pointer to a {@link WinBase.FILETIME} structure that
      *            receives the amount of time that the system has been idle.
      * @param lpKernelTime
-     *            A pointer to a {@link WinBase.FILETIME} structure that 
+     *            A pointer to a {@link WinBase.FILETIME} structure that
      *            receives the amount of time that the system has spent
      *            executing in Kernel mode (including all threads in all
      *            processes, on all processors). This time value also includes
@@ -204,7 +207,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724400(v=vs.85).aspx">GetSystemTimes documentation</a>
      */
     boolean GetSystemTimes(WinBase.FILETIME lpIdleTime, WinBase.FILETIME lpKernelTime, WinBase.FILETIME lpUserTime);
-    
+
     /**
      * The GetTickCount function retrieves the number of milliseconds that have
      * elapsed since the system was started, up to 49.7 days.
@@ -1262,23 +1265,23 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         GetLastError.
      */
     HANDLE OpenProcess(int fdwAccess, boolean fInherit, int IDProcess);
-    
+
     /**
      * This function retrieves the full path of the executable file of a given process.
-     * 
+     *
      * @param hProcess
      *          Handle for the running process
      * @param dwFlags
      *          0 - The name should use the Win32 path format.
-     *          1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format. 
+     *          1(WinNT.PROCESS_NAME_NATIVE) - The name should use the native system path format.
      * @param lpExeName
      *          pre-allocated character buffer for the returned path
      * @param lpdwSize
      *          input: the size of the allocated buffer
-     *          output: the length of the returned path in characters 
-     * 
-     * @return true if successful false if not. To get extended error information, 
-     *         call GetLastError. 
+     *          output: the length of the returned path in characters
+     *
+     * @return true if successful false if not. To get extended error information,
+     *         call GetLastError.
      */
     boolean QueryFullProcessImageName(HANDLE hProcess, int dwFlags, char[] lpExeName, IntByReference lpdwSize);
 
@@ -2507,7 +2510,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Reads data from an area of memory in a specified process. The entire area
      * to be read must be accessible or the operation fails.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680553(v=vs.85).aspx">MSDN</a>
      * @param hProcess
      *            A handle to the process with memory that is being read. The
@@ -2815,11 +2818,11 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa364433(v=vs.85).aspx">FindVolumeClose</a>
      */
     boolean FindVolumeClose(HANDLE hFindVolume);
-    
+
     /**
      * Retrieves the current control settings for a specified communications
      * device.
-     * 
+     *
      * @param hFile
      *            [in] A handle to the communications device.<br>
      *            The
@@ -2828,37 +2831,37 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @param lpDCB
      *            [in, out] A pointer to a {@link WinBase.DCB} structure that
      *            receives the control settings information.
-     * 
+     *
      * @return If the function succeeds, the return value is nonzero. <br>
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError()}.
-     * 
+     *
      */
     boolean GetCommState(HANDLE hFile, WinBase.DCB lpDCB);
 
     /**
-     * 
+     *
      * Retrieves the time-out parameters for all read and write operations on a
      * specified communications device.<br>
      * <br>
      * For more information about time-out values for communications devices,
      * see the {@link Kernel32#SetCommTimeouts} function.
-     * 
+     *
      * @param hFile
      *            [in] A handle to the communications device. The
      *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
      *            function returns this handle.
-     * 
+     *
      * @param lpCommTimeouts
      *            [in] A pointer to a {@link WinBase.COMMTIMEOUTS} structure in
      *            which the time-out information is returned.
      * @return If the function succeeds, the return value is nonzero.
-     * 
+     *
      *         If the function fails, the return value is zero. To get extended
      *         error information, call {@link Kernel32#GetLastError()}.
-     * 
-     * 
-     * 
+     *
+     *
+     *
      */
     boolean GetCommTimeouts(HANDLE hFile, WinBase.COMMTIMEOUTS lpCommTimeouts);
 
@@ -2867,7 +2870,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * device-control block (a {@link WinBase.DCB} structure). The function
      * reinitializes all hardware and control settings, but it does not empty
      * output or input queues.
-     * 
+     *
      * @param hFile
      *            [in] A handle to the communications device. The
      *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
@@ -2885,7 +2888,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Sets the time-out parameters for all read and write operations on a
      * specified communications device.
-     * 
+     *
      * @param hFile
      *            [in] A handle to the communications device. The
      *            {@link com.sun.jna.platform.win32.Kernel32#CreateFile(String, int, int, com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES, int, int, com.sun.jna.platform.win32.WinNT.HANDLE)}
@@ -2906,7 +2909,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * process.<br>
      * <br>
      * <pre><code>BOOL ProcessIdToSessionId(_In_ DWORD dwProcessId, _Out_ DWORD *pSessionId);</code></pre><br>
-     * 
+     *
      * @param dwProcessId
      *            Specifies a process identifier.<br>
      *            Use the GetCurrentProcessId function to retrieve the process
@@ -2926,7 +2929,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Loads the specified module into the address space of the calling process.
      * The specified module may cause other modules to be loaded.
-     * 
+     *
      * <pre>
      * <code>
      * HMODULE WINAPI LoadLibraryEx(
@@ -2936,7 +2939,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * );
      * </code>
      * </pre>
-     * 
+     *
      * @param lpFileName
      *            A string that specifies the file name of the module to load.
      *            This name is not related to the name stored in a library
@@ -3065,7 +3068,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            <br>
      *            <br>
      *            LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR: 0x00000100<br>
-     * 
+     *
      *            If this value is used, the directory that contains the DLL is
      *            temporarily added to the beginning of the list of directories
      *            that are searched for the DLL's dependencies. Directories in
@@ -3127,7 +3130,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Determines the location of a resource with the specified type and name in
      * the specified module.<br>
      * To specify a language, use the FindResourceEx function.
-     * 
+     *
      * @param hModule
      *            A handle to the module whose portable executable file or an
      *            accompanying MUI file contains the resource. <br>
@@ -3158,7 +3161,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves a handle that can be used to obtain a pointer to the first byte
      * of the specified resource in memory.
-     * 
+     *
      * @param hModule
      *            A handle to the module whose executable file contains the
      *            resource. <br>
@@ -3177,7 +3180,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /**
      * Retrieves a pointer to the specified resource in memory.
-     * 
+     *
      * @param hResource
      *            A handle to the resource to be accessed. <br>
      *            The LoadResource function returns this handle.<br>
@@ -3204,13 +3207,13 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      */
     int SizeofResource(HMODULE hModule, HANDLE hResource);
 
-    
+
     /**
      * Frees the loaded dynamic-link library (DLL) module and, if necessary,
      * decrements its reference count. When the reference count reaches zero,
      * the module is unloaded from the address space of the calling process and
      * the handle is no longer valid.
-     * 
+     *
      * @param module
      *            A handle to the loaded library module. The LoadLibrary,
      *            LoadLibraryEx, GetModuleHandle, or GetModuleHandleEx function
@@ -3220,7 +3223,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         information, call the GetLastError function.
      */
     boolean FreeLibrary(HMODULE module);
-    
+
     /**
      * Enumerates resource types within a binary module.<br>
      * Starting with Windows Vista, this is typically a language-neutral
@@ -3231,7 +3234,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * only that file is searched for resource types.<br>
      * Alternately, applications can call EnumResourceTypesEx, which provides
      * more precise control over which resource files to enumerate.
-     * 
+     *
      * @param hModule
      *            A handle to a module to be searched.<br>
      *            This handle must be obtained through LoadLibrary or
@@ -3249,7 +3252,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         error information, call GetLastError.
      */
     boolean EnumResourceTypes(HMODULE hModule, WinBase.EnumResTypeProc proc, Pointer lParam);
-    
+
     /**
      * Enumerates resources of a specified type within a binary module. <br>
      * For Windows Vista and later, this is typically a language-neutral
@@ -3258,7 +3261,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * files) that contain localizable language resources.<br>
      * It is also possible for hModule to specify an .mui file, in which case
      * only that file is searched for resources.
-     * 
+     *
      * @param hModule
      *            A handle to a module to be searched. <br>
      *            Starting with Windows Vista, if this is an LN file, then
@@ -3287,10 +3290,10 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         information, call GetLastError.
      */
     boolean EnumResourceNames(HMODULE hModule, Pointer type, WinBase.EnumResNameProc proc, Pointer lParam);
-    
+
     /**
      * Retrieves information about the first module associated with a process.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684218(v=vs.85).aspx">MSDN</a>
      * @param hSnapshot
      *            A handle to the snapshot returned from a previous call to the
@@ -3308,8 +3311,8 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves information about the next module associated with a process or
      * thread.
-     * 
-     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684221(v=vs.85).aspx">MSDN</a> 
+     *
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684221(v=vs.85).aspx">MSDN</a>
      * @param hSnapshot
      *            A handle to the snapshot returned from a previous call to the
      *            CreateToolhelp32Snapshot function.
