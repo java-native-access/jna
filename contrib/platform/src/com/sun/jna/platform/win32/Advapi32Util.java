@@ -296,9 +296,13 @@ public abstract class Advapi32Util {
 		if (!Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		String result = stringSid.getValue().getWideString(0);
-		Kernel32.INSTANCE.LocalFree(stringSid.getValue());
-		return result;
+
+		Pointer ptr = stringSid.getValue();
+		try {
+			return ptr.getWideString(0);
+		} finally {
+			Kernel32.INSTANCE.LocalFree(ptr);
+		}
 	}
 
 	/**
@@ -314,7 +318,13 @@ public abstract class Advapi32Util {
 		if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		return pSID.getValue().getBytes();
+
+		PSID value = pSID.getValue();
+		try {
+			return value.getBytes();
+		} finally {
+			Kernel32.INSTANCE.LocalFree(value.getPointer());
+		}
 	}
 
 	/**
@@ -332,8 +342,13 @@ public abstract class Advapi32Util {
 		if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		return Advapi32.INSTANCE.IsWellKnownSid(pSID.getValue(),
-				wellKnownSidType);
+
+		PSID value = pSID.getValue();
+		try {
+			return Advapi32.INSTANCE.IsWellKnownSid(value, wellKnownSidType);
+		} finally {
+			Kernel32.INSTANCE.LocalFree(value.getPointer());
+		}
 	}
 
 	/**
@@ -372,8 +387,7 @@ public abstract class Advapi32Util {
 	 * @return Account.
 	 */
 	public static Account getAccountBySid(String systemName, String sidString) {
-		return getAccountBySid(systemName, new PSID(
-				convertStringSidToSid(sidString)));
+		return getAccountBySid(systemName, new PSID(convertStringSidToSid(sidString)));
 	}
 
 	/**

@@ -15,34 +15,32 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
-import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
 import com.sun.jna.platform.win32.WinBase.FE_EXPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.FE_IMPORT_FUNC;
 import com.sun.jna.platform.win32.WinBase.PROCESS_INFORMATION;
+import com.sun.jna.platform.win32.WinBase.SECURITY_ATTRIBUTES;
+import com.sun.jna.platform.win32.WinBase.STARTUPINFO;
+import com.sun.jna.platform.win32.WinDef.BOOLByReference;
+import com.sun.jna.platform.win32.WinDef.DWORD;
+import com.sun.jna.platform.win32.WinDef.DWORDByReference;
+import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
+import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
-import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
-
-import static com.sun.jna.platform.win32.WinDef.BOOLByReference;
-import static com.sun.jna.platform.win32.WinDef.DWORD;
-import static com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import static com.sun.jna.platform.win32.WinDef.ULONG;
-import static com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
-import static com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 
 /**
  * Advapi32.dll Interface.
@@ -185,7 +183,6 @@ public interface Advapi32 extends StdCallLibrary {
     /**
      * Convert a security identifier (SID) to a string format suitable for
      * display, storage, or transmission.
-     * http://msdn.microsoft.com/en-us/library/aa376399(VS.85).aspx
      *
      * @param Sid
      *            The SID structure to be converted.
@@ -193,20 +190,25 @@ public interface Advapi32 extends StdCallLibrary {
      *            Pointer to a variable that receives a pointer to a
      *            null-terminated SID string. To free the returned buffer, call
      *            the LocalFree function.
-     * @return True if the function was successful, False otherwise.
+     * @return {@code true} if the function was successful - call {@code GetLastError()}
+     * to check failure reason
+     * @see <A HREF="http://msdn.microsoft.com/en-us/library/aa376399(VS.85).aspx">ConvertSidToStringSid</A>
      */
     boolean ConvertSidToStringSid(PSID Sid, PointerByReference StringSid);
 
     /**
      * Convert a string-format security identifier (SID) into a valid,
      * functional SID.
-     * http://msdn.microsoft.com/en-us/library/aa376402(VS.85).aspx
+     *
      *
      * @param StringSid
      *            The string-format SID to convert.
      * @param Sid
-     *            Receives a pointer to the converted SID.
-     * @return True if the function was successful, False otherwise.
+     *            Receives a pointer to the converted SID. To free the returned buffer, call
+     *            the LocalFree function.
+     * @return {@code true} if the function was successful - call {@code GetLastError()}
+     * to check failure reason
+     * @see <A HREF="http://msdn.microsoft.com/en-us/library/aa376402(VS.85).aspx">ConvertStringSidToSid</A>
      */
     boolean ConvertStringSidToSid(String StringSid, PSIDByReference Sid);
 
@@ -1231,30 +1233,30 @@ public interface Advapi32 extends StdCallLibrary {
      */
     public boolean ChangeServiceConfig2(SC_HANDLE hService, int dwInfoLevel,
                                         ChangeServiceConfig2Info lpInfo);
-	
+
     /**
      * Retrieves the optional configuration parameters of the specified service.
-     * 
+     *
      * @param hService
-     *            A handle to the service. This handle is returned by the OpenService or 
-     *            CreateService function and must have the SERVICE_QUERY_CONFIG access right. For 
+     *            A handle to the service. This handle is returned by the OpenService or
+     *            CreateService function and must have the SERVICE_QUERY_CONFIG access right. For
      *            more information, see Service Security and Access Rights.
      * @param dwInfoLevel
      *            The configuration information to be queried.
      * @param lpBuffer
-     *            A pointer to the buffer that receives the service configuration information. The 
+     *            A pointer to the buffer that receives the service configuration information. The
      *            format of this data depends on the value of the dwInfoLevel parameter.
-     *            The maximum size of this array is 8K bytes. To determine the required size, 
-     *            specify NULL for this parameter and 0 for the cbBufSize parameter. The function 
-     *            fails and GetLastError returns ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded 
+     *            The maximum size of this array is 8K bytes. To determine the required size,
+     *            specify NULL for this parameter and 0 for the cbBufSize parameter. The function
+     *            fails and GetLastError returns ERROR_INSUFFICIENT_BUFFER. The pcbBytesNeeded
      *            parameter receives the needed size.
      * @param cbBufSize
      *            The size of the structure pointed to by the lpBuffer parameter, in bytes.
      * @param pcbBytesNeeded
-     *            A pointer to a variable that receives the number of bytes required to store the 
+     *            A pointer to a variable that receives the number of bytes required to store the
      *            configuration information, if the function fails with ERROR_INSUFFICIENT_BUFFER.
      * @return If the function succeeds, the return value is nonzero.
-     *         If the function fails, the return value is zero. To get extended error information, 
+     *         If the function fails, the return value is zero. To get extended error information,
      *         call GetLastError.
      */
     public boolean QueryServiceConfig2(SC_HANDLE hService, int dwInfoLevel,
