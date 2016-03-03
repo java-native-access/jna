@@ -1404,6 +1404,7 @@ public interface WinDef {
          */
         public BOOL(long value) {
             super(SIZE, value, false);
+            assert value == 0 || value == 1;
         }
 
         public boolean booleanValue() {
@@ -1597,7 +1598,7 @@ public interface WinDef {
          *
          * @param ch The {@code char} value
          */
-        public CHAR(char ch) {
+        public CHAR(byte ch) {
             this(ch & 0xFF);
         }
 

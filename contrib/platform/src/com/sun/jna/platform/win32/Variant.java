@@ -1,5 +1,6 @@
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.IntegerType;
 import java.util.Date;
 import java.util.List;
 
@@ -103,12 +104,14 @@ public interface Variant {
     public static VARIANT_BOOL VARIANT_TRUE = new VARIANT_BOOL(0xFFFF);
     public static VARIANT_BOOL VARIANT_FALSE = new VARIANT_BOOL(0x0000);
 
+    @Deprecated
     public final static long COM_DAYS_ADJUSTMENT = 25569L; // ((1969 - 1899) *
                                                            // 365) +1 + Leap
-                                                           // years = Days
+                                                           // years = Days 
+    @Deprecated
     public final static long MICRO_SECONDS_PER_DAY = 86400000L; // 24L * 60L *
                                                                 // 60L * 1000L;
-
+    
     public static class VARIANT extends Union {
 
         public static class ByReference extends VARIANT implements
@@ -168,12 +171,11 @@ public interface Variant {
 
         public VARIANT(VARIANT_BOOL value) {
             this();
-            this.setValue(VT_BOOL, new BOOL(value.intValue()));
+            this.setValue(VT_BOOL, value);
         }
 
         public VARIANT(BOOL value) {
-            this();
-            this.setValue(VT_BOOL, value);
+            this(value.booleanValue());
         }
 
         public VARIANT(LONG value) {
@@ -201,9 +203,10 @@ public interface Variant {
         }
 
         public VARIANT(char value) {
-            this(new CHAR(value));
+            this();
+            this.setValue(VT_UI2, new USHORT(value));
         }
-
+        
         public VARIANT(CHAR value) {
             this();
             this.setValue(Variant.VT_I1, value);
@@ -213,7 +216,7 @@ public interface Variant {
             this();
             this.setValue(VT_I2, new SHORT(value));
         }
-
+        
         public VARIANT(int value) {
             this();
             this.setValue(VT_I4, new LONG(value));
@@ -252,10 +255,7 @@ public interface Variant {
 
         public VARIANT(boolean value) {
             this();
-            if (value)
-                this.setValue(VT_BOOL, new BOOL(VARIANT_TRUE.intValue()));
-            else
-                this.setValue(VT_BOOL, new BOOL(VARIANT_FALSE.intValue()));
+            this.setValue(VT_BOOL, new VARIANT_BOOL(value));
         }
 
         public VARIANT(IDispatch value) {
@@ -428,6 +428,8 @@ public interface Variant {
         public Object getValue() {
             this.read();
             switch (this.getVarType().intValue()) {
+            case VT_UI1:
+                return this._variant.__variant.readField("bVal");
             case VT_I2:
                 return this._variant.__variant.readField("iVal");
             case VT_I4:
@@ -521,16 +523,20 @@ public interface Variant {
             }
         }
 
-        public int shortValue() {
-            return (Short) this.getValue();
+        public byte byteValue() {
+            return ((IntegerType) this.getValue()).byteValue();
+        }
+        
+        public short shortValue() {
+            return ((IntegerType) this.getValue()).shortValue();
         }
 
         public int intValue() {
-            return (Integer) this.getValue();
+            return ((IntegerType) this.getValue()).intValue();
         }
 
         public long longValue() {
-            return (Long) this.getValue();
+            return ((IntegerType) this.getValue()).longValue();
         }
 
         public float floatValue() {
@@ -547,36 +553,23 @@ public interface Variant {
         }
 
         public boolean booleanValue() {
-            return (Boolean) this.getValue();
+            // getValue returns a VARIANT_BOOL
+            return ((VARIANT_BOOL) this.getValue()).booleanValue();
         }
 
         public Date dateValue() {
             DATE varDate = (DATE) this.getValue();
-            return this.toJavaDate(varDate);
+            return varDate.getAsJavaDate();
         }
 
+        @Deprecated
         protected Date toJavaDate(DATE varDate) {
-
-            double doubleDate = varDate.date;
-            long longDate = (long) doubleDate;
-
-            double doubleTime = doubleDate - longDate;
-            long longTime = (long) doubleTime * MICRO_SECONDS_PER_DAY;
-
-            return new Date(
-                    ((longDate - COM_DAYS_ADJUSTMENT) * MICRO_SECONDS_PER_DAY)
-                            + longTime);
+            return varDate.getAsJavaDate();
         }
 
+        @Deprecated
         protected DATE fromJavaDate(Date javaDate) {
-            long longTime = javaDate.getTime() % MICRO_SECONDS_PER_DAY;
-            long longDate = ((javaDate.getTime() - longTime) / MICRO_SECONDS_PER_DAY)
-                    + COM_DAYS_ADJUSTMENT;
-
-            float floatTime = ((float) longTime)
-                    / ((float) MICRO_SECONDS_PER_DAY);
-            float floatDateTime = floatTime + longDate;
-            return new DATE(floatDateTime);
+            return new DATE(javaDate);
         }
 
         public static class _VARIANT extends Structure {
@@ -621,7 +614,7 @@ public interface Variant {
                 // DOUBLE VT_R8
                 public Double dblVal;
                 // VARIANT_BOOL VT_BOOL
-                public BOOL boolVal;
+                public VARIANT_BOOL boolVal;
                 // SCODE VT_ERROR
                 public SCODE scode;
                 // CY VT_CY

@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import java.lang.reflect.InvocationHandler;
@@ -100,6 +101,8 @@ class Convert {
                 }
                 if (vobj instanceof WinDef.BOOL) {
 			return ((WinDef.BOOL) vobj).booleanValue();
+                } else if (vobj instanceof VARIANT_BOOL) {
+			return ((VARIANT_BOOL) vobj).booleanValue();
 		} else if (vobj instanceof WinDef.LONG) {
 			return ((WinDef.LONG) vobj).longValue();
 		} else if (vobj instanceof WinDef.SHORT) {

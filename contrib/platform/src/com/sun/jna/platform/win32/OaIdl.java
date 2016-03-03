@@ -32,13 +32,19 @@ import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.COM.TypeComp;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.ptr.PointerByReference;
+import java.util.Date;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface OaIdl.
  */
 public interface OaIdl {
-
+    
+    // The DATE Type is defined in localtime and the java Date type always contains
+    // a a timezone offset, so the difference has to be calculated and can't be
+    // predetermined
+    public static final long DATE_OFFSET = new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0).getTime();
+    
     /**
      * The Class EXCEPINFO.
      */
@@ -116,6 +122,14 @@ public interface OaIdl {
         public VARIANT_BOOL(long value) {
             super(2, value);
         }
+        
+        public VARIANT_BOOL(boolean value) {
+            this(value ? 0xFFFF : 0x0000);
+        }
+        
+        public boolean booleanValue() {
+            return shortValue() != 0x0000;
+        }
     }
 
     public static class _VARIANT_BOOL extends VARIANT_BOOL {
@@ -169,6 +183,8 @@ public interface OaIdl {
     }
 
     public static class DATE extends Structure {
+        private final static long MICRO_SECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
+        
         public static class ByReference extends DATE implements
                 Structure.ByReference {
         }
@@ -183,7 +199,32 @@ public interface OaIdl {
         public DATE(double date) {
             this.date = date;
         }
+        
+        public DATE(Date javaDate) {
+            setFromJavaDate(javaDate);
+        }
 
+        public Date getAsJavaDate() {
+            long days = (((long) this.date) * MICRO_SECONDS_PER_DAY) + DATE_OFFSET;
+            int hours = (int) (24 * Math.abs(this.date - ((long) this.date)));
+            
+            Date baseDate = new Date(days);
+            baseDate.setHours(hours);
+            baseDate.setMinutes(0);
+            baseDate.setSeconds(0);
+            return baseDate;
+        }
+        
+        public void setFromJavaDate(Date javaDate) {
+            double msSinceOrigin = javaDate.getTime() - DATE_OFFSET;
+            double daysAsFract = msSinceOrigin / MICRO_SECONDS_PER_DAY;
+            
+            double dayPart = Math.floor(daysAsFract);
+            double hourPart = Math.signum(daysAsFract) * (javaDate.getHours() / 24d);
+            
+            this.date = dayPart + hourPart;
+        }
+        
         @Override
         protected List<String> getFieldOrder() {
             return FIELDS;
