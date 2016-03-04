@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>net.java.dev.jna</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>jna-parent</artifactId>
     <version>4.3.0-SNAPHSOT</version>
     <packaging>pom</packaging>
 
-    <name>net.java.dev.jna:parent</name>
+    <name>net.java.dev.jna:jna-parent</name>
     <url>https://github.com/java-native-access/jna</url>
     <licenses>
         <license>
