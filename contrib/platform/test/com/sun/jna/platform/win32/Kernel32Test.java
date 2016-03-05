@@ -61,6 +61,12 @@ public class Kernel32Test extends TestCase {
         junit.textui.TestRunner.run(Kernel32Test.class);
     }
 
+    // see https://github.com/java-native-access/jna/issues/604
+    public void testGetLastErrorNativeLibraryOverride() {
+        assertFalse("Unexpected success", Kernel32.INSTANCE.CloseHandle(null));
+        assertEquals("Mismatched error code", WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+    }
+
     // see https://github.com/twall/jna/issues/482
     public void testNoDuplicateMethodsNames() {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Kernel32.class);
@@ -295,11 +301,10 @@ public class Kernel32Test extends TestCase {
 
     public void testGetCurrentThread() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
-        assertNotNull(h);
-        assertFalse(h.equals(0));
-        // CloseHandle does not need to be called for a thread handle
-        assertFalse(Kernel32.INSTANCE.CloseHandle(h));
-        assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+        assertNotNull("No current thread handle", h);
+        assertFalse("Null current thread handle", h.equals(0));
+        // Calling the CloseHandle function with this handle has no effect
+        assertTrue(Kernel32.INSTANCE.CloseHandle(h));
     }
 
     public void testOpenThread() {
@@ -316,11 +321,10 @@ public class Kernel32Test extends TestCase {
 
     public void testGetCurrentProcess() {
         HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
-        assertNotNull(h);
-        assertFalse(h.equals(0));
-        // CloseHandle does not need to be called for a process handle
-        assertFalse(Kernel32.INSTANCE.CloseHandle(h));
-        assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+        assertNotNull("No current process handle", h);
+        assertFalse("Null current process handle", h.equals(0));
+        // Calling the CloseHandle function with a pseudo handle has no effect
+        assertTrue(Kernel32.INSTANCE.CloseHandle(h));
     }
 
     public void testOpenProcess() {
@@ -332,8 +336,9 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testQueryFullProcessImageName() {
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
-        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
+        int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, pid);
+        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process ID=" + pid + " handle", h);
 
         try {
             char[] path = new char[WinDef.MAX_PATH];
