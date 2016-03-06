@@ -145,8 +145,7 @@ public class Advapi32Test extends TestCase {
         	assertTrue("Non positive sid length", sidLength > 0);
         	assertTrue("Invalid sid", Advapi32.INSTANCE.IsValidSid(value));
     	} finally {
-    	    assertEquals("Failed to release SID",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
+    	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
     }
 
@@ -159,8 +158,7 @@ public class Advapi32Test extends TestCase {
     	try {
     	    assertEquals("Wrong SID length", 12, Advapi32.INSTANCE.GetLengthSid(value));
     	} finally {
-    	    assertEquals("Failed to free SID",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
+    	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
     }
 
@@ -194,8 +192,7 @@ public class Advapi32Test extends TestCase {
     		assertEquals("Everyone", nameString);
     		assertTrue(referencedDomainNameString.length() == 0);
     	} finally {
-    	    assertEquals("Failed to release sid",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
+    	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
     }
 
@@ -214,12 +211,10 @@ public class Advapi32Test extends TestCase {
             	String convertedSidString = conv.getWideString(0);
             	assertEquals("Mismatched SID string", convertedSidString, sidString);
         	} finally {
-        	    assertEquals("Failed to release string value",
-        	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(conv));
+        	    Kernel32Util.freeLocalMemory(conv);
         	}
     	} finally {
-    	    assertEquals("Failed to release sid",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
+    	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
     }
 
@@ -631,8 +626,7 @@ public class Advapi32Test extends TestCase {
     	    assertTrue("Not a world sid", Advapi32.INSTANCE.IsWellKnownSid(value, WELL_KNOWN_SID_TYPE.WinWorldSid));
     	    assertFalse("Unexpected admin sid", Advapi32.INSTANCE.IsWellKnownSid(value, WELL_KNOWN_SID_TYPE.WinAccountAdministratorSid));
     	} finally {
-    	    assertEquals("Failed to release sid",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(value.getPointer()));
+    	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
     }
 
@@ -652,8 +646,7 @@ public class Advapi32Test extends TestCase {
     	    String convertedSidString = conv.getWideString(0);
     	    assertEquals("Mismatched SID string", EVERYONE, convertedSidString);
     	} finally {
-    	    assertEquals("Failed to release string",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(conv));
+    	    Kernel32Util.freeLocalMemory(conv);
     	}
     }
 
@@ -1011,8 +1004,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to free security descriptor of " + file,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
     }
 
@@ -1084,8 +1076,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to free security descriptor of " + filePath,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
         if (impersontating) {
         	Advapi32.INSTANCE.SetThreadToken(null, null);
@@ -1137,8 +1128,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to release security descriptor of " + file,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
     }
 
@@ -1225,8 +1215,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to release security descriptor of " + file,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
 
         if (impersontating) {
@@ -1269,8 +1258,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to release security descriptor of " + file,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
     }
 
@@ -1301,8 +1289,7 @@ public class Advapi32Test extends TestCase {
                 file.delete();
             }
         } finally {
-            assertEquals("Failed to release security descriptor of " + file,
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue()));
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
         }
     }
 

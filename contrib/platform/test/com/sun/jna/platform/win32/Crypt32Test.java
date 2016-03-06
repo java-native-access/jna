@@ -44,16 +44,13 @@ public class Crypt32Test extends TestCase {
                 	assertEquals("description", pDescription.getValue().getWideString(0));
                 	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
                 } finally {
-                    assertEquals("Failed to free decrypted data",
-                            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDataDecrypted.pbData));
+                    Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
                 }
         	} finally {
-                assertEquals("Failed to free description",
-                        WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDescription.getValue()));
+                Kernel32Util.freeLocalMemory(pDescription.getValue());
         	}
     	} finally {
-    	    assertEquals("Failed to free encrypted data",
-    	            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDataEncrypted.pbData));
+    	    Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
     	}
     }
 
@@ -80,16 +77,13 @@ public class Crypt32Test extends TestCase {
                 	assertEquals("description", pDescription.getValue().getWideString(0));
                 	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
             	} finally {
-                    assertEquals("Failed to free descrypted data",
-                            WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDataDecrypted.pbData));
+                    Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
             	}
         	} finally {
-                assertEquals("Failed to free description",
-                        WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDescription.getValue()));
+                Kernel32Util.freeLocalMemory(pDescription.getValue());
         	}
     	} finally {
-            assertEquals("Failed to free encrypted data",
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeLocalMemory(pDataEncrypted.pbData));
+            Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
     	}
     }
 

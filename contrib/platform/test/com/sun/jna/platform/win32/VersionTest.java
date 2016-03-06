@@ -54,8 +54,7 @@ public class VersionTest extends TestCase {
             assertTrue("dwFileVersionLS", fixedFileInfo.dwFileVersionLS.longValue() > 0);
             assertTrue("dwFileVersionMS", fixedFileInfo.dwFileVersionMS.longValue() > 0);
         } finally {
-            assertEquals("Failed to free buffer",
-                    WinError.ERROR_SUCCESS, Kernel32Util.freeGlobalMemory(buffer));
+            Kernel32Util.freeGlobalMemory(buffer);
         }
     }
 }
