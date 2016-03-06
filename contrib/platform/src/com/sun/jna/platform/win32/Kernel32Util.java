@@ -55,47 +55,15 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * Makes sure that local memory has been successfully freed
-     *
-     * @param ptr The {@link Pointer} to the memory to be released - ignored if NULL
-     * @see #freeLocalMemory(Pointer)
-     * @throws Win32Exception if non-{@code ERROR_SUCCESS} code reported
-     */
-    public static void validateFreeLocalMemory(Pointer ptr) {
-        int rc = freeLocalMemory(ptr);
-        if (rc != WinError.ERROR_SUCCESS) {
-            throw new Win32Exception(rc);
-        }
-    }
-
-    /**
      * Invokes {@link Kernel32#LocalFree(Pointer)} and checks if it succeeded.
      *
      * @param ptr The {@link Pointer} to the memory to be released - ignored if NULL
-     * @return {@code ERROR_SUCCESS} or reason for failing to free the memory
-     * @see Native#getLastError()
-     */
-    public static int freeLocalMemory(Pointer ptr) {
-        Pointer res = Kernel32.INSTANCE.LocalFree(ptr);
-        if (res != null) {
-            return Native.getLastError();
-        } else {
-            return WinError.ERROR_SUCCESS;
-        }
-    }
-
-
-    /**
-     * Makes sure that global memory has been successfully freed
-     *
-     * @param ptr The {@link Pointer} to the memory to be released - ignored if NULL
-     * @see #freeGlobalMemory(Pointer)
      * @throws Win32Exception if non-{@code ERROR_SUCCESS} code reported
      */
-    public static void validateFreeGlobalMemory(Pointer ptr) {
-        int rc = freeGlobalMemory(ptr);
-        if (rc != WinError.ERROR_SUCCESS) {
-            throw new Win32Exception(rc);
+    public static void freeLocalMemory(Pointer ptr) {
+        Pointer res = Kernel32.INSTANCE.LocalFree(ptr);
+        if (res != null) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
     }
 
@@ -103,15 +71,12 @@ public abstract class Kernel32Util implements WinDef {
      * Invokes {@link Kernel32#GlobalFree(Pointer)} and checks if it succeeded.
      *
      * @param ptr The {@link Pointer} to the memory to be released - ignored if NULL
-     * @return {@code ERROR_SUCCESS} or reason for failing to free the memory
-     * @see Native#getLastError()
+     * @throws Win32Exception if non-{@code ERROR_SUCCESS} code reported
      */
-    public static int freeGlobalMemory(Pointer ptr) {
+    public static void freeGlobalMemory(Pointer ptr) {
         Pointer res = Kernel32.INSTANCE.GlobalFree(ptr);
         if (res != null) {
-            return Native.getLastError();
-        } else {
-            return WinError.ERROR_SUCCESS;
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
     }
 
@@ -141,7 +106,7 @@ public abstract class Kernel32Util implements WinDef {
             String s = ptr.getWideString(0);
             return s.trim();
         } finally {
-            validateFreeLocalMemory(ptr);
+            freeLocalMemory(ptr);
         }
     }
 

@@ -74,7 +74,7 @@ public abstract class Crypt32Util {
             return pDataProtected.getData();
         } finally {
             if (pDataProtected.pbData != null) {
-                Kernel32Util.validateFreeLocalMemory(pDataProtected.pbData);
+                Kernel32Util.freeLocalMemory(pDataProtected.pbData);
             }
         }
     }
@@ -133,25 +133,25 @@ public abstract class Crypt32Util {
             }
         } finally {
             if (pDataUnprotected.pbData != null) {
-                int rc = Kernel32Util.freeLocalMemory(pDataUnprotected.pbData);
-                if (rc != WinError.ERROR_SUCCESS) {
-                    Win32Exception exc = new Win32Exception(rc);
+                try {
+                    Kernel32Util.freeLocalMemory(pDataUnprotected.pbData);
+                } catch(Win32Exception e) {
                     if (err == null) {
-                        err = exc;
+                        err = e;
                     } else {
-                        err.addSuppressed(exc);
+                        err.addSuppressed(e);
                     }
                 }
             }
 
             if (pDescription.getValue() != null) {
-                int rc = Kernel32Util.freeLocalMemory(pDescription.getValue());
-                if (rc != WinError.ERROR_SUCCESS) {
-                    Win32Exception exc = new Win32Exception(rc);
+                try {
+                    Kernel32Util.freeLocalMemory(pDescription.getValue());
+                } catch(Win32Exception e) {
                     if (err == null) {
-                        err = exc;
+                        err = e;
                     } else {
-                        err.addSuppressed(exc);
+                        err.addSuppressed(e);
                     }
                 }
             }

@@ -23,8 +23,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Tlhelp32.MODULEENTRY32W;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
 import junit.framework.TestCase;
@@ -88,6 +90,30 @@ public class Kernel32UtilTest extends TestCase {
             return String.format("%.1f TB", (double) bytes / 1099511627776L);
         } else {
             return String.format("%d bytes", bytes);
+        }
+    }
+
+    public void testFreeLocalMemory() {
+        try {
+            Pointer ptr = new Pointer(0xFFFFFFFFFFFFFFFFL);
+            Kernel32Util.freeLocalMemory(ptr);
+            fail("Unexpected success to free bad local memory");
+        } catch(Win32Exception e) {
+            HRESULT hr = e.getHR();
+            int code = W32Errors.HRESULT_CODE(hr.intValue());
+            assertEquals("Mismatched failure reason code", WinError.ERROR_INVALID_HANDLE, code);
+        }
+    }
+
+    public void testFreeGlobalMemory() {
+        try {
+            Pointer ptr = new Pointer(0xFFFFFFFFFFFFFFFFL);
+            Kernel32Util.freeGlobalMemory(ptr);
+            fail("Unexpected success to free bad global memory");
+        } catch(Win32Exception e) {
+            HRESULT hr = e.getHR();
+            int code = W32Errors.HRESULT_CODE(hr.intValue());
+            assertEquals("Mismatched failure reason code", WinError.ERROR_INVALID_HANDLE, code);
         }
     }
 
