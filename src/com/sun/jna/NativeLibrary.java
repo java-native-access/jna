@@ -109,7 +109,12 @@ public class NativeLibrary {
             synchronized(functions) {
                 Function f = new Function(this, "GetLastError", Function.ALT_CONVENTION, encoding) {
                         @Override
-                        Object invoke(Object[] args, Class<?> returnType, boolean b) {
+                        Object invoke(Object[] args, Class<?> returnType, boolean b, int fixedArgs) {
+                            return Integer.valueOf(Native.getLastError());
+                        }
+
+                        @Override
+                        Object invoke(Method invokingMethod, Class<?>[] paramTypes, Class<?> returnType, Object[] inArgs, Map<String, ?> options) {
                             return Integer.valueOf(Native.getLastError());
                         }
                     };
