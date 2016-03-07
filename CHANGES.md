@@ -41,6 +41,7 @@ Features
 * [#606](https://github.com/java-native-access/jna/pull/606): Added Kerne32Util method to facilitate checking that calls to LocalFree/GlobalFree are successful [@lgoldstein](https://github.com/lgoldstein).
 * [#612](https://github.com/java-native-access/jna/pull/612): Kernel32Util#freeLocal/GlobalMemory always throws Win32Exception if failed [@lgoldstein](https://github.com/lgoldstein).
 * [#608](https://github.com/java-native-access/jna/pull/608): Mavenize the build process - change parent and native pom artifactId/name to differentiate in IDE and build tools. [@bhamail](https://github.com/bhamail)
+* [#613](https://github.com/java-native-access/jna/pull/613): Make Win32Exception extend LastErrorException [@lgoldstein](https://github.com/lgoldstein).
 
 Bug Fixes
 ---------
