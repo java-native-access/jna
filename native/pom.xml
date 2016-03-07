@@ -7,15 +7,15 @@
 
     <parent>
         <groupId>net.java.dev.jna</groupId>
-        <artifactId>parent</artifactId>
+        <artifactId>jna-parent</artifactId>
         <version>4.3.0-SNAPHSOT</version>
         <relativePath>../parent</relativePath>
     </parent>
 
-    <artifactId>native</artifactId>
+    <artifactId>jna-native</artifactId>
     <packaging>pom</packaging>
 
-    <name>net.java.dev.jna:native</name>
+    <name>net.java.dev.jna:jna-native</name>
 
     <build>
         <plugins>
