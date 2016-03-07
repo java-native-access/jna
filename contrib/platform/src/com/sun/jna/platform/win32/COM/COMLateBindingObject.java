@@ -149,7 +149,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
                 this.getIDispatch(), propertyName);
 
-        return (((VARIANT_BOOL) result.getValue()).intValue() != 0);
+        return result.booleanValue();
     }
 
     /**
@@ -179,7 +179,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
                 this.getIDispatch(), propertyName);
 
-        return ((LONG) result.getValue()).intValue();
+        return result.intValue();
     }
 
     /**
@@ -194,7 +194,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
                 this.getIDispatch(), propertyName);
 
-        return ((SHORT) result.getValue()).shortValue();
+        return result.shortValue();
     }
 
     /**
@@ -209,7 +209,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
                 this.getIDispatch(), propertyName);
 
-        return result.getValue().toString();
+        return result.stringValue();
     }
 
     /**
