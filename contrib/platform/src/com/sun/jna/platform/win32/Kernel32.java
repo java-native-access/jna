@@ -735,14 +735,15 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
             int dwDesiredAccess, boolean bInheritHandle, int dwOptions);
 
     /**
-     * The CloseHandle function closes an open object handle.
+     * Closes an open object handle.
      *
      * @param hObject
      *            Handle to an open object. This parameter can be a pseudo
      *            handle or INVALID_HANDLE_VALUE.
      * @return If the function succeeds, the return value is nonzero. If the
      *         function fails, the return value is zero. To get extended error
-     *         information, call GetLastError.
+     *         information, call {@code GetLastError}.
+     * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724211(v=vs.85).aspx">CloseHandle</A>
      */
     boolean CloseHandle(HANDLE hObject);
 

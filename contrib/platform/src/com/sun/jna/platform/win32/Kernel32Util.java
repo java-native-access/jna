@@ -81,6 +81,90 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
+     * Closes all referenced handles. If an exception is thrown for
+     * a specific handle, then it is accumulated until all
+     * handles have been closed. If more than one exception occurs,
+     * then it is added as a suppressed exception to the first one.
+     * Once closed all handles, the accumulated exception (if any) is thrown
+     *
+     * @param refs The references to close
+     * @see #closeHandleRef(HANDLEByReference)
+     */
+    public static void closeHandleRefs(HANDLEByReference... refs) {
+        Win32Exception err = null;
+        for (HANDLEByReference r : refs) {
+            try {
+                closeHandleRef(r);
+            } catch(Win32Exception e) {
+                if (err == null) {
+                    err = e;
+                } else {
+                    err.addSuppressed(e);
+                }
+            }
+        }
+
+        if (err != null) {
+            throw err;
+        }
+    }
+    /**
+     * Closes the handle in the reference
+     *
+     * @param ref The handle reference - ignored if {@code null}
+     * @see #closeHandle(HANDLE)
+     */
+    public static void closeHandleRef(HANDLEByReference ref) {
+        closeHandle((ref == null) ? null : ref.getValue());
+    }
+
+    /**
+     * Invokes {@link #closeHandle(HANDLE)} on each handle. If an exception
+     * is thrown for a specific handle, then it is accumulated until all
+     * handles have been closed. If more than one exception occurs, then it
+     * is added as a suppressed exception to the first one. Once closed all
+     * handles, the accumulated exception (if any) is thrown
+     *
+     * @param handles The handles to be closed
+     * @see Throwable#getSuppressed()
+     */
+    public static void closeHandles(HANDLE... handles) {
+        Win32Exception err = null;
+        for (HANDLE h : handles) {
+            try {
+                closeHandle(h);
+            } catch(Win32Exception e) {
+                if (err == null) {
+                    err = e;
+                } else {
+                    err.addSuppressed(e);
+                }
+            }
+        }
+
+        if (err != null) {
+            throw err;
+        }
+    }
+
+    /**
+     * Invokes {@link Kernel32#CloseHandle(HANDLE)} and checks the success code.
+     * If not successful, then throws a {@link Win32Exception} with the
+     * {@code GetLastError} value
+     *
+     * @param h The handle to be closed - ignored if {@code null}
+     */
+    public static void closeHandle(HANDLE h) {
+        if (h == null) {
+            return;
+        }
+
+        if (!Kernel32.INSTANCE.CloseHandle(h)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+    }
+
+    /**
      * Format a message from the value obtained from
      * {@link Kernel32#GetLastError()} or {@link Native#getLastError()}.
      *
@@ -220,6 +304,7 @@ public abstract class Kernel32Util implements WinDef {
         }
 
         HANDLE hFile = null;
+        Win32Exception err = null;
         try {
             hFile = Kernel32.INSTANCE.CreateFile(fileName, WinNT.GENERIC_READ,
                     WinNT.FILE_SHARE_READ, new WinBase.SECURITY_ATTRIBUTES(),
@@ -232,24 +317,35 @@ public abstract class Kernel32Util implements WinDef {
 
             int type = Kernel32.INSTANCE.GetFileType(hFile);
             switch (type) {
-            case WinNT.FILE_TYPE_UNKNOWN:
-                int err = Kernel32.INSTANCE.GetLastError();
-                switch (err) {
-                case WinError.NO_ERROR:
-                    break;
-                default:
-                    throw new Win32Exception(err);
-                }
+                case WinNT.FILE_TYPE_UNKNOWN:
+                    int rc = Kernel32.INSTANCE.GetLastError();
+                    switch (rc) {
+                        case WinError.NO_ERROR:
+                            break;
+                        default:
+                            throw new Win32Exception(rc);
+                    }
                 // fall-thru
 
             default:
                 return type;
             }
+        } catch(Win32Exception e) {
+            err = e;
+            throw err;  // re-throw so finally block executed
         } finally {
-            if (hFile != null) {
-                if (!Kernel32.INSTANCE.CloseHandle(hFile)) {
-                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            try {
+                closeHandle(hFile);
+            } catch(Win32Exception e) {
+                if (err == null) {
+                    err = e;
+                } else {
+                    err.addSuppressed(e);
                 }
+            }
+
+            if (err != null) {
+                throw err;
             }
         }
     }
@@ -942,15 +1038,16 @@ public abstract class Kernel32Util implements WinDef {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
 
-        List<Tlhelp32.MODULEENTRY32W> modules = new ArrayList<Tlhelp32.MODULEENTRY32W>();
         Win32Exception we = null;
         try {
             Tlhelp32.MODULEENTRY32W first = new Tlhelp32.MODULEENTRY32W();
-            modules.add(first);
 
             if (!Kernel32.INSTANCE.Module32FirstW(snapshot, first)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
+
+            List<Tlhelp32.MODULEENTRY32W> modules = new ArrayList<Tlhelp32.MODULEENTRY32W>();
+            modules.add(first);
 
             Tlhelp32.MODULEENTRY32W next = new Tlhelp32.MODULEENTRY32W();
             while (Kernel32.INSTANCE.Module32NextW(snapshot, next)) {
@@ -965,23 +1062,25 @@ public abstract class Kernel32Util implements WinDef {
             if (lastError != W32Errors.ERROR_SUCCESS && lastError != W32Errors.ERROR_NO_MORE_FILES) {
                 throw new Win32Exception(lastError);
             }
+
+            return modules;
         } catch (Win32Exception e) {
             we = e;
+            throw we;   // re-throw so finally block is executed
         } finally {
-            if (snapshot != null) {
-                if (!Kernel32.INSTANCE.CloseHandle(snapshot)) {
-                    Win32Exception e = new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    if (we != null) {
-                        e.addSuppressed(we);
-                    }
+            try {
+                closeHandle(snapshot);
+            } catch(Win32Exception e) {
+                if (we == null) {
                     we = e;
+                } else {
+                    we.addSuppressed(e);
                 }
             }
-        }
 
-        if (we != null) {
-            throw we;
+            if (we != null) {
+                throw we;
+            }
         }
-        return modules;
     }
 }

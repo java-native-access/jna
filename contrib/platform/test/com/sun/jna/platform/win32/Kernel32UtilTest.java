@@ -291,7 +291,7 @@ public class Kernel32UtilTest extends TestCase {
             String name = Kernel32Util.QueryFullProcessImageName(h, 0);
             assertTrue("Failed to query process image name, empty path returned", name.length() > 0);
         } finally {
-            assertTrue("CloseHandle", Kernel32.INSTANCE.CloseHandle(h));
+            Kernel32Util.closeHandle(h);
         }
     }
 
