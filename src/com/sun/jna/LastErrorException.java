@@ -31,10 +31,16 @@ public class LastErrorException extends RuntimeException {
     private static String parseMessage(String m) {
         try {
             return formatMessage(Integer.parseInt(m));
-        }
-        catch(NumberFormatException e) {
+        } catch(NumberFormatException e) {
             return m;
         }
+    }
+
+    /**
+     * @return The reported error code
+     */
+    public int getErrorCode() {
+        return errorCode;
     }
 
     public LastErrorException(String msg) {
@@ -44,23 +50,17 @@ public class LastErrorException extends RuntimeException {
                 msg = msg.substring(1, msg.indexOf("]"));
             }
             this.errorCode = Integer.parseInt(msg);
-        }
-        catch(NumberFormatException e) {
+        } catch(NumberFormatException e) {
             this.errorCode = -1;
         }
     }
 
-    /**
-     * Returns the error code of the error.
-     * @return
-     *  Error code.
-     */
-    public int getErrorCode() {
-    	return errorCode;
+    public LastErrorException(int code) {
+        this(code, formatMessage(code));
     }
 
-    public LastErrorException(int code) {
-        super(formatMessage(code));
+    protected LastErrorException(int code, String msg) {
+        super(msg);
         this.errorCode = code;
     }
 }
