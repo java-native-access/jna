@@ -240,59 +240,68 @@ public class Kernel32Test extends TestCase {
 
     public void testWaitForSingleObject() {
         HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+        assertNotNull("Failed to create event: " + Kernel32.INSTANCE.GetLastError(), handle);
 
-        // handle runs into timeout since it is not triggered
-        // WAIT_TIMEOUT = 0x00000102
-        assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
-                handle, 1000));
-
-        Kernel32.INSTANCE.CloseHandle(handle);
+        try {
+            // handle runs into timeout since it is not triggered
+            // WAIT_TIMEOUT = 0x00000102
+            assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(handle, 1000));
+        } finally {
+            Kernel32Util.closeHandle(handle);
+        }
     }
 
     public void testResetEvent() {
         HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, true, false, null);
+        assertNotNull("Failed to create event: " + Kernel32.INSTANCE.GetLastError(), handle);
 
-        // set the event to the signaled state
-        Kernel32.INSTANCE.SetEvent(handle);
+        try {
+            // set the event to the signaled state
+            Kernel32.INSTANCE.SetEvent(handle);
 
-        // This should return successfully
-        assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(
-                 handle, 1000));
+            // This should return successfully
+            assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(
+                     handle, 1000));
 
-        // now reset it to not signaled
-        Kernel32.INSTANCE.ResetEvent(handle);
+            // now reset it to not signaled
+            Kernel32.INSTANCE.ResetEvent(handle);
 
-        // handle runs into timeout since it is not triggered
-        // WAIT_TIMEOUT = 0x00000102
-        assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(
-                handle, 1000));
-
-        Kernel32.INSTANCE.CloseHandle(handle);
+            // handle runs into timeout since it is not triggered
+            // WAIT_TIMEOUT = 0x00000102
+            assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForSingleObject(handle, 1000));
+        } finally {
+            Kernel32Util.closeHandle(handle);
+        }
     }
 
     public void testWaitForMultipleObjects(){
         HANDLE[] handles = new HANDLE[2];
-
-        handles[0] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-        handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
-
-        // handle runs into timeout since it is not triggered
-        // WAIT_TIMEOUT = 0x00000102
-        assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForMultipleObjects(
-                handles.length, handles, false, 1000));
-
-        Kernel32.INSTANCE.CloseHandle(handles[0]);
-        Kernel32.INSTANCE.CloseHandle(handles[1]);
+        try {
+            for (int index = 0; index < handles.length; index++) {
+                HANDLE h = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+                assertNotNull("Failed to create event #" + index + ": " + Kernel32.INSTANCE.GetLastError(), h);
+                handles[index] = h;
+            }
+            // handle runs into timeout since it is not triggered
+            // WAIT_TIMEOUT = 0x00000102
+            assertEquals(WinError.WAIT_TIMEOUT, Kernel32.INSTANCE.WaitForMultipleObjects(
+                    handles.length, handles, false, 1000));
+        } finally {
+            Kernel32Util.closeHandles(handles);
+        }
 
         // invalid Handle
         handles[0] = WinBase.INVALID_HANDLE_VALUE;
         handles[1] = Kernel32.INSTANCE.CreateEvent(null, false, false, null);
+        assertNotNull("Failed to create valid event: " + Kernel32.INSTANCE.GetLastError(), handles[1]);
+        try {
+            // returns WAIT_FAILED since handle is invalid
+            assertEquals(WinBase.WAIT_FAILED, Kernel32.INSTANCE.WaitForMultipleObjects(
+                    handles.length, handles, false, 5000));
 
-        // returns WAIT_FAILED since handle is invalid
-        assertEquals(WinBase.WAIT_FAILED, Kernel32.INSTANCE.WaitForMultipleObjects(
-                handles.length, handles, false, 5000));
-
-        Kernel32.INSTANCE.CloseHandle(handles[1]);
+        } finally {
+            Kernel32Util.closeHandle(handles[1]);
+        }
     }
 
     public void testGetCurrentThreadId() {
@@ -304,7 +313,7 @@ public class Kernel32Test extends TestCase {
         assertNotNull("No current thread handle", h);
         assertFalse("Null current thread handle", h.equals(0));
         // Calling the CloseHandle function with this handle has no effect
-        assertTrue(Kernel32.INSTANCE.CloseHandle(h));
+        Kernel32Util.closeHandle(h);
     }
 
     public void testOpenThread() {
@@ -312,7 +321,7 @@ public class Kernel32Test extends TestCase {
                 Kernel32.INSTANCE.GetCurrentThreadId());
         assertNotNull(h);
         assertFalse(h.equals(0));
-        assertTrue(Kernel32.INSTANCE.CloseHandle(h));
+        Kernel32Util.closeHandle(h);
     }
 
     public void testGetCurrentProcessId() {
@@ -324,7 +333,7 @@ public class Kernel32Test extends TestCase {
         assertNotNull("No current process handle", h);
         assertFalse("Null current process handle", h.equals(0));
         // Calling the CloseHandle function with a pseudo handle has no effect
-        assertTrue(Kernel32.INSTANCE.CloseHandle(h));
+        Kernel32Util.closeHandle(h);
     }
 
     public void testOpenProcess() {
@@ -347,7 +356,7 @@ public class Kernel32Test extends TestCase {
             assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
             assertTrue("Failed to query process image name, empty path returned", lpdwSize.getValue() > 0);
         } finally {
-            assertTrue("CloseHandle", Kernel32.INSTANCE.CloseHandle(h));
+            Kernel32Util.closeHandle(h);
         }
     }
 
@@ -483,7 +492,7 @@ public class Kernel32Test extends TestCase {
 
             assertEquals("Mismatched read content", expected, new String(readBuffer, 0, read));
         } finally {
-            assertTrue("Failed to close file", Kernel32.INSTANCE.CloseHandle(hFile));
+            Kernel32Util.closeHandle(hFile);
         }
     }
 
@@ -493,19 +502,22 @@ public class Kernel32Test extends TestCase {
 
         HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
                 new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-        assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
-
-        assertTrue(Kernel32.INSTANCE.SetHandleInformation(hFile, WinBase.HANDLE_FLAG_PROTECT_FROM_CLOSE, 0));
-        assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+        try {
+            assertTrue(Kernel32.INSTANCE.SetHandleInformation(hFile, WinBase.HANDLE_FLAG_PROTECT_FROM_CLOSE, 0));
+        } finally {
+            Kernel32Util.closeHandle(hFile);
+        }
     }
 
     public void testCreatePipe() {
         HANDLEByReference hReadPipe = new HANDLEByReference();
         HANDLEByReference hWritePipe = new HANDLEByReference();
-
-        assertTrue(Kernel32.INSTANCE.CreatePipe(hReadPipe, hWritePipe, null, 0));
-        assertTrue(Kernel32.INSTANCE.CloseHandle(hReadPipe.getValue()));
-        assertTrue(Kernel32.INSTANCE.CloseHandle(hWritePipe.getValue()));
+        try {
+            assertTrue(Kernel32.INSTANCE.CreatePipe(hReadPipe, hWritePipe, null, 0));
+        } finally {
+            Kernel32Util.closeHandleRefs(hReadPipe, hWritePipe);
+        }
     }
 
     public void testGetExitCodeProcess() {
@@ -519,10 +531,13 @@ public class Kernel32Test extends TestCase {
         tmp.deleteOnExit();
         HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_READ, WinNT.FILE_SHARE_READ,
                 new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-
-        assertFalse(Kernel32.INSTANCE.TerminateProcess(hFile, 1));
-        assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
-        assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+        try {
+            assertFalse(Kernel32.INSTANCE.TerminateProcess(hFile, 1));
+            assertEquals(WinError.ERROR_INVALID_HANDLE, Kernel32.INSTANCE.GetLastError());
+        } finally {
+            Kernel32Util.closeHandle(hFile);
+        }
     }
 
     public void testGetFileAttributes() {
@@ -587,22 +602,22 @@ public class Kernel32Test extends TestCase {
 
         HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE, WinNT.FILE_SHARE_WRITE,
                 new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
-        assertFalse(hFile == WinBase.INVALID_HANDLE_VALUE);
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+        try {
+            WinBase.FILETIME.ByReference creationTime = new WinBase.FILETIME.ByReference();
+            WinBase.FILETIME.ByReference accessTime = new WinBase.FILETIME.ByReference();
+            WinBase.FILETIME.ByReference modifiedTime = new WinBase.FILETIME.ByReference();
+            Kernel32.INSTANCE.GetFileTime(hFile, creationTime, accessTime, modifiedTime);
 
-        WinBase.FILETIME.ByReference creationTime = new WinBase.FILETIME.ByReference();
-        WinBase.FILETIME.ByReference accessTime = new WinBase.FILETIME.ByReference();
-        WinBase.FILETIME.ByReference modifiedTime = new WinBase.FILETIME.ByReference();
-        Kernel32.INSTANCE.GetFileTime(hFile, creationTime, accessTime, modifiedTime);
+            assertEquals(creationTime.toDate().getYear(), new Date().getYear());
+            assertEquals(accessTime.toDate().getYear(), new Date().getYear());
+            assertEquals(modifiedTime.toDate().getYear(), new Date().getYear());
 
-        assertEquals(creationTime.toDate().getYear(), new Date().getYear());
-        assertEquals(accessTime.toDate().getYear(), new Date().getYear());
-        assertEquals(modifiedTime.toDate().getYear(), new Date().getYear());
-
-        Kernel32.INSTANCE.SetFileTime(hFile, null, null, new WinBase.FILETIME(new Date(2010, 1, 1)));
-
-        assertTrue(Kernel32.INSTANCE.CloseHandle(hFile));
-
-        assertEquals(2010, new Date(tmp.lastModified()).getYear());
+            Kernel32.INSTANCE.SetFileTime(hFile, null, null, new WinBase.FILETIME(new Date(2010, 1, 1)));
+            assertEquals(2010, new Date(tmp.lastModified()).getYear());
+        } finally {
+            Kernel32Util.closeHandle(hFile);
+        }
     }
 
     public void testSetFileAttributes() throws IOException {
@@ -616,23 +631,24 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testGetProcessList() throws IOException {
-        WinNT.HANDLE processEnumHandle = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPALL, new WinDef.DWORD(0));
+        HANDLE processEnumHandle = Kernel32.INSTANCE.CreateToolhelp32Snapshot(Tlhelp32.TH32CS_SNAPALL, new WinDef.DWORD(0));
         assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(processEnumHandle));
+        try {
+            Tlhelp32.PROCESSENTRY32.ByReference processEntry = new Tlhelp32.PROCESSENTRY32.ByReference();
 
-        Tlhelp32.PROCESSENTRY32.ByReference processEntry = new Tlhelp32.PROCESSENTRY32.ByReference();
+            assertTrue(Kernel32.INSTANCE.Process32First(processEnumHandle, processEntry));
 
-        assertTrue(Kernel32.INSTANCE.Process32First(processEnumHandle, processEntry));
-
-        List<Long> processIdList = new ArrayList<Long>();
-        processIdList.add(processEntry.th32ProcessID.longValue());
-
-        while (Kernel32.INSTANCE.Process32Next(processEnumHandle, processEntry))
-        {
+            List<Long> processIdList = new ArrayList<Long>();
             processIdList.add(processEntry.th32ProcessID.longValue());
-        }
 
-        assertTrue(Kernel32.INSTANCE.CloseHandle(processEnumHandle));
-        assertTrue(processIdList.size() > 4);
+            while (Kernel32.INSTANCE.Process32Next(processEnumHandle, processEntry)) {
+                processIdList.add(processEntry.th32ProcessID.longValue());
+            }
+
+            assertTrue(processIdList.size() > 4);
+        } finally {
+            Kernel32Util.closeHandle(processEnumHandle);
+        }
     }
 
     public final void testGetPrivateProfileInt() throws IOException {
@@ -848,7 +864,7 @@ public class Kernel32Test extends TestCase {
                         fail("Received value of WinBase.DCB.BaudRate is not valid");
                 }
             } finally {
-                Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+                Kernel32Util.closeHandle(handleSerialPort);
             }
         }
     }
@@ -889,7 +905,7 @@ public class Kernel32Test extends TestCase {
                 assertTrue(Kernel32.INSTANCE.SetCommState(handleSerialPort, lpDCB));
 
             } finally {
-                Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+                Kernel32Util.closeHandle(handleSerialPort);
             }
         }
     }
@@ -919,7 +935,7 @@ public class Kernel32Test extends TestCase {
                 lpCommTimeouts = new WinBase.COMMTIMEOUTS();
                 assertTrue(Kernel32.INSTANCE.GetCommTimeouts(handleSerialPort, lpCommTimeouts));
             } finally {
-                Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+                Kernel32Util.closeHandle(handleSerialPort);
             }
         }
     }
@@ -965,7 +981,7 @@ public class Kernel32Test extends TestCase {
                 assertTrue(Kernel32.INSTANCE.SetCommTimeouts(handleSerialPort, lpCommTimeouts));
 
             } finally {
-                Kernel32.INSTANCE.CloseHandle(handleSerialPort);
+                Kernel32Util.closeHandle(handleSerialPort);
             }
         }
     }
@@ -1065,28 +1081,30 @@ public class Kernel32Test extends TestCase {
             if (!Kernel32.INSTANCE.Module32FirstW(snapshot, first)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
+
+
+            // not sure if this will be run against java.exe or javaw.exe but this
+            // check tests both
+            assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));
+            assertEquals("The process ID of the module ID should be our process ID", Kernel32.INSTANCE.GetCurrentProcessId(), first.th32ProcessID.intValue());
         } catch (Win32Exception e) {
             we = e;
+            throw we;   // re-throw so finally block is executed
         } finally {
-            if (snapshot != null) {
-                if (!Kernel32.INSTANCE.CloseHandle(snapshot)) {
-                    Win32Exception e = new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    if (we != null) {
-                        e.addSuppressed(we);
-                    }
+            try {
+                Kernel32Util.closeHandle(snapshot);
+            } catch(Win32Exception e) {
+                if (we == null) {
                     we = e;
+                } else {
+                    we.addSuppressed(e);
                 }
             }
-        }
 
-        if (we != null) {
-            throw we;
+            if (we != null) {
+                throw we;
+            }
         }
-
-        // not sure if this will be run against java.exe or javaw.exe but this
-        // check tests both
-        assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));
-        assertEquals("The process ID of the module ID should be our process ID", Kernel32.INSTANCE.GetCurrentProcessId(), first.th32ProcessID.intValue());
     }
 
     public void testModule32NextW() {
@@ -1101,27 +1119,28 @@ public class Kernel32Test extends TestCase {
             if (!Kernel32.INSTANCE.Module32NextW(snapshot, first)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
+
+            // not sure if this will be run against java.exe or javaw.exe but this
+            // check tests both
+            assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));
+            assertEquals("The process ID of the module ID should be our process ID", Kernel32.INSTANCE.GetCurrentProcessId(), first.th32ProcessID.intValue());
         } catch (Win32Exception e) {
             we = e;
+            throw we;   // re-throw so finally block is executed
         } finally {
-            if (snapshot != null) {
-                if (!Kernel32.INSTANCE.CloseHandle(snapshot)) {
-                    Win32Exception e = new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    if (we != null) {
-                        e.addSuppressed(we);
-                    }
+            try {
+                Kernel32Util.closeHandle(snapshot);
+            } catch(Win32Exception e) {
+                if (we == null) {
                     we = e;
+                } else {
+                    we.addSuppressed(e);
                 }
             }
-        }
 
-        if (we != null) {
-            throw we;
+            if (we != null) {
+                throw we;
+            }
         }
-
-        // not sure if this will be run against java.exe or javaw.exe but this
-        // check tests both
-        assertTrue("The first module in the current process should be java.exe or javaw.exe", first.szModule().startsWith("java"));
-        assertEquals("The process ID of the module ID should be our process ID", Kernel32.INSTANCE.GetCurrentProcessId(), first.th32ProcessID.intValue());
     }
 }

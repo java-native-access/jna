@@ -478,27 +478,44 @@ public abstract class Advapi32Util {
 	 */
 	public static Account[] getCurrentUserGroups() {
 		HANDLEByReference phToken = new HANDLEByReference();
+		Win32Exception err = null;
 		try {
 			// open thread or process token
 			HANDLE threadHandle = Kernel32.INSTANCE.GetCurrentThread();
 			if (!Advapi32.INSTANCE.OpenThreadToken(threadHandle,
 					TOKEN_DUPLICATE | TOKEN_QUERY, true, phToken)) {
-				if (W32Errors.ERROR_NO_TOKEN != Kernel32.INSTANCE
-						.GetLastError()) {
-					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+			    int rc = Kernel32.INSTANCE.GetLastError();
+				if (rc != W32Errors.ERROR_NO_TOKEN) {
+					throw new Win32Exception(rc);
 				}
+
 				HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
 				if (!Advapi32.INSTANCE.OpenProcessToken(processHandle,
 						TOKEN_DUPLICATE | TOKEN_QUERY, phToken)) {
 					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 				}
 			}
+
 			return getTokenGroups(phToken.getValue());
+		} catch(Win32Exception e) {
+	        err = e;
+		    throw err;    // re-throw in order to invoke finally block
 		} finally {
-			if (phToken.getValue() != WinBase.INVALID_HANDLE_VALUE) {
-				if (!Kernel32.INSTANCE.CloseHandle(phToken.getValue())) {
-					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		    HANDLE hToken = phToken.getValue();
+			if (!WinBase.INVALID_HANDLE_VALUE.equals(hToken)) {
+				try {
+				    Kernel32Util.closeHandle(hToken);
+				} catch(Win32Exception e) {
+				    if (err == null) {
+				        err = e;
+				    } else {
+				        err.addSuppressed(e);
+				    }
 				}
+			}
+
+			if (err != null) {
+			    throw err;
 			}
 		}
 	}
@@ -2341,39 +2358,38 @@ public abstract class Advapi32Util {
      * @return true if has access, otherwise false
      */
     public static boolean accessCheck(File file, AccessCheckPermission permissionToCheck) {
-        boolean hasAccess = false;
-        final Memory securityDescriptorMemoryPointer = getSecurityDescriptorForFile(file.getAbsolutePath().replaceAll("/", "\\"));
+        Memory securityDescriptorMemoryPointer = getSecurityDescriptorForFile(file.getAbsolutePath().replace('/', '\\'));
 
-        HANDLEByReference openedAccessToken = null;
-        final HANDLEByReference duplicatedToken = new HANDLEByReference();
+        HANDLEByReference openedAccessToken = new HANDLEByReference();
+        HANDLEByReference duplicatedToken = new HANDLEByReference();
+        Win32Exception err = null;
         try{
-            openedAccessToken = new HANDLEByReference();
-
-            final int desireAccess = TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_DUPLICATE | STANDARD_RIGHTS_READ;
-            if(!Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(), desireAccess, openedAccessToken)) {
+            int desireAccess = TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_DUPLICATE | STANDARD_RIGHTS_READ;
+            HANDLE hProcess = Kernel32.INSTANCE.GetCurrentProcess();
+            if (!Advapi32.INSTANCE.OpenProcessToken(hProcess, desireAccess, openedAccessToken)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            if(!Advapi32.INSTANCE.DuplicateToken(openedAccessToken.getValue(), SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, duplicatedToken)) {
+            if (!Advapi32.INSTANCE.DuplicateToken(openedAccessToken.getValue(), SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation, duplicatedToken)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            final GENERIC_MAPPING mapping = new GENERIC_MAPPING();
+            GENERIC_MAPPING mapping = new GENERIC_MAPPING();
             mapping.genericRead = new DWORD(FILE_GENERIC_READ);
             mapping.genericWrite = new DWORD(FILE_GENERIC_WRITE);
             mapping.genericExecute = new DWORD(FILE_GENERIC_EXECUTE);
             mapping.genericAll = new DWORD(FILE_ALL_ACCESS);
 
-            final DWORDByReference rights = new DWORDByReference(new DWORD(permissionToCheck.getCode()));
+            DWORDByReference rights = new DWORDByReference(new DWORD(permissionToCheck.getCode()));
             Advapi32.INSTANCE.MapGenericMask(rights, mapping);
 
-            final PRIVILEGE_SET privileges = new PRIVILEGE_SET(1);
+            PRIVILEGE_SET privileges = new PRIVILEGE_SET(1);
             privileges.PrivilegeCount = new DWORD(0);
-            final DWORDByReference privilegeLength = new DWORDByReference(new DWORD(privileges.size()));
+            DWORDByReference privilegeLength = new DWORDByReference(new DWORD(privileges.size()));
 
-            final DWORDByReference grantedAccess = new DWORDByReference();
-            final BOOLByReference result = new BOOLByReference();
-            if(!Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer,
+            DWORDByReference grantedAccess = new DWORDByReference();
+            BOOLByReference result = new BOOLByReference();
+            if (!Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer,
                     duplicatedToken.getValue(),
                     rights.getValue(),
                     mapping,
@@ -2381,24 +2397,29 @@ public abstract class Advapi32Util {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            hasAccess = result.getValue().booleanValue();
-
+           return result.getValue().booleanValue();
+        } catch(Win32Exception e) {
+            err = e;
+            throw err;  // re-throw so finally block executed
         } finally {
-
-            if(openedAccessToken != null && openedAccessToken.getValue() != null) {
-                Kernel32.INSTANCE.CloseHandle(openedAccessToken.getValue());
+            try {
+                Kernel32Util.closeHandleRefs(openedAccessToken, duplicatedToken);
+            } catch(Win32Exception e) {
+                if (err == null) {
+                    err = e;
+                } else {
+                    err.addSuppressed(e);
+                }
             }
 
-            if(duplicatedToken != null && duplicatedToken.getValue() != null) {
-                Kernel32.INSTANCE.CloseHandle(duplicatedToken.getValue());
-            }
-
-            if(securityDescriptorMemoryPointer != null) {
+            if (securityDescriptorMemoryPointer != null) {
                 securityDescriptorMemoryPointer.clear();
             }
-        }
 
-        return hasAccess;
+            if (err != null) {
+                throw err;
+            }
+        }
     }
 
     /**
