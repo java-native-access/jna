@@ -38,11 +38,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Factory {
-
 	/**
-	 * Creates a utility COM Factory and a ComThread on which all COM calls are executed.
-	 * NOTE: Remember to call factory.getComThread().terminate() at some appropriate point.
-	 * 
+	 * Factory keeps track of COM objects - all objects created with this
+         * factory can be disposed by calling {@link Factory#disposeAll() }.
 	 */
 	public Factory() {
             assert COMUtils.comIsInitialized() : "COM not initialized";
@@ -86,22 +84,6 @@ public class Factory {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
-		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
-		T result = comInterface.cast(proxy);
-		return result;
-	}
-
-	/** only for use when creating ProxyObjects from Callbacks
-	 * 
-	 * @param comInterface
-	 * @param unknownId
-	 * @param dispatch
-	 * @return proxy object
-	 */
-	<T> T createProxy(Class<T> comInterface, long unknownId, IDispatch dispatch) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-		ProxyObject jop = new ProxyObject(comInterface, unknownId, dispatch, this);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
 		return result;

@@ -55,12 +55,27 @@ import java.lang.reflect.InvocationTargetException;
 
 /**
  * This object acts as the invocation handler for interfaces annotated with
- * ComInterface. It wraps all (necessary) low level COM calls and executes them
- * on a 'ComThread' held by the Factory object.
+ * ComInterface. It wraps all (necessary) low level COM calls and dispatches
+ * them through the COM runtime.
+ * 
+ * <p>The caller of the methods is responsible for correct initialization of the
+ * COM runtime and appropriate thread-handling - depending on the choosen
+ * handling model.</p>
+ * 
+ * @see <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/ms693344%28v=vs.85%29.aspx">MSDN - Processes, Threads, and Apartments</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/ms809971.aspx">MSDN - Understanding and Using COM Threading Models</a>
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
 		IRawDispatchHandle, IConnectionPoint {
         
+	// cached value of the IUnknown interface pointer
+	// Rules of COM state that querying for the IUnknown interface must return
+	// an identical pointer value
+	private long unknownId;
+	private final Class<?> theInterface;
+	private final Factory factory;
+	private final com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
+    
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
@@ -73,38 +88,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		factory.register(this);
 	}
 
-	/** when proxy is created for arguments on a call back, they are already on the
-	 * com thread, and hence calling 'getUnknownId' will not work as it uses the ComThread
-	 * however, the unknown pointer value is passed in;
-	 *
-	 * @param theInterface
-	 * @param unknownId
-	 * @param rawDispatch
-	 * @param factory
-	 */
-	ProxyObject(Class<?> theInterface, long unknownId, IDispatch rawDispatch, Factory factory) {
-		this.unknownId = unknownId;
-		this.rawDispatch = rawDispatch;
-		this.theInterface = theInterface;
-		this.factory = factory;
-		// make sure dispatch object knows we have a reference to it
-		// (for debug it is usefult to be able to see how many refs are present
-		int n = this.rawDispatch.AddRef();
-		factory.register(this);
-	}
-
-        
-	// cached value of the IUnknown interface pointer
-	// Rules of COM state that querying for the IUnknown interface must return
-	// an identical pointer value
-	long unknownId;
-
-	long getUnknownId() {
+	private long getUnknownId() {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		if (-1 == this.unknownId) {
 			try {
-
 				final PointerByReference ppvObject = new PointerByReference();
 
 				Thread current = Thread.currentThread();
@@ -144,12 +132,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	Class<?> theInterface;
-	Factory factory;
-	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
-
 	@Override
-    public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
+        public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
 		return this.rawDispatch;
 	}
 
@@ -164,7 +148,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * therefore we can compare the pointers
 	 */
 	@Override
-    public boolean equals(Object arg) {
+        public boolean equals(Object arg) {
 		if (null == arg) {
 			return false;
 		} else if (arg instanceof ProxyObject) {
@@ -261,7 +245,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	// ---------------------- IConnectionPoint ----------------------
-	ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
+	private ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		// query for ConnectionPointContainer
@@ -466,7 +450,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	IID getIID(ComInterface annotation) {
+	private IID getIID(ComInterface annotation) {
 		String iidStr = annotation.iid();
 		if (null != iidStr && !iidStr.isEmpty()) {
 			return new IID(iidStr);
@@ -657,11 +641,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 
 
-			HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
-							new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
+                HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                                                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
 
 
-			COMUtils.checkRC(hr, pExcepInfo, puArgErr);
-			return hr;
+                COMUtils.checkRC(hr, pExcepInfo, puArgErr);
+                return hr;
 	}
 }

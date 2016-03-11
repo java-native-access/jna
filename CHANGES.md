@@ -43,6 +43,7 @@ Features
 * [#608](https://github.com/java-native-access/jna/pull/608): Mavenize the build process - change parent and native pom artifactId/name to differentiate in IDE and build tools. [@bhamail](https://github.com/bhamail)
 * [#613](https://github.com/java-native-access/jna/pull/613): Make Win32Exception extend LastErrorException [@lgoldstein](https://github.com/lgoldstein).
 * [#613](https://github.com/java-native-access/jna/pull/614): Added standard 'Kernel32Util#closeHandle' method that throws a Win32Exception if failed to close the handle [@lgoldstein](https://github.com/lgoldstein).
+* [#616](https://github.com/java-native-access/jna/pull/616): Allow access to base interfaces (most important IDispatch) via ProxyObject and improve binding by allowing to use dispId for the call - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -55,7 +56,7 @@ Bug Fixes
 * [#593](https://github.com/java-native-access/jna/pull/593): Improve binding of TypeLib bindings - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#578](https://github.com/java-native-access/jna/pull/578): Fix COM CallbackHandlers, allow usage of VARIANTs directly in c.s.j.p.w.COM.util.ProxyObject and fix native memory leak in c.s.j.p.w.COM.util.ProxyObject - [@matthiasblaesing](https://github.com/matthiasblaesing)
 * [#601](https://github.com/java-native-access/jna/pull/601): Remove COMThread and COM initialization from objects and require callers to initialize COM themselves. Asserts are added to guard correct usage. - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#602] https://github.com/java-native-access/jna/pull/602): Make sure SID related memory is properly released once no longer required [@lgoldstein](https://github.com/lgoldstein).
+* [#602](https://github.com/java-native-access/jna/pull/602): Make sure SID related memory is properly released once no longer required [@lgoldstein](https://github.com/lgoldstein).
 * [#610](https://github.com/java-native-access/jna/pull/610): Fixed issue #604: Kernel32#GetLastError() always returns ERROR_SUCCESS [@lgoldstein](https://github.com/lgoldstein).
 
 Release 4.2.1
