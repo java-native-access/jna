@@ -73,27 +73,21 @@ public class TlbDispInterface extends TlbBase {
             TlbAbstractMethod method = null;
 
             if (!isReservedMethod(methodName)) {
-                if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                    method = new TlbFunctionStub(index, typeLibUtil, funcDesc,
-                            typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-                    method = new TlbPropertyGetStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-                    method = new TlbPropertyPutStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
-                    method = new TlbPropertyPutStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
+                if (funcDesc.invkind.value == INVOKEKIND.INVOKE_FUNC.value) {
+                    method = new TlbFunctionStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYGET.value) {
+                    method = new TlbPropertyGetStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUT.value) {
+                    method = new TlbPropertyPutStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUTREF.value) {
+                    method = new TlbPropertyPutStub(index, typeLibUtil, funcDesc, typeInfoUtil);
                 }
 
                 this.content += method.getClassBuffer();
 
-                if (i < cFuncs - 1)
+                if (i < cFuncs - 1) {
                     this.content += CR;
+                }
             }
 
             // Release our function description stuff
