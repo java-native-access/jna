@@ -13,27 +13,21 @@
 
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.WString;
-import com.sun.jna.platform.win32.DBT;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_DEVICEINTERFACE;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_HANDLE;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_HDR;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_OEM;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_PORT;
 import com.sun.jna.platform.win32.DBT.DEV_BROADCAST_VOLUME;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HDEVNOTIFY;
 import com.sun.jna.platform.win32.WinUser.MSG;
 import com.sun.jna.platform.win32.WinUser.WNDCLASSEX;
 import com.sun.jna.platform.win32.WinUser.WindowProc;
-import com.sun.jna.platform.win32.Wtsapi32;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,7 +40,7 @@ public class Win32WindowDemo implements WindowProc {
 	 */
 	public Win32WindowDemo() {
 		// define new window class
-		WString windowClass = new WString("MyWindowClass");
+		String windowClass = new String("MyWindowClass");
 		HMODULE hInst = Kernel32.INSTANCE.GetModuleHandle("");
 
 		WNDCLASSEX wClass = new WNDCLASSEX();
