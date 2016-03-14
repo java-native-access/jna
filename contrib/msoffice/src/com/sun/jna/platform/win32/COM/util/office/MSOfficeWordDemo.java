@@ -101,9 +101,6 @@ public class MSOfficeWordDemo {
 			if (msWord != null) {
 				msWord.Quit();
 			}
-			if (null != factory) {
-				factory.getComThread().terminate(500);
-			}
 		}
 	}
 }
