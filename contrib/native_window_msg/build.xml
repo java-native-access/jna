@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jnacontrib.native_window_msg" default="jar" basedir=".">
-    <description>Builds, tests, and runs the project jnacontrib.msoffice.</description>
+    <description>Builds, tests, and runs the project jnacontrib.native_window_msg.</description>
     <!-- Locations -->
     <property name="src"                location="./src"/>
     <property name="build"              location="build"/>
