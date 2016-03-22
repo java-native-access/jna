@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jnacontrib.w32printing" default="jar" basedir=".">
+    <description>Builds, tests, and runs the project jnacontrib.w32printing.</description>
+    <!-- Locations -->
+    <property name="src"                location="./src"/>
+    <property name="build"              location="build"/>
+    <property name="jna-dist"           location="../../dist"/>
+
+    <property name="classes"       location="${build}/classes"/>
+    <property name="jar"           location="${build}/demo-w32printing.jar"/>
+    <property name="file.reference.jna.jar" location="../../build/jna.jar"/>
+    <property name="main-class"			value="com.sun.jna.platform.win32.Win32SpoolMonitor.java" />
+
+    <path id="classpath">
+        <fileset file="${file.reference.jna.jar}"/>
+        <fileset dir="../platform/dist" includes="jna-platform.jar"/>
+    </path>
+
+    <!-- Delete class and jar files. -->
+    <target name="clean">
+        <delete dir="${classes}"/>
+        <delete file="${jar}"/>
+        <delete dir="${build}"/>
+    </target>
+
+    <!-- Compile all classes. -->
+    <target name="compile">
+        <mkdir dir="${classes}"/>
+        <!-- Compile the project. -->
+        <javac srcdir="${src}" destdir="${classes}" target="1.5" source="1.5"
+               encoding="UTF-8" debug="on" includeantruntime="false">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+        </javac>
+    </target>
+
+    <!-- Create jar-file. -->
+    <target name="jar" depends="compile">
+
+        <!-- Copy all non-java files to classes. -->
+        <copy todir="${classes}/com">
+            <fileset dir="${src}/com">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+
+        <jar jarfile="${jar}" basedir="${classes}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}"/>
+            </manifest>
+            <!-- platform -->
+            <fileset dir="../platform/build/classes"/>
+            <!-- jna -->
+            <zipfileset src="${file.reference.jna.jar}"/>
+        </jar>
+    </target>
+</project>
