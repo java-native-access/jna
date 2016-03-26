@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -52,15 +51,31 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * This object acts as the invocation handler for interfaces annotated with
- * ComInterface. It wraps all (necessary) low level COM calls and executes them
- * on a 'ComThread' held by the Factory object.
+ * ComInterface. It wraps all (necessary) low level COM calls and dispatches
+ * them through the COM runtime.
+ * 
+ * <p>The caller of the methods is responsible for correct initialization of the
+ * COM runtime and appropriate thread-handling - depending on the choosen
+ * handling model.</p>
+ * 
+ * @see <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/ms693344%28v=vs.85%29.aspx">MSDN - Processes, Threads, and Apartments</a>
+ * @see <a href="https://msdn.microsoft.com/en-us/library/ms809971.aspx">MSDN - Understanding and Using COM Threading Models</a>
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
-		IRawDispatchHandle {
+		IRawDispatchHandle, IConnectionPoint {
         
+	// cached value of the IUnknown interface pointer
+	// Rules of COM state that querying for the IUnknown interface must return
+	// an identical pointer value
+	private long unknownId;
+	private final Class<?> theInterface;
+	private final Factory factory;
+	private final com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
+    
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
 		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
@@ -73,38 +88,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		factory.register(this);
 	}
 
-	/** when proxy is created for arguments on a call back, they are already on the
-	 * com thread, and hence calling 'getUnknownId' will not work as it uses the ComThread
-	 * however, the unknown pointer value is passed in;
-	 *
-	 * @param theInterface
-	 * @param unknownId
-	 * @param rawDispatch
-	 * @param factory
-	 */
-	ProxyObject(Class<?> theInterface, long unknownId, IDispatch rawDispatch, Factory factory) {
-		this.unknownId = unknownId;
-		this.rawDispatch = rawDispatch;
-		this.theInterface = theInterface;
-		this.factory = factory;
-		// make sure dispatch object knows we have a reference to it
-		// (for debug it is usefult to be able to see how many refs are present
-		int n = this.rawDispatch.AddRef();
-		factory.register(this);
-	}
-
-        
-	// cached value of the IUnknown interface pointer
-	// Rules of COM state that querying for the IUnknown interface must return
-	// an identical pointer value
-	long unknownId;
-
-	long getUnknownId() {
+	private long getUnknownId() {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		if (-1 == this.unknownId) {
 			try {
-
 				final PointerByReference ppvObject = new PointerByReference();
 
 				Thread current = Thread.currentThread();
@@ -144,12 +132,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	Class<?> theInterface;
-	Factory factory;
-	com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
-
 	@Override
-    public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
+        public com.sun.jna.platform.win32.COM.IDispatch getRawDispatch() {
 		return this.rawDispatch;
 	}
 
@@ -164,7 +148,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	 * therefore we can compare the pointers
 	 */
 	@Override
-    public boolean equals(Object arg) {
+        public boolean equals(Object arg) {
 		if (null == arg) {
 			return false;
 		} else if (arg instanceof ProxyObject) {
@@ -204,33 +188,21 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	@Override
 	public Object invoke(final Object proxy, final java.lang.reflect.Method method, final Object[] args)
 			throws Throwable {
-		return this.invokeSynchronised(proxy, method, args);
-	}
-
-	/*
-	 * may not necessary for this method to be synchronised as all calls to COM
-	 * are on their own , single, thread. However, might be best not to overlap
-	 * calls to COM object with advise, unadvise, queryInterface, etc.
-	 */
-	synchronized Object invokeSynchronised(final Object proxy, final java.lang.reflect.Method method,
-			final Object[] args) throws Throwable {
-		if (method.equals(Object.class.getMethod("toString"))) {
-			return this.toString();
-		} else if (method.equals(Object.class.getMethod("equals", Object.class))) {
-			return this.equals(args[0]);
-		} else if (method.equals(Object.class.getMethod("hashCode"))) {
-			return this.hashCode();
-		} else if (method.equals(IRawDispatchHandle.class.getMethod("getRawDispatch"))) {
-			return this.getRawDispatch();
-		} else if (method.equals(IUnknown.class.getMethod("queryInterface", Class.class))) {
-			return this.queryInterface((Class<?>) args[0]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("advise", Class.class,
-				IComEventCallbackListener.class))) {
-			return this.advise((Class<?>) args[0], (IComEventCallbackListener) args[1]);
-		} else if (method.equals(IConnectionPoint.class.getMethod("unadvise", Class.class,
-				IComEventCallbackCookie.class))) {
-			this.unadvise((Class<?>) args[0], (IComEventCallbackCookie) args[1]);
-			return null;
+                boolean declaredAsInterface = 
+                        (method.getAnnotation(ComMethod.class) != null)
+                        ||(method.getAnnotation(ComProperty.class) != null);
+            
+		if ((! declaredAsInterface) && (method.getDeclaringClass().equals(Object.class)
+                        || method.getDeclaringClass().equals(IRawDispatchHandle.class)
+                        || method.getDeclaringClass().equals(com.sun.jna.platform.win32.COM.util.IUnknown.class)
+                        || method.getDeclaringClass().equals(com.sun.jna.platform.win32.COM.util.IDispatch.class)
+                        || method.getDeclaringClass().equals(IConnectionPoint.class)
+                        )) {
+                        try {
+                            return method.invoke(this, args);
+                        } catch (InvocationTargetException ex) {
+                            throw ex.getCause();
+                        }
 		}
 
 		Class<?> returnType = method.getReturnType();
@@ -238,28 +210,42 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		ComProperty prop = method.getAnnotation(ComProperty.class);
 		if (null != prop) {
+                        int dispId = prop.dispId();
 			if (isVoid) {
-				String propName = this.getMutatorName(method, prop);
-				this.setProperty(propName, args[0]);
-				return null;
+                                if(dispId != -1) {
+                                    this.setProperty(new DISPID(dispId), args[0]);
+                                    return null;
+                                } else {
+                                    String propName = this.getMutatorName(method, prop);
+                                    this.setProperty(propName, args[0]);
+                                    return null;
+                                }
 			} else {
-				String propName = this.getAccessorName(method, prop);
-				return this.getProperty(returnType, propName, args);
+                                if(dispId != -1) {
+                                    return this.getProperty(returnType, new DISPID(dispId), args);
+                                } else {
+                                    String propName = this.getAccessorName(method, prop);
+                                    return this.getProperty(returnType, propName, args);
+                                }
 			}
 		}
 
 		ComMethod meth = method.getAnnotation(ComMethod.class);
 		if (null != meth) {
-			String methName = this.getMethodName(method, meth);
-			Object res = this.invokeMethod(returnType, methName, args);
-			return res;
+                        int dispId = meth.dispId();
+                        if(dispId != -1) {
+                            return this.invokeMethod(returnType, new DISPID(dispId), args);
+                        } else {
+                            String methName = this.getMethodName(method, meth);
+                            return this.invokeMethod(returnType, methName, args);
+                        }
 		}
 
 		return null;
 	}
 
 	// ---------------------- IConnectionPoint ----------------------
-	ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
+	private ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		// query for ConnectionPointContainer
@@ -339,42 +325,58 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	// --------------------- IDispatch ------------------------------
 	@Override
 	public <T> void setProperty(String name, T value) {
+            DISPID dispID = resolveDispId(this.getRawDispatch(), name);
+            setProperty(dispID, value);
+	}
+
+        @Override
+	public <T> void setProperty(DISPID dispId, T value) {
             assert COMUtils.comIsInitialized() : "COM not initialized";
             
             VARIANT v = Convert.toVariant(value);
-            WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), name, v);
+            WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), dispId, v);
             Convert.free(v, value); // Free value allocated by Convert#toVariant
             COMUtils.checkRC(hr);
 	}
-
+        
 	@Override
 	public <T> T getProperty(Class<T> returnType, String name, Object... args) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-		VARIANT[] vargs;
-		if (null == args) {
-			vargs = new VARIANT[0];
-		} else {
-			vargs = new VARIANT[args.length];
-		}
-		for (int i = 0; i < vargs.length; ++i) {
-			vargs[i] = Convert.toVariant(args[i]);
-		}
-		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), name, vargs);
-                
-                for (int i = 0; i < vargs.length; i++) {
-                        // Free value allocated by Convert#toVariant
-                        Convert.free(vargs[i], args[i]);
-                }
-                
-		COMUtils.checkRC(hr);
-		
-                return convertAndFreeReturn(result, returnType);
+            DISPID dispID = resolveDispId(this.getRawDispatch(), name);
+            return getProperty(returnType, dispID, args);
 	}
 
+        @Override
+        public <T> T getProperty(Class<T> returnType, DISPID dispID, Object... args) {
+            VARIANT[] vargs;
+            if (null == args) {
+                    vargs = new VARIANT[0];
+            } else {
+                    vargs = new VARIANT[args.length];
+            }
+            for (int i = 0; i < vargs.length; ++i) {
+                    vargs[i] = Convert.toVariant(args[i]);
+            }
+            Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
+            WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, this.getRawDispatch(), dispID, vargs);
+
+            for (int i = 0; i < vargs.length; i++) {
+                    // Free value allocated by Convert#toVariant
+                    Convert.free(vargs[i], args[i]);
+            }
+
+            COMUtils.checkRC(hr);
+
+            return convertAndFreeReturn(result, returnType);
+        }
+        
 	@Override
 	public <T> T invokeMethod(Class<T> returnType, String name, Object... args) {
+                DISPID dispID = resolveDispId(this.getRawDispatch(), name);
+                return invokeMethod(returnType, dispID, args);
+        }
+        
+        @Override
+        public <T> T invokeMethod(Class<T> returnType, DISPID dispID, Object... args) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		VARIANT[] vargs;
@@ -387,7 +389,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			vargs[i] = Convert.toVariant(args[i]);
 		}
 		Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
-		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), name, vargs);
+		WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_METHOD, result, this.getRawDispatch(), dispID, vargs);
                 
                 for (int i = 0; i < vargs.length; i++) {
                         // Free value allocated by Convert#toVariant
@@ -448,7 +450,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	IID getIID(ComInterface annotation) {
+	private IID getIID(ComInterface annotation) {
 		String iidStr = annotation.iid();
 		if (null != iidStr && !iidStr.isEmpty()) {
 			return new IID(iidStr);
@@ -535,11 +537,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		return this.oleMethod(nType, pvResult, pDisp, dispId, (VARIANT[]) null);
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
-	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, final IDispatch pDisp, String name,
-			VARIANT[] pArgs) throws COMException {
+        protected DISPID resolveDispId(final IDispatch pDisp, String name) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
                 if (pDisp == null)
                         throw new COMException("pDisp (IDispatch) parameter is null!");
 
@@ -552,8 +552,17 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
                                                 pdispID);
 
                 COMUtils.checkRC(hr);
+                
+                return pdispID.getValue();
+        }
+        
+	/*
+	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
+	 */
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, final IDispatch pDisp, String name,
+			VARIANT[] pArgs) throws COMException {
 
-                return this.oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
+                return this.oleMethod(nType, pvResult, pDisp, resolveDispId(pDisp, name), pArgs);
 	}
 
 	/*
@@ -562,7 +571,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult, final IDispatch pDisp,
 			final DISPID dispId, VARIANT[] pArgs) throws COMException {
 
-                assert COMUtils.comIsInitialized() : "COM not initialized";
+               assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		if (pDisp == null)
 			throw new COMException("pDisp (IDispatch) parameter is null!");
@@ -632,11 +641,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 
 
-			HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
-							new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
+                HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                                                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
 
 
-			COMUtils.checkRC(hr, pExcepInfo, puArgErr);
-			return hr;
+                COMUtils.checkRC(hr, pExcepInfo, puArgErr);
+                return hr;
 	}
 }

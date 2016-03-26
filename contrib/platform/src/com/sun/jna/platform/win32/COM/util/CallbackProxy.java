@@ -142,9 +142,7 @@ public class CallbackProxy implements IDispatchCallback {
                         PointerByReference ppvObject = new PointerByReference();
                         IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
                         dispatch.QueryInterface(new REFIID(iid), ppvObject);
-                        Unknown rawUnk = new Unknown(ppvObject.getValue());
-					long unknownId = Pointer.nativeValue( rawUnk.getPointer() );
-                        IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, unknownId, dispatch);
+                        IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, dispatch);
                         if(targetClass.getAnnotation(ComInterface.class) != null) {
                             rjargs.add(unk.queryInterface(targetClass));
                         } else {
