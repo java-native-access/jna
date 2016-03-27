@@ -35,15 +35,16 @@ Features
 * [#577](https://github.com/java-native-access/jna/pull/577): Apply generic definitions wherever applicable - [@lgoldstein](https://github.com/lgoldstein).
 * [#569](https://github.com/java-native-access/jna/pull/569): Added `com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2` support. Added GetPrinter and ClosePrinter functions in `com.sun.jna.platform.win32.Winspool` - [@IvanRF](https://github.com/IvanRF).
 * [#583](https://github.com/java-native-access/jna/pull/583): Added printer attributes and status - [@IvanRF](https://github.com/IvanRF).
-* [#589](https://github.com/java-native-access/jna/pull/589): Use MethodResultContext in direct mapping (as done in interface mapping) - [@marco2357](https://github.com/marco2357).
+* [#589](https://github.com/java-native-access/jna/pull/589): Use `com.sun.jna.MethodResultContext` in direct mapping (as done in interface mapping) - [@marco2357](https://github.com/marco2357).
 * [#595](https://github.com/java-native-access/jna/pull/595): Allow calling COM methods/getters requiring hybrid calling (METHOD+PROPERTYGET) - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#582](https://github.com/java-native-access/jna/pull/582): Mavenize the build process - Phase 1: building the native code via Maven [@lgoldstein](https://github.com/lgoldstein).
-* [#606](https://github.com/java-native-access/jna/pull/606): Added Kerne32Util method to facilitate checking that calls to LocalFree/GlobalFree are successful [@lgoldstein](https://github.com/lgoldstein).
-* [#612](https://github.com/java-native-access/jna/pull/612): 'Kernel32Util#freeLocal/GlobalMemory' always throws Win32Exception if failed [@lgoldstein](https://github.com/lgoldstein).
-* [#608](https://github.com/java-native-access/jna/pull/608): Mavenize the build process - change parent and native pom artifactId/name to differentiate in IDE and build tools. [@bhamail](https://github.com/bhamail)
-* [#613](https://github.com/java-native-access/jna/pull/613): Make Win32Exception extend LastErrorException [@lgoldstein](https://github.com/lgoldstein).
-* [#613](https://github.com/java-native-access/jna/pull/614): Added standard 'Kernel32Util#closeHandle' method that throws a Win32Exception if failed to close the handle [@lgoldstein](https://github.com/lgoldstein).
+* [#582](https://github.com/java-native-access/jna/pull/582): Mavenize the build process - Phase 1: building the native code via Maven - [@lgoldstein](https://github.com/lgoldstein).
+* [#606](https://github.com/java-native-access/jna/pull/606): Added Kernel32Util method to facilitate checking that calls to LocalFree/GlobalFree are successful - [@lgoldstein](https://github.com/lgoldstein).
+* [#612](https://github.com/java-native-access/jna/pull/612): `Kernel32Util.freeLocalMemory()`/`Kernel32Util.freeGlobalMemory()` always throw `com.sun.jna.platform.win32.Win32Exception` if failed - [@lgoldstein](https://github.com/lgoldstein).
+* [#608](https://github.com/java-native-access/jna/pull/608): Mavenize the build process - change parent and native pom artifactId/name to differentiate in IDE and build tools. - [@bhamail](https://github.com/bhamail)
+* [#613](https://github.com/java-native-access/jna/pull/613): Make `com.sun.jna.platform.win32.Win32Exception` extend `com.sun.jna.LastErrorException` - [@lgoldstein](https://github.com/lgoldstein).
+* [#614](https://github.com/java-native-access/jna/pull/614): Added standard `com.sun.jna.platform.win32.Kernel32Util.closeHandle()` method that throws a `com.sun.jna.platform.win32.Win32Exception` if failed to close the handle - [@lgoldstein](https://github.com/lgoldstein).
 * [#616](https://github.com/java-native-access/jna/pull/616): Allow access to base interfaces (most important IDispatch) via ProxyObject and improve binding by allowing to use dispId for the call - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#621](https://github.com/java-native-access/jna/pull/621): Added TYPEFLAGS-constants for `wTypeFlags` in `com.sun.jna.platform.win32.OaIdl.TYPEATTR` - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
 
 Bug Fixes
 ---------

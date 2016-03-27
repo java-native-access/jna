@@ -1458,6 +1458,7 @@ public interface OaIdl {
         public WORD cImplTypes;
         public WORD cbSizeVft;
         public WORD cbAlignment;
+        // The type flags. See TYPEFLAGS_...
         public WORD wTypeFlags;
         public WORD wMajorVerNum;
         public WORD wMinorVerNum;
@@ -1479,5 +1480,87 @@ public interface OaIdl {
         protected List<String> getFieldOrder() {
             return FIELDS;
         }
+
+        /**
+         * A type description that describes an Application object.
+         */
+        public final static int TYPEFLAGS_FAPPOBJECT = 0x1;
+
+        /**
+         * Instances of the type can be created by ITypeInfo::CreateInstance.
+         */
+        public final static int TYPEFLAGS_FCANCREATE = 0x2;
+
+        /**
+         * The type is licensed.
+         */
+        public final static int TYPEFLAGS_FLICENSED = 0x4;
+
+        /**
+         * The type is predefined. The client application should automatically create a single instance of the object
+         * that has this attribute. The name of the variable that points to the object is the same as the class name of
+         * the object.
+         */
+        public final static int TYPEFLAGS_FPREDECLID = 0x8;
+
+        /**
+         * The type should not be displayed to browsers.
+         */
+        public final static int TYPEFLAGS_FHIDDEN = 0x10;
+
+        /**
+         * The type is a control from which other types will be derived, and should not be displayed to users.
+         */
+        public final static int TYPEFLAGS_FCONTROL = 0x20;
+
+        /**
+         * The interface supplies both IDispatch and VTBL binding.
+         */
+        public final static int TYPEFLAGS_FDUAL = 0x40;
+
+        /**
+         * The interface cannot add members at run time.
+         */
+        public final static int TYPEFLAGS_FNONEXTENSIBLE = 0x80;
+
+        /**
+         * The types used in the interface are fully compatible with Automation, including VTBL binding support. Setting
+         * dual on an interface sets this flag in addition to TYPEFLAG_FDUAL. Not allowed on dispinterfaces.
+         */
+        public final static int TYPEFLAGS_FOLEAUTOMATION = 0x100;
+
+        /**
+         * Should not be accessible from macro languages. This flag is intended for system-level types or types that
+         * type browsers should not display.
+         */
+        public final static int TYPEFLAGS_FRESTRICTED = 0x200;
+
+        /**
+         * The class supports aggregation.
+         */
+        public final static int TYPEFLAGS_FAGGREGATABLE = 0x400;
+
+        /**
+         * The type is replaceable.
+         */
+        public final static int TYPEFLAGS_FREPLACEABLE = 0x800;
+
+        /**
+         * Indicates that the interface derives from IDispatch, either directly or indirectly. This flag is computed.
+         * There is no Object Description Language for the flag.
+         */
+        public final static int TYPEFLAGS_FDISPATCHABLE = 0x1000;
+
+        /**
+         * The type has reverse binding.
+         */
+        public final static int TYPEFLAGS_FREVERSEBIND = 0x2000;
+
+        /**
+         * Interfaces can be marked with this flag to indicate that they will be using a proxy/stub dynamic link
+         * library. This flag specifies that the typelib proxy should not be unregistered when the typelib is
+         * unregistered.
+         */
+        public final static int TYPEFLAGS_FPROXY = 0x4000;
     }
 }
