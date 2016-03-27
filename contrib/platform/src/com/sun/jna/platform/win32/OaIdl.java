@@ -6,11 +6,14 @@ package com.sun.jna.platform.win32;
 import java.util.List;
 
 import com.sun.jna.IntegerType;
+import com.sun.jna.Memory;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.Variant.VariantArg;
@@ -31,14 +34,41 @@ import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.COM.TypeComp;
+import com.sun.jna.platform.win32.COM.Unknown;
+import static com.sun.jna.platform.win32.Variant.VT_BOOL;
+import static com.sun.jna.platform.win32.Variant.VT_BSTR;
+import static com.sun.jna.platform.win32.Variant.VT_CY;
+import static com.sun.jna.platform.win32.Variant.VT_DATE;
+import static com.sun.jna.platform.win32.Variant.VT_DECIMAL;
+import static com.sun.jna.platform.win32.Variant.VT_DISPATCH;
+import static com.sun.jna.platform.win32.Variant.VT_ERROR;
+import static com.sun.jna.platform.win32.Variant.VT_I1;
+import static com.sun.jna.platform.win32.Variant.VT_I2;
+import static com.sun.jna.platform.win32.Variant.VT_I4;
+import static com.sun.jna.platform.win32.Variant.VT_INT;
+import static com.sun.jna.platform.win32.Variant.VT_R4;
+import static com.sun.jna.platform.win32.Variant.VT_R8;
+import static com.sun.jna.platform.win32.Variant.VT_RECORD;
+import static com.sun.jna.platform.win32.Variant.VT_UI1;
+import static com.sun.jna.platform.win32.Variant.VT_UI2;
+import static com.sun.jna.platform.win32.Variant.VT_UI4;
+import static com.sun.jna.platform.win32.Variant.VT_UINT;
+import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
+import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
 import com.sun.jna.ptr.ByReference;
+import com.sun.jna.ptr.PointerByReference;
+import java.util.Date;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Interface OaIdl.
  */
 public interface OaIdl {
-
+    
+    // The DATE Type is defined in localtime and the java Date type always contains
+    // a a timezone offset, so the difference has to be calculated and can't be
+    // predetermined
+    public static final long DATE_OFFSET = new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0).getTime();
+    
     /**
      * The Class EXCEPINFO.
      */
@@ -116,6 +146,14 @@ public interface OaIdl {
         public VARIANT_BOOL(long value) {
             super(2, value);
         }
+        
+        public VARIANT_BOOL(boolean value) {
+            this(value ? 0xFFFF : 0x0000);
+        }
+        
+        public boolean booleanValue() {
+            return shortValue() != 0x0000;
+        }
     }
 
     public static class _VARIANT_BOOL extends VARIANT_BOOL {
@@ -169,6 +207,8 @@ public interface OaIdl {
     }
 
     public static class DATE extends Structure {
+        private final static long MICRO_SECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
+        
         public static class ByReference extends DATE implements
                 Structure.ByReference {
         }
@@ -183,7 +223,32 @@ public interface OaIdl {
         public DATE(double date) {
             this.date = date;
         }
+        
+        public DATE(Date javaDate) {
+            setFromJavaDate(javaDate);
+        }
 
+        public Date getAsJavaDate() {
+            long days = (((long) this.date) * MICRO_SECONDS_PER_DAY) + DATE_OFFSET;
+            int hours = (int) (24 * Math.abs(this.date - ((long) this.date)));
+            
+            Date baseDate = new Date(days);
+            baseDate.setHours(hours);
+            baseDate.setMinutes(0);
+            baseDate.setSeconds(0);
+            return baseDate;
+        }
+        
+        public void setFromJavaDate(Date javaDate) {
+            double msSinceOrigin = javaDate.getTime() - DATE_OFFSET;
+            double daysAsFract = msSinceOrigin / MICRO_SECONDS_PER_DAY;
+            
+            double dayPart = Math.floor(daysAsFract);
+            double hourPart = Math.signum(daysAsFract) * (javaDate.getHours() / 24d);
+            
+            this.date = dayPart + hourPart;
+        }
+        
         @Override
         protected List<String> getFieldOrder() {
             return FIELDS;
@@ -443,6 +508,38 @@ public interface OaIdl {
         }
     };
 
+    /**
+     * General comment: All indices in the helper methods use java int.
+     * 
+     * <p>VARTYPE for the SAFEARRAY can be:</p>
+     *
+     * <ul>
+     * <li>VT_BOOL</li>
+     * <li>VT_BSTR</li>
+     * <li>VT_CY</li>
+     * <li>VT_DATE</li>
+     * <li>VT_DECIMAL</li>
+     * <li>VT_DISPATCH</li>
+     * <li>VT_ERROR</li>
+     * <li>VT_I1</li>
+     * <li>VT_I2</li>
+     * <li>VT_I4</li>
+     * <li>VT_INT</li>
+     * <li>VT_R4</li>
+     * <li>VT_R8</li>
+     * <li>VT_RECORD</li>
+     * <li>VT_UI1</li>
+     * <li>VT_UI2</li>
+     * <li>VT_UI4</li>
+     * <li>VT_UINT</li>
+     * <li>VT_UNKNOWN</li>
+     * <li>VT_VARIANT</li>
+     * </ul>
+     * 
+     * <p>The native type for the indices is LONG, which is defined as:</p>
+     * 
+     * <blockquote>A 32-bit signed integer. The range is �2147483648 through 2147483647 decimal.</blockquote>
+     */
     public static class SAFEARRAY extends Structure {
         public static class ByReference extends SAFEARRAY implements
                 Structure.ByReference {
@@ -470,8 +567,429 @@ public interface OaIdl {
         }
 
         @Override
+        public void read() {
+            super.read();
+            rgsabound = (SAFEARRAYBOUND[]) rgsabound[0].toArray(cDims.intValue());
+        }
+        
+        @Override
         protected List<String> getFieldOrder() {
             return FIELDS;
+        }
+
+        /**
+         * Create a SAFEARRAY with supplied VARIANT as element type.
+         *
+         * <p>
+         * This helper creates a basic SAFEARRAY with a base type of VT_VARIANT.
+         * The array will have as many dimensions as parameters are passed in.
+         * The lowerbound for each dimension is set to zero, the count to the
+         * parameter value.</p>
+         *
+         * @param size array of dimension size
+         * @return SAFEARRAYWrapper or {@code NULL} if creation fails.
+         */
+        public static SAFEARRAY createSafeArray(int... size) {
+            return createSafeArray(new WTypes.VARTYPE(Variant.VT_VARIANT), size);
+        }
+ 
+        /**
+         * Create a SAFEARRAY with supplied element type.
+         *
+         * <p>
+         * The array will have as many dimensions as parameters are passed in.
+         * The lowerbound for each dimension is set to zero, the count to the
+         * parameter value.</p>
+         *
+         * @param vartype type of array contents (see Variant.VT_* constants)
+         * @param size array of dimension size
+         * @return SAFEARRAYWrapper or {@code NULL} if creation fails.
+         */
+        public static SAFEARRAY createSafeArray(VARTYPE vartype, int... size) {
+            OaIdl.SAFEARRAYBOUND[] rgsabound = (OaIdl.SAFEARRAYBOUND[]) new OaIdl.SAFEARRAYBOUND().toArray(size.length);
+            for (int i = 0; i < size.length; i++) {
+                rgsabound[i].lLbound = new WinDef.LONG(0);
+                rgsabound[i].cElements = new WinDef.ULONG(size[size.length - i - 1]);
+            }
+            SAFEARRAY.ByReference data = OleAuto.INSTANCE.SafeArrayCreate(vartype, new WinDef.UINT(size.length), rgsabound);
+            return data;
+        }
+        
+        /**
+         * Set value at {@code indices} in {@code array} to arg.
+         *
+         * <p>
+         * The supplied argument is copied into the array. If the value is no
+         * longer needed, it needs to be freed if not handled automatically.</p>
+         *
+         * @param indices the index, order follows java/C convention
+         * @param arg the arg
+         */
+        public void putElement(Object arg, int... indices) {
+            WinDef.LONG[] paramIndices = new WinDef.LONG[indices.length];
+            for (int i = 0; i < indices.length; i++) {
+                paramIndices[i] = new WinDef.LONG(indices[indices.length - i - 1]);
+            }
+            
+            WinNT.HRESULT hr;
+            Memory mem;
+            switch (getVarType().intValue()) {
+                case VT_BOOL:
+                    mem = new Memory(2);
+                    if(arg instanceof Boolean) {
+                        mem.setShort(0, (short) (((Boolean) arg) ? 0xFFFF : 0) );
+                    } else {
+                        mem.setShort(0, (short) (((Number) arg).intValue() > 0 ? 0xFFFF : 0));
+                    }
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_UI1:
+                case VT_I1:
+                    mem = new Memory(1);
+                    mem.setByte(0, ((Number) arg).byteValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_UI2:
+                case VT_I2:
+                    mem = new Memory(2);
+                    mem.setShort(0, ((Number) arg).shortValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_UI4:
+                case VT_UINT:
+                case VT_I4:
+                case VT_INT:
+                    mem = new Memory(4);
+                    mem.setInt(0, ((Number) arg).intValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_ERROR:
+                    mem = new Memory(4);
+                    mem.setInt(0, ((Number) arg).intValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_R4:
+                    mem = new Memory(4);
+                    mem.setFloat(0, ((Number) arg).floatValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_R8:
+                    mem = new Memory(8);
+                    mem.setDouble(0, ((Number) arg).doubleValue());
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_DATE:
+                    mem = new Memory(8);
+                    mem.setDouble(0, ((DATE) arg).date);
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_BSTR:
+                    if(arg instanceof String) {
+                        BSTR bstr = OleAuto.INSTANCE.SysAllocString((String) arg);
+                        hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, bstr.getPointer());
+                        OleAuto.INSTANCE.SysFreeString(bstr);
+                        COMUtils.checkRC(hr);
+                    } else {
+                        hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((BSTR) arg).getPointer());
+                        COMUtils.checkRC(hr);
+                    }
+                    break;
+                case VT_VARIANT:
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((VARIANT) arg).getPointer());
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_UNKNOWN:
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((Unknown) arg).getPointer());
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_DISPATCH:
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((Dispatch) arg).getPointer());
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_CY:
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((CURRENCY) arg).getPointer());
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_DECIMAL:
+                    hr = OleAuto.INSTANCE.SafeArrayPutElement(this, paramIndices, ((DECIMAL) arg).getPointer());
+                    COMUtils.checkRC(hr);
+                    break;
+                case VT_RECORD:
+                default:
+                    throw new IllegalStateException("Can't parse array content - type not supported: " + getVarType().intValue());
+            }
+        }
+
+        /**
+         * Retrieve the value at the referenced index from the SAFEARRAY.
+         *
+         * <p>The function creates a copy of the value. The values are
+         * allocated with native functions and need to be freed accordingly.</p>
+         *
+         * @param indices the index, order follows java/C convention
+         * @return the variant
+         */
+        public Object getElement(int... indices) {
+            WinDef.LONG[] paramIndices = new WinDef.LONG[indices.length];
+            for (int i = 0; i < indices.length; i++) {
+                paramIndices[i] = new WinDef.LONG(indices[indices.length - i - 1]);
+            }
+            
+            Object result;
+            WinNT.HRESULT hr;
+            Memory mem;
+            PointerByReference pbr;
+            switch (getVarType().intValue()) {
+                case VT_BOOL:
+                    mem = new Memory(2);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getShort(0) != 0;
+                    break;
+                case VT_UI1:
+                case VT_I1:
+                    mem = new Memory(1);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getByte(0);
+                    break;
+                case VT_UI2:
+                case VT_I2:
+                    mem = new Memory(2);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getShort(0);
+                    break;
+                case VT_UI4:
+                case VT_UINT:
+                case VT_I4:
+                case VT_INT:
+                    mem = new Memory(4);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getInt(0);
+                    break;
+                case VT_ERROR:
+                    mem = new Memory(4);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = new SCODE(mem.getInt(0));
+                    break;
+                case VT_R4:
+                    mem = new Memory(4);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getFloat(0);
+                    break;
+                case VT_R8:
+                    mem = new Memory(8);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = mem.getDouble(0);
+                    break;
+                case VT_DATE:
+                    mem = new Memory(8);
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, mem);
+                    COMUtils.checkRC(hr);
+                    result = new DATE(mem.getDouble(0));
+                    break;
+                case VT_BSTR:
+                    pbr = new PointerByReference();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, pbr.getPointer());
+                    COMUtils.checkRC(hr);
+                    BSTR bstr = new BSTR(pbr.getValue());
+                    result = bstr.getValue();
+                    OleAuto.INSTANCE.SysFreeString(bstr);
+                    break;
+                case VT_VARIANT:
+                    VARIANT holder = new Variant.VARIANT();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, holder.getPointer());
+                    COMUtils.checkRC(hr);
+                    result = holder;
+                    break;
+                case VT_UNKNOWN:
+                    pbr = new PointerByReference();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, pbr.getPointer());
+                    COMUtils.checkRC(hr);
+                    result = new Unknown(pbr.getValue());
+                    break;
+                case VT_DISPATCH:
+                    pbr = new PointerByReference();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, pbr.getPointer());
+                    COMUtils.checkRC(hr);
+                    result = new Dispatch(pbr.getValue());
+                    break;
+                case VT_CY:
+                    CURRENCY currency = new CURRENCY();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, currency.getPointer());
+                    COMUtils.checkRC(hr);
+                    result = currency;
+                    break;
+                case VT_DECIMAL:
+                    DECIMAL decimal = new DECIMAL();
+                    hr = OleAuto.INSTANCE.SafeArrayGetElement(this, paramIndices, decimal.getPointer());
+                    COMUtils.checkRC(hr);
+                    result = decimal;
+                    break;
+                case VT_RECORD:
+                default:
+                    throw new IllegalStateException("Can't parse array content - type not supported: " + getVarType().intValue());
+            }
+            
+            return result;
+        }
+
+        /**
+         * Retrieve pointer to data element from array.
+         *
+         * <p>
+         * Caller is responsible for (un)locking the array via
+         * {@link OleAuto#SafeArrayLock} and {@link OleAuto#SafeArrayUnlock} or
+         * the helper methods: {@link SAFEARRAY#lock} and
+         * {@link SAFEARRAY#unlock}.</p>
+         *
+         * @param indices the index, order follows java/C convention
+         * @return the pointer to the data element
+         */
+        public Pointer ptrOfIndex(int... indices) {
+            WinDef.LONG[] paramIndices = new WinDef.LONG[indices.length];
+            for (int i = 0; i < indices.length; i++) {
+                paramIndices[i] = new WinDef.LONG(indices[indices.length - i - 1]);
+            }
+            PointerByReference pbr = new PointerByReference();
+            WinNT.HRESULT hr = OleAuto.INSTANCE.SafeArrayPtrOfIndex(this, paramIndices, pbr);
+            COMUtils.checkRC(hr);
+            return pbr.getValue();
+        }
+
+        /**
+         * Destroy the underlying SAFEARRAY and free memory
+         */
+        public void destroy() {
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayDestroy(this);
+            COMUtils.checkRC(res);
+        }
+
+        /**
+         * Retrieve lower bound for the selected dimension.
+         *
+         * <p>As in the all the accessor functions, that index is converted to
+         * java conventions.</p>
+         * 
+         * @param dimension zerobased index
+         * @return
+         */
+        public int getLBound(int dimension) {
+            int targetDimension = getDimensionCount() - dimension;
+            WinDef.LONGByReference bound = new WinDef.LONGByReference();
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayGetLBound(this, new WinDef.UINT(targetDimension), bound);
+            COMUtils.checkRC(res);
+            return bound.getValue().intValue();
+        }
+
+        /**
+         * Retrieve upper bound for the selected dimension.
+         *
+         * <p>As in the all the accessor functions, that index is converted to
+         * java conventions.</p>
+         * 
+         * @param dimension zerobased index
+         * @return
+         */
+        public int getUBound(int dimension) {
+            int targetDimension = getDimensionCount() - dimension;
+            WinDef.LONGByReference bound = new WinDef.LONGByReference();
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayGetUBound(this, new WinDef.UINT(targetDimension), bound);
+            COMUtils.checkRC(res);
+            return bound.getValue().intValue();
+        }
+
+        /**
+         * Return number of dimensions of the SAFEARRAY
+         *
+         * @return
+         */
+        public int getDimensionCount() {
+            return OleAuto.INSTANCE.SafeArrayGetDim(this).intValue();
+        }
+
+        /**
+         * Lock array and retrieve pointer to data
+         *
+         * @return Pointer to arraydata
+         */
+        public Pointer accessData() {
+            PointerByReference pbr = new PointerByReference();
+            WinNT.HRESULT hr = OleAuto.INSTANCE.SafeArrayAccessData(this, pbr);
+            COMUtils.checkRC(hr);
+            return pbr.getValue();
+        }
+
+        /**
+         * Unlock array and invalidate the pointer retrieved via
+         * SafeArrayAccessData
+         */
+        public void unaccessData() {
+            WinNT.HRESULT hr = OleAuto.INSTANCE.SafeArrayUnaccessData(this);
+            COMUtils.checkRC(hr);
+        }
+
+        /**
+         * Increments the lock count of an array, and places a pointer to the
+         * array data in pvData of the array descriptor.
+         */
+        public void lock() {
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayLock(this);
+            COMUtils.checkRC(res);
+        }
+
+        /**
+         * Decrements the lock count of an array so it can be freed or resized
+         */
+        public void unlock() {
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayUnlock(this);
+            COMUtils.checkRC(res);
+        }
+
+        /**
+         * Changes the right-most (least significant) bound of the specified
+         * safe array.
+         *
+         * @param cElements
+         * @param lLbound
+         */
+        public void redim(int cElements, int lLbound) {
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayRedim(this, new OaIdl.SAFEARRAYBOUND(cElements, lLbound));
+            COMUtils.checkRC(res);
+        }
+
+        /**
+         * Return VARTYPE of the SAFEARRAY
+         *
+         * @return
+         */
+        public VARTYPE getVarType() {
+            WTypes.VARTYPEByReference resultHolder = new WTypes.VARTYPEByReference();
+            WinNT.HRESULT res = OleAuto.INSTANCE.SafeArrayGetVartype(this, resultHolder);
+            COMUtils.checkRC(res);
+            return resultHolder.getValue();
+        }
+        
+        /**
+         * Get size of one element in bytes
+         * 
+         * @return element size in bytes
+         */
+        public long getElemsize() {
+            return OleAuto.INSTANCE.SafeArrayGetElemsize(this).longValue();
         }
     }
 
