@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
@@ -21,10 +22,43 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Date;
 
-import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.BYTE;
+import com.sun.jna.platform.win32.WinDef.CHAR;
+import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.SHORT;
+import com.sun.jna.platform.win32.OaIdl;
+import static com.sun.jna.platform.win32.Variant.VT_ARRAY;
+import static com.sun.jna.platform.win32.Variant.VT_BOOL;
+import static com.sun.jna.platform.win32.Variant.VT_BSTR;
+import static com.sun.jna.platform.win32.Variant.VT_BYREF;
+import static com.sun.jna.platform.win32.Variant.VT_CY;
+import static com.sun.jna.platform.win32.Variant.VT_DATE;
+import static com.sun.jna.platform.win32.Variant.VT_DECIMAL;
+import static com.sun.jna.platform.win32.Variant.VT_DISPATCH;
+import static com.sun.jna.platform.win32.Variant.VT_EMPTY;
+import static com.sun.jna.platform.win32.Variant.VT_ERROR;
+import static com.sun.jna.platform.win32.Variant.VT_I1;
+import static com.sun.jna.platform.win32.Variant.VT_I2;
+import static com.sun.jna.platform.win32.Variant.VT_I4;
+import static com.sun.jna.platform.win32.Variant.VT_I8;
+import static com.sun.jna.platform.win32.Variant.VT_INT;
+import static com.sun.jna.platform.win32.Variant.VT_NULL;
+import static com.sun.jna.platform.win32.Variant.VT_R4;
+import static com.sun.jna.platform.win32.Variant.VT_R8;
+import static com.sun.jna.platform.win32.Variant.VT_RECORD;
+import static com.sun.jna.platform.win32.Variant.VT_SAFEARRAY;
+import static com.sun.jna.platform.win32.Variant.VT_UI1;
+import static com.sun.jna.platform.win32.Variant.VT_UI2;
+import static com.sun.jna.platform.win32.Variant.VT_UI4;
+import static com.sun.jna.platform.win32.Variant.VT_UI8;
+import static com.sun.jna.platform.win32.Variant.VT_UINT;
+import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
+import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
+import com.sun.jna.platform.win32.WinDef.PVOID;
 
 /**
  * This class is considered internal to the package.
@@ -50,20 +84,42 @@ class Convert {
 	public static VARIANT toVariant(Object value) {
                 if (value instanceof VARIANT) {
                         return (VARIANT) value;
-                } else if (value instanceof Boolean) {
-			return new VARIANT((Boolean) value);
-		} else if (value instanceof Long) {
-			return new VARIANT(new WinDef.LONG((Long) value));
+                } else if (value instanceof BSTR) {
+                        return new VARIANT((BSTR) value);
+                } else if (value instanceof VARIANT_BOOL) {
+                        return new VARIANT((VARIANT_BOOL) value);
+                } else if (value instanceof BOOL) {
+                        return new VARIANT((BOOL) value);
+                } else if (value instanceof LONG) {
+                        return new VARIANT((LONG) value);
+                } else if (value instanceof SHORT) {
+                        return new VARIANT((SHORT) value);
+                } else if (value instanceof DATE) {
+                        return new VARIANT((DATE) value);
+                } else if (value instanceof BYTE) {
+                        return new VARIANT((BYTE) value);
+                } else if (value instanceof Byte) {
+                        return new VARIANT((Byte) value);
+                } else if (value instanceof Character) {
+                        return new VARIANT((Character) value);
+                } else if (value instanceof CHAR) {
+                        return new VARIANT((CHAR) value);
+		} else if (value instanceof Short) {
+			return new VARIANT((Short) value);
 		} else if (value instanceof Integer) {
 			return new VARIANT((Integer) value);
-		} else if (value instanceof Short) {
-			return new VARIANT(new WinDef.SHORT((Short) value));
+		} else if (value instanceof Long) {
+			return new VARIANT((Long) value);
 		} else if (value instanceof Float) {
 			return new VARIANT((Float) value);
 		} else if (value instanceof Double) {
 			return new VARIANT((Double) value);
 		} else if (value instanceof String) {
 			return new VARIANT((String) value);
+                } else if (value instanceof Boolean) {
+			return new VARIANT((Boolean) value);
+                } else if (value instanceof com.sun.jna.platform.win32.COM.IDispatch) {
+			return new VARIANT((com.sun.jna.platform.win32.COM.IDispatch) value);
 		} else if (value instanceof Date) {
 			return new VARIANT((Date) value);
 		} else if (value instanceof Proxy) {
@@ -78,43 +134,171 @@ class Convert {
 		}
 	}
 	
-	public static Object toJavaObject(VARIANT value, Class targetClass) {
-		if (null==value) {
+	public static Object toJavaObject(VARIANT value, Class targetClass, Factory factory, boolean addReference) {
+		if (null==value 
+                        || value.getVarType().intValue() == VT_EMPTY 
+                        || value.getVarType().intValue() == VT_NULL) {
                     return null;
+                }
+                
+                if (targetClass != null
+                        && (!targetClass.isAssignableFrom(Object.class))) {
+                    if (targetClass != null && targetClass.isAssignableFrom(value.getClass())) {
+                        return value;
+                    }
+
+                    Object vobj = value.getValue();
+                    if (vobj != null && (targetClass == null || targetClass.isAssignableFrom(vobj.getClass()))) {
+                        return vobj;
+                    }
+                }
+                
+                if (value.getVarType().intValue() == (VT_BYREF | VT_VARIANT)) {
+                    value = (VARIANT) value.getValue();
                 }
                 
                 // Passing null or Object.class as targetClass switch to default
                 // handling
-                boolean concreteClassRequested = targetClass != null
-                        && (! targetClass.isAssignableFrom(Object.class));
+                if (targetClass == null
+                    || (targetClass.isAssignableFrom(Object.class))) {
+                    
+                    targetClass = null;
+                    
+                    int varType = value.getVarType().intValue();
+                    
+                    switch (value.getVarType().intValue()) {
+                        case VT_UI1:
+                        case VT_I1:
+                        case VT_BYREF | VT_UI1:
+                        case VT_BYREF | VT_I1:
+                            targetClass = Byte.class;
+                            break;
+                        case VT_I2:
+                        case VT_BYREF | VT_I2:
+                            targetClass = Short.class;
+                            break;
+                        case VT_UI2:
+                        case VT_BYREF | VT_UI2:
+                            targetClass = Character.class;
+                            break;
+                        case VT_INT:
+                        case VT_UINT:
+                        case VT_UI4:
+                        case VT_I4:
+                        case VT_BYREF | VT_I4:
+                        case VT_BYREF | VT_UI4:
+                        case VT_BYREF | VT_INT:
+                        case VT_BYREF | VT_UINT:
+                            targetClass = Integer.class;
+                            break;
+                        case VT_UI8:
+                        case VT_I8:
+                        case VT_BYREF | VT_I8:
+                        case VT_BYREF | VT_UI8:
+                            targetClass = Long.class;
+                            break;
+                        case VT_R4:
+                        case VT_BYREF | VT_R4:
+                            targetClass = Float.class;
+                            break;
+                        case VT_R8:
+                        case VT_BYREF | VT_R8:
+                            targetClass = Double.class;
+                            break;
+                        case VT_BOOL:
+                        case VT_BYREF | VT_BOOL:
+                            targetClass = Boolean.class;
+                            break;
+                        case VT_ERROR:
+                        case VT_BYREF | VT_ERROR:
+                            targetClass = WinDef.SCODE.class;
+                            break;
+                        case VT_CY:
+                        case VT_BYREF | VT_CY:
+                            targetClass = OaIdl.CURRENCY.class;
+                            break;
+                        case VT_DATE:
+                        case VT_BYREF | VT_DATE:
+                            targetClass = Date.class;
+                            break;
+                        case VT_BSTR:
+                        case VT_BYREF | VT_BSTR:
+                            targetClass = String.class;
+                            break;
+                        case VT_UNKNOWN:
+                        case VT_BYREF | VT_UNKNOWN:
+                            targetClass = com.sun.jna.platform.win32.COM.IUnknown.class;
+                            break;
+                        case VT_DISPATCH:
+                        case VT_BYREF | VT_DISPATCH:
+                            targetClass = IDispatch.class;
+                            break;
+                        case VT_BYREF | VT_VARIANT:
+                            targetClass = Variant.class;
+                            break;
+                        case VT_BYREF:
+                            targetClass = PVOID.class;
+                            break;
+                        case VT_BYREF | VT_DECIMAL:
+                            targetClass = OaIdl.DECIMAL.class;
+                            break;
+                        case VT_RECORD:
+                        default:
+                            if ((varType & VT_ARRAY) > 0
+                                    || ((varType & VT_SAFEARRAY) > 0)) {
+                                targetClass = OaIdl.SAFEARRAY.class;
+                            }
+                    }
+                }
                 
-                if (concreteClassRequested && targetClass.isAssignableFrom(value.getClass())) {
-                        return value;
+                Object result;
+                if(Byte.class.equals(targetClass) || byte.class.equals(targetClass)) {
+                    result = value.byteValue();
+                } else if (Short.class.equals(targetClass) || short.class.equals(targetClass)) {
+                    result = value.shortValue();
+                } else if (Character.class.equals(targetClass) || char.class.equals(targetClass)) {
+                    result = (char) value.intValue();
+                } else if (Integer.class.equals(targetClass) || int.class.equals(targetClass)) {
+                    result = value.intValue();
+                } else if (Long.class.equals(targetClass) || long.class.equals(targetClass) || IComEnum.class.isAssignableFrom(targetClass)) {
+                    result = value.longValue();
+                } else if (Float.class.equals(targetClass) || float.class.equals(targetClass)) {
+                    result = value.floatValue();
+                } else if (Double.class.equals(targetClass) || double.class.equals(targetClass)) {
+                    result = value.doubleValue();
+                } else if (Boolean.class.equals(targetClass) || boolean.class.equals(targetClass)) {
+                    result = value.booleanValue();
+                } else if (Date.class.equals(targetClass)) {
+                    result = value.dateValue();
+                } else if (String.class.equals(targetClass)) {
+                    result = value.stringValue();
+                } else if (value.getValue() instanceof com.sun.jna.platform.win32.COM.IDispatch) {
+                    com.sun.jna.platform.win32.COM.IDispatch d = (com.sun.jna.platform.win32.COM.IDispatch) value.getValue();
+                    Object proxy = factory.createProxy(targetClass, d);
+                    // must release a COM reference, createProxy adds one, as does the
+                    // call
+                    if (!addReference) {
+                        int n = d.Release();
+                    }
+                    result = proxy;
+                } else {
+                    /*
+                    WinDef.SCODE.class.equals(targetClass) 
+                        || OaIdl.CURRENCY.class.equals(targetClass)
+                        || OaIdl.DECIMAL.class.equals(targetClass)
+                        || OaIdl.SAFEARRAY.class.equals(targetClass)
+                        || com.sun.jna.platform.win32.COM.IUnknown.class.equals(targetClass)
+                        || Variant.class.equals(targetClass)
+                        || PVOID.class.equals(targetClass
+                    */
+                    result = value.getValue();
                 }
-                Object vobj = value.getValue();
-                if (vobj != null && concreteClassRequested && targetClass.isAssignableFrom(vobj.getClass())) {
-                        return vobj;
+
+                if (IComEnum.class.isAssignableFrom(targetClass)) {
+                    return targetClass.cast(Convert.toComEnum((Class<? extends IComEnum>) targetClass, result));
+                } else {
+                    return result;
                 }
-                // Handle VARIANTByRef
-                if(vobj instanceof VARIANT) {
-                    vobj = ((VARIANT) vobj).getValue();
-                }
-                if (vobj instanceof WinDef.BOOL) {
-			return ((WinDef.BOOL) vobj).booleanValue();
-                } else if (vobj instanceof VARIANT_BOOL) {
-			return ((VARIANT_BOOL) vobj).booleanValue();
-		} else if (vobj instanceof WinDef.LONG) {
-			return ((WinDef.LONG) vobj).longValue();
-		} else if (vobj instanceof WinDef.SHORT) {
-			return ((WinDef.SHORT) vobj).shortValue();
-		} else if (vobj instanceof WinDef.UINT) {
-			return ((WinDef.UINT) vobj).intValue();
-		} else if (vobj instanceof WinDef.WORD) {
-			return ((WinDef.WORD) vobj).intValue();
-		} else if (vobj instanceof WTypes.BSTR) {
-			return ((WTypes.BSTR) vobj).getValue();
-		}
-		return vobj;
 	}
 	
 	public static <T extends IComEnum> T toComEnum(Class<T> enumType, Object value) {

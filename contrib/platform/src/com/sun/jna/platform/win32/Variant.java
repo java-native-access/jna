@@ -533,32 +533,36 @@ public interface Variant {
         }
 
         public byte byteValue() {
-            return ((IntegerType) this.getValue()).byteValue();
+            return ((Number) this.getValue()).byteValue();
         }
         
         public short shortValue() {
-            return ((IntegerType) this.getValue()).shortValue();
+            return ((Number) this.getValue()).shortValue();
         }
 
         public int intValue() {
-            return ((IntegerType) this.getValue()).intValue();
+            return ((Number) this.getValue()).intValue();
         }
 
         public long longValue() {
-            return ((IntegerType) this.getValue()).longValue();
+            return ((Number) this.getValue()).longValue();
         }
 
         public float floatValue() {
-            return (Float) this.getValue();
+            return ((Number) this.getValue()).floatValue();
         }
 
         public double doubleValue() {
-            return (Double) this.getValue();
+            return ((Number) this.getValue()).doubleValue();
         }
 
         public String stringValue() {
             BSTR bstr = (BSTR) this.getValue();
-            return bstr.getValue();
+            if(bstr == null) {
+                return null;
+            } else {
+                return bstr.getValue();
+            }
         }
 
         public boolean booleanValue() {
@@ -568,7 +572,11 @@ public interface Variant {
 
         public Date dateValue() {
             DATE varDate = (DATE) this.getValue();
-            return varDate.getAsJavaDate();
+            if(varDate == null) {
+                return null;
+            } else {
+                return varDate.getAsJavaDate();
+            }
         }
 
         @Deprecated
