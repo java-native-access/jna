@@ -402,20 +402,9 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
         private <T> T convertAndFreeReturn(VARIANT.ByReference result, Class<T> returnType) {
-            Object jobj = Convert.toJavaObject(result, returnType);
-            if (IComEnum.class.isAssignableFrom(returnType)) {
-                return returnType.cast(Convert.toComEnum((Class<? extends IComEnum>) returnType, jobj));
-            } else if (jobj instanceof IDispatch) {
-                IDispatch d = (IDispatch) jobj;
-                T t = this.factory.createProxy(returnType, d);
-                // must release a COM reference, createProxy adds one, as does the
-                // call
-                int n = d.Release();
-                return t;
-            } else {
-                Convert.free(result, returnType);
-                return returnType.cast(jobj);
-            }
+            Object jobj = Convert.toJavaObject(result, returnType, factory, false);
+            Convert.free(result, returnType);
+            return returnType.cast(jobj);
         }
 
 	@Override

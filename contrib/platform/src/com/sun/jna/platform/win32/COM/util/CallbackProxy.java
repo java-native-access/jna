@@ -133,24 +133,8 @@ public class CallbackProxy implements IDispatchCallback {
                 for ( int i = 0; i < vargs.variantArg.length; i++) {
                     Class targetClass = params[vargs.variantArg.length - 1 - i];
                     Variant.VARIANT varg = vargs.variantArg[i];
-                    Object jarg = Convert.toJavaObject(varg, targetClass);
-                    if (jarg instanceof IDispatch) {
-                        // If a dispatch is returned try to wrap it into a proxy 
-                        // helper if the target is ComInterface annotated
-                        IDispatch dispatch = (IDispatch) jarg;
-                        //get raw IUnknown interface
-                        PointerByReference ppvObject = new PointerByReference();
-                        IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-                        dispatch.QueryInterface(new REFIID(iid), ppvObject);
-                        IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, dispatch);
-                        if(targetClass.getAnnotation(ComInterface.class) != null) {
-                            rjargs.add(unk.queryInterface(targetClass));
-                        } else {
-                            rjargs.add(unk);
-                        }
-                    } else {
-                        rjargs.add(jarg);
-                    }
+                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true);
+                    rjargs.add(jarg);
                 }
             }
 
