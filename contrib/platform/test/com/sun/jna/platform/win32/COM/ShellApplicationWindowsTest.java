@@ -9,10 +9,11 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef.LONG;
 
-import static junit.framework.TestCase.assertTrue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class ShellApplicationWindowsTest {
 

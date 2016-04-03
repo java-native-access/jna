@@ -134,21 +134,20 @@ class Convert {
 		}
 	}
 	
-	public static Object toJavaObject(VARIANT value, Class targetClass, Factory factory, boolean addReference) {
+	public static Object toJavaObject(VARIANT value, Class<?> targetClass, Factory factory, boolean addReference) {
 		if (null==value 
                         || value.getVarType().intValue() == VT_EMPTY 
                         || value.getVarType().intValue() == VT_NULL) {
                     return null;
                 }
                 
-                if (targetClass != null
-                        && (!targetClass.isAssignableFrom(Object.class))) {
-                    if (targetClass != null && targetClass.isAssignableFrom(value.getClass())) {
+                if (targetClass != null  && (!targetClass.isAssignableFrom(Object.class))) {
+                    if (targetClass.isAssignableFrom(value.getClass())) {
                         return value;
                     }
 
                     Object vobj = value.getValue();
-                    if (vobj != null && (targetClass == null || targetClass.isAssignableFrom(vobj.getClass()))) {
+                    if (vobj != null && (targetClass.isAssignableFrom(vobj.getClass()))) {
                         return vobj;
                     }
                 }
@@ -159,8 +158,7 @@ class Convert {
                 
                 // Passing null or Object.class as targetClass switch to default
                 // handling
-                if (targetClass == null
-                    || (targetClass.isAssignableFrom(Object.class))) {
+                if (targetClass == null || (targetClass.isAssignableFrom(Object.class))) {
                     
                     targetClass = null;
                     
