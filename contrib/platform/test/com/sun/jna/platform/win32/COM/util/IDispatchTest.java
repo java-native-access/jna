@@ -8,12 +8,11 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.Ole32;
-import junit.framework.TestCase;
-import static junit.framework.TestCase.assertFalse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static junit.framework.TestCase.assertTrue;
+
+import static org.junit.Assert.*;
 
 public class IDispatchTest {
 
@@ -36,11 +35,11 @@ public class IDispatchTest {
         ComInternetExplorerMethodname ieApp = factory.createObject(ComInternetExplorerMethodname.class);
 
         // Test getting property
-        TestCase.assertFalse(ieApp.getVisible());
+        assertFalse(ieApp.getVisible());
 
         // Test setting property
         ieApp.setVisible(Boolean.TRUE);
-        TestCase.assertTrue(ieApp.getVisible());
+        assertTrue(ieApp.getVisible());
 
         // Check navigate function and with that the method invocation
         assertTrue(ieApp.getLocationURL().isEmpty());
@@ -61,7 +60,7 @@ public class IDispatchTest {
 
         ieApp.Quit();
         
-        TestCase.assertTrue(navigationHappend);
+        assertTrue(navigationHappend);
     }
     
     @ComObject(progId = "Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")
@@ -87,11 +86,11 @@ public class IDispatchTest {
         ComInternetExplorerNamed ieApp = factory.createObject(ComInternetExplorerNamed.class);
 
         // Test getting property
-        TestCase.assertFalse(ieApp.getVisible_MOD());
+        assertFalse(ieApp.getVisible_MOD());
 
         // Test setting property
         ieApp.setVisible_MOD(Boolean.TRUE);
-        TestCase.assertTrue(ieApp.getVisible_MOD());
+        assertTrue(ieApp.getVisible_MOD());
 
         // Check navigate function and with that the method invocation
         assertTrue(ieApp.getLocationURL_MOD().isEmpty());
@@ -112,7 +111,7 @@ public class IDispatchTest {
 
         ieApp.Quit_MOD();
         
-        TestCase.assertTrue(navigationHappend);
+        assertTrue(navigationHappend);
     }
     
     @ComObject(progId = "Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")
@@ -138,11 +137,11 @@ public class IDispatchTest {
         ComInternetExplorerDISPID ieApp = factory.createObject(ComInternetExplorerDISPID.class);
 
         // Test getting property
-        TestCase.assertFalse(ieApp.getVisible_MOD());
+        assertFalse(ieApp.getVisible_MOD());
 
         // Test setting property
         ieApp.setVisible_MOD(Boolean.TRUE);
-        TestCase.assertTrue(ieApp.getVisible_MOD());
+        assertTrue(ieApp.getVisible_MOD());
 
         // Check navigate function and with that the method invocation
         assertTrue(ieApp.getLocationURL_MOD().isEmpty());
@@ -163,7 +162,7 @@ public class IDispatchTest {
 
         ieApp.Quit_MOD();
         
-        TestCase.assertTrue(navigationHappend);
+        assertTrue(navigationHappend);
     }
     
     @ComObject(progId = "Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")
@@ -189,11 +188,11 @@ public class IDispatchTest {
         ComInternetExplorerIDispatch ieApp = factory.createObject(ComInternetExplorerIDispatch.class);
 
         // Test getting property
-        TestCase.assertFalse(ieApp.getProperty(Boolean.class, "Visible"));
+        assertFalse(ieApp.getProperty(Boolean.class, "Visible"));
 
         // Test setting property
         ieApp.setProperty("Visible", Boolean.TRUE);
-        TestCase.assertTrue(ieApp.getProperty(Boolean.class, "Visible"));
+        assertTrue(ieApp.getProperty(Boolean.class, "Visible"));
 
         // Check navigate function and with that the method invocation
         assertTrue(ieApp.getProperty(String.class, "LocationURL").isEmpty());
@@ -214,7 +213,7 @@ public class IDispatchTest {
 
         ieApp.invokeMethod(Void.class, "Quit");
         
-        TestCase.assertTrue(navigationHappend);
+        assertTrue(navigationHappend);
     }
     
     @Test
@@ -227,11 +226,11 @@ public class IDispatchTest {
         ComInternetExplorerIDispatch ieApp = factory.createObject(ComInternetExplorerIDispatch.class);
 
         // Test getting property
-        TestCase.assertFalse(ieApp.getProperty(Boolean.class, visible));
+        assertFalse(ieApp.getProperty(Boolean.class, visible));
 
         // Test setting property
         ieApp.setProperty(visible, Boolean.TRUE);
-        TestCase.assertTrue(ieApp.getProperty(Boolean.class, visible));
+        assertTrue(ieApp.getProperty(Boolean.class, visible));
 
         // Check navigate function and with that the method invocation
         assertTrue(ieApp.getProperty(String.class, locationURL).isEmpty());
@@ -252,7 +251,7 @@ public class IDispatchTest {
 
         ieApp.invokeMethod(Void.class, quit);
         
-        TestCase.assertTrue(navigationHappend);
+        assertTrue(navigationHappend);
     }
     
     @ComObject(progId = "Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")

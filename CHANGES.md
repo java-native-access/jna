@@ -46,7 +46,7 @@ Features
 * [#618](https://github.com/java-native-access/jna/pull/618): Implement SAFEARRAY access and bugfix VARIANT - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#616](https://github.com/java-native-access/jna/pull/616): Allow access to base interfaces (most important IDispatch) via ProxyObject and improve binding by allowing to use dispId for the call - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#621](https://github.com/java-native-access/jna/pull/621): Added TYPEFLAGS-constants for `wTypeFlags` in `com.sun.jna.platform.win32.OaIdl.TYPEATTR` - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
-* [#625](https://github.com/java-native-access/jna/pull/625): Make conversion to/from java to/from VARIANT in `com.sun.jna.platform.win32.COM.util.Convert` more flexible and dependable by introducing more conversions and unittests - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#625](https://github.com/java-native-access/jna/pull/625): Make conversion to/from java to/from VARIANT in `com.sun.jna.platform.win32.COM.util.Convert` more flexible and dependable - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

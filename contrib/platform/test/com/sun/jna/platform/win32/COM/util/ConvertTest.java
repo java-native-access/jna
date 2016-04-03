@@ -38,7 +38,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void convertVariant() {
+    public void testConvertVariant() {
         VARIANT testValue = new Variant.VARIANT(42);
         VARIANT resultVariant = Convert.toVariant(testValue);
         assertSame(testValue, resultVariant);
@@ -47,7 +47,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void convertString() {
+    public void testConvertString() {
         // This test leaks the allocated BSTR -- this is tollerated here, as memory usage is minimal
         String testString = "Hallo";
         BSTR testValue = new BSTR(testString);
@@ -63,7 +63,7 @@ public class ConvertTest {
     }
 
     @Test
-    public void convertBoolean() {
+    public void testConvertBoolean() {
         VARIANT_BOOL testVariantBOOL = new VARIANT_BOOL(true);
         VARIANT resultVariantBOOL = Convert.toVariant(testVariantBOOL);
         assertEquals(true, resultVariantBOOL.booleanValue());
@@ -94,7 +94,7 @@ public class ConvertTest {
     }
     
     @Test
-    public void convertIntTypes() {
+    public void testConvertIntTypes() {
         LONG testLONG = new LONG(42);
         VARIANT resultLONG = Convert.toVariant(testLONG);
         assertEquals(42, resultLONG.longValue());
@@ -196,7 +196,7 @@ public class ConvertTest {
     }
     
     @Test
-    public void convertFloat() {
+    public void testConvertFloat() {
         Float testFloatObj = 42.23f;
         VARIANT resultFloatObj = Convert.toVariant(testFloatObj);
         float testFloat = 42.23f;
@@ -231,7 +231,7 @@ public class ConvertTest {
     }
     
     @Test
-    public void convertDate() {
+    public void testConvertDate() {
         Date testDate = new Date(2015 - 1900, 1, 1, 9, 0, 0);
         VARIANT resultDate = Convert.toVariant(testDate);
         DATE testDATE = new DATE(testDate);
@@ -246,7 +246,7 @@ public class ConvertTest {
     }
         
     @Test
-    public void convertEnum() {
+    public void testConvertEnum() {
         TestEnum testEnum = TestEnum.Val2;
         VARIANT resultEnum = Convert.toVariant(testEnum);
         assertEquals((int) testEnum.getValue(), resultEnum.intValue());
