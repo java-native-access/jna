@@ -366,7 +366,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
             COMUtils.checkRC(hr);
 
-            return convertAndFreeReturn(result, returnType);
+            return (T) Convert.toJavaObject(result, returnType, factory, false, true);
         }
         
 	@Override
@@ -398,14 +398,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
                 
 		COMUtils.checkRC(hr);
 
-                return convertAndFreeReturn(result, returnType);
+                return (T) Convert.toJavaObject(result, returnType, factory, false, true);
 	}
-
-        private <T> T convertAndFreeReturn(VARIANT.ByReference result, Class<T> returnType) {
-            Object jobj = Convert.toJavaObject(result, returnType, factory, false);
-            Convert.free(result, returnType);
-            return returnType.cast(jobj);
-        }
 
 	@Override
 	public <T> T queryInterface(Class<T> comInterface) throws COMException {

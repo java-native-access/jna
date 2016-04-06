@@ -133,7 +133,7 @@ public class CallbackProxy implements IDispatchCallback {
                 for ( int i = 0; i < vargs.variantArg.length; i++) {
                     Class targetClass = params[vargs.variantArg.length - 1 - i];
                     Variant.VARIANT varg = vargs.variantArg[i];
-                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true);
+                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true, false);
                     rjargs.add(jarg);
                 }
             }

@@ -134,7 +134,7 @@ class Convert {
 		}
 	}
 	
-	public static Object toJavaObject(VARIANT value, Class<?> targetClass, Factory factory, boolean addReference) {
+	public static Object toJavaObject(VARIANT value, Class<?> targetClass, Factory factory, boolean addReference, boolean freeValue) {
 		if (null==value 
                         || value.getVarType().intValue() == VT_EMPTY 
                         || value.getVarType().intValue() == VT_NULL) {
@@ -151,6 +151,8 @@ class Convert {
                         return vobj;
                     }
                 }
+                
+                VARIANT inputValue = value;
                 
                 if (value.getVarType().intValue() == (VT_BYREF | VT_VARIANT)) {
                     value = (VARIANT) value.getValue();
@@ -293,10 +295,14 @@ class Convert {
                 }
 
                 if (IComEnum.class.isAssignableFrom(targetClass)) {
-                    return targetClass.cast(Convert.toComEnum((Class<? extends IComEnum>) targetClass, result));
-                } else {
-                    return result;
+                    result = targetClass.cast(Convert.toComEnum((Class<? extends IComEnum>) targetClass, result));
                 }
+                
+                if(freeValue) {
+                    free(inputValue, result);
+                }
+                
+                return result;
 	}
 	
 	public static <T extends IComEnum> T toComEnum(Class<T> enumType, Object value) {
@@ -326,10 +332,8 @@ class Convert {
          * @param javaType type before/after conversion
          */
         public static void free(VARIANT variant, Class<?> javaType) {
-            if(javaType == null) {
-                return;
-            }
-            if(javaType.isAssignableFrom(String.class) 
+            if((javaType == null || (! BSTR.class.isAssignableFrom(javaType)))
+                    && variant != null
                     && variant.getVarType().intValue() == Variant.VT_BSTR) {
                 Object value = variant.getValue();
                 if(value instanceof BSTR) {
