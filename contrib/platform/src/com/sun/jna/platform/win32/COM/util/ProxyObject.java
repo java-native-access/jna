@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -51,7 +52,6 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * This object acts as the invocation handler for interfaces annotated with
@@ -232,12 +232,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		ComMethod meth = method.getAnnotation(ComMethod.class);
 		if (null != meth) {
+                        Object[] fullLengthArgs = unfoldWhenVarargs(method, args);
                         int dispId = meth.dispId();
                         if(dispId != -1) {
-                            return this.invokeMethod(returnType, new DISPID(dispId), args);
+                            return this.invokeMethod(returnType, new DISPID(dispId), fullLengthArgs);
                         } else {
                             String methName = this.getMethodName(method, meth);
-                            return this.invokeMethod(returnType, methName, args);
+                            return this.invokeMethod(returnType, methName, fullLengthArgs);
                         }
 		}
 
@@ -400,6 +401,21 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
                 return (T) Convert.toJavaObject(result, returnType, factory, false, true);
 	}
+
+	private Object[] unfoldWhenVarargs(java.lang.reflect.Method method, Object[] argParams) {
+        if (null == argParams) {
+            return null;
+        }
+        if (argParams.length == 0 || !method.isVarArgs() || !(argParams[argParams.length - 1] instanceof Object[])) {
+            return argParams;
+        }
+        // when last parameter is Object[] -> unfold the ellipsis:
+        Object[] varargs = (Object[]) argParams[argParams.length - 1];
+        Object[] args = new Object[argParams.length - 1 + varargs.length];
+        System.arraycopy(argParams, 0, args, 0, argParams.length - 1);
+        System.arraycopy(varargs, 0, args, argParams.length - 1, varargs.length);
+        return args;
+    }
 
 	@Override
 	public <T> T queryInterface(Class<T> comInterface) throws COMException {
