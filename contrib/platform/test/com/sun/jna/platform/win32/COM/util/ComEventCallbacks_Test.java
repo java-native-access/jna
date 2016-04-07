@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,11 +24,19 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
+import com.sun.jna.platform.win32.Guid.IID;
+import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.ptr.PointerByReference;
 import org.hamcrest.CoreMatchers;
+
+import static com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
+import static com.sun.jna.platform.win32.COM.IDispatch.IID_IDISPATCH;
+import static org.junit.Assert.*;
 
 public class ComEventCallbacks_Test {
 
@@ -88,8 +97,10 @@ public class ComEventCallbacks_Test {
 		void Navigate(String url, long flags, String targetFrameName, VARIANT postData, String headers);
 	}
         
-	@ComInterface(iid="{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
+	@ComInterface(iid=DWebBrowserEvents2.IID)
 	interface DWebBrowserEvents2 {
+                public static final String IID = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}";
+            
 		@ComEventCallback(dispid=0x000000fd)
 		void OnQuit();
 		
@@ -235,7 +246,44 @@ public class ComEventCallbacks_Test {
                 iWebBrowser2.Quit();
                 
                 // NavigateComplete can't be called if access is blocked
-                Assert.assertFalse("Navigation to https://github.com/java-native-access/jna should be blocked", listener.navigateComplete2Called);
-		
+                Assert.assertFalse("Navigation to https://github.com/java-native-access/jna should be blocked", listener.navigateComplete2Called);	
 	}
+        
+        @Test
+        public void testComEventCallback() {
+                DWebBrowserEvents2_Listener listener = new DWebBrowserEvents2_Listener();
+                CallbackProxy proxy = new CallbackProxy(factory, DWebBrowserEvents2.class, listener);
+                
+                REFIID refiid = new REFIID(new IID(DWebBrowserEvents2.IID));
+                
+                // precondition: the structures for the listenedToRiid and
+                // refiid have to be different (else the PointerType#equals would
+                // be enough
+                assertFalse(proxy.listenedToRiid.getPointer().equals(refiid.getPointer()));
+                
+                // Neverthe less, the QueryInterface method has to return the
+                // correct pointer (the IID is relevant, not its wrapper
+                PointerByReference interfacePointer = new PointerByReference();
+                
+                // Check the "business" interface
+                HRESULT hr = proxy.QueryInterface(refiid, interfacePointer);
+                assertTrue(COMUtils.SUCCEEDED(hr));
+                assertEquals(interfacePointer.getValue(), proxy.getPointer());
+                
+                // IUnknown must be implemented
+                hr = proxy.QueryInterface(new REFIID(IID_IUNKNOWN), interfacePointer);
+                assertTrue(COMUtils.SUCCEEDED(hr));
+                assertEquals(interfacePointer.getValue(), proxy.getPointer());
+                
+                // Currently only Dispatch based callbacks are supported,
+                // so this interface must be present to
+                hr = proxy.QueryInterface(new REFIID(IID_IDISPATCH), interfacePointer);
+                assertTrue(COMUtils.SUCCEEDED(hr));
+                assertEquals(interfacePointer.getValue(), proxy.getPointer());
+                
+                // Negative check -- this has to fail, the IID should not be
+                // assigned
+                hr = proxy.QueryInterface(new REFIID(new IID("{00000000-0000-0000-C000-000000000000}")), interfacePointer);
+                assertTrue(COMUtils.FAILED(hr));
+        }
 }

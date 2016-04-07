@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.LastErrorException;
 import java.util.ArrayList;
 
 import com.sun.jna.Native;
@@ -109,8 +110,14 @@ public abstract class COMUtils {
     public static void checkRC(HRESULT hr, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
         if (FAILED(hr)) {
-            String formatMessageFromHR = Kernel32Util.formatMessage(hr);
-            throw new COMException(formatMessageFromHR, pExcepInfo, puArgErr);
+            String formatMessage;
+            try {
+                formatMessage = Kernel32Util.formatMessage(hr) + "(HRESULT: " + Integer.toHexString(hr.intValue()) + ")";
+            } catch (LastErrorException ex) {
+                // throws if HRESULT can't be resolved
+                formatMessage = "(HRESULT: " + Integer.toHexString(hr.intValue()) + ")";
+            }
+            throw new COMException(formatMessage, pExcepInfo, puArgErr);
         }
     }
 

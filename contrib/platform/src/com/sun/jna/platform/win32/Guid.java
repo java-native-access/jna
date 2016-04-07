@@ -512,7 +512,27 @@ public interface Guid {
         public IID getValue() {
             return new IID(getPointer());
         }
-        
+
+        @Override
+        public boolean equals(Object o) {
+            if (o == null) {
+                return false;
+            }
+            if (this == o) {
+                return true;
+            }
+            if (getClass() != o.getClass()) {
+                return false;
+            }
+
+            REFIID other = (REFIID) o;
+            return getValue().equals(other.getValue());
+        }
+
+        @Override
+        public int hashCode() {
+            return getValue().hashCode();
+        }
     }
     
     /**

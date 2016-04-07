@@ -133,7 +133,7 @@ public class CallbackProxy implements IDispatchCallback {
                 for ( int i = 0; i < vargs.variantArg.length; i++) {
                     Class targetClass = params[vargs.variantArg.length - 1 - i];
                     Variant.VARIANT varg = vargs.variantArg[i];
-                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true);
+                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true, false);
                     rjargs.add(jarg);
                 }
             }
@@ -199,19 +199,13 @@ public class CallbackProxy implements IDispatchCallback {
 	public HRESULT QueryInterface(REFIID refid, PointerByReference ppvObject) {
 		if (null == ppvObject) {
 			return new HRESULT(WinError.E_POINTER);
-		}
-
-		if (refid.equals(this.listenedToRiid)) {
+		} else if (refid.equals(this.listenedToRiid)) {
 			ppvObject.setValue(this.getPointer());
 			return WinError.S_OK;
-		}
-
-		if (new Guid.IID(refid.getPointer()).equals(Unknown.IID_IUNKNOWN)) {
+		} else if (refid.getValue().equals(Unknown.IID_IUNKNOWN)) {
 			ppvObject.setValue(this.getPointer());
 			return WinError.S_OK;
-		}
-
-		if (new Guid.IID(refid.getPointer()).equals(Dispatch.IID_IDISPATCH)) {
+		} else if (refid.getValue().equals(Dispatch.IID_IDISPATCH)) {
 			ppvObject.setValue(this.getPointer());
 			return WinError.S_OK;
 		}
