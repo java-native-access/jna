@@ -20,78 +20,77 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Msi extends StdCallLibrary {
 
-    Msi INSTANCE = (Msi)
-        Native.loadLibrary("msi", Msi.class, W32APIOptions.UNICODE_OPTIONS);
+    Msi INSTANCE = Native.loadLibrary("msi", Msi.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The component being requested is disabled on the computer.
      */
-    static int INSTALLSTATE_NOTUSED = -7;
+    int INSTALLSTATE_NOTUSED = -7;
 
     /**
      * The configuration data is corrupt.
      */
-    static int INSTALLSTATE_BADCONFIG = -6;
+    int INSTALLSTATE_BADCONFIG = -6;
 
     /**
      * The installation is suspended or in progress.
      */
-    static int INSTALLSTATE_INCOMPLETE = -5;
+    int INSTALLSTATE_INCOMPLETE = -5;
 
     /**
      * The feature must run from the source, and the source is unavailable.
      */
-    static int INSTALLSTATE_SOURCEABSENT = -4;
+    int INSTALLSTATE_SOURCEABSENT = -4;
 
     /**
      * The return buffer is full.
      */
-    static int INSTALLSTATE_MOREDATA = -3;
+    int INSTALLSTATE_MOREDATA = -3;
 
     /**
      * An invalid parameter was passed to the function.
      */
-    static int INSTALLSTATE_INVALIDARG = -2;
+    int INSTALLSTATE_INVALIDARG = -2;
 
     /**
      * An unrecognized product or feature was specified.
      */
-    static int INSTALLSTATE_UNKNOWN = -1;
+    int INSTALLSTATE_UNKNOWN = -1;
 
     /**
      * The feature is broken.
      */
-    static int INSTALLSTATE_BROKEN =  0;
+    int INSTALLSTATE_BROKEN =  0;
 
     /**
      * The advertised feature.
      */
-    static int INSTALLSTATE_ADVERTISED =  1;
+    int INSTALLSTATE_ADVERTISED =  1;
 
     /**
      * The component is being removed.
      */
-    static int INSTALLSTATE_REMOVED =  1;
+    int INSTALLSTATE_REMOVED =  1;
 
     /**
      * The feature was uninstalled.
      */
-    static int INSTALLSTATE_ABSENT =  2;
+    int INSTALLSTATE_ABSENT =  2;
 
     /**
      * The feature was installed on the local drive.
      */
-    static int INSTALLSTATE_LOCAL =  3;
+    int INSTALLSTATE_LOCAL =  3;
 
     /**
      * The feature must run from the source, CD-ROM, or network.
      */
-    static int INSTALLSTATE_SOURCE =  4;
+    int INSTALLSTATE_SOURCE =  4;
 
     /**
      * The feature is installed in the default location: local or source.
      */
-    static int INSTALLSTATE_DEFAULT =  5;
+    int INSTALLSTATE_DEFAULT =  5;
 
     /**
      * The MsiGetComponentPath function returns the full path to an installed component. If the key path for the

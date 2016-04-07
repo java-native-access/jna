@@ -13,12 +13,9 @@
 package com.sun.jna.platform.win32.COM.tlb.imp;
 
 import com.sun.jna.platform.win32.OaIdl.FUNCDESC;
-import com.sun.jna.platform.win32.OaIdl.HREFTYPE;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TYPEATTR;
-import com.sun.jna.platform.win32.WinDef.WORD;
-import com.sun.jna.platform.win32.COM.ITypeInfo;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil;
 import com.sun.jna.platform.win32.COM.TypeInfoUtil.TypeInfoDoc;
 import com.sun.jna.platform.win32.COM.TypeLibUtil;
@@ -76,27 +73,21 @@ public class TlbDispInterface extends TlbBase {
             TlbAbstractMethod method = null;
 
             if (!isReservedMethod(methodName)) {
-                if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                    method = new TlbFunctionStub(index, typeLibUtil, funcDesc,
-                            typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-                    method = new TlbPropertyGetStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-                    method = new TlbPropertyPutStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
-                } else if (funcDesc.invkind
-                        .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
-                    method = new TlbPropertyPutStub(index, typeLibUtil,
-                            funcDesc, typeInfoUtil);
+                if (funcDesc.invkind.value == INVOKEKIND.INVOKE_FUNC.value) {
+                    method = new TlbFunctionStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYGET.value) {
+                    method = new TlbPropertyGetStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUT.value) {
+                    method = new TlbPropertyPutStub(index, typeLibUtil, funcDesc, typeInfoUtil);
+                } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUTREF.value) {
+                    method = new TlbPropertyPutStub(index, typeLibUtil, funcDesc, typeInfoUtil);
                 }
 
                 this.content += method.getClassBuffer();
 
-                if (i < cFuncs - 1)
+                if (i < cFuncs - 1) {
                     this.content += CR;
+                }
             }
 
             // Release our function description stuff

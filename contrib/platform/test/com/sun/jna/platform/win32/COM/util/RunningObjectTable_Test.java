@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -21,29 +22,25 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
-import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Ole32;
-import com.sun.jna.platform.win32.Ole32Util;
-import com.sun.jna.platform.win32.OleAuto;
-import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable_Test {
 
+        static {
+                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        }
+    
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application extends IUnknown {
 		@ComProperty
-		boolean getVisible();
+		Boolean getVisible();
 		
 		@ComProperty
-		void setVisible(boolean value);
+		void setVisible(Boolean value);
 		
 		@ComMethod
 		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
@@ -55,9 +52,10 @@ public class RunningObjectTable_Test {
 	
 	Factory factory;
 	MsWordApp msWord;
-	
+
 	@Before
 	public void before() {
+                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		this.factory = new Factory();
 		//ensure there is only one word application running.
 		while(true) {
@@ -94,6 +92,8 @@ public class RunningObjectTable_Test {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+                factory.disposeAll();
+                Ole32.INSTANCE.CoUninitialize();
 	}
 	
 	@Test

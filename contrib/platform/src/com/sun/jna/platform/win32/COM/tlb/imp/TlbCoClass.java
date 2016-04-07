@@ -97,21 +97,18 @@ public class TlbCoClass extends TlbBase {
             FUNCDESC funcDesc = typeInfoUtil.getFuncDesc(i);
             
             TlbAbstractMethod method = null;
-            if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_FUNC)) {
-                if(this.isVTableMode())
+            if (funcDesc.invkind.value == INVOKEKIND.INVOKE_FUNC.value) {
+                if(this.isVTableMode()) {
                     method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
-                else
+                } else {
                     method = new TlbFunctionDispId(i, index, typeLibUtil, funcDesc, typeInfoUtil);
-            } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYGET)) {
-                method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc,
-                        typeInfoUtil);
-            } else if (funcDesc.invkind.equals(INVOKEKIND.INVOKE_PROPERTYPUT)) {
-                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc,
-                        typeInfoUtil);
-            } else if (funcDesc.invkind
-                    .equals(INVOKEKIND.INVOKE_PROPERTYPUTREF)) {
-                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc,
-                        typeInfoUtil);
+            }
+            } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYGET.value) {
+                method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc, typeInfoUtil);
+            } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUT.value) {
+                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc, typeInfoUtil);
+            } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUTREF.value) {
+                method = new TlbPropertyPut(i, index, typeLibUtil, funcDesc, typeInfoUtil);
             }
                 
             if(!isReservedMethod(method.getMethodName()))

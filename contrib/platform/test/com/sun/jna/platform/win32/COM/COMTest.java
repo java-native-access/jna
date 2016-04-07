@@ -31,7 +31,11 @@ import com.sun.jna.platform.win32.WinDef.WORD;
  * @author dblock[at]dblock[dot]org
  */
 public class COMTest extends TestCase {
-
+    
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+    
     public static void main(String[] args) {
         junit.textui.TestRunner.run(COMTest.class);
     }

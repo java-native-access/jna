@@ -23,7 +23,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IUnknownTest extends TestCase {
-    
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+
     private Unknown createIUnknown() {
         try {
             PointerByReference pUnknown = new PointerByReference();
@@ -66,7 +69,7 @@ public class IUnknownTest extends TestCase {
     public void testQueryInterface() {
         Unknown iUnknown = this.createIUnknown();
         PointerByReference ppvObject = new PointerByReference();
-        iUnknown.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
+        iUnknown.QueryInterface(new REFIID(IUnknown.IID_IUNKNOWN), ppvObject);
 
         assertTrue("ppvObject:" + ppvObject.toString(), ppvObject != null);
     }

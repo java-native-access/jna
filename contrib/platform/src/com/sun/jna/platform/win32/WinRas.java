@@ -1,10 +1,10 @@
 /* Copyright (c) 2011 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
@@ -26,12 +26,12 @@ import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LUID;
-import com.sun.jna.win32.StdCallLibrary;
+import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 
 /**
  * Definitions for RASAPI32
  */
-public interface WinRas extends StdCallLibrary {
+public interface WinRas {
 	public static final int ERROR_BUFFER_TOO_SMALL = 603;
 	public static final int ERROR_CANNOT_FIND_PHONEBOOK_ENTRY = 623;
 
@@ -99,9 +99,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public Pointer pbEapInfo;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSizeofEapInfo", "pbEapInfo", });
 		}
 		/**
@@ -148,9 +147,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public Pointer pbDevSpecificInfo;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "pbDevSpecificInfo", });
 		}
 		/**
@@ -219,9 +217,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public RASDEVSPECIFICINFO RasDevSpecificInfo;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "dwfOptions", "hwndParent", "reserved", "reserved1", "RasEapInfo", "fSkipPppAuth", "RasDevSpecificInfo", });
 		}
 	}
@@ -277,9 +274,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public char[] szDomain = new char[DNLEN + 1];
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "szEntryName", "szPhoneNumber", "szCallbackNumber", "szUserName", "szPassword", "szDomain",  });
 		}
 	}
@@ -348,9 +344,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public GUID guidCorrelationId;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "hrasconn", "szEntryName", "szDeviceType", "szDeviceName", "szPhonebook", "dwSubEntry", "guidEntry", "dwFlags", "luid", "guidCorrelationId" });
 		}
 	}
@@ -430,9 +425,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public int dwConnectDuration;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "dwBytesXmited", "dwBytesRcved", "dwFramesXmited", "dwFramesRcved", "dwCrcErr", "dwTimeoutErr", "dwAlignmentErr", "dwHardwareOverrunErr", "dwFramingErr", "dwBufferOverrunErr", "dwCompressionRatioIn", "dwCompressionRatioOut", "dwBps", "dwConnectDuration", });
 		}
 	}
@@ -455,9 +449,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public byte[] addr = new byte[8];
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "addr",	});
 		}
 	}
@@ -480,9 +473,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public byte[] addr = new byte[16];
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "addr",	});
 		}
 	}
@@ -534,9 +526,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public int dwServerOptions;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "dwError", "szIpAddress",	"szServerIpAddress", "dwOptions", "dwServerOptions",});
 		}
 	}
@@ -572,9 +563,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public UNION u;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwType", "u",	});
 		}
 
@@ -654,9 +644,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public int rasconnsubstate;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "rasconnstate", "dwError", "szDeviceType", "szDeviceName", "szPhoneNumber", "localEndPoint", "remoteEndPoint", "rasconnsubstate" });
 		}
 	}
@@ -699,9 +688,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public char[] szDomain = new char[DNLEN + 1];
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "dwMask", "szUserName", "szPassword", "szDomain",  });
 		}
 	}
@@ -722,9 +710,8 @@ public interface WinRas extends StdCallLibrary {
 
 		public byte[] addr = new byte[4];
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "addr",  });
 		}
 	}
@@ -1016,9 +1003,8 @@ public interface WinRas extends StdCallLibrary {
 		 */
 		public int dwNetworkOutageTime;
 
-		@SuppressWarnings("rawtypes")
 		@Override
-		protected List getFieldOrder() {
+		protected List<String> getFieldOrder() {
 			return Arrays.asList(new String[] { "dwSize", "dwfOptions", "dwCountryID", "dwCountryCode", "szAreaCode", "szLocalPhoneNumber", "dwAlternateOffset",
 					"ipaddr", "ipaddrDns", "ipaddrDnsAlt", "ipaddrWins", "ipaddrWinsAlt", "dwFrameSize", "dwfNetProtocols", "dwFramingProtocol",
 					"szScript", "szAutodialDll", "szAutodialFunc", "szDeviceType", "szDeviceName", "szX25PadType", "szX25Address", "szX25Facilities", "szX25UserData" ,

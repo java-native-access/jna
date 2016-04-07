@@ -12,9 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import junit.framework.TestCase;
-
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.HREFTYPEByReference;
 import com.sun.jna.platform.win32.OaIdl.INVOKEKIND;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
@@ -29,28 +26,19 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import org.junit.Ignore;
+import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  * @author dblock[at]dblock[dot]org
  */
-public class ITypeInfoTest extends TestCase {
-
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(ITypeInfoTest.class);
+public class ITypeInfoTest {
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
-    public ITypeInfoTest() {
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-    }
-
-    @Override
-    protected void tearDown() throws Exception {
-    }
-
-    public ITypeInfo getTypeInfo() {
+    private ITypeInfo getTypeInfo() {
         TypeLibUtil shellTypeLib = new TypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
         int typeInfoCount = shellTypeLib.getTypeInfoCount();
         if (typeInfoCount == 0)
@@ -59,7 +47,7 @@ public class ITypeInfoTest extends TestCase {
         return typeInfo;
     }
 
-    public ITypeInfo[] getTypeInfos() {
+    private ITypeInfo[] getTypeInfos() {
         TypeLibUtil shellTypeLib = new TypeLibUtil("{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}", 1, 0);
         int typeInfoCount = shellTypeLib.getTypeInfoCount();
         if (typeInfoCount == 0)
@@ -83,6 +71,7 @@ public class ITypeInfoTest extends TestCase {
     public void testGetVarDesc() {
     }
 
+    @Test
     public void testGetNames() {
         ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(1);
@@ -100,6 +89,7 @@ public class ITypeInfoTest extends TestCase {
         throw new RuntimeException("Didn't find name for member in any of the type infos");
     }
 
+    @Test
     public void testGetRefTypeOfImplType() {
         ITypeInfo typeInfo = getTypeInfo();
         HREFTYPEByReference pRefType = new HREFTYPEByReference();
@@ -110,6 +100,7 @@ public class ITypeInfoTest extends TestCase {
         //System.out.println("GetRefTypeOfImplType: " + pRefType.toString());
     }
 
+    @Test
     public void testGetImplTypeFlags() {
         ITypeInfo typeInfo = getTypeInfo();
         IntByReference pImplTypeFlags = new IntByReference();
@@ -120,6 +111,7 @@ public class ITypeInfoTest extends TestCase {
         //System.out.println("GetImplTypeFlags: " + pImplTypeFlags.toString());
     }
 
+    @Test
     public void testGetIDsOfNames() {
         ITypeInfo[] typeInfos = getTypeInfos();
         LPOLESTR[] rgszNames = {new LPOLESTR("Help")};
@@ -139,6 +131,7 @@ public class ITypeInfoTest extends TestCase {
     	
     }
 
+    @Test
     public void testGetDocumentation() {
         ITypeInfo[] typeInfos = getTypeInfos();
         MEMBERID memid = new MEMBERID(0);
@@ -161,6 +154,7 @@ public class ITypeInfoTest extends TestCase {
         throw new RuntimeException("Didn't find documentation in any of the type infos");
     }
 
+    @Test
     @Ignore("Needs a DLL that contains code")
     public void testGetDllEntry() {
         ITypeInfo[] typeInfos = getTypeInfos();
@@ -185,6 +179,7 @@ public class ITypeInfoTest extends TestCase {
     public void testGetRefTypeInfo() {
     }
 
+    @Test
     @Ignore("Needs a DLL that contains code")
     public void testAddressOfMember() {
         ITypeInfo[] typeInfos = getTypeInfos();
@@ -205,6 +200,7 @@ public class ITypeInfoTest extends TestCase {
 
     }
 
+    @Test
     public void testGetMops() {
         ITypeInfo typeInfo = getTypeInfo();
         MEMBERID memid = new MEMBERID(0);

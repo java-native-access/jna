@@ -1,33 +1,30 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.PSID;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from DsGetDC.h. Windows SDK 6.0a
- * 
+ *
  * @author dblock[at]dblock.org
  */
-public interface DsGetDC extends StdCallLibrary {
+public interface DsGetDC {
 
     /**
      * The DOMAIN_CONTROLLER_INFO structure is used with the DsGetDcName
@@ -39,16 +36,13 @@ public interface DsGetDC extends StdCallLibrary {
                 implements Structure.ByReference {
         }
 
-        public DOMAIN_CONTROLLER_INFO() {
-        }
-
-        public DOMAIN_CONTROLLER_INFO(Pointer memory) {
-            super(memory);
-            read();
-        }
+        public static final List<String> FIELDS = createFieldsOrder("DomainControllerName",
+                "DomainControllerAddress", "DomainControllerAddressType",
+                "DomainGuid", "DomainName", "DnsForestName", "Flags",
+                "DcSiteName", "ClientSiteName");
 
         /**
-         * Pointer to a null-terminated WString that specifies the computer name
+         * Pointer to a null-terminated string that specifies the computer name
          * of the discovered domain controller. The returned computer name is
          * prefixed with "\\". The DNS-style name, for example,
          * "\\phoenix.fabrikam.com", is returned, if available. If the DNS-style
@@ -57,16 +51,16 @@ public interface DsGetDC extends StdCallLibrary {
          * 4.0 domain or if the domain does not support the IP family of
          * protocols.
          */
-        public WString DomainControllerName;
+        public String DomainControllerName;
         /**
-         * Pointer to a null-terminated WString that specifies the address of
+         * Pointer to a null-terminated string that specifies the address of
          * the discovered domain controller. The address is prefixed with "\\".
-         * This WString is one of the types defined by the
+         * This string is one of the types defined by the
          * DomainControllerAddressType member.
          */
-        public WString DomainControllerAddress;
+        public String DomainControllerAddress;
         /**
-         * Indicates the type of WString that is contained in the
+         * Indicates the type of string that is contained in the
          * DomainControllerAddress member.
          */
         public int DomainControllerAddressType;
@@ -77,46 +71,53 @@ public interface DsGetDC extends StdCallLibrary {
          */
         public GUID DomainGuid;
         /**
-         * Pointer to a null-terminated WString that specifies the name of the
+         * Pointer to a null-terminated string that specifies the name of the
          * domain. The DNS-style name, for example, "fabrikam.com", is returned
          * if available. Otherwise, the flat-style name, for example,
          * "fabrikam", is returned. This name may be different than the
          * requested domain name if the domain has been renamed.
          */
-        public WString DomainName;
+        public String DomainName;
         /**
-         * Pointer to a null-terminated WString that specifies the name of the
+         * Pointer to a null-terminated string that specifies the name of the
          * domain at the root of the DS tree. The DNS-style name, for example,
          * "fabrikam.com", is returned if available. Otherwise, the flat-style
          * name, for example, "fabrikam" is returned.
          */
-        public WString DnsForestName;
+        public String DnsForestName;
         /**
          * Contains a set of flags that describe the domain controller.
          */
         public int Flags;
         /**
-         * Pointer to a null-terminated WString that specifies the name of the
+         * Pointer to a null-terminated string that specifies the name of the
          * site where the domain controller is located. This member may be NULL
          * if the domain controller is not in a site; for example, the domain
          * controller is a Windows NT 4.0 domain controller.
          */
-        public WString DcSiteName;
+        public String DcSiteName;
         /**
-         * Pointer to a null-terminated WString that specifies the name of the
+         * Pointer to a null-terminated string that specifies the name of the
          * site that the computer belongs to. The computer is specified in the
          * ComputerName parameter passed to DsGetDcName. This member may be NULL
          * if the site that contains the computer cannot be found; for example,
          * if the DS administrator has not associated the subnet that the
          * computer is in with a valid site.
          */
-        public WString ClientSiteName;
+        public String ClientSiteName;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "DomainControllerName",
-                    "DomainControllerAddress", "DomainControllerAddressType",
-                    "DomainGuid", "DomainName", "DnsForestName", "Flags",
-                    "DcSiteName", "ClientSiteName" });
+        public DOMAIN_CONTROLLER_INFO() {
+            super();
+        }
+
+        public DOMAIN_CONTROLLER_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -130,10 +131,13 @@ public interface DsGetDC extends StdCallLibrary {
 
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("dci");
+
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dci" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
@@ -178,16 +182,20 @@ public interface DsGetDC extends StdCallLibrary {
                 Structure.ByReference {
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("NetbiosDomainName",
+                "DnsDomainName", "Flags", "ParentIndex", "TrustType",
+                "TrustAttributes", "DomainSid", "DomainGuid");
+
         /**
          * Pointer to a null-terminated string that contains the NetBIOS name of
          * the domain.
          */
-        public WString NetbiosDomainName;
+        public String NetbiosDomainName;
         /**
          * Pointer to a null-terminated string that contains the DNS name of the
          * domain. This member may be NULL.
          */
-        public WString DnsDomainName;
+        public String DnsDomainName;
         /**
          * Contains a set of flags that specify more data about the domain
          * trust.
@@ -221,13 +229,13 @@ public interface DsGetDC extends StdCallLibrary {
          */
         public GUID DomainGuid;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "NetbiosDomainName",
-                    "DnsDomainName", "Flags", "ParentIndex", "TrustType",
-                    "TrustAttributes", "DomainSid", "DomainGuid" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
 
         public DS_DOMAIN_TRUSTS() {
+            super();
         }
 
         public DS_DOMAIN_TRUSTS(Pointer p) {

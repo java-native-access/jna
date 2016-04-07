@@ -20,14 +20,14 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TlbFunction.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class TlbFunctionVTable extends TlbAbstractMethod {
 
     /**
      * Instantiates a new tlb function.
-     * 
+     *
      * @param index
      *            the index
      * @param typeLibUtil
@@ -71,11 +71,6 @@ public class TlbFunctionVTable extends TlbAbstractMethod {
         this.replaceVariable("functionCount", String.valueOf(count));
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sun.jna.platform.win32.COM.tlb.imp.TlbBase#getClassTemplate()
-     */
     @Override
     protected String getClassTemplate() {
         return "com/sun/jna/platform/win32/COM/tlb/imp/TlbFunctionVTable.template";

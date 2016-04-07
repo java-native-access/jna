@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 public class WinspoolUtilTest extends TestCase {
 
     public static void main(String[] args) {
-        junit.textui.TestRunner.run(Shell32UtilTest.class);
+        junit.textui.TestRunner.run(WinspoolUtilTest.class);
         for(PRINTER_INFO_1 printerInfo : WinspoolUtil.getPrinterInfo1()) {
             System.out.println(printerInfo.pName + ": " + printerInfo.pDescription);        	
         }
@@ -36,7 +36,21 @@ public class WinspoolUtilTest extends TestCase {
 		assertTrue(WinspoolUtil.getPrinterInfo1().length >= 0);
 	}
 	
-	public void testGetPrinterInfo4() {
-		assertTrue(WinspoolUtil.getPrinterInfo4().length >= 0);
+	public void testGetPrinterInfo2() {
+		assertTrue(WinspoolUtil.getPrinterInfo2().length >= 0);
 	}
+	
+    public void testGetPrinterInfo2Specific() {
+        try {
+            WinspoolUtil.getPrinterInfo2("1234567890A123");
+            fail("A Win32Exception with ERROR_INVALID_PRINTER_NAME should have been thrown instead of hitting this.");
+        } catch (Win32Exception e) {
+            assertEquals("A Win32Exception with ERROR_INVALID_PRINTER_NAME message should have been thrown.",
+                    Kernel32Util.formatMessage(W32Errors.HRESULT_FROM_WIN32(WinError.ERROR_INVALID_PRINTER_NAME)), e.getMessage());
+        }
+    }
+
+	public void testGetPrinterInfo4() {
+        assertTrue(WinspoolUtil.getPrinterInfo4().length >= 0);
+    }
 }

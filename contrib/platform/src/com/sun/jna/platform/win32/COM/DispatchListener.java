@@ -12,11 +12,8 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.Arrays;
 import java.util.List;
 
-import com.sun.jna.CallbackThreadInitializer;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
@@ -35,26 +32,27 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class DispatchListener extends Structure {
+    public static final List<String> FIELDS = createFieldsOrder("vtbl");
 	public DispatchListener(IDispatchCallback callback) {
 		this.vtbl = this.constructVTable();
 		this.initVTable(callback);
 		super.write();
 	}
 	public DispatchVTable.ByReference vtbl;
-	
+
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "vtbl" });
+		return FIELDS;
 	}
-	
+
 	protected DispatchVTable.ByReference constructVTable() {
 		return new DispatchVTable.ByReference();
 	}
-	
+
 	protected void initVTable(final IDispatchCallback callback) {
 		this.vtbl.QueryInterfaceCallback = new DispatchVTable.QueryInterfaceCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject) {
+			public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
 				return callback.QueryInterface(refid, ppvObject);
 			}
 		};
@@ -84,14 +82,14 @@ public class DispatchListener extends Structure {
 		};
 		this.vtbl.GetIDsOfNamesCallback = new DispatchVTable.GetIDsOfNamesCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+			public HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 					DISPIDByReference rgDispId) {
 				return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
 			}
 		};
 		this.vtbl.InvokeCallback = new DispatchVTable.InvokeCallback() {
 			@Override
-			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 					DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 		            IntByReference puArgErr) {
 

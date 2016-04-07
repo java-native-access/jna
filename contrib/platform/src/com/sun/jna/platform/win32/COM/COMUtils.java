@@ -15,20 +15,21 @@ package com.sun.jna.platform.win32.COM;
 import java.util.ArrayList;
 
 import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.Advapi32Util;
 import com.sun.jna.platform.win32.Advapi32Util.EnumKey;
 import com.sun.jna.platform.win32.Advapi32Util.InfoKey;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.W32Errors;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class COMUtils.
  * 
@@ -181,6 +182,36 @@ public abstract class COMUtils {
         }
 
         return comInfos;
+    }
+
+    /**
+     * Check is COM was initialized correctly. The initialization status is not changed!
+     *
+     * <p>This is a debug function, not for normal usage!</p>
+     * 
+     * @return
+     */
+    public static boolean comIsInitialized() {
+        WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        if (hr.equals(W32Errors.S_OK)) {
+            // User failed - uninitialize again and return false
+            Ole32.INSTANCE.CoUninitialize();
+            return false;
+        } else if (hr.equals(W32Errors.S_FALSE)) {
+            // OK Variant 1 - User initialized COM with same threading module as
+            // in this check. According to MSDN CoUninitialize needs to be called
+            // in this case.
+            Ole32.INSTANCE.CoUninitialize();
+            return true;
+        } else if (hr.intValue() == W32Errors.RPC_E_CHANGED_MODE) {
+            return true;
+        }
+        // If another result than the checked ones above happens handling is
+        // delegated to the "normal" COM exception handling and a COMException
+        // will be raised.
+        COMUtils.checkRC(hr);
+        // The return will not be met, as COMUtils#checkRC will raise an exception
+        return false;
     }
 
     /**

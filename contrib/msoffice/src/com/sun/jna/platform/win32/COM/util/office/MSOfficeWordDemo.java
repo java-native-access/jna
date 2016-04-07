@@ -14,6 +14,8 @@ package com.sun.jna.platform.win32.COM.util.office;
 
 import java.io.File;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.util.Factory;
 import com.sun.jna.platform.win32.COM.util.office.word.ComIApplication;
@@ -40,6 +42,7 @@ public class MSOfficeWordDemo {
 		ComWord_Application msWordObject = null;
 		ComIApplication msWord = null;
 		Factory factory = null;
+		Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		try {
 			String tempDir = System.getProperty("java.io.tmpdir");
 			System.out.println("Files in temp dir: "+tempDir);
@@ -101,9 +104,7 @@ public class MSOfficeWordDemo {
 			if (msWord != null) {
 				msWord.Quit();
 			}
-			if (null != factory) {
-				factory.getComThread().terminate(500);
-			}
 		}
+		Ole32.INSTANCE.CoUninitialize();
 	}
 }

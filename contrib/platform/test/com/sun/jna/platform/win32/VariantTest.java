@@ -2,15 +2,25 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.Native;
 import com.sun.jna.platform.win32.OaIdl.DATE;
+import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinDef.BYTE;
+import com.sun.jna.platform.win32.WinDef.CHAR;
+import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinDef.LONGLONG;
 import com.sun.jna.platform.win32.WinDef.SHORT;
+import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.DoubleByReference;
-
 import java.util.Date;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertThat;
 
 public class VariantTest extends TestCase {
 
@@ -19,11 +29,12 @@ public class VariantTest extends TestCase {
     }
 
     public VariantTest() {
+        super();
     }
 
     public void testVariantClear() {
         VARIANT variant = new VARIANT(new SHORT(33333));
-        HRESULT hr = OleAuto.INSTANCE.VariantClear(variant.getPointer());
+        HRESULT hr = OleAuto.INSTANCE.VariantClear(variant);
 
         assertTrue("hr: " + hr.intValue(), hr.intValue() == 0);
     }
@@ -68,17 +79,164 @@ public class VariantTest extends TestCase {
 
         pvRecord2 = (VARIANT._VARIANT.__VARIANT.BRECORD)variant.getValue();
     }
+    
+    public void testDATECalculation() {
+        // Samples from MSDN to ensure correct implementation
+        // Definition is to be found here: https://msdn.microsoft.com/de-de/library/82ab7w69.aspx
+        
+        // From Date to DATE
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 27, 0, 0, 0)).date, equalTo(-3.00d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 28, 12, 0, 0)).date, equalTo(-2.50d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 28, 0, 0, 0)).date, equalTo(-2.00d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 29, 0, 0, 0)).date, equalTo(-1.00d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0)).date, equalTo(0.00d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 30, 6, 0, 0)).date, equalTo(0.25d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 30, 12, 0, 0)).date, equalTo(0.50d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 30, 18, 0, 0)).date, equalTo(0.75d));
+        assertThat(new DATE(new Date(1899 - 1900, 12 - 1, 31, 0, 0, 0)).date, equalTo(1.0d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 1, 0, 0, 0)).date, equalTo(2.00d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 1, 12, 0, 0)).date, equalTo(2.50d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 2, 0, 0, 0)).date, equalTo(3.00d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 4, 0, 0, 0)).date, equalTo(5.00d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 4, 6, 0, 0)).date, equalTo(5.25d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 4, 12, 0, 0)).date, equalTo(5.50d));
+        assertThat(new DATE(new Date(1900 - 1900, 1 - 1, 4, 21, 0, 0)).date, equalTo(5.875d));
+        
+        // From DATE to Date
+        assertThat(new DATE(-3.00d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 27, 0, 0, 0)));
+        assertThat(new DATE(-2.50d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 28, 12, 0, 0)));
+        assertThat(new DATE(-2.00d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 28, 0, 0, 0)));
+        assertThat(new DATE(-1.00d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 29, 0, 0, 0)));
+        assertThat(new DATE(-0.75d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 18, 0, 0)));
+        assertThat(new DATE(-0.50d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 12, 0, 0)));
+        assertThat(new DATE(-0.25d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 6, 0, 0)));
+        assertThat(new DATE(0.00d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0)));
+        assertThat(new DATE(0.25d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 6, 0, 0)));
+        assertThat(new DATE(0.50d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 12, 0, 0)));
+        assertThat(new DATE(0.75d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 30, 18, 0, 0)));
+        assertThat(new DATE(1.0d).getAsJavaDate(), equalTo(new Date(1899 - 1900, 12 - 1, 31, 0, 0, 0)));
+        assertThat(new DATE(2.00d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 1, 0, 0, 0)));
+        assertThat(new DATE(2.50d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 1, 12, 0, 0)));
+        assertThat(new DATE(3.00d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 2, 0, 0, 0)));
+        assertThat(new DATE(5.00d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 0, 0, 0)));
+        assertThat(new DATE(5.25d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 6, 0, 0)));
+        assertThat(new DATE(5.50d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 12, 0, 0)));
+        assertThat(new DATE(5.875d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 21, 0, 0)));
+        
+        
+    }
 
     public void testVariantConstructors() {
-        VARIANT variant = new VARIANT((short) 1);
-        variant = new VARIANT((byte) 1);
-        variant = new VARIANT('1');
-        variant = new VARIANT((int) 1);
-        variant = new VARIANT((long) 1);
-        variant = new VARIANT((float) 1);
-        variant = new VARIANT((double) 1);
-        variant = new VARIANT("1");
-        variant = new VARIANT(true);
-        variant = new VARIANT(new Date());
+        VARIANT variant;
+        
+        // skipped: BSTRByReference constructor
+        // skipped: empty constructor
+        // skipped: pointer constructor
+        // skipped: IDispatch constructor
+        String testString = "TeST$ö";
+        BSTR bstr = OleAuto.INSTANCE.SysAllocString(testString);
+        
+        variant = new VARIANT(bstr);
+        assertThat(variant.getValue(), instanceOf(BSTR.class));
+        assertThat(((BSTR)variant.getValue()).getValue(), equalTo(testString));
+        assertThat(variant.stringValue(), equalTo(testString));
+        
+        variant = new VARIANT(testString);
+        assertThat(variant.getValue(), instanceOf(BSTR.class));
+        assertThat(((BSTR)variant.getValue()).getValue(), equalTo(testString));
+        assertThat(variant.stringValue(), equalTo(testString));
+        
+        OleAuto.INSTANCE.SysFreeString(bstr);
+        OleAuto.INSTANCE.SysFreeString((BSTR) variant.getValue());
+        
+        BOOL boolTrue = new WinDef.BOOL(true);
+        
+        variant = new VARIANT(Variant.VARIANT_TRUE);
+        assertThat(variant.getValue(), instanceOf(VARIANT_BOOL.class));
+        assertThat(((VARIANT_BOOL) variant.getValue()).shortValue(), equalTo((short) 0xFFFF));
+        assertThat(variant.booleanValue(), equalTo(true));
+        
+        variant = new VARIANT(boolTrue);
+        assertThat(variant.getValue(), instanceOf(VARIANT_BOOL.class));
+        assertThat(((VARIANT_BOOL) variant.getValue()).shortValue(), equalTo((short) 0xFFFF));
+        assertThat(variant.booleanValue(), equalTo(true));
+
+        int testInt = 4223;
+        LONG testIntWin = new LONG(testInt);
+        variant = new VARIANT(testIntWin);
+        assertThat(variant.getValue(), instanceOf(LONG.class));
+        assertThat(((LONG) variant.getValue()).intValue(), equalTo(testInt));
+        assertThat(variant.intValue(), equalTo(testInt));
+        
+        variant = new VARIANT(testInt);
+        assertThat(variant.getValue(), instanceOf(LONG.class));
+        assertThat(((LONG) variant.getValue()).intValue(), equalTo(testInt));
+        assertThat(variant.intValue(), equalTo(testInt));
+        
+        short testShort = 23;
+        SHORT testShortWin = new SHORT(testShort);
+        variant = new VARIANT(testShortWin);
+        assertThat(variant.getValue(), instanceOf(SHORT.class));
+        assertThat(((SHORT) variant.getValue()).shortValue(), equalTo(testShort));
+        assertThat(variant.shortValue(), equalTo(testShort));
+        
+        variant = new VARIANT(testShort);
+        assertThat(variant.getValue(), instanceOf(SHORT.class));
+        assertThat(((SHORT) variant.getValue()).shortValue(), equalTo(testShort));
+        assertThat(variant.shortValue(), equalTo(testShort));
+       
+        long testLong = 4223L + Integer.MAX_VALUE;
+    
+        variant = new VARIANT(testLong);
+        assertThat(variant.getValue(), instanceOf(LONGLONG.class));
+        assertThat(((LONGLONG) variant.getValue()).longValue(), equalTo(testLong));
+        assertThat(variant.longValue(), equalTo(testLong));
+        
+        Date testDate = new Date(2042 - 1900, 2, 3, 23, 0, 0);
+        variant = new VARIANT(testDate);
+        assertThat(variant.getValue(), instanceOf(DATE.class));
+        assertThat(variant.dateValue(), equalTo(testDate));
+        
+        byte testByte = 42;
+        BYTE testByteWin = new BYTE(testByte);
+        CHAR testByteWin2 = new CHAR(testByte);
+        variant = new VARIANT(testByte);
+        assertThat(variant.getValue(), instanceOf(BYTE.class));
+        assertThat(((BYTE) variant.getValue()).byteValue(), equalTo(testByte));
+        assertThat(variant.byteValue(), equalTo(testByte));
+
+        variant = new VARIANT(testByteWin);
+        assertThat(variant.getValue(), instanceOf(BYTE.class));
+        assertThat(((BYTE) variant.getValue()).byteValue(), equalTo(testByte));
+        assertThat(variant.byteValue(), equalTo(testByte));
+        
+        variant = new VARIANT(testByteWin2);
+        assertThat(variant.getValue(), instanceOf(CHAR.class));
+        assertThat(((CHAR) variant.getValue()).byteValue(), equalTo(testByte));
+        assertThat(variant.byteValue(), equalTo(testByte));
+
+        variant = new VARIANT(testByteWin2);
+        assertThat(variant.getValue(), instanceOf(CHAR.class));
+        assertThat(((CHAR) variant.getValue()).byteValue(), equalTo(testByte));
+        assertThat(variant.byteValue(), equalTo(testByte));
+        
+        double testDouble = 42.23;
+        variant = new VARIANT(testDouble);
+        assertThat(variant.getValue(), instanceOf(Double.class));
+        // If this fails introduce comparison with range
+        assertThat(variant.doubleValue(), equalTo(testDouble));
+        
+        float testFloat = 42.23f;
+        variant = new VARIANT(testFloat);
+        assertThat(variant.getValue(), instanceOf(Float.class));
+        // If this fails introduce comparison with range
+        assertThat(variant.floatValue(), equalTo(testFloat));
+        
+        char testChar = 42 + Short.MAX_VALUE;
+
+        variant = new VARIANT(testChar);
+        assertThat(variant.getValue(), instanceOf(USHORT.class));
+        assertThat(((USHORT) variant.getValue()).intValue(), equalTo((int) testChar));
+        assertThat(variant.intValue(), equalTo((int) testChar));
     }
 }

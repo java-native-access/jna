@@ -9,7 +9,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 
 package com.sun.jna;
@@ -18,16 +18,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Map.Entry;
-
 import junit.framework.TestCase;
 
 
 public class PointerTest extends TestCase {
-    
+
     private static final String UNICODE = "[\u0444]";
 
     public void testGetNativeLong() {
@@ -182,26 +177,26 @@ public class PointerTest extends TestCase {
         assertNull("Array element should be null", arr[0]);
     }
 
-    private Object defaultArg(Class type) {
+    private Object defaultArg(Class<?> type) {
         if (type == boolean.class || type == Boolean.class) return Boolean.FALSE;
-        if (type == byte.class || type == Byte.class) return new Byte((byte)0);
-        if (type == char.class || type == Character.class) return new Character((char)0);
-        if (type == short.class || type == Short.class) return new Short((short)0);
-        if (type == int.class || type == Integer.class) return new Integer(0);
-        if (type == long.class || type == Long.class) return new Long(0);
-        if (type == float.class || type == Float.class) return new Float(0);
-        if (type == double.class || type == Double.class) return new Double(0);
+        if (type == byte.class || type == Byte.class) return Byte.valueOf((byte)0);
+        if (type == char.class || type == Character.class) return Character.valueOf((char)0);
+        if (type == short.class || type == Short.class) return Short.valueOf((short)0);
+        if (type == int.class || type == Integer.class) return Integer.valueOf(0);
+        if (type == long.class || type == Long.class) return Long.valueOf(0L);
+        if (type == float.class || type == Float.class) return Float.valueOf(0);
+        if (type == double.class || type == Double.class) return Double.valueOf(0);
         if (type == NativeLong.class) return new NativeLong(0);
         return null;
     }
 
     public void testOpaquePointer() throws Exception {
         Pointer p = Pointer.createConstant(0);
-        Class cls = p.getClass();
+        Class<?> cls = p.getClass();
         Method[] methods = cls.getMethods();
         for (int i=0;i < methods.length;i++) {
             Method m = methods[i];
-            Class[] argTypes = m.getParameterTypes();
+            Class<?>[] argTypes = m.getParameterTypes();
             try {
                 Object[] args = new Object[argTypes.length];
                 for (int arg=0;arg < args.length;arg++) {

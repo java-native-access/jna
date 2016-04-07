@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -19,11 +20,13 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
     private String origPropJNANoSys;
 
+    @Override
     protected void setUp() {
         origPropJNANoSys = System.getProperty("jna.nosys");
         System.setProperty("jna.nosys", "true"); // would be set by ant script, set here for IDE usage
     }
 
+    @Override
     protected void tearDown() {
         if (origPropJNANoSys == null) {
             Properties props = (Properties)System.getProperties().clone();
@@ -56,13 +59,12 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
 
     private static final class MyStructMissingField extends Structure {
-        @SuppressWarnings("UnusedDeclaration")
         public String missingDeclaredField;
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             //noinspection unchecked
-            return Arrays.asList();
+            return Collections.<String>emptyList();
         }
     }
     public void testCheckMethodGetFieldOrderMissingField() throws Exception {
@@ -76,7 +78,7 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
     private static final class MyStructExtraField extends Structure {
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList("extraField");
         }
     }
@@ -91,13 +93,11 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
 
     private static final class MyStructStaticField extends Structure {
-        @SuppressWarnings("UnusedDeclaration")
         public long instanceField;
-        @SuppressWarnings("UnusedDeclaration")
         public static long myStaticField = -1;
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList("instanceField");
         }
     }
@@ -107,11 +107,10 @@ public class StructureFieldOrderInspectorTest extends TestCase {
 
 
     private static class MyStructSuper extends Structure {
-        @SuppressWarnings("UnusedDeclaration")
         public long instanceField;
 
         @Override
-        protected List getFieldOrder() {
+        protected List<String> getFieldOrder() {
             return Arrays.asList("instanceField");
         }
     }

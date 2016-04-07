@@ -6,26 +6,27 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
+import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import java.util.WeakHashMap;
 
 /**
- * A <code>Pointer</code> to memory obtained from the native heap via a 
+ * A <code>Pointer</code> to memory obtained from the native heap via a
  * call to <code>malloc</code>.
  *
  * <p>In some cases it might be necessary to use memory obtained from
- * <code>malloc</code>.  For example, <code>Memory</code> helps 
+ * <code>malloc</code>.  For example, <code>Memory</code> helps
  * accomplish the following idiom:
  * <pre>
  * 		void *buf = malloc(BUF_LEN * sizeof(char));
@@ -42,17 +43,14 @@ import java.util.WeakHashMap;
  * @see Pointer
  */
 public class Memory extends Pointer {
-
-    private static final Map buffers;
     /** Keep track of all allocated memory so we can dispose of it before unloading. */
-    private static final Map allocatedMemory;
+    private static final Map<Memory, Reference<Memory>> allocatedMemory =
+            Collections.synchronizedMap(new WeakHashMap<Memory, Reference<Memory>>());
 
-    static {
-        buffers = Collections.synchronizedMap(Platform.HAS_BUFFERS
-                                              ? (Map)new WeakIdentityHashMap()
-                                              : (Map)new HashMap());
-        allocatedMemory = Collections.synchronizedMap(new WeakHashMap());
-    }
+    private static final Map<Buffer, Memory> buffers =
+            Collections.synchronizedMap(Platform.HAS_BUFFERS
+                                              ? new WeakIdentityHashMap<Buffer, Memory>()
+                                              : new HashMap<Buffer, Memory>());
 
     /** Force cleanup of memory that has associated NIO Buffers which have
         been GC'd.
@@ -63,8 +61,10 @@ public class Memory extends Pointer {
 
     /** Dispose of all allocated memory. */
     public static void disposeAll() {
-        for (Iterator i=allocatedMemory.keySet().iterator();i.hasNext();) {
-            ((Memory)i.next()).dispose();
+        // use a copy since dispose() modifies the map
+        Collection<Memory> refs = new LinkedList<Memory>(allocatedMemory.keySet());
+        for (Memory r : refs) {
+            r.dispose();
         }
     }
 
@@ -79,18 +79,21 @@ public class Memory extends Pointer {
             this.peer = Memory.this.peer + offset;
         }
         /** No need to free memory. */
+        @Override
         protected void dispose() {
             this.peer = 0;
-        } 
+        }
         /** Pass bounds check to parent. */
+        @Override
         protected void boundsCheck(long off, long sz) {
             Memory.this.boundsCheck(this.peer - Memory.this.peer + off, sz);
         }
+        @Override
         public String toString() {
             return super.toString() + " (shared from " + Memory.this.toString() + ")";
         }
     }
-    
+
     /**
      * Allocate space in the native heap via a call to C's <code>malloc</code>.
      *
@@ -100,39 +103,43 @@ public class Memory extends Pointer {
         this.size = size;
         if (size <= 0) {
             throw new IllegalArgumentException("Allocation size must be greater than zero");
-        } 
+        }
         peer = malloc(size);
-        if (peer == 0) 
+        if (peer == 0)
             throw new OutOfMemoryError("Cannot allocate " + size + " bytes");
 
-        allocatedMemory.put(this, new WeakReference(this));
+        allocatedMemory.put(this, new WeakReference<Memory>(this));
     }
 
-    protected Memory() { }
+    protected Memory() {
+        super();
+    }
 
     /** Provide a view of this memory using the given offset as the base address.  The
      * returned {@link Pointer} will have a size equal to that of the original
      * minus the offset.
      * @throws IndexOutOfBoundsException if the requested memory is outside
-     * the allocated bounds. 
+     * the allocated bounds.
      */
+    @Override
     public Pointer share(long offset) {
         return share(offset, size() - offset);
     }
-    
+
     /** Provide a view of this memory using the given offset as the base
-     * address, bounds-limited with the given size.  Maintains a reference to 
+     * address, bounds-limited with the given size.  Maintains a reference to
      * the original {@link Memory} object to avoid GC as long as the shared
      * memory is referenced.
      * @throws IndexOutOfBoundsException if the requested memory is outside
-     * the allocated bounds. 
+     * the allocated bounds.
      */
+    @Override
     public Pointer share(long offset, long sz) {
         boundsCheck(offset, sz);
         return new SharedMemory(offset, sz);
     }
-    
-    /** Provide a view onto this structure with the given alignment. 
+
+    /** Provide a view onto this structure with the given alignment.
      * @param byteBoundary Align memory to this number of bytes; should be a
      * power of two.
      * @throws IndexOutOfBoundsException if the requested alignment can
@@ -147,7 +154,7 @@ public class Memory extends Pointer {
         for (int i=0;i < 32;i++) {
             if (byteBoundary == (1<<i)) {
                 long mask = ~((long)byteBoundary - 1);
-                
+
                 if ((peer & mask) != peer) {
                     long newPeer = (peer + byteBoundary - 1) & mask;
                     long newSize = peer + size - newPeer;
@@ -163,15 +170,19 @@ public class Memory extends Pointer {
     }
 
     /** Properly dispose of native memory when this object is GC'd. */
+    @Override
     protected void finalize() {
         dispose();
     }
 
     /** Free the native memory and set peer to zero */
     protected synchronized void dispose() {
-        free(peer);
-        peer = 0;
-        allocatedMemory.remove(this);
+        try {
+            free(peer);
+        } finally {
+            peer = 0;
+            allocatedMemory.remove(this);
+        }
     }
 
     /** Zero the full extent of this memory region. */
@@ -189,8 +200,8 @@ public class Memory extends Pointer {
     }
 
     /**
-     * Check that indirection won't cause us to write outside the 
-     * malloc'ed space. 
+     * Check that indirection won't cause us to write outside the
+     * malloc'ed space.
      *
      */
     protected void boundsCheck(long off, long sz) {
@@ -210,87 +221,87 @@ public class Memory extends Pointer {
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(long,byte[],int,int) 
+     * @see Pointer#read(long,byte[],int,int)
      */
+    @Override
     public void read(long bOff, byte[] buf, int index, int length) {
         boundsCheck(bOff, length * 1L);
         super.read(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#read(long,short[],int,int)
      */
+    @Override
     public void read(long bOff, short[] buf, int index, int length) {
         boundsCheck(bOff, length * 2L);
         super.read(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(long,char[],int,int) 
+     * @see Pointer#read(long,char[],int,int)
      */
+    @Override
     public void read(long bOff, char[] buf, int index, int length) {
         boundsCheck(bOff, length * 2L);
         super.read(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#read(long,int[],int,int)
      */
+    @Override
     public void read(long bOff, int[] buf, int index, int length) {
         boundsCheck(bOff, length * 4L);
         super.read(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(long,long[],int,int) 
+     * @see Pointer#read(long,long[],int,int)
      */
+    @Override
     public void read(long bOff, long[] buf, int index, int length) {
         boundsCheck(bOff, length * 8L);
         super.read(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.read</code>.  But this method performs a bounds 
+     * <code>Pointer.read</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(long,float[],int,int) 
+     * @see Pointer#read(long,float[],int,int)
      */
+    @Override
     public void read(long bOff, float[] buf, int index, int length) {
         boundsCheck(bOff, length * 4L);
         super.read(bOff, buf, index, length);
     }
-
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
@@ -298,16 +309,13 @@ public class Memory extends Pointer {
      * ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#read(long,double[],int,int) 
+     * @see Pointer#read(long,double[],int,int)
      */
-    public void read(long bOff, double[] buf, int index, int length) 
-    {
+    @Override
+    public void read(long bOff, double[] buf, int index, int length) {
         boundsCheck(bOff, length * 8L);
         super.read(bOff, buf, index, length);
     }
-
-
-
 
     //////////////////////////////////////////////////////////////////////////
     // Raw write methods
@@ -315,103 +323,101 @@ public class Memory extends Pointer {
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(long,byte[],int,int) 
+     * @see Pointer#write(long,byte[],int,int)
      */
+    @Override
     public void write(long bOff, byte[] buf, int index, int length) {
         boundsCheck(bOff, length * 1L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#write(long,short[],int,int)
      */
+    @Override
     public void write(long bOff, short[] buf, int index, int length) {
         boundsCheck(bOff, length * 2L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#write(long,char[],int,int)
      */
+    @Override
     public void write(long bOff, char[] buf, int index, int length) {
         boundsCheck(bOff, length * 2L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(long,int[],int,int) 
+     * @see Pointer#write(long,int[],int,int)
      */
+    @Override
     public void write(long bOff, int[] buf, int index, int length) {
         boundsCheck(bOff, length * 4L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(long,long[],int,int) 
+     * @see Pointer#write(long,long[],int,int)
      */
+    @Override
     public void write(long bOff, long[] buf, int index, int length) {
         boundsCheck(bOff, length * 8L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#write(long,float[],int,int)
      */
+    @Override
     public void write(long bOff, float[] buf, int index, int length) {
         boundsCheck(bOff, length * 4L);
         super.write(bOff, buf, index, length);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.write</code>.  But this method performs a bounds 
+     * <code>Pointer.write</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
-     * @see Pointer#write(long,double[],int,int) 
+     * @see Pointer#write(long,double[],int,int)
      */
+    @Override
     public void write(long bOff, double[] buf, int index, int length) {
         boundsCheck(bOff, length * 8L);
         super.write(bOff, buf, index, length);
     }
-
-
-
 
     //////////////////////////////////////////////////////////////////////////
     // Java type read methods
@@ -419,31 +425,31 @@ public class Memory extends Pointer {
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getByte</code>.  But this method performs a bounds 
+     * <code>Pointer.getByte</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getByte(long)
      */
+    @Override
     public byte getByte(long offset) {
         boundsCheck(offset, 1);
         return super.getByte(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getByte</code>.  But this method performs a bounds 
+     * <code>Pointer.getByte</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getByte(long)
      */
+    @Override
     public char getChar(long offset) {
         boundsCheck(offset, 1);
         return super.getChar(offset);
     }
-
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
@@ -453,83 +459,84 @@ public class Memory extends Pointer {
      *
      * @see Pointer#getShort(long)
      */
+    @Override
     public short getShort(long offset) {
         boundsCheck(offset, 2);
         return super.getShort(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getInt</code>.  But this method performs a bounds 
+     * <code>Pointer.getInt</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getInt(long)
      */
+    @Override
     public int getInt(long offset) {
         boundsCheck(offset, 4);
         return super.getInt(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getLong</code>.  But this method performs a bounds 
+     * <code>Pointer.getLong</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getLong(long)
      */
+    @Override
     public long getLong(long offset) {
         boundsCheck(offset, 8);
         return super.getLong(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getFloat</code>.  But this method performs a bounds 
+     * <code>Pointer.getFloat</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getFloat(long)
      */
+    @Override
     public float getFloat(long offset) {
         boundsCheck(offset, 4);
         return super.getFloat(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getDouble</code>.  But this method performs a 
-     * bounds check to ensure that the indirection does not cause memory 
+     * <code>Pointer.getDouble</code>.  But this method performs a
+     * bounds check to ensure that the indirection does not cause memory
      * outside the <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getDouble(long)
      */
+    @Override
     public double getDouble(long offset) {
         boundsCheck(offset, 8);
         return super.getDouble(offset);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.getPointer</code>.  But this method performs 
-     * a bounds checks to ensure that the indirection does not cause memory 
+     * <code>Pointer.getPointer</code>.  But this method performs
+     * a bounds checks to ensure that the indirection does not cause memory
      * outside the <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#getPointer(long)
      */
+    @Override
     public Pointer getPointer(long offset) {
         boundsCheck(offset, Pointer.SIZE);
         return super.getPointer(offset);
     }
 
     /**
-     * Get a ByteBuffer mapped to a portion of this memory.  
+     * Get a ByteBuffer mapped to a portion of this memory.
      * We keep a weak reference to all ByteBuffers provided so that this
      * memory object is not GC'd while there are still implicit outstanding
      * references to it (it'd be nice if we could attach our own reference to
@@ -538,8 +545,9 @@ public class Memory extends Pointer {
      *
      * @param offset byte offset from pointer to start the buffer
      * @param length Length of ByteBuffer
-     * @return a direct ByteBuffer that accesses the memory being pointed to, 
+     * @return a direct ByteBuffer that accesses the memory being pointed to,
      */
+    @Override
     public ByteBuffer getByteBuffer(long offset, long length) {
         boundsCheck(offset, length);
         ByteBuffer b = super.getByteBuffer(offset, length);
@@ -549,12 +557,14 @@ public class Memory extends Pointer {
         return b;
     }
 
+    @Override
     public String getString(long offset, String encoding) {
         // NOTE: we only make sure the start of the string is within bounds
         boundsCheck(offset, 0);
         return super.getString(offset, encoding);
     }
 
+    @Override
     public String getWideString(long offset) {
         // NOTE: we only make sure the start of the string is within bounds
         boundsCheck(offset, 0);
@@ -567,132 +577,135 @@ public class Memory extends Pointer {
 
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setByte</code>.  But this method performs a bounds 
+     * <code>Pointer.setByte</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setByte
      */
+    @Override
     public void setByte(long offset, byte value) {
         boundsCheck(offset, 1);
         super.setByte(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setChar</code>.  But this method performs a bounds 
+     * <code>Pointer.setChar</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setChar
      */
+    @Override
     public void setChar(long offset, char value) {
         boundsCheck(offset, Native.WCHAR_SIZE);
         super.setChar(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setShort</code>.  But this method performs a bounds 
+     * <code>Pointer.setShort</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setShort
      */
+    @Override
     public void setShort(long offset, short value) {
         boundsCheck(offset, 2);
         super.setShort(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setInt</code>.  But this method performs a bounds 
+     * <code>Pointer.setInt</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setInt
      */
+    @Override
     public void setInt(long offset, int value) {
         boundsCheck(offset, 4);
         super.setInt(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setLong</code>.  But this method performs a bounds 
+     * <code>Pointer.setLong</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setLong
      */
+    @Override
     public void setLong(long offset, long value) {
         boundsCheck(offset, 8);
         super.setLong(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setFloat</code>.  But this method performs a bounds 
+     * <code>Pointer.setFloat</code>.  But this method performs a bounds
      * checks to ensure that the indirection does not cause memory outside the
      * <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setFloat
      */
+    @Override
     public void setFloat(long offset, float value) {
         boundsCheck(offset, 4);
         super.setFloat(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setDouble</code>.  But this method performs a 
-     * bounds checks to ensure that the indirection does not cause memory 
+     * <code>Pointer.setDouble</code>.  But this method performs a
+     * bounds checks to ensure that the indirection does not cause memory
      * outside the <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setDouble
      */
+    @Override
     public void setDouble(long offset, double value) {
         boundsCheck(offset, 8);
         super.setDouble(offset, value);
     }
 
-
     /**
      * Indirect the native pointer to <code>malloc</code> space, a la
-     * <code>Pointer.setPointer</code>.  But this method performs 
-     * a bounds checks to ensure that the indirection does not cause memory 
+     * <code>Pointer.setPointer</code>.  But this method performs
+     * a bounds checks to ensure that the indirection does not cause memory
      * outside the <code>malloc</code>ed space to be accessed.
      *
      * @see Pointer#setPointer
      */
+    @Override
     public void setPointer(long offset, Pointer value) {
         boundsCheck(offset, Pointer.SIZE);
         super.setPointer(offset, value);
     }
 
+    @Override
     public void setString(long offset, String value, String encoding) {
         boundsCheck(offset, Native.getBytes(value, encoding).length + 1L);
         super.setString(offset, value, encoding);
     }
 
+    @Override
     public void setWideString(long offset, String value) {
         boundsCheck(offset, (value.length() + 1L) * Native.WCHAR_SIZE);
         super.setWideString(offset, value);
     }
 
+    @Override
     public String toString() {
-        return "allocated@0x" + Long.toHexString(peer) + " ("
-            + size + " bytes)";
+        return "allocated@0x" + Long.toHexString(peer) + " (" + size + " bytes)";
     }
 
     protected static void free(long p) {
-        // free(0) is a no-op, so avoid the overhead of the call 
+        // free(0) is a no-op, so avoid the overhead of the call
         if (p != 0) {
             Native.free(p);
         }

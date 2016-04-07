@@ -13,9 +13,6 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.Proxy;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
@@ -32,28 +29,23 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 public class Factory {
-
 	/**
-	 * Creates a utility COM Factory and a ComThread on which all COM calls are executed.
-	 * NOTE: Remember to call factory.getComThread().terminate() at some appropriate point.
-	 * 
+	 * Factory keeps track of COM objects - all objects created with this
+         * factory can be disposed by calling {@link Factory#disposeAll() }.
 	 */
 	public Factory() {
-		this(new ComThread("Default Factory COM Thread", 5000, new Thread.UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread t, Throwable e) {
-				//ignore
-			}
-		}));
+            assert COMUtils.comIsInitialized() : "COM not initialized";
 	}
 
-	public Factory(ComThread comThread) {
-		this.comThread = comThread;
-		this.registeredObjects = new WeakHashMap<ProxyObject, Integer>();
-	}
 	
 	@Override
 	protected void finalize() throws Throwable {
@@ -63,11 +55,6 @@ public class Factory {
 			super.finalize();
 		}
 	}
-	
-	ComThread comThread;
-	public ComThread getComThread() {
-		return this.comThread;
-	}
 
 	/**
 	 * CoInitialize must be called be fore this method. Either explicitly or
@@ -76,51 +63,27 @@ public class Factory {
 	 * @return running object table
 	 */
 	public IRunningObjectTable getRunningObjectTable() {
-		try {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                final PointerByReference rotPtr = new PointerByReference();
 
-			final PointerByReference rotPtr = new PointerByReference();
+                HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
 
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
-				}
-			});
-			COMUtils.checkRC(hr);
-			com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
-					rotPtr.getValue());
-			IRunningObjectTable rot = new RunningObjectTable(raw, this);
-			return rot;
-
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
-	}
+                COMUtils.checkRC(hr);
+                com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
+                        rotPtr.getValue());
+                IRunningObjectTable rot = new RunningObjectTable(raw, this);
+                return rot;
+        }
 
 	/**
 	 * Creates a ProxyObject for the given interface and IDispatch pointer.
 	 * 
 	 */
 	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
 		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
-		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
-		T result = comInterface.cast(proxy);
-		return result;
-	}
-
-	/** only for use when creating ProxyObjects from Callbacks
-	 * 
-	 * @param comInterface
-	 * @param unknownId
-	 * @param dispatch
-	 * @return proxy object
-	 */
-	<T> T createProxy(Class<T> comInterface, long unknownId, IDispatch dispatch) {
-		ProxyObject jop = new ProxyObject(comInterface, unknownId, dispatch, this);
 		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
 		T result = comInterface.cast(proxy);
 		return result;
@@ -131,38 +94,26 @@ public class Factory {
 	 * returns a ProxyObject for the given interface.
 	 */
 	public <T> T createObject(Class<T> comInterface) {
-		try {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+                if (null == comObectAnnotation) {
+                        throw new COMException(
+                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+                }
+                final GUID guid = this.discoverClsId(comObectAnnotation);
 
-			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-			if (null == comObectAnnotation) {
-				throw new COMException(
-						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-			}
-			final GUID guid = this.discoverClsId(comObectAnnotation);
+                final PointerByReference ptrDisp = new PointerByReference();
+                WinNT.HRESULT hr = Ole32.INSTANCE.CoCreateInstance(guid, null,
+                        WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp);
 
-			final PointerByReference ptrDisp = new PointerByReference();
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return Ole32.INSTANCE.CoCreateInstance(guid, null, WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH,
-							ptrDisp);
-				}
-			});
-			COMUtils.checkRC(hr);
-			Dispatch d = new Dispatch(ptrDisp.getValue());
-			T t = this.createProxy(comInterface,d);
-			//CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
-			//Note: the createProxy adds one
-			int n = d.Release();
-			return t;
-
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                COMUtils.checkRC(hr);
+                Dispatch d = new Dispatch(ptrDisp.getValue());
+                T t = this.createProxy(comInterface,d);
+                //CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
+                //Note: the createProxy adds one
+                int n = d.Release();
+                return t;
 	}
 
 	/**
@@ -170,109 +121,84 @@ public class Factory {
 	 * returns a ProxyObject for the given interface.
 	 */
 	public <T> T fetchObject(Class<T> comInterface) {
-		try {
-			ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-			if (null == comObectAnnotation) {
-				throw new COMException(
-						"createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-			}
-			final GUID guid = this.discoverClsId(comObectAnnotation);
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
+                if (null == comObectAnnotation) {
+                        throw new COMException(
+                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
+                }
+                final GUID guid = this.discoverClsId(comObectAnnotation);
 
-			final PointerByReference ptrDisp = new PointerByReference();
-			WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-				@Override
-				public WinNT.HRESULT call() throws Exception {
-					return OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
-				}
-			});
-			COMUtils.checkRC(hr);
-			Dispatch d = new Dispatch(ptrDisp.getValue());
-			T t = this.createProxy(comInterface, d);
-			//GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
-			//Note: the createProxy adds one
-			d.Release();
-			
-			return t;
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                final PointerByReference ptrDisp = new PointerByReference();
+                WinNT.HRESULT hr = OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
+
+                COMUtils.checkRC(hr);
+                Dispatch d = new Dispatch(ptrDisp.getValue());
+                T t = this.createProxy(comInterface, d);
+                //GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
+                //Note: the createProxy adds one
+                d.Release();
+
+                return t;
 	}
 
 	GUID discoverClsId(ComObject annotation) {
-		try {
-			String clsIdStr = annotation.clsId();
-			final String progIdStr = annotation.progId();
-			if (null != clsIdStr && !clsIdStr.isEmpty()) {
-				return new CLSID(clsIdStr);
-			} else if (null != progIdStr && !progIdStr.isEmpty()) {
-				final CLSID.ByReference rclsid = new CLSID.ByReference();
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+            
+                String clsIdStr = annotation.clsId();
+                final String progIdStr = annotation.progId();
+                if (null != clsIdStr && !clsIdStr.isEmpty()) {
+                        return new CLSID(clsIdStr);
+                } else if (null != progIdStr && !progIdStr.isEmpty()) {
+                        final CLSID.ByReference rclsid = new CLSID.ByReference();
 
-				WinNT.HRESULT hr = this.comThread.execute(new Callable<WinNT.HRESULT>() {
-					@Override
-					public WinNT.HRESULT call() throws Exception {
-						return Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
-					}
-				});
+                        WinNT.HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
 
-				COMUtils.checkRC(hr);
-				return rclsid;
-			} else {
-				throw new COMException("ComObject must define a value for either clsId or progId");
-			}
-		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		} catch (ExecutionException e) {
-			throw new RuntimeException(e);
-		} catch (TimeoutException e) {
-			throw new RuntimeException(e);
-		}
+                        COMUtils.checkRC(hr);
+                        return rclsid;
+                } else {
+                        throw new COMException("ComObject must define a value for either clsId or progId");
+                }
 	}
 
-	//factory needs to keep a register of all handles to COM objects so that it can clean them up properly
-	// (if java had an out of scope clean up destructor like C++, this wouldn't be needed)
-	WeakHashMap<ProxyObject, Integer> registeredObjects;
+	// Proxy object release their COM interface reference latest in the
+        // finalize method, which is run when garbadge collection removes the
+        // object.
+        // When the factory is finished, the referenced objects loose their
+        // environment and can't be used anymore. registeredObjects is used
+        // to dispose interfaces even if garbadge collection has not yet collected
+        // the proxy objects.
+	private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<WeakReference<ProxyObject>>();
 	public void register(ProxyObject proxyObject) {
-		synchronized (this.registeredObjects) {
-			//ProxyObject identity resolves to the underlying native pointer value
-			// different java ProxyObjects will resolve to the same pointer
-			// thus we need to count the number of references.
-			if (this.registeredObjects.containsKey(proxyObject)) {
-				int r = this.registeredObjects.get(proxyObject);
-				this.registeredObjects.put(proxyObject, r+1);
-			} else {
-				this.registeredObjects.put(proxyObject, 1);
-			}
-		}
+            synchronized (this.registeredObjects) {
+                this.registeredObjects.add(new WeakReference<ProxyObject>(proxyObject));
+            }
 	}
 	
-	public void unregister(ProxyObject proxyObject, int d) {
-		synchronized (this.registeredObjects) {
-			if (this.registeredObjects.containsKey(proxyObject)) {
-				int r = this.registeredObjects.get(proxyObject);
-				if (r > 1) {
-					this.registeredObjects.put(proxyObject, r-d);
-				} else {
-					this.registeredObjects.remove(proxyObject);
-				}
-			} else {
-				throw new RuntimeException("Tried to dispose a ProxyObject that is not registered");
-			}
-			
-		}
-	}
+	public void unregister(ProxyObject proxyObject) {
+            synchronized (this.registeredObjects) {
+                Iterator<WeakReference<ProxyObject>> iterator = this.registeredObjects.iterator();
+                while(iterator.hasNext()) {
+                    WeakReference<ProxyObject> weakRef = iterator.next();
+                    ProxyObject po = weakRef.get();
+                    if(po == null || po == proxyObject) {
+                        iterator.remove();
+                    }
+                }
+            }
+        }
 	
 	public void disposeAll() {
-		synchronized (this.registeredObjects) {
-			Set<ProxyObject> s = new HashSet<ProxyObject>(this.registeredObjects.keySet());
-			for(ProxyObject proxyObject : s) {
-				int r = this.registeredObjects.get(proxyObject);
-				proxyObject.dispose(r);
-			}
-			this.registeredObjects.clear();
-		}
+            synchronized (this.registeredObjects) {
+                List<WeakReference<ProxyObject>> s = new ArrayList<WeakReference<ProxyObject>>(this.registeredObjects);
+                for(WeakReference<ProxyObject> weakRef : s) {
+                        ProxyObject po = weakRef.get();
+                        if(po != null) {
+                            po.dispose();
+                        }
+                }
+                this.registeredObjects.clear();
+            }
 	}
 }

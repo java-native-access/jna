@@ -5,13 +5,13 @@
 Java Native Access (JNA)
 ========================
 
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.0).  Please read the [overview](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.1).  Please read the [overview](http://java-native-access.github.io/jna/4.2.1/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
 
 JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.
 
 JNA allows you to call directly into native functions using natural Java method invocation. The Java call looks just like the call does in native code. Most calls require no special handling or configuration; no boilerplate or generated code is required.
 
-JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.
+JNA uses a small JNI library stub to dynamically invoke native code. The developer uses a Java interface to describe functions and structures in the target native library. This makes it quite easy to take advantage of native platform features without incurring the high overhead of configuring and building JNI code for multiple platforms.  Read this [more in-depth description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
 
 While significant attention has been paid to performance, correctness and ease of use take priority.
 
@@ -56,13 +56,13 @@ Pre-built platform support may be found [here](https://github.com/java-native-ac
 Download
 ========
 
-Version 4.2.0
+Version 4.2.2
 
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna) &nbsp;
-  [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.2.0/jna-4.2.0.jar)
+  [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.2.2/jna-4.2.2.jar)
   
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp;
-  [jna-platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.2.0/jna-platform-4.2.0.jar)
+  [jna-platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.2.2/jna-platform-4.2.2.jar)
 
 Features
 ========
@@ -112,6 +112,7 @@ Using the Library
 =================
 
 * [Getting Started](https://github.com/java-native-access/jna/blob/master/www/GettingStarted.md)
+* [Functional Description](https://github.com/java-native-access/jna/blob/master/www/FunctionalDescription.md).
 * [Mapping between Java and Native](https://github.com/java-native-access/jna/blob/master/www/Mappings.md)
 * [Using Pointers and Arrays](https://github.com/java-native-access/jna/blob/master/www/PointersAndArrays.md)
 * [Using Structures and Unions](https://github.com/java-native-access/jna/blob/master/www/StructuresAndUnions.md)
@@ -122,12 +123,12 @@ Using the Library
 * [Platform Library](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/java-native-access/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://java-native-access.github.io/jna/4.2.0/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://java-native-access.github.io/jna/4.2.1/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.0/).
+The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.2.1/).
 
 Developers
 ==========

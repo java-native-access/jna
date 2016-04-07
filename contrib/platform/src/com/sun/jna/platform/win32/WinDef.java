@@ -13,7 +13,6 @@
 package com.sun.jna.platform.win32;
 
 import java.awt.Rectangle;
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.IntegerType;
@@ -25,7 +24,6 @@ import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from Windef.h (various macros and types). Microsoft Windows SDK 6.0A.
@@ -33,7 +31,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author dblock[at]dblock.org
  */
 @SuppressWarnings("serial")
-public interface WinDef extends StdCallLibrary {
+public interface WinDef {
 
     /** The max path. */
     int MAX_PATH = 260;
@@ -239,7 +237,7 @@ public interface WinDef extends StdCallLibrary {
          * Instantiates a new LONG by reference.
          */
         public LONGByReference() {
-            this(new LONG(0));
+            this(new LONG(0L));
         }
 
         /**
@@ -756,7 +754,7 @@ public interface WinDef extends StdCallLibrary {
      * The Class RECT.
      */
     public class RECT extends Structure {
-
+        public static final List<String> FIELDS = createFieldsOrder("left", "top", "right", "bottom");
         /** The left. */
         public int left;
 
@@ -771,7 +769,7 @@ public interface WinDef extends StdCallLibrary {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("left", "top", "right", "bottom");
+            return FIELDS;
         }
 
         /**
@@ -1057,14 +1055,21 @@ public interface WinDef extends StdCallLibrary {
         /**
          * The Class ByReference.
          */
-        public static class ByReference extends POINT implements
-                                                          Structure.ByReference {
+        public static class ByReference extends POINT implements Structure.ByReference {
+
         }
 
+        public static final List<String> FIELDS = createFieldsOrder("x", "y");
+
+        /** The x. */
+        public int x;
+        /** The y. */
+        public int y;
         /**
          * Instantiates a new point.
          */
         public POINT() {
+            super();
         }
 
         /**
@@ -1077,9 +1082,6 @@ public interface WinDef extends StdCallLibrary {
             super(memory);
             read();
         }
-
-        /** The y. */
-        public int x, y;
 
         /**
          * Instantiates a new point.
@@ -1096,7 +1098,7 @@ public interface WinDef extends StdCallLibrary {
 
         @Override
         protected List<String> getFieldOrder() {
-            return Arrays.asList("x", "y");
+            return FIELDS;
         }
     }
 
@@ -1402,6 +1404,7 @@ public interface WinDef extends StdCallLibrary {
          */
         public BOOL(long value) {
             super(SIZE, value, false);
+            assert value == 0 || value == 1;
         }
 
         public boolean booleanValue() {
@@ -1595,7 +1598,7 @@ public interface WinDef extends StdCallLibrary {
          *
          * @param ch The {@code char} value
          */
-        public CHAR(char ch) {
+        public CHAR(byte ch) {
             this(ch & 0xFF);
         }
 

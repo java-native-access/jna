@@ -33,8 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Ole32 extends StdCallLibrary {
 
     /** The instance. */
-    Ole32 INSTANCE = (Ole32) Native.loadLibrary("Ole32", Ole32.class,
-                                                W32APIOptions.UNICODE_OPTIONS);
+    Ole32 INSTANCE = Native.loadLibrary("Ole32", Ole32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Creates a GUID, a unique 128-bit integer used for CLSIDs and interface
@@ -217,6 +216,8 @@ public interface Ole32 extends StdCallLibrary {
      * 
      *         REGDB_E_READREGDB The registry could not be opened for reading.
      */
+    HRESULT CLSIDFromString(String lpsz, CLSID.ByReference pclsid);
+    /** @deprecated use the String version */
     HRESULT CLSIDFromString(WString lpsz, CLSID.ByReference pclsid);
 
 	/**

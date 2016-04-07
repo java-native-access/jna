@@ -98,9 +98,9 @@ public class TlbImp implements TlbConst {
                 if (typekind.value == TYPEKIND.TKIND_ENUM) {
                     this.createCOMEnum(i, this.getPackageName(), typeLibUtil);
                 } else if (typekind.value == TYPEKIND.TKIND_RECORD) {
-                    this.logInfo("'TKIND_RECORD' objects are currently not supported!");
+                    TlbImp.logInfo("'TKIND_RECORD' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_MODULE) {
-                    this.logInfo("'TKIND_MODULE' objects are currently not supported!");
+                    TlbImp.logInfo("'TKIND_MODULE' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_INTERFACE) {
                     this.createCOMInterface(i, this.getPackageName(),
                             typeLibUtil);
@@ -111,9 +111,9 @@ public class TlbImp implements TlbConst {
                     this.createCOMCoClass(i, this.getPackageName(),
                             typeLibUtil, bindingMode);
                 } else if (typekind.value == TYPEKIND.TKIND_ALIAS) {
-                    this.logInfo("'TKIND_ALIAS' objects are currently not supported!");
+                    TlbImp.logInfo("'TKIND_ALIAS' objects are currently not supported!");
                 } else if (typekind.value == TYPEKIND.TKIND_UNION) {
-                    this.logInfo("'TKIND_UNION' objects are currently not supported!");
+                    TlbImp.logInfo("'TKIND_UNION' objects are currently not supported!");
                 }
             }
 

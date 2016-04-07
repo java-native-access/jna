@@ -1,4 +1,7 @@
-build
+target/
+.project
+.classpath
+build/
 build-d64
 build.eclipse
 build.number
@@ -21,3 +24,6 @@ native/libffi/doc/libffi.info
 junit-*
 pom-jna.xml.asc
 pom-jna-platform.xml.asc
+# IntelliJ IDEA
+.idea
+*.iml

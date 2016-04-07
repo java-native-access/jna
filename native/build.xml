@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="compile-native" default="install">
+    <dirname property="module.root.folder" file="${ant.file}"/>
+    <dirname property="workspace.root.folder" file="${module.root.folder}"/>
+    <property name="jna.parent.folder" value="${workspace.root.folder}${file.separator}parent"/>
+    <import file="${jna.parent.folder}${file.separator}build-compile.xml"/>
+
+    <!-- ############### Determine architecture value #################### -->
+    <condition property="os.prefix" value="linux-${jre.arch}">
+        <os name="Linux"/>
+    </condition>
+    <condition property="os.prefix" value="aix-${jre.arch}">
+        <os name="AIX"/>
+    </condition>
+    <condition property="os.prefix" value="win32-${jre.arch}">
+        <os family="windows"/>
+    </condition>
+    <!-- Darwin builds are universal, no arch required -->
+    <condition property="os.prefix" value="darwin">
+        <os family="mac"/>
+    </condition>
+    <condition property="os.prefix" value="sunos-${jre.arch}">
+        <os name="SunOS"/>
+    </condition>
+    <condition property="os.prefix" value="freebsd-${jre.arch}">
+        <os name="FreeBSD"/>
+    </condition>
+    <condition property="os.prefix" value="openbsd-${jre.arch}">
+        <os name="OpenBSD"/>
+    </condition>
+    <condition property="os.prefix" value="netbsd-${jre.arch}">
+        <os name="NetBSD"/>
+    </condition>
+    <condition property="os.prefix" value="kfreebsd-${jre.arch}">
+        <os name="GNU/kFreeBSD"/>
+    </condition>
+    <fail unless="os.prefix"
+          message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
+    <!-- Keep all natives separate -->
+    <property name="native.subdir" value="native-${os.prefix}"/>
+
+    <!-- ################# figure out the compatibility version ################## -->
+    <!-- Set up restrictions for w32ce, based on JavaME/CDC -->
+    <condition property="compatibility" value="1.4">
+        <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
+    <condition property="test.compatibility" value="1.4">
+        <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+    </condition>
+    <!-- Default compatibility, 1.6, or whatever version is running -->
+    <condition property="compatibility" value="${ant.java.version}" else="1.6">
+        <matches pattern="^1.[345]$" string="${ant.java.version}"/>
+    </condition>
+    <!-- Platform default compatibility, 1.5+ -->
+    <condition property="platform.compatibility" value="1.5" else="${compatibility}">
+        <equals arg1="${compatibility}" arg2="1.4"/>
+    </condition>
+
+    <!-- ################# figure out JDK home ################## -->
+    <echo level="info" message="java.home: ${java.home}"/>
+    <condition property="jdk.home" value="${java.home}">
+        <available file="${java.home}${file.separator}include"/>
+    </condition>
+    <dirname property="java.home.parent" file="${java.home}"/>
+    <condition property="jdk.home" value="${java.home.parent}">
+        <available file="${java.home.parent}${file.separator}include"/>
+    </condition>
+    <condition property="jdk.home" value="/System/Library/Frameworks/JavaVM.framework/Home">
+        <available file="/System/Library/Frameworks/JavaVM.framework/Headers"/>
+    </condition>
+    <fail unless="jdk.home" message="Can't find JNI headers (java.home=${java.home})"/>
+    <echo level="info" message="jdk.home: ${jdk.home}"/>
+    <echo level="info" message="JAVA_HOME: ${env.JAVA_HOME}"/>
+
+    <property name="libarch" value="${os.arch}"/>
+    <condition property="libjsig"
+               value="${java.home}${file.separator}lib${file.separator}${libarch}${file.separator}libjsig.so" else="">
+        <available file="${java.home}${file.separator}lib${file.separator}${libarch}${file.separator}libjsig.so"/>
+    </condition>
+    <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
+        <not>
+            <equals arg1="${libjsig}" arg2=""/>
+        </not>
+    </condition>
+
+    <property name="native.jar" value="${os.prefix}.jar"/>
+    <property name="build.native.folder" location="${module.target.folder}${file.separator}${native.subdir}"/>
+    <property name="md5.file" location="${build.native.folder}${file.separator}jni.checksum"/>
+
+    <!-- compile the core so we can run 'javah' on it -->
+    <!-- TODO change these values when the core is Maven-ized as well -->
+    <property name="jna.core.folder" value="${workspace.root.folder}"/>
+    <property name="jna.core.sources" value="${jna.core.folder}${file.separator}src"/>
+    <target name="compile-core" depends="compile-base" unless="-native">
+        <echo level="info"
+              message="Compile ${jna.core.sources} - compatibility=${compatibility} - target=${module.target.classes}"/>
+        <mkdir dir="${module.target.classes}"/>
+        <javac source="${compatibility}" target="${compatibility}"
+               srcdir="${jna.core.sources}" destdir="${module.target.classes}"
+               includeantruntime="false"/>
+    </target>
+
+    <target name="javah" depends="compile-core" unless="-native">
+        <mkdir dir="${build.native.folder}"/>
+        <echo level="info" message="Create native class headers in ${build.native.folder}"/>
+        <javah classpath="${module.target.classes}" destdir="${build.native.folder}" force="yes" verbose="true">
+            <class name="com.sun.jna.Function"/>
+            <class name="com.sun.jna.Native"/>
+            <class name="com.sun.jna.win32.DLLCallback"/>
+        </javah>
+        <condition property="grep" value="/usr/sfw/bin/ggrep">
+            <os name="SunOS"/>
+        </condition>
+        <condition property="grep" value="ggrep">
+            <os name="OpenBSD"/>
+        </condition>
+        <property name="grep" value="grep"/>
+        <condition property="grep.required" value="false" else="true">
+            <os name="AIX"/>
+        </condition>
+        <!-- args are based on GNU grep, other versions may differ -->
+        <apply dir="${build.native.folder}" executable="${grep}" parallel="true"
+               failonerror="${grep.required}" relative="true" output="${md5.file}">
+            <arg value="-A"/>
+            <arg value="1"/>
+            <arg value="JNIEXPORT"/>
+            <fileset dir="${build.native.folder}" includes="*.h"/>
+        </apply>
+        <!-- Clean up gcj javah output to match that of Sun's javah -->
+        <fixcrlf file="${md5.file}" eol="unix"/>
+        <replaceregexp match="^((.*\.h):JNIEXPORT[^(]+)( +\(.*)"
+                       replace="\1&#xa;\2- \3&#xa;--"
+                       byline="true"
+                       file="${md5.file}"/>
+        <replaceregexp match="(JNIEnv *\*) *env"
+                       replace="\1"
+                       byline="true"
+                       file="${md5.file}"/>
+        <replaceregexp match="&#xa;--&#xa;.*\.h-$"
+                       replace=""
+                       flags="m"
+                       file="${md5.file}"/>
+        <checksum property="md5" file="${md5.file}"/>
+        <condition property="jni.valid" value="true">
+            <or>
+                <os name="AIX"/>
+                <equals arg1="${jni.md5}" arg2="${md5}" trim="true"/>
+                <equals arg1="${jni.md5}" arg2=""/>
+            </or>
+        </condition>
+    </target>
+
+    <!-- ########### W32 version resource ################ -->
+    <condition property="-rsrc">
+        <and>
+            <not>
+                <os family="windows"/>
+            </not>
+            <not>
+                <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+            </not>
+        </and>
+    </condition>
+    <property name="resource.file.path" location="${build.native.folder}${file.separator}jnidispatch.rc"/>
+    <!-- jnidispatch library release version -->
+    <property name="jni.major" value="4"/>
+    <property name="jni.minor" value="0"/>
+    <property name="jni.revision" value="1"/>
+    <property name="jni.build" value="0"/> <!--${build.number}-->
+    <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
+    <property name="jni.md5" value="1a6047467b59e8748f975e03016ce3d9"/>
+
+    <target name="create-version-resource" unless="-rsrc" description="Generate w32 DLL version resource information">
+        <copy file="${module.root.folder}${file.separator}jnidispatch.rc" tofile="${resource.file.path}"
+              verbose="true"/>
+        <property name="w32.jni.version" value="${jni.major},${jni.minor},${jni.revision},${jni.build}"/>
+        <property name="w32.jna.version" value="${jna.major},${jna.minor},${jna.revision},${jna.build}"/>
+        <echo level="info"
+              message="Generate w32 DLL version information - JNI=${w32.jni.version}, JNA=${w32.jna.version}"/>
+        <replaceregexp match="FILEVERSION.*"
+                       replace="FILEVERSION ${w32.jni.version}"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+        <replaceregexp match="PRODUCTVERSION.*"
+                       replace="PRODUCTVERSION ${jna.major},${jna.minor},${jna.revision},${jna.build}"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+        <replaceregexp match="FileVersion.*"
+                       replace="FileVersion&quot;,&quot;${jni.version}&quot;"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+        <replaceregexp match="Full Version.*"
+                       replace="Full Version&quot;,&quot;${jni.version} b${jni.build}&quot;"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+        <replaceregexp match="ProductVersion.*"
+                       replace="ProductVersion&quot;,&quot;${spec.version}&quot;"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+        <replaceregexp match="(Copyright.*-)2..."
+                       replace="\1${year}"
+                       preserveLastModified="true"
+                       file="${resource.file.path}" byline="true"/>
+    </target>
+
+    <property name="debug.native" value="false"/>
+    <property name="cflags_extra.native" value=""/>
+    <property name="dynlink.native" value="false"/>
+
+    <target name="compile-native" depends="javah,create-version-resource" description="Builds the native code"
+            unless="-native">
+        <property name="comment" value="# auto-generated by ant"/>
+        <property name="makefile.path" value="${module.root.folder}${file.separator}Makefile"/>
+        <replaceregexp match="^JNA_JNI_VERSION=.*"
+                       replace="JNA_JNI_VERSION=${jni.version} ${comment}"
+                       file="${makefile.path}" byline="true"/>
+        <replaceregexp match="^CHECKSUM=.*"
+                       replace="CHECKSUM=${jni.md5} ${comment}"
+                       file="${makefile.path}" byline="true"/>
+        <!-- Handle cross-compilation -->
+        <condition property="make.OS" value="OS=w32ce">
+            <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+        </condition>
+        <condition property="make.OS" value="OS=android">
+            <matches pattern="^android-" string="${os.prefix}"/>
+        </condition>
+        <property name="make.OS" value="IGNORE="/>
+        <!-- Ensure Makefile ARCH property properly set -->
+        <condition property="ARCH" value="arm">
+            <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
+        </condition>
+        <condition property="ARCH" value="arm">
+            <equals arg1="${os.prefix}" arg2="android-arm"/>
+        </condition>
+        <condition property="ARCH" value="armv7">
+            <equals arg1="${os.prefix}" arg2="android-armv7"/>
+        </condition>
+        <condition property="ARCH" value="aarch64">
+            <equals arg1="${os.prefix}" arg2="android-aarch64"/>
+        </condition>
+        <condition property="ARCH" value="x86">
+            <equals arg1="${os.prefix}" arg2="android-x86"/>
+        </condition>
+        <condition property="ARCH" value="x86-64">
+            <equals arg1="${os.prefix}" arg2="android-x86-64"/>
+        </condition>
+        <condition property="ARCH" value="mips">
+            <equals arg1="${os.prefix}" arg2="android-mips"/>
+        </condition>
+        <condition property="ARCH" value="mips64">
+            <equals arg1="${os.prefix}" arg2="android-mips64"/>
+        </condition>
+        <condition property="ARCH" value="ppc">
+            <equals arg1="${os.prefix}" arg2="aix-ppc"/>
+        </condition>
+        <condition property="ARCH" value="ppc64">
+            <equals arg1="${os.prefix}" arg2="aix-ppc64"/>
+        </condition>
+        <!-- ensure ARCH is set properly for 64-bit capable platforms -->
+        <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
+        <property name="ARCH" value="${os.arch}"/>
+        <echo level="info" message="ARCH: ${ARCH}"/>
+
+        <condition property="make.USE_MSVC" value="USE_MSVC=${USE_MSVC}" else="IGNORE=">
+            <isset property="USE_MSVC"/>
+        </condition>
+        <echo level="info" message="make.USE_MSVC: ${make.USE_MSVC}"/>
+
+        <condition property="make.CC" value="CC=${CC}" else="IGNORE=">
+            <isset property="CC"/>
+        </condition>
+        <echo level="info" message="make.CC: ${make.CC}"/>
+
+        <condition property="make.ARCH" value="ARCH=${ARCH}" else="IGNORE=">
+            <isset property="ARCH"/>
+        </condition>
+        <echo level="info" message="make.ARCH: ${make.ARCH}"/>
+
+        <condition property="make.SDKROOT" value="SDKROOT=${SDKROOT}">
+            <isset property="SDKROOT"/>
+        </condition>
+        <property name="xcode" value="/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform"/>
+        <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.11.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="${xcode}/Developer/SDKs/MacOSX10.11.sdk"/>
+            </and>
+        </condition>
+        <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.9.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="${xcode}/Developer/SDKs/MacOSX10.9.sdk"/>
+            </and>
+        </condition>
+        <condition property="make.SDKROOT" value="SDKROOT=${xcode}/Developer/SDKs/MacOSX10.8.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="${xcode}/Developer/SDKs/MacOSX10.8.sdk"/>
+            </and>
+        </condition>
+        <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.6.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="/Developer/SDKs/MacOSX10.6.sdk"/>
+            </and>
+        </condition>
+        <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.5.sdk">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="/Developer/SDKs/MacOSX10.5.sdk"/>
+            </and>
+        </condition>
+        <condition property="make.SDKROOT" value="SDKROOT=/Developer/SDKs/MacOSX10.4u.sdk" else="IGNORE=">
+            <and>
+                <equals arg1="${os.prefix}" arg2="darwin" trim="true"/>
+                <available file="/Developer/SDKs/MacOSX10.4u.sdk"/>
+            </and>
+        </condition>
+        <echo level="info" message="make.SDKROOT: ${make.SDKROOT}"/>
+
+        <!-- Windows drive letters, separator and spaces in absolute paths wreak havoc on make -->
+        <condition property="make.BUILD"
+                   value="BUILD=./${target.sub.folder.name}/${native.subdir}"
+                   else="BUILD=${build.native.folder}">
+            <os family="windows"/>
+        </condition>
+        <echo level="info" message="make.BUILD: ${make.BUILD}"/>
+
+        <condition property="make.PATH" value="PATH=/opt/csw/bin:/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
+            <os name="SunOS"/>
+        </condition>
+        <echo level="info" message="make.PATH: ${make.PATH}"/>
+
+        <!-- Allow explicit override of make variables -->
+        <condition property="make.OPTS" value="${EXTRA_MAKE_OPTS}" else="IGNORE=">
+            <isset property="EXTRA_MAKE_OPTS"/>
+        </condition>
+        <echo level="info" message="make.OPTS: ${make.OPTS}"/>
+
+        <condition property="make" value="/usr/sfw/bin/gmake">
+            <and>
+                <os name="SunOS"/>
+                <available file="/usr/sfw/bin/gmake"/>
+            </and>
+        </condition>
+        <condition property="make" value="gmake">
+            <or>
+                <os name="FreeBSD"/>
+                <os name="OpenBSD"/>
+                <os name="NetBSD"/>
+                <os name="SunOS"/>
+                <os name="AIX"/>
+            </or>
+        </condition>
+        <!-- Default make program if no specific override-->
+        <property name="make" value="make"/>
+
+        <!-- Native resource path within jna.jar -->
+        <property name="native.path" value="com/sun/jna/${os.prefix}"/>
+        <mkdir dir="${build.native.folder}"/>
+        <echo level="info" message="${make} ${makefile.path} - target=${build.native.folder}"/>
+        <exec executable="${make}" dir="${module.root.folder}" failonerror="true">
+            <arg value="JAVA_HOME=${jdk.home}"/>
+            <arg value="JAVAH=${build.native.folder}"/>
+            <arg value="DEBUG=${debug.native}"/>
+            <arg value="CFLAGS_EXTRA=${cflags_extra.native}"/>
+            <arg value="DYNAMIC_LIBFFI=${dynlink.native}"/>
+            <arg value="${make.CC}"/>
+            <arg value="${make.USE_MSVC}"/>
+            <arg value="${make.BUILD}"/>
+            <arg value="${make.SDKROOT}"/>
+            <arg value="${make.ARCH}"/>
+            <arg value="${make.PATH}"/>
+            <arg value="${make.OS}"/>
+            <arg line="${make.OPTS}"/>
+            <arg value="JNA_JNI_VERSION=${jni.version}"/>
+            <arg value="CHECKSUM=${jni.md5}"/>
+        </exec>
+    </target>
+
+    <target name="install" depends="compile-native" description="Creates the native library"/>
+    <target name="clean" description="Removes all generated artifacts">
+        <delete dir="${module.target.folder}" quiet="true"/>
+    </target>
+</project>

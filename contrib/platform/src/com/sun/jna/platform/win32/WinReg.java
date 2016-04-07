@@ -15,7 +15,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByReference;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * This module contains the function prototypes and constant, type and structure 
@@ -24,7 +23,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  */
-public interface WinReg extends StdCallLibrary {
+public interface WinReg {
 	
     public static class HKEY extends HANDLE {
         public HKEY() { }

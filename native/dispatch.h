@@ -216,7 +216,7 @@ extern void* getPointerTypeAddress(JNIEnv*, jobject);
 extern void writeStructure(JNIEnv*, jobject);
 extern jclass getNativeType(JNIEnv*, jclass);
 extern void toNative(JNIEnv*, jobject, void*, size_t, jboolean, const char*);
-extern jclass fromNative(JNIEnv*, jclass, ffi_type*, void*, jboolean, const char*);
+extern jclass fromNativeCallbackParam(JNIEnv*, jclass, ffi_type*, void*, jboolean, const char*);
 
 typedef struct _AttachOptions {
   int daemon;

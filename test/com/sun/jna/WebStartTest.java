@@ -1,14 +1,14 @@
 /* Copyright (c) 2009-2012 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -43,7 +43,7 @@ import junit.framework.TestResult;
  * Works under OSX, windows, and linux.
  */
 public class WebStartTest extends TestCase implements Paths {
-    
+
     // Provide a policy file for unsigned jars
     // Unfortunately this does not allow native libraries
     private static final String POLICY =
@@ -51,7 +51,7 @@ public class WebStartTest extends TestCase implements Paths {
         + " permission java.security.AllPermission;\n"
         + "};";
 
-    private static final String JNLP = 
+    private static final String JNLP =
         "<?xml version='1.0' encoding='UTF-8'?>\n"
         + "<jnlp spec='1.0' codebase='{CODEBASE}' href='{JNLP_FILE}'>\n"
         + "  <information>\n"
@@ -135,91 +135,95 @@ public class WebStartTest extends TestCase implements Paths {
         String codebase = new File(dir, "jws").toURI().toURL().toString();
 
         ServerSocket s = new ServerSocket(0);
-        s.setSoTimeout(SOCKET_TIMEOUT);
-        int port = s.getLocalPort();
-
-        File jnlp = File.createTempFile(getName(), ".jnlp");
-        String contents = JNLP.replace("{CLASS}", testClass);
-        contents = contents.replace("{METHOD}", testMethod);
-        contents = contents.replace("{CODEBASE}", codebase);
-        contents = contents.replace("{JNLP_FILE}", jnlp.toURI().toURL().toString());
-        contents = contents.replace("{PORT}", String.valueOf(port));
-        contents = contents.replace("{CLOVER}",
-                                    USING_CLOVER ? "<jar href='clover.jar'/>" : "");
-
         try {
-            OutputStream os = new FileOutputStream(jnlp);
-            os.write(contents.getBytes());
-            os.close();
-            String path = findJWS();
-            String[] cmd = {
-                path,
-                Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
-                "-Xnosplash", 
-                "-wait", 
-                jnlp.toURI().toURL().toString(),
-            };
-            final Process p = Runtime.getRuntime().exec(cmd);
-            final StringBuffer output = new StringBuffer();
-            class SocketHandler extends Thread {
-                private InputStream is;
-                private StringBuffer sb;
-                public SocketHandler(Socket s, StringBuffer b) throws IOException {
-                    this.is = s.getInputStream();
-                    this.sb = b;
-                }
-                public void run() {
-                    byte[] buf = new byte[256];
-                    while (true) {
-                        try {
-                            int count = is.read(buf, 0, buf.length);
-                            if (count == -1) break;
-                            if (count == 0) {
-                                try { sleep(1); } catch(InterruptedException e) { }
-                            }
-                            else {
-                                sb.append(new String(buf, 0, count));
-                            }
-                        }
-                        catch(IOException e) {
-                            showMessage("read error: " + e.toString());
-                        }
-                    }
-                    try { is.close(); } catch(IOException e) { }
-                }
-            }
-            
-            Thread out = null;
+            s.setSoTimeout(SOCKET_TIMEOUT);
+            int port = s.getLocalPort();
+
+            File jnlp = File.createTempFile(getName(), ".jnlp");
+            String contents = JNLP.replace("{CLASS}", testClass);
+            contents = contents.replace("{METHOD}", testMethod);
+            contents = contents.replace("{CODEBASE}", codebase);
+            contents = contents.replace("{JNLP_FILE}", jnlp.toURI().toURL().toString());
+            contents = contents.replace("{PORT}", String.valueOf(port));
+            contents = contents.replace("{CLOVER}", USING_CLOVER ? "<jar href='clover.jar'/>" : "");
+
             try {
-                out = new SocketHandler(s.accept(), output);
-                out.start();
-            }
-            catch(SocketTimeoutException e) {
-                try { 
-                    p.exitValue();
+                OutputStream os = new FileOutputStream(jnlp);
+                os.write(contents.getBytes());
+                os.close();
+                String path = findJWS();
+                String[] cmd = {
+                    path,
+                    Platform.isWindows() ? "-J-Ddummy" : (Platform.is64Bit() ? "-J-d64" : "-J-d32"),
+                    "-Xnosplash",
+                    "-wait",
+                    jnlp.toURI().toURL().toString(),
+                };
+                final Process p = Runtime.getRuntime().exec(cmd);
+                final StringBuffer output = new StringBuffer();
+                class SocketHandler extends Thread {
+                    private InputStream is;
+                    private StringBuffer sb;
+                    public SocketHandler(Socket s, StringBuffer b) throws IOException {
+                        this.is = s.getInputStream();
+                        this.sb = b;
+                    }
+                    @Override
+                    public void run() {
+                        byte[] buf = new byte[256];
+                        while (true) {
+                            try {
+                                int count = is.read(buf, 0, buf.length);
+                                if (count == -1) break;
+                                if (count == 0) {
+                                    try { sleep(1); } catch(InterruptedException e) { }
+                                }
+                                else {
+                                    sb.append(new String(buf, 0, count));
+                                }
+                            }
+                            catch(IOException e) {
+                                showMessage("read error: " + e.toString());
+                            }
+                        }
+                        try { is.close(); } catch(IOException e) { }
+                    }
                 }
-                catch(IllegalThreadStateException e2) {
-                    p.destroy();
-                    throw new Error("JWS Timed out");
+
+                Thread out = null;
+                try {
+                    out = new SocketHandler(s.accept(), output);
+                    out.start();
+                }
+                catch(SocketTimeoutException e) {
+                    try {
+                        p.exitValue();
+                    }
+                    catch(IllegalThreadStateException e2) {
+                        p.destroy();
+                        throw new Error("JWS Timed out");
+                    }
+                }
+                p.waitFor();
+                if (out != null) {
+                    out.join();
+                }
+
+                int code = p.exitValue();
+                String error = output.toString();
+                if (code != 0 || !"".equals(error)) {
+                    if (code == 1
+                        || error.indexOf("AssertionFailedError") != -1) {
+                        fail("JWS FAIL: " + error);
+                    }
+                    throw new Error("JWS ERROR: " + error);
                 }
             }
-            p.waitFor();
-            if (out != null) {
-                out.join();
+            finally {
+                jnlp.delete();
             }
-            
-            int code = p.exitValue();
-            String error = output.toString();
-            if (code != 0 || !"".equals(error)) {
-                if (code == 1
-                    || error.indexOf("AssertionFailedError") != -1) {
-                    fail("JWS FAIL: " + error);
-                }
-                throw new Error("JWS ERROR: " + error);
-            }
-        }
-        finally {
-            jnlp.delete();
+        } finally {
+            s.close();
         }
     }
 
@@ -261,7 +265,7 @@ public class WebStartTest extends TestCase implements Paths {
             runTestUnderWebStart(getClass().getName(), getName());
         }
     }
-    
+
     public interface FolderInfo extends com.sun.jna.win32.StdCallLibrary {
         int MAX_PATH = 260;
         int SHGFP_TYPE_CURRENT = 0;
@@ -276,7 +280,7 @@ public class WebStartTest extends TestCase implements Paths {
         String JAVA_HOME = System.getProperty("java.home");
         String BIN = new File(JAVA_HOME, "/bin").getAbsolutePath();
         File javaws = new File(BIN, "javaws" + (Platform.isWindows()?".exe":""));
-        List tried = new ArrayList();
+        List<File> tried = new ArrayList<File>();
         tried.add(javaws);
         if (!javaws.exists()) {
             // NOTE: OSX puts javaws somewhere else entirely
@@ -290,8 +294,7 @@ public class WebStartTest extends TestCase implements Paths {
             }
             // NOTE: win64 only includes javaws in the system path
             if (Platform.isWindows()) {
-                FolderInfo info = (FolderInfo)
-                    Native.loadLibrary("shell32", FolderInfo.class);
+                FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
                 //int result =
                         info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
@@ -312,7 +315,7 @@ public class WebStartTest extends TestCase implements Paths {
     }
 
     // TODO: find some way of querying the current VM for the deployment
-    // properties path 
+    // properties path
     private File findDeploymentProperties() {
         String path = System.getProperty("user.home");
         File deployment;
@@ -321,8 +324,7 @@ public class WebStartTest extends TestCase implements Paths {
             vendor = vendor.substring(0, vendor.indexOf(" "));
         }
         if (Platform.isWindows()) {
-            FolderInfo info = (FolderInfo)
-                Native.loadLibrary("shell32", FolderInfo.class);
+            FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
             char[] buf = new char[FolderInfo.MAX_PATH];
             info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
                                   null, 0, buf);
@@ -358,10 +360,11 @@ public class WebStartTest extends TestCase implements Paths {
         return new File(deployment, "deployment.properties");
     }
 
-    private static final String POLICY_KEY = 
+    private static final String POLICY_KEY =
         "deployment.user.security.policy";
     private static final String CERTS_KEY =
         "deployment.user.security.trusted.certs";
+    @Override
     public void runBare() throws Throwable {
         if (runningWebStart()) {
             super.runBare();
@@ -408,12 +411,11 @@ public class WebStartTest extends TestCase implements Paths {
         TestResult result = new TestResult();
         test.run(result);
         if (result.failureCount() != 0) {
-            Enumeration e = result.failures();
-            return ((TestFailure)e.nextElement()).thrownException();
-        }
-        else if (result.errorCount() != 0) {
-            Enumeration e = result.errors();
-            return ((TestFailure)e.nextElement()).thrownException();
+            Enumeration<TestFailure> e = result.failures();
+            return e.nextElement().thrownException();
+        } else if (result.errorCount() != 0) {
+            Enumeration<TestFailure> e = result.errors();
+            return e.nextElement().thrownException();
         }
         return null;
     }

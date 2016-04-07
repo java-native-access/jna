@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
 import com.sun.jna.platform.win32.OaIdl.TLIBATTR;
@@ -69,9 +70,9 @@ public interface ITypeLib extends IUnknown {
 
     public HRESULT FindName(
     /* [annotation][out][in] */
-    BSTRByReference szNameBuf,
+    LPOLESTR szNameBuf,
     /* [in] */ULONG lHashVal,
-    /* [length_is][size_is][out] */ITypeInfo[] ppTInfo,
+    /* [length_is][size_is][out] */Pointer[] ppTInfo,
     /* [length_is][size_is][out] */MEMBERID[] rgMemId,
     /* [out][in] */USHORTByReference pcFound);
 

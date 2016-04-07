@@ -1,14 +1,14 @@
 /* Copyright (c) 2007-20013 Timothy Wall, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna;
 
@@ -27,7 +27,7 @@ import java.util.Collections;
 import junit.framework.TestCase;
 
 public class LibraryLoadTest extends TestCase implements Paths {
-    
+
     private class TestLoader extends URLClassLoader {
         public TestLoader(File path) throws MalformedURLException {
             super(new URL[] { path.toURI().toURL(), },
@@ -38,7 +38,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadJNALibrary() {
         assertTrue("Pointer size should never be zero", Pointer.SIZE > 0);
     }
-    
+
     public void testLoadJAWT() {
         if (!Platform.HAS_AWT || !Platform.HAS_JAWT) return;
 
@@ -48,7 +48,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
         // AWT is unavailable
         AWT.loadJAWT(getName());
     }
-    
+
     public void testLoadAWTAfterJNA() {
         if (!Platform.HAS_AWT) return;
 
@@ -58,7 +58,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
             Toolkit.getDefaultToolkit();
         }
     }
-    
+
     public void testExtractFromResourcePath() throws Exception {
         // doesn't actually load the resource
         assertNotNull(Native.extractFromResourcePath("testlib-path", new TestLoader(new File(TESTPATH))));
@@ -115,19 +115,19 @@ public class LibraryLoadTest extends TestCase implements Paths {
     private Object load() {
         return Native.loadLibrary(Platform.C_LIBRARY_NAME, CLibrary.class);
     }
-    
+
     public void testLoadProcess() {
         Native.loadLibrary(CLibrary.class);
     }
-    
+
     public void testLoadProcessWithOptions() {
         Native.loadLibrary(CLibrary.class, Collections.EMPTY_MAP);
     }
-    
+
     public void testLoadCLibrary() {
         load();
     }
-    
+
     private void copy(File src, File dst) throws Exception {
         FileInputStream is = new FileInputStream(src);
         FileOutputStream os = new FileOutputStream(dst);
@@ -140,7 +140,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
         }
         finally {
             try { is.close(); } catch(IOException e) { }
-            try { os.close(); } catch(IOException e) { } 
+            try { os.close(); } catch(IOException e) { }
         }
     }
 
@@ -163,7 +163,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
             fail("Library '" + newLibName + "' at " + dst + " could not be loaded: " + e);
         }
     }
-    
+
     public void testLoadLibraryWithLongName() throws Exception {
         File tmpdir = Native.getTempDir();
         String libName = NativeLibrary.mapSharedLibraryName("testlib");
@@ -202,7 +202,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
             }
         }
     }
-    
+
     public void testLoadFrameworkLibraryAbsolute() {
         if (Platform.isMac()) {
             final String PATH = "/System/Library/Frameworks/CoreServices";
@@ -255,7 +255,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     // dependent libraries in the same directory as the original
     public void testLoadDependentLibraryWithAlteredSearchPath() {
         try {
-            TestLib2 lib = (TestLib2)Native.loadLibrary("testlib2", TestLib2.class);
+            TestLib2 lib = Native.loadLibrary("testlib2", TestLib2.class);
             lib.dependentReturnFalse();
         }
         catch(UnsatisfiedLinkError e) {
@@ -271,11 +271,11 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadProperCLibraryVersion() {
         if (Platform.isWindows()) return;
 
-        CLibrary lib = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+        CLibrary lib = Native.loadLibrary("c", CLibrary.class);
         assertNotNull("Couldn't get current user",
                       lib.getpwuid(lib.geteuid()));
     }
-    
+
     private static class AWT {
         public static void loadJAWT(String name) {
             Frame f = new Frame(name);

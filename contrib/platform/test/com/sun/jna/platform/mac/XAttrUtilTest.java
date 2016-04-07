@@ -84,7 +84,13 @@ public class XAttrUtilTest extends TestCase {
 	}
 
 	public void testUnicode() {
-		String[] names = new String[] { "中文", "にほんご", "Österreichisch", "Française", "Português" };
+		String[] names = new String[] {
+                    "\u4E2D\u6587",
+                    "\u306B\u307B\u3093\u3054",
+                    "\u00D6sterreichisch",
+                    "Fran\u00E7aise",
+                    "Portugu\u00EAs",
+                };
 		for (int i = 0; i < names.length; i++) {
 			// set xattr
 			XAttrUtil.setXAttr(testPath, names[i], names[i]);

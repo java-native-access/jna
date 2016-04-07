@@ -34,7 +34,6 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
-// TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
  *
@@ -73,20 +72,16 @@ public class COMBindingBaseObject extends COMInvoker {
 
     public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
-        // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-
-        if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
-            throw new COMException("CoInitialize() failed!");
-        }
-
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+        
+        HRESULT hr;
+        
         if (useActiveInstance) {
             hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(new REFIID.ByValue( IDispatch.IID_IDISPATCH),
+                hr = iUnknown.QueryInterface(new REFIID( IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -107,20 +102,15 @@ public class COMBindingBaseObject extends COMInvoker {
 
     public COMBindingBaseObject(String progId, boolean useActiveInstance,
             int dwClsContext) throws COMException {
-        // Initialize COM for this thread...
-        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_APARTMENTTHREADED);
-
-        if (COMUtils.FAILED(hr)) {
-            this.release();
-            throw new COMException("CoInitialize() failed!");
-        }
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+        
+        HRESULT hr;
 
         // Get CLSID for Word.Application...
         CLSID.ByReference clsid = new CLSID.ByReference();
         hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
 
         if (COMUtils.FAILED(hr)) {
-            Ole32.INSTANCE.CoUninitialize();
             throw new COMException("CLSIDFromProgID() failed!");
         }
 
@@ -129,7 +119,7 @@ public class COMBindingBaseObject extends COMInvoker {
 
             if (COMUtils.SUCCEEDED(hr)) {
                 this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(new REFIID.ByValue(IDispatch.IID_IDISPATCH),
+                hr = iUnknown.QueryInterface(new REFIID(IDispatch.IID_IDISPATCH),
                         this.pDispatch);
             } else {
                 hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
@@ -194,10 +184,9 @@ public class COMBindingBaseObject extends COMInvoker {
      * Release.
      */
     public void release() {
-        if (this.iDispatch != null)
+        if (this.iDispatch != null) {
             this.iDispatch.Release();
-
-        Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
@@ -211,7 +200,7 @@ public class COMBindingBaseObject extends COMInvoker {
         DISPIDByReference pdispID = new DISPIDByReference();
 
         // Get DISPID for name passed...
-        HRESULT hr = pDisp.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1,
+        HRESULT hr = pDisp.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1,
                 LOCALE_USER_DEFAULT, pdispID);
 
         COMUtils.checkRC(hr);
@@ -262,9 +251,40 @@ public class COMBindingBaseObject extends COMInvoker {
             dp.write();
         }
 
+        // Apply "fix" according to
+        // https://www.delphitools.info/2013/04/30/gaining-visual-basic-ole-super-powers/
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms221486(v=vs.85).aspx
+        //
+        // Summary: there are methods in the word typelibrary that require both
+        // PROPERTYGET _and_ METHOD to be set. With only one of these set the call
+        // fails.
+        //
+        // The article from delphitools argues, that automation compatible libraries
+        // need to be compatible with VisualBasic which does not distingish methods
+        // and property getters and will set both flags always.
+        //
+        // The MSDN article advises this behaviour: "[...] Some languages cannot 
+        // distinguish between retrieving a property and calling a method. In this 
+        //case, you should set the flags DISPATCH_PROPERTYGET and DISPATCH_METHOD.
+        // [...]"))
+        //
+        // This was found when trying to bind InchesToPoints from the _Application 
+        // dispatch interface of the MS Word 15 type library
+        //
+        // The signature according the ITypeLib Viewer (OLE/COM Object Viewer):
+        // [id(0x00000172), helpcontext(0x09700172)]
+        // single InchesToPoints([in] single Inches);
+
+        final int finalNType;
+        if (nType == OleAuto.DISPATCH_METHOD || nType == OleAuto.DISPATCH_PROPERTYGET) {
+            finalNType = OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET;
+        } else {
+            finalNType = nType;
+        }
+
         // Make the call!
-        HRESULT hr = pDisp.Invoke(dispId, new REFIID.ByValue(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
-                new WinDef.WORD(nType), dp, pvResult, pExcepInfo, puArgErr);
+        HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
 
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
         return hr;

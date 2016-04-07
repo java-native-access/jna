@@ -1,26 +1,27 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import java.io.File;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.DsGetDC.DS_DOMAIN_TRUSTS;
 import com.sun.jna.platform.win32.DsGetDC.PDOMAIN_CONTROLLER_INFO;
 import com.sun.jna.platform.win32.LMAccess.GROUP_INFO_2;
 import com.sun.jna.platform.win32.LMAccess.GROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.LOCALGROUP_USERS_INFO_0;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
+import com.sun.jna.platform.win32.LMShare.SHARE_INFO_2;
+import com.sun.jna.platform.win32.LMShare.SHARE_INFO_502;
 import com.sun.jna.platform.win32.NTSecApi.LSA_FOREST_TRUST_RECORD;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_INFORMATION;
 import com.sun.jna.platform.win32.NTSecApi.PLSA_FOREST_TRUST_RECORD;
@@ -28,6 +29,8 @@ import com.sun.jna.platform.win32.Netapi32Util.User;
 import com.sun.jna.platform.win32.Secur32.EXTENDED_NAME_FORMAT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -50,16 +53,16 @@ public class Netapi32Test extends TestCase {
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
     			lpNameBuffer.getValue()));
     }
-    
+
     public void testNetGetLocalGroups() {
     	for(int i = 0; i < 2; i++) {
 			PointerByReference bufptr = new PointerByReference();
 			IntByReference entriesRead = new IntByReference();
-			IntByReference totalEntries = new IntByReference();		
-	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetLocalGroupEnum(null, i, bufptr, 
-	    			LMCons.MAX_PREFERRED_LENGTH, 
-	    			entriesRead, 
-	    			totalEntries, 
+			IntByReference totalEntries = new IntByReference();
+	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetLocalGroupEnum(null, i, bufptr,
+	    			LMCons.MAX_PREFERRED_LENGTH,
+	    			entriesRead,
+	    			totalEntries,
 	    			null));
 	    	assertTrue(entriesRead.getValue() > 0);
 	    	assertEquals(totalEntries.getValue(), entriesRead.getValue());
@@ -67,11 +70,11 @@ public class Netapi32Test extends TestCase {
 	    			bufptr.getValue()));
     	}
     }
-    
+
     public void testNetGetDCName() {
     	PointerByReference lpNameBuffer = new PointerByReference();
     	IntByReference BufferType = new IntByReference();
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGetJoinInformation(null, lpNameBuffer, BufferType));    	
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGetJoinInformation(null, lpNameBuffer, BufferType));
     	if (BufferType.getValue() == LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName) {
 	    	PointerByReference bufptr = new PointerByReference();
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGetDCName(null, null, bufptr));
@@ -81,7 +84,7 @@ public class Netapi32Test extends TestCase {
     	}
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(lpNameBuffer.getValue()));
     }
-    
+
     public void testNetUserGetGroups() {
     	User[] users = Netapi32Util.getUsers();
     	assertTrue(users.length >= 1);
@@ -89,16 +92,16 @@ public class Netapi32Test extends TestCase {
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserGetGroups(
-    			null, users[0].name, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, 
+    			null, users[0].name, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH,
     			entriesread, totalentries));
-    	GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());    	
+    	GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());
     	GROUP_USERS_INFO_0[] lgroups = (GROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
         for (GROUP_USERS_INFO_0 localGroupInfo : lgroups) {
         	assertTrue(localGroupInfo.grui0_name.length() > 0);
         }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
     }
-    
+
     public void testNetUserGetLocalGroups() {
     	String currentUser = Secur32Util.getUserNameEx(
 				EXTENDED_NAME_FORMAT.NameSamCompatible);
@@ -106,48 +109,48 @@ public class Netapi32Test extends TestCase {
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserGetLocalGroups(
-    			null, currentUser, 0, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, 
+    			null, currentUser, 0, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH,
     			entriesread, totalentries));
-    	LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());    	
+    	LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());
     	LOCALGROUP_USERS_INFO_0[] lgroups = (LOCALGROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
         for (LOCALGROUP_USERS_INFO_0 localGroupInfo : lgroups) {
         	assertTrue(localGroupInfo.lgrui0_name.length() > 0);
         }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
-    }    
-    
+    }
+
     public void testNetGroupEnum() {
     	PointerByReference bufptr = new PointerByReference();
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetGroupEnum(
-    			null, 2, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));    	
-    	GROUP_INFO_2 group = new GROUP_INFO_2(bufptr.getValue());    	
+    			null, 2, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));
+    	GROUP_INFO_2 group = new GROUP_INFO_2(bufptr.getValue());
     	GROUP_INFO_2[] groups = (GROUP_INFO_2[]) group.toArray(entriesread.getValue());
         for (GROUP_INFO_2 grpi : groups) {
         	assertTrue(grpi.grpi2_name.length() > 0);
         }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
     }
-    
+
     public void testNetUserEnum() {
     	PointerByReference bufptr = new PointerByReference();
     	IntByReference entriesread = new IntByReference();
     	IntByReference totalentries = new IntByReference();
-    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserEnum(    			
-    			null, 1, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));    	
-    	USER_INFO_1 userinfo = new USER_INFO_1(bufptr.getValue());    	
+    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserEnum(
+    			null, 1, 0, bufptr, LMCons.MAX_PREFERRED_LENGTH, entriesread, totalentries, null));
+    	USER_INFO_1 userinfo = new USER_INFO_1(bufptr.getValue());
     	USER_INFO_1[] userinfos = (USER_INFO_1[]) userinfo.toArray(entriesread.getValue());
         for (USER_INFO_1 ui : userinfos) {
         	assertTrue(ui.usri1_name.length() > 0);
         }
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetApiBufferFree(bufptr.getValue()));
-    }    
-    
+    }
+
     public void testNetUserAdd() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -156,11 +159,11 @@ public class Netapi32Test extends TestCase {
     	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
     			Kernel32Util.getComputerName(), userInfo.usri1_name.toString()));
     }
-    
+
     public void testNetUserChangePassword() {
     	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = new WString("JNANetapi32TestUser");
-    	userInfo.usri1_password = new WString("!JNAP$$Wrd0");
+    	userInfo.usri1_name = "JNANetapi32TestUser";
+    	userInfo.usri1_password = "!JNAP$$Wrd0";
     	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(Kernel32Util.getComputerName(), 1, userInfo, null)) {
@@ -174,35 +177,35 @@ public class Netapi32Test extends TestCase {
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
 	    			Kernel32Util.getComputerName(), userInfo.usri1_name.toString()));
     	}
-    }    
-    
+    }
+
     public void testNetUserDel() {
     	assertEquals(LMErr.NERR_UserNotFound, Netapi32.INSTANCE.NetUserDel(
     			Kernel32Util.getComputerName(), "JNANetapi32TestUserDoesntExist"));
     }
-    
+
     public void testDsGetDcName() {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
-    	
+
         PDOMAIN_CONTROLLER_INFO.ByReference pdci = new PDOMAIN_CONTROLLER_INFO.ByReference();
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.DsGetDcName(
     			null, null, null, null, 0, pdci));
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
     			pdci.getPointer()));
     }
-    
+
     public void testDsGetForestTrustInformation() {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
 
-    	String domainController = Netapi32Util.getDCName();    	
+    	String domainController = Netapi32Util.getDCName();
     	PLSA_FOREST_TRUST_INFORMATION.ByReference pfti = new PLSA_FOREST_TRUST_INFORMATION.ByReference();
     	assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsGetForestTrustInformation(
     			domainController, null, 0, pfti));
-    	
+
     	assertTrue(pfti.fti.RecordCount >= 0);
-    	
+
     	for (PLSA_FOREST_TRUST_RECORD precord : pfti.fti.getEntries()) {
     		LSA_FOREST_TRUST_RECORD.UNION data = precord.tr.u;
 			switch(precord.tr.ForestTrustType) {
@@ -227,22 +230,22 @@ public class Netapi32Test extends TestCase {
     			break;
 			}
     	}
-    	
+
     	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(
-    			pfti.getPointer()));   	
+    			pfti.getPointer()));
     }
-    
-    
+
+
     public void testDsEnumerateDomainTrusts() {
     	if (Netapi32Util.getJoinStatus() != LMJoin.NETSETUP_JOIN_STATUS.NetSetupDomainName)
     		return;
 
     	IntByReference domainTrustCount = new IntByReference();
         PointerByReference domainsPointerRef = new PointerByReference();
-        assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(null, 
+        assertEquals(W32Errors.NO_ERROR, Netapi32.INSTANCE.DsEnumerateDomainTrusts(null,
                 DsGetDC.DS_DOMAIN_VALID_FLAGS, domainsPointerRef, domainTrustCount));
     	assertTrue(domainTrustCount.getValue() >= 0);
-    	
+
         DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
         DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
 
@@ -252,9 +255,103 @@ public class Netapi32Test extends TestCase {
 			assertTrue(Advapi32Util.convertSidToStringSid(trust.DomainSid).startsWith("S-"));
 			assertTrue(Ole32Util.getStringFromGUID(trust.DomainGuid).startsWith("{"));
     	}
-    	
 
-    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(domainTrustRefs.getPointer()));   	    	
+
+    	assertEquals(W32Errors.ERROR_SUCCESS, Netapi32.INSTANCE.NetApiBufferFree(domainTrustRefs.getPointer()));
     }
 
+    public void testNetShareAddShareInfo2() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = fileShareFolder.getName();
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = "";
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo2 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals("Failed to add share", LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0);
+    }
+
+    public void testNetShareAddShareInfo502() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_502 shi = new SHARE_INFO_502();
+        shi.shi502_netname = fileShareFolder.getName();
+        shi.shi502_type = LMShare.STYPE_DISKTREE;
+        shi.shi502_remark = "";
+        shi.shi502_permissions = LMAccess.ACCESS_ALL;
+        shi.shi502_max_uses = -1;
+        shi.shi502_current_uses = 0;
+        shi.shi502_path = fileShareFolder.getAbsolutePath();
+        shi.shi502_passwd = null;
+        shi.shi502_reserved = 0;
+        shi.shi502_security_descriptor = null;
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        int winError = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                502, shi.getPointer(), parm_err);
+
+        if (winError == W32Errors.ERROR_INVALID_PARAMETER) {
+            // fail with offset.
+            throw new Exception("testNetShareAddShareInfo502 failed with invalid parameter on structure offset: " + parm_err.getValue());
+        }
+
+        assertEquals(LMErr.NERR_Success, winError);
+
+        Netapi32.INSTANCE.NetShareDel(null, shi.shi502_netname, 0);
+    }
+
+    public void testNetShareDel() throws Exception {
+
+        File fileShareFolder = createTempFolder();
+
+        SHARE_INFO_2 shi = new SHARE_INFO_2();
+        shi.shi2_netname = fileShareFolder.getName();
+        shi.shi2_type = LMShare.STYPE_DISKTREE;
+        shi.shi2_remark = "";
+        shi.shi2_permissions = LMAccess.ACCESS_ALL;
+        shi.shi2_max_uses = -1;
+        shi.shi2_current_uses = 0;
+        shi.shi2_path = fileShareFolder.getAbsolutePath();
+        shi.shi2_passwd = "";
+
+        // Write from struct to native memory.
+        shi.write();
+
+        IntByReference parm_err = new IntByReference(0);
+        assertEquals("Failed to add share", LMErr.NERR_Success, Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err));
+
+        assertEquals("Failed to delete share", LMErr.NERR_Success, Netapi32.INSTANCE.NetShareDel(null, shi.shi2_netname, 0));
+    }
+
+    private File createTempFolder() throws Exception {
+        String folderPath = System.getProperty("java.io.tmpdir") + File.separatorChar + System.nanoTime();
+        File file = new File(folderPath);
+        file.mkdir();
+        return file;
+    }
 }

@@ -12,16 +12,11 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.COM.UnknownVTable.AddRefCallback;
-import com.sun.jna.platform.win32.COM.UnknownVTable.QueryInterfaceCallback;
-import com.sun.jna.platform.win32.COM.UnknownVTable.ReleaseCallback;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
@@ -35,12 +30,16 @@ import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-import com.sun.jna.win32.DLLCallback;
 import com.sun.jna.win32.StdCallLibrary;
 
 public class DispatchVTable extends Structure {
 	public static class ByReference extends DispatchVTable implements Structure.ByReference {
 	}
+
+	public static final List<String> FIELDS = createFieldsOrder(
+	        "QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback",
+	        "GetTypeInfoCountCallback", "GetTypeInfoCallback",
+            "GetIDsOfNamesCallback", "InvokeCallback");
 
 	public QueryInterfaceCallback QueryInterfaceCallback;
 	public AddRefCallback AddRefCallback;
@@ -52,12 +51,11 @@ public class DispatchVTable extends Structure {
 
 	@Override
 	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback","GetTypeInfoCountCallback", "GetTypeInfoCallback",
-				"GetIDsOfNamesCallback", "InvokeCallback" });
+		return FIELDS;
 	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID.ByValue refid, PointerByReference ppvObject);
+		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
 	}
 
 	public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
@@ -67,7 +65,7 @@ public class DispatchVTable extends Structure {
 	public static interface ReleaseCallback extends StdCallLibrary.StdCallCallback {
 		int invoke(Pointer thisPointer);
 	}
-	
+
 	public static interface GetTypeInfoCountCallback extends StdCallLibrary.StdCallCallback {
 		WinNT.HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo);
 	}
@@ -77,12 +75,12 @@ public class DispatchVTable extends Structure {
 	}
 
 	public static interface GetIDsOfNamesCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+		WinNT.HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 				DISPIDByReference rgDispId);
 	}
 
 	public static interface InvokeCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 				IntByReference puArgErr);
 	}

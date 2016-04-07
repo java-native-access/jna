@@ -1,18 +1,17 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.NativeLong;
@@ -21,90 +20,99 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.RECT;
-import com.sun.jna.win32.StdCallLibrary;
 
 /**
- * Ported from WinGDI.h. 
+ * Ported from WinGDI.h.
  * Microsoft Windows SDK 6.0A.
  * @author dblock[at]dblock.org
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
-public interface WinGDI extends StdCallLibrary {
-    public int RDH_RECTANGLES = 1;
+public interface WinGDI {
+    int RDH_RECTANGLES = 1;
 
-    public class RGNDATAHEADER extends Structure {
+    class RGNDATAHEADER extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dwSize", "iType", "nCount", "nRgnSize", "rcBound");
         public int dwSize = size();
         public int iType = RDH_RECTANGLES; // required
         public int nCount;
         public int nRgnSize;
         public RECT rcBound;
-        
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "dwSize", "iType", "nCount", "nRgnSize", "rcBound" });
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
-    public class RGNDATA extends Structure {
+
+    class RGNDATA extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("rdh", "Buffer" );
         public RGNDATAHEADER rdh;
         public byte[] Buffer;
 
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "rdh", "Buffer" });
-        }
-
-        public RGNDATA() { 
-            this(1); 
+        public RGNDATA() {
+            this(1);
         }
         public RGNDATA(int bufferSize) {
             Buffer = new byte[bufferSize];
             allocateMemory();
         }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
 
-    public int RGN_AND = 1;
-    public int RGN_OR = 2;
-    public int RGN_XOR = 3;
-    public int RGN_DIFF = 4;
-    public int RGN_COPY = 5;
-    
-    public int ERROR = 0;
-    public int NULLREGION = 1;
-    public int SIMPLEREGION = 2;
-    public int COMPLEXREGION = 3;
+    HANDLE HGDI_ERROR = new HANDLE(Pointer.createConstant(0xFFFFFFFF));
 
-    public int ALTERNATE = 1;
-    public int WINDING = 2;
-    
-    public int BI_RGB = 0;
-    public int BI_RLE8 = 1;
-    public int BI_RLE4 = 2;
-    public int BI_BITFIELDS = 3;
-    public int BI_JPEG = 4;
-    public int BI_PNG = 5;
-    
-    public final int PFD_TYPE_RGBA = 0;
-    public final int PFD_TYPE_COLORINDEX = 1;
+    int RGN_AND = 1;
+    int RGN_OR = 2;
+    int RGN_XOR = 3;
+    int RGN_DIFF = 4;
+    int RGN_COPY = 5;
 
-    public final int PFD_MAIN_PLANE = 0;
-    public final int PFD_OVERLAY_PLANE = 1;
-    public final int PFD_UNDERLAY_PLANE = (-1);
+    int ERROR = 0;
+    int NULLREGION = 1;
+    int SIMPLEREGION = 2;
+    int COMPLEXREGION = 3;
 
-    public final int PFD_DOUBLEBUFFER = 0x00000001;
-    public final int PFD_STEREO = 0x00000002;
-    public final int PFD_DRAW_TO_WINDOW = 0x00000004;
-    public final int PFD_DRAW_TO_BITMAP = 0x00000008;
-    public final int PFD_SUPPORT_GDI = 0x00000010;
-    public final int PFD_SUPPORT_OPENGL = 0x00000020;
-    public final int PFD_GENERIC_FORMAT = 0x00000040;
-    public final int PFD_NEED_PALETTE = 0x00000080;
-    public final int PFD_NEED_SYSTEM_PALETTE = 0x00000100;
-    public final int PFD_SWAP_EXCHANGE = 0x00000200;
-    public final int PFD_SWAP_COPY = 0x00000400;
-    public final int PFD_SWAP_LAYER_BUFFERS = 0x00000800;
-    public final int PFD_GENERIC_ACCELERATED = 0x00001000;
-    public final int PFD_SUPPORT_DIRECTDRAW = 0x00002000;
+    int ALTERNATE = 1;
+    int WINDING = 2;
 
-    public class BITMAPINFOHEADER extends Structure {
+    int BI_RGB = 0;
+    int BI_RLE8 = 1;
+    int BI_RLE4 = 2;
+    int BI_BITFIELDS = 3;
+    int BI_JPEG = 4;
+    int BI_PNG = 5;
+
+    int PFD_TYPE_RGBA = 0;
+    int PFD_TYPE_COLORINDEX = 1;
+
+    int PFD_MAIN_PLANE = 0;
+    int PFD_OVERLAY_PLANE = 1;
+    int PFD_UNDERLAY_PLANE = (-1);
+
+    int PFD_DOUBLEBUFFER = 0x00000001;
+    int PFD_STEREO = 0x00000002;
+    int PFD_DRAW_TO_WINDOW = 0x00000004;
+    int PFD_DRAW_TO_BITMAP = 0x00000008;
+    int PFD_SUPPORT_GDI = 0x00000010;
+    int PFD_SUPPORT_OPENGL = 0x00000020;
+    int PFD_GENERIC_FORMAT = 0x00000040;
+    int PFD_NEED_PALETTE = 0x00000080;
+    int PFD_NEED_SYSTEM_PALETTE = 0x00000100;
+    int PFD_SWAP_EXCHANGE = 0x00000200;
+    int PFD_SWAP_COPY = 0x00000400;
+    int PFD_SWAP_LAYER_BUFFERS = 0x00000800;
+    int PFD_GENERIC_ACCELERATED = 0x00001000;
+    int PFD_SUPPORT_DIRECTDRAW = 0x00002000;
+
+    class BITMAPINFOHEADER extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("biSize",
+                "biWidth", "biHeight", "biPlanes", "biBitCount", "biCompression",
+                "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter", "biClrUsed", "biClrImportant");
+
         public int biSize = size();
         public int biWidth;
         public int biHeight;
@@ -116,46 +124,60 @@ public interface WinGDI extends StdCallLibrary {
         public int biYPelsPerMeter;
         public int biClrUsed;
         public int biClrImportant;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "biSize", "biWidth", "biHeight", "biPlanes", "biBitCount", "biCompression", "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter", "biClrUsed", "biClrImportant" });
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
-    public class RGBQUAD extends Structure {
+
+    class RGBQUAD extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("rgbBlue", "rgbGreen", "rgbRed", "rgbReserved");
+
         public byte rgbBlue;
         public byte rgbGreen;
         public byte rgbRed;
         public byte rgbReserved = 0;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "rgbBlue", "rgbGreen", "rgbRed", "rgbReserved" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
-    public class BITMAPINFO extends Structure {
+
+    class BITMAPINFO extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("bmiHeader", "bmiColors");
+
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
         public RGBQUAD[] bmiColors = new RGBQUAD[1];
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "bmiHeader", "bmiColors" });
+        public BITMAPINFO() {
+            this(1);
         }
-        public BITMAPINFO() { this(1); }
         public BITMAPINFO(int size) {
             bmiColors = new RGBQUAD[size];
         }
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
     }
-    
-    public class ICONINFO extends Structure {
+
+    class ICONINFO extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("fIcon", "xHotspot", "yHotspot", "hbmMask", "hbmColor");
+
         public boolean fIcon;
         public int xHotspot;
         public int yHotspot;
         public HBITMAP hbmMask;
         public HBITMAP hbmColor;
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "fIcon", "xHotspot",
-                                                "yHotspot", "hbmMask", "hbmColor" });
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
-    public class BITMAP extends Structure {
+
+    class BITMAP extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("bmType", "bmWidth", "bmHeight",
+                "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
         public NativeLong bmType;
         public NativeLong bmWidth;
         public NativeLong bmHeight;
@@ -163,32 +185,40 @@ public interface WinGDI extends StdCallLibrary {
         public short bmPlanes;
         public short bmBitsPixel;
         public Pointer bmBits;
-        protected List getFieldOrder() {
-            return Arrays.asList("bmType", "bmWidth", "bmHeight",
-                                 "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
-    
-    public class DIBSECTION extends Structure {
+
+    class DIBSECTION extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("dsBm", "dsBmih", "dsBitfields", "dshSection", "dsOffset");
+
         public BITMAP           dsBm;
         public BITMAPINFOHEADER dsBmih;
         public int[]            dsBitfields = new int[3];
         public HANDLE           dshSection;
-        public int              dsOffset;        
-        protected List getFieldOrder() {
-            return Arrays.asList("dsBm", "dsBmih", "dsBitfields", "dshSection", "dsOffset");
+        public int              dsOffset;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
-    public int DIB_RGB_COLORS = 0;
-    public int DIB_PAL_COLORS = 1;
+    int DIB_RGB_COLORS = 0;
+    int DIB_PAL_COLORS = 1;
 
     /**
      * The PIXELFORMATDESCRIPTOR structure describes the pixel format of a drawing surface.
      */
-    public static class PIXELFORMATDESCRIPTOR extends Structure {
+    class PIXELFORMATDESCRIPTOR extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("nSize", "nVersion", "dwFlags", "iPixelType",
+                "cColorBits", "cRedBits", "cRedShift", "cGreenBits", "cGreenShift", "cBlueBits", "cBlueShift", "cAlphaBits", "cAlphaShift",
+                "cAccumBits", "cAccumRedBits", "cAccumGreenBits", "cAccumBlueBits", "cAccumAlphaBits",
+                "cDepthBits", "cStencilBits", "cAuxBuffers", "iLayerType", "bReserved", "dwLayerMask", "dwVisibleMask", "dwDamageMask");
+
         public PIXELFORMATDESCRIPTOR() {
-            super();
             nSize = (short) size();
         }
 
@@ -305,13 +335,9 @@ public interface WinGDI extends StdCallLibrary {
          */
         public int dwDamageMask;
 
-        @SuppressWarnings("rawtypes")
         @Override
-        protected List getFieldOrder() {
-            return Arrays.asList(new String[] { "nSize", "nVersion", "dwFlags", "iPixelType",
-                    "cColorBits", "cRedBits", "cRedShift", "cGreenBits", "cGreenShift", "cBlueBits", "cBlueShift", "cAlphaBits", "cAlphaShift",
-                    "cAccumBits", "cAccumRedBits", "cAccumGreenBits", "cAccumBlueBits", "cAccumAlphaBits",
-                    "cDepthBits", "cStencilBits", "cAuxBuffers", "iLayerType", "bReserved", "dwLayerMask", "dwVisibleMask", "dwDamageMask", });
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

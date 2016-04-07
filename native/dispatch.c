@@ -97,6 +97,15 @@ static int _protect;
 
 #ifdef __cplusplus
 extern "C" {
+#else
+#if defined(_MSC_VER)
+// At least until I upgrace to 2013-era MSVS
+typedef int bool;
+#define true 1
+#define false 0
+#else
+#include <stdbool.h>
+#endif
 #endif
 
 #define MEMCPY(ENV,D,S,L) do {     \
@@ -108,6 +117,7 @@ extern "C" {
 
 #define MASK_CC          com_sun_jna_Function_MASK_CC
 #define THROW_LAST_ERROR com_sun_jna_Function_THROW_LAST_ERROR
+#define USE_VARARGS      com_sun_jna_Function_USE_VARARGS
 
 /* Cached class, field and method IDs */
 static jclass classObject;
@@ -183,6 +193,7 @@ static jmethodID MID_DoubleBuffer_arrayOffset;
 
 static jmethodID MID_Pointer_init;
 static jmethodID MID_Native_dispose;
+static jmethodID MID_Native_fromNativeCallbackParam;
 static jmethodID MID_Native_fromNative;
 static jmethodID MID_Native_nativeType;
 static jmethodID MID_Native_toNativeTypeMapped;
@@ -435,6 +446,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
   callconv_t callconv = flags & MASK_CC;
   const char* volatile throw_type = NULL;
   const char* volatile throw_msg = NULL;
+  int fixed_args = (flags & USE_VARARGS) >> 7;
 
   nargs = (*env)->GetArrayLength(env, args);
 
@@ -609,7 +621,9 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     break;
   }
 
-  status = ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
+  status = fixed_args
+    ? ffi_prep_cif_var(&cif, abi, fixed_args, nargs, return_type, arg_types)
+    : ffi_prep_cif(&cif, abi, nargs, return_type, arg_types);
   if (!ffi_error(env, "Native call setup", status)) {
     PSTART();
     if ((flags & THROW_LAST_ERROR) != 0) {
@@ -1147,16 +1161,17 @@ static void
 fromNativeTypeMapped(JNIEnv* env, jobject from_native,
                      void* native_return_value,
                      int jtype, size_t size,
-                     jclass java_return_class,
+                     jobject java_method,
                      void* result_storage,
                      const char* encoding) {
   jobject value = new_object(env, (char)jtype, native_return_value, JNI_TRUE, encoding);
   if (!(*env)->ExceptionCheck(env)) {
     jobject obj = (*env)->CallStaticObjectMethod(env, classNative,
                                                  MID_Native_fromNativeTypeMapped,
-                                                 from_native, value, java_return_class);
+                                                 from_native, value, java_method);
     if (!(*env)->ExceptionCheck(env)) {
       // Convert objects into primitive types if the return class demands it
+      jclass java_return_class = (*env)->CallObjectMethod(env, java_method, MID_Method_getReturnType);
       if ((*env)->IsSameObject(env, java_return_class, classPrimitiveBoolean)
           || (*env)->IsSameObject(env, java_return_class, classPrimitiveByte)
           || (*env)->IsSameObject(env, java_return_class, classPrimitiveCharacter)
@@ -1175,13 +1190,25 @@ fromNativeTypeMapped(JNIEnv* env, jobject from_native,
 }
 
 jobject
-fromNative(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote, const char* encoding) {
+fromNativeCallbackParam(JNIEnv* env, jclass javaClass, ffi_type* type, void* resp, jboolean promote, const char* encoding) {
+  int jtype = get_java_type_from_ffi_type(type);
+  jobject value = new_object(env, (char)jtype, resp, promote, encoding);
+  if (!(*env)->ExceptionCheck(env)) {
+    return (*env)->CallStaticObjectMethod(env, classNative,
+                                          MID_Native_fromNativeCallbackParam,
+                                          javaClass, value);
+  }
+  return NULL;
+}
+
+jobject
+fromNative(JNIEnv* env, jobject javaMethod, ffi_type* type, void* resp, jboolean promote, const char* encoding) {
   int jtype = get_java_type_from_ffi_type(type);
   jobject value = new_object(env, (char)jtype, resp, promote, encoding);
   if (!(*env)->ExceptionCheck(env)) {
     return (*env)->CallStaticObjectMethod(env, classNative,
                                           MID_Native_fromNative,
-                                          javaClass, value);
+                                          javaMethod, value);
   }
   return NULL;
 }
@@ -1670,7 +1697,7 @@ typedef struct _method_data {
   ffi_type** closure_arg_types;
   int*    flags;
   int     rflag;
-  jclass  closure_rclass;
+  jobject closure_method;
   jobject* to_native;
   jobject  from_native;
   jboolean throw_last_error;
@@ -1860,7 +1887,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
                    ? 'c' : (data->rflag == CVT_TYPE_MAPPER_WSTRING
                             ? 'w' : get_java_type_from_ffi_type(data->cif.rtype)));
       fromNativeTypeMapped(env, data->from_native, resp, jtype, data->cif.rtype->size,
-                           data->closure_rclass, oldresp, data->encoding);
+                           data->closure_method, oldresp, data->encoding);
     }
     break;
   case CVT_INTEGER_TYPE:
@@ -1868,7 +1895,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   case CVT_NATIVE_MAPPED:
   case CVT_NATIVE_MAPPED_STRING:
   case CVT_NATIVE_MAPPED_WSTRING:
-    *(void **)oldresp = fromNative(env, data->closure_rclass, data->cif.rtype, resp, JNI_TRUE, data->encoding);
+    *(void **)oldresp = fromNative(env, data->closure_method, data->cif.rtype, resp, JNI_TRUE, data->encoding);
     break;
   case CVT_POINTER:
     *(void **)resp = newJavaPointer(env, *(void **)resp);
@@ -1880,13 +1907,22 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
     *(void **)resp = newJavaWString(env, *(void **)resp);
     break;
   case CVT_STRUCTURE:
-    *(void **)resp = newJavaStructure(env, *(void **)resp, data->closure_rclass);
+    {
+      jclass return_class = (*env)->CallObjectMethod(env, data->closure_method, MID_Method_getReturnType);
+      *(void **)resp = newJavaStructure(env, *(void **)resp, return_class);
+    }
     break;
   case CVT_STRUCTURE_BYVAL:
-    *(void **)oldresp = newJavaStructure(env, resp, data->closure_rclass);
+    {
+      jclass return_class = (*env)->CallObjectMethod(env, data->closure_method, MID_Method_getReturnType);
+      *(void **)oldresp = newJavaStructure(env, resp, return_class);
+    }
     break;
   case CVT_CALLBACK:
-    *(void **)resp = newJavaCallback(env, *(void **)resp, data->closure_rclass);
+    {
+      jclass return_class = (*env)->CallObjectMethod(env, data->closure_method, MID_Method_getReturnType);
+      *(void **)resp = newJavaCallback(env, *(void **)resp, return_class);
+    }
     break;
   default:
     break;
@@ -2711,6 +2747,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
   case com_sun_jna_Native_TYPE_LONG: return sizeof(long);
   case com_sun_jna_Native_TYPE_WCHAR_T: return sizeof(wchar_t);
   case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
+  case com_sun_jna_Native_TYPE_BOOL: return sizeof(bool);
   default:
     {
       char msg[MSG_SIZE];
@@ -2749,11 +2786,17 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain static method dispose from class com.sun.jna.Native");
   }
-  else if (!(MID_Native_fromNative
+  else if (!(MID_Native_fromNativeCallbackParam
              = (*env)->GetStaticMethodID(env, classNative,
                                          "fromNative", "(Ljava/lang/Class;Ljava/lang/Object;)Lcom/sun/jna/NativeMapped;"))) {
     throwByName(env, EUnsatisfiedLink,
-                "Can't obtain static method fromNative from class com.sun.jna.Native");
+                "Can't obtain static method fromNative(Class, Object) from class com.sun.jna.Native");
+  }
+  else if (!(MID_Native_fromNative
+             = (*env)->GetStaticMethodID(env, classNative,
+                                         "fromNative", "(Ljava/lang/reflect/Method;Ljava/lang/Object;)Lcom/sun/jna/NativeMapped;"))) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain static method fromNative(Method, Object) from class com.sun.jna.Native");
   }
   else if (!(MID_Native_nativeType
              = (*env)->GetStaticMethodID(env, classNative,
@@ -2769,9 +2812,9 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
   }
   else if (!(MID_Native_fromNativeTypeMapped
              = (*env)->GetStaticMethodID(env, classNative,
-                                         "fromNative", "(Lcom/sun/jna/FromNativeConverter;Ljava/lang/Object;Ljava/lang/Class;)Ljava/lang/Object;"))) {
+                                         "fromNative", "(Lcom/sun/jna/FromNativeConverter;Ljava/lang/Object;Ljava/lang/reflect/Method;)Ljava/lang/Object;"))) {
     throwByName(env, EUnsatisfiedLink,
-                "Can't obtain static method fromNative from class com.sun.jna.Native");
+                "Can't obtain static method fromNative(FromNativeConverter, Object, Method) from class com.sun.jna.Native");
   }
   else if (!LOAD_CREF(env, Structure, "com/sun/jna/Structure")) {
     throwByName(env, EUnsatisfiedLink,
@@ -3088,15 +3131,17 @@ Java_com_sun_jna_Native__1getDirectBufferPointer(JNIEnv *env, jclass UNUSED(clas
   return A2L(addr);
 }
 
+#ifdef HAVE_PROTECTION
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_setProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp), jboolean protect_access) {
-#ifdef HAVE_PROTECTION
   _protect = protect_access;
-#else
-  // avoid compiler warning
-  protect_access = 0;
-#endif
 }
+#else
+JNIEXPORT void JNICALL
+Java_com_sun_jna_Native_setProtected(JNIEnv *UNUSED(env), jclass UNUSED(classp), jboolean UNUSED(protect_access)) {
+  /* Unsupported */
+}
+#endif
 
 jboolean
 is_protected() {
@@ -3250,7 +3295,7 @@ Java_com_sun_jna_Native_unregister(JNIEnv *env, jclass UNUSED(ncls), jclass cls,
       }
     }
     if (md->from_native) (*env)->DeleteWeakGlobalRef(env, md->from_native);
-    if (md->closure_rclass) (*env)->DeleteWeakGlobalRef(env, md->closure_rclass);
+    if (md->closure_method) (*env)->DeleteGlobalRef(env, md->closure_method);
     free(md->arg_types);
     free(md->closure_arg_types);
     free(md->flags);
@@ -3277,7 +3322,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
                                        jint rconversion,
                                        jlong closure_return_type,
                                        jlong return_type,
-                                       jclass closure_rclass,
+                                       jobject closure_method,
                                        jlong function, jint cc,
                                        jboolean throw_last_error,
                                        jobjectArray to_native,
@@ -3315,7 +3360,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   data->closure_arg_types = malloc(sizeof(ffi_type*) * (argc + 2));
   data->closure_arg_types[0] = &ffi_type_pointer;
   data->closure_arg_types[1] = &ffi_type_pointer;
-  data->closure_rclass = NULL;
+  data->closure_method = NULL;
   data->flags = cvts ? malloc(sizeof(jint)*argc) : NULL;
   data->rflag = rconversion;
   data->to_native = NULL;
@@ -3342,7 +3387,7 @@ Java_com_sun_jna_Native_registerMethod(JNIEnv *env, jclass UNUSED(ncls),
   if (closure_types) (*env)->ReleaseLongArrayElements(env, closure_atypes, closure_types, 0);
   if (cvts) (*env)->ReleaseIntArrayElements(env, conversions, cvts, 0);
   data->fptr = L2A(function);
-  data->closure_rclass = (*env)->NewWeakGlobalRef(env, closure_rclass);
+  data->closure_method = (*env)->NewGlobalRef(env, closure_method);
 
   status = ffi_prep_cif(closure_cif, abi, argc+2, closure_rtype, data->closure_arg_types);
   if (ffi_error(env, "Native method mapping", status)) {

@@ -25,6 +25,10 @@ abstract class VarArgsChecker {
             return m.isVarArgs();
         }
         
+	int fixedArgs(Method m) {
+	    // In Java, final argument contains all "varargs"
+	    return m.isVarArgs() ? m.getParameterTypes().length - 1 : 0;
+	}
     }
     
     /**
@@ -37,6 +41,9 @@ abstract class VarArgsChecker {
             return false;
         }
         
+	int fixedArgs(Method m) {
+	    return 0;
+	}
     }
     
     /**
@@ -68,4 +75,10 @@ abstract class VarArgsChecker {
      */
     abstract boolean isVarArgs(Method m);
     
+    /**
+     * If variadic, returns the number of fixed arguments to the method.
+     * @param m Method to be checked
+     * @return Number of fixed arguments if the given method takes a variable number of arguments, zero otherwise.
+     */
+    abstract int fixedArgs(Method m);
 }

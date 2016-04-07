@@ -23,7 +23,7 @@ import com.sun.jna.Pointer;
 interface XAttr extends Library {
 
 	// load from current image
-	XAttr INSTANCE = (XAttr) Native.loadLibrary(null, XAttr.class);
+	XAttr INSTANCE = Native.loadLibrary(null, XAttr.class);
 
 	// see /usr/include/sys/xattr.h
 	int XATTR_NOFOLLOW = 0x0001;

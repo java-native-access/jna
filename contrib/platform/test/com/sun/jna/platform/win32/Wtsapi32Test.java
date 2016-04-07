@@ -5,7 +5,6 @@ import java.awt.Frame;
 import com.sun.jna.Native;
 import junit.framework.TestCase;
 
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 
 public class Wtsapi32Test extends TestCase {

@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
@@ -22,7 +21,6 @@ import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VARIANT.ByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
@@ -59,7 +57,7 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT QueryInterface(REFIID.ByValue riid, PointerByReference ppvObject) {
+    public HRESULT QueryInterface(REFIID riid, PointerByReference ppvObject) {
         return this.getIDispatch().QueryInterface(riid, ppvObject);
     }
 
@@ -85,14 +83,14 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
     }
 
     @Override
-    public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames,
+    public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
             LCID lcid, DISPIDByReference rgDispId) {
         return this.getIDispatch().GetIDsOfNames(riid, rgszNames, cNames, lcid,
                 rgDispId);
     }
 
     @Override
-    public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid,
+    public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
             WORD wFlags, DISPPARAMS.ByReference pDispParams,
             VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
             IntByReference puArgErr) {

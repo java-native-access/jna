@@ -18,7 +18,6 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
-import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Ole32;
@@ -31,7 +30,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class IDispatchTest extends TestCase {
-
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
+        
     /** The Constant LOCALE_SYSTEM_DEFAULT. */
     public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
             .GetSystemDefaultLCID();
@@ -40,7 +42,7 @@ public class IDispatchTest extends TestCase {
         try {
             PointerByReference pDispatch = new PointerByReference();
 
-            // Get CLSID for Word.Application...
+            // Get CLSID for Shell.Application...
             CLSID.ByReference clsid = new CLSID.ByReference();
             HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID("Shell.Application",
                     clsid);
@@ -102,7 +104,7 @@ public class IDispatchTest extends TestCase {
         WString[] ptName = new WString[] { new WString("Application") };
         DISPIDByReference pdispID = new DISPIDByReference();
 
-        HRESULT hr = dispatch.GetIDsOfNames(new REFIID.ByValue(Guid.IID_NULL), ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
+        HRESULT hr = dispatch.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1, LOCALE_SYSTEM_DEFAULT, pdispID);
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
     }

@@ -26,6 +26,9 @@ import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.LPARAM;
+import com.sun.jna.platform.win32.WinDef.LRESULT;
+import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinUser;
 
 public class WindowUtilsTest extends TestCase {
@@ -36,9 +39,10 @@ public class WindowUtilsTest extends TestCase {
         final List<DesktopWindow> allVisibleWindows = WindowUtils
             .getAllWindows(true);
 
-        assertTrue(allWindows.size() > 0);
-        assertTrue(allVisibleWindows.size() > 0);
-        assertTrue(allWindows.size() > allVisibleWindows.size());
+        assertTrue("Found no windows", allWindows.size() > 0);
+        assertTrue("Found no visible windows", allVisibleWindows.size() > 0);
+        assertTrue("Expected more non-visible windows than visible windows",
+                   allWindows.size() > allVisibleWindows.size());
 
         DesktopWindow explorerProc = null;
         for (final DesktopWindow dw : allWindows) {
@@ -48,7 +52,8 @@ public class WindowUtilsTest extends TestCase {
             }
         }
 
-        assertNotNull(explorerProc);
+        assertNotNull("explorer.exe was not found among all windows",
+                      explorerProc);
 
         explorerProc = null;
         for (final DesktopWindow dw : allVisibleWindows) {
@@ -58,7 +63,8 @@ public class WindowUtilsTest extends TestCase {
             }
         }
 
-        assertNotNull(explorerProc);
+        assertNotNull("explorer.exe was not found among visible windows",
+                      explorerProc);
     }
 
     public void testGetWindowIcon() throws Exception {
@@ -70,8 +76,9 @@ public class WindowUtilsTest extends TestCase {
                                                                           "/res/test_icon.png").getPath())));
             w.setIconImage(expectedIcon);
             w.setVisible(true);
-            HWND hwnd = new HWND();
-            hwnd.setPointer(Native.getComponentPointer(w));
+            Pointer p = Native.getComponentPointer(w);
+            assertNotNull("Couldn't obtain window HANDLE from JFrame", p);
+            HWND hwnd = new HWND(p);
 
             final BufferedImage obtainedIcon = WindowUtils.getWindowIcon(hwnd);
 
@@ -149,15 +156,18 @@ public class WindowUtilsTest extends TestCase {
                 .read(new FileInputStream(new File(getClass().getResource("/res/test_icon.png").getPath())));
             w.setIconImage(expectedIcon);
             w.setVisible(true);
-            HWND hwnd = new HWND();
-            hwnd.setPointer(Native.getComponentPointer(w));
+            Pointer p = Native.getComponentPointer(w);
+            assertNotNull("Could not obtain native HANDLE for JFrame", p);
+            HWND hwnd = new HWND(p);
             
             final DWORDByReference hIconNumber = new DWORDByReference();
-            long result = User32.INSTANCE.SendMessageTimeout(hwnd,
-                                                             WinUser.WM_GETICON, WinUser.ICON_BIG, 0,
-                                                             WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
+            LRESULT result = User32.INSTANCE
+                .SendMessageTimeout(hwnd, WinUser.WM_GETICON,
+                                    new WPARAM(WinUser.ICON_BIG),
+                                    new LPARAM(0),
+                                    WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
             
-            assertNotEquals(0, result);
+            assertNotEquals(0, result.intValue());
             
             final HICON hIcon = new HICON(new Pointer(hIconNumber.getValue()
                                                       .longValue()));

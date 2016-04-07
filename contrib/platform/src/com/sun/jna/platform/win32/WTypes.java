@@ -25,7 +25,7 @@ import com.sun.jna.ptr.ByReference;
 
 /**
  * Constant defined in WTypes.h
- * 
+ *
  * @author scott.palmer
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
@@ -196,7 +196,7 @@ public interface WTypes {
     }
 
     public static class LPOLESTR extends PointerType {
-        public static class ByReference extends BSTR implements
+        public static class ByReference extends LPOLESTR implements
                 Structure.ByReference {
         }
 
@@ -233,12 +233,38 @@ public interface WTypes {
     }
 
     public static class VARTYPE extends USHORT {
+        private static final long serialVersionUID = 1L;
+
         public VARTYPE() {
             this(0);
         }
 
         public VARTYPE(int value) {
             super(value);
+        }
+    }
+    
+    public static class VARTYPEByReference extends ByReference {
+        public VARTYPEByReference() {
+            super(VARTYPE.SIZE);
+        }
+
+        public VARTYPEByReference(VARTYPE type) {
+            super(VARTYPE.SIZE);
+            setValue(type);
+        }
+        
+        public VARTYPEByReference(short type) {
+            super(VARTYPE.SIZE);
+            getPointer().setShort(0, type);
+        }
+        
+        public void setValue(VARTYPE value) {
+            getPointer().setShort(0, value.shortValue());
+        }
+
+        public VARTYPE getValue() {
+            return new VARTYPE(getPointer().getShort(0));
         }
     }
 }

@@ -30,7 +30,10 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable_Test {
-
+        static {
+                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        }
+    
 	@Before
 	public void before() {
 		HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
@@ -125,7 +128,7 @@ public class RunningObjectTable_Test {
 			
 			IUnknown unk = new Unknown(ppunkObject.getValue());
 			PointerByReference ppvObject = new PointerByReference();
-			hr = unk.QueryInterface(new REFIID.ByValue(IUnknown.IID_IUNKNOWN), ppvObject);
+			hr = unk.QueryInterface(new REFIID(IUnknown.IID_IUNKNOWN), ppvObject);
 			assertEquals(0, hr.intValue());
 			assertNotNull(ppvObject.getValue());
 			

@@ -56,8 +56,8 @@
   <buildnumber/>
   <!-- JNA library release version -->
   <property name="jna.major" value="4"/>
-  <property name="jna.minor" value="2"/>
-  <property name="jna.revision" value="1"/>
+  <property name="jna.minor" value="3"/>
+  <property name="jna.revision" value="0"/>
   <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
@@ -67,12 +67,12 @@
   </condition>
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
-  <property name="jni.major" value="4"/>
+  <property name="jni.major" value="5"/>
   <property name="jni.minor" value="0"/>
-  <property name="jni.revision" value="1"/>
+  <property name="jni.revision" value="0"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
-  <property name="jni.md5" value="1a6047467b59e8748f975e03016ce3d9"/>
+  <property name="jni.md5" value="4f72f2799dfee6008a386bc40afd7428"/>
   <property name="spec.title" value="Java Native Access (JNA)"/>
   <property name="spec.vendor" value="${vendor}"/>
   <property name="spec.version" value="${jna.major}"/>
@@ -307,6 +307,7 @@
       <path id="test.libs">
         <fileset dir="lib">
           <include name="junit.jar"/>
+          <include name="hamcrest-core-1.3.jar"/>
         </fileset>
         <fileset dir="lib/test"/>
         <pathelement path="${classes}"/>
@@ -520,7 +521,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <property name="javac.source" value="${platform.compatibility}"/>
       <property name="javac.target" value="${platform.compatibility}"/>
       <!-- OSGi manifest properties -->
@@ -543,9 +544,15 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="jar" failonerror="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <fileset dir="${contrib}" includes="*/build.xml" excludes="platform/build.xml"/>
     </subant>
+  </target>
+
+  <target name="idea-jar" depends="jar" description="Build Intellij Idea convenience jar">
+    <jar destfile="${dist}/idea-dispatch.jar">
+      <zipfileset src="${dist-jar}" excludes="**/*.class"/>
+    </jar>
   </target>
 
   <target name="javah" depends="compile" unless="-native">
@@ -971,7 +978,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <condition property="tests.exclude" value="${tests.stdcall}">
       <and><os family="windows"/><not><os arch="x86"/></not></and>
     </condition>
-    <condition property="tests.platform" value="**/unix/*Test.java">
+    <condition property="tests.platform" value="**/mac/**/*Test.java">
+      <os family="mac"/>
+    </condition>
+    <condition property="tests.platform" value="**/unix/**/*Test.java">
       <and>
         <os family="unix"/>
         <not><os family="mac"/></not>
@@ -1025,7 +1035,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <subant target="test" failonerror="true" inheritall="true" inheritrefs="true">
       <property name="file.reference.jna.build" location="${build}"/>
       <property name="file.reference.jna.jar" location="${build}/${jar}"/>
-      <property name="libs.junit.classpath" location="lib/junit.jar"/>
+      <property name="libs.junit.classpath" refid="test.libs"/>
       <property name="javac.source" value="${test.compatibility}"/>
       <property name="javac.target" value="${test.compatibility}"/>
       <fileset dir="${contrib}" includes="platform/build.xml"/>

@@ -12,24 +12,15 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
-import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -46,6 +37,7 @@ import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.DispatchListener;
 import com.sun.jna.platform.win32.COM.IDispatch;
@@ -66,31 +58,16 @@ public class CallbackProxy implements IDispatchCallback {
 		this.listenedToRiid = this.createRIID(comEventCallbackInterface);
 		this.dsipIdMap = this.createDispIdMap(comEventCallbackInterface);
 		this.dispatchListener = new DispatchListener(this);
-		this.executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
-			@Override
-			public Thread newThread(Runnable r) {
-				Thread thread = new Thread(r, "COM Event Callback executor");
-				thread.setDaemon(true);
-				thread.setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
-					@Override
-					public void uncaughtException(Thread t, Throwable e) {
-						CallbackProxy.this.factory.comThread.uncaughtExceptionHandler.uncaughtException(t, e);
-					}
-				});
-				return thread;
-			}
-		});
 	}
 
 	Factory factory;
 	Class<?> comEventCallbackInterface;
 	IComEventCallbackListener comEventCallbackListener;
-	REFIID.ByValue listenedToRiid;
+	REFIID listenedToRiid;
 	public DispatchListener dispatchListener;
 	Map<DISPID, Method> dsipIdMap;
-	ExecutorService executorService;
 
-	REFIID.ByValue createRIID(Class<?> comEventCallbackInterface) {
+	REFIID createRIID(Class<?> comEventCallbackInterface) {
 		ComInterface comInterfaceAnnotation = comEventCallbackInterface.getAnnotation(ComInterface.class);
 		if (null == comInterfaceAnnotation) {
 			throw new COMException(
@@ -100,7 +77,7 @@ public class CallbackProxy implements IDispatchCallback {
 		if (null == iidStr || iidStr.isEmpty()) {
 			throw new COMException("ComInterface must define a value for iid");
 		}
-		return new REFIID.ByValue(new IID(iidStr).getPointer());
+		return new REFIID(new IID(iidStr).getPointer());
 	}
 
 	Map<DISPID, Method> createDispIdMap(Class<?> comEventCallbackInterface) {
@@ -125,85 +102,63 @@ public class CallbackProxy implements IDispatchCallback {
 		return -1;
 	}
 
-	void invokeOnThread(final DISPID dispIdMember, final REFIID.ByValue riid, LCID lcid, WORD wFlags,
-			final DISPPARAMS.ByReference pDispParams) {
-		// decode arguments
-		// must decode them on this thread, and create a proxy for any COM objects (IDispatch)
-		// this will AddRef on the COM object so that it is not cleaned up before we can use it
-		// on the thread that does the java callback.
-		List<Object> rjargs = new ArrayList<Object>();
-		if (pDispParams.cArgs.intValue() > 0) {
-			VariantArg vargs = pDispParams.rgvarg;
-			vargs.setArraySize(pDispParams.cArgs.intValue());
-			for (Variant.VARIANT varg : vargs.variantArg) {
-				Object jarg = Convert.toJavaObject(varg);
-				if (jarg instanceof IDispatch) {
-					IDispatch dispatch = (IDispatch) jarg;
-					//get raw IUnknown interface
-					PointerByReference ppvObject = new PointerByReference();
-					IID iid = com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
-					dispatch.QueryInterface(new REFIID.ByValue(iid), ppvObject);
-					Unknown rawUnk = new Unknown(ppvObject.getValue());
-					long unknownId = Pointer.nativeValue( rawUnk.getPointer() );
-					int n = rawUnk.Release();
-					//Note: unlike in other places, there is currently no COM ref already added for this pointer 
-					IUnknown unk = CallbackProxy.this.factory.createProxy(IUnknown.class, unknownId, dispatch);
-					rjargs.add(unk);
-				} else {
-					rjargs.add(jarg);
-				}
-			}
-		}
-		final List<Object> jargs = new ArrayList<Object>(rjargs);
-		Runnable invokation = new Runnable() {
-			@Override
-			public void run() {
-				try {
-					if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
-						Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
-						if (eventMethod.getParameterTypes().length != jargs.size()) {
-							CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-									"Trying to invoke method " + eventMethod + " with " + jargs.size() + " arguments",
-									null);
-						} else {
-							try {
-								// need to convert arguments maybe
-								List<Object> margs = new ArrayList<Object>();
-								Class<?>[] params = eventMethod.getParameterTypes();
-								for (int i = 0; i < eventMethod.getParameterTypes().length; ++i) {
-									Class<?> paramType = params[i];
-									Object jobj = jargs.get(i);
-									if (jobj != null && paramType.getAnnotation(ComInterface.class) != null) {
-										if (jobj instanceof IUnknown) {
-											IUnknown unk = (IUnknown) jobj;
-											Object mobj = unk.queryInterface(paramType);
-											margs.add(mobj);
-										} else {
-											throw new RuntimeException("Cannot convert argument " + jobj.getClass()
-													+ " to ComInterface " + paramType);
-										}
-									} else {
-										margs.add(jobj);
-									}
-								}
-								eventMethod.invoke(comEventCallbackListener, margs.toArray());
-							} catch (Exception e) {
-								CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-										"Exception invoking method " + eventMethod, e);
-							}
-						}
-					} else {
-						CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-								"No method found with dispId = " + dispIdMember, null);
-					}
-				} catch (Exception e) {
-					CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-							"Exception receiving callback event ", e);
-				}
-			}
-		};
-		this.executorService.execute(invokation);
-	}
+	void invokeOnThread(final DISPID dispIdMember, final REFIID riid, LCID lcid, WORD wFlags,
+            final DISPPARAMS.ByReference pDispParams) {
+
+            final Method eventMethod;
+            if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
+                eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
+                if (eventMethod.getParameterTypes().length != pDispParams.cArgs.intValue()) {
+                    CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                            "Trying to invoke method " + eventMethod + " with " + pDispParams.cArgs.intValue() + " arguments",
+                            null);
+                    return;
+                }
+            } else {
+                CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                        "No method found with dispId = " + dispIdMember, null);
+                return;
+            }
+            
+            // Arguments are converted to the JAVA side and IDispatch Interfaces
+            // are wrapped into an ProxyObject if so requested.
+            //
+            // Out-Parameter need to be specified as VARIANT, VARIANT args are
+            // not converted, so COM memory allocation rules apply.
+            final Class<?>[] params = eventMethod.getParameterTypes();
+            List<Object> rjargs = new ArrayList<Object>();
+            if (pDispParams.cArgs.intValue() > 0) {
+                VariantArg vargs = pDispParams.rgvarg;
+                vargs.setArraySize(pDispParams.cArgs.intValue());
+                for ( int i = 0; i < vargs.variantArg.length; i++) {
+                    Class targetClass = params[vargs.variantArg.length - 1 - i];
+                    Variant.VARIANT varg = vargs.variantArg[i];
+                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true);
+                    rjargs.add(jarg);
+                }
+            }
+
+            List<Object> margs = new ArrayList<Object>();
+            try {
+                // Reverse order from calling convention
+                int lastParamIdx = eventMethod.getParameterTypes().length - 1;
+                for (int i = lastParamIdx; i >= 0; i--) {
+                    margs.add(rjargs.get(i));
+                }
+                eventMethod.invoke(comEventCallbackListener, margs.toArray());
+            } catch (Exception e) {
+                List<String> decodedClassNames = new ArrayList<String>(margs.size());
+                for(Object o: margs) {
+                    if(o == null) {
+                        decodedClassNames.add("NULL");
+                    } else {
+                        decodedClassNames.add(o.getClass().getName());
+                    }
+                }
+                CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                        "Exception invoking method " + eventMethod + " supplied: " + decodedClassNames.toString(), e);
+            }
+        }
 
 	@Override
 	public Pointer getPointer() {
@@ -222,24 +177,26 @@ public class CallbackProxy implements IDispatchCallback {
 	}
 
 	@Override
-	public HRESULT GetIDsOfNames(REFIID.ByValue riid, WString[] rgszNames, int cNames, LCID lcid,
+	public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
 			DISPIDByReference rgDispId) {
 		return new HRESULT(WinError.E_NOTIMPL);
 	}
 
 	@Override
-	public HRESULT Invoke(DISPID dispIdMember, REFIID.ByValue riid, LCID lcid, WORD wFlags,
+	public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
 			DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
 			IntByReference puArgErr) {
 
-		this.invokeOnThread(dispIdMember, riid, lcid, wFlags, pDispParams);
+                assert COMUtils.comIsInitialized() : "Assumption about COM threading broken.";
+                
+                this.invokeOnThread(dispIdMember, riid, lcid, wFlags, pDispParams);
 
 		return WinError.S_OK;
 	}
 
 	// ------------------------ IUnknown ------------------------------
 	@Override
-	public HRESULT QueryInterface(REFIID.ByValue refid, PointerByReference ppvObject) {
+	public HRESULT QueryInterface(REFIID refid, PointerByReference ppvObject) {
 		if (null == ppvObject) {
 			return new HRESULT(WinError.E_POINTER);
 		}
