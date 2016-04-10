@@ -77,7 +77,7 @@ public abstract class OaIdlUtil {
      * @param sa SAFEARRAY to convert
      * @param destruct if true the supplied SAFEARRAY is destroyed, there must
      * not be additional locks on the array!
-     * @return
+     * @return Java array corresponding to the given SAFEARRAY
      */
     public static Object toPrimitiveArray(SAFEARRAY sa, boolean destruct) {
         Pointer dataPointer = sa.accessData();

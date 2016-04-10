@@ -248,9 +248,9 @@ public interface Variant {
          * Create a new VARIANT wrapping the supplied string.
          * 
          * <p><i>Implementation note:</i> the string is wrapped as a BSTR value,
-         * that is allocated using {@see com.sun.jna.platform.win32.OleAuto#SysAllocString}
+         * that is allocated using {@link com.sun.jna.platform.win32.OleAuto#SysAllocString}
          * and needs to be freed using
-         * {@see com.sun.jna.platform.win32.OleAuto#SysFreeString} by the user</p>
+         * {@link com.sun.jna.platform.win32.OleAuto#SysFreeString} by the user</p>
          * 
          * @param value  to be wrapped
          */

@@ -885,7 +885,7 @@ public interface OaIdl {
          * java conventions.</p>
          * 
          * @param dimension zerobased index
-         * @return
+         * @return lower bound for the selected dimension
          */
         public int getLBound(int dimension) {
             int targetDimension = getDimensionCount() - dimension;
@@ -902,7 +902,7 @@ public interface OaIdl {
          * java conventions.</p>
          * 
          * @param dimension zerobased index
-         * @return
+         * @return upper bound for the selected dimension
          */
         public int getUBound(int dimension) {
             int targetDimension = getDimensionCount() - dimension;
@@ -915,7 +915,7 @@ public interface OaIdl {
         /**
          * Return number of dimensions of the SAFEARRAY
          *
-         * @return
+         * @return number of dimensions of the SAFEARRAY
          */
         public int getDimensionCount() {
             return OleAuto.INSTANCE.SafeArrayGetDim(this).intValue();
@@ -974,7 +974,7 @@ public interface OaIdl {
         /**
          * Return VARTYPE of the SAFEARRAY
          *
-         * @return
+         * @return VARTYPE of the SAFEARRAY
          */
         public VARTYPE getVarType() {
             WTypes.VARTYPEByReference resultHolder = new WTypes.VARTYPEByReference();

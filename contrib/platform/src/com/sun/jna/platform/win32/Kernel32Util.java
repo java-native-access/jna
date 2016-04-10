@@ -88,7 +88,7 @@ public abstract class Kernel32Util implements WinDef {
      * Once closed all handles, the accumulated exception (if any) is thrown
      *
      * @param refs The references to close
-     * @see #closeHandleRef(HANDLEByReference)
+     * @see #closeHandleRef(WinNT.HANDLEByReference)
      */
     public static void closeHandleRefs(HANDLEByReference... refs) {
         Win32Exception err = null;
@@ -112,14 +112,14 @@ public abstract class Kernel32Util implements WinDef {
      * Closes the handle in the reference
      *
      * @param ref The handle reference - ignored if {@code null}
-     * @see #closeHandle(HANDLE)
+     * @see #closeHandle(WinNT.HANDLE)
      */
     public static void closeHandleRef(HANDLEByReference ref) {
         closeHandle((ref == null) ? null : ref.getValue());
     }
 
     /**
-     * Invokes {@link #closeHandle(HANDLE)} on each handle. If an exception
+     * Invokes {@link #closeHandle(WinNT.HANDLE)} on each handle. If an exception
      * is thrown for a specific handle, then it is accumulated until all
      * handles have been closed. If more than one exception occurs, then it
      * is added as a suppressed exception to the first one. Once closed all
@@ -148,7 +148,7 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * Invokes {@link Kernel32#CloseHandle(HANDLE)} and checks the success code.
+     * Invokes {@link Kernel32#CloseHandle(WinNT.HANDLE)} and checks the success code.
      * If not successful, then throws a {@link Win32Exception} with the
      * {@code GetLastError} value
      *

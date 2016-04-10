@@ -192,11 +192,11 @@ public abstract class COMUtils {
     }
 
     /**
-     * Check is COM was initialized correctly. The initialization status is not changed!
+     * Check if COM was initialized correctly. The initialization status is not changed!
      *
      * <p>This is a debug function, not for normal usage!</p>
      * 
-     * @return
+     * @return whether COM has been initialized
      */
     public static boolean comIsInitialized() {
         WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);

@@ -74,10 +74,9 @@ class Convert {
          * <li>VARIANTs are not rewrapped, but passed through unmodified</li>
          * <li>A string is wrapped into a BSTR, that is wrapped into the VARIANT.
          *  The string is allocated as native memory by the VARIANT constructor.
-         *  The BSTR needs to be freed by {@see com.sun.jna.platform.win32.OleAuto#SysFreeString}.</li>
+         *  The BSTR needs to be freed by {@link com.sun.jna.platform.win32.OleAuto#SysFreeString}.</li>
          * </ul>
          * 
-         * @see com.sun.jna.platform.win32.Variant.VARIANT#VARIANT(java.lang.String)
          * @param value to be wrapped
          * @return wrapped VARIANT
          */
@@ -325,7 +324,7 @@ class Convert {
         /**
          * Free the contents of the supplied VARIANT.
          * 
-         * <p>This method is a companion to {@see #toVariant}. Primary usage is
+         * <p>This method is a companion to {@link #toVariant}. Primary usage is
          * to free BSTRs contained in VARIANTs.</p>
          * 
          * @param variant to be cleared
@@ -345,7 +344,7 @@ class Convert {
         /**
          * Free the contents of the supplied VARIANT.
          * 
-         * <p>This method is a companion to {@see #toVariant}. Primary usage is
+         * <p>This method is a companion to {@link #toVariant}. Primary usage is
          * to free BSTRs contained in VARIANTs.</p>
          * 
          * @param variant to be cleared
