@@ -14,6 +14,7 @@ package com.sun.jna;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -152,10 +153,19 @@ public class NativeTest extends TestCase {
 
     public void testCustomizeDefaultStringEncoding() {
         Properties oldprops = (Properties)System.getProperties().clone();
-        final String ENCODING = System.getProperty("file.encoding");
+        String encoding = null;
+        // Choose a charset that is not the default encoding so we can actually
+        // tell we changed it.
+        for (String charset : Charset.availableCharsets().keySet()) {
+            if (!charset.equals(Native.DEFAULT_ENCODING)) {
+                encoding = charset;
+                break;
+            }
+        }
+        assertNotNull("No available encodings other than the default!?", encoding);
         try {
-            System.setProperty("jna.encoding", ENCODING);
-            assertEquals("Default encoding should match jna.encoding setting", ENCODING, Native.getDefaultStringEncoding());
+            System.setProperty("jna.encoding", encoding);
+            assertEquals("Default encoding should match jna.encoding setting", encoding, Native.getDefaultStringEncoding());
         }
         finally {
             System.setProperties(oldprops);
