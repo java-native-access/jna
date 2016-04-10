@@ -35,7 +35,7 @@ For Windows, see [Windows Development Environment](WindowsDevelopmentEnvironment
 For windows CE/Mobile 6.x, you'll need cegcc (http://gitorious.org/cegcc) for
 cross-compiling and a JavaME implementation (phoneME (http://davy.preuveneers.be/phoneme) works well).
 
-For Android, see [Android Development Environment)(AndroidDevelopmentEnvironment.md).
+For Android, see [Android Development Environment](AndroidDevelopmentEnvironment.md).
 
 Required Testing
 ================
