@@ -131,18 +131,23 @@ public class NativeTest extends TestCase {
     public void testDefaultStringEncoding() throws Exception {
         final String UNICODE = "\u0444\u043b\u0441\u0432\u0443";
         final String UNICODEZ = UNICODE + "\0more stuff";
-        byte[] utf8 = Native.getBytes(UNICODE);
+        byte[] nativeEnc = Native.getBytes(UNICODE);
         byte[] expected = UNICODE.getBytes(Native.DEFAULT_ENCODING);
-        for (int i=0;i < Math.min(utf8.length, expected.length);i++) {
+        for (int i=0;i < Math.min(nativeEnc.length, expected.length);i++) {
             assertEquals("Improperly encoded at " + i,
-                         expected[i], utf8[i]);
+                         expected[i], nativeEnc[i]);
         }
-        assertEquals("Wrong number of encoded characters", expected.length, utf8.length);
-        String result = Native.toString(utf8);
-        assertEquals("Improperly decoded", UNICODE, result);
-
+        assertEquals("Wrong number of encoded characters", expected.length, nativeEnc.length);
+        String result = Native.toString(nativeEnc);
+        // The native encoding might not support our test string; the result
+        // will then be all '?'
+        if (!result.matches("^\\?+$")) {
+            assertEquals("Improperly decoded", UNICODE, result);
+        }
+        // When the native encoding doesn't support our test string, we can only
+        // usefully compare the lengths.
         assertEquals("Should truncate bytes at NUL terminator",
-                     UNICODE, Native.toString(UNICODEZ.getBytes(Native.DEFAULT_ENCODING)));
+                UNICODE.length(), Native.toString(UNICODEZ.getBytes(Native.DEFAULT_ENCODING)).length());
     }
 
     public void testCustomizeDefaultStringEncoding() {
