@@ -13,8 +13,6 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WTypes.BSTRByReference;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 
 /**
@@ -81,7 +79,7 @@ public interface IMoniker extends IPersistStream {
          * 
 	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms680754%28v=vs.85%29.aspx">MSDN</a>
 	 */
-	HRESULT GetDisplayName(Pointer pbc, Pointer pmkToLeft, BSTRByReference ppszDisplayName);
+	String GetDisplayName(Pointer bindContext, Pointer pmkToLeft);
 
 	void ParseDisplayName();
 

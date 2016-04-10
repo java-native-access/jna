@@ -21,6 +21,7 @@ import org.junit.Test;
 
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Guid.REFIID;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.ULONG;
@@ -114,13 +115,8 @@ public class RunningObjectTable_Test {
 			
 			PointerByReference ppbc = new PointerByReference();
 			Ole32.INSTANCE.CreateBindCtx(new DWORD(), ppbc);
-			//IBindCtx pbc = new BindCtx(ppbc.getValue());
-			
-			BSTRByReference ppszDisplayName = new BSTRByReference();
-			hr = moniker.GetDisplayName(ppbc.getValue(), moniker.getPointer(), ppszDisplayName);
-			COMUtils.checkRC(hr);
-			String name = ppszDisplayName.getString();
-			Ole32.INSTANCE.CoTaskMemFree(ppszDisplayName.getPointer().getPointer(0));
+
+			String name = moniker.GetDisplayName(ppbc.getValue(), moniker.getPointer());
 			
 			PointerByReference ppunkObject = new PointerByReference();
 			hr = rot.GetObject(moniker.getPointer(), ppunkObject);

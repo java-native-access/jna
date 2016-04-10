@@ -14,10 +14,11 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.WTypes.BSTRByReference;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.ptr.PointerByReference;
 
 public class Moniker extends Unknown implements IMoniker {
 
@@ -119,13 +120,26 @@ public class Moniker extends Unknown implements IMoniker {
 	}
 
 	@Override
-	public HRESULT GetDisplayName(Pointer pbc, Pointer pmkToLeft, BSTRByReference ppszDisplayName) {
+	public String GetDisplayName(Pointer pbc, Pointer pmkToLeft) {
 		final int vTableId = vTableIdStart + 13;
 
+                PointerByReference ppszDisplayNameRef = new PointerByReference();
+                
 		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pbc,
-				pmkToLeft, ppszDisplayName }, WinNT.HRESULT.class);
+				pmkToLeft, ppszDisplayNameRef }, WinNT.HRESULT.class);
 
-		return hr;
+                COMUtils.checkRC(hr);
+
+                Pointer ppszDisplayName = ppszDisplayNameRef.getValue();
+                if(ppszDisplayName == null) {
+                    return null;
+                }
+                
+                WTypes.LPOLESTR oleStr = new WTypes.LPOLESTR(ppszDisplayName);
+                String name = oleStr.getValue();
+                Ole32.INSTANCE.CoTaskMemFree(ppszDisplayName);
+
+		return name;
 	}
 
 	@Override
