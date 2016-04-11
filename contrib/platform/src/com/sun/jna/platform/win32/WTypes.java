@@ -22,6 +22,9 @@ import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.USHORT;
 import com.sun.jna.ptr.ByReference;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Constant defined in WTypes.h
@@ -61,13 +64,40 @@ public interface WTypes {
     public static int CLSCTX_ALL = CLSCTX_INPROC_SERVER | CLSCTX_INPROC_HANDLER
             | CLSCTX_LOCAL_SERVER;
 
+    /**
+     * BSTR wrapper.
+     * 
+     * <p>From MSDN:</p>
+     * 
+     * <blockquote>A BSTR (Basic string or binary string) is a string data type 
+     * that is used by COM, Automation, and Interop functions. Use the BSTR data 
+     * type in all interfaces that will be accessed from script.</blockquote>
+     * 
+     * <p>The memory structure:</p>
+     * 
+     * <dl>
+     * <dt>Length prefix</dt>
+     * <dd>Length of the data array holding the string data and does not include
+     * the final two NULL characters.</dd>
+     * <dt>Data string</dt>
+     * <dd>UTF-16LE encoded bytes for the string.</dd>
+     * <dt>Terminator</dt>
+     * <dd>Two null characters</dd>
+     * </dl>
+     * 
+     * <p>The "value" of the BSTR is the pointer to the start of the Data String,
+     * the length prefix is the four bytes before that.</p>
+     * 
+     * <p>The MSDN states, that a BSTR derived from a Nullpointer is treated
+     * as a string containing zero characters.</p>
+     */
     public static class BSTR extends PointerType {
         public static class ByReference extends BSTR implements
                 Structure.ByReference {
         }
 
         public BSTR() {
-            super(new Memory(Pointer.SIZE));
+            super(Pointer.NULL);
         }
 
         public BSTR(Pointer pointer) {
@@ -75,21 +105,39 @@ public interface WTypes {
         }
 
         public BSTR(String value) {
-            super(new Memory((value.length() + 1L) * Native.WCHAR_SIZE));
+            super();
             this.setValue(value);
         }
 
         public void setValue(String value) {
-            this.getPointer().setWideString(0, value);
+            if(value == null) {
+                value = "";
+            }
+            try {
+                byte[] encodedValue = value.getBytes("UTF-16LE");
+                // 4 bytes for the length prefix, length for the encoded data,
+                // 2 bytes for the two NULL terminators
+                Memory mem = new Memory(4 + encodedValue.length + 2);
+                mem.clear();
+                mem.setInt(0, encodedValue.length);
+                mem.write(4, encodedValue, 0, encodedValue.length);
+                this.setPointer(mem.share(4));
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("UTF-16LE charset is not supported", ex);
+            }
         }
 
         public String getValue() {
-            Pointer pointer = this.getPointer();
-            String str = null;
-            if (pointer != null)
-                str = pointer.getWideString(0);
-
-            return str;
+            try {
+                Pointer pointer = this.getPointer();
+                if(pointer == null) {
+                    return "";
+                }
+                int stringLength = pointer.getInt(-4);
+                return new String(pointer.getByteArray(0, stringLength), "UTF-16LE");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("UTF-16LE charset is not supported", ex);
+            }
         }
 
         @Override

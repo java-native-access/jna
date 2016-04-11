@@ -122,6 +122,22 @@ public interface OleAuto extends StdCallLibrary {
 	void SysFreeString(BSTR bstr);
 
 	/**
+	 * Returns the length (in bytes) of a BSTR.
+	 *
+	 * @param bstr
+	 *            Unicode string that was allocated previously.
+	 */
+	int SysStringByteLen(BSTR bstr);
+        
+	/**
+	 * Returns the length of a BSTR.
+	 *
+	 * @param bstr
+	 *            Unicode string that was allocated previously.
+	 */
+	int SysStringLen(BSTR bstr);
+        
+	/**
 	 * The VariantInit function initializes the VARIANTARG by setting the vt
 	 * field to VT_EMPTY. Unlike VariantClear, this function does not interpret
 	 * the current contents of the VARIANTARG. Use VariantInit to initialize new
