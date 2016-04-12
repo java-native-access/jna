@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -652,8 +653,9 @@ public class CallbacksTest extends TestCase implements Paths {
                 return arg + arg2;
             }
         };
-        final String VALUE = "value" + UNICODE;
-        final String VALUE2 = getName() + UNICODE;
+        Charset charset = Charset.forName(Native.getDefaultStringEncoding());
+        final String VALUE = "value" + charset.decode(charset.encode(UNICODE));
+        final String VALUE2 = getName() + charset.decode(charset.encode(UNICODE));
         String value = lib.callStringCallback(cb, VALUE, VALUE2);
         assertTrue("Callback not called", called[0]);
         assertEquals("Wrong String callback argument 0", VALUE, cbargs[0]);
@@ -673,8 +675,9 @@ public class CallbacksTest extends TestCase implements Paths {
         Map<?, ?> m = CallbackReference.allocations;
         m.clear();
 
-        String arg = getName() + "1" + UNICODE;
-        String arg2 = getName() + "2" + UNICODE;
+        Charset charset = Charset.forName(Native.getDefaultStringEncoding());
+        String arg = getName() + "1" + charset.decode(charset.encode(UNICODE));
+        String arg2 = getName() + "2" + charset.decode(charset.encode(UNICODE));
         String value = lib.callStringCallback(cb, arg, arg2);
         WeakReference<Object> ref = new WeakReference<Object>(value);
 
@@ -723,7 +726,8 @@ public class CallbacksTest extends TestCase implements Paths {
                 return arg;
             }
         };
-        final String VALUE = "value" + UNICODE;
+        Charset charset = Charset.forName(Native.getDefaultStringEncoding());
+        final String VALUE = "value" + charset.decode(charset.encode(UNICODE));
         final String[] VALUE_ARRAY = { VALUE, null };
         Pointer value = lib.callStringArrayCallback(cb, VALUE_ARRAY);
         assertTrue("Callback not called", called[0]);
@@ -795,7 +799,8 @@ public class CallbacksTest extends TestCase implements Paths {
     public void testUnionByValueCallbackArgument() throws Exception{
         TestLibrary.TestUnion arg = new TestLibrary.TestUnion();
         arg.setType(String.class);
-        final String VALUE = getName() + UNICODE;
+        Charset charset = Charset.forName(arg.getStringEncoding());
+        final String VALUE = getName() + charset.decode(charset.encode(UNICODE));
         arg.f1 = VALUE;
         final boolean[] called = { false };
         final TestLibrary.TestUnion[] cbvalue = { null };

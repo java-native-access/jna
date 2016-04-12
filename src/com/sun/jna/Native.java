@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -95,7 +96,7 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native implements Version {
 
-    public static final String DEFAULT_ENCODING = "utf8";
+    public static final String DEFAULT_ENCODING = Charset.defaultCharset().name();
     public static boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
     public static boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 

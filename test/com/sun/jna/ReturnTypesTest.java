@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 import junit.framework.TestCase;
@@ -314,7 +315,8 @@ public class ReturnTypesTest extends TestCase {
     }
 
     public void testReturnStringArray() {
-        final String VALUE = getName() + UNICODE;
+        Charset charset = Charset.forName(Native.getDefaultStringEncoding());
+        final String VALUE = getName() + charset.decode(charset.encode(UNICODE));
         String[] input = {
             VALUE, null,
         };

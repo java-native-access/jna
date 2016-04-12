@@ -12,6 +12,7 @@
  */
 package com.sun.jna;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -1084,9 +1085,10 @@ public class StructureTest extends TestCase {
                 return Arrays.asList("inner");
             }
         }
-        final String VALUE = getName() + UNICODE;
-        final WString WVALUE = new WString(VALUE);
         StructureFromPointer o = new StructureFromPointer();
+        Charset charset = Charset.forName(o.getStringEncoding());
+        final String VALUE = getName() + charset.decode(charset.encode(UNICODE));
+        final WString WVALUE = new WString(VALUE);
         o.s = VALUE;
         o.ws = WVALUE;
         o.write();
