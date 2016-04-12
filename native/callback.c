@@ -210,18 +210,17 @@ create_callback(JNIEnv* env, jobject obj, jobject method,
     }
   }
 
-#if defined(_WIN32)
-  if (calling_convention == CALLCONV_STDCALL) {
-#if defined(_WIN64) || defined(_WIN32_WCE)
-    // Ignore requests for stdcall on win64/wince
-    abi = FFI_DEFAULT_ABI;
-#else
+  // ALT_CONVENTION is currently always stdcall
+  if (calling_convention == com_sun_jna_Function_ALT_CONVENTION) {
+#if defined(_WIN32) && defined(_M_IX86)
     abi = FFI_STDCALL;
     // All JNI entry points on win32 use stdcall
     java_abi = FFI_STDCALL;
+#else
+    // Ignore requests for stdcall on other platforms
+    abi = FFI_DEFAULT_ABI;
 #endif
   }
-#endif // _WIN32
 
   if (!(abi > FFI_FIRST_ABI && abi < FFI_LAST_ABI)) {
     snprintf(msg, sizeof(msg), "Invalid calling convention %d", abi);
