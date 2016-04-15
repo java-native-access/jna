@@ -16,4 +16,6 @@ public interface ComIWorkbooks {
 	@ComMethod
 	ComIWorkbook Open(Object FileName);
 
+        @ComMethod
+        ComIWorkbook Add();
 }

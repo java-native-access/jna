@@ -28,9 +28,7 @@ public class MSExcel extends COMLateBindingObject {
         this.invokeNoReply("Add", getWorkbooks());
     }
 
-    public void openExcelBook(String filename, boolean bVisible)
-            throws COMException {
-        // OpenDocument
+    public void openExcelBook(String filename) throws COMException {
         this.invokeNoReply("Open", getWorkbooks(), new VARIANT(filename));
     }
 

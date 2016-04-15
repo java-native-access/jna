@@ -1,28 +1,28 @@
 package com.sun.jna.platform.win32.COM.office;
 
-import java.io.File;
+import com.sun.jna.Pointer;
 
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.Helper;
+import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import java.io.File;
+import java.io.IOException;
 
 public class MSOfficeDemo {
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        new MSOfficeDemo();
+    public static void main(String[] args) throws IOException {
+        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        try {
+            MSOfficeDemo demo = new MSOfficeDemo();
+            demo.testMSExcel();
+            demo.testMSWord();
+        } finally {
+            Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
-    private String currentWorkingDir = new File("").getAbsolutePath()
-            + File.separator;
-
-    public MSOfficeDemo() {
-        //this.testMSWord();
-         this.testMSExcel();
-    }
-
-    public void testMSWord() {
+    public void testMSWord() throws IOException {
+        File demoDocument = null;
         MSWord msWord = null;
         
         // http://msdn.microsoft.com/en-us/library/office/ff839952(v=office.15).aspx
@@ -42,82 +42,92 @@ public class MSOfficeDemo {
             System.out.println("MSWord version: " + msWord.getVersion());
 
             msWord.setVisible(true);
-            // msWord.newDocument();
-            msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
+            
+            Helper.sleep(5);
+            
+            demoDocument = Helper.createNotExistingFile("jnatest", ".doc");
+            Helper.extractClasspathFileToReal("/com/sun/jna/platform/win32/COM/util/office/resources/jnatest.doc", demoDocument);
+            
+            msWord.openDocument(demoDocument.getAbsolutePath());
             msWord.insertText("Hello from JNA! \n\n");
             // wait 10sec. before closing
-            Thread.currentThread().sleep(1000);
+            Helper.sleep(10);
             // save in different formats
             // pdf format is only supported in MSWord 2007 and above
-            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.doc", wdFormatDocument);
-            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.pdf", wdFormatPDF);
-            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.rtf", wdFormatRTF);
-            msWord.SaveAs("C:\\TEMP\\jnatestSaveAs.html", wdFormatHTML);
+            System.out.println("Wrinting files to: " + Helper.tempDir);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.doc").getAbsolutePath(), wdFormatDocument);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.pdf").getAbsolutePath(), wdFormatPDF);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.rtf").getAbsolutePath(), wdFormatRTF);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.html").getAbsolutePath(), wdFormatHTML);
             // close and save the document
             msWord.closeActiveDocument(false);
             msWord.newDocument();
             // msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
             msWord.insertText("Hello from JNA! \n Please notice that JNA can control MS Word via the new COM interface! \nHere we are creating a new word document and we save it to the 'TEMP' directory!");
             // save with no user prompt
-            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc1.docx", wdFormatDocumentDefault);
-            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc2.docx", wdFormatDocumentDefault);
-            msWord.SaveAs("C:\\TEMP\\jnatestNewDoc3.docx", wdFormatDocumentDefault);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath(), wdFormatDocumentDefault);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath(), wdFormatDocumentDefault);
+            msWord.SaveAs(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath(), wdFormatDocumentDefault);
             // close and save the document
             msWord.closeActiveDocument(false);
             // open 3 documents
-            msWord.openDocument("C:\\TEMP\\jnatestNewDoc1.docx", true);
+            msWord.openDocument(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath());
             msWord.insertText("Hello some changes from JNA!\n");            
-            msWord.openDocument("C:\\TEMP\\jnatestNewDoc2.docx", true);
+            msWord.openDocument(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath());
             msWord.insertText("Hello some changes from JNA!\n");            
-            msWord.openDocument("C:\\TEMP\\jnatestNewDoc3.docx", true);
+            msWord.openDocument(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath());
             msWord.insertText("Hello some changes from JNA!\n");            
             // save the document and prompt the user
             msWord.Save(false, wdPromptUser);
-            // wait then close word
-            msWord.quit();
-        } catch(InterruptedException ie) {
-            ie.printStackTrace();
         } catch (COMException e) {
             if (e.getExcepInfo() != null) {
-                System.out
-                        .println("bstrSource: " + e.getExcepInfo().bstrSource);
-                System.out.println("bstrDescription: "
-                        + e.getExcepInfo().bstrDescription);
+                System.out.println("bstrSource: " + e.getExcepInfo().bstrSource);
+                System.out.println("bstrDescription: " + e.getExcepInfo().bstrDescription);
             }
-
-            // print stack trace
-            e.printStackTrace();
-
-            if (msWord != null)
+        } finally {
+            if (msWord != null) {
                 msWord.quit();
+            }
+            
+            if(demoDocument != null && demoDocument.exists()) {
+                demoDocument.delete();
+            }
         }
     }
 
-    public void testMSExcel() {
+    public void testMSExcel() throws IOException {
+        File demoDocument = null;
         MSExcel msExcel = null;
 
         try {
             msExcel = new MSExcel();
             System.out.println("MSExcel version: " + msExcel.getVersion());
             msExcel.setVisible(true);
-            // msExcel.newExcelBook();
-            msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
+
+            Helper.sleep(5);
+            
+            demoDocument = Helper.createNotExistingFile("jnatest", ".xls");
+            Helper.extractClasspathFileToReal("/com/sun/jna/platform/win32/COM/util/office/resources/jnatest.xls", demoDocument);
+            
+            msExcel.openExcelBook(demoDocument.getAbsolutePath());
             msExcel.insertValue("A1", "Hello from JNA!");
             // wait 10sec. before closing
-            Thread.currentThread().sleep(10000);
+            Helper.sleep(10);
             // close and save the active sheet
             msExcel.closeActiveWorkbook(true);
-            msExcel.setVisible(true);
-            // msExcel.newExcelBook();
-            msExcel.openExcelBook(currentWorkingDir + "jnatest.xls", true);
+
+            msExcel.newExcelBook();
             msExcel.insertValue("A1", "Hello from JNA!");
             // close and save the active sheet
             msExcel.closeActiveWorkbook(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-
-            if (msExcel != null)
+        } finally {
+            if (msExcel != null) {
                 msExcel.quit();
+            }
+            
+            if (demoDocument != null && demoDocument.exists()) {
+                demoDocument.delete();
+            }
         }
     }
 }

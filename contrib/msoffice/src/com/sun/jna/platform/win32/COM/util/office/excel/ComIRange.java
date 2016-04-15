@@ -21,5 +21,73 @@ public interface ComIRange {
 
 	@ComMethod
 	void Activate();
-
+        
+	@ComProperty
+        ComIRange getItem(Object rowIndex, Object columnIndex);
+        
+        @ComProperty
+        void setValue(Object data);
+        
+        @ComProperty
+        Object getValue();
+        
+        @ComProperty
+        void setFormula(String data);
+        
+        @ComProperty
+        String getFormula();
+        
+        @ComProperty
+        void setNumberFormat(String data);
+        
+        @ComProperty
+        String getNumberFormat();
+        
+        @ComProperty
+        ComIRange getEntireColumn();
+        
+        @ComMethod
+        void AutoFit();
+        
+        @ComProperty
+        public ComIRange getResize(Object rowSize, Object columnSize);
+        
+        @ComProperty
+        void setOrientation(int degree);
+        
+        @ComProperty
+        int getOrientation();
+        
+        @ComProperty
+        void setWrapText(boolean wrap);
+        
+        @ComProperty
+        boolean getWrapText();
+        
+        @ComProperty
+        Interior getInterior();
+        
+        @ComProperty
+        Borders getBorders();
+        
+        @ComProperty
+        int getTop();
+        
+        @ComProperty
+        void setTop(int value);
+        
+        @ComProperty
+        int getLeft();
+        
+        @ComProperty
+        void setLeft(int value);
+        
+        @ComProperty
+        String getName();
+        
+        @ComProperty
+        void setName(String name);
+        
+        @ComProperty
+        void setAddress(String name);
 }

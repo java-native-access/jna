@@ -40,4 +40,10 @@ public interface ComIApplication {
 	@ComMethod
 	void Quit();
 	
+        /**
+         * <p>
+         * id(0x172)</p>
+         */
+        @ComMethod(name = "InchesToPoints", dispId = 0x172)
+        Float InchesToPoints(Float Inches);
 }
