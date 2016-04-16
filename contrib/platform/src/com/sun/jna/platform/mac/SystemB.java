@@ -168,6 +168,15 @@ public interface SystemB extends Library {
      * @return the host's name port
      */
     int mach_host_self();
+    
+    /**
+     * The mach_task_self system call returns the calling thread's task_self
+     * port. It has an effect equivalent to receiving a send right for the task's
+     * kernel port.  
+     *
+     * @return the task's kernel port
+     */
+    int mach_task_self();
 
     /**
      * The host_page_size function returns the page size for the given host.
@@ -333,4 +342,20 @@ public interface SystemB extends Library {
      */
     int host_processor_info(int machPort, int flavor, IntByReference procCount,
         PointerByReference procInfo, IntByReference procInfoCount);
+    
+    /**
+     * The getloadavg() function returns the number of processes in the system
+     * run queue averaged over various periods of time.  Up to nelem samples are
+     * retrieved and assigned to successive elements of loadavg[].  The system
+     * imposes a maximum of 3 samples, representing averages over the last 1, 5,
+     * and 15 minutes, respectively.
+     * @param loadavg
+     *            An array of doubles which will be filled with the results
+     * @param nelem
+     *            Number of samples to return
+     * @return If the load average was unobtainable, -1 is returned; otherwise, 
+     * the number of samples actually retrieved is returned.
+     * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
+     */
+    int getloadavg(double[] loadavg, int nelem);
 }

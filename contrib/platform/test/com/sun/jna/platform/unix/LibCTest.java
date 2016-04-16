@@ -48,4 +48,14 @@ public class LibCTest extends AbstractUnixTestSupport {
             LibC.INSTANCE.unsetenv(name);
         }
     }
+    
+    @Test
+    public void testGetLoadAvg() {
+        double[] loadavg = new double[3];
+        int retval = LibC.INSTANCE.getloadavg(loadavg, 3);
+        assertEquals(retval, 3);
+        assertTrue(loadavg[0] >= 0);
+        assertTrue(loadavg[1] >= 0);
+        assertTrue(loadavg[2] >= 0);
+    }
 }
