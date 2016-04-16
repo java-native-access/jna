@@ -152,7 +152,23 @@ public class SystemBTest extends TestCase {
 		assertEquals(procCpuLoadInfo.getValue().getIntArray(0,
 				procInfoCount.getValue()).length, procInfoCount.getValue());
 	}
+	
+    public void testMachPorts() {
+      int machPort = SystemB.INSTANCE.mach_host_self();
+      assertTrue(machPort > 0);
+      machPort = SystemB.INSTANCE.mach_task_self();
+      assertTrue(machPort > 0);	  
+      }
 
+    public void testGetLoadAvg() {
+      double[] loadavg = new double[3];
+      int retval = SystemB.INSTANCE.getloadavg(loadavg, 3);
+      assertEquals(retval, 3);
+      assertTrue(loadavg[0] >= 0);
+      assertTrue(loadavg[1] >= 0);
+      assertTrue(loadavg[2] >= 0);
+    }
+	
 	public static void main(java.lang.String[] argList) {
 		junit.textui.TestRunner.run(SystemBTest.class);
 	}
