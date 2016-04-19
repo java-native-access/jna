@@ -24,6 +24,8 @@ import org.junit.Test;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Psapi.MODULEINFO;
+import com.sun.jna.platform.win32.Psapi.PERFORMANCE_INFORMATION;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -223,5 +225,12 @@ public class PsapiTest {
                 throw we;
             }
         }
+    }
+	
+    @Test
+    public void testGetPerformanceInfo() {
+        PERFORMANCE_INFORMATION perfInfo = new PERFORMANCE_INFORMATION();
+        assertTrue(Psapi.INSTANCE.GetPerformanceInfo(perfInfo, perfInfo.size()));
+        assertTrue(perfInfo.ProcessCount.intValue() > 0);
     }
 }

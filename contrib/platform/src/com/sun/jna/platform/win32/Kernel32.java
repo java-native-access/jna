@@ -218,6 +218,15 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int GetTickCount();
 
     /**
+     * The GetTickCount64 function retrieves the number of milliseconds that 
+     * have elapsed since the system was started.
+     *
+     * @return Number of milliseconds that have elapsed since the system was
+     *         started.
+     */
+    long GetTickCount64();
+  
+    /**
      * The GetCurrentThreadId function retrieves the thread identifier of the
      * calling thread.
      *

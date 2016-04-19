@@ -378,6 +378,14 @@ public class Kernel32Test extends TestCase {
         assertTrue(tick2 > tick1 || tick3 > tick2);
     }
 
+    public void testGetTickCount64() throws InterruptedException {
+        long tick1 = Kernel32.INSTANCE.GetTickCount64();
+        Thread.sleep(10);
+        long tick2 = Kernel32.INSTANCE.GetTickCount64();
+
+        assertTrue(tick2 > tick1);
+    }
+
     public void testGetVersion() {
         DWORD version = Kernel32.INSTANCE.GetVersion();
         assertTrue("Version high should be non-zero: 0x" + Integer.toHexString(version.getHigh().intValue()), version.getHigh().intValue() != 0);
