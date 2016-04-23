@@ -15,6 +15,8 @@ package com.sun.jna.platform.win32.COM.util;
 import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
+import java.io.File;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,8 +43,53 @@ public class ProxyObject_Test {
 		
 		@ComMethod
 		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
+
+		@ComMethod
+		public void Quit(Object... someArgs);
+
+		@ComMethod(dispId = 0x00000183)
+		public float PointsToPixels(float points, Object... someArgs);
+
+		@ComProperty(dispId = 0x00000006)
+		public Documents getDocuments();
 	}	
-	
+
+	@ComInterface(iid = "{0002096C-0000-0000-C000-000000000046}")
+	public interface Documents extends IDispatch {
+		@ComMethod
+		public _Document Add(Object template, Object newTemplate, Object documentType, Object visible);
+
+		@ComMethod
+		public _Document Add(Object... someArgs);
+	}
+
+	@ComInterface(iid = "{0002096B-0000-0000-C000-000000000046}")
+	public interface _Document extends IDispatch {
+		@ComMethod
+		public void SaveAs(Object fileName, Object fileFormat, Object lockComments, Object password,
+		        Object addToRecentFiles, Object writePassword, Object readOnlyRecommended, Object embedTrueTypeFonts,
+		        Object saveNativePictureFormat, Object saveFormsData, Object saveAsAOCELetter, Object encoding,
+		        Object insertLineBreaks, Object allowSubstitutions, Object lineEnding, Object addBiDiMarks);
+
+		@ComMethod
+		public void SaveAs(Object... someArgs);
+	}
+
+	public enum WdSaveFormat implements IComEnum {
+		wdFormatDocument(0), wdFormatText(2), wdFormatRTF(6), wdFormatHTML(8), wdFormatPDF(17);
+
+		private long _value;
+
+		private WdSaveFormat(long value) {
+			_value = value;
+		}
+
+		@Override
+		public long getValue() {
+			return _value;
+		}
+	}
+
 	@ComObject(progId="Word.Application")
 	interface MsWordApp extends Application {
 	}
@@ -116,4 +163,27 @@ public class ProxyObject_Test {
 		
 	}
 	
+	@Test
+	public void testVarargsCallWithoutVarargParameter() {
+		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
+
+		// call must work without exception:
+		float f = comObj.PointsToPixels(25.3f);
+		comObj.Quit();
+	}
+
+	@Test
+	public void testVarargsCallWithParameter() {
+		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
+
+		Documents documents = comObj.getDocuments();
+		_Document myDocument = documents.Add();
+
+		String path = new File(".").getAbsolutePath();
+		myDocument.SaveAs(path + "\\abcdefg", WdSaveFormat.wdFormatPDF);
+		comObj.Quit();
+
+		boolean wasDeleted = new File("abcdefg.pdf").delete();
+		assertTrue(wasDeleted);
+	}
 }
