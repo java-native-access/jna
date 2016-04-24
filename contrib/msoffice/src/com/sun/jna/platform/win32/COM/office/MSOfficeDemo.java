@@ -2,8 +2,11 @@ package com.sun.jna.platform.win32.COM.office;
 
 import java.io.File;
 
-import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 
 public class MSOfficeDemo {
 
@@ -18,8 +21,14 @@ public class MSOfficeDemo {
             + File.separator;
 
     public MSOfficeDemo() {
-        //this.testMSWord();
-         this.testMSExcel();
+        HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
+        COMUtils.checkRC(hr);
+        try {
+            // this.testMSWord();
+            this.testMSExcel();
+        } finally {
+            Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
     public void testMSWord() {
@@ -113,6 +122,7 @@ public class MSOfficeDemo {
             msExcel.insertValue("A1", "Hello from JNA!");
             // close and save the active sheet
             msExcel.closeActiveWorkbook(true);
+            msExcel.quit();
         } catch (Exception e) {
             e.printStackTrace();
 
