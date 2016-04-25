@@ -1151,4 +1151,11 @@ public class Kernel32Test extends TestCase {
             }
         }
     }
+    
+    public void testSetErrorMode() {
+        // Set bit flags to 0x0001
+        int previousMode = Kernel32.INSTANCE.SetErrorMode(0x0001);
+        // Restore to previous state; 0x0001 is now "previous"
+        assertEquals(Kernel32.INSTANCE.SetErrorMode(previousMode), 0x0001);
+    }
 }
