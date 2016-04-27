@@ -17,6 +17,8 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
@@ -32,7 +34,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Psapi extends StdCallLibrary {
     Psapi INSTANCE = Native.loadLibrary("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
-
+    
     /**
      * Retrieves the fully qualified path for the file containing the specified
      * module.
@@ -234,12 +236,56 @@ public interface Psapi extends StdCallLibrary {
      */
     int GetProcessImageFileName(HANDLE hProcess, char[] lpImageFileName, int nSize);
 
+
+    /**
+     * Retrieves the performance values contained in the
+     * {@link PERFORMANCE_INFORMATION} structure.
+     * 
+     * @param pPerformanceInformation
+     *            A pointer to a {@link PERFORMANCE_INFORMATION} structure that
+     *            receives the performance information.
+     * @param cb
+     *            The size of the {@link PERFORMANCE_INFORMATION} structure, in
+     *            bytes.
+     * @return If the function succeeds, the return value is TRUE. If the
+     *         function fails, the return value is FALSE. To get extended error
+     *         information, call {@link Kernel32Util#getLastErrorMessage()}.
+     * @see <a href="http://msdn.microsoft.com/en-us/library/ms683210(VS.85).aspx">MSDN</a>
+     */
+    boolean GetPerformanceInfo(PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
+    
     class MODULEINFO extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("lpBaseOfDll", "SizeOfImage", "EntryPoint");
 
         public Pointer EntryPoint;
         public Pointer lpBaseOfDll;
         public int     SizeOfImage;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
+    class PERFORMANCE_INFORMATION extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("cb", "CommitTotal", "CommitLimit", 
+            "CommitPeak", "PhysicalTotal", "PhysicalAvailable", "SystemCache", "KernelTotal", "KernelPaged",
+            "KernelNonpaged", "PageSize", "HandleCount", "ProcessCount", "ThreadCount");
+
+        public DWORD cb;
+        public SIZE_T CommitTotal;
+        public SIZE_T CommitLimit;
+        public SIZE_T CommitPeak;
+        public SIZE_T PhysicalTotal;
+        public SIZE_T PhysicalAvailable;
+        public SIZE_T SystemCache;
+        public SIZE_T KernelTotal;
+        public SIZE_T KernelPaged;
+        public SIZE_T KernelNonpaged;
+        public SIZE_T PageSize;
+        public DWORD HandleCount;
+        public DWORD ProcessCount;
+        public DWORD ThreadCount;
 
         @Override
         protected List<String> getFieldOrder() {
