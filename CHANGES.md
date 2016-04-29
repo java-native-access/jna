@@ -50,6 +50,7 @@ Features
 * [#639](https://github.com/java-native-access/jna/pull/639): Add getloadavg() to OS X and Unix - [@dbwiddis](https://github.com/dbwiddis).
 * [#640](https://github.com/java-native-access/jna/pull/640): Add `com.sun.jna.platform.win32.Psapi.GetPerformanceInfo()`, `com.sun.jna.platform.win32.Kernel32.GetTickCount64()`, and `com.sun.jna.platform.win32.Kernel32.SetErrorMode()` - [@dbwiddis](https://github.com/dbwiddis).
 * [#642](https://github.com/java-native-access/jna/pull/642): COM calls with variable number of arguments (varargs) are now supported - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
+* [#644](https://github.com/java-native-access/jna/pull/644): New ant target 'install' for installing JNA artifacts in local m2-repository - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
 
 Bug Fixes
 ---------

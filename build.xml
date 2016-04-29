@@ -1176,6 +1176,24 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </subant>
   </target>
 
+  <target name="install" depends="dist" description="Install jna and jna-platform artifacts into local maven repository">
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${dist-jar}"/>
+      <arg value="-Dsources=${maven-sources-jar}"/>
+      <arg value="-Djavadoc=${maven-javadoc-jar}"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom-platform}"/>
+      <arg value="-Dfile=${platform-jar}"/>
+      <arg value="-Dsources=${platform-sources-jar}"/>
+      <arg value="-Djavadoc=${platform-javadoc-jar}"/>
+    </artifact:mvn>
+  </target>
+
 
   <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
   <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
