@@ -29,9 +29,7 @@ public class MSWord extends COMLateBindingObject {
         this.invokeNoReply("Add", getDocuments());
     }
 
-    public void openDocument(String filename, boolean bVisible)
-            throws COMException {
-        // OpenDocument
+    public void openDocument(String filename) throws COMException {
         this.invokeNoReply("Open", getDocuments(), new VARIANT(filename));
     }
 
@@ -70,7 +68,6 @@ public class MSWord extends COMLateBindingObject {
     }
 
     public Documents getDocuments() {
-        // GetDocuments
         Documents pDocuments = new Documents(this.getAutomationProperty(
                 "Documents", this.getApplication().getIDispatch()));
 

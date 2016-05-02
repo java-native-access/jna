@@ -12,57 +12,69 @@
  */
 package com.sun.jna.platform.win32.COM.util.office;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.COM.Helper;
 import java.io.File;
 
-import com.sun.jna.platform.win32.COM.office.MSExcel;
 import com.sun.jna.platform.win32.COM.util.AbstractComEventCallbackListener;
 import com.sun.jna.platform.win32.COM.util.Factory;
+import com.sun.jna.platform.win32.COM.util.IComEventCallbackCookie;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComExcel_Application;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIAppEvents;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIApplication;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIRange;
+import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorkbook;
 import com.sun.jna.platform.win32.COM.util.office.excel.ComIWorksheet;
-import com.sun.jna.platform.win32.COM.util.office.word.ComWord_Application;
+import com.sun.jna.platform.win32.Ole32;
+import java.io.IOException;
 
 public class MSOfficeExcelDemo {
+        private static final String currentWorkingDir = new File("").getAbsolutePath() + File.separator;
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		new MSOfficeExcelDemo();
-	}
-
-	private String currentWorkingDir = new File("").getAbsolutePath() + File.separator;
-
-	public MSOfficeExcelDemo() {
-		this.testMSExcel();
-	}
-
-	public void testMSExcel() {
-		ComExcel_Application excelObject = null;
-		ComIApplication msExcel = null;
-		Factory factory = null;
+	public static void main(String[] argv) throws IOException {
+            Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+            try {
+                testExcel();
+            } finally {
+                Ole32.INSTANCE.CoUninitialize();
+            }
+        }
+        
+        public static void testExcel() throws IOException {
+                File demoDocument = null;
+                ComIApplication msExcel = null;
+		Factory factory = new Factory();
 		try {
-			factory = new Factory();
-			excelObject = factory.createObject(ComExcel_Application.class);
+                        System.out.println("Files in temp dir: " + Helper.tempDir.getAbsolutePath());
+                        
+			ComExcel_Application excelObject = factory.createObject(ComExcel_Application.class);
 			msExcel = excelObject.queryInterface(ComIApplication.class);
+                        
 			System.out.println("MSExcel version: " + msExcel.getVersion());
+                        
 			msExcel.setVisible(true);
-			// msExcel.newExcelBook();
-			msExcel.getWorkbooks().Open(currentWorkingDir + "jnatest.xls");
+                        
+                        Helper.sleep(5);
+                        
+                        demoDocument = Helper.createNotExistingFile("jnatest", ".xls");
+                        Helper.extractClasspathFileToReal("/com/sun/jna/platform/win32/COM/util/office/resources/jnatest.xls", demoDocument);
+                        
+                        ComIWorkbook workbook = msExcel.getWorkbooks().Open(demoDocument.getAbsolutePath());
 			msExcel.getActiveSheet().getRange("A1").setValue("Hello from JNA!");
 			// wait 1sec. before closing
-			Thread.currentThread().sleep(1000);
-//			// close and save the active sheet
-//			msExcel.getActiveWorkbook().Close(true);
-//			msExcel.setVisible(true);
+			Helper.sleep(1);
+			// Save document into temp and close
+                        File output = new File(Helper.tempDir, "jnatest.xls");
+                        output.delete();
+                        workbook.SaveAs(output.getAbsolutePath());
+			msExcel.getActiveWorkbook().Close(false);
+
 //			// msExcel.newExcelBook();
-//			msExcel.getWorkbooks().Open(currentWorkingDir + "jnatest.xls");
-//			msExcel.getActiveSheet().getRange("A2").setValue("Hello again from JNA!");
+			msExcel.getWorkbooks().Open(output.getAbsolutePath());
+			msExcel.getActiveSheet().getRange("A2").setValue("Hello again from JNA!");
 
 			class Listener extends AbstractComEventCallbackListener implements ComIAppEvents {
-				boolean SheetSelectionChange_called;
+				volatile boolean SheetSelectionChange_called;
 				
 				@Override
 				public void errorReceivingCallbackEvent(String message, Exception exception) {
@@ -75,26 +87,32 @@ public class MSOfficeExcelDemo {
 				
 			};
 			Listener listener = new Listener();
-			msExcel.advise(ComIAppEvents.class, listener);
-//			
-//			msExcel.getActiveSheet().getRange("A5").Activate();
-//			
-//			Thread.currentThread().sleep(500);
+			IComEventCallbackCookie cookie = msExcel.advise(ComIAppEvents.class, listener);
 			
-			// close and save the active sheet
-			msExcel.getActiveWorkbook().Close(true);
+                        Helper.sleep(1);
+                        
+			msExcel.getActiveSheet().getRange("A5").Activate();
 			
-			msExcel.Quit();
-			msExcel = null;
-		} catch (Exception e) {
-			e.printStackTrace();
+			Helper.sleep(1);
+                        
+                        msExcel.unadvise(ComIAppEvents.class, cookie);
+			
+                        System.out.println("Listener was fired: " + listener.SheetSelectionChange_called);
+                        
+			// close and discard changes
+			msExcel.getActiveWorkbook().Close(false);
 		} finally {
+                        // Make sure the excel instance is shut down
 			if (null != msExcel) {
 				msExcel.Quit();
 			}
-			if (null != factory) {
-				factory.disposeAll();
-			}
+                        
+                        // Release all objects acquired by the factory
+                        factory.disposeAll();
+                        
+                        if (demoDocument != null && demoDocument.exists()) {
+                            demoDocument.delete();
+                        }
 		}
 	}
 }

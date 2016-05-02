@@ -29,4 +29,10 @@ public interface ComIApplication extends IUnknown, IConnectionPoint {
 
 	@ComMethod
 	void Quit();
+        
+        @ComProperty
+        boolean getUserControl();
+        
+        @ComProperty
+        void setUserControl(boolean value);
 }
