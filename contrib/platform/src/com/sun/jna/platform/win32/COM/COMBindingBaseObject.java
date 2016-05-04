@@ -15,6 +15,7 @@ package com.sun.jna.platform.win32.COM;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
+import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl;
@@ -74,8 +75,28 @@ public class COMBindingBaseObject extends COMInvoker {
             int dwClsContext) {
         assert COMUtils.comIsInitialized() : "COM not initialized";
         
-        HRESULT hr;
+        init(useActiveInstance, clsid, dwClsContext);
+    }
+
+    public COMBindingBaseObject(String progId, boolean useActiveInstance,
+            int dwClsContext) throws COMException {
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+
+        CLSID.ByReference clsid = new CLSID.ByReference();
+        HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
+
+        COMUtils.checkRC(hr);
         
+        init(useActiveInstance, clsid, dwClsContext);
+    }
+
+    public COMBindingBaseObject(String progId, boolean useActiveInstance)
+            throws COMException {
+        this(progId, useActiveInstance, WTypes.CLSCTX_SERVER);
+    }
+
+    private void init(boolean useActiveInstance, GUID clsid, int dwClsContext) throws COMException {
+        HRESULT hr;
         if (useActiveInstance) {
             hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
 
@@ -91,59 +112,12 @@ public class COMBindingBaseObject extends COMInvoker {
             hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
                     IDispatch.IID_IDISPATCH, this.pDispatch);
         }
-
-        if (COMUtils.FAILED(hr)) {
-            throw new COMException("COM object with CLSID "
-                    + clsid.toGuidString() + " not registered properly!");
-        }
-
-        this.iDispatch = new Dispatch(this.pDispatch.getValue());
-    }
-
-    public COMBindingBaseObject(String progId, boolean useActiveInstance,
-            int dwClsContext) throws COMException {
-        assert COMUtils.comIsInitialized() : "COM not initialized";
         
-        HRESULT hr;
-
-        // Get CLSID for Word.Application...
-        CLSID.ByReference clsid = new CLSID.ByReference();
-        hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
-
-        if (COMUtils.FAILED(hr)) {
-            throw new COMException("CLSIDFromProgID() failed!");
-        }
-
-        if (useActiveInstance) {
-            hr = OleAuto.INSTANCE.GetActiveObject(clsid, null, this.pUnknown);
-
-            if (COMUtils.SUCCEEDED(hr)) {
-                this.iUnknown = new Unknown(this.pUnknown.getValue());
-                hr = iUnknown.QueryInterface(new REFIID(IDispatch.IID_IDISPATCH),
-                        this.pDispatch);
-            } else {
-                hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                        IDispatch.IID_IDISPATCH, this.pDispatch);
-            }
-        } else {
-            hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
-                    IDispatch.IID_IDISPATCH, this.pDispatch);
-        }
-
-        if (COMUtils.FAILED(hr)) {
-            throw new COMException("COM object with ProgID '" + progId
-                    + "' and CLSID " + clsid.toGuidString()
-                    + " not registered properly!");
-        }
-
+        COMUtils.checkRC(hr);
+        
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
-
-    public COMBindingBaseObject(String progId, boolean useActiveInstance)
-            throws COMException {
-        this(progId, useActiveInstance, WTypes.CLSCTX_SERVER);
-    }
-
+    
     /**
      * Gets the i dispatch.
      *
