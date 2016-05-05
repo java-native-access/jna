@@ -595,8 +595,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		// Handle special-case for property-puts!
 		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
-			dp.cNamedArgs = new UINT(_argsLen);
-			dp.rgdispidNamedArgs = new DISPIDByReference(OaIdl.DISPID_PROPERTYPUT);
+			dp.setRgdispidNamedArgs(new DISPID[] {OaIdl.DISPID_PROPERTYPUT});
 		}
                 
                 // Apply "fix" according to
@@ -631,9 +630,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
 		// Build DISPPARAMS
 		if (_argsLen > 0) {
-			dp.cArgs = new UINT(_args.length);
-			// make pointer of variant array
-			dp.rgvarg = new VariantArg.ByReference(_args);
+			dp.setArgs(_args);
 
 			// write 'DISPPARAMS' structure to memory
 			dp.write();

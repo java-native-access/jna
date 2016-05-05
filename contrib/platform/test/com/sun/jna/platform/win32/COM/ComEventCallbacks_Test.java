@@ -92,9 +92,6 @@ public class ComEventCallbacks_Test {
     public void after() {
         // Shutdown Internet Explorer
         DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
-        pDispParams.cArgs = new UINT(0);
-        pDispParams.cNamedArgs = new UINT(0);
-        pDispParams.rgvarg = null;
         VARIANT.ByReference pVarResult = new VARIANT.ByReference();
         IntByReference puArgErr = new IntByReference();
         EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();        
@@ -196,27 +193,24 @@ public class ComEventCallbacks_Test {
                 VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
                 IntByReference puArgErr) {
 
-            // @toDo: Move setArraySize into invoke method
-            if (pDispParams.rgvarg != null && pDispParams.cArgs.intValue() > 0) {
-                pDispParams.rgvarg.setArraySize(pDispParams.cArgs.intValue());
-            }
+            VARIANT[] arguments = pDispParams.getArgs();
 
             try {
                 switch (dispIdMember.intValue()) {
                     case DISPID_NavigateComplete2:
                         navigateComplete2Called = true;
                         // URL ist passed as VARIANT$ByReference
-                        VARIANT urlByRef = pDispParams.rgvarg.variantArg[0];
+                        VARIANT urlByRef = arguments[0];
                         navigateComplete2String = ((VARIANT) urlByRef.getValue()).stringValue();
                         break;
                     case DISPID_BeforeNavigate2:
-                        VARIANT Cancel = pDispParams.rgvarg.variantArg[0];
-                        VARIANT Headers = pDispParams.rgvarg.variantArg[1];
-                        VARIANT PostData = pDispParams.rgvarg.variantArg[2];
-                        VARIANT TargetFrameName = pDispParams.rgvarg.variantArg[3];
-                        VARIANT Flags = pDispParams.rgvarg.variantArg[4];
-                        VARIANT URL = pDispParams.rgvarg.variantArg[5];
-                        VARIANT pDisp = pDispParams.rgvarg.variantArg[6];
+                        VARIANT Cancel = arguments[0];
+                        VARIANT Headers = arguments[1];
+                        VARIANT PostData = arguments[2];
+                        VARIANT TargetFrameName = arguments[3];
+                        VARIANT Flags = arguments[4];
+                        VARIANT URL = arguments[5];
+                        VARIANT pDisp = arguments[6];
                         VARIANT_BOOLByReference cancelValue = ((VARIANT_BOOLByReference) Cancel.getValue());
                         if (blockNavigation) {
                             cancelValue.setValue(Variant.VARIANT_TRUE);
@@ -280,11 +274,8 @@ public class ComEventCallbacks_Test {
         DISPPARAMS.ByReference pDispParams;
 
         pDispParams = new DISPPARAMS.ByReference();
-        pDispParams.cArgs = new UINT(1);
-        pDispParams.cNamedArgs = new UINT(1);
-        pDispParams.rgvarg = new Variant.VariantArg.ByReference(new VARIANT[1]);
-        pDispParams.rgvarg.variantArg[0] = new VARIANT(true);
-        pDispParams.rgdispidNamedArgs = new DISPIDByReference(new DISPID(OaIdl.DISPID_PROPERTYPUT.intValue()));
+        pDispParams.setArgs(new VARIANT[] {new VARIANT(true)});
+        pDispParams.setRgdispidNamedArgs(new DISPID[] {OaIdl.DISPID_PROPERTYPUT});
         // Visible-Prioperty
         hr = ieDispatch.Invoke(dispIdVisible.getValue(), niid, lcid, propertyPutFlags, pDispParams, null, null, null);
         COMUtils.checkRC(hr);
@@ -319,11 +310,9 @@ public class ComEventCallbacks_Test {
         String navigateURL = "https://github.com/java-native-access/jna";
         String blockedURL = "http://www.google.de";
 
+        VARIANT[] arguments = new VARIANT[] {new VARIANT(navigateURL)};
         pDispParams = new DISPPARAMS.ByReference();
-        pDispParams.cArgs = new UINT(1);
-        pDispParams.cNamedArgs = new UINT(0);
-        pDispParams.rgvarg = new Variant.VariantArg.ByReference(new VARIANT[1]);
-        pDispParams.rgvarg.variantArg[0] = new VARIANT(navigateURL);
+        pDispParams.setArgs(arguments);
         hr = ieDispatch.Invoke(dispIdNavigate.getValue(), niid, lcid, methodFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
 
@@ -343,11 +332,9 @@ public class ComEventCallbacks_Test {
         listener.navigateComplete2String = null;
         listener.blockNavigation = true;
 
+        arguments = new VARIANT[]{new VARIANT(blockedURL)};
         pDispParams = new DISPPARAMS.ByReference();
-        pDispParams.cArgs = new UINT(1);
-        pDispParams.cNamedArgs = new UINT(0);
-        pDispParams.rgvarg = new Variant.VariantArg.ByReference(new VARIANT[1]);
-        pDispParams.rgvarg.variantArg[0] = new VARIANT(blockedURL);
+        pDispParams.setArgs(arguments);
         hr = ieDispatch.Invoke(dispIdNavigate.getValue(), niid, lcid, methodFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
 

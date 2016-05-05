@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Memory;
 import java.util.List;
 
 import com.sun.jna.Native;
@@ -19,7 +20,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.OaIdl.DISPIDByReference;
+import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAYBOUND;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -563,15 +564,61 @@ public interface OleAuto extends StdCallLibrary {
 		/** The rgvarg. */
 		public VariantArg.ByReference rgvarg;
 
-		/** The rgdispid named args. */
-		public DISPIDByReference rgdispidNamedArgs;
+                /** The rgdispid named args. */
+                public Pointer rgdispidNamedArgs = Pointer.NULL;
 
-		/** The c args. */
-		public UINT cArgs;
+		/** The c args. - use setArgs to update arguments */
+		public UINT cArgs = new UINT(0);
 
-		/** The c named args. */
-		public UINT cNamedArgs;
+		/** The c named args. - use setRgdispidNamedArgs to update named arguments map */
+		public UINT cNamedArgs = new UINT(0);
 
+                public DISPID[] getRgdispidNamedArgs() {
+                        DISPID[] namedArgs = null;
+                        int count = cNamedArgs.intValue();
+                        if(rgdispidNamedArgs != null && count > 0) {
+                            int[] rawData = rgdispidNamedArgs.getIntArray(0, count);
+                            namedArgs = new DISPID[count];
+                            for(int i = 0; i < count; i++) {
+                                namedArgs[i] = new DISPID(rawData[i]);
+                            }
+                        } else {
+                            namedArgs = new DISPID[0];
+                        }
+                        return namedArgs;
+                }
+                
+                public void setRgdispidNamedArgs(DISPID[] namedArgs) {
+                        if(namedArgs == null) {
+                            namedArgs = new DISPID[0];
+                        }
+                        cNamedArgs = new UINT(namedArgs.length);
+                        rgdispidNamedArgs = new Memory(DISPID.SIZE * namedArgs.length);
+                        int[] rawData = new int[namedArgs.length];
+                        for(int i = 0; i < rawData.length; i++) {
+                            rawData[i] = namedArgs[i].intValue();
+                        }
+                        rgdispidNamedArgs.write(0, rawData, 0, namedArgs.length);
+                }
+                
+                public VARIANT[] getArgs() {
+                        if(this.rgvarg != null) {
+                            this.rgvarg.setArraySize(cArgs.intValue());
+                            return this.rgvarg.variantArg;
+                        } else {
+                            return new VARIANT[0];
+                        }
+                }
+                
+                public void setArgs(VARIANT[] arguments) {
+                        if(arguments == null) {
+                            arguments = new VARIANT[0];
+                        }
+                        
+                        rgvarg = new VariantArg.ByReference(arguments);
+                        cArgs = new UINT(arguments.length);
+                }
+                
 		/**
 		 * Instantiates a new dispparams.
 		 */
