@@ -1747,8 +1747,10 @@ public abstract class Structure {
             typeInfoMap.put(Pointer.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(String.class, FFITypes.ffi_type_pointer);
             typeInfoMap.put(WString.class, FFITypes.ffi_type_pointer);
-            typeInfoMap.put(boolean.class, FFITypes.ffi_type_uint8);
-            typeInfoMap.put(Boolean.class, FFITypes.ffi_type_uint8);
+            Pointer btype = Native.BOOL_SIZE == 1
+                ? FFITypes.ffi_type_uint8 : FFITypes.ffi_type_uint32
+            typeInfoMap.put(boolean.class, FFITypes.btype);
+            typeInfoMap.put(Boolean.class, FFITypes.btype);
         }
         // From ffi.h
         private static final int FFI_TYPE_STRUCT = 13;
