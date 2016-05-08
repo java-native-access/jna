@@ -26,12 +26,12 @@ import org.junit.BeforeClass;
 // Untested: Proxy
 public class ConvertTest {
 
-    private static Factory fact;
+    private static ObjectFactory fact;
 
     @BeforeClass
     public static void init() {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-        fact = new Factory();
+        fact = new ObjectFactory();
     }
 
     @AfterClass

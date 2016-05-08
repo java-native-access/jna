@@ -27,7 +27,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.Ole32;
 
-public class ProxyObject_Test {
+public class ProxyObjectObjectFactory_Test {
 
         static {
                 ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
@@ -94,12 +94,12 @@ public class ProxyObject_Test {
 	interface MsWordApp extends Application {
 	}
 	
-	Factory factory;
+	ObjectFactory factory;
         
 	@Before
 	public void before() {
                 Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-		this.factory = new Factory();
+		this.factory = new ObjectFactory();
 		//ensure there are no word applications running.
 		while(true) {
 			try {

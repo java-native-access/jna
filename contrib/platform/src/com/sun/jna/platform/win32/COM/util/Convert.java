@@ -133,7 +133,7 @@ class Convert {
 		}
 	}
 	
-	public static Object toJavaObject(VARIANT value, Class<?> targetClass, Factory factory, boolean addReference, boolean freeValue) {
+	public static Object toJavaObject(VARIANT value, Class<?> targetClass, ObjectFactory factory, boolean addReference, boolean freeValue) {
 		if (null==value 
                         || value.getVarType().intValue() == VT_EMPTY 
                         || value.getVarType().intValue() == VT_NULL) {

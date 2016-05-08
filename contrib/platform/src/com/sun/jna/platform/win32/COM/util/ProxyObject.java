@@ -71,10 +71,10 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	// an identical pointer value
 	private long unknownId;
 	private final Class<?> theInterface;
-	private final Factory factory;
+	private final ObjectFactory factory;
 	private final com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
     
-	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, Factory factory) {
+	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, ObjectFactory factory) {
 		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
 		this.theInterface = theInterface;
@@ -276,8 +276,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			final ConnectionPoint rawCp = this.fetchRawConnectionPoint(iid);
 
 			// create the dispatch listener
-			final IDispatchCallback rawListener = new CallbackProxy(this.factory, comEventCallbackInterface,
-					comEventCallbackListener);
+			final IDispatchCallback rawListener = factory.createDispatchCallback(comEventCallbackInterface, comEventCallbackListener);
 			// store it the comEventCallback argument, so it is not garbage
 			// collected.
 			comEventCallbackListener.setDispatchCallbackListener(rawListener);

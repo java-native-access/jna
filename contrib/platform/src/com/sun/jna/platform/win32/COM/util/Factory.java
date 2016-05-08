@@ -10,223 +10,163 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
  */
+
 package com.sun.jna.platform.win32.COM.util;
 
-import java.lang.reflect.Proxy;
-
-import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.COM.IDispatch;
+import com.sun.jna.platform.win32.COM.IDispatchCallback;
+import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.Guid;
+import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OleAuto;
-import com.sun.jna.platform.win32.WTypes;
+import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.Dispatch;
-import com.sun.jna.platform.win32.COM.IDispatch;
-import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
-import com.sun.jna.platform.win32.Kernel32;
-import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.ptr.PointerByReference;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import com.sun.jna.ptr.IntByReference;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
-public class Factory {        
-	/**
-	 * Factory keeps track of COM objects - all objects created with this
-         * factory can be disposed by calling {@link Factory#disposeAll() }.
-	 */
-	public Factory() {
-            assert COMUtils.comIsInitialized() : "COM not initialized";
-	}
-	
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			this.disposeAll();
-		} finally {
-			super.finalize();
-		}
-	}
+/**
+ * Factory is intended as a simpler to use version of ObjectFactory.
+ * 
+ * <p>The Factory abstracts the necessity to handle COM threading by introducing
+ * a dispatching thread, that is correctly COM initialized and is used to handle
+ * all outgoing calls.</p>
+ * 
+ * <p><b>NOTE:</b> Remember to call factory.getComThread().terminate() at some
+ * appropriate point, when the factory is not used anymore</p>
+ */
+public class Factory extends ObjectFactory {
 
-	/**
-	 * CoInitialize must be called be fore this method. Either explicitly or
-	 * implicitly via other methods.
-	 * 
-	 * @return running object table
-	 */
-	public IRunningObjectTable getRunningObjectTable() {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-                final PointerByReference rotPtr = new PointerByReference();
+    private ComThread comThread;
 
-                HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
+    public Factory() {
+        this(new ComThread("Default Factory COM Thread", 5000, new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                //ignore
+            }
+        }));
+    }
 
-                COMUtils.checkRC(hr);
-                com.sun.jna.platform.win32.COM.RunningObjectTable raw = new com.sun.jna.platform.win32.COM.RunningObjectTable(
-                        rotPtr.getValue());
-                IRunningObjectTable rot = new RunningObjectTable(raw, this);
-                return rot;
+    public Factory(ComThread comThread) {
+        this.comThread = comThread;
+    }
+
+    private class ProxyObject2 implements InvocationHandler {
+
+        private final Object delegate;
+
+        public ProxyObject2(Object delegate) {
+            this.delegate = delegate;
         }
 
-	/**
-	 * Creates a ProxyObject for the given interface and IDispatch pointer.
-	 * 
-	 */
-	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
-		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
-		T result = comInterface.cast(proxy);
-		return result;
-	}
-	
-	/**
-	 * Creates a new COM object (CoCreateInstance) for the given progId and
-	 * returns a ProxyObject for the given interface.
-	 */
-	public <T> T createObject(Class<T> comInterface) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-                if (null == comObectAnnotation) {
-                        throw new COMException(
-                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-                }
-                final GUID guid = this.discoverClsId(comObectAnnotation);
-
-                final PointerByReference ptrDisp = new PointerByReference();
-                WinNT.HRESULT hr = Ole32.INSTANCE.CoCreateInstance(guid, null,
-                        WTypes.CLSCTX_SERVER, IDispatch.IID_IDISPATCH, ptrDisp);
-
-                COMUtils.checkRC(hr);
-                Dispatch d = new Dispatch(ptrDisp.getValue());
-                T t = this.createProxy(comInterface,d);
-                //CoCreateInstance returns a pointer to COM object with a +1 reference count, so we must drop one
-                //Note: the createProxy adds one
-                int n = d.Release();
-                return t;
-	}
-
-	/**
-	 * Gets and existing COM object (GetActiveObject) for the given progId and
-	 * returns a ProxyObject for the given interface.
-	 */
-	public <T> T fetchObject(Class<T> comInterface) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-                ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
-                if (null == comObectAnnotation) {
-                        throw new COMException(
-                                        "createObject: Interface must define a value for either clsId or progId via the ComInterface annotation");
-                }
-                final GUID guid = this.discoverClsId(comObectAnnotation);
-
-                final PointerByReference ptrDisp = new PointerByReference();
-                WinNT.HRESULT hr = OleAuto.INSTANCE.GetActiveObject(guid, null, ptrDisp);
-
-                COMUtils.checkRC(hr);
-                Dispatch d = new Dispatch(ptrDisp.getValue());
-                T t = this.createProxy(comInterface, d);
-                //GetActiveObject returns a pointer to COM object with a +1 reference count, so we must drop one
-                //Note: the createProxy adds one
-                d.Release();
-
-                return t;
-	}
-
-	GUID discoverClsId(ComObject annotation) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-                String clsIdStr = annotation.clsId();
-                final String progIdStr = annotation.progId();
-                if (null != clsIdStr && !clsIdStr.isEmpty()) {
-                        return new CLSID(clsIdStr);
-                } else if (null != progIdStr && !progIdStr.isEmpty()) {
-                        final CLSID.ByReference rclsid = new CLSID.ByReference();
-
-                        WinNT.HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progIdStr, rclsid);
-
-                        COMUtils.checkRC(hr);
-                        return rclsid;
-                } else {
-                        throw new COMException("ComObject must define a value for either clsId or progId");
-                }
-	}
-
-	// Proxy object release their COM interface reference latest in the
-        // finalize method, which is run when garbadge collection removes the
-        // object.
-        // When the factory is finished, the referenced objects loose their
-        // environment and can't be used anymore. registeredObjects is used
-        // to dispose interfaces even if garbadge collection has not yet collected
-        // the proxy objects.
-	private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<WeakReference<ProxyObject>>();
-	public void register(ProxyObject proxyObject) {
-            synchronized (this.registeredObjects) {
-                this.registeredObjects.add(new WeakReference<ProxyObject>(proxyObject));
-            }
-	}
-	
-	public void unregister(ProxyObject proxyObject) {
-            synchronized (this.registeredObjects) {
-                Iterator<WeakReference<ProxyObject>> iterator = this.registeredObjects.iterator();
-                while(iterator.hasNext()) {
-                    WeakReference<ProxyObject> weakRef = iterator.next();
-                    ProxyObject po = weakRef.get();
-                    if(po == null || po == proxyObject) {
-                        iterator.remove();
+        @Override
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            if (args != null) {
+                for (int i = 0; i < args.length; i++) {
+                    if (args[i] != null
+                            && Proxy.isProxyClass(args[i].getClass())) {
+                        InvocationHandler ih = Proxy.getInvocationHandler(args[i]);
+                        if (ih instanceof ProxyObject2) {
+                            args[i] = ((ProxyObject2) ih).delegate;
+                        }
                     }
                 }
             }
-        }
-	
-	public void disposeAll() {
-            synchronized (this.registeredObjects) {
-                List<WeakReference<ProxyObject>> s = new ArrayList<WeakReference<ProxyObject>>(this.registeredObjects);
-                for(WeakReference<ProxyObject> weakRef : s) {
-                        ProxyObject po = weakRef.get();
-                        if(po != null) {
-                            po.dispose();
-                        }
+
+            return comThread.execute(new Callable<Object>() {
+                @Override
+                public Object call() throws Exception {
+                    return method.invoke(delegate, args);
                 }
-                this.registeredObjects.clear();
+            });
+        }
+    }
+
+    private class CallbackProxy2 extends CallbackProxy {
+
+        public CallbackProxy2(ObjectFactory factory, Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
+            super(factory, comEventCallbackInterface, comEventCallbackListener);
+        }
+
+        @Override
+        public WinNT.HRESULT Invoke(OaIdl.DISPID dispIdMember, Guid.REFIID riid, WinDef.LCID lcid, WinDef.WORD wFlags, OleAuto.DISPPARAMS.ByReference pDispParams, Variant.VARIANT.ByReference pVarResult, OaIdl.EXCEPINFO.ByReference pExcepInfo, IntByReference puArgErr) {
+            // Mark callbacks as COM initialized - so normal inline call
+            // invocation can be used -- see ComThread#
+            ComThread.setComThread(true);
+            try {
+                return super.Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+            } finally {
+                ComThread.setComThread(false);
             }
-	}
-        
-        /**
-         * The Constant LOCALE_USER_DEFAULT.
-         */
-        private final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE.GetUserDefaultLCID();
+        }
+    }
     
-        private LCID LCID;
-        
-        /**
-         * Retrieve the LCID to be used for COM calls. 
-         * 
-         * @return If {@code setLCID} is not called retrieves the users default
-         *         locale, else the set LCID.
-         */
-        public LCID getLCID() {
-            if(LCID != null) {
-                return LCID;
-            } else {
-                return LOCALE_USER_DEFAULT;
+    @Override
+    public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
+        T result = super.createProxy(comInterface, dispatch);
+        ProxyObject2 po2 = new ProxyObject2(result);
+        Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[]{comInterface}, po2);
+        return (T) proxy;
+    }
+
+    @Override
+    Guid.GUID discoverClsId(final ComObject annotation) {
+        return runInComThread(new Callable<Guid.GUID>() {
+            public Guid.GUID call() throws Exception {
+                return Factory.super.discoverClsId(annotation);
             }
+        });
+    }
+
+    @Override
+    public <T> T fetchObject(final Class<T> comInterface) {
+        // Proxy2 is added by createProxy inside fetch Object
+        return runInComThread(new Callable<T>() {
+            public T call() throws Exception {
+                return Factory.super.fetchObject(comInterface);
+            }
+        });
+    }
+
+    @Override
+    public <T> T createObject(final Class<T> comInterface) {
+        // Proxy2 is added by createProxy inside fetch Object
+        return runInComThread(new Callable<T>() {
+            public T call() throws Exception {
+                return Factory.super.createObject(comInterface);
+            }
+        });
+    }
+
+    @Override
+    IDispatchCallback createDispatchCallback(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
+        return new CallbackProxy2(this, comEventCallbackInterface, comEventCallbackListener);
+    }
+    
+    @Override
+    public IRunningObjectTable getRunningObjectTable() {
+        return super.getRunningObjectTable();
+    }
+    
+    private <T> T runInComThread(Callable<T> callable) {
+        try {
+            return comThread.execute(callable);
+        } catch (TimeoutException ex) {
+            throw new RuntimeException(ex);
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex);
+        } catch (ExecutionException ex) {
+            throw new RuntimeException(ex);
         }
-        
-        /**
-         * Set the LCID to use for COM calls.
-         * 
-         * @param value override LCID. NULL resets to default.
-         */
-        public void setLCID(LCID value) {
-            LCID = value;
-        }
+    }
+
+    public ComThread getComThread() {
+        return comThread;
+    }
 }

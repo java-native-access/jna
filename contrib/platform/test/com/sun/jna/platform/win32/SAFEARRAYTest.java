@@ -15,7 +15,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.util.Factory;
+import com.sun.jna.platform.win32.COM.util.ObjectFactory;
 import com.sun.jna.platform.win32.COM.util.IComEnum;
 import com.sun.jna.platform.win32.COM.util.IConnectionPoint;
 import com.sun.jna.platform.win32.COM.util.IUnknown;
@@ -59,6 +59,7 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
+import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
 
 public class SAFEARRAYTest {
     static {
@@ -112,7 +113,7 @@ public class SAFEARRAYTest {
     @Ignore("Only for live testing")
     @Test
     public void testPerformance() {
-        Factory fact = new Factory();
+        ObjectFactory fact = new ObjectFactory();
         
         // Open a record set with a sample search (basicly get the first five
         // entries from the search index
@@ -446,7 +447,7 @@ public class SAFEARRAYTest {
      */
     @Test
     public void testADODB() {
-        Factory fact = new Factory();
+        ObjectFactory fact = new ObjectFactory();
         
         // Open a record set with a sample search (basicly get the first five
         // entries from the search index
