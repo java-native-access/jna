@@ -1103,7 +1103,6 @@ public final class Native implements Version {
         if (NativeMapped.class.isAssignableFrom(cls)) {
             cls = NativeMappedConverter.getInstance(cls).nativeType();
         }
-        // boolean defaults to 8 bit integer if not otherwise mapped
         if (cls == boolean.class || cls == Boolean.class) return BOOL_SIZE;
         if (cls == byte.class || cls == Byte.class) return 1;
         if (cls == short.class || cls == Short.class) return 2;
