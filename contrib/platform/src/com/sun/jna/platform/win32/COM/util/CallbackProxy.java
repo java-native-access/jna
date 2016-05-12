@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
-import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -29,7 +28,6 @@ import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinDef.UINTByReference;
@@ -40,7 +38,6 @@ import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.DispatchListener;
-import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
@@ -49,7 +46,15 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 public class CallbackProxy implements IDispatchCallback {
-
+        // Helper declarations, initialized to default values by jvm
+        private static boolean DEFAULT_BOOLEAN;
+        private static byte DEFAULT_BYTE;
+        private static short DEFAULT_SHORT;
+        private static int DEFAULT_INT;
+        private static long DEFAULT_LONG;
+        private static float DEFAULT_FLOAT;
+        private static double DEFAULT_DOUBLE;
+    
 	public CallbackProxy(Factory factory, Class<?> comEventCallbackInterface,
 			IComEventCallbackListener comEventCallbackListener) {
 		this.factory = factory;
@@ -90,6 +95,11 @@ public class CallbackProxy implements IDispatchCallback {
 				if (-1 == dispId) {
 					dispId = this.fetchDispIdFromName(annotation);
 				}
+                                if(dispId == -1) {
+                                        CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                                            "DISPID for " + meth.getName() + " not found",
+                                            null);
+                                }
 				map.put(new DISPID(dispId), meth);
 			}
 		}
@@ -105,50 +115,105 @@ public class CallbackProxy implements IDispatchCallback {
 	void invokeOnThread(final DISPID dispIdMember, final REFIID riid, LCID lcid, WORD wFlags,
             final DISPPARAMS.ByReference pDispParams) {
 
-            final Method eventMethod;
-            if (CallbackProxy.this.dsipIdMap.containsKey(dispIdMember)) {
-                eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
-                if (eventMethod.getParameterTypes().length != pDispParams.cArgs.intValue()) {
-                    CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
-                            "Trying to invoke method " + eventMethod + " with " + pDispParams.cArgs.intValue() + " arguments",
-                            null);
-                    return;
-                }
-            } else {
+            VARIANT[] arguments = pDispParams.getArgs();
+            
+            final Method eventMethod = CallbackProxy.this.dsipIdMap.get(dispIdMember);
+            if (eventMethod == null) {
                 CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
                         "No method found with dispId = " + dispIdMember, null);
                 return;
             }
+            
+            /**
+             * DISPPARAMs provides two different ways to pass arguments.
+             *
+             * Arguments can be passed as a linear list with all arguments
+             * specified to a certain position (positional) or the position of
+             * an argument can be passed via the rgdispidNamedArgs array
+             * (named).
+             *
+             * pDispParams.rgvarg (length in pDispParams.cArgs) contains all
+             * arguments (named + position based)
+             *
+             * pDispParams.rgdispidNamedArgs (length in pDispParams.cNamedArgs)
+             * contains the named parameters as DISPIDs - the DISPIDs are the
+             * target index in the method signature (zero based).
+             *
+             * Each entry in pDispParams.rgvarg is either position based or name
+             * based and the position bases arguments are passed in reverse
+             * order, so getting this:
+             *
+             * rgvarg = ["arg1", "arg2", "arg3", "arg4", "arg5"]
+             * rgdispidNamedArgs = [3, 4]
+             *
+             * Would lead to this paramater array in the handler:
+             *
+             * ["arg5", "arg4", "arg3", "arg1", "arg2"]
+             *
+             * See also:
+             * https://msdn.microsoft.com/de-de/library/windows/desktop/ms221653%28v=vs.85%29.aspx
+             */   
             
             // Arguments are converted to the JAVA side and IDispatch Interfaces
             // are wrapped into an ProxyObject if so requested.
             //
             // Out-Parameter need to be specified as VARIANT, VARIANT args are
             // not converted, so COM memory allocation rules apply.
-            final Class<?>[] params = eventMethod.getParameterTypes();
-            List<Object> rjargs = new ArrayList<Object>();
-            if (pDispParams.cArgs.intValue() > 0) {
-                VariantArg vargs = pDispParams.rgvarg;
-                vargs.setArraySize(pDispParams.cArgs.intValue());
-                for ( int i = 0; i < vargs.variantArg.length; i++) {
-                    Class targetClass = params[vargs.variantArg.length - 1 - i];
-                    Variant.VARIANT varg = vargs.variantArg[i];
-                    Object jarg = Convert.toJavaObject(varg, targetClass, factory, true, false);
-                    rjargs.add(jarg);
+            
+            DISPID[] positionMap = pDispParams.getRgdispidNamedArgs();
+            
+            final Class<?>[] paramTypes = eventMethod.getParameterTypes();
+            final Object[] params = new Object[paramTypes.length];
+
+            // Handle position based parameters first
+            for ( int i = 0; i < params.length && (arguments.length - positionMap.length - i) > 0; i++) {
+                Class targetClass = paramTypes[i];
+                Variant.VARIANT varg = arguments[arguments.length - i - 1];
+                params[i] = Convert.toJavaObject(varg, targetClass, factory, true, false);
+            }
+            
+            for ( int i = 0; i < positionMap.length; i++) {
+                int targetPosition = positionMap[i].intValue();
+                if(targetPosition >= params.length) {
+                    // If less parameters are mapped then supplied, ignore
+                    continue;
+                }
+                Class targetClass = paramTypes[targetPosition];
+                Variant.VARIANT varg = arguments[i];
+                params[targetPosition] = Convert.toJavaObject(varg, targetClass, factory, true, false);
+            }
+
+            
+            // Make sure the parameters are correctly initialized -- primitives
+            // are initialized to their default value, else a NullPointer
+            // exception occurs while doing the call into the target method
+            for(int i = 0; i < params.length; i++) {
+                if(params[i] == null && paramTypes[i].isPrimitive()) {
+                    if (paramTypes[i].equals(boolean.class)) {
+                        params[i] = DEFAULT_BOOLEAN;
+                    } else if (paramTypes[i].equals(byte.class)) {
+                        params[i] = DEFAULT_BYTE;
+                    } else if (paramTypes[i].equals(short.class)) {
+                        params[i] = DEFAULT_SHORT;
+                    } else if (paramTypes[i].equals(int.class)) {
+                        params[i] = DEFAULT_INT;
+                    } else if (paramTypes[i].equals(long.class)) {
+                        params[i] = DEFAULT_LONG;
+                    } else if (paramTypes[i].equals(float.class)) {
+                        params[i] = DEFAULT_FLOAT;
+                    } else if (paramTypes[i].equals(double.class)) {
+                        params[i] = DEFAULT_DOUBLE;
+                    } else {
+                        throw new IllegalArgumentException("Class type " + paramTypes[i].getName() + " not mapped to primitive default value.");
+                    }
                 }
             }
 
-            List<Object> margs = new ArrayList<Object>();
             try {
-                // Reverse order from calling convention
-                int lastParamIdx = eventMethod.getParameterTypes().length - 1;
-                for (int i = lastParamIdx; i >= 0; i--) {
-                    margs.add(rjargs.get(i));
-                }
-                eventMethod.invoke(comEventCallbackListener, margs.toArray());
+                eventMethod.invoke(comEventCallbackListener, params);
             } catch (Exception e) {
-                List<String> decodedClassNames = new ArrayList<String>(margs.size());
-                for(Object o: margs) {
+                List<String> decodedClassNames = new ArrayList<String>(params.length);
+                for(Object o: params) {
                     if(o == null) {
                         decodedClassNames.add("NULL");
                     } else {

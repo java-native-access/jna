@@ -129,12 +129,8 @@ public class HybdridCOMInvocationTest {
         WORD wFlagsCombined = new WinDef.WORD(OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET);
         
         OleAuto.DISPPARAMS.ByReference pDispParams = new OleAuto.DISPPARAMS.ByReference();
-        VARIANT[] params = new VARIANT[1];
-        params[0] = new VARIANT(1f);
-        pDispParams.cArgs = new UINT(1);
-        pDispParams.cNamedArgs = new UINT(0);
-        pDispParams.rgvarg = new Variant.VariantArg.ByReference(params);
-        pDispParams.rgdispidNamedArgs = new OaIdl.DISPIDByReference();
+        VARIANT[] params = new VARIANT[] {new VARIANT(1f)};
+        pDispParams.setArgs(params);
         
         // Call InchesToPoints as a method
         hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsMethod, pDispParams, result, pExcepInfo, puArgErr);
