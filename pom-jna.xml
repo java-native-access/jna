@@ -40,6 +40,14 @@
         <role>Owner</role>
       </roles>
     </developer>
+    <developer>
+      <email>mblaesing@doppel-helix.eu</email>
+      <name>Matthias Bläsing</name>
+      <url>https://github.com/matthiasblaesing/</url>
+      <roles>
+        <role>Developer</role>
+      </roles>
+    </developer>
   </developers>
 
 </project>
