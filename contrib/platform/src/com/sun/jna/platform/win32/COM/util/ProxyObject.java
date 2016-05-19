@@ -33,11 +33,9 @@ import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.OleAuto.DISPPARAMS;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.Variant.VariantArg;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.LCID;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
@@ -497,12 +495,6 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	/** The Constant LOCALE_USER_DEFAULT. */
-	public final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE.GetUserDefaultLCID();
-
-	/** The Constant LOCALE_SYSTEM_DEFAULT. */
-	public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE.GetSystemDefaultLCID();
-
 	/*
 	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
 	 */
@@ -547,8 +539,12 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
                 final DISPIDByReference pdispID = new DISPIDByReference();
 
                 // Get DISPID for name passed...
-                HRESULT hr = pDisp.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1, LOCALE_USER_DEFAULT,
-                                                pdispID);
+                HRESULT hr = pDisp.GetIDsOfNames(
+                        new REFIID(Guid.IID_NULL), 
+                        ptName, 
+                        1, 
+                        factory.getLCID(), 
+                        pdispID);
 
                 COMUtils.checkRC(hr);
                 
@@ -637,8 +633,15 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 
 
-                HRESULT hr = pDisp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
-                                                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
+                HRESULT hr = pDisp.Invoke(
+                        dispId, 
+                        new REFIID(Guid.IID_NULL), 
+                        factory.getLCID(),
+                        new WinDef.WORD(finalNType), 
+                        dp, 
+                        pvResult, 
+                        pExcepInfo, 
+                        puArgErr);
 
 
                 COMUtils.checkRC(hr, pExcepInfo, puArgErr);
