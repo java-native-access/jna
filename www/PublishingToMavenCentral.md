@@ -8,13 +8,13 @@ One Time
 * Get the account enabled for publishing to the net.java.dev.jna groupId
   (contact an existing uploader for this)
 * Set up your gpg keys as described [here](http://central.sonatype.org/pages/working-with-pgp-signatures.html). Make sure you distribute your public key.
-* Make sure you have a settings.xml file (in directory: ${user.home}/.m2/). For example:
+* Make sure you have a settings.xml file (in directory: ${user.home}/.m2/).
+  For example (Replace *myossrhuser* and *myossrhpwd* with the account credentials):
 
         <settings>
         ...
             <servers>
             ...
-                <!-- java.net repos for sync to maven central -->
                 <server>
                     <id>oss.sonatype.org</id>
                     <username>myossrhuser</username>
@@ -53,7 +53,8 @@ full release is performed).
 Publish Release
 ---------------
 
-* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/java-native-access/jna/blob/master/pom-jna.xml) and [pom-jna-platform.xml](https://github.com/java-native-access/jna/blob/master/pom-jna-platform.xml)
+* Verify the &lt;version> tags in [pom-jna.xml](https://github.com/java-native-access/jna/blob/master/pom-jna.xml) 
+  and [pom-jna-platform.xml](https://github.com/java-native-access/jna/blob/master/pom-jna-platform.xml)
   match the version (jna.version) in [build.xml](https://github.com/java-native-access/jna/blob/master/build.xml).
 * Run `ant -Dmaven-release=true stage`. This uploads current checkout to [oss.sonatype.org](https://oss.sonatype.org).
 * Follow steps from [Releasing the Deployment](http://central.sonatype.org/pages/releasing-the-deployment.html).
