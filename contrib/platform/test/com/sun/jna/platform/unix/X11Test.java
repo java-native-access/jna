@@ -76,6 +76,12 @@ public class X11Test extends TestCase {
         }
     }
 
+    public void testSetWMProtocols() {
+        Atom[] protocols = new Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false) };
+        int status = X11.INSTANCE.XSetWMProtocols(display, root, protocols, 1);
+        assertEquals("Bad status for XSetWMProtocols", 1, status);
+    }
+
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(X11Test.class);
     }
