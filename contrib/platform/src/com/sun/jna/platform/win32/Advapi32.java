@@ -1635,6 +1635,144 @@ public interface Advapi32 extends StdCallLibrary {
                             IntByReference lpnLengthNeeded);
 
     /**
+     * The SetFileSecurity function sets the security of a file or directory object.
+     * This function is obsolete. Use the SetNamedSecurityInfo function instead.
+     *
+     * @param lpFileName
+     *          A pointer to a null-terminated string that specifies the file or directory for which security is set.
+     *          Note that security applied to a directory is not inherited by its children.
+     * @param SecurityInformation
+     *          Specifies a SECURITY_INFORMATION structure that identifies the contents of the security descriptor
+     *          pointed to by the pSecurityDescriptor parameter.
+     * @param pSecurityDescriptor
+     *          A pointer to a SECURITY_DESCRIPTOR structure.
+     * @return
+     *          If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get
+     *          extended error information, call GetLastError.
+     */
+    boolean SetFileSecurity(String lpFileName, int SecurityInformation, Pointer pSecurityDescriptor);
+
+    /**
+     * The GetSecurityInfo function retrieves a copy of the security descriptor for an object specified by a handle.
+     *
+     * @param handle [in]
+     *          A handle to the object from which to retrieve security information.
+     * @param ObjectType [in]
+     *          SE_OBJECT_TYPE enumeration value that indicates the type of object.
+     * @param SecurityInfo [in]
+     *          A set of bit flags that indicate the type of security information to retrieve. See WinNT *_SECURITY_INFORMATION
+     * @param ppsidOwner [out, optional]
+     *          A pointer to a variable that receives a pointer to the owner SID in the security descriptor returned
+     *          in ppSecurityDescriptor. The returned pointer is valid only if you set the OWNER_SECURITY_INFORMATION flag.
+     *          This parameter can be NULL if you do not need the owner SID.
+     * @param ppsidGroup [in, optional]
+     *          A pointer to a variable that receives a pointer to the primary group SID in the returned security descriptor.
+     *          The returned pointer is valid only if you set the GROUP_SECURITY_INFORMATION flag. This parameter can be NULL
+     *          if you do not need the group SID.
+     * @param ppDacl [in, optional]
+     *          A pointer to a variable that receives a pointer to the DACL in the returned security descriptor. The returned
+     *          pointer is valid only if you set the DACL_SECURITY_INFORMATION flag. This parameter can be NULL if you do not
+     *          need the DACL.
+     * @param ppSacl [in, optional]
+     *          A pointer to a variable that receives a pointer to the SACL in the returned security descriptor. The returned
+     *          pointer is valid only if you set the SACL_SECURITY_INFORMATION flag. This parameter can be NULL if you do not
+     *          need the SACL.
+     * @param ppSecurityDescriptor
+     *          A pointer to a variable that receives a pointer to the security descriptor of the object. When you have finished
+     *          using the pointer, free the returned buffer by calling the LocalFree function.
+     *          This parameter is required if any one of the ppsidOwner, ppsidGroup, ppDacl, or ppSacl parameters is not NULL.
+     * @return whether the call succeeded. A nonzero return is a failure.
+     *
+     * <p><b>NOTES:</b></p>
+     * <p>1. If the ppsidOwner, ppsidGroup, ppDacl, and ppSacl parameters are non-NULL, and the SecurityInfo parameter specifies
+     * that they be retrieved from the object, those parameters will point to the corresponding parameters in the security descriptor
+     * returned in ppSecurityDescriptor.</p>
+     * <p>2. To read the owner, group, or DACL from the object's security descriptor, the calling process must have been granted
+     * READ_CONTROL access when the handle was opened. To get READ_CONTROL access, the caller must be the owner of the object or
+     * the object's DACL must grant the access.</p>
+     * <p>3. To read the SACL from the security descriptor, the calling process must have been granted ACCESS_SYSTEM_SECURITY access
+     * when the handle was opened. The proper way to get this access is to enable the SE_SECURITY_NAME privilege in the caller's
+     * current token, open the handle for ACCESS_SYSTEM_SECURITY access, and then disable the privilege.</p>
+     * <p>4. If the supplied handle was opened with an ACCESS_MASK value of MAXIMUM_ALLOWED,
+     * then the SetSecurityInfo function will not propagate ACEs to children.</p>
+     */
+    int GetSecurityInfo(HANDLE handle,
+                        int ObjectType,
+                        int SecurityInfo,
+                        PointerByReference ppsidOwner,
+                        PointerByReference ppsidGroup,
+                        PointerByReference ppDacl,
+                        PointerByReference ppSacl,
+                        PointerByReference ppSecurityDescriptor);
+
+    /**
+     * The SetSecurityInfo function sets specified security information in
+     * the security descriptor of a specified object. The caller identifies the
+     * object by a handle.
+     *
+     * @param handle [in]
+     *            A handle to the object for which to set security information.
+     * @param ObjectType [in]
+     *            A value of the SE_OBJECT_TYPE enumeration that indicates the type
+     *            of object named by the pObjectName parameter.
+     * @param SecurityInfo [in]
+     *            A set of bit flags that indicate the type of security
+     *            information to set. See WinNT *_SECURITY_INFORMATION
+     * @param ppsidOwner [in, optional]
+     *            A pointer to a SID structure that identifies the owner of the object.
+     *            If the caller does not have the SeRestorePrivilege constant
+     *            (see Privilege Constants), this SID must be contained in the
+     *            caller's token, and must have the SE_GROUP_OWNER permission enabled.
+     *            The SecurityInfo parameter must include the OWNER_SECURITY_INFORMATION
+     *            flag. To set the owner, the caller must have WRITE_OWNER access to
+     *            the object or have the SE_TAKE_OWNERSHIP_NAME privilege enabled.
+     *            If you are not setting the owner SID, this parameter can be NULL.
+     * @param ppsidGroup [in, optional]
+     *            A pointer to a SID that identifies the primary group of the object.
+     *            The SecurityInfo parameter must include the GROUP_SECURITY_INFORMATION
+     *            flag. If you are not setting the primary group SID, this parameter
+     *            can be NULL.
+     * @param ppDacl [in, optional]
+     *            A pointer to the new DACL for the object. The SecurityInfo parameter
+     *            must include the DACL_SECURITY_INFORMATION flag. The caller must have
+     *            WRITE_DAC access to the object or be the owner of the object. If you
+     *            are not setting the DACL, this parameter can be NULL.
+     * @param ppSacl [in, optional]
+     *             A pointer to the new SACL for the object. The SecurityInfo parameter
+     *             must include any of the following flags: SACL_SECURITY_INFORMATION,
+     *             LABEL_SECURITY_INFORMATION, ATTRIBUTE_SECURITY_INFORMATION,
+     *             SCOPE_SECURITY_INFORMATION, or BACKUP_SECURITY_INFORMATION.
+     *             If setting SACL_SECURITY_INFORMATION or SCOPE_SECURITY_INFORMATION,
+     *             the caller must have the SE_SECURITY_NAME privilege enabled. If
+     *             you are not setting the SACL, this parameter can be NULL.
+     * @return whether the call succeeded. A nonzero return is a failure.
+     *
+     * <p><b>NOTES:</b></p>
+     * <p>1. If you are setting the discretionary access control list (DACL) or any elements
+     * in the system access control list (SACL) of an object, the system automatically
+     * propagates any inheritable access control entries (ACEs) to existing child objects,
+     * according to the ACE inheritance rules.</p>
+     * <p>2. The SetSecurityInfo function does not reorder access-allowed or access-denied
+     * ACEs based on the preferred order. When propagating inheritable ACEs to existing
+     * child objects, SetSecurityInfo puts inherited ACEs in order after all of the
+     * noninherited ACEs in the DACLs of the child objects.</p>
+     * <p>3. If share access to the children of the object is not available, this function
+     * will not propagate unprotected ACEs to the children. For example, if a directory
+     * is opened with exclusive access, the operating system will not propagate unprotected
+     * ACEs to the subdirectories or files of that directory when the security on the
+     * directory is changed.</p>
+     * <p>4. If the supplied handle was opened with an ACCESS_MASK value of MAXIMUM_ALLOWED,
+     * then the SetSecurityInfo function will not propagate ACEs to children.</p>
+     */
+    int SetSecurityInfo(HANDLE handle,
+                        int ObjectType,
+                        int SecurityInfo,
+                        Pointer ppsidOwner,
+                        Pointer ppsidGroup,
+                        Pointer ppDacl,
+                        Pointer ppSacl);
+
+    /**
      * The GetNamedSecurityInfo function retrieves a copy of the security
      * descriptor for an object specified by name
      *
