@@ -15,6 +15,7 @@ package com.sun.jna.platform.unix;
 import java.awt.GraphicsEnvironment;
 
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
 
@@ -76,10 +77,22 @@ public class X11Test extends TestCase {
         }
     }
 
-    public void testSetWMProtocols() {
+    public void testXSetWMProtocols() {
         X11.Atom[] protocols = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false) };
         int status = X11.INSTANCE.XSetWMProtocols(display, root, protocols, 1);
         assertEquals("Bad status for XSetWMProtocols", 1, status);
+    }
+
+    public void testXGetWMProtocols() {
+        X11.Atom[] setProtocols = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false) };
+        X11.INSTANCE.XSetWMProtocols(display, root, setProtocols, 1);
+        
+        X11.Atom[] protocols = new X11.Atom[1];
+        IntByReference count = new IntByReference();
+        int status = X11.INSTANCE.XGetWMProtocols(display, root, protocols, count);
+        assertEquals("Bad status for XGetWMProtocols", 1, status);
+        assertEquals("Wrong number of protocols returned for XGetWMProtocols", count.getValue(), 1);
+        assertNotNull("No protocols returned for XGetWMProtocols", protocols[0]);
     }
 
     public static void main(java.lang.String[] argList) {
