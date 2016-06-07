@@ -53,6 +53,7 @@ Features
 * [#644](https://github.com/java-native-access/jna/pull/644): New ant target 'install' for installing JNA artifacts in local m2-repository - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
 * [#649](https://github.com/java-native-access/jna/pull/649): Bugfix msoffice sample and add two samples taken from MSDN and translated from VisualBasic to Java  - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#654](https://github.com/java-native-access/jna/pull/654): Support named arguments for `com.sun.jna.platform.win32.COM.util.CallbackProxy` based callbacks - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#665](https://github.com/java-native-access/jna/pull/665): Added `XSetWMProtocols` and `XGetWMProtocols` to `com.sun.jna.platform.unix.X11` - [@zainab-ali](https://github.com/zainab-ali).
 
 Bug Fixes
 ---------
