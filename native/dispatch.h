@@ -36,6 +36,7 @@
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
+#define _XOPEN_SOURCE 600
 #define GET_LAST_ERROR() errno
 #define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif /* _WIN32 */
