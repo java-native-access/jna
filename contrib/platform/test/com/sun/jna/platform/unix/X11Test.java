@@ -79,7 +79,7 @@ public class X11Test extends TestCase {
     }
 
     public void testXSetWMProtocols() {
-        X11.Atom[] atoms = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false) };
+        X11.Atom[] atoms = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false), X11.INSTANCE.XInternAtom(display, "WM_TAKE_FOCUS", false) };
         int status = X11.INSTANCE.XSetWMProtocols(display, root, atoms, atoms.length);
         Assert.assertNotEquals("Bad status for XSetWMProtocols", 0, status);
     }
