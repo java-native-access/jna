@@ -24,6 +24,7 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import static com.sun.jna.platform.win32.Variant.VARIANT.VARIANT_MISSING;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WinDef.LCID;
 import java.io.File;
 
 import java.io.IOException;
@@ -39,24 +40,18 @@ import javax.swing.JOptionPane;
  * bindings or enhance the coverage yourself.</p>
  */
 public class Excelautomation_KB_219151_Mod {
-    private static final String FKT_SUM = "SUM";
-    private static final String FKT_RAND = "RAND";
-    private static final String FKT_COLUMN = "COLUMN";
-    private static final String FKT_CHAR = "CHAR";
-//    Variant for de-Locale:
-//    private static final String FKT_SUM = "SUMME";
-//    private static final String FKT_RAND = "ZUFALLSZAHL";
-//    private static final String FKT_COLUMN = "SPALTE";
-//    private static final String FKT_CHAR = "ZEICHEN";
-    
+
     public static void main(String[] args) throws IOException {
         // Initialize COM Subsystem
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
         // Initialize Factory for COM object creation
         Factory fact = new Factory();
+        // Set LCID for calls to english locale. Without this formulas need
+        // to be specified in the users locale.
+        fact.setLCID(new LCID(0x0409));
         
         try {
-            // Start word application
+            // Start excel application
             ComExcel_Application excel = fact.createObject(ComExcel_Application.class);
             ComIApplication excelApp = excel.queryInterface(ComIApplication.class);
             
@@ -94,7 +89,7 @@ public class Excelautomation_KB_219151_Mod {
             sheet.getRange("C2", "C6").setFormula("= A2 & \" \" & B2");
             
             // Fill D2:D6 with a formula(=RAND()*100000) and apply format.
-            sheet.getRange("D2", "D6").setFormula("=" + FKT_RAND + "()*100000");
+            sheet.getRange("D2", "D6").setFormula("=RAND()*100000");
             sheet.getRange("D2", "D6").setNumberFormat("$0.00");
 
             // AutoFit columns A:D.
@@ -139,7 +134,7 @@ public class Excelautomation_KB_219151_Mod {
         // Starting at E1, fill headers for the number of columns selected.
         ComIRange oResizeRange = sheet.getRange("E1", "E1").getResize(VARIANT_MISSING, iNumQtrs);
 
-        oResizeRange.setFormula("=\"Q\" & " + FKT_COLUMN + "() - 4 & " + FKT_CHAR + "(10) & \"Sales\"");
+        oResizeRange.setFormula("=\"Q\" & COLUMN() - 4 & CHAR(10) & \"Sales\"");
       
         // Change the Orientation and WrapText properties for the headers.
         oResizeRange.setOrientation(38);
@@ -150,7 +145,7 @@ public class Excelautomation_KB_219151_Mod {
       
         // Fill the columns with a formula and apply a number format.
         oResizeRange = sheet.getRange("E2", "E6").getResize(VARIANT_MISSING, iNumQtrs);
-        oResizeRange.setFormula("="+ FKT_RAND + "()*100");
+        oResizeRange.setFormula("=RAND()*100");
         oResizeRange.setNumberFormat("$0.00");
       
         // Apply borders to the Sales data and headers.
@@ -159,7 +154,7 @@ public class Excelautomation_KB_219151_Mod {
       
         // Add a Totals formula for the sales data and apply a border.
         oResizeRange = sheet.getRange("E8", "E8").getResize(VARIANT_MISSING, iNumQtrs);
-        oResizeRange.setFormula("=" + FKT_SUM + "(E2:E6)");
+        oResizeRange.setFormula("=SUM(E2:E6)");
         Borders oResizeRangeBorders = oResizeRange.getBorders();
         oResizeRangeBorders.setLineStyle(XlLineStyle.xlDouble);
         oResizeRangeBorders.setWeight(XlBorderWeight.xlThick);

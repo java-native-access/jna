@@ -13,9 +13,6 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import java.lang.reflect.Proxy;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -29,6 +26,8 @@ import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Dispatch;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 import java.lang.ref.WeakReference;
@@ -37,7 +36,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Factory {
+public class Factory {        
 	/**
 	 * Factory keeps track of COM objects - all objects created with this
          * factory can be disposed by calling {@link Factory#disposeAll() }.
@@ -45,7 +44,6 @@ public class Factory {
 	public Factory() {
             assert COMUtils.comIsInitialized() : "COM not initialized";
 	}
-
 	
 	@Override
 	protected void finalize() throws Throwable {
@@ -201,4 +199,34 @@ public class Factory {
                 this.registeredObjects.clear();
             }
 	}
+        
+        /**
+         * The Constant LOCALE_USER_DEFAULT.
+         */
+        private final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE.GetUserDefaultLCID();
+    
+        private LCID LCID;
+        
+        /**
+         * Retrieve the LCID to be used for COM calls. 
+         * 
+         * @return If {@code setLCID} is not called retrieves the users default
+         *         locale, else the set LCID.
+         */
+        public LCID getLCID() {
+            if(LCID != null) {
+                return LCID;
+            } else {
+                return LOCALE_USER_DEFAULT;
+            }
+        }
+        
+        /**
+         * Set the LCID to use for COM calls.
+         * 
+         * @param value override LCID. NULL resets to default.
+         */
+        public void setLCID(LCID value) {
+            LCID = value;
+        }
 }
