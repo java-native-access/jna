@@ -54,6 +54,7 @@ Features
 * [#649](https://github.com/java-native-access/jna/pull/649): Bugfix msoffice sample and add two samples taken from MSDN and translated from VisualBasic to Java  - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#654](https://github.com/java-native-access/jna/pull/654): Support named arguments for `com.sun.jna.platform.win32.COM.util.CallbackProxy` based callbacks - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#659](https://github.com/java-native-access/jna/issues/659): Enable LCID (locale) override for `com.sun.jna.platform.win32.COM.util.ProxyObject`-based COM calls - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#665](https://github.com/java-native-access/jna/pull/665): Added `XSetWMProtocols` and `XGetWMProtocols` to `com.sun.jna.platform.unix.X11` - [@zainab-ali](https://github.com/zainab-ali).
 
 Bug Fixes
 ---------
