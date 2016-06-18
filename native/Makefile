@@ -207,19 +207,24 @@ STRIP=@echo
 LIBPFX=
 LIBSFX=.dll
 TESTLIB_TRUNC=$(BUILD)/testlib-truncated.dll
+
 ifeq ($(ARCH),amd64)
 MINGW_PREFIX?=x86_64-w64-mingw32-
 FFI_CONFIG+=--host=x86_64-w64-mingw32
+else
+FFI_CONFIG+=--host=i686-w64-mingw32
+MINGW_PREFIX?=i686-w64-mingw32-
+endif
 # Need windres from mingw distribution, even if building with MSVC
 WINDRES=$(MINGW_PREFIX)windres
-MINGW=$(MINGW_PREFIX)gcc 
-else
-MINGW_PREFIX?=i686-pc-mingw32-
-endif
+MINGW=$(MINGW_PREFIX)gcc
 
 ifeq ($(USE_MSVC),true)
 # MS compiler
 CC=$(FFI_SRC)/msvcc.sh
+ifneq ($(DYNAMIC_LIBFFI),true)
+CDEFINES+=-DUSE_STATIC_RTL
+endif
 COPT=
 CPP=cl -nologo -EP
 LD=link
