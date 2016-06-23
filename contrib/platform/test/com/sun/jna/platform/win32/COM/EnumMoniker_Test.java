@@ -26,7 +26,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.util.Factory;
+import com.sun.jna.platform.win32.COM.util.ObjectFactory;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -54,7 +54,7 @@ public class EnumMoniker_Test {
 	interface MsWordApp extends Application {
 	}
 	
-	Factory factory;
+	ObjectFactory factory;
 	MsWordApp ob1;
 	MsWordApp ob2;
 
@@ -63,7 +63,7 @@ public class EnumMoniker_Test {
                 WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
                 COMUtils.checkRC(hr);
                 
-		this.factory = new Factory();
+		this.factory = new ObjectFactory();
 		// Two COM objects are require to be running for these tests to work
 		this.ob1 = this.factory.createObject(MsWordApp.class);
 		this.ob2 = this.factory.createObject(MsWordApp.class);

@@ -16,12 +16,12 @@ import static org.junit.Assert.*;
 
 public class IDispatchTest {
 
-    Factory factory;
+    ObjectFactory factory;
 
     @Before
     public void before() {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-        this.factory = new Factory();
+        this.factory = new ObjectFactory();
     }
 
     @After

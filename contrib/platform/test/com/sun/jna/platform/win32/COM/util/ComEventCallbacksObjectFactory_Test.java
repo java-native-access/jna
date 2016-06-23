@@ -38,18 +38,18 @@ import static com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
 import static com.sun.jna.platform.win32.COM.IDispatch.IID_IDISPATCH;
 import static org.junit.Assert.*;
 
-public class ComEventCallbacks_Test {
+public class ComEventCallbacksObjectFactory_Test {
 
         static {
                 ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
         }
     
-	Factory factory;
+	ObjectFactory factory;
 	
 	@Before
 	public void before() {
                 Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-		this.factory = new Factory();
+		this.factory = new ObjectFactory();
 	}
 
 	@After

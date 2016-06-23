@@ -50,13 +50,13 @@ public class RunningObjectTable_Test {
 	interface MsWordApp extends Application {
 	}
 	
-	Factory factory;
+	ObjectFactory factory;
 	MsWordApp msWord;
 
 	@Before
 	public void before() {
                 Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-		this.factory = new Factory();
+		this.factory = new ObjectFactory();
 		//ensure there is only one word application running.
 		while(true) {
 			try {
