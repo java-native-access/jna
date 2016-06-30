@@ -8,5 +8,5 @@ You may obtain a copy of the License at:
 http://www.apache.org/licenses/
 
 A copy is also included in the downloadable source code package
-containing JNA, in file "ASL2.0", under the same directory
+containing JNA, in file "AL2.0", under the same directory
 as this file.
