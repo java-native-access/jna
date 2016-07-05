@@ -73,7 +73,7 @@ Bug Fixes
 * [#634](https://github.com/java-native-access/jna/pull/634): Improve BSTR handling and add `SysStringByteLen` and `SysStringLen` to `com.sun.jna.platform.win32.OleAuto` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#646](https://github.com/java-native-access/jna/issues/646): `platform.win32.COM.COMBindingBaseObject` swallows reason if instantiation fails - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#674](https://github.com/java-native-access/jna/pull/674): Update references to Apache License as requested by issue #673 [@bhamail](https://github.com/bhamail)
-* [#636](https://github.com/java-native-access/jna/issues/636); Staticly link visual c++ runtime when building with MSVC - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#636](https://github.com/java-native-access/jna/issues/636): Staticly link visual c++ runtime when building with MSVC - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.2.1
 =============
