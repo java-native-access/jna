@@ -17,6 +17,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import com.sun.jna.Native;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.ShellAPI.APPBARDATA;
 import com.sun.jna.platform.win32.ShellAPI.SHELLEXECUTEINFO;
@@ -232,4 +233,18 @@ public class Shell32Test extends TestCase {
         int iconCount = Shell32.INSTANCE.ExtractIconEx(new File(winDir, "explorer.exe").getAbsolutePath(), -1, null, null, 1);
         assertTrue("Should be at least two icons in explorer.exe", iconCount > 1);
     }
+
+    public void testCurrentProcessExplicitAppUserModelID() {
+        String appUserModelID = "com.sun.jna.platform.win32.Shell32Test";
+
+        HRESULT r1 = Shell32.INSTANCE.SetCurrentProcessExplicitAppUserModelID(new WString(appUserModelID));
+        assertEquals(WinError.S_OK, r1);
+
+        PointerByReference ppszAppID = new PointerByReference();
+        HRESULT r2 = Shell32.INSTANCE.GetCurrentProcessExplicitAppUserModelID(ppszAppID);
+        assertEquals(WinError.S_OK, r2);
+
+        assertEquals(appUserModelID, ppszAppID.getPointer().getWideString(0));
+    }
+
 }
