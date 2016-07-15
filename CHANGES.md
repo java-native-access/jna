@@ -7,7 +7,6 @@ Release 4.3 (Next release)
 
 Features
 --------
-* [#680](https://github.com/java-native-access/jna/pull/680): Added `SetCurrentProcessExplicitAppUserModelID` to `com.sun.jna.platform.win32.Shell32` for setting the [System.AppUserModel.ID](https://msdn.microsoft.com/en-us/library/windows/desktop/dd391569.aspx) of the `javaw` host process - [@rednoah](https://github.com/rednoah).
 * [#526](https://github.com/java-native-access/jna/pull/526): Added initialization and conversion between Windows SYSTEMTIME and Java Calendar - [@lgoldstein](https://github.com/lgoldstein).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `com.sun.jna.platform.win32.Mpr`, `com.sun.jna.platform.win32.LmShare`, and `com.sun.jna.platform.win32.Winnetwk` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `ACCESS_*` definitions to `com.sun.jna.platform.win32.LmAccess` - [@amarcionek](https://github.com/amarcionek).
@@ -56,6 +55,7 @@ Features
 * [#654](https://github.com/java-native-access/jna/pull/654): Support named arguments for `com.sun.jna.platform.win32.COM.util.CallbackProxy` based callbacks - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#659](https://github.com/java-native-access/jna/issues/659): Enable LCID (locale) override for `com.sun.jna.platform.win32.COM.util.ProxyObject`-based COM calls - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#665](https://github.com/java-native-access/jna/pull/665): Added `XSetWMProtocols` and `XGetWMProtocols` to `com.sun.jna.platform.unix.X11` - [@zainab-ali](https://github.com/zainab-ali).
+* [#680](https://github.com/java-native-access/jna/pull/680): Added `SetCurrentProcessExplicitAppUserModelID` and `GetCurrentProcessExplicitAppUserModelID` to `com.sun.jna.platform.win32.Shell32` for setting the [System.AppUserModel.ID](https://msdn.microsoft.com/en-us/library/windows/desktop/dd391569.aspx) of the host process - [@rednoah](https://github.com/rednoah).
 
 Bug Fixes
 ---------
