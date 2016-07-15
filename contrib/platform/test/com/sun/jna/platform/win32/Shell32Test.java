@@ -245,6 +245,8 @@ public class Shell32Test extends TestCase {
         assertEquals(WinError.S_OK, r2);
 
         assertEquals(appUserModelID, ppszAppID.getPointer().getWideString(0));
+
+        Ole32.INSTANCE.CoTaskMemFree(ppszAppID.getPointer());
     }
 
 }

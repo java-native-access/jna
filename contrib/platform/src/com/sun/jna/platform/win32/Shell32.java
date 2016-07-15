@@ -382,10 +382,8 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * Retrieves the application-defined, explicit Application User Model ID (AppUserModelID) for the current process.
      * 
      * @param ppszAppID
-     *            Type: PWSTR*<br>
      *            A pointer that receives the address of the AppUserModelID assigned to the process. The caller is responsible for freeing this string with {@link Ole32#CoTaskMemFree} when it is no longer needed.
-     * @return Type: HRESULT<br>
-     *         If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd378419(v=vs.85).aspx">MSDN</a>
      */
     HRESULT GetCurrentProcessExplicitAppUserModelID(PointerByReference ppszAppID);
@@ -394,10 +392,8 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * Specifies a unique application-defined Application User Model ID (AppUserModelID) that identifies the current process to the taskbar. This identifier allows an application to group its associated processes and windows under a single taskbar button.
      * 
      * @param appID
-     *            Type: PCWSTR<br>
      *            The AppUserModelID to assign to the current process.
-     * @return Type: HRESULT<br>
-     *         If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd378422(v=vs.85).aspx">MSDN</a>
      */
     HRESULT SetCurrentProcessExplicitAppUserModelID(WString appID);
