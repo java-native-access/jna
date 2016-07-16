@@ -4,6 +4,7 @@ language: java
 
 install:
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
+  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew doctor || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
 
 script:
