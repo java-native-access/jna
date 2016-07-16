@@ -4,8 +4,8 @@ language: java
 
 install:
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
+  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew libtool || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
-  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install gnu-sed --with-default-names || true'
 
 script:
   - ant test
