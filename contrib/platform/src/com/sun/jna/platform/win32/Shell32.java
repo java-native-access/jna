@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HICON;
@@ -376,5 +377,26 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @see <a href="https://msdn.microsoft.com/en-us/library/ms648069(VS.85).aspx">MSDN</a>
      */
     int ExtractIconEx(String lpszFile, int nIconIndex, HICON[] phiconLarge, HICON[] phiconSmall, int nIcons);
+
+    /**
+     * Retrieves the application-defined, explicit Application User Model ID (AppUserModelID) for the current process.
+     * 
+     * @param ppszAppID
+     *            A pointer that receives the address of the AppUserModelID assigned to the process. The caller is responsible for freeing this string with {@link Ole32#CoTaskMemFree} when it is no longer needed.
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd378419(v=vs.85).aspx">MSDN</a>
+     */
+    HRESULT GetCurrentProcessExplicitAppUserModelID(PointerByReference ppszAppID);
+
+    /**
+     * Specifies a unique application-defined Application User Model ID (AppUserModelID) that identifies the current process to the taskbar. This identifier allows an application to group its associated processes and windows under a single taskbar button.
+     * 
+     * @param appID
+     *            The AppUserModelID to assign to the current process.
+     * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd378422(v=vs.85).aspx">MSDN</a>
+     */
+    HRESULT SetCurrentProcessExplicitAppUserModelID(WString appID);
+
 }
 
