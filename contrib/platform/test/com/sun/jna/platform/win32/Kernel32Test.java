@@ -346,7 +346,7 @@ public class Kernel32Test extends TestCase {
 
     public void testQueryFullProcessImageName() {
         int pid = Kernel32.INSTANCE.GetCurrentProcessId();
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, pid);
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, pid);
         assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process ID=" + pid + " handle", h);
 
         try {
