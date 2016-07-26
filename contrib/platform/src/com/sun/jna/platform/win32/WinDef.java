@@ -139,7 +139,7 @@ public interface WinDef {
          * @return Low WORD.
          */
         public WORD getLow() {
-            return new WORD(longValue() & 0xFF);
+            return new WORD(longValue() & 0xFFFF);
         }
 
         /**
@@ -148,7 +148,7 @@ public interface WinDef {
          * @return High WORD.
          */
         public WORD getHigh() {
-            return new WORD((longValue() >> 16) & 0xFF);
+            return new WORD((longValue() >> 16) & 0xFFFF);
         }
 
         @Override
