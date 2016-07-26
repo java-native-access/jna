@@ -22,6 +22,7 @@ import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from WinUser.h Microsoft Windows SDK 6.0A.
@@ -1166,6 +1167,7 @@ public interface WinUser extends WinDef {
          * Instantiates a new wndclassex.
          */
         public WNDCLASSEX() {
+            super(W32APITypeMapper.DEFAULT);
         }
 
         /**
@@ -1175,7 +1177,7 @@ public interface WinUser extends WinDef {
          *            the memory
          */
         public WNDCLASSEX(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
