@@ -44,7 +44,8 @@ public class NtDllTest extends TestCase {
     			phKey.getValue(), Wdm.KEY_INFORMATION_CLASS.KeyBasicInformation, 
     			keyInformation, resultLength.getValue(), resultLength));    	
     	// show
-    	assertEquals("Software", keyInformation.getName());
+        // Keys are case insensitive (https://msdn.microsoft.com/de-de/library/windows/desktop/ms724946(v=vs.85).aspx)
+    	assertEquals("software", keyInformation.getName().toLowerCase());
     	// close key
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	    	    	
     }

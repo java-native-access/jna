@@ -421,7 +421,7 @@ public abstract class Kernel32Util implements WinDef {
         if (lpszEnvironmentBlock == null) {
             return null;
         }
-
+        
         Map<String,String>  vars=new TreeMap<String,String>();
         boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
         long                stepFactor=asWideChars ? 2L : 1L;

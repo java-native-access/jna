@@ -48,7 +48,7 @@ public class PdhTest extends AbstractWin32TestSupport {
         HANDLE hQuery = ref.getValue();
         try {
             ref.setValue(null);
-            assertErrorSuccess("PdhAddCounter", pdh.PdhAddCounter(hQuery, counterName, null, ref), true);
+            assertErrorSuccess("PdhAddEnglishCounter", pdh.PdhAddEnglishCounter(hQuery, counterName, null, ref), true);
             
             HANDLE hCounter = ref.getValue();
             try {
@@ -93,7 +93,7 @@ public class PdhTest extends AbstractWin32TestSupport {
             try {
                 for (String counterName : names) {
                     ref.setValue(null);
-                    assertErrorSuccess("PdhAddCounter[" + counterName + "]", pdh.PdhAddCounter(hQuery, counterName, null, ref), true);
+                    assertErrorSuccess("PdhAddCounter[" + counterName + "]", pdh.PdhAddEnglishCounter(hQuery, counterName, null, ref), true);
 
                     HANDLE hCounter = ref.getValue();
                     handlesMap.put(counterName, hCounter);

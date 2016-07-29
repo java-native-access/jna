@@ -102,13 +102,33 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testGetAccountNameFromSid() {
-        assertEquals("Everyone", Advapi32Util.getAccountBySid("S-1-1-0").name);
+        if(AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals("Everyone", Advapi32Util.getAccountBySid("S-1-1-0").name);
+        } else {
+            System.err.println("testGetAccountNameFromSid Test can only be run on english locale");
+        }
     }
 
     public void testGetAccountSidFromName() {
-        assertEquals("S-1-1-0", Advapi32Util.getAccountByName("Everyone").sidString);
+        if(AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals("S-1-1-0", Advapi32Util.getAccountByName("Everyone").sidString);
+        } else {
+            System.err.println("testGetAccountSidFromName Test can only be run on english locale");
+        }
     }
-
+    
+    public void testGetAccountNameRoundtrip() {
+        // This test ensures getAccountBySid and getAccountByName are at least
+        // symmetrical. The names of the accounts are locale dependend so this is
+        // a compromise. (german: "Jeder", english: "Everybody")
+        String worldSID = "S-1-1-0"; // https://msdn.microsoft.com/en-us/library/windows/desktop/aa379649(v=vs.85).aspx
+        String accountNameResolved = Advapi32Util.getAccountBySid(worldSID).name;
+        String roundTripSid = Advapi32Util.getAccountByName(accountNameResolved).sidString;
+        assertNotNull(accountNameResolved);
+        assertTrue(! accountNameResolved.isEmpty());
+        assertEquals(worldSID, roundTripSid);
+    }
+    
     public void testConvertSid() {
     	String sidString = "S-1-1-0"; // Everyone
     	byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);

@@ -380,7 +380,7 @@ public class Kernel32Test extends TestCase {
 
     public void testGetTickCount64() throws InterruptedException {
         long tick1 = Kernel32.INSTANCE.GetTickCount64();
-        Thread.sleep(10);
+        Thread.sleep(100);
         long tick2 = Kernel32.INSTANCE.GetTickCount64();
 
         assertTrue(tick2 > tick1);

@@ -49,9 +49,11 @@ public class Kernel32ConsoleTest extends AbstractWin32TestSupport {
 
 	@Test
 	public void testGetConsoleWindow() {
+                // Only the call is done -- the prior test checked for not-null
+                // but running this test from netbeans IDE or console
+                // always resulted in NULL and this is a valid value
+                // (if there is no console attached)
 		HWND	hwnd=INSTANCE.GetConsoleWindow();
-		// don't really care what the handle value is - just ensure that API can be called
-		assertNotNull("No console window handle", hwnd);
 	}
 
 	@Test

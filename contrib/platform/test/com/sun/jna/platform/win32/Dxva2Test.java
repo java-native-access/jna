@@ -21,7 +21,6 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
 import com.sun.jna.Memory;
-import com.sun.jna.platform.win32.Dxva2;
 import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_COLOR_TEMPERATURE;
 import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_DISPLAY_TECHNOLOGY_TYPE;
 import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_DRIVE_TYPE;
@@ -30,13 +29,12 @@ import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_POSITION_T
 import com.sun.jna.platform.win32.HighLevelMonitorConfigurationAPI.MC_SIZE_TYPE;
 import com.sun.jna.platform.win32.LowLevelMonitorConfigurationAPI.MC_TIMING_REPORT;
 import com.sun.jna.platform.win32.PhysicalMonitorEnumerationAPI.PHYSICAL_MONITOR;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WTypes.LPSTR;
+import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.POINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
-import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.platform.win32.WinUser.HMONITOR;
 
 
@@ -51,7 +49,7 @@ public class Dxva2Test {
     @Before
 	public void setUp()
     {
-        HMONITOR hMonitor = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
+        HMONITOR hMonitor = User32.INSTANCE.MonitorFromWindow(User32.INSTANCE.GetDesktopWindow(), WinUser.MONITOR_DEFAULTTOPRIMARY);
 
         DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
         assertTrue(Dxva2.INSTANCE.GetNumberOfPhysicalMonitorsFromHMONITOR(hMonitor, pdwNumberOfPhysicalMonitors).booleanValue());
@@ -136,11 +134,15 @@ public class Dxva2Test {
         // the method returns FALSE if the monitor driver doesn't support it,
         // but verifies that the JNA mapping is correct (no exception)
         DWORDByReference pdwCapabilitiesStringLengthInCharacters = new DWORDByReference();
-        Dxva2.INSTANCE.GetCapabilitiesStringLength(hPhysicalMonitor, pdwCapabilitiesStringLengthInCharacters);
-        DWORD capStrLen = pdwCapabilitiesStringLengthInCharacters.getValue();
-
-        LPSTR pszASCIICapabilitiesString = new LPSTR(new Memory(capStrLen.intValue()));
-        Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, pszASCIICapabilitiesString, capStrLen);
+        BOOL success = Dxva2.INSTANCE.GetCapabilitiesStringLength(hPhysicalMonitor, pdwCapabilitiesStringLengthInCharacters);
+        if(success.booleanValue()) {
+            // VirtualBox is known to report an empty string
+            DWORD capStrLen = pdwCapabilitiesStringLengthInCharacters.getValue();
+            LPSTR pszASCIICapabilitiesString = new LPSTR(new Memory(capStrLen.intValue()));
+            Dxva2.INSTANCE.CapabilitiesRequestAndCapabilitiesReply(hPhysicalMonitor, pszASCIICapabilitiesString, capStrLen);
+        } else {
+            System.err.println("GetCapabilitiesStringLength failed with errorcode: " + Kernel32.INSTANCE.GetLastError());
+        }
     }
 
     @Test

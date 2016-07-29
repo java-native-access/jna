@@ -189,7 +189,9 @@ public class Advapi32Test extends TestCase {
     		String nameString = Native.toString(name);
     		String referencedDomainNameString = Native.toString(referencedDomainName);
     		assertTrue(nameString.length() > 0);
-    		assertEquals("Everyone", nameString);
+                if(AbstractWin32TestSupport.isEnglishLocale) {
+                    assertEquals("Everyone", nameString);
+                }
     		assertTrue(referencedDomainNameString.length() == 0);
     	} finally {
     	    Kernel32Util.freeLocalMemory(value.getPointer());

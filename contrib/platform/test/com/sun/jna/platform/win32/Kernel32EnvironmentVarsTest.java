@@ -32,6 +32,11 @@ public class Kernel32EnvironmentVarsTest extends AbstractWin32TestSupport {
         Map<String,String>  vars=Kernel32Util.getEnvironmentVariables();
         for (Map.Entry<String,String> entry : vars.entrySet()) {
             String  name=entry.getKey(), expected=entry.getValue();
+            if("".equals(name)) {
+                // Empty names are created by and env-entry with name "=C:..."
+                // as "=" is the split character, this fails here
+                continue;
+            }
             char[]  data=new char[expected.length() + 1];
             int     size=Kernel32.INSTANCE.GetEnvironmentVariable(name, data, data.length);
             assertEquals("Mismatched retrieved length for " + name, data.length - 1 /* w/o the '\0' */, size);

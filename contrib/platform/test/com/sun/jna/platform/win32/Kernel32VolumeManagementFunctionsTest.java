@@ -136,11 +136,14 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         char[] lpszVolumeName = new char[WinDef.MAX_PATH + 1];
         HANDLE hFindVolume = assertValidHandle("FindFirstVolume", Kernel32.INSTANCE.FindFirstVolume(lpszVolumeName, lpszVolumeName.length));
         try {
+            int foundPaths = 0;
             do {
                 String volumeGUID = Native.toString(lpszVolumeName);
                 testEnumVolumeMountMoints(volumeGUID);
-                testGetVolumePathNamesForVolumeName(volumeGUID);
+                foundPaths += testGetVolumePathNamesForVolumeName(volumeGUID);
             } while(Kernel32.INSTANCE.FindNextVolume(hFindVolume, lpszVolumeName, lpszVolumeName.length));
+            
+            assertTrue("No paths were found", foundPaths > 0);
             
             int hr = Kernel32.INSTANCE.GetLastError();
             assertEquals("Bad volumes enum termination reason", WinError.ERROR_NO_MORE_FILES, hr);
@@ -149,13 +152,13 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         }
     }
     
-    private void testGetVolumePathNamesForVolumeName(String lpszVolumeName) {
+    private int testGetVolumePathNamesForVolumeName(String lpszVolumeName) {
         Collection<String> paths = Kernel32Util.getVolumePathNamesForVolumeName(lpszVolumeName);
-        assertTrue("No paths for volume " + lpszVolumeName, paths.size() > 0);
         for (String p : paths) {
 //            System.out.append('\t').append("testGetVolumePathNamesForVolumeName").append('[').append(lpszVolumeName).append(']').append(" - ").println(p);
             assertTrue("Empty path for volume " + lpszVolumeName, p.length() > 0);
         }
+        return paths.size();
     }
 
     private void testEnumVolumeMountMoints(String volumeGUID) {
@@ -164,7 +167,9 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         if (WinNT.INVALID_HANDLE_VALUE.equals(hFindVolumeMountPoint)) {
             int hr = Kernel32.INSTANCE.GetLastError();
             if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., network or hidden volumes
-             || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
+             || (hr == WinError.ERROR_NOT_READY)        // e.g., DVD drive
+             || (hr == WinError.ERROR_NO_MORE_FILES)    // No folders found
+             || (hr == WinError.ERROR_PATH_NOT_FOUND)) {
 //                System.out.append('\t').append('[').append(volumeGUID).append(']').append(" - skipped: reason=").println(hr);
                 return;
             }

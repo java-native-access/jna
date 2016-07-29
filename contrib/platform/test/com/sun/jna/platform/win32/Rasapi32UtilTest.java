@@ -55,7 +55,11 @@ public class Rasapi32UtilTest extends TestCase {
 	}
 
 	public void testGetRasErrorString() {
-		assertEquals("An incorrect structure size was detected.", Rasapi32Util.getRasErrorString(632));
+                if(AbstractWin32TestSupport.isEnglishLocale) {
+                    assertEquals("An incorrect structure size was detected.", Rasapi32Util.getRasErrorString(632));
+                } else {
+                    System.err.println("testGetRasErrorString test can only be run with english locale.");
+                }
 	}
 
 	public void testGetRasConnectionStatusText() {

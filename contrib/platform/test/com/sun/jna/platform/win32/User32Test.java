@@ -205,7 +205,7 @@ public class User32Test extends AbstractWin32TestSupport {
 
     @Test
     public final void testGetMonitorInfo() {
-        HMONITOR hMon = User32.INSTANCE.MonitorFromPoint(new POINT(0, 0), WinUser.MONITOR_DEFAULTTOPRIMARY);
+        HMONITOR hMon = User32.INSTANCE.MonitorFromWindow(User32.INSTANCE.GetDesktopWindow(), WinUser.MONITOR_DEFAULTTOPRIMARY);
 
         assertTrue(User32.INSTANCE.GetMonitorInfo(hMon, new MONITORINFO()).booleanValue());
 
@@ -297,16 +297,20 @@ public class User32Test extends AbstractWin32TestSupport {
 
     @Test
     public void testGetClassLongPtr() {
-        DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+        if (System.getProperty("os.arch", "unknown").equalsIgnoreCase("amd64")) {
+            DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-        assertNotNull("Could not find explorer.exe process",
-                              explorerProc);
+            assertNotNull("Could not find explorer.exe process",
+                    explorerProc);
 
-        ULONG_PTR result = User32.INSTANCE
+            ULONG_PTR result = User32.INSTANCE
                     .GetClassLongPtr(explorerProc.getHWND(),
-                                     WinUser.GCLP_HMODULE);
+                            WinUser.GCLP_HMODULE);
 
-        assertNotEquals(0, result.intValue());
+            assertNotEquals(0, result.intValue());
+        } else {
+            System.err.println("GetClassLongPtr only supported on x64");
+        }
     }
 
     @Test
