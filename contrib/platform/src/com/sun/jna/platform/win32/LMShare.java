@@ -16,6 +16,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from LMShare.h.
@@ -118,11 +119,11 @@ public interface LMShare {
         public String shi2_passwd;
 
         public SHARE_INFO_2() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public SHARE_INFO_2(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -202,11 +203,11 @@ public interface LMShare {
         public Pointer shi502_security_descriptor;
 
         public SHARE_INFO_502() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public SHARE_INFO_502(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 

@@ -120,10 +120,10 @@
   <property name="pom-platform" value="pom-jna-platform.xml" />
 
   <!-- defined maven snapshots and staging repository id and url -->
-  <property name="maven-snapshots-repository-id" value="snapshots.java.net" />
-  <property name="maven-snapshots-repository-url" value="https://maven.java.net/content/repositories/snapshots/" />
-  <property name="maven-staging-repository-id" value="staging.java.net" />
-  <property name="maven-staging-repository-url" value="https://maven.java.net/service/local/staging/deploy/maven2/" />
+  <property name="maven-snapshots-repository-id" value="oss.sonatype.org" />
+  <property name="maven-snapshots-repository-url" value="https://oss.sonatype.org/content/repositories/snapshots/" />
+  <property name="maven-staging-repository-id" value="oss.sonatype.org" />
+  <property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 
   <!-- Miscellaneous -->
   <property name="build.compiler.emacs" value="true"/>
@@ -1143,7 +1143,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- Javadoc -->
     <!-- JNA sources only, for use in Linux build from source/shared libffi -->
     <zip zipfile="${dist}/src.zip">
-      <zipfileset dir="." includes="build.xml,${pom},LICENSE,LGPL2.1,ASL2.0"/>
+      <zipfileset dir="." includes="build.xml,${pom},LICENSE,LGPL2.1,AL2.0"/>
       <zipfileset dir="${src}" includes="**/*.java" prefix="src"/>
       <zipfileset dir="${test.src}" includes="**/*.java" prefix="test"/>
       <zipfileset dir="${native}" excludes="libffi,libffi/**/*,build,build/**/*" prefix="native"/>

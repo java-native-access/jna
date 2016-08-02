@@ -19,6 +19,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from WinCrypt.h.
@@ -101,11 +102,11 @@ public interface WinCrypt {
         public String szPrompt;
 
         public CRYPTPROTECT_PROMPTSTRUCT() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public CRYPTPROTECT_PROMPTSTRUCT(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 

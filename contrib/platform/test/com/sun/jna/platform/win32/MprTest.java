@@ -39,6 +39,12 @@ public class MprTest extends TestCase {
         junit.textui.TestRunner.run(MprTest.class);
     }
 
+    public void testCreateLocalShare() throws Exception {
+        File fileShareFolder = createTempFolder();
+        String share = createLocalShare(fileShareFolder);
+        Netapi32.INSTANCE.NetShareDel(null, share, 0);
+    }
+    
     public void testWNetUseConnection() throws Exception {
         // First create a share on the local machine
         File fileShareFolder = createTempFolder();
@@ -262,10 +268,11 @@ public class MprTest extends TestCase {
         shi.write();
 
         IntByReference parm_err = new IntByReference(0);
-        assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetShareAdd(null, // Use
-                                                                             // local
-                                                                             // computer
-                2, shi.getPointer(), parm_err));
+        int errorCode = Netapi32.INSTANCE.NetShareAdd(null, // Use local computer
+                2, shi.getPointer(), parm_err);
+        assertEquals(
+                String.format("Failed to create share - errorCode: %d (Param: %d)", errorCode, parm_err.getValue()),
+                LMErr.NERR_Success, errorCode);
 
         return shareFolder.getName();
     }

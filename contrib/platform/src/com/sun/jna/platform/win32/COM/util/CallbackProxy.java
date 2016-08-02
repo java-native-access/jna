@@ -55,7 +55,7 @@ public class CallbackProxy implements IDispatchCallback {
         private static float DEFAULT_FLOAT;
         private static double DEFAULT_DOUBLE;
     
-	public CallbackProxy(Factory factory, Class<?> comEventCallbackInterface,
+	public CallbackProxy(ObjectFactory factory, Class<?> comEventCallbackInterface,
 			IComEventCallbackListener comEventCallbackListener) {
 		this.factory = factory;
 		this.comEventCallbackInterface = comEventCallbackInterface;
@@ -65,7 +65,7 @@ public class CallbackProxy implements IDispatchCallback {
 		this.dispatchListener = new DispatchListener(this);
 	}
 
-	Factory factory;
+	ObjectFactory factory;
 	Class<?> comEventCallbackInterface;
 	IComEventCallbackListener comEventCallbackListener;
 	REFIID listenedToRiid;

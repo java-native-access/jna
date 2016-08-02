@@ -18,6 +18,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from DsGetDC.h. Windows SDK 6.0a
@@ -107,11 +108,11 @@ public interface DsGetDC {
         public String ClientSiteName;
 
         public DOMAIN_CONTROLLER_INFO() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public DOMAIN_CONTROLLER_INFO(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
@@ -235,11 +236,11 @@ public interface DsGetDC {
         }
 
         public DS_DOMAIN_TRUSTS() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public DS_DOMAIN_TRUSTS(Pointer p) {
-            super(p);
+            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
     };

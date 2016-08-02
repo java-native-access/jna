@@ -14,9 +14,6 @@ package com.sun.jna.platform.win32.COM.util;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.COM.COMException;
@@ -25,12 +22,12 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable implements IRunningObjectTable {
 
-	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, Factory factory) {
+	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, ObjectFactory factory) {
 		this.raw = raw;
 		this.factory = factory;
 	}
 
-	Factory factory;
+	ObjectFactory factory;
 	com.sun.jna.platform.win32.COM.RunningObjectTable raw;
 
 	@Override

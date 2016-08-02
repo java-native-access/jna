@@ -20,7 +20,7 @@
           <distribution>repo</distribution>
       </license>
       <license>
-          <name>ASL, version 2</name>
+          <name>Apache License v2.0</name>
           <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
       </license>
@@ -38,6 +38,14 @@
       <name>Timothy Wall</name>
       <roles>
         <role>Owner</role>
+      </roles>
+    </developer>
+    <developer>
+      <email>mblaesing@doppel-helix.eu</email>
+      <name>Matthias Bläsing</name>
+      <url>https://github.com/matthiasblaesing/</url>
+      <roles>
+        <role>Developer</role>
       </roles>
     </developer>
   </developers>

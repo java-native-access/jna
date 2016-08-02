@@ -254,7 +254,8 @@ public class Secur32Test extends TestCase {
     		assertTrue(packageInfo.Comment.length() >= 0);
     	}
     	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeContextBuffer(
-    			pPackageInfo.getPointer()));
+    			pPackageInfo.pPkgInfo.getPointer()));
+        
     }
 
     public void testQuerySecurityContextToken() {

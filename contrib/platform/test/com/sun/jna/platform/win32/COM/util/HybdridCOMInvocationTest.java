@@ -72,7 +72,7 @@ public class HybdridCOMInvocationTest {
     
     @Test
     public void testOfficeInvocationProblemCOMUtil() {
-        Factory fact = new Factory();
+        ObjectFactory fact = new ObjectFactory();
         Application app;
         try {
             app = fact.createObject(Application.class);

@@ -15,8 +15,10 @@ package com.sun.jna.platform.unix;
 import java.awt.GraphicsEnvironment;
 
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
+import org.junit.Assert;
 
 /**
  * Exercise the {@link X11} class.
@@ -74,6 +76,32 @@ public class X11Test extends TestCase {
                 X11.INSTANCE.XFree(pref.getValue());
             }
         }
+    }
+
+    public void testXSetWMProtocols() {
+        X11.Atom[] atoms = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false), X11.INSTANCE.XInternAtom(display, "WM_TAKE_FOCUS", false) };
+        int status = X11.INSTANCE.XSetWMProtocols(display, root, atoms, atoms.length);
+        Assert.assertNotEquals("Bad status for XSetWMProtocols", 0, status);
+    }
+
+    public void testXGetWMProtocols() {
+        X11.Atom[] sentAtoms = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false), X11.INSTANCE.XInternAtom(display, "WM_TAKE_FOCUS", false) };
+        X11.INSTANCE.XSetWMProtocols(display, root, sentAtoms, sentAtoms.length);
+        
+        PointerByReference protocols = new PointerByReference();
+        IntByReference count = new IntByReference();
+        
+        int status = X11.INSTANCE.XGetWMProtocols(display, root, protocols, count);
+        
+        X11.Atom[] receivedAtoms = new X11.Atom[count.getValue()];
+        for(int i = count.getValue() - 1; i >= 0; i--) {
+            receivedAtoms[i] = new X11.Atom(protocols.getValue().getLong(X11.Atom.SIZE * i));
+        }
+        X11.INSTANCE.XFree(protocols.getValue());
+
+        Assert.assertNotEquals("Bad status for XGetWMProtocols", 0, status);
+        Assert.assertEquals("Wrong number of protocols returned for XGetWMProtocols", sentAtoms.length, receivedAtoms.length);
+        Assert.assertArrayEquals("Sent protocols were not equal to returned procols for XGetWMProtocols", sentAtoms, receivedAtoms);
     }
 
     public static void main(java.lang.String[] argList) {

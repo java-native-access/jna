@@ -346,7 +346,7 @@ public class Kernel32Test extends TestCase {
 
     public void testQueryFullProcessImageName() {
         int pid = Kernel32.INSTANCE.GetCurrentProcessId();
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, pid);
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, pid);
         assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process ID=" + pid + " handle", h);
 
         try {
@@ -380,7 +380,7 @@ public class Kernel32Test extends TestCase {
 
     public void testGetTickCount64() throws InterruptedException {
         long tick1 = Kernel32.INSTANCE.GetTickCount64();
-        Thread.sleep(10);
+        Thread.sleep(100);
         long tick2 = Kernel32.INSTANCE.GetTickCount64();
 
         assertTrue(tick2 > tick1);

@@ -29,9 +29,12 @@ import com.sun.jna.WString;
  * @author twall
  */
 public class W32APITypeMapper extends DefaultTypeMapper {
-
+    /** Standard TypeMapper to use the unicode version of a w32 API. */
     public static final TypeMapper UNICODE = new W32APITypeMapper(true);
+    /** Standard TypeMapper to use the ASCII/MBCS version of a w32 API. */
     public static final TypeMapper ASCII = new W32APITypeMapper(false);
+    /** Default TypeMapper to use - depends on the value of {@code w32.ascii} system property */
+    public static final TypeMapper DEFAULT = Boolean.getBoolean("w32.ascii") ? ASCII : UNICODE;
 
     protected W32APITypeMapper(boolean unicode) {
         if (unicode) {

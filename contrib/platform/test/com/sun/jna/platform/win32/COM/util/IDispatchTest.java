@@ -1,6 +1,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
@@ -16,12 +17,16 @@ import static org.junit.Assert.*;
 
 public class IDispatchTest {
 
-    Factory factory;
+    ObjectFactory factory;
 
     @Before
     public void before() {
+        AbstractWin32TestSupport.killProcessByName("iexplore.exe");
+        try {
+            Thread.sleep(5 * 1000);
+        } catch (InterruptedException ex) {}
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-        this.factory = new Factory();
+        this.factory = new ObjectFactory();
     }
 
     @After

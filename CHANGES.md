@@ -1,4 +1,4 @@
-NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and ASL (see LICENSE).
+NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE).
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
@@ -53,8 +53,11 @@ Features
 * [#644](https://github.com/java-native-access/jna/pull/644): New ant target 'install' for installing JNA artifacts in local m2-repository - [@SevenOf9Sleeper](https://github.com/SevenOf9Sleeper).
 * [#649](https://github.com/java-native-access/jna/pull/649): Bugfix msoffice sample and add two samples taken from MSDN and translated from VisualBasic to Java  - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#654](https://github.com/java-native-access/jna/pull/654): Support named arguments for `com.sun.jna.platform.win32.COM.util.CallbackProxy` based callbacks - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#659](https://github.com/java-native-access/jna/issues/659): Enable LCID (locale) override for `com.sun.jna.platform.win32.COM.util.ProxyObject`-based COM calls - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#665](https://github.com/java-native-access/jna/pull/665): Added `XSetWMProtocols` and `XGetWMProtocols` to `com.sun.jna.platform.unix.X11` - [@zainab-ali](https://github.com/zainab-ali).
 * [#667](https://github.com/java-native-access/jna/pull/667): Added SetFileSecurity, GetSecurityInfo and SetSecurityInfo to `com.sun.jna.platform.win32.Advapi32` - [@amarcionek](https://github.com/amarcionek).
 * [#667](https://github.com/java-native-access/jna/pull/667): Added NtSetSecurityObject and NtQuerySecurityObject to `com.sun.jna.platform.win32.NtDll` - [@amarcionek](https://github.com/amarcionek).
+* [#680](https://github.com/java-native-access/jna/pull/680): Added `SetCurrentProcessExplicitAppUserModelID` and `GetCurrentProcessExplicitAppUserModelID` to `com.sun.jna.platform.win32.Shell32` for setting the [System.AppUserModel.ID](https://msdn.microsoft.com/en-us/library/windows/desktop/dd391569.aspx) of the host process - [@rednoah](https://github.com/rednoah).
 
 Bug Fixes
 ---------
@@ -72,6 +75,10 @@ Bug Fixes
 * [#633](https://github.com/java-native-access/jna/pull/633): Restore default usage of platform native encoding for Java strings passed to native functions (was hard-coded to UTF-8 in 4.0 and later) [@amake](https://github.com/amake)
 * [#634](https://github.com/java-native-access/jna/pull/634): Improve BSTR handling and add `SysStringByteLen` and `SysStringLen` to `com.sun.jna.platform.win32.OleAuto` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#646](https://github.com/java-native-access/jna/issues/646): `platform.win32.COM.COMBindingBaseObject` swallows reason if instantiation fails - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#674](https://github.com/java-native-access/jna/pull/674): Update references to Apache License as requested by issue #673 [@bhamail](https://github.com/bhamail)
+* [#636](https://github.com/java-native-access/jna/issues/636): Staticly link visual c++ runtime when building with MSVC - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#624](https://github.com/java-native-access/jna/issues/624): WinDef.DWORD getLow() & getHigh() using incorrect bit mask - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#668](https://github.com/java-native-access/jna/issues/668): Correct typemapper used for structures defined in `com.sun.jna.platform.win32.DsGetDC`, `com.sun.jna.platform.win32.LMAccess`, `com.sun.jna.platform.win32.LMShare`, `com.sun.jna.platform.win32.Sspi`, `com.sun.jna.platform.win32.WinBase`, `com.sun.jna.platform.win32.WinCrypt`, `com.sun.jna.platform.win32.WinUser` and `com.sun.jna.platform.win32.Winnetwk` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.2.1
 =============

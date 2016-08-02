@@ -795,6 +795,10 @@ public interface X11 extends Library {
                           String icon_name, String[] argv, int argc,
                           XSizeHints normal_hints, Pointer wm_hints,
                           Pointer class_hints);
+
+    int XSetWMProtocols(Display display, Window window, Atom[] atom, int count);
+    int XGetWMProtocols(Display display, Window w, PointerByReference protocols_return, IntByReference count_return);
+
     int XFree(Pointer data);
     Window XCreateSimpleWindow(Display display, Window parent, int x, int y,
                                int width, int height, int border_width,
