@@ -17,6 +17,8 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.TypeMapper;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from Sspi.h.
@@ -450,6 +452,10 @@ public interface Sspi {
          */
         public String Comment;
 
+        public SecPkgInfo() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+        
         @Override
         protected List<String> getFieldOrder() {
             return FIELDS;

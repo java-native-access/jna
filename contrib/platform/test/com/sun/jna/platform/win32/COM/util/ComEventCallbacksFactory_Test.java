@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -46,6 +47,11 @@ public class ComEventCallbacksFactory_Test {
 	
 	@Before
 	public void before() {
+                AbstractWin32TestSupport.killProcessByName("iexplore.exe");
+                try {
+                    Thread.sleep(5 * 1000);
+                } catch (InterruptedException ex) {}
+                
                 ComThread thread = new ComThread("Default Factory COM Thread", 10000, new Thread.UncaughtExceptionHandler() {
                     @Override
                     public void uncaughtException(Thread t, Throwable e) {
@@ -59,7 +65,7 @@ public class ComEventCallbacksFactory_Test {
 	public void after() {
 		this.factory.disposeAll();
                 this.factory.getComThread().terminate(10000);
-	}
+        }
 	
 	
 	@ComObject(progId="Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")

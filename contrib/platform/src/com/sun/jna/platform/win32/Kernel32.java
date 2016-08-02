@@ -1264,10 +1264,16 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * This function returns a handle to an existing process object.
      *
-     * @param fdwAccess
-     *            Not supported; set to zero.
-     * @param fInherit
-     *            Not supported; set to FALSE.
+     * @param fdwAccess The access to the process object. This access right is
+     * checked against the security descriptor for the process. This parameter
+     * can be one or more of the process access rights.
+     * <p>
+     * If the caller has enabled the SeDebugPrivilege privilege, the requested
+     * access is granted regardless of the contents of the security
+     * descriptor.</p>
+     * 
+     * @param fInherit If this value is TRUE, processes created by this process will inherit the handle. Otherwise, the processes do not inherit this handle.
+     * 
      * @param IDProcess
      *            Specifies the process identifier of the process to open.
      * @return An open handle to the specified process indicates success. NULL

@@ -26,6 +26,7 @@ import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from Winbase.h (kernel32.dll/kernel services).
@@ -427,6 +428,10 @@ public interface WinBase extends WinDef, BaseTSD {
         public SYSTEMTIME DaylightDate;
         public LONG       DaylightBias;
 
+        public TIME_ZONE_INFORMATION() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+        
         @Override
         protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "Bias", "StandardName", "StandardDate", "StandardBias", "DaylightName", "DaylightDate", "DaylightBias" });
@@ -902,6 +907,7 @@ public interface WinBase extends WinDef, BaseTSD {
         }
 
         public STARTUPINFO() {
+            super(W32APITypeMapper.DEFAULT);
             cb = new DWORD(size());
         }
     }

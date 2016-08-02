@@ -29,7 +29,8 @@ public class NtDllUtilTest extends TestCase {
     	HKEYByReference phKey = new HKEYByReference();
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
     			WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
-    	assertEquals("Software", NtDllUtil.getKeyName(phKey.getValue()));
+        // Keys are case insensitive (https://msdn.microsoft.com/de-de/library/windows/desktop/ms724946(v=vs.85).aspx)
+    	assertEquals("software", NtDllUtil.getKeyName(phKey.getValue()).toLowerCase());
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
 }

@@ -18,6 +18,7 @@ import org.junit.Test;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.IID;
@@ -43,6 +44,8 @@ import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.Assert;
 
 public class ComEventCallbacks_Test {
@@ -69,6 +72,11 @@ public class ComEventCallbacks_Test {
     
     @Before
     public void before() {
+        AbstractWin32TestSupport.killProcessByName("iexplore.exe");
+        try {
+            Thread.sleep(5 * 1000);
+        } catch (InterruptedException ex) {}
+        
         HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
         COMUtils.checkRC(hr);
 

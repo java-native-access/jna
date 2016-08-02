@@ -17,6 +17,7 @@ import java.util.List;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.PSID;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from LMAccess.h.
@@ -31,11 +32,11 @@ public interface LMAccess {
         public String lgrui0_name;
 
         public LOCALGROUP_INFO_0() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public LOCALGROUP_INFO_0(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -52,11 +53,11 @@ public interface LMAccess {
         public String lgrui1_comment;
 
         public LOCALGROUP_INFO_1() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public LOCALGROUP_INFO_1(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -88,11 +89,11 @@ public interface LMAccess {
         public String usri0_name;
 
         public USER_INFO_0() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public USER_INFO_0(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -153,11 +154,11 @@ public interface LMAccess {
         public String usri1_script_path;
 
         public USER_INFO_1() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public USER_INFO_1(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -232,11 +233,11 @@ public interface LMAccess {
         public PSID.ByReference   usri23_user_sid;
 
         public USER_INFO_23() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public USER_INFO_23(Pointer memory) {
-            useMemory(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -257,11 +258,11 @@ public interface LMAccess {
         public String grui0_name;
 
         public GROUP_USERS_INFO_0() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public GROUP_USERS_INFO_0(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -282,11 +283,11 @@ public interface LMAccess {
         public String lgrui0_name;
 
         public LOCALGROUP_USERS_INFO_0() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public LOCALGROUP_USERS_INFO_0(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -311,11 +312,11 @@ public interface LMAccess {
         public String grpi0_name;
 
         public GROUP_INFO_0() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public GROUP_INFO_0(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -345,11 +346,11 @@ public interface LMAccess {
         public String grpi1_comment;
 
         public GROUP_INFO_1() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public GROUP_INFO_1(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -390,11 +391,11 @@ public interface LMAccess {
         public int grpi2_attributes;
 
         public GROUP_INFO_2() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public GROUP_INFO_2(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -435,11 +436,11 @@ public interface LMAccess {
         public int grpi3_attributes;
 
         public GROUP_INFO_3() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public GROUP_INFO_3(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 

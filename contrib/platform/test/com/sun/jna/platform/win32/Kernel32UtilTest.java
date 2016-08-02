@@ -122,13 +122,21 @@ public class Kernel32UtilTest extends TestCase {
     }
 
     public void testFormatMessageFromLastErrorCode() {
-        assertEquals("The remote server has been paused or is in the process of being started.",
-                Kernel32Util.formatMessageFromLastErrorCode(W32Errors.ERROR_SHARING_PAUSED));
+        if (AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals("The remote server has been paused or is in the process of being started.",
+                    Kernel32Util.formatMessageFromLastErrorCode(W32Errors.ERROR_SHARING_PAUSED));
+        } else {
+            System.out.println("testFormatMessageFromLastErrorCode Test can only be run on english locale");
+        }
     }
 
     public void testFormatMessageFromHR() {
-        assertEquals("The operation completed successfully.",
-                Kernel32Util.formatMessage(W32Errors.S_OK));
+        if(AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals("The operation completed successfully.",
+                    Kernel32Util.formatMessage(W32Errors.S_OK));
+        } else {
+            System.out.println("testFormatMessageFromHR Test can only be run on english locale");
+        }
     }
 
     public void testGetTempPath() {
@@ -285,7 +293,7 @@ public class Kernel32UtilTest extends TestCase {
     }
 
     public final void testQueryFullProcessImageName() {
-        HANDLE h = Kernel32.INSTANCE.OpenProcess(0, false, Kernel32.INSTANCE.GetCurrentProcessId());
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, Kernel32.INSTANCE.GetCurrentProcessId());
         assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process handle", h);
         try {
             String name = Kernel32Util.QueryFullProcessImageName(h, 0);

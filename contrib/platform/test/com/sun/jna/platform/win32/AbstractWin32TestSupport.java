@@ -12,13 +12,18 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.sun.jna.platform.AbstractPlatformTestSupport;
+import static com.sun.jna.platform.win32.Tlhelp32.TH32CS_SNAPALL;
+import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import java.util.Arrays;
+import java.util.Collections;
 
 public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSupport {
     protected AbstractWin32TestSupport() {
@@ -115,5 +120,29 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
         }
 
         return handle;
+    }
+    
+    public static final LCID systemLCID = Kernel32.INSTANCE.GetSystemDefaultLCID();
+    public static final boolean isEnglishLocale = 
+            systemLCID.intValue() == 0x409 // en_US
+            || systemLCID.intValue() == 0x809 // en_GB
+            ;
+
+    public static void killProcessByName(String filename) {
+        HANDLE hSnapShot = Kernel32.INSTANCE.CreateToolhelp32Snapshot(TH32CS_SNAPALL, null);
+        Tlhelp32.PROCESSENTRY32 process = new Tlhelp32.PROCESSENTRY32();
+        boolean hRes = Kernel32.INSTANCE.Process32First(hSnapShot, process);
+        while (hRes) {
+            String imageName = Native.toString(process.szExeFile);
+            if (imageName.equalsIgnoreCase(filename)) {
+                HANDLE hProcess = Kernel32.INSTANCE.OpenProcess(Kernel32.PROCESS_TERMINATE, false, process.th32ProcessID.intValue());
+                if (hProcess != null) {
+                    Kernel32.INSTANCE.TerminateProcess(hProcess, 9);
+                    Kernel32.INSTANCE.CloseHandle(hProcess);
+                }
+            }
+            hRes = Kernel32.INSTANCE.Process32Next(hSnapShot, process);
+        }
+        Kernel32.INSTANCE.CloseHandle(hSnapShot);
     }
 }

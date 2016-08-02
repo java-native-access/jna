@@ -29,8 +29,12 @@ public class Win32ExceptionTest extends TestCase {
         try {
             throw new Win32Exception(W32Errors.ERROR_SHARING_PAUSED);
         } catch (Win32Exception e) {
-            assertLastErrorValue(e, W32Errors.ERROR_SHARING_PAUSED,
+            if(AbstractWin32TestSupport.isEnglishLocale) {
+                assertLastErrorValue(e, W32Errors.ERROR_SHARING_PAUSED,
                     "The remote server has been paused or is in the process of being started.");
+            } else {
+                System.err.println("testFormatMessageFromHR test can only be run with english locale.");
+            }
         }
     }
 
@@ -38,7 +42,11 @@ public class Win32ExceptionTest extends TestCase {
         try {
             throw new Win32Exception(W32Errors.S_OK);
         } catch (Win32Exception e) {
-            assertLastErrorValue(e, W32Errors.ERROR_SUCCESS, "The operation completed successfully.");
+            if(AbstractWin32TestSupport.isEnglishLocale) {
+                assertLastErrorValue(e, W32Errors.ERROR_SUCCESS, "The operation completed successfully.");
+            } else {
+                System.err.println("testFormatMessageFromHR test can only be run with english locale.");
+            }
         }
     }
 

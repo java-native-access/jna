@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -48,6 +49,10 @@ public class ComEventCallbacksObjectFactory_Test {
 	
 	@Before
 	public void before() {
+                AbstractWin32TestSupport.killProcessByName("iexplore.exe");
+                try {
+                    Thread.sleep(5 * 1000);
+                } catch (InterruptedException ex) {}
                 Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
 		this.factory = new ObjectFactory();
 	}

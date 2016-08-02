@@ -18,6 +18,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from AccCtrl.h. Microsoft Windows SDK 7.1
@@ -346,11 +347,11 @@ public abstract class Winnetwk {
         public String lpProvider;
 
         public NETRESOURCE() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public NETRESOURCE(Pointer address) {
-            super(address);
+            super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
@@ -391,11 +392,11 @@ public abstract class Winnetwk {
         public String lpUniversalName;
 
         public UNIVERSAL_NAME_INFO() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public UNIVERSAL_NAME_INFO(Pointer address) {
-            super(address);
+            super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
@@ -444,11 +445,11 @@ public abstract class Winnetwk {
         public String lpRemainingPath;
 
         public REMOTE_NAME_INFO() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public REMOTE_NAME_INFO(Pointer address) {
-            super(address);
+            super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
