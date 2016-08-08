@@ -12,12 +12,21 @@
  */
 package com.sun.jna.platform.win32;
 
-import junit.framework.TestCase;
+import static com.sun.jna.platform.win32.WinNT.DACL_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.GROUP_SECURITY_INFORMATION;
+import static com.sun.jna.platform.win32.WinNT.OWNER_SECURITY_INFORMATION;
 
+import java.io.File;
+import java.io.FileWriter;
+
+import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.Wdm.KEY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.Wdm.KEY_INFORMATION_CLASS;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
+
+import junit.framework.TestCase;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -48,5 +57,64 @@ public class NtDllTest extends TestCase {
     	assertEquals("software", keyInformation.getName().toLowerCase());
     	// close key
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	    	    	
+    }
+
+    public void testNtQuerySetSecurityObjectNoSACL() throws Exception {
+        int infoType = OWNER_SECURITY_INFORMATION
+                       | GROUP_SECURITY_INFORMATION
+                       | DACL_SECURITY_INFORMATION;
+
+        // create a temp file
+        File file = createTempFile();
+        String filePath = file.getAbsolutePath();
+        HANDLE hFile = WinBase.INVALID_HANDLE_VALUE;
+
+        try {
+            hFile = Kernel32.INSTANCE.CreateFile(
+                        filePath,
+                        WinNT.GENERIC_WRITE | WinNT.WRITE_OWNER | WinNT.WRITE_DAC,
+                        WinNT.FILE_SHARE_READ,
+                        new WinBase.SECURITY_ATTRIBUTES(),
+                        WinNT.OPEN_EXISTING,
+                        WinNT.FILE_ATTRIBUTE_NORMAL,
+                        null);
+            assertFalse("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+            int Length = 64 * 1024;
+            Memory SecurityDescriptor = new Memory(Length);
+            IntByReference LengthNeeded = new IntByReference();
+
+            assertEquals("NtQuerySecurityObject(" + filePath + ")", 0,
+                    NtDll.INSTANCE.NtQuerySecurityObject(
+                            hFile,
+                            infoType,
+                            SecurityDescriptor,
+                            Length,
+                            LengthNeeded));
+            assertTrue(LengthNeeded.getValue() > 0);
+            assertTrue(LengthNeeded.getValue() < 64 * 1024);            
+            assertEquals("NtSetSecurityObject(" + filePath + ")", 0,
+                    NtDll.INSTANCE.NtSetSecurityObject(
+                            hFile,
+                            infoType,
+                            SecurityDescriptor));
+        } finally {
+            if (hFile != WinBase.INVALID_HANDLE_VALUE)
+                Kernel32.INSTANCE.CloseHandle(hFile);
+            file.delete();
+        }
+    }
+
+    private File createTempFile() throws Exception {
+        String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime()
+                + ".text";
+        File file = new File(filePath);
+        file.createNewFile();
+        FileWriter fileWriter = new FileWriter(file);
+        for (int i = 0; i < 1000; i++) {
+            fileWriter.write("Sample text " + i + System.getProperty("line.separator"));
+        }
+        fileWriter.close();
+        return file;
     }
 }

@@ -1005,6 +1005,200 @@ public class Advapi32Test extends TestCase {
     	assertTrue(Advapi32.INSTANCE.RevertToSelf());
     }
 
+    public void testGetSetFileSecurityNoSACL() throws Exception {
+        int infoType = OWNER_SECURITY_INFORMATION
+                       | GROUP_SECURITY_INFORMATION
+                       | DACL_SECURITY_INFORMATION;
+
+        int memSize = 64 * 1024;
+        Memory memorySecurity = new Memory(memSize);
+        IntByReference sizeNeeded = new IntByReference(0);
+        // create a temp file
+        File file = createTempFile();
+        String filePath = file.getAbsolutePath();
+
+        try {
+
+            assertEquals("GetFileSecurity(" + filePath + ")", true,
+                         Advapi32.INSTANCE.GetFileSecurity(
+                                 filePath,
+                                 infoType,
+                                 memorySecurity,
+                                 memSize,
+                                 sizeNeeded));
+            assertEquals("SetFileSecurity(" + filePath + ")", true,
+                         Advapi32.INSTANCE.SetFileSecurity(
+                                 filePath,
+                                 infoType,
+                                 memorySecurity));
+        } finally {
+            file.delete();
+        }
+    }
+
+    public void testGetSetSecurityInfoNoSACL() throws Exception {
+        int infoType = OWNER_SECURITY_INFORMATION
+                       | GROUP_SECURITY_INFORMATION
+                       | DACL_SECURITY_INFORMATION;
+
+        PointerByReference ppsidOwner = new PointerByReference();
+        PointerByReference ppsidGroup = new PointerByReference();
+        PointerByReference ppDacl = new PointerByReference();
+        PointerByReference ppSecurityDescriptor = new PointerByReference();
+        // create a temp file
+        File file = createTempFile();
+        String filePath = file.getAbsolutePath();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(
+                filePath,
+                WinNT.GENERIC_ALL | WinNT.WRITE_OWNER | WinNT.WRITE_DAC,
+                WinNT.FILE_SHARE_READ,
+                new WinBase.SECURITY_ATTRIBUTES(),
+                WinNT.OPEN_EXISTING,
+                WinNT.FILE_ATTRIBUTE_NORMAL,
+                null);
+        assertFalse("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+            try {
+
+                assertEquals("GetSecurityInfo(" + filePath + ")", 0,
+                        Advapi32.INSTANCE.GetSecurityInfo(
+                                hFile,
+                                AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                infoType,
+                                ppsidOwner,
+                                ppsidGroup,
+                                ppDacl,
+                                null,
+                                ppSecurityDescriptor));
+
+                assertEquals("SetSecurityInfo(" + filePath + ")", 0,
+                        Advapi32.INSTANCE.SetSecurityInfo(
+                                hFile,
+                                AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                infoType,
+                                ppsidOwner.getValue(),
+                                ppsidGroup.getValue(),
+                                ppDacl.getValue(),
+                                null));
+            } finally {
+                Kernel32.INSTANCE.CloseHandle(hFile);
+                file.delete();
+            }
+        } finally {
+            Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
+        }
+    }
+
+    public void testGetSetSecurityInfoForFileWithSACL() throws Exception {
+        boolean impersontating = false;
+
+        HANDLEByReference phToken = new HANDLEByReference();
+        HANDLEByReference phTokenDuplicate = new HANDLEByReference();
+        try {
+            // open thread or process token, elevate
+            if (!Advapi32.INSTANCE.OpenThreadToken(
+                 Kernel32.INSTANCE.GetCurrentThread(),
+                 TOKEN_ADJUST_PRIVILEGES,
+                 false,
+                 phToken))
+            {
+                assertEquals(W32Errors.ERROR_NO_TOKEN, Kernel32.INSTANCE.GetLastError());
+                // OpenThreadToken may fail with W32Errors.ERROR_NO_TOKEN if current thread is anonymous.  When this happens,
+                // we need to open the process token to duplicate it, then set our thread token.
+                assertTrue(Advapi32.INSTANCE.OpenProcessToken(Kernel32.INSTANCE.GetCurrentProcess(), TOKEN_DUPLICATE, phToken));
+                // Process token opened, now duplicate
+                assertTrue(Advapi32.INSTANCE.DuplicateTokenEx(
+                            phToken.getValue(),
+                            TOKEN_ADJUST_PRIVILEGES | TOKEN_IMPERSONATE,
+                            null,
+                            SECURITY_IMPERSONATION_LEVEL.SecurityImpersonation,
+                            TOKEN_TYPE.TokenImpersonation,
+                            phTokenDuplicate));
+                // And set thread token.
+                assertTrue(Advapi32.INSTANCE.SetThreadToken(null, phTokenDuplicate.getValue()));
+                impersontating = true;
+            }
+
+            // Which token to adjust depends on whether we had to impersonate or not.
+            HANDLE tokenAdjust = impersontating ? phTokenDuplicate.getValue() : phToken.getValue();
+
+            WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(1);
+            WinNT.LUID pLuid = new WinNT.LUID();
+
+            assertTrue(Advapi32.INSTANCE.LookupPrivilegeValue(null, SE_SECURITY_NAME, pLuid));
+            tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+            assertTrue(Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null));
+
+            assertTrue(Advapi32.INSTANCE.LookupPrivilegeValue(null, SE_RESTORE_NAME, pLuid));
+            tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+            assertTrue(Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null));
+
+            // create a temp file
+            File file = createTempFile();
+            int infoType = OWNER_SECURITY_INFORMATION
+                           | GROUP_SECURITY_INFORMATION
+                           | DACL_SECURITY_INFORMATION
+                           | SACL_SECURITY_INFORMATION;
+
+            PointerByReference ppsidOwner = new PointerByReference();
+            PointerByReference ppsidGroup = new PointerByReference();
+            PointerByReference ppDacl = new PointerByReference();
+            PointerByReference ppSacl = new PointerByReference();
+            PointerByReference ppSecurityDescriptor = new PointerByReference();
+            String filePath = file.getAbsolutePath();
+            HANDLE hFile = WinBase.INVALID_HANDLE_VALUE;
+
+            try {
+                try {
+                    hFile = Kernel32.INSTANCE.CreateFile(
+                                filePath,
+                                WinNT.ACCESS_SYSTEM_SECURITY | WinNT.GENERIC_WRITE | WinNT.WRITE_OWNER | WinNT.WRITE_DAC,
+                                WinNT.FILE_SHARE_READ,
+                                new WinBase.SECURITY_ATTRIBUTES(),
+                                WinNT.OPEN_EXISTING,
+                                WinNT.FILE_ATTRIBUTE_NORMAL,
+                                null);
+                    assertEquals("GetSecurityInfo(" + filePath + ")", 0,
+                            Advapi32.INSTANCE.GetSecurityInfo(
+                                    hFile,
+                                    AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                    infoType,
+                                    ppsidOwner,
+                                    ppsidGroup,
+                                    ppDacl,
+                                    ppSacl,
+                                    ppSecurityDescriptor));
+                    assertEquals("SetSecurityInfo(" + filePath + ")", 0,
+                            Advapi32.INSTANCE.SetSecurityInfo(
+                                    hFile,
+                                    AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                                    infoType,
+                                    ppsidOwner.getValue(),
+                                    ppsidGroup.getValue(),
+                                    ppDacl.getValue(),
+                                    ppSacl.getValue()));
+                } finally {
+                    if (hFile != WinBase.INVALID_HANDLE_VALUE)
+                        Kernel32.INSTANCE.CloseHandle(hFile);
+                    file.delete();
+                }
+            } finally {
+                Kernel32Util.freeLocalMemory(ppSecurityDescriptor.getValue());
+            }
+
+            if (impersontating) {
+                assertTrue("SetThreadToken", Advapi32.INSTANCE.SetThreadToken(null, null));
+            }
+            else {
+                tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(0));
+                assertTrue("AdjustTokenPrivileges", Advapi32.INSTANCE.AdjustTokenPrivileges(tokenAdjust, false, tp, 0, null, null));
+            }
+        } finally {
+            Kernel32Util.closeHandleRefs(phToken, phTokenDuplicate);
+        }
+    }
 
     public void testGetNamedSecurityInfoForFileNoSACL() throws Exception {
         int infoType = OWNER_SECURITY_INFORMATION
