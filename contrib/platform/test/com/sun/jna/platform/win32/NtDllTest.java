@@ -25,7 +25,6 @@ import com.sun.jna.platform.win32.Wdm.KEY_INFORMATION_CLASS;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 
 import junit.framework.TestCase;
 
@@ -81,9 +80,9 @@ public class NtDllTest extends TestCase {
                         null);
             assertFalse("Failed to create file handle: " + filePath, WinBase.INVALID_HANDLE_VALUE.equals(hFile));
 
-            long Length = 64 * 1024;
+            int Length = 64 * 1024;
             Memory SecurityDescriptor = new Memory(Length);
-            LongByReference LengthNeeded = new LongByReference();
+            IntByReference LengthNeeded = new IntByReference();
 
             assertEquals("NtQuerySecurityObject(" + filePath + ")", 0,
                     NtDll.INSTANCE.NtQuerySecurityObject(
@@ -92,6 +91,8 @@ public class NtDllTest extends TestCase {
                             SecurityDescriptor,
                             Length,
                             LengthNeeded));
+            assertTrue(LengthNeeded.getValue() > 0);
+            assertTrue(LengthNeeded.getValue() < 64 * 1024);            
             assertEquals("NtSetSecurityObject(" + filePath + ")", 0,
                     NtDll.INSTANCE.NtSetSecurityObject(
                             hFile,

@@ -1030,7 +1030,7 @@ public class Advapi32Test extends TestCase {
                          Advapi32.INSTANCE.SetFileSecurity(
                                  filePath,
                                  infoType,
-                                 memorySecurity.getPointer(0)));
+                                 memorySecurity));
         } finally {
             file.delete();
         }

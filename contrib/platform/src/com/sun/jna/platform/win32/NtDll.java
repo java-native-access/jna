@@ -17,7 +17,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -104,5 +103,5 @@ public interface NtDll extends StdCallLibrary {
      * @return
      *  NtQuerySecurityObject returns STATUS_SUCCESS or an appropriate error status.
      */
-    public int NtQuerySecurityObject(HANDLE handle, int SecurityInformation, Pointer SecurityDescriptor, long Length, LongByReference LengthNeeded);
+    public int NtQuerySecurityObject(HANDLE handle, int SecurityInformation, Pointer SecurityDescriptor, int Length, IntByReference LengthNeeded);
 }
