@@ -310,6 +310,7 @@ w32_short_name(JNIEnv* env, jstring str) {
 
 static HANDLE
 w32_find_entry(JNIEnv* env, HANDLE handle, const char* funname) {
+  if (funcname[0] == '#') funname = (const char *)atoi(funname + 1);
   void* func = NULL;
   if (handle != GetModuleHandle(NULL)) {
     func = GetProcAddress(handle, funname);
