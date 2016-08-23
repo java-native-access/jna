@@ -543,6 +543,12 @@ public interface WinUser extends WinDef {
      * associated with the thread that registered the hot key.
      */
     int WM_HOTKEY = 0x0312;
+    
+    /**
+     * Used to define private messages for use by private window classes,
+     * usually of the form WM_USER+x, where x is an integer value.
+     */
+    int WM_USER = 0x0400;
 
     int WM_KEYUP = 257;
     int WM_SYSKEYDOWN = 260;
