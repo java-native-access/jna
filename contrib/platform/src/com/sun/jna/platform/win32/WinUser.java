@@ -1766,4 +1766,173 @@ public interface WinUser extends WinDef {
             return "hDevice=" + hDevice + ", dwType=" + dwType;
         }
     }
+
+    /**
+     * A handle to a bitmap (HBITMAP).
+     */
+    public int CF_BITMAT = 2;
+    /**
+     * A memory object containing a BITMAPINFO structure followed by the bitmap
+     * bits.
+     */
+    public int CF_DIB = 8;
+    /**
+     * A memory object containing a BITMAPV5HEADER structure followed by the
+     * bitmap color space information and the bitmap bits.
+     */
+    public int CF_DIBV5 = 17;
+    /**
+     * Software Arts' Data Interchange Format.
+     */
+    public int CF_DIF = 5;
+    /**
+     * Bitmap display format associated with a private format. The hMem
+     * parameter must be a handle to data that can be displayed in bitmap format
+     * in lieu of the privately formatted data.
+     */
+    public int CF_DSPBITMAP = 0x0082;
+    /**
+     * Enhanced metafile display format associated with a private format. The
+     * hMem parameter must be a handle to data that can be displayed in enhanced
+     * metafile format in lieu of the privately formatted data.
+     */
+    public int CF_DSPENHMETAFILE = 0x008E;
+    /**
+     * Metafile-picture display format associated with a private format. The
+     * hMem parameter must be a handle to data that can be displayed in
+     * metafile-picture format in lieu of the privately formatted data.
+     */
+    public int CF_DSPMETAFILEPICT = 0x0083;
+    /**
+     * Text display format associated with a private format. The hMem parameter
+     * must be a handle to data that can be displayed in text format in lieu of
+     * the privately formatted data.
+     */
+    public int CF_DSPTEXT = 0x0081;
+    /**
+     * A handle to an enhanced metafile (HENHMETAFILE).
+     */
+    public int CF_ENHMETAFILE = 14;
+    /**
+     * Start of a range of integer values for application-defined GDI object
+     * clipboard formats. The end of the range is CF_GDIOBJLAST.
+     *
+     * <p>
+     * Handles associated with clipboard formats in this range are not
+     * automatically deleted using the GlobalFree function when the clipboard is
+     * emptied. Also, when using values in this range, the hMem parameter is not
+     * a handle to a GDI object, but is a handle allocated by the GlobalAlloc
+     * function with the GMEM_MOVEABLE flag.</p>
+     */
+    public int CF_GDIOBJFIRST = 0x0300;
+    /**
+     * @see WinUser.CF_GDIOBJFIRST
+     */
+    public int CF_GDIOBJLAST = 0x03FF;
+    /**
+     * A handle to type HDROP that identifies a list of files. An application
+     * can retrieve information about the files by passing the handle to the
+     * DragQueryFile function.
+     */
+    public int CF_HDROP = 15;
+    /**
+     * The data is a handle to the locale identifier associated with text in the
+     * clipboard. When you close the clipboard, if it contains CF_TEXT data but
+     * no CF_LOCALE data, the system automatically sets the CF_LOCALE format to
+     * the current input language. You can use the CF_LOCALE format to associate
+     * a different locale with the clipboard text.
+     *
+     * <p>
+     * An application that pastes text from the clipboard can retrieve this
+     * format to determine which character set was used to generate the
+     * text.</p>
+     * <p>
+     * Note that the clipboard does not support plain text in multiple character
+     * sets. To achieve this, use a formatted text data type such as RTF
+     * instead.</p>
+     * <p>
+     * The system uses the code page associated with CF_LOCALE to implicitly
+     * convert from CF_TEXT to CF_UNICODETEXT. Therefore, the correct code page
+     * table is used for the conversion.</p>
+     */
+    public int CF_LOCALE = 16;
+    /**
+     * Handle to a metafile picture format as defined by the METAFILEPICT
+     * structure. When passing a CF_METAFILEPICT handle by means of DDE, the
+     * application responsible for deleting hMem should also free the metafile
+     * referred to by the CF_METAFILEPICT handle.
+     */
+    public int CF_METAFILEPICT = 3;
+    /**
+     * Text format containing characters in the OEM character set. Each line
+     * ends with a carriage return/linefeed (CR-LF) combination. A null
+     * character signals the end of the data.
+     */
+    public int CF_OEMTEXT = 7;
+    /**
+     * Owner-display format. The clipboard owner must display and update the
+     * clipboard viewer window, and receive the WM_ASKCBFORMATNAME,
+     * WM_HSCROLLCLIPBOARD, WM_PAINTCLIPBOARD, WM_SIZECLIPBOARD, and
+     * WM_VSCROLLCLIPBOARD messages. The hMem parameter must be NULL.
+     */
+    public int CF_OWNERDISPLAY = 0x0080;
+    /**
+     * Handle to a color palette. Whenever an application places data in the
+     * clipboard that depends on or assumes a color palette, it should place the
+     * palette on the clipboard as well.
+     *
+     * <p>
+     * If the clipboard contains data in the CF_PALETTE (logical color palette)
+     * format, the application should use the SelectPalette and RealizePalette
+     * functions to realize (compare) any other data in the clipboard against
+     * that logical palette.</p>
+     *<p>
+     * When displaying clipboard data, the clipboard always uses as its current
+     * palette any object on the clipboard that is in the CF_PALETTE format.</p>
+     */
+    public int CF_PALETTE = 9;
+    /**
+     * Data for the pen extensions to the Microsoft Windows for Pen Computing.
+     */
+    public int CF_PENDATA = 10;
+    /**
+     * Start of a range of integer values for private clipboard formats. The
+     * range ends with CF_PRIVATELAST. Handles associated with private clipboard
+     * formats are not freed automatically; the clipboard owner must free such
+     * handles, typically in response to the WM_DESTROYCLIPBOARD message.
+     */
+    public int CF_PRIVATEFIRST = 0x0200;
+    /**
+     * @see WinDef.CF_PRIVATEFIRST.
+     */
+    public int CF_PRIVATELAST = 0x02FF;
+    /**
+     * Represents audio data more complex than can be represented in a CF_WAVE
+     * standard wave format.
+     */
+    public int CF_RIFF = 11;
+    /**
+     * Microsoft Symbolic Link (SYLK) format.
+     */
+    public int CF_SYLK = 4;
+    /**
+     * Text format. Each line ends with a carriage return/linefeed (CR-LF)
+     * combination. A null character signals the end of the data. Use this
+     * format for ANSI text.
+     */
+    public int CF_TEXT = 1;
+    /**
+     * Tagged-image file format.
+     */
+    public int CF_TIFF = 6;
+    /**
+     * Unicode text format. Each line ends with a carriage return/linefeed
+     * (CR-LF) combination. A null character signals the end of the data.
+     */
+    public int CF_UNICODETEXT = 13;
+    /**
+     * Represents audio data in one of the standard wave formats, such as 11 kHz
+     * or 22 kHz PCM.
+     */
+    public int CF_WAVE = 12;
 }

@@ -2357,4 +2357,18 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         error information, call GetLastError.<br>
      */
     int GetClassLong(HWND hWnd, int nIndex);
+    
+    /**
+     * Registers a new clipboard format. This format can then be used as a 
+     * valid clipboard format. 
+     * 
+     * @param formatName The name of the new format. 
+     * 
+     * @return If the function succeeds, the return value identifies the 
+     * registered clipboard format.
+     * 
+     * <p> If the function fails, the return value is zero. To get extended
+     * error information, call GetLastError.</p>
+     */
+    public int RegisterClipboardFormat(String formatName);
 }
