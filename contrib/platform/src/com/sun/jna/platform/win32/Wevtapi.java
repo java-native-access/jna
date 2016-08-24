@@ -42,7 +42,7 @@ public interface Wevtapi extends StdCallLibrary {
      * on the remote computer; otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get
      * the error code.
      */
-    HANDLE EvtOpenSession(int LoginClass, Pointer Login, int Timeout, int Flags);
+    HANDLE EvtOpenSession(int LoginClass, EvtRpcLogin.EVT_RPC_LOGIN Login, int Timeout, int Flags);
 
     /**
      * Closes an open handle.
