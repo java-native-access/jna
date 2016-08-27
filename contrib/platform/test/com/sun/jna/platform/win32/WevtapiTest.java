@@ -3,7 +3,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
-import com.sun.jna.WString;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -82,7 +81,7 @@ public class WevtapiTest extends TestCase {
                 // test EvtRender
                 Memory buff = new Memory(1024);
                 IntByReference propertyCount = new IntByReference();
-                EvtVariant.EVT_VARIANT evtVariant = new EvtVariant.EVT_VARIANT();
+                Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
                     evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
                     buff = evtRender(buff, contextHandle, evtHandle.getValue(),
@@ -129,7 +128,7 @@ public class WevtapiTest extends TestCase {
         return buff;
     }
 
-    private void useMemory(EvtVariant.EVT_VARIANT evtVariant, Memory buff, int index) {
+    private void useMemory(Winevt.EVT_VARIANT evtVariant, Memory buff, int index) {
         evtVariant.use(buff.share(evtVariant.size() * index));
         evtVariant.readField("Type");
         int type = evtVariant.Type;
@@ -217,7 +216,7 @@ public class WevtapiTest extends TestCase {
                     throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                 }
             }
-            EvtVariant.EVT_VARIANT evtVariant = new EvtVariant.EVT_VARIANT();
+            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
             useMemory(evtVariant, buff, 0);
             assertThat(evtVariant.field1.BooleanVal, is(1));
         } finally {
@@ -228,7 +227,7 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtOpenPublisherEnum() throws Exception {
-        EvtRpcLogin.EVT_RPC_LOGIN login = new EvtRpcLogin.EVT_RPC_LOGIN(new WString("localhost"), null, null, null,
+        Winevt.EVT_RPC_LOGIN login = new Winevt.EVT_RPC_LOGIN("localhost", null, null, null,
                 Winevt.EVT_RPC_LOGIN_FLAGS.EvtRpcLoginAuthDefault);
         WinNT.HANDLE session = null;
         WinNT.HANDLE publisherEnumHandle = null;
@@ -258,7 +257,6 @@ public class WevtapiTest extends TestCase {
                     }
                 }
                 publisherList.add(buff.getWideString(0));
-                System.out.println(buff.getWideString(0));
             }
             assertThat(publisherList.size() > 0, is(true));
         } finally {
@@ -289,7 +287,7 @@ public class WevtapiTest extends TestCase {
                     }
                 }
             }
-            EvtVariant.EVT_VARIANT evtVariant = new EvtVariant.EVT_VARIANT(buff.share(0));
+            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT(buff.share(0));
             evtVariant.readField("Type");
             StringBuilder sb = new StringBuilder();
             if ((evtVariant.Type & Winevt.EVT_VARIANT_TYPE_ARRAY) == Winevt.EVT_VARIANT_TYPE_ARRAY
@@ -344,7 +342,7 @@ public class WevtapiTest extends TestCase {
             int arrayIndex = 1;
             Memory buff = new Memory(1024);
             IntByReference propertyCount = new IntByReference();
-            EvtVariant.EVT_VARIANT evtVariant = new EvtVariant.EVT_VARIANT();
+            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
             Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
             WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
             IntByReference returned = new IntByReference();
@@ -400,7 +398,7 @@ public class WevtapiTest extends TestCase {
             int eventArraySize = 10;
             int evtNextTimeout = 1000;
             Memory buff = new Memory(1024);
-            EvtVariant.EVT_VARIANT evtVariant = new EvtVariant.EVT_VARIANT();
+            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
             Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
             WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
             IntByReference buffUsed = new IntByReference();
