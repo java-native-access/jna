@@ -789,6 +789,46 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
     void PostMessage(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
 
     /**
+     * Posts a message to the message queue of the specified thread. It returns
+     * without waiting for the thread to process the message.
+     * 
+     * @param idThread The identifier of the thread to which the message is to 
+     * be posted.
+     * 
+     * <p>The function fails if the specified thread does not have a 
+     * message queue. The system creates a thread's message queue when the
+     * thread makes its first call to one of the User or GDI functions.</p>
+     * 
+     * <p>Message posting is subject to UIPI. The thread of a process can post 
+     * messages only to posted-message queues of threads in processes of lesser
+     * or equal integrity level.</p>
+     * 
+     * <p>This thread must have the SE_TCB_NAME privilege to post a message to a
+     * thread that belongs to a process with the same locally unique identifier
+     * (LUID) but is in a different desktop. Otherwise, the function fails
+     * and returns ERROR_INVALID_THREAD_ID.</p>
+     * 
+     * <p>This thread must either belong to the same desktop as the calling 
+     * thread or to a process with the same LUID. Otherwise, the function
+     * fails and returns ERROR_INVALID_THREAD_ID.</p>
+     * 
+     * @param Msg The type of message to be posted.
+     *
+     * @param wParam Additional message-specific information.
+     * 
+     * @param lParam Additional message-specific information.
+     * 
+     * @return If the function succeeds, the return value is nonzero.
+     * 
+     * <p>If the function fails, the return value is zero. To get extended error
+     * information, call GetLastError.</p><p>GetLastError returns 
+     * ERROR_INVALID_THREAD_ID if idThread is not a valid thread identifier, or
+     * if the thread specified by idThread does not have a message queue.</p>
+     * <p>GetLastError returns ERROR_NOT_ENOUGH_QUOTA when the message limit is hit.</p>
+     */
+    int PostThreadMessage(int  idThread, int  Msg, WPARAM wParam,  LPARAM lParam);
+    
+    /**
      * This function indicates to Windows that a thread has made a request to
      * terminate (quit). It is typically used in response to a WM_DESTROY
      * message.
@@ -2357,4 +2397,18 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         error information, call GetLastError.<br>
      */
     int GetClassLong(HWND hWnd, int nIndex);
+    
+    /**
+     * Registers a new clipboard format. This format can then be used as a 
+     * valid clipboard format. 
+     * 
+     * @param formatName The name of the new format. 
+     * 
+     * @return If the function succeeds, the return value identifies the 
+     * registered clipboard format.
+     * 
+     * <p> If the function fails, the return value is zero. To get extended
+     * error information, call GetLastError.</p>
+     */
+    public int RegisterClipboardFormat(String formatName);
 }
