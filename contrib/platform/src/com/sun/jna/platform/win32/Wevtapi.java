@@ -60,13 +60,13 @@ public interface Wevtapi extends StdCallLibrary {
      *
      * @param Object The handle whose operation you want to cancel. You can cancel the following operations:
      *               <ul>
-     *               <li>{@link Wevtapi#EvtClearLog}<li/>
-     *               <li>{@link Wevtapi#EvtExportLog}<li/>
-     *               <li>{@link Wevtapi#EvtNext}<li/>
-     *               <li>{@link Wevtapi#EvtQuery}<li/>
-     *               <li>{@link Wevtapi#EvtSeek}<li/>
-     *               <li>{@link Wevtapi#EvtSubscribe}<li/>
-     *               <ul/>
+     *               <li>{@link Wevtapi#EvtClearLog}</li>
+     *               <li>{@link Wevtapi#EvtExportLog}</li>
+     *               <li>{@link Wevtapi#EvtNext}</li>
+     *               <li>{@link Wevtapi#EvtQuery}</li>
+     *               <li>{@link Wevtapi#EvtSeek}</li>
+     *               <li>{@link Wevtapi#EvtSubscribe}</li>
+     *               </ul>
      *               To cancel the {@link Wevtapi#EvtClearLog}, {@link Wevtapi#EvtExportLog}, {@link Wevtapi#EvtQuery},
      *               and EvtSubscribe operations, you must pass the session handle. To specify the default
      *               session (local session), set this parameter to NULL.

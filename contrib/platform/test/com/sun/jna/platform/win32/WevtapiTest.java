@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.sun.jna.Native.POINTER_SIZE;
+import static com.sun.jna.platform.win32.Winevt.EVT_VARIANT_TYPE_ARRAY;
+import static com.sun.jna.platform.win32.Winevt.EVT_VARIANT_TYPE_MASK;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -87,8 +89,8 @@ public class WevtapiTest extends TestCase {
                     buff = evtRender(buff, contextHandle, evtHandle.getValue(),
                             Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     useMemory(evtVariant, buff, 0);
-                    assertThat("Provider Name", evtVariant.field1.AnsiStringVal.getWideString(0), is("testSource"));
-                    sb.append(evtVariant.field1.AnsiStringVal.getWideString(0));
+                    assertThat("Provider Name", evtVariant.field1.StringVal, is("testSource"));
+                    sb.append(evtVariant.field1.StringVal);
                     useMemory(evtVariant, buff, 1);
                     assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
                     useMemory(evtVariant, buff, 2);
@@ -131,9 +133,17 @@ public class WevtapiTest extends TestCase {
     private void useMemory(Winevt.EVT_VARIANT evtVariant, Memory buff, int index) {
         evtVariant.use(buff.share(evtVariant.size() * index));
         evtVariant.readField("Type");
-        int type = evtVariant.Type;
+        int typeIdx = evtVariant.Type;
+
+        boolean isArray = (typeIdx & EVT_VARIANT_TYPE_ARRAY) == EVT_VARIANT_TYPE_ARRAY;
+        int baseTypeIdx = typeIdx & EVT_VARIANT_TYPE_MASK;
+
+        System.out.println("===== " + baseTypeIdx + " ======");
+
+        Winevt.EVT_VARIANT_TYPE type = Winevt.EVT_VARIANT_TYPE.values()[baseTypeIdx];
+
         evtVariant.field1.use(buff.share(evtVariant.size() * index));
-        evtVariant.field1.readField(Winevt.EVT_VARIANT_TYPE.values()[type].getField());
+        evtVariant.field1.readField(isArray ? type.getArrField() : type.getField());
     }
 
     public void testEvtOpenLog() throws Exception {
@@ -290,17 +300,13 @@ public class WevtapiTest extends TestCase {
             Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT(buff.share(0));
             evtVariant.readField("Type");
             StringBuilder sb = new StringBuilder();
-            if ((evtVariant.Type & Winevt.EVT_VARIANT_TYPE_ARRAY) == Winevt.EVT_VARIANT_TYPE_ARRAY
-                    && (evtVariant.Type & Winevt.EVT_VARIANT_TYPE_MASK) == Winevt.EVT_VARIANT_TYPE.EvtVarTypeString.ordinal()) {
-                evtVariant.readField("Count");
-                int count = evtVariant.Count;
-                evtVariant.field1.use(buff.share(0));
-                evtVariant.field1.readField("AnsiStringArr");
-                Pointer[] pointers = evtVariant.field1.AnsiStringArr.getPointer().getPointerArray(0);
 
-                for (int i = 0; i < count; i++) {
-                    sb.append(pointers[i].getWideString(0));
-                }
+            evtVariant.readField("Count");
+            int count = evtVariant.Count;
+            useMemory(evtVariant, buff, 0);
+            Pointer[] pointers = evtVariant.field1.StringArr.getPointer().getPointerArray(0);
+            for (int i = 0; i < count; i++) {
+                sb.append(pointers[i].getWideString(0));
             }
             assertThat(sb.toString(), is("Application"));
         } finally {
@@ -417,8 +423,8 @@ public class WevtapiTest extends TestCase {
                         }
                     }
                     useMemory(evtVariant, buff, 0);
-                    assertThat("Evtx Path", evtVariant.field1.AnsiStringVal.getWideString(0), is(testEvtx.getAbsolutePath()));
-                    sb.append(evtVariant.field1.AnsiStringVal.getWideString(0));
+                    assertThat("Evtx Path", evtVariant.field1.StringVal, is(testEvtx.getAbsolutePath()));
+                    sb.append(evtVariant.field1.StringVal);
 
                 }
 
@@ -436,5 +442,58 @@ public class WevtapiTest extends TestCase {
                 Wevtapi.INSTANCE.EvtClose(contextHandle);
             }
         }
+    }
+
+    public void testEvtVariantType() throws Exception {
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeNull.getField(), is(""));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeString.getField(), is("StringVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeAnsiString.getField(), is("AnsiStringVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSByte.getField(), is("SByteVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeByte.getField(), is("ByteVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt16.getField(), is("Int16Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt16.getField(), is("UInt16Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt32.getField(), is("Int32Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt32.getField(), is("UInt32Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt64.getField(), is("Int64Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt64.getField(), is("UInt64Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSingle.getField(), is("SingleVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeDouble.getField(), is("DoubleVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean.getField(), is("BooleanVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBinary.getField(), is("BinaryVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeGuid.getField(), is("GuidVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSizeT.getField(), is("SizeTVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeFileTime.getField(), is("FileTimeVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSysTime.getField(), is("SysTimeVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSid.getField(), is("SidVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeHexInt32.getField(), is("Int32Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeHexInt64.getField(), is("Int64Val"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeEvtHandle.getField(), is("EvtHandleVal"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeEvtXml.getField(), is("XmlVal"));
+
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeNull.getArrField(), is(""));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeString.getArrField(), is("StringArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeAnsiString.getArrField(), is("AnsiStringArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSByte.getArrField(), is("SByteArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeByte.getArrField(), is("ByteArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt16.getArrField(), is("Int16Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt16.getArrField(), is("UInt16Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt32.getArrField(), is("Int32Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt32.getArrField(), is("UInt32Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeInt64.getArrField(), is("Int64Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeUInt64.getArrField(), is("UInt64Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSingle.getArrField(), is("SingleArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeDouble.getArrField(), is("DoubleArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean.getArrField(), is("BooleanArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBinary.getArrField(), is("BinaryArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeGuid.getArrField(), is("GuidArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSizeT.getArrField(), is("SizeTArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeFileTime.getArrField(), is("FileTimeArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSysTime.getArrField(), is("SysTimeArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeSid.getArrField(), is("SidArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeHexInt32.getArrField(), is("Int32Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeHexInt64.getArrField(), is("Int64Arr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeEvtHandle.getArrField(), is("EvtHandleArr"));
+        assertThat(Winevt.EVT_VARIANT_TYPE.EvtVarTypeEvtXml.getArrField(), is("XmlArr"));
+
     }
 }

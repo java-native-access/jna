@@ -40,73 +40,73 @@ public interface Winevt {
         EvtVarTypeNull(""),
 
         /** A null-terminated Unicode string. */
-        EvtVarTypeString("AnsiStringVal"),
+        EvtVarTypeString("String"),
 
         /** A null-terminated ANSI string. */
-        EvtVarTypeAnsiString("AnsiStringVal"),
+        EvtVarTypeAnsiString("AnsiString"),
 
         /** A signed 8-bit integer value. */
-        EvtVarTypeSByte("ByteVal"),
+        EvtVarTypeSByte("SByte"),
 
         /** An unsigned 8-bit integer value. */
-        EvtVarTypeByte("ByteVal"),
+        EvtVarTypeByte("Byte"),
 
         /** An signed 16-bit integer value. */
-        EvtVarTypeInt16("Int16Val"),
+        EvtVarTypeInt16("Int16"),
 
         /** An unsigned 16-bit integer value. */
-        EvtVarTypeUInt16("UInt16Val"),
+        EvtVarTypeUInt16("UInt16"),
 
         /** A signed 32-bit integer value. */
-        EvtVarTypeInt32("Int32Val"),
+        EvtVarTypeInt32("Int32"),
 
         /** An unsigned 32-bit integer value. */
-        EvtVarTypeUInt32("UInt32Val"),
+        EvtVarTypeUInt32("UInt32"),
 
         /** A signed 64-bit integer value. */
-        EvtVarTypeInt64("Int64Val"),
+        EvtVarTypeInt64("Int64"),
 
         /** An unsigned 64-bit integer value. */
-        EvtVarTypeUInt64("UInt64Val"),
+        EvtVarTypeUInt64("UInt64"),
 
         /** A single-precision real value. */
-        EvtVarTypeSingle("SingleVal"),
+        EvtVarTypeSingle("Single"),
 
         /** A double-precision real value. */
-        EvtVarTypeDouble("DoubleVal"),
+        EvtVarTypeDouble("Double"),
 
         /** A Boolean value. */
-        EvtVarTypeBoolean("BooleanVal"),
+        EvtVarTypeBoolean("Boolean"),
 
         /** A hexadecimal binary value. */
-        EvtVarTypeBinary("BinaryVal"),
+        EvtVarTypeBinary("Binary"),
 
         /** A GUID value. */
-        EvtVarTypeGuid("GuidVal"),
+        EvtVarTypeGuid("Guid"),
 
         /** An unsigned 32-bit or 64-bit integer value that contains a pointer address. */
-        EvtVarTypeSizeT("SizeTVal"),
+        EvtVarTypeSizeT("SizeT"),
 
         /** A FILETIME value. */
-        EvtVarTypeFileTime("FileTimeVal"),
+        EvtVarTypeFileTime("FileTime"),
 
         /** A SYSTEMTIME value. */
-        EvtVarTypeSysTime("SysTimeVal"),
+        EvtVarTypeSysTime("SysTime"),
 
         /** A security identifier (SID) structure */
-        EvtVarTypeSid("SidVal"),
+        EvtVarTypeSid("Sid"),
 
         /** A 32-bit hexadecimal number. */
-        EvtVarTypeHexInt32("Int32Val"),
+        EvtVarTypeHexInt32("Int32"),
 
         /** A 64-bit hexadecimal number. */
-        EvtVarTypeHexInt64("Int64Val"),
+        EvtVarTypeHexInt64("Int64"),
 
         /** An EVT_HANDLE value. */
-        EvtVarTypeEvtHandle("EvtHandleVal"),
+        EvtVarTypeEvtHandle("EvtHandle"),
 
         /** A null-terminated Unicode string that contains XML. */
-        EvtVarTypeEvtXml("AnsiStringVal");
+        EvtVarTypeEvtXml("Xml");
 
         private final String field;
 
@@ -115,7 +115,11 @@ public interface Winevt {
         }
 
         public String getField() {
-            return this.field;
+            return this.field.isEmpty() ? "" : this.field + "Val";
+        }
+
+        public String getArrField() {
+            return this.field.isEmpty() ? "" : this.field + "Arr";
         }
     }
 
@@ -196,7 +200,7 @@ public interface Winevt {
             public Guid.GUID.ByReference GuidVal;
 
             /** A null-terminated Unicode string. */
-            public WinDef.CHARByReference StringVal;
+            public String StringVal;
 
             /** A null-terminated ANSI string value. */
             public Pointer AnsiStringVal;
@@ -281,11 +285,11 @@ public interface Winevt {
             }
 
             public field1_union() {
-                super(W32APITypeMapper.DEFAULT);
+                super(W32APITypeMapper.UNICODE);
             }
 
             public field1_union(Pointer peer) {
-                super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
+                super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             }
 
             protected field1_union newInstance() {
@@ -426,7 +430,7 @@ public interface Winevt {
         public int Flags;
 
         public EVT_RPC_LOGIN() {
-            super(W32APITypeMapper.DEFAULT);
+            super(W32APITypeMapper.UNICODE);
         }
 
         protected List<String> getFieldOrder() {
@@ -434,7 +438,7 @@ public interface Winevt {
         }
 
         public EVT_RPC_LOGIN(String Server, String User, String Domain, String Password, int Flags) {
-            super(W32APITypeMapper.DEFAULT);
+            super(W32APITypeMapper.UNICODE);
             this.Server = Server;
             this.User = User;
             this.Domain = Domain;
@@ -443,7 +447,7 @@ public interface Winevt {
         }
 
         public EVT_RPC_LOGIN(Pointer peer) {
-            super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
+            super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
         }
 
         protected ByReference newByReference() {
@@ -540,9 +544,9 @@ public interface Winevt {
         /**
          * A bitmask that you can use to determine which of the following flags is set:
          * <ul>
-         * <li>EvtSeekRelativeToFirst<li/>
-         * <li>EvtSeekRelativeToLast<li/>
-         * <li>EvtSeekRelativeToBookmark<li/>
+         * <li>EvtSeekRelativeToFirst</li>
+         * <li>EvtSeekRelativeToLast</li>
+         * <li>EvtSeekRelativeToBookmark</li>
          * </ul>
          */
         public static final int EvtSeekOriginMask = 7;
@@ -1171,7 +1175,7 @@ public interface Winevt {
          * Identifies the message attribute of the provider. The metadata is the resource identifier assigned to
          * the message string. To get the message string, call the {@link Wevtapi#EvtFormatMessage} function.
          * The variant type for this property is EvtVarTypeUInt32. If the provider does not specify a message,
-         * the value is –1.
+         * the value is -1.
          */
         public static final int EvtPublisherMetadataPublisherMessageID = 5;
 
@@ -1217,7 +1221,7 @@ public interface Winevt {
          * the {@link Wevtapi#EvtGetObjectArrayProperty} function. For details, see Remarks. The variant type for
          * this property is EvtVarTypeUInt32. The property contains the resource identifier that is assigned to
          * the message string. To get the message string, call the EvtFormatMessage function.
-         * If the channel does not specify a message, the value is –1.
+         * If the channel does not specify a message, the value is -1.
          */
         public static final int EvtPublisherMetadataChannelReferenceMessageID = 11;
 
@@ -1248,7 +1252,7 @@ public interface Winevt {
          * the {@link Wevtapi#EvtGetObjectArrayProperty} function. For details, see Remarks. The variant type for
          * this property is EvtVarTypeUInt32. The property contains the resource identifier that is assigned to
          * the message string. To get the message string, call the {@link Wevtapi#EvtFormatMessage} function.
-         * If the level does not specify a message, the value is –1.
+         * If the level does not specify a message, the value is -1.
          */
         public static final int EvtPublisherMetadataLevelMessageID = 15;
 
@@ -1286,7 +1290,7 @@ public interface Winevt {
          * the {@link Wevtapi#EvtGetObjectArrayProperty} function. For details, see Remarks.
          * The variant type for this property is EvtVarTypeUInt32. The property contains the resource identifier
          * that is assigned to the message string. To get the message string, call the {@link Wevtapi#EvtFormatMessage}
-         * function. If the task does not specify a message, the value is –1.
+         * function. If the task does not specify a message, the value is -1.
          */
         public static final int EvtPublisherMetadataTaskMessageID = 20;
 
@@ -1319,7 +1323,7 @@ public interface Winevt {
          * the {@link Wevtapi#EvtGetObjectArrayProperty} function. For details, see Remarks. The variant type for
          * this property is EvtVarTypeUInt32. The property contains the resource identifier that is assigned to
          * the message string. To get the message string, call the {@link Wevtapi#EvtFormatMessage} function.
-         * If the opcode does not specify a message, the value is –1.
+         * If the opcode does not specify a message, the value is -1.
          */
         public static final int EvtPublisherMetadataOpcodeMessageID = 24;
 
@@ -1350,7 +1354,7 @@ public interface Winevt {
          * the {@link Wevtapi#EvtGetObjectArrayProperty} function. For details, see Remarks. The variant type for
          * this property is EvtVarTypeUInt32. The property contains the resource identifier that is assigned to
          * the message string. To get the message string, call the {@link Wevtapi#EvtFormatMessage} function.
-         * If the keyword does not specify a message, the value is –1.
+         * If the keyword does not specify a message, the value is -1.
          */
         public static final int EvtPublisherMetadataKeywordMessageID = 28;
 
@@ -1419,7 +1423,7 @@ public interface Winevt {
          * Identifies the message attribute of the event definition. The variant type for this property is
          * EvtVarTypeUInt32. The property contains the resource identifier that is assigned to the message string.
          * To get the message string, call the EvtFormatMessage function. If the event definition does not specify
-         * a message, the value is –1.
+         * a message, the value is -1.
          */
         public static final int EventMetadataEventMessageID = 7;
 
