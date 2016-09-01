@@ -27,3 +27,5 @@ pom-jna-platform.xml.asc
 # IntelliJ IDEA
 .idea
 *.iml
+/contrib/platform/${build.generated.sources.dir}/
+/contrib/platform/${build}/
