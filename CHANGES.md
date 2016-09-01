@@ -80,6 +80,7 @@ Bug Fixes
 * [#636](https://github.com/java-native-access/jna/issues/636): Staticly link visual c++ runtime when building with MSVC - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#624](https://github.com/java-native-access/jna/issues/624): WinDef.DWORD getLow() & getHigh() using incorrect bit mask - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#668](https://github.com/java-native-access/jna/issues/668): Correct typemapper used for structures defined in `com.sun.jna.platform.win32.DsGetDC`, `com.sun.jna.platform.win32.LMAccess`, `com.sun.jna.platform.win32.LMShare`, `com.sun.jna.platform.win32.Sspi`, `com.sun.jna.platform.win32.WinBase`, `com.sun.jna.platform.win32.WinCrypt`, `com.sun.jna.platform.win32.WinUser` and `com.sun.jna.platform.win32.Winnetwk` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#696](https://github.com/java-native-access/jna/issues/696): COMLateBindingObject.getAutomationProperty method that takes iDispatch parameter doesn't use it - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.2.1
 =============
