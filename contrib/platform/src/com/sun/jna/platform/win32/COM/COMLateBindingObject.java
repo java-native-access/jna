@@ -15,11 +15,8 @@ package com.sun.jna.platform.win32.COM;
 import java.util.Date;
 
 import com.sun.jna.platform.win32.Guid.CLSID;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.SHORT;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -132,7 +129,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
             IDispatch iDispatch) {
         VARIANT.ByReference result = new VARIANT.ByReference();
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
-                this.getIDispatch(), propertyName);
+                iDispatch, propertyName);
 
         return ((IDispatch) result.getValue());
     }
