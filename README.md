@@ -124,6 +124,7 @@ Using the Library
 * [Direct Method Mapping](https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/java-native-access/jna/blob/master/www/FrequentlyAskedQuestions.md)
 * [Avoiding Crashes](http://java-native-access.github.io/jna/4.2.1/overview-summary.html#crash-protection)
+* [Java OpenVR Binding](https://github.com/java-graphics/openvr)
 
 Primary Documentation (JavaDoc)
 ===============================
