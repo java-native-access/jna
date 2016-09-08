@@ -37,6 +37,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
 - [Waffle](https://github.com/dblock/waffle): Enables SSO on Windows in Java applications, by Daniel Doubrovkine.
 - [leveldb-jna](https://github.com/protonail/leveldb-jna): Cross-platform JNA based adapter for LevelDB (used in [Keylord](http://protonail.com/products/keylord)).
+- [Java OpenVR Bindings](https://github.com/java-graphics/openvr).
 
 *Interesting Investigations/Experiments*
 
