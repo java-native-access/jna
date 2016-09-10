@@ -16,7 +16,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
-import com.sun.jna.ptr.*;
 import com.sun.jna.win32.W32APITypeMapper;
 
 import java.util.Arrays;
@@ -221,37 +220,37 @@ public interface Winevt {
             public WinNT.HANDLE EvtHandleVal;
 
             /** A pointer to an array of Boolean values. */
-            public IntByReference BooleanArr;
+            public Pointer BooleanArr;
 
             /** A pointer to an array of signed 8-bit values. */
             public Pointer SByteArr;
 
             /** A pointer to an array of signed 16-bit values. */
-            public ShortByReference Int16Arr;
+            public Pointer Int16Arr;
 
             /** A pointer to an array of signed 32-bit values. */
-            public IntByReference Int32Arr;
+            public Pointer Int32Arr;
 
             /** A pointer to an array of signed 64-bit values. */
-            public LongByReference Int64Arr;
+            public Pointer Int64Arr;
 
             /** A pointer to an array of unsigned 8-bit values. */
             public Pointer ByteArr;
 
             /** A pointer to an array of unsigned 16-bit values. */
-            public ShortByReference UInt16Arr;
+            public Pointer UInt16Arr;
 
             /** A pointer to an array of unsigned 32-bit values. */
-            public IntByReference UInt32Arr;
+            public Pointer UInt32Arr;
 
             /** A pointer to an array of unsigned 64-bit values. */
-            public LongByReference UInt64Arr;
+            public Pointer UInt64Arr;
 
             /** A pointer to an array of single precision real values. */
-            public FloatByReference SingleArr;
+            public Pointer SingleArr;
 
             /** A pointer to an array of double precision real values. */
-            public DoubleByReference DoubleArr;
+            public Pointer DoubleArr;
 
             /** A pointer to an array of FILETIME values. */
             public WinBase.FILETIME.ByReference FileTimeArr;
@@ -263,22 +262,22 @@ public interface Winevt {
             public Guid.GUID.ByReference GuidArr;
 
             /** A pointer to an array of null-terminated Unicode strings. */
-            public PointerByReference StringArr;
+            public Pointer StringArr;
 
             /** A pointer to an array of null-terminated ANSI strings. */
-            public PointerByReference AnsiStringArr;
+            public Pointer AnsiStringArr;
 
             /** A pointer to an array of 4-byte ASCII values. */
-            public PointerByReference SidArr;
+            public Pointer SidArr;
 
             /** A pointer to an array of size_t values. */
-            public PointerByReference SizeTArr;
+            public Pointer SizeTArr;
 
             /** An XML string value. */
-            public char XmlVal;
+            public String XmlVal;
 
             /** A pointer to an array of XML string values. */
-            public WinDef.CHARByReference XmlValArr;
+            public Pointer XmlValArr;
 
             public void use(Pointer m) {
                 useMemory(m, 0);

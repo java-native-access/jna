@@ -85,16 +85,22 @@ public class WevtapiTest extends TestCase {
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
-                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
-                    useMemory(evtVariant, buff, 0);
-                    assertThat("Provider Name", evtVariant.field1.StringVal, is("testSource"));
-                    sb.append(evtVariant.field1.StringVal);
-                    useMemory(evtVariant, buff, 1);
-                    assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
-                    useMemory(evtVariant, buff, 2);
-                    assertThat("EventID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
+                    try {
+                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                        buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                                Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                        useMemory(evtVariant, buff, 0);
+                        assertThat("Provider Name", evtVariant.field1.StringVal, is("testSource"));
+                        sb.append(evtVariant.field1.StringVal);
+                        useMemory(evtVariant, buff, 1);
+                        assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
+                        useMemory(evtVariant, buff, 2);
+                        assertThat("EventID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
+                    } finally {
+                        if (evtHandle.getValue() != null) {
+                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
+                        }
+                    }
                 }
                 arrayIndex++;
             }
@@ -304,7 +310,7 @@ public class WevtapiTest extends TestCase {
             evtVariant.readField("Count");
             int count = evtVariant.Count;
             useMemory(evtVariant, buff, 0);
-            Pointer[] pointers = evtVariant.field1.StringArr.getPointer().getPointerArray(0);
+            Pointer[] pointers = evtVariant.field1.StringArr.getPointerArray(0);
             for (int i = 0; i < count; i++) {
                 sb.append(pointers[i].getWideString(0));
             }
@@ -354,16 +360,22 @@ public class WevtapiTest extends TestCase {
             IntByReference returned = new IntByReference();
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    evtRender(buff, contextHandle, evtHandle.getValue(),
-                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
-                    useMemory(evtVariant, buff, 0);
-                    assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
-                    sb.append(evtVariant.field1.UInt64Val);
+                    try {
+                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                        evtRender(buff, contextHandle, evtHandle.getValue(),
+                                Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                        useMemory(evtVariant, buff, 0);
+                        assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
+                        sb.append(evtVariant.field1.UInt64Val);
 
-                    // test EvtUpdateBookmark
-                    if (!Wevtapi.INSTANCE.EvtUpdateBookmark(hBookmark, evtHandle.getValue())) {
-                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                        // test EvtUpdateBookmark
+                        if (!Wevtapi.INSTANCE.EvtUpdateBookmark(hBookmark, evtHandle.getValue())) {
+                            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                        }
+                    } finally {
+                        if (evtHandle.getValue() != null) {
+                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
+                        }
                     }
                 }
                 arrayIndex++;
@@ -411,20 +423,26 @@ public class WevtapiTest extends TestCase {
             IntByReference returned = new IntByReference();
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
-                            Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
-                        if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                            buff = new Memory(buffUsed.getValue());
-                            if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
-                                    Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
-                                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                    try {
+                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                        if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
+                                Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
+                            if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
+                                buff = new Memory(buffUsed.getValue());
+                                if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
+                                        Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
+                                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                                }
                             }
                         }
+                        useMemory(evtVariant, buff, 0);
+                        assertThat("Evtx Path", evtVariant.field1.StringVal, is(testEvtx.getAbsolutePath()));
+                        sb.append(evtVariant.field1.StringVal);
+                    } finally {
+                        if (evtHandle.getValue() != null) {
+                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
+                        }
                     }
-                    useMemory(evtVariant, buff, 0);
-                    assertThat("Evtx Path", evtVariant.field1.StringVal, is(testEvtx.getAbsolutePath()));
-                    sb.append(evtVariant.field1.StringVal);
 
                 }
 
