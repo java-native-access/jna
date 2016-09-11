@@ -188,11 +188,30 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *            Long pointer to a RECT structure that receives the screen
      *            coordinates of the upper-left and lower-right corners of the
      *            window.
-     * @return Nonzero indicates success. Zero indicates failure. To get
-     *         extended error information, call GetLastError.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero.
      */
     boolean GetWindowRect(HWND hWnd, RECT rect);
 
+    /**
+     * This function retrieves the coordinates of a window's client area. 
+     * The client coordinates specify the upper-left and lower-right corners of the 
+     * client area. Because client coordinates are relative to the upper-left 
+     * corner of a window's client area, the coordinates of the upper-left corner 
+     * are (0,0).
+     *
+     * @param hWnd
+     *            Handle to the window.
+     * @param rect
+     *            Long pointer to a RECT structure that structure that receives 
+     *            the client coordinates. The left and top members are zero. The 
+     *            right and bottom members contain the width and height of the 
+     *            window.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero.
+     */
+    boolean GetClientRect(HWND hWnd, RECT rect);
+    
     /**
      * This function copies the text of the specified window's title bar - if it
      * has one - into a buffer. If the specified window is a control, the text
