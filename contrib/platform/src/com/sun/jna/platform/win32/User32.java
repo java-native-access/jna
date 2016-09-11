@@ -179,7 +179,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /**
      * This function retrieves the dimensions of the bounding rectangle of the
-     * specified window. The dimensions are given in screen coordinates that are
+     * specified window including the window borders. The dimensions are given in screen coordinates that are
      * relative to the upper-left corner of the screen.
      *
      * @param hWnd
@@ -193,6 +193,22 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      */
     boolean GetWindowRect(HWND hWnd, RECT rect);
 
+    /**
+     * This function retrieves the dimensions of the bounding rectangle of the
+     * specified window excluding the window borders. The dimensions are given in screen coordinates that are
+     * relative to the upper-left corner of the screen.
+     *
+     * @param hWnd
+     *            Handle to the window.
+     * @param rect
+     *            Long pointer to a RECT structure that receives the screen
+     *            coordinates of the upper-left and lower-right corners of the
+     *            window.
+     * @return Nonzero indicates success. Zero indicates failure. To get
+     *         extended error information, call GetLastError.
+     */
+    boolean GetClientRect(HWND hWnd, RECT rect);
+    
     /**
      * This function copies the text of the specified window's title bar - if it
      * has one - into a buffer. If the specified window is a control, the text
