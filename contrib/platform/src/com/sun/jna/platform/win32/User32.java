@@ -2430,4 +2430,93 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * error information, call GetLastError.</p>
      */
     public int RegisterClipboardFormat(String formatName);
+    
+    /**
+     * The mouse_event function synthesizes mouse motion and button clicks.
+     * 
+     * @param dwFlags 
+     *            Controls various aspects of mouse motion and button 
+     *            clicking. This parameter can be certain combinations of the following 
+     *            values.
+     *
+     *            {@link WinUser#MOUSEEVENTF_ABSOLUTE} 0x8000 - The dx and dy parameters contain normalized 
+     *            absolute coordinates. If not set, those parameters contain relative data: 
+     *            the change in position since the last reported position. This flag can be 
+     *            set, or not set, regardless of what kind of mouse or mouse-like device, 
+     *            if any, is connected to the system. For further information about relative 
+     *            mouse motion, see the following Remarks section.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_LEFTDOWN} 0x0002 - The left button is down.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_LEFTUP} 0x0004 - The left button is up.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_MIDDLEDOWN} 0x0020 - The middle button is down.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_MIDDLEUP} 0x0040 - The middle button is up.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_MOVE} 0x0001 - Movement occurred.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_RIGHTDOWN} 0x0008 - The right button is down.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_RIGHTUP} 0x0010 - The right button is up.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_WHEEL} 0x0800 - The wheel has been moved, if the 
+     *            mouse has a wheel. The amount of movement is specified in dwData
+     * 
+     *            {@link WinUser#MOUSEEVENTF_XDOWN} 0x0080 - An X button was pressed.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_XUP} 0x0100 - An X button was released.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_WHEEL} 0x0800 - The wheel button is rotated.
+     * 
+     *            {@link WinUser#MOUSEEVENTF_HWHEEL} 0x01000 - The wheel button is tilted.
+     * 
+     *            The values that specify mouse button status are set to indicate 
+     *            changes in status, not ongoing conditions. For example, if the 
+     *            left mouse button is pressed and held down, {@link WinUser#MOUSEEVENTF_LEFTDOWN}
+     *            is set when the left button is first pressed, but not for 
+     *            subsequent motions. Similarly, {@link WinUser#MOUSEEVENTF_LEFTUP} is set only when 
+     *            the button is first released. You cannot specify both 
+     *            {@link WinUser#MOUSEEVENTF_WHEEL} and either {@link WinUser#MOUSEEVENTF_XDOWN} or {@link WinUser#MOUSEEVENTF_XUP}
+     *            simultaneously in the dwFlags parameter, because they both require 
+     *            use of the dwData field.
+     * @param dx 
+     *            The mouse's absolute position along the x-axis or its amount of motion 
+     *            since the last mouse event was generated, depending on the setting of 
+     *            {@link WinUser#MOUSEEVENTF_ABSOLUTE}. Absolute data is specified as the mouse's actual 
+     *            x-coordinate; relative data is specified as the number of mickeys moved. 
+     *            A mickey is the amount that a mouse has to move for it to report that 
+     *            it has moved.
+     * @param dy 
+     *            The mouse's absolute position along the y-axis or its amount of motion 
+     *            since the last mouse event was generated, depending on the setting of 
+     *            {@link WinUser#MOUSEEVENTF_ABSOLUTE}. Absolute data is specified as the mouse's actual 
+     *            y-coordinate; relative data is specified as the number of mickeys moved.
+     * @param dwData 
+     *            If dwFlags contains {@link WinUser#MOUSEEVENTF_WHEEL}, then dwData specifies the amount of 
+     *            wheel movement. A positive value indicates that the wheel was rotated forward, 
+     *            away from the user; a negative value indicates that the wheel was rotated 
+     *            backward, toward the user. One wheel click is defined as {@link WinUser#WHEEL_DELTA}, which is 120.
+     * 
+     *            If dwFlags contains {@link WinUser#MOUSEEVENTF_HWHEEL}, then dwData specifies the amount of wheel 
+     *            movement. A positive value indicates that the wheel was tilted to the right; a 
+     *            negative value indicates that the wheel was tilted to the left.
+     *            
+     *            If dwFlags contains {@link WinUser#MOUSEEVENTF_XDOWN} or {@link WinUser#MOUSEEVENTF_XUP}, then dwData specifies 
+     *            which X buttons were pressed or released. This value may be any combination of 
+     *            the following flags.
+     * 
+     *            If dwFlags is not {@link WinUser#MOUSEEVENTF_WHEEL}, {@link WinUser#MOUSEEVENTF_XDOWN}, or {@link WinUser#MOUSEEVENTF_XUP}, then 
+     *            dwData should be zero.
+     * 
+     *            {@link WinUser#XBUTTON1} 0x0001 - Set if the first X button was pressed or released.
+     * 
+     *            {@link WinUser#XBUTTON2} 0x0002 - Set if the second X button was pressed or released.
+     * @param dwExtraInfo 
+     *            An additional value associated with the mouse event. An application calls 
+     *            GetMessageExtraInfo to obtain this extra information.
+     * 
+     * @return This function has no return value.
+     */
+    public void mouse_event(DWORD dwFlags, DWORD dx, DWORD dy, DWORD dwData, ULONG_PTR dwExtraInfo);
 }
