@@ -95,7 +95,7 @@ public class WevtapiTest extends TestCase {
                         useMemory(evtVariant, buff, 1);
                         assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
                         useMemory(evtVariant, buff, 2);
-                        assertThat("EventID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
+                        assertThat("EventID", evtVariant.field1.UInt16Val, is((char) (arrayIndex * eventArraySize + i + 5001)));
                     } finally {
                         if (evtHandle.getValue() != null) {
                             Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
