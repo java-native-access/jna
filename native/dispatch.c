@@ -85,7 +85,6 @@ static inline char * STR_ERROR(int code, char * buf, size_t len) {
 #endif
 
 #include <stdlib.h>
-#include <alloca.h>
 #include <wchar.h>
 #include <jni.h>
 

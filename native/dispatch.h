@@ -18,7 +18,7 @@
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
-#if defined(__sun__) || defined(_AIX)
+#if defined(__sun__) || defined(_AIX) || defined(__linux__)
 #  include <alloca.h>
 #endif
 #ifdef _WIN32
