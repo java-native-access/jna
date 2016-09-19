@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
@@ -3353,4 +3354,25 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         flags.
      */
     int SetErrorMode(int umode);
+    
+    /**
+     * Retrieves the address of an exported function or variable from the
+     * specified dynamic-link library (DLL).
+     *
+     * <p>
+     * This function is mapped to enable accessing function on win32 systems
+     * only accessible by their ordinal value.</p>
+     *
+     * <p>
+     * To access functions by their name, please use
+     * NativeLibrary#getFunction.</p>
+     *
+     * @param hmodule A handle to the DLL module that contains the function or
+     *                variable. The LoadLibrary, LoadLibraryEx,
+     *                LoadPackagedLibrary, or GetModuleHandle function returns
+     *                this handle.
+     * @param ordinal ordinal value of the function export
+     * @return address of the exported function
+     */
+    Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
 }

@@ -141,7 +141,7 @@ public class Function extends Pointer {
      * @param   p       Native function pointer
      */
     public static Function getFunction(Pointer p) {
-        return getFunction(p, 0);
+        return getFunction(p, 0, null);
     }
 
     /**
@@ -159,7 +159,28 @@ public class Function extends Pointer {
      *                  Function <a href="#callflags">call flags</a>
      */
     public static Function getFunction(Pointer p, int callFlags) {
-        return new Function(p, callFlags, null);
+        return getFunction(p, callFlags, null);
+    }
+    
+    /**
+     * Obtain a <code>Function</code> representing a native
+     * function pointer.  In general, this function should be used by dynamic
+     * languages; Java code should allow JNA to bind to a specific Callback
+     * interface instead by defining a return type or Structure field type.
+     *
+     * <p>The allocated instance represents a pointer to the native
+     * function pointer.
+     *
+     * @param   p
+     *                  Native function pointer
+     * @param   callFlags
+     *                  Function <a href="#callflags">call flags</a>
+     * @param   encoding
+     *                  Encoding to use for conversion between Java and native
+     *                  strings.
+     */
+    public static Function getFunction(Pointer p, int callFlags, String encoding) {
+        return new Function(p, callFlags, encoding);
     }
 
     // Keep a reference to the NativeLibrary so it does not get garbage
