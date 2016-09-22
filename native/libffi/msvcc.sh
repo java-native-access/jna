@@ -237,7 +237,7 @@ if [ -n "$assembly" ]; then
     fi
     ppsrc="$outdir/$(basename $src|sed 's/.S$/.asm/g')"
     echo "$cl -nologo -EP $includes $defines $src > $ppsrc"
-    "$cl" -nologo -EP $includes $defines $src > $ppsrc || exit $?
+    eval "\"$cl\" -nologo -EP $includes $defines $src > $ppsrc || exit $?"
     output="$(echo $output | sed 's%/F[dpa][^ ]*%%g')"
     args="-nologo $safeseh $single $output $ppsrc"
 
