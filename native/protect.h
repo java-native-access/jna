@@ -44,6 +44,7 @@
 #ifdef __GNUC__
 #include <excpt.h>
 #else
+#include <windows.h>
 // copied from mingw header
 typedef EXCEPTION_DISPOSITION (*PEXCEPTION_HANDLER)
   (struct _EXCEPTION_RECORD*, void*, struct _CONTEXT*, void*);

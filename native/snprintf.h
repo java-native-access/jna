@@ -1,5 +1,6 @@
 #ifndef _SNPRINTF_H
 #define _SNPRINTF_H
+#if _MSC_VER < 1900 // Before Visual Studio 2015
 // snprintf on windows is broken; always nul-terminate manually
 // DO NOT rely on the return value...
 static int snprintf(char * str, size_t size, const char * format, ...) {
@@ -10,4 +11,5 @@ static int snprintf(char * str, size_t size, const char * format, ...) {
   va_end(ap);
   return retval;
 }
+#endif
 #endif /* _SNPRINTF_H */
