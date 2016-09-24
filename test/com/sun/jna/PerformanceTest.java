@@ -337,7 +337,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
         start = System.currentTimeMillis();
         for (int i=0;i < COUNT;i++) {
-            Native.setMemory(0L, 0L, (byte)0);
+            Native.setMemory(Pointer.NULL, 0L, 0L, 0L, (byte)0);
         }
         delta = System.currentTimeMillis() - start;
         System.out.println("memset (JNI): " + delta + "ms");
