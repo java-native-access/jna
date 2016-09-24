@@ -372,24 +372,24 @@ public class Function extends Pointer {
         Object result = null;
 	int callFlags = this.callFlags | ((fixedArgs & 0x3) << 7);
         if (returnType == null || returnType==void.class || returnType==Void.class) {
-            Native.invokeVoid(peer, callFlags, args);
+            Native.invokeVoid(this, this.peer, callFlags, args);
             result = null;
         } else if (returnType==boolean.class || returnType==Boolean.class) {
-            result = valueOf(Native.invokeInt(peer, callFlags, args) != 0);
+            result = valueOf(Native.invokeInt(this, this.peer, callFlags, args) != 0);
         } else if (returnType==byte.class || returnType==Byte.class) {
-            result = Byte.valueOf((byte)Native.invokeInt(peer, callFlags, args));
+            result = Byte.valueOf((byte)Native.invokeInt(this, this.peer, callFlags, args));
         } else if (returnType==short.class || returnType==Short.class) {
-            result = Short.valueOf((short)Native.invokeInt(peer, callFlags, args));
+            result = Short.valueOf((short)Native.invokeInt(this, this.peer, callFlags, args));
         } else if (returnType==char.class || returnType==Character.class) {
-            result = Character.valueOf((char)Native.invokeInt(peer, callFlags, args));
+            result = Character.valueOf((char)Native.invokeInt(this, this.peer, callFlags, args));
         } else if (returnType==int.class || returnType==Integer.class) {
-            result = Integer.valueOf(Native.invokeInt(peer, callFlags, args));
+            result = Integer.valueOf(Native.invokeInt(this, this.peer, callFlags, args));
         } else if (returnType==long.class || returnType==Long.class) {
-            result = Long.valueOf(Native.invokeLong(peer, callFlags, args));
+            result = Long.valueOf(Native.invokeLong(this, this.peer, callFlags, args));
         } else if (returnType==float.class || returnType==Float.class) {
-            result = Float.valueOf(Native.invokeFloat(peer, callFlags, args));
+            result = Float.valueOf(Native.invokeFloat(this, this.peer, callFlags, args));
         } else if (returnType==double.class || returnType==Double.class) {
-            result = Double.valueOf(Native.invokeDouble(peer, callFlags, args));
+            result = Double.valueOf(Native.invokeDouble(this, this.peer, callFlags, args));
         } else if (returnType==String.class) {
             result = invokeString(callFlags, args, false);
         } else if (returnType==WString.class) {
@@ -402,7 +402,7 @@ public class Function extends Pointer {
         } else if (Structure.class.isAssignableFrom(returnType)) {
             if (Structure.ByValue.class.isAssignableFrom(returnType)) {
                 Structure s =
-                    Native.invokeStructure(peer, callFlags, args,
+                    Native.invokeStructure(this, this.peer, callFlags, args,
                                            Structure.newInstance(returnType));
                 s.autoRead();
                 result = s;
@@ -440,7 +440,7 @@ public class Function extends Pointer {
                 result = p.getPointerArray(0);
             }
         } else if (allowObjects) {
-            result = Native.invokeObject(peer, callFlags, args);
+            result = Native.invokeObject(this, this.peer, callFlags, args);
             if (result != null
                 && !returnType.isAssignableFrom(result.getClass())) {
                 throw new ClassCastException("Return type " + returnType
@@ -454,7 +454,7 @@ public class Function extends Pointer {
     }
 
     private Pointer invokePointer(int callFlags, Object[] args) {
-        long ptr = Native.invokePointer(peer, callFlags, args);
+        long ptr = Native.invokePointer(this, this.peer, callFlags, args);
         return ptr == 0 ? null : new Pointer(ptr);
     }
 
