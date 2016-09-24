@@ -1001,6 +1001,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <syspropertyset refid="headless"/>
       <!-- avoid VM conflicts with JNA protected mode -->
       <env key="${ld.preload.name}" file="${libjsig}"/>
+      <env key="LC_MESSAGES" value="C" />
       <sysproperty key="jna.library.path" file="${build.native}"/>
       <!-- Ignore any system install of JNA -->
       <sysproperty key="jna.nosys" value="true"/>
