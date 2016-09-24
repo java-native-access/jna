@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Function;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,6 +31,7 @@ import java.util.TimeZone;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
@@ -1157,5 +1159,34 @@ public class Kernel32Test extends TestCase {
         int previousMode = Kernel32.INSTANCE.SetErrorMode(0x0001);
         // Restore to previous state; 0x0001 is now "previous"
         assertEquals(Kernel32.INSTANCE.SetErrorMode(previousMode), 0x0001);
+    }
+    
+    /**
+     * Test that a named function on win32 can be equally resolved by its ordinal
+     * value.
+     * 
+     * From link.exe /dump /exports c:\\Windows\\System32\\kernel32.dll
+     * 
+     *  746  2E9 0004FA20 GetTapeStatus
+     *  747  2EA 0002DB20 GetTempFileNameA
+     *  748  2EB 0002DB30 GetTempFileNameW
+     *  749  2EC 0002DB40 GetTempPathA
+     *  750  2ED 0002DB50 GetTempPathW
+     *  751  2EE 00026780 GetThreadContext
+     * 
+     * The tested function is GetTempPathW which is mapped to the ordinal 750.
+     */
+    public void testGetProcAddress() {
+        NativeLibrary kernel32Library = NativeLibrary.getInstance("kernel32");
+        // get module handle needed to resolve function pointer via GetProcAddress
+        HMODULE kernel32Module = Kernel32.INSTANCE.GetModuleHandle("kernel32");
+        
+        Function namedFunction = kernel32Library.getFunction("GetTempPathW");
+        long namedFunctionPointerValue = Pointer.nativeValue(namedFunction);
+        
+        Pointer ordinalFunction = Kernel32.INSTANCE.GetProcAddress(kernel32Module, 750);
+        long ordinalFunctionPointerValue = Pointer.nativeValue(ordinalFunction);
+        
+        assertEquals(namedFunctionPointerValue, ordinalFunctionPointerValue);
     }
 }
