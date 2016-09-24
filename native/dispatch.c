@@ -16,6 +16,10 @@
  * Lesser General Public License for more details.
  */
 
+#include "dispatch.h"
+
+#include <string.h>
+
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -45,6 +49,7 @@
 #else
 #include <dlfcn.h>
 #include <errno.h>
+#include <assert.h>
 #define STRTYPE char*
 #ifdef USE_DEFAULT_LIBNAME_ENCODING
 #define NAME2CSTR(ENV,JSTR) newCString(ENV,JSTR)
@@ -53,8 +58,21 @@
 #endif
 #define DEFAULT_LOAD_OPTS (RTLD_LAZY|RTLD_GLOBAL)
 #define LOAD_LIBRARY(NAME,OPTS) dlopen(NAME, OPTS)
-#define LOAD_ERROR(BUF,LEN) (snprintf(BUF, LEN, "%s", dlerror()), BUF)
-#define STR_ERROR(CODE,BUF,LEN) (strerror_r(CODE, BUF, LEN), BUF)
+static inline char * LOAD_ERROR(char * buf, size_t len) {
+    const size_t count = snprintf(buf, len, "%s", dlerror());
+    assert(count <= len && "snprintf() output has been truncated");
+    return buf;
+}
+static inline char * STR_ERROR(int code, char * buf, size_t len) {
+    // The conversion will fail if code is not a valid error code.
+    int err = strerror_r(code, buf, len);
+    if (err)
+        // Depending on glib version, "Unknown error" error code
+        // may be returned or passed using errno.
+        err = strerror_r(err > 0 ? err : errno, buf, len);
+    assert(err == 0 && "strerror_r() conversion has failed");
+    return buf;
+}
 #define FREE_LIBRARY(HANDLE) dlclose(HANDLE)
 #define FIND_ENTRY(HANDLE, NAME) dlsym(HANDLE, NAME)
 #endif
@@ -67,15 +85,8 @@
 #endif
 
 #include <stdlib.h>
-// Force XSI-compliant strerror_r (http://unixhelp.ed.ac.uk/CGI/man-cgi?strerror)
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE 600
-#endif
-#include <string.h>
 #include <wchar.h>
 #include <jni.h>
-
-#include "dispatch.h"
 
 #ifndef NO_JAWT
 #include <jawt.h>

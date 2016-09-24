@@ -18,7 +18,7 @@
 #include "ffi.h"
 #include "com_sun_jna_Function.h"
 #include "com_sun_jna_Native.h"
-#if defined(__sun__) || defined(_AIX)
+#if defined(__sun__) || defined(_AIX) || defined(__linux__)
 #  include <alloca.h>
 #endif
 #ifdef _WIN32
@@ -36,6 +36,7 @@
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
+#define _XOPEN_SOURCE 600
 #define GET_LAST_ERROR() errno
 #define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif /* _WIN32 */
