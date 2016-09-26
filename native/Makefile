@@ -84,6 +84,8 @@ JNISFX=$(LIBSFX)
 CC=gcc
 LD=$(CC)
 LIBS=
+# CC_OPTS only applied to objects build for jnidispatch, not for libffi
+LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered
 # Default to Sun recommendations for JNI compilation
 COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing
 CASM=-S
@@ -402,13 +404,13 @@ endif
 $(BUILD)/%.o : %.c dispatch.h protect.h $(FFI_LIB)
 	@mkdir -p $(BUILD)
 ifneq ($(SDKROOT),)
-	$(CC) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
+	$(CC) $(LOC_CC_OPTS) -arch $(ARCH) $(CFLAGS) -c $< -o $@.$(ARCH)
 	for arch in $(ALT_ARCHS); do \
-	  $(CC) -arch $$arch -I$(BUILD)/libffi.$$arch/include $(CFLAGS) -c $< -o $@.$$arch; \
+	  $(CC) $(LOC_CC_OPTS) -arch $$arch -I$(BUILD)/libffi.$$arch/include $(CFLAGS) -c $< -o $@.$$arch; \
 	done
 	lipo -create -output $@ $@.*
 else
-	$(CC) $(CFLAGS) -c $< $(COUT)
+	$(CC) $(CFLAGS) $(LOC_CC_OPTS) -c $< $(COUT)
 endif
 
 all: $(LIBRARY) $(TESTLIB) $(TESTLIB2) $(TESTLIB_JAR) $(TESTLIB_PATH) $(TESTLIB_TRUNC)

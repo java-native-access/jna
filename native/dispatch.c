@@ -2032,7 +2032,7 @@ closure_handler(ffi_cif* cif, void* resp, void** argp, void *cdata)
  */
 JNIEXPORT jlong JNICALL 
 Java_com_sun_jna_Native_invokePointer (JNIEnv *env, jclass UNUSED(cls),
-                                       jobject function, jlong fp,
+                                       jobject UNUSED(function), jlong fp,
                                        jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -2048,7 +2048,7 @@ Java_com_sun_jna_Native_invokePointer (JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT jobject 
 JNICALL Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
-                                             jobject function, jlong fp,
+                                             jobject UNUSED(function), jlong fp,
                                              jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -2064,7 +2064,7 @@ JNICALL Java_com_sun_jna_Native_invokeObject(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT void JNICALL 
 Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls), 
-                                        jobject function, jlong fp,
+                                        jobject UNUSED(function), jlong fp,
                                         jint callconv, jobjectArray arr,
                                         jlong memory, jlong type_info)
 {
@@ -2084,7 +2084,7 @@ Java_com_sun_jna_Native_invokeStructure(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT jdouble JNICALL
 Java_com_sun_jna_Native_invokeDouble(JNIEnv *env, jclass UNUSED(cls), 
-                                     jobject function, jlong fp, 
+                                     jobject UNUSED(function), jlong fp, 
                                      jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -2099,7 +2099,7 @@ Java_com_sun_jna_Native_invokeDouble(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT jfloat JNICALL
 Java_com_sun_jna_Native_invokeFloat(JNIEnv *env, jclass UNUSED(cls), 
-                                    jobject function, jlong fp,
+                                    jobject UNUSED(function), jlong fp,
                                     jint callconv, jobjectArray arr)
 {
     jvalue result;
@@ -2114,7 +2114,7 @@ Java_com_sun_jna_Native_invokeFloat(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT jint JNICALL
 Java_com_sun_jna_Native_invokeInt(JNIEnv *env, jclass UNUSED(cls), 
-                                  jobject function, jlong fp, jint callconv,
+                                  jobject UNUSED(function), jlong fp, jint callconv,
                                   jobjectArray arr)
 {
     ffi_arg result;
@@ -2129,7 +2129,7 @@ Java_com_sun_jna_Native_invokeInt(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT jlong JNICALL
 Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls),
-                                   jobject function, jlong fp, jint callconv,
+                                   jobject UNUSED(function), jlong fp, jint callconv,
                                    jobjectArray arr)
 {
     jvalue result;
@@ -2144,7 +2144,7 @@ Java_com_sun_jna_Native_invokeLong(JNIEnv *env, jclass UNUSED(cls),
  */
 JNIEXPORT void JNICALL
 Java_com_sun_jna_Native_invokeVoid(JNIEnv *env, jclass UNUSED(cls),
-                                   jobject function, jlong fp, jint callconv,
+                                   jobject UNUSED(function), jlong fp, jint callconv,
                                    jobjectArray arr)
 {
     jvalue result;
@@ -2262,7 +2262,7 @@ Java_com_sun_jna_Native_findSymbol(JNIEnv *env, jclass UNUSED(cls),
  * Signature: (Lcom/sun/jna/Pointer;JJ[BII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3BII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetByteArrayRegion(env, arr, off, n, L2A(addr + offset));
@@ -2275,7 +2275,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[CII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3CII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jcharArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jcharArray arr, jint off, jint n)
 {
   getChars(env, (wchar_t*)L2A(addr + offset), arr, off, n);
 }
@@ -2286,7 +2286,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[DII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3DII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr + offset));
@@ -2299,7 +2299,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[FII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3FII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr + offset));
@@ -2312,7 +2312,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[III)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3III
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jintArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jintArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr + offset));
@@ -2325,7 +2325,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[JII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3JII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlongArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlongArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr + offset));
@@ -2338,7 +2338,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJ[SII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3SII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jshortArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jshortArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->GetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr + offset));
@@ -2351,7 +2351,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_write__Lcom_sun_jna_Pointer_2JJ_3
  * Signature: (Lcom/sun/jna/Pointer;JJB)J
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jbyte value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyte value)
 {
   jbyte *peer = (jbyte *)L2A(addr + offset);
   volatile jlong i = 0;
@@ -2373,7 +2373,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_indexOf
  * Signature: (Lcom/sun/jna/Pointer;JJ[BII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3BII
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyteArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetByteArrayRegion(env, arr, off, n, L2A(addr + offset));
@@ -2386,7 +2386,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3B
  * Signature: (Lcom/sun/jna/Pointer;JJ[CII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3CII
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jcharArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jcharArray arr, jint off, jint n)
 {
   setChars(env, (wchar_t*)L2A(addr + offset), arr, off, n);
 }
@@ -2397,7 +2397,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3C
  * Signature: (Lcom/sun/jna/Pointer;JJ[DII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3DII
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jdoubleArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetDoubleArrayRegion(env, arr, off, n, (jdouble*)L2A(addr + offset));
@@ -2410,7 +2410,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3D
  * Signature: (Lcom/sun/jna/Pointer;JJ[FII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3FII
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jfloatArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetFloatArrayRegion(env, arr, off, n, (jfloat*)L2A(addr + offset));
@@ -2423,7 +2423,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3F
  * Signature: (Lcom/sun/jna/Pointer;JJ[III)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3III
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jintArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jintArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetIntArrayRegion(env, arr, off, n, (jint*)L2A(addr + offset));
@@ -2436,7 +2436,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3I
  * Signature: (Lcom/sun/jna/Pointer;JJ[JII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3JII
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlongArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlongArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetLongArrayRegion(env, arr, off, n, (jlong*)L2A(addr + offset));
@@ -2449,7 +2449,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3J
  * Signature: (Lcom/sun/jna/Pointer;JJ[SII)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3SII
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jshortArray arr, jint off, jint n)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jshortArray arr, jint off, jint n)
 {
   PSTART();
   (*env)->SetShortArrayRegion(env, arr, off, n, (jshort*)L2A(addr + offset));
@@ -2462,7 +2462,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_read__Lcom_sun_jna_Pointer_2JJ_3S
  * Signature: (Lcom/sun/jna/Pointer;JJ)B
  */
 JNIEXPORT jbyte JNICALL Java_com_sun_jna_Native_getByte
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jbyte res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2475,7 +2475,7 @@ JNIEXPORT jbyte JNICALL Java_com_sun_jna_Native_getByte
  * Signature: (Lcom/sun/jna/Pointer;JJ)C
  */
 JNIEXPORT jchar JNICALL Java_com_sun_jna_Native_getChar
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     wchar_t res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2516,7 +2516,7 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__JJ
  * Signature: (Lcom/sun/jna/Pointer;JJJ)Ljava/nio/ByteBuffer;
  */
 JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__Lcom_sun_jna_Pointer_2JJJ
-    (JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlong length)
+    (JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlong length)
 {
 #ifdef NO_NIO_BUFFERS
     return NULL;
@@ -2531,7 +2531,7 @@ JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__Lcom_sun_
  * Signature: (Lcom/sun/jna/Pointer;JJ)D
  */
 JNIEXPORT jdouble JNICALL Java_com_sun_jna_Native_getDouble
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jdouble res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2544,7 +2544,7 @@ JNIEXPORT jdouble JNICALL Java_com_sun_jna_Native_getDouble
  * Signature: (Lcom/sun/jna/Pointer;JJ)F
  */
 JNIEXPORT jfloat JNICALL Java_com_sun_jna_Native_getFloat
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jfloat res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2557,7 +2557,7 @@ JNIEXPORT jfloat JNICALL Java_com_sun_jna_Native_getFloat
  * Signature: (Lcom/sun/jna/Pointer;JJ)I
  */
 JNIEXPORT jint JNICALL Java_com_sun_jna_Native_getInt
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jint res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2570,7 +2570,7 @@ JNIEXPORT jint JNICALL Java_com_sun_jna_Native_getInt
  * Signature: (Lcom/sun/jna/Pointer;JJ)J
  */
 JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_getLong
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jlong res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2583,7 +2583,7 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native_getLong
  * Signature: (Lcom/sun/jna/Pointer;JJ)S
  */
 JNIEXPORT jshort JNICALL Java_com_sun_jna_Native_getShort
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
     jshort res = 0;
     MEMCPY(env, &res, L2A(addr + offset), sizeof(res));
@@ -2596,7 +2596,7 @@ JNIEXPORT jshort JNICALL Java_com_sun_jna_Native_getShort
  * Signature: (Lcom/sun/jna/Pointer;JJ)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getWideString
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset)
 {
   return newJavaString(env, L2A(addr + offset), NULL);
 }
@@ -2607,7 +2607,7 @@ JNIEXPORT jstring JNICALL Java_com_sun_jna_Native_getWideString
  * Signature: (Lcom/sun/jna/Pointer;JJ)[B
  */
 JNIEXPORT jbyteArray JNICALL Java_com_sun_jna_Native_getStringBytes
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong baseaddr, jlong offset)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong baseaddr, jlong offset)
 {
   volatile jbyteArray bytes = 0;
   PSTART();
@@ -2632,7 +2632,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_sun_jna_Native_getStringBytes
  * Signature: (Lcom/sun/jna/Pointer;JJJB)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
-(JNIEnv *UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlong count, jbyte value)
+(JNIEnv *UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlong count, jbyte value)
 {
   MEMSET(env, L2A(addr + offset), (int)value, (size_t)count);
 }
@@ -2643,7 +2643,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setMemory
  * Signature: (Lcom/sun/jna/Pointer;JJB)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setByte
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jbyte value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jbyte value)
 {
   MEMCPY(env, L2A(addr  + offset), &value, sizeof(value));
 }
@@ -2654,7 +2654,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setByte
  * Signature: (Lcom/sun/jna/Pointer;JJC)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setChar
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jchar value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jchar value)
 {
   wchar_t ch = value;
   MEMCPY(env, L2A(addr + offset), &ch, sizeof(ch));
@@ -2666,7 +2666,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setChar
  * Signature: (Lcom/sun/jna/Pointer;JJJ)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlong value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlong value)
 {
   void *ptr = L2A(value);
   MEMCPY(env, L2A(addr + offset), &ptr, sizeof(void *));
@@ -2678,7 +2678,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setPointer
  * Signature: (Lcom/sun/jna/Pointer;JJD)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jdouble value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jdouble value)
 {
   MEMCPY(env, L2A(addr + offset), &value, sizeof(value));
 }
@@ -2689,7 +2689,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setDouble
  * Signature: (Lcom/sun/jna/Pointer;JJF)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jfloat value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jfloat value)
 {
   MEMCPY(env, L2A(addr + offset), &value, sizeof(value));
 }
@@ -2700,7 +2700,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setFloat
  * Signature: (Lcom/sun/jna/Pointer;JJI)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jint value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jint value)
 {
   MEMCPY(env, L2A(addr + offset), &value, sizeof(value));
 }
@@ -2711,7 +2711,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setInt
  * Signature: (Lcom/sun/jna/Pointer;JJJ)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jlong value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jlong value)
 {
   MEMCPY(env, L2A(addr + offset), &value, sizeof(value));
 }
@@ -2722,7 +2722,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setLong
  * Signature: (Lcom/sun/jna/Pointer;JJS)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setShort
-(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jshort value)
+(JNIEnv * UNUSED_ENV(env), jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jshort value)
 {
   MEMCPY(env, L2A(addr + offset), &value, sizeof(value));
 }
@@ -2733,7 +2733,7 @@ JNIEXPORT void JNICALL Java_com_sun_jna_Native_setShort
  * Signature: (Lcom/sun/jna/Pointer;JJLjava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_com_sun_jna_Native_setWideString
-(JNIEnv *env, jclass UNUSED(cls), jobject pointer, jlong addr, jlong offset, jstring value)
+(JNIEnv *env, jclass UNUSED(cls), jobject UNUSED(pointer), jlong addr, jlong offset, jstring value)
 {
     int len = (*env)->GetStringLength(env, value);
     const void* volatile str;

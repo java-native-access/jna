@@ -30,6 +30,7 @@
 #pragma warning( disable : 4204 ) /* structure initializer */
 #pragma warning( disable : 4710 ) /* swprintf not inlined */
 #pragma warning( disable : 4201 ) /* nameless struct/union (jni_md.h) */
+#pragma warning( disable : 4996 ) /* deprecated functions (strdup) */
 #else
 #include <malloc.h>
 #endif /* _MSC_VER */
@@ -152,6 +153,8 @@ typedef struct _callback {
 #define L2A(X) ((void *)(unsigned long)(X))
 #define A2L(X) ((jlong)(unsigned long)(X))
 #endif
+#else
+#include <stdio.h>
 #endif
 
 /* Convenience macros */
