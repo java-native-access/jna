@@ -729,10 +729,14 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @param wMsgFilterMax
      *            Specifies the integer value of the highest message value to be
      *            retrieved.
-     * @return Nonzero indicates that the function retrieves a message other
-     *         than WM_QUIT. Zero indicates that the function retrieves the
-     *         WM_QUIT message, or that lpMsg is an invalid pointer. To get
-     *         extended error information, call GetLastError.
+     * @return If the function retrieves a message other than WM_QUIT, the
+     *         return value is nonzero.
+     *
+     * <p>If the function retrieves the WM_QUIT message, the return value is zero.</p>
+     *
+     * <p>If there is an error, the return value is -1. For example, the function
+     * fails if hWnd is an invalid window handle or lpMsg is an invalid pointer.
+     * To get extended error information, call GetLastError.</p>
      */
     int GetMessage(MSG lpMsg, HWND hWnd, int wMsgFilterMin, int wMsgFilterMax);
 

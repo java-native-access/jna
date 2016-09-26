@@ -136,7 +136,7 @@ public final class User32Util {
                 }
             }
         }
-        
+
         private volatile int nativeThreadId = 0;
         private volatile long javaThreadId = 0;
         private final List<FutureTask> workQueue = Collections.synchronizedList(new ArrayList<FutureTask>());
@@ -150,17 +150,26 @@ public final class User32Util {
             javaThreadId = Thread.currentThread().getId();
             nativeThreadId = Kernel32.INSTANCE.GetCurrentThreadId();
             
-            while (User32.INSTANCE.GetMessage(msg, null, 0, 0) != 0) {
-                while(! workQueue.isEmpty()) {
-                    try {
-                        FutureTask ft = workQueue.remove(0);
-                        ft.run();
-                    } catch (IndexOutOfBoundsException ex) {
+            int getMessageReturn;
+            while ((getMessageReturn = User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0) {
+                if (getMessageReturn != -1) {
+                    // Normal processing
+                    while (!workQueue.isEmpty()) {
+                        try {
+                            FutureTask ft = workQueue.remove(0);
+                            ft.run();
+                        } catch (IndexOutOfBoundsException ex) {
+                            break;
+                        }
+                    }
+                    User32.INSTANCE.TranslateMessage(msg);
+                    User32.INSTANCE.DispatchMessage(msg);
+                } else {
+                    // Error case
+                    if(getMessageFailed()) {
                         break;
                     }
                 }
-                User32.INSTANCE.TranslateMessage(msg);
-                User32.INSTANCE.DispatchMessage(msg);
             }
             
             while (!workQueue.isEmpty()) {
@@ -213,6 +222,30 @@ public final class User32Util {
         
         public void exit() {
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_QUIT, null, null);
+        }
+        
+        /**
+         * The method is called from the thread, that run the message dispatcher,
+         * when the call to {@see com.sun.jna.platform.win32.User32#GetMessage}
+         * fails (returns {@code -1}).
+         * 
+         * <p>If the method returns {@code true}, the MainLoop is exitted, if it 
+         * returns {@code false} the mainloop is resumed.</p>
+         * 
+         * <p>Default behavior: The error code is logged to the 
+         * com.sun.jna.platform.win32.User32Util.MessageLoopThread logger and
+         * the main loop exists.
+         * </p>
+         * 
+         * @return true if MainLoop should exit, false it it should resume
+         */
+        protected boolean getMessageFailed() {
+            int lastError = Kernel32.INSTANCE.GetLastError();
+            Logger.getLogger("com.sun.jna.platform.win32.User32Util.MessageLoopThread")
+                    .log(Level.WARNING, 
+                            "Message loop was interrupted by an error. [lastError: {0}]", 
+                            lastError);
+            return true;
         }
     }
 }
