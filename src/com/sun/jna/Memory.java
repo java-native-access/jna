@@ -23,11 +23,9 @@ package com.sun.jna;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -58,16 +56,13 @@ public class Memory extends Pointer {
     private static final Map<Memory, Reference<Memory>> allocatedMemory =
             Collections.synchronizedMap(new WeakHashMap<Memory, Reference<Memory>>());
 
-    private static final Map<Buffer, Memory> buffers =
-            Collections.synchronizedMap(Platform.HAS_BUFFERS
-                                              ? new WeakIdentityHashMap<Buffer, Memory>()
-                                              : new HashMap<Buffer, Memory>());
+    private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
     /** Force cleanup of memory that has associated NIO Buffers which have
         been GC'd.
     */
     public static void purge() {
-        buffers.size();
+        buffers.clean();
     }
 
     /** Dispose of all allocated memory. */
