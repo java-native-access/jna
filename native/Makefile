@@ -85,6 +85,14 @@ CC=gcc
 LD=$(CC)
 LIBS=
 # CC_OPTS only applied to objects build for jnidispatch, not for libffi
+# -Wno-unknown-warning-option 
+#                => Suppress warning for unknown warnings
+# -Werror        => Treat warnings as errors
+# -Wno-clobbered => Silence GCC warning about clobbered automatic variables.
+#                   The "longjmp" case only happens in protect.h in the logic
+#                   that implements "protected" mode. In that case an exception
+#                   is raised and the value of the potentially clobbered
+#                   variables is ignored.
 LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered
 # Default to Sun recommendations for JNI compilation
 COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing

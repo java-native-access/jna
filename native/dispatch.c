@@ -1116,7 +1116,7 @@ initializeThread(callback* cb, AttachOptions* args) {
       if (args->name != NULL) {
         // Make a copy, since the Java Structure which owns this native memory
         // will go out of scope and be available for GC
-        args->name = strdup(args->name);
+        args->name = STRDUP(args->name);
       }
     }
   }
