@@ -1,18 +1,18 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static com.sun.jna.Native.POINTER_SIZE;
-import static com.sun.jna.platform.win32.Winevt.EVT_VARIANT_TYPE_ARRAY;
-import static com.sun.jna.platform.win32.Winevt.EVT_VARIANT_TYPE_MASK;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -58,7 +58,7 @@ public class WevtapiTest extends TestCase {
     public void testReadEvents() throws Exception {
         WinNT.HANDLE queryHandle = null;
         WinNT.HANDLE contextHandle = null;
-        File testEvtx = new File(getClass().getResource("/res/test.evtx").toURI());
+        File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
             // test EvtQuery
@@ -66,7 +66,7 @@ public class WevtapiTest extends TestCase {
                     Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
 
             // test EvtCreateRenderContext
-            String[] targets = {"Event/System/Provider/@Name", "Event/System/EventRecordID", "Event/System/EventID"};
+            String[] targets = {"Event/System/Provider/@Name", "Event/System/EventRecordID", "Event/System/EventID", "Event/EventData/Data", "Event/System/TimeCreated/@SystemTime"};
             StringArray array = new StringArray(targets, true);
             contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
@@ -78,6 +78,9 @@ public class WevtapiTest extends TestCase {
             Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
             WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
             IntByReference returned = new IntByReference();
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
 
                 // test EvtRender
@@ -85,22 +88,24 @@ public class WevtapiTest extends TestCase {
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
-                    try {
-                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                        buff = evtRender(buff, contextHandle, evtHandle.getValue(),
-                                Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
-                        useMemory(evtVariant, buff, 0);
-                        assertThat("Provider Name", evtVariant.field1.StringVal, is("testSource"));
-                        sb.append(evtVariant.field1.StringVal);
-                        useMemory(evtVariant, buff, 1);
-                        assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
-                        useMemory(evtVariant, buff, 2);
-                        assertThat("EventID", evtVariant.field1.UInt16Val, is((char) (arrayIndex * eventArraySize + i + 5001)));
-                    } finally {
-                        if (evtHandle.getValue() != null) {
-                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
-                        }
-                    }
+                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    assertThat("PropertyCount", propertyCount.getValue(), is(5));
+                    useMemory(evtVariant, buff, 0);
+                    assertThat("Provider Name", (String) evtVariant.getValue(), is("testSource"));
+                    sb.append((String) evtVariant.getValue());
+                    useMemory(evtVariant, buff, 1);
+                    assertThat("EventRecordID", (Long) evtVariant.getValue(), is((long) arrayIndex * eventArraySize + i + 1));
+                    useMemory(evtVariant, buff, 2);
+                    assertThat("EventID", (Short) evtVariant.getValue(), is((short) (5000 + (arrayIndex * eventArraySize + i + 1))));
+                    useMemory(evtVariant, buff, 3);
+                    String[] args = (String[]) evtVariant.getValue();
+                    assertThat("Data#length", args.length, is(1));
+                    assertThat("Data#value", args[0], is("testMessage" + (arrayIndex * eventArraySize + i + 1)));
+                    useMemory(evtVariant, buff, 4);
+                    Date systemtime = ((WinBase.FILETIME) evtVariant.getValue()).toDate();
+                    assertThat("TimeCreated", dateFormat.format(systemtime), is("2016-08-17"));
                 }
                 arrayIndex++;
             }
@@ -118,7 +123,106 @@ public class WevtapiTest extends TestCase {
                 Wevtapi.INSTANCE.EvtClose(contextHandle);
             }
         }
+
+        // =========== Test accessing binary data and empty value ================
+
+        queryHandle = null;
+        contextHandle = null;
+        testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample2.evtx").toURI());
+        try {
+            queryHandle = Wevtapi.INSTANCE.EvtQuery(null, testEvtx.getPath(), null,
+                    Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
+
+            String[] targets = {"Event/EventData/Binary", "Event/System/Correlation"};
+            StringArray array = new StringArray(targets, true);
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+                    Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
+
+            int read = 0;
+            int eventArraySize = 1;
+            int evtNextTimeout = 1000;
+            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
+            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            IntByReference returned = new IntByReference();
+
+            while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
+                Memory buff = new Memory(1024);
+                IntByReference propertyCount = new IntByReference();
+                Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
+                for (int i = 0; i < returned.getValue(); i++) {
+                    read++;
+                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    assertThat("PropertyCount", propertyCount.getValue(), is(2));
+                    useMemory(evtVariant, buff, 0);
+                    assertThat("Binary", (byte[]) evtVariant.getValue(), is(new byte[]{(byte) 0xD9, (byte) 0x06, 0, 0}));
+                    useMemory(evtVariant, buff, 1);
+                    assertThat("Correlation", evtVariant.getValue(), nullValue());
+                }
+            }
+
+            assertThat(read, is(1));
+        } finally {
+            // test EvtClose
+            if (queryHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(queryHandle);
+            }
+            if (contextHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(contextHandle);
+            }
+        }
+
+        // =========== Test accessing GUID + SID data ================
+
+        queryHandle = null;
+        contextHandle = null;
+        testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample3.evtx").toURI());
+        try {
+            queryHandle = Wevtapi.INSTANCE.EvtQuery(null, testEvtx.getPath(), null,
+                    Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
+
+            String[] targets = {"Event/System/Security/@UserID", "Event/System/Provider/@Guid"};
+            StringArray array = new StringArray(targets, true);
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+                    Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
+
+            int read = 0;
+            int eventArraySize = 1;
+            int evtNextTimeout = 1000;
+            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
+            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            IntByReference returned = new IntByReference();
+
+            while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
+                Memory buff = new Memory(1024);
+                IntByReference propertyCount = new IntByReference();
+                Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
+                for (int i = 0; i < returned.getValue(); i++) {
+                    read++;
+                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
+                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    assertThat("PropertyCount", propertyCount.getValue(), is(2));
+                    useMemory(evtVariant, buff, 0);
+                    assertThat("Security#UserID", ((WinNT.PSID) evtVariant.getValue()).getSidString(), is("S-1-5-21-3178902164-3053647283-518304804-1001"));
+                    useMemory(evtVariant, buff, 1);
+                    assertThat("Provider#GUID", ((Guid.GUID) evtVariant.getValue()).toGuidString(), is("{B0AA8734-56F7-41CC-B2F4-DE228E98B946}"));
+                }
+            }
+
+            assertThat(read, is(1));
+        } finally {
+            // test EvtClose
+            if (queryHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(queryHandle);
+            }
+            if (contextHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(contextHandle);
+            }
+        }
     }
+
 
     private Memory evtRender(Memory buff, WinNT.HANDLE contextHandle, WinNT.HANDLE evtHandle, int flag, IntByReference propertyCount) {
         buff.clear();
@@ -138,22 +242,12 @@ public class WevtapiTest extends TestCase {
 
     private void useMemory(Winevt.EVT_VARIANT evtVariant, Memory buff, int index) {
         evtVariant.use(buff.share(evtVariant.size() * index));
-        evtVariant.readField("Type");
-        int typeIdx = evtVariant.Type;
-
-        boolean isArray = (typeIdx & EVT_VARIANT_TYPE_ARRAY) == EVT_VARIANT_TYPE_ARRAY;
-        int baseTypeIdx = typeIdx & EVT_VARIANT_TYPE_MASK;
-
-        System.out.println("===== " + baseTypeIdx + " ======");
-
-        Winevt.EVT_VARIANT_TYPE type = Winevt.EVT_VARIANT_TYPE.values()[baseTypeIdx];
-
-        evtVariant.field1.use(buff.share(evtVariant.size() * index));
-        evtVariant.field1.readField(isArray ? type.getArrField() : type.getField());
+        evtVariant.read();
     }
 
+
     public void testEvtOpenLog() throws Exception {
-        File testEvtx = new File(getClass().getResource("/res/test.evtx").toURI());
+        File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         WinNT.HANDLE logHandle = Wevtapi.INSTANCE.EvtOpenLog(null, testEvtx.getAbsolutePath(),
                 Winevt.EVT_OPEN_LOG_FLAGS.EvtOpenFilePath);
         if (logHandle == null) {
@@ -234,7 +328,7 @@ public class WevtapiTest extends TestCase {
             }
             Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
             useMemory(evtVariant, buff, 0);
-            assertThat(evtVariant.field1.BooleanVal, is(1));
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
         } finally {
             if (channelHandle != null) {
                 Wevtapi.INSTANCE.EvtClose(channelHandle);
@@ -310,9 +404,9 @@ public class WevtapiTest extends TestCase {
             evtVariant.readField("Count");
             int count = evtVariant.Count;
             useMemory(evtVariant, buff, 0);
-            Pointer[] pointers = evtVariant.field1.StringArr.getPointerArray(0);
+            String[] queryNames = (String[]) evtVariant.getValue();
             for (int i = 0; i < count; i++) {
-                sb.append(pointers[i].getWideString(0));
+                sb.append(queryNames[i]);
             }
             assertThat(sb.toString(), is("Application"));
         } finally {
@@ -326,7 +420,7 @@ public class WevtapiTest extends TestCase {
 
         WinNT.HANDLE queryHandle = null;
         WinNT.HANDLE contextHandle = null;
-        File testEvtx = new File(getClass().getResource("/res/test.evtx").toURI());
+        File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
             queryHandle = Wevtapi.INSTANCE.EvtQuery(null, testEvtx.getPath(), null,
@@ -365,8 +459,8 @@ public class WevtapiTest extends TestCase {
                         evtRender(buff, contextHandle, evtHandle.getValue(),
                                 Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                         useMemory(evtVariant, buff, 0);
-                        assertThat("EventRecordID", evtVariant.field1.UInt64Val, is((long) arrayIndex * eventArraySize + i + 1));
-                        sb.append(evtVariant.field1.UInt64Val);
+                        assertThat("EventRecordID", (Long) evtVariant.getValue(), is((long) arrayIndex * eventArraySize + i + 1));
+                        sb.append(evtVariant.getValue());
 
                         // test EvtUpdateBookmark
                         if (!Wevtapi.INSTANCE.EvtUpdateBookmark(hBookmark, evtHandle.getValue())) {
@@ -401,7 +495,7 @@ public class WevtapiTest extends TestCase {
     public void testEvtGetEventInfo() throws Exception {
         WinNT.HANDLE queryHandle = null;
         WinNT.HANDLE contextHandle = null;
-        File testEvtx = new File(getClass().getResource("/res/test.evtx").toURI());
+        File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
             queryHandle = Wevtapi.INSTANCE.EvtQuery(null, testEvtx.getPath(), null,
@@ -436,8 +530,8 @@ public class WevtapiTest extends TestCase {
                             }
                         }
                         useMemory(evtVariant, buff, 0);
-                        assertThat("Evtx Path", evtVariant.field1.StringVal, is(testEvtx.getAbsolutePath()));
-                        sb.append(evtVariant.field1.StringVal);
+                        assertThat("Evtx Path", (String) evtVariant.getValue(), is(testEvtx.getAbsolutePath()));
+                        sb.append((String) evtVariant.getValue());
                     } finally {
                         if (evtHandle.getValue() != null) {
                             Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());

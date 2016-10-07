@@ -151,177 +151,41 @@ public interface Winevt {
      * https://msdn.microsoft.com/en-us/library/windows/desktop/aa385611(v=vs.85).aspx
      */
     public static class EVT_VARIANT extends Structure {
-
+        /**
+         * <strong>Exposed to follow JNA rules, use the
+         * {@link EVT_VARIANT#getValue} method
+         * to manipulate values!</strong>
+         */
         public field1_union field1;
 
+        /*
+        Defined to get correct size for the union. Data is accessed by direct
+        read from memory.
+        */
         public static class field1_union extends Union {
 
-            /** A Boolean value. */
-            public int BooleanVal;
+            public byte byteValue;
 
-            /** A signed 8-bit integer value. */
-            public byte SByteVal;
+            public short shortValue;
 
-            /** A signed 16-bit integer value. */
-            public short Int16Val;
+            public int intValue;
 
-            /** A signed 32-bit integer value. */
-            public int Int32Val;
+            public long longValue;
 
-            /** A signed 64-bit integer value. */
-            public long Int64Val;
+            public float floatValue;
 
-            /** An unsigned 8-bit integer value. */
-            public byte ByteVal;
+            public double doubleVal;
 
-            /** An unsigned 16-bit integer value. */
-            public char UInt16Val;
-
-            /** An unsigned 32-bit integer value. */
-            public int UInt32Val;
-
-            /** An unsigned 64-bit integer value. */
-            public long UInt64Val;
-
-            /** A single precision real value. */
-            public float SingleVal;
-
-            /** A double precision real value. */
-            public double DoubleVal;
-
-            /** An 8-byte FILETIME value. */
-            public long FileTimeVal;
-
-            /** A SYSTEMTIME value. */
-            public WinBase.SYSTEMTIME.ByReference SysTimeVal;
-
-            /** A 16-byte GUID value. */
-            public Guid.GUID.ByReference GuidVal;
-
-            /** A null-terminated Unicode string. */
-            public String StringVal;
-
-            /** A null-terminated ANSI string value. */
-            public Pointer AnsiStringVal;
-
-            /** A pointer to a hexadecimal binary value. */
-            public Pointer BinaryVal;
-
-            /** A 4-byte ASCII value. A security identifier (SID) structure that uniquely identifies a user or group. */
-            public Pointer SidVal;
-
-            /**
-             * A pointer address. The size of the address (4 bytes or 8 bytes) depends on whether the provider ran on
-             * a 32-bit or 64-bit operating system.
-             */
-            public BaseTSD.SIZE_T SizeTVal;
-
-            /** An EVT_HANDLE value. */
-            public WinNT.HANDLE EvtHandleVal;
-
-            /** A pointer to an array of Boolean values. */
-            public Pointer BooleanArr;
-
-            /** A pointer to an array of signed 8-bit values. */
-            public Pointer SByteArr;
-
-            /** A pointer to an array of signed 16-bit values. */
-            public Pointer Int16Arr;
-
-            /** A pointer to an array of signed 32-bit values. */
-            public Pointer Int32Arr;
-
-            /** A pointer to an array of signed 64-bit values. */
-            public Pointer Int64Arr;
-
-            /** A pointer to an array of unsigned 8-bit values. */
-            public Pointer ByteArr;
-
-            /** A pointer to an array of unsigned 16-bit values. */
-            public Pointer UInt16Arr;
-
-            /** A pointer to an array of unsigned 32-bit values. */
-            public Pointer UInt32Arr;
-
-            /** A pointer to an array of unsigned 64-bit values. */
-            public Pointer UInt64Arr;
-
-            /** A pointer to an array of single precision real values. */
-            public Pointer SingleArr;
-
-            /** A pointer to an array of double precision real values. */
-            public Pointer DoubleArr;
-
-            /** A pointer to an array of FILETIME values. */
-            public WinBase.FILETIME.ByReference FileTimeArr;
-
-            /** A pointer to an array of SYSTEMTIME values. */
-            public WinBase.SYSTEMTIME.ByReference SysTimeArr;
-
-            /** A pointer to an array of GUID values. */
-            public Guid.GUID.ByReference GuidArr;
-
-            /** A pointer to an array of null-terminated Unicode strings. */
-            public Pointer StringArr;
-
-            /** A pointer to an array of null-terminated ANSI strings. */
-            public Pointer AnsiStringArr;
-
-            /** A pointer to an array of 4-byte ASCII values. */
-            public Pointer SidArr;
-
-            /** A pointer to an array of size_t values. */
-            public Pointer SizeTArr;
-
-            /** An XML string value. */
-            public String XmlVal;
-
-            /** A pointer to an array of XML string values. */
-            public Pointer XmlValArr;
-
-            public void use(Pointer m) {
-                useMemory(m, 0);
-            }
-
-            public field1_union() {
-                super(W32APITypeMapper.UNICODE);
-            }
-
-            public field1_union(Pointer peer) {
-                super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
-            }
-
-            protected field1_union newInstance() {
-                return new field1_union();
-            }
-
-            protected ByReference newByReference() {
-                return new ByReference();
-            }
-
-            protected ByValue newByValue() {
-                return new ByValue();
-            }
-
-            public static class ByReference extends field1_union implements Structure.ByReference {
-                public ByReference(Pointer p) {
-                    super(p);
-                }
-
-                public ByReference() {
-                    super();
-                }
-
-            }
-
-            public static class ByValue extends field1_union implements Structure.ByValue {
-
-            }
+            public Pointer pointerValue;
         }
 
         /**
          * The number of elements in the array of values. Use Count if the Type member has
          * the EVT_VARIANT_TYPE_ARRAY flag set.
+         * <p>
+         * <strong>Exposed to follow JNA rules, use
+         * {@link EVT_VARIANT#getValue} and {@link EVT_VARIANT#setValue} methods
+         * to manipulate values!</strong>
          */
         public int Count;
 
@@ -333,6 +197,10 @@ public interface Winevt {
          * if the type is EvtVarTypeString and the EVT_VARIANT_TYPE_ARRAY flag is set.
          * You can use the {@link Winevt#EVT_VARIANT_TYPE_MASK} constant to mask out the array bit to determine
          * the variant's type.
+         * <p>
+         * <strong>Exposed to follow JNA rules, use
+         * {@link EVT_VARIANT#getValue} and {@link EVT_VARIANT#setValue} methods
+         * to manipulate values!</strong>
          */
         public int Type;
 
@@ -348,20 +216,8 @@ public interface Winevt {
             super(peer, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
         }
 
-        protected EVT_VARIANT newInstance() {
-            return new EVT_VARIANT();
-        }
-
         public void use(Pointer m) {
             useMemory(m, 0);
-        }
-
-        protected ByReference newByReference() {
-            return new ByReference();
-        }
-
-        protected ByValue newByValue() {
-            return new ByValue();
         }
 
         public static class ByReference extends EVT_VARIANT implements Structure.ByReference {
@@ -376,6 +232,128 @@ public interface Winevt {
 
         public static class ByValue extends EVT_VARIANT implements Structure.ByValue {
 
+        }
+
+
+        private int getBaseType() {
+            return Type & EVT_VARIANT_TYPE_MASK;
+        }
+
+        public boolean isArray() {
+            return (Type & EVT_VARIANT_TYPE_ARRAY) == EVT_VARIANT_TYPE_ARRAY;
+        }
+
+        public EVT_VARIANT_TYPE getVariantType() {
+            return EVT_VARIANT_TYPE.values()[getBaseType()];
+        }
+
+        public Object getValue() {
+            EVT_VARIANT_TYPE type = getVariantType();
+            switch (type) {
+                case EvtVarTypeAnsiString:
+                    return isArray() ? field1.getPointer().getPointer(0).getStringArray(0, Count) : field1.getPointer().getPointer(0).getString(0);
+                case EvtVarTypeBoolean:
+                    if (isArray()) {
+                        int[] rawValue = field1.getPointer().getPointer(0).getIntArray(0, Count);
+                        WinDef.BOOL[] result = new WinDef.BOOL[rawValue.length];
+                        for (int i = 0; i < result.length; i++) {
+                            result[i] = new WinDef.BOOL(rawValue[i]);
+                        }
+                        return result;
+                    } else {
+                        return new WinDef.BOOL(field1.getPointer().getInt(0));
+                    }
+                case EvtVarTypeString:
+                case EvtVarTypeEvtXml:
+                    return isArray() ? field1.getPointer().getPointer(0).getWideStringArray(0, Count) : field1.getPointer().getPointer(0).getWideString(0);
+                case EvtVarTypeFileTime:
+                    if (isArray()) {
+                        WinBase.FILETIME resultFirst = (WinBase.FILETIME) Structure.newInstance(WinBase.FILETIME.class, field1.getPointer().getPointer(0));
+                        resultFirst.read();
+                        return resultFirst.toArray(Count);
+                    } else {
+                        WinBase.FILETIME result = new WinBase.FILETIME(field1.getPointer());
+                        result.read();
+                        return result;
+                    }
+                case EvtVarTypeSysTime:
+                    if (isArray()) {
+                        WinBase.SYSTEMTIME resultFirst = (WinBase.SYSTEMTIME) Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
+                        resultFirst.read();
+                        return resultFirst.toArray(Count);
+                    } else {
+                        WinBase.SYSTEMTIME result = (WinBase.SYSTEMTIME) Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
+                        result.read();
+                        return result;
+                    }
+                case EvtVarTypeSByte:
+                case EvtVarTypeByte:
+                    return isArray() ? field1.getPointer().getPointer(0).getByteArray(0, Count) : field1.getPointer().getByte(0);
+                case EvtVarTypeInt16:
+                case EvtVarTypeUInt16:
+                    return isArray() ? field1.getPointer().getPointer(0).getShortArray(0, Count) : field1.getPointer().getShort(0);
+                case EvtVarTypeHexInt32:
+                case EvtVarTypeInt32:
+                case EvtVarTypeUInt32:
+                    return isArray() ? field1.getPointer().getPointer(0).getIntArray(0, Count) : field1.getPointer().getInt(0);
+                case EvtVarTypeHexInt64:
+                case EvtVarTypeInt64:
+                case EvtVarTypeUInt64:
+                    return isArray() ? field1.getPointer().getPointer(0).getLongArray(0, Count) : field1.getPointer().getLong(0);
+                case EvtVarTypeSingle:
+                    return isArray() ? field1.getPointer().getPointer(0).getFloatArray(0, Count) : field1.getPointer().getFloat(0);
+                case EvtVarTypeDouble:
+                    return isArray() ? field1.getPointer().getPointer(0).getDoubleArray(0, Count) : field1.getPointer().getDouble(0);
+                case EvtVarTypeBinary:
+                    assert (!isArray());
+                    return field1.getPointer().getPointer(0).getByteArray(0, Count);
+                case EvtVarTypeNull:
+                    return null;
+                case EvtVarTypeGuid:
+                    if (isArray()) {
+                        Guid.GUID resultFirst = (Guid.GUID) Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
+                        resultFirst.read();
+                        return resultFirst.toArray(Count);
+                    } else {
+                        Guid.GUID result = (Guid.GUID) Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
+                        result.read();
+                        return result;
+                    }
+                case EvtVarTypeSid:
+                    if (isArray()) {
+                        WinNT.PSID resultFirst = (WinNT.PSID) Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
+                        resultFirst.read();
+                        return resultFirst.toArray(Count);
+                    } else {
+                        WinNT.PSID result = (WinNT.PSID) Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
+                        result.read();
+                        return result;
+                    }
+                case EvtVarTypeSizeT:
+                    if (isArray()) {
+                        long[] rawValue = field1.getPointer().getPointer(0).getLongArray(0, Count);
+                        BaseTSD.SIZE_T[] result = new BaseTSD.SIZE_T[rawValue.length];
+                        for (int i = 0; i < result.length; i++) {
+                            result[i] = new BaseTSD.SIZE_T(rawValue[i]);
+                        }
+                        return result;
+                    } else {
+                        return new BaseTSD.SIZE_T(field1.getPointer().getLong(0));
+                    }
+                case EvtVarTypeEvtHandle:
+                    if (isArray()) {
+                        Pointer[] rawValue = field1.getPointer().getPointer(0).getPointerArray(0, Count);
+                        WinNT.HANDLE[] result = new WinNT.HANDLE[rawValue.length];
+                        for (int i = 0; i < result.length; i++) {
+                            result[i] = new WinNT.HANDLE(rawValue[i]);
+                        }
+                        return result;
+                    } else {
+                        return new WinNT.HANDLE(field1.getPointer().getPointer(0));
+                    }
+                default:
+                    throw new IllegalStateException(String.format("NOT IMPLEMENTED: getValue(%s) (Array: %b, Count: %d)", type, isArray(), Count));
+            }
         }
     }
 
