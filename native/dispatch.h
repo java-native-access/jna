@@ -144,7 +144,7 @@ typedef struct _callback {
 
 #if defined(_MSC_VER)
 #include "snprintf.h"
-#define strdup _strdup
+#define STRDUP _strdup
 #if defined(_WIN64)
 #define L2A(X) ((void *)(X))
 #define A2L(X) ((jlong)(X))
@@ -152,6 +152,9 @@ typedef struct _callback {
 #define L2A(X) ((void *)(unsigned long)(X))
 #define A2L(X) ((jlong)(unsigned long)(X))
 #endif
+#else
+#include <stdio.h>
+#define STRDUP strdup
 #endif
 
 /* Convenience macros */

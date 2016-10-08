@@ -876,7 +876,7 @@ addVarArgs(const char *fmt, ...) {
       break;
     case 'f': // float (promoted to ‘double’ when passed through ‘...’)
     case 'g': // double
-      sum += va_arg(ap, double);
+      sum += (int) va_arg(ap, double);
       break;
     default:
       break;
