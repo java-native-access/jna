@@ -413,6 +413,15 @@ public interface WinBase extends WinDef, BaseTSD {
             Calendar cal = toCalendar();
             return dtf.format(cal.getTime());
         }
+
+        public static class ByReference extends SYSTEMTIME implements Structure.ByReference {
+
+        }
+
+        public static class ByValue extends SYSTEMTIME implements Structure.ByValue {
+
+        }
+
     }
 
     /**
@@ -431,7 +440,7 @@ public interface WinBase extends WinDef, BaseTSD {
         public TIME_ZONE_INFORMATION() {
             super(W32APITypeMapper.DEFAULT);
         }
-        
+
         @Override
         protected List<String> getFieldOrder() {
             return Arrays.asList(new String[] { "Bias", "StandardName", "StandardDate", "StandardBias", "DaylightName", "DaylightDate", "DaylightBias" });
