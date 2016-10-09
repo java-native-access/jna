@@ -15,7 +15,8 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
+import com.sun.jna.platform.win32.Winevt.EVT_VARIANT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -42,7 +43,7 @@ public interface Wevtapi extends StdCallLibrary {
      * on the remote computer; otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get
      * the error code.
      */
-    HANDLE EvtOpenSession(int LoginClass, Winevt.EVT_RPC_LOGIN Login, int Timeout, int Flags);
+    EVT_HANDLE EvtOpenSession(int LoginClass, Winevt.EVT_RPC_LOGIN Login, int Timeout, int Flags);
 
     /**
      * Closes an open handle.
@@ -52,7 +53,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtClose(HANDLE Object);
+    boolean EvtClose(EVT_HANDLE Object);
 
     /**
      * Cancels all pending operations on a handle.
@@ -73,7 +74,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtCancel(HANDLE Object);
+    boolean EvtCancel(EVT_HANDLE Object);
 
     /**
      * Gets a text message that contains the extended error information for the current error.
@@ -107,7 +108,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return A handle to the query results if successful; otherwise, NULL. If the function returns NULL,
      * call the {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtQuery(HANDLE Session, String Path, String Query, int Flags);
+    EVT_HANDLE EvtQuery(EVT_HANDLE Session, String Path, String Query, int Flags);
 
     /**
      * Gets the next event from the query or subscription results.
@@ -127,7 +128,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtNext(HANDLE ResultSet, int EventArraySize, Pointer EventArray, int Timeout, int Flags,
+    boolean EvtNext(EVT_HANDLE ResultSet, int EventArraySize, EVT_HANDLE[] EventArray, int Timeout, int Flags,
                     IntByReference Returned);
 
     /**
@@ -149,7 +150,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtSeek(HANDLE ResultSet, long Position, HANDLE Bookmark, int Timeout, int Flags);
+    boolean EvtSeek(EVT_HANDLE ResultSet, long Position, EVT_HANDLE Bookmark, int Timeout, int Flags);
 
     /**
      * Creates a subscription that will receive current and future events from a channel or log file
@@ -187,7 +188,7 @@ public interface Wevtapi extends StdCallLibrary {
      * call the {@link Kernel32#GetLastError} function to get the error code.
      * You must call the EvtClose function with the subscription handle when done.
      */
-    HANDLE EvtSubscribe(HANDLE Session, HANDLE SignalEvent, String ChannelPath, String Query, HANDLE Bookmark,
+    EVT_HANDLE EvtSubscribe(EVT_HANDLE Session, EVT_HANDLE SignalEvent, String ChannelPath, String Query, EVT_HANDLE Bookmark,
                         Pointer Context, Callback Callback, int Flags);
 
     /**
@@ -205,7 +206,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return A context handle that you use when calling the {@link Wevtapi#EvtRender}function to render the contents
      * of an event; otherwise, NULL. If NULL, call the {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtCreateRenderContext(int ValuePathsCount, Pointer ValuePaths, int Flags);
+    EVT_HANDLE EvtCreateRenderContext(int ValuePathsCount, String[] ValuePaths, int Flags);
 
     /**
      * Renders an XML fragment based on the rendering context that you specify.
@@ -237,7 +238,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtRender(HANDLE Context, HANDLE Fragment, int Flags, int BufferSize, Pointer Buffer,
+    boolean EvtRender(EVT_HANDLE Context, EVT_HANDLE Fragment, int Flags, int BufferSize, Pointer Buffer,
                       IntByReference BufferUsed, IntByReference PropertyCount);
 
     /**
@@ -285,7 +286,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtFormatMessage(HANDLE PublisherMetadata, HANDLE Event, int MessageId, int ValueCount, Pointer Values,
+    boolean EvtFormatMessage(EVT_HANDLE PublisherMetadata, EVT_HANDLE Event, int MessageId, int ValueCount, EVT_VARIANT[] Values,
                              int Flags, int BufferSize, Pointer Buffer, IntByReference BufferUsed);
 
     /**
@@ -300,7 +301,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the file or channel;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtOpenLog(HANDLE Session, String Path, int Flags);
+    EVT_HANDLE EvtOpenLog(EVT_HANDLE Session, String Path, int Flags);
 
     /**
      * Gets information about a channel or log file.
@@ -320,7 +321,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetLogInfo(HANDLE Log, int PropertyId, int PropertyValueBufferSize, Pointer PropertyValueBuffer,
+    boolean EvtGetLogInfo(EVT_HANDLE Log, int PropertyId, int PropertyValueBufferSize, Pointer PropertyValueBuffer,
                           IntByReference PropertyValueBufferUsed);
 
     /**
@@ -336,7 +337,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtClearLog(HANDLE Session, String ChannelPath, String TargetFilePath, int Flags);
+    boolean EvtClearLog(EVT_HANDLE Session, String ChannelPath, String TargetFilePath, int Flags);
 
     /**
      * Copies events from the specified channel or log file and writes them to the target log file.
@@ -362,7 +363,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtExportLog(HANDLE Session, String Path, String Query, String TargetFilePath, int Flags);
+    boolean EvtExportLog(EVT_HANDLE Session, String Path, String Query, String TargetFilePath, int Flags);
 
     /**
      * Adds localized strings to the events in the specified log file.
@@ -378,7 +379,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtArchiveExportedLog(HANDLE Session, String LogFilePath, int Locale, int Flags);
+    boolean EvtArchiveExportedLog(EVT_HANDLE Session, String LogFilePath, int Locale, int Flags);
 
     /**
      * Gets a handle that you use to enumerate the list of channels that are registered on the computer.
@@ -390,7 +391,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the list of channel names that are registered on
      * the computer; otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtOpenChannelEnum(HANDLE Session, int Flags);
+    EVT_HANDLE EvtOpenChannelEnum(EVT_HANDLE Session, int Flags);
 
     /**
      * Gets a channel name from the enumerator.
@@ -406,7 +407,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtNextChannelPath(HANDLE ChannelEnum, int ChannelPathBufferSize, Pointer ChannelPathBuffer,
+    boolean EvtNextChannelPath(EVT_HANDLE ChannelEnum, int ChannelPathBufferSize, Pointer ChannelPathBuffer,
                                IntByReference ChannelPathBufferUsed);
 
     /**
@@ -420,7 +421,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the channel's configuration;
      * otherwise, NULL. If NULL, call GetLastError function to get the error code.
      */
-    HANDLE EvtOpenChannelConfig(HANDLE Session, String ChannelPath, int Flags);
+    EVT_HANDLE EvtOpenChannelConfig(EVT_HANDLE Session, String ChannelPath, int Flags);
 
     /**
      * Saves the changes made to a channel's configuration.
@@ -432,7 +433,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtSaveChannelConfig(HANDLE ChannelConfig, int Flags);
+    boolean EvtSaveChannelConfig(EVT_HANDLE ChannelConfig, int Flags);
 
     /**
      * Sets the specified configuration property of a channel.
@@ -450,7 +451,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtSetChannelConfigProperty(HANDLE ChannelConfig, int PropertyId, int Flags, Pointer PropertyValue);
+    boolean EvtSetChannelConfigProperty(EVT_HANDLE ChannelConfig, int PropertyId, int Flags, EVT_VARIANT PropertyValue);
 
     /**
      * Gets the specified channel configuration property.
@@ -470,7 +471,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetChannelConfigProperty(HANDLE ChannelConfig, int PropertyId, int Flags, int PropertyValueBufferSize,
+    boolean EvtGetChannelConfigProperty(EVT_HANDLE ChannelConfig, int PropertyId, int Flags, int PropertyValueBufferSize,
                                         Pointer PropertyValueBuffer, IntByReference PropertyValueBufferUsed);
 
     /**
@@ -483,7 +484,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the list of registered providers;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtOpenPublisherEnum(HANDLE Session, int Flags);
+    EVT_HANDLE EvtOpenPublisherEnum(EVT_HANDLE Session, int Flags);
 
     /**
      * Gets the identifier of a provider from the enumerator.
@@ -499,7 +500,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the list of registered providers;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    boolean EvtNextPublisherId(HANDLE PublisherEnum, int PublisherIdBufferSize, Pointer PublisherIdBuffer,
+    boolean EvtNextPublisherId(EVT_HANDLE PublisherEnum, int PublisherIdBufferSize, Pointer PublisherIdBuffer,
                                IntByReference PublisherIdBufferUsed);
 
     /**
@@ -521,7 +522,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the provider's metadata;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtOpenPublisherMetadata(HANDLE EvtHandleSession, String PublisherIdentity, String LogFilePath, int Locale, int Flags);
+    EVT_HANDLE EvtOpenPublisherMetadata(EVT_HANDLE EvtHandleSession, String PublisherIdentity, String LogFilePath, int Locale, int Flags);
 
     /**
      * Gets the specified provider metadata property.
@@ -544,7 +545,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetPublisherMetadataProperty(HANDLE PublisherMetadata, int PropertyId, int Flags,
+    boolean EvtGetPublisherMetadataProperty(EVT_HANDLE PublisherMetadata, int PropertyId, int Flags,
                                             int PublisherMetadataPropertyBufferSize,
                                             Pointer PublisherMetadataPropertyBuffer,
                                             IntByReference PublisherMetadataPropertyBufferUsed);
@@ -559,7 +560,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the list of events that the provider defines;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtOpenEventMetadataEnum(HANDLE PublisherMetadata, int Flags);
+    EVT_HANDLE EvtOpenEventMetadataEnum(EVT_HANDLE PublisherMetadata, int Flags);
 
     /**
      * Gets an event definition from the enumerator.
@@ -571,7 +572,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the event's metadata;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtNextEventMetadata(HANDLE EventMetadataEnum, int Flags);
+    EVT_HANDLE EvtNextEventMetadata(EVT_HANDLE EventMetadataEnum, int Flags);
 
     /**
      * Gets the specified event metadata property.
@@ -593,7 +594,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetEventMetadataProperty(HANDLE EventMetadata, int PropertyId, int Flags,
+    boolean EvtGetEventMetadataProperty(EVT_HANDLE EventMetadata, int PropertyId, int Flags,
                                         int EventMetadataPropertyBufferSize, Pointer Buffer, IntByReference BufferUsed);
 
     /**
@@ -652,7 +653,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetQueryInfo(HANDLE QueryOrSubscription, int PropertyId, int PropertyValueBufferSize,
+    boolean EvtGetQueryInfo(EVT_HANDLE QueryOrSubscription, int PropertyId, int PropertyValueBufferSize,
                             Pointer PropertyValueBuffer, IntByReference PropertyValueBufferUsed);
 
     /**
@@ -663,7 +664,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return A handle to the bookmark if the call succeeds;
      * otherwise, NULL. If NULL, call the {@link Kernel32#GetLastError} function to get the error code.
      */
-    HANDLE EvtCreateBookmark(String BookmarkXml);
+    EVT_HANDLE EvtCreateBookmark(String BookmarkXml);
 
     /**
      * Updates the bookmark with information that identifies the specified event.
@@ -675,7 +676,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtUpdateBookmark(HANDLE Bookmark, HANDLE Event);
+    boolean EvtUpdateBookmark(EVT_HANDLE Bookmark, EVT_HANDLE Event);
 
     /**
      * Gets information that identifies the structured XML query that selected the event and the channel or log file
@@ -695,7 +696,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtGetEventInfo(HANDLE Event, int PropertyId, int PropertyValueBufferSize, Pointer PropertyValueBuffer,
+    boolean EvtGetEventInfo(EVT_HANDLE Event, int PropertyId, int PropertyValueBufferSize, Pointer PropertyValueBuffer,
                             IntByReference PropertyValueBufferUsed);
 
 }

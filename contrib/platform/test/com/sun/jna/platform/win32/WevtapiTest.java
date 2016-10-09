@@ -1,7 +1,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.StringArray;
+import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.sun.jna.Native.POINTER_SIZE;
+import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -34,7 +34,7 @@ public class WevtapiTest extends TestCase {
     }
 
     private int _evtGetExtendedStatus(String query, Memory buffer, IntByReference bufferUsed) {
-        WinNT.HANDLE handle = null;
+        EVT_HANDLE handle = null;
         int ret;
         try {
             handle = Wevtapi.INSTANCE.EvtQuery(null, "Application", query,
@@ -56,8 +56,8 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testReadEvents() throws Exception {
-        WinNT.HANDLE queryHandle = null;
-        WinNT.HANDLE contextHandle = null;
+        EVT_HANDLE queryHandle = null;
+        EVT_HANDLE contextHandle = null;
         File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
@@ -67,16 +67,14 @@ public class WevtapiTest extends TestCase {
 
             // test EvtCreateRenderContext
             String[] targets = {"Event/System/Provider/@Name", "Event/System/EventRecordID", "Event/System/EventID", "Event/EventData/Data", "Event/System/TimeCreated/@SystemTime"};
-            StringArray array = new StringArray(targets, true);
-            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
             // test EvtNext
             int eventArraySize = 10;
             int evtNextTimeout = 1000;
             int arrayIndex = 0;
-            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
-            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
             IntByReference returned = new IntByReference();
 
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -88,8 +86,7 @@ public class WevtapiTest extends TestCase {
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                    buff = evtRender(buff, contextHandle, eventArray[i],
                             Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(5));
                     useMemory(evtVariant, buff, 0);
@@ -134,15 +131,13 @@ public class WevtapiTest extends TestCase {
                     Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
 
             String[] targets = {"Event/EventData/Binary", "Event/System/Correlation"};
-            StringArray array = new StringArray(targets, true);
-            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
             int read = 0;
             int eventArraySize = 1;
             int evtNextTimeout = 1000;
-            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
-            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
             IntByReference returned = new IntByReference();
 
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
@@ -151,8 +146,7 @@ public class WevtapiTest extends TestCase {
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
                     read++;
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                    buff = evtRender(buff, contextHandle, eventArray[i],
                             Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(2));
                     useMemory(evtVariant, buff, 0);
@@ -183,15 +177,13 @@ public class WevtapiTest extends TestCase {
                     Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
 
             String[] targets = {"Event/System/Security/@UserID", "Event/System/Provider/@Guid"};
-            StringArray array = new StringArray(targets, true);
-            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
             int read = 0;
             int eventArraySize = 1;
             int evtNextTimeout = 1000;
-            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
-            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
             IntByReference returned = new IntByReference();
 
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
@@ -200,8 +192,7 @@ public class WevtapiTest extends TestCase {
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
                     read++;
-                    evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                    buff = evtRender(buff, contextHandle, evtHandle.getValue(),
+                    buff = evtRender(buff, contextHandle, eventArray[i],
                             Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(2));
                     useMemory(evtVariant, buff, 0);
@@ -224,7 +215,7 @@ public class WevtapiTest extends TestCase {
     }
 
 
-    private Memory evtRender(Memory buff, WinNT.HANDLE contextHandle, WinNT.HANDLE evtHandle, int flag, IntByReference propertyCount) {
+    private Memory evtRender(Memory buff, EVT_HANDLE contextHandle, EVT_HANDLE evtHandle, int flag, IntByReference propertyCount) {
         buff.clear();
         IntByReference dwBufferUsed = new IntByReference();
         if (!Wevtapi.INSTANCE.EvtRender(contextHandle, evtHandle, flag, (int) buff.size(), buff, dwBufferUsed, propertyCount)) {
@@ -248,7 +239,7 @@ public class WevtapiTest extends TestCase {
 
     public void testEvtOpenLog() throws Exception {
         File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
-        WinNT.HANDLE logHandle = Wevtapi.INSTANCE.EvtOpenLog(null, testEvtx.getAbsolutePath(),
+        EVT_HANDLE logHandle = Wevtapi.INSTANCE.EvtOpenLog(null, testEvtx.getAbsolutePath(),
                 Winevt.EVT_OPEN_LOG_FLAGS.EvtOpenFilePath);
         if (logHandle == null) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
@@ -271,7 +262,7 @@ public class WevtapiTest extends TestCase {
 
     public void testEvtOpenChannelEnum() throws Exception {
 
-        WinNT.HANDLE channelHandle = null;
+        EVT_HANDLE channelHandle = null;
         List<String> channelList = new ArrayList<String>();
         try {
             channelHandle = Wevtapi.INSTANCE.EvtOpenChannelEnum(null, 0);
@@ -305,7 +296,7 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtOpenChannelConfig() throws Exception {
-        WinNT.HANDLE channelHandle = null;
+        EVT_HANDLE channelHandle = null;
         try {
             channelHandle = Wevtapi.INSTANCE.EvtOpenChannelConfig(null, "Application", 0);
             if (channelHandle == null) {
@@ -339,8 +330,8 @@ public class WevtapiTest extends TestCase {
     public void testEvtOpenPublisherEnum() throws Exception {
         Winevt.EVT_RPC_LOGIN login = new Winevt.EVT_RPC_LOGIN("localhost", null, null, null,
                 Winevt.EVT_RPC_LOGIN_FLAGS.EvtRpcLoginAuthDefault);
-        WinNT.HANDLE session = null;
-        WinNT.HANDLE publisherEnumHandle = null;
+        EVT_HANDLE session = null;
+        EVT_HANDLE publisherEnumHandle = null;
         List<String> publisherList = new ArrayList<String>();
         try {
             session = Wevtapi.INSTANCE.EvtOpenSession(Winevt.EVT_LOGIN_CLASS.EvtRpcLogin, login, 0, 0);
@@ -382,7 +373,7 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtGetQueryInfo() throws Exception {
-        WinNT.HANDLE queryHandle = null;
+        EVT_HANDLE queryHandle = null;
         try {
             queryHandle = Wevtapi.INSTANCE.EvtQuery(null, "Application", null,
                     Winevt.EVT_QUERY_FLAGS.EvtQueryChannelPath);
@@ -417,9 +408,8 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtCreateBookmark() throws Exception {
-
-        WinNT.HANDLE queryHandle = null;
-        WinNT.HANDLE contextHandle = null;
+        EVT_HANDLE queryHandle = null;
+        EVT_HANDLE contextHandle = null;
         File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
@@ -427,7 +417,7 @@ public class WevtapiTest extends TestCase {
                     Winevt.EVT_QUERY_FLAGS.EvtQueryFilePath);
 
             // test EvtCreateBookmark
-            WinNT.HANDLE hBookmark = Wevtapi.INSTANCE.EvtCreateBookmark(
+            EVT_HANDLE hBookmark = Wevtapi.INSTANCE.EvtCreateBookmark(
                     "<BookmarkList><Bookmark Channel='" + testEvtx.getAbsolutePath() + "' RecordId='" + 11 + "' IsCurrent='true'/></BookmarkList>"
             );
             if (hBookmark == null) {
@@ -439,8 +429,7 @@ public class WevtapiTest extends TestCase {
             }
 
             String[] targets = {"Event/System/EventRecordID"};
-            StringArray array = new StringArray(targets, true);
-            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
             int eventArraySize = 10;
@@ -449,26 +438,25 @@ public class WevtapiTest extends TestCase {
             Memory buff = new Memory(1024);
             IntByReference propertyCount = new IntByReference();
             Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
-            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
-            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
             IntByReference returned = new IntByReference();
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
+                    EVT_HANDLE evtHandle = eventArray[i];
                     try {
-                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                        evtRender(buff, contextHandle, evtHandle.getValue(),
+                        evtRender(buff, contextHandle, evtHandle,
                                 Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                         useMemory(evtVariant, buff, 0);
                         assertThat("EventRecordID", (Long) evtVariant.getValue(), is((long) arrayIndex * eventArraySize + i + 1));
                         sb.append(evtVariant.getValue());
 
                         // test EvtUpdateBookmark
-                        if (!Wevtapi.INSTANCE.EvtUpdateBookmark(hBookmark, evtHandle.getValue())) {
+                        if (!Wevtapi.INSTANCE.EvtUpdateBookmark(hBookmark, evtHandle)) {
                             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                         }
                     } finally {
-                        if (evtHandle.getValue() != null) {
-                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
+                        if (evtHandle != null) {
+                            Wevtapi.INSTANCE.EvtClose(evtHandle);
                         }
                     }
                 }
@@ -493,8 +481,8 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtGetEventInfo() throws Exception {
-        WinNT.HANDLE queryHandle = null;
-        WinNT.HANDLE contextHandle = null;
+        EVT_HANDLE queryHandle = null;
+        EVT_HANDLE contextHandle = null;
         File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
         StringBuilder sb = new StringBuilder();
         try {
@@ -503,27 +491,25 @@ public class WevtapiTest extends TestCase {
 
 
             String[] targets = {"Event/System/EventRecordID"};
-            StringArray array = new StringArray(targets, true);
-            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, array,
+            contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
             int eventArraySize = 10;
             int evtNextTimeout = 1000;
             Memory buff = new Memory(1024);
             Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
-            Memory eventArray = new Memory(POINTER_SIZE * eventArraySize);
-            WinNT.HANDLEByReference evtHandle = new WinNT.HANDLEByReference();
+            EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
             IntByReference buffUsed = new IntByReference();
             IntByReference returned = new IntByReference();
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
+                    EVT_HANDLE evtHandle = eventArray[i];
                     try {
-                        evtHandle.setPointer(eventArray.share(i * POINTER_SIZE));
-                        if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
+                        if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle,
                                 Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
                             if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
                                 buff = new Memory(buffUsed.getValue());
-                                if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle.getValue(),
+                                if (!Wevtapi.INSTANCE.EvtGetEventInfo(evtHandle,
                                         Winevt.EVT_EVENT_PROPERTY_ID.EvtEventPath, (int) buff.size(), buff, buffUsed)) {
                                     throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                                 }
@@ -533,8 +519,8 @@ public class WevtapiTest extends TestCase {
                         assertThat("Evtx Path", (String) evtVariant.getValue(), is(testEvtx.getAbsolutePath()));
                         sb.append((String) evtVariant.getValue());
                     } finally {
-                        if (evtHandle.getValue() != null) {
-                            Wevtapi.INSTANCE.EvtClose(evtHandle.getValue());
+                        if (evtHandle != null) {
+                            Wevtapi.INSTANCE.EvtClose(evtHandle);
                         }
                     }
 

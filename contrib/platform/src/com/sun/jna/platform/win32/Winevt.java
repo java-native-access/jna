@@ -16,6 +16,7 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.W32APITypeMapper;
 
 import java.util.Arrays;
@@ -245,6 +246,10 @@ public interface Winevt {
 
         public EVT_VARIANT_TYPE getVariantType() {
             return EVT_VARIANT_TYPE.values()[getBaseType()];
+        }
+        
+        public void setValue(EVT_VARIANT_TYPE type, Object value) {
+            throw new IllegalStateException(String.format("NOT IMPLEMENTED: setValue(%s)", type));
         }
 
         public Object getValue() {
@@ -1487,4 +1492,15 @@ public interface Winevt {
      * https://msdn.microsoft.com/en-us/library/windows/desktop/aa385781(v=vs.85).aspx
      */
     public static final int EVT_CLEAR_ACCESS = 0x4;
+    
+    public class EVT_HANDLE extends HANDLE {
+
+        public EVT_HANDLE() {
+        }
+
+        public EVT_HANDLE(Pointer p) {
+            super(p);
+        }
+        
+    }
 }
