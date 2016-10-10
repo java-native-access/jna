@@ -1,7 +1,8 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -299,26 +300,9 @@ public class WevtapiTest extends TestCase {
         EVT_HANDLE channelHandle = null;
         try {
             channelHandle = Wevtapi.INSTANCE.EvtOpenChannelConfig(null, "Application", 0);
-            if (channelHandle == null) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-            }
+            assertNotNull(channelHandle);
 
-            Memory buff = new Memory(1024);
-            IntByReference buffUsed = new IntByReference();
-            if (!Wevtapi.INSTANCE.EvtGetChannelConfigProperty(channelHandle, Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog,
-                    0, (int) buff.size(), buff, buffUsed)) {
-                if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                    buff = new Memory(buffUsed.getValue());
-                    if (!Wevtapi.INSTANCE.EvtGetChannelConfigProperty(channelHandle, Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog,
-                            0, (int) buff.size(), buff, buffUsed)) {
-                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    }
-                } else {
-                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                }
-            }
-            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
-            useMemory(evtVariant, buff, 0);
+            Winevt.EVT_VARIANT evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
             assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
         } finally {
             if (channelHandle != null) {
@@ -326,7 +310,38 @@ public class WevtapiTest extends TestCase {
             }
         }
     }
+    
+    public void testModifyChannelConfig() throws Exception {
+        EVT_HANDLE channelHandle = null;
+        try {
+            channelHandle = Wevtapi.INSTANCE.EvtOpenChannelConfig(null, "Application", 0);
+            assertNotNull(channelHandle);
 
+            Winevt.EVT_VARIANT evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
+            
+            Winevt.EVT_VARIANT setter = new Winevt.EVT_VARIANT();
+            setter.setValue(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean, new BOOL(false));
+            Wevtapi.INSTANCE.EvtSetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog, 0, setter);
+            
+            evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(false));
+            
+            setter.setValue(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean, new BOOL(true));
+            Wevtapi.INSTANCE.EvtSetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog, 0, setter);
+            
+            evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
+            
+            // Writing back is skipped neighter is EvtChannelConfigClassicEventlog
+            // writable, nor is it a good idea to mess with the log of the developer machine
+        } finally {
+            if (channelHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(channelHandle);
+            }
+        }
+    }
+    
     public void testEvtOpenPublisherEnum() throws Exception {
         Winevt.EVT_RPC_LOGIN login = new Winevt.EVT_RPC_LOGIN("localhost", null, null, null,
                 Winevt.EVT_RPC_LOGIN_FLAGS.EvtRpcLoginAuthDefault);
