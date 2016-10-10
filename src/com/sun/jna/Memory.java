@@ -180,8 +180,8 @@ public class Memory extends Pointer {
         try {
             free(peer);
         } finally {
-            peer = 0;
             allocatedMemory.remove(this);
+            peer = 0;
         }
     }
 
