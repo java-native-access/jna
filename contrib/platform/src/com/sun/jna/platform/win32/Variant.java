@@ -276,6 +276,11 @@ public interface Variant {
             this.setValue(VT_DATE, date);
         }
 
+        public VARIANT(SAFEARRAY array) {
+            this();
+            this.setValue(array);
+        }
+        
         public VARTYPE getVarType() {
             this.read();
             return _variant.vt;
@@ -287,6 +292,10 @@ public interface Variant {
 
         public void setValue(int vt, Object value) {
             this.setValue(new VARTYPE(vt), value);
+        }
+        
+        public void setValue(SAFEARRAY array) {
+            this.setValue(array.getVarType().intValue() | VT_SAFEARRAY, array);
         }
 
         public void setValue(VARTYPE vt, Object value) {

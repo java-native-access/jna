@@ -3,9 +3,11 @@ package com.sun.jna.platform.win32;
 import junit.framework.TestCase;
 
 import com.sun.jna.platform.win32.OaIdl.DATE;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.BYTE;
@@ -20,6 +22,7 @@ import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class VariantTest extends TestCase {
@@ -238,5 +241,18 @@ public class VariantTest extends TestCase {
         assertThat(variant.getValue(), instanceOf(USHORT.class));
         assertThat(((USHORT) variant.getValue()).intValue(), equalTo((int) testChar));
         assertThat(variant.intValue(), equalTo((int) testChar));
+    }
+    
+    public void testVariantSafearrayWrapping() {
+        SAFEARRAY safearray = OaIdl.SAFEARRAY.createSafeArray(new VARTYPE(Variant.VT_I1), 5);
+        try {
+            VARIANT variant = new VARIANT(safearray);
+            assertThat(variant.getVarType().intValue(), equalTo((int) (Variant.VT_I1 | Variant.VT_SAFEARRAY)));
+            Object wrappedValue = variant.getValue();
+            assertThat(wrappedValue, instanceOf(SAFEARRAY.class));
+            assertThat(safearray.getUBound(0), is(4));
+        } finally {
+            safearray.destroy();
+        }
     }
 }
