@@ -14,7 +14,9 @@ package com.sun.jna;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -174,6 +176,25 @@ public class MemoryTest extends TestCase implements GCWaits {
             "[04050607]" + ls +
             "[08090a0b]" + ls +
             "[0c0d0e]" + ls, m.dump());
+    }
+    
+    public void testRemoveAllocatedMemoryMap() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        // Make sure there are no remaining allocations
+        Memory.disposeAll();
+
+        // get a reference to the allocated memory
+        Field allocatedMemoryField = Memory.class.getDeclaredField("allocatedMemory");
+        allocatedMemoryField.setAccessible(true);
+        Map<Memory, Reference<Memory>> allocatedMemory = (Map<Memory, Reference<Memory>>) allocatedMemoryField.get(null);
+        assertEquals(0, allocatedMemory.size());
+        
+        // Test allocation and ensure it is accounted for
+        Memory mem = new Memory(1024);
+        assertEquals(1, allocatedMemory.size());
+        
+        // Dispose memory and ensure allocation is removed from allocatedMemory-Map
+        mem.dispose();
+        assertEquals(0, allocatedMemory.size());
     }
 
     public static void main(String[] args) {
