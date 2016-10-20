@@ -247,6 +247,10 @@ public interface Winevt {
             return EVT_VARIANT_TYPE.values()[getBaseType()];
         }
 
+        public void setValue(EVT_VARIANT_TYPE type, Object value) {
+            throw new IllegalStateException(String.format("NOT IMPLEMENTED: setValue(%s)", type));
+        }
+
         public Object getValue() {
             EVT_VARIANT_TYPE type = getVariantType();
             switch (type) {
@@ -1487,4 +1491,14 @@ public interface Winevt {
      * https://msdn.microsoft.com/en-us/library/windows/desktop/aa385781(v=vs.85).aspx
      */
     public static final int EVT_CLEAR_ACCESS = 0x4;
+
+    public class EVT_HANDLE extends WinNT.HANDLE {
+
+        public EVT_HANDLE() {
+        }
+
+        public EVT_HANDLE(Pointer p) {
+            super(p);
+        }
+    }
 }
