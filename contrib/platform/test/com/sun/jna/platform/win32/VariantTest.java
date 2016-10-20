@@ -247,7 +247,7 @@ public class VariantTest extends TestCase {
         SAFEARRAY safearray = OaIdl.SAFEARRAY.createSafeArray(new VARTYPE(Variant.VT_I1), 5);
         try {
             VARIANT variant = new VARIANT(safearray);
-            assertThat(variant.getVarType().intValue(), equalTo((int) (Variant.VT_I1 | Variant.VT_SAFEARRAY)));
+            assertThat(variant.getVarType().intValue(), equalTo((int) (Variant.VT_I1 | Variant.VT_ARRAY)));
             Object wrappedValue = variant.getValue();
             assertThat(wrappedValue, instanceOf(SAFEARRAY.class));
             assertThat(safearray.getUBound(0), is(4));
