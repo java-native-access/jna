@@ -31,6 +31,7 @@ import com.sun.jna.platform.win32.WinDef.CHAR;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.OaIdl;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import static com.sun.jna.platform.win32.Variant.VT_ARRAY;
 import static com.sun.jna.platform.win32.Variant.VT_BOOL;
 import static com.sun.jna.platform.win32.Variant.VT_BSTR;
@@ -50,7 +51,6 @@ import static com.sun.jna.platform.win32.Variant.VT_NULL;
 import static com.sun.jna.platform.win32.Variant.VT_R4;
 import static com.sun.jna.platform.win32.Variant.VT_R8;
 import static com.sun.jna.platform.win32.Variant.VT_RECORD;
-import static com.sun.jna.platform.win32.Variant.VT_SAFEARRAY;
 import static com.sun.jna.platform.win32.Variant.VT_UI1;
 import static com.sun.jna.platform.win32.Variant.VT_UI2;
 import static com.sun.jna.platform.win32.Variant.VT_UI4;
@@ -128,6 +128,8 @@ class Convert {
 		} else if (value instanceof IComEnum) {
 			IComEnum enm = (IComEnum) value;
 			return new VARIANT(new WinDef.LONG(enm.getValue()));
+                } else if (value instanceof SAFEARRAY) {
+                        return new VARIANT((SAFEARRAY) value);
 		} else {
 			return null;
 		}
@@ -243,8 +245,7 @@ class Convert {
                             break;
                         case VT_RECORD:
                         default:
-                            if ((varType & VT_ARRAY) > 0
-                                    || ((varType & VT_SAFEARRAY) > 0)) {
+                            if ((varType & VT_ARRAY) > 0) {
                                 targetClass = OaIdl.SAFEARRAY.class;
                             }
                     }

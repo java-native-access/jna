@@ -57,6 +57,7 @@ import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
 import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
 import com.sun.jna.ptr.ByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.io.Closeable;
 import java.util.Date;
 
 /**
@@ -509,7 +510,8 @@ public interface OaIdl {
     };
 
     /**
-     * General comment: All indices in the helper methods use java int.
+     * Implementation of SAFEARRAY. Implements Closable, which in this case 
+     * delegates to destroy, to free native memory on close.
      * 
      * <p>VARTYPE for the SAFEARRAY can be:</p>
      *
@@ -536,11 +538,14 @@ public interface OaIdl {
      * <li>VT_VARIANT</li>
      * </ul>
      * 
+     * <p>General comment: All indices in the helper methods use java int.</p>
+     * 
      * <p>The native type for the indices is LONG, which is defined as:</p>
      * 
      * <blockquote>A 32-bit signed integer. The range is �2147483648 through 2147483647 decimal.</blockquote>
      */
-    public static class SAFEARRAY extends Structure {
+    public static class SAFEARRAY extends Structure implements Closeable {
+
         public static class ByReference extends SAFEARRAY implements
                 Structure.ByReference {
         }
@@ -878,6 +883,13 @@ public interface OaIdl {
             COMUtils.checkRC(res);
         }
 
+        /**
+         * Implemented to satisfy Closeable interface, delegates to destroy.
+         */
+        public void close() {
+            destroy();
+        }
+        
         /**
          * Retrieve lower bound for the selected dimension.
          *

@@ -295,7 +295,7 @@ public interface Variant {
         }
         
         public void setValue(SAFEARRAY array) {
-            this.setValue(array.getVarType().intValue() | VT_SAFEARRAY, array);
+            this.setValue(array.getVarType().intValue() | VT_ARRAY, array);
         }
 
         public void setValue(VARTYPE vt, Object value) {
@@ -428,7 +428,7 @@ public interface Variant {
                 this._variant.__variant.writeField("pvRecord", value);
                 break;
             default:
-                if ((varType & VT_ARRAY) > 0 || (varType & VT_SAFEARRAY) > 0) {
+                if ((varType & VT_ARRAY) > 0) {
                     if ((varType & VT_BYREF) > 0) {
                         this._variant.__variant.writeField("pparray", value);
                     } else {
@@ -530,7 +530,7 @@ public interface Variant {
             case VT_RECORD:
                 return this._variant.__variant.readField("pvRecord");
             default:
-                if((varType & VT_ARRAY) > 0 || ((varType & VT_SAFEARRAY) > 0)) {
+                if((varType & VT_ARRAY) > 0) {
                     if((varType & VT_BYREF) > 0) {
                         return this._variant.__variant.readField("pparray");
                     } else {
