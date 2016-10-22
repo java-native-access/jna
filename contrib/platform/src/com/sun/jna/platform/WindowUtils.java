@@ -3,7 +3,7 @@
  * Parts Copyright (c) 2007 Olivier Chafik
  *
  * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 and 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
  * Apache License 2.0. (starting with JNA version 4.0.0).
  * 
  * You can freely decide which license you want to apply to 
