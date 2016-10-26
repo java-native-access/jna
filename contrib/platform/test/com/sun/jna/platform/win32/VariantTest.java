@@ -126,7 +126,17 @@ public class VariantTest extends TestCase {
         assertThat(new DATE(5.50d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 12, 0, 0)));
         assertThat(new DATE(5.875d).getAsJavaDate(), equalTo(new Date(1900 - 1900, 1 - 1, 4, 21, 0, 0)));
         
+        // Test roundtripping with sub hour resolution
+        // This test allows for a rounding error of 500ms, this follows MSDN:
+        // https://msdn.microsoft.com/en-us/library/aa393691.aspx
+        // the resolution is higher, but it is not requested to be
         
+        // Date was choosen from the example that made the problem visible
+        // in testing
+        Date testDate = new Date(2016 - 1900, 10 - 1, 12, 2, 59, 19);
+        
+        assertTrue("java.util.Date -> com.sun.jna.platform.win32.OaIdl.DATE -> java.util.Date roundtrip failed",
+                Math.abs(new DATE(testDate).getAsJavaDate().getTime() - testDate.getTime()) < 500);
     }
 
     public void testVariantConstructors() {

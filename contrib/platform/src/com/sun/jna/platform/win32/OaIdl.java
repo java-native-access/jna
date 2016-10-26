@@ -231,12 +231,20 @@ public interface OaIdl {
 
         public Date getAsJavaDate() {
             long days = (((long) this.date) * MICRO_SECONDS_PER_DAY) + DATE_OFFSET;
-            int hours = (int) (24 * Math.abs(this.date - ((long) this.date)));
+            double timePart = 24 * Math.abs(this.date - ((long) this.date));
+            int hours = (int) timePart;
+            timePart = 60 * (timePart - ((int) timePart));
+            int minutes = (int) timePart;
+            timePart = 60 * (timePart - ((int) timePart));
+            int seconds = (int) timePart;
+            timePart = 1000 * (timePart - ((int) timePart));
+            int milliseconds = (int) timePart;
             
             Date baseDate = new Date(days);
             baseDate.setHours(hours);
-            baseDate.setMinutes(0);
-            baseDate.setSeconds(0);
+            baseDate.setMinutes(minutes);
+            baseDate.setSeconds(seconds);
+            baseDate.setTime(baseDate.getTime() + milliseconds);
             return baseDate;
         }
         
@@ -244,10 +252,16 @@ public interface OaIdl {
             double msSinceOrigin = javaDate.getTime() - DATE_OFFSET;
             double daysAsFract = msSinceOrigin / MICRO_SECONDS_PER_DAY;
             
-            double dayPart = Math.floor(daysAsFract);
-            double hourPart = Math.signum(daysAsFract) * (javaDate.getHours() / 24d);
+            Date dayDate = new Date(javaDate.getTime());
+            dayDate.setHours(0);
+            dayDate.setMinutes(0);
+            dayDate.setSeconds(0);
+            dayDate.setTime(dayDate.getTime() / 1000 * 1000); // Clear milliseconds
             
-            this.date = dayPart + hourPart;
+            double integralPart = Math.floor(daysAsFract);
+            double fractionalPart = Math.signum(daysAsFract) * ((javaDate.getTime() - dayDate.getTime()) / (24d * 60 * 60 * 1000));
+            
+            this.date = integralPart + fractionalPart;
         }
         
         @Override
