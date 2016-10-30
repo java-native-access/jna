@@ -36,7 +36,9 @@
 #define GET_LAST_ERROR() GetLastError()
 #define SET_LAST_ERROR(CODE) SetLastError(CODE)
 #else
+#ifndef _XOPEN_SOURCE /* AIX power-aix 1 7 00F84C0C4C00 defins 700 */
 #define _XOPEN_SOURCE 600
+#endif
 #define GET_LAST_ERROR() errno
 #define SET_LAST_ERROR(CODE) (errno = (CODE))
 #endif /* _WIN32 */
