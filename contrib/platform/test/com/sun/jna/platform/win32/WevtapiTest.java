@@ -21,37 +21,24 @@ import static org.junit.Assert.assertThat;
 public class WevtapiTest extends TestCase {
 
     public void testEvtGetExtendedStatus() throws Exception {
-        Memory buffer = new Memory(1024);
-        IntByReference bufferUsed = new IntByReference();
-
-        assertThat(_evtGetExtendedStatus(null, buffer, bufferUsed), is(0));
-        assertThat(bufferUsed.getValue(), is(0));
-
-        assertThat(_evtGetExtendedStatus(">><", buffer, bufferUsed), is(0));
-        assertThat(bufferUsed.getValue() > 0, is((true)));
-
+        assertThat(_evtGetExtendedStatus(null).length(), is(0));
+        assertThat(_evtGetExtendedStatus(">><").length() > 0, is(true)); // illegal query
     }
 
-    private int _evtGetExtendedStatus(String query, Memory buffer, IntByReference bufferUsed) {
+    private String _evtGetExtendedStatus(String query) {
         EVT_HANDLE handle = null;
-        int ret;
+        String result;
         try {
             handle = Wevtapi.INSTANCE.EvtQuery(null, "Application", query,
                     Winevt.EVT_QUERY_FLAGS.EvtQueryChannelPath);
-            ret = Wevtapi.INSTANCE.EvtGetExtendedStatus((int) buffer.size(), buffer, bufferUsed);
-            if (ret == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                buffer = new Memory(bufferUsed.getValue());
-                ret = Wevtapi.INSTANCE.EvtGetExtendedStatus((int) buffer.size(), buffer, bufferUsed);
-            }
-            if (ret != WinError.ERROR_SUCCESS) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-            }
+            result = WevtapiUtil.EvtGetExtendedStatus();
         } finally {
             if (handle != null) {
                 Wevtapi.INSTANCE.EvtClose(handle);
             }
         }
-        return ret;
+        System.out.println(result);
+        return result;
     }
 
     public void testReadEvents() throws Exception {
@@ -82,12 +69,11 @@ public class WevtapiTest extends TestCase {
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
 
                 // test EvtRender
-                Memory buff = new Memory(1024);
+                Memory buff;
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
-                    buff = evtRender(buff, contextHandle, eventArray[i],
-                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    buff = WevtapiUtil.EvtRender(contextHandle, eventArray[i], Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(5));
                     useMemory(evtVariant, buff, 0);
                     assertThat("Provider Name", (String) evtVariant.getValue(), is("testSource"));
@@ -141,13 +127,12 @@ public class WevtapiTest extends TestCase {
             IntByReference returned = new IntByReference();
 
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
-                Memory buff = new Memory(1024);
+                Memory buff;
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
                     read++;
-                    buff = evtRender(buff, contextHandle, eventArray[i],
-                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    buff = WevtapiUtil.EvtRender(contextHandle, eventArray[i], Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(2));
                     useMemory(evtVariant, buff, 0);
                     assertThat("Binary", (byte[]) evtVariant.getValue(), is(new byte[]{(byte) 0xD9, (byte) 0x06, 0, 0}));
@@ -187,13 +172,12 @@ public class WevtapiTest extends TestCase {
             IntByReference returned = new IntByReference();
 
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
-                Memory buff = new Memory(1024);
+                Memory buff;
                 IntByReference propertyCount = new IntByReference();
                 Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
                 for (int i = 0; i < returned.getValue(); i++) {
                     read++;
-                    buff = evtRender(buff, contextHandle, eventArray[i],
-                            Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                    buff = WevtapiUtil.EvtRender(contextHandle, eventArray[i], Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                     assertThat("PropertyCount", propertyCount.getValue(), is(2));
                     useMemory(evtVariant, buff, 0);
                     assertThat("Security#UserID", ((WinNT.PSID) evtVariant.getValue()).getSidString(), is("S-1-5-21-3178902164-3053647283-518304804-1001"));
@@ -212,23 +196,6 @@ public class WevtapiTest extends TestCase {
                 Wevtapi.INSTANCE.EvtClose(contextHandle);
             }
         }
-    }
-
-
-    private Memory evtRender(Memory buff, EVT_HANDLE contextHandle, EVT_HANDLE evtHandle, int flag, IntByReference propertyCount) {
-        buff.clear();
-        IntByReference dwBufferUsed = new IntByReference();
-        if (!Wevtapi.INSTANCE.EvtRender(contextHandle, evtHandle, flag, (int) buff.size(), buff, dwBufferUsed, propertyCount)) {
-            if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                buff = new Memory(dwBufferUsed.getValue());
-                if (!Wevtapi.INSTANCE.EvtRender(contextHandle, evtHandle, flag, (int) buff.size(), buff, dwBufferUsed, propertyCount)) {
-                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                }
-            } else {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-            }
-        }
-        return buff;
     }
 
     private void useMemory(Winevt.EVT_VARIANT evtVariant, Memory buff, int index) {
@@ -302,23 +269,8 @@ public class WevtapiTest extends TestCase {
             if (channelHandle == null) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
-
-            Memory buff = new Memory(1024);
-            IntByReference buffUsed = new IntByReference();
-            if (!Wevtapi.INSTANCE.EvtGetChannelConfigProperty(channelHandle, Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog,
-                    0, (int) buff.size(), buff, buffUsed)) {
-                if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                    buff = new Memory(buffUsed.getValue());
-                    if (!Wevtapi.INSTANCE.EvtGetChannelConfigProperty(channelHandle, Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog,
-                            0, (int) buff.size(), buff, buffUsed)) {
-                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                    }
-                } else {
-                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                }
-            }
-            Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
-            useMemory(evtVariant, buff, 0);
+            Winevt.EVT_VARIANT evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle,
+                    Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
             assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
         } finally {
             if (channelHandle != null) {
@@ -343,18 +295,15 @@ public class WevtapiTest extends TestCase {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            Memory buff = new Memory(1024);
-            IntByReference buffUsed = new IntByReference();
+            Memory buff;
             while (true) {
-                buff.clear();
-                if (!Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnumHandle, (int) buff.size(), buff, buffUsed)) {
-                    if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_NO_MORE_ITEMS) {
+                try {
+                    buff = WevtapiUtil.EvtNextPublisherId(publisherEnumHandle);
+                } catch (Win32Exception e) {
+                    if (e.getErrorCode() == WinError.ERROR_NO_MORE_ITEMS) {
                         break;
-                    } else if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                        buff = new Memory(buffUsed.getValue());
-                        if (!Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnumHandle, (int) buff.size(), buff, buffUsed)) {
-                            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-                        }
+                    } else {
+                        throw e;
                     }
                 }
                 publisherList.add(buff.getWideString(0));
@@ -436,7 +385,7 @@ public class WevtapiTest extends TestCase {
             int eventArraySize = 10;
             int evtNextTimeout = 1000;
             int arrayIndex = 1;
-            Memory buff = new Memory(1024);
+            Memory buff;
             IntByReference propertyCount = new IntByReference();
             Winevt.EVT_VARIANT evtVariant = new Winevt.EVT_VARIANT();
             EVT_HANDLE[] eventArray = new EVT_HANDLE[eventArraySize];
@@ -444,8 +393,7 @@ public class WevtapiTest extends TestCase {
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
                     try {
-                        evtRender(buff, contextHandle, eventArray[i],
-                                Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
+                        buff = WevtapiUtil.EvtRender(contextHandle, eventArray[i], Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                         useMemory(evtVariant, buff, 0);
                         assertThat("EventRecordID", (Long) evtVariant.getValue(), is((long) arrayIndex * eventArraySize + i + 1));
                         sb.append(evtVariant.getValue());
@@ -466,7 +414,7 @@ public class WevtapiTest extends TestCase {
                     Kernel32.INSTANCE.GetLastError() != WinError.ERROR_NO_MORE_ITEMS) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
-            buff = evtRender(buff, null, hBookmark, Winevt.EVT_RENDER_FLAGS.EvtRenderBookmark, propertyCount);
+            buff = WevtapiUtil.EvtRender(null, hBookmark, Winevt.EVT_RENDER_FLAGS.EvtRenderBookmark, propertyCount);
             assertThat(buff.getWideString(0), is("<BookmarkList>\r\n  <Bookmark Channel='" + testEvtx.getAbsolutePath() +
                     "' RecordId='" + 20 + "' IsCurrent='true'/>\r\n</BookmarkList>"));
             assertThat(sb.length() > 0, is(true));
