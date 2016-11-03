@@ -40,7 +40,7 @@ public abstract class WevtapiUtil {
         if (buffUsed.getValue() == 0) {
             return "";
         }
-        Memory mem = safeAllocate(buffUsed.getValue());
+        Memory mem = new Memory(buffUsed.getValue() * 2);
         errorCode = Wevtapi.INSTANCE.EvtGetExtendedStatus((int) mem.size(), mem, buffUsed);
         if (errorCode != WinError.ERROR_SUCCESS) {
             throw new Win32Exception(errorCode);
@@ -48,17 +48,6 @@ public abstract class WevtapiUtil {
         return mem.getWideString(0);
     }
 
-    /**
-     * Allocating Memory
-     * <p>
-     * Allocating too small memory cause 0xc0000374(A heap has been corrupted)
-     *
-     * @param size need memory size
-     * @return allocated memory
-     */
-    private static Memory safeAllocate(int size) {
-        return new Memory(size > 1024 ? size : 1024);
-    }
 
     /**
      * Renders an XML fragment based on the rendering context that you specify.
@@ -197,7 +186,7 @@ public abstract class WevtapiUtil {
             throw new Win32Exception(errorCode);
         }
 
-        Memory publisherIdBuffer = safeAllocate(publisherIdBufferUsed.getValue());
+        Memory publisherIdBuffer = new Memory(publisherIdBufferUsed.getValue() * 2);
         result = Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnum, (int) publisherIdBuffer.size(), publisherIdBuffer, publisherIdBufferUsed);
         if (!result) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
@@ -224,7 +213,7 @@ public abstract class WevtapiUtil {
         if ((!result) && errorCode != Kernel32.ERROR_INSUFFICIENT_BUFFER) {
             throw new Win32Exception(errorCode);
         }
-        Memory publisherMetadataPropertyBuffer = safeAllocate(publisherMetadataPropertyBufferUsed.getValue());
+        Memory publisherMetadataPropertyBuffer = new Memory(publisherMetadataPropertyBufferUsed.getValue());
         result = Wevtapi.INSTANCE.EvtGetPublisherMetadataProperty(PublisherMetadata, PropertyId, Flags,
                 (int) publisherMetadataPropertyBuffer.size(), publisherMetadataPropertyBuffer, publisherMetadataPropertyBufferUsed);
         if (!result) {
