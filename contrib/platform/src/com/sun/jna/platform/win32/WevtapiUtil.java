@@ -125,7 +125,7 @@ public abstract class WevtapiUtil {
      * @return A caller-allocated buffer that will receive the formatted message string.
      */
     public static Memory EvtFormatMessage(EVT_HANDLE publisherMetadata, EVT_HANDLE event, int messageId, int valueCount,
-                                          Pointer values, int flags) {
+                                          EVT_VARIANT[] values, int flags) {
         boolean result;
         IntByReference bufferUsed = new IntByReference();
         result = Wevtapi.INSTANCE.EvtFormatMessage(publisherMetadata, event, messageId, valueCount, values, flags, 0, null, bufferUsed);

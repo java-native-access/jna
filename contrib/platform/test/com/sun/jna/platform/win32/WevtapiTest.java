@@ -1,9 +1,9 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
-import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID;
+import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;

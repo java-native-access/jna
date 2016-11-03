@@ -13,12 +13,7 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Memory;
-import com.sun.jna.Pointer;
-import com.sun.jna.StringArray;
-import com.sun.jna.Structure;
-import com.sun.jna.Union;
-import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.*;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -256,13 +251,12 @@ public interface Winevt {
         private Object holder;
 
         /**
-         *
          * @param type
          * @param value
          */
         public void setValue(EVT_VARIANT_TYPE type, Object value) {
             allocateMemory();
-            if(type == null) {
+            if (type == null) {
                 throw new IllegalArgumentException("setValue must not be called with type set to NULL");
             }
             holder = null;
