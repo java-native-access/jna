@@ -2,6 +2,8 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID;
 import com.sun.jna.ptr.IntByReference;
 import junit.framework.TestCase;
 
@@ -11,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -53,7 +56,6 @@ public class WevtapiTest extends TestCase {
 
             // test EvtCreateRenderContext
             String[] targets = {"Event/System/Provider/@Name", "Event/System/EventRecordID", "Event/System/EventID", "Event/EventData/Data", "Event/System/TimeCreated/@SystemTime"};
-
             contextHandle = Wevtapi.INSTANCE.EvtCreateRenderContext(targets.length, targets,
                     Winevt.EVT_RENDER_CONTEXT_FLAGS.EvtRenderContextValues);
 
@@ -266,12 +268,41 @@ public class WevtapiTest extends TestCase {
         EVT_HANDLE channelHandle = null;
         try {
             channelHandle = Wevtapi.INSTANCE.EvtOpenChannelConfig(null, "Application", 0);
-            if (channelHandle == null) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-            }
+            assertNotNull(channelHandle);
             Winevt.EVT_VARIANT evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle,
                     Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
             assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
+        } finally {
+            if (channelHandle != null) {
+                Wevtapi.INSTANCE.EvtClose(channelHandle);
+            }
+        }
+    }
+
+    public void testModifyChannelConfig() throws Exception {
+        EVT_HANDLE channelHandle = null;
+        try {
+            channelHandle = Wevtapi.INSTANCE.EvtOpenChannelConfig(null, "Application", 0);
+            assertNotNull(channelHandle);
+
+            Winevt.EVT_VARIANT evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
+
+            Winevt.EVT_VARIANT setter = new Winevt.EVT_VARIANT();
+            setter.setValue(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean, new BOOL(false));
+            Wevtapi.INSTANCE.EvtSetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog, 0, setter);
+
+            evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(false));
+
+            setter.setValue(Winevt.EVT_VARIANT_TYPE.EvtVarTypeBoolean, new BOOL(true));
+            Wevtapi.INSTANCE.EvtSetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog, 0, setter);
+
+            evtVariant = WevtapiUtil.EvtGetChannelConfigProperty(channelHandle, EVT_CHANNEL_CONFIG_PROPERTY_ID.EvtChannelConfigClassicEventlog);
+            assertThat(((WinDef.BOOL) evtVariant.getValue()).booleanValue(), is(true));
+
+            // Writing back is skipped neighter is EvtChannelConfigClassicEventlog
+            // writable, nor is it a good idea to mess with the log of the developer machine
         } finally {
             if (channelHandle != null) {
                 Wevtapi.INSTANCE.EvtClose(channelHandle);
@@ -357,7 +388,6 @@ public class WevtapiTest extends TestCase {
     }
 
     public void testEvtCreateBookmark() throws Exception {
-
         EVT_HANDLE queryHandle = null;
         EVT_HANDLE contextHandle = null;
         File testEvtx = new File(getClass().getResource("/res/WevtapiTest.sample1.evtx").toURI());
@@ -392,6 +422,7 @@ public class WevtapiTest extends TestCase {
             IntByReference returned = new IntByReference();
             while (Wevtapi.INSTANCE.EvtNext(queryHandle, eventArraySize, eventArray, evtNextTimeout, 0, returned)) {
                 for (int i = 0; i < returned.getValue(); i++) {
+                    EVT_HANDLE evtHandle = eventArray[i];
                     try {
                         buff = WevtapiUtil.EvtRender(contextHandle, eventArray[i], Winevt.EVT_RENDER_FLAGS.EvtRenderEventValues, propertyCount);
                         useMemory(evtVariant, buff, 0);

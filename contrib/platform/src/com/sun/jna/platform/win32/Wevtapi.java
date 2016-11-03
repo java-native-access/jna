@@ -189,7 +189,7 @@ public interface Wevtapi extends StdCallLibrary {
      * You must call the EvtClose function with the subscription handle when done.
      */
     EVT_HANDLE EvtSubscribe(EVT_HANDLE Session, EVT_HANDLE SignalEvent, String ChannelPath, String Query, EVT_HANDLE Bookmark,
-                            Pointer Context, Callback Callback, int Flags);
+                        Pointer Context, Callback Callback, int Flags);
 
     /**
      * Creates a context that specifies the information in the event that you want to render.
@@ -286,7 +286,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function was successful, False The function failed. To get the error code, call
      * the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtFormatMessage(EVT_HANDLE PublisherMetadata, EVT_HANDLE Event, int MessageId, int ValueCount, Pointer Values,
+    boolean EvtFormatMessage(EVT_HANDLE PublisherMetadata, EVT_HANDLE Event, int MessageId, int ValueCount, EVT_VARIANT[] Values,
                              int Flags, int BufferSize, Pointer Buffer, IntByReference BufferUsed);
 
     /**

@@ -13,9 +13,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinDef.BOOL;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.W32APITypeMapper;
 
 import java.util.Arrays;
@@ -247,10 +252,211 @@ public interface Winevt {
             return EVT_VARIANT_TYPE.values()[getBaseType()];
         }
 
+        // Helper to store java object for set values
+        private Object holder;
+
+        /**
+         *
+         * @param type
+         * @param value
+         */
         public void setValue(EVT_VARIANT_TYPE type, Object value) {
-            throw new IllegalStateException(String.format("NOT IMPLEMENTED: setValue(%s)", type));
+            allocateMemory();
+            if(type == null) {
+                throw new IllegalArgumentException("setValue must not be called with type set to NULL");
+            }
+            holder = null;
+            if (value == null || type == EVT_VARIANT_TYPE.EvtVarTypeNull) {
+                Type = EVT_VARIANT_TYPE.EvtVarTypeNull.ordinal();
+                Count = 0;
+                field1.writeField("pointerValue", Pointer.NULL);
+            } else {
+                switch (type) {
+                    case EvtVarTypeAnsiString:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == String.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            StringArray sa = new StringArray((String[]) value, false);
+                            holder = sa;
+                            Count = ((String[]) value).length;
+                            field1.writeField("pointerValue", sa);
+                        } else if (value.getClass() == String.class) {
+                            Type = type.ordinal();
+                            Memory mem = new Memory(((String) value).length() + 1);
+                            mem.setString(0, (String) value);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from String/String[]");
+                        }
+                        break;
+                    case EvtVarTypeBoolean:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == BOOL.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((BOOL[]) value).length * 4);
+                            for (int i = 0; i < ((BOOL[]) value).length; i++) {
+                                mem.setInt(i * 4, ((BOOL[]) value)[i].intValue());
+                            }
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == BOOL.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("intValue", ((BOOL) value).intValue());
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from BOOL/BOOL[]");
+                        }
+                        break;
+                    case EvtVarTypeString:
+                    case EvtVarTypeEvtXml:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == String.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            StringArray sa = new StringArray((String[]) value, true);
+                            holder = sa;
+                            Count = ((String[]) value).length;
+                            field1.writeField("pointerValue", sa);
+                        } else if (value.getClass() == String.class) {
+                            Type = type.ordinal();
+                            Memory mem = new Memory((((String) value).length() + 1) * 2);
+                            mem.setWideString(0, (String) value);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from String/String[]");
+                        }
+                        break;
+                    case EvtVarTypeSByte:
+                    case EvtVarTypeByte:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == byte.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((byte[]) value).length * 1);
+                            mem.write(0, (byte[]) value, 0, ((byte[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == byte.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("byteValue", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from byte/byte[]");
+                        }
+                        break;
+                    case EvtVarTypeInt16:
+                    case EvtVarTypeUInt16:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == short.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((short[]) value).length * 2);
+                            mem.write(0, (short[]) value, 0, ((short[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == short.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("shortValue", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from short/short[]");
+                        }
+                        break;
+                    case EvtVarTypeHexInt32:
+                    case EvtVarTypeInt32:
+                    case EvtVarTypeUInt32:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == int.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((int[]) value).length * 4);
+                            mem.write(0, (int[]) value, 0, ((int[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == int.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("intValue", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from int/int[]");
+                        }
+                        break;
+                    case EvtVarTypeHexInt64:
+                    case EvtVarTypeInt64:
+                    case EvtVarTypeUInt64:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == long.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((long[]) value).length * 4);
+                            mem.write(0, (long[]) value, 0, ((long[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == long.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("longValue", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from long/long[]");
+                        }
+                        break;
+                    case EvtVarTypeSingle:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == float.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((float[]) value).length * 4);
+                            mem.write(0, (float[]) value, 0, ((float[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == float.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("floatValue", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from float/float[]");
+                        }
+                        break;
+                    case EvtVarTypeDouble:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == double.class) {
+                            Type = type.ordinal() | EVT_VARIANT_TYPE_ARRAY;
+                            Memory mem = new Memory(((double[]) value).length * 4);
+                            mem.write(0, (double[]) value, 0, ((double[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else if (value.getClass() == double.class) {
+                            Type = type.ordinal();
+                            Count = 0;
+                            field1.writeField("doubleVal", value);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from double/double[]");
+                        }
+                        break;
+                    case EvtVarTypeBinary:
+                        if (value.getClass().isArray() && value.getClass().getComponentType() == byte.class) {
+                            Type = type.ordinal();
+                            Memory mem = new Memory(((byte[]) value).length * 1);
+                            mem.write(0, (byte[]) value, 0, ((byte[]) value).length);
+                            holder = mem;
+                            Count = 0;
+                            field1.writeField("pointerValue", mem);
+                        } else {
+                            throw new IllegalArgumentException(type.name() + " must be set from byte[]");
+                        }
+                        break;
+                    case EvtVarTypeFileTime:
+                    case EvtVarTypeEvtHandle:
+                    case EvtVarTypeSysTime:
+                    case EvtVarTypeGuid:
+                    case EvtVarTypeSid:
+                    case EvtVarTypeSizeT:
+                    default:
+                        throw new IllegalStateException(String.format("NOT IMPLEMENTED: getValue(%s) (Array: %b, Count: %d)", type, isArray(), Count));
+                }
+            }
+            write();
         }
 
+        /**
+         * @return value contained in the EVT_VARIANT
+         */
         public Object getValue() {
             EVT_VARIANT_TYPE type = getVariantType();
             switch (type) {
@@ -1492,7 +1698,7 @@ public interface Winevt {
      */
     public static final int EVT_CLEAR_ACCESS = 0x4;
 
-    public class EVT_HANDLE extends WinNT.HANDLE {
+    public class EVT_HANDLE extends HANDLE {
 
         public EVT_HANDLE() {
         }
@@ -1500,5 +1706,6 @@ public interface Winevt {
         public EVT_HANDLE(Pointer p) {
             super(p);
         }
+
     }
 }
