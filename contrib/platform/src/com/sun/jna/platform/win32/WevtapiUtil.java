@@ -1,18 +1,30 @@
 /* Copyright (c) 2016 Minoru Sakamoto, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
 import com.sun.jna.platform.win32.Winevt.EVT_VARIANT;
 import com.sun.jna.ptr.IntByReference;
@@ -39,12 +51,12 @@ public abstract class WevtapiUtil {
         if (buffUsed.getValue() == 0) {
             return "";
         }
-        Memory mem = new Memory(buffUsed.getValue() * 2);
-        errorCode = Wevtapi.INSTANCE.EvtGetExtendedStatus((int) mem.size(), mem, buffUsed);
+        char[] mem = new char[buffUsed.getValue()];
+        errorCode = Wevtapi.INSTANCE.EvtGetExtendedStatus(mem.length, mem, buffUsed);
         if (errorCode != WinError.ERROR_SUCCESS) {
             throw new Win32Exception(errorCode);
         }
-        return mem.getWideString(0);
+        return Native.toString(mem);
     }
 
 
@@ -121,9 +133,9 @@ public abstract class WevtapiUtil {
      *                          must identify the event's message string.
      * @param flags             [in] A flag that specifies the message string in the event to format. For possible
      *                          values, see the {@link Winevt.EVT_FORMAT_MESSAGE_FLAGS} enumeration.
-     * @return A caller-allocated buffer that will receive the formatted message string.
+     * @return Formatted message string
      */
-    public static Memory EvtFormatMessage(EVT_HANDLE publisherMetadata, EVT_HANDLE event, int messageId, int valueCount,
+    public static String EvtFormatMessage(EVT_HANDLE publisherMetadata, EVT_HANDLE event, int messageId, int valueCount,
                                           EVT_VARIANT[] values, int flags) {
         boolean result;
         IntByReference bufferUsed = new IntByReference();
@@ -133,13 +145,13 @@ public abstract class WevtapiUtil {
             throw new Win32Exception(errorCode);
         }
 
-        Memory buffer = new Memory(bufferUsed.getValue());
+        char[] buffer = new char[bufferUsed.getValue()];
         result = Wevtapi.INSTANCE.EvtFormatMessage(publisherMetadata, event, messageId, valueCount, values, flags,
-                (int) buffer.size(), buffer, bufferUsed);
+                buffer.length, buffer, bufferUsed);
         if (!result) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return buffer;
+        return Native.toString(buffer);
     }
 
     /**
@@ -175,9 +187,9 @@ public abstract class WevtapiUtil {
      *
      * @param publisherEnum [in] A handle to the registered providers enumerator that
      *                      the {@link Wevtapi#EvtOpenPublisherEnum} function returns.
-     * @return A caller-allocated buffer that will receive the name of the registered provider.
+     * @return The name of the registered provider.
      */
-    public static Memory EvtNextPublisherId(EVT_HANDLE publisherEnum) {
+    public static String EvtNextPublisherId(EVT_HANDLE publisherEnum) {
         IntByReference publisherIdBufferUsed = new IntByReference();
         boolean result = Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnum, 0, null, publisherIdBufferUsed);
         int errorCode = Kernel32.INSTANCE.GetLastError();
@@ -185,12 +197,12 @@ public abstract class WevtapiUtil {
             throw new Win32Exception(errorCode);
         }
 
-        Memory publisherIdBuffer = new Memory(publisherIdBufferUsed.getValue() * 2);
-        result = Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnum, (int) publisherIdBuffer.size(), publisherIdBuffer, publisherIdBufferUsed);
+        char[] publisherIdBuffer = new char[publisherIdBufferUsed.getValue()];
+        result = Wevtapi.INSTANCE.EvtNextPublisherId(publisherEnum, publisherIdBuffer.length, publisherIdBuffer, publisherIdBufferUsed);
         if (!result) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        return publisherIdBuffer;
+        return Native.toString(publisherIdBuffer);
     }
 
     /**

@@ -1,14 +1,25 @@
 /* Copyright (c) 2016 Minoru Sakamoto, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -87,7 +98,7 @@ public interface Wevtapi extends StdCallLibrary {
      *                   the required buffer size if the function fails with ERROR_INSUFFICIENT_BUFFER.
      * @return The return value is ERROR_SUCCESS if the call succeeded; otherwise, a Win32 error code.
      */
-    int EvtGetExtendedStatus(int BufferSize, Pointer Buffer, IntByReference BufferUsed);
+    int EvtGetExtendedStatus(int BufferSize, char[] Buffer, IntByReference BufferUsed);
 
     /**
      * Runs a query to retrieve events from a channel or log file that match the specified query criteria.
@@ -287,7 +298,7 @@ public interface Wevtapi extends StdCallLibrary {
      * the {@link Kernel32#GetLastError} function.
      */
     boolean EvtFormatMessage(EVT_HANDLE PublisherMetadata, EVT_HANDLE Event, int MessageId, int ValueCount, EVT_VARIANT[] Values,
-                             int Flags, int BufferSize, Pointer Buffer, IntByReference BufferUsed);
+                             int Flags, int BufferSize, char[] Buffer, IntByReference BufferUsed);
 
     /**
      * Gets a handle to a channel or log file that you can then use to get information about the channel or log file.
@@ -407,7 +418,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return True The function succeeded, False The function failed. To get the error code,
      * call the {@link Kernel32#GetLastError} function.
      */
-    boolean EvtNextChannelPath(EVT_HANDLE ChannelEnum, int ChannelPathBufferSize, Pointer ChannelPathBuffer,
+    boolean EvtNextChannelPath(EVT_HANDLE ChannelEnum, int ChannelPathBufferSize, char[] ChannelPathBuffer,
                                IntByReference ChannelPathBufferUsed);
 
     /**
@@ -500,7 +511,7 @@ public interface Wevtapi extends StdCallLibrary {
      * @return If successful, the function returns a handle to the list of registered providers;
      * otherwise, NULL. If NULL, call {@link Kernel32#GetLastError} function to get the error code.
      */
-    boolean EvtNextPublisherId(EVT_HANDLE PublisherEnum, int PublisherIdBufferSize, Pointer PublisherIdBuffer,
+    boolean EvtNextPublisherId(EVT_HANDLE PublisherEnum, int PublisherIdBufferSize, char[] PublisherIdBuffer,
                                IntByReference PublisherIdBufferUsed);
 
     /**

@@ -1,6 +1,30 @@
+/* Copyright (c) 2016 Minoru Sakamoto, All Rights Reserved
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ *
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
+ */
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.Winevt.EVT_CHANNEL_CONFIG_PROPERTY_ID;
 import com.sun.jna.platform.win32.Winevt.EVT_HANDLE;
@@ -10,6 +34,7 @@ import junit.framework.TestCase;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +64,6 @@ public class WevtapiTest extends TestCase {
                 Wevtapi.INSTANCE.EvtClose(handle);
             }
         }
-        System.out.println(result);
         return result;
     }
 
@@ -238,21 +262,20 @@ public class WevtapiTest extends TestCase {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            Memory buff = new Memory(1024);
+            char[] buff = new char[1024];
             IntByReference buffUsed = new IntByReference();
             while (true) {
-                buff.clear();
-                if (!Wevtapi.INSTANCE.EvtNextChannelPath(channelHandle, (int) buff.size(), buff, buffUsed)) {
+                if (!Wevtapi.INSTANCE.EvtNextChannelPath(channelHandle, buff.length, buff, buffUsed)) {
                     if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_NO_MORE_ITEMS) {
                         break;
                     } else if (Kernel32.INSTANCE.GetLastError() == WinError.ERROR_INSUFFICIENT_BUFFER) {
-                        buff = new Memory(buffUsed.getValue());
-                        if (!Wevtapi.INSTANCE.EvtNextChannelPath(channelHandle, (int) buff.size(), buff, buffUsed)) {
+                        buff = new char[buffUsed.getValue()];
+                        if (!Wevtapi.INSTANCE.EvtNextChannelPath(channelHandle, buff.length, buff, buffUsed)) {
                             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                         }
                     }
                 }
-                channelList.add(buff.getWideString(0));
+                channelList.add(Native.toString(buff));
             }
             assertThat(channelList.size() > 0, is(true));
 
@@ -325,10 +348,10 @@ public class WevtapiTest extends TestCase {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-            Memory buff;
+            String providerName;
             while (true) {
                 try {
-                    buff = WevtapiUtil.EvtNextPublisherId(publisherEnumHandle);
+                    providerName = WevtapiUtil.EvtNextPublisherId(publisherEnumHandle);
                 } catch (Win32Exception e) {
                     if (e.getErrorCode() == WinError.ERROR_NO_MORE_ITEMS) {
                         break;
@@ -336,7 +359,7 @@ public class WevtapiTest extends TestCase {
                         throw e;
                     }
                 }
-                publisherList.add(buff.getWideString(0));
+                publisherList.add(providerName);
             }
             assertThat(publisherList.size() > 0, is(true));
         } finally {
