@@ -1189,4 +1189,20 @@ public class Kernel32Test extends TestCase {
         
         assertEquals(namedFunctionPointerValue, ordinalFunctionPointerValue);
     }
+    
+    public void testSetThreadExecutionState() {
+        int originalExecutionState = Kernel32.INSTANCE.SetThreadExecutionState(
+                WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_AWAYMODE_REQUIRED
+        );
+        
+        assert originalExecutionState > 0;
+        
+        int intermediateExecutionState = Kernel32.INSTANCE.SetThreadExecutionState(
+                WinBase.ES_CONTINUOUS
+        );
+        
+        assertEquals(WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_AWAYMODE_REQUIRED, intermediateExecutionState);
+        
+        Kernel32.INSTANCE.SetThreadExecutionState(originalExecutionState);
+    }
 }

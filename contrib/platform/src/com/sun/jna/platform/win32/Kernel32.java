@@ -3386,4 +3386,27 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return address of the exported function
      */
     Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
+    
+    /**
+     * Enables an application to inform the system that it is in use, thereby
+     * preventing the system from entering sleep or turning off the display
+     * while the application is running.
+     *
+     * @param esFlags The thread's execution requirements. This parameter can be
+     *                one or more of the following values (ORed together)
+     * 
+     * <ul>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_AWAYMODE_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_CONTINUOUS}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_DISPLAY_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_SYSTEM_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_USER_PRESENT}</li>
+     * </ul>
+     *
+     * @return If the function succeeds, the return value is the previous thread
+     *         execution state.
+     * <p>
+     * If the function fails, the return value is 0</p>
+     */
+    int SetThreadExecutionState(int esFlags);
 }
