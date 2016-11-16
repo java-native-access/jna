@@ -2257,6 +2257,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_INTERACTIVE_PROCESS = 0x00000100;
     int SERVICE_TYPE_ALL = SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER
             | SERVICE_INTERACTIVE_PROCESS;
+    
+    //
+    // Start Type
+    //
+
+    int SERVICE_BOOT_START   = 0x00000000;
+    int SERVICE_SYSTEM_START = 0x00000001;
+    int SERVICE_AUTO_START   = 0x00000002;
+    int SERVICE_DEMAND_START = 0x00000003;
+    int SERVICE_DISABLED     = 0x00000004;
+
+    //
+    // Error control type
+    //
+    int SERVICE_ERROR_IGNORE   = 0x00000000;
+    int SERVICE_ERROR_NORMAL   = 0x00000001;
+    int SERVICE_ERROR_SEVERE   = 0x00000002;
+    int SERVICE_ERROR_CRITICAL = 0x00000003;
+    
     int STATUS_PENDING = 0x00000103;
 
     // Privilege Constants
