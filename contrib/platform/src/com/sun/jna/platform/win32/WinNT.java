@@ -3094,17 +3094,21 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Specifies whether the server is to be given a snapshot of the
          * client's security context (called static tracking), or is to be
          * continually updated to track changes to the client's security context
-         * (called dynamic tracking). The SECURITY_STATIC_TRACKING value
-         * specifies static tracking, and the SECURITY_DYNAMIC_TRACKING value
-         * specifies dynamic tracking. Not all communications mechanisms support
-         * dynamic tracking; those that do not will default to static tracking.
+         * (called dynamic tracking). The {@link WinNT.SECURITY_STATIC_TRACKING}
+         * value specifies static tracking, and the
+         * {@link WinNT.SECURITY_DYNAMIC_TRACKING} value specifies dynamic
+         * tracking. Not all communications mechanisms support dynamic tracking;
+         * those that do not will default to static tracking.
          */
-        public short ContextTrackingMode;
+        public byte ContextTrackingMode;
         /**
          * Specifies whether the server may enable or disable privileges and
          * groups that the client's security context may include.
+         * 
+         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and 
+         * {@link WinNT#BOOLEAN_FALSE}.</p>
          */
-        public BOOL EffectiveOnly;
+        public byte EffectiveOnly;
 
         @Override
         public void write() {
@@ -3117,4 +3121,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return FIELDS;
         }
     }
+    
+    byte SECURITY_DYNAMIC_TRACKING = (byte) 1;
+    byte SECURITY_STATIC_TRACKING = (byte) 0;
+    byte BOOLEAN_TRUE = (byte) 1;
+    byte BOOLEAN_FALSE = (byte) 0;
 }
