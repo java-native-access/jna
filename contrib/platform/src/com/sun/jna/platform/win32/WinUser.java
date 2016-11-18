@@ -1843,7 +1843,7 @@ public interface WinUser extends WinDef {
      */
     public int CF_GDIOBJFIRST = 0x0300;
     /**
-     * @see WinUser.CF_GDIOBJFIRST
+     * @see WinUser#CF_GDIOBJFIRST
      */
     public int CF_GDIOBJLAST = 0x03FF;
     /**
@@ -1920,7 +1920,7 @@ public interface WinUser extends WinDef {
      */
     public int CF_PRIVATEFIRST = 0x0200;
     /**
-     * @see WinDef.CF_PRIVATEFIRST.
+     * @see WinUser#CF_PRIVATEFIRST
      */
     public int CF_PRIVATELAST = 0x02FF;
     /**

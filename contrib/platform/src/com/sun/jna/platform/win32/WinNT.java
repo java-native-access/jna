@@ -3113,9 +3113,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Specifies whether the server is to be given a snapshot of the
          * client's security context (called static tracking), or is to be
          * continually updated to track changes to the client's security context
-         * (called dynamic tracking). The {@link WinNT.SECURITY_STATIC_TRACKING}
+         * (called dynamic tracking). The {@link WinNT#SECURITY_STATIC_TRACKING}
          * value specifies static tracking, and the
-         * {@link WinNT.SECURITY_DYNAMIC_TRACKING} value specifies dynamic
+         * {@link WinNT#SECURITY_DYNAMIC_TRACKING} value specifies dynamic
          * tracking. Not all communications mechanisms support dynamic tracking;
          * those that do not will default to static tracking.
          */

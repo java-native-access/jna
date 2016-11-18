@@ -241,7 +241,7 @@ public final class User32Util {
         
         /**
          * The method is called from the thread, that run the message dispatcher,
-         * when the call to {@see com.sun.jna.platform.win32.User32#GetMessage}
+         * when the call to {@link com.sun.jna.platform.win32.User32#GetMessage}
          * fails (returns {@code -1}).
          * 
          * <p>If the method returns {@code true}, the MainLoop is exitted, if it 

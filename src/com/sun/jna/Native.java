@@ -1908,8 +1908,6 @@ public final class Native implements Version {
      * @param fp        function pointer
      * @param callFlags calling convention to be used
      * @param args      Arguments to pass to the native function
-     *
-     * @return The value returned by the target native function
      */
     static native void invokeVoid(Function function, long fp, int callFlags, Object[] args);
 
