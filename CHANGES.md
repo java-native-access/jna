@@ -88,6 +88,7 @@ Bug Fixes
 * [#664](https://github.com/java-native-access/jna/issues/664): Prevent premature GC of Pointer and Function objects by passing whole object into JNI call in addition to the raw pointer value - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#669](https://github.com/java-native-access/jna/pull/669): Ensure XSI-compliant strerror_r is used, to prevent corrupted error messages on linux - [@DavidKeller](https://github.com/DavidKeller).
 * [#697](https://github.com/java-native-access/jna/issues/697): Ensure disposed memory is removed from Memory#allocatedMemory map - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#731](https://github.com/java-native-access/jna/issues/731): Require mingw-w64 instead of mingw as the alternative to the MSVC build - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.2.1
 =============

@@ -301,11 +301,8 @@ w32_short_name(JNIEnv* env, jstring str) {
     size_t size = wcslen(wstr) + 5;
     wchar_t* prefixed = (wchar_t*)alloca(sizeof(wchar_t) * size);
 
-#ifdef _MSC_VER
     swprintf(prefixed, size, L"\\\\?\\%ls", wstr);
-#else
-    swprintf(prefixed, L"\\\\?\\%ls", wstr);
-#endif
+
     if ((required = GetShortPathNameW(prefixed, NULL, 0)) != 0) {
       wchar_t* wshort = (wchar_t*)malloc(sizeof(wchar_t) * required);
       if (GetShortPathNameW(prefixed, wshort, required)) {
@@ -3067,11 +3064,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
       const wchar_t* suffix = L"/bin/jawt.dll";
       size_t len = wcslen(prop) + wcslen(suffix) + 1;
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
-#ifdef _MSC_VER
+
       swprintf(path, len, L"%s%s", prop, suffix);
-#else
-      swprintf(path, L"%s%s", prop, suffix);
-#endif
+      
       free((void *)prop);
     }
 #undef JAWT_NAME
