@@ -1,14 +1,25 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -2265,6 +2276,25 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_INTERACTIVE_PROCESS = 0x00000100;
     int SERVICE_TYPE_ALL = SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER
             | SERVICE_INTERACTIVE_PROCESS;
+    
+    //
+    // Start Type
+    //
+
+    int SERVICE_BOOT_START   = 0x00000000;
+    int SERVICE_SYSTEM_START = 0x00000001;
+    int SERVICE_AUTO_START   = 0x00000002;
+    int SERVICE_DEMAND_START = 0x00000003;
+    int SERVICE_DISABLED     = 0x00000004;
+
+    //
+    // Error control type
+    //
+    int SERVICE_ERROR_IGNORE   = 0x00000000;
+    int SERVICE_ERROR_NORMAL   = 0x00000001;
+    int SERVICE_ERROR_SEVERE   = 0x00000002;
+    int SERVICE_ERROR_CRITICAL = 0x00000003;
+    
     int STATUS_PENDING = 0x00000103;
 
     // Privilege Constants
@@ -3102,17 +3132,21 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Specifies whether the server is to be given a snapshot of the
          * client's security context (called static tracking), or is to be
          * continually updated to track changes to the client's security context
-         * (called dynamic tracking). The SECURITY_STATIC_TRACKING value
-         * specifies static tracking, and the SECURITY_DYNAMIC_TRACKING value
-         * specifies dynamic tracking. Not all communications mechanisms support
-         * dynamic tracking; those that do not will default to static tracking.
+         * (called dynamic tracking). The {@link WinNT#SECURITY_STATIC_TRACKING}
+         * value specifies static tracking, and the
+         * {@link WinNT#SECURITY_DYNAMIC_TRACKING} value specifies dynamic
+         * tracking. Not all communications mechanisms support dynamic tracking;
+         * those that do not will default to static tracking.
          */
-        public short ContextTrackingMode;
+        public byte ContextTrackingMode;
         /**
          * Specifies whether the server may enable or disable privileges and
          * groups that the client's security context may include.
+         * 
+         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and 
+         * {@link WinNT#BOOLEAN_FALSE}.</p>
          */
-        public BOOL EffectiveOnly;
+        public byte EffectiveOnly;
 
         @Override
         public void write() {
@@ -3125,4 +3159,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return FIELDS;
         }
     }
+    
+    byte SECURITY_DYNAMIC_TRACKING = (byte) 1;
+    byte SECURITY_STATIC_TRACKING = (byte) 0;
+    byte BOOLEAN_TRUE = (byte) 1;
+    byte BOOLEAN_FALSE = (byte) 0;
 }

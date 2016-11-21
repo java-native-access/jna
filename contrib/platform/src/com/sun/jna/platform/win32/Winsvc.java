@@ -1,14 +1,25 @@
 /* Copyright (c) 2010 EugineLev, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -388,23 +399,24 @@ public interface Winsvc {
     //
     // Controls
     //
-    int  SERVICE_CONTROL_STOP			= 0x00000001;
-    int  SERVICE_CONTROL_PAUSE			= 0x00000002;
-    int  SERVICE_CONTROL_CONTINUE		= 0x00000003;
-    int  SERVICE_CONTROL_INTERROGATE	= 0x00000004;
-    //	int  SERVICE_CONTROL_SHUTDOWN		= 0x00000005;
-    int  SERVICE_CONTROL_PARAMCHANGE	= 0x00000006;
-    int  SERVICE_CONTROL_NETBINDADD		= 0x00000007;
-    int  SERVICE_CONTROL_NETBINDREMOVE	= 0x00000008;
-    int  SERVICE_CONTROL_NETBINDENABLE	= 0x00000009;
-    int  SERVICE_CONTROL_NETBINDDISABLE	= 0x0000000A;
-    //	int SERVICE_CONTROL_DEVICEEVENT		= 0x0000000B;
-    //	int SERVICE_CONTROL_HARDWAREPROFILECHANGE = 0x0000000C;
-    //	int SERVICE_CONTROL_POWEREVENT		= 0x0000000D;
-    //	int SERVICE_CONTROL_SESSIONCHANGE	= 0x0000000E;
-    //	int SERVICE_CONTROL_PRESHUTDOWN		= 0x0000000F;
-    //	int SERVICE_CONTROL_TIMECHANGE		= 0x00000010;
-    //	int SERVICE_CONTROL_TRIGGEREVENT	= 0x00000020;
+    int SERVICE_CONTROL_STOP                  = 0x00000001;
+    int SERVICE_CONTROL_PAUSE                 = 0x00000002;
+    int SERVICE_CONTROL_CONTINUE              = 0x00000003;
+    int SERVICE_CONTROL_INTERROGATE           = 0x00000004;
+    int SERVICE_CONTROL_SHUTDOWN              = 0x00000005;
+    int SERVICE_CONTROL_PARAMCHANGE           = 0x00000006;
+    int SERVICE_CONTROL_NETBINDADD            = 0x00000007;
+    int SERVICE_CONTROL_NETBINDREMOVE         = 0x00000008;
+    int SERVICE_CONTROL_NETBINDENABLE         = 0x00000009;
+    int SERVICE_CONTROL_NETBINDDISABLE        = 0x0000000A;
+    int SERVICE_CONTROL_DEVICEEVENT           = 0x0000000B;
+    int SERVICE_CONTROL_HARDWAREPROFILECHANGE = 0x0000000C;
+    int SERVICE_CONTROL_POWEREVENT            = 0x0000000D;
+    int SERVICE_CONTROL_SESSIONCHANGE         = 0x0000000E;
+    int SERVICE_CONTROL_PRESHUTDOWN           = 0x0000000F;
+    int SERVICE_CONTROL_TIMECHANGE            = 0x00000010;
+    int SERVICE_CONTROL_TRIGGEREVENT          = 0x00000020;
+    int SERVICE_CONTROL_USERMODEREBOOT        = 0x00000040;
 
     //
     // Service State -- for CurrentState

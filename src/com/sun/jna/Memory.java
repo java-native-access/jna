@@ -1,22 +1,31 @@
-/* This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * <p/>
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+/* The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna;
 
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -47,16 +56,13 @@ public class Memory extends Pointer {
     private static final Map<Memory, Reference<Memory>> allocatedMemory =
             Collections.synchronizedMap(new WeakHashMap<Memory, Reference<Memory>>());
 
-    private static final Map<Buffer, Memory> buffers =
-            Collections.synchronizedMap(Platform.HAS_BUFFERS
-                                              ? new WeakIdentityHashMap<Buffer, Memory>()
-                                              : new HashMap<Buffer, Memory>());
+    private static final WeakMemoryHolder buffers = new WeakMemoryHolder();
 
     /** Force cleanup of memory that has associated NIO Buffers which have
         been GC'd.
     */
     public static void purge() {
-        buffers.size();
+        buffers.clean();
     }
 
     /** Dispose of all allocated memory. */

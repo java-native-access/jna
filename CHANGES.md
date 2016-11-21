@@ -65,7 +65,8 @@ Features
 * [#693](https://github.com/java-native-access/jna/pull/693): Bind DDEML (Dynamic Data Exchange Management Library), add a thread implementation that runs a windows message loop - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#702](https://github.com/java-native-access/jna/pull/702): Added `GetClientRect` to `com/sun/jna/platform/win32/User32` - [@Jonatino](https://github.com/Jonatino).
 * [#689](https://github.com/java-native-access/jna/pull/689): Add `GetProcAddress(HMODULE, int)` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#723](https://github.com/java-native-access/jna/pull/723): Added `com.sun.jna.platform.win32.Wevtapi` and `com.sun.jna.platform.win32.Winevt`  - [@sakamotodesu](https://github.com/sakamotodesu).
+* [#723](https://github.com/java-native-access/jna/pull/723): Added `com.sun.jna.platform.win32.Wevtapi` and `com.sun.jna.platform.win32.Winevt` - [@sakamotodesu](https://github.com/sakamotodesu).
+* [#720](https://github.com/java-native-access/jna/issues/720): Added `SetThreadExecutionState` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -91,6 +92,7 @@ Bug Fixes
 * [#664](https://github.com/java-native-access/jna/issues/664): Prevent premature GC of Pointer and Function objects by passing whole object into JNI call in addition to the raw pointer value - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#669](https://github.com/java-native-access/jna/pull/669): Ensure XSI-compliant strerror_r is used, to prevent corrupted error messages on linux - [@DavidKeller](https://github.com/DavidKeller).
 * [#697](https://github.com/java-native-access/jna/issues/697): Ensure disposed memory is removed from Memory#allocatedMemory map - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#731](https://github.com/java-native-access/jna/issues/731): Require mingw-w64 instead of mingw as the alternative to the MSVC build - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.2.1
 =============

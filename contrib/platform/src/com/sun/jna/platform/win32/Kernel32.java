@@ -1,14 +1,25 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * <p/>
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -3524,4 +3535,27 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return address of the exported function
      */
     Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
+    
+    /**
+     * Enables an application to inform the system that it is in use, thereby
+     * preventing the system from entering sleep or turning off the display
+     * while the application is running.
+     *
+     * @param esFlags The thread's execution requirements. This parameter can be
+     *                one or more of the following values (ORed together)
+     * 
+     * <ul>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_AWAYMODE_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_CONTINUOUS}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_DISPLAY_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_SYSTEM_REQUIRED}</li>
+     * <li>{@link com.sun.jna.platform.win32.WinBase#ES_USER_PRESENT}</li>
+     * </ul>
+     *
+     * @return If the function succeeds, the return value is the previous thread
+     *         execution state.
+     * <p>
+     * If the function fails, the return value is 0</p>
+     */
+    int SetThreadExecutionState(int esFlags);
 }

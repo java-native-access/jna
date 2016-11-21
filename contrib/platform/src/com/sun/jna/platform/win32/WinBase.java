@@ -1,14 +1,25 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -2533,4 +2544,34 @@ public interface WinBase extends WinDef, BaseTSD {
          */
         boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam);
     }
+    
+    /**
+     * Enables away mode. This value must be specified with {@link #ES_CONTINUOUS}.
+     *
+     * Away mode should be used only by media-recording and media-distribution
+     * applications that must perform critical background processing on desktop
+     * computers while the computer appears to be sleeping. See Remarks.
+     */
+    int ES_AWAYMODE_REQUIRED = 0x00000040;
+    /**
+     * Informs the system that the state being set should remain in effect until
+     * the next call that uses ES_CONTINUOUS and one of the other state flags is
+     * cleared.
+     */
+    int ES_CONTINUOUS = 0x80000000;
+    /**
+     * Forces the display to be on by resetting the display idle timer.
+     */
+    int ES_DISPLAY_REQUIRED = 0x00000002;
+    /**
+     * Forces the system to be in the working state by resetting the system idle
+     * timer.
+     */
+    int ES_SYSTEM_REQUIRED = 0x00000001;
+    /**
+     * This value is not supported. If ES_USER_PRESENT is combined with other
+     * esFlags values, the call will fail and none of the specified states will
+     * be set.
+     */
+    int ES_USER_PRESENT = 0x00000004;
 }

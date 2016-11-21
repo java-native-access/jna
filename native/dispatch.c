@@ -5,15 +5,26 @@
  * Copyright (c) 2007-2013 Timothy Wall. All Rights Reserved.
  * Copyright (c) 2007 Wayne Meissner. All Rights Reserved.
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- * <p/>
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 
 #include "dispatch.h"
@@ -290,11 +301,8 @@ w32_short_name(JNIEnv* env, jstring str) {
     size_t size = wcslen(wstr) + 5;
     wchar_t* prefixed = (wchar_t*)alloca(sizeof(wchar_t) * size);
 
-#ifdef _MSC_VER
     swprintf(prefixed, size, L"\\\\?\\%ls", wstr);
-#else
-    swprintf(prefixed, L"\\\\?\\%ls", wstr);
-#endif
+
     if ((required = GetShortPathNameW(prefixed, NULL, 0)) != 0) {
       wchar_t* wshort = (wchar_t*)malloc(sizeof(wchar_t) * required);
       if (GetShortPathNameW(prefixed, wshort, required)) {
@@ -3056,11 +3064,9 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
       const wchar_t* suffix = L"/bin/jawt.dll";
       size_t len = wcslen(prop) + wcslen(suffix) + 1;
       path = (wchar_t*)alloca(len * sizeof(wchar_t));
-#ifdef _MSC_VER
+
       swprintf(path, len, L"%s%s", prop, suffix);
-#else
-      swprintf(path, L"%s%s", prop, suffix);
-#endif
+      
       free((void *)prop);
     }
 #undef JAWT_NAME
