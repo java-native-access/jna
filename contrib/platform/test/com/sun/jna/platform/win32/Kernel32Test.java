@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.Function;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,6 +20,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -29,6 +32,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import com.sun.jna.Function;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
@@ -36,18 +40,37 @@ import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
+import com.sun.jna.platform.win32.Ntifs.REPARSE_DATA_BUFFER;
+import com.sun.jna.platform.win32.Ntifs.SymbolicLinkReparseBuffer;
+import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinBase.FILE_ATTRIBUTE_TAG_INFO;
+import com.sun.jna.platform.win32.WinBase.FILE_BASIC_INFO;
+import com.sun.jna.platform.win32.WinBase.FILE_COMPRESSION_INFO;
+import com.sun.jna.platform.win32.WinBase.FILE_DISPOSITION_INFO;
+import com.sun.jna.platform.win32.WinBase.FILE_ID_INFO;
+import com.sun.jna.platform.win32.WinBase.FILE_STANDARD_INFO;
 import com.sun.jna.platform.win32.WinBase.MEMORYSTATUSEX;
+import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
+import com.sun.jna.platform.win32.WinBase.WIN32_FIND_DATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
+import com.sun.jna.platform.win32.WinDef.ULONGLONG;
+import com.sun.jna.platform.win32.WinDef.USHORT;
+import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
+import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_COMPRESSION;
+import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_REPARSE_POINT;
+import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_COMPRESSION;
+import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_REPARSE_POINT;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.ShortByReference;
 
 import junit.framework.TestCase;
 
@@ -554,6 +577,128 @@ public class Kernel32Test extends TestCase {
         assertTrue(WinBase.INVALID_FILE_ATTRIBUTES != Kernel32.INSTANCE.GetFileAttributes("."));
     }
 
+    public void testDeviceIoControlFsctlCompression() throws IOException {
+        File tmp = File.createTempFile("testDeviceIoControlFsctlCompression", "jna");
+        tmp.deleteOnExit();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_ALL, WinNT.FILE_SHARE_READ,
+                new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+            ShortByReference lpBuffer = new ShortByReference();
+            IntByReference lpBytes = new IntByReference();
+
+            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+                    new FSCTL_GET_COMPRESSION().getControlCode(),
+                    null,
+                    0,
+                    lpBuffer.getPointer(),
+                    USHORT.SIZE,
+                    lpBytes,
+                    null)) {
+                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            assertEquals(WinNT.COMPRESSION_FORMAT_NONE, lpBuffer.getValue());
+            assertEquals(USHORT.SIZE, lpBytes.getValue());
+
+            lpBuffer = new ShortByReference((short)WinNT.COMPRESSION_FORMAT_LZNT1);
+
+            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+                    new FSCTL_SET_COMPRESSION().getControlCode(),
+                    lpBuffer.getPointer(),
+                    USHORT.SIZE,
+                    null,
+                    0,
+                    lpBytes,
+                    null)) {
+                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+
+            if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
+                    new FSCTL_GET_COMPRESSION().getControlCode(),
+                    null,
+                    0,
+                    lpBuffer.getPointer(),
+                    USHORT.SIZE,
+                    lpBytes,
+                    null)) {
+                fail("DeviceIoControl failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            assertEquals(WinNT.COMPRESSION_FORMAT_LZNT1, lpBuffer.getValue());
+            assertEquals(USHORT.SIZE, lpBytes.getValue());
+
+        } finally {
+            Kernel32Util.closeHandle(hFile);
+        }
+    }
+
+    /**
+     * NOTE: Due to process elevation, this test must be run as administrator
+     * @throws IOException
+     */
+    public void testDeviceIoControlFsctlReparse() throws IOException {
+        Path folder = Files.createTempDirectory("testDeviceIoControlFsctlReparse_FOLDER");
+        Path link = Files.createTempDirectory("testDeviceIoControlFsctlReparse_LINK");
+        File delFolder = folder.toFile();
+        delFolder.deleteOnExit();
+        File delLink = link.toFile();
+        delLink.deleteOnExit();
+
+        // Required for FSCTL_SET_REPARSE_POINT
+        Advapi32Util.Privilege restore = new Advapi32Util.Privilege(WinNT.SE_RESTORE_NAME);
+        restore.enable();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(link.toAbsolutePath().toString(),
+                WinNT.GENERIC_READ | WinNT.FILE_WRITE_ATTRIBUTES | WinNT.FILE_WRITE_EA,
+                WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE,
+                new WinBase.SECURITY_ATTRIBUTES(),
+                WinNT.OPEN_EXISTING,
+                WinNT.FILE_ATTRIBUTE_DIRECTORY | WinNT.FILE_FLAG_BACKUP_SEMANTICS | WinNT.FILE_FLAG_OPEN_REPARSE_POINT,
+                null);
+
+        if (WinBase.INVALID_HANDLE_VALUE.equals(hFile)) {
+            fail("CreateFile failed with " + Kernel32.INSTANCE.GetLastError());
+        }
+
+        try {
+            SymbolicLinkReparseBuffer symLinkReparseBuffer = new SymbolicLinkReparseBuffer(folder.getFileName().toString(),
+                    folder.getFileName().toString(),
+                    Ntifs.SYMLINK_FLAG_RELATIVE);
+
+            REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, 0, symLinkReparseBuffer);
+
+            assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                    new FSCTL_SET_REPARSE_POINT().getControlCode(),
+                    lpBuffer.getPointer(),
+                    lpBuffer.getSize(),
+                    null,
+                    0,
+                    null,
+                    null));
+
+            Memory p = new Memory(REPARSE_DATA_BUFFER.sizeOf());
+            IntByReference lpBytes = new IntByReference();
+            assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                    new FSCTL_GET_REPARSE_POINT().getControlCode(),
+                    null,
+                    0,
+                    p,
+                    (int) p.size(),
+                    lpBytes,
+                    null));
+            // Is a reparse point
+            lpBuffer = new REPARSE_DATA_BUFFER(p);
+            assertTrue(lpBytes.getValue() > 0);
+            assertTrue(lpBuffer.ReparseTag.intValue() == WinNT.IO_REPARSE_TAG_SYMLINK);
+            assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getPrintName());
+            assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getSubstituteName());
+        } finally {
+            Kernel32Util.closeHandle(hFile);
+            restore.disable();
+        }
+    }
+
     public void testCopyFile() throws IOException {
         File source = File.createTempFile("testCopyFile", "jna");
         source.deleteOnExit();
@@ -604,6 +749,239 @@ public class Kernel32Test extends TestCase {
 
         assertTrue(status);
         assertTrue(processInformation.dwProcessId.longValue() > 0);
+    }
+
+    public void testFindFirstFile() throws IOException {
+        Path tmpDir = Files.createTempDirectory("testFindFirstFile");
+        File tmpFile = new File(Files.createTempFile(tmpDir, "testFindFirstFile", ".jna").toString());
+
+        Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFile(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\*"), p);
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+
+            // Get data and confirm the 1st name is . for the directory itself.
+            WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
+            String actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals("."));
+
+            // Get data and confirm the 2nd name is .. for the directory's parent
+            assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            fd = new WIN32_FIND_DATA(p);
+            actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals(".."));
+
+            // Get data and confirm the 3rd name is the tmp file name
+            assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            fd = new WIN32_FIND_DATA(p);
+            actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals(tmpFile.getName()));
+
+            // No more files in directory
+            assertFalse(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            assertEquals(WinNT.ERROR_NO_MORE_FILES, Kernel32.INSTANCE.GetLastError());
+        }
+        finally {
+            Kernel32.INSTANCE.FindClose(hFile);
+            tmpFile.delete();
+            Files.delete(tmpDir);
+        }
+    }
+
+    public void testFindFirstFileExFindExInfoStandard() throws IOException {
+        Path tmpDir = Files.createTempDirectory("testFindFirstFileExFindExInfoStandard");
+        File tmpFile = new File(Files.createTempFile(tmpDir, "testFindFirstFileExFindExInfoStandard", ".jna").toString());
+
+        Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\*"),
+                WinBase.FindExInfoStandard,
+                p,
+                WinBase.FindExSearchNameMatch,
+                null,
+                new DWORD(0));
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+
+            // Get data and confirm the 1st name is . for the directory itself.
+            WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
+            String actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals("."));
+
+            // Get data and confirm the 2nd name is .. for the directory's parent
+            assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            fd = new WIN32_FIND_DATA(p);
+            actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals(".."));
+
+            // Get data and confirm the 3rd name is the tmp file name
+            assertTrue(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            fd = new WIN32_FIND_DATA(p);
+            actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals(tmpFile.getName()));
+
+            // No more files in directory
+            assertFalse(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            assertEquals(WinNT.ERROR_NO_MORE_FILES, Kernel32.INSTANCE.GetLastError());
+        }
+        finally {
+            Kernel32.INSTANCE.FindClose(hFile);
+            tmpFile.delete();
+            Files.delete(tmpDir);
+        }
+    }
+
+    public void testFindFirstFileExFindExInfoBasic() throws IOException {
+        Path tmpDir = Files.createTempDirectory("testFindFirstFileExFindExInfoBasic");
+        File tmpFile = new File(Files.createTempFile(tmpDir, "testFindFirstFileExFindExInfoBasic", ".jna").toString());
+
+        Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
+        // Add the file name to the search to get just that one entry
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\" + tmpFile.getName()),
+                WinBase.FindExInfoBasic,
+                p,
+                WinBase.FindExSearchNameMatch,
+                null,
+                new DWORD(0));
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+            // Get data and confirm the 1st name is for the file itself
+            WIN32_FIND_DATA fd = new WIN32_FIND_DATA(p);
+            String actualFileName = new String(fd.getFileName());
+            actualFileName = new String(fd.getFileName());
+            assertTrue(actualFileName.contentEquals(tmpFile.getName()));
+
+            // FindExInfoBasic does not return the short name, so confirm that its empty
+            String alternateFileName = fd.getAlternateFileName();
+            assertTrue(alternateFileName.isEmpty());
+
+            // No more files in directory
+            assertFalse(Kernel32.INSTANCE.FindNextFile(hFile, p));
+            assertEquals(WinNT.ERROR_NO_MORE_FILES, Kernel32.INSTANCE.GetLastError());
+        }
+        finally {
+            Kernel32.INSTANCE.FindClose(hFile);
+            tmpFile.delete();
+            Files.delete(tmpDir);
+        }
+    }
+
+    public void testGetFileInformationByHandleEx() throws IOException {
+        File tmp = File.createTempFile("testGetFileInformationByHandleEx", "jna");
+        tmp.deleteOnExit();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE, WinNT.FILE_SHARE_WRITE,
+                new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+
+            Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
+            // New file has non-zero creation time
+            assertTrue(0 != fbi.CreationTime.getValue());
+
+            p = new Memory(FILE_STANDARD_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileStandardInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_STANDARD_INFO fsi = new FILE_STANDARD_INFO(p);
+            // New file has 1 link
+            assertEquals(new DWORD(1), fsi.NumberOfLinks);
+
+            p = new Memory(FILE_COMPRESSION_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileCompressionInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_COMPRESSION_INFO fci = new FILE_COMPRESSION_INFO(p);
+            // Uncompressed file should be zero
+            assertEquals(new WORD(0), fci.CompressionFormat);
+
+            p = new Memory(FILE_ATTRIBUTE_TAG_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileAttributeTagInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_ATTRIBUTE_TAG_INFO fati = new FILE_ATTRIBUTE_TAG_INFO(p);
+            // New files have the archive bit
+            assertEquals(new DWORD(WinNT.FILE_ATTRIBUTE_ARCHIVE), fati.FileAttributes);
+
+            p = new Memory(FILE_ID_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_ID_INFO fii = new FILE_ID_INFO(p);
+            // Volume serial number should be non-zero
+            assertFalse(fii.VolumeSerialNumber == new ULONGLONG(0));
+        } finally {
+            Kernel32.INSTANCE.CloseHandle(hFile);
+        }
+    }
+
+    public void testSetFileInformationByHandleFileBasicInfo() throws IOException, InterruptedException {
+        File tmp = File.createTempFile("testSetFileInformationByHandleFileBasicInfo", "jna");
+        tmp.deleteOnExit();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(),
+                WinNT.GENERIC_READ | WinNT.GENERIC_WRITE,
+                WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE,
+                new WinBase.SECURITY_ATTRIBUTES(),
+                WinNT.OPEN_EXISTING,
+                WinNT.FILE_ATTRIBUTE_NORMAL,
+                null);
+
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+            Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())))
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+
+            FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
+            // Add TEMP attribute
+            fbi.FileAttributes = new DWORD(fbi.FileAttributes.intValue() | WinNT.FILE_ATTRIBUTE_TEMPORARY);
+            fbi.ChangeTime = new WinNT.LARGE_INTEGER(0);
+            fbi.CreationTime = new WinNT.LARGE_INTEGER(0);
+            fbi.LastAccessTime = new WinNT.LARGE_INTEGER(0);
+            fbi.LastWriteTime = new WinNT.LARGE_INTEGER(0);
+            fbi.write();
+
+            if (false == Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileBasicInfo, fbi.getPointer(), new DWORD(FILE_BASIC_INFO.sizeOf())))
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size())))
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+
+            fbi = new FILE_BASIC_INFO(p);
+            assertTrue((fbi.FileAttributes.intValue() & WinNT.FILE_ATTRIBUTE_TEMPORARY) != 0);
+        }
+        finally {
+            Kernel32.INSTANCE.CloseHandle(hFile);
+        }
+    }
+
+    public void testSetFileInformationByHandleFileDispositionInfo() throws IOException, InterruptedException {
+        File tmp = File.createTempFile("testSetFileInformationByHandleFileDispositionInfo", "jna");
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE | WinNT.DELETE, WinNT.FILE_SHARE_WRITE,
+                new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+            FILE_DISPOSITION_INFO fdi = new FILE_DISPOSITION_INFO(true);
+            if (false == Kernel32.INSTANCE.SetFileInformationByHandle(hFile, WinBase.FileDispositionInfo, fdi.getPointer(), new DWORD(FILE_DISPOSITION_INFO.sizeOf())))
+                fail("SetFileInformationByHandle failed with " + Kernel32.INSTANCE.GetLastError());
+
+        } finally {
+            Kernel32.INSTANCE.CloseHandle(hFile);
+        }
+
+        assertFalse(Files.exists(Paths.get(tmp.getAbsolutePath())));
     }
 
     public void testGetSetFileTime() throws IOException {
@@ -772,6 +1150,72 @@ public class Kernel32Test extends TestCase {
         assertTrue(reader.readLine().matches("A\\s*=\\s*3"));
         assertTrue(reader.readLine().matches("E\\s*=\\s*Z"));
         reader.close();
+    }
+
+    /**
+     * Test both SystemTimeToFileTime and FileTimeToSystemTime
+     * @throws IOException
+     */
+    public final void testSystemTimeToFileTimeAndFileTimeToSystemTime() throws IOException {
+
+        WinBase.SYSTEMTIME systemTime = new WinBase.SYSTEMTIME();
+        Kernel32.INSTANCE.GetSystemTime(systemTime);
+        WinBase.FILETIME fileTime = new WinBase.FILETIME();
+
+        if (false == Kernel32.INSTANCE.SystemTimeToFileTime(systemTime, fileTime)) {
+            fail("SystemTimeToFileTime failed with " + Kernel32.INSTANCE.GetLastError());
+        }
+
+        WinBase.SYSTEMTIME newSystemTime = new WinBase.SYSTEMTIME();
+        if (false == Kernel32.INSTANCE.FileTimeToSystemTime(fileTime, newSystemTime)) {
+            fail("FileTimeToSystemTime failed with " + Kernel32.INSTANCE.GetLastError());
+        }
+
+        assertEquals(systemTime.wYear, newSystemTime.wYear);
+        assertEquals(systemTime.wDay, newSystemTime.wDay);
+        assertEquals(systemTime.wMonth, newSystemTime.wMonth);
+        assertEquals(systemTime.wHour, newSystemTime.wHour);
+        assertEquals(systemTime.wMinute, newSystemTime.wMinute);
+        assertEquals(systemTime.wSecond, newSystemTime.wSecond);
+        assertEquals(systemTime.wMilliseconds, newSystemTime.wMilliseconds);
+    }
+
+    /**
+     * Test FILETIME's LARGE_INTEGER constructor
+     * @throws IOException
+     */
+    public final void testFileTimeFromLargeInteger() throws IOException {
+
+        File tmp = File.createTempFile("testGetFileInformationByHandleEx", "jna");
+        tmp.deleteOnExit();
+
+        HANDLE hFile = Kernel32.INSTANCE.CreateFile(tmp.getAbsolutePath(), WinNT.GENERIC_WRITE, WinNT.FILE_SHARE_WRITE,
+                new WinBase.SECURITY_ATTRIBUTES(), WinNT.OPEN_EXISTING, WinNT.FILE_ATTRIBUTE_NORMAL, null);
+        assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
+
+        try {
+
+            Memory p = new Memory(FILE_BASIC_INFO.sizeOf());
+            if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileBasicInfo, p, new DWORD(p.size()))) {
+                fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
+            }
+            FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
+            FILETIME ft = new FILETIME(fbi.LastWriteTime);
+            SYSTEMTIME stUTC = new SYSTEMTIME();
+            SYSTEMTIME stLocal = new SYSTEMTIME();
+            Kernel32.INSTANCE.FileTimeToSystemTime(ft, stUTC);
+            // Covert to local
+            Kernel32.INSTANCE.SystemTimeToTzSpecificLocalTime(null, stUTC, stLocal);
+            FileTime calculatedCreateTime = FileTime.fromMillis(stLocal.toCalendar().getTimeInMillis());
+
+            // Actual file's createTime
+            FileTime createTime = Files.getLastModifiedTime(Paths.get(tmp.getAbsolutePath()));
+
+            assertEquals(createTime.toMillis(), calculatedCreateTime.toMillis());
+        }
+        finally {
+            Kernel32.INSTANCE.CloseHandle(hFile);
+        }
     }
 
     public final void testCreateRemoteThread() throws IOException {

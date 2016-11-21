@@ -19,11 +19,13 @@ import java.util.Date;
 import java.util.List;
 
 import com.sun.jna.Callback;
+import com.sun.jna.Native;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -183,6 +185,643 @@ public interface WinBase extends WinDef, BaseTSD {
      */
     int STILL_ACTIVE = WinNT.STATUS_PENDING;
 
+    // Codes for FILE_INFO_BY_HANDLE_CLASS taken from Winbase.h
+    int FileBasicInfo                   = 0;
+    int FileStandardInfo                = 1;
+    int FileNameInfo                    = 2;
+    int FileRenameInfo                  = 3;
+    int FileDispositionInfo             = 4;
+    int FileAllocationInfo              = 5;
+    int FileEndOfFileInfo               = 6;
+    int FileStreamInfo                  = 7;
+    int FileCompressionInfo             = 8;
+    int FileAttributeTagInfo            = 9;
+    int FileIdBothDirectoryInfo         = 10; // 0xA
+    int FileIdBothDirectoryRestartInfo  = 11; // 0xB
+    int FileIoPriorityHintInfo          = 12; // 0xC
+    int FileRemoteProtocolInfo          = 13; // 0xD
+    int FileFullDirectoryInfo           = 14; // 0xE
+    int FileFullDirectoryRestartInfo    = 15; // 0xF
+    int FileStorageInfo                 = 16; // 0x10
+    int FileAlignmentInfo               = 17; // 0x11
+    int FileIdInfo                      = 18; // 0x12
+    int FileIdExtdDirectoryInfo         = 19; // 0x13
+    int FileIdExtdDirectoryRestartInfo  = 20; // 0x14
+
+    /**
+     * Contains the basic information for a file. Used for file handles.
+     */
+    public static class FILE_BASIC_INFO extends Structure {
+
+        public static class ByReference extends FILE_BASIC_INFO implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The time the file was created in FILETIME format, which is a 64-bit value
+         * representing the number of 100-nanosecond intervals since January 1, 1601 (UTC).
+         */
+        public LARGE_INTEGER CreationTime;
+
+        /**
+         * The time the file was last accessed in FILETIME format.
+         */
+        public LARGE_INTEGER LastAccessTime;
+
+        /**
+         * The time the file was last written to in FILETIME format.
+         */
+        public LARGE_INTEGER LastWriteTime;
+
+        /**
+         * The time the file was changed in FILETIME format.
+         */
+        public LARGE_INTEGER ChangeTime;
+
+        /**
+         * The file attributes. For a list of attributes, see File Attribute Constants.
+         * If this is set to 0 in a FILE_BASIC_INFO structure passed to SetFileInformationByHandle
+         * then none of the attributes are changed.
+         */
+        public DWORD FileAttributes;
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_BASIC_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "CreationTime", "LastAccessTime", "LastWriteTime", "ChangeTime", "FileAttributes" });
+        }
+
+        public FILE_BASIC_INFO() {
+            super();
+        }
+
+        public FILE_BASIC_INFO(Pointer memory) {
+            super(memory);
+            read();
+            // This is admittedly odd, but the read() doesn't properly initialize the LARGE_INTEGERs via contructors, so do so here.
+            this.CreationTime = new LARGE_INTEGER(this.CreationTime.getValue());
+            this.LastAccessTime = new LARGE_INTEGER(this.LastAccessTime.getValue());
+            this.LastWriteTime = new LARGE_INTEGER(this.LastWriteTime.getValue());
+            this.ChangeTime = new LARGE_INTEGER(this.ChangeTime.getValue());
+        }
+
+        public FILE_BASIC_INFO(FILETIME CreationTime,
+                FILETIME LastAccessTime,
+                FILETIME LastWriteTime,
+                FILETIME ChangeTime,
+                DWORD FileAttributes) {
+            this.CreationTime = new LARGE_INTEGER(CreationTime.toTime());
+            this.LastAccessTime = new LARGE_INTEGER(LastAccessTime.toTime());
+            this.LastWriteTime = new LARGE_INTEGER(LastWriteTime.toTime());
+            this.ChangeTime = new LARGE_INTEGER(ChangeTime.toTime());
+            this.FileAttributes = FileAttributes;
+            write();
+        }
+
+        public FILE_BASIC_INFO(LARGE_INTEGER CreationTime,
+                LARGE_INTEGER LastAccessTime,
+                LARGE_INTEGER LastWriteTime,
+                LARGE_INTEGER ChangeTime,
+                DWORD FileAttributes) {
+            this.CreationTime = CreationTime;
+            this.LastAccessTime = LastAccessTime;
+            this.LastWriteTime = LastWriteTime;
+            this.ChangeTime = ChangeTime;
+            this.FileAttributes = FileAttributes;
+            write();
+        }
+    }
+
+    /**
+     * Receives extended information for the file. Used for file handles. Use only when calling GetFileInformationByHandleEx.
+     */
+    public static class FILE_STANDARD_INFO extends Structure {
+
+        public static class ByReference extends FILE_STANDARD_INFO implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The amount of space that is allocated for the file.
+         */
+        public LARGE_INTEGER AllocationSize;
+
+        /**
+         * The end of the file.
+         */
+        public LARGE_INTEGER EndOfFile;
+
+        /**
+         * The number of links to the file.
+         */
+        public DWORD NumberOfLinks;
+
+        /**
+         * TRUE if the file in the delete queue; otherwise, false.
+         */
+        public boolean DeletePending;
+
+        /**
+         * TRUE if the file is a directory; otherwise, false.
+         */
+        public boolean Directory;
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_STANDARD_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "AllocationSize", "EndOfFile", "NumberOfLinks", "DeletePending", "Directory" });
+        }
+
+        public FILE_STANDARD_INFO() {
+            super();
+        }
+
+        public FILE_STANDARD_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public FILE_STANDARD_INFO(LARGE_INTEGER AllocationSize,
+                LARGE_INTEGER EndOfFile,
+                DWORD NumberOfLinks,
+                boolean DeletePending,
+                boolean Directory) {
+            this.AllocationSize = AllocationSize;
+            this.EndOfFile = EndOfFile;
+            this.NumberOfLinks = NumberOfLinks;
+            this.DeletePending = DeletePending;
+            this.Directory = Directory;
+            write();
+        }
+    }
+
+    /**
+     * Indicates whether a file should be deleted. Used for any handles. Use only when calling SetFileInformationByHandle.
+     */
+    public static class FILE_DISPOSITION_INFO extends Structure {
+
+        public static class ByReference extends FILE_DISPOSITION_INFO  implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * Indicates whether the file should be deleted. Set to TRUE to delete the file. This member
+         * has no effect if the handle was opened with FILE_FLAG_DELETE_ON_CLOSE.
+         */
+        public boolean DeleteFile;
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_DISPOSITION_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "DeleteFile" });
+        }
+
+        public FILE_DISPOSITION_INFO () {
+            super();
+        }
+
+        public FILE_DISPOSITION_INFO (Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public FILE_DISPOSITION_INFO (boolean DeleteFile) {
+            this.DeleteFile = DeleteFile;
+            write();
+        }
+    }
+
+    /**
+     * Receives extended information for the file. Used for file handles. Use only when calling GetFileInformationByHandleEx.
+     */
+    public static class FILE_COMPRESSION_INFO extends Structure {
+
+        public static class ByReference extends FILE_COMPRESSION_INFO implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The file size of the compressed file.
+         */
+        public LARGE_INTEGER CompressedFileSize;
+
+        /**
+         * The compression format that is used to compress the file.
+         */
+        public WORD CompressionFormat;
+
+        /**
+         * The factor that the compression uses.
+         */
+        public UCHAR CompressionUnitShift;
+
+        /**
+         * The number of chunks that are shifted by compression.
+         */
+        public UCHAR ChunkShift;
+
+        /**
+         * The number of clusters that are shifted by compression.
+         */
+        public UCHAR ClusterShift;
+
+        /**
+         * Reserved
+         */
+        public UCHAR[] Reserved = new UCHAR[3];
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_COMPRESSION_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "CompressedFileSize", "CompressionFormat", "CompressionUnitShift", "ChunkShift", "ClusterShift", "Reserved" });
+        }
+
+        public FILE_COMPRESSION_INFO() {
+            super();
+        }
+
+        public FILE_COMPRESSION_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public FILE_COMPRESSION_INFO(LARGE_INTEGER CompressedFileSize,
+                WORD CompressionFormat,
+                UCHAR CompressionUnitShift,
+                UCHAR ChunkShift,
+                UCHAR ClusterShift) {
+            this.CompressedFileSize = CompressedFileSize;
+            this.CompressionFormat = CompressionFormat;
+            this.CompressionUnitShift = CompressionUnitShift;
+            this.ChunkShift = ChunkShift;
+            this.ClusterShift = ClusterShift;
+            this.Reserved = new UCHAR[3];
+            write();
+        }
+    }
+
+    /**
+     * Receives the requested file attribute information. Used for any handles. Use only when calling GetFileInformationByHandleEx.
+     */
+    public static class FILE_ATTRIBUTE_TAG_INFO extends Structure {
+
+        public static class ByReference extends FILE_ATTRIBUTE_TAG_INFO implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The file attribute information.
+         */
+        public DWORD FileAttributes;
+
+        /**
+         * The reparse tag.
+         */
+        public DWORD ReparseTag;
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_ATTRIBUTE_TAG_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "FileAttributes", "ReparseTag" });
+        }
+
+        public FILE_ATTRIBUTE_TAG_INFO() {
+            super();
+        }
+
+        public FILE_ATTRIBUTE_TAG_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public FILE_ATTRIBUTE_TAG_INFO(DWORD FileAttributes,
+                DWORD ReparseTag) {
+            this.FileAttributes = FileAttributes;
+            this.ReparseTag = ReparseTag;
+            write();
+        }
+    }
+
+    /**
+     * Contains identification information for a file. This structure is returned from the
+     * GetFileInformationByHandleEx function when FileIdInfo is passed in the
+     * FileInformationClass parameter.
+     */
+    public static class FILE_ID_INFO extends Structure {
+
+        public static class ByReference extends FILE_ID_INFO implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        public static class FILE_ID_128 extends Structure {
+            public BYTE[] Identifier = new BYTE[16];
+
+            @Override
+            protected List<String> getFieldOrder() {
+                return Arrays.asList(new String[] { "Identifier" });
+            }
+
+            public FILE_ID_128() {
+                super();
+            }
+
+            public FILE_ID_128(Pointer memory) {
+                super(memory);
+                read();
+            }
+
+            public FILE_ID_128(BYTE[] Identifier) {
+                this.Identifier = Identifier;
+                write();
+            }
+        }
+
+        /**
+         * The serial number of the volume that contains a file.
+         */
+        public ULONGLONG VolumeSerialNumber;
+
+        /**
+         * The end of the file.
+         */
+        public FILE_ID_128 FileId;
+
+        public static int sizeOf()
+        {
+            return Native.getNativeSize(FILE_ID_INFO.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "VolumeSerialNumber", "FileId" });
+        }
+
+        public FILE_ID_INFO() {
+            super();
+        }
+
+        public FILE_ID_INFO(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public FILE_ID_INFO(ULONGLONG VolumeSerialNumber,
+                FILE_ID_128 FileId,
+                DWORD NumberOfLinks,
+                boolean DeletePending,
+                boolean Directory) {
+            this.VolumeSerialNumber = VolumeSerialNumber;
+            this.FileId = FileId;
+            write();
+        }
+    }
+
+    // FINDEX_INFO_LEVELS values defines values that are used with the FindFirstFileEx function to specify the information level of the returned data.
+
+    /**
+     * The FindFirstFileEx function retrieves a standard set of attribute information. The data is returned
+     * in a WIN32_FIND_DATA structure.
+     */
+    int FindExInfoStandard = 0;
+
+    /**
+     * The FindFirstFileEx function does not query the short file name, improving overall enumeration speed. The data is
+     * returned in a WIN32_FIND_DATA structure, and the cAlternateFileName member is always a NULL string.
+     */
+    int FindExInfoBasic = 1;
+    /**
+     * This value is used for validation. Supported values are less than this value.
+     */
+    int FindExInfoMaxInfoLevel = 2;
+
+    // FINDEX_SEARCH_OPS values defines values that are used with the FindFirstFileEx function to specify the type of filtering to perform.
+    /**
+     * The search for a file that matches a specified file name. The lpSearchFilter parameter of FindFirstFileEx
+     * must be NULL when this search operation is used.
+     */
+    int FindExSearchNameMatch = 0;
+
+    /**
+     * This is an advisory flag. If the file system supports directory filtering, the function searches for a file that
+     * matches the specified name and is also a directory. If the file system does not support directory filtering,
+     * this flag is silently ignored.
+     * The lpSearchFilter parameter of the FindFirstFileEx function must be NULL when this search value is used.
+     * If directory filtering is desired, this flag can be used on all file systems, but because it is an advisory
+     * flag and only affects file systems that support it, the application must examine the file attribute data stored
+     * in the lpFindFileData parameter of the FindFirstFileEx function to determine whether the function has returned
+     * a handle to a directory.
+     */
+    int FindExSearchLimitToDirectories = 1;
+
+    /**
+     * This filtering type is not available. For more information, see Device Interface Classes.
+     */
+    int FindExSearchLimitToDevices = 2;
+
+    /**
+     * Contains information about the file that is found by the FindFirstFile, FindFirstFileEx, or FindNextFile function.
+     */
+    public static class WIN32_FIND_DATA extends Structure {
+
+        public static class ByReference extends WIN32_FIND_DATA implements Structure.ByReference {
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+        }
+
+        /**
+         * The file attributes of a file. For possible values and their descriptions,
+         * see File Attribute Constants. The FILE_ATTRIBUTE_SPARSE_FILE attribute on
+         * the file is set if any of the streams of the file have ever been sparse.
+         */
+        public DWORD dwFileAttributes;
+
+        /**
+         * A FILETIME structure that specifies when a file or directory was created. If
+         * the underlying file system does not support creation time, this member is zero.
+         */
+        public FILETIME ftCreationTime;
+
+        /**
+         * A FILETIME structure.  For a file, the structure specifies when the file was last
+         * read from, written to, or for executable files, run. For a directory, the structure
+         * specifies when the directory is created. If the underlying file system does not
+         * support last access time, this member is zero. On the FAT file system, the
+         * specified date for both files and directories is correct, but the time of day is
+         * always set to midnight.
+         */
+        public FILETIME ftLastAccessTime;
+
+        /**
+         * A FILETIME structure. For a file, the structure specifies when the file was last
+         * written to, truncated, or overwritten, for example, when WriteFile or SetEndOfFile
+         * are used. The date and time are not updated when file attributes or security descriptors
+         * are changed. For a directory, the structure specifies when the directory is created.
+         * If the underlying file system does not support last write time, this member is zero.
+         */
+        public FILETIME ftLastWriteTime;
+
+        /**
+         * The high-order DWORD value of the file size, in bytes. This value is zero unless the
+         * file size is greater than MAXDWORD.
+         * The size of the file is equal to (nFileSizeHigh * (MAXDWORD+1)) + nFileSizeLow.
+         */
+        public DWORD nFileSizeHigh;
+
+        /**
+         * The low-order DWORD value of the file size, in bytes.
+         */
+        public DWORD nFileSizeLow;
+
+        /**
+         * If the dwFileAttributes member includes the FILE_ATTRIBUTE_REPARSE_POINT attribute, this member
+         * specifies the reparse point tag. Otherwise, this value is undefined and should not be used.
+         * For more information see Reparse Point Tags.
+         *
+         * IO_REPARSE_TAG_CSV (0x80000009)
+         * IO_REPARSE_TAG_DEDUP (0x80000013)
+         * IO_REPARSE_TAG_DFS (0x8000000A)
+         * IO_REPARSE_TAG_DFSR (0x80000012)
+         * IO_REPARSE_TAG_HSM (0xC0000004)
+         * IO_REPARSE_TAG_HSM2 (0x80000006)
+         * IO_REPARSE_TAG_MOUNT_POINT (0xA0000003)
+         * IO_REPARSE_TAG_NFS (0x80000014)
+         * IO_REPARSE_TAG_SIS (0x80000007)
+         * IO_REPARSE_TAG_SYMLINK (0xA000000C)
+         * IO_REPARSE_TAG_WIM (0x80000008)
+         */
+        public DWORD dwReserved0;
+
+        /**
+         * Reserved for future use.
+         */
+        public DWORD dwReserved1;
+
+        /**
+         * The name of the file. <b>NOTE: When written from Native memory, this will be a null terminated string.
+         * Any characters after the null terminator are random memory. Use function getFileName to
+         * get a String with the name.</b>
+         */
+        public char[] cFileName = new char[MAX_PATH];
+
+        /**
+         * An alternative name for the file. This name is in the classic 8.3 file name format.
+         * <b>NOTE: When written from Native memory, this will be a null terminated string.
+         * Any characters after the null terminator are random memory. Use function getAlternateFileName to
+         * get a String with the alternate name.</b>
+         */
+        public char[] cAlternateFileName = new char[14];
+
+        public static int sizeOf() {
+            return Native.getNativeSize(WIN32_FIND_DATA.class, null);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return Arrays.asList(new String[] { "dwFileAttributes", "ftCreationTime", "ftLastAccessTime", "ftLastWriteTime", "nFileSizeHigh", "nFileSizeLow", "dwReserved0", "dwReserved1", "cFileName", "cAlternateFileName" });
+        }
+
+        public WIN32_FIND_DATA() {
+            super();
+        }
+
+        public WIN32_FIND_DATA(Pointer memory) {
+            super(memory);
+            read();
+        }
+
+        public WIN32_FIND_DATA(DWORD dwFileAttributes,
+                FILETIME ftCreationTime,
+                FILETIME ftLastAccessTime,
+                FILETIME ftLastWriteTime,
+                DWORD nFileSizeHigh,
+                DWORD nFileSizeLow,
+                DWORD dwReserved0,
+                DWORD dwReserved1,
+                char[] cFileName,
+                char[] cAlternateFileName) {
+            this.dwFileAttributes = dwFileAttributes;
+            this.ftCreationTime = ftCreationTime;
+            this.ftLastAccessTime = ftLastAccessTime;
+            this.ftLastWriteTime = ftLastWriteTime;
+            this.nFileSizeHigh = nFileSizeHigh;
+            this.nFileSizeLow = nFileSizeLow;
+            this.dwReserved0 = dwReserved0;
+            this.cFileName = cFileName;
+            this.cAlternateFileName = cAlternateFileName;
+            write();
+        }
+
+        /**
+         * @return String containing the file name
+         */
+        public String getFileName() {
+            String actualFileName = new String(cFileName);
+            return actualFileName.substring(0, actualFileName.indexOf('\0'));
+        }
+
+        /**
+         * @return String containing the alternate file name
+         */
+        public String getAlternateFileName() {
+            String actualAlternateFileName = new String(cAlternateFileName);
+            return actualAlternateFileName.substring(0, actualAlternateFileName.indexOf('\0'));
+        }
+    }
+
     /**
      * The FILETIME structure is a 64-bit value representing the number of
      * 100-nanosecond intervals since January 1, 1601 (UTC).
@@ -211,6 +850,15 @@ public interface WinBase extends WinDef, BaseTSD {
             long rawValue = dateToFileTime(date);
             dwHighDateTime = (int)(rawValue >> 32 & 0xffffffffL);
             dwLowDateTime = (int)(rawValue & 0xffffffffL);
+        }
+
+        /**
+         * Construct FILETIME from LARGE_INTEGER
+         * @param ft
+         */
+        public FILETIME(LARGE_INTEGER ft) {
+            dwHighDateTime = ft.getHigh().intValue();
+            dwLowDateTime = ft.getLow().intValue();
         }
 
         public FILETIME() {

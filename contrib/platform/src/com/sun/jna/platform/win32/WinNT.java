@@ -828,6 +828,16 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int FILE_SUPPORTS_OPEN_BY_FILE_ID = 0x01000000;
     int FILE_SUPPORTS_USN_JOURNAL = 0x02000000;
 
+    // Reparse point tags
+    int IO_REPARSE_TAG_MOUNT_POINT              = 0xA0000003;
+    int IO_REPARSE_TAG_HSM                      = 0xC0000004;
+    int IO_REPARSE_TAG_HSM2                     = 0x80000006;
+    int IO_REPARSE_TAG_SIS                      = 0x80000007;
+    int IO_REPARSE_TAG_WIM                      = 0x80000008;
+    int IO_REPARSE_TAG_CSV                      = 0x80000009;
+    int IO_REPARSE_TAG_DFS                      = 0x8000000A;
+    int IO_REPARSE_TAG_SYMLINK                  = 0xA000000C;
+    int IO_REPARSE_TAG_DFSR                     = 0x80000012;
 
     // The controllable aspects of the DefineDosDevice function.
     // see https://msdn.microsoft.com/en-us/library/windows/desktop/aa363904(v=vs.85).aspx
@@ -835,6 +845,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int DDD_REMOVE_DEFINITION = 0x00000002;
     int DDD_EXACT_MATCH_ON_REMOVE = 0x00000004;
     int DDD_NO_BROADCAST_SYSTEM = 0x00000008;
+
+    int COMPRESSION_FORMAT_NONE          = 0x0000;
+    int COMPRESSION_FORMAT_DEFAULT       = 0x0001;
+    int COMPRESSION_FORMAT_LZNT1         = 0x0002;
+    int COMPRESSION_FORMAT_XPRESS        = 0x0003;
+    int COMPRESSION_FORMAT_XPRESS_HUFF   = 0x0004;
+    int COMPRESSION_ENGINE_STANDARD      = 0x0000;
+    int COMPRESSION_ENGINE_MAXIMUM       = 0x0100;
+    int COMPRESSION_ENGINE_HIBER         = 0x0200;
 
     /**
      * The FILE_NOTIFY_INFORMATION structure describes the changes found by the

@@ -599,6 +599,19 @@ public class Advapi32UtilTest extends TestCase {
         dest.delete();
     }
 
+    /**
+     * Test Privilege class
+     */
+    public void testPrivilege() {
+        Advapi32Util.Privilege p = new Advapi32Util.Privilege(WinNT.SE_ASSIGNPRIMARYTOKEN_NAME);
+        try {
+            p.enable(); // Will throw if it fails
+        }
+        finally {
+            p.disable();
+        }
+    }
+
     private File createTempFile() throws Exception{
         String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime()
                 + ".text";

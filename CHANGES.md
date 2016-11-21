@@ -7,6 +7,10 @@ Release 4.3 (Next release)
 
 Features
 --------
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `com.sun.jna.platform.win32.WinioctlUtil` for help in determining FSCTL_* codes - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `com.sun.jna.platform.win32.Ntifs` with Reparse Point structures and defines - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added initialization of FILETIME from LARGE_INTEGER - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `GetFileInformationByHandleEx` and `SetFileInformationByHandle` to `com.sun.jna.platform.win32.Kernel32` - [@amarcionek](https://github.com/amarcionek).
 * [#526](https://github.com/java-native-access/jna/pull/526): Added initialization and conversion between Windows SYSTEMTIME and Java Calendar - [@lgoldstein](https://github.com/lgoldstein).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `com.sun.jna.platform.win32.Mpr`, `com.sun.jna.platform.win32.LmShare`, and `com.sun.jna.platform.win32.Winnetwk` - [@amarcionek](https://github.com/amarcionek).
 * [#532](https://github.com/java-native-access/jna/pull/529): Added `ACCESS_*` definitions to `com.sun.jna.platform.win32.LmAccess` - [@amarcionek](https://github.com/amarcionek).
