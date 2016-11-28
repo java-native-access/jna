@@ -50,6 +50,9 @@ public interface ComIApplication {
 	
     @ComProperty
 	ComIWindow getActiveWindow();
+    
+    @ComProperty
+    ComIOptions getOptions();
 	
 	@ComProperty
 	void setVisible(boolean value);

@@ -10,4 +10,10 @@ public interface ComITemplate {
 	
 	@ComProperty(name = "Application",dispId=0x3e8)
 	ComIApplication getApplication();
+	
+	@ComProperty
+	void setSaved(boolean bSaved);
+
+	@ComProperty
+	boolean getSaved();
 }

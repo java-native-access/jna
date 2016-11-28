@@ -12,4 +12,9 @@ public interface ComIWindow {
 	@ComProperty
 	ComIApplication getApplication();
 
+	@ComProperty
+	WdWindowState getWindowState();
+	
+	@ComProperty
+	void setWindowState(WdWindowState windowState);
 }

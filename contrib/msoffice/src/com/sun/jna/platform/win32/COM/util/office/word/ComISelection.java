@@ -25,11 +25,23 @@ package com.sun.jna.platform.win32.COM.util.office.word;
 
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 
 @ComInterface
 public interface ComISelection {
 
 	@ComMethod
 	void TypeText(String text);
+	
+	@ComProperty
+	Range getRange();
+	
+	//Moves the end of the selection one unit toward the end of the document.
+	@ComMethod
+	long MoveEnd();
+	
+	//Moves the start of the selection one unit toward the start of the document.
+	@ComMethod
+	long MoveStart();
 	
 }

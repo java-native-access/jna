@@ -36,6 +36,9 @@ public interface ComIDocuments {
 
 	@ComMethod
 	ComIDocument Add();
+	
+	@ComMethod
+	ComIDocument Add(String template);
 
 	@ComMethod
 	void Save(boolean noPrompt, WdOriginalFormat originalFormat);

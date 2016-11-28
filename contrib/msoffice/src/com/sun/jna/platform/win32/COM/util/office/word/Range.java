@@ -42,7 +42,7 @@ public interface Range {
      * <p>id(0x0)</p>
      */
     @ComProperty(name = "Text", dispId = 0x0)
-    void setText(String param0);
+    void setText(String text);
         
     /**
      * <p>id(0x5)</p>
@@ -153,5 +153,8 @@ public interface Range {
      */
     @ComProperty(name = "InlineShapes", dispId = 0x13f)
     InlineShapes getInlineShapes();
+
+    @ComProperty
+	void setRange(long start,long end);
 
 }

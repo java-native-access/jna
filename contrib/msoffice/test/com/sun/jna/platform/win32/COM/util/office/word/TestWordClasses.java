@@ -23,6 +23,7 @@ import org.junit.Test;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.COM.Helper;
+import com.sun.jna.platform.win32.COM.office.MSWord.Selection;
 import com.sun.jna.platform.win32.COM.util.Factory;
 
 /**
@@ -80,9 +81,6 @@ public class TestWordClasses{
 		//TEST STEP 1: Create documents, save as PDF, RTF, HTML, DOC. Open 3 documents
 		testWordDocuments();
 		
-		//TEST STEP 2: Test read the Count Property of the Word.Documents object. It should be 3
-		testLongProperties();
-		
 		//TEST STEP 3: Test the Normal Template property of the Word.Application
 		testNormalTemplate();
 		
@@ -95,11 +93,11 @@ public class TestWordClasses{
 		msWord.setCaption("MSWORD1");
 		msWord.setVisible(true);
 		msWord.Activate();
-		Helper.sleep(5);
+		Helper.sleep(1);
 		msWord2.Activate();
-		Helper.sleep(5);
+		Helper.sleep(1);
 		msWord.setVisible(false);
-		Helper.sleep(5);
+		Helper.sleep(1);
 		msWord2.setVisible(false);
 	}
 	
@@ -110,10 +108,25 @@ public class TestWordClasses{
 		System.out.println("There are two different word application instances running.");
 	}
 	
+	@Test
+	public void testApplicationOptions() throws Throwable {
+		
+		//TEST SHOWREADABILITYSTATISTICS
+		boolean b = msWord.getOptions().getShowReadabilityStatistics();
+		System.out.println("MSWORD1: ShowReadabilityStatistics is:"+b);
+		msWord2.getOptions().setShowReadabilityStatistics(true);
+		b=msWord2.getOptions().getShowReadabilityStatistics();
+		System.out.println("MSWORD2: ShowReadabilityStatistics is:"+b);
+		msWord2.getOptions().setShowReadabilityStatistics(false);
+		
+	}
+	
 	
 	private void testNormalTemplate() throws Exception {
 		ComITemplate normal = msWord.getNormalTemplate();
+		normal.setSaved(true);
 		System.out.println("Word Aplication Name of Normal Template:"+normal.getName());
+		System.out.println("Normal Template Saved Property (should be true):"+normal.getSaved());
 	}
 	
 	@Test
@@ -154,6 +167,9 @@ public class TestWordClasses{
 		msWord.setVisible(true);
 		ComIDocument doc1=msWord.getDocuments().Add();
 		ComIWindow window = msWord.getActiveWindow();
+		System.out.println("Window Stat is:"+window.getWindowState());
+		window.setWindowState(WdWindowState.wdWindowStateMaximize);
+		System.out.println("Window Stat is (should be Maximized(2)):"+window.getWindowState());
 		window.setFocus();
 		doc1.Close(false);
 		msWord.setVisible(false);
@@ -169,24 +185,24 @@ public class TestWordClasses{
 
 		msWord.setVisible(true);            
                
-		msWord.getDocuments().Open(demoDocument.getAbsolutePath());
+		ComIDocument doc=msWord.getDocuments().Open(demoDocument.getAbsolutePath());
                     
         Helper.sleep(1);
                     
 		msWord.getSelection().TypeText("Hello from JNA! \n\n");
 		// wait 10sec. before closing
-		Helper.sleep(10);
+		Helper.sleep(1);
 		// save in different formats
 		// pdf format is only supported in MSWord 2007 and above
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestSaveAs.doc").getAbsolutePath(), WdSaveFormat.wdFormatDocument);
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestSaveAs.pdf").getAbsolutePath(), WdSaveFormat.wdFormatPDF);
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestSaveAs.rtf").getAbsolutePath(), WdSaveFormat.wdFormatRTF);
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestSaveAs.html").getAbsolutePath(), WdSaveFormat.wdFormatHTML);
+		doc.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.doc").getAbsolutePath(), WdSaveFormat.wdFormatDocument);
+		doc.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.pdf").getAbsolutePath(), WdSaveFormat.wdFormatPDF);
+		doc.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.rtf").getAbsolutePath(), WdSaveFormat.wdFormatRTF);
+		doc.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.html").getAbsolutePath(), WdSaveFormat.wdFormatHTML);
 		// close and don't save the changes
-		msWord.getActiveDocument().Close(false);
+		doc.Close(false);
                     
                     // Create a new document
-		msWord.getDocuments().Add();
+		doc=msWord.getDocuments().Add();
 		// msWord.openDocument(currentWorkingDir + "jnatest.doc", true);
                     msWord.getSelection().TypeText(
                         "Hello from JNA! \n Please notice that JNA can control "
@@ -194,31 +210,59 @@ public class TestWordClasses{
                         + "creating a new word document and we save it "
                         + "to the 'TEMP' directory!");
                     // save with no user prompt
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
-		msWord.getActiveDocument().SaveAs(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
+        System.out.println("jnatestNewDoc1.docx Saved property is:"+msWord.getActiveDocument().getSaved());
+        doc.SaveAs(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
+		System.out.println("jnatestNewDoc1.docx Saved property is:"+msWord.getActiveDocument().getSaved());
+		doc.SaveAs(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
+		doc.SaveAs(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath(), WdSaveFormat.wdFormatDocumentDefault);
 		// close and don't save the changes
-		msWord.getActiveDocument().Close(false);
+		doc.Close(false);
                     
 		// open 3 documents
-		msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath());
+		doc=msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc1.docx").getAbsolutePath());
 		msWord.getSelection().TypeText("Hello some changes from JNA!\n");
-		msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath());
+		ComIDocument doc2=msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc2.docx").getAbsolutePath());
 		msWord.getSelection().TypeText("Hello some changes from JNA!\n");
-		msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath());
+		
+		ComIDocument doc3=msWord.getDocuments().Open(new File(Helper.tempDir, "jnatestNewDoc3.docx").getAbsolutePath());
 		msWord.getSelection().TypeText("Hello some changes from JNA!\n");
 		// save the document and prompt the user
 		msWord.getDocuments().Save(false, WdOriginalFormat.wdPromptUser);
 		
+		ComISelection selection=msWord.getSelection();
+		Range range=msWord.getSelection().getRange();
+		range.setText("THIS IS A TEXT");
+		selection.MoveEnd();
+		selection.MoveEnd();
+		selection.MoveEnd();
+		selection.MoveEnd();//Selection Should be:THIS
+		String text=msWord.getSelection().getRange().getText();
+		Assert.assertTrue(text.trim().equals("THIS"));
+		System.out.println("TEXT is: "+text);
+		Helper.sleep(1);
+		ComITemplate template=	msWord.getActiveDocument().getAttachedTemplate();
+		System.out.println("Template used for document:"+template.getName());
+
+		long l=msWord.getDocuments().Count();
+		Assert.assertTrue(l==3L);
+		System.out.println("Number of documents(should be 3):"+l);
+		
+		doc.Close(false);
+		doc2.Close(false);
+		doc3.Close(false);
+		
+		ComIDocuments documents=msWord.getDocuments();
+		
+		doc= documents.Add(template.getName());
+		doc.CheckGrammar();
+		doc.CheckSpelling();
+		ComITemplate used_template = doc.getAttachedTemplate();
+		Assert.assertTrue(template.equals(used_template));
+		System.out.println("Template used to create a new document:"+used_template.getName());
+		Helper.sleep(1);
+		doc.Close(false);
 	}
 	
     
-	
-	private void testLongProperties() throws Exception {
-		long l=msWord.getDocuments().Count();
-		Assert.assertTrue(l==3L);
-		System.out.println("Number of documents:"+l);
-		
-	}
    
 }
