@@ -105,6 +105,8 @@ public class MSOfficeWordDemo {
 			msWord.getSelection().TypeText("Hello some changes from JNA!\n");
 			// save the document and prompt the user
 			msWord.getDocuments().Save(false, WdOriginalFormat.wdPromptUser);
+			long l=msWord.getDocuments().Count();
+			System.out.println("Number of documents:"+l);
 		} finally {
                         // Make sure the word instance is shut down
 			if (msWord != null) {

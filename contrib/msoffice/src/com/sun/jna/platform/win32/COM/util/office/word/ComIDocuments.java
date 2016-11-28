@@ -24,8 +24,12 @@
 package com.sun.jna.platform.win32.COM.util.office.word;
 
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
+import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 
 public interface ComIDocuments {
+	
+	@ComProperty(name = "Count", dispId = 0x2)
+    Long Count();
 
 	@ComMethod
 	ComIDocument Open(String fileName);
