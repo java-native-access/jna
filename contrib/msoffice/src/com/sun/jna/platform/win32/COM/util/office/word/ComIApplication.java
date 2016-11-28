@@ -31,10 +31,25 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 public interface ComIApplication {
 
 	@ComProperty
+	String getCaption();
+	
+	@ComProperty
+	void setCaption(String caption);
+	
+	@ComProperty
+	String getName();
+	
+	@ComProperty
 	String getVersion();
 
 	@ComProperty
 	boolean getVisible();
+	
+	@ComProperty
+	ComIWindows getWindows();
+	
+    @ComProperty
+	ComIWindow getActiveWindow();
 	
 	@ComProperty
 	void setVisible(boolean value);
@@ -45,16 +60,25 @@ public interface ComIApplication {
 	@ComProperty
 	ComISelection getSelection();
 	
+	//The normal template is the one that is assigned as default when creating a new document.
+	//The default name is "normal.dot", and it is located in the users local directory for office templates.
+	@ComProperty
+	ComITemplate getNormalTemplate();
+	
 	@ComProperty
 	ComIDocument getActiveDocument();
 
 	@ComMethod
 	void Quit();
 	
-        /**
-         * <p>
-         * id(0x172)</p>
-         */
-        @ComMethod(name = "InchesToPoints", dispId = 0x172)
-        Float InchesToPoints(Float Inches);
+    /**
+     * <p>
+     * id(0x172)</p>
+     */
+    @ComMethod(name = "InchesToPoints", dispId = 0x172)
+    Float InchesToPoints(Float Inches);
+
+    @ComMethod(name="Activate", dispId=0x181)
+	void Activate();
+
 }

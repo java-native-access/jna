@@ -28,7 +28,7 @@ import com.sun.jna.platform.win32.COM.util.Factory;
 /**
  * @author joseluisll[at]gmail[dot]com
  * 
- * Test to test additions to the MS Word COM classes.
+ * Testcase to test additions to the MS Word COM classes. 
  */
 public class TestWordClasses{
     private static final String currentWorkingDir = new File("").getAbsolutePath() + File.separator;
@@ -37,6 +37,10 @@ public class TestWordClasses{
 	ComIApplication msWord = null;
 	Factory factory = null;
 	ComWord_Application msWordObject = null;
+
+	private ComWord_Application msWordObject2;
+
+	private ComIApplication msWord2;
 
 	@Before
 	public void setUP() throws Exception {
@@ -47,6 +51,9 @@ public class TestWordClasses{
 		msWord = msWordObject.queryInterface(ComIApplication.class);
         demoDocument = Helper.createNotExistingFile("jnatest", ".doc");
         Helper.extractClasspathFileToReal("/com/sun/jna/platform/win32/COM/util/office/resources/jnatest.doc", demoDocument);
+       
+        msWordObject2=factory.createObject(ComWord_Application.class);
+		msWord2 = msWordObject2.queryInterface(ComIApplication.class);
 
 	}
 	
@@ -55,6 +62,7 @@ public class TestWordClasses{
 		
 		if (msWord != null) {
 			msWord.Quit();
+			msWord2.Quit();
 		}
                     
         // Release all objects acquired by the factory
@@ -68,15 +76,89 @@ public class TestWordClasses{
 	}
 	
 	@Test
-	public void testMSWord() throws Throwable{
+	public void testDocumentHandling() throws Throwable{
 		//TEST STEP 1: Create documents, save as PDF, RTF, HTML, DOC. Open 3 documents
 		testWordDocuments();
 		
 		//TEST STEP 2: Test read the Count Property of the Word.Documents object. It should be 3
 		testLongProperties();
 		
+		//TEST STEP 3: Test the Normal Template property of the Word.Application
+		testNormalTemplate();
+		
+	}
+	@Test
+	public void testActivate() throws Exception {
+		msWord2.setCaption("MSWORD2");
+		Helper.sleep(5);
+		msWord2.setVisible(true);
+		msWord.setCaption("MSWORD1");
+		msWord.setVisible(true);
+		msWord.Activate();
+		Helper.sleep(5);
+		msWord2.Activate();
+		Helper.sleep(5);
+		msWord.setVisible(false);
+		Helper.sleep(5);
+		msWord2.setVisible(false);
 	}
 	
+	@Test
+	public void testDifferentApplications() throws Throwable {
+		//The two word applications must be different Processes
+		Assert.assertTrue(!msWord.equals(msWord2));
+		System.out.println("There are two different word application instances running.");
+	}
+	
+	
+	private void testNormalTemplate() throws Exception {
+		ComITemplate normal = msWord.getNormalTemplate();
+		System.out.println("Word Aplication Name of Normal Template:"+normal.getName());
+	}
+	
+	@Test
+	public void testCaptionProperty() throws Exception{
+		String caption="JNA - MSWORD - CAPTIONTEST";
+		msWord.setVisible(true);
+		msWord.setCaption(caption);
+		Helper.sleep(5);
+		Assert.assertTrue(caption.equals(msWord.getCaption()));
+		System.out.println("Tested the caption:" +caption);
+	}
+	
+	@Test
+	public void testWindows() throws Exception {
+		msWord.setVisible(true);
+		ComIDocument doc1 = msWord.getDocuments().Add();
+		ComIDocument doc2 = msWord.getDocuments().Add();
+		ComIWindows windows = msWord.getWindows();
+		long l=windows.getCount();
+		Assert.assertTrue(l==2L);
+		System.out.println("Number of opened document windows (should be 2):"+l);
+		doc1.Close(false);
+		doc2.Close(false);
+		msWord.setVisible(false);
+	}
+	
+	@Test
+	public void testNoWindows() throws Exception {
+		msWord.setVisible(true);
+		ComIWindows windows = msWord.getWindows();
+		long l=windows.getCount();
+		System.out.println("Number of opened document windows (should be 0):"+l);
+		msWord.setVisible(false);
+	}
+	
+	@Test 
+	public void testActiveWindow() throws Exception {
+		msWord.setVisible(true);
+		ComIDocument doc1=msWord.getDocuments().Add();
+		ComIWindow window = msWord.getActiveWindow();
+		window.setFocus();
+		doc1.Close(false);
+		msWord.setVisible(false);
+	}
+
 	
 	private void testWordDocuments() throws Exception {
 		
