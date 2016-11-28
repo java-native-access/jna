@@ -111,6 +111,11 @@ public class MSWord extends COMLateBindingObject {
         public Documents(IDispatch iDispatch) throws COMException {
             super(iDispatch);
         }
+        
+        
+        public long getCount() {
+        	return this.getLongProperty("Count");
+        }
     }
 
     public class ActiveDocument extends COMLateBindingObject {
