@@ -47,7 +47,9 @@ import static com.sun.jna.platform.win32.WinNT.TOKEN_QUERY;
 import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_DACL_SECURITY_INFORMATION;
 import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_SACL_SECURITY_INFORMATION;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ALLOWED_ACE;
 import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
@@ -376,6 +379,38 @@ public abstract class Advapi32Util {
 		PSID pSID = new PSID(sidBytes);
 		return Advapi32.INSTANCE.IsWellKnownSid(pSID, wellKnownSidType);
 	}
+
+    /**
+     * Align cbAcl on a DWORD
+     * @param cbAcl size to align
+     * @return the aligned size
+     */
+    public static int alignOnDWORD(int cbAcl) {
+        return (cbAcl + (DWORD.SIZE - 1)) & 0xfffffffc;
+    }
+
+	/**
+     * Helper function to calculate the size of an ACE for a given PSID size
+     * @param pSid the PSID
+     * @return size of the ACE
+     */
+    public static int getAceSize(int sidLength) {
+        return Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null)
+                + sidLength
+                - DWORD.SIZE;
+    }
+
+    /**
+     * Get the first 4 bytes of the PSID for a SidStart
+     * @param psid the PSID
+     * @return the SidStart
+     * @throws IOException
+     */
+    public static int getSidStart(PSID psid) throws IOException {
+        byte[] sidStart = psid.getBytes();
+        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(sidStart));
+        return dis.readInt();
+    }
 
 	/**
 	 * Get an account name from a string SID on the local machine.

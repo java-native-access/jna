@@ -35,12 +35,14 @@ import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
@@ -249,6 +251,20 @@ public interface Advapi32 extends StdCallLibrary {
     boolean IsValidSid(PSID pSid);
 
     /**
+     * he EqualSid function tests two security identifier (SID) values for equality.
+     * Two SIDs must match exactly to be considered equal.
+     * @param pSid1
+     *             A pointer to the first SID structure to compare. This structure is assumed to be valid.
+     * @param pSid2
+     *             A pointer to the second SID structure to compare. This structure is assumed to be valid.
+     * @return If the SID structures are equal, the return value is nonzero.
+     *         If the SID structures are not equal, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     *         If either SID structure is not valid, the return value is undefined.
+     */
+    boolean EqualSid(PSID pSid1, PSID pSid2);
+
+    /**
      * Compares a SID to a well known SID and returns TRUE if they match.
      *
      * @param pSid
@@ -282,6 +298,121 @@ public interface Advapi32 extends StdCallLibrary {
      */
     boolean CreateWellKnownSid(int wellKnownSidType, PSID domainSid,
                                PSID pSid, IntByReference cbSid);
+
+    /**
+     * The InitializeSecurityDescriptor function initializes a new security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure that the function initializes.
+     * @param dwRevision
+     *              The revision level to assign to the security descriptor. This parameter
+     *              must be SECURITY_DESCRIPTOR_REVISION.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean InitializeSecurityDescriptor(SECURITY_DESCRIPTOR pSecurityDescriptor, int dwRevision);
+
+    /**
+     * The InitializeAcl function initializes a new ACL structure.
+     * @param pAcl
+     *              A pointer to an ACL structure to be initialized by this function.
+     *              Allocate memory for pAcl before calling this function.
+     * @param nAclLength
+     *              The length, in bytes, of the buffer pointed to by the pAcl parameter. This value
+     *              must be large enough to contain the ACL header and all of the access control
+     *              entries (ACEs) to be stored in the ACL. In addition, this value must be
+     *              DWORD-aligned. For more information about calculating the size of an ACL,
+     *              see Remarks.
+     * @param dwAclRevision
+     *              The revision level of the ACL structure being created. This value can be ACL_REVISION
+     *              or ACL_REVISION_DS. Use ACL_REVISION_DS if the access control list (ACL) supports
+     *              object-specific ACEs.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean InitializeAcl(ACL pAcl, int nAclLength, int dwAclRevision);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an ACE to this ACL.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs. This value
+     *          must be compatible with the AceType field of all ACEs in pAceList. Otherwise, the function
+     *          will fail and set the last error to ERROR_INVALID_PARAMETER.
+     * @param dwStartingAceIndex
+     *          Specifies the position in the ACL's list of ACEs at which to add new ACEs. A value of zero
+     *          inserts the ACEs at the beginning of the list. A value of MAXDWORD appends the ACEs to the end
+     *          of the list.
+     * @param pAceList
+     *          A pointer to a list of one or more ACEs to be added to the specified ACL. The ACEs in the list
+     *          must be stored contiguously.
+     * @param nAceListLength
+     *          Specifies the size, in bytes, of the input buffer pointed to by the pAceList parameter.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAce(ACL pAcl, int dwAceRevision, int dwStartingAceIndex, Pointer pAceList, int nAceListLength);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an access-allowed ACE to the end of this ACL.
+     *          The ACE is in the form of an ACCESS_ALLOWED_ACE structure.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs.
+     * @param AccessMask
+     *          Specifies the mask of access rights to be granted to the specified SID.
+     * @param pSid
+     *          A pointer to the SID representing a user, group, or logon account being granted access.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAccessAllowedAce(ACL pAcl, int dwAceRevision, int AccessMask, PSID pSid);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an access-allowed ACE to the end of this ACL.
+     *          The ACE is in the form of an ACCESS_ALLOWED_ACE structure.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs.
+     * @param AceFlags
+     *          A set of bit flags that control ACE inheritance. The function sets these flags in the AceFlags
+     *          member of the ACE_HEADER structure of the new ACE. This parameter can be a combination
+     *          of the following values: CONTAINER_INHERIT_ACE, INHERIT_ONLY_ACE, INHERITED_ACE,
+     *          NO_PROPAGATE_INHERIT_ACE, and OBJECT_INHERIT_ACE
+     * @param AccessMask
+     *          Specifies the mask of access rights to be granted to the specified SID.
+     * @param pSid
+     *          A pointer to the SID representing a user, group, or logon account being granted access.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAccessAllowedAceEx(ACL pAcl, int dwAceRevision, int AceFlags, int AccessMask, PSID pSid);
+
+    /**
+     * The GetAce function obtains a pointer to an access control entry (ACE) in an access
+     * control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL that contains the ACE to be retrieved.
+     * @param dwAceIndex
+     *          The index of the ACE to be retrieved. A value of zero corresponds to the first ACE in
+     *          the ACL, a value of one to the second ACE, and so on.
+     * @param pAce
+     *          A pointer to a pointer that the function sets to the address of the ACE.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetAce(ACL pAcl, int dwAceIndex, PointerByReference pAce);
 
     /**
      * The LogonUser function attempts to log a user on to the local computer.

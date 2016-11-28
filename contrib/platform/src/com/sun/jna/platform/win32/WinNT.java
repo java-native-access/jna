@@ -50,6 +50,15 @@ import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 @SuppressWarnings("serial")
 public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
+    int MINCHAR     = 0x80;
+    int MAXCHAR     = 0x7f;
+    int MINSHORT    = 0x8000;
+    int MAXSHORT    = 0x7fff;
+    int MINLONG     = 0x80000000;
+    int MAXLONG     = 0x7fffffff;
+    int MAXBYTE     = 0xff;
+    int MAXWORD     = 0xffff;
+    int MAXDWORD    = 0xffffffff;
     //
     // The following are masks for the predefined standard access types
     //
@@ -2462,6 +2471,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_RM_CONTROL_VALID         = 0x00004000;
     int SE_SELF_RELATIVE            = 0x00008000;
 
+    int SECURITY_DESCRIPTOR_REVISION = 0x00000001;
 
     public static class SECURITY_DESCRIPTOR extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR implements
@@ -2480,6 +2490,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             useMemory(new Memory(data.length));
         }
 
+        public SECURITY_DESCRIPTOR(int size) {
+            super();
+            useMemory(new Memory(size));
+            data = new byte[size];
+        }
+
         public SECURITY_DESCRIPTOR(Pointer memory) {
             super(memory);
             read();
@@ -2490,6 +2506,18 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             return FIELDS;
         }
     }
+
+    int ACL_REVISION        = 2;
+    int ACL_REVISION_DS     = 4;
+
+    // This is the history of ACL revisions.  Add a new one whenever
+    // ACL_REVISION is updated
+    int ACL_REVISION1       = 1;
+    int ACL_REVISION2       = 2;
+    int ACL_REVISION3       = 3;
+    int ACL_REVISION4       = 4;
+    int MIN_ACL_REVISION    = ACL_REVISION2;
+    int MAX_ACL_REVISION    = ACL_REVISION4;
 
     public static class ACL extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2");
@@ -2504,6 +2532,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public ACL() {
             super();
+        }
+
+        public ACL(int size) {
+            super();
+            useMemory(new Memory(size));
         }
 
         public ACL(Pointer pointer) {
@@ -2631,6 +2664,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
         }
 
+        public ACEStructure(byte AceType, byte AceFlags, short AceSize, PSID psid) {
+            super();
+            this.AceType = AceType;
+            this.AceFlags = AceFlags;
+            this.AceSize = AceSize;
+            this.psid = psid;
+            write();
+        }
+
         public String getSidString() {
             return Advapi32Util.convertSidToStringSid(psid);
         }
@@ -2686,16 +2728,49 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super();
         }
 
+        public ACCESS_ACEStructure(int Mask, int SidStart, byte AceType, byte AceFlags, short AceSize, PSID psid) {
+            super();
+            this.allocateMemory(AceSize);
+            this.AceType = AceType;
+            this.AceFlags = AceFlags;
+            this.AceSize = AceSize;
+            this.psid = psid;
+            this.Mask = Mask;
+            this.SidStart = new DWORD(SidStart);
+            write();
+        }
+
         public ACCESS_ACEStructure(Pointer p) {
             super(p);
             read();
-            // AceSize - size of public members of the structure + size of DWORD
-            // (SidStart)
+            // Check for AceSize being zero, can happen on empty memory
+            if (AceSize != 0) {
             int sizeOfSID = super.AceSize - size() + 4;
-            // ACE_HEADER + size of int (Mask)
+                // ACE_HEADER + size of int (Mask)
+                int offsetOfSID = 4 + 4;
+                byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
+                psid = new PSID(data);
+            }
+            else {
+                psid = null;
+            }
+        }
+
+        /**
+         * Write override due to psid not being a managed field
+         */
+        @Override
+        public void write() {
+            int sizeOfSID = super.AceSize - 8;
             int offsetOfSID = 4 + 4;
-            byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
-            psid = new PSID(data);
+            super.writeField("AceType");
+            super.writeField("AceFlags");
+            super.writeField("AceSize");
+            super.writeField("Mask");
+            // Get bytes from the PSID
+            byte[] psidWrite = psid.getPointer().getByteArray(0, sizeOfSID);
+            // Write those bytes to native memory
+            super.getPointer().write(offsetOfSID, psidWrite, 0, sizeOfSID);
         }
 
         @Override
@@ -2712,6 +2787,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public ACCESS_ALLOWED_ACE(Pointer p) {
             super(p);
+        }
+
+        public ACCESS_ALLOWED_ACE(int Mask, int SidStart, byte AceFlags, short AceSize, PSID psid) {
+            super(Mask, SidStart, ACCESS_ALLOWED_ACE_TYPE, AceFlags, AceSize, psid);
         }
     }
 

@@ -55,6 +55,9 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ALLOWED_ACE;
+import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -62,6 +65,7 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR;
 import com.sun.jna.platform.win32.WinNT.SECURITY_IMPERSONATION_LEVEL;
 import com.sun.jna.platform.win32.WinNT.SID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.SID_NAME_USE;
@@ -147,6 +151,23 @@ public class Advapi32Test extends TestCase {
     	} finally {
     	    Kernel32Util.freeLocalMemory(value.getPointer());
     	}
+    }
+
+    public void testEqualSid() {
+        String sidString = EVERYONE;
+        PSIDByReference sid1 = new PSIDByReference();
+        PSIDByReference sid2 = new PSIDByReference();
+        assertTrue("SID1 conversion failed", Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid1));
+        assertTrue("SID2 conversion failed", Advapi32.INSTANCE.ConvertStringSidToSid(sidString, sid2));
+
+        try {
+            assertTrue("Converted SID1 not valid", Advapi32.INSTANCE.IsValidSid(sid1.getValue()));
+            assertTrue("Converted SID2 not valid", Advapi32.INSTANCE.IsValidSid(sid2.getValue()));
+            assertTrue("Invalid sid", Advapi32.INSTANCE.EqualSid(sid1.getValue(), sid2.getValue()));
+        } finally {
+            Kernel32Util.freeLocalMemory(sid1.getValue().getPointer());
+            Kernel32Util.freeLocalMemory(sid2.getValue().getPointer());
+        }
     }
 
     public void testGetSidLength() {
@@ -672,6 +693,131 @@ public class Advapi32Test extends TestCase {
     	} finally {
     	    Kernel32Util.freeLocalMemory(conv);
     	}
+    }
+
+    public void testInitializeSecurityDescriptor() {
+        SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
+        assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));
+    }
+
+    public void testInitializeAcl() throws IOException {
+        ACL pAcl;
+        int cbAcl = 0;
+        PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
+
+        int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
+        cbAcl = Native.getNativeSize(ACL.class, null);
+        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
+        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
+        pAcl = new ACL(cbAcl);
+        assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
+    }
+
+    public void testGetAce() throws IOException {
+        ACL pAcl;
+        int cbAcl = 0;
+        PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
+
+        int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
+        cbAcl = Native.getNativeSize(ACL.class, null);
+        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
+        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
+        pAcl = new ACL(cbAcl);
+        assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
+        assertTrue(Advapi32.INSTANCE.AddAccessAllowedAce(pAcl, WinNT.ACL_REVISION, WinNT.STANDARD_RIGHTS_ALL, pSid));
+
+        PointerByReference pAce = new PointerByReference(new Memory(16));
+        assertTrue(Advapi32.INSTANCE.GetAce(pAcl, 0, pAce));
+        ACCESS_ALLOWED_ACE pAceGet = new ACCESS_ALLOWED_ACE(pAce.getValue());
+        assertTrue(pAceGet.Mask == WinNT.STANDARD_RIGHTS_ALL);
+        assertTrue(Advapi32.INSTANCE.EqualSid(pAceGet.psid, pSid));
+    }
+
+    public void testAddAce() throws IOException {
+        ACL pAcl;
+        int cbAcl = 0;
+        PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
+
+        int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
+        cbAcl = Native.getNativeSize(ACL.class, null);
+        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
+        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
+        pAcl = new ACL(cbAcl);
+        int cbAce = Advapi32Util.getAceSize(sidLength);
+        ACCESS_ALLOWED_ACE pace = new ACCESS_ALLOWED_ACE(WinNT.STANDARD_RIGHTS_ALL,
+                Advapi32Util.getSidStart(pSid),
+                WinNT.INHERITED_ACE,
+                (short)cbAce,
+                pSid);
+
+        assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
+        assertTrue(Advapi32.INSTANCE.AddAce(pAcl, WinNT.ACL_REVISION, WinNT.MAXDWORD, pace.getPointer(), cbAce));
+
+        PointerByReference pAce = new PointerByReference(new Memory(16));
+        assertTrue(Advapi32.INSTANCE.GetAce(pAcl, 0, pAce));
+        ACCESS_ALLOWED_ACE pAceGet = new ACCESS_ALLOWED_ACE(pAce.getValue());
+        assertTrue(pAceGet.Mask == WinNT.STANDARD_RIGHTS_ALL);
+        assertTrue(Advapi32.INSTANCE.EqualSid(pAceGet.psid, pSid));
+    }
+
+    public void testAddAccessAllowedAce() throws IOException {
+        ACL pAcl;
+        int cbAcl = 0;
+        PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
+
+        int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
+        cbAcl = Native.getNativeSize(ACL.class, null);
+        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
+        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
+        pAcl = new ACL(cbAcl);
+        assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
+        assertTrue(Advapi32.INSTANCE.AddAccessAllowedAce(pAcl, WinNT.ACL_REVISION, WinNT.STANDARD_RIGHTS_ALL, pSid));
+
+        PointerByReference pAce = new PointerByReference(new Memory(16));
+        assertTrue(Advapi32.INSTANCE.GetAce(pAcl, 0, pAce));
+        ACCESS_ALLOWED_ACE pAceGet = new ACCESS_ALLOWED_ACE(pAce.getValue());
+        assertTrue(pAceGet.Mask == WinNT.STANDARD_RIGHTS_ALL);
+        assertTrue(Advapi32.INSTANCE.EqualSid(pAceGet.psid, pSid));
+    }
+
+    public void testAddAccessAllowedAceEx() throws IOException {
+        ACL pAcl;
+        int cbAcl = 0;
+        PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
+
+        int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
+        cbAcl = Native.getNativeSize(ACL.class, null);
+        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
+        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
+        pAcl = new ACL(cbAcl);
+        assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
+        assertTrue(Advapi32.INSTANCE.AddAccessAllowedAceEx(pAcl, WinNT.ACL_REVISION, WinNT.INHERIT_ONLY_ACE, WinNT.STANDARD_RIGHTS_ALL, pSid));
+
+        PointerByReference pAce = new PointerByReference(new Memory(16));
+        assertTrue(Advapi32.INSTANCE.GetAce(pAcl, 0, pAce));
+        ACCESS_ALLOWED_ACE pAceGet = new ACCESS_ALLOWED_ACE(pAce.getValue());
+        assertTrue(pAceGet.Mask == WinNT.STANDARD_RIGHTS_ALL);
+        assertTrue(Advapi32.INSTANCE.EqualSid(pAceGet.psid, pSid));
     }
 
     public void testOpenEventLog() {
