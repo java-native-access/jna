@@ -588,6 +588,19 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
                 propertyName, new VARIANT(value));
     }
+    
+    /**
+     * Sets the property.
+     * 
+     * @param propertyName
+     *            the property name
+     * @param value
+     *            the value
+     */
+    protected void setProperty(String propertyName, long value) {
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
+                propertyName, new VARIANT(value));
+    }
 
     /**
      * Sets the property.
