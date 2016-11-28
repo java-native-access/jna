@@ -1,14 +1,25 @@
-/* Copyright (c) 2016 Adam Marcionek All Rights Reserved
+/* Copyright (c) 2016 Adam Marcionek, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -19,6 +30,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from Ntifs.h
@@ -50,25 +62,25 @@ public interface Ntifs extends WinDef, BaseTSD {
          * Offset, in bytes, of the substitute name string in the PathBuffer array.
          * Note that this offset must be divided by sizeof(WCHAR) to get the array index.
          */
-        public USHORT SubstituteNameOffset = new USHORT(0);
+        public short SubstituteNameOffset = 0;
 
         /**
          * Length, in bytes, of the substitute name string. If this string is NULL-terminated,
          * SubstituteNameLength does not include space for the UNICODE_NULL character.
          */
-        public USHORT SubstituteNameLength = new USHORT(0);
+        public short SubstituteNameLength = 0;
 
         /**
          * Offset, in bytes, of the print name string in the PathBuffer array.
          * Note that this offset must be divided by sizeof(WCHAR) to get the array index.
          */
-        public USHORT PrintNameOffset = new USHORT(0);
+        public short PrintNameOffset = 0;
 
         /**
          * Length, in bytes, of the print name string. If this string is NULL-terminated,
          * PrintNameLength does not include space for the UNICODE_NULL character.
          */
-        public USHORT PrintNameLength = new USHORT(0);
+        public short PrintNameLength = 0;
 
         /**
          * Used to indicate if the given symbolic link is an absolute or relative symbolic link.
@@ -76,7 +88,7 @@ public interface Ntifs extends WinDef, BaseTSD {
          * array (at offset SubstitueNameOffset) is processed as a relative symbolic link; otherwise, 
          * it is processed as an absolute symbolic link.
          */
-        public ULONG Flags = new ULONG(0);
+        public int Flags = 0;
 
         /**
          * First character of the path string. This is followed in memory by the remainder of the string.
@@ -99,11 +111,11 @@ public interface Ntifs extends WinDef, BaseTSD {
         }
 
         public SymbolicLinkReparseBuffer() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public SymbolicLinkReparseBuffer(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -111,15 +123,15 @@ public interface Ntifs extends WinDef, BaseTSD {
             super();
             String bothNames = substituteName + printName;
             PathBuffer = bothNames.toCharArray();
-            this.SubstituteNameOffset = new USHORT(0);
-            this.SubstituteNameLength = new USHORT(substituteName.length() * 2);
-            this.PrintNameOffset = new USHORT((substituteName.length()) * 2);
-            this.PrintNameLength = new USHORT(printName.length() * 2);
-            this.Flags = new ULONG(Flags);
+            this.SubstituteNameOffset = 0;
+            this.SubstituteNameLength = (short) (substituteName.length() * 2);
+            this.PrintNameOffset = (short) (substituteName.length() * 2);
+            this.PrintNameLength = (short) (printName.length() * 2);
+            this.Flags = Flags;
             write();
         }
 
-        public SymbolicLinkReparseBuffer(USHORT SubstituteNameOffset, USHORT SubstituteNameLength, USHORT PrintNameOffset, USHORT PrintNameLength, ULONG Flags, String PathBuffer) {
+        public SymbolicLinkReparseBuffer(short SubstituteNameOffset, short SubstituteNameLength, short PrintNameOffset, short PrintNameLength, int Flags, String PathBuffer) {
             super();
             this.SubstituteNameOffset = SubstituteNameOffset;
             this.SubstituteNameLength = SubstituteNameLength;
@@ -134,14 +146,14 @@ public interface Ntifs extends WinDef, BaseTSD {
          * @return the print name in a String
          */
         public String getPrintName() {
-            return String.copyValueOf(PathBuffer, this.PrintNameOffset.intValue() / 2, this.PrintNameLength.intValue() / 2);
+            return String.copyValueOf(PathBuffer, PrintNameOffset / 2, PrintNameLength / 2);
         }
 
         /**
          * @return the substitute name in a String
          */
         public String getSubstituteName() {
-            return String.copyValueOf(PathBuffer, this.SubstituteNameOffset.intValue() / 2, this.SubstituteNameLength.intValue() / 2);
+            return String.copyValueOf(PathBuffer, SubstituteNameOffset / 2, SubstituteNameLength / 2);
         }
     }
 
@@ -160,25 +172,25 @@ public interface Ntifs extends WinDef, BaseTSD {
          * Offset, in bytes, of the substitute name string in the PathBuffer array.
          * Note that this offset must be divided by sizeof(WCHAR) to get the array index.
          */
-        public USHORT SubstituteNameOffset;
+        public short SubstituteNameOffset = 0;
 
         /**
          * Length, in bytes, of the substitute name string. If this string is NULL-terminated,
          * SubstituteNameLength does not include space for the UNICODE_NULL character.
          */
-        public USHORT SubstituteNameLength;
+        public short SubstituteNameLength = 0;
 
         /**
          * Offset, in bytes, of the print name string in the PathBuffer array.
          * Note that this offset must be divided by sizeof(WCHAR) to get the array index.
          */
-        public USHORT PrintNameOffset;
+        public short PrintNameOffset = 0;
 
         /**
          * Length, in bytes, of the print name string. If this string is NULL-terminated,
          * PrintNameLength does not include space for the UNICODE_NULL character.
          */
-        public USHORT PrintNameLength;
+        public short PrintNameLength = 0;
 
         /**
          * First character of the path string. This is followed in memory by the remainder of the string.
@@ -201,11 +213,11 @@ public interface Ntifs extends WinDef, BaseTSD {
         }
 
         public MountPointReparseBuffer() {
-            super();
+            super(W32APITypeMapper.UNICODE);
         }
 
         public MountPointReparseBuffer(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
 
@@ -213,14 +225,14 @@ public interface Ntifs extends WinDef, BaseTSD {
             super();
             String bothNames = substituteName + printName;
             PathBuffer = bothNames.toCharArray();
-            this.SubstituteNameOffset = new USHORT(0);
-            this.SubstituteNameLength = new USHORT(substituteName.length());
-            this.PrintNameOffset = new USHORT((substituteName.length()) * 2);
-            this.PrintNameLength = new USHORT(printName.length() * 2);
+            this.SubstituteNameOffset = 0;
+            this.SubstituteNameLength = (short) substituteName.length();
+            this.PrintNameOffset = (short) (substituteName.length() * 2);
+            this.PrintNameLength = (short) (printName.length() * 2);
             write();
         }
 
-        public MountPointReparseBuffer(USHORT SubstituteNameOffset, USHORT SubstituteNameLength, USHORT PrintNameOffset, USHORT PrintNameLength, String PathBuffer) {
+        public MountPointReparseBuffer(short SubstituteNameOffset, short SubstituteNameLength, short PrintNameOffset, short PrintNameLength, String PathBuffer) {
             super();
             this.SubstituteNameOffset = SubstituteNameOffset;
             this.SubstituteNameLength = SubstituteNameLength;
@@ -291,12 +303,12 @@ public interface Ntifs extends WinDef, BaseTSD {
         /**
          * Reparse point tag. Must be a Microsoft reparse point tag.
          */
-        public ULONG ReparseTag;
+        public int ReparseTag = 0;
 
         /**
          * Size, in bytes, of the reparse data in the DataBuffer member.
          */
-        public USHORT ReparseDataLength = new USHORT(0);
+        public short ReparseDataLength = 0;
 
         /**
          * Length, in bytes, of the unparsed portion of the file name pointed to by the FileName member of the associated file object.
@@ -304,7 +316,7 @@ public interface Ntifs extends WinDef, BaseTSD {
          * I/O fails with STATUS_REPARSE. For all other purposes, such as setting or querying a reparse point for the reparse data,
          * this member is treated as reserved.
          */
-        public USHORT Reserved;
+        public short Reserved = 0;
 
         public static class REPARSE_UNION extends Union {
             public static class ByReference extends REPARSE_UNION  implements Structure.ByReference {
@@ -334,7 +346,7 @@ public interface Ntifs extends WinDef, BaseTSD {
          * @return size of the structure considering the ReparseDataLength size
          */
         public int getSize() {
-            return REPARSE_BUFFER_HEADER_SIZE + this.ReparseDataLength.intValue();
+            return REPARSE_BUFFER_HEADER_SIZE + ReparseDataLength;
         }
 
         @Override
@@ -346,19 +358,19 @@ public interface Ntifs extends WinDef, BaseTSD {
             super();
         }
 
-        public REPARSE_DATA_BUFFER(int ReparseTag, int Reserved) {
+        public REPARSE_DATA_BUFFER(int ReparseTag, short Reserved) {
             super();
-            this.ReparseTag = new ULONG(ReparseTag);
-            this.Reserved = new USHORT(Reserved);
-            this.ReparseDataLength = new USHORT(0);
+            this.ReparseTag = ReparseTag;
+            this.Reserved = Reserved;
+            this.ReparseDataLength = 0;
             write();
         }
 
-        public REPARSE_DATA_BUFFER(int ReparseTag, int Reserved, SymbolicLinkReparseBuffer symLinkReparseBuffer) {
+        public REPARSE_DATA_BUFFER(int ReparseTag, short Reserved, SymbolicLinkReparseBuffer symLinkReparseBuffer) {
             super();
-            this.ReparseTag = new ULONG(ReparseTag);
-            this.Reserved = new USHORT(Reserved);
-            this.ReparseDataLength = new USHORT(symLinkReparseBuffer.size());
+            this.ReparseTag = ReparseTag;
+            this.Reserved = Reserved;
+            this.ReparseDataLength = (short) symLinkReparseBuffer.size();
             this.u.setType(SymbolicLinkReparseBuffer.class);
             this.u.symLinkReparseBuffer = symLinkReparseBuffer;
             write();
@@ -373,7 +385,7 @@ public interface Ntifs extends WinDef, BaseTSD {
         public void read() {
             super.read();
             // Set structure value based on ReparseTag and then re-read the union.
-            switch(ReparseTag.intValue()) {
+            switch(ReparseTag) {
                 default:
                     u.setType(GenericReparseBuffer.class);
                     break;

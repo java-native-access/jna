@@ -259,7 +259,7 @@ public interface WinBase extends WinDef, BaseTSD {
          * If this is set to 0 in a FILE_BASIC_INFO structure passed to SetFileInformationByHandle
          * then none of the attributes are changed.
          */
-        public DWORD FileAttributes;
+        public int FileAttributes;
 
         public static int sizeOf()
         {
@@ -289,7 +289,7 @@ public interface WinBase extends WinDef, BaseTSD {
                 FILETIME LastAccessTime,
                 FILETIME LastWriteTime,
                 FILETIME ChangeTime,
-                DWORD FileAttributes) {
+                int FileAttributes) {
             this.CreationTime = new LARGE_INTEGER(CreationTime.toTime());
             this.LastAccessTime = new LARGE_INTEGER(LastAccessTime.toTime());
             this.LastWriteTime = new LARGE_INTEGER(LastWriteTime.toTime());
@@ -302,7 +302,7 @@ public interface WinBase extends WinDef, BaseTSD {
                 LARGE_INTEGER LastAccessTime,
                 LARGE_INTEGER LastWriteTime,
                 LARGE_INTEGER ChangeTime,
-                DWORD FileAttributes) {
+                int FileAttributes) {
             this.CreationTime = CreationTime;
             this.LastAccessTime = LastAccessTime;
             this.LastWriteTime = LastWriteTime;
@@ -339,7 +339,7 @@ public interface WinBase extends WinDef, BaseTSD {
         /**
          * The number of links to the file.
          */
-        public DWORD NumberOfLinks;
+        public int NumberOfLinks;
 
         /**
          * TRUE if the file in the delete queue; otherwise, false.
@@ -372,7 +372,7 @@ public interface WinBase extends WinDef, BaseTSD {
 
         public FILE_STANDARD_INFO(LARGE_INTEGER AllocationSize,
                 LARGE_INTEGER EndOfFile,
-                DWORD NumberOfLinks,
+                int NumberOfLinks,
                 boolean DeletePending,
                 boolean Directory) {
             this.AllocationSize = AllocationSize;
@@ -451,27 +451,27 @@ public interface WinBase extends WinDef, BaseTSD {
         /**
          * The compression format that is used to compress the file.
          */
-        public WORD CompressionFormat;
+        public short CompressionFormat;
 
         /**
          * The factor that the compression uses.
          */
-        public UCHAR CompressionUnitShift;
+        public char CompressionUnitShift;
 
         /**
          * The number of chunks that are shifted by compression.
          */
-        public UCHAR ChunkShift;
+        public char ChunkShift;
 
         /**
          * The number of clusters that are shifted by compression.
          */
-        public UCHAR ClusterShift;
+        public char ClusterShift;
 
         /**
          * Reserved
          */
-        public UCHAR[] Reserved = new UCHAR[3];
+        public char[] Reserved = new char[3];
 
         public static int sizeOf()
         {
@@ -484,25 +484,25 @@ public interface WinBase extends WinDef, BaseTSD {
         }
 
         public FILE_COMPRESSION_INFO() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public FILE_COMPRESSION_INFO(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
         public FILE_COMPRESSION_INFO(LARGE_INTEGER CompressedFileSize,
-                WORD CompressionFormat,
-                UCHAR CompressionUnitShift,
-                UCHAR ChunkShift,
-                UCHAR ClusterShift) {
+                short CompressionFormat,
+                char CompressionUnitShift,
+                char ChunkShift,
+                char ClusterShift) {
             this.CompressedFileSize = CompressedFileSize;
             this.CompressionFormat = CompressionFormat;
             this.CompressionUnitShift = CompressionUnitShift;
             this.ChunkShift = ChunkShift;
             this.ClusterShift = ClusterShift;
-            this.Reserved = new UCHAR[3];
+            this.Reserved = new char[3];
             write();
         }
     }
@@ -524,12 +524,12 @@ public interface WinBase extends WinDef, BaseTSD {
         /**
          * The file attribute information.
          */
-        public DWORD FileAttributes;
+        public int FileAttributes;
 
         /**
          * The reparse tag.
          */
-        public DWORD ReparseTag;
+        public int ReparseTag;
 
         public static int sizeOf()
         {
@@ -550,8 +550,8 @@ public interface WinBase extends WinDef, BaseTSD {
             read();
         }
 
-        public FILE_ATTRIBUTE_TAG_INFO(DWORD FileAttributes,
-                DWORD ReparseTag) {
+        public FILE_ATTRIBUTE_TAG_INFO(int FileAttributes,
+                int ReparseTag) {
             this.FileAttributes = FileAttributes;
             this.ReparseTag = ReparseTag;
             write();
@@ -600,7 +600,7 @@ public interface WinBase extends WinDef, BaseTSD {
         /**
          * The serial number of the volume that contains a file.
          */
-        public ULONGLONG VolumeSerialNumber;
+        public long VolumeSerialNumber;
 
         /**
          * The end of the file.
@@ -626,11 +626,8 @@ public interface WinBase extends WinDef, BaseTSD {
             read();
         }
 
-        public FILE_ID_INFO(ULONGLONG VolumeSerialNumber,
-                FILE_ID_128 FileId,
-                DWORD NumberOfLinks,
-                boolean DeletePending,
-                boolean Directory) {
+        public FILE_ID_INFO(long VolumeSerialNumber,
+                FILE_ID_128 FileId) {
             this.VolumeSerialNumber = VolumeSerialNumber;
             this.FileId = FileId;
             write();
@@ -698,7 +695,7 @@ public interface WinBase extends WinDef, BaseTSD {
          * see File Attribute Constants. The FILE_ATTRIBUTE_SPARSE_FILE attribute on
          * the file is set if any of the streams of the file have ever been sparse.
          */
-        public DWORD dwFileAttributes;
+        public int dwFileAttributes;
 
         /**
          * A FILETIME structure that specifies when a file or directory was created. If
@@ -730,12 +727,12 @@ public interface WinBase extends WinDef, BaseTSD {
          * file size is greater than MAXDWORD.
          * The size of the file is equal to (nFileSizeHigh * (MAXDWORD+1)) + nFileSizeLow.
          */
-        public DWORD nFileSizeHigh;
+        public int nFileSizeHigh;
 
         /**
          * The low-order DWORD value of the file size, in bytes.
          */
-        public DWORD nFileSizeLow;
+        public int nFileSizeLow;
 
         /**
          * If the dwFileAttributes member includes the FILE_ATTRIBUTE_REPARSE_POINT attribute, this member
@@ -754,12 +751,12 @@ public interface WinBase extends WinDef, BaseTSD {
          * IO_REPARSE_TAG_SYMLINK (0xA000000C)
          * IO_REPARSE_TAG_WIM (0x80000008)
          */
-        public DWORD dwReserved0;
+        public int dwReserved0;
 
         /**
          * Reserved for future use.
          */
-        public DWORD dwReserved1;
+        public int dwReserved1;
 
         /**
          * The name of the file. <b>NOTE: When written from Native memory, this will be a null terminated string.
@@ -786,22 +783,22 @@ public interface WinBase extends WinDef, BaseTSD {
         }
 
         public WIN32_FIND_DATA() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public WIN32_FIND_DATA(Pointer memory) {
-            super(memory);
+            super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
 
-        public WIN32_FIND_DATA(DWORD dwFileAttributes,
+        public WIN32_FIND_DATA(int dwFileAttributes,
                 FILETIME ftCreationTime,
                 FILETIME ftLastAccessTime,
                 FILETIME ftLastWriteTime,
-                DWORD nFileSizeHigh,
-                DWORD nFileSizeLow,
-                DWORD dwReserved0,
-                DWORD dwReserved1,
+                int nFileSizeHigh,
+                int nFileSizeLow,
+                int dwReserved0,
+                int dwReserved1,
                 char[] cFileName,
                 char[] cAlternateFileName) {
             this.dwFileAttributes = dwFileAttributes;

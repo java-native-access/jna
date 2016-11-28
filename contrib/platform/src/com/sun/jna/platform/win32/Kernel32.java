@@ -26,7 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.LastErrorException;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -2708,7 +2707,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * 				To get extended error information, call the GetLastError function.
      * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
      */
-    HANDLE FindFirstFile(LPWSTR lpFileName, Pointer lpFindFileData);
+    HANDLE FindFirstFile(String lpFileName, Pointer lpFindFileData);
 
     /**
      * Searches a directory for a file or subdirectory with a name and attributes that match those specified. For the most basic
@@ -2751,7 +2750,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * 				To get extended error information, call the GetLastError function.
      * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
      */
-    HANDLE FindFirstFileEx(LPWSTR lpFileName, int fInfoLevelId, Pointer lpFindFileData, int fSearchOp, Pointer lpSearchFilter, DWORD dwAdditionalFlags);
+    HANDLE FindFirstFileEx(String lpFileName, int fInfoLevelId, Pointer lpFindFileData, int fSearchOp, Pointer lpSearchFilter, DWORD dwAdditionalFlags);
 
     /**
      * Continues a file search from a previous call to the FindFirstFile, FindFirstFileEx, or FindFirstFileTransacted functions.

@@ -42,7 +42,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.Ntifs.REPARSE_DATA_BUFFER;
 import com.sun.jna.platform.win32.Ntifs.SymbolicLinkReparseBuffer;
-import com.sun.jna.platform.win32.WTypes.LPWSTR;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinBase.FILE_ATTRIBUTE_TAG_INFO;
 import com.sun.jna.platform.win32.WinBase.FILE_BASIC_INFO;
@@ -57,9 +56,7 @@ import com.sun.jna.platform.win32.WinBase.WIN32_FIND_DATA;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
-import com.sun.jna.platform.win32.WinDef.ULONGLONG;
 import com.sun.jna.platform.win32.WinDef.USHORT;
-import com.sun.jna.platform.win32.WinDef.WORD;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
@@ -666,7 +663,7 @@ public class Kernel32Test extends TestCase {
                     folder.getFileName().toString(),
                     Ntifs.SYMLINK_FLAG_RELATIVE);
 
-            REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, 0, symLinkReparseBuffer);
+            REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, (short) 0, symLinkReparseBuffer);
 
             assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
                     new FSCTL_SET_REPARSE_POINT().getControlCode(),
@@ -690,7 +687,7 @@ public class Kernel32Test extends TestCase {
             // Is a reparse point
             lpBuffer = new REPARSE_DATA_BUFFER(p);
             assertTrue(lpBytes.getValue() > 0);
-            assertTrue(lpBuffer.ReparseTag.intValue() == WinNT.IO_REPARSE_TAG_SYMLINK);
+            assertTrue(lpBuffer.ReparseTag == WinNT.IO_REPARSE_TAG_SYMLINK);
             assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getPrintName());
             assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getSubstituteName());
         } finally {
@@ -756,7 +753,7 @@ public class Kernel32Test extends TestCase {
         File tmpFile = new File(Files.createTempFile(tmpDir, "testFindFirstFile", ".jna").toString());
 
         Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
-        HANDLE hFile = Kernel32.INSTANCE.FindFirstFile(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\*"), p);
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFile(tmpDir.toAbsolutePath().toString() + "\\*", p);
         assertFalse(WinBase.INVALID_HANDLE_VALUE.equals(hFile));
 
         try {
@@ -794,7 +791,7 @@ public class Kernel32Test extends TestCase {
         File tmpFile = new File(Files.createTempFile(tmpDir, "testFindFirstFileExFindExInfoStandard", ".jna").toString());
 
         Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
-        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\*"),
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(tmpDir.toAbsolutePath().toString() + "\\*",
                 WinBase.FindExInfoStandard,
                 p,
                 WinBase.FindExSearchNameMatch,
@@ -838,7 +835,7 @@ public class Kernel32Test extends TestCase {
 
         Memory p = new Memory(WIN32_FIND_DATA.sizeOf());
         // Add the file name to the search to get just that one entry
-        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(new LPWSTR(tmpDir.toAbsolutePath().toString() + "\\" + tmpFile.getName()),
+        HANDLE hFile = Kernel32.INSTANCE.FindFirstFileEx(tmpDir.toAbsolutePath().toString() + "\\" + tmpFile.getName(),
                 WinBase.FindExInfoBasic,
                 p,
                 WinBase.FindExSearchNameMatch,
@@ -892,7 +889,7 @@ public class Kernel32Test extends TestCase {
             }
             FILE_STANDARD_INFO fsi = new FILE_STANDARD_INFO(p);
             // New file has 1 link
-            assertEquals(new DWORD(1), fsi.NumberOfLinks);
+            assertEquals(1, fsi.NumberOfLinks);
 
             p = new Memory(FILE_COMPRESSION_INFO.sizeOf());
             if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileCompressionInfo, p, new DWORD(p.size()))) {
@@ -900,7 +897,7 @@ public class Kernel32Test extends TestCase {
             }
             FILE_COMPRESSION_INFO fci = new FILE_COMPRESSION_INFO(p);
             // Uncompressed file should be zero
-            assertEquals(new WORD(0), fci.CompressionFormat);
+            assertEquals(0, fci.CompressionFormat);
 
             p = new Memory(FILE_ATTRIBUTE_TAG_INFO.sizeOf());
             if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileAttributeTagInfo, p, new DWORD(p.size()))) {
@@ -908,7 +905,7 @@ public class Kernel32Test extends TestCase {
             }
             FILE_ATTRIBUTE_TAG_INFO fati = new FILE_ATTRIBUTE_TAG_INFO(p);
             // New files have the archive bit
-            assertEquals(new DWORD(WinNT.FILE_ATTRIBUTE_ARCHIVE), fati.FileAttributes);
+            assertEquals(WinNT.FILE_ATTRIBUTE_ARCHIVE, fati.FileAttributes);
 
             p = new Memory(FILE_ID_INFO.sizeOf());
             if (false == Kernel32.INSTANCE.GetFileInformationByHandleEx(hFile, WinBase.FileIdInfo, p, new DWORD(p.size()))) {
@@ -916,7 +913,7 @@ public class Kernel32Test extends TestCase {
             }
             FILE_ID_INFO fii = new FILE_ID_INFO(p);
             // Volume serial number should be non-zero
-            assertFalse(fii.VolumeSerialNumber == new ULONGLONG(0));
+            assertFalse(fii.VolumeSerialNumber == 0);
         } finally {
             Kernel32.INSTANCE.CloseHandle(hFile);
         }
@@ -943,7 +940,7 @@ public class Kernel32Test extends TestCase {
 
             FILE_BASIC_INFO fbi = new FILE_BASIC_INFO(p);
             // Add TEMP attribute
-            fbi.FileAttributes = new DWORD(fbi.FileAttributes.intValue() | WinNT.FILE_ATTRIBUTE_TEMPORARY);
+            fbi.FileAttributes = fbi.FileAttributes | WinNT.FILE_ATTRIBUTE_TEMPORARY;
             fbi.ChangeTime = new WinNT.LARGE_INTEGER(0);
             fbi.CreationTime = new WinNT.LARGE_INTEGER(0);
             fbi.LastAccessTime = new WinNT.LARGE_INTEGER(0);
@@ -957,7 +954,7 @@ public class Kernel32Test extends TestCase {
                 fail("GetFileInformationByHandleEx failed with " + Kernel32.INSTANCE.GetLastError());
 
             fbi = new FILE_BASIC_INFO(p);
-            assertTrue((fbi.FileAttributes.intValue() & WinNT.FILE_ATTRIBUTE_TEMPORARY) != 0);
+            assertTrue((fbi.FileAttributes & WinNT.FILE_ATTRIBUTE_TEMPORARY) != 0);
         }
         finally {
             Kernel32.INSTANCE.CloseHandle(hFile);
