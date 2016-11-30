@@ -391,7 +391,7 @@ public abstract class Advapi32Util {
 
 	/**
      * Helper function to calculate the size of an ACE for a given PSID size
-     * @param pSid the PSID
+     * @param sidLength length of the sid
      * @return size of the ACE
      */
     public static int getAceSize(int sidLength) {

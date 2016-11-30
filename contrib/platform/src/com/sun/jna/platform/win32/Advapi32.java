@@ -358,7 +358,7 @@ public interface Advapi32 extends StdCallLibrary {
      *              is TRUE, the function sets the SE_DACL_PRESENT flag in the SECURITY_DESCRIPTOR_CONTROL
      *              structure and uses the values in the pDacl and bDaclDefaulted parameters. If this parameter
      *              is FALSE, the function clears the SE_DACL_PRESENT flag, and pDacl and bDaclDefaulted are ignored.
-     * @param pAcl
+     * @param pDacl
      *              A pointer to an ACL structure that specifies the DACL for the security descriptor. If this
      *              parameter is NULL, a NULL DACL is assigned to the security descriptor, which allows all access
      *              to the object. The DACL is referenced by, not copied into, the security descriptor.
@@ -397,7 +397,9 @@ public interface Advapi32 extends StdCallLibrary {
      *              A pointer to a flag set to the value of the SE_DACL_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure
      *              if a DACL exists for the security descriptor. If this flag is TRUE, the DACL was retrieved by a default mechanism;
      *              if FALSE, the DACL was explicitly specified by a user.
-     * @return
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
      */
     boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PointerByReference pDacl, BOOLByReference bDaclDefaulted);
 
