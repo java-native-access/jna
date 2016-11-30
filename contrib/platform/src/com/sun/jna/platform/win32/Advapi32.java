@@ -43,6 +43,7 @@ import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
 import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
@@ -311,6 +312,94 @@ public interface Advapi32 extends StdCallLibrary {
      *         information, call GetLastError.
      */
     boolean InitializeSecurityDescriptor(SECURITY_DESCRIPTOR pSecurityDescriptor, int dwRevision);
+
+    /**
+     * The GetSecurityDescriptorControl function retrieves a security descriptor control and revision information.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure whose control and revision
+     *              information the function retrieves.
+     * @param pControl
+     *              A pointer to a SECURITY_DESCRIPTOR_CONTROL structure that receives the security descriptor's
+     *              control information.
+     * @param lpdwRevision
+     *              A pointer to a variable that receives the security descriptor's revision value.
+     *              This value is always set, even when GetSecurityDescriptorControl returns an error.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, IntByReference pControl, IntByReference lpdwRevision);
+
+    /**
+     * The SetSecurityDescriptorControl function sets the control bits of a security descriptor. The function can set only the control
+     * bits that relate to automatic inheritance of ACEs. To set the other control bits of a security descriptor, use the functions,
+     * such as SetSecurityDescriptorDacl, for modifying the components of a security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure whose control and revision information are set.
+     * @param ControlBitsOfInterest
+     *              A SECURITY_DESCRIPTOR_CONTROL mask that indicates the control bits to set.
+     * @param ControlBitsToSet
+     *               SECURITY_DESCRIPTOR_CONTROL mask that indicates the new values for the control bits specified by the ControlBitsOfInterest mask.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, int ControlBitsOfInterest, int ControlBitsToSet);
+
+    /**
+     * The SetSecurityDescriptorDacl function sets information in a discretionary access control list (DACL).
+     * If a DACL is already present in the security descriptor, the DACL is replaced.
+     * @param pSecurityDescriptor
+     *              A pointer to the SECURITY_DESCRIPTOR structure to which the function adds the DACL. This
+     *              security descriptor must be in absolute format, meaning that its members must be pointers
+     *              to other structures, rather than offsets to contiguous data.
+     * @param bDaclPresent
+     *              A flag that indicates the presence of a DACL in the security descriptor. If this parameter
+     *              is TRUE, the function sets the SE_DACL_PRESENT flag in the SECURITY_DESCRIPTOR_CONTROL
+     *              structure and uses the values in the pDacl and bDaclDefaulted parameters. If this parameter
+     *              is FALSE, the function clears the SE_DACL_PRESENT flag, and pDacl and bDaclDefaulted are ignored.
+     * @param pAcl
+     *              A pointer to an ACL structure that specifies the DACL for the security descriptor. If this
+     *              parameter is NULL, a NULL DACL is assigned to the security descriptor, which allows all access
+     *              to the object. The DACL is referenced by, not copied into, the security descriptor.
+     * @param bDaclDefaulted
+     *              A flag that indicates the source of the DACL. If this flag is TRUE, the DACL has been retrieved
+     *              by some default mechanism. If FALSE, the DACL has been explicitly specified by a user. The function
+     *              stores this value in the SE_DACL_DEFAULTED flag of the SECURITY_DESCRIPTOR_CONTROL structure. If
+     *              this parameter is not specified, the SE_DACL_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, boolean bDaclPresent, ACL pDacl, boolean bDaclDefaulted);
+
+    /**
+     * The GetSecurityDescriptorDacl function retrieves a pointer to the discretionary access control list (DACL) in
+     * a specified security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to the SECURITY_DESCRIPTOR structure that contains the DACL. The function retrieves a pointer to it.
+     * @param bDaclPresent
+     *              A pointer to a value that indicates the presence of a DACL in the specified security descriptor. If
+     *              lpbDaclPresent is TRUE, the security descriptor contains a DACL, and the remaining output parameters in this
+     *              function receive valid values. If lpbDaclPresent is FALSE, the security descriptor does not contain a DACL,
+     *              and the remaining output parameters do not receive valid values. A value of TRUE for lpbDaclPresent does not
+     *              mean that pDacl is not NULL. That is, lpbDaclPresent can be TRUE while pDacl is NULL, meaning that a NULL
+     *              DACL is in effect. A NULL DACL implicitly allows all access to an object and is not the same as an empty DACL.
+     *              An empty DACL permits no access to an object. For information about creating a proper DACL, see Creating a DACL.
+     * @param pDacl
+     *              A pointer to a pointer to an access control list (ACL). If a DACL exists, the function sets the pointer pointed
+     *              to by pDacl to the address of the security descriptor's DACL. If a DACL does not exist, no value is stored.
+     *              If the function stores a NULL value in the pointer pointed to by pDacl, the security descriptor has a NULL DACL.
+     *              A NULL DACL implicitly allows all access to an object.
+     *              If an application expects a non-NULL DACL but encounters a NULL DACL, the application should fail securely and
+     *              not allow access.
+     * @param bDaclDefaulted
+     *              A pointer to a flag set to the value of the SE_DACL_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure
+     *              if a DACL exists for the security descriptor. If this flag is TRUE, the DACL was retrieved by a default mechanism;
+     *              if FALSE, the DACL was explicitly specified by a user.
+     * @return
+     */
+    boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PointerByReference pDacl, BOOLByReference bDaclDefaulted);
 
     /**
      * The InitializeAcl function initializes a new ACL structure.
@@ -2071,6 +2160,85 @@ public interface Advapi32 extends StdCallLibrary {
      * @return If the components of the security descriptor are valid, the return value is nonzero.
      */
     boolean IsValidSecurityDescriptor(Pointer ppSecurityDescriptor);
+
+    /**
+     * A pointer to a SECURITY_DESCRIPTOR structure in absolute format. The function creates a version of this security
+     * descriptor in self-relative format without modifying the original.
+     * @param pAbsoluteSD
+     *          A pointer to a SECURITY_DESCRIPTOR structure in absolute format. The function creates a version of this
+     *          security descriptor in self-relative format without modifying the original.
+     * @param pSelfRelativeSD
+     *          A pointer to a buffer the function fills with a security descriptor in self-relative format.
+     * @param lpdwBufferLength
+     *          A pointer to a variable specifying the size of the buffer pointed to by the pSelfRelativeSD parameter.
+     *          If the buffer is not large enough for the security descriptor, the function fails and sets this variable
+     *          to the minimum required size.
+     * @return If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get
+     *         extended error information, call GetLastError. Possible return codes include, but are not limited to, the following:
+     *         ERROR_INSUFFICIENT_BUFFER - One or more of the buffers is too small.
+     */
+    boolean MakeSelfRelativeSD(SECURITY_DESCRIPTOR pAbsoluteSD,
+                               SECURITY_DESCRIPTOR_RELATIVE pSelfRelativeSD,
+                               IntByReference lpdwBufferLength);
+
+    /**
+     * The MakeAbsoluteSD function creates a security descriptor in absolute format by using a
+     * security descriptor in self-relative format as a template.
+     * @param pSelfRelativeSD
+     *              A pointer to a SECURITY_DESCRIPTOR structure in self-relative format. The function creates an
+     *              absolute-format version of this security descriptor without modifying the original security descriptor.
+     * @param pAbsoluteSD
+     *              A pointer to a buffer that the function fills with the main body of an absolute-format security
+     *              descriptor. This information is formatted as a SECURITY_DESCRIPTOR structure.
+     * @param lpdwAbsoluteSDSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pAbsoluteSD parameter.
+     *              If the buffer is not large enough for the security descriptor, the function fails and sets this variable
+     *              to the minimum required size.
+     * @param pDacl
+     *              A pointer to a buffer the function fills with the discretionary access control list (DACL) of the
+     *              absolute-format security descriptor. The main body of the absolute-format security descriptor references
+     *              this pointer.
+     * @param lpdwDaclSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pDacl parameter. If
+     *              the buffer is not large enough for the access control list (ACL), the function fails and sets this
+     *              variable to the minimum required size.
+     * @param pSacl
+     *              A pointer to a buffer the function fills with the system access control list (SACL) of the absolute-format
+     *              security descriptor. The main body of the absolute-format security descriptor references this pointer.
+     * @param lpdwSaclSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pSacl parameter. If the
+     *              buffer is not large enough for the ACL, the function fails and sets this variable to the minimum required
+     *              size.
+     * @param pOwner
+     *              A pointer to a buffer the function fills with the security identifier (SID) of the owner of the
+     *              absolute-format security descriptor. The main body of the absolute-format security descriptor references
+     *              this pointer.
+     * @param lpdwOwnerSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pOwner parameter.
+     *              If the buffer is not large enough for the SID, the function fails and sets this variable to the minimum
+     *              required size.
+     * @param pPrimaryGroup
+     *              A pointer to a buffer the function fills with the SID of the absolute-format security descriptor's
+     *              primary group. The main body of the absolute-format security descriptor references this pointer.
+     * @param lpdwPrimaryGroupSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pPrimaryGroup parameter.
+     *              If the buffer is not large enough for the SID, the function fails and sets this variable to the minimum
+     *              required size.
+     * @return If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get
+     *         extended error information, call GetLastError. Possible return codes include, but are not limited to, the following:
+     *         ERROR_INSUFFICIENT_BUFFER - One or more of the buffers is too small.
+     */
+    boolean MakeAbsoluteSD(SECURITY_DESCRIPTOR_RELATIVE pSelfRelativeSD,
+                           SECURITY_DESCRIPTOR pAbsoluteSD,
+                           IntByReference lpdwAbsoluteSDSize,
+                           ACL pDacl,
+                           IntByReference lpdwDaclSize,
+                           ACL pSacl,
+                           IntByReference lpdwSaclSize,
+                           PSID pOwner,
+                           IntByReference lpdwOwnerSize,
+                           PSID pPrimaryGroup,
+                           IntByReference lpdwPrimaryGroupSize);
 
     /**
      * The IsValidAcl function validates an access control list (ACL).

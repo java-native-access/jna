@@ -2486,6 +2486,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public SECURITY_DESCRIPTOR(byte[] data) {
+            super();
             this.data = data;
             useMemory(new Memory(data.length));
         }
@@ -2521,6 +2522,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     public static class ACL extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2");
+
+        /*
+         * Maximum size chosen based on technet article:
+         * https://technet.microsoft.com/en-us/library/cc781716.aspx
+         */
+        public static int MAX_ACL_SIZE = 64 * 1024;
 
         public byte AclRevision;
         public byte Sbz1;
@@ -2589,10 +2596,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public int Sacl;
         public int Dacl;
 
-        private ACL DACL;
         private PSID OWNER;
         private PSID GROUP;
         private ACL SACL;
+        private ACL DACL;
 
         public SECURITY_DESCRIPTOR_RELATIVE() {
             super();
@@ -2602,6 +2609,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(new Memory(data.length));
             getPointer().write(0, data, 0, data.length);
             setMembers();
+        }
+
+        public SECURITY_DESCRIPTOR_RELATIVE(int length) {
+            super(new Memory(length));
         }
 
         public SECURITY_DESCRIPTOR_RELATIVE(Pointer p) {
