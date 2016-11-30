@@ -712,6 +712,44 @@ public class Advapi32Test extends TestCase {
         assertTrue(lpdwRevision.getValue() == WinNT.SECURITY_DESCRIPTOR_REVISION);
     }
 
+    public void testSetGetSecurityDescriptorOwner() {
+        SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
+        assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));
+
+        PSID pSidPut = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSidPut, cbSid));
+
+        assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorOwner(sd, pSidPut, true));
+
+        BOOLByReference lpbOwnerDefaulted = new BOOLByReference();
+        PointerByReference prSd = new PointerByReference(new Memory(WinNT.SECURITY_MAX_SID_SIZE));
+        assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorOwner(sd, prSd, lpbOwnerDefaulted));
+
+        PSID pSidGet = new PSID(prSd.getValue());
+        assertTrue(Advapi32.INSTANCE.EqualSid(pSidPut, pSidGet));
+    }
+
+    public void testSetGetSecurityDescriptorGroup() {
+        SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
+        assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));
+
+        PSID pSidPut = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+        IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+        assertTrue("Failed to create well-known SID",
+                Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSidPut, cbSid));
+
+        assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorGroup(sd, pSidPut, true));
+
+        BOOLByReference lpbOwnerDefaulted = new BOOLByReference();
+        PointerByReference prSd = new PointerByReference(new Memory(WinNT.SECURITY_MAX_SID_SIZE));
+        assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorGroup(sd, prSd, lpbOwnerDefaulted));
+
+        PSID pSidGet = new PSID(prSd.getValue());
+        assertTrue(Advapi32.INSTANCE.EqualSid(pSidPut, pSidGet));
+    }
+
     public void testSetGetSecurityDescriptorDacl() throws IOException {
         SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
         assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));

@@ -347,31 +347,85 @@ public interface Advapi32 extends StdCallLibrary {
     boolean SetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, int ControlBitsOfInterest, int ControlBitsToSet);
 
     /**
-     * The SetSecurityDescriptorDacl function sets information in a discretionary access control list (DACL).
-     * If a DACL is already present in the security descriptor, the DACL is replaced.
+     * The GetSecurityDescriptorOwner function retrieves the owner information from a security descriptor.
      * @param pSecurityDescriptor
-     *              A pointer to the SECURITY_DESCRIPTOR structure to which the function adds the DACL. This
-     *              security descriptor must be in absolute format, meaning that its members must be pointers
-     *              to other structures, rather than offsets to contiguous data.
-     * @param bDaclPresent
-     *              A flag that indicates the presence of a DACL in the security descriptor. If this parameter
-     *              is TRUE, the function sets the SE_DACL_PRESENT flag in the SECURITY_DESCRIPTOR_CONTROL
-     *              structure and uses the values in the pDacl and bDaclDefaulted parameters. If this parameter
-     *              is FALSE, the function clears the SE_DACL_PRESENT flag, and pDacl and bDaclDefaulted are ignored.
-     * @param pDacl
-     *              A pointer to an ACL structure that specifies the DACL for the security descriptor. If this
-     *              parameter is NULL, a NULL DACL is assigned to the security descriptor, which allows all access
-     *              to the object. The DACL is referenced by, not copied into, the security descriptor.
-     * @param bDaclDefaulted
-     *              A flag that indicates the source of the DACL. If this flag is TRUE, the DACL has been retrieved
-     *              by some default mechanism. If FALSE, the DACL has been explicitly specified by a user. The function
-     *              stores this value in the SE_DACL_DEFAULTED flag of the SECURITY_DESCRIPTOR_CONTROL structure. If
-     *              this parameter is not specified, the SE_DACL_DEFAULTED flag is cleared.
+     *          A pointer to a SECURITY_DESCRIPTOR structure whose owner information the function retrieves.
+     * @param pOwner
+     *          A pointer to a pointer to a security identifier (SID) that identifies the owner when the function returns.
+     *          If the security descriptor does not contain an owner, the function sets the pointer pointed to by pOwner
+     *          to NULL and ignores the remaining output parameter, lpbOwnerDefaulted. If the security descriptor contains an owner,
+     *          the function sets the pointer pointed to by pOwner to the address of the security descriptor's owner SID
+     *          and provides a valid value for the variable pointed to by lpbOwnerDefaulted.
+     * @param lpbOwnerDefaulted
+     *          A pointer to a flag that is set to the value of the SE_OWNER_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL
+     *          structure when the function returns. If the value stored in the variable pointed to by the pOwner parameter is
+     *          NULL, no value is set.
      * @return If the function succeeds, the return value is nonzero. If the
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean SetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, boolean bDaclPresent, ACL pDacl, boolean bDaclDefaulted);
+    boolean GetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PointerByReference pOwner, BOOLByReference lpbOwnerDefaulted);
+
+    /**
+     * The SetSecurityDescriptorOwner function sets the owner information of an absolute-format security descriptor. It replaces
+     * any owner information already present in the security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to the SECURITY_DESCRIPTOR structure whose owner is set by this function. The function replaces any existing
+     *          owner with the new owner.
+     * @param pOwner
+     *          A pointer to a SID structure for the security descriptor's new primary owner. The SID structure is referenced by, not
+     *          copied into, the security descriptor. If this parameter is NULL, the function clears the security descriptor's owner
+     *          information. This marks the security descriptor as having no owner.
+     * @param bOwnerDefaulted
+     *          Indicates whether the owner information is derived from a default mechanism. If this value is TRUE, it is default information.
+     *          The function stores this value as the SE_OWNER_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure. If this parameter
+     *          is zero, the SE_OWNER_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PSID pOwner, boolean bOwnerDefaulted);
+
+    /**
+     * The GetSecurityDescriptorGroup function retrieves the primary group information from a security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to a SECURITY_DESCRIPTOR structure whose primary group information the function retrieves.
+     * @param pGroup
+     *          A pointer to a pointer to a security identifier (SID) that identifies the primary group when the function
+     *          returns. If the security descriptor does not contain a primary group, the function sets the pointer
+     *          pointed to by pGroup to NULL and ignores the remaining output parameter, lpbGroupDefaulted. If the
+     *          security descriptor contains a primary group, the function sets the pointer pointed to by pGroup to the
+     *          address of the security descriptor's group SID and provides a valid value for the variable pointed to
+     *          by lpbGroupDefaulted.
+     * @param lpbGroupDefaulted
+     *          A pointer to a flag that is set to the value of the SE_GROUP_DEFAULTED flag in the
+     *          SECURITY_DESCRIPTOR_CONTROL structure when the function returns. If the value stored in the variable
+     *          pointed to by the pGroup parameter is NULL, no value is set.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PointerByReference pGroup, BOOLByReference lpbGroupDefaulted);
+
+    /**
+     * The SetSecurityDescriptorGroup function sets the primary group information of an absolute-format security descriptor, replacing
+     * any primary group information already present in the security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to the SECURITY_DESCRIPTOR structure whose primary group is set by this function. The function replaces
+     *          any existing primary group with the new primary group.
+     * @param pGroup
+     *          A pointer to a SID structure for the security descriptor's new primary group. The SID structure is referenced by, not copied
+     *          into, the security descriptor. If this parameter is NULL, the function clears the security descriptor's primary group
+     *          information. This marks the security descriptor as having no primary group.
+     * @param bGroupDefaulted
+     *          Indicates whether the primary group information was derived from a default mechanism. If this value is TRUE, it is default
+     *          information, and the function stores this value as the SE_GROUP_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure.
+     *          If this parameter is zero, the SE_GROUP_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PSID pGroup, boolean bGroupDefaulted);
 
     /**
      * The GetSecurityDescriptorDacl function retrieves a pointer to the discretionary access control list (DACL) in
@@ -402,6 +456,33 @@ public interface Advapi32 extends StdCallLibrary {
      *         information, call GetLastError.
      */
     boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PointerByReference pDacl, BOOLByReference bDaclDefaulted);
+
+    /**
+     * The SetSecurityDescriptorDacl function sets information in a discretionary access control list (DACL).
+     * If a DACL is already present in the security descriptor, the DACL is replaced.
+     * @param pSecurityDescriptor
+     *              A pointer to the SECURITY_DESCRIPTOR structure to which the function adds the DACL. This
+     *              security descriptor must be in absolute format, meaning that its members must be pointers
+     *              to other structures, rather than offsets to contiguous data.
+     * @param bDaclPresent
+     *              A flag that indicates the presence of a DACL in the security descriptor. If this parameter
+     *              is TRUE, the function sets the SE_DACL_PRESENT flag in the SECURITY_DESCRIPTOR_CONTROL
+     *              structure and uses the values in the pDacl and bDaclDefaulted parameters. If this parameter
+     *              is FALSE, the function clears the SE_DACL_PRESENT flag, and pDacl and bDaclDefaulted are ignored.
+     * @param pDacl
+     *              A pointer to an ACL structure that specifies the DACL for the security descriptor. If this
+     *              parameter is NULL, a NULL DACL is assigned to the security descriptor, which allows all access
+     *              to the object. The DACL is referenced by, not copied into, the security descriptor.
+     * @param bDaclDefaulted
+     *              A flag that indicates the source of the DACL. If this flag is TRUE, the DACL has been retrieved
+     *              by some default mechanism. If FALSE, the DACL has been explicitly specified by a user. The function
+     *              stores this value in the SE_DACL_DEFAULTED flag of the SECURITY_DESCRIPTOR_CONTROL structure. If
+     *              this parameter is not specified, the SE_DACL_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, boolean bDaclPresent, ACL pDacl, boolean bDaclDefaulted);
 
     /**
      * The InitializeAcl function initializes a new ACL structure.
