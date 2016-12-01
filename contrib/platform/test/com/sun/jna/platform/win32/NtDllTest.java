@@ -105,6 +105,12 @@ public class NtDllTest extends TestCase {
         }
     }
 
+    public void testRtlNtStatusToDosError() {
+        int status = NTStatus.STATUS_INVALID_OWNER;
+        int error = NtDll.INSTANCE.RtlNtStatusToDosError(status);
+        assertEquals(W32Errors.ERROR_INVALID_OWNER, error);
+    }
+
     private File createTempFile() throws Exception {
         String filePath = System.getProperty("java.io.tmpdir") + System.nanoTime()
                 + ".text";

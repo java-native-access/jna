@@ -115,4 +115,13 @@ public interface NtDll extends StdCallLibrary {
      *  NtQuerySecurityObject returns STATUS_SUCCESS or an appropriate error status.
      */
     public int NtQuerySecurityObject(HANDLE handle, int SecurityInformation, Pointer SecurityDescriptor, int Length, IntByReference LengthNeeded);
+
+    /**
+     * Converts the specified NTSTATUS code to its equivalent system error code.
+     * @param Status [in]
+     *  The NTSTATUS code to be converted.
+     * @return The function returns the corresponding system error code. ERROR_MR_MID_NOT_FOUND is returned when the specified NTSTATUS code
+     *  does not have a corresponding system error code.
+     */
+    public int RtlNtStatusToDosError(int Status);
 }
