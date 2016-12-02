@@ -63,6 +63,8 @@ Features
 * [#689](https://github.com/java-native-access/jna/pull/689): Add `GetProcAddress(HMODULE, int)` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#723](https://github.com/java-native-access/jna/pull/723): Added `com.sun.jna.platform.win32.Wevtapi` and `com.sun.jna.platform.win32.Winevt` - [@sakamotodesu](https://github.com/sakamotodesu).
 * [#720](https://github.com/java-native-access/jna/issues/720): Added `SetThreadExecutionState` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#738](https://github.com/java-native-access/jna/pull/738): Added `GetSecurityDescriptorOwner`, `SetSecurityDescriptorOwner`, `GetSecurityDescriptorGroup`, `SetSecurityDescriptorGroup`, `GetSecurityDescriptorControl`, `SetSecurityDescriptorControl`, `GetSecurityDescriptorDacl`, `SetSecurityDescriptorDacl`, `MakeSelfRelativeSD`, `MakeAbsoluteSD`, `EqualSid`, `InitializeSecurityDescriptor`, `InitializeAcl`, `AddAce`, `AddAccessAllowedAce`, `AddAccessAllowedAceEx`, and `GetAce` to `com.sun.jna.platform.win32.Advapi32 - [@amarcionek](https://github.com/amarcionek).
+* [#738](https://github.com/java-native-access/jna/pull/738): Added `RtlNtStatusToDosError` to `com.sun.jna.platform.win32.NtDll - [@amarcionek](https://github.com/amarcionek).
 
 Bug Fixes
 ---------
