@@ -39,6 +39,7 @@ import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PACLByReference;
 import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
@@ -53,6 +54,7 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.ShortByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -328,7 +330,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean GetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, IntByReference pControl, IntByReference lpdwRevision);
+    boolean GetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, ShortByReference pControl, IntByReference lpdwRevision);
 
     /**
      * The SetSecurityDescriptorControl function sets the control bits of a security descriptor. The function can set only the control
@@ -344,7 +346,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean SetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, int ControlBitsOfInterest, int ControlBitsToSet);
+    boolean SetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, short ControlBitsOfInterest, short ControlBitsToSet);
 
     /**
      * The GetSecurityDescriptorOwner function retrieves the owner information from a security descriptor.
@@ -364,7 +366,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean GetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PointerByReference pOwner, BOOLByReference lpbOwnerDefaulted);
+    boolean GetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PSIDByReference pOwner, BOOLByReference lpbOwnerDefaulted);
 
     /**
      * The SetSecurityDescriptorOwner function sets the owner information of an absolute-format security descriptor. It replaces
@@ -405,7 +407,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean GetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PointerByReference pGroup, BOOLByReference lpbGroupDefaulted);
+    boolean GetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PSIDByReference pGroup, BOOLByReference lpbGroupDefaulted);
 
     /**
      * The SetSecurityDescriptorGroup function sets the primary group information of an absolute-format security descriptor, replacing
@@ -455,7 +457,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         function fails, the return value is zero. For extended error
      *         information, call GetLastError.
      */
-    boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PointerByReference pDacl, BOOLByReference bDaclDefaulted);
+    boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PACLByReference pDacl, BOOLByReference bDaclDefaulted);
 
     /**
      * The SetSecurityDescriptorDacl function sets information in a discretionary access control list (DACL).

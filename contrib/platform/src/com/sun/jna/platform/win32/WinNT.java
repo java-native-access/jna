@@ -2581,6 +2581,31 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
     }
 
+    public static class PACLByReference extends ByReference {
+        public PACLByReference() {
+            this(null);
+        }
+
+        public PACLByReference(ACL h) {
+            super(Pointer.SIZE);
+            setValue(h);
+        }
+
+        public void setValue(ACL h) {
+            getPointer().setPointer(0, h != null ? h.getPointer() : null);
+        }
+
+        public ACL getValue() {
+            Pointer p = getPointer().getPointer(0);
+            if (p == null) {
+                return null;
+            }
+            else {
+                return new ACL(p);
+            }
+        }
+    }
+
     public static class SECURITY_DESCRIPTOR_RELATIVE extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE
                 implements Structure.ByReference {

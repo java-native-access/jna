@@ -62,6 +62,7 @@ import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PACLByReference;
 import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
@@ -79,6 +80,7 @@ import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.ShortByReference;
 
 import junit.framework.TestCase;
 
@@ -704,8 +706,8 @@ public class Advapi32Test extends TestCase {
     public void testSetGetSecurityDescriptorControl() {
         SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
         assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));
-        assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorControl(sd, WinNT.SE_DACL_PROTECTED, WinNT.SE_DACL_PROTECTED));
-        IntByReference pControl = new IntByReference();
+        assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorControl(sd, (short)WinNT.SE_DACL_PROTECTED, (short)WinNT.SE_DACL_PROTECTED));
+        ShortByReference pControl = new ShortByReference();
         IntByReference lpdwRevision = new IntByReference();
         assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorControl(sd, pControl, lpdwRevision));
         assertTrue(pControl.getValue() == WinNT.SE_DACL_PROTECTED);
@@ -724,10 +726,10 @@ public class Advapi32Test extends TestCase {
         assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorOwner(sd, pSidPut, true));
 
         BOOLByReference lpbOwnerDefaulted = new BOOLByReference();
-        PointerByReference prSd = new PointerByReference(new Memory(WinNT.SECURITY_MAX_SID_SIZE));
+        PSIDByReference prSd = new PSIDByReference();
         assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorOwner(sd, prSd, lpbOwnerDefaulted));
 
-        PSID pSidGet = new PSID(prSd.getValue());
+        PSID pSidGet = prSd.getValue();
         assertTrue(Advapi32.INSTANCE.EqualSid(pSidPut, pSidGet));
     }
 
@@ -743,10 +745,10 @@ public class Advapi32Test extends TestCase {
         assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorGroup(sd, pSidPut, true));
 
         BOOLByReference lpbOwnerDefaulted = new BOOLByReference();
-        PointerByReference prSd = new PointerByReference(new Memory(WinNT.SECURITY_MAX_SID_SIZE));
+        PSIDByReference prSd = new PSIDByReference();
         assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorGroup(sd, prSd, lpbOwnerDefaulted));
 
-        PSID pSidGet = new PSID(prSd.getValue());
+        PSID pSidGet = prSd.getValue();
         assertTrue(Advapi32.INSTANCE.EqualSid(pSidPut, pSidGet));
     }
 
@@ -772,9 +774,9 @@ public class Advapi32Test extends TestCase {
         assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorDacl(sd, true, pAcl, false));
         BOOLByReference lpbDaclPresent  = new BOOLByReference();
         BOOLByReference lpbDaclDefaulted  = new BOOLByReference();
-        PointerByReference pDacl = new PointerByReference();
+        PACLByReference pDacl = new PACLByReference();
         assertTrue(Advapi32.INSTANCE.GetSecurityDescriptorDacl(sd, lpbDaclPresent, pDacl, lpbDaclDefaulted));
-        ACL pAclGet = new ACL(pDacl.getValue());
+        ACL pAclGet = pDacl.getValue();
         assertEquals(new BOOL(true), lpbDaclPresent.getValue());
         assertEquals(new BOOL(false), lpbDaclDefaulted.getValue());
         assertEquals(1, pAclGet.AceCount);
