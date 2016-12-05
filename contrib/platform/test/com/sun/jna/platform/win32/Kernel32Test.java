@@ -643,56 +643,55 @@ public class Kernel32Test extends TestCase {
         delLink.deleteOnExit();
 
         // Required for FSCTL_SET_REPARSE_POINT
-        Advapi32Util.Privilege restore = new Advapi32Util.Privilege(WinNT.SE_RESTORE_NAME);
-        restore.enable();
+        try(Advapi32Util.Privilege restore = new Advapi32Util.Privilege(new String[] { WinNT.SE_RESTORE_NAME }, true)) {
 
-        HANDLE hFile = Kernel32.INSTANCE.CreateFile(link.toAbsolutePath().toString(),
-                WinNT.GENERIC_READ | WinNT.FILE_WRITE_ATTRIBUTES | WinNT.FILE_WRITE_EA,
-                WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE,
-                new WinBase.SECURITY_ATTRIBUTES(),
-                WinNT.OPEN_EXISTING,
-                WinNT.FILE_ATTRIBUTE_DIRECTORY | WinNT.FILE_FLAG_BACKUP_SEMANTICS | WinNT.FILE_FLAG_OPEN_REPARSE_POINT,
-                null);
+            HANDLE hFile = Kernel32.INSTANCE.CreateFile(link.toAbsolutePath().toString(),
+                    WinNT.GENERIC_READ | WinNT.FILE_WRITE_ATTRIBUTES | WinNT.FILE_WRITE_EA,
+                    WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE,
+                    new WinBase.SECURITY_ATTRIBUTES(),
+                    WinNT.OPEN_EXISTING,
+                    WinNT.FILE_ATTRIBUTE_DIRECTORY | WinNT.FILE_FLAG_BACKUP_SEMANTICS | WinNT.FILE_FLAG_OPEN_REPARSE_POINT,
+                    null);
 
-        if (WinBase.INVALID_HANDLE_VALUE.equals(hFile)) {
-            fail("CreateFile failed with " + Kernel32.INSTANCE.GetLastError());
-        }
+            if (WinBase.INVALID_HANDLE_VALUE.equals(hFile)) {
+                fail("CreateFile failed with " + Kernel32.INSTANCE.GetLastError());
+            }
 
-        try {
-            SymbolicLinkReparseBuffer symLinkReparseBuffer = new SymbolicLinkReparseBuffer(folder.getFileName().toString(),
-                    folder.getFileName().toString(),
-                    Ntifs.SYMLINK_FLAG_RELATIVE);
+            try {
+                SymbolicLinkReparseBuffer symLinkReparseBuffer = new SymbolicLinkReparseBuffer(folder.getFileName().toString(),
+                        folder.getFileName().toString(),
+                        Ntifs.SYMLINK_FLAG_RELATIVE);
 
-            REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, (short) 0, symLinkReparseBuffer);
+                REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, (short) 0, symLinkReparseBuffer);
 
-            assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
-                    new FSCTL_SET_REPARSE_POINT().getControlCode(),
-                    lpBuffer.getPointer(),
-                    lpBuffer.getSize(),
-                    null,
-                    0,
-                    null,
-                    null));
+                assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                        new FSCTL_SET_REPARSE_POINT().getControlCode(),
+                        lpBuffer.getPointer(),
+                        lpBuffer.getSize(),
+                        null,
+                        0,
+                        null,
+                        null));
 
-            Memory p = new Memory(REPARSE_DATA_BUFFER.sizeOf());
-            IntByReference lpBytes = new IntByReference();
-            assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
-                    new FSCTL_GET_REPARSE_POINT().getControlCode(),
-                    null,
-                    0,
-                    p,
-                    (int) p.size(),
-                    lpBytes,
-                    null));
-            // Is a reparse point
-            lpBuffer = new REPARSE_DATA_BUFFER(p);
-            assertTrue(lpBytes.getValue() > 0);
-            assertTrue(lpBuffer.ReparseTag == WinNT.IO_REPARSE_TAG_SYMLINK);
-            assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getPrintName());
-            assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getSubstituteName());
-        } finally {
-            Kernel32Util.closeHandle(hFile);
-            restore.disable();
+                Memory p = new Memory(REPARSE_DATA_BUFFER.sizeOf());
+                IntByReference lpBytes = new IntByReference();
+                assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
+                        new FSCTL_GET_REPARSE_POINT().getControlCode(),
+                        null,
+                        0,
+                        p,
+                        (int) p.size(),
+                        lpBytes,
+                        null));
+                // Is a reparse point
+                lpBuffer = new REPARSE_DATA_BUFFER(p);
+                assertTrue(lpBytes.getValue() > 0);
+                assertTrue(lpBuffer.ReparseTag == WinNT.IO_REPARSE_TAG_SYMLINK);
+                assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getPrintName());
+                assertEquals(folder.getFileName().toString(), lpBuffer.u.symLinkReparseBuffer.getSubstituteName());
+            } finally {
+                Kernel32Util.closeHandle(hFile);
+            }
         }
     }
 

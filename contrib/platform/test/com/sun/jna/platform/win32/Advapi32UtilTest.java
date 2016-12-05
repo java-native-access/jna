@@ -603,12 +603,20 @@ public class Advapi32UtilTest extends TestCase {
      * Test Privilege class
      */
     public void testPrivilege() {
-        Advapi32Util.Privilege p = new Advapi32Util.Privilege(WinNT.SE_ASSIGNPRIMARYTOKEN_NAME);
-        try {
-            p.enable(); // Will throw if it fails
+        // Test multiple known privileges
+        try(Advapi32Util.Privilege p = new Advapi32Util.Privilege(new String[] { WinNT.SE_ASSIGNPRIMARYTOKEN_NAME, WinNT.SE_BACKUP_NAME }, true);) {
+            // Will throw if it fails p.enable() fails
         }
-        finally {
-            p.disable();
+
+        // Test unknown privilege
+        try(Advapi32Util.Privilege p = new Advapi32Util.Privilege(new String[] { "NOT_A_PRIVILEGE"}, true);) {
+            // Will throw if it fails p.enable() fails
+        }
+        catch (IllegalArgumentException ex) {
+            // Exception is expected
+        }
+        catch (Exception ex) {
+            fail("Encountered unknown exception - " + ex.getMessage());
         }
     }
 

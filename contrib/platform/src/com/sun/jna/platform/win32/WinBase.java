@@ -456,22 +456,22 @@ public interface WinBase extends WinDef, BaseTSD {
         /**
          * The factor that the compression uses.
          */
-        public char CompressionUnitShift;
+        public byte CompressionUnitShift;
 
         /**
          * The number of chunks that are shifted by compression.
          */
-        public char ChunkShift;
+        public byte ChunkShift;
 
         /**
          * The number of clusters that are shifted by compression.
          */
-        public char ClusterShift;
+        public byte ClusterShift;
 
         /**
          * Reserved
          */
-        public char[] Reserved = new char[3];
+        public byte[] Reserved = new byte[3];
 
         public static int sizeOf()
         {
@@ -494,15 +494,15 @@ public interface WinBase extends WinDef, BaseTSD {
 
         public FILE_COMPRESSION_INFO(LARGE_INTEGER CompressedFileSize,
                 short CompressionFormat,
-                char CompressionUnitShift,
-                char ChunkShift,
-                char ClusterShift) {
+                byte CompressionUnitShift,
+                byte ChunkShift,
+                byte ClusterShift) {
             this.CompressedFileSize = CompressedFileSize;
             this.CompressionFormat = CompressionFormat;
             this.CompressionUnitShift = CompressionUnitShift;
             this.ChunkShift = ChunkShift;
             this.ClusterShift = ClusterShift;
-            this.Reserved = new char[3];
+            this.Reserved = new byte[3];
             write();
         }
     }

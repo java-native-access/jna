@@ -49,6 +49,7 @@ import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_DACL_SECURITY_INFORMA
 import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_SACL_SECURITY_INFORMATION;
 
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -2640,50 +2641,63 @@ public abstract class Advapi32Util {
     }
 
     /**
-     * Convenience class to enables a certain Windows process privilege
+     * Convenience class to enable certain Windows process privileges
      */
-    public static class Privilege {
+    public static class Privilege implements Closeable {
         /**
          * If true, the thread is currently impersonating
          */
         private boolean currentlyImpersonating = false;
 
         /**
-         * If true, the Privilege has been enabled
+         * If true, the privileges have been enabled
          */
-        private boolean privilegeEnabled = false;
+        private boolean privilegesEnabled = false;
 
         /**
-         * LUID form of the privilege
+         * LUID form of the privileges
          */
-        private final WinNT.LUID pLuid = new WinNT.LUID();
+        private final WinNT.LUID[] pLuids;
 
         /**
-         * String form of the privilege
-         */
-        private final String privilege;
-
-        /**
-         * Construct a Privilege
-         * @param privilege the name of the privilege in the form of SE_* from Advapi32.java
+         * Construct and enable a set of privileges
+         * @param privileges the name of the privileges in the form of SE_* from Advapi32.java
+         * @enable if true, enable the privilege immediately.
          * @throws IllegalArgumentException
          */
-        public Privilege(String privilege) throws IllegalArgumentException {
-            this.privilege = privilege;
-            if (!Advapi32.INSTANCE.LookupPrivilegeValue(null, this.privilege, pLuid)) {
-                throw new IllegalArgumentException("Failed to find privilege \"" + privilege + "\" - " + Kernel32.INSTANCE.GetLastError());
+        public Privilege(String[] privileges, boolean enable) throws IllegalArgumentException, Win32Exception {
+            pLuids = new WinNT.LUID[privileges.length];
+            int i = 0;
+            for (String p : privileges) {
+                pLuids[i] = new WinNT.LUID();
+                if (!Advapi32.INSTANCE.LookupPrivilegeValue(null, p, pLuids[i])) {
+                    throw new IllegalArgumentException("Failed to find privilege \"" + privileges[i] + "\" - " + Kernel32.INSTANCE.GetLastError());
+                }
+                i++;
             }
+            if (enable)
+                this.enable();
         }
 
         /**
-         * Enables the given privilege. If required, it will duplicate the process token. No resources are left open when this completes. That is, it is
-         * NOT required to drop the privilege, although it is considered a best practice if you do not need it. This class is state full. It keeps track
-         * of whether it has enabled a privilege. Multiple calls to enable() without a drop() in between have no affect.
+         * Calls {@link#disable} to remove the privileges 
+         * @see java.io.Closeable#close()
+         */
+        @Override
+        public void close() {
+            this.disable();
+        }
+
+        /**
+         * Enables the given privileges. If required, it will duplicate the process token. No resources are left open when this completes. That is, it is
+         * NOT required to drop the privileges, although it is considered a best practice if you do not need it. This class is state full. It keeps track
+         * of whether it has enabled the privileges. Multiple calls to enable() without a drop() in between have no affect.
+         * @return pointer to self (Privilege) as a convenience for try with resources statements
          * @throws Win32Exception
          */
         public void enable() throws Win32Exception {
             // Ignore if already enabled.
-            if (privilegeEnabled)
+            if (privilegesEnabled)
                 return;
 
             // Get thread token
@@ -2691,12 +2705,14 @@ public abstract class Advapi32Util {
 
             try {
                 phThreadToken.setValue(getThreadToken());
-                WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(1);
-                tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+                WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(pLuids.length);
+                for (int i = 0; i < pLuids.length; i++) {
+                    tp.Privileges[i] = new WinNT.LUID_AND_ATTRIBUTES(pLuids[i], new DWORD(WinNT.SE_PRIVILEGE_ENABLED));
+                }
                 if (!Advapi32.INSTANCE.AdjustTokenPrivileges(phThreadToken.getValue(), false, tp, 0, null, null)) {
                     throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                 }
-                privilegeEnabled = true;
+                privilegesEnabled = true;
             }
             catch (Win32Exception ex) {
                 // If fails, clean up
@@ -2705,11 +2721,13 @@ public abstract class Advapi32Util {
                     currentlyImpersonating = false;
                 }
                 else {
-                    if (privilegeEnabled) {
-                        WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(1);
-                        tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(0));
+                    if (privilegesEnabled) {
+                        WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(pLuids.length);
+                        for (int i = 0; i < pLuids.length; i++) {
+                            tp.Privileges[i] = new WinNT.LUID_AND_ATTRIBUTES(pLuids[i], new DWORD(0));
+                        }
                         Advapi32.INSTANCE.AdjustTokenPrivileges(phThreadToken.getValue(), false, tp, 0, null, null);
-                        privilegeEnabled = false;
+                        privilegesEnabled = false;
                     }
                 }
                 throw ex;
@@ -2728,8 +2746,7 @@ public abstract class Advapi32Util {
          * Disabled the prior enabled privilege
          * @throws Win32Exception
          */
-        public void disable() throws Win32Exception
-        {
+        public void disable() throws Win32Exception {
             // Get thread token
             final HANDLEByReference phThreadToken = new HANDLEByReference();
 
@@ -2740,11 +2757,13 @@ public abstract class Advapi32Util {
                 }
                 else
                 {
-                    if (privilegeEnabled) {
-                        WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(1);
-                        tp.Privileges[0] = new WinNT.LUID_AND_ATTRIBUTES(pLuid, new DWORD(0));
+                    if (privilegesEnabled) {
+                        WinNT.TOKEN_PRIVILEGES tp = new WinNT.TOKEN_PRIVILEGES(pLuids.length);
+                        for (int i = 0; i < pLuids.length; i++) {
+                            tp.Privileges[i] = new WinNT.LUID_AND_ATTRIBUTES(pLuids[i], new DWORD(0));
+                        }
                         Advapi32.INSTANCE.AdjustTokenPrivileges(phThreadToken.getValue(), false, tp, 0, null, null);
-                        privilegeEnabled = false;
+                        privilegesEnabled = false;
                     }
                 }
             }
