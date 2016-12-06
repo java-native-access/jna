@@ -643,8 +643,9 @@ public class Kernel32Test extends TestCase {
         delLink.deleteOnExit();
 
         // Required for FSCTL_SET_REPARSE_POINT
-        try(Advapi32Util.Privilege restore = new Advapi32Util.Privilege(new String[] { WinNT.SE_RESTORE_NAME }, true)) {
-
+        Advapi32Util.Privilege restore = new Advapi32Util.Privilege(WinNT.SE_RESTORE_NAME);
+        try {
+            restore.enable();
             HANDLE hFile = Kernel32.INSTANCE.CreateFile(link.toAbsolutePath().toString(),
                     WinNT.GENERIC_READ | WinNT.FILE_WRITE_ATTRIBUTES | WinNT.FILE_WRITE_EA,
                     WinNT.FILE_SHARE_READ | WinNT.FILE_SHARE_WRITE | WinNT.FILE_SHARE_DELETE,
@@ -692,6 +693,9 @@ public class Kernel32Test extends TestCase {
             } finally {
                 Kernel32Util.closeHandle(hFile);
             }
+        }
+        finally {
+            restore.close();
         }
     }
 

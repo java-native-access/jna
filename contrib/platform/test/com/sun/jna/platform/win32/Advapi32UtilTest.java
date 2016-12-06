@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
+import com.sun.jna.platform.win32.Advapi32Util.Privilege;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -604,19 +605,27 @@ public class Advapi32UtilTest extends TestCase {
      */
     public void testPrivilege() {
         // Test multiple known privileges
-        try(Advapi32Util.Privilege p = new Advapi32Util.Privilege(new String[] { WinNT.SE_ASSIGNPRIMARYTOKEN_NAME, WinNT.SE_BACKUP_NAME }, true);) {
+        Privilege privilege  = new Privilege(WinNT.SE_ASSIGNPRIMARYTOKEN_NAME, WinNT.SE_BACKUP_NAME);
+        try {
+            privilege.enable();
             // Will throw if it fails p.enable() fails
+        }
+        finally {
+            privilege.close();
         }
 
         // Test unknown privilege
-        try(Advapi32Util.Privilege p = new Advapi32Util.Privilege(new String[] { "NOT_A_PRIVILEGE"}, true);) {
-            // Will throw if it fails p.enable() fails
+        try {
+            privilege  = new Privilege("NOT_A_PRIVILEGE");
         }
         catch (IllegalArgumentException ex) {
             // Exception is expected
         }
         catch (Exception ex) {
             fail("Encountered unknown exception - " + ex.getMessage());
+        }
+        finally {
+            privilege.close();
         }
     }
 

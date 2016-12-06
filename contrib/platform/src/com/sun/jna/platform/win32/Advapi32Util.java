@@ -2661,11 +2661,10 @@ public abstract class Advapi32Util {
 
         /**
          * Construct and enable a set of privileges
-         * @param privileges the name of the privileges in the form of SE_* from Advapi32.java
-         * @enable if true, enable the privilege immediately.
+         * @param privileges the names of the privileges in the form of SE_* from Advapi32.java
          * @throws IllegalArgumentException
          */
-        public Privilege(String[] privileges, boolean enable) throws IllegalArgumentException, Win32Exception {
+        public Privilege(String... privileges) throws IllegalArgumentException, Win32Exception {
             pLuids = new WinNT.LUID[privileges.length];
             int i = 0;
             for (String p : privileges) {
@@ -2675,12 +2674,10 @@ public abstract class Advapi32Util {
                 }
                 i++;
             }
-            if (enable)
-                this.enable();
         }
 
         /**
-         * Calls {@link#disable} to remove the privileges 
+         * Calls disable() to remove the privileges
          * @see java.io.Closeable#close()
          */
         @Override
@@ -2695,10 +2692,10 @@ public abstract class Advapi32Util {
          * @return pointer to self (Privilege) as a convenience for try with resources statements
          * @throws Win32Exception
          */
-        public void enable() throws Win32Exception {
+        public Privilege enable() throws Win32Exception {
             // Ignore if already enabled.
             if (privilegesEnabled)
-                return;
+                return this;
 
             // Get thread token
             final HANDLEByReference phThreadToken = new HANDLEByReference();
@@ -2740,6 +2737,7 @@ public abstract class Advapi32Util {
                     phThreadToken.setValue(null);
                 }
             }
+            return this;
         }
 
         /**
