@@ -1712,7 +1712,7 @@ public abstract class Structure {
         setAutoWrite(auto);
     }
 
-    /** Set whether the structure is read from native memory prior to
+    /** Set whether the structure is read from native memory after
      * a native function call.
      * @param auto whether to automatically synch from native memory.
      */
@@ -1720,7 +1720,7 @@ public abstract class Structure {
         this.autoRead = auto;
     }
 
-    /** Returns whether the structure is read from native memory prior to
+    /** Returns whether the structure is read from native memory after
      * a native function call.
      * @return whether automatic synch from native memory is enabled.
      */
@@ -1728,7 +1728,7 @@ public abstract class Structure {
         return this.autoRead;
     }
 
-    /** Set whether the structure is written to native memory after a native
+    /** Set whether the structure is written to native memory prior to a native
      * function call.
      * @param auto whether to automatically synch to native memory.
      */
@@ -1736,7 +1736,7 @@ public abstract class Structure {
         this.autoWrite = auto;
     }
 
-    /** Returns whether the structure is written to native memory after a native
+    /** Returns whether the structure is written to native memory prior to a native
      * function call.
      * @return whether automatic synch to native memory is enabled.
      */
