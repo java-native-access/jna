@@ -43,43 +43,33 @@ public abstract class WinioctlUtil {
 		return ((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method);
 	}
 
-	/**
-	 * Base interface for a Winiotcl function used to construct the control code
-	 */
-	public interface WinioctlFunction {
-		/**
-		 * @return the control code given the IOTCL's parameters
-		 */
-		public abstract int getControlCode();
-	}
+	public static final int FSCTL_GET_COMPRESSION = CTL_CODE(
+            Winioctl.FILE_DEVICE_FILE_SYSTEM,
+            Winioctl.FSCTL_GET_COMPRESSION,
+            Winioctl.METHOD_BUFFERED,
+            Winioctl.FILE_ANY_ACCESS);
 
-	public static class FSCTL_GET_COMPRESSION implements WinioctlFunction {
-		public int getControlCode() {
-			return WinioctlUtil.CTL_CODE(Winioctl.FILE_DEVICE_FILE_SYSTEM, Winioctl.FSCTL_GET_COMPRESSION,  Winioctl.METHOD_BUFFERED, Winioctl.FILE_ANY_ACCESS);
-		}
-	}
+	public static final int FSCTL_SET_COMPRESSION = CTL_CODE(
+	        Winioctl.FILE_DEVICE_FILE_SYSTEM,
+	        Winioctl.FSCTL_SET_COMPRESSION,
+	        Winioctl.METHOD_BUFFERED,
+	        WinNT.FILE_READ_DATA | WinNT.FILE_WRITE_DATA);
 
-	public static class FSCTL_SET_COMPRESSION implements WinioctlFunction {
-		public int getControlCode() {
-			return WinioctlUtil.CTL_CODE(Winioctl.FILE_DEVICE_FILE_SYSTEM, Winioctl.FSCTL_SET_COMPRESSION,  Winioctl.METHOD_BUFFERED, WinNT.FILE_READ_DATA | WinNT.FILE_WRITE_DATA);
-		}
-	}
+    public static final int FSCTL_SET_REPARSE_POINT = CTL_CODE(
+            Winioctl.FILE_DEVICE_FILE_SYSTEM,
+            Winioctl.FSCTL_SET_REPARSE_POINT,
+            Winioctl.METHOD_BUFFERED,
+            Winioctl.FILE_SPECIAL_ACCESS);
 
-	public static class FSCTL_SET_REPARSE_POINT implements WinioctlFunction {
-		public int getControlCode() {
-			return WinioctlUtil.CTL_CODE(Winioctl.FILE_DEVICE_FILE_SYSTEM, Winioctl.FSCTL_SET_REPARSE_POINT,  Winioctl.METHOD_BUFFERED, Winioctl.FILE_SPECIAL_ACCESS);
-		}
-	}
+    public static final int FSCTL_GET_REPARSE_POINT = CTL_CODE(
+            Winioctl.FILE_DEVICE_FILE_SYSTEM,
+            Winioctl.FSCTL_GET_REPARSE_POINT,
+            Winioctl.METHOD_BUFFERED,
+            Winioctl.FILE_ANY_ACCESS);
 
-	public static class FSCTL_GET_REPARSE_POINT implements WinioctlFunction {
-		public int getControlCode() {
-			return WinioctlUtil.CTL_CODE(Winioctl.FILE_DEVICE_FILE_SYSTEM, Winioctl.FSCTL_GET_REPARSE_POINT,  Winioctl.METHOD_BUFFERED, Winioctl.FILE_ANY_ACCESS);
-		}
-	}
-
-	public static class FSCTL_DELETE_REPARSE_POINT implements WinioctlFunction {
-		public int getControlCode() {
-			return WinioctlUtil.CTL_CODE(Winioctl.FILE_DEVICE_FILE_SYSTEM, Winioctl.FSCTL_DELETE_REPARSE_POINT,  Winioctl.METHOD_BUFFERED, Winioctl.FILE_SPECIAL_ACCESS);
-		}
-	}
+    public static final int FSCTL_DELETE_REPARSE_POINT = CTL_CODE(
+            Winioctl.FILE_DEVICE_FILE_SYSTEM,
+            Winioctl.FSCTL_DELETE_REPARSE_POINT,
+            Winioctl.METHOD_BUFFERED,
+            Winioctl.FILE_SPECIAL_ACCESS);
 }
