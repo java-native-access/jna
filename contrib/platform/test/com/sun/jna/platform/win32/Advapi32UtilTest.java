@@ -24,6 +24,7 @@ import java.util.TreeMap;
 import com.sun.jna.platform.win32.Advapi32Util.Account;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogIterator;
 import com.sun.jna.platform.win32.Advapi32Util.EventLogRecord;
+import com.sun.jna.platform.win32.Advapi32Util.Privilege;
 import com.sun.jna.platform.win32.LMAccess.USER_INFO_1;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -597,6 +598,35 @@ public class Advapi32UtilTest extends TestCase {
             file.delete();
         }
         dest.delete();
+    }
+
+    /**
+     * Test Privilege class
+     */
+    public void testPrivilege() {
+        // Test multiple known privileges
+        Privilege privilege  = new Privilege(WinNT.SE_ASSIGNPRIMARYTOKEN_NAME, WinNT.SE_BACKUP_NAME);
+        try {
+            privilege.enable();
+            // Will throw if it fails p.enable() fails
+        }
+        finally {
+            privilege.close();
+        }
+
+        // Test unknown privilege
+        try {
+            privilege  = new Privilege("NOT_A_PRIVILEGE");
+        }
+        catch (IllegalArgumentException ex) {
+            // Exception is expected
+        }
+        catch (Exception ex) {
+            fail("Encountered unknown exception - " + ex.getMessage());
+        }
+        finally {
+            privilege.close();
+        }
     }
 
     private File createTempFile() throws Exception{

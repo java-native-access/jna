@@ -63,6 +63,10 @@ Features
 * [#689](https://github.com/java-native-access/jna/pull/689): Add `GetProcAddress(HMODULE, int)` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#723](https://github.com/java-native-access/jna/pull/723): Added `com.sun.jna.platform.win32.Wevtapi` and `com.sun.jna.platform.win32.Winevt` - [@sakamotodesu](https://github.com/sakamotodesu).
 * [#720](https://github.com/java-native-access/jna/issues/720): Added `SetThreadExecutionState` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `com.sun.jna.platform.win32.WinioctlUtil` for help in determining FSCTL_* codes - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `com.sun.jna.platform.win32.Ntifs` with Reparse Point structures and defines - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added initialization of FILETIME from LARGE_INTEGER - [@amarcionek](https://github.com/amarcionek).
+* [#732](https://github.com/java-native-access/jna/pull/732): Added `GetFileInformationByHandleEx` and `SetFileInformationByHandle` to `com.sun.jna.platform.win32.Kernel32` - [@amarcionek](https://github.com/amarcionek).
 
 Bug Fixes
 ---------

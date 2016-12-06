@@ -1444,6 +1444,48 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean GlobalMemoryStatusEx(MEMORYSTATUSEX lpBuffer);
 
     /**
+     * Retrieves file information for the specified file.
+     * To set file information using a file handle, see SetFileInformationByHandle.
+     * @param hFile
+     * 				A handle to the file that contains the information to be retrieved.
+     * @param FileInformationClass
+     * 				A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of
+     * 				information to be retrieved.
+     * @param lpFileInformation
+     * 				A pointer to the buffer that receives the requested file information.
+     * 				The structure that is returned corresponds to the class that is specified
+     * 				by FileInformationClass.
+     * @param dwBufferSize
+     * 				The size of the lpFileInformation buffer, in bytes.
+     * @return If the function succeeds, the return value is nonzero and file information
+     * 		   data is contained in the buffer pointed to by the lpFileInformation parameter.
+     *         If the function fails, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     */
+    boolean GetFileInformationByHandleEx(HANDLE hFile, int FileInformationClass, Pointer lpFileInformation, DWORD dwBufferSize);
+
+    /**
+     * Sets the file information for the specified file. To retrieve file information using a
+     * file handle, see GetFileInformationByHandleEx.
+     * @param hFile
+     * 				A handle to the file for which to change information.
+     * 				This handle must be opened with the appropriate permissions for the
+     * 				requested change. This handle should not be a pipe handle.
+     * @param FileInformationClass
+     * 				A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of information to be changed.
+     * 				Valid values are FILE_BASIC_INFO, FILE_RENAME_INFO, FILE_DISPOSITION_INFO, FILE_ALLOCATION_INFO,
+     * 				FILE_END_OF_FILE_INFO, and FILE_IO_PRIORITY_HINT_INFO
+     * @param lpFileInformation
+     * 				A pointer to the buffer that contains the information to change for the specified file
+     * 				information class. The structure that this parameter points to corresponds to the class
+     * 				that is specified by FileInformationClass.
+     * @param dwBufferSize
+     * 				The size of the lpFileInformation buffer, in bytes.
+     * @return Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.
+     */
+    boolean SetFileInformationByHandle(HANDLE hFile, int FileInformationClass, Pointer lpFileInformation, DWORD dwBufferSize);
+
+    /**
      * Retrieves the date and time that a file or directory was created, last
      * accessed, and last modified.
      *
@@ -2495,6 +2537,18 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean SystemTimeToFileTime(SYSTEMTIME lpSystemTime, FILETIME lpFileTime);
 
     /**
+     * Converts a file time to system time format. System time is based on Coordinated Universal Time (UTC).
+     * @param lpFileTime
+     * 				[in] A pointer to a FILETIME structure containing the file time to be converted to system (UTC) date and time format.
+					This value must be less than 0x8000000000000000. Otherwise, the function fails.
+     * @param lpSystemTime
+     * 				A pointer to a SYSTEMTIME structure to receive the converted file time.
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     * 				To get extended error information, call GetLastError.
+     */
+    boolean FileTimeToSystemTime(FILETIME lpFileTime, SYSTEMTIME lpSystemTime);
+
+    /**
      * Creates a thread that runs in the virtual address space of another process.
      *
      * @param hProcess A handle to the process in which the thread is to be created.
@@ -2626,6 +2680,100 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa365461(v=vs.85).aspx">QueryDosDevice</a>
      */
     int QueryDosDevice(String lpDeviceName, char[] lpTargetPath, int ucchMax);
+
+    /**
+     * Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if wildcards are used).
+     * To specify additional attributes to use in a search, use the FindFirstFileEx function.
+     * @param lpFileName
+     * 				The directory or path, and the file name. The file name can include wildcard characters,
+     * 				for example, an asterisk (*) or a question mark (?).
+     * 				This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
+     * 				missing the terminating null character), or end in a trailing backslash (\).
+     * 				If the string ends with a wildcard, period, or directory name, the user must have access to the root
+     * 				and all subdirectories on the path.
+     * 				In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
+     * 				limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
+     * 				and prepend "\\?\" to the path. For more information, see Naming a File.
+     * 				<b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
+     * 				you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
+     * 				See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
+     * @param lpFindFileData
+     * 				A pointer to the buffer that receives the file data. The pointer type is determined by the level of
+     * 				information that is specified in the fInfoLevelId parameter.
+     * @return If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose,
+     * 				and the lpFindFileData parameter contains information about the first file or directory found.
+     * 				If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
+     * 				value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+     * 				To get extended error information, call the GetLastError function.
+     * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
+     */
+    HANDLE FindFirstFile(String lpFileName, Pointer lpFindFileData);
+
+    /**
+     * Searches a directory for a file or subdirectory with a name and attributes that match those specified. For the most basic
+     * version of this function, see FindFirstFile.
+     * @param lpFileName
+     * 				The directory or path, and the file name. The file name can include wildcard characters,
+     * 				for example, an asterisk (*) or a question mark (?).
+     * 				This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
+     * 				missing the terminating null character), or end in a trailing backslash (\).
+     * 				If the string ends with a wildcard, period, or directory name, the user must have access to the root
+     * 				and all subdirectories on the path.
+     * 				In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
+     * 				limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
+     * 				and prepend "\\?\" to the path. For more information, see Naming a File.
+     * 				<b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
+     * 				you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
+     * 				See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
+     * @param fInfoLevelId
+     * 				The information level of the returned data. This parameter is one of the FINDEX_INFO_LEVELS enumeration values.
+     * @param lpFindFileData
+     * 				A pointer to the buffer that receives the file data. The pointer type is determined by the level of
+     * 				information that is specified in the fInfoLevelId parameter.
+     * @param fSearchOp
+     * 				The type of filtering to perform that is different from wildcard matching. This parameter is one of
+     * 				the FINDEX_SEARCH_OPS enumeration values.
+     * @param lpSearchFilter
+     * 				A pointer to the search criteria if the specified fSearchOp needs structured search information.
+     * 				At this time, none of the supported fSearchOp values require extended search information. Therefore,
+     * 				this pointer must be NULL.
+     * @param dwAdditionalFlags
+     * 				Specifies additional flags that control the search.
+     * 				FIND_FIRST_EX_CASE_SENSITIVE (0x01) - Searches are case-sensitive.
+     * 				FIND_FIRST_EX_LARGE_FETCH (0x02) - Uses a larger buffer for directory queries, which can increase performance
+     * 				of the find operation. <b>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value
+     * 				is not supported until Windows Server 2008 R2 and Windows 7.</b>
+     * @return If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose,
+     * 				and the lpFindFileData parameter contains information about the first file or directory found.
+     * 				If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
+     * 				value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+     * 				To get extended error information, call the GetLastError function.
+     * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
+     */
+    HANDLE FindFirstFileEx(String lpFileName, int fInfoLevelId, Pointer lpFindFileData, int fSearchOp, Pointer lpSearchFilter, DWORD dwAdditionalFlags);
+
+    /**
+     * Continues a file search from a previous call to the FindFirstFile, FindFirstFileEx, or FindFirstFileTransacted functions.
+     * @param hFindFile
+     * 				The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.
+     * @param lpFindFileData
+     * 				A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory.
+     * @return If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains
+     * 				information about the next file or directory found. If the function fails, the return value is zero and the
+     * 				contents of lpFindFileData are indeterminate. To get extended error information, call the GetLastError function.
+     * 				If the function fails because no more matching files can be found, the GetLastError function returns ERROR_NO_MORE_FILES.
+     */
+    boolean FindNextFile(HANDLE hFindFile, Pointer lpFindFileData);
+
+    /**
+     * Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW, FindFirstFileNameTransactedW,
+     * FindFirstFileTransacted, FindFirstStreamTransactedW, or FindFirstStreamW functions.
+     * @param hFindFile
+     * 			The file search handle.
+     * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
+     * 			To get extended error information, call GetLastError.
+     */
+    boolean FindClose(HANDLE hFindFile);
 
     /**
      * Retrieves the name of a mounted folder on the specified volume - used
