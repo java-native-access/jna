@@ -12,6 +12,11 @@
  */
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_COMPRESSION;
+import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_REPARSE_POINT;
+import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_COMPRESSION;
+import static com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_REPARSE_POINT;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -62,10 +67,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.MEMORY_BASIC_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
-import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_COMPRESSION;
-import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_GET_REPARSE_POINT;
-import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_COMPRESSION;
-import com.sun.jna.platform.win32.WinioctlUtil.FSCTL_SET_REPARSE_POINT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
 
@@ -587,7 +588,7 @@ public class Kernel32Test extends TestCase {
             IntByReference lpBytes = new IntByReference();
 
             if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
-                    new FSCTL_GET_COMPRESSION().getControlCode(),
+                    FSCTL_GET_COMPRESSION,
                     null,
                     0,
                     lpBuffer.getPointer(),
@@ -602,7 +603,7 @@ public class Kernel32Test extends TestCase {
             lpBuffer = new ShortByReference((short)WinNT.COMPRESSION_FORMAT_LZNT1);
 
             if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
-                    new FSCTL_SET_COMPRESSION().getControlCode(),
+                    FSCTL_SET_COMPRESSION,
                     lpBuffer.getPointer(),
                     USHORT.SIZE,
                     null,
@@ -613,7 +614,7 @@ public class Kernel32Test extends TestCase {
             }
 
             if (false == Kernel32.INSTANCE.DeviceIoControl(hFile,
-                    new FSCTL_GET_COMPRESSION().getControlCode(),
+                    FSCTL_GET_COMPRESSION,
                     null,
                     0,
                     lpBuffer.getPointer(),
@@ -666,7 +667,7 @@ public class Kernel32Test extends TestCase {
                 REPARSE_DATA_BUFFER lpBuffer = new REPARSE_DATA_BUFFER(WinNT.IO_REPARSE_TAG_SYMLINK, (short) 0, symLinkReparseBuffer);
 
                 assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
-                        new FSCTL_SET_REPARSE_POINT().getControlCode(),
+                        FSCTL_SET_REPARSE_POINT,
                         lpBuffer.getPointer(),
                         lpBuffer.getSize(),
                         null,
@@ -677,7 +678,7 @@ public class Kernel32Test extends TestCase {
                 Memory p = new Memory(REPARSE_DATA_BUFFER.sizeOf());
                 IntByReference lpBytes = new IntByReference();
                 assertTrue(Kernel32.INSTANCE.DeviceIoControl(hFile,
-                        new FSCTL_GET_REPARSE_POINT().getControlCode(),
+                        FSCTL_GET_REPARSE_POINT,
                         null,
                         0,
                         p,
