@@ -35,12 +35,16 @@ import com.sun.jna.platform.win32.WinDef.BOOLByReference;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.WinNT.PACLByReference;
 import com.sun.jna.platform.win32.WinNT.PRIVILEGE_SET;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.platform.win32.WinNT.PSIDByReference;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
@@ -50,6 +54,7 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.ptr.ShortByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -249,6 +254,20 @@ public interface Advapi32 extends StdCallLibrary {
     boolean IsValidSid(PSID pSid);
 
     /**
+     * he EqualSid function tests two security identifier (SID) values for equality.
+     * Two SIDs must match exactly to be considered equal.
+     * @param pSid1
+     *             A pointer to the first SID structure to compare. This structure is assumed to be valid.
+     * @param pSid2
+     *             A pointer to the second SID structure to compare. This structure is assumed to be valid.
+     * @return If the SID structures are equal, the return value is nonzero.
+     *         If the SID structures are not equal, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     *         If either SID structure is not valid, the return value is undefined.
+     */
+    boolean EqualSid(PSID pSid1, PSID pSid2);
+
+    /**
      * Compares a SID to a well known SID and returns TRUE if they match.
      *
      * @param pSid
@@ -282,6 +301,292 @@ public interface Advapi32 extends StdCallLibrary {
      */
     boolean CreateWellKnownSid(int wellKnownSidType, PSID domainSid,
                                PSID pSid, IntByReference cbSid);
+
+    /**
+     * The InitializeSecurityDescriptor function initializes a new security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure that the function initializes.
+     * @param dwRevision
+     *              The revision level to assign to the security descriptor. This parameter
+     *              must be SECURITY_DESCRIPTOR_REVISION.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean InitializeSecurityDescriptor(SECURITY_DESCRIPTOR pSecurityDescriptor, int dwRevision);
+
+    /**
+     * The GetSecurityDescriptorControl function retrieves a security descriptor control and revision information.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure whose control and revision
+     *              information the function retrieves.
+     * @param pControl
+     *              A pointer to a SECURITY_DESCRIPTOR_CONTROL structure that receives the security descriptor's
+     *              control information.
+     * @param lpdwRevision
+     *              A pointer to a variable that receives the security descriptor's revision value.
+     *              This value is always set, even when GetSecurityDescriptorControl returns an error.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, ShortByReference pControl, IntByReference lpdwRevision);
+
+    /**
+     * The SetSecurityDescriptorControl function sets the control bits of a security descriptor. The function can set only the control
+     * bits that relate to automatic inheritance of ACEs. To set the other control bits of a security descriptor, use the functions,
+     * such as SetSecurityDescriptorDacl, for modifying the components of a security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to a SECURITY_DESCRIPTOR structure whose control and revision information are set.
+     * @param ControlBitsOfInterest
+     *              A SECURITY_DESCRIPTOR_CONTROL mask that indicates the control bits to set.
+     * @param ControlBitsToSet
+     *               SECURITY_DESCRIPTOR_CONTROL mask that indicates the new values for the control bits specified by the ControlBitsOfInterest mask.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorControl(SECURITY_DESCRIPTOR pSecurityDescriptor, short ControlBitsOfInterest, short ControlBitsToSet);
+
+    /**
+     * The GetSecurityDescriptorOwner function retrieves the owner information from a security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to a SECURITY_DESCRIPTOR structure whose owner information the function retrieves.
+     * @param pOwner
+     *          A pointer to a pointer to a security identifier (SID) that identifies the owner when the function returns.
+     *          If the security descriptor does not contain an owner, the function sets the pointer pointed to by pOwner
+     *          to NULL and ignores the remaining output parameter, lpbOwnerDefaulted. If the security descriptor contains an owner,
+     *          the function sets the pointer pointed to by pOwner to the address of the security descriptor's owner SID
+     *          and provides a valid value for the variable pointed to by lpbOwnerDefaulted.
+     * @param lpbOwnerDefaulted
+     *          A pointer to a flag that is set to the value of the SE_OWNER_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL
+     *          structure when the function returns. If the value stored in the variable pointed to by the pOwner parameter is
+     *          NULL, no value is set.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PSIDByReference pOwner, BOOLByReference lpbOwnerDefaulted);
+
+    /**
+     * The SetSecurityDescriptorOwner function sets the owner information of an absolute-format security descriptor. It replaces
+     * any owner information already present in the security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to the SECURITY_DESCRIPTOR structure whose owner is set by this function. The function replaces any existing
+     *          owner with the new owner.
+     * @param pOwner
+     *          A pointer to a SID structure for the security descriptor's new primary owner. The SID structure is referenced by, not
+     *          copied into, the security descriptor. If this parameter is NULL, the function clears the security descriptor's owner
+     *          information. This marks the security descriptor as having no owner.
+     * @param bOwnerDefaulted
+     *          Indicates whether the owner information is derived from a default mechanism. If this value is TRUE, it is default information.
+     *          The function stores this value as the SE_OWNER_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure. If this parameter
+     *          is zero, the SE_OWNER_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorOwner(SECURITY_DESCRIPTOR pSecurityDescriptor, PSID pOwner, boolean bOwnerDefaulted);
+
+    /**
+     * The GetSecurityDescriptorGroup function retrieves the primary group information from a security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to a SECURITY_DESCRIPTOR structure whose primary group information the function retrieves.
+     * @param pGroup
+     *          A pointer to a pointer to a security identifier (SID) that identifies the primary group when the function
+     *          returns. If the security descriptor does not contain a primary group, the function sets the pointer
+     *          pointed to by pGroup to NULL and ignores the remaining output parameter, lpbGroupDefaulted. If the
+     *          security descriptor contains a primary group, the function sets the pointer pointed to by pGroup to the
+     *          address of the security descriptor's group SID and provides a valid value for the variable pointed to
+     *          by lpbGroupDefaulted.
+     * @param lpbGroupDefaulted
+     *          A pointer to a flag that is set to the value of the SE_GROUP_DEFAULTED flag in the
+     *          SECURITY_DESCRIPTOR_CONTROL structure when the function returns. If the value stored in the variable
+     *          pointed to by the pGroup parameter is NULL, no value is set.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PSIDByReference pGroup, BOOLByReference lpbGroupDefaulted);
+
+    /**
+     * The SetSecurityDescriptorGroup function sets the primary group information of an absolute-format security descriptor, replacing
+     * any primary group information already present in the security descriptor.
+     * @param pSecurityDescriptor
+     *          A pointer to the SECURITY_DESCRIPTOR structure whose primary group is set by this function. The function replaces
+     *          any existing primary group with the new primary group.
+     * @param pGroup
+     *          A pointer to a SID structure for the security descriptor's new primary group. The SID structure is referenced by, not copied
+     *          into, the security descriptor. If this parameter is NULL, the function clears the security descriptor's primary group
+     *          information. This marks the security descriptor as having no primary group.
+     * @param bGroupDefaulted
+     *          Indicates whether the primary group information was derived from a default mechanism. If this value is TRUE, it is default
+     *          information, and the function stores this value as the SE_GROUP_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure.
+     *          If this parameter is zero, the SE_GROUP_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorGroup(SECURITY_DESCRIPTOR pSecurityDescriptor, PSID pGroup, boolean bGroupDefaulted);
+
+    /**
+     * The GetSecurityDescriptorDacl function retrieves a pointer to the discretionary access control list (DACL) in
+     * a specified security descriptor.
+     * @param pSecurityDescriptor
+     *              A pointer to the SECURITY_DESCRIPTOR structure that contains the DACL. The function retrieves a pointer to it.
+     * @param bDaclPresent
+     *              A pointer to a value that indicates the presence of a DACL in the specified security descriptor. If
+     *              lpbDaclPresent is TRUE, the security descriptor contains a DACL, and the remaining output parameters in this
+     *              function receive valid values. If lpbDaclPresent is FALSE, the security descriptor does not contain a DACL,
+     *              and the remaining output parameters do not receive valid values. A value of TRUE for lpbDaclPresent does not
+     *              mean that pDacl is not NULL. That is, lpbDaclPresent can be TRUE while pDacl is NULL, meaning that a NULL
+     *              DACL is in effect. A NULL DACL implicitly allows all access to an object and is not the same as an empty DACL.
+     *              An empty DACL permits no access to an object. For information about creating a proper DACL, see Creating a DACL.
+     * @param pDacl
+     *              A pointer to a pointer to an access control list (ACL). If a DACL exists, the function sets the pointer pointed
+     *              to by pDacl to the address of the security descriptor's DACL. If a DACL does not exist, no value is stored.
+     *              If the function stores a NULL value in the pointer pointed to by pDacl, the security descriptor has a NULL DACL.
+     *              A NULL DACL implicitly allows all access to an object.
+     *              If an application expects a non-NULL DACL but encounters a NULL DACL, the application should fail securely and
+     *              not allow access.
+     * @param bDaclDefaulted
+     *              A pointer to a flag set to the value of the SE_DACL_DEFAULTED flag in the SECURITY_DESCRIPTOR_CONTROL structure
+     *              if a DACL exists for the security descriptor. If this flag is TRUE, the DACL was retrieved by a default mechanism;
+     *              if FALSE, the DACL was explicitly specified by a user.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, BOOLByReference bDaclPresent, PACLByReference pDacl, BOOLByReference bDaclDefaulted);
+
+    /**
+     * The SetSecurityDescriptorDacl function sets information in a discretionary access control list (DACL).
+     * If a DACL is already present in the security descriptor, the DACL is replaced.
+     * @param pSecurityDescriptor
+     *              A pointer to the SECURITY_DESCRIPTOR structure to which the function adds the DACL. This
+     *              security descriptor must be in absolute format, meaning that its members must be pointers
+     *              to other structures, rather than offsets to contiguous data.
+     * @param bDaclPresent
+     *              A flag that indicates the presence of a DACL in the security descriptor. If this parameter
+     *              is TRUE, the function sets the SE_DACL_PRESENT flag in the SECURITY_DESCRIPTOR_CONTROL
+     *              structure and uses the values in the pDacl and bDaclDefaulted parameters. If this parameter
+     *              is FALSE, the function clears the SE_DACL_PRESENT flag, and pDacl and bDaclDefaulted are ignored.
+     * @param pDacl
+     *              A pointer to an ACL structure that specifies the DACL for the security descriptor. If this
+     *              parameter is NULL, a NULL DACL is assigned to the security descriptor, which allows all access
+     *              to the object. The DACL is referenced by, not copied into, the security descriptor.
+     * @param bDaclDefaulted
+     *              A flag that indicates the source of the DACL. If this flag is TRUE, the DACL has been retrieved
+     *              by some default mechanism. If FALSE, the DACL has been explicitly specified by a user. The function
+     *              stores this value in the SE_DACL_DEFAULTED flag of the SECURITY_DESCRIPTOR_CONTROL structure. If
+     *              this parameter is not specified, the SE_DACL_DEFAULTED flag is cleared.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean SetSecurityDescriptorDacl(SECURITY_DESCRIPTOR pSecurityDescriptor, boolean bDaclPresent, ACL pDacl, boolean bDaclDefaulted);
+
+    /**
+     * The InitializeAcl function initializes a new ACL structure.
+     * @param pAcl
+     *              A pointer to an ACL structure to be initialized by this function.
+     *              Allocate memory for pAcl before calling this function.
+     * @param nAclLength
+     *              The length, in bytes, of the buffer pointed to by the pAcl parameter. This value
+     *              must be large enough to contain the ACL header and all of the access control
+     *              entries (ACEs) to be stored in the ACL. In addition, this value must be
+     *              DWORD-aligned. For more information about calculating the size of an ACL,
+     *              see Remarks.
+     * @param dwAclRevision
+     *              The revision level of the ACL structure being created. This value can be ACL_REVISION
+     *              or ACL_REVISION_DS. Use ACL_REVISION_DS if the access control list (ACL) supports
+     *              object-specific ACEs.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean InitializeAcl(ACL pAcl, int nAclLength, int dwAclRevision);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an ACE to this ACL.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs. This value
+     *          must be compatible with the AceType field of all ACEs in pAceList. Otherwise, the function
+     *          will fail and set the last error to ERROR_INVALID_PARAMETER.
+     * @param dwStartingAceIndex
+     *          Specifies the position in the ACL's list of ACEs at which to add new ACEs. A value of zero
+     *          inserts the ACEs at the beginning of the list. A value of MAXDWORD appends the ACEs to the end
+     *          of the list.
+     * @param pAceList
+     *          A pointer to a list of one or more ACEs to be added to the specified ACL. The ACEs in the list
+     *          must be stored contiguously.
+     * @param nAceListLength
+     *          Specifies the size, in bytes, of the input buffer pointed to by the pAceList parameter.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAce(ACL pAcl, int dwAceRevision, int dwStartingAceIndex, Pointer pAceList, int nAceListLength);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an access-allowed ACE to the end of this ACL.
+     *          The ACE is in the form of an ACCESS_ALLOWED_ACE structure.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs.
+     * @param AccessMask
+     *          Specifies the mask of access rights to be granted to the specified SID.
+     * @param pSid
+     *          A pointer to the SID representing a user, group, or logon account being granted access.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAccessAllowedAce(ACL pAcl, int dwAceRevision, int AccessMask, PSID pSid);
+
+    /**
+     * The AddAce function adds one or more access control entries (ACEs) to a specified access control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL. This function adds an access-allowed ACE to the end of this ACL.
+     *          The ACE is in the form of an ACCESS_ALLOWED_ACE structure.
+     * @param dwAceRevision
+     *          Specifies the revision level of the ACL being modified. This value can be ACL_REVISION or
+     *          ACL_REVISION_DS. Use ACL_REVISION_DS if the ACL contains object-specific ACEs.
+     * @param AceFlags
+     *          A set of bit flags that control ACE inheritance. The function sets these flags in the AceFlags
+     *          member of the ACE_HEADER structure of the new ACE. This parameter can be a combination
+     *          of the following values: CONTAINER_INHERIT_ACE, INHERIT_ONLY_ACE, INHERITED_ACE,
+     *          NO_PROPAGATE_INHERIT_ACE, and OBJECT_INHERIT_ACE
+     * @param AccessMask
+     *          Specifies the mask of access rights to be granted to the specified SID.
+     * @param pSid
+     *          A pointer to the SID representing a user, group, or logon account being granted access.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean AddAccessAllowedAceEx(ACL pAcl, int dwAceRevision, int AceFlags, int AccessMask, PSID pSid);
+
+    /**
+     * The GetAce function obtains a pointer to an access control entry (ACE) in an access
+     * control list (ACL).
+     * @param pAcl
+     *          A pointer to an ACL that contains the ACE to be retrieved.
+     * @param dwAceIndex
+     *          The index of the ACE to be retrieved. A value of zero corresponds to the first ACE in
+     *          the ACL, a value of one to the second ACE, and so on.
+     * @param pAce
+     *          A pointer to a pointer that the function sets to the address of the ACE.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. For extended error
+     *         information, call GetLastError.
+     */
+    boolean GetAce(ACL pAcl, int dwAceIndex, PointerByReference pAce);
 
     /**
      * The LogonUser function attempts to log a user on to the local computer.
@@ -1940,6 +2245,85 @@ public interface Advapi32 extends StdCallLibrary {
      * @return If the components of the security descriptor are valid, the return value is nonzero.
      */
     boolean IsValidSecurityDescriptor(Pointer ppSecurityDescriptor);
+
+    /**
+     * A pointer to a SECURITY_DESCRIPTOR structure in absolute format. The function creates a version of this security
+     * descriptor in self-relative format without modifying the original.
+     * @param pAbsoluteSD
+     *          A pointer to a SECURITY_DESCRIPTOR structure in absolute format. The function creates a version of this
+     *          security descriptor in self-relative format without modifying the original.
+     * @param pSelfRelativeSD
+     *          A pointer to a buffer the function fills with a security descriptor in self-relative format.
+     * @param lpdwBufferLength
+     *          A pointer to a variable specifying the size of the buffer pointed to by the pSelfRelativeSD parameter.
+     *          If the buffer is not large enough for the security descriptor, the function fails and sets this variable
+     *          to the minimum required size.
+     * @return If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get
+     *         extended error information, call GetLastError. Possible return codes include, but are not limited to, the following:
+     *         ERROR_INSUFFICIENT_BUFFER - One or more of the buffers is too small.
+     */
+    boolean MakeSelfRelativeSD(SECURITY_DESCRIPTOR pAbsoluteSD,
+                               SECURITY_DESCRIPTOR_RELATIVE pSelfRelativeSD,
+                               IntByReference lpdwBufferLength);
+
+    /**
+     * The MakeAbsoluteSD function creates a security descriptor in absolute format by using a
+     * security descriptor in self-relative format as a template.
+     * @param pSelfRelativeSD
+     *              A pointer to a SECURITY_DESCRIPTOR structure in self-relative format. The function creates an
+     *              absolute-format version of this security descriptor without modifying the original security descriptor.
+     * @param pAbsoluteSD
+     *              A pointer to a buffer that the function fills with the main body of an absolute-format security
+     *              descriptor. This information is formatted as a SECURITY_DESCRIPTOR structure.
+     * @param lpdwAbsoluteSDSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pAbsoluteSD parameter.
+     *              If the buffer is not large enough for the security descriptor, the function fails and sets this variable
+     *              to the minimum required size.
+     * @param pDacl
+     *              A pointer to a buffer the function fills with the discretionary access control list (DACL) of the
+     *              absolute-format security descriptor. The main body of the absolute-format security descriptor references
+     *              this pointer.
+     * @param lpdwDaclSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pDacl parameter. If
+     *              the buffer is not large enough for the access control list (ACL), the function fails and sets this
+     *              variable to the minimum required size.
+     * @param pSacl
+     *              A pointer to a buffer the function fills with the system access control list (SACL) of the absolute-format
+     *              security descriptor. The main body of the absolute-format security descriptor references this pointer.
+     * @param lpdwSaclSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pSacl parameter. If the
+     *              buffer is not large enough for the ACL, the function fails and sets this variable to the minimum required
+     *              size.
+     * @param pOwner
+     *              A pointer to a buffer the function fills with the security identifier (SID) of the owner of the
+     *              absolute-format security descriptor. The main body of the absolute-format security descriptor references
+     *              this pointer.
+     * @param lpdwOwnerSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pOwner parameter.
+     *              If the buffer is not large enough for the SID, the function fails and sets this variable to the minimum
+     *              required size.
+     * @param pPrimaryGroup
+     *              A pointer to a buffer the function fills with the SID of the absolute-format security descriptor's
+     *              primary group. The main body of the absolute-format security descriptor references this pointer.
+     * @param lpdwPrimaryGroupSize
+     *              A pointer to a variable that specifies the size of the buffer pointed to by the pPrimaryGroup parameter.
+     *              If the buffer is not large enough for the SID, the function fails and sets this variable to the minimum
+     *              required size.
+     * @return If the function succeeds, the function returns nonzero. If the function fails, it returns zero. To get
+     *         extended error information, call GetLastError. Possible return codes include, but are not limited to, the following:
+     *         ERROR_INSUFFICIENT_BUFFER - One or more of the buffers is too small.
+     */
+    boolean MakeAbsoluteSD(SECURITY_DESCRIPTOR_RELATIVE pSelfRelativeSD,
+                           SECURITY_DESCRIPTOR pAbsoluteSD,
+                           IntByReference lpdwAbsoluteSDSize,
+                           ACL pDacl,
+                           IntByReference lpdwDaclSize,
+                           ACL pSacl,
+                           IntByReference lpdwSaclSize,
+                           PSID pOwner,
+                           IntByReference lpdwOwnerSize,
+                           PSID pPrimaryGroup,
+                           IntByReference lpdwPrimaryGroupSize);
 
     /**
      * The IsValidAcl function validates an access control list (ACL).

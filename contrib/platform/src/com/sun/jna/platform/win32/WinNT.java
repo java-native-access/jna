@@ -25,7 +25,6 @@ package com.sun.jna.platform.win32;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
@@ -50,6 +49,15 @@ import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 @SuppressWarnings("serial")
 public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
+    int MINCHAR     = 0x80;
+    int MAXCHAR     = 0x7f;
+    int MINSHORT    = 0x8000;
+    int MAXSHORT    = 0x7fff;
+    int MINLONG     = 0x80000000;
+    int MAXLONG     = 0x7fffffff;
+    int MAXBYTE     = 0xff;
+    int MAXWORD     = 0xffff;
+    int MAXDWORD    = 0xffffffff;
     //
     // The following are masks for the predefined standard access types
     //
@@ -2481,6 +2489,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_RM_CONTROL_VALID         = 0x00004000;
     int SE_SELF_RELATIVE            = 0x00008000;
 
+    int SECURITY_DESCRIPTOR_REVISION = 0x00000001;
 
     public static class SECURITY_DESCRIPTOR extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR implements
@@ -2495,8 +2504,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public SECURITY_DESCRIPTOR(byte[] data) {
+            super();
             this.data = data;
             useMemory(new Memory(data.length));
+        }
+
+        public SECURITY_DESCRIPTOR(int size) {
+            super();
+            useMemory(new Memory(size));
+            data = new byte[size];
         }
 
         public SECURITY_DESCRIPTOR(Pointer memory) {
@@ -2510,8 +2526,26 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
     }
 
+    int ACL_REVISION        = 2;
+    int ACL_REVISION_DS     = 4;
+
+    // This is the history of ACL revisions.  Add a new one whenever
+    // ACL_REVISION is updated
+    int ACL_REVISION1       = 1;
+    int ACL_REVISION2       = 2;
+    int ACL_REVISION3       = 3;
+    int ACL_REVISION4       = 4;
+    int MIN_ACL_REVISION    = ACL_REVISION2;
+    int MAX_ACL_REVISION    = ACL_REVISION4;
+
     public static class ACL extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("AclRevision", "Sbz1", "AclSize", "AceCount", "Sbz2");
+
+        /*
+         * Maximum size chosen based on technet article:
+         * https://technet.microsoft.com/en-us/library/cc781716.aspx
+         */
+        public static int MAX_ACL_SIZE = 64 * 1024;
 
         public byte AclRevision;
         public byte Sbz1;
@@ -2523,6 +2557,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public ACL() {
             super();
+        }
+
+        public ACL(int size) {
+            super();
+            useMemory(new Memory(size));
         }
 
         public ACL(Pointer pointer) {
@@ -2560,6 +2599,31 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
     }
 
+    public static class PACLByReference extends ByReference {
+        public PACLByReference() {
+            this(null);
+        }
+
+        public PACLByReference(ACL h) {
+            super(Pointer.SIZE);
+            setValue(h);
+        }
+
+        public void setValue(ACL h) {
+            getPointer().setPointer(0, h != null ? h.getPointer() : null);
+        }
+
+        public ACL getValue() {
+            Pointer p = getPointer().getPointer(0);
+            if (p == null) {
+                return null;
+            }
+            else {
+                return new ACL(p);
+            }
+        }
+    }
+
     public static class SECURITY_DESCRIPTOR_RELATIVE extends Structure {
         public static class ByReference extends SECURITY_DESCRIPTOR_RELATIVE
                 implements Structure.ByReference {
@@ -2575,10 +2639,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public int Sacl;
         public int Dacl;
 
-        private ACL DACL;
         private PSID OWNER;
         private PSID GROUP;
         private ACL SACL;
+        private ACL DACL;
 
         public SECURITY_DESCRIPTOR_RELATIVE() {
             super();
@@ -2588,6 +2652,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(new Memory(data.length));
             getPointer().write(0, data, 0, data.length);
             setMembers();
+        }
+
+        public SECURITY_DESCRIPTOR_RELATIVE(int length) {
+            super(new Memory(length));
         }
 
         public SECURITY_DESCRIPTOR_RELATIVE(Pointer p) {
@@ -2650,6 +2718,15 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
         }
 
+        public ACEStructure(byte AceType, byte AceFlags, short AceSize, PSID psid) {
+            super();
+            this.AceType = AceType;
+            this.AceFlags = AceFlags;
+            this.AceSize = AceSize;
+            this.psid = psid;
+            write();
+        }
+
         public String getSidString() {
             return Advapi32Util.convertSidToStringSid(psid);
         }
@@ -2680,46 +2757,69 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
     public static abstract class ACCESS_ACEStructure extends ACEStructure {
-        public static final List<String> EXTRA_ABSTRACT_FIELDS = createFieldsOrder("Mask", "SidStart");
-        private static final AtomicReference<List<String>> fieldsHolder = new AtomicReference<List<String>>(null);
-        private static List<String> resolveEffectiveFields(List<String> baseFields) {
-            List<String> fields;
-            synchronized (fieldsHolder) {
-                fields = fieldsHolder.get();
-                if (fields == null) {
-                    fields = createFieldsOrder(baseFields, EXTRA_ABSTRACT_FIELDS);
-                    fieldsHolder.set(fields);
-                }
-            }
-
-            return fields;
-        }
+        public static final List<String> FIELDS = createFieldsOrder(ACEStructure.FIELDS, "Mask", "SidStart");
 
         public int Mask;
         /**
-         * first 4 bytes of the SID
+         * First 4 bytes of the SID
+         * Only used to have a valid field defined - use sid!
          */
-        public DWORD SidStart;
+        public byte[] SidStart = new byte[4];
 
         public ACCESS_ACEStructure() {
             super();
         }
 
+        public ACCESS_ACEStructure(int Mask, byte AceType, byte AceFlags, PSID psid) {
+            super();
+            this.calculateSize(true);
+            this.AceType = AceType;
+            this.AceFlags = AceFlags;
+            this.AceSize = (short) (super.fieldOffset("SidStart") + psid.getBytes().length);
+            this.psid = psid;
+            this.Mask = Mask;
+            this.SidStart = psid.getPointer().getByteArray(0, SidStart.length);
+            this.allocateMemory(AceSize);
+            write();
+        }
+
         public ACCESS_ACEStructure(Pointer p) {
             super(p);
             read();
-            // AceSize - size of public members of the structure + size of DWORD
-            // (SidStart)
-            int sizeOfSID = super.AceSize - size() + 4;
-            // ACE_HEADER + size of int (Mask)
-            int offsetOfSID = 4 + 4;
-            byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
-            psid = new PSID(data);
+        }
+
+        /**
+         * Write override due to psid not being a managed field
+         */
+        @Override
+        public void write() {
+            super.write();
+            int offsetOfSID = super.fieldOffset("SidStart");
+            int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
+            if(psid != null) {
+                // Get bytes from the PSID
+                byte[] psidWrite = psid.getBytes();
+                assert psidWrite.length <= sizeOfSID;
+                // Write those bytes to native memory
+                getPointer().write(offsetOfSID, psidWrite, 0, sizeOfSID);
+            }
+        }
+
+        @Override
+        public void read() {
+            super.read();
+            int offsetOfSID = super.fieldOffset("SidStart");
+            int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
+            if(sizeOfSID > 0) {
+                psid = new PSID(getPointer().getByteArray(offsetOfSID, sizeOfSID));
+            } else {
+                psid = new PSID();
+            }
         }
 
         @Override
         protected List<String> getFieldOrder() {
-            return resolveEffectiveFields(super.getFieldOrder());
+            return FIELDS;
         }
     }
 
@@ -2732,6 +2832,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public ACCESS_ALLOWED_ACE(Pointer p) {
             super(p);
         }
+
+        public ACCESS_ALLOWED_ACE(int Mask, byte AceFlags, PSID psid) {
+            super(Mask, ACCESS_ALLOWED_ACE_TYPE, AceFlags, psid);
+        }
     }
 
     /* Access denied ACE */
@@ -2742,6 +2846,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public ACCESS_DENIED_ACE(Pointer p) {
             super(p);
+        }
+
+        public ACCESS_DENIED_ACE(int Mask, byte AceFlags, PSID psid) {
+            super(Mask, ACCESS_DENIED_ACE_TYPE, AceFlags, psid);
         }
     }
 

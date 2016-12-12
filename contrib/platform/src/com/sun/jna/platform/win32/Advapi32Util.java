@@ -71,6 +71,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
+import com.sun.jna.platform.win32.WinNT.ACCESS_ALLOWED_ACE;
 import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
@@ -380,7 +381,27 @@ public abstract class Advapi32Util {
 		return Advapi32.INSTANCE.IsWellKnownSid(pSID, wellKnownSidType);
 	}
 
+    /**
+     * Align cbAcl on a DWORD
+     * @param cbAcl size to align
+     * @return the aligned size
+     */
+    public static int alignOnDWORD(int cbAcl) {
+        return (cbAcl + (DWORD.SIZE - 1)) & 0xfffffffc;
+    }
+
 	/**
+     * Helper function to calculate the size of an ACE for a given PSID size
+     * @param sidLength length of the sid
+     * @return size of the ACE
+     */
+    public static int getAceSize(int sidLength) {
+        return Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null)
+                + sidLength
+                - DWORD.SIZE;
+    }
+
+    /**
 	 * Get an account name from a string SID on the local machine.
 	 *
 	 * @param sidString

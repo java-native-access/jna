@@ -96,5 +96,14 @@ public interface NTStatus {
     //  STATUS_ABANDONED_WAIT_63
     //
     int  STATUS_ABANDONED_WAIT_63 = 0x000000BF;
+
+    //
+    // MessageId: STATUS_INVALID_OWNER
+    //
+    // MessageText:
+    //
+    //  Indicates a particular Security ID may not be assigned as the owner of an object.
+    //
+    int  STATUS_INVALID_OWNER = 0xC000005A;
 }
 
