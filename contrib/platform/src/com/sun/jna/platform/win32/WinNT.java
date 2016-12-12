@@ -2778,6 +2778,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             this.AceSize = (short) (super.fieldOffset("SidStart") + psid.getBytes().length);
             this.psid = psid;
             this.Mask = Mask;
+            this.SidStart = psid.getPointer().getByteArray(0, SidStart.length);
             this.allocateMemory(AceSize);
             write();
         }
@@ -2792,6 +2793,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         @Override
         public void write() {
+            super.write();
             int offsetOfSID = super.fieldOffset("SidStart");
             int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
             if(psid != null) {
