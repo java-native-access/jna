@@ -25,7 +25,6 @@ package com.sun.jna.platform.win32;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
@@ -2758,57 +2757,34 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
     public static abstract class ACCESS_ACEStructure extends ACEStructure {
-        public static final List<String> EXTRA_ABSTRACT_FIELDS = createFieldsOrder("Mask", "SidStart");
-        private static final AtomicReference<List<String>> fieldsHolder = new AtomicReference<List<String>>(null);
-        private static List<String> resolveEffectiveFields(List<String> baseFields) {
-            List<String> fields;
-            synchronized (fieldsHolder) {
-                fields = fieldsHolder.get();
-                if (fields == null) {
-                    fields = createFieldsOrder(baseFields, EXTRA_ABSTRACT_FIELDS);
-                    fieldsHolder.set(fields);
-                }
-            }
-
-            return fields;
-        }
+        public static final List<String> FIELDS = createFieldsOrder(ACEStructure.FIELDS, "Mask", "SidStart");
 
         public int Mask;
         /**
-         * first 4 bytes of the SID
+         * First 4 bytes of the SID
+         * Only used to have a valid field defined - use sid!
          */
-        public DWORD SidStart;
+        public byte[] SidStart = new byte[4];
 
         public ACCESS_ACEStructure() {
             super();
         }
 
-        public ACCESS_ACEStructure(int Mask, int SidStart, byte AceType, byte AceFlags, short AceSize, PSID psid) {
+        public ACCESS_ACEStructure(int Mask, byte AceType, byte AceFlags, PSID psid) {
             super();
-            this.allocateMemory(AceSize);
+            this.calculateSize(true);
             this.AceType = AceType;
             this.AceFlags = AceFlags;
-            this.AceSize = AceSize;
+            this.AceSize = (short) (super.fieldOffset("SidStart") + psid.getBytes().length);
             this.psid = psid;
             this.Mask = Mask;
-            this.SidStart = new DWORD(SidStart);
+            this.allocateMemory(AceSize);
             write();
         }
 
         public ACCESS_ACEStructure(Pointer p) {
             super(p);
             read();
-            // Check for AceSize being zero, can happen on empty memory
-            if (AceSize != 0) {
-            int sizeOfSID = super.AceSize - size() + 4;
-                // ACE_HEADER + size of int (Mask)
-                int offsetOfSID = 4 + 4;
-                byte[] data = p.getByteArray(offsetOfSID, sizeOfSID);
-                psid = new PSID(data);
-            }
-            else {
-                psid = null;
-            }
         }
 
         /**
@@ -2816,21 +2792,32 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          */
         @Override
         public void write() {
-            int sizeOfSID = super.AceSize - 8;
-            int offsetOfSID = 4 + 4;
-            super.writeField("AceType");
-            super.writeField("AceFlags");
-            super.writeField("AceSize");
-            super.writeField("Mask");
-            // Get bytes from the PSID
-            byte[] psidWrite = psid.getPointer().getByteArray(0, sizeOfSID);
-            // Write those bytes to native memory
-            super.getPointer().write(offsetOfSID, psidWrite, 0, sizeOfSID);
+            int offsetOfSID = super.fieldOffset("SidStart");
+            int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
+            if(psid != null) {
+                // Get bytes from the PSID
+                byte[] psidWrite = psid.getBytes();
+                assert psidWrite.length <= sizeOfSID;
+                // Write those bytes to native memory
+                getPointer().write(offsetOfSID, psidWrite, 0, sizeOfSID);
+            }
+        }
+
+        @Override
+        public void read() {
+            super.read();
+            int offsetOfSID = super.fieldOffset("SidStart");
+            int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
+            if(sizeOfSID > 0) {
+                psid = new PSID(getPointer().getByteArray(offsetOfSID, sizeOfSID));
+            } else {
+                psid = new PSID();
+            }
         }
 
         @Override
         protected List<String> getFieldOrder() {
-            return resolveEffectiveFields(super.getFieldOrder());
+            return FIELDS;
         }
     }
 
@@ -2844,8 +2831,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
         }
 
-        public ACCESS_ALLOWED_ACE(int Mask, int SidStart, byte AceFlags, short AceSize, PSID psid) {
-            super(Mask, SidStart, ACCESS_ALLOWED_ACE_TYPE, AceFlags, AceSize, psid);
+        public ACCESS_ALLOWED_ACE(int Mask, byte AceFlags, PSID psid) {
+            super(Mask, ACCESS_ALLOWED_ACE_TYPE, AceFlags, psid);
         }
     }
 
@@ -2857,6 +2844,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         public ACCESS_DENIED_ACE(Pointer p) {
             super(p);
+        }
+
+        public ACCESS_DENIED_ACE(int Mask, byte AceFlags, PSID psid) {
+            super(Mask, ACCESS_DENIED_ACE_TYPE, AceFlags, psid);
         }
     }
 

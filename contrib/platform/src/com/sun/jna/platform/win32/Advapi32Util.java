@@ -48,9 +48,7 @@ import static com.sun.jna.platform.win32.WinNT.TOKEN_QUERY;
 import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_DACL_SECURITY_INFORMATION;
 import static com.sun.jna.platform.win32.WinNT.UNPROTECTED_SACL_SECURITY_INFORMATION;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -404,18 +402,6 @@ public abstract class Advapi32Util {
     }
 
     /**
-     * Get the first 4 bytes of the PSID for a SidStart
-     * @param psid the PSID
-     * @return the SidStart
-     * @throws IOException
-     */
-    public static int getSidStart(PSID psid) throws IOException {
-        byte[] sidStart = psid.getBytes();
-        DataInputStream dis = new DataInputStream(new ByteArrayInputStream(sidStart));
-        return dis.readInt();
-    }
-
-	/**
 	 * Get an account name from a string SID on the local machine.
 	 *
 	 * @param sidString

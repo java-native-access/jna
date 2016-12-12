@@ -834,19 +834,15 @@ public class Advapi32Test extends TestCase {
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
         cbAcl = Native.getNativeSize(ACL.class, null);
-        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
-        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
         pAcl = new ACL(cbAcl);
-        int cbAce = Advapi32Util.getAceSize(sidLength);
         ACCESS_ALLOWED_ACE pace = new ACCESS_ALLOWED_ACE(WinNT.STANDARD_RIGHTS_ALL,
-                Advapi32Util.getSidStart(pSid),
                 WinNT.INHERITED_ACE,
-                (short)cbAce,
                 pSid);
 
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
-        assertTrue(Advapi32.INSTANCE.AddAce(pAcl, WinNT.ACL_REVISION, WinNT.MAXDWORD, pace.getPointer(), cbAce));
+        assertTrue(Advapi32.INSTANCE.AddAce(pAcl, WinNT.ACL_REVISION, WinNT.MAXDWORD, pace.getPointer(), pace.size()));
 
         PointerByReference pAce = new PointerByReference(new Memory(16));
         assertTrue(Advapi32.INSTANCE.GetAce(pAcl, 0, pAce));
@@ -865,8 +861,7 @@ public class Advapi32Test extends TestCase {
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
         cbAcl = Native.getNativeSize(ACL.class, null);
-        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
-        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
         pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
@@ -889,8 +884,7 @@ public class Advapi32Test extends TestCase {
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
         cbAcl = Native.getNativeSize(ACL.class, null);
-        cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
-        cbAcl += (sidLength - DWORD.SIZE);
+        cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
         pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
