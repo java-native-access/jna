@@ -3,15 +3,22 @@ sudo: false
 language: java
 
 install:
-  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
-  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew uninstall libtool && brew install libtool || true'
-  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
+- '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
+- '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew uninstall libtool && brew install libtool || true'
+- '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
 
 script:
-  - ant test
-  - ant test-platform
-  - ant dist
+- ant test
+- ant test-platform
+- ant dist
 
 os:
-  - linux
-  - osx
+- osx
+
+deploy:
+  provider: script
+  script: scripts/upload.sh
+
+env:
+  global:
+    secure: LaHn2EzoWnTR6tPmxkSh89zHV6IYZjFmCWdPp0RR4NSPj4qYTTtL9f2ULzTIgbPbdgujFmW/dC1sYRxpZDglmtdGLN2L8UbB7gEvt8Jl3qJtzV6UqH8UDwGw1eLEXRWBwzIw8HuH32leQsOCASOl31GyKhcyODOQjccRu+zxbhjsSqOtOoNHyKTuJi2Rj12r6KdAgsGDSzZjvZafuhSZKNzaqRDjqK4lA8Zt1fKG0M6+RVMhzumxJnTjSWM6ZZmqd6ncaHXQgLFyKID2dtr+gETp1TJXpoB6Gvj9RyPW+3a7H2uM7ttHuitNPz1sP4zwxmc5P1y1JJw1hQ7t1JMwAT8V8zwaNlmaAoKTJC4TXJtxugy/Eks9ZcRacRZKO8kvOL66AMn0DerF5jCjrg83JOus6Cx+5Hq6/FP0Rj/OUcEQlzuT1+tGNWZlY5wAFqMvtTKoLTwUhFoRgUOK7SxIyma6DCb2wrRc743LfBZi9mix9QcGDLXu/OqANfyRKEh/Le3RFqh9Cz0WBXv5Fss6WjH5ju9IlJCu1l2M8Ws0so7BbGhwQC9u01IZI5UEkMixSd/r8KIgMD6f/uvU0YTto4FNa42l5Y0aX7xfzYMfiOVc+sW2LlQcPdjKVi4RIzPGN5QYalpXT9kpkn2fDTvb4mMNPe1Jd6CjQr8iIesbKVA=
