@@ -28,7 +28,6 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.TypeMapper;
 import com.sun.jna.win32.W32APITypeMapper;
 
 /**
@@ -142,6 +141,116 @@ public interface Sspi {
      * This is read-only for input parameters or read/write for output parameters.
      */
     int SECBUFFER_TOKEN = 2;
+
+    // for ulAttribute parameter in QueryContextAttributes function
+    // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa379326(v=vs.85).aspx)
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * {@link SecPkgContext_PackageInfo} structure.
+     * 
+     * Returns information on the SSP in use.
+     */
+    int SECPKG_ATTR_PACKAGE_INFO = 0x0000000A;
+    
+    // flags for SecPkgInfo fCapabilities
+    // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa380104(v=vs.85).aspx)
+    /**
+     * Supports integrity on messages
+     */
+    int SECPKG_FLAG_INTEGRITY = 0x00000001;
+    /**
+     * Supports privacy (confidentiality)
+     */
+    int SECPKG_FLAG_PRIVACY = 0x00000002;
+    /**
+     * Only security token needed
+     */
+    int SECPKG_FLAG_TOKEN_ONLY = 0x00000004;
+    /**
+     * Datagram RPC support
+     */
+    int SECPKG_FLAG_DATAGRAM = 0x00000008;
+    /**
+     * Connection oriented RPC support
+     */
+    int SECPKG_FLAG_CONNECTION = 0x00000010;
+    /**
+     * Full 3-leg required for re-auth.
+     */
+    int SECPKG_FLAG_MULTI_REQUIRED = 0x00000020;
+    /**
+     * Server side functionality not available
+     */
+    int SECPKG_FLAG_CLIENT_ONLY = 0x00000040;
+    /**
+     * Supports extended error msgs
+     */
+    int SECPKG_FLAG_EXTENDED_ERROR = 0x00000080;
+    /**
+     * Supports impersonation
+     */
+    int SECPKG_FLAG_IMPERSONATION = 0x00000100;
+    /**
+     * Accepts Win32 names
+     */
+    int SECPKG_FLAG_ACCEPT_WIN32_NAME = 0x00000200;
+    /**
+     * Supports stream semantics
+     */
+    int SECPKG_FLAG_STREAM = 0x00000400;
+    /**
+     * Can be used by the negotiate package
+     */
+    int SECPKG_FLAG_NEGOTIABLE = 0x00000800;
+    /**
+     * GSS Compatibility Available
+     */
+    int SECPKG_FLAG_GSS_COMPATIBLE = 0x00001000;
+    /**
+     * Supports common LsaLogonUser
+     */
+    int SECPKG_FLAG_LOGON = 0x00002000;
+    /**
+     * Token Buffers are in ASCII
+     */
+    int SECPKG_FLAG_ASCII_BUFFERS = 0x00004000;
+    /**
+     * Package can fragment to fit
+     */
+    int SECPKG_FLAG_FRAGMENT = 0x00008000;
+    /**
+     * Package can perform mutual authentication
+     */
+    int SECPKG_FLAG_MUTUAL_AUTH = 0x00010000;
+    /**
+     * Package can delegate
+     */
+    int SECPKG_FLAG_DELEGATION = 0x00020000;
+    /**
+     * Supports callers with restricted tokens.
+     */
+    int SECPKG_FLAG_RESTRICTED_TOKENS = 0x80000;
+    /**
+     * The security package extends the Microsoft Negotiate security package.
+     */
+    int SECPKG_FLAG_NEGO_EXTENDER = 0x00100000;
+    /**
+     * This package is negotiated by the package of type SECPKG_FLAG_NEGO_EXTENDER.
+     */
+    int SECPKG_FLAG_NEGOTIABLE2 = 0x00200000;
+    /**
+     * This package receives all calls from app container apps.
+     */
+    int SECPKG_FLAG_APPCONTAINER_PASSTHROUGH = 0x00400000;
+    /**
+     * This package receives calls from app container apps if one of the following checks succeeds.
+     * <ul>
+     * <li>Caller has default credentials capability.</li>
+     * <li>The target is a proxy server.</li>
+     * <li>The caller has supplied credentials.</li>
+     * </ul>
+     */
+    int SECPKG_FLAG_APPCONTAINER_CHECKS = 0x00800000;
 
     /**
      * Security handle.
@@ -472,4 +581,33 @@ public interface Sspi {
             return FIELDS;
         }
     }
+    
+    /**
+     * The SecPkgContext_PackageInfo structure.
+     */
+    public static class SecPkgContext_PackageInfo extends Structure {
+        /**
+         * A reference pointer to a SecPkgContext_PackageInfo structure.
+         */
+        public static class ByReference extends SecPkgContext_PackageInfo implements Structure.ByReference {
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("PackageInfo");
+
+        /**
+         * Pointer to a SecPkgInfo structure containing the name of the SSP in
+         * use.
+         */
+        public SecPkgInfo.ByReference PackageInfo;
+
+        public SecPkgContext_PackageInfo() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+
 }

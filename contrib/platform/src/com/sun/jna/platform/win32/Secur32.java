@@ -25,6 +25,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
@@ -319,4 +320,24 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, the return value can be either SEC_E_INVALID_HANDLE or SEC_E_UNSUPPORTED_FUNCTION.
      */
     int RevertSecurityContext(CtxtHandle phContext);
+	
+    /**
+     * Enables a transport application to query a security package for certain
+     * attributes of a security context.
+     * 
+     * @param phContext
+     *  A handle to the security context to be queried.
+     * @param ulAttribute
+     *  Specifies the attribute of the context to be returned. This
+     *  parameter can be one of the SECPKG_ATTR_* values defined in
+     *  {@link Sspi}.
+     * @param pBuffer
+     *  A pointer to a structure that receives the attributes. The
+     *  type of structure pointed to depends on the value specified in
+     *  the ulAttribute parameter.
+     * @return
+     *  If the function succeeds, the return value is SEC_E_OK.
+     *  If the function fails, the return value is a nonzero error code.
+     */
+    int QueryContextAttributes(CtxtHandle phContext, int ulAttribute, Structure pBuffer);
 }

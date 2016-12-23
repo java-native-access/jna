@@ -70,6 +70,7 @@ Features
 * [#732](https://github.com/java-native-access/jna/pull/732): Added initialization of FILETIME from LARGE_INTEGER - [@amarcionek](https://github.com/amarcionek).
 * [#732](https://github.com/java-native-access/jna/pull/732): Added `GetFileInformationByHandleEx` and `SetFileInformationByHandle` to `com.sun.jna.platform.win32.Kernel32` - [@amarcionek](https://github.com/amarcionek).
 * [#740](https://github.com/java-native-access/jna/pull/740): Modified `com.sun.jna.platform.win32.WinioctlUtil` for simplicity dealing with FSCTL_* codes - [@amarcionek](https://github.com/amarcionek).
+* [#745](https://github.com/java-native-access/jna/pull/745): Added Secur32#QueryContextAttributes - [@barney2k7](https://github.com/barney2k7).
 
 Bug Fixes
 ---------
