@@ -45,7 +45,7 @@ see: [https://oss.sonatype.org/content/repositories/snapshots/net/java/dev/jna/]
 To publish a development SNAPSHOT do the following:
 
         git checkout -- .
-        and clean
+        ant clean
         ant deploy
 
 Note: Unlike stable, unchanging releases, a SNAPSHOT may be re-published at any time (and is typically deleted after a
