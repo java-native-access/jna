@@ -817,16 +817,14 @@ public interface WinBase extends WinDef, BaseTSD {
          * @return String containing the file name
          */
         public String getFileName() {
-            String actualFileName = new String(cFileName);
-            return actualFileName.substring(0, actualFileName.indexOf('\0'));
+            return Native.toString(cFileName);
         }
 
         /**
          * @return String containing the alternate file name
          */
         public String getAlternateFileName() {
-            String actualAlternateFileName = new String(cAlternateFileName);
-            return actualAlternateFileName.substring(0, actualAlternateFileName.indexOf('\0'));
+            return Native.toString(cAlternateFileName);
         }
     }
 
