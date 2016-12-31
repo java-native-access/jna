@@ -1169,6 +1169,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </delete>
     <delete quiet="true" includeEmptyDirs="true">
       <fileset dir=".clover"/>
+      <fileset dir="build.clover" />
       <fileset dir="${javadoc}"/>
       <fileset dir="." includes="*~,**/*~,build.number,native/libffi/configure"/>
     </delete>
