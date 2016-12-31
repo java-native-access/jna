@@ -58,3 +58,64 @@ for each file that it's complaining about.
 ### Building
 
 Type `ant` from the top to build the project.
+
+Recipe for building on windows
+------------------------------
+
+This is the contents of a note I made for myself to be able to build JNA on
+windows.
+
+<pre>
+0. Start-Point: A clean Windows 10 Installation with all patches as of 2016-06-10
+1. Install Windows SDK 7.1:
+
+	Version registry key:
+
+	HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\NET Framework Setup\NDP\v4\Client
+	HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\NET Framework Setup\NDP\v4\Full
+
+	Relevant attribute: VERSION
+
+	1. Note down the values in the version value (Windows 10 pure with patches as of 2016-06-10: 4.6.01038)
+	2. Change ownership of the registry keys to your current user (Open permissions for the key and choose "Extended")
+	3. Add full access righs for your current user to the permissions
+	4. Change both version attributes to 4.0.30319
+	5. Download and Install Windows SDK 7.1 with defaults: http://www.microsoft.com/en-us/download/details.aspx?id=8279
+	6. Restore Version from first item of this list
+
+
+2. Install Oracle JDK 8u92 (64 bit)
+3. Install Cygwin (https://cygwin.com/install.html)
+	- make
+	- automake
+	- automake1.15
+	- libtool
+	- mingw64-x86_64-gcc-g++ (Version 5.3.0-1)
+	- mingw64-x86_64-gcc-core (Version 5.3.0-1)
+	- gcc-g++
+	- diffutils
+4. Ensure ant, maven, cygwin are accessible from the PATH
+5. Run 
+	C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.Cmd /Release /x64
+   inside a windows command prompt
+6. Point JAVA_HOME to the root of a 64 Bit JDK
+7. Run native build
+
+
+For 32bit:
+
+- Install:
+    - mingw64-i686-gcc-g++ (Version 5.3.0-1)
+    - mingw64-i686-gcc-core (Version 5.3.0-1)
+- Modify the recipe:
+    - Step 5: 
+        C:\Program Files\Microsoft SDKs\Windows\v7.1\Bin\SetEnv.Cmd /Release /x86
+    - Step 6:
+        Point JAVA_HOME to the root of a 32 Bit JDK
+
+To build with Visual Studio 2015:
+- Instead of Step 5 start the build environments from start menu:
+    - VS2015 x86 Native Tools
+    - VS2015 x64 Native Tools
+- Run steps 6+7 inside that environment
+</pre>
