@@ -97,6 +97,7 @@ Bug Fixes
 * [#669](https://github.com/java-native-access/jna/pull/669): Ensure XSI-compliant strerror_r is used, to prevent corrupted error messages on linux - [@DavidKeller](https://github.com/DavidKeller).
 * [#697](https://github.com/java-native-access/jna/issues/697): Ensure disposed memory is removed from Memory#allocatedMemory map - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#731](https://github.com/java-native-access/jna/issues/731): Require mingw-w64 instead of mingw as the alternative to the MSVC build - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#747](https://github.com/java-native-access/jna/issues/747): - Call `Native.toString()` in `#getFileName()` and `#getAlternateFileName()` in `c.s.j.p.win32.WinBase` instead of custom NUL terminator logic - [@jhult](https://github.com/jhult).
 
 Release 4.2.1
 =============
