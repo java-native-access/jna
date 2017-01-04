@@ -48,9 +48,7 @@
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
-  <tstamp>
-    <format property="year" pattern="yyyy" locale="en,US"/>
-  </tstamp>
+  <property name="year" value="2016"/>
   <property name="copyright"
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
