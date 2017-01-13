@@ -31,6 +31,7 @@
   <!-- (all build-related props should go in -dynamic-properties) -->
   <property name="name" value="jna"/>
   <property name="jar" value="${name}.jar"/>
+  <property name="aar" value="${name}.aar"/>
   <property name="minjar" value="${name}-min.jar"/>
   <property name="testjar" value="${name}-test.jar"/>
   <property name="debug" value="true"/>
@@ -52,6 +53,8 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
+  
+  <property name="android.versionCode" value="1"/>
   <!-- JNA library release version -->
   <property name="jna.major" value="4"/>
   <property name="jna.minor" value="3"/>
@@ -101,6 +104,7 @@
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
   <property name="dist-jar" value="${dist}/${jar}"/>
+  <property name="dist-aar" value="${dist}/${aar}"/>
 
   <!-- Maven -->
   <!-- define Maven coordinates -->
@@ -278,17 +282,19 @@
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/${native.subdir}"/>
+    <property name="build.aar" location="${build}/aar"/>
     <property name="md5.file" location="${build.native}/jni.checksum"/>
-
+    
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
     <mkdir dir="${classes}"/>
     <mkdir dir="${test.classes}"/>
     <mkdir dir="${reports}"/>
     <mkdir dir="${doc}"/>
+    <mkdir dir="${build.aar}"/>
 
     <echo>Java version ${java.version}, compatibility: ${compatibility}, ant: ${ant.java.version}</echo>
-    <echo>JNA version ${jna.version}, native ${jni.version}</echo>
+    <echo>JNA version ${jna.version}, native ${jni.version}, android ${android.versionCode}</echo>
     <echo>${java.vm.name} (${java.vm.vendor}, ${java.vm.version})</echo>
     <echo>java.home=${java.home}</echo>
     <echo>java.library.path=${java.library.path}</echo>
@@ -297,6 +303,7 @@
     <echo>os.arch=${os.arch} (${sun.cpu.endian})</echo>
     <echo>build=${build}</echo>
     <echo>build.native=${build.native}</echo>
+    <echo>build.aar=${build.aar}</echo>
 
   </target>
 
@@ -512,6 +519,54 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </jar>
     <zip zipfile="${build}/${minjar}">
       <zipfileset src="${build}/${jar}" excludes="**/*jnidispatch*"/>
+    </zip>
+  </target>
+
+  <target name="aar" depends="jar" description="Build Android Archive">
+    <!-- Dummy entries in R.txt and the string resources are needed or a grails
+         build using this library will fail (tested with Android Studio 2.2.3 -->
+    <mkdir dir="${build.aar}/res/values" />
+    <echo file="${build.aar}/res/values/values.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="jna_library_appname">JNA bindings</string>
+</resources>
+    ]]></echo>
+    <echo file="${build.aar}/R.txt">int string jna_library_appname 0x7f050021
+</echo>
+    <echo file="${build.aar}/AndroidManifest.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.sun.jna"
+    android:versionCode="]]>${android.versionCode}<![CDATA["
+    android:versionName="]]>${jna.version}<![CDATA[" >
+</manifest> 
+    ]]></echo>
+    <zip zipfile="${build}/${aar}">
+        <mappedresources>
+          <fileset file="${build}/${minjar}"/>
+          <globmapper from="*" to="classes.jar"/>
+        </mappedresources>
+        <zipfileset src="${lib.native}/android-aarch64.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/arm64-v8a"/>
+        <zipfileset src="${lib.native}/android-arm.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/armeabi"/>
+        <zipfileset src="${lib.native}/android-armv7.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/armeabi-v7a"/>
+        <zipfileset src="${lib.native}/android-mips.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/mips"/>
+        <zipfileset src="${lib.native}/android-mips64.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/mips64"/>
+        <zipfileset src="${lib.native}/android-x86-64.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/x86_64"/>
+        <zipfileset src="${lib.native}/android-x86.jar"
+                  includes="*jnidispatch*"
+                  prefix="jni/x86"/>
+        <fileset dir="${build.aar}"/>
     </zip>
   </target>
 
@@ -1118,10 +1173,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </jar>
   </target>
 
-  <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
+  <target name="dist" depends="jar,aar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
     <copy todir="${dist}" force="true" overwrite="true">
-      <fileset dir="${build}" includes="${jar},${minjar}"/>
+      <fileset dir="${build}" includes="${jar},${minjar},${aar}"/>
       <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar"/>
       <fileset dir="${lib.native}">
         <include name="*.jar"/>
@@ -1188,6 +1243,13 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
+      <arg value="-DpomFile=${pom}"/>
+      <arg value="-Dfile=${dist-aar}"/>
+      <arg value="-Dpackaging=aar"/>
+    </artifact:mvn>
+
+    <artifact:mvn failonerror="true">
+      <arg value="org.apache.maven.plugins:maven-install-plugin:2.5:install-file"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
       <arg value="-Dsources=${platform-sources-jar}"/>
@@ -1209,9 +1271,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <arg value="-DrepositoryId=${maven-snapshots-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar}"/>
-      <arg value="-Dtypes=jar,jar"/>
-      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
+      <arg value="-Dtypes=jar,jar,aar"/>
+      <arg value="-Dclassifiers=sources,javadoc,"/>
     </artifact:mvn>
 
     <artifact:mvn failonerror="true">
@@ -1230,35 +1292,16 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   <property name="version-maven-gpg-plugin" value="1.4"/>
 
   <target name="stage" depends="dist" description="deploy release version to Maven staging repository">
-    <!-- sign and deploy the jna artifact -->
+    <!-- sign and deploy the jna,  artifact -->
     <artifact:mvn failonerror="true">
       <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
       <arg value="-Durl=${maven-staging-repository-url}"/>
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom}"/>
       <arg value="-Dfile=${dist-jar}"/>
-      <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
-
-    <!-- sign and deploy the jna sources artifact -->
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
-      <arg value="-Durl=${maven-staging-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-sources-jar}"/>
-      <arg value="-Dclassifier=sources"/>
-      <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
-
-    <!-- sign and deploy the jna javadoc artifact -->
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
-      <arg value="-Durl=${maven-staging-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=${pom}"/>
-      <arg value="-Dfile=${maven-javadoc-jar}"/>
-      <arg value="-Dclassifier=javadoc"/>
+      <arg value="-Dfiles=${maven-sources-jar},${maven-javadoc-jar},${dist-aar}"/>
+      <arg value="-Dclassifiers=sources,javadoc,"/>
+      <arg value="-Dtypes=jar,jar,aar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
 
@@ -1269,31 +1312,11 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
       <arg value="-DpomFile=${pom-platform}"/>
       <arg value="-Dfile=${platform-jar}"/>
+      <arg value="-Dfiles=${platform-sources-jar},${platform-javadoc-jar}"/>
+      <arg value="-Dclassifiers=sources,javadoc"/>
+      <arg value="-Dtypes=jar,jar"/>
       <arg value="-Dgpg.useagent=true"/>
     </artifact:mvn>
-
-      <!-- sign and deploy the platform sources artifact -->
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
-      <arg value="-Durl=${maven-staging-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=${pom-platform}"/>
-      <arg value="-Dfile=${platform-sources-jar}"/>
-      <arg value="-Dclassifier=sources"/>
-      <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
-
-    <!-- sign and deploy the platform javadoc artifact -->
-    <artifact:mvn failonerror="true">
-      <arg value="org.apache.maven.plugins:maven-gpg-plugin:${version-maven-gpg-plugin}:sign-and-deploy-file"/>
-      <arg value="-Durl=${maven-staging-repository-url}"/>
-      <arg value="-DrepositoryId=${maven-staging-repository-id}"/>
-      <arg value="-DpomFile=${pom-platform}"/>
-      <arg value="-Dfile=${platform-javadoc-jar}"/>
-      <arg value="-Dclassifier=javadoc"/>
-      <arg value="-Dgpg.useagent=true"/>
-    </artifact:mvn>
-
   </target>
 </project>
 

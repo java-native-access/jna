@@ -31,6 +31,7 @@ JNA Release Process
 
 * Increment the version in build.xml for the next development iteration
   * Increment "jna.revision" in build.xml by one
+  * Increment "android.versionCode" in build.xml by one
   * Create a new section in CHANGES.md for 'Next Release (x.y.z)'
   * Commit and push
 
