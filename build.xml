@@ -1120,7 +1120,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 
   <target name="dist" depends="jar,javadoc,contrib-jars,compile-tests,native"
           description="Build distribution files">
-    <copy todir="${dist}">
+    <copy todir="${dist}" force="true" overwrite="true">
       <fileset dir="${build}" includes="${jar},${minjar}"/>
       <fileset dir="${contrib}/platform/dist" includes="jna-platform.jar"/>
       <fileset dir="${lib.native}">
