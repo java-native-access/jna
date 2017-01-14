@@ -210,7 +210,7 @@ USE_MSVC=true
 endif
 # This will be overridden when called from ant
 ARCH=$(shell uname -m | sed 's/i.86/i386/g')
-CDEFINES=-DHAVE_PROTECTION -DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
+CDEFINES=-DPSAPI_VERSION=1 -DFFI_BUILDING -DUNICODE -D_UNICODE
 WINDRES=windres
 EXTRAOBJS=$(RSRC)
 STRIP=@echo
@@ -232,6 +232,7 @@ MINGW=$(MINGW_PREFIX)gcc
 ifeq ($(USE_MSVC),true)
 # MS compiler
 CC=$(FFI_SRC)/msvcc.sh
+CDEFINES+=-DHAVE_PROTECTION 
 ifneq ($(DYNAMIC_LIBFFI),true)
 CDEFINES+=-DUSE_STATIC_RTL
 endif
