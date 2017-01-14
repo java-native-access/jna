@@ -1082,6 +1082,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <javadoc package="true"
              windowtitle="JNA API"
+             encoding="UTF-8"
              sourcepathref="javadoc.src.path"
              classpathref="javadoc.compile.path"
              maxmemory="256m"
