@@ -253,20 +253,10 @@ else
 # Mingw compiler
 LDFLAGS=-o $@ -shared
 FFI_ENV+=CXXCPP="$(CPP)"
-
-ifneq ($(ARCH),amd64)
 CC=$(MINGW_PREFIX)gcc
 CPP=$(MINGW_PREFIX)gcc -E
 LDFLAGS+=-Wl,--add-stdcall-alias
-LIBS=-lpsapi
-else
-# mingw64 lacks SEH, so MSVC build is preferred
-CC=$(MINGW)
-# No SEH under mingw64, thus no HAVE_PROTECTION
-CDEFINES=-DPSAPI_VERSION=1
-LD = $(CC)
 LIBS= -lmingwex -lpsapi -lkernel32 -lmsvcrt
-endif
 endif
 
 endif
