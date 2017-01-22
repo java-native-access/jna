@@ -148,12 +148,63 @@ public final class Native implements Version {
     static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
 
+    @Deprecated
     public static float parseVersion(String v) {
         return Float.parseFloat(v.substring(0, v.lastIndexOf(".")));
+    }
+    
+    /**
+     * Version string must have the structure <major>.<minor>.<revision>
+     * a bugfix change in the native code increments revision, the minor is
+     * incremented for backwards compatible changes and the major version
+     * is changed for backwards incompatbile changes.
+     * 
+     * @param expectedVersion
+     * @param nativeVersion
+     * @return 
+     */
+    static boolean isCompatibleVersion(String expectedVersion, String nativeVersion) {
+        String[] expectedVersionParts = expectedVersion.split("\\.");
+        String[] nativeVersionParts = nativeVersion.split("\\.");
+        if(expectedVersionParts.length < 3 || nativeVersionParts.length < 3) {
+            return false;
+        }
+        
+        int expectedMajor = Integer.parseInt(expectedVersionParts[0]);
+        int nativeMajor = Integer.parseInt(nativeVersionParts[0]);
+        int expectedMinor = Integer.parseInt(expectedVersionParts[1]);
+        int nativeMinor = Integer.parseInt(nativeVersionParts[1]);
+        
+        if(expectedMajor != nativeMajor) {
+            return false;
+        }
+        
+        if(expectedMinor > nativeMinor) {
+            return false;
+        }
+        
+        return true;
     }
 
     static {
         loadNativeDispatchLibrary();
+
+        if (! isCompatibleVersion(VERSION_NATIVE, getNativeVersion())) {
+            String LS = System.getProperty("line.separator");
+            throw new Error(LS + LS
+                            + "There is an incompatible JNA native library installed on this system" + LS
+                            + "Expected: " + VERSION_NATIVE + LS
+                            + "Found:    " + getNativeVersion() + LS
+                            + (jnidispatchPath != null
+                               ? "(at " + jnidispatchPath + ")" : System.getProperty("java.library.path"))
+                            + "." + LS
+                            + "To resolve this issue you may do one of the following:" + LS
+                            + " - remove or uninstall the offending library" + LS
+                            + " - set the system property jna.nosys=true" + LS
+                            + " - set jna.boot.library.path to include the path to the version of the " + LS
+                            + "   jnidispatch library included with the JNA jar file you are using" + LS);
+        }
+        
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
@@ -165,20 +216,6 @@ public final class Native implements Version {
         initIDs();
         if (Boolean.getBoolean("jna.protected")) {
             setProtected(true);
-        }
-        float version = parseVersion(getNativeVersion());
-        if (version != parseVersion(VERSION_NATIVE)) {
-            String LS = System.getProperty("line.separator");
-            throw new Error(LS + LS
-                            + "There is an incompatible JNA native library installed on this system" + LS
-                            + (jnidispatchPath != null
-                               ? "(at " + jnidispatchPath + ")" : System.getProperty("java.library.path"))
-                            + "." + LS
-                            + "To resolve this issue you may do one of the following:" + LS
-                            + " - remove or uninstall the offending library" + LS
-                            + " - set the system property jna.nosys=true" + LS
-                            + " - set jna.boot.library.path to include the path to the version of the " + LS
-                            + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
         MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
             || (Platform.isLinux() && (Platform.isARM() || Platform.isPPC()))
