@@ -523,4 +523,13 @@ public class NativeTest extends TestCase {
             try { Thread.sleep(300000); } catch(Exception e) { }
         }
     }
+    
+    public void testVersionComparison() {
+        assertTrue("Equal version", Native.isCompatibleVersion("5.1.0", "5.1.0"));
+        assertTrue("New revision", Native.isCompatibleVersion("5.2.0", "5.2.1"));
+        assertTrue("New minor provided, older minor expected", Native.isCompatibleVersion("5.1.0", "5.10.0"));
+        assertFalse("Old minor provided, new minor expected", Native.isCompatibleVersion("5.10.0", "5.1.0"));
+        assertFalse("Different major (expected < provided)", Native.isCompatibleVersion("4.0.0", "5.0.0"));
+        assertFalse("Different major (expected > provided)", Native.isCompatibleVersion("5.0.0", "4.0.0"));
+    }
 }
