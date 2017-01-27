@@ -132,7 +132,7 @@ Utilities that wrap Win32 functions into more user-friendly implementations are 
 Javadoc Pages
 =============
 
-Javadoc pages are published with [gh-pages](http://pages.github.com/) to a root branch. The official repository for JNA is [here](http://java-native-access.github.com/jna). Here's how to pull and push the root branch to your local environment.
+Javadoc pages are published with [gh-pages](http://pages.github.com/) to a root branch. The official repository for JNA is [here](http://java-native-access.github.io/jna/4.3.0/javadoc/). Here's how to pull and push the root branch to your local environment.
 
 ``` sh
 git fetch origin
