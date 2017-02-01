@@ -22,6 +22,11 @@
  */
 package com.sun.jna;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /** Provide simplified platform information. */
 public final class Platform {
     public static final int UNSPECIFIED = -1;
@@ -125,7 +130,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
-	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"));
+	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), isSoftFloat());
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }
@@ -220,7 +225,7 @@ public final class Platform {
         return ARCH.startsWith("sparc");
     }
 
-    static String getCanonicalArchitecture(String arch) {
+    static String getCanonicalArchitecture(String arch, boolean softfloat) {
 	arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
@@ -239,14 +244,37 @@ public final class Platform {
 	if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {
 	    arch = "ppc64le";
 	}
+        // Map arm to armel if the binary is running as softfloat build
+        if("arm".equals(arch) && softfloat) {
+            arch = "armel";
+        }
+        
+        
 	return arch;
+    }
+    
+    private static boolean isSoftFloat() {
+        try {
+            File self = new File("/proc/self/exe");
+            ELFAnalyser ahfd = ELFAnalyser.analyse(self.getCanonicalPath());
+            return ahfd.isArmSoftFloat();
+        } catch (IOException ex) {
+            // asume hardfloat
+            Logger.getLogger(Platform.class.getName()).log(Level.FINE, null, ex);
+        }
+        return false;
     }
 
     /** Generate a canonical String prefix based on the current OS 
         type/arch/name.
     */
     static String getNativeLibraryResourcePrefix() {
-        return getNativeLibraryResourcePrefix(getOSType(), System.getProperty("os.arch"), System.getProperty("os.name"));
+        String prefix = System.getProperty("jna.prefix");
+        if(prefix != null) {
+            return prefix;
+        } else {
+            return getNativeLibraryResourcePrefix(getOSType(), System.getProperty("os.arch"), System.getProperty("os.name"));
+        }
     }
 
     /** Generate a canonical String prefix based on the given OS
@@ -256,8 +284,12 @@ public final class Platform {
         @param name from <code>os.name</code> System property
     */
     static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
+        return getNativeLibraryResourcePrefix(osType, arch, name, isSoftFloat());
+    }
+    
+    static String getNativeLibraryResourcePrefix(int osType, String arch, String name, boolean isSoftfloat) {
         String osPrefix;
-        arch = getCanonicalArchitecture(arch);
+        arch = getCanonicalArchitecture(arch, isSoftfloat);
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {

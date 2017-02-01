@@ -208,6 +208,17 @@
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
 
+    <mkdir dir="${build}/ant-elfanalyser" />
+    <javac classpath="lib/ant.jar" destdir="${build}/ant-elfanalyser" includeantruntime="false">
+        <src path="src" />
+        <src path="ant-elfanalyser-src" />
+        <include name="**/ELFAnalyser.java" />
+        <include name="**/BuildArmSoftFloatDetector.java" />
+    </javac>
+
+    <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-elfanalyser" />
+    <BuildArmSoftFloatDetector targetProperty="build.isArmSoftFloat"/>
+    
     <!-- Add other supported platforms here -->
     <condition property="jre.arch" value="x86">
       <matches pattern="(i[3456]86|pentium)" string="${os.arch}"/>
@@ -230,7 +241,15 @@
     <condition property="jre.arch" value="ppc64">
       <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
     </condition>
+    <condition property="jre.arch" value="armel">
+      <and>
+        <matches pattern="arm" string="${os.arch}"/>
+        <matches pattern="true" string="${build.isArmSoftFloat}"/>
+      </and>
+    </condition>
+    
     <property name="jre.arch" value="${os.arch}"/>
+    
     <condition property="os.prefix" value="linux-${jre.arch}">
       <os name="Linux"/>
     </condition>
@@ -424,6 +443,8 @@ com/sun/jna/linux-x86-64/libjnidispatch.so;
 processor=x86-64;osname=linux,
 com/sun/jna/linux-arm/libjnidispatch.so;
 processor=arm;osname=linux,
+com/sun/jna/linux-armel/libjnidispatch.so;
+processor=armel;osname=linux,
 com/sun/jna/linux-aarch64/libjnidispatch.so;
 processor=aarch64;osname=linux,
 com/sun/jna/linux-ia64/libjnidispatch.so;
@@ -468,6 +489,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-arm.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-arm"/>
+      <zipfileset src="${lib.native}/linux-armel.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-armel"/>
       <zipfileset src="${lib.native}/linux-aarch64.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-aarch64"/>
@@ -666,6 +690,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-arm.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-armel.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-aarch64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ia64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc.jar" overwrite="true"/>
@@ -1319,5 +1344,3 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </artifact:mvn>
   </target>
 </project>
-
-

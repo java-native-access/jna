@@ -31,68 +31,83 @@ public class PlatformTest extends TestCase {
     public void testOSPrefix() {
         assertEquals("Wrong resource path", "win32-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.WINDOWS,
-                                                             "x86", "Windows"));
+                                                             "x86", "Windows", false));
         assertEquals("Wrong resource path Windows/i386", "win32-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.WINDOWS,
-                                                             "i386", "Windows"));
+                                                             "i386", "Windows", false));
         assertEquals("Wrong resource path Windows CE/arm", "w32ce-arm",
                      Platform.getNativeLibraryResourcePrefix(Platform.WINDOWSCE,
-                                                             "arm", "Windows CE"));
+                                                             "arm", "Windows CE", false));
         assertEquals("Wrong resource path Mac/x86", "darwin",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                             "x86", "Darwin"));
+                                                             "x86", "Darwin", false));
         assertEquals("Wrong resource path Mac/x86", "darwin",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                             "i386", "Darwin"));
+                                                             "i386", "Darwin", false));
         assertEquals("Wrong resource path Mac/x86_64", "darwin",
                      Platform.getNativeLibraryResourcePrefix(Platform.MAC,
-                                                             "x86_64", "Mac"));
+                                                             "x86_64", "Mac", false));
         assertEquals("Wrong resource path Solaris/sparc", "sunos-sparc",
                      Platform.getNativeLibraryResourcePrefix(Platform.SOLARIS,
-                                                             "sparc", "Solaris"));
+                                                             "sparc", "Solaris", false));
         assertEquals("Wrong resource path SunOS/sparcv9", "sunos-sparcv9",
                      Platform.getNativeLibraryResourcePrefix(Platform.SOLARIS,
-                                                             "sparcv9", "SunOS"));
+                                                             "sparcv9", "SunOS", false));
         assertEquals("Wrong resource path Linux/i386", "linux-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "i386", "Linux/Gnu"));
+                                                             "i386", "Linux/Gnu", false));
         assertEquals("Wrong resource path Linux/x86", "linux-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "x86", "Linux"));
+                                                             "x86", "Linux", false));
         assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "x86_64", "Linux"));
+                                                             "x86_64", "Linux", false));
         assertEquals("Wrong resource path Linux/x86", "linux-x86-64",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "amd64", "Linux"));
+                                                             "amd64", "Linux", false));
         assertEquals("Wrong resource path Linux/ppc", "linux-ppc",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "powerpc", "Linux"));
+                                                             "powerpc", "Linux", false));
         assertEquals("Wrong resource path Linux/sparcv9", "linux-sparcv9",
                      Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
-                                                             "sparcv9", "Linux"));
+                                                             "sparcv9", "Linux", false));
+        assertEquals("Wrong resource path Linux/arm (hardfloat)", "linux-arm",
+                     Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
+                                                             "arm", "Linux/Gnu", false));
+        assertEquals("Wrong resource path Linux/arm (softfloat)", "linux-armel",
+                     Platform.getNativeLibraryResourcePrefix(Platform.LINUX,
+                                                             "arm", "Linux/Gnu", true));
         assertEquals("Wrong resource path OpenBSD/x86", "openbsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.OPENBSD,
-                                                             "x86", "OpenBSD"));
+                                                             "x86", "OpenBSD", false));
         assertEquals("Wrong resource path FreeBSD/x86", "freebsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.FREEBSD,
-                                                             "x86", "FreeBSD"));
+                                                             "x86", "FreeBSD", false));
         assertEquals("Wrong resource path GNU/kFreeBSD/x86", "kfreebsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.KFREEBSD,
-                                                             "x86", "GNU/kFreeBSD"));
+                                                             "x86", "GNU/kFreeBSD", false));
         assertEquals("Wrong resource path NetBSD/x86", "netbsd-x86",
                      Platform.getNativeLibraryResourcePrefix(Platform.NETBSD,
-                                                             "x86", "NetBSD"));
+                                                             "x86", "NetBSD", false));
         assertEquals("Wrong resource path Linux/armv7l (android)", "android-arm",
                      Platform.getNativeLibraryResourcePrefix(Platform.ANDROID,
-                                                             "armv7l", "Linux"));
+                                                             "armv7l", "Linux", false));
         
         assertEquals("Wrong resource path other/other", "name-ppc",
                      Platform.getNativeLibraryResourcePrefix(Platform.UNSPECIFIED,
-                                                             "PowerPC", "Name Of System"));
+                                                             "PowerPC", "Name Of System", false));
         
     }
 
+    public void testSystemProperty() {
+        String demoOverride = "demoOverride";
+        assertFalse(demoOverride.equals(Platform.getNativeLibraryResourcePrefix()));
+        
+        System.setProperty("jna.prefix", demoOverride);
+        assertTrue(demoOverride.equals(Platform.getNativeLibraryResourcePrefix()));
+        
+        System.clearProperty("jna.prefix");
+    }
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(PlatformTest.class);
