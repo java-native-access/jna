@@ -327,10 +327,11 @@ public class Function extends Pointer {
 
         TypeMapper mapper = (TypeMapper)options.get(Library.OPTION_TYPE_MAPPER);
         boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
+        boolean isVarArgs = args.length > 0 && invokingMethod != null ? isVarArgs(invokingMethod) : false;
         int fixedArgs = args.length > 0 && invokingMethod != null ? fixedArgs(invokingMethod) : 0;
         for (int i=0; i < args.length; i++) {
             Class<?> paramType = invokingMethod != null
-                ? (fixedArgs > 0 && i >= paramTypes.length-1
+                ? (isVarArgs && i >= paramTypes.length-1
                    ? paramTypes[paramTypes.length-1].getComponentType()
                    : paramTypes[i])
                 : null;

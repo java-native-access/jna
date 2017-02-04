@@ -13,6 +13,7 @@ Bug Fixes
 ---------
 * [#754](https://github.com/java-native-access/jna/issues/754): Move MSVC build to standard stdbool.h and require Visual C++ 2015 (sizeof(bool) = 1 is now also true on MSVC build) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#399](https://github.com/java-native-access/jna/issues/399): Check native version before attempting to call into native code - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#763](https://github.com/java-native-access/jna/issues/763): Fix vararg calls without fixed parts - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.3.0
 =============

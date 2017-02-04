@@ -43,6 +43,7 @@ public class VarArgsTest extends TestCase {
         public int addVarArgs(String fmt, Number... args);
         public String returnStringVarArgs(String fmt, Object... args);
         public void modifyStructureVarArgs(String fmt, Object arg1, Object... args);
+        public String returnStringVarArgs(String... args);
     }
     TestLibrary lib;
     @Override
@@ -87,6 +88,12 @@ public class VarArgsTest extends TestCase {
         Object[] args = new Object[] { "Test" };
         assertEquals("Did not return correct string", args[0],
                      lib.returnStringVarArgs("", args));
+    }
+
+    public void testStringVarArgsFull() {
+        Object[] args = new Object[] { "Test" };
+        assertEquals("Did not return correct string", args[0],
+                     lib.returnStringVarArgs("", "Test"));
     }
 
     public void testAppendNullToVarargs() {
