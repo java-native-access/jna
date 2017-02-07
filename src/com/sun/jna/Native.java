@@ -383,6 +383,10 @@ public final class Native implements Version {
      * encoding.  If there is no NUL terminator, the String will comprise the
      * entire array.
      *
+     * <p><strong>Usage note</strong>: This function assumes, that {@code buf}
+     * holds a {@code char} array. This means only single-byte encodings are
+     * supported.</p>
+     * 
      * @param buf The buffer containing the encoded bytes
      * @param encoding The encoding name - if {@code null} then the platform
      * default encoding will be used
