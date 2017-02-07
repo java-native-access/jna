@@ -60,10 +60,10 @@ Download
 Version 4.3.0
 
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna) &nbsp;
-  [jna.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna/4.3.0/jna-4.3.0.jar)
+  [jna.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/4.3.0/jna-4.3.0.jar)
   
 * [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp;
-  [jna-platform.jar](https://maven.java.net/content/repositories/releases/net/java/dev/jna/jna-platform/4.3.0/jna-platform-4.3.0.jar)
+  [jna-platform.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/4.3.0/jna-platform-4.3.0.jar)
 
 Features
 ========
