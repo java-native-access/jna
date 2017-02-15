@@ -2561,6 +2561,7 @@ public interface Ddeml extends StdCallLibrary {
     public int DdeGetData(HDDEDATA hData, Pointer pDst, int cbMax, int cbOff);
 
     /**
+     * Provides access to the data in the specified Dynamic Data Exchange (DDE) object.
      * An application must call the DdeUnaccessData function when it has
      * finished accessing the data in the object.
      *
