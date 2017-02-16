@@ -34,7 +34,7 @@ import com.sun.jna.win32.W32APIOptions;
 import com.sun.jna.platform.win32.WinNT.*;
 
 public interface Shlwapi extends StdCallLibrary {
-    Shlwapi INSTANCE = Native.loadLibrary("Shlwapi", Shlwapi.class, W32APIOptions.UNICODE_OPTIONS);
+    Shlwapi INSTANCE = Native.loadLibrary("Shlwapi", Shlwapi.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Takes an STRRET structure returned by IShellFolder::GetDisplayNameOf and returns a pointer
