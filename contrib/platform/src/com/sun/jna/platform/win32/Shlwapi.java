@@ -55,4 +55,15 @@ public interface Shlwapi extends StdCallLibrary {
      */
 
     HRESULT StrRetToStr(PointerByReference pstr, Pointer pidl, PointerByReference ppszName);
+
+    /**
+     * Determines if a path string is a valid Universal Naming Convention (UNC) path, as opposed to
+     * a path based on a drive letter.
+     *
+     * @param path
+     *            A string containing the path to validate.
+     *
+     * @return TRUE if the string is a valid UNC path; otherwise, FALSE.
+     */
+    boolean PathIsUNC(String path);
 }
