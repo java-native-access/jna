@@ -8,6 +8,7 @@ Release 4.3.1 (Next release)
 Features
 --------
 * [#757](https://github.com/java-native-access/jna/issues/757): Build android archive (AAR) - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#767](https://github.com/java-native-access/jna/pull/767): Add Win32 API mapping for Shlwapi PathIsUNC - [@ivanwick](https://github.com/ivanwick).
 
 Bug Fixes
 ---------
