@@ -25,13 +25,23 @@ package com.sun.jna.platform.win32;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
+import com.sun.jna.platform.win32.GDI32;
+import com.sun.jna.platform.win32.User32;
+import com.sun.jna.platform.win32.Win32Exception;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.RECT;
+import com.sun.jna.platform.win32.WinError;
+import com.sun.jna.platform.win32.WinGDI;
 import com.sun.jna.platform.win32.WinGDI.BITMAPINFO;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
@@ -41,6 +51,13 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
  * @author mlfreeman[at]gmail.com
  */
 public class GDI32Util {
+	private static final DirectColorModel SCREENSHOT_COLOR_MODEL = new DirectColorModel(24, 0x00FF0000, 0xFF00, 0xFF);
+	private static final int[] SCREENSHOT_BAND_MASKS = {
+	        SCREENSHOT_COLOR_MODEL.getRedMask(),
+            SCREENSHOT_COLOR_MODEL.getGreenMask(),
+            SCREENSHOT_COLOR_MODEL.getBlueMask()
+	};
+
 	/**
 	 * Takes a screenshot of the given window
 	 * 
@@ -86,8 +103,6 @@ public class GDI32Util {
 		BufferedImage image = null;
 		
 		try {
-			image = new BufferedImage(windowWidth, windowHeight, BufferedImage.TYPE_INT_RGB);
-			
 			hdcTargetMem = GDI32.INSTANCE.CreateCompatibleDC(hdcTarget);
 			if (hdcTargetMem == null) {
 				throw new Win32Exception(Native.getLastError());
@@ -122,8 +137,11 @@ public class GDI32Util {
 				throw new Win32Exception(Native.getLastError());
 			}
 
-			image.setRGB(0, 0, windowWidth, windowHeight, buffer.getIntArray(0, windowWidth * windowHeight), 0,
-					windowWidth);
+			int bufferSize = windowWidth * windowHeight;
+			DataBuffer dataBuffer = new DataBufferInt(buffer.getIntArray(0, bufferSize), bufferSize);
+			WritableRaster raster = Raster.createPackedRaster(dataBuffer, windowWidth, windowHeight, windowWidth,
+                                                              SCREENSHOT_BAND_MASKS, null);
+			image = new BufferedImage(SCREENSHOT_COLOR_MODEL, raster, false, null);
 
 		} catch (Win32Exception e) {
 			we = e;
