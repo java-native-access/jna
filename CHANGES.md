@@ -9,6 +9,7 @@ Features
 --------
 * [#757](https://github.com/java-native-access/jna/issues/757): Build android archive (AAR) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#767](https://github.com/java-native-access/jna/pull/767): Add Win32 API mapping for Shlwapi PathIsUNC - [@ivanwick](https://github.com/ivanwick).
+* [#753](https://github.com/java-native-access/jna/issues/753): Support arm hardfloat and softfloat by introducing armel as platform (ARM EABI Little-endian) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#772](https://github.com/java-native-access/jna/pull/772): Improved speed of GDIUtil.getScreenshot() by ~30% - [@sommd](https://github.com/sommd).
 
 Bug Fixes

@@ -20,7 +20,17 @@ That's all it takes.  If you'd like to submit the change back to JNA, make sure 
 Calling `Native.loadLibrary()` causes an UnsatisfiedLinkError
 -------------------------------------------------------------
 
-Set the system property `jna.debug_load=true`, and JNA will print its library search steps to the console.  `jna.debug_load.jna` will trace the search for JNA's own native support.
+Set the system property `jna.debug_load=true`, and JNA will print its library 
+search steps to the console. `jna.debug_load.jna` will trace the search for 
+JNA's own native support.
+
+If the native prefix value is misdetected. It can be overriden by the 
+`jna.prefix` system property. For example if the binary running the JVM follows
+the arm softfloat ABI, you can specify the `armel` prefix like this:
+
+```
+java -Djna.prefix=linux-armel <normalCall>
+```
 
 My library mapping causes an UnsatisfiedLinkError
 -------------------------------------------------
