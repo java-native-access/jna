@@ -350,6 +350,31 @@ public interface WinUser extends WinDef {
         }
     }
 
+    
+    /**
+     * Contains data to be passed to another application by the WM_COPYDATA message.
+     */
+    public class COPYDATASTRUCT extends Structure {
+
+		public COPYDATASTRUCT() {
+			super();
+		}
+		
+		public COPYDATASTRUCT(Pointer p) {
+			super(p);
+			//Receiving data and read it from native memory to fill the structure.
+			read();
+		}
+		
+		public ULONG_PTR dwData;
+		public DWORD cbData;
+		public Pointer lpData;
+
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "dwData", "cbData", "lpData" });
+		}
+	}
+    
     public class FLASHWINFO extends Structure {
         public int cbSize = size();
         public HANDLE hWnd;
@@ -483,6 +508,7 @@ public interface WinUser extends WinDef {
     int MOD_WIN = 0x0008;
 
     int WH_KEYBOARD = 2;
+    int WH_CALLWNDPROC = 4;
     int WH_MOUSE = 7;
     int WH_KEYBOARD_LL = 13;
     int WH_MOUSE_LL = 14;
@@ -491,6 +517,27 @@ public interface WinUser extends WinDef {
 
     public interface HOOKPROC extends StdCallCallback { }
 
+    /**
+     * Defines the message parameters passed to a WH_CALLWNDPROC hook procedure, CallWndProc.
+     */
+    public class CWPSTRUCT extends Structure {
+
+		public CWPSTRUCT(Pointer p) {
+			super(p);
+			//Receiving data and read it from native memory to fill the structure.
+			read();
+		}
+
+		public LPARAM lParam;
+		public WPARAM wParam;
+		public UINT message;
+		public HWND hwnd;
+
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "lParam", "wParam", "message", "hwnd"});
+		}
+    }
+    
     /**
      * The WM_PAINT message is sent when the system or another application makes
      * a request to paint a portion of an \ application's window.
@@ -560,6 +607,11 @@ public interface WinUser extends WinDef {
      * usually of the form WM_USER+x, where x is an integer value.
      */
     int WM_USER = 0x0400;
+    
+    /**
+     * An application sends the WM_COPYDATA message to pass data to another application.
+     */
+    int WM_COPYDATA = 0x004A;
 
     int WM_KEYUP = 257;
     int WM_SYSKEYDOWN = 260;
@@ -806,10 +858,96 @@ public interface WinUser extends WinDef {
     int GW_ENABLEDPOPUP = 6;
 
     /**
+     * If the calling thread and the thread that owns the window are attached 
+     * to different input queues, the system posts the request to the thread 
+     * that owns the window. This prevents the calling thread from blocking 
+     * its execution while other threads process the request.
+     */
+    int SWP_ASYNCWINDOWPOS = 0x4000; 
+    		
+    /**
+     * Prevents generation of the WM_SYNCPAINT message.
+     */
+    int SWP_DEFERERASE = 0x2000;
+    
+    /**
+     * Draws a frame (defined in the window's class description) around the window.
+     */
+    int SWP_DRAWFRAME = 0x0020;
+    
+    /**
+     * Applies new frame styles set using the SetWindowLong function. Sends 
+     * a WM_NCCALCSIZE message to the window, even if the window's size is 
+     * not being changed. If this flag is not specified, WM_NCCALCSIZE is 
+     * sent only when the window's size is being changed.
+     */
+    int SWP_FRAMECHANGED = 0x0020;
+    
+    /**
+     * Hides the window.
+     */
+    int SWP_HIDEWINDOW = 0x0080;
+    
+    /**
+     * Does not activate the window. If this flag is not set, the window is 
+     * activated and moved to the top of either the topmost or non-topmost 
+     * group (depending on the setting of the hWndInsertAfter parameter).
+     */
+    int SWP_NOACTIVATE = 0x0010;
+    
+    /**
+     * Discards the entire contents of the client area. If this flag is not 
+     * specified, the valid contents of the client area are saved and copied 
+     * back into the client area after the window is sized or repositioned.
+     */
+    int SWP_NOCOPYBITS = 0x0100;
+    
+    /**
+     * Retains the current position (ignores X and Y parameters).
+     */
+    int SWP_NOMOVE = 0x0002;
+    
+    /**
+     * Does not change the owner window's position in the Z order.
+     */
+    int SWP_NOOWNERZORDER = 0x0200;
+    
+    /**
+     * Does not redraw changes. If this flag is set, no repainting of any kind
+     *  occurs. This applies to the client area, the nonclient area (including
+     *   the title bar and scroll bars), and any part of the parent window 
+     *   uncovered as a result of the window being moved. When this flag is 
+     *   set, the application must explicitly invalidate or redraw any parts
+     *   of the window and parent window that need redrawing.
+     */
+    int SWP_NOREDRAW = 0x0008;
+    
+    /**
+     * Same as the SWP_NOOWNERZORDER flag.
+     */
+    int SWP_NOREPOSITION = 0x0200;
+    
+    /**
+     * Used by User32.SetWindowPos. <br>
+     * Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
+     */
+    int SWP_NOSENDCHANGING = 0x0400;
+    
+    /**
+     * Retains the current size (ignores the cx and cy parameters).
+     */
+    int SWP_NOSIZE = 0x0001;
+    		
+    /**
      * Retains the current Z order (ignores the hWndInsertAfter parameter).
      */
     int SWP_NOZORDER = 0x0004;
 
+    /**
+     * Displays the window.
+     */
+    int SWP_SHOWWINDOW = 0x0040;
+    
     /**
      * Minimizes the window.
      */
@@ -931,12 +1069,6 @@ public interface WinUser extends WinDef {
      * BS_RIGHTBUTTON style.
      */
     int BS_LEFTTEXT                    = 0x00000020;
-
-    /**
-     * Used by User32.SetWindowPos. <br>
-     * Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
-     */
-    int SWP_NOSENDCHANGING             = 0x0400;
 
 
     /**

@@ -409,4 +409,29 @@ public class User32Test extends AbstractWin32TestSupport {
         assertEquals("GetClassLong result should be 0", 0, result);
         assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.", WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
     }
+    
+    @Test
+    public void testGetActiveWindow() {
+        
+        HWND result = User32.INSTANCE.GetActiveWindow();
+        assertNull("GetActiveWindow result should be null", result);
+        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
+    }
+    
+    @Test
+    public void testSendMessage() {
+    	 DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+
+         assertNotNull(explorerProc);
+
+         LRESULT result = User32.INSTANCE
+                     .SendMessage(explorerProc.getHWND(),
+                                         WinUser.WM_USER,
+                                         new WPARAM(124),
+                                         new LPARAM(12345));
+
+         assertNotEquals(0, result);
+    	
+    }
+    
 }
