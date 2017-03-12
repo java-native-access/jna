@@ -928,6 +928,16 @@ returnStringVarArgs(const char *fmt, ...) {
   return cp;
 }
 
+EXPORT char *
+returnStringVarArgs2(const char *fmt, ...) {
+  char* cp;
+  va_list ap;
+  va_start(ap, fmt);
+  cp = va_arg(ap, char *);
+  va_end(ap);
+  return cp;
+}
+
 #if defined(_WIN32) && !defined(_WIN64) && !defined(_WIN32_WCE)
 ///////////////////////////////////////////////////////////////////////
 // stdcall tests

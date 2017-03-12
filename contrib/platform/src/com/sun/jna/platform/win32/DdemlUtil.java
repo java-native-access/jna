@@ -731,7 +731,7 @@ public abstract class DdemlUtil {
         }
 
         public void freeDataHandle(Ddeml.HDDEDATA hData) {
-            boolean result = Ddeml.INSTANCE.DdeUnaccessData(hData);
+            boolean result = Ddeml.INSTANCE.DdeFreeDataHandle(hData);
             if(! result) {
                 throw DdemlException.create(getLastError());
             }
