@@ -367,7 +367,7 @@ public interface WinUser extends WinDef {
 		}
 		
 		public ULONG_PTR dwData;
-		public DWORD cbData;
+		public int cbData;
 		public Pointer lpData;
 
 		protected List<String> getFieldOrder() {
@@ -522,6 +522,10 @@ public interface WinUser extends WinDef {
      */
     public class CWPSTRUCT extends Structure {
 
+    	public CWPSTRUCT() {
+    		super();
+		}
+    	
 		public CWPSTRUCT(Pointer p) {
 			super(p);
 			//Receiving data and read it from native memory to fill the structure.
@@ -530,7 +534,7 @@ public interface WinUser extends WinDef {
 
 		public LPARAM lParam;
 		public WPARAM wParam;
-		public UINT message;
+		public int message;
 		public HWND hwnd;
 
 		protected List<String> getFieldOrder() {
