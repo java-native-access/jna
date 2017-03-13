@@ -68,6 +68,8 @@ public class NativeTest extends TestCase {
             }
         }
     }
+    
+    @SuppressWarnings("deprecation")
     public void testVersion() {
         String[] INPUTS = { "1.0", "1.0.1", "2.1.3" };
         float[] EXPECTED = { 1.0f, 1.0f, 2.1f };

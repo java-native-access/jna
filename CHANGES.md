@@ -2,19 +2,23 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Release 4.3.1 (Next release)
+Release 4.4.0 (Next release)
 ============================
 
 Features
 --------
 * [#757](https://github.com/java-native-access/jna/issues/757): Build android archive (AAR) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#774](https://github.com/java-native-access/jna/pull/774): Addition win32 api : SendMessage, GetActiveWindow, COPYDATASTRUCT and a few constants + a demo application - [@cnico](https://github.com/cnico).
+* [#767](https://github.com/java-native-access/jna/pull/767): Add Win32 API mapping for Shlwapi PathIsUNC - [@ivanwick](https://github.com/ivanwick).
+* [#753](https://github.com/java-native-access/jna/issues/753): Support arm hardfloat and softfloat by introducing armel as platform (ARM EABI Little-endian) - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#772](https://github.com/java-native-access/jna/pull/772): Improved speed of GDIUtil.getScreenshot() by ~30% - [@sommd](https://github.com/sommd).
 
 Bug Fixes
 ---------
 * [#754](https://github.com/java-native-access/jna/issues/754): Move MSVC build to standard stdbool.h and require Visual C++ 2015 (sizeof(bool) = 1 is now also true on MSVC build) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#399](https://github.com/java-native-access/jna/issues/399): Check native version before attempting to call into native code - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#763](https://github.com/java-native-access/jna/issues/763): Fix vararg calls without fixed parts - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#770](https://github.com/java-native-access/jna/pull/770): Fix for free data handle in DdemlUtil. - [@stolarczykt](https://github.com/stolarczykt).
 
 Release 4.3.0
 =============
