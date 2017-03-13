@@ -416,7 +416,7 @@ public class User32WindowMessagesTest extends AbstractWin32TestSupport {
 		// It will fail the test in case of exception like AssertionError is raised by junit.
 		try {
 			assertEquals(expected, actual);
-		} catch (Throwable t) {
+		} catch (AssertionError t) {
 			exceptionInCreatedThread = t;
 			throw t;
 		}
