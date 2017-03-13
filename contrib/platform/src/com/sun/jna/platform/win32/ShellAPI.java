@@ -298,22 +298,11 @@ public interface ShellAPI extends StdCallLibrary {
 	 * enclose each mark in a pair of quotation marks, as in the following
 	 * example.
 	 * </p>
-	 * <div id="code-snippet-2" class="codeSnippetContainer" xmlns=""> <div
-	 * class="codeSnippetContainerTabs"> </div>
-	 * <div class="codeSnippetContainerCodeContainer"> <div class=
-	 * "codeSnippetToolBar"> <div class="codeSnippetToolBarText"> <a name=
-	 * "CodeSnippetCopyLink" style="display: none;" title=
-	 * "Copy to clipboard." href=
-	 * "javascript:if (window.epx.codeSnippet)window.epx.codeSnippet.copyCode('CodeSnippetContainerCode_3de148bb-edf3-4344-8ecf-c211304bfa9e');"
-	 * >Copy</a> </div> </div>
-	 * <div id="CodeSnippetContainerCode_3de148bb-edf3-4344-8ecf-c211304bfa9e"
-	 * class="codeSnippetContainerCode" dir="ltr"> <div style="color:Black;">
-	 *
+         * <p>
 	 * <pre>
 	 * sei.lpParameters = &quot;An example: \&quot;\&quot;\&quot;quoted text\&quot;\&quot;\&quot;&quot;;
 	 * </pre>
-	 *
-	 * </div> </div> </div> </div>
+         * </p>
 	 * <p>
 	 * In this case, the application receives three parameters: <em>An</em>,
 	 * <em>example:</em>, and <em>"quoted text"</em>.

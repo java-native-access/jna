@@ -161,7 +161,7 @@ public final class Native implements Version {
      * 
      * @param expectedVersion
      * @param nativeVersion
-     * @return 
+     * @return true if nativeVersion describes a version compatible to expectedVersion
      */
     static boolean isCompatibleVersion(String expectedVersion, String nativeVersion) {
         String[] expectedVersionParts = expectedVersion.split("\\.");
