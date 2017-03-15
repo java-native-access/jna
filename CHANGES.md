@@ -5,6 +5,12 @@ NOTE: JNI native support is typically incompatible between minor versions, and a
 Release 4.5.0 (Next release)
 ============================
 
+Features
+--------
+
+Bug Fixes
+---------
+* [#776](https://github.com/java-native-access/jna/issues/776): Do not include ClassPath attribute in MANIFEST.MF of jna-platform. - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.4.0
 =============
