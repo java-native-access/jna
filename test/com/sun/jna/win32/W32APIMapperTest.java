@@ -34,8 +34,13 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
 public class W32APIMapperTest extends TestCase {
-
-    final String UNICODE = "[\u0444]";
+    // Unicode Character 'SINGLE RIGHT-POINTING ANGLE QUOTATION MARK': ›
+    //
+    // byte encoding in CP1250-CP1258 is 155
+    //
+    // The requirement is, that the encoding is present in many native windows
+    // encodings and outside the ASCII range
+    final String UNICODE = "[\u203a]";
     final String MAGIC = "magic" + UNICODE;
 
     public static void main(String[] args) {
