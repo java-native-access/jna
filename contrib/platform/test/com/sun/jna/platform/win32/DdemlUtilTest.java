@@ -84,8 +84,8 @@ public class DdemlUtilTest {
     
             Assert.assertTrue(latch.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(server);
-            closeQuitely(client);
+            closeQuietly(server);
+            closeQuietly(client);
         }
     }
     
@@ -148,8 +148,8 @@ public class DdemlUtilTest {
             assertTrue("Failed to disconnect", disconnectLatch.await(5, TimeUnit.SECONDS));
 
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
 
@@ -241,9 +241,9 @@ public class DdemlUtilTest {
             assertTrue(disconnectLatch1.await(5, TimeUnit.SECONDS));
             assertTrue(disconnectLatch2.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server1);
-            closeQuitely(server2);
+            closeQuietly(client);
+            closeQuietly(server1);
+            closeQuietly(server2);
         }
     }
     
@@ -308,8 +308,8 @@ public class DdemlUtilTest {
             
             assertTrue(executeReceived.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
     
@@ -376,8 +376,8 @@ public class DdemlUtilTest {
             
             assertTrue(pokeReceived.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
     
@@ -448,8 +448,8 @@ public class DdemlUtilTest {
             
             assertTrue(pokeReceived.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
 
@@ -538,8 +538,8 @@ public class DdemlUtilTest {
             assertFalse(executesProcessed.await(2, TimeUnit.SECONDS));
             assertThat(executesProcessed.getCount(), is(1L));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
     
@@ -622,8 +622,8 @@ public class DdemlUtilTest {
             
             assertTrue(executesProcessed.await(3, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
 
@@ -698,8 +698,8 @@ public class DdemlUtilTest {
 
             assertTrue(executesProcessed.await(3, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
     
@@ -791,12 +791,12 @@ public class DdemlUtilTest {
             assertTrue(adviseDataRequestReceived.await(5, TimeUnit.SECONDS));
             assertTrue(adviseDataReceived.await(5, TimeUnit.SECONDS));
         } finally {
-            closeQuitely(client);
-            closeQuitely(server);
+            closeQuietly(client);
+            closeQuietly(server);
         }
     }
     
-    private static void closeQuitely(Closeable closeable) {
+    private static void closeQuietly(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
