@@ -8,6 +8,7 @@ Release 4.5.0 (Next release)
 Features
 --------
 * [#774](https://github.com/java-native-access/jna/pull/774): Addition win32 api : SendMessage, GetActiveWindow, COPYDATASTRUCT and a few constants + a demo application - [@cnico](https://github.com/cnico).
+* [#784](https://github.com/java-native-access/jna/issues/784): Added Solaris Kstat library - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
