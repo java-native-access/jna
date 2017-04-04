@@ -8,6 +8,7 @@ Release 4.5.0 (Next release)
 Features
 --------
 * [#774](https://github.com/java-native-access/jna/pull/774): Addition win32 api : SendMessage, GetActiveWindow, COPYDATASTRUCT and a few constants + a demo application - [@cnico](https://github.com/cnico).
+* [#783](https://github.com/java-native-access/jna/pull/783): Add Ole32 functions: `OleBuildVersion`, `OleInitialize`, `OleUninitialize`, `OleFlushClipboard`, `OleRun`, add VARIANT conversion functions to OleAuto, add default locale, LCID and LANG to WinNT - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

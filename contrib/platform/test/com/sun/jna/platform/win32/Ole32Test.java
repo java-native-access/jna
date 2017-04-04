@@ -126,4 +126,16 @@ public class Ole32Test extends TestCase {
 
         Ole32.INSTANCE.CoTaskMemFree(ptr);
     }
+    
+    public void testOleFunctions() {
+        HRESULT initResult = Ole32.INSTANCE.OleInitialize(Pointer.NULL);
+        
+        assertTrue(W32Errors.SUCCEEDED(initResult));
+        
+        // For a real test, a test component will be needed
+        Ole32.INSTANCE.OleFlushClipboard();
+        Ole32.INSTANCE.OleRun(Pointer.NULL);
+        
+        Ole32.INSTANCE.CoUninitialize();
+    }
 }
