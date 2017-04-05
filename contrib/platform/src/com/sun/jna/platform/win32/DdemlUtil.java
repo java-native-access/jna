@@ -2109,11 +2109,9 @@ public abstract class DdemlUtil {
          * string. A value of -1 indicates that pData is a data handle that
          * identifies the data being sent.
          *
-         * @param item The data item for which data is being
-         * exchanged during the transaction. This handle must have been created
-         * by a previous call to the DdeCreateStringHandle function. This
-         * parameter is ignored (and should be set to 0L) if the wType parameter
-         * is XTYP_EXECUTE.
+         * @param item The data item for which data is being exchanged during
+         * the transaction. This parameter is ignored (and should be set to NULL)
+         * if the wType parameter is XTYP_EXECUTE.
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
@@ -2223,11 +2221,9 @@ public abstract class DdemlUtil {
          * function, and the application can use it only after establishing a
          * conversation with the server.
          *
-         * @param item The data item for which data is being
-         * exchanged during the transaction. This handle must have been created
-         * by a previous call to the DdeCreateStringHandle function. This
-         * parameter is ignored (and should be set to 0L) if the wType parameter
-         * is XTYP_EXECUTE.
+         * @param item The data item for which data is being exchanged during
+         * the transaction. This parameter is ignored (and should be set to NULL)
+         * if the wType parameter is XTYP_EXECUTE.
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
@@ -2425,11 +2421,9 @@ public abstract class DdemlUtil {
          * string. A value of -1 indicates that pData is a data handle that
          * identifies the data being sent.
          *
-         * @param item The data item for which data is being
-         * exchanged during the transaction. This handle must have been created
-         * by a previous call to the DdeCreateStringHandle function. This
-         * parameter is ignored (and should be set to 0L) if the wType parameter
-         * is XTYP_EXECUTE.
+         * @param item The data item for which data is being exchanged during
+         * the transaction. This parameter is ignored (and should be set to NULL)
+         * if the wType parameter is XTYP_EXECUTE.
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
@@ -2573,9 +2567,8 @@ public abstract class DdemlUtil {
          * conversation with the server.
          * 
          * @param item The data item for which data is being exchanged during
-         * the transaction. This handle must have been created by a previous
-         * call to the DdeCreateStringHandle function. This parameter is ignored
-         * (and should be set to 0L) if the wType parameter is XTYP_EXECUTE.
+         * the transaction. This parameter is ignored (and should be set to NULL)
+         * if the wType parameter is XTYP_EXECUTE.
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
@@ -2661,11 +2654,9 @@ public abstract class DdemlUtil {
          * DdeCallback, receives this transaction when a client specifies
          * XTYP_ADVSTOP in the DdeClientTransaction function.
          *
-         * @param item The data item for which data is being
-         * exchanged during the transaction. This handle must have been created
-         * by a previous call to the DdeCreateStringHandle function. This
-         * parameter is ignored (and should be set to 0L) if the wType parameter
-         * is XTYP_EXECUTE.
+         * @param item The data item for which data is being exchanged during
+         * the transaction. This parameter is ignored (and should be set to NULL)
+         * if the wType parameter is XTYP_EXECUTE.
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
@@ -3349,15 +3340,12 @@ public abstract class DdemlUtil {
          * server exists, the system selects only one.
          *
          * @param service The service name of the server application with which
-         * a conversation is to be established. This handle must have been
-         * created by a previous call to the DdeCreateStringHandle function. If
-         * this parameter is 0L, a conversation is established with any
-         * available server.
+         * a conversation is to be established. If this parameter is NULL, a
+         * conversation is established with any available server.
          *
          * @param topic The name of the topic on which a conversation is to be
-         * established. This handle must have been created by a previous call to
-         * DdeCreateStringHandle. If this parameter is 0L, a conversation on any
-         * topic supported by the selected server is established.
+         * established. If this parameter is NULL, a conversation on any topic
+         * supported by the selected server is established.
          *
          * @param convcontext A pointer to the CONVCONTEXT structure that contains
          * conversation context information. If this parameter is NULL, the
@@ -3699,14 +3687,13 @@ public abstract class DdemlUtil {
          * 
          * @param service A string that specifies the service name of the server
          * application with which a conversation is to be established. If this
-         * parameter is 0L, the system attempts to establish conversations with
+         * parameter is NULL, the system attempts to establish conversations with
          * all available servers that support the specified topic name.
          *
          * @param topic A string that specifies the name of the topic on which a
-         * conversation is to be established. This handle must have been created
-         * by a previous call to the DdeCreateStringHandle function. If this
-         * parameter is 0L, the system will attempt to establish conversations
-         * on all topics supported by the selected server (or servers).
+         * conversation is to be established. If this parameter is NULL, the
+         * system will attempt to establish conversations on all topics
+         * supported by the selected server (or servers).
          * 
          * @param existingList An existinct conversation list to be enumerated.
          * This parameter should be NULL if a new conversation list is to be
