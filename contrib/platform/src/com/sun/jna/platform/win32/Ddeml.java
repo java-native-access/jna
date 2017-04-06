@@ -885,7 +885,7 @@ public interface Ddeml extends StdCallLibrary {
      * loop but instead alters the advise loop flags (XTYPF_ACKREQ and
      * XTYPF_NODATA) to match the latest request.</p>
      * <p>This transaction is filtered if the server application specified the
-     * CBF_FAIL_ADVISES flag in the {@link #DdeInitialize} function. </p>
+     * {@link #CBF_FAIL_ADVISES} flag in the {@link #DdeInitialize} function. </p>
      */
     public int XTYP_ADVSTART = 0x0030 | XCLASS_BOOL;
     /**
@@ -905,7 +905,7 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Remarks</strong></p>
      * <p>
      * This transaction is filtered if the server application specified the
-     * CBF_FAIL_ADVISES flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_FAIL_ADVISES} flag in the {@link #DdeInitialize} function.</p>
      */
     public int XTYP_ADVSTOP = 0x0040 | XCLASS_NOTIFICATION;
     /**
@@ -933,7 +933,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * This transaction is filtered if the server application specified the
-     * CBF_FAIL_EXECUTES flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_FAIL_EXECUTES} flag in the {@link #DdeInitialize} function.</p>
      * 
      * <p>
      * An application must free the data handle obtained during this
@@ -982,14 +982,14 @@ public interface Ddeml extends StdCallLibrary {
      * the callback function returns TRUE and a conversation is successfully
      * established, the system passes the conversation handle to the server by
      * issuing an XTYP_CONNECT_CONFIRM transaction to the server's callback
-     * function (unless the server specified the CBF_SKIP_CONNECT_CONFIRMS flag
+     * function (unless the server specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag
      * in the {@link #DdeInitialize function}).</p>
      * 
      * <p><strong>Remarks</strong></p>
      *
      * <p>
      * This transaction is filtered if the server application specified the
-     * CBF_FAIL_CONNECTIONS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_FAIL_CONNECTIONS} flag in the {@link #DdeInitialize} function.</p>
      * <p>
      * A server cannot block this transaction type; the CBR_BLOCK return code is
      * ignored. </p>
@@ -1017,7 +1017,7 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Remarks</strong></p>
      *
      * <p>
-     * This transaction is filtered if the server application specified the CBF_SKIP_CONNECT_CONFIRMS flag in the {@link #DdeInitialize} function.
+     * This transaction is filtered if the server application specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag in the {@link #DdeInitialize} function.
      * </p>
      * <p>
      * A server cannot block this transaction type; the CBR_BLOCK return code is ignored.
@@ -1080,7 +1080,7 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Remarks</strong></p>
      *
      * <p>
-     * This transaction is filtered if the server application specified the CBF_FAIL_POKES flag in the {@link #DdeInitialize} function.
+     * This transaction is filtered if the server application specified the {@link #CBF_FAIL_POKES} flag in the {@link #DdeInitialize} function.
      * </p>
      */
     public int XTYP_POKE = 0x0090 | XCLASS_FLAGS;
@@ -1103,7 +1103,7 @@ public interface Ddeml extends StdCallLibrary {
      * <strong>Remarks</strong>
      * <p>
      * This transaction is filtered if the application specified the
-     * CBF_SKIP_REGISTRATIONS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_SKIP_REGISTRATIONS} flag in the {@link #DdeInitialize} function.</p>
      *
      * <p>
      * A application cannot block this transaction type; the CBR_BLOCK return
@@ -1143,7 +1143,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * This transaction is filtered if the server application specified the
-     * CBF_FAIL_REQUESTS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_FAIL_REQUESTS} flag in the {@link #DdeInitialize} function.</p>
      *<p>
      * If responding to this transaction requires lengthy processing, the server
      * can return the CBR_BLOCK return code to suspend future transactions on
@@ -1173,7 +1173,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * This transaction is filtered if the application specified the
-     * CBF_SKIP_DISCONNECTS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_SKIP_DISCONNECTS} flag in the {@link #DdeInitialize} function.</p>
      *<p>
      * The application can obtain the status of the terminated conversation by
      * calling the {@link #DdeQueryConvInfo} function while processing this transaction.
@@ -1204,7 +1204,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * This transaction is filtered if the application specified the
-     * CBF_SKIP_REGISTRATIONS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_SKIP_REGISTRATIONS} flag in the {@link #DdeInitialize} function.</p>
      *<p>
      * A application cannot block this transaction type; the CBR_BLOCK return
      * code is ignored.</p>
@@ -1252,7 +1252,7 @@ public interface Ddeml extends StdCallLibrary {
      * a NULL string handle. The system sends the XTYP_CONNECT_CONFIRM
      * transaction to the server to confirm each conversation and to pass the
      * conversation handles to the server. The server will not receive these
-     * confirmations if it specified the CBF_SKIP_CONNECT_CONFIRMS flag in the
+     * confirmations if it specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag in the
      * {@link #DdeInitialize} function.</p>
      * <p>
      * The server should return NULL to refuse the XTYP_WILDCONNECT transaction.
@@ -1263,7 +1263,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * This transaction is filtered if the server application specified the
-     * CBF_FAIL_CONNECTIONS flag in the {@link #DdeInitialize} function.</p>
+     * {@link #CBF_FAIL_CONNECTIONS} flag in the {@link #DdeInitialize} function.</p>
      * <p>
      * A server cannot block this transaction type; the CBR_BLOCK return code is
      * ignored.</p>
@@ -1529,7 +1529,7 @@ public interface Ddeml extends StdCallLibrary {
      * Prevents the application from becoming a server in a DDE conversation.
      * The application can only be a client. This flag reduces consumption of
      * resources by the DDEML. It includes the functionality of the
-     * CBF_FAIL_ALLSVRXACTIONS 
+     * {@link #CBF_FAIL_ALLSVRXACTIONS} 
      */
     public int APPCMD_CLIENTONLY = 0x00000010;
     /**
@@ -1672,7 +1672,7 @@ public interface Ddeml extends StdCallLibrary {
      * Prevents the application from becoming a server in a DDE conversation.
      * The application can only be a client. This flag reduces consumption of
      * resources by the DDEML. It includes the functionality of the
-     * CBF_FAIL_ALLSVRXACTIONS flag.</p>
+     * {@link #CBF_FAIL_ALLSVRXACTIONS} flag.</p>
      * </td></tr>
      * <tr><td><dl>
      * <dt><strong>APPCMD_FILTERINITS</strong></dt>
@@ -1691,7 +1691,7 @@ public interface Ddeml extends StdCallLibrary {
      * specifying it turns on the application's service name filters.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_ALLSVRXACTIONS</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_ALLSVRXACTIONS}</strong></dt>
      * <dt>0x0003f000</dt>
      * </dl>
      * </td><td>
@@ -1702,7 +1702,7 @@ public interface Ddeml extends StdCallLibrary {
      * flags.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_ADVISES</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_ADVISES}</strong></dt>
      * <dt>0x00004000</dt>
      * </dl>
      * </td><td>
@@ -1713,7 +1713,7 @@ public interface Ddeml extends StdCallLibrary {
      * server.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_CONNECTIONS</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_CONNECTIONS}</strong></dt>
      * <dt>0x00002000</dt>
      * </dl>
      * </td><td>
@@ -1722,7 +1722,7 @@ public interface Ddeml extends StdCallLibrary {
      * XTYP_WILDCONNECT transactions.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_EXECUTES</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_EXECUTES}</strong></dt>
      * <dt>0x00008000</dt>
      * </dl>
      * </td><td>
@@ -1732,7 +1732,7 @@ public interface Ddeml extends StdCallLibrary {
      * XTYP_EXECUTE transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_POKES</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_POKES}</strong></dt>
      * <dt>0x00010000</dt>
      * </dl>
      * </td><td>
@@ -1742,7 +1742,7 @@ public interface Ddeml extends StdCallLibrary {
      * transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_REQUESTS</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_REQUESTS}</strong></dt>
      * <dt>0x00020000</dt>
      * </dl>
      * </td><td>
@@ -1752,7 +1752,7 @@ public interface Ddeml extends StdCallLibrary {
      * XTYP_REQUEST transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_FAIL_SELFCONNECTIONS</strong></dt>
+     * <dt><strong>{@link #CBF_FAIL_SELFCONNECTIONS}</strong></dt>
      * <dt>0x00001000</dt>
      * </dl>
      * </td><td>
@@ -1764,7 +1764,7 @@ public interface Ddeml extends StdCallLibrary {
      * instances of itself but not with itself.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_SKIP_ALLNOTIFICATIONS</strong></dt>
+     * <dt><strong>{@link #CBF_SKIP_ALLNOTIFICATIONS}</strong></dt>
      * <dt>0x003c0000</dt>
      * </dl>
      * </td><td>
@@ -1773,7 +1773,7 @@ public interface Ddeml extends StdCallLibrary {
      * flag is equivalent to combining all CBF_SKIP_ flags.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_SKIP_CONNECT_CONFIRMS</strong></dt>
+     * <dt><strong>{@link #CBF_SKIP_CONNECT_CONFIRMS}</strong></dt>
      * <dt>0x00040000</dt>
      * </dl>
      * </td><td>
@@ -1782,7 +1782,7 @@ public interface Ddeml extends StdCallLibrary {
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_SKIP_DISCONNECTS</strong></dt>
+     * <dt><strong>{@link #CBF_SKIP_DISCONNECTS}</strong></dt>
      * <dt>0x00200000</dt>
      * </dl>
      * </td><td>
@@ -1791,7 +1791,7 @@ public interface Ddeml extends StdCallLibrary {
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_SKIP_REGISTRATIONS</strong></dt>
+     * <dt><strong>{@link #CBF_SKIP_REGISTRATIONS}</strong></dt>
      * <dt>0x00080000</dt>
      * </dl>
      * </td><td>
@@ -1800,7 +1800,7 @@ public interface Ddeml extends StdCallLibrary {
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>CBF_SKIP_UNREGISTRATIONS</strong></dt>
+     * <dt><strong>{@link #CBF_SKIP_UNREGISTRATIONS}</strong></dt>
      * <dt>0x00100000</dt>
      * </dl>
      * </td><td>
