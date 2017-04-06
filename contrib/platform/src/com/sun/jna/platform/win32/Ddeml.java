@@ -1273,7 +1273,7 @@ public interface Ddeml extends StdCallLibrary {
      * A Dynamic Data Exchange (DDE) debugger's DDE callback function,
      * DdeCallback, receives the XTYP_MONITOR transaction whenever a DDE event
      * occurs in the system. To receive this transaction, an application must
-     * specify the APPCLASS_MONITOR value when it calls the {@link #DdeInitialize}
+     * specify the {@link #APPCLASS_MONITOR} value when it calls the {@link #DdeInitialize}
      * function.
      *
      * <p>
@@ -1287,27 +1287,27 @@ public interface Ddeml extends StdCallLibrary {
      * following values.
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
-     * <tr><td>MF_CALLBACKS</td><td>The system sent a transaction to a DDE
+     * <tr><td>{@link #MF_CALLBACKS}</td><td>The system sent a transaction to a DDE
      * callback function. The DDE object contains a MONCBSTRUCT structure that
      * provides information about the transaction.</td></tr>
-     * <tr><td>MF_CONV</td><td>A DDE conversation was established or terminated.
+     * <tr><td>{@link #MF_CONV}</td><td>A DDE conversation was established or terminated.
      * The DDE object contains a MONCONVSTRUCT structure that provides
      * information about the conversation.</td></tr>
-     * <tr><td>MF_ERRORS</td><td>A DDE error occurred. The DDE object contains a
+     * <tr><td>{@link #MF_ERRORS}</td><td>A DDE error occurred. The DDE object contains a
      * MONERRSTRUCT structure that provides information about the
      * error.</td></tr>
-     * <tr><td>MF_HSZ_INFO</td><td>A DDE application created, freed, or
+     * <tr><td>{@link #MF_HSZ_INFO}</td><td>A DDE application created, freed, or
      * incremented the usage count of a string handle, or a string handle was
      * freed as a result of a call to the {@link #DdeUninitialize} function. The DDE
      * object contains a MONHSZSTRUCT structure that provides information about
      * the string handle.</td></tr>
-     * <tr><td>MF_LINKS</td><td>A DDE application started or stopped an advise
+     * <tr><td>{@link #MF_LINKS}</td><td>A DDE application started or stopped an advise
      * loop. The DDE object contains a MONLINKSTRUCT structure that provides
      * information about the advise loop.</td></tr>
-     * <tr><td>MF_POSTMSGS</td><td>The system or an application posted a DDE
+     * <tr><td>{@link #MF_POSTMSGS}</td><td>The system or an application posted a DDE
      * message. The DDE object contains a MONMSGSTRUCT structure that provides
      * information about the message.</td></tr>
-     * <tr><td>MF_SENDMSGS</td><td>The system or an application sent a DDE
+     * <tr><td>{@link #MF_SENDMSGS}</td><td>The system or an application sent a DDE
      * message. The DDE object contains a MONMSGSTRUCT structure that provides
      * information about the message.</td></tr>
      * </table>
@@ -1366,8 +1366,8 @@ public interface Ddeml extends StdCallLibrary {
      */
     public int DMLERR_DLL_NOT_INITIALIZED = 0x4003;
     /**
-     * An application initialized as APPCLASS_MONITOR has attempted to perform a
-     * DDE transaction, or an application initialized as APPCMD_CLIENTONLY has
+     * An application initialized as {@link #APPCLASS_MONITOR} has attempted to perform a
+     * DDE transaction, or an application initialized as {@link #APPCMD_CLIENTONLY} has
      * attempted to perform server transactions.
      */
     public int DMLERR_DLL_USAGE = 0x4004;
@@ -1643,7 +1643,7 @@ public interface Ddeml extends StdCallLibrary {
      * <table>
      * <tr ><th>Value</th><th>Meaning</th></tr>
      * <tr><td><dl>
-     * <dt><strong>APPCLASS_MONITOR</strong></dt>
+     * <dt><strong>{@link #APPCLASS_MONITOR}</strong></dt>
      * <dt>0x00000001L</dt>
      * </dl>
      * </td><td>
@@ -1651,11 +1651,11 @@ public interface Ddeml extends StdCallLibrary {
      * Makes it possible for the application to monitor DDE activity in the
      * system. This flag is for use by DDE monitoring applications. The
      * application specifies the types of DDE activity to monitor by combining
-     * one or more monitor flags with the APPCLASS_MONITOR flag. For details,
+     * one or more monitor flags with the {@link #APPCLASS_MONITOR} flag. For details,
      * see the following Remarks section.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>APPCLASS_STANDARD</strong></dt>
+     * <dt><strong>{@link #APPCLASS_STANDARD}</strong></dt>
      * <dt>0x00000000L</dt>
      * </dl>
      * </td><td>
@@ -1664,7 +1664,7 @@ public interface Ddeml extends StdCallLibrary {
      * application.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>APPCMD_CLIENTONLY</strong></dt>
+     * <dt><strong>{@link #APPCMD_CLIENTONLY}</strong></dt>
      * <dt>0x00000010L</dt>
      * </dl>
      * </td><td>
@@ -1675,7 +1675,7 @@ public interface Ddeml extends StdCallLibrary {
      * {@link #CBF_FAIL_ALLSVRXACTIONS} flag.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>APPCMD_FILTERINITS</strong></dt>
+     * <dt><strong>{@link #APPCMD_FILTERINITS}</strong></dt>
      * <dt>0x00000020L</dt>
      * </dl>
      * </td><td>
@@ -1809,7 +1809,7 @@ public interface Ddeml extends StdCallLibrary {
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_CALLBACKS</strong></dt>
+     * <dt><strong>{@link #MF_CALLBACKS}</strong></dt>
      * <dt>0x08000000</dt>
      * </dl>
      * </td><td>
@@ -1818,7 +1818,7 @@ public interface Ddeml extends StdCallLibrary {
      * callback function in the system.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_CONV</strong></dt>
+     * <dt><strong>{@link #MF_CONV}</strong></dt>
      * <dt>0x40000000</dt>
      * </dl>
      * </td><td>
@@ -1827,7 +1827,7 @@ public interface Ddeml extends StdCallLibrary {
      * terminated.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_ERRORS</strong></dt>
+     * <dt><strong>{@link #MF_ERRORS}</strong></dt>
      * <dt>0x10000000</dt>
      * </dl>
      * </td><td>
@@ -1835,7 +1835,7 @@ public interface Ddeml extends StdCallLibrary {
      * Notifies the callback function whenever a DDE error occurs.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_HSZ_INFO</strong></dt>
+     * <dt><strong>{@link #MF_HSZ_INFO}</strong></dt>
      * <dt>0x01000000</dt>
      * </dl>
      * </td><td>
@@ -1846,7 +1846,7 @@ public interface Ddeml extends StdCallLibrary {
      * function.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_LINKS</strong></dt>
+     * <dt><strong>{@link #MF_LINKS}</strong></dt>
      * <dt>0x20000000</dt>
      * </dl>
      * </td><td>
@@ -1855,7 +1855,7 @@ public interface Ddeml extends StdCallLibrary {
      * ended.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_POSTMSGS</strong></dt>
+     * <dt><strong>{@link #MF_POSTMSGS}</strong></dt>
      * <dt>0x04000000</dt>
      * </dl>
      * </td><td>
@@ -1864,7 +1864,7 @@ public interface Ddeml extends StdCallLibrary {
      * posts a DDE message.</p>
      * </td></tr>
      * <tr><td><dl>
-     * <dt><strong>MF_SENDMSGS</strong></dt>
+     * <dt><strong>{@link #MF_SENDMSGS}</strong></dt>
      * <dt>0x02000000</dt>
      * </dl>
      * </td><td>
