@@ -1871,13 +1871,13 @@ public interface Ddeml extends StdCallLibrary {
      * </table>
      *
      * @param ulRes Reserved; must be set to zero.
-     * @return If the function succeeds, the return value is DMLERR_NO_ERROR.
+     * @return If the function succeeds, the return value is {@link #DMLERR_NO_ERROR}.
      * 
      * <p>If the function fails, the return value is one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_USAGE</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_SYS_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_USAGE}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_SYS_ERROR}</li>
      * </ul>
      */
     public int DdeInitialize(DWORDByReference pidInst, DdeCallback fnCallback, int afCmd, int ulRes);
@@ -1934,11 +1934,11 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_SYS_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_SYS_ERROR}</li>
      * </ul>
      */
     public HCONVLIST DdeConnectList(int idInst, HSZ hszService, HSZ hszTopic,
@@ -1971,9 +1971,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, 
      * which can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public boolean DdeDisconnectList(HCONVLIST hConvList);
@@ -2012,10 +2012,10 @@ public interface Ddeml extends StdCallLibrary {
      * be one of the following values:</p>
      *
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public HCONV DdeConnect( int idInst, HSZ hszService, HSZ hszTopic, CONVCONTEXT pCC);
@@ -2033,9 +2033,9 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public boolean DdeDisconnect( HCONV hConv);
@@ -2060,10 +2060,10 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public HCONV DdeReconnect( HCONV hConv);
@@ -2090,10 +2090,10 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_UNFOUND_QUEUE_ID</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_UNFOUND_QUEUE_ID}</li>
      * </ul>
      */
     public int DdeQueryConvInfo( HCONV hConv, int idTransaction, CONVINFO pConvInfo);
@@ -2116,10 +2116,10 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_UNFOUND_QUEUE_ID</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_UNFOUND_QUEUE_ID}</li>
      * </ul>
      */
     public boolean DdeSetUserHandle( HCONV hConv, int id, DWORD_PTR hUser);
@@ -2142,10 +2142,10 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_UNFOUND_QUEUE_ID</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_UNFOUND_QUEUE_ID}</li>
      * </ul>
      */
     public boolean DdeAbandonTransaction(int idInst, HCONV hConv, int idTransaction);
@@ -2175,9 +2175,9 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_DLL_USAGE</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_DLL_USAGE}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      *
      */
@@ -2236,9 +2236,9 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public boolean DdeEnableCallback(int idInst, HCONV hConv, int wCmd);
@@ -2301,10 +2301,10 @@ public interface Ddeml extends StdCallLibrary {
      * The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_DLL_USAGE</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_DLL_USAGE}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public HDDEDATA DdeNameService(int idInst,HSZ hsz1, HSZ hsz2, int afCmd);
@@ -2405,21 +2405,21 @@ public interface Ddeml extends StdCallLibrary {
      * which can be one of the following values:</p>
      * 
      * <ul>
-     * <li>DMLERR_ADVACKTIMEOUT</li>
-     * <li>DMLERR_BUSY</li>
-     * <li>DMLERR_DATAACKTIMEOUT</li>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_EXECACKTIMEOUT</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_MEMORY_ERROR</li>
-     * <li>DMLERR_NO_CONV_ESTABLISHED</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_NOTPROCESSED</li>
-     * <li>DMLERR_POKEACKTIMEOUT</li>
-     * <li>DMLERR_POSTMSG_FAILED</li>
-     * <li>DMLERR_REENTRANCY</li>
-     * <li>DMLERR_SERVER_DIED</li>
-     * <li>DMLERR_UNADVACKTIMEOUT</li>
+     *   <li>{@link #DMLERR_ADVACKTIMEOUT}</li>
+     *   <li>{@link #DMLERR_BUSY}</li>
+     *   <li>{@link #DMLERR_DATAACKTIMEOUT}</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_EXECACKTIMEOUT}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_MEMORY_ERROR}</li>
+     *   <li>{@link #DMLERR_NO_CONV_ESTABLISHED}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_NOTPROCESSED}</li>
+     *   <li>{@link #DMLERR_POKEACKTIMEOUT}</li>
+     *   <li>{@link #DMLERR_POSTMSG_FAILED}</li>
+     *   <li>{@link #DMLERR_REENTRANCY}</li>
+     *   <li>{@link #DMLERR_SERVER_DIED}</li>
+     *   <li>{@link #DMLERR_UNADVACKTIMEOUT}</li>
      * </ul>
      */
     public HDDEDATA DdeClientTransaction(
@@ -2477,10 +2477,10 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, 
      * which can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_MEMORY_ERROR</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_MEMORY_ERROR}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public HDDEDATA DdeCreateDataHandle(
@@ -2518,10 +2518,10 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_MEMORY_ERROR</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_MEMORY_ERROR}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public HDDEDATA DdeAddData(HDDEDATA hData, Pointer pSrc, int cb, int cbOff);
@@ -2553,9 +2553,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, which 
      * can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public int DdeGetData(HDDEDATA hData, Pointer pDst, int cbMax, int cbOff);
@@ -2579,9 +2579,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, which can
      * be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public Pointer DdeAccessData(HDDEDATA hData, WinDef.DWORDByReference pcbDataSize);
@@ -2598,9 +2598,9 @@ public interface Ddeml extends StdCallLibrary {
      * can be one of the following values:</p>
      * 
      * <ul>
-     * <li>DMLERR_DLL_NOT_INITIALIZED</li>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public boolean DdeUnaccessData(HDDEDATA hData);
@@ -2618,8 +2618,8 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code,
      * which can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
      * </ul>
      */
     public boolean DdeFreeDataHandle(HDDEDATA hData);
@@ -2658,9 +2658,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p>The DdeGetLastError function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
-     * <li>DMLERR_INVALIDPARAMETER</li>
-     * <li>DMLERR_NO_ERROR</li>
-     * <li>DMLERR_SYS_ERROR</li>
+     *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
+     *   <li>{@link #DMLERR_NO_ERROR}</li>
+     *   <li>{@link #DMLERR_SYS_ERROR}</li>
      * </ul>
      */
     public HSZ DdeCreateStringHandle(int idInst, String psz, int iCodePage);
