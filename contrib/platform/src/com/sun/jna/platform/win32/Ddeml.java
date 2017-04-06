@@ -152,44 +152,48 @@ public interface Ddeml extends StdCallLibrary {
         }
     }
 
-    /* The following structure is used by DdeQueryConvInfo(): */
+    /**
+     * Contains information about a Dynamic Data Exchange (DDE) conversation.
+     *
+     * @see #DdeQueryConvInfo(HCONV hConv, int idTransaction, CONVINFO pConvInfo)
+     */
     public class CONVINFO extends Structure {
 
         public static final List<String> FIELDS = createFieldsOrder(
                 "cb", "hUser", "hConvPartner", "hszSvcPartner", "hszServiceReq",
                 "hszTopic", "hszItem", "wFmt", "wType", "wStatus", "wConvst",
                 "wLastError", "hConvList", "ConvCtxt", "hwnd", "hwndPartner");
-        /* sizeof(CONVINFO)  */
+        /** The structure's size, in bytes. */
         public int cb;
-        /* user specified field  */
+        /** User specified field  */
         public DWORD_PTR hUser;
-        /* hConv on other end or 0 if non-ddemgr partner  */
+        /** hConv on other end or 0 if non-ddemgr partner  */
         public HCONV hConvPartner;
-        /* app name of partner if obtainable  */
+        /** App name of partner if obtainable  */
         public HSZ hszSvcPartner;
-        /* AppName requested for connection  */
+        /** AppName requested for connection  */
         public HSZ hszServiceReq;
-        /* Topic name for conversation  */
+        /** Topic name for conversation  */
         public HSZ hszTopic;
-        /* transaction item name or NULL if quiescent  */
+        /** Transaction item name or NULL if quiescent  */
         public HSZ hszItem;
-        /* transaction format or NULL if quiescent  */
+        /** Transaction format or NULL if quiescent  */
         public int wFmt;
-        /* XTYP_ for current transaction  */
+        /** XTYP_ for current transaction  */
         public int wType;
-        /* ST_ constant for current conversation  */
+        /** ST_ constant for current conversation  */
         public int wStatus;
-        /* XST_ constant for current transaction  */
+        /** XST_ constant for current transaction  */
         public int wConvst;
-        /* last transaction error.  */
+        /** Last transaction error.  */
         public int wLastError;
-        /* parent hConvList if this conversation is in a list */
+        /** Parent hConvList if this conversation is in a list */
         public HCONVLIST hConvList;
-        /* conversation context */
+        /** Conversation context */
         public CONVCONTEXT ConvCtxt;
-        /* window handle for this conversation */
+        /** Window handle for this conversation */
         public HWND hwnd;
-        /* partner window handle for this conversation */
+        /** Partner window handle for this conversation */
         public HWND hwndPartner;
 
         @Override
