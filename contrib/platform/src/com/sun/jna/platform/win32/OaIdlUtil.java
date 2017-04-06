@@ -105,16 +105,12 @@ public abstract class OaIdlUtil {
         Pointer dataPointer = sa.accessData();
         try {
             int dimensions = sa.getDimensionCount();
-            int[] minIdx = new int[dimensions];
-            int[] maxIdx = new int[dimensions];
             int[] elements = new int[dimensions];
             int[] cumElements = new int[dimensions];
             int varType = sa.getVarType().intValue();
 
             for (int i = 0; i < dimensions; i++) {
-                minIdx[i] = sa.getLBound(i);
-                maxIdx[i] = sa.getUBound(i);
-                elements[i] = maxIdx[i] - minIdx[i] + 1;
+                elements[i] = sa.getUBound(i) - sa.getLBound(i) + 1;
             }
 
             for (int i = dimensions - 1; i >= 0; i--) {
@@ -173,7 +169,7 @@ public abstract class OaIdlUtil {
             }
 
             Object targetArray = Array.newInstance(Object.class, elements);
-            toPrimitiveArray(sourceArray, targetArray, minIdx, maxIdx, elements, cumElements, varType, new int[0]);
+            toPrimitiveArray(sourceArray, targetArray, elements, cumElements, varType, new int[0]);
             return targetArray;
         } finally {
             sa.unaccessData();
@@ -183,19 +179,19 @@ public abstract class OaIdlUtil {
         }
     }
 
-    private static void toPrimitiveArray(Object dataArray, Object targetArray, int[] minIdx, int[] maxIdx, int[] elements, int[] cumElements, int varType, int[] currentIdx) {
+    private static void toPrimitiveArray(Object dataArray, Object targetArray, int[] elements, int[] cumElements, int varType, int[] currentIdx) {
         int dimIdx = currentIdx.length;
         int[] subIdx = new int[currentIdx.length + 1];
         System.arraycopy(currentIdx, 0, subIdx, 0, dimIdx);
-        for (int i = minIdx[dimIdx]; i <= maxIdx[dimIdx]; i++) {
+        for (int i = 0; i < elements[dimIdx]; i++) {
             subIdx[dimIdx] = i;
-            if (dimIdx == (minIdx.length - 1)) {
+            if (dimIdx == (elements.length - 1)) {
                 int offset = 0;
                 for (int j = 0; j < dimIdx; j++) {
                     offset += cumElements[j] * currentIdx[j];
                 }
-                offset += subIdx[dimIdx] - minIdx[dimIdx];
-                int targetPos = subIdx[dimIdx] - minIdx[dimIdx];
+                offset += subIdx[dimIdx];
+                int targetPos = subIdx[dimIdx];
                 switch (varType) {
                     case VT_BOOL:
                         Array.set(targetArray, targetPos, Array.getShort(dataArray, offset) != 0);
@@ -281,7 +277,7 @@ public abstract class OaIdlUtil {
                         throw new IllegalStateException("Type not supported: " + varType);
                 }
             } else {
-                toPrimitiveArray(dataArray, Array.get(targetArray, i), minIdx, maxIdx, elements, cumElements, varType, subIdx);
+                toPrimitiveArray(dataArray, Array.get(targetArray, i), elements, cumElements, varType, subIdx);
             }
         }
     }
