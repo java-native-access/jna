@@ -69,7 +69,7 @@ public interface Ddeml extends StdCallLibrary {
     };
 
     /**
-     * the following structure is for use with XTYP_WILDCONNECT processing.
+     * The following structure is for use with {@link #XTYP_WILDCONNECT} processing.
      */
     public class HSZPAIR extends Structure {
 
@@ -94,7 +94,7 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * The following structure is used by {@link #DdeConnect} and {@link #DdeConnectList} and
-     * by XTYP_CONNECT and XTYP_WILDCONNECT callbacks.
+     * by {@link #XTYP_CONNECT} and {@link #XTYP_WILDCONNECT} callbacks.
      */
     public class CONVCONTEXT extends Structure {
 
@@ -547,7 +547,7 @@ public interface Ddeml extends StdCallLibrary {
          */
         public BOOL fEstablished;
         /**
-         * Indicates whether the XTYPF_NODATA flag is set for the advise loop. A
+         * Indicates whether the {@link #XTYPF_NODATA} flag is set for the advise loop. A
          * value of TRUE indicates the flag is set; FALSE indicates it is not.
          */
         public BOOL fNoData;
@@ -792,7 +792,7 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>hsz2</dt><dd>A handle to the item name.</dd>
      * <dt>hdata</dt><dd>A handle to the data associated with the topic name and
      * item name pair. This parameter is NULL if the client specified the
-     * XTYPF_NODATA flag when it requested the advise loop.</dd>
+     * {@link #XTYPF_NODATA} flag when it requested the advise loop.</dd>
      * </dl>
      * 
      * <p><strong>Return value</strong></p>
@@ -875,15 +875,15 @@ public interface Ddeml extends StdCallLibrary {
      * the specified topic name and item name pair, or FALSE to deny the advise
      * loop. If the callback function returns TRUE, any subsequent calls to the
      * {@link #DdePostAdvise} function by the server on the same topic name and item name
-     * pair causes the system to send XTYP_ADVREQ transactions to the server.
+     * pair causes the system to send {@link #XTYP_ADVREQ} transactions to the server.
      * </p>
      * <p><strong>Remarks</strong></p>
      * <p>
      * If a client requests an advise loop on a topic name, item name, and data
      * format for an advise loop that is already established, the Dynamic Data
      * Exchange Management Library (DDEML) does not create a duplicate advise
-     * loop but instead alters the advise loop flags (XTYPF_ACKREQ and
-     * XTYPF_NODATA) to match the latest request.</p>
+     * loop but instead alters the advise loop flags ({@link #XTYPF_ACKREQ} and
+     * {@link #XTYPF_NODATA}) to match the latest request.</p>
      * <p>This transaction is filtered if the server application specified the
      * {@link #CBF_FAIL_ADVISES} flag in the {@link #DdeInitialize} function. </p>
      */
@@ -981,7 +981,7 @@ public interface Ddeml extends StdCallLibrary {
      * pair, or the function should return FALSE to deny the conversation. If
      * the callback function returns TRUE and a conversation is successfully
      * established, the system passes the conversation handle to the server by
-     * issuing an XTYP_CONNECT_CONFIRM transaction to the server's callback
+     * issuing an {@link #XTYP_CONNECT_CONFIRM} transaction to the server's callback
      * function (unless the server specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag
      * in the {@link #DdeInitialize function}).</p>
      * 
@@ -1000,7 +1000,7 @@ public interface Ddeml extends StdCallLibrary {
      * receives the XTYP_CONNECT_CONFIRM transaction to confirm that a
      * conversation has been established with a client and to provide the server
      * with the conversation handle. The system sends this transaction as a
-     * result of a previous XTYP_CONNECT or XTYP_WILDCONNECT transaction.
+     * result of a previous {@link #XTYP_CONNECT} or {@link #XTYP_WILDCONNECT} transaction.
      *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
@@ -1249,7 +1249,7 @@ public interface Ddeml extends StdCallLibrary {
      * HSZPAIR structures. The array should contain one structure for each
      * service-name and topic-name pair that matches the service-name and
      * topic-name pair requested by the client. The array must be terminated by
-     * a NULL string handle. The system sends the XTYP_CONNECT_CONFIRM
+     * a NULL string handle. The system sends the {@link #XTYP_CONNECT_CONFIRM}
      * transaction to the server to confirm each conversation and to pass the
      * conversation handles to the server. The server will not receive these
      * confirmations if it specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag in the
@@ -1440,7 +1440,7 @@ public interface Ddeml extends StdCallLibrary {
     public int DMLERR_UNADVACKTIMEOUT = 0x4010;
     /**
      * An invalid transaction identifier was passed to a DDEML function. Once
-     * the application has returned from an XTYP_XACT_COMPLETE callback, the
+     * the application has returned from an {@link #XTYP_XACT_COMPLETE} callback, the
      * transaction identifier for that callback function is no longer valid.
      */
     public int DMLERR_UNFOUND_QUEUE_ID = 0x4011;
@@ -1454,7 +1454,7 @@ public interface Ddeml extends StdCallLibrary {
     }
 
     /**
-     * Prevents the callback function from receiving XTYP_CONNECT transactions
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT} transactions
      * from the application's own instance. This flag prevents an application
      * from establishing a DDE conversation with its own instance. An
      * application should use this flag if it needs to communicate with other
@@ -1462,33 +1462,33 @@ public interface Ddeml extends StdCallLibrary {
      */
     public int CBF_FAIL_SELFCONNECTIONS = 0x00001000;
     /**
-     * Prevents the callback function from receiving XTYP_CONNECT and
-     * XTYP_WILDCONNECT transactions.
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT} and
+     * {@link #XTYP_WILDCONNECT} transactions.
      */
     public int CBF_FAIL_CONNECTIONS = 0x00002000;
     /**
-     * Prevents the callback function from receiving XTYP_ADVSTART and
-     * XTYP_ADVSTOP transactions. The system returns DDE_FNOTPROCESSED to each
-     * client that sends an XTYP_ADVSTART or XTYP_ADVSTOP transaction to the
+     * Prevents the callback function from receiving {@link #XTYP_ADVSTART} and
+     * {@link #XTYP_ADVSTOP} transactions. The system returns DDE_FNOTPROCESSED to each
+     * client that sends an {@link #XTYP_ADVSTART} or {@link #XTYP_ADVSTOP} transaction to the
      * server.
      */
     public int CBF_FAIL_ADVISES = 0x00004000;
     /**
-     * Prevents the callback function from receiving XTYP_EXECUTE transactions.
+     * Prevents the callback function from receiving {@link #XTYP_EXECUTE} transactions.
      * The system returns DDE_FNOTPROCESSED to a client that sends an
-     * XTYP_EXECUTE transaction to the server.
+     * {@link #XTYP_EXECUTE} transaction to the server.
      */
     public int CBF_FAIL_EXECUTES = 0x00008000;
     /**
-     * Prevents the callback function from receiving XTYP_POKE transactions. The
-     * system returns DDE_FNOTPROCESSED to a client that sends an XTYP_POKE
+     * Prevents the callback function from receiving {@link #XTYP_POKE} transactions. The
+     * system returns DDE_FNOTPROCESSED to a client that sends an {@link #XTYP_POKE}
      * transaction to the server.
      */
     public int CBF_FAIL_POKES = 0x00010000;
     /**
-     * Prevents the callback function from receiving XTYP_REQUEST transactions.
+     * Prevents the callback function from receiving {@link #XTYP_REQUEST} transactions.
      * The system returns DDE_FNOTPROCESSED to a client that sends an
-     * XTYP_REQUEST transaction to the server.
+     * {@link #XTYP_REQUEST} transaction to the server.
      */
     public int CBF_FAIL_REQUESTS = 0x00020000;
     /**
@@ -1500,22 +1500,22 @@ public interface Ddeml extends StdCallLibrary {
     public int CBF_FAIL_ALLSVRXACTIONS = 0x0003f000;
 
     /**
-     * Prevents the callback function from receiving XTYP_CONNECT_CONFIRM
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT_CONFIRM}
      * notifications.
      */
     public int CBF_SKIP_CONNECT_CONFIRMS = 0x00040000;
     /**
-     * Prevents the callback function from receiving XTYP_REGISTER
+     * Prevents the callback function from receiving {@link #XTYP_REGISTER}
      * notifications.
      */
     public int CBF_SKIP_REGISTRATIONS = 0x00080000;
     /**
-     *Prevents the callback function from receiving XTYP_UNREGISTER
+     *Prevents the callback function from receiving {@link #XTYP_UNREGISTER}
      * notifications.
      */
     public int CBF_SKIP_UNREGISTRATIONS = 0x00100000;
     /**
-     * Prevents the callback function from receiving XTYP_DISCONNECT
+     * Prevents the callback function from receiving {@link #XTYP_DISCONNECT}
      * notifications.
      */    
     public int CBF_SKIP_DISCONNECTS = 0x00200000;
@@ -1533,7 +1533,7 @@ public interface Ddeml extends StdCallLibrary {
      */
     public int APPCMD_CLIENTONLY = 0x00000010;
     /**
-     * Prevents the DDEML from sending XTYP_CONNECT and XTYP_WILDCONNECT
+     * Prevents the DDEML from sending {@link #XTYP_CONNECT} and {@link #XTYP_WILDCONNECT}
      * transactions to the application until the application has created its
      * string handles and registered its service names or has turned off
      * filtering by a subsequent call to the {@link #DdeNameService} or {@link #DdeInitialize}
@@ -1680,7 +1680,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the DDEML from sending XTYP_CONNECT and XTYP_WILDCONNECT
+     * Prevents the DDEML from sending {@link #XTYP_CONNECT} and {@link #XTYP_WILDCONNECT}
      * transactions to the application until the application has created its
      * string handles and registered its service names or has turned off
      * filtering by a subsequent call to the {@link #DdeNameService} or DdeInitialize
@@ -1707,9 +1707,9 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_ADVSTART and
-     * XTYP_ADVSTOP transactions. The system returns DDE_FNOTPROCESSED to each
-     * client that sends an XTYP_ADVSTART or XTYP_ADVSTOP transaction to the
+     * Prevents the callback function from receiving {@link #XTYP_ADVSTART} and
+     * {@link #XTYP_ADVSTOP} transactions. The system returns DDE_FNOTPROCESSED to each
+     * client that sends an {@link #XTYP_ADVSTART} or {@link #XTYP_ADVSTOP} transaction to the
      * server.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1718,8 +1718,8 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_CONNECT and
-     * XTYP_WILDCONNECT transactions.</p>
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT} and
+     * {@link #XTYP_WILDCONNECT} transactions.</p>
      * </td></tr>
      * <tr><td><dl>
      * <dt><strong>{@link #CBF_FAIL_EXECUTES}</strong></dt>
@@ -1727,9 +1727,9 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_EXECUTE transactions.
+     * Prevents the callback function from receiving {@link #XTYP_EXECUTE} transactions.
      * The system returns DDE_FNOTPROCESSED to a client that sends an
-     * XTYP_EXECUTE transaction to the server.</p>
+     * {@link #XTYP_EXECUTE} transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
      * <dt><strong>{@link #CBF_FAIL_POKES}</strong></dt>
@@ -1737,8 +1737,8 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_POKE transactions. The
-     * system returns DDE_FNOTPROCESSED to a client that sends an XTYP_POKE
+     * Prevents the callback function from receiving {@link #XTYP_POKE} transactions. The
+     * system returns DDE_FNOTPROCESSED to a client that sends an {@link #XTYP_POKE}
      * transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1747,9 +1747,9 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_REQUEST transactions.
+     * Prevents the callback function from receiving {@link #XTYP_REQUEST} transactions.
      * The system returns DDE_FNOTPROCESSED to a client that sends an
-     * XTYP_REQUEST transaction to the server.</p>
+     * {@link #XTYP_REQUEST} transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
      * <dt><strong>{@link #CBF_FAIL_SELFCONNECTIONS}</strong></dt>
@@ -1757,7 +1757,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_CONNECT transactions
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT} transactions
      * from the application's own instance. This flag prevents an application
      * from establishing a DDE conversation with its own instance. An
      * application should use this flag if it needs to communicate with other
@@ -1778,7 +1778,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_CONNECT_CONFIRM
+     * Prevents the callback function from receiving {@link #XTYP_CONNECT_CONFIRM}
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1787,7 +1787,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_DISCONNECT
+     * Prevents the callback function from receiving {@link #XTYP_DISCONNECT}
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1796,7 +1796,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_REGISTER
+     * Prevents the callback function from receiving {@link #XTYP_REGISTER}
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1805,7 +1805,7 @@ public interface Ddeml extends StdCallLibrary {
      * </dl>
      * </td><td>
      * <p>
-     * Prevents the callback function from receiving XTYP_UNREGISTER
+     * Prevents the callback function from receiving {@link #XTYP_UNREGISTER}
      * notifications.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1926,8 +1926,8 @@ public interface Ddeml extends StdCallLibrary {
      * 
      * @param pCC A pointer to the CONVCONTEXT structure that contains 
      * conversation-context information. If this parameter is NULL, the server 
-     * receives the default CONVCONTEXT structure during the XTYP_CONNECT or 
-     * XTYP_WILDCONNECT transaction.
+     * receives the default CONVCONTEXT structure during the {@link #XTYP_CONNECT} or 
+     * {@link #XTYP_WILDCONNECT} transaction.
      * 
      * @return If the function succeeds, the return value is the handle to a 
      * new conversation list.
@@ -2004,8 +2004,8 @@ public interface Ddeml extends StdCallLibrary {
      *
      * @param pCC A pointer to the CONVCONTEXT structure that contains
      * conversation context information. If this parameter is NULL, the server
-     * receives the default CONVCONTEXT structure during the XTYP_CONNECT or
-     * XTYP_WILDCONNECT transaction.
+     * receives the default CONVCONTEXT structure during the {@link #XTYP_CONNECT} or
+     * {@link #XTYP_WILDCONNECT} transaction.
      *
      * @return If the function succeeds, the return value is the handle to the
      * established conversation.
@@ -2053,7 +2053,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * @param hConv A handle to the conversation to be reestablished. A client
      * must have obtained the conversation handle by a previous call to the
-     * {@link #DdeConnect} function or from an XTYP_DISCONNECT transaction.
+     * {@link #DdeConnect} function or from an {@link #XTYP_DISCONNECT} transaction.
      * @return If the function succeeds, the return value is the handle to the
      * reestablished conversation.
      *
@@ -2155,7 +2155,7 @@ public interface Ddeml extends StdCallLibrary {
     public boolean DdeAbandonTransaction(int idInst, HCONV hConv, int idTransaction);
 
     /**
-     * Causes the system to send an XTYP_ADVREQ transaction to the calling
+     * Causes the system to send an {@link #XTYP_ADVREQ} transaction to the calling
      * (server) application's Dynamic Data Exchange (DDE) callback function for
      * each client with an active advise loop on the specified topic and item. A
      * server application should call this function whenever the data associated
@@ -2209,17 +2209,17 @@ public interface Ddeml extends StdCallLibrary {
      * <p>
      * A server application can disable the following transactions:</p>
      * <ul>
-     * <li>XTYP_ADVSTART</li>
-     * <li>XTYP_ADVSTOP</li>
-     * <li>XTYP_EXECUTE</li>
-     * <li>XTYP_POKE</li>
-     * <li>XTYP_REQUEST</li>
+     *   <li>{@link #XTYP_ADVSTART}</li>
+     *   <li>{@link #XTYP_ADVSTOP}</li>
+     *   <li>{@link #XTYP_EXECUTE}</li>
+     *   <li>{@link #XTYP_POKE}</li>
+     *   <li>{@link #XTYP_REQUEST}</li>
      * </ul>
      * <p>
      * A client application can disable the following transactions:</p>
      * <ul>
-     * <li>XTYP_ADVDATA</li>
-     * <li>XTYP_XACT_COMPLETE</li>
+     *   <li>{@link #XTYP_ADVDATA}</li>
+     *   <li>{@link #XTYP_XACT_COMPLETE}</li>
      * </ul>
      * </td></tr>
      * <tr><td>EC_QUERYWAITING</td><td>Determines whether any transactions are
@@ -2260,8 +2260,8 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Registers or unregisters the service names a Dynamic Data Exchange (DDE)
-     * server supports. This function causes the system to send XTYP_REGISTER or
-     * XTYP_UNREGISTER transactions to other running Dynamic Data Exchange
+     * server supports. This function causes the system to send {@link #XTYP_REGISTER} or
+     * {@link #XTYP_UNREGISTER} transactions to other running Dynamic Data Exchange
      * Management Library (DDEML) client applications.
      *
      * @param idInst The application instance identifier obtained by a previous
@@ -2281,15 +2281,15 @@ public interface Ddeml extends StdCallLibrary {
      * If the hsz1 parameter is 0L, all service names registered by the server
      * will be unregistered.</td></tr>
      * <tr><td>DNS_FILTERON</td><td>Turns on service name initiation filtering.
-     * The filter prevents a server from receiving XTYP_CONNECT transactions for
+     * The filter prevents a server from receiving {@link #XTYP_CONNECT} transactions for
      * service names it has not registered. This is the default setting for this
      * filter.
      * <br><br>
      * If a server application does not register any service names, the
-     * application cannot receive XTYP_WILDCONNECT transactions.
+     * application cannot receive {@link #XTYP_WILDCONNECT} transactions.
      * </td></tr>
      * <tr><td>DNS_FILTEROFF</td><td>Turns off service name initiation
-     * filtering. If this flag is specified, the server receives an XTYP_CONNECT
+     * filtering. If this flag is specified, the server receives an {@link #XTYP_CONNECT}
      * transaction whenever another DDE application calls the {@link #DdeConnect}
      * function, regardless of the service name.</td></tr>
      * </table>
@@ -2324,9 +2324,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p>Optionally, an application can specify the data handle (HDDEDATA) to
      * pass to the server and in that case the cbData parameter should be set
      * to -1. This parameter is required only if the wType parameter is 
-     * XTYP_EXECUTE or XTYP_POKE. Otherwise, this parameter should be NULL.</p>
+     * {@link #XTYP_EXECUTE} or {@link #XTYP_POKE}. Otherwise, this parameter should be NULL.</p>
      * 
-     * <p>For the optional usage of this parameter, XTYP_POKE transactions where
+     * <p>For the optional usage of this parameter, {@link #XTYP_POKE} transactions where
      * pData is a data handle, the handle must have been created by a previous
      * call to the {@link #DdeCreateDataHandle} function, employing the same data format
      * specified in the wFmt parameter.</p>
@@ -2342,16 +2342,16 @@ public interface Ddeml extends StdCallLibrary {
      * @param hszItem A handle to the data item for which data is being 
      * exchanged during the transaction. This handle must have been created by 
      * a previous call to the {@link #DdeCreateStringHandle} function. This parameter is
-     * ignored (and should be set to 0L) if the wType parameter is XTYP_EXECUTE.
+     * ignored (and should be set to 0L) if the wType parameter is {@link #XTYP_EXECUTE}.
      * 
      * @param wFmt The standard clipboard format in which the data item is 
      * being submitted or requested.
      * 
      * <p>If the transaction specified by the wType parameter does not pass
-     * data or is XTYP_EXECUTE, this parameter should be zero.</p>
+     * data or is {@link #XTYP_EXECUTE}, this parameter should be zero.</p>
      * 
      * <p>If the transaction specified by the wType parameter references 
-     * non-execute DDE data ( XTYP_POKE, XTYP_ADVSTART, XTYP_ADVSTOP, XTYP_REQUEST), 
+     * non-execute DDE data ( {@link #XTYP_POKE}, {@link #XTYP_ADVSTART}, {@link #XTYP_ADVSTOP}, {@link #XTYP_REQUEST}), 
      * the wFmt value must be either a valid predefined (CF_) DDE format or a
      * valid registered clipboard format.</p>
      * 
@@ -2360,25 +2360,25 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
-     * <tr><td>XTYP_ADVSTART</td><td>Begins an advise loop. Any number of
+     * <tr><td>{@link #XTYP_ADVSTART}</td><td>Begins an advise loop. Any number of
      * distinct advise loops can exist within a conversation. An application can
-     * alter the advise loop type by combining the XTYP_ADVSTART transaction
+     * alter the advise loop type by combining the {@link #XTYP_ADVSTART} transaction
      * type with one or more of the following flags:
      * <dl>
-     * <dt>XTYPF_NODATA.</dt><dd>Instructs the server to notify the client of
+     * <dt>{@link #XTYPF_NODATA}.</dt><dd>Instructs the server to notify the client of
      * any data changes without actually sending the data. This flag gives the
      * client the option of ignoring the notification or requesting the changed
      * data from the server.</dd>
-     * <dt>XTYPF_ACKREQ.</dt><dd>Instructs the server to wait until the client
+     * <dt>{@link #XTYPF_ACKREQ}.</dt><dd>Instructs the server to wait until the client
      * acknowledges that it received the previous data item before sending the
      * next data item. This flag prevents a fast server from sending data faster
      * than the client can process it.</dd>
      * </dl>
      * </td></tr>
-     * <tr><td>XTYP_ADVSTOP</td><td>Ends an advise loop.</td></tr>
-     * <tr><td>XTYP_EXECUTE</td><td>Begins an execute transaction.</td></tr>
-     * <tr><td>XTYP_POKE</td><td>Begins a poke transaction.</td></tr>
-     * <tr><td>XTYP_REQUEST</td><td>Begins a request transaction.</td></tr>
+     * <tr><td>{@link #XTYP_ADVSTOP}</td><td>Ends an advise loop.</td></tr>
+     * <tr><td>{@link #XTYP_EXECUTE}</td><td>Begins an execute transaction.</td></tr>
+     * <tr><td>{@link #XTYP_POKE}</td><td>Begins a poke transaction.</td></tr>
+     * <tr><td>{@link #XTYP_REQUEST}</td><td>Begins a request transaction.</td></tr>
      * </table>
      *
      * @param dwTimeout The maximum amount of time, in milliseconds, that the
@@ -2396,7 +2396,7 @@ public interface Ddeml extends StdCallLibrary {
      * versions of the Dynamic Data Exchange Management Library (DDEML).
      * For asynchronous transactions, this variable is filled with a unique 
      * transaction identifier for use with the {@link #DdeAbandonTransaction} function 
-     * and the XTYP_XACT_COMPLETE transaction.
+     * and the {@link #XTYP_XACT_COMPLETE} transaction.
      * 
      * @return If the function succeeds, the return value is a data handle that
      * identifies the data for successful synchronous transactions in which the 
@@ -2458,7 +2458,7 @@ public interface Ddeml extends StdCallLibrary {
      * @param hszItem A handle to the string that specifies the data item 
      * corresponding to the DDE object. This handle must have been created by a 
      * previous call to the {@link #DdeCreateStringHandle} function. If the data handle 
-     * is to be used in an XTYP_EXECUTE transaction, this parameter must be 0L.
+     * is to be used in an {@link #XTYP_EXECUTE} transaction, this parameter must be 0L.
      * 
      * @param wFmt The standard clipboard format of the data.
      * 
