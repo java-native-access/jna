@@ -832,7 +832,7 @@ public interface Ddeml extends StdCallLibrary {
      * transaction is the last one. A server can use this count to determine
      * whether to create an HDATA_APPOWNED data handle to the advise data.
      * <br><br>
-     * The low-order word is set to CADV_LATEACK if the DDEML issued the
+     * The low-order word is set to {@link #CADV_LATEACK} if the DDEML issued the
      * XTYP_ADVREQ transaction because of a late-arriving DDE_ACK message from a
      * client being outrun by the server.
      * <br><br>
@@ -2079,7 +2079,7 @@ public interface Ddeml extends StdCallLibrary {
      * @param idTransaction The transaction. For asynchronous transactions, this
      * parameter should be a transaction identifier returned by the
      * {@link #DdeClientTransaction} function. For synchronous transactions, this
-     * parameter should be QID_SYNC.
+     * parameter should be {@link #QID_SYNC}.
      * @param pConvInfo A pointer to the CONVINFO structure that receives
      * information about the transaction and conversation. The cb member of the
      * CONVINFO structure must specify the length of the buffer allocated for
@@ -2111,7 +2111,7 @@ public interface Ddeml extends StdCallLibrary {
      * @param hConv A handle to the conversation.
      * @param id The transaction identifier to associate with the value
      * specified by the hUser parameter. An application should set this
-     * parameter to QID_SYNC to associate hUser with the conversation identified
+     * parameter to {@link #QID_SYNC} to associate hUser with the conversation identified
      * by the hConv parameter.
      * @param hUser The value to be associated with the conversation handle.
      * @return true If the function succeeds.
@@ -2199,11 +2199,11 @@ public interface Ddeml extends StdCallLibrary {
      * values.
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
-     * <tr><td>EC_ENABLEALL</td><td>Enables all transactions for the specified
+     * <tr><td>{@link #EC_ENABLEALL}</td><td>Enables all transactions for the specified
      * conversation.</td></tr>
-     * <tr><td>EC_ENABLEONE</td><td>Enables one transaction for the specified
+     * <tr><td>{@link #EC_ENABLEONE}</td><td>Enables one transaction for the specified
      * conversation.</td></tr>
-     * <tr><td>EC_DISABLE</td><td>Disables all blockable transactions for the
+     * <tr><td>{@link #EC_DISABLE}</td><td>Disables all blockable transactions for the
      * specified conversation.
      *
      * <p>
@@ -2222,7 +2222,7 @@ public interface Ddeml extends StdCallLibrary {
      *   <li>{@link #XTYP_XACT_COMPLETE}</li>
      * </ul>
      * </td></tr>
-     * <tr><td>EC_QUERYWAITING</td><td>Determines whether any transactions are
+     * <tr><td>{@link #EC_QUERYWAITING}</td><td>Determines whether any transactions are
      * in the queue for the specified conversation.</td></tr>
      * </table>
      *
@@ -2232,7 +2232,7 @@ public interface Ddeml extends StdCallLibrary {
      * If the function fails, the return value is zero.</p>
      *
      * <p>
-     * If the wCmd parameter is EC_QUERYWAITING, and the application transaction
+     * If the wCmd parameter is {@link #EC_QUERYWAITING}, and the application transaction
      * queue contains one or more unprocessed transactions that are not being
      * processed, the return value is TRUE; otherwise, it is FALSE.</p>
      *
@@ -2275,12 +2275,12 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
-     * <tr><td>DNS_REGISTER</td><td>Registers the error code service
+     * <tr><td>{@link #DNS_REGISTER}</td><td>Registers the error code service
      * name.</td></tr>
-     * <tr><td>DNS_UNREGISTER</td><td>Unregisters the error code service name.
+     * <tr><td>{@link #DNS_UNREGISTER}</td><td>Unregisters the error code service name.
      * If the hsz1 parameter is 0L, all service names registered by the server
      * will be unregistered.</td></tr>
-     * <tr><td>DNS_FILTERON</td><td>Turns on service name initiation filtering.
+     * <tr><td>{@link #DNS_FILTERON}</td><td>Turns on service name initiation filtering.
      * The filter prevents a server from receiving {@link #XTYP_CONNECT} transactions for
      * service names it has not registered. This is the default setting for this
      * filter.
@@ -2288,7 +2288,7 @@ public interface Ddeml extends StdCallLibrary {
      * If a server application does not register any service names, the
      * application cannot receive {@link #XTYP_WILDCONNECT} transactions.
      * </td></tr>
-     * <tr><td>DNS_FILTEROFF</td><td>Turns off service name initiation
+     * <tr><td>{@link #DNS_FILTEROFF}</td><td>Turns off service name initiation
      * filtering. If this flag is specified, the server receives an {@link #XTYP_CONNECT}
      * transaction whenever another DDE application calls the {@link #DdeConnect}
      * function, regardless of the service name.</td></tr>
@@ -2383,7 +2383,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * @param dwTimeout The maximum amount of time, in milliseconds, that the
      * client will wait for a response from the server application in a 
-     * synchronous transaction. This parameter should be TIMEOUT_ASYNC for 
+     * synchronous transaction. This parameter should be {@link #TIMEOUT_ASYNC} for 
      * asynchronous transactions.
      * 
      * @param pdwResult A pointer to a variable that receives the result of the
@@ -2651,8 +2651,8 @@ public interface Ddeml extends StdCallLibrary {
      * DDEML string management functions are implemented using atoms.
      * 
      * @param iCodePage The code page to be used to render the string. This 
-     * value should be either CP_WINANSI (the default code page) or 
-     * CP_WINUNICODE, depending on whether the ANSI or Unicode version of
+     * value should be either {@link #CP_WINANSI} (the default code page) or 
+     * {@link #CP_WINUNICODE}, depending on whether the ANSI or Unicode version of
      * {@link #DdeInitialize} was called by the client application.
      * 
      * @return If the function succeeds, the return value is a string handle.
@@ -2688,7 +2688,7 @@ public interface Ddeml extends StdCallLibrary {
      * psz parameter is set to NULL, this parameter is ignored.
      * 
      * @param iCodePage The code page used to render the string. This value 
-     * should be either CP_WINANSI or CP_WINUNICODE.
+     * should be either {@link #CP_WINANSI} or {@link #CP_WINUNICODE}.
      * 
      * @return If the psz parameter specified a valid pointer, the return value 
      * is the length, in characters, of the returned text 
