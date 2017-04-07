@@ -13,6 +13,7 @@ Features
 Bug Fixes
 ---------
 * [#776](https://github.com/java-native-access/jna/issues/776): Do not include ClassPath attribute in MANIFEST.MF of jna-platform. - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#785](https://github.com/java-native-access/jna/issues/785): OaIdlUtil#toPrimitiveArray fails if dimension bounds are not 0-based - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.4.0
 =============
