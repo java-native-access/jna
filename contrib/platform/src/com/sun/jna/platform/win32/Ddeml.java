@@ -798,9 +798,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Return value</strong></p>
      *
      * <p>
-     * A DDE callback function should return DDE_FACK if it processes this
-     * transaction, DDE_FBUSY if it is too busy to process this transaction, or
-     * DDE_FNOTPROCESSED if it rejects this transaction.</p>
+     * A DDE callback function should return {@link #DDE_FACK} if it processes this
+     * transaction, {@link #DDE_FBUSY} if it is too busy to process this transaction, or
+     * {@link #DDE_FNOTPROCESSED} if it rejects this transaction.</p>
      * <p>
      * <strong>Remarks</strong></p>
      *
@@ -925,9 +925,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Return value</strong></p>
      *
      * <p>
-     * A server callback function should return DDE_FACK if it processes this
-     * transaction, DDE_FBUSY if it is too busy to process this transaction, or
-     * DDE_FNOTPROCESSED if it rejects this transaction.</p>
+     * A server callback function should return {@link #DDE_FACK} if it processes this
+     * transaction, {@link #DDE_FBUSY} if it is too busy to process this transaction, or
+     * {@link #DDE_FNOTPROCESSED} if it rejects this transaction.</p>
      * 
      * <p><strong>Remarks</strong></p>
      *
@@ -1072,9 +1072,9 @@ public interface Ddeml extends StdCallLibrary {
      * <p><strong>Return value</strong></p>
      *
      * <p>
-     * A server callback function should return the DDE_FACK flag if it
-     * processes this transaction, the DDE_FBUSY flag if it is too busy to
-     * process this transaction, or the DDE_FNOTPROCESSED flag if it rejects
+     * A server callback function should return the {@link #DDE_FACK} flag if it
+     * processes this transaction, the {@link #DDE_FBUSY} flag if it is too busy to
+     * process this transaction, or the {@link #DDE_FNOTPROCESSED} flag if it rejects
      * this transaction. </p>
      * 
      * <p><strong>Remarks</strong></p>
@@ -1136,7 +1136,7 @@ public interface Ddeml extends StdCallLibrary {
      * The server should call the {@link #DdeCreateDataHandle} function to create a data
      * handle that identifies the data and then return the handle. The server
      * should return NULL if it is unable to complete the transaction. If the
-     * server returns NULL, the client will receive a DDE_FNOTPROCESSED
+     * server returns NULL, the client will receive a {@link #DDE_FNOTPROCESSED}
      * flag.</p>
      * 
      * <p><strong>Remarks</strong></p>
@@ -1352,7 +1352,7 @@ public interface Ddeml extends StdCallLibrary {
      */
     public int DMLERR_ADVACKTIMEOUT = 0x4000;
     /**
-     * The response to the transaction caused the DDE_FBUSY flag to be set.
+     * The response to the transaction caused the {@link #DDE_FBUSY} flag to be set.
      */
     public int DMLERR_BUSY = 0x4001;
     /**
@@ -1468,32 +1468,32 @@ public interface Ddeml extends StdCallLibrary {
     public int CBF_FAIL_CONNECTIONS = 0x00002000;
     /**
      * Prevents the callback function from receiving {@link #XTYP_ADVSTART} and
-     * {@link #XTYP_ADVSTOP} transactions. The system returns DDE_FNOTPROCESSED to each
+     * {@link #XTYP_ADVSTOP} transactions. The system returns {@link #DDE_FNOTPROCESSED} to each
      * client that sends an {@link #XTYP_ADVSTART} or {@link #XTYP_ADVSTOP} transaction to the
      * server.
      */
     public int CBF_FAIL_ADVISES = 0x00004000;
     /**
      * Prevents the callback function from receiving {@link #XTYP_EXECUTE} transactions.
-     * The system returns DDE_FNOTPROCESSED to a client that sends an
+     * The system returns {@link #DDE_FNOTPROCESSED} to a client that sends an
      * {@link #XTYP_EXECUTE} transaction to the server.
      */
     public int CBF_FAIL_EXECUTES = 0x00008000;
     /**
      * Prevents the callback function from receiving {@link #XTYP_POKE} transactions. The
-     * system returns DDE_FNOTPROCESSED to a client that sends an {@link #XTYP_POKE}
+     * system returns {@link #DDE_FNOTPROCESSED} to a client that sends an {@link #XTYP_POKE}
      * transaction to the server.
      */
     public int CBF_FAIL_POKES = 0x00010000;
     /**
      * Prevents the callback function from receiving {@link #XTYP_REQUEST} transactions.
-     * The system returns DDE_FNOTPROCESSED to a client that sends an
+     * The system returns {@link #DDE_FNOTPROCESSED} to a client that sends an
      * {@link #XTYP_REQUEST} transaction to the server.
      */
     public int CBF_FAIL_REQUESTS = 0x00020000;
     /**
      * Prevents the callback function from receiving server transactions. The
-     * system returns DDE_FNOTPROCESSED to each client that sends a transaction
+     * system returns {@link #DDE_FNOTPROCESSED} to each client that sends a transaction
      * to this application. This flag is equivalent to combining all CBF_FAIL_
      * flags.
      */
@@ -1697,7 +1697,7 @@ public interface Ddeml extends StdCallLibrary {
      * </td><td>
      * <p>
      * Prevents the callback function from receiving server transactions. The
-     * system returns DDE_FNOTPROCESSED to each client that sends a transaction
+     * system returns {@link #DDE_FNOTPROCESSED} to each client that sends a transaction
      * to this application. This flag is equivalent to combining all CBF_FAIL_
      * flags.</p>
      * </td></tr>
@@ -1708,7 +1708,7 @@ public interface Ddeml extends StdCallLibrary {
      * </td><td>
      * <p>
      * Prevents the callback function from receiving {@link #XTYP_ADVSTART} and
-     * {@link #XTYP_ADVSTOP} transactions. The system returns DDE_FNOTPROCESSED to each
+     * {@link #XTYP_ADVSTOP} transactions. The system returns {@link #DDE_FNOTPROCESSED} to each
      * client that sends an {@link #XTYP_ADVSTART} or {@link #XTYP_ADVSTOP} transaction to the
      * server.</p>
      * </td></tr>
@@ -1728,7 +1728,7 @@ public interface Ddeml extends StdCallLibrary {
      * </td><td>
      * <p>
      * Prevents the callback function from receiving {@link #XTYP_EXECUTE} transactions.
-     * The system returns DDE_FNOTPROCESSED to a client that sends an
+     * The system returns {@link #DDE_FNOTPROCESSED} to a client that sends an
      * {@link #XTYP_EXECUTE} transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1738,7 +1738,7 @@ public interface Ddeml extends StdCallLibrary {
      * </td><td>
      * <p>
      * Prevents the callback function from receiving {@link #XTYP_POKE} transactions. The
-     * system returns DDE_FNOTPROCESSED to a client that sends an {@link #XTYP_POKE}
+     * system returns {@link #DDE_FNOTPROCESSED} to a client that sends an {@link #XTYP_POKE}
      * transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
@@ -1748,7 +1748,7 @@ public interface Ddeml extends StdCallLibrary {
      * </td><td>
      * <p>
      * Prevents the callback function from receiving {@link #XTYP_REQUEST} transactions.
-     * The system returns DDE_FNOTPROCESSED to a client that sends an
+     * The system returns {@link #DDE_FNOTPROCESSED} to a client that sends an
      * {@link #XTYP_REQUEST} transaction to the server.</p>
      * </td></tr>
      * <tr><td><dl>
