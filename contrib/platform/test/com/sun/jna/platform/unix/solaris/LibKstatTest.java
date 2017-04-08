@@ -1,6 +1,4 @@
 /*
- * Copyright (c) 2017 Daniel Widdis 
- *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -21,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sun.jna.Native;
+import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.unix.solaris.LibKstat.Kstat;
 import com.sun.jna.platform.unix.solaris.LibKstat.KstatCtl;
@@ -36,45 +35,51 @@ import junit.framework.TestCase;
 public class LibKstatTest extends TestCase {
 
     public void testKstatLookupString() {
-        KstatCtl kc = LibKstat.INSTANCE.kstat_open();
+        if (Platform.isSolaris()) {
+            KstatCtl kc = LibKstat.INSTANCE.kstat_open();
 
-        // Test reading string
-        Kstat ksp = kstatLookup(kc, "cpu_info", -1, null);
-        assertNotNull(ksp);
-        assertTrue(kstatRead(kc, ksp));
-        assertNotNull(kstatDataLookupString(ksp, "vendor_id"));
-        assertNotNull(kstatDataLookupString(ksp, "brand"));
-        assertNotNull(kstatDataLookupString(ksp, "stepping"));
-        assertNotNull(kstatDataLookupString(ksp, "model"));
-        assertNotNull(kstatDataLookupString(ksp, "family"));
+            // Test reading string
+            Kstat ksp = kstatLookup(kc, "cpu_info", -1, null);
+            assertNotNull(ksp);
+            assertTrue(kstatRead(kc, ksp));
+            assertNotNull(kstatDataLookupString(ksp, "vendor_id"));
+            assertNotNull(kstatDataLookupString(ksp, "brand"));
+            assertNotNull(kstatDataLookupString(ksp, "stepping"));
+            assertNotNull(kstatDataLookupString(ksp, "model"));
+            assertNotNull(kstatDataLookupString(ksp, "family"));
 
-        LibKstat.INSTANCE.kstat_close(kc);
+            LibKstat.INSTANCE.kstat_close(kc);
+        }
     }
 
     public void testKstatLookupLong() {
-        KstatCtl kc = LibKstat.INSTANCE.kstat_open();
+        if (Platform.isSolaris()) {
+            KstatCtl kc = LibKstat.INSTANCE.kstat_open();
 
-        // Test reading long
-        Kstat ksp = kstatLookup(kc, null, -1, "file_cache");
-        assertNotNull(ksp);
-        assertTrue(kstatRead(kc, ksp));
-        assertTrue(kstatDataLookupLong(ksp, "buf_max") > 0);
+            // Test reading long
+            Kstat ksp = kstatLookup(kc, null, -1, "file_cache");
+            assertNotNull(ksp);
+            assertTrue(kstatRead(kc, ksp));
+            assertTrue(kstatDataLookupLong(ksp, "buf_max") > 0);
 
-        LibKstat.INSTANCE.kstat_close(kc);
+            LibKstat.INSTANCE.kstat_close(kc);
+        }
     }
 
     public void testKstatLookupAll() {
-        KstatCtl kc = LibKstat.INSTANCE.kstat_open();
+        if (Platform.isSolaris()) {
+            KstatCtl kc = LibKstat.INSTANCE.kstat_open();
 
-        for (Kstat ksp : kstatLookupAll(kc, "cpu", -1, "sys")) {
-            if (kstatRead(kc, ksp)) {
-                assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_idle") >= 0);
-                assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_kernel") >= 0);
-                assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_user") >= 0);
+            for (Kstat ksp : kstatLookupAll(kc, "cpu", -1, "sys")) {
+                if (kstatRead(kc, ksp)) {
+                    assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_idle") >= 0);
+                    assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_kernel") >= 0);
+                    assertTrue(kstatDataLookupLong(ksp, "cpu_ticks_user") >= 0);
+                }
             }
-        }
 
-        LibKstat.INSTANCE.kstat_close(kc);
+            LibKstat.INSTANCE.kstat_close(kc);
+        }
     }
 
     /**
