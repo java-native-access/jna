@@ -155,7 +155,12 @@ public final class User32Util {
         private volatile int nativeThreadId = 0;
         private volatile long javaThreadId = 0;
         private final List<FutureTask> workQueue = Collections.synchronizedList(new ArrayList<FutureTask>());
-        
+        private static long messageLoopId = 0;
+
+        public MessageLoopThread() {
+            setName("JNA User32 MessageLoop " + (++messageLoopId));
+        }
+
         @Override
         public void run() {
             MSG msg = new WinUser.MSG();
