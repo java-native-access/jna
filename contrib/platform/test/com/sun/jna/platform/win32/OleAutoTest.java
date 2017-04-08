@@ -20,6 +20,8 @@ import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -62,4 +64,33 @@ public class OleAutoTest extends TestCase {
         assertEquals(0, hr.intValue());
     }
 
+    public void testVariantConvertBoolean() {
+        VARIANT variant = new Variant.VARIANT(true);
+        OleAuto.INSTANCE.VariantChangeType(variant, variant, OleAuto.VARIANT_ALPHABOOL, new VARTYPE(Variant.VT_BSTR));
+        assertEquals("Variant-Type", Variant.VT_BSTR, variant.getVarType().intValue());
+        assertEquals("Variant-Value", "True", variant.stringValue());
+        OleAuto.INSTANCE.VariantClear(variant);
+
+        VARIANT.ByReference variant2 = new Variant.VARIANT.ByReference();
+        variant2.setValue(Variant.VT_BOOL, new OaIdl.VARIANT_BOOL(true));
+        OleAuto.INSTANCE.VariantChangeType(variant2, variant2, OleAuto.VARIANT_ALPHABOOL, new VARTYPE(Variant.VT_BSTR));
+        assertEquals("Variant-Type", Variant.VT_BSTR, variant2.getVarType().intValue());
+        assertEquals("Variant-Value", "True", variant2.stringValue());
+        OleAuto.INSTANCE.VariantClear(variant2);
+    }
+    
+    public void testVariantConvertBSTR() {
+        VARIANT variant = new Variant.VARIANT("42");
+        OleAuto.INSTANCE.VariantChangeType(variant, variant, (short) 0, new VARTYPE(Variant.VT_INT));
+        assertEquals("Variant-Type", Variant.VT_INT, variant.getVarType().intValue());
+        assertEquals("Variant-Value", 42, variant.intValue());
+        OleAuto.INSTANCE.VariantClear(variant);
+
+        VARIANT.ByReference variant2 = new Variant.VARIANT.ByReference();
+        variant2.setValue(Variant.VT_BSTR, OleAuto.INSTANCE.SysAllocString("42"));
+        OleAuto.INSTANCE.VariantChangeType(variant2, variant2, (short) 0, new VARTYPE(Variant.VT_INT));
+        assertEquals("Variant-Type", Variant.VT_INT, variant2.getVarType().intValue());
+        assertEquals("Variant-Value", 42, variant2.intValue());
+        OleAuto.INSTANCE.VariantClear(variant2);
+    }
 }

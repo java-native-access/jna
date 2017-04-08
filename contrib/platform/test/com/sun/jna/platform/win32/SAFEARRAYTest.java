@@ -25,7 +25,6 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
-import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import static com.sun.jna.platform.win32.Variant.VT_BOOL;
 import static com.sun.jna.platform.win32.Variant.VT_BSTR;
@@ -60,6 +59,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import org.junit.Before;
 import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
+import com.sun.jna.platform.win32.WTypes.VARTYPE;
+import com.sun.jna.platform.win32.WinDef.LONG;
 
 public class SAFEARRAYTest {
     static {
@@ -215,6 +216,34 @@ public class SAFEARRAYTest {
         }
         wrap.unaccessData();
         return result;
+    }
+    
+    @Test
+    public void testMultidimensionalNotNullBased() {
+        // create a basic SAFEARRAY
+        SAFEARRAY sa = SAFEARRAY.createSafeArray(new VARTYPE(VT_I4), 2, 2);
+        sa.putElement(1, 0, 0);
+        sa.putElement(2, 0, 1);
+        sa.putElement(3, 1, 0);
+        sa.putElement(4, 1, 1);
+        
+        // query the plain SAFEARRAY
+        Object[][] basic = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, false);
+
+        // Virtually move the bounds
+        sa.rgsabound[0].lLbound = new LONG(2);
+        sa.rgsabound[1].lLbound = new LONG(5);
+        sa.write();
+        
+        // Validate new bounds
+        Assert.assertEquals(2, sa.getLBound(0));
+        Assert.assertEquals(3, sa.getUBound(0));
+        Assert.assertEquals(5, sa.getLBound(1));
+        Assert.assertEquals(6, sa.getUBound(1));
+        
+        // requery the moved array and compare with basic array
+        Object[][] relocated = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, false);
+        Assert.assertArrayEquals( basic, relocated);
     }
     
     @Test
