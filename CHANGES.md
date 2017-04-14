@@ -2,6 +2,20 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
+At this point development of 4.5.0 and 5.0.0 happens in parallel. All changes
+committed to 4.5.0 will be pulled into 5.0.0. 5.0.0 is used to hold API
+breaks.
+
+Release 5.0.0 (Development)
+===========================
+
+Features
+--------
+
+Bug Fixes
+---------
+* [#652](https://github.com/java-native-access/jna/issues/652): Dead Lock in class initialization - [@matthiasblaesing](https://github.com/matthiasblaesing).
+
 Release 4.5.0 (Next release)
 ============================
 
