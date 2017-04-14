@@ -23,6 +23,7 @@
  */
 package com.sun.jna.ptr;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
 /** Represents a reference to a pointer to native data. 
@@ -36,7 +37,7 @@ public class PointerByReference extends ByReference {
     }
     
     public PointerByReference(Pointer value) {
-        super(Pointer.SIZE);
+        super(Native.POINTER_SIZE);
         setValue(value);
     }
     

@@ -363,7 +363,7 @@ public class CallbackReference extends WeakReference<Callback> {
 
     /** Set the behavioral options for this callback. */
     private void setCallbackOptions(int options) {
-        cbstruct.setInt(Pointer.SIZE, options);
+        cbstruct.setInt(Native.POINTER_SIZE, options);
     }
 
     /** Obtain a pointer to the native glue code for this callback. */

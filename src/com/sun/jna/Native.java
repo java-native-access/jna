@@ -210,7 +210,7 @@ public final class Native implements Version {
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
         BOOL_SIZE = sizeof(TYPE_BOOL);
-
+        
         // Perform initialization of other JNA classes until *after*
         // initializing the above final fields
         initIDs();

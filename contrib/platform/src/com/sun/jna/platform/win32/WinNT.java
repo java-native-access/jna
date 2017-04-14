@@ -394,7 +394,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public PSIDByReference(PSID h) {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
             setValue(h);
         }
 
@@ -1393,7 +1393,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public HANDLEByReference(HANDLE h) {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
             setValue(h);
         }
 
@@ -2605,7 +2605,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public PACLByReference(ACL h) {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
             setValue(h);
         }
 

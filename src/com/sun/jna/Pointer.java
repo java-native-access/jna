@@ -46,16 +46,6 @@ import java.util.List;
  */
 public class Pointer {
 
-    /** Size of a native pointer, in bytes. */
-    public static final int SIZE;
-
-    static {
-        // Force load of native library
-        if ((SIZE = Native.POINTER_SIZE) == 0) {
-            throw new Error("Native library not initialized");
-        }
-    }
-
     /** Convenience constant, same as <code>null</code>. */
     public static final Pointer NULL = null;
 
@@ -238,7 +228,7 @@ public class Pointer {
      */
     public void read(long offset, Pointer[] buf, int index, int length) {
         for (int i=0;i < length;i++) {
-            Pointer p = getPointer(offset + i*Pointer.SIZE);
+            Pointer p = getPointer(offset + i*Native.POINTER_SIZE);
             Pointer oldp = buf[i+index];
             // Avoid replacing the original pointer if it hasn't changed
             if (oldp == null || p == null || p.peer != oldp.peer) {
@@ -359,7 +349,7 @@ public class Pointer {
     */
     public void write(long bOff, Pointer[] buf, int index, int length) {
         for (int i=0;i < length;i++) {
-            setPointer(bOff + i * Pointer.SIZE, buf[index + i]);
+            setPointer(bOff + i * Native.POINTER_SIZE, buf[index + i]);
         }
     }
 
@@ -779,7 +769,7 @@ v     * @param wide whether to convert from a wide or standard C string
         Pointer p = getPointer(offset);
         while (p != null) {
             array.add(p);
-            addOffset += Pointer.SIZE;
+            addOffset += Native.POINTER_SIZE;
             p = getPointer(offset + addOffset);
         }
         return array.toArray(new Pointer[array.size()]);
@@ -875,7 +865,7 @@ v     * @param wide whether to convert from a wide or standard C string
                        ? p.getWideString(0) : p.getString(0, encoding));
                 strings.add(s);
                 if (count < length) {
-                    addOffset += SIZE;
+                    addOffset += Native.POINTER_SIZE;
                     p = getPointer(offset + addOffset);
                 }
             }
@@ -886,7 +876,7 @@ v     * @param wide whether to convert from a wide or standard C string
                     : (NativeString.WIDE_STRING.equals(encoding)
                        ? p.getWideString(0) : p.getString(0, encoding));
                 strings.add(s);
-                addOffset += SIZE;
+                addOffset += Native.POINTER_SIZE;
             }
         }
         return strings.toArray(new String[strings.size()]);

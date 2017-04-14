@@ -92,7 +92,7 @@ public class UnionTest extends TestCase {
 
     public void testFieldOffsets() {
         StructUnion u = new StructUnion();
-        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
+        assertEquals("Wrong union size: " + u, Native.POINTER_SIZE, u.size());
         u.setType(u.testStruct.getClass());
         u.write();
         assertEquals("Wrong struct member base address",
@@ -132,7 +132,7 @@ public class UnionTest extends TestCase {
         final int VALUE = 0x12345678;
         // write an instance of a direct union class to memory
         StructUnion u = new StructUnion();
-        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
+        assertEquals("Wrong union size: " + u, Native.POINTER_SIZE, u.size());
         IntStructure intStruct = new IntStructure();
         intStruct.value = VALUE;
         u.setTypedValue(intStruct);
@@ -158,7 +158,7 @@ public class UnionTest extends TestCase {
 
     public void testReadTypedUnion() {
         StructUnion u = new StructUnion();
-        assertEquals("Wrong union size: " + u, Pointer.SIZE, u.size());
+        assertEquals("Wrong union size: " + u, Native.POINTER_SIZE, u.size());
         final int VALUE = 0x12345678;
         u.getPointer().setInt(0, VALUE);
         assertEquals("int structure not read properly", VALUE, ((IntStructure) u.getTypedValue(IntStructure.class)).value);

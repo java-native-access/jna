@@ -157,7 +157,7 @@ public interface WTypes {
 
     public class BSTRByReference extends ByReference {
         public BSTRByReference() {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
         }
 
         public BSTRByReference(BSTR value) {

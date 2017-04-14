@@ -50,7 +50,7 @@ public interface WinBase extends WinDef, BaseTSD {
 
     /** Constant value representing an invalid HANDLE. */
     HANDLE INVALID_HANDLE_VALUE =
-        new HANDLE(Pointer.createConstant(Pointer.SIZE == 8
+        new HANDLE(Pointer.createConstant(Native.POINTER_SIZE == 8
                                           ? -1 : 0xFFFFFFFFL));
 
     int WAIT_FAILED = 0xFFFFFFFF;

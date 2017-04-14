@@ -74,7 +74,7 @@ public class StructureBufferFieldTest extends TestCase {
     public void testBufferFieldReadChanged() {
         if (!Platform.HAS_BUFFERS) return;
         BufferStructure bs = new BufferStructure();
-        if (Pointer.SIZE == 4) {
+        if (Native.POINTER_SIZE == 4) {
             bs.getPointer().setInt(0, 0x1);
         }
         else {

@@ -945,7 +945,7 @@ public class StructureTest extends TestCase {
     public void testPointerArrayField() {
         ArrayOfPointerStructure s = new ArrayOfPointerStructure();
         int size = s.size();
-        assertEquals("Wrong size", ArrayOfPointerStructure.SIZE * Pointer.SIZE, size);
+        assertEquals("Wrong size", ArrayOfPointerStructure.SIZE * Native.POINTER_SIZE, size);
         s.array[0] = s.getPointer();
         s.write();
         s.array[0] = null;
@@ -992,7 +992,7 @@ public class StructureTest extends TestCase {
     }
     public void testStructureByReferenceField() {
         StructureWithPointers s = new StructureWithPointers();
-        assertEquals("Wrong size for structure with structure references", Pointer.SIZE * 2, s.size());
+        assertEquals("Wrong size for structure with structure references", Native.POINTER_SIZE * 2, s.size());
         assertNull("Initial refs should be null", s.s1);
     }
 
@@ -1060,14 +1060,14 @@ public class StructureTest extends TestCase {
         m2.setString(0, WVALUE);
 
         s.getPointer().setPointer(0, m);
-        s.getPointer().setPointer(Pointer.SIZE, m2);
+        s.getPointer().setPointer(Native.POINTER_SIZE, m2);
         s.read();
         assertEquals("Wrong String field value", VALUE, s.s);
         assertEquals("Wrong WString field value", WVALUE, s.ws);
 
         s.write();
         assertEquals("String field should not be overwritten: " + s, m, s.getPointer().getPointer(0));
-        assertEquals("WString field should not be overwritten: " + s, m2, s.getPointer().getPointer(Pointer.SIZE));
+        assertEquals("WString field should not be overwritten: " + s, m2, s.getPointer().getPointer(Native.POINTER_SIZE));
     }
 
     // Ensure string cacheing doesn't interfere with wrapped structure writes.
@@ -1148,7 +1148,7 @@ public class StructureTest extends TestCase {
             }
         }
         TestStructure s = new TestStructure();
-        assertEquals("Wrong structure size", 2*Pointer.SIZE, s.size());
+        assertEquals("Wrong structure size", 2*Native.POINTER_SIZE, s.size());
 
         PublicTestStructure.ByReference ref = new PublicTestStructure.ByReference();
         ref.x = 42;
@@ -1256,9 +1256,9 @@ public class StructureTest extends TestCase {
                      inner, els.getPointer(0));
         assertEquals("Wrong type information for integer field",
                      Structure.getTypeInfo(Integer.valueOf(0)),
-                     els.getPointer(Pointer.SIZE));
+                     els.getPointer(Native.POINTER_SIZE));
         assertNull("Type element list should be null-terminated",
-                   els.getPointer(Pointer.SIZE*2));
+                   els.getPointer(Native.POINTER_SIZE*2));
     }
 
     public void testInnerArrayTypeInfo() {

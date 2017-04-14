@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Callback;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Union;
@@ -198,9 +199,9 @@ public interface WinUser extends WinDef {
     int GWL_USERDATA = -21;
     int GWL_HWNDPARENT = -8;
 
-    int DWL_DLGPROC = Pointer.SIZE;
+    int DWL_DLGPROC = Native.POINTER_SIZE;
     int DWL_MSGRESULT = 0;
-    int DWL_USER = 2*Pointer.SIZE;
+    int DWL_USER = 2*Native.POINTER_SIZE;
 
     /* Window Styles */
 
