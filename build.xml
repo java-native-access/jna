@@ -562,6 +562,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     package="com.sun.jna"
     android:versionCode="]]>${android.versionCode}<![CDATA["
     android:versionName="]]>${jna.version}<![CDATA[" >
+
+    <uses-sdk android:targetSdkVersion="25" />
 </manifest> 
     ]]></echo>
     <zip zipfile="${build}/${aar}">
