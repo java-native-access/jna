@@ -115,7 +115,7 @@ public interface WinDef {
          * @return the value
          */
         public WORD getValue() {
-            return new WORD(getPointer().getInt(0));
+            return new WORD(getPointer().getShort(0));
         }
     }
 
