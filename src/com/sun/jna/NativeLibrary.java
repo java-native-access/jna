@@ -177,6 +177,7 @@ public class NativeLibrary {
         }
 
         searchPath.addAll(initPaths("jna.library.path"));
+        searchPath.addAll(initPaths("java.library.path"));
         String libraryPath = findLibraryPath(libraryName, searchPath);
         long handle = 0;
         //
