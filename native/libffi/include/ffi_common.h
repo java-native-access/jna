@@ -50,10 +50,12 @@ char *alloca ();
 /* Check for the existence of memcpy. */
 #if STDC_HEADERS
 # include <string.h>
-#else
-# ifndef HAVE_MEMCPY
-#  define memcpy(d, s, n) bcopy ((s), (d), (n))
-# endif
+/* This can cause Windows build to fail.
+else
+ ifndef HAVE_MEMCPY
+  define memcpy(d, s, n) bcopy ((s), (d), (n))
+ endif
+*/
 #endif
 
 #if defined(FFI_DEBUG)
