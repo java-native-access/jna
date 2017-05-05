@@ -200,3 +200,20 @@ experience with the JNA COM support.
 Additional resource that should be checked are JACOB or com4j, both of which can 
 parse a COM interface definition and generate a Java object to match it.  
 JNAerator is also working on generating COM bindings.
+
+JNA on Android
+--------------
+
+To use JNA on Android add the following dependency to gradle (note the `@aar`):
+
+```
+compile 'net.java.dev.jna:jna:4.4.0@aar'
+```
+
+If you're using Proguard, you should also add the following to your Proguard rules:
+
+```
+-dontwarn java.awt.*
+-keep class com.sun.jna.* { *; }
+-keepclassmembers class * extends com.sun.jna.* { public *; }
+```
