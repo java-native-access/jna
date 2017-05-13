@@ -1299,10 +1299,10 @@ public class StructureTest extends TestCase {
         final String LS = System.getProperty("line.separator");
         System.setProperty("jna.dump_memory", "true");
         final String EXPECTED = "(?m).*" + s.size() + " bytes.*\\{" + LS
-            + "  int intField@0=0" + LS
-            + "  .* inner@4=.*\\{" + LS
-            + "    int x@0=.*" + LS
-            + "    int y@4=.*" + LS
+            + "  int intField@0x0=0x0000" + LS
+            + "  .* inner@0x4=.*\\{" + LS
+            + "    int x@0x0=.*" + LS
+            + "    int y@0x4=.*" + LS
             + "  \\}" + LS
             + "\\}" + LS
             + "memory dump" + LS
