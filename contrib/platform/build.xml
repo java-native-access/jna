@@ -102,7 +102,6 @@
     <target name="-pre-jar">
         <tempfile deleteonexit="true" destdir="${build.dir}" property="tmp.manifest.file"/>
         <manifest file="${tmp.manifest.file}" mode="replace">
-            <attribute name="Main-Class" value="com.sun.jna.Native"/>
             <attribute name="Manifest-Version" value="1.0"/>
             <attribute name="Implementation-Title" value="${impl.title}"/>
             <attribute name="Implementation-Vendor" value="${vendor}"/>
