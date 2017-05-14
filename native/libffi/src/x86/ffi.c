@@ -655,6 +655,9 @@ ffi_prep_incoming_args(char *stack, void **rvalue, void **avalue,
 #endif
     }
 
+  /* Align if necessary */
+  if ((sizeof(void*) - 1) & (size_t) argp)
+    argp = (char *) ALIGN(argp, sizeof(void*));
   return (size_t)argp - (size_t)stack;
 }
 
