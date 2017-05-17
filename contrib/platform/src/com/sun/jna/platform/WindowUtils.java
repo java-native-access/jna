@@ -1389,11 +1389,13 @@ public class WindowUtils {
             whenDisplayable(w, new Runnable() {
 				@Override
                 public void run() {
-                    Object peer = w.getPeer();
                     try {
-                        Class<?> cls = peer.getClass();
-                        Method m = cls.getMethod("setAlpha", new Class[]{ float.class });
-                        m.invoke(peer, Float.valueOf(alpha));
+                        // This will work with old Apple AWT implementations and
+                        // not with openjdk
+                        Method getPeer = w.getClass().getMethod("getPeer");
+                        Object peer = getPeer.invoke(w);
+                        Method setAlpha = peer.getClass().getMethod("setAlpha", new Class[]{ float.class });
+                        setAlpha.invoke(peer, Float.valueOf(alpha));
                     }
                     catch (Exception e) {
                     }

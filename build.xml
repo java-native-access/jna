@@ -1085,8 +1085,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <sysproperty key="jna.library.path" file="${build.native}"/>
       <!-- Ignore any system install of JNA -->
       <sysproperty key="jna.nosys" value="true"/>
-      <!-- Avoid VM crashes, if possible -->
-      <sysproperty key="jna.protected" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
       <sysproperty key="jna.nativedir" file="${build.native}"/>
       <jvmarg value="${vmopt.arch}"/>
