@@ -49,7 +49,7 @@ public class StdCallFunctionMapper implements FunctionMapper {
             cls = NativeMappedConverter.getInstance(cls).nativeType();
         }
         if (cls.isArray()) {
-            return Pointer.SIZE;
+            return Native.POINTER_SIZE;
         }
         try {
             return Native.getNativeSize(cls);

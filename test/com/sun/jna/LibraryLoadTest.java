@@ -47,7 +47,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
 
     public void testLoadJNALibrary() {
-        assertTrue("Pointer size should never be zero", Pointer.SIZE > 0);
+        assertTrue("Pointer size should never be zero", Native.POINTER_SIZE > 0);
     }
 
     public void testLoadJAWT() {
@@ -65,7 +65,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
 
         if (GraphicsEnvironment.isHeadless()) return;
 
-        if (Pointer.SIZE > 0) {
+        if (Native.POINTER_SIZE > 0) {
             Toolkit.getDefaultToolkit();
         }
     }

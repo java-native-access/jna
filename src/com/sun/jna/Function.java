@@ -381,7 +381,7 @@ public class Function extends Pointer {
                             Class<?> type = inArg.getClass().getComponentType();
                             Structure[] ss = (Structure[])inArg;
                             for (int si=0;si < ss.length;si++) {
-                                Pointer p = array.getPointer(Pointer.SIZE * si);
+                                Pointer p = array.getPointer(Native.POINTER_SIZE * si);
                                 ss[si] = Structure.updateStructureByReference(type, ss[si], p);
                             }
                         }
@@ -814,12 +814,12 @@ public class Function extends Pointer {
     private static class PointerArray extends Memory implements PostCallRead {
         private final Pointer[] original;
         public PointerArray(Pointer[] arg) {
-            super(Pointer.SIZE * (arg.length+1));
+            super(Native.POINTER_SIZE * (arg.length+1));
             this.original = arg;
             for (int i=0;i < arg.length;i++) {
-                setPointer(i*Pointer.SIZE, arg[i]);
+                setPointer(i*Native.POINTER_SIZE, arg[i]);
             }
-            setPointer(Pointer.SIZE*arg.length, null);
+            setPointer(Native.POINTER_SIZE*arg.length, null);
         }
         @Override
         public void read() {

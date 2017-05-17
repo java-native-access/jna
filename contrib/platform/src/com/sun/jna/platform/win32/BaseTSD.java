@@ -24,6 +24,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.IntegerType;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.ByReference;
 
@@ -44,7 +45,7 @@ public interface BaseTSD {
         }
 
         public LONG_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Native.POINTER_SIZE, value);
         }
 
         public Pointer toPointer() {
@@ -74,7 +75,7 @@ public interface BaseTSD {
         }
 
         public ULONG_PTR(long value) {
-            super(Pointer.SIZE, value, true);
+            super(Native.POINTER_SIZE, value, true);
         }
 
         public Pointer toPointer() {
@@ -90,11 +91,11 @@ public interface BaseTSD {
             this(new ULONG_PTR(0));
         }
         public ULONG_PTRByReference(ULONG_PTR value) {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
             setValue(value);
         }
         public void setValue(ULONG_PTR value) {
-            if (Pointer.SIZE == 4) {
+            if (Native.POINTER_SIZE == 4) {
                 getPointer().setInt(0, value.intValue());
             }
             else {
@@ -102,7 +103,7 @@ public interface BaseTSD {
             }
         }
         public ULONG_PTR getValue() {
-            return new ULONG_PTR(Pointer.SIZE == 4
+            return new ULONG_PTR(Native.POINTER_SIZE == 4
                                  ? getPointer().getInt(0)
                                  : getPointer().getLong(0));
         }
@@ -118,7 +119,7 @@ public interface BaseTSD {
         }
 
         public DWORD_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Native.POINTER_SIZE, value);
         }
     }
 

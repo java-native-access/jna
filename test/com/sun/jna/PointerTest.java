@@ -88,7 +88,7 @@ public class PointerTest extends TestCase {
     }
 
     public void testSetNativeMapped() {
-        Pointer p = new Memory(Pointer.SIZE);
+        Pointer p = new Memory(Native.POINTER_SIZE);
         TestPointerType tp = new TestPointerType(p);
 
         p.setValue(0, tp, tp.getClass());
@@ -97,7 +97,7 @@ public class PointerTest extends TestCase {
     }
 
     public void testGetNativeMapped() {
-        Pointer p = new Memory(Pointer.SIZE);
+        Pointer p = new Memory(Native.POINTER_SIZE);
         p.setPointer(0, null);
         Object o = p.getValue(0, TestPointerType.class, null);
         assertNull("Wrong empty value: " + o, o);
@@ -107,14 +107,14 @@ public class PointerTest extends TestCase {
     }
 
     public void testGetStringArray() {
-        Pointer p = new Memory(Pointer.SIZE*3);
+        Pointer p = new Memory(Native.POINTER_SIZE*3);
         final String VALUE1 = getName() + UNICODE;
         final String VALUE2 = getName() + "2" + UNICODE;
         final String ENCODING = "utf8";
 
         p.setPointer(0, new NativeString(VALUE1, ENCODING).getPointer());
-        p.setPointer(Pointer.SIZE, new NativeString(VALUE2, ENCODING).getPointer());
-        p.setPointer(Pointer.SIZE*2, null);
+        p.setPointer(Native.POINTER_SIZE, new NativeString(VALUE2, ENCODING).getPointer());
+        p.setPointer(Native.POINTER_SIZE*2, null);
 
         assertEquals("Wrong null-terminated String array",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
@@ -129,13 +129,13 @@ public class PointerTest extends TestCase {
     }
 
     public void testGetWideStringArray() {
-        Pointer p = new Memory(Pointer.SIZE*3);
+        Pointer p = new Memory(Native.POINTER_SIZE*3);
         final String VALUE1 = getName() + UNICODE;
         final String VALUE2 = getName() + "2" + UNICODE;
 
         p.setPointer(0, new NativeString(VALUE1, true).getPointer());
-        p.setPointer(Pointer.SIZE, new NativeString(VALUE2, true).getPointer());
-        p.setPointer(Pointer.SIZE*2, null);
+        p.setPointer(Native.POINTER_SIZE, new NativeString(VALUE2, true).getPointer());
+        p.setPointer(Native.POINTER_SIZE*2, null);
 
         assertEquals("Wrong null-terminated String array",
                      Arrays.asList(new String[] { VALUE1, VALUE2 }),
@@ -150,7 +150,7 @@ public class PointerTest extends TestCase {
     }
 
     public void testReadPointerArray() {
-        Pointer mem = new Memory(Pointer.SIZE * 2);
+        Pointer mem = new Memory(Native.POINTER_SIZE * 2);
         Pointer[] p = new Pointer[2];
         String VALUE1 = getName();
 
@@ -166,7 +166,7 @@ public class PointerTest extends TestCase {
         assertSame("Pointer object not preserved[1]", orig[1], p[1]);
 
         mem.setPointer(0, null);
-        mem.setPointer(Pointer.SIZE, new Memory(1024));
+        mem.setPointer(Native.POINTER_SIZE, new Memory(1024));
         mem.read(0, p, 0, p.length);
         assertNull("Pointer element not updated[0]", p[0]);
         assertNotSame("Pointer element not updated[1]", orig[1], p[1]);
@@ -181,7 +181,7 @@ public class PointerTest extends TestCase {
     }
 
     public void testReadStringArrayNULLElement() {
-        Memory m = new Memory(Pointer.SIZE);
+        Memory m = new Memory(Native.POINTER_SIZE);
         m.clear();
         String[] arr = m.getStringArray(0, 1);
         assertEquals("Wrong array size", 1, arr.length);

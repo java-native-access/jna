@@ -537,7 +537,7 @@ public class Memory extends Pointer {
      */
     @Override
     public Pointer getPointer(long offset) {
-        boundsCheck(offset, Pointer.SIZE);
+        boundsCheck(offset, Native.POINTER_SIZE);
         return super.getPointer(offset);
     }
 
@@ -689,7 +689,7 @@ public class Memory extends Pointer {
      */
     @Override
     public void setPointer(long offset, Pointer value) {
-        boundsCheck(offset, Pointer.SIZE);
+        boundsCheck(offset, Native.POINTER_SIZE);
         super.setPointer(offset, value);
     }
 

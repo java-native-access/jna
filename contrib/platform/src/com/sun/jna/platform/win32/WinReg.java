@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.ByReference;
@@ -48,7 +49,7 @@ public interface WinReg {
         }
         
         public HKEYByReference(HKEY h) {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
             setValue(h);
         }
         

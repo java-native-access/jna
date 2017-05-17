@@ -40,8 +40,8 @@ public class VMCrashProtectionTest extends TestCase {
         if (!Native.isProtected())
             return;
         
-        Memory m = new Memory(Pointer.SIZE);
-        if (Pointer.SIZE == 4)
+        Memory m = new Memory(Native.POINTER_SIZE);
+        if (Native.POINTER_SIZE == 4)
             m.setInt(0, 1);
         else
             m.setLong(0, 1);

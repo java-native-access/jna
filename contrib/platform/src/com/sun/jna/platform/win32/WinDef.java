@@ -683,7 +683,7 @@ public interface WinDef {
          * Instantiates a new int ptr.
          */
         public INT_PTR() {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
         }
 
         /**
@@ -693,7 +693,7 @@ public interface WinDef {
          *            the value
          */
         public INT_PTR(long value) {
-            super(Pointer.SIZE, value);
+            super(Native.POINTER_SIZE, value);
         }
 
         /**
@@ -715,7 +715,7 @@ public interface WinDef {
          * Instantiates a new uint ptr.
          */
         public UINT_PTR() {
-            super(Pointer.SIZE);
+            super(Native.POINTER_SIZE);
         }
 
         /**
@@ -725,7 +725,7 @@ public interface WinDef {
          *            the value
          */
         public UINT_PTR(long value) {
-            super(Pointer.SIZE, value, true);
+            super(Native.POINTER_SIZE, value, true);
         }
 
         /**
