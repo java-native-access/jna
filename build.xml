@@ -209,7 +209,12 @@
     <property name="reports" value="${build}/reports"/>
 
     <mkdir dir="${build}/ant-elfanalyser" />
-    <javac classpath="lib/ant.jar" destdir="${build}/ant-elfanalyser" includeantruntime="false">
+    <javac classpath="lib/ant.jar" 
+           destdir="${build}/ant-elfanalyser" 
+           includeantruntime="false"
+           source="1.6"
+           target="1.6"
+    >
         <src path="src" />
         <src path="ant-elfanalyser-src" />
         <include name="**/ELFAnalyser.java" />
