@@ -1,0 +1,1 @@
+curl -H "Content-Type: application/octed-stream" --data-binary @lib/native/darwin.jar "https://doppel-helix.eu:8443/simpleupload/api/simple?apikey=$KEY&path=darwin.jar"
