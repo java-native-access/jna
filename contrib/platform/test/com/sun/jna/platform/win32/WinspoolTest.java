@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
+import com.sun.jna.platform.win32.Winspool.FORM_INFO_2;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
@@ -92,6 +93,23 @@ public class WinspoolTest extends TestCase {
     public void testClosePrinter() {
         boolean result = Winspool.INSTANCE.ClosePrinter(null);
         assertFalse("ClosePrinter should return false on failure.", result);
+        assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
+    }
+    
+    public void testGetForm() {
+    	HANDLEByReference hbr = new HANDLEByReference();
+		FORM_INFO_2 form2 = new FORM_INFO_2();
+		IntByReference pcbNeeded = new IntByReference();
+        boolean result = Winspool.INSTANCE.GetForm(hbr.getValue(), "1234567890A123", 2, form2.getPointer(), 0, pcbNeeded);
+        assertFalse("GetForm should return false on failure.", result);
+        assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
+    }
+    
+    public void testSetForm() {
+    	HANDLEByReference hbr = new HANDLEByReference(null);
+		FORM_INFO_2 form2 = new FORM_INFO_2();
+        boolean result = Winspool.INSTANCE.SetForm(hbr.getValue(), "1234567890A123", 2, form2.getPointer());
+        assertFalse("SetForm should return false on failure.", result);
         assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
     }
 }

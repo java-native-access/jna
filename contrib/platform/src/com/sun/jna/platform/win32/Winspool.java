@@ -499,7 +499,97 @@ public interface Winspool extends StdCallLibrary {
             return FIELDS;
         }
     }
+	
+	/**
+	 * The FORM_INFO_2 structure specifies general printer information.
+	 *
+	 * @see <a href=
+	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162844(v=vs.85).aspx">
+	 *      FORM_INFO_2 structure</a>
+	 */
+	public static class FORM_INFO_2 extends Structure {
+		
+		public static final List<String> FIELDS = createFieldsOrder("Flags", "pName", "Size", "ImageableArea", "pKeyword", "StringType", "pMuiDll", "dwResourceId", "pDisplayName", "wLangId");
+		
+		/**
+		 * Specifies information about the returned data. Following are the
+		 * values for this member.
+		 */
+		public int Flags;
+		/**
+		 * Pointer to a null-terminated string that names the contents of the
+		 * structure.
+		 */
+		public String pName;
+		
+		public SIZEL Size;
+		
+		public RECTL ImageableArea;
+		
+		public String pKeyword;
+		
+		public int StringType;
+		
+		public String pMuiDll;
+		
+		public int dwResourceId;
+		
+		public String pDisplayName;
+		
+		public short wLangId;
 
+		public FORM_INFO_2() {
+            super();
+        }
+
+        public FORM_INFO_2(int size) {
+            super(new Memory(size));
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+	}
+	
+	public static class SIZEL extends Structure {
+
+		public int width;
+		
+		public int height;
+		
+		public SIZEL() {
+            super();
+        }
+		
+		@Override
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "width", "height" });
+		}
+		
+	}
+	
+	public static class RECTL extends Structure {
+
+		public int left;
+		
+		public int top;
+
+		public int right;
+		
+		public int bottom;
+		
+		public RECTL() {
+            super();
+        }
+		
+		@Override
+		protected List<String> getFieldOrder() {
+			return Arrays.asList(new String[] { "left", "top", "right", "bottom" });
+		}
+		
+	}
+	
 	/**
 	 * The PRINTER_DEFAULTS structure specifies the default data type,
 	 * environment, initialization data, and access rights for a printer.
@@ -521,14 +611,14 @@ public interface Winspool extends StdCallLibrary {
 		 * Pointer to a DEVMODE structure that identifies the default
 		 * environment and initialization data for a printer.
 		 */
-		PVOID pDevMode;
+		public PVOID pDevMode;
 		/**
 		 * Specifies desired access rights for a printer. The OpenPrinter
 		 * function uses this member to set access rights to the printer. These
 		 * rights can affect the operation of the SetPrinter and DeletePrinter
 		 * functions.
 		 */
-		int DesiredAccess;
+		public int DesiredAccess;
 
 		@Override
         protected List<String> getFieldOrder() {
@@ -571,6 +661,30 @@ public interface Winspool extends StdCallLibrary {
             HANDLEByReference phPrinter,
             // _In_
             LPPRINTER_DEFAULTS pDefault);
+    
+    boolean GetForm(
+    		//_In_
+    		HANDLE hPrinter,
+    		//_In_  
+    		String pFormName,
+    		//_In_  
+    		int Level,
+    		//_Out_ 
+    		Pointer  pForm,
+    		//_In_  
+    		int cbBuf,
+    		//_Out_ 
+    		IntByReference pcbNeeded);
+    
+    boolean SetForm(
+    		  //_In_ 
+    		HANDLE hPrinter,
+    		  //_In_ 
+    		String pFormName,
+    		  //_In_ 
+    		int  Level,
+    		  //_In_ 
+    		Pointer pForm); 
 
 	/**
 	 * The ClosePrinter function closes the specified printer object.<br>
