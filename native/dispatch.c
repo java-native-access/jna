@@ -169,6 +169,7 @@ static jclass classAttachOptions;
 static jclass classNativeMapped;
 static jclass classIntegerType;
 static jclass classPointerType;
+static jclass classJNIEnv;
 static jclass class_ffi_callback;
 
 static jmethodID MID_Class_getComponentType;
@@ -537,6 +538,11 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     }
     else if ((*env)->IsInstanceOf(env, arg, classPointer)) {
       c_args[i].l = getNativeAddress(env, arg);
+      arg_types[i] = &ffi_type_pointer;
+      arg_values[i] = &c_args[i].l;
+    }
+    else if ((*env)->IsInstanceOf(env, arg, classJNIEnv)) {
+      c_args[i].l = (void*)env;
       arg_types[i] = &ffi_type_pointer;
       arg_values[i] = &c_args[i].l;
     }
@@ -1793,6 +1799,9 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       case CVT_POINTER:
         *(void **)args[i] = getNativeAddress(env, *(void **)args[i]);
         break;
+      case CVT_JNIENV:
+        *(void **)args[i] = (void*)env;
+        break;
       case CVT_STRUCTURE:
         objects[i] = *(void **)args[i];
         writeStructure(env, *(void **)args[i]);
@@ -2958,6 +2967,10 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
                      "<init>", "(Ljava/lang/String;)V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain constructor for class com.sun.jna.WString");
+  }
+  else if (!LOAD_CREF(env, JNIEnv, "com/sun/jna/JNIEnv")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain class com.sun.jna.JNIEnv");
   }
   else if (!LOAD_CREF(env, _ffi_callback, "com/sun/jna/Native$ffi_callback")) {
     throwByName(env, EUnsatisfiedLink,

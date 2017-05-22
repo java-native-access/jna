@@ -1535,6 +1535,7 @@ public final class Native implements Version {
     private static final int CVT_TYPE_MAPPER_STRING = 24;
     private static final int CVT_TYPE_MAPPER_WSTRING = 25;
     private static final int CVT_OBJECT = 26;
+    private static final int CVT_JNIENV = 27;
 
     private static int getConversion(Class<?> type, TypeMapper mapper, boolean allowObjects) {
         if (type == Boolean.class) type = boolean.class;
@@ -1624,6 +1625,9 @@ public final class Native implements Version {
                 return CVT_NATIVE_MAPPED_WSTRING;
             }
             return CVT_NATIVE_MAPPED;
+        }
+        if (JNIEnv.class == type) {
+            return CVT_JNIENV;
         }
         return allowObjects ? CVT_OBJECT : CVT_UNSUPPORTED;
     }

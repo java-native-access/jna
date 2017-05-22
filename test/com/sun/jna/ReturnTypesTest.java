@@ -107,6 +107,7 @@ public class ReturnTypesTest extends TestCase {
         class TestObject { }
         Object returnObjectArgument(Object s);
         TestObject returnObjectArgument(TestObject s);
+        Class returnClass(JNIEnv env, Object arg);
         boolean returnFalse();
         boolean returnTrue();
         int returnInt32Zero();
@@ -138,7 +139,8 @@ public class ReturnTypesTest extends TestCase {
     @Override
     protected void setUp() {
         lib = Native.loadLibrary("testlib", TestLibrary.class);
-        libSupportingObject = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
+        libSupportingObject = Native.loadLibrary("testlib", TestLibrary.class,
+                Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
         libNativeMapped = Native.loadLibrary("testlib", NativeMappedLibrary.class);
     }
 
@@ -172,6 +174,13 @@ public class ReturnTypesTest extends TestCase {
         catch(Throwable e) {
             fail("Method declared with Java Object return should throw IllegalArgumentException, not " + e);
         }
+    }
+
+    public void testReturnClass() throws Exception {
+        assertEquals("Wrong class returned", Class.class,
+                libSupportingObject.returnClass(JNIEnv.CURRENT, TestLibrary.class));
+        assertEquals("Wrong class returned", StringBuilder.class,
+                libSupportingObject.returnClass(JNIEnv.CURRENT, new StringBuilder()));
     }
 
     public void testInvokeBoolean() {

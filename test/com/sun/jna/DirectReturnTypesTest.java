@@ -42,6 +42,10 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
             throw new IllegalArgumentException(s.getClass().getName());
         }
         @Override
+        public Class returnClass(JNIEnv env, Object arg) {
+            throw new IllegalArgumentException(arg.getClass().getName());
+        }
+        @Override
         public native boolean returnFalse();
         @Override
         public native boolean returnTrue();
@@ -95,6 +99,8 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
         public native Object returnObjectArgument(Object s);
         @Override
         public native TestObject returnObjectArgument(TestObject s);
+        @Override
+        public native Class returnClass(JNIEnv env, Object arg);
 
         static {
             Native.register(NativeLibrary.getInstance("testlib",
