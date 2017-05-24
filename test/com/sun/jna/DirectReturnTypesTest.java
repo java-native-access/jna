@@ -24,6 +24,7 @@
 package com.sun.jna;
 
 import java.util.Map;
+import java.util.Collections;
 
 /** Exercise a range of native methods.
  *
@@ -96,8 +97,13 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
     }
 
     public static class DirectObjectTestLibrary extends DirectTestLibrary {
-        public DirectObjectTestLibrary(Map<String, ?> options) {
-            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        @Override
+        public native Object returnObjectArgument(Object s);
+        @Override
+        public native TestObject returnObjectArgument(TestObject s);
+        public DirectObjectTestLibrary() {
+            Native.register(getClass(), NativeLibrary.getInstance("testlib",
+                Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE)));
         }
     }
 
@@ -117,9 +123,13 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
         return new DirectNativeMappedLibrary();
     }
 
-    // Override not-yet-supported tests
+
     @Override
-    public void testReturnObject() { }
+    public void testReturnObject() {
+        lib = new DirectObjectTestLibrary();
+    }
+
+    // Override not-yet-supported tests
     @Override
     public void testReturnPointerArray() { }
     @Override

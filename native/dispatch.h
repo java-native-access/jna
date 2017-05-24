@@ -115,6 +115,7 @@ enum {
   CVT_TYPE_MAPPER = com_sun_jna_Native_CVT_TYPE_MAPPER,
   CVT_TYPE_MAPPER_STRING = com_sun_jna_Native_CVT_TYPE_MAPPER_STRING,
   CVT_TYPE_MAPPER_WSTRING = com_sun_jna_Native_CVT_TYPE_MAPPER_WSTRING,
+  CVT_OBJECT = com_sun_jna_Native_CVT_OBJECT,
 };
 
 /* callback behavior flags */
