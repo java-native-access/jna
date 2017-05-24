@@ -485,7 +485,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     }
     else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
       c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
-      arg_types[i] = &ffi_type_sint32;
+      arg_types[i] = &ffi_type_uint32;
       arg_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
