@@ -10,6 +10,7 @@ Features
 * [#774](https://github.com/java-native-access/jna/pull/774): Addition win32 api : SendMessage, GetActiveWindow, COPYDATASTRUCT and a few constants + a demo application - [@cnico](https://github.com/cnico).
 * [#783](https://github.com/java-native-access/jna/pull/783): Add Ole32 functions: `OleBuildVersion`, `OleInitialize`, `OleUninitialize`, `OleFlushClipboard`, `OleRun`, add VARIANT conversion functions to OleAuto, add default locale, LCID and LANG to WinNT - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#784](https://github.com/java-native-access/jna/issues/784): Added Solaris Kstat library - [@dbwiddis](https://github.com/dbwiddis).
+* [#805](https://github.com/java-native-access/jna/issues/805): Provide a way to pass JNIEnv pointer to native method and support OPTION_ALLOW_OBJECTs for direct mapping - [@ncruces](https://github.com/ncruces).
 
 Bug Fixes
 ---------

@@ -1026,6 +1026,11 @@ Java_com_sun_jna_PerformanceTest_00024JNILibrary_getpid(JNIEnv *UNUSED(env), jcl
 #endif
 }
 
+EXPORT jclass
+returnClass(JNIEnv *env, jobject arg) {
+  return (*env)->GetObjectClass(env, arg);
+}
+
 #ifdef __cplusplus
 }
 #endif
