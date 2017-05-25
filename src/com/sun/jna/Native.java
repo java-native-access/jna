@@ -1534,8 +1534,10 @@ public final class Native implements Version {
     private static final int CVT_TYPE_MAPPER = 23;
     private static final int CVT_TYPE_MAPPER_STRING = 24;
     private static final int CVT_TYPE_MAPPER_WSTRING = 25;
+    private static final int CVT_OBJECT = 26;
+    private static final int CVT_JNIENV = 27;
 
-    private static int getConversion(Class<?> type, TypeMapper mapper) {
+    private static int getConversion(Class<?> type, TypeMapper mapper, boolean allowObjects) {
         if (type == Boolean.class) type = boolean.class;
         else if (type == Byte.class) type = byte.class;
         else if (type == Short.class) type = short.class;
@@ -1624,7 +1626,10 @@ public final class Native implements Version {
             }
             return CVT_NATIVE_MAPPED;
         }
-        return CVT_UNSUPPORTED;
+        if (JNIEnv.class == type) {
+            return CVT_JNIENV;
+        }
+        return allowObjects ? CVT_OBJECT : CVT_UNSUPPORTED;
     }
 
     /**
@@ -1657,6 +1662,7 @@ public final class Native implements Version {
         List<Method> mlist = new ArrayList<Method>();
         Map<String, ?> options = lib.getOptions();
         TypeMapper mapper = (TypeMapper) options.get(Library.OPTION_TYPE_MAPPER);
+        boolean allowObjects = Boolean.TRUE.equals(options.get(Library.OPTION_ALLOW_OBJECTS));
         options = cacheOptions(cls, options, null);
 
         for (Method m : methods) {
@@ -1677,7 +1683,7 @@ public final class Native implements Version {
             int[] cvt = new int[ptypes.length];
             ToNativeConverter[] toNative = new ToNativeConverter[ptypes.length];
             FromNativeConverter fromNative = null;
-            int rcvt = getConversion(rclass, mapper);
+            int rcvt = getConversion(rclass, mapper, allowObjects);
             boolean throwLastError = false;
             switch (rcvt) {
                 case CVT_UNSUPPORTED:
@@ -1701,6 +1707,7 @@ public final class Native implements Version {
                     rtype = FFIType.get(NativeMappedConverter.getInstance(rclass).nativeType()).peer;
                     break;
                 case CVT_STRUCTURE:
+                case CVT_OBJECT:
                     closure_rtype = rtype = FFIType.get(Pointer.class).peer;
                     break;
                 case CVT_STRUCTURE_BYVAL:
@@ -1714,7 +1721,7 @@ public final class Native implements Version {
             for (int t=0;t < ptypes.length;t++) {
                 Class<?> type = ptypes[t];
                 sig += getSignature(type);
-                int conversionType = getConversion(type, mapper);
+                int conversionType = getConversion(type, mapper, allowObjects);
                 cvt[t] = conversionType;
                 if (conversionType == CVT_UNSUPPORTED) {
                     throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
