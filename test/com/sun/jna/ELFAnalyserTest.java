@@ -26,10 +26,10 @@ public class ELFAnalyserTest {
     
     @BeforeClass
     public static void initClass() throws IOException {
-        File win32Zip = new File("lib/native/win32-x86-64.jar");
-        File linuxArmelZip = new File("lib/native/linux-armel.jar");
-        File linuxArmhfZip = new File("lib/native/linux-arm.jar");
-        File linuxAmd64Zip = new File("lib/native/linux-x86-64.jar");
+        File win32Zip = new File("dist/win32-x86-64.jar");
+        File linuxArmelZip = new File("dist/linux-armel.jar");
+        File linuxArmhfZip = new File("dist/linux-arm.jar");
+        File linuxAmd64Zip = new File("dist/linux-x86-64.jar");
         
         testResources.mkdirs();
         
