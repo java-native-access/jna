@@ -107,6 +107,10 @@ public class DirectArgumentsMarshalTest extends ArgumentsMarshalTest {
         public native int fillFloatBuffer(float[] buf, int len, float value);
         @Override
         public native int fillDoubleBuffer(double[] buf, int len, double value);
+        @Override
+        public native int fillInt8Buffer(boolean[] buf, int len, byte value);
+        @Override
+        public native int fillInt16Buffer(char[] buf, int len, short value);
 
         // dummy to avoid causing Native.register to fail
         @Override
