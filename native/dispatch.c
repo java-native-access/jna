@@ -485,7 +485,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
     }
     else if ((*env)->IsInstanceOf(env, arg, classBoolean)) {
       c_args[i].i = (*env)->GetBooleanField(env, arg, FID_Boolean_value);
-      arg_types[i] = &ffi_type_sint32;
+      arg_types[i] = &ffi_type_uint32;
       arg_values[i] = &c_args[i].i;
     }
     else if ((*env)->IsInstanceOf(env, arg, classByte)) {
@@ -1849,6 +1849,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
    objects[i] = *(void **)args[i];                                      \
    release[i] = (void *)(*env)->Release##Type##ArrayElements;           \
    elems[i] = *(void **)args[i] = (*env)->Get##Type##ArrayElements(env, objects[i], NULL); } while(0)
+      case CVT_ARRAY_BOOLEAN: ARRAY(Boolean); break;
       case CVT_ARRAY_BYTE: ARRAY(Byte); break;
       case CVT_ARRAY_SHORT: ARRAY(Short); break;
       case CVT_ARRAY_CHAR: ARRAY(Char); break;
@@ -1968,6 +1969,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
         free(*(void **)args[i]);
         break;
       case CVT_BUFFER:
+      case CVT_ARRAY_BOOLEAN:
       case CVT_ARRAY_BYTE:
       case CVT_ARRAY_SHORT:
       case CVT_ARRAY_CHAR:
