@@ -314,10 +314,7 @@ class Convert {
 					return t;
 				}
 			}
-		} catch (NoSuchMethodException e) {
-		} catch (IllegalAccessException e) {
-		} catch (IllegalArgumentException e) {
-		} catch (InvocationTargetException e) {
+		} catch(NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 		}
 		return null;
 	}
