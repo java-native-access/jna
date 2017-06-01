@@ -143,6 +143,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         // Check for temporary file deletion
         File f = new File(path);
         for (int i=0;i < GC_WAITS && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
+            System.gc(); // attempt to fix intermittent test failures
             Thread.sleep(4 * GC_WAIT_INTERVAL);  // '4 *' is attempt to fix intermittent test failures
             System.gc();
         }
