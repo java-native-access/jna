@@ -168,11 +168,7 @@ public class Factory extends ObjectFactory {
     private <T> T runInComThread(Callable<T> callable) {
         try {
             return comThread.execute(callable);
-        } catch (TimeoutException ex) {
-            throw new RuntimeException(ex);
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-        } catch (ExecutionException ex) {
+        } catch(TimeoutException | InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);
         }
     }
