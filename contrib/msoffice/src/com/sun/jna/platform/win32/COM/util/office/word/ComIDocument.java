@@ -62,6 +62,16 @@ public interface ComIDocument {
         @ComProperty(name = "Tables", dispId = 0x6)
         Tables getTables();
         
+        @ComProperty
+        ComITemplate getAttachedTemplate();
+        
+        @ComProperty
+        void setSaved(boolean bSaved);
+        
+        @ComProperty
+        boolean getSaved();
+        
+        
         /**
          * <p>id(0x228)</p>
          */
@@ -81,4 +91,16 @@ public interface ComIDocument {
                 Boolean BitmapMissingFonts,
                 Boolean UseISO19005_1,
                 Object FixedFormatExtClassPtr);
+        
+        @ComMethod
+        void CheckGrammar();
+        
+        @ComMethod
+        void CheckSpelling();
+        
+        @ComMethod
+        void Repaginate();
+        
+
+        
 }

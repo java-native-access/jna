@@ -204,6 +204,21 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
         return result.shortValue();
     }
+    
+    /**
+     * Gets the long property.
+     * 
+     * @param propertyName
+     *            the property name
+     * @return the long property
+     */
+    protected long getLongProperty(String propertyName) {
+        VARIANT.ByReference result = new VARIANT.ByReference();
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
+                this.getIDispatch(), propertyName);
+
+        return result.longValue();
+    }
 
     /**
      * Gets the string property.
@@ -570,6 +585,19 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      *            the value
      */
     protected void setProperty(String propertyName, short value) {
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
+                propertyName, new VARIANT(value));
+    }
+    
+    /**
+     * Sets the property.
+     * 
+     * @param propertyName
+     *            the property name
+     * @param value
+     *            the value
+     */
+    protected void setProperty(String propertyName, long value) {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
                 propertyName, new VARIANT(value));
     }
