@@ -197,6 +197,7 @@ public final class Platform {
             || "ia64".equals(ARCH)
             || "ppc64".equals(ARCH) || "ppc64le".equals(ARCH)
             || "sparcv9".equals(ARCH)
+            || "mips64".equals(ARCH) || "mips64el".equals(ARCH)
             || "amd64".equals(ARCH)) {
             return true;
         }
@@ -225,6 +226,16 @@ public final class Platform {
         return ARCH.startsWith("sparc");
     }
 
+    public static final boolean isMIPS() {
+        if (ARCH.equals("mips")
+            || ARCH.equals("mips64")
+            || ARCH.equals("mipsel")
+            || ARCH.equals("mips64el")) {
+            return true;
+        } 
+        return false;
+    }
+
     static String getCanonicalArchitecture(String arch, boolean softfloat) {
 	arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
@@ -248,6 +259,9 @@ public final class Platform {
         if("arm".equals(arch) && softfloat) {
             arch = "armel";
         }
+	if ("mips64el".equals(arch)) {
+	    arch = "mips64el";
+	}
         
         
 	return arch;

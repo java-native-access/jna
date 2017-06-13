@@ -947,6 +947,9 @@ public class NativeLibrary {
             cpu = "arm";
             libc = "-gnueabi";
         }
+        else if (Platform.isMIPS()) {
+            cpu = (Platform.is64Bit() ? "mips64el" : "mipsel");
+        }
 
         return cpu + kernel + libc;
     }
