@@ -259,9 +259,6 @@ public final class Platform {
         if("arm".equals(arch) && softfloat) {
             arch = "armel";
         }
-	if ("mips64el".equals(arch)) {
-	    arch = "mips64el";
-	}
         
         
 	return arch;

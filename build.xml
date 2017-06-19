@@ -254,13 +254,7 @@
       </and>
     </condition>
     <condition property="jre.arch" value="mips64el">
-      <or>
-	<matches pattern="mips64el" string="${os.arch}"/>
-	<and>
-	  <matches pattern="mips64" string="${os.arch}"/>
-	  <matches pattern="little" string="${sun.cpu.endian}"/>
-	</and>
-      </or>
+      <matches pattern="mips64el" string="${os.arch}"/>
     </condition>
     
     <property name="jre.arch" value="${os.arch}"/>
