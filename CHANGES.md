@@ -12,6 +12,7 @@ Features
 * [#784](https://github.com/java-native-access/jna/issues/784): Added Solaris Kstat library - [@dbwiddis](https://github.com/dbwiddis).
 * [#805](https://github.com/java-native-access/jna/issues/805): Provide a way to pass JNIEnv pointer to native method and support OPTION_ALLOW_OBJECTs for direct mapping - [@ncruces](https://github.com/ncruces).
 * [#816](https://github.com/java-native-access/jna/pull/816): Support `boolean[]` in direct mapping - [@ncruces](https://github.com/ncruces).
+* [#827](https://github.com/java-native-access/jna/pull/827): Add support for linux-mips64el - [@all7](https://github.com/all7).
 
 Bug Fixes
 ---------
