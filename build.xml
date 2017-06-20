@@ -253,9 +253,6 @@
         <matches pattern="true" string="${build.isArmSoftFloat}"/>
       </and>
     </condition>
-    <condition property="jre.arch" value="mips64el">
-      <matches pattern="mips64el" string="${os.arch}"/>
-    </condition>
     
     <property name="jre.arch" value="${os.arch}"/>
     
