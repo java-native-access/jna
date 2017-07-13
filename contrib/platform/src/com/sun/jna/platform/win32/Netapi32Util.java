@@ -214,7 +214,7 @@ public abstract class Netapi32Util {
             LMAccess.LOCALGROUP_INFO_1 group = new LMAccess.LOCALGROUP_INFO_1(bufptr.getValue());
             LMAccess.LOCALGROUP_INFO_1[] groups = (LOCALGROUP_INFO_1[]) group.toArray(entriesRead.getValue());
 			
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
+            ArrayList<LocalGroup> result = new ArrayList<>(); 
             for(LOCALGROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.lgrui1_name != null) {
@@ -263,7 +263,7 @@ public abstract class Netapi32Util {
             LMAccess.GROUP_INFO_1 group = new LMAccess.GROUP_INFO_1(bufptr.getValue());
             LMAccess.GROUP_INFO_1[] groups = (LMAccess.GROUP_INFO_1[]) group.toArray(entriesRead.getValue());
 			
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
+            ArrayList<LocalGroup> result = new ArrayList<>(); 
             for(LMAccess.GROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.grpi1_name != null) {
@@ -312,7 +312,7 @@ public abstract class Netapi32Util {
             }
             LMAccess.USER_INFO_1 user = new LMAccess.USER_INFO_1(bufptr.getValue());
             LMAccess.USER_INFO_1[] users = (LMAccess.USER_INFO_1[]) user.toArray(entriesRead.getValue());
-            ArrayList<User> result = new ArrayList<User>(); 
+            ArrayList<User> result = new ArrayList<>(); 
             for(LMAccess.USER_INFO_1 lu : users) {
                 User auser = new User();
                 if (lu.usri1_name != null) {
@@ -367,7 +367,7 @@ public abstract class Netapi32Util {
             }
             LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());    	
             LOCALGROUP_USERS_INFO_0[] lgroups = (LOCALGROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
-            ArrayList<Group> result = new ArrayList<Group>(); 
+            ArrayList<Group> result = new ArrayList<>(); 
             for (LOCALGROUP_USERS_INFO_0 lgpi : lgroups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.lgrui0_name != null) {
@@ -414,7 +414,7 @@ public abstract class Netapi32Util {
             }
             GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());    	
             GROUP_USERS_INFO_0[] lgroups = (GROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
-            ArrayList<Group> result = new ArrayList<Group>(); 
+            ArrayList<Group> result = new ArrayList<>(); 
             for (GROUP_USERS_INFO_0 lgpi : lgroups) {
                 Group lgp = new Group();
                 if (lgpi.grui0_name != null) {
@@ -637,7 +637,7 @@ public abstract class Netapi32Util {
     	try {
             DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
             DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
-            ArrayList<DomainTrust> trusts = new ArrayList<DomainTrust>(domainTrustCount.getValue());
+            ArrayList<DomainTrust> trusts = new ArrayList<>(domainTrustCount.getValue());
             for(DS_DOMAIN_TRUSTS domainTrust : domainTrusts) {
                 DomainTrust t = new DomainTrust();
                 if (domainTrust.DnsDomainName != null) {

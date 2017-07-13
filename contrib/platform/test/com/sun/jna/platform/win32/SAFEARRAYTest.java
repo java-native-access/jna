@@ -487,8 +487,8 @@ public class SAFEARRAYTest {
         recordset.Open("SELECT TOP 5 System.ItemPathDisplay, System.ItemName, System.ItemUrl, System.DateCreated FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);
 
         // Save complete list for comparison with subscript list
-        List<String> urls = new ArrayList<String>(5);
-        List<String> names = new ArrayList<String>(5);
+        List<String> urls = new ArrayList<>(5);
+        List<String> names = new ArrayList<>(5);
         
         while (!recordset.getEOF()) {
             WinNT.HRESULT hr;

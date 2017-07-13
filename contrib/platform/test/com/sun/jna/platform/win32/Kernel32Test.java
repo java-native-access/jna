@@ -1027,7 +1027,7 @@ public class Kernel32Test extends TestCase {
 
             assertTrue(Kernel32.INSTANCE.Process32First(processEnumHandle, processEntry));
 
-            List<Long> processIdList = new ArrayList<Long>();
+            List<Long> processIdList = new ArrayList<>();
             processIdList.add(processEntry.th32ProcessID.longValue());
 
             while (Kernel32.INSTANCE.Process32Next(processEnumHandle, processEntry)) {
@@ -1499,7 +1499,7 @@ public class Kernel32Test extends TestCase {
 
 
     public void testEnumResourceTypes() {
-        final List<String> types = new ArrayList<String>();
+        final List<String> types = new ArrayList<>();
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
             @Override

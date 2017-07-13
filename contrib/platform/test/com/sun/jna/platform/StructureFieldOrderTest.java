@@ -42,7 +42,7 @@ public class StructureFieldOrderTest extends TestCase {
 
 
     public void testMethodGetFieldOrder() {
-        final List<String> ignoreConstructorError = new ArrayList<String>();
+        final List<String> ignoreConstructorError = new ArrayList<>();
 
         if (Platform.isWindows()) {
             ignoreConstructorError.add(X11.class.getName() + "$");

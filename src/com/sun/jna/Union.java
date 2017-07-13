@@ -67,7 +67,7 @@ public abstract class Union extends Structure {
     @Override
     protected List<String> getFieldOrder() {
         List<Field> flist = getFieldList();
-        List<String> list = new ArrayList<String>(flist.size());
+        List<String> list = new ArrayList<>(flist.size());
         for (Field f : flist) {
             list.add(f.getName());
         }

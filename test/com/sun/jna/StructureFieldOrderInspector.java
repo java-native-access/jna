@@ -58,7 +58,7 @@ public final class StructureFieldOrderInspector {
                                                    final List<String> ignoreConstructorError) {
         final Set<Class<? extends Structure>> classes = StructureFieldOrderInspector.findSubTypesOfStructure(classDeclaredInSourceTreeToSearch);
 
-        final List<Throwable> problems = new ArrayList<Throwable>();
+        final List<Throwable> problems = new ArrayList<>();
 
         for (final Class<? extends Structure> structureSubType : classes) {
             try {
@@ -174,7 +174,7 @@ public final class StructureFieldOrderInspector {
         }
 
         final Field[] actualFields = structureSubType.getFields(); // include fields from super classes
-        final List<String> actualFieldNames = new ArrayList<String>(actualFields.length);
+        final List<String> actualFieldNames = new ArrayList<>(actualFields.length);
         for (final Field field : actualFields) {
             // ignore static fields
             if (!Modifier.isStatic(field.getModifiers())) {

@@ -201,7 +201,7 @@ public class ObjectFactory {
 	
 	public void disposeAll() {
             synchronized (this.registeredObjects) {
-                List<WeakReference<ProxyObject>> s = new ArrayList<WeakReference<ProxyObject>>(this.registeredObjects);
+                List<WeakReference<ProxyObject>> s = new ArrayList<>(this.registeredObjects);
                 for(WeakReference<ProxyObject> weakRef : s) {
                         ProxyObject po = weakRef.get();
                         if(po != null) {

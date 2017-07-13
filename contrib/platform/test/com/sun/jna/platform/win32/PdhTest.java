@@ -74,7 +74,7 @@ public class PdhTest extends AbstractWin32TestSupport {
     
     @Test
     public void testQueryMultipleCounters() {
-        Collection<String> names = new LinkedList<String>();
+        Collection<String> names = new LinkedList<>();
         PDH_COUNTER_PATH_ELEMENTS elems = new PDH_COUNTER_PATH_ELEMENTS();
         elems.szObjectName = "Processor";
         elems.szInstanceName = "_Total";
@@ -89,7 +89,7 @@ public class PdhTest extends AbstractWin32TestSupport {
         
         HANDLE hQuery = ref.getValue();
         try {
-            Map<String, HANDLE> handlesMap = new HashMap<String, HANDLE>(names.size());
+            Map<String, HANDLE> handlesMap = new HashMap<>(names.size());
             try {
                 for (String counterName : names) {
                     ref.setValue(null);

@@ -70,7 +70,7 @@ public class FilteredTextField extends JTextField {
   private static final Border RED_BORDER =
     BorderFactory.createLineBorder(Color.RED, 2);
   
-  private ArrayList<Character> allowable = new ArrayList<Character>();
+  private ArrayList<Character> allowable = new ArrayList<>();
   private int maximumLength = String.valueOf(Long.MAX_VALUE).length();
   
   private Border defaultBorder = null;

@@ -774,7 +774,7 @@ v     * @param wide whether to convert from a wide or standard C string
      * determined by a NULL-valued terminating element.
      */
     public Pointer[] getPointerArray(long offset) {
-        List<Pointer> array = new ArrayList<Pointer>();
+        List<Pointer> array = new ArrayList<>();
         int addOffset = 0;
         Pointer p = getPointer(offset);
         while (p != null) {
@@ -862,7 +862,7 @@ v     * @param wide whether to convert from a wide or standard C string
      * @param encoding
      */
     public String[] getStringArray(long offset, int length, String encoding) {
-        List<String> strings = new ArrayList<String>();
+        List<String> strings = new ArrayList<>();
         Pointer p;
         int addOffset = 0;
         if (length != -1) {

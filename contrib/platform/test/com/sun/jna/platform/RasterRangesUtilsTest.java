@@ -26,7 +26,7 @@ import com.sun.jna.platform.RasterRangesUtils.RangesOutput;
 
 public class RasterRangesUtilsTest extends TestCase {
 
-    Set<Rectangle> rects = new HashSet<Rectangle>();
+    Set<Rectangle> rects = new HashSet<>();
 
     RangesOutput out = new RangesOutput() {
         public boolean outputRange(int x, int y, int w, int h) {

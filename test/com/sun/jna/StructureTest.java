@@ -1580,7 +1580,7 @@ public class StructureTest extends TestCase {
             public int four = 4;
             @Override
             protected List<String> getFieldOrder() {
-                List<String> list = new ArrayList<String>(super.getFieldOrder());
+                List<String> list = new ArrayList<>(super.getFieldOrder());
                 list.addAll(Arrays.asList("four", "five"));
                 return list;
             }
