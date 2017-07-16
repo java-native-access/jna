@@ -90,7 +90,7 @@ public class XAttrUtil {
 	}
 
 	protected static List<String> decodeStringSequence(ByteBuffer bb) {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 
 		bb.mark(); // first key starts from here
 		while (bb.hasRemaining()) {

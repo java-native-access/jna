@@ -350,7 +350,7 @@ public class CallbacksTest extends TestCase implements Paths {
         lib.callVoidCallback(cb);
         assertTrue("Callback not called", called[0]);
 
-        Map<Callback, CallbackReference> refs = new WeakHashMap<Callback, CallbackReference>(callbackCache());
+        Map<Callback, CallbackReference> refs = new WeakHashMap<>(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = refs.get(cb);
         refs = callbackCache();
@@ -690,7 +690,7 @@ public class CallbacksTest extends TestCase implements Paths {
         String arg = getName() + "1" + charset.decode(charset.encode(UNICODE));
         String arg2 = getName() + "2" + charset.decode(charset.encode(UNICODE));
         String value = lib.callStringCallback(cb, arg, arg2);
-        WeakReference<Object> ref = new WeakReference<Object>(value);
+        WeakReference<Object> ref = new WeakReference<>(value);
 
         arg = null;
         value = null;
@@ -1308,7 +1308,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // as daemon to avoid VM having to wait for it.
     public void testCallbackThreadPersistence() throws Exception {
     	final int[] called = {0};
-        final Set<Thread> threads = new HashSet<Thread>();
+        final Set<Thread> threads = new HashSet<>();
 
         final int COUNT = 5;
         CallbackThreadInitializer init = new CallbackThreadInitializer(true, false) {
@@ -1337,7 +1337,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
     // Thread object is never GC'd on linux-amd64 and darwin-amd64 (w/openjdk7)
     public void testCleanupUndetachedThreadOnThreadExit() throws Exception {
-        final Set<Reference<Thread>> threads = new HashSet<Reference<Thread>>();
+        final Set<Reference<Thread>> threads = new HashSet<>();
         final int[] called = { 0 };
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             @Override
@@ -1391,7 +1391,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // but callback explicitly detaches it on final invocation.
     public void testCallbackIndicatedThreadDetach() throws Exception {
     	final int[] called = {0};
-        final Set<Thread> threads = new HashSet<Thread>();
+        final Set<Thread> threads = new HashSet<>();
         final int COUNT = 5;
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             @Override
@@ -1454,7 +1454,7 @@ public class CallbacksTest extends TestCase implements Paths {
         assertEquals("Wrong module HANDLE for DLL function pointer", handle, pref.getValue());
 
         // Check slot re-use
-        Map<Callback, CallbackReference> refs = new WeakHashMap<Callback, CallbackReference>(callbackCache());
+        Map<Callback, CallbackReference> refs = new WeakHashMap<>(callbackCache());
         assertTrue("Callback not cached", refs.containsKey(cb));
         CallbackReference ref = refs.get(cb);
         refs = callbackCache();

@@ -149,7 +149,7 @@ public class NativeLibrary {
         }
 
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
-        List<String> searchPath = new ArrayList<String>();
+        List<String> searchPath = new ArrayList<>();
         int openFlags = openFlags(options);
 
         // Append web start path, if available.  Note that this does not
@@ -404,7 +404,7 @@ public class NativeLibrary {
      * @param libraryOptions Native library options for the given library (see {@link Library}).
      */
     public static final NativeLibrary getInstance(String libraryName, Map<String, ?> libraryOptions) {
-        Map<String, Object> options = new HashMap<String, Object>(libraryOptions);
+        Map<String, Object> options = new HashMap<>(libraryOptions);
         if (options.get(Library.OPTION_CALLING_CONVENTION) == null) {
             options.put(Library.OPTION_CALLING_CONVENTION, Integer.valueOf(Function.C_CONVENTION));
         }
@@ -638,7 +638,7 @@ public class NativeLibrary {
 
     /** Close the native library we're mapped to. */
     public void dispose() {
-        Set<String> keys = new HashSet<String>();
+        Set<String> keys = new HashSet<>();
         synchronized(libraries) {
             for (Map.Entry<String, Reference<NativeLibrary>> e : libraries.entrySet()) {
                 Reference<NativeLibrary> ref = e.getValue();
@@ -666,7 +666,7 @@ public class NativeLibrary {
             return Collections.emptyList();
         }
         StringTokenizer st = new StringTokenizer(value, File.pathSeparator);
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         while (st.hasMoreTokens()) {
             String path = st.nextToken();
             if (!"".equals(path)) {
@@ -792,7 +792,7 @@ public class NativeLibrary {
                 }
             };
 
-        Collection<File> matches = new LinkedList<File>();
+        Collection<File> matches = new LinkedList<>();
         for (String path : searchPath) {
             File[] files = new File(path).listFiles(filter);
             if (files != null && files.length > 0) {
@@ -958,7 +958,7 @@ public class NativeLibrary {
      * Get the library paths from ldconfig cache. Tested against ldconfig 2.13.
      */
     private static ArrayList<String> getLinuxLdPaths() {
-        ArrayList<String> ldPaths = new ArrayList<String>();
+        ArrayList<String> ldPaths = new ArrayList<>();
         try {
                 Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));

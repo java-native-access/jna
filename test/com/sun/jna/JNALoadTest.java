@@ -127,8 +127,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         assertTrue("Native library not unpacked from jar: " + path,
                    path.startsWith(System.getProperty("java.io.tmpdir")));
 
-        Reference<Class<?>> ref = new WeakReference<Class<?>>(cls);
-        Reference<ClassLoader> clref = new WeakReference<ClassLoader>(loader);
+        Reference<Class<?>> ref = new WeakReference<>(cls);
+        Reference<ClassLoader> clref = new WeakReference<>(loader);
         loader = null;
         cls = null;
         field = null;
@@ -180,8 +180,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         String path = (String)field.get(null);
         assertNotNull("Native library not found", path);
 
-        Reference<Class<?>> ref = new WeakReference<Class<?>>(cls);
-        Reference<ClassLoader> clref = new WeakReference<ClassLoader>(loader);
+        Reference<Class<?>> ref = new WeakReference<>(cls);
+        Reference<ClassLoader> clref = new WeakReference<>(loader);
         loader = null;
         cls = null;
         field = null;

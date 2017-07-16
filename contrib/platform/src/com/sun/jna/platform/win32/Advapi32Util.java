@@ -454,7 +454,7 @@ public abstract class Advapi32Util {
 				tokenInformationLength.getValue(), tokenInformationLength)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
-		ArrayList<Account> userGroups = new ArrayList<Account>();
+		ArrayList<Account> userGroups = new ArrayList<>();
 		// make array of names
 		for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
 			Account group = null;
@@ -810,7 +810,7 @@ public abstract class Advapi32Util {
 				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
 		}
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		int offset = 0;
 		while (offset < data.size()) {
 			String s = data.getWideString(offset);
@@ -1537,7 +1537,7 @@ public abstract class Advapi32Util {
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
-		ArrayList<String> keys = new ArrayList<String>(lpcSubKeys.getValue());
+		ArrayList<String> keys = new ArrayList<>(lpcSubKeys.getValue());
 		char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
 		for (int i = 0; i < lpcSubKeys.getValue(); i++) {
 			IntByReference lpcchValueName = new IntByReference(
@@ -1633,7 +1633,7 @@ public abstract class Advapi32Util {
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
-		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
+		TreeMap<String, Object> keyValues = new TreeMap<>();
 		char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
 		byte[] data = new byte[lpcMaxValueLen.getValue()];
 		for (int i = 0; i < lpcValues.getValue(); i++) {
@@ -1701,7 +1701,7 @@ public abstract class Advapi32Util {
 			case WinNT.REG_MULTI_SZ: {
 				Memory stringData = new Memory(lpcbData.getValue());
 				stringData.write(0, data, 0, lpcbData.getValue());
-				ArrayList<String> result = new ArrayList<String>();
+				ArrayList<String> result = new ArrayList<>();
 				int offset = 0;
 				while (offset < stringData.size()) {
 					String s = stringData.getWideString(offset);
@@ -1987,7 +1987,7 @@ public abstract class Advapi32Util {
 			}
 			// strings
 			if (_record.NumStrings.intValue() > 0) {
-				ArrayList<String> strings = new ArrayList<String>();
+				ArrayList<String> strings = new ArrayList<>();
 				int count = _record.NumStrings.intValue();
 				long offset = _record.StringOffset.intValue();
 				while (count > 0) {
@@ -2154,7 +2154,7 @@ public abstract class Advapi32Util {
 		ACCESS_ACEStructure[] aceStructures = dacl.getACEStructures();
 
 		if (compact) {
-			Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
+			Map<String, ACCESS_ACEStructure> aceMap = new HashMap<>();
 			for (ACCESS_ACEStructure aceStructure : aceStructures) {
 				boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
 				String key = aceStructure.getSidString() + "/" + inherted + "/"

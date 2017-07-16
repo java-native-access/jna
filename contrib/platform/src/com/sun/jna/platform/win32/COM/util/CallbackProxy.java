@@ -97,7 +97,7 @@ public class CallbackProxy implements IDispatchCallback {
 	}
 
 	Map<DISPID, Method> createDispIdMap(Class<?> comEventCallbackInterface) {
-		Map<DISPID, Method> map = new HashMap<DISPID, Method>();
+		Map<DISPID, Method> map = new HashMap<>();
 
 		for (Method meth : comEventCallbackInterface.getMethods()) {
 			ComEventCallback annotation = meth.getAnnotation(ComEventCallback.class);
@@ -223,7 +223,7 @@ public class CallbackProxy implements IDispatchCallback {
             try {
                 eventMethod.invoke(comEventCallbackListener, params);
             } catch (Exception e) {
-                List<String> decodedClassNames = new ArrayList<String>(params.length);
+                List<String> decodedClassNames = new ArrayList<>(params.length);
                 for(Object o: params) {
                     if(o == null) {
                         decodedClassNames.add("NULL");
