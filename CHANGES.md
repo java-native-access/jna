@@ -15,6 +15,17 @@ Features
 Bug Fixes
 ---------
 * [#652](https://github.com/java-native-access/jna/issues/652): Dead Lock in class initialization - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#843](https://github.com/java-native-access/jna/pull/843): Correctly bind `com.sun.jna.platform.win32.SecBufferDesc` and add convenience binding as `com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc`. Bind SSPI functions `InitializeSecurityContext`, `AcceptSecurityContext`, `QueryCredentialsAttributes`, `QuerySecurityPackageInfo`, `EncryptMessage`, `DecryptMessage`, `MakeSignature`, `VerifySignature` in `com.sun.jna.platform.win32.Secur32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+
+
+Breaking Changes
+----------------
+* `Pointer#SIZE` is removed. Its use is replaced by `Native#POINTER_SIZE` 
+  to prevent a class loading deadlock, when JNA is initialized from multiple threads
+* `SecBufferDesc` was incompatibly changed to match the correct native semantics.
+  SecBufferDesc describing more than one buffer were broken. For most usecases 
+  `com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc` is the best 
+  alternative.
 
 Release 4.5.0 (Next release)
 ============================
