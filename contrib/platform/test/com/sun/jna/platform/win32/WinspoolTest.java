@@ -17,6 +17,7 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
+import com.sun.jna.platform.win32.Winspool.PRINTER_DEFAULTS;
 import com.sun.jna.ptr.IntByReference;
 
 import junit.framework.TestCase;
@@ -93,5 +94,10 @@ public class WinspoolTest extends TestCase {
         boolean result = Winspool.INSTANCE.ClosePrinter(null);
         assertFalse("ClosePrinter should return false on failure.", result);
         assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
+    }
+
+    public void testLPPrinterDefaultStructure() {
+        PRINTER_DEFAULTS defaults = new PRINTER_DEFAULTS();
+        defaults.write();
     }
 }
