@@ -508,7 +508,7 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">
 	 *      PRINTER_DEFAULTS structure</a>
 	 */
-	public class LPPRINTER_DEFAULTS extends Structure {
+	public class PRINTER_DEFAULTS extends Structure {
 		
 		public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
 		
