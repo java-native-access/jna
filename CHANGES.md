@@ -20,7 +20,7 @@ Bug Fixes
 * [#785](https://github.com/java-native-access/jna/issues/785): OaIdlUtil#toPrimitiveArray fails if dimension bounds are not 0-based - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#795](https://github.com/java-native-access/jna/issues/795): com.sun.jna.platform.win32.WinDef.WORDByReference holds a WORD which is defined to 16 bit on windows, so it needs to be accessed as short (getShort()). Fix suggested by  - [@kdeines](https://github.com/kdeines).
 * [#804](https://github.com/java-native-access/jna/pull/804) Main-Class in jna-platform.jar collides with java 9 module system - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#823](https://github.com/java-native-access/jna/pull/823): Rename LPPRINTER_DEFAULTS to PRINTER_DEFAULTS and expose all fields.
+* [#834](https://github.com/java-native-access/jna/issues/834): Rename LPPRINTER_DEFAULTS to PRINTER_DEFAULTS and expose all fields.
 
 Release 4.4.0
 =============
