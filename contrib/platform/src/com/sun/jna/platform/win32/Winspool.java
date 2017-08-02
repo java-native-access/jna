@@ -508,7 +508,7 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">
 	 *      PRINTER_DEFAULTS structure</a>
 	 */
-	public class LPPRINTER_DEFAULTS extends Structure {
+	public class PRINTER_DEFAULTS extends Structure {
 		
 		public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
 		
@@ -521,14 +521,14 @@ public interface Winspool extends StdCallLibrary {
 		 * Pointer to a DEVMODE structure that identifies the default
 		 * environment and initialization data for a printer.
 		 */
-		PVOID pDevMode;
+		public PVOID pDevMode;
 		/**
 		 * Specifies desired access rights for a printer. The OpenPrinter
 		 * function uses this member to set access rights to the printer. These
 		 * rights can affect the operation of the SetPrinter and DeletePrinter
 		 * functions.
 		 */
-		int DesiredAccess;
+		public int DesiredAccess;
 
 		@Override
         protected List<String> getFieldOrder() {
