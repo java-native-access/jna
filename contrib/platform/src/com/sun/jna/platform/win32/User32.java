@@ -1731,7 +1731,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *        handle to that display monitor. If the point is not contained by a display monitor,
      *        the return value depends on the value of dwFlags.
      */
-    HMONITOR MonitorFromPoint(POINT pt, int dwFlags);
+    HMONITOR MonitorFromPoint(POINT.ByValue pt, int dwFlags);
 
     /**
      * Retrieves a handle to the display monitor that has the largest area of intersection with
