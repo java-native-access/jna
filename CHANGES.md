@@ -14,6 +14,7 @@ Features
 * [#816](https://github.com/java-native-access/jna/pull/816): Support `boolean[]` in direct mapping - [@ncruces](https://github.com/ncruces).
 * [#827](https://github.com/java-native-access/jna/pull/827): Add support for linux-mips64el - [@all7](https://github.com/all7).
 * [#845](https://github.com/java-native-access/jna/issues/845): Add support for linux-s390x - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#771](https://github.com/java-native-access/jna/issues/771): Rebuild native libraries for linux-x86 and linux-x86-64 with an against an older GLIBC (minimum version of glibc for these architectures is now 2.7) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
