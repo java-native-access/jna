@@ -3528,9 +3528,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * construct the locale id from a language id and a sort id.
          * 
-         * @param lgid
-         * @param srtid
-         * @return 
+         * @param lgid language id
+         * @param srtid sort id
+         * @return locale id derived from ldig and srtid
          */
         public static final LCID MAKELCID(int lgid, int srtid) {
             return new LCID(_MAKELCID(lgid, srtid));
@@ -3539,10 +3539,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * construct the locale id from a language id, sort id, and sort version.
          * 
-         * @param lgid
-         * @param srtid
-         * @param ver
-         * @return 
+         * @param lgid locale id
+         * @param srtid sort id
+         * @param ver sort version
+         * @return locale id derviced from a language id, sort id, and sort version.
          */
         public static final LCID MAKESORTLCID(int lgid, int srtid, int ver) {
             return new LCID(_MAKELCID(lgid, srtid) | (ver << 20));
@@ -3551,8 +3551,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * extract the language id from a locale id.
          * 
-         * @param lcid
-         * @return 
+         * @param lcid locale id
+         * @return extracted language id
          */
         public static final int LANGIDFROMLCID(LCID lcid) {
             return lcid.intValue() & 0xFFFF;
@@ -3561,8 +3561,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * extract the sort id from a locale id.
          * 
-         * @param lcid
-         * @return 
+         * @param lcid locale id
+         * @return extracted sort id
          */
         public static final int SORTIDFROMLCID(LCID lcid) {
             return (lcid.intValue() >>> 16) & 0xf;
@@ -3571,8 +3571,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * extract the sort version from a locale id.
          * 
-         * @param lcid
-         * @return 
+         * @param lcid locale id
+         * @return extracted sort version
          */
         public static final int SORTVERSIONFROMLCID(LCID lcid) {
             return (lcid.intValue() >>> 20) & 0xf;
@@ -3581,9 +3581,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Construct language id from a primary language id and a sublanguage id.
          * 
-         * @param p Language ID
-         * @param s Sublanguage ID
-         * @return 
+         * @param p primary language ID
+         * @param s sublanguage ID
+         * @return constructed language id
          */
         public static final int MAKELANGID(int p, int s) {
             return (s << 10) | (p & 0xFFFF);
@@ -3592,8 +3592,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Extract primary language id from a language id.
          * 
-         * @param lgid Language ID
-         * @return 
+         * @param lgid language ID
+         * @return extracted primary language id
          */
         public static final int PRIMARYLANGID(int lgid) {
             return lgid & 0x3ff;
@@ -3602,8 +3602,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Extract sublanguage id from a language id.
          * 
-         * @param lgid Language ID
-         * @return 
+         * @param lgid language ID
+         * @return extracted sublanguage id
          */
         public static final int SUBLANGID(int lgid) {
             return (lgid  & 0xFFFF) >>> 10;

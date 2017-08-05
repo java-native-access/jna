@@ -184,7 +184,7 @@ public class User32Test extends AbstractWin32TestSupport {
     public final void testMonitorFromPoint() {
         int dwFlags = WinUser.MONITOR_DEFAULTTOPRIMARY;
 
-        POINT pt = new POINT(0, 0);
+        POINT.ByValue pt = new POINT.ByValue(0, 0);
         assertNotNull(User32.INSTANCE.MonitorFromPoint(pt, dwFlags));
     }
 
