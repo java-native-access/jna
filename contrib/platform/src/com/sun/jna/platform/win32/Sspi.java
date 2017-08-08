@@ -642,10 +642,19 @@ public interface Sspi {
     }
 
     /**
+     * <b>DON'T USE THIS CLASS</b>
      * 
-     * @deprecated use {@link SecBufferDesc2} (generic binding) and
-     * {@link ManagedSecBufferDesc} (use for SecBufferDesc managed from the
-     * java side)
+     * <p>The SecBufferDesc structure describes an array of SecBuffer structures to
+     * pass from a transport application to a security package.</p>
+     * 
+     * <p>This class is provided for backwards compability and <b>must not be used
+     * for new code.</b></p>
+     * 
+     * <p>The binding used here, works only for the corner case, where
+     * exactly one {@link SecBuffer} is passed to the SecurityPackage.</p>
+     * 
+     * @deprecated use {@link ManagedSecBufferDesc} or {@link SecBufferDesc2}
+     * (generic binding)
      */
     @Deprecated
     public static class SecBufferDesc extends Structure {
@@ -699,78 +708,17 @@ public interface Sspi {
             return FIELDS;
         }
     }
-
-    /**
-     * The SecBufferDesc structure describes an array of SecBuffer structures
-     * to pass from a transport application to a security package.
-     * 
-     * <p>
-     * ManagedSecBufferDesc assumes, that the size of the SecBufferDesc is known
-     * at construction time. It is assumed, that this covers all relevant
-     * use-cases.</p>
-     */
-    public static class ManagedSecBufferDesc extends SecBufferDesc2 {
-                
-        private final SecBuffer[] secBuffers;
-        
-        /**
-         * Create a new SecBufferDesc with initial data.
-         * @param type Token type.
-         * @param token Initial token data.
-         */
-        public ManagedSecBufferDesc(int type, byte[] token) {
-            secBuffers = new SecBuffer[] { new SecBuffer(type, token) };
-            pBuffers = secBuffers[0].getPointer();
-            cBuffers = secBuffers.length;
-        }
-
-        /**
-         * Create a new SecBufferDesc with one SecBuffer of a given type and size.
-         * @param type type
-         * @param tokenSize token size
-         */
-        public ManagedSecBufferDesc(int type, int tokenSize) {
-            secBuffers = new SecBuffer[] { new SecBuffer(type, tokenSize) };
-            pBuffers = secBuffers[0].getPointer();
-            cBuffers = secBuffers.length;
-        }
-        
-        public ManagedSecBufferDesc(int bufferCount) {
-            cBuffers = bufferCount;
-            secBuffers = (SecBuffer[]) new SecBuffer().toArray(bufferCount);
-            pBuffers = secBuffers[0].getPointer();
-            cBuffers = secBuffers.length;
-        }
-
-        public SecBuffer getBuffer(int idx) {
-            return secBuffers[idx];
-        }
-
-        @Override
-        public void write() {
-            for(SecBuffer sb: secBuffers)  {
-                sb.write();
-            }
-            writeField("ulVersion");
-            writeField("pBuffers");
-            writeField("cBuffers");
-        }
-
-        @Override
-        public void read() {
-            for (SecBuffer sb : secBuffers) {
-                sb.read();
-            }
-        }
-
-    }
     
     /**
      * The SecBufferDesc structure describes an array of SecBuffer structures to
      * pass from a transport application to a security package.
      * 
-     * If the SecBufferDesc2 is managed from the java side, prefer to use 
-     * {@link ManagedSecBufferDesc}.
+     * <p>SecBufferDesc2 was introduced because {@link SecBufferDesc} does not
+     * correctly cover the case there not exactly one {@link SecBuffer} is
+     * passed to the security package.</p>
+     * 
+     * <p>If the SecBufferDesc2 is managed from the java side, <b>prefer to use 
+     * {@link com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc ManagedSecBufferDesc}.</b></p>
      */
     public static class SecBufferDesc2 extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("ulVersion", "cBuffers", "pBuffers");

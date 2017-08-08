@@ -14,7 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.platform.win32.Sspi.ManagedSecBufferDesc;
+import com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc;
 import com.sun.jna.platform.win32.Sspi.CredHandle;
 import com.sun.jna.platform.win32.Sspi.CtxtHandle;
 import com.sun.jna.platform.win32.Sspi.PSecPkgInfo;
@@ -31,7 +31,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 
 import junit.framework.TestCase;
-import org.junit.Assert;
 
 /**
  * @author dblock[at]dblock[dot]org
