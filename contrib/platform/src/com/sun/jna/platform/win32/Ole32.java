@@ -447,7 +447,7 @@ public interface Ole32 extends StdCallLibrary {
 
     /**
      * Puts an OLE compound document object into the running state.
-     * @param pUnknown [in] Pointer to the {@link IUnknown IUnknown} interface
+     * @param pUnknown [in] Pointer to the {@link com.sun.jna.platform.win32.COM.IUnknown IUnknown} interface
      *                 on the object, with which it will query for a pointer to
      *                 the IRunnableObject interface, and then call its Run method.
      * @return This function returns  on success.

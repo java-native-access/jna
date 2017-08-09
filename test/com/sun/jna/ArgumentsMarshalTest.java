@@ -109,6 +109,12 @@ public class ArgumentsMarshalTest extends TestCase {
         int fillFloatBuffer(float[] buf, int len, float value);
         int fillDoubleBuffer(double[] buf, int len, double value);
 
+        // boolean[] maps to jboolean* (always 8-bit), boolean mapping is 32-bit by default; use byte
+        int fillInt8Buffer(boolean[] buf, int len, byte value);
+
+        // char[] maps to jchar* (always 16-bit), char maps to wchar_t (can be 32-bit); use short
+        int fillInt16Buffer(char[] buf, int len, short value);
+
         // Nonexistent functions
         boolean returnBooleanArgument(Object arg);
 
@@ -507,11 +513,35 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
 
+    public void testBooleanArrayArgument() {
+        boolean[] buf = new boolean[1024];
+        assertEquals("Wrong return value", buf.length,
+                     lib.fillInt8Buffer(buf, buf.length, (byte)1));
+        for (int i=0;i < buf.length;i++) {
+            assertTrue("Bad value at index " + i, buf[i]);
+        }
+        assertEquals("Wrong return value", buf.length,
+                     lib.fillInt8Buffer(buf, buf.length, (byte)0));
+        for (int i=0;i < buf.length;i++) {
+            assertFalse("Bad value at index " + i, buf[i]);
+        }
+    }
+
     public void testByteArrayArgument() {
         byte[] buf = new byte[1024];
         final byte MAGIC = (byte)0xED;
         assertEquals("Wrong return value", buf.length,
                      lib.fillInt8Buffer(buf, buf.length, MAGIC));
+        for (int i=0;i < buf.length;i++) {
+            assertEquals("Bad value at index " + i, MAGIC, buf[i]);
+        }
+    }
+
+    public void testCharArrayArgument() {
+        char[] buf = new char[1024];
+        final char MAGIC = '\uFEFF';
+        assertEquals("Wrong return value", buf.length,
+                     lib.fillInt16Buffer(buf, buf.length, (short)MAGIC));
         for (int i=0;i < buf.length;i++) {
             assertEquals("Bad value at index " + i, MAGIC, buf[i]);
         }

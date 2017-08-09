@@ -1068,6 +1068,35 @@ public interface WinDef {
          */
         public static class ByReference extends POINT implements Structure.ByReference {
 
+            public ByReference() {
+            }
+
+            public ByReference(Pointer memory) {
+                super(memory);
+            }
+
+            public ByReference(int x, int y) {
+                super(x, y);
+            }
+
+        }
+        
+        /**
+         * The Class ByValue.
+         */
+        public static class ByValue extends POINT implements Structure.ByValue {
+
+            public ByValue() {
+            }
+
+            public ByValue(Pointer memory) {
+                super(memory);
+            }
+
+            public ByValue(int x, int y) {
+                super(x, y);
+            }
+
         }
 
         public static final List<String> FIELDS = createFieldsOrder("x", "y");

@@ -24,7 +24,7 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [Apache Cassandra](http://cassandra.apache.org): Large-scale NoSQL data store.
 - [Rococoa](http://rococoa.dev.java.net): Java bindings to the Mac OS X Cocoa framework, by Duncan McGregor.
 - [jna-posix](http://kenai.com/projects/jna-posix): Common POSIX Functions for Java.
-- [JNAerator](http://jnaerator.googlecode.com): Pronounced "generator", auto-generates JNA mappings from C headers, by Olivier Chafik.
+- [JNAerator](https://github.com/nativelibs4java/JNAerator): Pronounced "generator", auto-generates JNA mappings from C headers, by Olivier Chafik.
 - [Freedom for Media in Java](http://fmj.sf.net) by Ken Larson/Dieter Krachtus.
 - [gstreamer for Java](http://code.google.com/p/gstreamer-java) by Wayne Meissner.
 - [Videolan](http://trac.videolan.org/jvlc/): JVLC Java Multimedia Library.

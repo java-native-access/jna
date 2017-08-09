@@ -130,7 +130,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
-	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), isSoftFloat());
+	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"));
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }
@@ -197,6 +197,7 @@ public final class Platform {
             || "ia64".equals(ARCH)
             || "ppc64".equals(ARCH) || "ppc64le".equals(ARCH)
             || "sparcv9".equals(ARCH)
+            || "mips64".equals(ARCH) || "mips64el".equals(ARCH)
             || "amd64".equals(ARCH)) {
             return true;
         }
@@ -225,7 +226,17 @@ public final class Platform {
         return ARCH.startsWith("sparc");
     }
 
-    static String getCanonicalArchitecture(String arch, boolean softfloat) {
+    public static final boolean isMIPS() {
+        if (ARCH.equals("mips")
+            || ARCH.equals("mips64")
+            || ARCH.equals("mipsel")
+            || ARCH.equals("mips64el")) {
+            return true;
+        } 
+        return false;
+    }
+
+    static String getCanonicalArchitecture(String arch) {
 	arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
@@ -245,22 +256,26 @@ public final class Platform {
 	    arch = "ppc64le";
 	}
         // Map arm to armel if the binary is running as softfloat build
-        if("arm".equals(arch) && softfloat) {
+        if("arm".equals(arch) && isSoftFloat()) {
             arch = "armel";
         }
-        
         
 	return arch;
     }
     
-    private static boolean isSoftFloat() {
+    static boolean isSoftFloat() {
         try {
             File self = new File("/proc/self/exe");
-            ELFAnalyser ahfd = ELFAnalyser.analyse(self.getCanonicalPath());
-            return ahfd.isArmSoftFloat();
+            if (self.exists()) {
+                ELFAnalyser ahfd = ELFAnalyser.analyse(self.getCanonicalPath());
+                return ahfd.isArmSoftFloat();
+            }
         } catch (IOException ex) {
             // asume hardfloat
-            Logger.getLogger(Platform.class.getName()).log(Level.FINE, null, ex);
+            Logger.getLogger(Platform.class.getName()).log(Level.INFO, "Failed to read '/proc/self/exe' or the target binary.", ex);
+        } catch (SecurityException ex) {
+            // asume hardfloat
+            Logger.getLogger(Platform.class.getName()).log(Level.INFO, "SecurityException while analysing '/proc/self/exe' or the target binary.", ex);
         }
         return false;
     }
@@ -284,12 +299,8 @@ public final class Platform {
         @param name from <code>os.name</code> System property
     */
     static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
-        return getNativeLibraryResourcePrefix(osType, arch, name, isSoftFloat());
-    }
-    
-    static String getNativeLibraryResourcePrefix(int osType, String arch, String name, boolean isSoftfloat) {
         String osPrefix;
-        arch = getCanonicalArchitecture(arch, isSoftfloat);
+        arch = getCanonicalArchitecture(arch);
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {

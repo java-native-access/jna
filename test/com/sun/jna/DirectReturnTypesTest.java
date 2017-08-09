@@ -23,7 +23,7 @@
  */
 package com.sun.jna;
 
-import java.util.Map;
+import java.util.Collections;
 
 /** Exercise a range of native methods.
  *
@@ -40,6 +40,10 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
         @Override
         public TestObject returnObjectArgument(TestObject s) {
             throw new IllegalArgumentException(s.getClass().getName());
+        }
+        @Override
+        public Class returnClass(JNIEnv env, Object arg) {
+            throw new IllegalArgumentException(arg.getClass().getName());
         }
         @Override
         public native boolean returnFalse();
@@ -90,14 +94,17 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
         }
     }
 
-    @Override
-    protected void setUp() {
-        lib = new DirectTestLibrary();
-    }
-
     public static class DirectObjectTestLibrary extends DirectTestLibrary {
-        public DirectObjectTestLibrary(Map<String, ?> options) {
-            Native.register(getClass(), NativeLibrary.getInstance("testlib", options));
+        @Override
+        public native Object returnObjectArgument(Object s);
+        @Override
+        public native TestObject returnObjectArgument(TestObject s);
+        @Override
+        public native Class returnClass(JNIEnv env, Object arg);
+
+        static {
+            Native.register(NativeLibrary.getInstance("testlib",
+                    Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE)));
         }
     }
 
@@ -108,18 +115,20 @@ public class DirectReturnTypesTest extends ReturnTypesTest {
         public native size_t returnInt32Magic();
         @Override
         public native size_t returnInt64Magic();
+
         static {
             Native.register("testlib");
         }
     }
+
     @Override
-    protected NativeMappedLibrary loadNativeMappedLibrary() {
-        return new DirectNativeMappedLibrary();
+    protected void setUp() {
+        lib = new DirectTestLibrary();
+        libSupportingObject = new DirectObjectTestLibrary();
+        libNativeMapped = new DirectNativeMappedLibrary();
     }
 
     // Override not-yet-supported tests
-    @Override
-    public void testReturnObject() { }
     @Override
     public void testReturnPointerArray() { }
     @Override
