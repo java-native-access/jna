@@ -13,6 +13,7 @@ Features
 * [#805](https://github.com/java-native-access/jna/issues/805): Provide a way to pass JNIEnv pointer to native method and support OPTION_ALLOW_OBJECTs for direct mapping - [@ncruces](https://github.com/ncruces).
 * [#816](https://github.com/java-native-access/jna/pull/816): Support `boolean[]` in direct mapping - [@ncruces](https://github.com/ncruces).
 * [#827](https://github.com/java-native-access/jna/pull/827): Add support for linux-mips64el - [@all7](https://github.com/all7).
+* [#839](https://github.com/java-native-access/jna/pull/839): Bind SSPI functions `InitializeSecurityContext`, `AcceptSecurityContext`, `QueryCredentialsAttributes`, `QuerySecurityPackageInfo`, `EncryptMessage`, `DecryptMessage`, `MakeSignature`, `VerifySignature` in `com.sun.jna.platform.win32.Secur32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

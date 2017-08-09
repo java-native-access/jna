@@ -65,6 +65,11 @@ public interface Sspi {
      */
     int SECURITY_NATIVE_DREP = 0x10;
 
+    
+    /**
+     * Specifies network data representation.
+     */
+    int SECURITY_NETWORK_DREP = 0x00;
 
     // Flags for the fContextReq parameter of InitializeSecurityContext or AcceptSecurityContext.
 
@@ -142,15 +147,211 @@ public interface Sspi {
      */
     int SECBUFFER_TOKEN = 2;
 
-    // for ulAttribute parameter in QueryContextAttributes function
-    // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa379326(v=vs.85).aspx)
+    /**
+     * The pBuffer parameter contains a pointer to a {@link SecPkgContext_Sizes}
+     * structure.
+     *
+     * <p>Queries the sizes of the structures used in the per-message functions.</p>
+     */
+    int SECPKG_ATTR_SIZES = 0;
+    /**
+     * The pBuffer parameter contains a pointer to a {@link SecPkgCredentials_Names}
+     * structure.
+     *
+     * <p>Queries the name associated with the context.</p>
+     */
+    int SECPKG_ATTR_NAMES = 1;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_Lifespan
+     * structure.
+     *
+     * <p>Queries the life span of the context.</p>
+     */
+    int SECPKG_ATTR_LIFESPAN = 2;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_DceInfo
+     * structure.
+     *
+     * <p>Queries for authorization data used by DCE services.</p>
+     */
+    int SECPKG_ATTR_DCE_INFO = 3;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_StreamSizes
+     * structure.
+     *
+     * <p>Queries the sizes of the various parts of a stream used in the
+     * per-message functions.</p>
+     * <p>This attribute is supported only by the Schannel security package.</p>
+     */
+    int SECPKG_ATTR_STREAM_SIZES = 4;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_KeyInfo
+     * structure.
+     *
+     * <p>Queries information about the keys used in a security context.</p>
+     */
+    int SECPKG_ATTR_KEY_INFO = 5;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_Authority
+     * structure.
+     *
+     * <p>Queries the name of the authenticating authority.</p>
+     */
+    int SECPKG_ATTR_AUTHORITY = 6;
+    int SECPKG_ATTR_PROTO_INFO = 7;
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * SecPkgContext_PasswordExpiry structure.
+     *
+     * <p>Returns password expiration information.</p>
+     */
+    int SECPKG_ATTR_PASSWORD_EXPIRY = 8;
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * {@link SecPkgContext_SessionKey} structure.
+     *
+     * Returns information about the session keys.
+     */
+    int SECPKG_ATTR_SESSION_KEY = 9;
     /**
      * The pBuffer parameter contains a pointer to a
      * {@link SecPkgContext_PackageInfo} structure.
-     * 
+     *
      * Returns information on the SSP in use.
      */
-    int SECPKG_ATTR_PACKAGE_INFO = 0x0000000A;
+    int SECPKG_ATTR_PACKAGE_INFO = 10;
+    int SECPKG_ATTR_USER_FLAGS = 11;
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * {@link SecPkgContext_NegotiationInfo} structure.
+     *
+     * <p>Returns information about the security package to be used with the
+     * negotiation process and the current state of the negotiation for the use
+     * of that package.</p>
+     */
+    int SECPKG_ATTR_NEGOTIATION_INFO = 12;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_NativeNames
+     * structure.
+     *
+     * <p>Returns the principal name (CNAME) from the outbound ticket.</p>
+     */
+    int SECPKG_ATTR_NATIVE_NAMES = 13;
+    /**
+     * The pBuffer parameter contains a pointer to a {@link SecPkgContext_Flags}
+     * structure.
+     *
+     * <p>Returns information about the negotiated context flags.</p>
+     */
+    int SECPKG_ATTR_FLAGS = 14;
+    // These attributes exist only in Win XP and greater
+    int SECPKG_ATTR_USE_VALIDATED = 15;
+    int SECPKG_ATTR_CREDENTIAL_NAME = 16;
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * SecPkgContext_TargetInformation structure.
+     *
+     * <p>Returns information about the name of the remote server.</p>
+     */
+    int SECPKG_ATTR_TARGET_INFORMATION = 17;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_AccessToken
+     * structure.
+     *
+     * <p>Returns a handle to the access token.</p>
+     */
+    int SECPKG_ATTR_ACCESS_TOKEN = 18;
+    // These attributes exist only in Win2K3 and greater
+    int SECPKG_ATTR_TARGET = 19;
+    int SECPKG_ATTR_AUTHENTICATION_ID = 20;
+    // These attributes exist only in Win2K3SP1 and greater
+    int SECPKG_ATTR_LOGOFF_TIME = 21;
+    //
+    // win7 or greater
+    //
+    int SECPKG_ATTR_NEGO_KEYS = 22;
+    int SECPKG_ATTR_PROMPTING_NEEDED = 24;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_Bindings
+     * structure that specifies channel binding information.
+     *
+     * <p>This value is supported only by the Schannel security package.</p>
+     *
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
+     * Windows XP:</strong>
+     * This value is not supported.</p>
+     */
+    int SECPKG_ATTR_UNIQUE_BINDINGS = 25;
+    /**
+     * The pBuffer parameter contains a pointer to a SecPkgContext_Bindings
+     * structure that specifies channel binding information.
+     *
+     * <p>This attribute is supported only by the Schannel security package.</p>
+     *
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
+     * Windows XP:</strong>
+     * This value is not supported.</p>
+     */
+    int SECPKG_ATTR_ENDPOINT_BINDINGS = 26;
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * SecPkgContext_ClientSpecifiedTarget structure that represents the service
+     * principal name (SPN) of the initial target supplied by the client.
+     * 
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
+     * Windows XP:</strong>
+     * This value is not supported.</p>
+     */
+    int SECPKG_ATTR_CLIENT_SPECIFIED_TARGET = 27;
+
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * SecPkgContext_LastClientTokenStatus structure that specifies whether the
+     * token from the most recent call to the InitializeSecurityContext function
+     * is the last token from the client.
+     *
+     * <p>This value is supported only by the Negotiate, Kerberos, and NTLM
+     * security packages.</p>
+     * 
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
+     * Windows XP:</strong>
+     * This value is not supported.</p>
+     */
+    int SECPKG_ATTR_LAST_CLIENT_TOKEN_STATUS = 30;
+    int SECPKG_ATTR_NEGO_PKG_INFO = 31; // contains nego info of packages
+    int SECPKG_ATTR_NEGO_STATUS = 32; // contains the last error
+    int SECPKG_ATTR_CONTEXT_DELETED = 33; // a context has been deleted
+
+    /**
+     * The pBuffer parameter contains a pointer to a
+     * SecPkgContext_SubjectAttributes structure.
+     *
+     * <p>This value returns information about the security attributes for the
+     * connection.</p>
+     *
+     * <p>This value is supported only on the CredSSP server.</p>
+     * 
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
+     * Windows XP:</strong>
+     * This value is not supported.</p>
+     */
+    int SECPKG_ATTR_SUBJECT_SECURITY_ATTRIBUTES = 128;
+
+    /**
+     * Negotiation has been completed.
+     */
+    int SECPKG_NEGOTIATION_COMPLETE = 0;
+    /**
+     * Negotiations not yet completed.
+     */
+    int SECPKG_NEGOTIATION_OPTIMISTIC = 1;
+    /**
+     * Negotiations in progress.
+     */
+    int SECPKG_NEGOTIATION_IN_PROGRESS = 2;
+    int SECPKG_NEGOTIATION_DIRECT = 3;
+    int SECPKG_NEGOTIATION_TRY_MULTICRED = 4;
+    
     
     // flags for SecPkgInfo fCapabilities
     // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa380104(v=vs.85).aspx)
@@ -252,6 +453,22 @@ public interface Sspi {
      */
     int SECPKG_FLAG_APPCONTAINER_CHECKS = 0x00800000;
 
+    /**
+     * Returns the name of a credential in a pbuffer of type {@link SecPkgCredentials_Names}.
+     */
+    int SECPKG_CRED_ATTR_NAMES = 1;
+
+    /**
+     * Produce a header or trailer but do not encrypt the message.
+     */
+    int SECQOP_WRAP_NO_ENCRYPT = 0x80000001;
+    /**
+     * Send an Schannel alert message. In this case, the pMessage parameter must
+     * contain a standard two-byte SSL/TLS event code. This value is supported
+     * only by the Schannel SSP.
+     */
+    int SECQOP_WRAP_OOB_DATA = 0x40000000;
+    
     /**
      * Security handle.
      */
@@ -424,6 +641,22 @@ public interface Sspi {
         }
     }
 
+    /**
+     * <b>DON'T USE THIS CLASS</b>
+     * 
+     * <p>The SecBufferDesc structure describes an array of SecBuffer structures to
+     * pass from a transport application to a security package.</p>
+     * 
+     * <p>This class is provided for backwards compability and <b>must not be used
+     * for new code.</b></p>
+     * 
+     * <p>The binding used here, works only for the corner case, where
+     * exactly one {@link SecBuffer} is passed to the SecurityPackage.</p>
+     * 
+     * @deprecated use {@link ManagedSecBufferDesc} or {@link SecBufferDesc2}
+     * (generic binding)
+     */
+    @Deprecated
     public static class SecBufferDesc extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("ulVersion", "cBuffers", "pBuffers");
         /**
@@ -475,7 +708,47 @@ public interface Sspi {
             return FIELDS;
         }
     }
+    
+    /**
+     * The SecBufferDesc structure describes an array of SecBuffer structures to
+     * pass from a transport application to a security package.
+     * 
+     * <p>SecBufferDesc2 was introduced because {@link SecBufferDesc} does not
+     * correctly cover the case there not exactly one {@link SecBuffer} is
+     * passed to the security package.</p>
+     * 
+     * <p>If the SecBufferDesc2 is managed from the java side, <b>prefer to use 
+     * {@link com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc ManagedSecBufferDesc}.</b></p>
+     */
+    public static class SecBufferDesc2 extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("ulVersion", "cBuffers", "pBuffers");
 
+        /**
+         * Version number.
+         */
+        public int ulVersion = SECBUFFER_VERSION;
+        /**
+         * Number of buffers.
+         */
+        public int cBuffers = 1;
+        /**
+         * Pointer to array of buffers.
+         */
+        public Pointer pBuffers;
+
+        /**
+         * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
+         */
+        public SecBufferDesc2() {
+            super();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
     /**
      * A security integer.
      */
@@ -610,4 +883,401 @@ public interface Sspi {
         }
     }
 
+    /**
+     * The SecPkgCredentials_Names structure holds the name of the user
+     * associated with a context.
+     *
+     * <p>
+     * The
+     * {@link Secur32#QueryCredentialsAttributes(com.sun.jna.platform.win32.Sspi.CredHandle, int, com.sun.jna.Structure)}
+     * function uses this structure.</p>
+     */
+    public static class SecPkgCredentials_Names extends Structure {
+
+        public static class ByReference extends SecPkgCredentials_Names implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("sUserName");
+
+        /**
+         * Pointer to a null-terminated string containing the name of the user
+         * represented by the credential. If the security package sets the
+         * SECPKG_FLAG_ACCEPT_WIN32_NAME flag to indicate that it can process
+         * Windows names, this name can be used in other Windows calls.
+         */
+        public Pointer sUserName;
+
+        public SecPkgCredentials_Names() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+
+        /**
+         * @return value of userName attribute
+         */
+        public synchronized String getUserName() {
+            if (sUserName == null) {
+                return null;
+            }
+            return Boolean.getBoolean("w32.ascii") ? sUserName.getString(0) : sUserName.getWideString(0);
+        }
+
+        /**
+         * Free native buffer
+         * 
+         * @return {@link WinError#SEC_E_OK} if ok
+         */
+        public synchronized int free() {
+            if (sUserName != null) {
+                int result = Secur32.INSTANCE.FreeContextBuffer(sUserName);
+                sUserName = null;
+                return result;
+            }
+            return WinError.SEC_E_OK;
+        }
+    }
+    
+    /**
+     * The SecPkgContext_Sizes structure indicates the sizes of important
+     * structures used in the message support functions.
+     *
+     * <p>
+     * The {@link Secur32#QueryContextAttributes(com.sun.jna.platform.win32.Sspi.CtxtHandle, int, com.sun.jna.Structure)
+     * } function uses this structure.</p>
+     */
+    public static class SecPkgContext_Sizes extends Structure {
+
+        public static class ByReference extends SecPkgContext_Sizes implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("cbMaxToken", "cbMaxSignature", "cbBlockSize", "cbSecurityTrailer");
+
+        /**
+         * Specifies the maximum size of the security token used in the authentication exchanges.
+         */
+        public int cbMaxToken;
+        
+        /**
+         * Specifies the maximum size of the signature created by the MakeSignature function. This member must be zero if integrity services are not requested or available.
+         */
+        public int cbMaxSignature;
+        
+        /**
+         * Specifies the preferred integral size of the messages. For example, eight indicates that messages should be of size zero mod eight for optimal performance. Messages other than this block size can be padded.
+         */
+        public int cbBlockSize;
+        
+        /**
+         * Size of the security trailer to be appended to messages. This member should be zero if the relevant services are not requested or available.
+         */
+        public int cbSecurityTrailer;
+
+        public SecPkgContext_Sizes() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+
+        @Override
+        public String toString() {
+            return "SecPkgContext_Sizes{" + "cbMaxToken=" + cbMaxToken +
+                    ", cbMaxSignature=" + cbMaxSignature + ", cbBlockSize=" +
+                    cbBlockSize + ", cbSecurityTrailer=" + cbSecurityTrailer +
+                    '}';
+        }
+    }
+    
+    public static class SecPkgContext_SessionKey extends Structure {
+
+        public static class ByReference extends SecPkgContext_SessionKey implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("SessionKeyLength", "SessionKey");
+
+        /**
+         * Size, in bytes, of the session key.
+         */
+        public int SessionKeyLength;
+        
+        /**
+         * The session key for the security context.
+         */
+        public Pointer SessionKey;
+
+        public SecPkgContext_SessionKey() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+
+        public byte[] getSessionKey() {
+            if(SessionKey == null) {
+                return null;
+            }
+            return SessionKey.getByteArray(0, SessionKeyLength);
+        }
+        
+        public synchronized void free() {
+            if(SessionKey != null) {
+                Secur32.INSTANCE.FreeContextBuffer(SessionKey);
+                SessionKey = null;
+            }
+        }
+    }
+    
+    public static class SecPkgContext_KeyInfo extends Structure {
+
+        public static class ByReference extends SecPkgContext_KeyInfo implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("sSignatureAlgorithmName", "sEncryptAlgorithmName","KeySize", "SignatureAlgorithm", "EncryptAlgorithm");
+
+        /**
+         * Name, if available, of the algorithm used for generating signatures, for example "MD5" or "SHA-2".
+         */
+        public Pointer sSignatureAlgorithmName;
+        
+        /**
+         * Name, if available, of the algorithm used for encrypting messages. Reserved for future use.
+         */
+        public Pointer sEncryptAlgorithmName;
+        
+        /**
+         * Specifies the effective key length, in bits, for the session key. This is typically 40, 56, or 128 bits.
+         */
+        public int KeySize;
+        
+        /**
+         * Specifies the algorithm identifier (ALG_ID) used for generating signatures, if available.
+         */
+        public int SignatureAlgorithm;
+        
+        /**
+         * Specifies the algorithm identifier (ALG_ID) used for encrypting messages. Reserved for future use.
+         */
+        public int EncryptAlgorithm;
+
+        public SecPkgContext_KeyInfo() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+
+        public synchronized String getSignatureAlgorithmName() {
+            if(sSignatureAlgorithmName == null) {
+                return null;
+            }
+            return Boolean.getBoolean("w32.ascii") ? sSignatureAlgorithmName.getString(0) : sSignatureAlgorithmName.getWideString(0);
+        }
+        
+        public synchronized String getEncryptAlgorithmName() {
+            if(sEncryptAlgorithmName == null) {
+                return null;
+            }
+            return Boolean.getBoolean("w32.ascii") ? sEncryptAlgorithmName.getString(0) : sEncryptAlgorithmName.getWideString(0);
+        }
+        
+        public synchronized void free() {
+            if(sSignatureAlgorithmName != null) {
+                Secur32.INSTANCE.FreeContextBuffer(sSignatureAlgorithmName);
+                sSignatureAlgorithmName = null;
+            }
+            if(sEncryptAlgorithmName != null) {
+                Secur32.INSTANCE.FreeContextBuffer(sEncryptAlgorithmName);
+                sEncryptAlgorithmName = null;
+            }
+        }
+    }
+    
+    public static class SecPkgContext_Lifespan extends Structure {
+
+        public static class ByReference extends SecPkgContext_Lifespan implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("tsStart", "tsExpiry");
+
+        /**
+         * Time at which the context was established.
+         */
+        public TimeStamp tsStart;
+        
+        /**
+         * Time at which the context will expire.
+         */
+        public TimeStamp tsExpiry;
+
+        public SecPkgContext_Lifespan() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
+    public static class SecPkgContext_NegotiationInfo extends Structure {
+
+        public static class ByReference extends SecPkgContext_NegotiationInfo implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("PackageInfo", "NegotiationState");
+
+        /**
+         * Time at which the context was established.
+         */
+        public PSecPkgInfo PackageInfo;
+
+        /**
+         * Time at which the context will expire.
+         */
+        public int NegotiationState;
+
+        public SecPkgContext_NegotiationInfo() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+        
+        public synchronized void free() {
+            if(PackageInfo != null) {
+                Secur32.INSTANCE.FreeContextBuffer(PackageInfo.pPkgInfo.getPointer());
+                PackageInfo = null;
+            }
+        }
+    }
+    
+    public static class SecPkgContext_Flags extends Structure {
+
+        public static class ByReference extends SecPkgContext_Flags implements Structure.ByReference {
+
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("Flags");
+
+        /**
+         * Flag values for the current security context. These values correspond
+         * to the flags negotiated by the InitializeSecurityContext (General)
+         * and AcceptSecurityContext (General) functions.
+         */
+        public int Flags;
+
+        public SecPkgContext_Flags() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
+    /**
+     * Strings in structure {@link SEC_WINNT_AUTH_IDENTITY} are ANSI
+     */
+    public static final int SEC_WINNT_AUTH_IDENTITY_ANSI = 0x1;
+    /**
+     * String in structure {@link SEC_WINNT_AUTH_IDENTITY} are UNICODE
+     */
+    public static final int SEC_WINNT_AUTH_IDENTITY_UNICODE = 0x2;
+
+    
+    public static class SEC_WINNT_AUTH_IDENTITY extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder("User", "UserLength", "Domain", "DomainLength", "Password", "PasswordLength", "Flags");
+
+        /**
+         * A string that contains the user name.
+         */
+        public String User;
+
+        /**
+         * The length, in characters, of the user string, not including the
+         * terminating null character.
+         */
+        public int UserLength;
+
+        /**
+         * A string that contains the domain name or the workgroup name.
+         */
+        public String Domain;
+
+        /**
+         * The length, in characters, of the domain string, not including the
+         * terminating null character.
+         */
+        public int DomainLength;
+
+        /**
+         * A string that contains the password of the user in the domain or
+         * workgroup. When you have finished using the password, remove the
+         * sensitive information from memory by calling SecureZeroMemory. For
+         * more information about protecting the password, see Handling
+         * Passwords.
+         */
+        public String Password;
+
+        /**
+         * The length, in characters, of the password string, not including the
+         * terminating null character.
+         */
+        public int PasswordLength;
+
+        /**
+         * This member can be one of the following values.
+         *
+         * <table>
+         * <tr><th>Value</th><th>Meaning</th></tr>
+         * <tr><td>SEC_WINNT_AUTH_IDENTITY_ANSI</td><td>The strings in this structure are in ANSI format.</td></tr>
+         * <tr><td>SEC_WINNT_AUTH_IDENTITY_UNICODE</td><td>The strings in this structure are in Unicode format.</td></tr>
+         * </table>
+         *
+         * <strong>As the string encoding is managed by JNA do not change this
+         * value!</strong>
+         */
+        public int Flags = SEC_WINNT_AUTH_IDENTITY_UNICODE;
+    
+
+        /**
+         * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
+         */
+        public SEC_WINNT_AUTH_IDENTITY() {
+            super(W32APITypeMapper.UNICODE);
+        }
+
+        @Override
+        public void write() {
+            UserLength = User == null ? 0 : User.length();
+            DomainLength = Domain == null ? 0 : Domain.length();
+            PasswordLength = Password == null ? 0 : Password.length();
+            super.write();
+        }
+        
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
 }
