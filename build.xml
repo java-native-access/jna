@@ -215,6 +215,7 @@
            includeantruntime="false"
            source="1.6"
            target="1.6"
+           encoding="UTF-8"
     >
         <src path="src" />
         <src path="ant-elfanalyser-src" />
@@ -363,7 +364,9 @@
            target="${compatibility}"
            destdir="${classes}"
            includeantruntime="false"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8">
       <src refid="src.path"/>
     </javac>
   </target>
@@ -960,7 +963,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
            destdir="${test.classes}"
            includeantruntime="false"
            includes="**/StructureFieldOrderInspector.java"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8"
+    >
       <src path="${test.src}"/>
     </javac>
   </target>
@@ -973,7 +979,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
            destdir="${test.classes}"
            includeantruntime="false"
            excludes="${tests.exclude-patterns}"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8"
+    >
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
