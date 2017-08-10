@@ -32,8 +32,12 @@ import com.sun.jna.ptr.PointerByReference;
 /**
  * Wrapper class for the ITypeInfo interface
  * 
- * Method Name V-Table Offset IUnknown.QueryInterface 0 IUnknown.AddRef 4
- * IUnknown.Release 8
+ * <table>
+ * <tr><th>Method Name</th><th>V-Table Offset</th></tr>
+ * <tr><td>IUnknown.QueryInterface</td><td>0</td></tr>
+ * <tr><td>IUnknown.AddRef</td><td>4</td></tr>
+ * <tr><td>IUnknown.Release</td><td>8</td></tr>
+ * </table>
  * 
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */

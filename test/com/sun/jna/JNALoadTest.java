@@ -143,7 +143,8 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         // Check for temporary file deletion
         File f = new File(path);
         for (int i=0;i < GC_WAITS && (f.exists() || Boolean.getBoolean("jna.loaded"));i++) {
-            Thread.sleep(GC_WAIT_INTERVAL);
+            System.gc(); // attempt to fix intermittent test failures
+            Thread.sleep(4 * GC_WAIT_INTERVAL);  // '4 *' is attempt to fix intermittent test failures
             System.gc();
         }
 
@@ -186,7 +187,7 @@ public class JNALoadTest extends TestCase implements Paths, GCWaits {
         field = null;
         System.gc();
         for (int i=0;i < GC_WAITS && (ref.get() != null || clref.get() != null || Boolean.getBoolean("jna.loaded"));i++) {
-            Thread.sleep(GC_WAIT_INTERVAL);
+            Thread.sleep(2 * GC_WAIT_INTERVAL);  // '2 *' is attempt to fix intermittent test failures 
             System.gc();
         }
         assertNull("Class not GC'd: " + ref.get(), ref.get());

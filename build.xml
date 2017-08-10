@@ -69,7 +69,7 @@
   <property name="jna.version" value="${jna.major}.${jna.minor}.${jna.revision}${version.suffix}"/>
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="5"/>
-  <property name="jni.minor" value="1"/>
+  <property name="jni.minor" value="2"/>
   <property name="jni.revision" value="0"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
@@ -193,6 +193,7 @@
           <os arch="ppc64le"/>
           <os arch="ia64"/>
           <os arch="aarch64"/>
+          <os arch="mips64el"/>
         </or>
       </and>
     </condition>
@@ -214,6 +215,7 @@
            includeantruntime="false"
            source="1.6"
            target="1.6"
+           encoding="UTF-8"
     >
         <src path="src" />
         <src path="ant-elfanalyser-src" />
@@ -362,7 +364,9 @@
            target="${compatibility}"
            destdir="${classes}"
            includeantruntime="false"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8">
       <src refid="src.path"/>
     </javac>
   </target>
@@ -456,6 +460,8 @@ com/sun/jna/linux-ia64/libjnidispatch.so;
 processor=ia64;osname=linux,
 com/sun/jna/linux-sparcv9/libjnidispatch.so;
 processor=sparcv9;osname=linux,
+com/sun/jna/linux-mips64el/libjnidispatch.so;
+processor=mips64el;osname=linux,
 
 com/sun/jna/freebsd-x86/libjnidispatch.so;
 processor=x86;osname=freebsd,
@@ -515,6 +521,9 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <zipfileset src="${lib.native}/linux-sparcv9.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/linux-sparcv9"/>
+      <zipfileset src="${lib.native}/linux-mips64el.jar"
+                  includes="*jnidispatch*"
+                  prefix="com/sun/jna/linux-mips64el"/>
       <zipfileset src="${lib.native}/sunos-x86.jar"
                   includes="*jnidispatch*"
                   prefix="com/sun/jna/sunos-x86"/>
@@ -704,6 +713,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-ppc64le.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-sparcv9.jar" overwrite="true"/>
+    <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/linux-mips64el.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/freebsd-x86-64.jar" overwrite="true"/>
     <copy file="${lib.native}/out-of-date.jar" tofile="${lib.native}/openbsd-x86.jar" overwrite="true"/>
@@ -953,7 +963,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
            destdir="${test.classes}"
            includeantruntime="false"
            includes="**/StructureFieldOrderInspector.java"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8"
+    >
       <src path="${test.src}"/>
     </javac>
   </target>
@@ -966,7 +979,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
            destdir="${test.classes}"
            includeantruntime="false"
            excludes="${tests.exclude-patterns}"
-           deprecation="on" debug="${debug}">
+           deprecation="on" 
+           debug="${debug}"
+           encoding="UTF-8"
+    >
       <src path="${test.src}"/>
       <exclude name="${tests.exclude}"/>
     </javac>
