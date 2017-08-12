@@ -27,13 +27,8 @@ package com.sun.jna.platform.win32;
 import java.util.List;
 
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LUID;
 import com.sun.jna.platform.win32.WinNT.LUID_AND_ATTRIBUTES;
