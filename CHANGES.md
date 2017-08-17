@@ -15,6 +15,7 @@ Features
 * [#827](https://github.com/java-native-access/jna/pull/827): Add support for linux-mips64el - [@all7](https://github.com/all7).
 * [#845](https://github.com/java-native-access/jna/issues/845): Add support for linux-s390x - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#771](https://github.com/java-native-access/jna/issues/771): Rebuild native libraries for linux-x86 and linux-x86-64 with an against an older GLIBC (minimum version of glibc for these architectures is now 2.7) - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#821](https://github.com/java-native-access/jna/issues/821): Move windows service related functions and structures in ntservice sample project to `com.sun.jna.platform.win32.Advapi32`: `StartServiceCtrlDispatcher`, `RegisterServiceCtrlHandler`, `RegisterServiceCtrlHandlerEx`, `SetServiceStatus`, `CreateService`, `DeleteService` and `com.sun.jna.platform.win32.Winsvc`: `Handler`, `HandlerEx`, `SERVICE_MAIN_FUNCTION`, `SERVICE_TABLE_ENTRY`, `SERVICE_DESCRIPTION`, `SERVICE_STATUS_HANDLE` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
