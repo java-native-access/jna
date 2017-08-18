@@ -23,7 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Memory;
@@ -35,7 +34,6 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.INT_PTR;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
-import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -500,37 +498,35 @@ public interface Winspool extends StdCallLibrary {
         }
     }
 
-	/**
-	 * The PRINTER_DEFAULTS structure specifies the default data type,
-	 * environment, initialization data, and access rights for a printer.
-	 * 
-	 * @see <a href=
-	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">
-	 *      PRINTER_DEFAULTS structure</a>
-	 */
-	public class LPPRINTER_DEFAULTS extends Structure {
-		
-		public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
-		
-		/**
-		 * Pointer to a null-terminated string that specifies the default data
-		 * type for a printer.
-		 */
-		public String pDatatype;
-		/**
-		 * Pointer to a DEVMODE structure that identifies the default
-		 * environment and initialization data for a printer.
-		 */
-		PVOID pDevMode;
-		/**
-		 * Specifies desired access rights for a printer. The OpenPrinter
-		 * function uses this member to set access rights to the printer. These
-		 * rights can affect the operation of the SetPrinter and DeletePrinter
-		 * functions.
-		 */
-		int DesiredAccess;
+    /**
+     * The PRINTER_DEFAULTS structure specifies the default data type,
+     * environment, initialization data, and access rights for a printer.
+     *
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">PRINTER_DEFAULTS structure</a>
+     */
+    public class LPPRINTER_DEFAULTS extends Structure {
 
-		@Override
+        public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
+
+        /**
+         * Pointer to a null-terminated string that specifies the default data
+         * type for a printer.
+         */
+        public String pDatatype;
+        /**
+         * Pointer to a DEVMODE structure that identifies the default
+         * environment and initialization data for a printer.
+         */
+        public Pointer pDevMode;
+        /**
+         * Specifies desired access rights for a printer. The OpenPrinter
+         * function uses this member to set access rights to the printer. These
+         * rights can affect the operation of the SetPrinter and DeletePrinter
+         * functions.
+         */
+        public int DesiredAccess;
+
+        @Override
         protected List<String> getFieldOrder() {
             return FIELDS;
         }
@@ -560,10 +556,8 @@ public interface Winspool extends StdCallLibrary {
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
      * 
-	 * @see <a href=
-	 *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">
-	 *      OpenPrinter function</a>
-	 */
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">OpenPrinter function</a>
+     */
     boolean OpenPrinter(
     	    // _In_
             String pPrinterName,
