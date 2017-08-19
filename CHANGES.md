@@ -24,6 +24,7 @@ Bug Fixes
 * [#795](https://github.com/java-native-access/jna/issues/795): com.sun.jna.platform.win32.WinDef.WORDByReference holds a WORD which is defined to 16 bit on windows, so it needs to be accessed as short (getShort()). Fix suggested by  - [@kdeines](https://github.com/kdeines).
 * [#804](https://github.com/java-native-access/jna/pull/804) Main-Class in jna-platform.jar collides with java 9 module system - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#838](https://github.com/java-native-access/jna/pull/838): Fix binding of `com.sun.jna.platform.win32.User32#MonitorFromPoint` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#834](https://github.com/java-native-access/jna/issues/834): Declare structure members of LPPRINTER_DEFAULTS as public - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.4.0
 =============

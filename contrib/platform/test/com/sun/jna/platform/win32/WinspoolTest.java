@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_1;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
@@ -93,5 +94,22 @@ public class WinspoolTest extends TestCase {
         boolean result = Winspool.INSTANCE.ClosePrinter(null);
         assertFalse("ClosePrinter should return false on failure.", result);
         assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
+    }
+    
+    public void testCorrectDeclarationOfMembers() throws InstantiationException, IllegalAccessException {
+        for(Class klass: Winspool.class.getDeclaredClasses()) {
+            if(Structure.class.isAssignableFrom(klass)) {
+                boolean writeWorked = false;
+                try {
+                    Structure struct = (Structure) klass.newInstance();
+                    struct.write();
+                    writeWorked = true;
+                } catch (java.lang.Throwable ex) {
+                    System.err.println(ex.getMessage());
+                    ex.printStackTrace(System.err);
+                }
+                assertTrue("Failed to write structure: " + klass.getName(), writeWorked);
+            }
+        }
     }
 }
