@@ -36,7 +36,8 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 - [FileBot Media Renamer](http://www.filebot.net) by Reinhard Pointner.
 - [USB for Java](https://launchpad.net/libusb4j) by Mario Boikov.
 - [Waffle](https://github.com/dblock/waffle): Enables SSO on Windows in Java applications, by Daniel Doubrovkine.
-- [leveldb-jna](https://github.com/protonail/leveldb-jna): Cross-platform JNA based adapter for LevelDB (used in [Keylord](http://protonail.com/products/keylord)).
+- [leveldb-jna](https://github.com/protonail/leveldb-jna): Cross-platform JNA based adapter for [LevelDB](https://github.com/google/leveldb) (used in [Keylord](http://protonail.com)).
+- [bolt-jna](https://github.com/protonail/bolt-jna): Cross-platform JNA based adapter for [Bolt](https://github.com/boltdb/bolt) (used in [Keylord](http://protonail.com)). It is show how to use JNA for binding to Go library.
 - [Java OpenVR Bindings](https://github.com/java-graphics/openvr).
 
 *Interesting Investigations/Experiments*
