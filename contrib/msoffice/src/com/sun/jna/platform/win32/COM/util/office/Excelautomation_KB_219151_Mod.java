@@ -142,7 +142,7 @@ public class Excelautomation_KB_219151_Mod {
             pane.setOptionType(JOptionPane.YES_NO_OPTION);
             JDialog dialog = pane.createDialog("Input...");
             dialog.setAlwaysOnTop(true);
-            dialog.show();
+            dialog.setVisible(true);
             if(((Integer) pane.getValue()) == JOptionPane.YES_OPTION) {
                 break;
             }

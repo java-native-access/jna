@@ -1,12 +1,18 @@
 sudo: false
+dist: trusty
 
 language: java
+
+addons:
+    apt:
+        packages:
+            - ant-optional
 
 install:
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew uninstall libtool && brew install libtool || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
-
+  
 script:
   - ant test
   - ant test-platform

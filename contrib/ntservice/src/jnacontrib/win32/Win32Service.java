@@ -23,29 +23,35 @@
 
 package jnacontrib.win32;
 
-import jnacontrib.jna.*;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Advapi32;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.Winsvc;
+import com.sun.jna.platform.win32.Winsvc.HandlerEx;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_DESCRIPTION;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_MAIN_FUNCTION;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_HANDLE;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_TABLE_ENTRY;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import jnacontrib.jna.Advapi32.SERVICE_STATUS_HANDLE;
-import jnacontrib.jna.Advapi32.SERVICE_TABLE_ENTRY;
 
 /**
  * Baseclass for a Win32 service.
  */
 public abstract class Win32Service {
+  private static final Advapi32 advapi32 = Advapi32.INSTANCE;
+    
+  private final Object waitObject = new Object();
+  
   protected String serviceName;
   private ServiceMain serviceMain;
   private ServiceControl serviceControl;
   private SERVICE_STATUS_HANDLE serviceStatusHandle;
-  private Object waitObject = new Object();
   
   /**
    * Creates a new instance of Win32Service.
@@ -104,34 +110,30 @@ public abstract class Win32Service {
    * @param account service account or null for LocalSystem
    * @param password password for service account or null
    * @param command command line to start the service
-   * @throws java.lang.Exception 
    */
   public boolean install(String displayName, String description, String[] dependencies, String account, String password, String command) {
-    Advapi32 advapi32;
-    Advapi32.SERVICE_DESCRIPTION desc;
-    SC_HANDLE service, serviceManager;
     boolean success = false;
-    String dep = "";
+    StringBuilder dep = new StringBuilder();
     
     if(dependencies != null) {
       for(String s : dependencies) {
-        dep += s + "\0";
+        dep.append(s);
+        dep.append("\0");
       }
     }
-    dep += "\0";
+    dep.append("\0");
     
-    desc = new Advapi32.SERVICE_DESCRIPTION();
+    SERVICE_DESCRIPTION desc = new SERVICE_DESCRIPTION();
     desc.lpDescription = description;
     
-    advapi32 = Advapi32.INSTANCE;
-    serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
+    SC_HANDLE serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
     
     if(serviceManager != null) {
-      service = advapi32.CreateService(serviceManager, serviceName, displayName,
+      SC_HANDLE service = advapi32.CreateService(serviceManager, serviceName, displayName,
               Winsvc.SERVICE_ALL_ACCESS, WinNT.SERVICE_WIN32_OWN_PROCESS, WinNT.SERVICE_DEMAND_START, 
               WinNT.SERVICE_ERROR_NORMAL, 
               command, 
-              null, null, dep, account, password);
+              null, null, dep.toString(), account, password);
       
       if(service != null) {
         success = advapi32.ChangeServiceConfig2(service, Winsvc.SERVICE_CONFIG_DESCRIPTION, desc);
@@ -139,25 +141,21 @@ public abstract class Win32Service {
       }
       advapi32.CloseServiceHandle(serviceManager);
     }
-    return(success);
+    return success;
   }
   
   /**
    * Uninstall the service.
    *
-   * @throws java.lang.Exception 
    * @return true on success
    */
   public boolean uninstall() {
-    Advapi32 advapi32;
-    SC_HANDLE serviceManager, service;
     boolean success = false;
-    
-    advapi32 = Advapi32.INSTANCE;
-    serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
+
+    SC_HANDLE serviceManager = openServiceControlManager(null, Winsvc.SC_MANAGER_ALL_ACCESS);
     
     if(serviceManager != null) {
-      service = advapi32.OpenService(serviceManager, serviceName, Winsvc.SERVICE_ALL_ACCESS);
+      SC_HANDLE service = advapi32.OpenService(serviceManager, serviceName, Winsvc.SERVICE_ALL_ACCESS);
       
       if(service != null) {
         success = advapi32.DeleteService(service);
@@ -165,7 +163,7 @@ public abstract class Win32Service {
       }
       advapi32.CloseServiceHandle(serviceManager);
     }
-    return(success);
+    return success;
   }
   
   /**
@@ -173,16 +171,12 @@ public abstract class Win32Service {
    * @return true on success
    */
   public boolean start() {
-    Advapi32 advapi32;
-    SC_HANDLE serviceManager, service;
     boolean success = false;
     
-    advapi32 = Advapi32.INSTANCE;
-    
-    serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
+    SC_HANDLE serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
     
     if(serviceManager != null) {
-      service = advapi32.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
+      SC_HANDLE service = advapi32.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
       
       if(service != null) {
         success = advapi32.StartService(service, 0, null);
@@ -191,51 +185,42 @@ public abstract class Win32Service {
       advapi32.CloseServiceHandle(serviceManager);
     }
     
-    return(success);
+    return success;
   }
   
   /**
    * Ask the ServiceControlManager to stop the service.
    * @return true on success
    */
-  public boolean stop() throws Exception {
-    Advapi32 advapi32;
-    SC_HANDLE serviceManager, service;
-    SERVICE_STATUS serviceStatus;
-    boolean success = false;
-    
-    advapi32 = Advapi32.INSTANCE;
-    
-    serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
-    
-    if(serviceManager != null) {
-      service = advapi32.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
-      
-      if(service != null) {
-        serviceStatus = new SERVICE_STATUS();
-        success = advapi32.ControlService(service, Winsvc.SERVICE_CONTROL_STOP, serviceStatus);
-        advapi32.CloseServiceHandle(service);
-      }
-      advapi32.CloseServiceHandle(serviceManager);
+    public boolean stop() {
+        boolean success = false;
+
+        SC_HANDLE serviceManager = openServiceControlManager(null, WinNT.GENERIC_EXECUTE);
+
+        if (serviceManager != null) {
+            SC_HANDLE service = Advapi32.INSTANCE.OpenService(serviceManager, serviceName, WinNT.GENERIC_EXECUTE);
+
+            if (service != null) {
+                SERVICE_STATUS serviceStatus = new SERVICE_STATUS();
+                success = Advapi32.INSTANCE.ControlService(service, Winsvc.SERVICE_CONTROL_STOP, serviceStatus);
+                Advapi32.INSTANCE.CloseServiceHandle(service);
+            }
+            Advapi32.INSTANCE.CloseServiceHandle(serviceManager);
+        }
+
+        return (success);
     }
-    
-    return(success);
-  }
   
   /**
    * Initialize the service, connect to the ServiceControlManager.
    */
   public void init() {
-    Advapi32 advapi32;
-    SERVICE_TABLE_ENTRY entry;
-    
     serviceMain = new ServiceMain();
-    advapi32 = Advapi32.INSTANCE;
-    entry = new Advapi32.SERVICE_TABLE_ENTRY();
+    SERVICE_TABLE_ENTRY entry = new SERVICE_TABLE_ENTRY();
     entry.lpServiceName = serviceName;
     entry.lpServiceProc = serviceMain;
     
-    advapi32.StartServiceCtrlDispatcher((SERVICE_TABLE_ENTRY[]) entry.toArray(2));
+    Advapi32.INSTANCE.StartServiceCtrlDispatcher((SERVICE_TABLE_ENTRY[]) entry.toArray(2));
   }
   
   /**
@@ -246,12 +231,7 @@ public abstract class Win32Service {
    * @return handle to ServiceControlManager or null when failed
    */
   private SC_HANDLE openServiceControlManager(String machine, int access) {
-    SC_HANDLE handle = null;
-    Advapi32 advapi32;
-    
-    advapi32 = Advapi32.INSTANCE;
-    handle = advapi32.OpenSCManager(machine, null, access);
-    return(handle);
+    return advapi32.OpenSCManager(machine, null, access);
   }
   
   /**
@@ -262,11 +242,7 @@ public abstract class Win32Service {
    * @param waitHint time to wait
    */
   private void reportStatus(int status, int win32ExitCode, int waitHint) {
-    Advapi32 advapi32;
-    SERVICE_STATUS serviceStatus;
-    
-    advapi32 = Advapi32.INSTANCE;
-    serviceStatus = new SERVICE_STATUS();
+    SERVICE_STATUS serviceStatus = new SERVICE_STATUS();
     serviceStatus.dwServiceType = WinNT.SERVICE_WIN32_OWN_PROCESS;
     serviceStatus.dwControlsAccepted = Winsvc.SERVICE_ACCEPT_STOP | Winsvc.SERVICE_ACCEPT_SHUTDOWN;
     serviceStatus.dwWin32ExitCode = win32ExitCode;
@@ -290,7 +266,7 @@ public abstract class Win32Service {
   /**
    * Implementation of the service main function.
    */
-  private class ServiceMain implements Advapi32.SERVICE_MAIN_FUNCTION {
+  private class ServiceMain implements SERVICE_MAIN_FUNCTION {
     
     /**
      * Called when the service is starting.
@@ -299,10 +275,6 @@ public abstract class Win32Service {
      * @param lpszArgv pointer to arguments
      */
     public void callback(int dwArgc, Pointer lpszArgv) {
-      Advapi32 advapi32;
-      
-      advapi32 = Advapi32.INSTANCE;
-      
       serviceControl = new ServiceControl();
       serviceStatusHandle = advapi32.RegisterServiceCtrlHandlerEx(serviceName, serviceControl, null);
       
@@ -331,7 +303,7 @@ public abstract class Win32Service {
   /**
    * Implementation of the service control function.
    */
-  private class ServiceControl implements Advapi32.HandlerEx {
+  private class ServiceControl implements HandlerEx {
 
     /**
      * Called when the service get a control code.

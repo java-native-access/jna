@@ -48,9 +48,12 @@ import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR_RELATIVE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
 import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.platform.win32.Winsvc.ChangeServiceConfig2Info;
+import com.sun.jna.platform.win32.Winsvc.HandlerEx;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_TABLE_ENTRY;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
@@ -2822,4 +2825,337 @@ public interface Advapi32 extends StdCallLibrary {
                                     String lpApplicationName, String lpCommandLine, int dwCreationFlags, Pointer lpEnvironment,
                                     String lpCurrentDirectory, STARTUPINFO lpStartupInfo, PROCESS_INFORMATION lpProcessInfo);
 
+    /**
+     * Connects the main thread of a service process to the service control
+     * manager, which causes the thread to be the service control dispatcher
+     * thread for the calling process.
+     *
+     * @param lpServiceTable A pointer to an array of SERVICE_TABLE_ENTRY
+     *                       structures containing one entry for each service
+     *                       that can execute in the calling process. The
+     *                       members of the last entry in the table must have
+     *                       NULL values to designate the end of the table.
+     * 
+     * @return true if function succeeds. To get extended error information, call
+     * GetLastError. Possible error codes:
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_FAILED_SERVICE_CONTROLLER_CONNECT</td><td>This error is returned if the program is being run as a console application rather than as a service. If the program will be run as a console application for debugging purposes, structure it such that service-specific code is not called when this error is returned.</td></tr>
+     * <tr><td>ERROR_INVALID_DATA</td><td>The specified dispatch table contains entries that are not in the proper format.</td></tr>
+     * <tr><td>ERROR_SERVICE_ALREADY_RUNNING</td><td>The process has already called StartServiceCtrlDispatcher. Each process can call StartServiceCtrlDispatcher only one time.</td></tr>
+     * </table>
+     */
+    public boolean StartServiceCtrlDispatcher(SERVICE_TABLE_ENTRY[] lpServiceTable);
+
+    /**
+     * Registers a function to handle service control requests.
+     *
+     * <p>This function has been superseded by the RegisterServiceCtrlHandlerEx
+     * function. A service can use either function, but the new function
+     * supports user-defined context data, and the new handler function supports
+     * additional extended control codes.</p>
+     *
+     * @param lpServiceName The name of the service run by the calling thread.
+     *                      This is the service name that the service control
+     *                      program specified in the CreateService function when
+     *                      creating the service.
+     *
+     *                      <p>If the service type is SERVICE_WIN32_OWN_PROCESS,
+     *                      the function does not verify that the specified name
+     *                      is valid, because there is only one registered
+     *                      service in the process.</p>
+     *
+     * @param lpHandlerProc A pointer to the handler function to be registered.
+     *                      For more information, see
+     *                      {@link com.sun.jna.platform.win32.Winsvc.Handler WinSvc.Handler}.
+     *
+     * @return A service status handle, NULL on error. Call GetLastError to
+     * get extended error condition. Possible error codes:
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_NOT_ENOUGH_MEMORY</td><td>Not enough memory is available to convert an ANSI string parameter to Unicode. This error does not occur for Unicode string parameters.</td></tr>
+     * <tr><td>ERROR_SERVICE_NOT_IN_EXE</td><td>The service entry was specified incorrectly when the process called the {@link #StartServiceCtrlDispatcher} function.</td></tr>
+     * </table>
+     */
+    public SERVICE_STATUS_HANDLE RegisterServiceCtrlHandler(String lpServiceName,
+            Handler lpHandlerProc);
+
+    /**
+     * Registers a function to handle extended service control requests.
+     *
+     * @param lpServiceName The name of the service run by the calling thread.
+     *                      This is the service name that the service control
+     *                      program specified in the CreateService function when
+     *                      creating the service.
+     * @param lpHandlerProc The handler function to be registered.
+     *                      For more information, see HandlerEx.
+     * @param lpContext     Any user-defined data. This parameter, which is
+     *                      passed to the handler function, can help identify
+     *                      the service when multiple services share a process.
+     *
+     * @return A service status handle on success, NULL on error. Call GetLastError
+     * to get extended information. Possible error codes:
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_NOT_ENOUGH_MEMORY</td><td>Not enough memory is available to convert an ANSI string parameter to Unicode. This error does not occur for Unicode string parameters.</td></tr>
+     * <tr><td>ERROR_SERVICE_NOT_IN_EXE</td><td>The service entry was specified incorrectly when the process called the {@link #StartServiceCtrlDispatcher} function.</td></tr>
+     * </table>
+     */
+    public SERVICE_STATUS_HANDLE RegisterServiceCtrlHandlerEx(String lpServiceName,
+            HandlerEx lpHandlerProc, Pointer lpContext);
+
+    /**
+     * Updates the service control manager's status information for the calling
+     * service.
+     *
+     *
+     * @param hServiceStatus  A handle to the status information structure for
+     *                        the current service. This handle is returned by
+     *                        the RegisterServiceCtrlHandlerEx function.
+     * @param lpServiceStatus A pointer to the SERVICE_STATUS structure the
+     *                        contains the latest status information for the
+     *                        calling service.
+     *  
+     * @return true if function succeeds. To get extended error information, call
+     * GetLastError. Possible error codes:
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_INVALID_DATA</td><td>The specified service status structure is invalid.</td></tr>
+     * <tr><td>ERROR_INVALID_HANDLE</td><td>The specified handle is invalid.</td></tr>
+     * </table>
+     */
+    public boolean SetServiceStatus(SERVICE_STATUS_HANDLE hServiceStatus,
+            SERVICE_STATUS lpServiceStatus);
+
+    /**
+     * Creates a service object and adds it to the specified service control
+     * manager database.
+     *
+     * @param hSCManager         [in] A handle to the service control manager
+     *                           database. This handle is returned by the
+     *                           OpenSCManager function and must have the
+     *                           SC_MANAGER_CREATE_SERVICE access right. For
+     *                           more information, see Service Security and
+     *                           Access Rights.
+     * @param lpServiceName      [in] The name of the service to install. The
+     *                           maximum string length is 256 characters. The
+     *                           service control manager database preserves the
+     *                           case of the characters, but service name
+     *                           comparisons are always case insensitive.
+     *                           Forward-slash (/) and backslash (\) are not
+     *                           valid service name characters.
+     * @param lpDisplayName      [in, optional] The display name to be used by
+     *                           user interface programs to identify the
+     *                           service. This string has a maximum length of
+     *                           256 characters. The name is case-preserved in
+     *                           the service control manager. Display name
+     *                           comparisons are always case-insensitive.
+     * @param dwDesiredAccess    [in] The access to the service. Before granting
+     *                           the requested access, the system checks the
+     *                           access token of the calling process. For a list
+     *                           of values, see Service Security and Access
+     *                           Rights.
+     * @param dwServiceType      [in] The service type. This parameter can be
+     *                           one of the following values.
+     * <table>
+     * <tr><th>Value</th><th>Meaning</th></tr>
+     * <tr><td>SERVICE_ADAPTER<br>0x00000004</td><td>Reserved.</td></tr>
+     * <tr><td>SERVICE_FILE_SYSTEM_DRIVER<br>0x00000002</td><td>File system driver service.</td></tr>
+     * <tr><td>SERVICE_KERNEL_DRIVER<br>0x00000001</td><td>Driver service.</td></tr>
+     * <tr><td>SERVICE_RECOGNIZER_DRIVER<br>0x00000008</td><td>Reserved.</td></tr>
+     * <tr><td>SERVICE_WIN32_OWN_PROCESS<br>0x00000010</td><td>Service that runs in its own process.</td></tr>
+     * <tr><td>SERVICE_WIN32_SHARE_PROCESS<br>0x00000020</td><td>Service that shares a process with one or more other services. For more information, see Service Programs.</td></tr>
+     * </table>
+     * 
+     * <p>If you specify either SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS, and the service is running in the context of the LocalSystem account, you can also specify the following value.</p>
+     * 
+     * <table>
+     * <tr><th>Value</th><th>Meaning</th></tr>
+     * <tr><td>SERVICE_INTERACTIVE_PROCESS<br>0x00000100</td><td>The service can interact with the desktop.</td></tr>
+     * </table>
+     * 
+     * @param dwStartType        [in] The service start options. This parameter
+     *                           can be one of the following values.
+     * 
+     * <table>
+     * <tr><th>Value</th><th>Meaning</th></tr>
+     * <tr><td>SERVICE_AUTO_START<br>0x00000002</td><td>A service started automatically by the service control manager during system startup.</td></tr>
+     * <tr><td>SERVICE_BOOT_START<br>0x00000000</td><td>A device driver started by the system loader. This value is valid only for driver services.</td></tr>
+     * <tr><td>SERVICE_DEMAND_START<br>0x00000003</td><td>A service started by the service control manager when a process calls the StartService function.</td></tr>
+     * <tr><td>SERVICE_DISABLED<br>0x00000004</td><td>A service that cannot be started. Attempts to start the service result in the error code ERROR_SERVICE_DISABLED.</td></tr>
+     * <tr><td>SERVICE_SYSTEM_START<br>0x00000001</td><td>A device driver started by the IoInitSystem function. This value is valid only for driver services.</td></tr>
+     * </table>
+     *
+     * @param dwErrorControl     [in] The severity of the error, and action
+     *                           taken, if this service fails to start. This
+     *                           parameter can be one of the following values.
+     * 
+     * <table>
+     * <tr><th>Value</th><th>Meaning</th></tr>
+     * <tr><td>SERVICE_ERROR_CRITICAL<br>0x00000003</td><td>The startup program logs the error in the event log, if possible. If the last-known-good configuration is being started, the startup operation fails. Otherwise, the system is restarted with the last-known good configuration.</td></tr>
+     * <tr><td>SERVICE_ERROR_IGNORE<br>0x00000000</td><td>The startup program ignores the error and continues the startup operation.</td></tr>
+     * <tr><td>SERVICE_ERROR_NORMAL<br>0x00000001</td><td>The startup program logs the error in the event log but continues the startup operation.</td></tr>
+     * <tr><td>SERVICE_ERROR_SEVERE<br>0x00000002</td><td>The startup program logs the error in the event log. If the last-known-good configuration is being started, the startup operation continues. Otherwise, the system is restarted with the last-known-good configuration.</td></tr>
+     * </table>
+     *
+     * @param lpBinaryPathName   [in, optional] The fully qualified path to the
+     *                           service binary file. If the path contains a
+     *                           space, it must be quoted so that it is
+     *                           correctly interpreted. For example, "d:\\my
+     *                           share\\myservice.exe" should be specified as
+     *                           "\"d:\\my share\\myservice.exe\"".
+     *
+     *                           <p>The path can also include arguments for an 
+     *                           auto-start service. For example, 
+     *                           "d:\\myshare\\myservice.exe arg1 arg2". These
+     *                           passed to the service entry point (typically 
+     *                           the main function).</p>
+     *
+     *                           <p>If you specify a path on another computer, 
+     *                           the share must be accessible by the computer 
+     *                           account of the local computer because this is 
+     *                           the security context used in the remote call. 
+     *                           However, this requirement allows any potential
+     *                           vulnerabilities in the remote computer to 
+     *                           affect the local computer. Therefore, it is
+     *                           best to use a local file.</p>
+     * 
+     * @param lpLoadOrderGroup   [in, optional] The names of the load ordering
+     *                           group of which this service is a member.
+     *                           Specify NULL or an empty string if the service
+     *                           does not belong to a group.
+     *
+     *                           <p>The startup program uses load ordering 
+     *                           groups to load groups of services in a 
+     *                           specified order with respect to the other 
+     *                           groups. The list of load ordering groups is
+     *                           contained in the following registry value:</p>
+     *
+     * <p>HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\ServiceGroupOrder</p>
+     * @param lpdwTagId          [out, optional] A pointer to a variable that
+     *                           receives a tag value that is unique in the
+     *                           group specified in the lpLoadOrderGroup
+     *                           parameter. Specify NULL if you are not changing
+     *                           the existing tag.
+     *
+     *                           <p>You can use a tag for ordering service 
+     *                           startup within a load ordering group by 
+     *                           specifying a tag order vector in the following
+     *                           registry value:</p>
+     *
+     * <p>HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\GroupOrderList</p>
+     *
+     *                           <p>Tags are only evaluated for driver services
+     *                           that have SERVICE_BOOT_START or 
+     *                           SERVICE_SYSTEM_START start types.</p>
+     * @param lpDependencies     [in, optional] A pointer to a double
+     *                           null-terminated array of null-separated names
+     *                           of services or load ordering groups that the
+     *                           system must start before this service. Specify
+     *                           NULL or an empty string if the service has no
+     *                           dependencies. Dependency on a group means that
+     *                           this service can run if at least one member of
+     *                           the group is running after an attempt to start
+     *                           all members of the group.
+     *
+     *                           <p>You must prefix group names with 
+     *                           SC_GROUP_IDENTIFIER so that they can be
+     *                           distinguished from a service name, because 
+     *                           services and service groups share the same name
+     *                           space.</p>
+     * @param lpServiceStartName [in, optional] The name of the account under
+     *                           which the service should run. If the service
+     *                           type is SERVICE_WIN32_OWN_PROCESS, use an
+     *                           account name in the form DomainName\UserName.
+     *                           The service process will be logged on as this
+     *                           user. If the account belongs to the built-in
+     *                           domain, you can specify .\UserName.
+     *
+     *                           <p>If this parameter is NULL, CreateService 
+     *                           uses the LocalSystem account. If the service 
+     *                           type specifies SERVICE_INTERACTIVE_PROCESS, the
+     *                           service must run in the LocalSystem account.</p>
+     *
+     *                           <p>If this parameter is NT AUTHORITY\LocalService,
+     *                           CreateService uses the LocalService account. If
+     *                           the parameter is NT AUTHORITY\NetworkService,
+     *                           CreateService uses the NetworkService account.</p>
+     *
+     *                           <p>A shared process can run as any user.</p>
+     *
+     *                           <p>If the service type is SERVICE_KERNEL_DRIVER
+     *                           or SERVICE_FILE_SYSTEM_DRIVER, the name is the
+     *                           driver object name that the system uses to load
+     *                           the device driver. Specify NULL if the driver
+     *                           is to use a default object name created by the
+     *                           I/O system.</p>
+     *
+     *                           <p>A service can be configured to use a managed
+     *                           account or a virtual account. If the service is
+     *                           configured to use a managed service account,
+     *                           the name is the managed service account name.
+     *                           If the service is configured to use a virtual
+     *                           account, specify the name as NT
+     *                           SERVICE\ServiceName. For more information about
+     *                           managed service accounts and virtual accounts, 
+     *                           see the Service Accounts Step-by-Step Guide.
+     *
+     * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:</strong>
+     * Managed service accounts and virtual accounts are not supported until
+     * Windows 7 and Windows Server 2008 R2.</p>
+     * @param lpPassword         [in, optional] The password to the account name
+     *                           specified by the lpServiceStartName parameter.
+     *                           Specify an empty string if the account has no
+     *                           password or if the service runs in the
+     *                           LocalService, NetworkService, or LocalSystem
+     *                           account. For more information, see Service
+     *                           Record List.
+     *
+     *                           <p>If the account name specified by the 
+     *                           lpServiceStartName parameter is the name of a 
+     *                           managed service account or virtual account
+     *                           name, the lpPassword parameter must be NULL.</p>
+     *
+     *                           <p>Passwords are ignored for driver services.</p>
+     *
+     * @return SC_HANDLE on success, NULL on error. Call GetLastError to
+     * get extended error condition. Possible error codes:
+     * 
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_ACCESS_DENIED</td><td>The handle to the SCM database does not have the SC_MANAGER_CREATE_SERVICE access right.</td></tr>
+     * <tr><td>ERROR_CIRCULAR_DEPENDENCY</td><td>A circular service dependency was specified.</td></tr>
+     * <tr><td>ERROR_DUPLICATE_SERVICE_NAME</td><td>The display name already exists in the service control manager database either as a service name or as another display name.</td></tr>
+     * <tr><td>ERROR_INVALID_HANDLE</td><td>The handle to the specified service control manager database is invalid.</td></tr>
+     * <tr><td>ERROR_INVALID_NAME</td><td>The specified service name is invalid.</td></tr>
+     * <tr><td>ERROR_INVALID_PARAMETER</td><td>A parameter that was specified is invalid.</td></tr>
+     * <tr><td>ERROR_INVALID_SERVICE_ACCOUNT</td><td>The user account name specified in the lpServiceStartName parameter does not exist.</td></tr>
+     * <tr><td>ERROR_SERVICE_EXISTS</td><td>The specified service already exists in this database.</td></tr>
+     * <tr><td>ERROR_SERVICE_MARKED_FOR_DELETE</td><td>The specified service already exists in this database and has been marked for deletion.</td></tr>
+     * </table>
+     */
+    public SC_HANDLE CreateService(SC_HANDLE hSCManager, String lpServiceName,
+            String lpDisplayName, int dwDesiredAccess, int dwServiceType,
+            int dwStartType, int dwErrorControl, String lpBinaryPathName,
+            String lpLoadOrderGroup, IntByReference lpdwTagId,
+            String lpDependencies, String lpServiceStartName, String lpPassword);
+
+    /**
+     * Marks the specified service for deletion from the service control manager database.
+     * 
+     * @param hService [in] A handle to the service. This handle is returned by
+     *                 the OpenService or CreateService function, and it must
+     *                 have the DELETE access right.
+     * 
+     * @return true if function succeeds. To get extended error information, call
+     * GetLastError. Possible error codes:
+     * 
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>ERROR_ACCESS_DENIED</td><td>The handle does not have the DELETE access right.</td></tr>
+     * <tr><td>ERROR_INVALID_HANDLE</td><td>The specified handle is invalid.</td></tr>
+     * <tr><td>ERROR_SERVICE_MARKED_FOR_DELETE</td><td>The specified service has already been marked for deletion.</td></tr>
+     * </table>
+     */
+    public boolean DeleteService(SC_HANDLE hService);
 }
