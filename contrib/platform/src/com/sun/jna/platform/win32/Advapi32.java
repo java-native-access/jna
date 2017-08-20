@@ -2866,7 +2866,8 @@ public interface Advapi32 extends StdCallLibrary {
      *                      service in the process.</p>
      *
      * @param lpHandlerProc A pointer to the handler function to be registered.
-     *                      For more information, see {@link Handler}.
+     *                      For more information, see
+     *                      {@link com.sun.jna.platform.win32.Winsvc.Handler WinSvc.Handler}.
      *
      * @return A service status handle, NULL on error. Call GetLastError to
      * get extended error condition. Possible error codes:

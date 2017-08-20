@@ -600,10 +600,12 @@ public interface Winsvc {
      * control handler function of a particular service.
      *
      * <p>
-     * This function has been superseded by the {@link HandlerEx} control handler
-     * function used with the {@link #RegisterServiceCtrlHandlerEx} function. A service
-     * can use either control handler, but the new control handler supports
-     * user-defined context data and additional extended control codes.</p>
+     * This function has been superseded by the {@link HandlerEx} control
+     * handler function used with the
+     * {@link com.sun.jna.platform.win32.Advapi32#RegisterServiceCtrlHandlerEx}
+     * function. A service can use either control handler, but the new control
+     * handler supports user-defined context data and additional extended
+     * control codes.</p>
      */
     interface Handler extends StdCallLibrary.StdCallCallback {
 
@@ -639,10 +641,13 @@ public interface Winsvc {
      * RegisterServiceCtrlHandlerEx function. A service program can use it as
      * the control handler function of a particular service.
      *
-     * <p>This function supersedes the Handler control handler function used
-     * with the {@link RegisterServiceCtrlHandler} function. A service can use either
-     * control handler, but the new control handler supports user-defined
-     * context data and additional extended control codes.</p>
+     * <p>
+     * This function supersedes the Handler control handler function used with
+     * the
+     * {@link com.sun.jna.platform.win32.Advapi32#RegisterServiceCtrlHandlerEx}
+     * function. A service can use either control handler, but the new control
+     * handler supports user-defined context data and additional extended
+     * control codes.</p>
      */
     interface HandlerEx extends StdCallLibrary.StdCallCallback {
 
@@ -739,7 +744,7 @@ public interface Winsvc {
          * a SERVICE_TIMECHANGE_INFO structure.</p>
          * 
          * @param lpContext   [in] User-defined data passed from
-         *                    {@link RegisterServiceCtrlHandlerEx}. When multiple
+         *                    {@link com.sun.jna.platform.win32.Advapi32#RegisterServiceCtrlHandlerEx}. When multiple
          *                    services share a process, the lpContext parameter
          *                    can help identify the service.
          * 
@@ -818,7 +823,7 @@ public interface Winsvc {
      * This member can specify a localized string using the following
      * format:</p>
      * <p>
-     * @[path\]dllname,-strID</p>
+     * {@literal @}[path\]dllname,-strID</p>
      * <p>
      * The string with identifier strID is loaded from dllname; the path is
      * optional. For more information, see RegLoadMUIString.</p>
