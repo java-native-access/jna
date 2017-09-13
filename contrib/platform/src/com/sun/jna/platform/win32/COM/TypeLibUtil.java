@@ -106,7 +106,7 @@ public class TypeLibUtil {
     public TypeLibUtil(String file) {
         // load typelib
         PointerByReference pTypeLib = new PointerByReference();
-        HRESULT hr = OleAuto.INSTANCE.LoadTypeLib(new WString(file), pTypeLib);
+        HRESULT hr = OleAuto.INSTANCE.LoadTypeLib(file, pTypeLib);
         COMUtils.checkRC(hr);
 
         // init type lib class

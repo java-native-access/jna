@@ -217,16 +217,6 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * @deprecated use {@link #formatMessage(WinNT.HRESULT)} instead.
-     * @param code error code
-     * @return formatted message
-     */
-    @Deprecated
-    public static String formatMessageFromHR(HRESULT code) {
-        return formatMessage(code.intValue());
-    }
-
-    /**
      * Format a system message from an error code.
      *
      * @param code
@@ -234,7 +224,7 @@ public abstract class Kernel32Util implements WinDef {
      * @return Formatted message.
      */
     public static String formatMessageFromLastErrorCode(int code) {
-        return formatMessageFromHR(W32Errors.HRESULT_FROM_WIN32(code));
+        return formatMessage(W32Errors.HRESULT_FROM_WIN32(code));
     }
 
     /**

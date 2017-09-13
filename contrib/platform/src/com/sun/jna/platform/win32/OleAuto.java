@@ -29,7 +29,6 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
@@ -883,9 +882,6 @@ public interface OleAuto extends StdCallLibrary {
          * @return status
 	 */
 	HRESULT LoadTypeLib(String szFile, PointerByReference pptlib);
-        /** @deprecated use the String version */
-	@Deprecated
-    HRESULT LoadTypeLib(WString szFile, PointerByReference pptlib);
 
 	/**
 	 * Converts a system time to a variant representation.

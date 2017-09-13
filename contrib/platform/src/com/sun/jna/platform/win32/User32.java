@@ -1717,23 +1717,6 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         </p>
      */
     int RegisterWindowMessage(String string);
-
-    /**
-     * Retrieves a handle to the display monitor that contains a specified point.
-     * @param pt A POINT structure that specifies the point of interest in virtual-screen
-     *        coordinates.
-     * @param dwFlags Determines the function's return value if the window does not intersect
-     *        any display monitor. This parameter can be one of the following values.
-     *        <ul><li>MONITOR_DEFAULTTONEAREST</li>
-     *        <li>MONITOR_DEFAULTTONULL</li>
-     *        <li>MONITOR_DEFAULTTOPRIMARY</li></ul>
-     * @return If the point is contained by a display monitor, the return value is an HMONITOR
-     *        handle to that display monitor. If the point is not contained by a display monitor,
-     *        the return value depends on the value of dwFlags.
-     * @deprecated  Use {@link #MonitorFromPoint(com.sun.jna.platform.win32.WinDef.POINT.ByValue, int)}
-     */
-    @Deprecated
-    HMONITOR MonitorFromPoint(POINT pt, int dwFlags);
     
     /**
      * Retrieves a handle to the display monitor that contains a specified point.

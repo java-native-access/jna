@@ -16,12 +16,44 @@ Bug Fixes
 
 Breaking Changes
 ----------------
-* `Pointer#SIZE` is removed. Its use is replaced by `Native#POINTER_SIZE` 
+
+* `com.sun.jna.Pointer#SIZE` is removed. Its use is replaced by `com.sun.jna.Native#POINTER_SIZE` 
   to prevent a class loading deadlock, when JNA is initialized from multiple threads
-* `SecBufferDesc` was incompatibly changed to match the correct native semantics.
-  SecBufferDesc describing more than one buffer were broken. For most usecases 
+* `com.sun.jna.Pointer#getString(long offset, boolean wide)` is removed. It was replaced by
+  `com.sun.jna.Pointer#getString(long offset)` or
+  `com.sun.jna.Pointer#getWideString(long offset)`
+* `com.sun.jna.Pointer#getStringArray(long offset, boolean wide)` is removed. It was replaced by
+  `com.sun.jna.Pointer#getStringArray(long offset)` or
+  `com.sun.jna.Pointer#getWideStringArray(long offset)`
+* `com.sun.jna.Pointer#setString(long offset, String value, boolean wide)` is removed. It was replaced by
+  `com.sun.jna.Pointer#setString(long offset, String value)` or
+  `com.sun.jna.Pointer#setWideString(long offset, String value)`
+* `com.sun.jna.Structure#setFieldOrder` is removed. It was replaced by 
+  `com.sun.jna.Structure#getFieldOrder` and threw an `java.lang.Error` on call.
+* `com.sun.jna.Native#parseVersion` was removed without replacement
+* `com.sun.jna.Native#setPreserveLastError` and `com.sun.jna.Native#getPreserveLastError`
+  were removed without replacement. They were turned into NOOPs in the past.
+* `com.sun.jna.Native#getDirectByteBuffer` was replaced by `com.sun.jna.Pointer#getByteBuffer`
+* `com.sun.jna.platform.win32.Sspi.SecBufferDesc` was incompatibly changed to 
+  match the correct native semantics. SecBufferDesc describing more than one
+  buffer were broken. For most usecases 
   `com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc` is the best 
   alternative.
+* `com.sun.jna.platform.win32.WinBase.FILETIME#toLong()` was replaced by
+  `com.sun.jna.platform.win32.WinBase.FILETIME#toTime()`
+* `com.sun.jna.platform.win32.Variant#COM_DAYS_ADJUSTMENT` was removed
+* `com.sun.jna.platform.win32.Variant#MICRO_SECONDS_PER_DAY` was removed
+* `com.sun.jna.platform.win32.Variant.VARIANT#toJavaDate` was removed
+* `com.sun.jna.platform.win32.Variant.VARIANT#fromJavaDate` was removed
+* `com.sun.jna.platform.win32.User32#MonitorFromPoint(Point pt, int dwFlags)`
+  was replaced by
+  `com.sun.jna.platform.win32.User32#MonitorFromPoint(Point.ByValue pt, int dwFlags)`
+* `com.sun.jna.platform.win32.OleAuto.LoadTypeLib(WString, PointerByReference)`
+  was replaced by
+  `com.sun.jna.platform.win32.OleAuto.LoadTypeLib(String, PointerByReference)`
+* `com.sun.jna.platform.win32.Kernel32Util.formatMessageFromHR(HRESULT)`
+  was replaced by
+  `com.sun.jna.platform.win32.Kernel32Util.formatMessage(HRESULT)`
 
 Release 4.5.0
 =============

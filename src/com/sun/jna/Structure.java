@@ -890,17 +890,6 @@ public abstract class Structure {
      */
     protected abstract List<String> getFieldOrder();
 
-    /**
-     * Force a compile-time error on the old method of field definition
-     * @param fields ordered array of field names
-     * @deprecated Use the required method getFieldOrder() instead to
-     * indicate the order of fields in this structure.
-     */
-    @Deprecated
-    protected final void setFieldOrder(String[] fields) {
-        throw new Error("This method is obsolete, use getFieldOrder() instead");
-    }
-
     /** Sort the structure fields according to the given array of names.
      * @param fields list of fields to be sorted
      * @param names list of names representing the desired sort order
