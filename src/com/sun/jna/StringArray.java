@@ -53,7 +53,7 @@ public class StringArray extends Memory implements Function.PostCallRead {
         this(strings, NativeString.WIDE_STRING);
     }
     private StringArray(Object[] strings, String encoding) {
-        super((strings.length + 1) * Pointer.SIZE);
+        super((strings.length + 1) * Native.POINTER_SIZE);
         this.original = strings;
         this.encoding = encoding;
         for (int i=0;i < strings.length;i++) {
@@ -63,9 +63,9 @@ public class StringArray extends Memory implements Function.PostCallRead {
                 natives.add(ns);
                 p = ns.getPointer();
             }
-            setPointer(Pointer.SIZE * i, p);
+            setPointer(Native.POINTER_SIZE * i, p);
         }
-        setPointer(Pointer.SIZE * strings.length, null);
+        setPointer(Native.POINTER_SIZE * strings.length, null);
     }
     /** Read back from native memory. */
     @Override
@@ -73,7 +73,7 @@ public class StringArray extends Memory implements Function.PostCallRead {
         boolean returnWide = original instanceof WString[];
         boolean wide = NativeString.WIDE_STRING.equals(encoding);
         for (int si=0;si < original.length;si++) {
-            Pointer p = getPointer(si * Pointer.SIZE);
+            Pointer p = getPointer(si * Native.POINTER_SIZE);
             Object s = null;
             if (p != null) {
                 s = wide ? p.getWideString(0) : p.getString(0, encoding);

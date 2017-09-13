@@ -56,8 +56,8 @@
   
   <property name="android.versionCode" value="2"/>
   <!-- JNA library release version -->
-  <property name="jna.major" value="4"/>
-  <property name="jna.minor" value="5"/>
+  <property name="jna.major" value="5"/>
+  <property name="jna.minor" value="0"/>
   <property name="jna.revision" value="0"/>
   <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
@@ -1113,8 +1113,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <sysproperty key="jna.library.path" file="${build.native}"/>
       <!-- Ignore any system install of JNA -->
       <sysproperty key="jna.nosys" value="true"/>
-      <!-- Avoid VM crashes, if possible -->
-      <sysproperty key="jna.protected" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
       <sysproperty key="jna.nativedir" file="${build.native}"/>
       <jvmarg value="${vmopt.arch}"/>

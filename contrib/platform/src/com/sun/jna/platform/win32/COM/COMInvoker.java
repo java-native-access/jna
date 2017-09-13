@@ -24,6 +24,7 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Function;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 
@@ -34,7 +35,7 @@ public abstract class COMInvoker extends PointerType {
         // we take the vtable id and multiply with the pointer size (4 bytes on
         // 32bit OS)
         Function func = Function.getFunction(vptr.getPointer(vtableId
-                * Pointer.SIZE));
+                * Native.POINTER_SIZE));
         return func.invokeInt(args);
     }
 
@@ -43,7 +44,7 @@ public abstract class COMInvoker extends PointerType {
         // we take the vtable id and multiply with the pointer size (4 bytes on
         // 32bit OS)
         Function func = Function.getFunction(vptr.getPointer(vtableId
-                * Pointer.SIZE));
+                * Native.POINTER_SIZE));
         return func.invoke(returnType, args);
     }
 
@@ -52,7 +53,7 @@ public abstract class COMInvoker extends PointerType {
         // we take the vtable id and multiply with the pointer size (4 bytes on
         // 32bit OS)
         Function func = Function.getFunction(vptr.getPointer(vtableId
-                * Pointer.SIZE));
+                * Native.POINTER_SIZE));
         func.invokeVoid(args);
     }
 

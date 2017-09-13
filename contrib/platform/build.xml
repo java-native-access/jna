@@ -177,8 +177,6 @@ com.sun.jna.platform.wince
         <env key="${ld.preload.name}" file="${libjsig}"/>
         <!-- Ignore any system install of JNA -->
         <sysproperty key="jna.nosys" value="true"/>
-        <!-- Avoid VM crashes, if possible -->
-        <sysproperty key="jna.protected" value="true"/>
         <sysproperty key="jna.builddir" file="${file.reference.jna.build}"/>
         <jvmarg value="${vmopt.arch}"/>
         <classpath><path path="${run.test.classpath}"/><path path="${file.reference.jna.build}/test-classes"/></classpath>

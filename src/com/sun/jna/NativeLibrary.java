@@ -870,7 +870,7 @@ public class NativeLibrary {
             if (Platform.isLinux() || Platform.isSolaris()
                 || Platform.isFreeBSD() || Platform.iskFreeBSD()) {
                 // Linux & FreeBSD use /usr/lib32, solaris uses /usr/lib/32
-                archPath = (Platform.isSolaris() ? "/" : "") + Pointer.SIZE * 8;
+                archPath = (Platform.isSolaris() ? "/" : "") + Native.POINTER_SIZE * 8;
             }
             String[] paths = {
                 "/usr/lib" + archPath,

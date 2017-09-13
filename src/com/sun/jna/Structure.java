@@ -1411,11 +1411,11 @@ public abstract class Structure {
                  || Callback.class.isAssignableFrom(type)
                  || WString.class == type
                  || String.class == type) {
-            alignment = Pointer.SIZE;
+            alignment = Native.POINTER_SIZE;
         }
         else if (Structure.class.isAssignableFrom(type)) {
             if (ByReference.class.isAssignableFrom(type)) {
-                alignment = Pointer.SIZE;
+                alignment = Native.POINTER_SIZE;
             }
             else {
                 if (value == null)
@@ -1968,7 +1968,7 @@ public abstract class Structure {
             return Arrays.asList(new String[] { "size", "alignment", "type", "elements" });
         }
         private void init(Pointer[] els) {
-            elements = new Memory(Pointer.SIZE * els.length);
+            elements = new Memory(Native.POINTER_SIZE * els.length);
             elements.write(0, els, 0, els.length);
             write();
         }
