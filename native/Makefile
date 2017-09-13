@@ -84,16 +84,6 @@ JNISFX=$(LIBSFX)
 CC=gcc
 LD=$(CC)
 LIBS=
-# CC_OPTS only applied to objects build for jnidispatch, not for libffi
-# -Wno-unknown-warning-option 
-#                => Suppress warning for unknown warnings
-# -Werror        => Treat warnings as errors
-# -Wno-clobbered => Silence GCC warning about clobbered automatic variables.
-#                   The "longjmp" case only happens in protect.h in the logic
-#                   that implements "protected" mode. In that case an exception
-#                   is raised and the value of the potentially clobbered
-#                   variables is ignored.
-LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered
 # Default to Sun recommendations for JNI compilation
 COPT=-O2 -fno-omit-frame-pointer -fno-strict-aliasing
 CASM=-S
@@ -130,37 +120,49 @@ ifeq ($(ARCH),arm)
 PREFIX=arm-linux-androideabi-
 COPT+= -mthumb-interwork -march=armv5te -mtune=xscale -msoft-float -fstack-protector 
 HOST=arm-linux-eabi
-else ifeq ($(ARCH),armv7)
+else
+ifeq ($(ARCH),armv7)
 PREFIX=arm-linux-androideabi-
 COPT+= -march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16 -Wl,--fix-cortex-a8
 HOST=arm-linux-eabi
 AARCH=arm
-else ifeq ($(ARCH),aarch64)
+else
+ifeq ($(ARCH),aarch64)
 PREFIX=aarch64-linux-android-
 HOST=aarch64-linux-android
 AARCH=arm64
 ALIBDIR=/usr/lib64
-else ifeq ($(ARCH),x86)
+else
+ifeq ($(ARCH),x86)
 PREFIX=i686-linux-android-
 COPT+= -march=i686
 HOST=i686-linux-android
-else ifeq ($(ARCH),x86-64)
+else
+ifeq ($(ARCH),x86-64)
 PREFIX=x86_64-linux-android-
 COPT+= -m64
 HOST=x86_64-linux-android
 AARCH=x86_64
 ALIBDIR=/usr/lib64
-else ifeq ($(ARCH),mips)
+else
+ifeq ($(ARCH),mips)
 PREFIX=mipsel-linux-android-
 HOST=mipsel-linux-android
 COPT+=
-else ifeq ($(ARCH),mips64)
+else
+ifeq ($(ARCH),mips64)
 PREFIX=mips64el-linux-android-
 HOST=mips64el-linux-android
 COPT+=
 ALIBDIR=/usr/lib64
 else
 ERROR = $(error "Unsupported android architecture '$(ARCH)'")
+endif
+endif
+endif
+endif
+endif
+endif
 endif
 NDK?=/Developer/Applications/android-ndk-r10e
 NDK_PLATFORM?=$(NDK)/platforms/android-21
@@ -318,6 +320,27 @@ ifeq ($(ARCH),ppc)
 endif
 endif
 
+# CC_OPTS only applied to objects build for jnidispatch, not for libffi
+# -Wno-unknown-warning-option 
+#                => Suppress warning for unknown warnings
+# -Werror        => Treat warnings as errors
+# -Wno-clobbered => Silence GCC warning about clobbered automatic variables.
+#                   The "longjmp" case only happens in protect.h in the logic
+#                   that implements "protected" mode. In that case an exception
+#                   is raised and the value of the potentially clobbered
+#                   variables is ignored.
+#
+# Enable this only on GCC versions, that can work with it. It is assumed, that
+# GCC version 4.X is the lower bound. That version is problematic, as it
+# does not support -Wno-unknown-warning-option
+ifeq ($(CC),gcc)
+    GCC_MAJOR_VERSION = $(shell gcc -dumpversion | cut -f 1 -d '.')
+    ifneq ($(GCC_MAJOR_VERSION),4)
+	LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+    endif
+else
+    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+endif
 
 # Enable 64-bit builds if the arch demands it
 ifeq ($(CC),gcc)
