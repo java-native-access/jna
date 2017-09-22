@@ -61,7 +61,7 @@ public class NativeTest extends TestCase {
                 Method m = Native.class.getMethod("loadLibrary", paramTypes);
                 Class<?> returnType = m.getReturnType();
                 signature.append(Native.getSignature(returnType));
-                assertSame("Mismatched return type for signature=" + signature, Object.class, returnType);
+                assertSame("Mismatched return type for signature=" + signature, Library.class, returnType);
 //                System.out.println("===>" + m.getName() + ": " + signature);
             } catch(NoSuchMethodError err) {
                 fail("No method for signature=" + signature);
