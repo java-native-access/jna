@@ -683,7 +683,12 @@ initialized unless they are selected via {@link com.sun.jna.Union#setType}.
 <a name="last-error"></a>
 <h3>Obtaining "last" error</h3>
 If a function sets the system error property
-(<code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> or <code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>), the error code will be thrown as a {@link com.sun.jna.LastErrorException} if you declare the exception in your JNA mapping.  Alternatively, you can use {@link com.sun.jna.Native#getLastError()} to retrieve it, providing that {@link com.sun.jna.Native#setPreserveLastError(boolean)} has been called with a <code>true</code> value.  Throwing an exception is preferred since it has better performance.
+(<code><a href="http://www.opengroup.org/onlinepubs/009695399/functions/errno.html">errno</a></code> or 
+<code><a href="http://msdn.microsoft.com/en-us/library/ms679360(VS.85).aspx">GetLastError()</a></code>), 
+the error code will be thrown as a {@link com.sun.jna.LastErrorException} if you 
+declare the exception in your JNA mapping. Alternatively, you can use 
+{@link com.sun.jna.Native#getLastError()} to retrieve it. Throwing an exception
+is preferred since it has better performance.
 
 <a name="java-objects"></a>
 <h3>Arbitrary Java Object arguments/return values</h3>
@@ -743,10 +748,6 @@ and {@link com.sun.jna.Structure#writeField(String)} or {@link
 com.sun.jna.Structure#writeField(String,Object)} to synch with just the fields
 of interest. 
 <h3>Throw exceptions on last error</h3>
-To avoid the overhead of preserving the system last error information on every
-native call, invoke
-{@link com.sun.jna.Native#setPreserveLastError setPreserveLastError(false)} or
-set the System property <code>jna.preserve_last_error=false</code>.<p/>
 In those methods where you are interested in the value of errno/GetLastError(),
 declare your method to throw {@link com.sun.jna.LastErrorException}.
 </body>

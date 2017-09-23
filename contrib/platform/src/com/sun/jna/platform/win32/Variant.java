@@ -22,7 +22,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.IntegerType;
 import java.util.Date;
 import java.util.List;
 
@@ -126,14 +125,6 @@ public interface Variant {
     public static VARIANT_BOOL VARIANT_TRUE = new VARIANT_BOOL(0xFFFF);
     public static VARIANT_BOOL VARIANT_FALSE = new VARIANT_BOOL(0x0000);
 
-    @Deprecated
-    public final static long COM_DAYS_ADJUSTMENT = 25569L; // ((1969 - 1899) *
-                                                           // 365) +1 + Leap
-                                                           // years = Days 
-    @Deprecated
-    public final static long MICRO_SECONDS_PER_DAY = 86400000L; // 24L * 60L *
-                                                                // 60L * 1000L;
-    
     public static class VARIANT extends Union {
 
         public static class ByReference extends VARIANT implements
@@ -294,8 +285,7 @@ public interface Variant {
 
         public VARIANT(Date value) {
             this();
-            DATE date = this.fromJavaDate(value);
-            this.setValue(VT_DATE, date);
+            this.setValue(VT_DATE, new DATE(value));
         }
 
         public VARIANT(SAFEARRAY array) {
@@ -608,16 +598,6 @@ public interface Variant {
             } else {
                 return varDate.getAsJavaDate();
             }
-        }
-
-        @Deprecated
-        protected Date toJavaDate(DATE varDate) {
-            return varDate.getAsJavaDate();
-        }
-
-        @Deprecated
-        protected DATE fromJavaDate(Date javaDate) {
-            return new DATE(javaDate);
         }
 
         public static class _VARIANT extends Structure {

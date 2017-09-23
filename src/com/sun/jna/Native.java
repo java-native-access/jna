@@ -147,11 +147,6 @@ public final class Native implements Version {
 
     static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
-
-    @Deprecated
-    public static float parseVersion(String v) {
-        return Float.parseFloat(v.substring(0, v.lastIndexOf(".")));
-    }
     
     /**
      * Version string must have the structure <major>.<minor>.<revision>
@@ -298,21 +293,6 @@ public final class Native implements Version {
      * if this platform supports protecting memory accesses.
      */
     public static synchronized native boolean isProtected();
-
-    /** This method is obsolete.  The last error value is always preserved.
-     * @see #getLastError()
-     * @deprecated Last error is always preserved and available via {@link #getLastError()}
-     */
-    @Deprecated
-    public static void setPreserveLastError(boolean enable) { }
-
-    /** Indicates whether the system last error result is preserved
-     * after every invocation.  Always returns <code>true</code><p>
-     * @see #getLastError()
-     * @deprecated Last error is always preserved and available via {@link #getLastError()}
-     */
-    @Deprecated
-    public static boolean getPreserveLastError() { return true; }
 
     /** Utility method to get the native window ID for a Java {@link Window}
      * as a <code>long</code> value.
@@ -2189,16 +2169,10 @@ public final class Native implements Version {
     public static native void free(long ptr);
 
     /**
-     * Get a direct ByteBuffer mapped to the memory pointed to by the pointer.
-     * This method calls through to the JNA NewDirectByteBuffer method.
-     *
-     * @param addr base address of the JNA-originated memory
-     * @param length Length of ByteBuffer
-     * @return a direct ByteBuffer that accesses the memory being pointed to
-     * @deprecated Use {@link Pointer#getByteBuffer(long, long)} (since 4.3.0)
+     * @deprecated retained to keep native signature
      */
     @Deprecated
-    public static native ByteBuffer getDirectByteBuffer(long addr, long length);
+    private static native ByteBuffer getDirectByteBuffer(long addr, long length);
 
     private static final ThreadLocal<Memory> nativeThreadTerminationFlag =
         new ThreadLocal<Memory>() {

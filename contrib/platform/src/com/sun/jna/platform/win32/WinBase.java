@@ -937,18 +937,6 @@ public interface WinBase extends WinDef, BaseTSD {
         }
 
         /**
-         * <p>Converts this filetime into a number of milliseconds which have
-         * passed since January 1, 1970 (UTC).</p>
-         * @return This filetime as a number of milliseconds which have passed
-         * since January 1, 1970 (UTC)
-         * @deprecated Replaced by {@link #toTime()}
-         */
-        @Deprecated
-        public long toLong() {
-            return toDate().getTime();
-        }
-
-        /**
          * <p>Converts the two 32-bit unsigned integer parts of this filetime
          * into a 64-bit unsigned integer representing the number of
          * 100-nanosecond intervals since January 1, 1601 (UTC).</p>
