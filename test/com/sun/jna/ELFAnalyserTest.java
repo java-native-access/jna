@@ -1,11 +1,10 @@
 
 package com.sun.jna;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.junit.AfterClass;
@@ -21,6 +20,7 @@ public class ELFAnalyserTest {
     private static File testResources = new File("build/test-resources");
     private static File win32Lib = new File(testResources, "win32-x86-64.dll");
     private static File linuxArmelLib = new File(testResources, "linux-armel.so");
+    private static File linuxArmelNoflagLib = new File(testResources, "linux-armel-noflag.so");
     private static File linuxArmhfLib = new File(testResources, "linux-armhf.so");
     private static File linuxAmd64Lib = new File(testResources, "linux-amd64.so");
     
@@ -37,6 +37,7 @@ public class ELFAnalyserTest {
         extractFileFromZip(linuxArmelZip, "libjnidispatch.so", linuxArmelLib);
         extractFileFromZip(linuxArmhfZip, "libjnidispatch.so", linuxArmhfLib);
         extractFileFromZip(linuxAmd64Zip, "libjnidispatch.so", linuxAmd64Lib);
+        makeLinuxArmelNoflagLib(linuxArmelLib, linuxArmelNoflagLib);
     }
     
     @Test
@@ -72,6 +73,16 @@ public class ELFAnalyserTest {
         assertTrue(ahfd.isArmSoftFloat());
         assertFalse(ahfd.isArmHardFloat());
     }
+
+    @Test
+    public void testArmelNoflag() throws IOException {
+        ELFAnalyser ahfd = ELFAnalyser.analyse(linuxArmelNoflagLib.getAbsolutePath());
+        assertTrue(ahfd.isELF());
+        assertTrue(ahfd.isArm());
+        assertFalse(ahfd.is64Bit());
+        assertTrue(ahfd.isArmSoftFloat());
+        assertFalse(ahfd.isArmHardFloat());
+    }
     
     @AfterClass
     public static void afterClass() throws IOException {
@@ -79,6 +90,7 @@ public class ELFAnalyserTest {
         linuxArmhfLib.delete();
         linuxArmelLib.delete();
         win32Lib.delete();
+        linuxArmelNoflagLib.delete();
         testResources.delete();
     }
     
@@ -103,6 +115,19 @@ public class ELFAnalyserTest {
         } finally {
             zip.close();
         }
+    }
+
+    // The e_flags for elf arm binaries begin at an offset of 0x24 bytes.
+    // The procedure call standard is coded on the second byte.
+    private static void makeLinuxArmelNoflagLib(File sourceFile, File outputFile) throws IOException {
+        final int POS_ABI_FLOAT_BIT = (byte) 0x25;
+        Files.copy(sourceFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        RandomAccessFile out = new RandomAccessFile(outputFile, "rw");
+
+        out.seek(POS_ABI_FLOAT_BIT);
+        out.write(0);
+
+        out.close();
     }
 }
 
