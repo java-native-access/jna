@@ -133,8 +133,8 @@ class ELFAnalyser {
         
         if(arm) {
             int flags = headerData.getInt(_64Bit ? 0x30 : 0x24);
-            armSoftFloat = (flags & EF_ARM_ABI_FLOAT_SOFT) == EF_ARM_ABI_FLOAT_SOFT;
             armHardFloat = (flags & EF_ARM_ABI_FLOAT_HARD) == EF_ARM_ABI_FLOAT_HARD;
+            armSoftFloat = !armHardFloat;
         }
     }
 }
