@@ -483,7 +483,7 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T> T loadLibrary(Class<T> interfaceClass) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
         return loadLibrary(null, interfaceClass);
     }
 
@@ -502,7 +502,7 @@ public final class Native implements Version {
      * dependent libraries are missing.
      * @see #loadLibrary(String, Class, Map)
      */
-    public static <T> T loadLibrary(Class<T> interfaceClass, Map<String, ?> options) {
+    public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map<String, ?> options) {
         return loadLibrary(null, interfaceClass, options);
     }
 
@@ -520,7 +520,7 @@ public final class Native implements Version {
      * dependent libraries are missing.
      * @see #loadLibrary(String, Class, Map)
      */
-    public static <T> T loadLibrary(String name, Class<T> interfaceClass) {
+    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass) {
         return loadLibrary(name, interfaceClass, Collections.<String, Object>emptyMap());
     }
 
@@ -540,8 +540,9 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T> T loadLibrary(String name, Class<T> interfaceClass, Map<String, ?> options) {
+    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass, Map<String, ?> options) {
         if (!Library.class.isAssignableFrom(interfaceClass)) {
+            // Maybe still possible if the caller is not using generics?
             throw new IllegalArgumentException("Interface (" + interfaceClass.getSimpleName() + ")"
                     + " of library=" + name + " does not extend " + Library.class.getSimpleName());
         }
