@@ -34,6 +34,10 @@ Breaking Changes
 * `com.sun.jna.Native#setPreserveLastError` and `com.sun.jna.Native#getPreserveLastError`
   were removed without replacement. They were turned into NOOPs in the past.
 * `com.sun.jna.Native#getDirectByteBuffer` was replaced by `com.sun.jna.Pointer#getByteBuffer`
+* `com.sun.jna.Native#loadLibrary` methods return a `T` instance and expect
+  a `Class<T>` as parameter. `T` was unconstraint and was modified to
+  extend `com.sun.jna.Library`. This change is source compatible, but not
+  binary compatbile, so bindings need to be recompiled.
 * `com.sun.jna.platform.win32.Sspi.SecBufferDesc` was incompatibly changed to 
   match the correct native semantics. SecBufferDesc describing more than one
   buffer were broken. For most usecases 
