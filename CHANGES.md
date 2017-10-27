@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-* [#863](https://github.com/java-native-access/jna/pull/863): change armSoftFloat condition in ELFAnalyser - [@kunkun26](https://github.com/kunkun26).
+* [#863](https://github.com/java-native-access/jna/pull/863): Fix ARM softfloat/hardfloat detection by modifying armSoftFloat condition in ELFAnalyser. Before this fix a softfloat binary could be misdetected as hardfloat. - [@kunkun26](https://github.com/kunkun26).
 
 Release 4.5.0
 =============
