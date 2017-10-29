@@ -217,7 +217,11 @@ public class COMLateBindingObject extends COMBindingBaseObject {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
                 this.getIDispatch(), propertyName);
 
-        return result.stringValue();
+        String res = result.stringValue();
+        
+        OleAuto.INSTANCE.VariantClear(result);
+        
+        return res;
     }
 
     /**
