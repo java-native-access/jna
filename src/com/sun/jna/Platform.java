@@ -130,7 +130,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
-	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"));
+	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), osType);
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }
@@ -236,7 +236,7 @@ public final class Platform {
         return false;
     }
 
-    static String getCanonicalArchitecture(String arch) {
+    static String getCanonicalArchitecture(String arch, int platform) {
 	arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
@@ -256,7 +256,7 @@ public final class Platform {
 	    arch = "ppc64le";
 	}
         // Map arm to armel if the binary is running as softfloat build
-        if("arm".equals(arch) && isSoftFloat()) {
+        if("arm".equals(arch) && platform == Platform.LINUX && isSoftFloat()) {
             arch = "armel";
         }
         
@@ -300,7 +300,7 @@ public final class Platform {
     */
     static String getNativeLibraryResourcePrefix(int osType, String arch, String name) {
         String osPrefix;
-        arch = getCanonicalArchitecture(arch);
+        arch = getCanonicalArchitecture(arch, osType);
         switch(osType) {
         case Platform.ANDROID:
             if (arch.startsWith("arm")) {
