@@ -1,17 +1,29 @@
 /* Copyright (c) 2015 Goldstein Lyor, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * The contents of this file is dual-licensed under 2 
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ * 
+ * You can freely decide which license you want to apply to 
+ * the project.
+ * 
+ * You may obtain a copy of the LGPL License at:
+ * 
+ * http://www.gnu.org/licenses/licenses.html
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ * 
+ * You may obtain a copy of the Apache License at:
+ * 
+ * http://www.apache.org/licenses/
+ * 
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.unix;
 
+import com.sun.jna.Native;
 import java.sql.Date;
 import java.util.Map;
 
@@ -21,6 +33,7 @@ import org.junit.Test;
  * @author Lyor Goldstein
  */
 public class LibCTest extends AbstractUnixTestSupport {
+
     public LibCTest() {
         super();
     }
@@ -48,7 +61,7 @@ public class LibCTest extends AbstractUnixTestSupport {
             LibC.INSTANCE.unsetenv(name);
         }
     }
-    
+
     @Test
     public void testGetLoadAvg() {
         double[] loadavg = new double[3];
@@ -57,5 +70,19 @@ public class LibCTest extends AbstractUnixTestSupport {
         assertTrue(loadavg[0] >= 0);
         assertTrue(loadavg[1] >= 0);
         assertTrue(loadavg[2] >= 0);
+    }
+
+    @Test
+    public void testGethostnameGetdomainname() {
+        // This needs visual inspection ...
+        byte[] buffer = new byte[256];
+        LibC.INSTANCE.gethostname(buffer, buffer.length);
+        String hostname = Native.toString(buffer);
+        System.out.println("Hostname: " + hostname);
+        assertTrue(hostname.length() > 0);
+        LibC.INSTANCE.getdomainname(buffer, buffer.length);
+        String domainname = Native.toString(buffer);
+        System.out.println("Domainname: " + domainname);
+        assertTrue(domainname.length() > 0);
     }
 }

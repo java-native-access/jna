@@ -54,11 +54,11 @@
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
   
-  <property name="android.versionCode" value="2"/>
+  <property name="android.versionCode" value="3"/>
   <!-- JNA library release version -->
   <property name="jna.major" value="4"/>
   <property name="jna.minor" value="5"/>
-  <property name="jna.revision" value="0"/>
+  <property name="jna.revision" value="1"/>
   <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
