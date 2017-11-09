@@ -1,23 +1,23 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -230,14 +230,14 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int GetTickCount();
 
     /**
-     * The GetTickCount64 function retrieves the number of milliseconds that 
+     * The GetTickCount64 function retrieves the number of milliseconds that
      * have elapsed since the system was started.
      *
      * @return Number of milliseconds that have elapsed since the system was
      *         started.
      */
     long GetTickCount64();
-  
+
     /**
      * The GetCurrentThreadId function retrieves the thread identifier of the
      * calling thread.
@@ -1283,9 +1283,9 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the caller has enabled the SeDebugPrivilege privilege, the requested
      * access is granted regardless of the contents of the security
      * descriptor.</p>
-     * 
+     *
      * @param fInherit If this value is TRUE, processes created by this process will inherit the handle. Otherwise, the processes do not inherit this handle.
-     * 
+     *
      * @param IDProcess
      *            Specifies the process identifier of the process to open.
      * @return An open handle to the specified process indicates success. NULL
@@ -3501,19 +3501,19 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         not contain module information.
      */
     boolean Module32NextW(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32W lpme);
-    
+
     /**
      * Controls whether the system will handle the specified types of serious
      * errors or whether the process will handle them.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680621(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param umode
      *            The process error mode.
      * @return The return value is the previous state of the error-mode bit
      *         flags.
      */
     int SetErrorMode(int umode);
-    
+
     /**
      * Retrieves the address of an exported function or variable from the
      * specified dynamic-link library (DLL).
@@ -3534,7 +3534,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return address of the exported function
      */
     Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
-    
+
     /**
      * Enables an application to inform the system that it is in use, thereby
      * preventing the system from entering sleep or turning off the display
@@ -3542,7 +3542,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *
      * @param esFlags The thread's execution requirements. This parameter can be
      *                one or more of the following values (ORed together)
-     * 
+     *
      * <ul>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_AWAYMODE_REQUIRED}</li>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_CONTINUOUS}</li>
@@ -3557,4 +3557,39 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the function fails, the return value is 0</p>
      */
     int SetThreadExecutionState(int esFlags);
+
+
+    /**
+     * Changes the protection on a region of committed pages in the virtual address
+     * space of a specified process.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/aa366899.aspx">MSDN</a>
+     *
+     * @param handle A handle to the process whose memory protection is to be changed.<br>
+     *               The handle must have the PROCESS_VM_OPERATION access right.<br>
+     *               For more information, see
+     *               <a href="https://msdn.microsoft.com/en-us/library/ms684880.aspx">Process Security and Access Rights.</a>
+     *
+     * @param lpAddress A pointer to the base address of the region of pages whose<br>
+     *                  access protection attributes are to be changed.<br>
+     *                  All pages in the specified region must be within the same reserved<br>
+     *                  region allocated when calling the VirtualAlloc or VirtualAllocEx function using MEM_RESERVE.<br>
+     *                  The pages cannot span adjacent reserved regions that were allocated by separate calls to<br>
+     *                  VirtualAlloc or VirtualAllocEx using MEM_RESERVE.
+     *
+     * @param dwSize The size of the region whose access protection attributes are changed, <br>
+     *               in bytes. The region of affected pages includes all pages containing one <br>
+     *               or more bytes in the range from the lpAddress parameter to (lpAddress+dwSize). <br>
+     *               This means that a 2-byte range straddling a page boundary causes the protection <br>
+     *               attributes of both pages to be changed.
+     *
+     * @param flNewProtect The memory protection option. This parameter can be one of the <a href="https://msdn.microsoft.com/en-us/library/aa366786.aspx">memory protection constants.</a>
+     *
+     * @param lpflOldProtect A pointer to a variable that receives the previous access protection of the<br>
+     *                       first page in the specified region of pages. If this parameter is NULL or does not<br>
+     *                       point to a valid variable, the function fails.
+     *
+     * @return If the function succeeds, the return value is nonzero.<br>
+     *         If the function fails, the return value is zero. To get extended error information, call GetLastError.
+     */
+    boolean VirtualProtectEx(HANDLE handle, Pointer lpAddress,SIZE_T dwSize,DWORD flNewProtect,DWORD lpflOldProtect);
 }
