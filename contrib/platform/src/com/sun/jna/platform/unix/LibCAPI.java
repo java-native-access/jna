@@ -43,12 +43,12 @@ public interface LibCAPI extends Reboot, Resource {
 
     // see man(2) get/set hostname
     int HOST_NAME_MAX = 255; // not including the '\0'
-    int gethostname(char[] name, int len);
-    int sethostname(char[] name, int len);
+    int gethostname(byte[] name, int len);
+    int sethostname(String name, int len);
 
     // see man(2) get/set domainname
-    int getdomainname(char[] name, int len);
-    int setdomainname(char[] name, int len);
+    int getdomainname(byte[] name, int len);
+    int setdomainname(String name, int len);
 
     /**
      * @param name Environment variable name
