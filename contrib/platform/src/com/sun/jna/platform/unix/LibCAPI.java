@@ -43,12 +43,32 @@ public interface LibCAPI extends Reboot, Resource {
 
     // see man(2) get/set hostname
     int HOST_NAME_MAX = 255; // not including the '\0'
+    /**
+     * @deprecated use com.sun.jna.platform.unix.LibCAPI.gethostname(byte[], int)
+     */
+    @Deprecated
     int gethostname(char[] name, int len);
+    /**
+     * @deprecated use com.sun.jna.platform.unix.LibCAPI.sethostname(String, int)
+     */
+    @Deprecated
     int sethostname(char[] name, int len);
+    int gethostname(byte[] name, int len);
+    int sethostname(String name, int len);
 
     // see man(2) get/set domainname
+    /**
+     * @deprecated use com.sun.jna.platform.unix.LibCAPI.getdomainname(byte[], int)
+     */
+    @Deprecated
     int getdomainname(char[] name, int len);
+    /**
+     * @deprecated use com.sun.jna.platform.unix.LibCAPI.setdomainname(String, int)
+     */
+    @Deprecated
     int setdomainname(char[] name, int len);
+    int getdomainname(byte[] name, int len);
+    int setdomainname(String name, int len);
 
     /**
      * @param name Environment variable name
