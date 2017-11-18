@@ -1552,7 +1552,7 @@ public class Kernel32Test extends TestCase {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
 
@@ -1589,7 +1589,7 @@ public class Kernel32Test extends TestCase {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
 
