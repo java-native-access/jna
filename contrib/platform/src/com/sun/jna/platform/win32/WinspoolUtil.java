@@ -118,7 +118,7 @@ public abstract class WinspoolUtil {
 			if (!Winspool.INSTANCE.ClosePrinter(pHandle.getValue())) {
 				Win32Exception ex = new Win32Exception(Kernel32.INSTANCE.GetLastError());
 				if (we != null) {
-					ex.addSuppressed(we);
+					ex.addSuppressedReflected(we);
 				}
 			}
 		}

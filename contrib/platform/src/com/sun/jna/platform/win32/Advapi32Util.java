@@ -544,7 +544,7 @@ public abstract class Advapi32Util {
 				    if (err == null) {
 				        err = e;
 				    } else {
-				        err.addSuppressed(e);
+				        err.addSuppressedReflected(e);
 				    }
 				}
 			}
@@ -2443,7 +2443,7 @@ public abstract class Advapi32Util {
                 if (err == null) {
                     err = e;
                 } else {
-                    err.addSuppressed(e);
+                    err.addSuppressedReflected(e);
                 }
             }
 

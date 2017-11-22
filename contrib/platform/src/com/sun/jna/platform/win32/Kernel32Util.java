@@ -110,7 +110,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (err == null) {
                     err = e;
                 } else {
-                    err.addSuppressed(e);
+                    err.addSuppressedReflected(e);
                 }
             }
         }
@@ -148,7 +148,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (err == null) {
                     err = e;
                 } else {
-                    err.addSuppressed(e);
+                    err.addSuppressedReflected(e);
                 }
             }
         }
@@ -341,7 +341,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (err == null) {
                     err = e;
                 } else {
-                    err.addSuppressed(e);
+                    err.addSuppressedReflected(e);
                 }
             }
 
@@ -905,7 +905,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (!Kernel32.INSTANCE.FreeLibrary(target)) {
                     Win32Exception we = new Win32Exception(Kernel32.INSTANCE.GetLastError());
                     if (err != null) {
-                        we.addSuppressed(err);
+                        we.addSuppressedReflected(err);
                     }
                     throw we;
                 }
@@ -1013,7 +1013,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (!Kernel32.INSTANCE.FreeLibrary(target)) {
                     Win32Exception we = new Win32Exception(Kernel32.INSTANCE.GetLastError());
                     if (err != null) {
-                        we.addSuppressed(err);
+                        we.addSuppressedReflected(err);
                     }
                     throw we;
                 }
@@ -1075,7 +1075,7 @@ public abstract class Kernel32Util implements WinDef {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
 

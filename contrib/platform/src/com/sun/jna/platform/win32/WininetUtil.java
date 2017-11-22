@@ -123,7 +123,7 @@ public class WininetUtil {
                 if (!Wininet.INSTANCE.FindCloseUrlCache(cacheHandle)) {
                     if (we != null) {
                         Win32Exception e = new Win32Exception(Native.getLastError());
-                        e.addSuppressed(we);
+                        e.addSuppressedReflected(we);
                         we = e;
                     }
                 }
