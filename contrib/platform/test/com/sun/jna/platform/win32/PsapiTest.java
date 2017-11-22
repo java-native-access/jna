@@ -135,7 +135,7 @@ public class PsapiTest {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
             if (we != null) {
@@ -186,7 +186,7 @@ public class PsapiTest {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
             if (we != null) {
@@ -218,7 +218,7 @@ public class PsapiTest {
                 if (we == null) {
                     we = e;
                 } else {
-                    we.addSuppressed(e);
+                    we.addSuppressedReflected(e);
                 }
             }
             if (we != null) {

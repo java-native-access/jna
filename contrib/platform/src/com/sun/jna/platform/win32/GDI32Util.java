@@ -153,7 +153,7 @@ public class GDI32Util {
 				if (result == null || WinGDI.HGDI_ERROR.equals(result)) {
 					Win32Exception ex = new Win32Exception(Native.getLastError());
 					if (we != null) {
-						ex.addSuppressed(we);
+						ex.addSuppressedReflected(we);
 					}
 					we = ex;
 				}
@@ -163,7 +163,7 @@ public class GDI32Util {
 				if (!GDI32.INSTANCE.DeleteObject(hBitmap)) {
 					Win32Exception ex = new Win32Exception(Native.getLastError());
 					if (we != null) {
-						ex.addSuppressed(we);
+						ex.addSuppressedReflected(we);
 					}
 					we = ex;
 				}
@@ -174,7 +174,7 @@ public class GDI32Util {
 				if (!GDI32.INSTANCE.DeleteDC(hdcTargetMem)) {
 					Win32Exception ex = new Win32Exception(Native.getLastError());
 					if (we != null) {
-						ex.addSuppressed(we);
+						ex.addSuppressedReflected(we);
 					}
 					we = ex;
 				}
