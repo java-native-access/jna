@@ -26,7 +26,6 @@ class ELFAnalyser {
      * e_flags mask if executable file conforms to software floating-point
      * procedure-call standard (arm ABI version 5)
      */
-    private static final int EF_ARM_ABI_FLOAT_SOFT = 0x00000200;
     private static final int EI_DATA_BIG_ENDIAN = 2;
     private static final int E_MACHINE_ARM = 0x28;
     private static final int EI_CLASS_64BIT = 2;
@@ -116,6 +115,7 @@ class ELFAnalyser {
             }
         }
         if (!ELF) {
+        	raf.close();
             return;
         }
         raf.seek(4);
@@ -136,5 +136,7 @@ class ELFAnalyser {
             armHardFloat = (flags & EF_ARM_ABI_FLOAT_HARD) == EF_ARM_ABI_FLOAT_HARD;
             armSoftFloat = !armHardFloat;
         }
+
+    	raf.close();
     }
 }

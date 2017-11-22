@@ -47,7 +47,7 @@ public class WeakMemoryHolder {
     }
     
     public synchronized void clean() {
-        for(Reference ref = referenceQueue.poll(); ref != null; ref = referenceQueue.poll()) {
+        for(Reference<?> ref = referenceQueue.poll(); ref != null; ref = referenceQueue.poll()) {
             backingMap.remove(ref);
         }
     }
