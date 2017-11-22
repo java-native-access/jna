@@ -26,7 +26,7 @@ package com.sun.jna;
 /** Simple wrapper class to identify a wide string argument or return type.
  * @author twall@users.sf.net
  */
-public final class WString implements CharSequence, Comparable {
+public final class WString implements CharSequence, Comparable<Object> {
     private String string;
     public WString(String s){
         if (s == null) {

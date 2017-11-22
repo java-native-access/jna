@@ -270,7 +270,7 @@ public class Function extends Pointer {
         this.functionName = functionAddress.toString();
         this.callFlags = callFlags;
         this.peer = functionAddress.peer;
-        this.options = Collections.EMPTY_MAP;
+        this.options = Collections.emptyMap();
         this.encoding = encoding != null
             ? encoding : Native.getDefaultStringEncoding();
     }

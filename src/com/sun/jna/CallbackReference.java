@@ -101,7 +101,8 @@ public class CallbackReference extends WeakReference<Callback> {
     }
 
     /* Called from native code to initialize a callback thread. */
-    private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
+    @SuppressWarnings("unused")
+	private static ThreadGroup initializeThread(Callback cb, AttachOptions args) {
         CallbackThreadInitializer init = null;
         if (cb instanceof DefaultCallbackProxy) {
             cb = ((DefaultCallbackProxy)cb).getCallback();

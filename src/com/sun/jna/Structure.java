@@ -149,7 +149,8 @@ public abstract class Structure {
     private final Map<String, Object> nativeStrings = new HashMap<String, Object>();
     private TypeMapper typeMapper;
     // This field is accessed by native code
-    private long typeInfo;
+    @SuppressWarnings("unused")
+	private long typeInfo;
 
     private boolean autoRead = true;
     private boolean autoWrite = true;
@@ -1356,7 +1357,8 @@ public abstract class Structure {
         return value;
     }
 
-    private int addPadding(int calculatedSize) {
+    @SuppressWarnings("unused")
+	private int addPadding(int calculatedSize) {
         return addPadding(calculatedSize, structAlignment);
     }
 
@@ -1586,8 +1588,10 @@ public abstract class Structure {
     public Structure[] toArray(int size) {
         return toArray((Structure[])Array.newInstance(getClass(), size));
     }
-
-    private Class<?> baseClass() {
+    
+    //Native usage
+    @SuppressWarnings("unused")
+	private Class<?> baseClass() {
         if ((this instanceof Structure.ByReference
              || this instanceof Structure.ByValue)
             && Structure.class.isAssignableFrom(getClass().getSuperclass())) {
@@ -1755,7 +1759,8 @@ public abstract class Structure {
      * #newInstance(Class,Pointer)}, except that it additionally calls
      * {@link #conditionalAutoRead()}.
      */
-    private static Structure newInstance(Class<?> type, long init) {
+    @SuppressWarnings("unused")
+	private static Structure newInstance(Class<?> type, long init) {
         try {
             Structure s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
             if (init != 0) {
@@ -1879,11 +1884,12 @@ public abstract class Structure {
         // Native.initIDs initializes these fields to their appropriate
         // pointer values.  These are in a separate class from FFIType so that
         // they may be initialized prior to loading the FFIType class
+        @SuppressWarnings("unused")
         private static class FFITypes {
             private static Pointer ffi_type_void;
             private static Pointer ffi_type_float;
             private static Pointer ffi_type_double;
-            private static Pointer ffi_type_longdouble;
+			private static Pointer ffi_type_longdouble;
             private static Pointer ffi_type_uint8;
             private static Pointer ffi_type_sint8;
             private static Pointer ffi_type_uint16;

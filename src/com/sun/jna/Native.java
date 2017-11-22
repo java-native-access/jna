@@ -651,7 +651,8 @@ public final class Native implements Version {
      * @param type The type class
      * @return The options map
      */
-    public static Map<String, Object> getLibraryOptions(Class<?> type) {
+    @SuppressWarnings("unchecked")
+	public static Map<String, Object> getLibraryOptions(Class<?> type) {
         Map<String, Object> libraryOptions;
         // cached already ?
         synchronized(libraries) {
@@ -2242,7 +2243,6 @@ public final class Native implements Version {
             // state every time.  Clear the termination flag, since it's not
             // needed when the native thread is detached normally.
             nativeThreads.remove(thread);
-            Pointer p = nativeThreadTerminationFlag.get();
             setDetachState(true, 0);
         }
         else {
