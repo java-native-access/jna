@@ -104,37 +104,45 @@ class ELFAnalyser {
     }
 
     private void runDetection() throws IOException {
-        // run precheck - only of if the file at least hold an ELF header parsing
-        // runs further.
         RandomAccessFile raf = new RandomAccessFile(filename, "r");
-        if (raf.length() > 4) {
-            byte[] magic = new byte[4];
-            raf.seek(0);
-            raf.read(magic);
-            if (Arrays.equals(magic, ELF_MAGIC)) {
-                ELF = true;
+        try {
+            // run precheck - only of if the file at least hold an ELF header parsing
+            // runs further.
+            if (raf.length() > 4) {
+                byte[] magic = new byte[4];
+                raf.seek(0);
+                raf.read(magic);
+                if (Arrays.equals(magic, ELF_MAGIC)) {
+                    ELF = true;
+                }
             }
-        }
-        if (!ELF) {
-            return;
-        }
-        raf.seek(4);
-        // The total header size depends on the pointer size of the platform
-        // so before the header is loaded the pointer size has to be determined
-        byte sizeIndicator = raf.readByte();
-        _64Bit = sizeIndicator == EI_CLASS_64BIT;
-        raf.seek(0);
-        ByteBuffer headerData = ByteBuffer.allocate(_64Bit ? 64 : 52);
-        raf.getChannel().read(headerData, 0);
-        bigEndian = headerData.get(5) == EI_DATA_BIG_ENDIAN;
-        headerData.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
+            if (!ELF) {
+                return;
+            }
+            raf.seek(4);
+            // The total header size depends on the pointer size of the platform
+            // so before the header is loaded the pointer size has to be determined
+            byte sizeIndicator = raf.readByte();
+            _64Bit = sizeIndicator == EI_CLASS_64BIT;
+            raf.seek(0);
+            ByteBuffer headerData = ByteBuffer.allocate(_64Bit ? 64 : 52);
+            raf.getChannel().read(headerData, 0);
+            bigEndian = headerData.get(5) == EI_DATA_BIG_ENDIAN;
+            headerData.order(bigEndian ? ByteOrder.BIG_ENDIAN : ByteOrder.LITTLE_ENDIAN);
 
-        arm = headerData.get(0x12) == E_MACHINE_ARM;
-        
-        if(arm) {
-            int flags = headerData.getInt(_64Bit ? 0x30 : 0x24);
-            armHardFloat = (flags & EF_ARM_ABI_FLOAT_HARD) == EF_ARM_ABI_FLOAT_HARD;
-            armSoftFloat = !armHardFloat;
+            arm = headerData.get(0x12) == E_MACHINE_ARM;
+
+            if(arm) {
+                int flags = headerData.getInt(_64Bit ? 0x30 : 0x24);
+                armHardFloat = (flags & EF_ARM_ABI_FLOAT_HARD) == EF_ARM_ABI_FLOAT_HARD;
+                armSoftFloat = !armHardFloat;
+            }
+        } finally {
+            try {
+                raf.close();
+            } catch (IOException ex) {
+                // Swallow - closing 
+            }
         }
     }
 }
