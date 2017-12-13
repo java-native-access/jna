@@ -17,6 +17,7 @@ Bug Fixes
 * [#871](https://github.com/java-native-access/jna/issues/871): Fix mapping of libc function `gethostname`, `sethostname`, `getdomainname` and `setdomainname` and bind `com.sun.jna.platform.win32.Winsock2.gethostname(byte[], int)` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#876](https://github.com/java-native-access/jna/pull/876): Restore java 6 compatibility - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#882](https://github.com/java-native-access/jna/pull/882): Correctly close file in `ELFAnalyser#runDetection`, fix suggested by [@Sylvyrfysh](https://github.com/Sylvyrfysh) in [#880](https://github.com/java-native-access/jna/pull/880) - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#887](https://github.com/java-native-access/jna/issues/887): MacFileUtils.moveToTrash() doesn't work in a sandboxed app fix suggested by [@sobakasu](https://github.com/sobakasu) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------
