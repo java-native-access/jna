@@ -74,14 +74,8 @@ public class MacFileUtils extends FileUtils {
 
     @Override
     public void moveToTrash(File[] files) throws IOException {
-        File home = new File(System.getProperty("user.home"));
-        File trash = new File(home, ".Trash");
-        if (!trash.exists()) {
-            throw new IOException("The Trash was not found in its expected location (" + trash + ")");
-        }
         List<String> failed = new ArrayList<String>();
-        for (int i=0;i < files.length;i++) {
-            File src = files[i];
+        for (File src: files) {
             FileManager.FSRef fsref = new FileManager.FSRef();
             int status = FileManager.INSTANCE.FSPathMakeRefWithOptions(src.getAbsolutePath(),
                                                                        FileManager.kFSPathMakeRefDoNotFollowLeafSymlink,
