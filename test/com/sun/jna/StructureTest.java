@@ -281,7 +281,7 @@ public class StructureTest extends TestCase {
     private void testStructureSize(int index) {
         try {
             SizeTest lib = Native.loadLibrary("testlib", SizeTest.class);
-            Class<?> cls = Class.forName(getClass().getName() + "$TestStructure" + index);
+            Class<? extends Structure> cls = (Class<? extends Structure>) Class.forName(getClass().getName() + "$TestStructure" + index);
             Structure s = Structure.newInstance(cls);
             assertEquals("Incorrect size for structure " + index + "=>" + s.toString(true), lib.getStructureSize(index), s.size());
         }

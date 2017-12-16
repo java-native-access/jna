@@ -488,7 +488,7 @@ public interface Winevt {
                     return isArray() ? field1.getPointer().getPointer(0).getWideStringArray(0, Count) : field1.getPointer().getPointer(0).getWideString(0);
                 case EvtVarTypeFileTime:
                     if (isArray()) {
-                        WinBase.FILETIME resultFirst = (WinBase.FILETIME) Structure.newInstance(WinBase.FILETIME.class, field1.getPointer().getPointer(0));
+                        WinBase.FILETIME resultFirst = Structure.newInstance(WinBase.FILETIME.class, field1.getPointer().getPointer(0));
                         resultFirst.read();
                         return resultFirst.toArray(Count);
                     } else {
@@ -498,11 +498,11 @@ public interface Winevt {
                     }
                 case EvtVarTypeSysTime:
                     if (isArray()) {
-                        WinBase.SYSTEMTIME resultFirst = (WinBase.SYSTEMTIME) Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
+                        WinBase.SYSTEMTIME resultFirst = Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
                         resultFirst.read();
                         return resultFirst.toArray(Count);
                     } else {
-                        WinBase.SYSTEMTIME result = (WinBase.SYSTEMTIME) Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
+                        WinBase.SYSTEMTIME result = Structure.newInstance(WinBase.SYSTEMTIME.class, field1.getPointer().getPointer(0));
                         result.read();
                         return result;
                     }
@@ -531,21 +531,21 @@ public interface Winevt {
                     return null;
                 case EvtVarTypeGuid:
                     if (isArray()) {
-                        Guid.GUID resultFirst = (Guid.GUID) Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
+                        Guid.GUID resultFirst = Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
                         resultFirst.read();
                         return resultFirst.toArray(Count);
                     } else {
-                        Guid.GUID result = (Guid.GUID) Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
+                        Guid.GUID result = Structure.newInstance(Guid.GUID.class, field1.getPointer().getPointer(0));
                         result.read();
                         return result;
                     }
                 case EvtVarTypeSid:
                     if (isArray()) {
-                        WinNT.PSID resultFirst = (WinNT.PSID) Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
+                        WinNT.PSID resultFirst = Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
                         resultFirst.read();
                         return resultFirst.toArray(Count);
                     } else {
-                        WinNT.PSID result = (WinNT.PSID) Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
+                        WinNT.PSID result = Structure.newInstance(WinNT.PSID.class, field1.getPointer().getPointer(0));
                         result.read();
                         return result;
                     }

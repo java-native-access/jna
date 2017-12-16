@@ -363,7 +363,7 @@ public class Pointer {
         if (Structure.class.isAssignableFrom(type)) {
             Structure s = (Structure)currentValue;
             if (Structure.ByReference.class.isAssignableFrom(type)) {
-                s = Structure.updateStructureByReference(type, s, getPointer(offset));
+                s = Structure.updateStructureByReference((Class<Structure>) type, s, getPointer(offset));
             } else {
                 s.useMemory(this, (int)offset, true);
                 s.read();
@@ -488,13 +488,13 @@ public class Pointer {
             if (Structure.ByReference.class.isAssignableFrom(cls)) {
                 Pointer[] parray = getPointerArray(offset, sarray.length);
                 for (int i=0;i < sarray.length;i++) {
-                    sarray[i] = Structure.updateStructureByReference(cls, sarray[i], parray[i]);
+                    sarray[i] = Structure.updateStructureByReference((Class<Structure>) cls, sarray[i], parray[i]);
                 }
             }
             else {
                 Structure first = sarray[0];
                 if (first == null) {
-                    first = Structure.newInstance(cls, share(offset));
+                    first = Structure.newInstance((Class<Structure>) cls, share(offset));
                     first.conditionalAutoRead();
                     sarray[0] = first;
                 }
@@ -940,7 +940,7 @@ public class Pointer {
             } else {
                 Structure first = sbuf[0];
                 if (first == null) {
-                    first = Structure.newInstance(cls, share(offset));
+                    first = Structure.newInstance((Class<Structure>) cls, share(offset));
                     sbuf[0] = first;
                 } else {
                     first.useMemory(this, (int)offset, true);

@@ -662,7 +662,7 @@ public abstract class Structure {
      * @param address the native <code>struct *</code>
      * @return Updated <code>Structure.ByReference</code> object
      */
-    static Structure updateStructureByReference(Class<?> type, Structure s, Pointer address) {
+    static <T extends Structure> T updateStructureByReference(Class<T> type, T s, Pointer address) {
         if (address == null) {
             s = null;
         }
@@ -670,7 +670,7 @@ public abstract class Structure {
             if (s == null || !address.equals(s.getPointer())) {
                 Structure s1 = reading().get(address);
                 if (s1 != null && type.equals(s1.getClass())) {
-                    s = s1;
+                    s = (T) s1;
                     s.autoRead();
                 }
                 else {
@@ -1042,7 +1042,7 @@ public abstract class Structure {
      * @param type Structure subclass to check
      * @return native size of the given Structure subclass
      */
-    static int size(Class<?> type) {
+    static int size(Class<? extends Structure> type) {
         return size(type, null);
     }
 
@@ -1051,7 +1051,7 @@ public abstract class Structure {
      * @param value optional instance of the given class
      * @return native size of the Structure subclass
      */
-    static int size(Class<?> type, Structure value) {
+    static <T extends Structure> int size(Class<T> type, T value) {
         LayoutInfo info;
         synchronized(layoutInfo) {
             info = layoutInfo.get(type);
@@ -1329,7 +1329,7 @@ public abstract class Structure {
         if (Structure.class.isAssignableFrom(type)
             && !(ByReference.class.isAssignableFrom(type))) {
             try {
-                value = newInstance(type, PLACEHOLDER_MEMORY);
+                value = newInstance((Class<? extends Structure>) type, PLACEHOLDER_MEMORY);
                 setFieldValue(field, value);
             }
             catch(IllegalArgumentException e) {
@@ -1408,7 +1408,7 @@ public abstract class Structure {
             }
             else {
                 if (value == null)
-                    value = newInstance(type, PLACEHOLDER_MEMORY);
+                    value = newInstance((Class<? extends Structure>) type, PLACEHOLDER_MEMORY);
                 alignment = ((Structure)value).getStructAlignment();
             }
         }
@@ -1744,9 +1744,9 @@ public abstract class Structure {
      * #newInstance(Class,Pointer)}, except that it additionally calls
      * {@link #conditionalAutoRead()}.
      */
-    private static Structure newInstance(Class<?> type, long init) {
+    private static <T extends Structure> T newInstance(Class<T> type, long init) {
         try {
-            Structure s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
+            T s = newInstance(type, init == 0 ? PLACEHOLDER_MEMORY : new Pointer(init));
             if (init != 0) {
                 s.conditionalAutoRead();
             }
@@ -1765,10 +1765,10 @@ public abstract class Structure {
      * @return the new instance
      * @throws IllegalArgumentException if the instantiation fails
      */
-    public static Structure newInstance(Class<?> type, Pointer init) throws IllegalArgumentException {
+    public static <T extends Structure> T newInstance(Class<T> type, Pointer init) throws IllegalArgumentException {
         try {
-            Constructor<?> ctor = type.getConstructor(Pointer.class);
-            return (Structure)ctor.newInstance(init);
+            Constructor<T> ctor = type.getConstructor(Pointer.class);
+            return ctor.newInstance(init);
         }
         catch(NoSuchMethodException e) {
             // Not defined, fall back to the default
@@ -1789,7 +1789,7 @@ public abstract class Structure {
             e.printStackTrace();
             throw new IllegalArgumentException(msg, e);
         }
-        Structure s = newInstance(type);
+        T s = newInstance(type);
         if (init != PLACEHOLDER_MEMORY) {
             s.useMemory(init);
         }
@@ -1801,9 +1801,9 @@ public abstract class Structure {
      * @return the new instance
      * @throws IllegalArgumentException if the instantiation fails
      */
-    public static Structure newInstance(Class<?> type) throws IllegalArgumentException {
+    public static <T extends Structure> T newInstance(Class<T> type) throws IllegalArgumentException {
         try {
-            Structure s = (Structure)type.newInstance();
+            T s = type.newInstance();
             if (s instanceof ByValue) {
                 s.allocateMemory();
             }
@@ -1993,7 +1993,7 @@ public abstract class Structure {
                     return FFITypes.ffi_type_pointer;
                 }
                 if (Structure.class.isAssignableFrom(cls)) {
-                    if (obj == null) obj = newInstance(cls, PLACEHOLDER_MEMORY);
+                    if (obj == null) obj = newInstance((Class<? extends Structure>) cls, PLACEHOLDER_MEMORY);
                     if (ByReference.class.isAssignableFrom(cls)) {
                         typeInfoMap.put(cls, FFITypes.ffi_type_pointer);
                         return FFITypes.ffi_type_pointer;
@@ -2124,7 +2124,7 @@ public abstract class Structure {
     /** Indicate whether the given Structure class can be created by JNA.
      * @param cls Structure subclass to check
      */
-    static void validate(Class<?> cls) {
+    static void validate(Class<? extends Structure> cls) {
         Structure.newInstance(cls, PLACEHOLDER_MEMORY);
     }
 }
