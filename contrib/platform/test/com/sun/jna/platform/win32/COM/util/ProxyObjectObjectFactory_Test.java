@@ -15,6 +15,8 @@ package com.sun.jna.platform.win32.COM.util;
 import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
+import java.lang.reflect.Proxy;
+
 import java.io.File;
 
 import org.junit.After;
@@ -156,7 +158,8 @@ public class ProxyObjectObjectFactory_Test {
 	@Test
 	public void accessWhilstDisposing() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
-		
+		comObj1.Quit();
+
 		//TODO: how to test this?
 		
 		this.factory.disposeAll();
@@ -185,5 +188,14 @@ public class ProxyObjectObjectFactory_Test {
 
 		boolean wasDeleted = new File("abcdefg.pdf").delete();
 		assertTrue(wasDeleted);
+	}
+
+
+	@Test
+	public void testDisposeMustBeCallableMultipleTimes() {
+		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
+                comObj.Quit();
+                ((ProxyObject) Proxy.getInvocationHandler(comObj)).dispose();
+                ((ProxyObject) Proxy.getInvocationHandler(comObj)).dispose();
 	}
 }
