@@ -34,7 +34,6 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
-import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -46,7 +45,6 @@ import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMException;
@@ -134,7 +132,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	public synchronized void dispose() {
-		if (! ((Dispatch) this.rawDispatch).getPointer().equals(Pointer.NULL)) {
+		if (((Dispatch) this.rawDispatch).getPointer() != Pointer.NULL) {
 			this.rawDispatch.Release();
                         ((Dispatch) this.rawDispatch).setPointer(Pointer.NULL);
                         factory.unregister(this);

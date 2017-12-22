@@ -12,7 +12,6 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
-import com.sun.jna.Pointer;
 import static org.junit.Assert.*;
 
 import java.io.File;
@@ -25,7 +24,6 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
-import com.sun.jna.platform.win32.Ole32;
 
 public class ProxyObjectFactory_Test {
 
