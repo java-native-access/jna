@@ -53,9 +53,8 @@
   <property name="copyright"
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
-  
-  <property name="android.versionCode" value="3"/>
-  <!-- JNA library release version -->
+
+  <!-- JNA library release version - android versionCode is derived from mjar/minor/revision -->
   <property name="jna.major" value="5"/>
   <property name="jna.minor" value="0"/>
   <property name="jna.revision" value="0"/>
@@ -128,6 +127,7 @@
   <property name="maven-staging-repository-url" value="https://oss.sonatype.org/service/local/staging/deploy/maven2/" />
 
   <!-- Miscellaneous -->
+  <property name="build" value="build"/>
   <property name="build.compiler.emacs" value="true"/>
 
   <target name="default" depends="test" description="Build and Test."/>
@@ -136,8 +136,26 @@
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>
 
-  <target name="-dynamic-properties">
+  <target name="-prepare-anttools">
+      <mkdir dir="${build}/ant-tools" />
+      <javac classpath="lib/ant.jar"
+             destdir="${build}/ant-tools"
+             includeantruntime="false"
+             source="1.6"
+             target="1.6"
+             encoding="UTF-8"
+      >
+          <src path="src" />
+          <src path="ant-tools-src" />
+          <include name="**/ELFAnalyser.java" />
+          <include name="**/BuildArmSoftFloatDetector.java" />
+          <include name="**/CalcAndroidVersion.java" />
+      </javac>
+      <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-tools" />
+      <taskdef name="CalcAndroidVersion" classname="com.sun.jna.CalcAndroidVersion" classpath="${build}/ant-tools" />
+  </target>
 
+  <target name="-dynamic-properties" depends="-prepare-anttools">
     <condition property="-native" value="true">
       <not><isset property="build-native"/></not>
     </condition>
@@ -204,29 +222,21 @@
         <equals arg1="${vmopt.arch}" arg2="${vm.64}"/>
       </and>
     </condition>
-    <property name="build" value="build"/>
+
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
     <property name="test.classes" location="${build}/test-classes"/>
     <property name="reports" value="${build}/reports"/>
 
-    <mkdir dir="${build}/ant-elfanalyser" />
-    <javac classpath="lib/ant.jar" 
-           destdir="${build}/ant-elfanalyser" 
-           includeantruntime="false"
-           source="1.6"
-           target="1.6"
-           encoding="UTF-8"
-    >
-        <src path="src" />
-        <src path="ant-elfanalyser-src" />
-        <include name="**/ELFAnalyser.java" />
-        <include name="**/BuildArmSoftFloatDetector.java" />
-    </javac>
-
-    <taskdef name="BuildArmSoftFloatDetector" classname="com.sun.jna.BuildArmSoftFloatDetector" classpath="${build}/ant-elfanalyser" />
+    <CalcAndroidVersion
+        major="${jna.major}"
+        minor="${jna.minor}"
+        revision="${jna.revision}"
+        releaseProperty="release"
+        targetProperty="android.versionCode"
+    />
     <BuildArmSoftFloatDetector targetProperty="build.isArmSoftFloat"/>
-    
+
     <!-- Add other supported platforms here -->
     <condition property="jre.arch" value="x86">
       <matches pattern="(i[3456]86|pentium)" string="${os.arch}"/>
@@ -311,7 +321,7 @@
     <property name="build.native" location="${build}/${native.subdir}"/>
     <property name="build.aar" location="${build}/aar"/>
     <property name="md5.file" location="${build.native}/jni.checksum"/>
-    
+
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
     <mkdir dir="${classes}"/>
