@@ -33,9 +33,9 @@ auxiliary.show.customizer.message=<message>
                     <encoding>UTF-8</encoding>
                 </source-folder>
                 <source-folder>
-                    <label>ant-elfanalyser-src</label>
+                    <label>ant-tools-src</label>
                     <type>java</type>
-                    <location>ant-elfanalyser-src</location>
+                    <location>ant-tools-src</location>
                     <encoding>UTF-8</encoding>
                 </source-folder>
             </folders>
@@ -68,8 +68,8 @@ auxiliary.show.customizer.message=<message>
                         <location>test</location>
                     </source-folder>
                     <source-folder style="packages">
-                        <label>ant-elfanalyser-src</label>
-                        <location>ant-elfanalyser-src</location>
+                        <label>ant-tools-src</label>
+                        <location>ant-tools-src</location>
                     </source-folder>
                     <source-file>
                         <location>build.xml</location>
@@ -98,7 +98,7 @@ auxiliary.show.customizer.message=<message>
                 <source-level>1.5</source-level>
             </compilation-unit>
             <compilation-unit>
-                <package-root>ant-elfanalyser-src</package-root>
+                <package-root>ant-tools-src</package-root>
                 <classpath mode="compile">src:lib/ant.jar</classpath>
                 <source-level>1.5</source-level>
             </compilation-unit>
