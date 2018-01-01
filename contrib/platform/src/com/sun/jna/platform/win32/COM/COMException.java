@@ -24,9 +24,8 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
-// TODO: Auto-generated Javadoc
 /**
  * Exception class for all COM related classes.
  *
@@ -35,19 +34,38 @@ import com.sun.jna.ptr.IntByReference;
 public class COMException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    /** The p excep info. */
-    private EXCEPINFO pExcepInfo;
+    private final EXCEPINFO pExcepInfo;
 
-    /** The pu arg err. */
-    private IntByReference puArgErr;
+    private final Integer errorArg;
 
-    private int uArgErr;
+    private final HRESULT hresult;
 
     /**
      * Instantiates a new automation exception.
      */
     public COMException() {
-        super();
+        this("", (Throwable) null);
+    }
+
+    /**
+     * Instantiates a new automation exception.
+     *
+     * @param message
+     *            the message
+     */
+    public COMException(String message) {
+        this(message, (Throwable) null);
+    }
+
+
+    /**
+     * Instantiates a new automation exception.
+     *
+     * @param cause
+     *            the cause
+     */
+    public COMException(Throwable cause) {
+        this(null, cause);
     }
 
     /**
@@ -60,6 +78,9 @@ public class COMException extends RuntimeException {
      */
     public COMException(String message, Throwable cause) {
         super(message, cause);
+        this.errorArg = null;
+        this.hresult = null;
+        this.pExcepInfo = null;
     }
 
     /**
@@ -67,9 +88,11 @@ public class COMException extends RuntimeException {
      *
      * @param message
      *            the message
+     * @param hresult
+     *            HRESULT that lead to the creation of the COMException
      */
-    public COMException(String message) {
-        super(message);
+    public COMException(String message, HRESULT hresult) {
+        this(message, null, null, hresult);
     }
 
     /**
@@ -79,30 +102,21 @@ public class COMException extends RuntimeException {
      *            the message
      * @param pExcepInfo
      *            the excep info
-     * @param puArgErr
-     *            the pu arg err
+     * @param argErr
+     *            the errorArg
+     * @param hresult
+     *            HRESULT that lead to the creation of the COMException
      */
     public COMException(String message, EXCEPINFO pExcepInfo,
-            IntByReference puArgErr) {
-        super(message + " (puArgErr=" + (null==puArgErr?"":puArgErr.getValue()) + ")");
+            Integer argErr, HRESULT hresult) {
+        super(formatMessage(message, argErr));
         this.pExcepInfo = pExcepInfo;
-        this.puArgErr = puArgErr;
+        this.errorArg = argErr;
+        this.hresult = hresult;
     }
 
     /**
-     * Instantiates a new automation exception.
-     *
-     * @param cause
-     *            the cause
-     */
-    public COMException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Gets the excep info.
-     *
-     * @return the excep info
+     * @return retrieve EXCEPINFO if present
      */
     public EXCEPINFO getExcepInfo() {
         return pExcepInfo;
@@ -113,15 +127,31 @@ public class COMException extends RuntimeException {
      *
      * @return the arg err
      */
-    public IntByReference getArgErr() {
-        return puArgErr;
+    public Integer getErrorArg() {
+        return errorArg;
     }
 
-    public int getuArgErr() {
-        return uArgErr;
+    /**
+     * @return the HRESULT that lead to thie COMException or NULL if the COMException as not directly caused by a native call
+     */
+    public HRESULT getHresult() {
+        return hresult;
     }
 
-    public void setuArgErr(int uArgErr) {
-        this.uArgErr = uArgErr;
+    /**
+     * @param errorCode
+     * @return true if the exception has an associated HRESULT and that HRESULT
+     * matches the supplied error code
+     */
+    public boolean matchesErrorCode(int errorCode) {
+        return hresult != null && hresult.intValue() == errorCode;
+    }
+
+    private static String formatMessage(String message, Integer errArg) {
+        if(errArg != null) {
+            return message + " (puArgErr=" + errArg + ")";
+        } else {
+            return message;
+        }
     }
 }

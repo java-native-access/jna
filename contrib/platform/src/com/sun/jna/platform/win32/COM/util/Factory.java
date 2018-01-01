@@ -24,6 +24,7 @@
 
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -136,7 +137,7 @@ public class Factory extends ObjectFactory {
     }
 
     @Override
-    public <T> T fetchObject(final Class<T> comInterface) {
+    public <T> T fetchObject(final Class<T> comInterface) throws COMException {
         // Proxy2 is added by createProxy inside fetch Object
         return runInComThread(new Callable<T>() {
             public T call() throws Exception {
@@ -173,6 +174,9 @@ public class Factory extends ObjectFactory {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         } catch (ExecutionException ex) {
+            if(ex.getCause() instanceof RuntimeException) {
+                throw (RuntimeException) ex.getCause();
+            }
             throw new RuntimeException(ex);
         }
     }

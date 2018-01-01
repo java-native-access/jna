@@ -36,6 +36,7 @@ import com.sun.jna.platform.win32.Kernel32Util;
 import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.W32Errors;
+import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinReg;
@@ -128,7 +129,12 @@ public abstract class COMUtils {
                 // throws if HRESULT can't be resolved
                 formatMessage = "(HRESULT: " + Integer.toHexString(hr.intValue()) + ")";
             }
-            throw new COMException(formatMessage, pExcepInfo, puArgErr);
+            if(hr.intValue() == WinError.DISP_E_TYPEMISMATCH ||
+                    hr.intValue() == WinError.DISP_E_PARAMNOTFOUND) {
+                throw new COMException(formatMessage, pExcepInfo, puArgErr.getValue(), hr);
+            } else {
+                throw new COMException(formatMessage, pExcepInfo, null, hr);
+            }
         }
     }
 

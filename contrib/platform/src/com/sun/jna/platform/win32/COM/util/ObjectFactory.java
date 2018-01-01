@@ -126,7 +126,7 @@ public class ObjectFactory {
 	 * Gets and existing COM object (GetActiveObject) for the given progId and
 	 * returns a ProxyObject for the given interface.
 	 */
-	public <T> T fetchObject(Class<T> comInterface) {
+	public <T> T fetchObject(Class<T> comInterface) throws COMException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);

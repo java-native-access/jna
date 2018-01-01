@@ -46,5 +46,5 @@ public interface IConnectionPoint {
 	 * @param comEventCallbackInterface - the interface that is being listened to
 	 * @param cookie - the cookie that was returned when advise was called
 	 */
-	void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie);
+	void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException;
 }
