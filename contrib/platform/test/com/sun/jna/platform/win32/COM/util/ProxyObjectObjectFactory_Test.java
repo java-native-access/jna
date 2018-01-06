@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMInvokeException;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Proxy;
@@ -224,5 +225,25 @@ public class ProxyObjectObjectFactory_Test {
                 comObj.Quit();
                 ((ProxyObject) Proxy.getInvocationHandler(comObj)).dispose();
                 ((ProxyObject) Proxy.getInvocationHandler(comObj)).dispose();
+	}
+        
+	@Test
+	public void testVarargsCallWithInvalidParameter() {
+		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
+
+		Documents documents = comObj.getDocuments();
+                
+                COMInvokeException invokeException = null;
+                
+                try {
+                    documents.Add("Not_existing_template");
+                } catch (COMInvokeException ex) {
+                    invokeException = ex;
+                }
+                
+                assertNotNull(invokeException);
+                assertEquals("Wrong hresult", WinError.DISP_E_EXCEPTION, invokeException.getHresult().intValue());
+                assertTrue("hresult was not matched", invokeException.matchesErrorCode(WinError.DISP_E_EXCEPTION));
+                assertEquals("Wrong scode", (long) 0x800a1436, (long) invokeException.getScode());
 	}
 }

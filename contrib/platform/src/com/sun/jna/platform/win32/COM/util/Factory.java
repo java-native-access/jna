@@ -36,6 +36,7 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.Callable;
@@ -91,12 +92,12 @@ public class Factory extends ObjectFactory {
                 }
             }
 
-            return comThread.execute(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return method.invoke(delegate, args);
-                }
-            });
+            return runInComThread(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        return method.invoke(delegate, args);
+                    }
+                });
         }
     }
 
@@ -174,8 +175,14 @@ public class Factory extends ObjectFactory {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         } catch (ExecutionException ex) {
-            if(ex.getCause() instanceof RuntimeException) {
-                throw (RuntimeException) ex.getCause();
+            Throwable cause = ex.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof InvocationTargetException) {
+                cause = ((InvocationTargetException) cause).getTargetException();
+                if (cause instanceof RuntimeException) {
+                    throw (RuntimeException) cause;
+                }
             }
             throw new RuntimeException(ex);
         }

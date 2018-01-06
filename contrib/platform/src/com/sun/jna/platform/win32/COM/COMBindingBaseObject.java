@@ -336,6 +336,6 @@ public class COMBindingBaseObject extends COMInvoker {
      *            the hr
      */
     protected void checkFailed(HRESULT hr) {
-        COMUtils.checkRC(hr, null, null);
+        COMUtils.checkRC(hr);
     }
 }

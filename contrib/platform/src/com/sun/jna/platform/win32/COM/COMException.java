@@ -23,7 +23,6 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 /**
@@ -33,10 +32,6 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
  */
 public class COMException extends RuntimeException {
     private static final long serialVersionUID = 1L;
-
-    private final EXCEPINFO pExcepInfo;
-
-    private final Integer errorArg;
 
     private final HRESULT hresult;
 
@@ -78,9 +73,7 @@ public class COMException extends RuntimeException {
      */
     public COMException(String message, Throwable cause) {
         super(message, cause);
-        this.errorArg = null;
         this.hresult = null;
-        this.pExcepInfo = null;
     }
 
     /**
@@ -92,43 +85,8 @@ public class COMException extends RuntimeException {
      *            HRESULT that lead to the creation of the COMException
      */
     public COMException(String message, HRESULT hresult) {
-        this(message, null, null, hresult);
-    }
-
-    /**
-     * Instantiates a new automation exception.
-     *
-     * @param message
-     *            the message
-     * @param pExcepInfo
-     *            the excep info
-     * @param argErr
-     *            the errorArg
-     * @param hresult
-     *            HRESULT that lead to the creation of the COMException
-     */
-    public COMException(String message, EXCEPINFO pExcepInfo,
-            Integer argErr, HRESULT hresult) {
-        super(formatMessage(message, argErr));
-        this.pExcepInfo = pExcepInfo;
-        this.errorArg = argErr;
+        super(message);
         this.hresult = hresult;
-    }
-
-    /**
-     * @return retrieve EXCEPINFO if present
-     */
-    public EXCEPINFO getExcepInfo() {
-        return pExcepInfo;
-    }
-
-    /**
-     * Gets the arg err.
-     *
-     * @return the arg err
-     */
-    public Integer getErrorArg() {
-        return errorArg;
     }
 
     /**
@@ -145,13 +103,5 @@ public class COMException extends RuntimeException {
      */
     public boolean matchesErrorCode(int errorCode) {
         return hresult != null && hresult.intValue() == errorCode;
-    }
-
-    private static String formatMessage(String message, Integer errArg) {
-        if(errArg != null) {
-            return message + " (puArgErr=" + errArg + ")";
-        } else {
-            return message;
-        }
     }
 }
