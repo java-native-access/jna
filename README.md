@@ -60,11 +60,25 @@ Download
 
 Version 4.5.1
 
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna) &nbsp;
-  [jna.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar)
+JNA
+---
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna)&nbsp;[jna.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar)
   
-* [![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp;
-  [jna-platform.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/4.5.1/jna-platform-4.5.1.jar)
+This is the core artifact of JNA and contains only the binding library and the
+core helper classes.
+
+JNA Platform
+------------
+
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp; [jna-platform.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/4.5.1/jna-platform-4.5.1.jar)
+
+This artifact holds cross-platform mappings and mappings for a number of commonly used platform 
+functions, including a large number of Win32 mappings as well as a set of utility classes 
+that simplify native access. The code is tested and the utility interfaces ensure that
+native memory management is taken care of correctly.
+
+See [PlatformLibrary.md](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md) for details.
 
 Features
 ========
@@ -143,7 +157,7 @@ Developers
 * [Releasing JNA](https://github.com/java-native-access/jna/blob/master/www/ReleasingJNA.md)
 * [Publishing to Maven Central](https://github.com/java-native-access/jna/blob/master/www/PublishingToMavenCentral.md)
 
-Contributing 
+Contributing
 ============
 
 You're encouraged to contribute to JNA. Fork the code from [https://github.com/java-native-access/jna](https://github.com/java-native-access/jna) and submit pull requests.
