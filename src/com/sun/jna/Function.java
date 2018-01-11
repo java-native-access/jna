@@ -378,11 +378,11 @@ public class Function extends Pointer {
                     if (args[i] instanceof PointerArray) {
                         PointerArray array = (PointerArray)args[i];
                         if (Structure.ByReference[].class.isAssignableFrom(inArg.getClass())) {
-                            Class<?> type = inArg.getClass().getComponentType();
+                            Class<? extends Structure> type = (Class<? extends Structure>) inArg.getClass().getComponentType();
                             Structure[] ss = (Structure[])inArg;
                             for (int si=0;si < ss.length;si++) {
                                 Pointer p = array.getPointer(Native.POINTER_SIZE * si);
-                                ss[si] = Structure.updateStructureByReference(type, ss[si], p);
+                                ss[si] = Structure.updateStructureByReference((Class<Structure>)type, ss[si], p);
                             }
                         }
                     }
@@ -436,13 +436,13 @@ public class Function extends Pointer {
             if (Structure.ByValue.class.isAssignableFrom(returnType)) {
                 Structure s =
                     Native.invokeStructure(this, this.peer, callFlags, args,
-                                           Structure.newInstance(returnType));
+                                           Structure.newInstance((Class<? extends Structure>)returnType));
                 s.autoRead();
                 result = s;
             } else {
                 result = invokePointer(callFlags, args);
                 if (result != null) {
-                    Structure s = Structure.newInstance(returnType, (Pointer)result);
+                    Structure s = Structure.newInstance((Class<? extends Structure>)returnType, (Pointer)result);
                     s.conditionalAutoRead();
                     result = s;
                 }
@@ -604,7 +604,7 @@ public class Function extends Pointer {
             } else if (ss.length == 0) {
                 throw new IllegalArgumentException("Structure array must have non-zero length");
             } else if (ss[0] == null) {
-                Structure.newInstance(type).toArray(ss);
+                Structure.newInstance((Class<? extends Structure>) type).toArray(ss);
                 return ss[0].getPointer();
             } else {
                 Structure.autoWrite(ss);

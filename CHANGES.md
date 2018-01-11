@@ -7,6 +7,8 @@ Release 5.0.0 (Next release)
 
 Features
 --------
+* [#822](https://github.com/java-native-access/jna/issues/822): `Native#loadLibrary` requires that the interface class passed in is an instance of Library. The runtime check can be enhanced by using a constraint generic. This breaks binary compatibility (see notes below) - [@d-noll](https://github.com/d-noll).
+* [#889](https://github.com/java-native-access/jna/issues/889): The `Structure#newInstance` receive the target type as a parameter. This adds a limited generic type, so that the return type ist the target type and not a generic structure, removing the necessity to do an explizit cast  - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

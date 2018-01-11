@@ -1241,7 +1241,7 @@ public final class Native implements Version {
         }
         if (Structure.class.isAssignableFrom(type)
             && !Structure.ByReference.class.isAssignableFrom(type)) {
-            return Structure.size(type, (Structure)value);
+            return Structure.size((Class<Structure>) type, (Structure)value);
         }
         try {
             return getNativeSize(type);
@@ -1276,7 +1276,7 @@ public final class Native implements Version {
         if (cls == double.class || cls == Double.class) return 8;
         if (Structure.class.isAssignableFrom(cls)) {
             if (Structure.ByValue.class.isAssignableFrom(cls)) {
-                return Structure.size(cls);
+                return Structure.size((Class<? extends Structure>) cls);
             }
             return POINTER_SIZE;
         }

@@ -272,7 +272,7 @@ public class CallbackReference extends WeakReference<Callback> {
     private Class<?> getNativeType(Class<?> cls) {
         if (Structure.class.isAssignableFrom(cls)) {
             // Make sure we can instantiate an argument of this type
-            Structure.validate(cls);
+            Structure.validate((Class<? extends Structure>)cls);
             if (!Structure.ByValue.class.isAssignableFrom(cls))
                 return Pointer.class;
         } else if (NativeMapped.class.isAssignableFrom(cls)) {
@@ -580,14 +580,14 @@ public class CallbackReference extends WeakReference<Callback> {
                     // If passed by value, don't hold onto the pointer, which
                     // is only valid for the duration of the callback call
                     if (Structure.ByValue.class.isAssignableFrom(dstType)) {
-                        Structure s = Structure.newInstance(dstType);
+                        Structure s = Structure.newInstance((Class<? extends Structure>) dstType);
                         byte[] buf = new byte[s.size()];
                         ((Pointer)value).read(0, buf, 0, buf.length);
                         s.getPointer().write(0, buf, 0, buf.length);
                         s.read();
                         value = s;
                     } else {
-                        Structure s = Structure.newInstance(dstType, (Pointer)value);
+                        Structure s = Structure.newInstance((Class<? extends Structure>) dstType, (Pointer)value);
                         s.conditionalAutoRead();
                         value = s;
                     }
