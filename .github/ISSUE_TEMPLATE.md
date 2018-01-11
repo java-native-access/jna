@@ -1,4 +1,7 @@
-NOTE: Only file GitHub issues for bugs and feature requests.
+NOTE: Only file GitHub issues for bugs and feature requests. If you see 
+segfauls or exceptions when using JNA based bindings it is most probably a 
+binding problem. Please use the [JNA users' group](https://groups.google.com/forum/#!forum/jna-users)
+for discussion before opening an issue.
 
 Before you post a new issue please check the 
 [JNA users' group](https://groups.google.com/forum/#!forum/jna-users) and the 
