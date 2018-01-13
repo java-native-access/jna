@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32.COM.office;
 import com.sun.jna.Pointer;
 
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMInvokeException;
 import com.sun.jna.platform.win32.COM.Helper;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.WinDef.LONG;
@@ -102,11 +103,10 @@ public class MSOfficeDemo {
             msWord.insertText("Hello some changes from JNA!\n");            
             // save the document and prompt the user
             msWord.Save(false, wdPromptUser);
+        } catch (COMInvokeException e) {
+            System.out.println("bstrSource: " + e.getSource());
+            System.out.println("bstrDescription: " + e.getDescription());
         } catch (COMException e) {
-            if (e.getExcepInfo() != null) {
-                System.out.println("bstrSource: " + e.getExcepInfo().bstrSource);
-                System.out.println("bstrDescription: " + e.getExcepInfo().bstrDescription);
-            }
         } finally {
             if (msWord != null) {
                 msWord.quit();

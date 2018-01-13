@@ -24,6 +24,7 @@
 
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.IDispatch;
 import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -35,6 +36,7 @@ import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.IntByReference;
 import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.Callable;
@@ -90,12 +92,12 @@ public class Factory extends ObjectFactory {
                 }
             }
 
-            return comThread.execute(new Callable<Object>() {
-                @Override
-                public Object call() throws Exception {
-                    return method.invoke(delegate, args);
-                }
-            });
+            return runInComThread(new Callable<Object>() {
+                    @Override
+                    public Object call() throws Exception {
+                        return method.invoke(delegate, args);
+                    }
+                });
         }
     }
 
@@ -136,7 +138,7 @@ public class Factory extends ObjectFactory {
     }
 
     @Override
-    public <T> T fetchObject(final Class<T> comInterface) {
+    public <T> T fetchObject(final Class<T> comInterface) throws COMException {
         // Proxy2 is added by createProxy inside fetch Object
         return runInComThread(new Callable<T>() {
             public T call() throws Exception {
@@ -173,6 +175,15 @@ public class Factory extends ObjectFactory {
         } catch (InterruptedException ex) {
             throw new RuntimeException(ex);
         } catch (ExecutionException ex) {
+            Throwable cause = ex.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            } else if (cause instanceof InvocationTargetException) {
+                cause = ((InvocationTargetException) cause).getTargetException();
+                if (cause instanceof RuntimeException) {
+                    throw (RuntimeException) cause;
+                }
+            }
             throw new RuntimeException(ex);
         }
     }

@@ -117,11 +117,16 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 					int n = dispatch.Release();
 				} else {
 					String formatMessageFromHR = Kernel32Util.formatMessage(hr);
-					throw new COMException("getUnknownId: " + formatMessageFromHR);
+					throw new COMException("getUnknownId: " + formatMessageFromHR, hr);
 				}
-			} catch (Exception e) {
+			} catch (RuntimeException e) {
+                            // Do not rewrap COMException
+                            if(e instanceof COMException) {
+                                throw e;
+                            } else {
 				throw new COMException("Error occured when trying get Unknown Id ", e);
-			}
+                            }
+                        }
 		}
 		return this.unknownId;
 	}
@@ -253,7 +258,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	// ---------------------- IConnectionPoint ----------------------
-	private ConnectionPoint fetchRawConnectionPoint(IID iid) throws InterruptedException, ExecutionException, TimeoutException {
+	private ConnectionPoint fetchRawConnectionPoint(IID iid) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		// query for ConnectionPointContainer
@@ -271,7 +276,8 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	}
 
 	public IComEventCallbackCookie advise(Class<?> comEventCallbackInterface,
-			final IComEventCallbackListener comEventCallbackListener) {
+			final IComEventCallbackListener comEventCallbackListener)
+                        throws COMException {
                  assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		try {
@@ -300,13 +306,17 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			// return the cookie so that a call to stop listening can be made
 			return new ComEventCallbackCookie(pdwCookie.getValue());
 
-		} catch (Exception e) {
-			throw new COMException("Error occured in advise when trying to connect the listener "
-					+ comEventCallbackListener, e);
+		} catch (RuntimeException e) {
+                        // Do not rewrap COMException
+                        if(e instanceof COMException) {
+                            throw e;
+                        } else {
+                            throw new COMException("Error occured in advise when trying to connect the listener " + comEventCallbackListener, e);
+                        }
 		}
 	}
 
-	public void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) {
+	public void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
 		try {
@@ -324,8 +334,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 			rawCp.Release();
 			COMUtils.checkRC(hr);
 
-		} catch (Exception e) {
-			throw new COMException("Error occured in unadvise when trying to disconnect the listener from " + this, e);
+		} catch (RuntimeException e) {
+                        // Do not rewrap COMException
+                        if(e instanceof COMException) {
+                            throw e;
+                        } else {
+                            throw new COMException("Error occured in unadvise when trying to disconnect the listener from " + this, e);
+                        }
 		}
 	}
 
@@ -448,10 +463,15 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 				return t;
 			} else {
 				String formatMessageFromHR = Kernel32Util.formatMessage(hr);
-				throw new COMException("queryInterface: " + formatMessageFromHR);
+				throw new COMException("queryInterface: " + formatMessageFromHR, hr);
 			}
-		} catch (Exception e) {
-			throw new COMException("Error occured when trying to query for interface " + comInterface.getName(), e);
+		} catch (RuntimeException e) {
+                        // Do not rewrap COMException
+                        if(e instanceof COMException) {
+                            throw e;
+                        } else {
+                            throw new COMException("Error occured when trying to query for interface " + comInterface.getName(), e);
+                        }
 		}
 	}
 

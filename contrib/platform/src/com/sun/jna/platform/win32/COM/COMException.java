@@ -23,10 +23,8 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
-import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.platform.win32.WinNT.HRESULT;
 
-// TODO: Auto-generated Javadoc
 /**
  * Exception class for all COM related classes.
  *
@@ -35,19 +33,34 @@ import com.sun.jna.ptr.IntByReference;
 public class COMException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
-    /** The p excep info. */
-    private EXCEPINFO pExcepInfo;
-
-    /** The pu arg err. */
-    private IntByReference puArgErr;
-
-    private int uArgErr;
+    private final HRESULT hresult;
 
     /**
      * Instantiates a new automation exception.
      */
     public COMException() {
-        super();
+        this("", (Throwable) null);
+    }
+
+    /**
+     * Instantiates a new automation exception.
+     *
+     * @param message
+     *            the message
+     */
+    public COMException(String message) {
+        this(message, (Throwable) null);
+    }
+
+
+    /**
+     * Instantiates a new automation exception.
+     *
+     * @param cause
+     *            the cause
+     */
+    public COMException(Throwable cause) {
+        this(null, cause);
     }
 
     /**
@@ -60,6 +73,7 @@ public class COMException extends RuntimeException {
      */
     public COMException(String message, Throwable cause) {
         super(message, cause);
+        this.hresult = null;
     }
 
     /**
@@ -67,61 +81,27 @@ public class COMException extends RuntimeException {
      *
      * @param message
      *            the message
+     * @param hresult
+     *            HRESULT that lead to the creation of the COMException
      */
-    public COMException(String message) {
+    public COMException(String message, HRESULT hresult) {
         super(message);
+        this.hresult = hresult;
     }
 
     /**
-     * Instantiates a new automation exception.
-     *
-     * @param message
-     *            the message
-     * @param pExcepInfo
-     *            the excep info
-     * @param puArgErr
-     *            the pu arg err
+     * @return the HRESULT that lead to thie COMException or NULL if the COMException as not directly caused by a native call
      */
-    public COMException(String message, EXCEPINFO pExcepInfo,
-            IntByReference puArgErr) {
-        super(message + " (puArgErr=" + (null==puArgErr?"":puArgErr.getValue()) + ")");
-        this.pExcepInfo = pExcepInfo;
-        this.puArgErr = puArgErr;
+    public HRESULT getHresult() {
+        return hresult;
     }
 
     /**
-     * Instantiates a new automation exception.
-     *
-     * @param cause
-     *            the cause
+     * @param errorCode
+     * @return true if the exception has an associated HRESULT and that HRESULT
+     * matches the supplied error code
      */
-    public COMException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Gets the excep info.
-     *
-     * @return the excep info
-     */
-    public EXCEPINFO getExcepInfo() {
-        return pExcepInfo;
-    }
-
-    /**
-     * Gets the arg err.
-     *
-     * @return the arg err
-     */
-    public IntByReference getArgErr() {
-        return puArgErr;
-    }
-
-    public int getuArgErr() {
-        return uArgErr;
-    }
-
-    public void setuArgErr(int uArgErr) {
-        this.uArgErr = uArgErr;
+    public boolean matchesErrorCode(int errorCode) {
+        return hresult != null && hresult.intValue() == errorCode;
     }
 }

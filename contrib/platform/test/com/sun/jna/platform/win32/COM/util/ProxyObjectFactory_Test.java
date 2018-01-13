@@ -12,9 +12,13 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMInvokeException;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,21 +28,23 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
+import com.sun.jna.platform.win32.WinError;
 
 public class ProxyObjectFactory_Test {
+        private static final Logger LOG = Logger.getLogger(ProxyObjectFactory_Test.class.getName());
 
         static {
                 ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
         }
-    
+
 	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 	interface Application extends IUnknown {
 		@ComProperty
 		boolean getVisible();
-		
+
 		@ComProperty
 		void setVisible(boolean value);
-		
+
 		@ComMethod
 		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
 
@@ -50,7 +56,7 @@ public class ProxyObjectFactory_Test {
 
 		@ComProperty(dispId = 0x00000006)
 		public Documents getDocuments();
-	}	
+	}
 
 	@ComInterface(iid = "{0002096C-0000-0000-C000-000000000046}")
 	public interface Documents extends IDispatch {
@@ -91,75 +97,99 @@ public class ProxyObjectFactory_Test {
 	@ComObject(progId="Word.Application")
 	interface MsWordApp extends Application {
 	}
-	
+
 	Factory factory;
-        
+
 	@Before
 	public void before() {
 		this.factory = new Factory();
 		//ensure there are no word applications running.
 		while(true) {
 			try {
-				MsWordApp ao = this.factory.fetchObject(MsWordApp.class);
-				Application a = ao.queryInterface(Application.class);
-				try {
-					a.Quit(true, null, null);
-					try {
-						//wait for it to quit
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();e.getCause().printStackTrace();
-				}
-			} catch(Exception e) {
-				break;
+                            MsWordApp ao = this.factory.fetchObject(MsWordApp.class);
+                            Application a = ao.queryInterface(Application.class);
+                            try {
+                                    a.Quit(true, null, null);
+                                    try {
+                                            //wait for it to quit
+                                            Thread.sleep(100);
+                                    } catch (InterruptedException e) {
+                                            LOG.log(Level.INFO, null, e);
+                                    }
+                            } catch (COMException e) {
+                                    LOG.log(Level.INFO, null, e);
+                                    LOG.log(Level.INFO, null, e.getCause());
+                            }
+			} catch(COMException e) {
+                            if(e.getHresult() != null) {
+                                if(e.matchesErrorCode(WinError.MK_E_UNAVAILABLE)) {
+                                    break;
+                                } else if (e.matchesErrorCode(WinError.RPC_E_DISCONNECTED)) {
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException ex) {
+                                    }
+                                }
+                            } else {
+                                throw e;
+                            }
 			}
 		}
 	}
-	
+
 	@After
 	public void after() {
                 factory.disposeAll();
                 factory.getComThread().terminate(10000);
 	}
-	
-	
+
+	@Test
+	public void testFetchNotExistingObject() {
+            COMException exceptionRaised = null;
+            try {
+                MsWordApp comObj2 = this.factory.fetchObject(MsWordApp.class);
+            } catch (COMException ex) {
+                exceptionRaised = ex;
+            }
+            assertNotNull("fetchObject on a non-running Object must raise an exception", exceptionRaised);
+            assertEquals("Unexpected error code", exceptionRaised.getHresult().intValue(), WinError.MK_E_UNAVAILABLE);
+            assertTrue("Error code not matched", exceptionRaised.matchesErrorCode(WinError.MK_E_UNAVAILABLE));
+        }
+
 	@Test
 	public void equals() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
 		MsWordApp comObj2 = this.factory.fetchObject(MsWordApp.class);
 
 		boolean res = comObj1.equals(comObj2);
-		
+
 		assertTrue(res);
-		
+
 		comObj1.Quit(false, null,null);
 	}
-	
+
 	@Test
 	public void notEquals() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
 		MsWordApp comObj2 = this.factory.createObject(MsWordApp.class);
 
 		boolean res = comObj1.equals(comObj2);
-		
+
 		assertFalse(res);
-		
+
 		comObj1.Quit(false, null,null);
 	}
-	
+
 	@Test
 	public void accessWhilstDisposing() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);
-		
+
 		//TODO: how to test this?
-		
+
 		this.factory.disposeAll();
-		
+
 	}
-	
+
 	@Test
 	public void testVarargsCallWithoutVarargParameter() {
 		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
@@ -182,5 +212,25 @@ public class ProxyObjectFactory_Test {
 
 		boolean wasDeleted = new File("abcdefg.pdf").delete();
 		assertTrue(wasDeleted);
+	}
+        
+	@Test
+	public void testVarargsCallWithInvalidParameter() {
+		MsWordApp comObj = this.factory.createObject(MsWordApp.class);
+
+		Documents documents = comObj.getDocuments();
+                
+                COMInvokeException invokeException = null;
+                
+                try {
+                    documents.Add("Not_existing_template");
+                } catch (COMInvokeException ex) {
+                    invokeException = ex;
+                }
+                
+                assertNotNull(invokeException);
+                assertEquals("Wrong hresult", WinError.DISP_E_EXCEPTION, invokeException.getHresult().intValue());
+                assertTrue("hresult was not matched", invokeException.matchesErrorCode(WinError.DISP_E_EXCEPTION));
+                assertEquals("Wrong scode", (long) 0x800a1436, (long) invokeException.getScode());
 	}
 }
