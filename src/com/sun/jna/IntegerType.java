@@ -158,8 +158,22 @@ public abstract class IntegerType extends Number implements NativeMapped {
 
     @Override
     public boolean equals(Object rhs) {
-        return rhs instanceof IntegerType
-            && number.equals(((IntegerType)rhs).number);
+        if(rhs instanceof IntegerType)
+            return number.equals(((IntegerType)rhs).number);
+
+        if(rhs instanceof Integer)
+            return rhs.equals(number.intValue());
+        if(rhs instanceof Long)
+            return rhs.equals(number.longValue());
+        if(rhs instanceof Float)
+            return rhs.equals(number.floatValue());
+        if(rhs instanceof Double)
+            return rhs.equals(number.doubleValue());
+        if(rhs instanceof Byte)
+            return rhs.equals(number.byteValue());
+        if(rhs instanceof Short)
+            return rhs.equals(number.shortValue());
+        return false;
     }
 
     @Override

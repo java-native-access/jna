@@ -163,6 +163,21 @@ public class IntegerTypeTest extends TestCase {
         assertEquals("Mismatched reversed order comparison", 1, IntegerType.compare(v2, v1));
     }
 
+    public void testEquals() {
+       NativeLong l=new NativeLong(5);
+       assertTrue("Mismatched equal with value type", l.equals(5));
+       assertTrue("Mismatched equal with NativeLong", l.equals(new NativeLong(5)));
+       assertFalse("Mismatched not equal with value type", l.equals(7));
+       assertFalse("Mismatched not equal with NativeLong", l.equals(new NativeLong(7)));
+   }
+
+   public void testCompare() {
+       NativeLong l=new NativeLong(5);
+       assertEquals("Mismatched equal native value comparison", 0, IntegerType.compare(l, 5));
+       assertTrue("Mismatched larger native value comparison", ( IntegerType.compare(l, 7) < 0));
+       assertTrue("Mismatched smaller native value comparison", ( IntegerType.compare(l, 4) > 0));
+   }
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(IntegerTypeTest.class);
     }
