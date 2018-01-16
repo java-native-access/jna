@@ -173,7 +173,7 @@ public abstract class IntegerType extends Number implements NativeMapped {
             return rhs.equals(number.byteValue());
         if(rhs instanceof Short)
             return rhs.equals(number.shortValue());
-        return rhs != null && rhs.equals(this);
+        return false;
     }
 
     @Override
