@@ -23,6 +23,8 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
@@ -174,4 +176,34 @@ public abstract class Crypt32Util {
 
         return unProtectedData;
     }
+	
+	/**
+	 * Utility method to call to Crypt32's CertNameToStr that allocates the assigns
+	 * the required memory for the psz parameter based on the type mapping used, calls
+	 * to CertNameToStr, and returns the received string.
+	 *
+	 * @param dwCertEncodingType
+	 *            The certificate encoding type that was used to encode the name.
+	 *            The message encoding type identifier, contained in the high WORD
+	 *            of this value, is ignored by this function.
+	 * @param pName
+	 *            A pointer to the CERT_NAME_BLOB structure to be converted.
+	 * @param dwStrType
+	 *            This parameter specifies the format of the output string. This
+	 *            parameter also specifies other options for the contents of the
+	 *            string.
+	 * @param csz
+	 *            The size, in characters, of the psz buffer. The size must include
+	 *            the terminating null character.
+	 * @return Returns the retrieved string. 
+	 */
+	String CertNameToStr(int dwCertEncodingType, DATA_BLOB pName, int dwStrType, int csz) {
+		int allocationSize = csz + 1;
+		allocationSize = Boolean.getBoolean("w32.ascii") ? allocationSize : allocationSize * 2;
+		Pointer pszPointer = new Memory(allocationSize);
+		
+		Crypt32.INSTANCE.CertNameToStr(dwCertEncodingType, pName, dwStrType, pszPointer, csz);
+	
+		return pszPointer.getString(0);
+	}
 }
