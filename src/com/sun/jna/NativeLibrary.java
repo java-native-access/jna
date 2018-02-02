@@ -959,21 +959,19 @@ public class NativeLibrary {
      */
     private static ArrayList<String> getLinuxLdPaths() {
         ArrayList<String> ldPaths = new ArrayList<String>();
-        try {
-                Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String buffer = "";
-                while ((buffer = reader.readLine()) != null) {
-                        int startPath = buffer.indexOf(" => ");
-                        int endPath = buffer.lastIndexOf('/');
-                        if (startPath != -1 && endPath != -1 && startPath < endPath) {
-                                String path =  buffer.substring(startPath+4, endPath);
-                                if (ldPaths.contains(path) == false) {
-                                        ldPaths.add(path);
-                                }
-                        }
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(Runtime.getRuntime().exec("/sbin/ldconfig -p").getInputStream()))) {
+            String buffer;
+            while ((buffer = reader.readLine()) != null) {
+                int startPath = buffer.indexOf(" => ");
+                int endPath = buffer.lastIndexOf('/');
+                if (startPath != -1 && endPath != -1 && startPath < endPath) {
+                    String path = buffer.substring(startPath + 4, endPath);
+                    if (!ldPaths.contains(path)) {
+                        ldPaths.add(path);
+                    }
                 }
-                reader.close();
+            }
         } catch (Exception e) {
         }
         return ldPaths;
