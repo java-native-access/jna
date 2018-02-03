@@ -171,6 +171,7 @@ static jclass classIntegerType;
 static jclass classPointerType;
 static jclass classJNIEnv;
 static jclass class_ffi_callback;
+static jclass classFromNativeConverter;
 
 static jmethodID MID_Class_getComponentType;
 static jmethodID MID_Object_toString;
@@ -224,7 +225,7 @@ static jmethodID MID_CallbackReference_getNativeString;
 static jmethodID MID_CallbackReference_initializeThread;
 static jmethodID MID_NativeMapped_toNative;
 static jmethodID MID_WString_init;
-static jmethodID MID_ToNativeConverter_nativeType;
+static jmethodID MID_FromNativeConverter_nativeType;
 static jmethodID MID_ffi_callback_invoke;
 
 static jfieldID FID_Boolean_value;
@@ -1143,10 +1144,10 @@ getNativeType(JNIEnv* env, jclass cls) {
                                         MID_Native_nativeType, cls);
 }
 
-void*
-getFFITypeTypeMapped(JNIEnv* env, jobject converter) {
-  return L2A((*env)->CallStaticLongMethod(env, converter,
-                                          MID_ToNativeConverter_nativeType));
+jclass
+getNativeTypeMapped(JNIEnv* env, jobject converter) {
+  return (*env)->CallObjectMethod(env, converter,
+                                          MID_FromNativeConverter_nativeType);
 }
 
 void
@@ -1905,10 +1906,20 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
   case CVT_TYPE_MAPPER_STRING:
   case CVT_TYPE_MAPPER_WSTRING:
     {
-      int jtype = (data->rflag == CVT_TYPE_MAPPER_STRING
-                   ? 'c' : (data->rflag == CVT_TYPE_MAPPER_WSTRING
-                            ? 'w' : get_java_type_from_ffi_type(data->cif.rtype)));
-      fromNativeTypeMapped(env, data->from_native, resp, jtype, data->cif.rtype->size,
+       int jtype;
+       if(data->rflag == CVT_TYPE_MAPPER_STRING) {
+           jtype = 'c';
+       } else if (data->rflag == CVT_TYPE_MAPPER_WSTRING) {
+           jtype = 'w';
+       } else {
+           jclass returnClass = getNativeTypeMapped(env, data->from_native);
+           jtype = get_java_type(env, returnClass);
+           if(jtype == -1) {
+               jtype = get_java_type_from_ffi_type(data->cif.rtype);
+           }
+       }
+       
+       fromNativeTypeMapped(env, data->from_native, resp, jtype, data->cif.rtype->size,
                            data->closure_method, oldresp, data->encoding);
     }
     break;
@@ -2982,6 +2993,15 @@ Java_com_sun_jna_Native_initIDs(JNIEnv *env, jclass cls) {
                      "invoke", "(JJJ)V")) {
     throwByName(env, EUnsatisfiedLink,
                 "Can't obtain invoke method from class com.sun.jna.Native$ffi_callback");
+  }
+  else if (!LOAD_CREF(env, FromNativeConverter, "com/sun/jna/FromNativeConverter")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain class com.sun.jna.FromNativeConverter");
+  }
+  else if (!LOAD_MID(env, MID_FromNativeConverter_nativeType, classFromNativeConverter, 
+                "nativeType", "()Ljava/lang/Class;")) {
+    throwByName(env, EUnsatisfiedLink,
+                "Can't obtain method nativeType for class com.sun.jna.FromNativeConverter");
   }
   // Initialize type fields within Structure.FFIType
   else {

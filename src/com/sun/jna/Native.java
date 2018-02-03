@@ -1511,15 +1511,7 @@ public final class Native implements Version {
     private static final int CVT_JNIENV = 27;
 
     private static int getConversion(Class<?> type, TypeMapper mapper, boolean allowObjects) {
-        if (type == Boolean.class) type = boolean.class;
-        else if (type == Byte.class) type = byte.class;
-        else if (type == Short.class) type = short.class;
-        else if (type == Character.class) type = char.class;
-        else if (type == Integer.class) type = int.class;
-        else if (type == Long.class) type = long.class;
-        else if (type == Float.class) type = float.class;
-        else if (type == Double.class) type = double.class;
-        else if (type == Void.class) type = void.class;
+        if (type == Void.class) type = void.class;
 
         if (mapper != null) {
             FromNativeConverter fromNative = mapper.getFromNativeConverter(type);
