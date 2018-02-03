@@ -2,8 +2,6 @@
 package com.sun.jna;
 
 import java.io.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -22,17 +20,12 @@ public class ELFAnalyserTest {
     
     @BeforeClass
     public static void initClass() throws IOException {
-        File win32Zip = new File("dist/win32-x86-64.jar");
-        File linuxArmelZip = new File("dist/linux-armel.jar");
-        File linuxArmhfZip = new File("dist/linux-arm.jar");
-        File linuxAmd64Zip = new File("dist/linux-x86-64.jar");
-        
         TEST_RESOURCES.mkdirs();
         
-        extractFileFromZip(win32Zip, "jnidispatch.dll", WIN32_LIB);
-        extractFileFromZip(linuxArmelZip, "libjnidispatch.so", LINUX_ARMEL_LIB);
-        extractFileFromZip(linuxArmhfZip, "libjnidispatch.so", LINUX_ARMHF_LIB);
-        extractFileFromZip(linuxAmd64Zip, "libjnidispatch.so", LINUX_AMD64_LIB);
+        extractTestFile(WIN32_LIB);
+        extractTestFile(LINUX_ARMEL_LIB);
+        extractTestFile(LINUX_ARMHF_LIB);
+        extractTestFile(LINUX_AMD64_LIB);
         makeLinuxArmelNoflagLib(LINUX_ARMEL_LIB, LINUX_ARMEL_NOFLAG_LIG);
     }
     
@@ -90,14 +83,10 @@ public class ELFAnalyserTest {
         TEST_RESOURCES.delete();
     }
     
-    private static void extractFileFromZip(File zipTarget, String zipEntryName, File outputFile) throws IOException {
-        ZipFile zip = new ZipFile(zipTarget);
+    private static void extractTestFile(File outputFile) throws IOException {
+        String inputPath = "/com/sun/jna/data/" + outputFile.getName();
+        InputStream is = ELFAnalyserTest.class.getResourceAsStream(inputPath);
         try {
-            ZipEntry entry = zip.getEntry(zipEntryName);
-            if(entry == null)  {
-                throw new IOException("ZipEntry for name " + zipEntryName + " not found in " + zipTarget.getAbsolutePath());
-            }
-            InputStream is = zip.getInputStream(entry); // Implicitly closed by closing ZipFile
             OutputStream os = new FileOutputStream(outputFile);
             try {
                 copyStream(is, os);
@@ -105,7 +94,7 @@ public class ELFAnalyserTest {
                 os.close();
             }
         } finally {
-            zip.close();
+            is.close();
         }
     }
 
