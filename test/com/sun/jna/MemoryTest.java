@@ -31,7 +31,7 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-public class MemoryTest extends TestCase implements GCWaits {
+public class MemoryTest extends TestCase {
 
     public void testAutoFreeMemory() throws Exception {
         final boolean[] flag = { false };
@@ -56,10 +56,8 @@ public class MemoryTest extends TestCase implements GCWaits {
         long start = System.currentTimeMillis();
         System.gc();
         Memory.purge();
-        for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
-            Thread.sleep(GC_WAIT_INTERVAL);
-            System.gc();
-            Memory.purge();
+        for (int i=0;i < GCWaits.GC_WAITS && ref.get() != null;i++) {
+            GCWaits.gcRun();
         }
         long end = System.currentTimeMillis();
         assertNull("Memory not GC'd after " + (end - start) + " millis", ref.get());
@@ -148,10 +146,8 @@ public class MemoryTest extends TestCase implements GCWaits {
         m = null;
         System.gc();
         Memory.purge();
-        for (int i=0;i < GC_WAITS && ref.get() != null;i++) {
-            Thread.sleep(GC_WAIT_INTERVAL);
-            System.gc();
-            Memory.purge();
+        for (int i=0;i < GCWaits.GC_WAITS && ref.get() != null;i++) {
+            GCWaits.gcRun();
         }
         assertNotNull("Memory GC'd while NIO Buffer still exists", ref.get());
 
@@ -161,10 +157,8 @@ public class MemoryTest extends TestCase implements GCWaits {
         b = null;
         System.gc();
         Memory.purge();
-        for (int i=0;i < GC_WAITS && (bref.get() != null || ref.get() != null);i++) {
-            Thread.sleep(GC_WAIT_INTERVAL);
-            System.gc();
-            Memory.purge();
+        for (int i=0;i < GCWaits.GC_WAITS && (bref.get() != null || ref.get() != null);i++) {
+            GCWaits.gcRun();
         }
         assertNull("Buffer not GC'd\n", bref.get());
         assertNull("Memory not GC'd after buffer GC'd\n", ref.get());

@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 //@SuppressWarnings("unused")
-public class DirectTest extends TestCase implements Paths, GCWaits {
+public class DirectTest extends TestCase implements Paths {
 
     public static void main(java.lang.String[] argList) {
         junit.textui.TestRunner.run(DirectTest.class);
