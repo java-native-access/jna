@@ -1060,7 +1060,11 @@ get_java_type(JNIEnv* env, jclass cls) {
 
 jlong
 getIntegerTypeValue(JNIEnv* env, jobject obj) {
-  return (*env)->GetLongField(env, obj, FID_IntegerType_value);
+  if(obj == NULL) {
+    return 0;
+  } else {
+    return (*env)->GetLongField(env, obj, FID_IntegerType_value);
+  }
 }
 
 void*
