@@ -26,7 +26,7 @@ LIB environment variables are set properly (as in VCVARS.BAT).
 
 Sample configuration setting up INCLUDE/LIB (see an alternative below):
 
-``` shell
+```shell
 export MSVC="/c/Program Files (x86)/Microsoft Visual Studio 10.0/vc"
 export WSDK="/c/Program Files (x86)/Microsoft SDKs/Windows/v7.0A"
 export WSDK_64="/c/Program Files/Microsoft SDKs/Windows/v7.1"
@@ -83,6 +83,8 @@ This builds the library based on the Visual C++ compiler.
         - git 
 4. Ensure ant, maven, cygwin (64 Bit!) are accessible from the PATH
 5. Run 
+        set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_152
+        set PATH=c:\cygwin64\bin\;%PATH%
 	"C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" x64
    inside a windows command prompt
 6. Point JAVA_HOME to the root of a 64 Bit JDK
@@ -105,6 +107,8 @@ For 32bit:
         - git 
 4. Ensure ant, maven, cygwin (32 Bit!) are accessible from the PATH
 5. Run 
+        set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.8.0_152
+        set PATH=c:\cygwin\bin\;%PATH%
 	"C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" x86
    inside a windows command prompt
 6. Point JAVA_HOME to the root of a 32 Bit JDK
