@@ -959,22 +959,29 @@ public class NativeLibrary {
      */
     private static ArrayList<String> getLinuxLdPaths() {
         ArrayList<String> ldPaths = new ArrayList<String>();
+        BufferedReader reader = null;
         try {
-                Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
-                BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                String buffer = "";
-                while ((buffer = reader.readLine()) != null) {
-                        int startPath = buffer.indexOf(" => ");
-                        int endPath = buffer.lastIndexOf('/');
-                        if (startPath != -1 && endPath != -1 && startPath < endPath) {
-                                String path =  buffer.substring(startPath+4, endPath);
-                                if (ldPaths.contains(path) == false) {
-                                        ldPaths.add(path);
-                                }
-                        }
+            Process process = Runtime.getRuntime().exec("/sbin/ldconfig -p");
+            reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String buffer;
+            while ((buffer = reader.readLine()) != null) {
+                int startPath = buffer.indexOf(" => ");
+                int endPath = buffer.lastIndexOf('/');
+                if (startPath != -1 && endPath != -1 && startPath < endPath) {
+                    String path = buffer.substring(startPath + 4, endPath);
+                    if (!ldPaths.contains(path)) {
+                        ldPaths.add(path);
+                    }
                 }
-                reader.close();
+            }
         } catch (Exception e) {
+        } finally {
+            if(reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                }
+            }
         }
         return ldPaths;
     }
