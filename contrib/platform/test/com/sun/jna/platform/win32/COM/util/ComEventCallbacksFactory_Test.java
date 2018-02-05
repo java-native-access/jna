@@ -295,4 +295,71 @@ public class ComEventCallbacksFactory_Test {
                 hr = proxy.QueryInterface(new REFIID(new IID("{00000000-0000-0000-C000-000000000000}")), interfacePointer);
                 assertTrue(COMUtils.FAILED(hr));
         }
+        
+        // This tests, that the IConnectionPoint interface can be queried
+        // via queryInterface and does not require the primary interface 
+        // to extends IConnectionPoint
+        
+        @ComObject(progId="Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")
+	interface ComInternetExplorerWithoutConnectionPoint extends ComIWebBrowser2WithoutConnectionPoint {
+	}
+	
+	@ComInterface(iid="{D30C1661-CDAF-11D0-8A3E-00C04FC9E26E}")
+	interface ComIWebBrowser2WithoutConnectionPoint extends IUnknown {
+		@ComProperty
+		boolean getVisible();
+		
+		@ComProperty
+		void setVisible(boolean value);
+		
+		@ComMethod
+		void Quit();
+                
+		@ComMethod
+                /**
+                 * navOpenInNewWindow = 1
+                 * navNoHistory = 2
+                 * navNoReadFromCache = 4
+                 * navNoWriteToCache = 8
+                 * navAllowAutosearch = 16
+                 * navBrowserBar = 32
+                 * navHyperlink = 64
+                 * navEnforceRestricted = 128
+                 * navNewWindowsManaged = 256
+                 * navUntrustedForDownload = 512
+                 * navTrustedForActiveX = 1024
+                 * navOpenInNewTab = 2048
+                 * navOpenInBackgroundTab = 4096
+                 * navKeepWordWheelText = 8192
+                 * navVirtualTab = 16384
+                 * navBlockRedirectsXDomain = 32768
+                 * navOpenNewForegroundTab = 65536
+                 */
+		void Navigate(String url, long flags, String targetFrameName, VARIANT postData, String headers);
+	}
+        
+	@Test
+	public void adviseNavigateComplete2WithoutConnectionPoint() throws InterruptedException {
+		ComInternetExplorerWithoutConnectionPoint ieApp = factory.createObject(ComInternetExplorerWithoutConnectionPoint.class);
+		ComIWebBrowser2WithoutConnectionPoint iWebBrowser2 = ieApp.queryInterface(ComIWebBrowser2WithoutConnectionPoint.class);
+		iWebBrowser2.setVisible(true);
+                
+                DWebBrowserEvents2_Listener listener = new DWebBrowserEvents2_Listener();
+		IComEventCallbackCookie cookie = iWebBrowser2.queryInterface(IConnectionPoint.class).advise(DWebBrowserEvents2.class, listener);
+                
+		iWebBrowser2.Navigate("https://github.com/java-native-access/jna", 0, null, null, null);
+                
+                for(int i = 0; i < 10; i++) {
+                    if(listener.navigateComplete2Called) {
+                        break;
+                    }
+                    Thread.sleep(1000);
+                }
+                
+                iWebBrowser2.Quit();
+                
+                Assert.assertTrue("NavigateComplete was not called", listener.navigateComplete2Called);
+                Assert.assertNotNull("URL passed to NavigateComplete2 was NULL", listener.navigateComplete2URL);
+                Assert.assertThat(listener.navigateComplete2URL, CoreMatchers.startsWith("https://github.com/java-native-access/jna"));
+	}
 }
