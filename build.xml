@@ -69,7 +69,7 @@
   <!-- jnidispatch library release version -->
   <property name="jni.major" value="5"/>
   <property name="jni.minor" value="2"/>
-  <property name="jni.revision" value="0"/>
+  <property name="jni.revision" value="1"/>
   <property name="jni.build" value="0"/> <!--${build.number}-->
   <property name="jni.version" value="${jni.major}.${jni.minor}.${jni.revision}"/>
   <property name="jni.md5" value="74e8f8e397c43487738c5c1f1363498b"/>
@@ -1015,11 +1015,17 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <include name="*testlib-jar*"/>
       </fileset>
     </copy>
+    <copy todir="${test.classes}">
+        <fileset dir="${test.src}">
+            <include name="**/data/**" />
+        </fileset>
+    </copy>
     <!-- Create a jar for easy movement of tests, and jar load test -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
         <include name="**/*testlib-jar*"/>
+        <include name="**/data/**" />
       </fileset>
       <manifest>
         <attribute name="permissions" value="all-permissions"/>
@@ -1115,6 +1121,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <propertyref prefix="java.awt.headless"/>
     </propertyset>
     <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
+        <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y" />-->
       <!-- optionally run headless -->
       <syspropertyset refid="headless"/>
       <!-- avoid VM conflicts with JNA protected mode -->
