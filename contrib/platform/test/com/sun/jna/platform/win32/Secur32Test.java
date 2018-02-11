@@ -40,6 +40,14 @@ public class Secur32Test extends TestCase {
         junit.textui.TestRunner.run(Secur32Test.class);
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        // Drain last error to prevent test fails from lingering  last error
+        // states
+        Kernel32.INSTANCE.GetLastError();
+    }
+
     public void testGetUserNameEx() {
     	IntByReference len = new IntByReference();
     	Secur32.INSTANCE.GetUserNameEx(

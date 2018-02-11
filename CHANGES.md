@@ -74,6 +74,10 @@ Breaking Changes
 * `com.sun.jna.platform.win32.COM.COMException` was structurally modified. The
   `pExcepInfo` and `puArgErr` members were removed and `hresult` member was added.
   The now missing information in `COMException` was moved to `COMInvokeException`.
+* The third parameter of `com.sun.jna.platform.win32.COM.IShellFolder#GetDisplayNameOf`
+  was changed from `PointerByReference` to `STRRET` and matching this,
+  the first parameter of `com.sun.jna.platform.win32.Shlwapi.StrRetToStr` was
+  changed identically.
 
 Release 4.5.0
 =============

@@ -30,6 +30,7 @@ import com.sun.jna.Function;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
+import com.sun.jna.platform.win32.ShTypes.STRRET;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
@@ -408,7 +409,7 @@ public interface IShellFolder {
     HRESULT GetDisplayNameOf(
             Pointer pidl,
             int flags,
-            PointerByReference pName);
+            STRRET pName);
 
     /**
      * Sets the display name of a file object or subfolder, changing the item identifier in the process.
@@ -523,7 +524,7 @@ public interface IShellFolder {
                     return new WinNT.HRESULT( f.invokeInt(new Object[]{interfacePointer, hwndOwner, cidl, apidl, riid, rgfReserved, ppv}));
                 }
 
-                public WinNT.HRESULT GetDisplayNameOf(Pointer pidl, int flags, PointerByReference pName){
+                public WinNT.HRESULT GetDisplayNameOf(Pointer pidl, int flags, STRRET pName){
                     Function f = Function.getFunction(vTable[11], Function.ALT_CONVENTION);
                     return new WinNT.HRESULT( f.invokeInt(new Object[]{interfacePointer, pidl, flags, pName}));
                 }
