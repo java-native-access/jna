@@ -28,6 +28,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.ShTypes.STRRET;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -54,7 +55,7 @@ public interface Shlwapi extends StdCallLibrary {
      * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
      */
 
-    HRESULT StrRetToStr(PointerByReference pstr, Pointer pidl, PointerByReference ppszName);
+    HRESULT StrRetToStr(STRRET pstr, Pointer pidl, PointerByReference ppszName);
 
     /**
      * Determines if a path string is a valid Universal Naming Convention (UNC) path, as opposed to
