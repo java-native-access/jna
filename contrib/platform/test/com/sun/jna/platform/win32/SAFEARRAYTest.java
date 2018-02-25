@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.ObjectFactory;
@@ -61,6 +62,7 @@ import org.junit.Before;
 import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.LONG;
+import java.lang.reflect.Field;
 
 public class SAFEARRAYTest {
     static {
@@ -81,6 +83,15 @@ public class SAFEARRAYTest {
     public void testCreateVarArray() {
         SAFEARRAY varArray = SAFEARRAY.createSafeArray(1);
         Assert.assertTrue(varArray != null);
+    }
+    
+    @Test
+    public void testCreateEmpty() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+        Field f = Structure.class.getDeclaredField("PLACEHOLDER_MEMORY");
+        f.setAccessible(true);
+        Pointer PLACEHOLDER_MEMORY = (Pointer) f.get(null);
+        SAFEARRAY sa = Structure.newInstance(SAFEARRAY.class, PLACEHOLDER_MEMORY);
+        Assert.assertTrue(sa != null);
     }
 
     @Test

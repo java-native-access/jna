@@ -2125,6 +2125,13 @@ public abstract class Structure {
      * @param cls Structure subclass to check
      */
     static void validate(Class<? extends Structure> cls) {
-        Structure.newInstance(cls, PLACEHOLDER_MEMORY);
+        try {
+            cls.getConstructor();
+            return;
+        }catch(NoSuchMethodException e) {
+        }
+        catch(SecurityException e) {
+        }
+        throw new IllegalArgumentException("No suitable constructor found for class: " + cls.getName());
     }
 }
