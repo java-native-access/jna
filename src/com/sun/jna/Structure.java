@@ -2135,7 +2135,14 @@ public abstract class Structure {
     /** Indicate whether the given Structure class can be created by JNA.
      * @param cls Structure subclass to check
      */
-    static void validate(Class<?> cls) {
-        Structure.newInstance(cls, PLACEHOLDER_MEMORY);
+    static void validate(Class<? extends Structure> cls) {
+        try {
+            cls.getConstructor();
+            return;
+        }catch(NoSuchMethodException e) {
+        }
+        catch(SecurityException e) {
+        }
+        throw new IllegalArgumentException("No suitable constructor found for class: " + cls.getName());
     }
 }

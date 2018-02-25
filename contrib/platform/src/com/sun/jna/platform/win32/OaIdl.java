@@ -607,7 +607,11 @@ public interface OaIdl {
         @Override
         public void read() {
             super.read();
-            rgsabound = (SAFEARRAYBOUND[]) rgsabound[0].toArray(cDims.intValue());
+            if(cDims.intValue() > 0) {
+                rgsabound = (SAFEARRAYBOUND[]) rgsabound[0].toArray(cDims.intValue());
+            } else {
+                rgsabound = new SAFEARRAYBOUND[]{ new SAFEARRAYBOUND() };
+            }
         }
         
         @Override

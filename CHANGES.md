@@ -10,6 +10,7 @@ Features
 
 Bug Fixes
 ---------
+* [#925](https://github.com/java-native-access/jna/issues/925): Optimize `Structure#validate` and prevent `ArrayIndexOutOfBoundsException` in `SAFEARRAY#read` for zero dimensions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.5.1
 =============
