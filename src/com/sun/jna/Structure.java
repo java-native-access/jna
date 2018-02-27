@@ -2135,7 +2135,7 @@ public abstract class Structure {
     /** Indicate whether the given Structure class can be created by JNA.
      * @param cls Structure subclass to check
      */
-    static void validate(Class<? extends Structure> cls) {
+    static void validate(Class<?> cls) {
         try {
             cls.getConstructor();
             return;
