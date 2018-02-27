@@ -90,7 +90,7 @@ public class SAFEARRAYTest {
         Field f = Structure.class.getDeclaredField("PLACEHOLDER_MEMORY");
         f.setAccessible(true);
         Pointer PLACEHOLDER_MEMORY = (Pointer) f.get(null);
-        SAFEARRAY sa = Structure.newInstance(SAFEARRAY.class, PLACEHOLDER_MEMORY);
+        SAFEARRAY sa = (SAFEARRAY) Structure.newInstance(SAFEARRAY.class, PLACEHOLDER_MEMORY);
         Assert.assertTrue(sa != null);
     }
 
