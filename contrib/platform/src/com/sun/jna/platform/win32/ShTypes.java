@@ -57,9 +57,9 @@ public interface ShTypes {
          * indicate which union member to use:
          * 
          * <table>
-         * <tr><td>{@link TYPE_WSTR}</td><td>0x0</td><td>Use STRRET.pOleStr</td><td>must be freed by caller of GetDisplayNameOf</td></tr>
-         * <tr><td>{@link TYPE_OFFSET}</td><td>0x1</td><td>Use STRRET.uOffset</td><td>Offset into SHITEMID for ANSI string</td></tr>
-         * <tr><td>{@link TYPE_CSTR}</td><td>0x0</td><td>Use STRRET.cStr</td><td>ANSI Buffer</td></tr>
+         * <tr><td>{@link #TYPE_WSTR}</td><td>0x0</td><td>Use STRRET.pOleStr</td><td>must be freed by caller of GetDisplayNameOf</td></tr>
+         * <tr><td>{@link #TYPE_OFFSET}</td><td>0x1</td><td>Use STRRET.uOffset</td><td>Offset into SHITEMID for ANSI string</td></tr>
+         * <tr><td>{@link #TYPE_CSTR}</td><td>0x0</td><td>Use STRRET.cStr</td><td>ANSI Buffer</td></tr>
          * </table>
          */
         public int uType;

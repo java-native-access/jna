@@ -765,7 +765,7 @@ public interface Winsvc {
          * request.</li>
          * <li>If your service handles SERVICE_CONTROL_HARDWAREPROFILECHANGE,
          * return NO_ERROR to grant the request and an error code to deny the
-         * request.< </li> <li>If your service handles
+         * request.</li> <li>If your service handles
          * SERVICE_CONTROL_POWEREVENT, return NO_ERROR to grant the request and
          * an error code to deny the request.</li>
          * <li>For all other control codes your service handles, return

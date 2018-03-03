@@ -517,7 +517,7 @@ public interface GDI32 extends StdCallLibrary {
 	 *            OR operator.</td>
 	 *            </tr>
 	 *            <tr>
-	 *            <td><strong>NOMIRRORBITMAP</strong</td>
+	 *            <td><strong>NOMIRRORBITMAP</strong></td>
 	 *            <td>Prevents the bitmap from being mirrored.</td>
 	 *            </tr>
 	 *            <tr>

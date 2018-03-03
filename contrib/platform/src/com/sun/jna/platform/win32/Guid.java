@@ -477,22 +477,30 @@ public interface Guid {
 
     /**
      * REFIID is a pointer to an IID.
-     * 
+     *
+     * <p>
      * This type needs to be seperate from IID, as the REFIID can be passed in
-     * from external code, that does not allow writes to memory.
-     * 
-     * With the normal JNA behaviour a structure, that crosses the native<->Java
-     * border will be autowritten, which causes a fault when written.
-     * Observed was this behaviour in COM-Callbacks, which get the REFIID passed
-     * into Invoke-method.
-     * 
-     * So a IID can't be used directly, although the typedef of REFIID (from MSDN):
-     * 
-     * typedef IID* REFIID;
-     * 
-     * and the jna behaviour is described as:
-     * 
-     * "When a function requires a pointer to a struct, a Java Structure should be used."
+     * from external code, that does not allow writes to memory.</p>
+     *
+     * <p>
+     * With the normal JNA behaviour a structure, that crosses the
+     * native&lt;-%gt;Java border will be autowritten, which causes a fault when
+     * written. Observed was this behaviour in COM-Callbacks, which get the
+     * REFIID passed into Invoke-method.</p>
+     *
+     * <p>
+     * So a IID can't be used directly, although the typedef of REFIID (from
+     * MSDN):</p>
+     *
+     * <p>
+     * {@code typedef IID* REFIID;}</p>
+     *
+     * <p>
+     * and the jna behaviour is described as:</p>
+     *
+     * <p>
+     * "When a function requires a pointer to a struct, a Java Structure should
+     * be used."</p>
      */
     public class REFIID extends PointerType {
 
