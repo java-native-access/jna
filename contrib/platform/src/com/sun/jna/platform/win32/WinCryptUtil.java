@@ -1,5 +1,5 @@
-/* Copyright (c) 2018 Roshan Muralidharan, All Rights Reserved
- * 
+/* Copyright (c) 2018 Matthias Bläsing, All Rights Reserved
+ *
  * The contents of this file is dual-licensed under 2 
  * alternative Open Source/Free licenses: LGPL 2.1 or later and 
  * Apache License 2.0. (starting with JNA version 4.0.0).
@@ -23,64 +23,154 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.platform.win32.WTypes.LPSTR;
-import com.sun.jna.platform.win32.WinCrypt.*;
-import com.sun.jna.platform.win32.WinDef.DWORD;
-import com.sun.jna.TypeMapper;
-import com.sun.jna.StringArray;
-import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
+import com.sun.jna.platform.win32.WinCrypt.CERT_CONTEXT;
+import com.sun.jna.platform.win32.WinCrypt.CRL_CONTEXT;
+import com.sun.jna.platform.win32.WinCrypt.CRYPT_ATTRIBUTE;
+import com.sun.jna.platform.win32.WinCrypt.CRYPT_SIGN_MESSAGE_PARA;
 
-/**
- * Utility classes and methods for WinCrypt
- */
-public class WinCryptUtil {
-	
-	/**
-	 * The CTL_USAGE structure contains an array of object identifiers (OIDs) for
-	 * Certificate Trust List (CTL) extensions.
-     * 
-     * <p>
-     * MANAGED_CTL_USAGE is a convenience binding, that makes dealing with
-     * CTL_USAGE easier by providing direct, bound access, to the contained
-     * LPSTRs.
-     * </p>
-     */
-	public static class MANAGED_CTL_USAGE extends CTL_USAGE {
 
-		private final String[] usageIdentifiers;
+public abstract class WinCryptUtil {
 
-		/**
-         * Create a new CTL_USAGE with initial data.
-         * @param usage Object Identifier of CTL_EXTENSION.
+    public static class MANAGED_CRYPT_SIGN_MESSAGE_PARA extends CRYPT_SIGN_MESSAGE_PARA {
+
+        private CERT_CONTEXT[] rgpMsgCerts;
+        private CRL_CONTEXT[] rgpMsgCrls;
+        private CRYPT_ATTRIBUTE[] rgAuthAttrs;
+        private CRYPT_ATTRIBUTE[] rgUnauthAttrs;
+
+        public void setRgpMsgCert(CERT_CONTEXT[] rgpMsgCerts) {
+            this.rgpMsgCerts = rgpMsgCerts;
+            if (rgpMsgCerts == null || rgpMsgCerts.length == 0) {
+                rgpMsgCert = null;
+                cMsgCert = 0;
+            } else {
+                cMsgCert = rgpMsgCerts.length;
+                Memory mem = new Memory(Native.POINTER_SIZE * rgpMsgCerts.length);
+                for (int i = 0; i < rgpMsgCerts.length; i++) {
+                    mem.setPointer(i * Native.POINTER_SIZE, rgpMsgCerts[i].getPointer());
+                }
+                rgpMsgCert = mem;
+            }
+        }
+
+        @Override
+        public CERT_CONTEXT[] getRgpMsgCert() {
+            return rgpMsgCerts;
+        }
+
+        public void setRgpMsgCrl(CRL_CONTEXT[] rgpMsgCrls) {
+            this.rgpMsgCrls = rgpMsgCrls;
+            if (rgpMsgCrls == null || rgpMsgCrls.length == 0) {
+                rgpMsgCert = null;
+                cMsgCert = 0;
+            } else {
+                cMsgCert = rgpMsgCrls.length;
+                Memory mem = new Memory(Native.POINTER_SIZE * rgpMsgCrls.length);
+                for (int i = 0; i < rgpMsgCrls.length; i++) {
+                    mem.setPointer(i * Native.POINTER_SIZE, rgpMsgCrls[i].getPointer());
+                }
+                rgpMsgCert = mem;
+            }
+        }
+
+        @Override
+        public CRL_CONTEXT[] getRgpMsgCrl() {
+            return rgpMsgCrls;
+        }
+
+        /**
+         * @param rgAuthAttrs array of CRYPT_ATTRIBUTE - it must be created from
+         * a continous memory region (manually allocated memory or
+         * CRYPT_ATTRIBUTE#toArray)
          */
-		public MANAGED_CTL_USAGE(String usage) {
-			super(W32APITypeMapper.ASCII);
+        public void setRgAuthAttr(CRYPT_ATTRIBUTE[] rgAuthAttrs) {
+            this.rgAuthAttrs = rgAuthAttrs;
+            if (rgAuthAttrs == null || rgAuthAttrs.length == 0) {
+                rgAuthAttr = null;
+                cMsgCert = 0;
+            } else {
+                cMsgCert = rgpMsgCerts.length;
+                rgAuthAttr = rgAuthAttrs[0].getPointer();
+            }
+        }
 
-			usageIdentifiers = new String[] { usage };
-			StringArray sArray = new StringArray(new String[] { usage });
-			rgpszUsageIdentifier = sArray.getPointer(0);
-			cUsageIdentifier = usageIdentifiers.length;
-		}
+        @Override
+        public CRYPT_ATTRIBUTE[] getRgAuthAttr() {
+            return rgAuthAttrs;
+        }
 
-		/**
-         * Create a new CTL_USAGE with an array of identifiers.
-         * @param usages Object Identifiers of CTL_EXTENSIONs.
+        /**
+         * @param rgUnauthAttrs array of CRYPT_ATTRIBUTE - it must be created
+         * from a continous memory region (manually allocated memory or
+         * CRYPT_ATTRIBUTE#toArray)
          */
-		public MANAGED_CTL_USAGE(String[] usages) {
-			super(W32APITypeMapper.ASCII);
+        public void setRgUnauthAttr(CRYPT_ATTRIBUTE[] rgUnauthAttrs) {
+            this.rgUnauthAttrs = rgUnauthAttrs;
+            if (rgUnauthAttrs == null || rgUnauthAttrs.length == 0) {
+                rgUnauthAttr = null;
+                cMsgCert = 0;
+            } else {
+                cMsgCert = rgpMsgCerts.length;
+                rgUnauthAttr = rgUnauthAttrs[0].getPointer();
+            }
+        }
 
-			usageIdentifiers = usages;
-			StringArray sArray = new StringArray(usages);
-			rgpszUsageIdentifier = sArray.getPointer(0);
-			cUsageIdentifier = usageIdentifiers.length;
-		}
+        @Override
+        public CRYPT_ATTRIBUTE[] getRgUnauthAttr() {
+            return rgUnauthAttrs;
+        }
 
-		/**
-         * Retrieve an identifier at the provided index.
-         * @param idx index of the object identifier to be retrieved.
-         */
-		public String getUsageIdentifier(int idx) {
-			return usageIdentifiers[idx];
-		}
-	}
+        @Override
+        public void write() {
+            if (rgpMsgCerts != null) {
+                for (CERT_CONTEXT cc : rgpMsgCerts) {
+                    cc.write();
+                }
+            }
+            if (rgpMsgCrls != null) {
+                for (CRL_CONTEXT cc : rgpMsgCrls) {
+                    cc.write();
+                }
+            }
+            if (rgAuthAttrs != null) {
+                for (CRYPT_ATTRIBUTE cc : rgAuthAttrs) {
+                    cc.write();
+                }
+            }
+            if (rgUnauthAttrs != null) {
+                for (CRYPT_ATTRIBUTE cc : rgUnauthAttrs) {
+                    cc.write();
+                }
+            }
+            cbSize = size();
+            super.write();
+        }
+
+        @Override
+        public void read() {
+            if (rgpMsgCerts != null) {
+                for (CERT_CONTEXT cc : rgpMsgCerts) {
+                    cc.read();
+                }
+            }
+            if (rgpMsgCrls != null) {
+                for (CRL_CONTEXT cc : rgpMsgCrls) {
+                    cc.read();
+                }
+            }
+            if (rgAuthAttrs != null) {
+                for (CRYPT_ATTRIBUTE cc : rgAuthAttrs) {
+                    cc.read();
+                }
+            }
+            if (rgUnauthAttrs != null) {
+                for (CRYPT_ATTRIBUTE cc : rgUnauthAttrs) {
+                    cc.read();
+                }
+            }
+            super.read();
+        }
+    }
 }

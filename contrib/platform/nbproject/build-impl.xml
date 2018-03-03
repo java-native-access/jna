@@ -285,7 +285,6 @@ is divided into following sections:
                     <compilerarg value="-s"/>
                     <compilerarg path="@{apgeneratedsrcdir}"/>
                     <compilerarg line="${ap.proc.none.internal}"/>
-					<compilerarg value="-XDignore.symbol.file" />
                     <customize/>
                 </javac>
             </sequential>
