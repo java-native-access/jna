@@ -1,7 +1,7 @@
 Getting Started with JNA
 ========================
 
-Java Native Access (JNA) has a single component, `jna.jar`; the supporting native library (jnidispatch) is included in the jar file. JNA is capable of extracting and loading the native library on its own, so you don't need additional configuration. JNA falls back to extraction if the native library is not already installed on the local system somwhere accessible to `System.loadLibrary`. The native library is also available in platform-specific jar files for use with Java Web Start.
+Java Native Access (JNA) has a single component, `jna.jar`; the supporting native library (jnidispatch) is included in the jar file. JNA is capable of extracting and loading the native library on its own, so you don't need additional configuration. JNA falls back to extraction if the native library is not already installed on the local system somewhere accessible to `System.loadLibrary`. The native library is also available in platform-specific jar files for use with Java Web Start.
 
 Begin by downloading the latest release of JNA and referencing `jna.jar` in your project's `CLASSPATH`.
 
