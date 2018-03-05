@@ -493,6 +493,14 @@ public class Advapi32Test extends TestCase {
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
 
+    public void testRegConnectRegistry() {
+    	HKEYByReference phkResult = new HKEYByReference();
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegConnectRegistry(
+    			"\\\\localhost", WinReg.HKEY_LOCAL_MACHINE, phkResult));
+    	assertTrue(WinBase.INVALID_HANDLE_VALUE != phkResult.getValue());
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phkResult.getValue()));
+    }
+
     public void testRegQueryValueEx() {
     	HKEYByReference phKey = new HKEYByReference();
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(

@@ -855,6 +855,39 @@ public interface Advapi32 extends StdCallLibrary {
                      int samDesired, HKEYByReference phkResult);
 
     /**
+     * Establishes a connection to a predefined registry key on another
+     * computer.
+     * @param lpMachineName
+     *            The name of the remote computer. The string has
+     *            the following form:<br />
+     *            <pre><code>\\computername</code></pre>
+     *            The caller must have access to the remote computer or the
+     *            function fails.<br />
+     *            If this parameter is <c>null</c>, the local computer name
+     *            is used.
+     * @param hKey
+     *            A predefined registry handle. This parameter can be one of
+     *            the following predefined keys on the remote computer.<br />
+     *            <ul>
+     *                <li>{@link WinReg#HKEY_LOCAL_MACHINE}</li>
+     *                <li>{@link WinReg#HKEY_PERFORMANCE_DATA}</li>
+     *                <li>{@link WinReg#HKEY_USERS}</li>
+     *            </ul>
+     * @param phkResult
+     *            A pointer to a variable that receives a key handle
+     *            identifying the predefined handle on the remote computer.
+     * @return If the function succeeds, the return value is
+     *         {@link WinError#ERROR_SUCCESS}.<br />
+     *         If the function fails, the return value is a nonzero error code
+     *         defined in Winerror.h. You can use the
+     *         {@link Native#getLastError} method to get a generic description
+     *         of the error.
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724840.aspx">RegConnectRegistry function (Windows)</a>
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724836.aspx">Predefined Keys (Windows)</a>
+     */
+    int RegConnectRegistry(String lpMachineName, HKEY hKey, HKEYByReference phkResult);
+
+    /**
      * The RegQueryValueEx function retrieves the type and data for a specified
      * value name associated with an open registry key.
      *
