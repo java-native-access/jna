@@ -725,7 +725,7 @@ public interface Ddeml extends StdCallLibrary {
     public int MSGF_DDEMGR = 0x8001;
 
     /* codepage constants */
-    /** default codepage for windows & old DDE convs. */
+    /** default codepage for windows &amp; old DDE convs. */
     public int CP_WINANSI = 1004;
     /** default codepage for usage from java */
     public int CP_WINUNICODE = 1200;

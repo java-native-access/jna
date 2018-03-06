@@ -43,7 +43,7 @@ public class WininetUtil {
      * Some entries are cookies, some entries are history items, and some are
      * actual files.<br>
      * 
-     * @return A map of cache URL => local file (or URL => empty string for
+     * @return A map of cache URL =&gt; local file (or URL =&gt; empty string for
      *         cookie and history entries)
      */
     public static Map<String, String> getCache() {

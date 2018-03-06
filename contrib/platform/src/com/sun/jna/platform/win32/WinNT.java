@@ -3496,7 +3496,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      *        15                   10 9                       0   bit
      *  </pre>
      * 
-     *  <p>WARNING:  This pattern isn't always follows, Serbina, Bosnian & Croation for example.</p>
+     *  <p>WARNING:  This pattern isn't always follows, Serbina, Bosnian &amp; Croation for example.</p>
      *
      *  <p>It is recommended that applications test for locale names or actual LCIDs.</p>
      *

@@ -119,7 +119,7 @@ public interface IDispatch extends IUnknown {
      * @param pDispParams  Pointer to a DISPPARAMS structure containing an array of arguments, an array of argument DISPIDs for named arguments, and counts for the number of elements in the arrays.
      * @param pVarResult   Pointer to the location where the result is to be stored, or NULL if the caller expects no result. This argument is ignored if DISPATCH_PROPERTYPUT or DISPATCH_PROPERTYPUTREF is specified.
      * @param pExcepInfo   Pointer to a structure that contains exception information. This structure should be filled in if DISP_E_EXCEPTION is returned. Can be NULL.
-     * @param puArgErr     The index within rgvarg of the first argument that has an error. Arguments are stored in pDispParams->rgvarg in reverse order,
+     * @param puArgErr     The index within rgvarg of the first argument that has an error. Arguments are stored in pDispParams-&gt;rgvarg in reverse order,
      *                     so the first argument is the one with the highest index in the array. This parameter is returned only when the resulting return
      *                     value is DISP_E_TYPEMISMATCH or DISP_E_PARAMNOTFOUND. This argument can be set to null. For details, see Returning Errors.
      * @return This method can return one of these values.

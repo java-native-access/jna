@@ -295,13 +295,13 @@ public interface IShellFolder {
      *            If this method is successful, the CODE field of the HRESULT contains one of the following values. For information regarding the extraction of
      *            the CODE field from the returned HRESULT, see Remarks. If this method is unsuccessful, it returns a COM error code.
      *            Negative
-     *            A negative return value indicates that the first item should precede the second (pidl1 < pidl2).
+     *            A negative return value indicates that the first item should precede the second (pidl1 &lt; pidl2).
      *            Positive
-     *            A positive return value indicates that the first item should follow the second (pidl1 > pidl2).
+     *            A positive return value indicates that the first item should follow the second (pidl1 &gt; pidl2).
      *            Zero
      *            A return value of zero indicates that the two items are the same (pidl1 = pidl2).
      *            Use the HRESULT_CODE macro to extract the CODE field from the HRESULT, then cast the result as a short.
-     *            #define HRESULT_CODE(hr)    ((hr) & 0xFFFF)
+     *            #define HRESULT_CODE(hr)    ((hr) &amp; 0xFFFF)
      *
      */
     HRESULT CompareIDs(

@@ -924,7 +924,7 @@ public abstract class Kernel32Util implements WinDef {
      *
      * @param path
      *            The path to the executable file
-     * @return A map of resource type name/ID => resources.<br>
+     * @return A map of resource type name/ID =&gt; resources.<br>
      *         A map key + a single list item + the path to the executable can
      *         be handed off to getResource() to actually get the resource.
      */
