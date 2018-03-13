@@ -179,7 +179,7 @@ public interface WTypes {
     }
 
     public static class LPSTR extends PointerType {
-        public static class ByReference extends BSTR implements
+        public static class ByReference extends LPSTR implements
                 Structure.ByReference {
         }
 
@@ -192,19 +192,19 @@ public interface WTypes {
         }
 
         public LPSTR(String value) {
-            this(new Memory((value.length() + 1L) * Native.WCHAR_SIZE));
+            this(new Memory(value.length() + 1L));
             this.setValue(value);
         }
 
         public void setValue(String value) {
-            this.getPointer().setWideString(0, value);
+            this.getPointer().setString(0, value);
         }
 
         public String getValue() {
             Pointer pointer = this.getPointer();
             String str = null;
             if (pointer != null)
-                str = pointer.getWideString(0);
+                str = pointer.getString(0);
 
             return str;
         }

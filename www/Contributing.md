@@ -6,7 +6,7 @@ JNA contains work from many developers. You're encouraged to contribute to both 
 - Install Git and configure it to work with Github
 - Fork the code from [github.com/twall/jna](https://github.com/java-native-access/jna)
 - Check out the code with `git clone git@github.com:username/jna.git`
-- Ensure you can build the project with `ant dist test`
+- Ensure you can build the project with `ant dist test test-platform`
 - Make your code changes, write tests, build
 - Submit pull requests, forks and/or topical branches are encouraged.
 
@@ -28,7 +28,7 @@ For debian-style installs,
 For most unix-like systems:
 
     % git clone git@github.com:java-native-access/jna
-    % ant dist test
+    % ant dist test test-platform
 
 For Windows, see [Windows Development Environment](WindowsDevelopmentEnvironment.md).
 

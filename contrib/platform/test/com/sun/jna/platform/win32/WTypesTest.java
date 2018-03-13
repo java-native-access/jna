@@ -22,10 +22,13 @@ public class WTypesTest extends TestCase {
 
     private static final String TEST_STRING = "input";
 
-    private static final Pointer TEST_POINTER = new Memory((TEST_STRING.length() + 1L) * Native.WCHAR_SIZE);
+    private static final Pointer TEST_POINTER_WCHAR = new Memory((TEST_STRING.length() + 1L) * Native.WCHAR_SIZE);
+	
+	private static final Pointer TEST_POINTER_CHAR = new Memory(TEST_STRING.length() + 1L);
 
     static {
-        TEST_POINTER.setWideString(0, TEST_STRING);
+        TEST_POINTER_WCHAR.setWideString(0, TEST_STRING);
+		TEST_POINTER_CHAR.setString(0, TEST_STRING);
     }
 
     public void testLPOLESTRConstruction() {
@@ -33,7 +36,7 @@ public class WTypesTest extends TestCase {
         assertEquals(fromString.getValue(), TEST_STRING);
         WTypes.LPOLESTR empty = new WTypes.LPOLESTR();
         assertNull(empty.getValue());
-        WTypes.LPOLESTR fromPointer = new WTypes.LPOLESTR(TEST_POINTER);
+        WTypes.LPOLESTR fromPointer = new WTypes.LPOLESTR(TEST_POINTER_WCHAR);
         assertEquals(fromPointer.getValue(), TEST_STRING);
     }
 
@@ -42,7 +45,7 @@ public class WTypesTest extends TestCase {
         assertEquals(instance.getValue(), TEST_STRING);
         WTypes.LPSTR empty = new WTypes.LPSTR();
         assertNull(empty.getValue());
-        WTypes.LPSTR fromPointer = new WTypes.LPSTR(TEST_POINTER);
+        WTypes.LPSTR fromPointer = new WTypes.LPSTR(TEST_POINTER_CHAR);
         assertEquals(fromPointer.getValue(), TEST_STRING);
     }
 
@@ -51,7 +54,7 @@ public class WTypesTest extends TestCase {
         assertEquals(instance.getValue(), TEST_STRING);
         WTypes.LPWSTR empty = new WTypes.LPWSTR();
         assertNull(empty.getValue());
-        WTypes.LPWSTR fromPointer = new WTypes.LPWSTR(TEST_POINTER);
+        WTypes.LPWSTR fromPointer = new WTypes.LPWSTR(TEST_POINTER_WCHAR);
         assertEquals(fromPointer.getValue(), TEST_STRING);
     }
     

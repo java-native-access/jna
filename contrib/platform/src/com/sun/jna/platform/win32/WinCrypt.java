@@ -28,9 +28,17 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.StringArray;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.win32.W32APITypeMapper;
+import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.WTypes.LPSTR;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
+import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
+import com.sun.jna.platform.win32.WinNT.HANDLE;
+import com.sun.jna.Union;
+import com.sun.jna.win32.StdCallLibrary;
 
 /**
  * Ported from WinCrypt.h.
@@ -43,7 +51,10 @@ public interface WinCrypt {
      * The CryptoAPI CRYPTOAPI_BLOB structure is used for an arbitrary array of bytes.
      */
     public static class DATA_BLOB extends Structure {
+		public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
+		
         public static final List<String> FIELDS = createFieldsOrder("cbData", "pbData");
+		
         /**
          * The count of bytes in the buffer pointed to by pbData.
          */
@@ -87,7 +98,1312 @@ public interface WinCrypt {
             return pbData == null ? null : pbData.getByteArray(0, cbData);
         }
     }
+	
+    /**
+     * The CERT_TRUST_STATUS structure contains trust information about a
+     * certificate in a certificate chain, summary trust information about a
+     * simple chain of certificates, or summary information about an array of
+     * simple chains.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377590(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_TRUST_STATUS extends Structure {
 
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwErrorStatus", "dwInfoStatus");
+        
+        public static class ByReference extends CERT_TRUST_STATUS implements Structure.ByReference {
+        }
+
+        public int dwErrorStatus;
+        public int dwInfoStatus;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CTL_ENTRY structure is an element of a certificate trust list (CTL).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381487(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CTL_ENTRY extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "SubjectIdentifier", "cAttribute", "rgAttribute");
+        
+        public static class ByReference extends CTL_ENTRY implements Structure.ByReference {
+        }
+
+        public DATA_BLOB SubjectIdentifier;
+        public int cAttribute;
+        public Pointer rgAttribute;
+
+        public CRYPT_ATTRIBUTE[] getRgAttribute() {
+            if (cAttribute == 0) {
+                return new CRYPT_ATTRIBUTE[0];
+            } else {
+                return (CRYPT_ATTRIBUTE[]) Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgAttribute)
+                        .toArray(cAttribute);
+            }
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * Contains information updated by a certificate revocation list (CRL)
+     * revocation type handler. The CERT_REVOCATION_CRL_INFO structure is used
+     * with both base and delta CRLs.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377509(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_REVOCATION_CRL_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "pBaseCRLContext", "pDeltaCRLContext", "pCrlEntry", 
+                "fDeltaCrlEntry");
+
+        public static class ByReference extends CERT_REVOCATION_CRL_INFO implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CRL_CONTEXT.ByReference pBaseCRLContext;
+        public CRL_CONTEXT.ByReference pDeltaCRLContext;
+        public CRL_ENTRY.ByReference pCrlEntry;
+        public boolean fDeltaCrlEntry;
+
+        public CERT_REVOCATION_CRL_INFO() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_REVOCATION_INFO structure indicates the revocation status of a
+     * certificate in a CERT_CHAIN_ELEMENT.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377519(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_REVOCATION_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder("cbSize", 
+                "dwRevocationResult", "pszRevocationOid", "pvOidSpecificInfo",
+                "fHasFreshnessTime", "dwFreshnessTime", "pCrlInfo");
+        
+        public static class ByReference extends CERT_REVOCATION_INFO implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwRevocationResult;
+        public String pszRevocationOid;
+        public Pointer pvOidSpecificInfo;
+        public boolean fHasFreshnessTime;
+        public int dwFreshnessTime;
+        public CERT_REVOCATION_CRL_INFO.ByReference pCrlInfo;
+
+        public CERT_REVOCATION_INFO() {
+            super(W32APITypeMapper.ASCII);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CHAIN_ELEMENT structure is a single element in a simple
+     * certificate chain. Each element has a pointer to a certificate context, a
+     * pointer to a structure that indicates the error status and information
+     * status of the certificate, and a pointer to a structure that indicates
+     * the revocation status of the certificate.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377183(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CHAIN_ELEMENT extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder("cbSize",
+                "pCertContext", "TrustStatus", "pRevocationInfo", "pIssuanceUsage",
+                "pApplicationUsage", "pwszExtendedErrorInfo");
+        
+        public static class ByReference extends CERT_CHAIN_ELEMENT implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CERT_CONTEXT.ByReference pCertContext;
+        public CERT_TRUST_STATUS TrustStatus;
+        public CERT_REVOCATION_INFO.ByReference pRevocationInfo;
+        public CTL_USAGE.ByReference pIssuanceUsage;
+        public CTL_USAGE.ByReference pApplicationUsage;
+
+        public String pwszExtendedErrorInfo;
+
+        public CERT_CHAIN_ELEMENT() {
+            super(W32APITypeMapper.UNICODE);
+        }
+
+        public CERT_CHAIN_ELEMENT(Pointer p) {
+            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CTL_INFO structure contains the information stored in a Certificate
+     * Trust List (CTL).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/es-xl/library/windows/desktop/aa381491(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CTL_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwVersion", "SubjectUsage", "ListIdentifier", "SequenceNumber",
+                "ThisUpdate", "NextUpdate", "SubjectAlgorithm", "cCTLEntry", 
+                "rgCTLEntry", "cExtension", "rgExtension");
+        
+        public static class ByReference extends CTL_INFO implements Structure.ByReference {
+        }
+
+        public int dwVersion;
+        public CTL_USAGE SubjectUsage;
+        public DATA_BLOB ListIdentifier;
+        public DATA_BLOB SequenceNumber;
+        public FILETIME ThisUpdate;
+        public FILETIME NextUpdate;
+        public CRYPT_ALGORITHM_IDENTIFIER SubjectAlgorithm;
+        public int cCTLEntry;
+        public Pointer rgCTLEntry;
+        public int cExtension;
+        public Pointer rgExtension;
+
+        public CTL_ENTRY[] getRgExtension() {
+            if (cCTLEntry == 0) {
+                return new CTL_ENTRY[0];
+            } else {
+                return (CTL_ENTRY[]) Structure.newInstance(
+                        CTL_ENTRY.class,
+                        rgCTLEntry)
+                        .toArray(cCTLEntry);
+            }
+        }
+
+        public CERT_EXTENSION[] getRgCTLEntry() {
+            if (cExtension == 0) {
+                return new CERT_EXTENSION[0];
+            } else {
+                return (CERT_EXTENSION[]) Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgExtension)
+                        .toArray(cExtension);
+            }
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CTL_CONTEXT structure contains both the encoded and decoded
+     * representations of a CTL. It also contains an opened HCRYPTMSG handle to
+     * the decoded, cryptographically signed message containing the CTL_INFO as
+     * its inner content.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381486(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CTL_CONTEXT extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwMsgAndCertEncodingType", "pbCtlEncoded", "cbCtlEncoded", 
+                "pCtlInfo", "hCertStore", "hCryptMsg", "pbCtlContent",
+                "cbCtlContent");
+
+        public static class ByReference extends CTL_CONTEXT implements Structure.ByReference {
+        }
+
+        public int dwMsgAndCertEncodingType;
+        public Pointer pbCtlEncoded;
+        public int cbCtlEncoded;
+        public CTL_INFO.ByReference pCtlInfo;
+        public HCERTSTORE hCertStore;
+        public HCRYPTMSG hCryptMsg;
+        public Pointer pbCtlContent;
+        public int cbCtlContent;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_TRUST_LIST_INFO structure that indicates valid usage of a CTL.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377585(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_TRUST_LIST_INFO extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "pCtlEntry", "pCtlContext");
+
+        public static class ByReference extends CERT_TRUST_LIST_INFO implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CTL_ENTRY.ByReference pCtlEntry;
+        public CTL_CONTEXT.ByReference pCtlContext;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CTL_USAGE structure contains an array of object identifiers (OIDs)
+     * for Certificate Trust List (CTL) extensions. CTL_USAGE structures are
+     * used in functions that search for CTLs for specific uses.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381493(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CTL_USAGE extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cUsageIdentifier", "rgpszUsageIdentifier");
+
+        public static class ByReference extends CTL_USAGE implements Structure.ByReference {
+        }
+
+        public int cUsageIdentifier;
+        public Pointer rgpszUsageIdentifier;
+
+        public CTL_USAGE() {
+            super();
+        }
+
+        public String[] getRgpszUsageIdentier() {
+            if (cUsageIdentifier == 0) {
+                return new String[0];
+            } else {
+                return rgpszUsageIdentifier.getStringArray(0, cUsageIdentifier);
+            }
+        }
+
+        public void setRgpszUsageIdentier(String[] array) {
+            if (array == null || array.length == 0) {
+                cUsageIdentifier = 0;
+                rgpszUsageIdentifier = null;
+            } else {
+                cUsageIdentifier = array.length;
+                rgpszUsageIdentifier = new StringArray(array);
+            }
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_USAGE_MATCH structure provides criteria for identifying issuer
+     * certificates to be used to build a certificate chain.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_USAGE_MATCH extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwType", "Usage");
+        
+        public static class ByReference extends CERT_USAGE_MATCH implements Structure.ByReference {
+        }
+
+        public int dwType;
+        public CTL_USAGE Usage;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CHAIN_PARA structure establishes the searching and matching
+     * criteria to be used in building a certificate chain.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377186(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CHAIN_PARA extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "RequestedUsage", "RequestedIssuancePolicy",
+                "dwUrlRetrievalTimeout", "fCheckRevocationFreshnessTime",
+                "dwRevocationFreshnessTime", "pftCacheResync", "pStrongSignPara",
+                "dwStrongSignFlags");
+
+        public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CERT_USAGE_MATCH RequestedUsage;
+        public CERT_USAGE_MATCH RequestedIssuancePolicy;
+        public int dwUrlRetrievalTimeout;
+        public boolean fCheckRevocationFreshnessTime;
+        public int dwRevocationFreshnessTime;
+        public FILETIME.ByReference pftCacheResync;
+        public CERT_STRONG_SIGN_PARA.ByReference pStrongSignPara;
+        public int dwStrongSignFlags;
+
+        public CERT_CHAIN_PARA() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * Contains parameters used to check for strong signatures on certificates,
+     * certificate revocation lists (CRLs), online certificate status protocol
+     * (OCSP) responses, and PKCS #7 messages.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh870262(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_STRONG_SIGN_PARA extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "dwInfoChoice", "DUMMYUNIONNAME");
+
+        public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwInfoChoice;
+        public DUMMYUNION DUMMYUNIONNAME;
+
+        public class DUMMYUNION extends Union {
+
+            Pointer pvInfo;
+            CERT_STRONG_SIGN_SERIALIZED_INFO.ByReference pSerializedInfo;
+            LPSTR pszOID;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * Contains the signature algorithm/hash algorithm and public key
+     * algorithm/bit length pairs that can be used for strong signing. This
+     * structure is used by the CERT_STRONG_SIGN_PARA structure.
+     *
+     * @see
+     * <a href= "https://msdn.microsoft.com/en-us/library/windows/desktop/hh870263(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_STRONG_SIGN_SERIALIZED_INFO extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwFlags", "pwszCNGSignHashAlgids", "pwszCNGPubKeyMinBitLengths");
+
+        public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
+        }
+
+        public int dwFlags;
+        public String pwszCNGSignHashAlgids;
+        public String pwszCNGPubKeyMinBitLengths;
+
+        public CERT_STRONG_SIGN_SERIALIZED_INFO() {
+            super(W32APITypeMapper.UNICODE);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CHAIN_POLICY_STATUS structure holds certificate chain status
+     * information returned by the CertVerifyCertificateChainPolicy function
+     * when the certificate chains are validated.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377188(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CHAIN_POLICY_STATUS extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "dwError", "lChainIndex", "lElementIndex",
+                "pvExtraPolicyStatus");
+
+        public static class ByReference extends CERT_CHAIN_POLICY_STATUS implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwError;
+        public int lChainIndex;
+        public int lElementIndex;
+        public Pointer pvExtraPolicyStatus;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_SIMPLE_CHAIN structure contains an array of chain elements and a
+     * summary trust status for the chain that the array represents.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377544(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_SIMPLE_CHAIN extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "TrustStatus", "cElement", "rgpElement", "pTrustListInfo",
+                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime");
+
+        public static class ByReference extends CERT_SIMPLE_CHAIN implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CERT_TRUST_STATUS TrustStatus;
+        public int cElement;
+        public Pointer rgpElement;
+        public CERT_TRUST_LIST_INFO.ByReference pTrustListInfo;
+
+        public boolean fHasRevocationFreshnessTime;
+        public int dwRevocationFreshnessTime;
+
+        public CERT_SIMPLE_CHAIN() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        public CERT_CHAIN_ELEMENT[] getRgpElement() {
+            CERT_CHAIN_ELEMENT[] elements = new CERT_CHAIN_ELEMENT[cElement];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_CHAIN_ELEMENT.class,
+                        rgpElement.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CHAIN_POLICY_PARA structure contains information used in
+     * CertVerifyCertificateChainPolicy to establish policy criteria for the
+     * verification of certificate chains.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377187(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CHAIN_POLICY_PARA extends Structure {
+        
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "dwFlags", "pvExtraPolicyPara");
+
+        public static class ByReference extends CERT_CHAIN_POLICY_PARA implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwFlags;
+        public Pointer pvExtraPolicyPara;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CHAIN_CONTEXT structure contains an array of simple certificate
+     * chains and a trust status structure that indicates summary validity data
+     * on all of the connected simple chains.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377182(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CHAIN_CONTEXT extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "TrustStatus", "cChain", "rgpChain",
+                "cLowerQualityChainContext", "rgpLowerQualityChainContext", 
+                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime",
+                "dwCreateFlags", "ChainId");
+        
+        public static class ByReference extends CERT_CHAIN_CONTEXT implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public CERT_TRUST_STATUS TrustStatus;
+        public int cChain;
+        public Pointer rgpChain;
+        public int cLowerQualityChainContext;
+        public Pointer rgpLowerQualityChainContext;
+        public boolean fHasRevocationFreshnessTime;
+        public int dwRevocationFreshnessTime;
+        public int dwCreateFlags;
+        public GUID ChainId;
+
+        public CERT_SIMPLE_CHAIN[] getRgpChain() {
+            CERT_SIMPLE_CHAIN[] elements = new CERT_SIMPLE_CHAIN[cChain];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_SIMPLE_CHAIN.class,
+                        rgpChain.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        public CERT_CHAIN_CONTEXT[] getRgpLowerQualityChainContext() {
+            CERT_CHAIN_CONTEXT[] elements = new CERT_CHAIN_CONTEXT[cLowerQualityChainContext];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_CHAIN_CONTEXT.class,
+                        rgpLowerQualityChainContext.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        public CERT_CHAIN_CONTEXT() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_CONTEXT structure contains both the encoded and decoded
+     * representations of a certificate. A certificate context returned by one
+     * of the functions defined in Wincrypt.h must be freed by calling the
+     * CertFreeCertificateContext function. The CertDuplicateCertificateContext
+     * function can be called to make a duplicate copy (which also must be freed
+     * by calling CertFreeCertificateContext).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377189(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_CONTEXT extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwCertEncodingType", "pbCertEncoded", "cbCertEncoded",
+                "pCertInfo", "hCertStore");
+        
+        public static class ByReference extends CERT_CONTEXT implements Structure.ByReference {
+        }
+
+        public int dwCertEncodingType;
+        public Pointer pbCertEncoded;
+        public int cbCertEncoded;
+        public CERT_INFO.ByReference pCertInfo;
+        public HCERTSTORE hCertStore;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_EXTENSION structure contains the extension information for a
+     * certificate, Certificate Revocation List (CRL) or Certificate Trust List
+     * (CTL).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377195(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_EXTENSION extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "pszObjId", "fCritical", "Value");
+        
+        public static class ByReference extends CERT_EXTENSION implements Structure.ByReference {
+        }
+
+        public String pszObjId;
+        public boolean fCritical;
+        public DATA_BLOB Value;
+
+        public CERT_EXTENSION() {
+            super(W32APITypeMapper.ASCII);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_EXTENSIONS structure contains an array of extensions.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377196(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_EXTENSIONS extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cExtension", "rgExtension");
+        
+        public static class ByReference extends CERT_EXTENSIONS implements Structure.ByReference {
+        }
+
+        public int cExtension;
+        public Pointer rgExtension;
+
+        public CERT_EXTENSION[] getRgExtension() {
+            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgExtension.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_INFO structure contains the information of a certificate.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377200(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwVersion", "SerialNumber", "SignatureAlgorithm", "Issuer", 
+                "NotBefore", "NotAfter", "Subject", "SubjectPublicKeyInfo", 
+                "IssuerUniqueId", "SubjectUniqueId", "cExtension", "rgExtension");
+        
+        public static class ByReference extends CERT_INFO implements Structure.ByReference {
+        }
+
+        public int dwVersion;
+        public DATA_BLOB SerialNumber;
+        public CRYPT_ALGORITHM_IDENTIFIER SignatureAlgorithm;
+        public DATA_BLOB Issuer;
+        public FILETIME NotBefore;
+        public FILETIME NotAfter;
+        public DATA_BLOB Subject;
+        public CERT_PUBLIC_KEY_INFO SubjectPublicKeyInfo;
+        public CRYPT_BIT_BLOB IssuerUniqueId;
+        public CRYPT_BIT_BLOB SubjectUniqueId;
+        public int cExtension;
+        public Pointer rgExtension;
+
+        public CERT_EXTENSION[] getRgExtension() {
+            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgExtension.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CERT_PUBLIC_KEY_INFO structure contains a public key and its
+     * algorithm.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377463(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CERT_PUBLIC_KEY_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "Algorithm", "PublicKey");
+        
+        public static class ByReference extends CERT_PUBLIC_KEY_INFO implements Structure.ByReference {
+        }
+
+        public CRYPT_ALGORITHM_IDENTIFIER Algorithm;
+        public CRYPT_BIT_BLOB PublicKey;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRL_CONTEXT structure contains both the encoded and decoded
+     * representations of a certificate revocation list (CRL). CRL contexts
+     * returned by any CryptoAPI function must be freed by calling the
+     * CertFreeCRLContext function.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379873(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRL_CONTEXT extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwCertEncodingType", "pbCrlEncoded", "cbCrlEncoded",
+                "pCrlInfo", "hCertStore");
+        
+        public static class ByReference extends CRL_CONTEXT implements Structure.ByReference {
+        }
+
+        public int dwCertEncodingType;
+        public Pointer pbCrlEncoded;
+        public int cbCrlEncoded;
+        public CRL_INFO.ByReference pCrlInfo;
+        public HCERTSTORE hCertStore;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRL_ENTRY structure contains information about a single revoked
+     * certificate. It is a member of a CRL_INFO structure.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379878(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRL_ENTRY extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "SerialNumber", "RevocationDate", "cExtension", "rgExtension");
+        
+        public static class ByReference extends CRL_ENTRY implements Structure.ByReference {
+        }
+
+        public DATA_BLOB SerialNumber;
+        public FILETIME RevocationDate;
+        public int cExtension;
+        public Pointer rgExtension;
+
+        public CERT_EXTENSION[] getRgExtension() {
+            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgExtension.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRL_INFO structure contains the information of a certificate
+     * revocation list (CRL).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379880(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRL_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwVersion", "SignatureAlgorithm", "Issuer", "ThisUpdate", 
+                "NextUpdate", "cCRLEntry", "rgCRLEntry", "cExtension", 
+                "rgExtension");
+        
+        public static class ByReference extends CRL_INFO implements Structure.ByReference {
+        }
+
+        public int dwVersion;
+        public CRYPT_ALGORITHM_IDENTIFIER SignatureAlgorithm;
+        public DATA_BLOB Issuer;
+        public FILETIME ThisUpdate;
+        public FILETIME NextUpdate;
+        public int cCRLEntry;
+        public Pointer rgCRLEntry;
+        public int cExtension;
+        public Pointer rgExtension;
+
+        public CRL_ENTRY[] getRgCRLEntry() {
+            CRL_ENTRY[] elements = new CRL_ENTRY[cCRLEntry];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CRL_ENTRY.class,
+                        rgCRLEntry.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        public CERT_EXTENSION[] getRgExtension() {
+            CERT_EXTENSION[] elements = new CERT_EXTENSION[cExtension];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_EXTENSION.class,
+                        rgExtension.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRYPT_ALGORITHM_IDENTIFIER structure specifies an algorithm used to
+     * encrypt a private key. The structure includes the object identifier (OID)
+     * of the algorithm and any needed parameters for that algorithm. The
+     * parameters contained in its CRYPT_OBJID_BLOB are encoded.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381133(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_ALGORITHM_IDENTIFIER extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "pszObjId", "Parameters");
+        
+        public static class ByReference extends CRYPT_ALGORITHM_IDENTIFIER implements Structure.ByReference {
+        }
+
+        public String pszObjId;
+        public DATA_BLOB Parameters;
+
+        public CRYPT_ALGORITHM_IDENTIFIER() {
+            super(W32APITypeMapper.ASCII);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRYPT_ATTRIBUTE structure specifies an attribute that has one or more
+     * values.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381139(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_ATTRIBUTE extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "pszObjId", "cValue", "rgValue");
+        
+        public static class ByReference extends CRYPT_ATTRIBUTE implements Structure.ByReference {
+        }
+
+        public String pszObjId;
+        public int cValue;
+        public DATA_BLOB.ByReference rgValue;
+
+        public DATA_BLOB[] getRgValue() {
+            return (DATA_BLOB[]) rgValue.toArray(cValue);
+        }
+
+        public CRYPT_ATTRIBUTE() {
+            super(W32APITypeMapper.ASCII);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRYPT_BIT_BLOB structure contains a set of bits represented by an
+     * array of bytes.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381165(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_BIT_BLOB extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbData", "pbData", "cUnusedBits");
+        
+        public static class ByReference extends CRYPT_BIT_BLOB implements Structure.ByReference {
+        }
+
+        public int cbData;
+        public Pointer pbData;
+        public int cUnusedBits;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRYPT_KEY_PROV_INFO structure contains information about a key
+     * container within a cryptographic service provider (CSP).
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381420(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_KEY_PROV_INFO extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "pwszContainerName", "pwszProvName", "dwProvType", "dwFlags", 
+                "cProvParam", "rgProvParam", "dwKeySpec");
+        
+        public static class ByReference extends CRYPT_KEY_PROV_INFO implements Structure.ByReference {
+        }
+
+        public String pwszContainerName;
+        public String pwszProvName;
+        public int dwProvType;
+        public int dwFlags;
+        public int cProvParam;
+        public Pointer rgProvParam;
+        public int dwKeySpec;
+
+        public CRYPT_KEY_PROV_INFO() {
+            super(W32APITypeMapper.UNICODE);
+        }
+
+        public CRYPT_KEY_PROV_PARAM[] getRgProvParam() {
+            CRYPT_KEY_PROV_PARAM[] elements = new CRYPT_KEY_PROV_PARAM[cProvParam];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CRYPT_KEY_PROV_PARAM.class,
+                        rgProvParam.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CRYPT_KEY_PROV_PARAM structure contains information about a key
+     * container parameter. This structure is used with the CRYPT_KEY_PROV_INFO
+     * structure.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381423(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_KEY_PROV_PARAM extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "dwParam", "pbData", "cbData", "dwFlags");
+        
+        public static class ByReference extends CRYPT_KEY_PROV_PARAM implements Structure.ByReference {
+        }
+
+        public int dwParam;
+        public Pointer pbData;
+        public int cbData;
+        public int dwFlags;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+        
+    /**
+     * The CRYPT_SIGN_MESSAGE_PARA structure contains information for signing
+     * messages using a specified signing certificate context.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381468(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_SIGN_MESSAGE_PARA extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "dwMsgEncodingType", "pSigningCert", "HashAlgorithm",
+                "pvHashAuxInfo", "cMsgCert", "rgpMsgCert", "cMsgCrl",
+                "rgpMsgCrl", "cAuthAttr", "rgAuthAttr", "cUnauthAttr", 
+                "rgUnauthAttr", "dwFlags", "dwInnerContentType", 
+                "HashEncryptionAlgorithm", "pvHashEncryptionAuxInfo");
+        
+        public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwMsgEncodingType;
+        public CERT_CONTEXT.ByReference pSigningCert;
+        public CRYPT_ALGORITHM_IDENTIFIER HashAlgorithm;
+        public Pointer pvHashAuxInfo;
+        public int cMsgCert;
+        public Pointer rgpMsgCert = null;
+        public int cMsgCrl;
+        public Pointer rgpMsgCrl = null;
+        public int cAuthAttr;
+        public Pointer rgAuthAttr = null;
+        public int cUnauthAttr;
+        public Pointer rgUnauthAttr = null;
+        public int dwFlags;
+        public int dwInnerContentType;
+        public CRYPT_ALGORITHM_IDENTIFIER HashEncryptionAlgorithm;
+        public Pointer pvHashEncryptionAuxInfo;
+
+        public CERT_CONTEXT[] getRgpMsgCert() {
+            CERT_CONTEXT[] elements = new CERT_CONTEXT[cMsgCrl];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CERT_CONTEXT.class,
+                        rgpMsgCert.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        public CRL_CONTEXT[] getRgpMsgCrl() {
+            CRL_CONTEXT[] elements = new CRL_CONTEXT[cMsgCrl];
+            for (int i = 0; i < elements.length; i++) {
+                elements[i] = Structure.newInstance(
+                        CRL_CONTEXT.class,
+                        rgpMsgCrl.getPointer(i * Native.POINTER_SIZE));
+                elements[i].read();
+            }
+            return elements;
+        }
+
+        public CRYPT_ATTRIBUTE[] getRgAuthAttr() {
+            if (cAuthAttr == 0) {
+                return new CRYPT_ATTRIBUTE[0];
+            } else {
+                return (CRYPT_ATTRIBUTE[]) Structure.newInstance(
+                        CRYPT_ATTRIBUTE.class,
+                        rgAuthAttr)
+                        .toArray(cAuthAttr);
+            }
+        }
+
+        public CRYPT_ATTRIBUTE[] getRgUnauthAttr() {
+            if (cUnauthAttr == 0) {
+                return new CRYPT_ATTRIBUTE[0];
+            } else {
+                return (CRYPT_ATTRIBUTE[]) Structure.newInstance(
+                        CRYPT_ATTRIBUTE.class,
+                        rgUnauthAttr)
+                        .toArray(cUnauthAttr);
+            }
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * The CryptGetSignerCertificateCallback user supplied callback function is
+     * used with the CRYPT_VERIFY_MESSAGE_PARA structure to get and verify a
+     * message signer's certificate.
+     */
+    public interface CryptGetSignerCertificateCallback extends StdCallLibrary.StdCallCallback {
+        /**
+         * 
+         * @param pvGetArg
+         * A pointer to user-defined data passed on to the
+         * verification function as specified in the CRYPT_VERIFY_MESSAGE_PARA
+         * structure.
+         * @param dwCertEncodingType
+         * Specifies the type of encoding used. It is always acceptable to
+         * specify both the certificate and message encoding types by combining
+         * them with a bitwise-OR operation as shown in the following example:
+         *
+         * <p><code>X509_ASN_ENCODING | PKCS_7_ASN_ENCODING</code></p>
+         *
+         * <p>Currently defined encoding types are:</p>
+         * 
+         * <ul>
+         * <li>X509_ASN_ENCODING</li>
+         * <li>PKCS_7_ASN_ENCODING</li>
+         * </ul>
+         * @param pSignerId A pointer to a CERT_INFO structure containing the
+         * issuer and serial number. Can be NULL if there is no content or
+         * signer.
+         * @param hMsgCertStore A handle to the certificate store containing all
+         * the certificates and CRLs in the signed message.
+         * @return
+         */
+        public CERT_CONTEXT.ByReference callback(Pointer pvGetArg, int dwCertEncodingType,
+                              CERT_INFO pSignerId,
+                              HCERTSTORE hMsgCertStore);
+    }
+
+    /**
+     * The CRYPT_VERIFY_MESSAGE_PARA structure contains information needed to
+     * verify signed messages.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381477(v=vs.85).aspx">MSDN</a>
+     */
+    public static class CRYPT_VERIFY_MESSAGE_PARA extends Structure {
+
+        private static final List<String> fieldOrder = createFieldsOrder(
+                "cbSize", "dwMsgAndCertEncodingType", "hCryptProv", 
+                "pfnGetSignerCertificate", "pvGetArg", "pStrongSignPara");
+        
+        public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
+        }
+
+        public int cbSize;
+        public int dwMsgAndCertEncodingType;
+        public HCRYPTPROV_LEGACY hCryptProv;
+        public CryptGetSignerCertificateCallback pfnGetSignerCertificate;
+        public Pointer pvGetArg;
+        public CERT_STRONG_SIGN_PARA.ByReference pStrongSignPara;
+
+        @Override
+        public void write() {
+            cbSize = size();
+            super.write();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return fieldOrder;
+        }
+    }
+
+    /**
+     * Handle to a certificate chain engine.
+     */
+    public static class HCERTCHAINENGINE extends HANDLE {
+
+        /**
+         * Instantiates a new hcertchainengine.
+         */
+        public HCERTCHAINENGINE() {
+
+        }
+
+        /**
+         * Instantiates a new hcertchainengine.
+         *
+         * @param p the p
+         */
+        public HCERTCHAINENGINE(Pointer p) {
+            super(p);
+        }
+    }
+	
+    /**
+     * Handle to a certificate store.
+     */
+    public static class HCERTSTORE extends HANDLE {
+
+        /**
+         * Instantiates a new hcertstore.
+         */
+        public HCERTSTORE() {
+
+        }
+
+        /**
+         * Instantiates a new hcertstore.
+         *
+         * @param p
+         *            the p
+         */
+        public HCERTSTORE(Pointer p) {
+            super(p);
+        }
+    }
+	
+	/**
+     * Handle to a cryptographic message.
+     */
+    public static class HCRYPTMSG extends HANDLE {
+
+        /**
+         * Instantiates a new hcryptmgr.
+         */
+        public HCRYPTMSG() {
+
+        }
+
+        /**
+         * Instantiates a new hcryptmsg.
+         *
+         * @param p
+         *            the p
+         */
+        public HCRYPTMSG(Pointer p) {
+            super(p);
+        }
+    }
+
+    public static class HCRYPTPROV_LEGACY extends BaseTSD.ULONG_PTR {
+
+        public HCRYPTPROV_LEGACY() {
+        }
+
+        public HCRYPTPROV_LEGACY(long value) {
+            super(value);
+        }
+    }
+    
     /**
      * The CRYPTPROTECT_PROMPTSTRUCT structure provides the text of a prompt and
      * information about when and where that prompt is to be displayed when using
@@ -301,4 +1617,267 @@ public interface WinCrypt {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
      */
     int CRYPT_E_ASN1_NOEOD = 0x80093202;
+	
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_ASN_ENCODING = 0x00000001;
+
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int CRYPT_NDR_ENCODING = 0x00000002;
+
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int X509_ASN_ENCODING = 0x00000001;
+
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int X509_NDR_ENCODING = 0x00000002;
+
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int PKCS_7_ASN_ENCODING = 0x00010000;
+
+    /**
+     * Message Encoding Type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
+     */
+    int PKCS_7_NDR_ENCODING = 0x00020000;
+
+    /**
+     * Determines the kind of issuer matching to be done.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
+     */
+    int USAGE_MATCH_TYPE_AND = 0x00000000;
+
+    /**
+     * Determines the kind of issuer matching to be done.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
+     */
+    int USAGE_MATCH_TYPE_OR = 0x00000001;
+
+    /**
+     * Set the window handle that the provider uses as the parent of any dialog
+     * boxes it creates.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa380276(v=vs.85).aspx">MSDN</a>
+     */
+    int PP_CLIENT_HWND = 1;
+
+    /**
+     * Certificate name string type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_SIMPLE_NAME_STR = 1;
+
+    /**
+     * Certificate name string type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_OID_NAME_STR = 2;
+
+    /**
+     * Certificate name string type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_X500_NAME_STR = 3;
+
+    /**
+     * Certificate name string type.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_XML_NAME_STR = 4;
+
+    /**
+     * Predefined verify chain policies.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377163(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_CHAIN_POLICY_BASE = 1;
+
+    /**
+     * Algorithm object identifiers RSA.
+     * 
+     * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381133(v=vs.85).aspx">MSDN</a>
+     */
+    String szOID_RSA_SHA1RSA = "1.2.840.113549.1.1.5";
+	
+    /**
+     * Predefined certificate chain engine values.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376078(v=vs.85).aspx">MSDN</a>
+     */
+    HCERTCHAINENGINE HCCE_CURRENT_USER = new HCERTCHAINENGINE(Pointer.createConstant(0x0));
+
+    /**
+     * Predefined certificate chain engine values.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376078(v=vs.85).aspx">MSDN</a>
+     */
+    HCERTCHAINENGINE HCCE_LOCAL_MACHINE = new HCERTCHAINENGINE(Pointer.createConstant(0x1));
+	
+    /**
+     * Predefined certificate chain engine values.
+     *
+     * @see
+     * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376078(v=vs.85).aspx">MSDN</a>
+     */
+    HCERTCHAINENGINE HCCE_SERIAL_LOCAL_MACHINE = new HCERTCHAINENGINE(Pointer.createConstant(0x2));
+
+    /**
+     * Certificate comparison functions.
+     *
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa376064(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_COMPARE_SHIFT = 16;
+
+    /**
+     * Certificate comparison functions.
+     *
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa376064(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_COMPARE_NAME_STR_W = 8;
+
+    /**
+     * Certificate comparison functions.
+     *
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa376064(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_INFO_SUBJECT_FLAG = 7;
+
+    /**
+     * Certificate comparison functions.
+     *
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa376064(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_FIND_SUBJECT_STR_W = (CERT_COMPARE_NAME_STR_W << CERT_COMPARE_SHIFT | CERT_INFO_SUBJECT_FLAG);
+
+    /**
+     * Certificate comparison functions.
+     *
+     * @see <a href=
+     *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa376064(v=vs.85).aspx">MSDN</a>
+     */
+    int CERT_FIND_SUBJECT_STR = CERT_FIND_SUBJECT_STR_W;
+
+    /**
+     * Imported keys are marked as exportable. If this flag is not used, calls
+     * to the CryptExportKey function with the key handle fail.
+     */
+    int CRYPT_EXPORTABLE = 0x00000001;
+
+    /**
+     * The user is to be notified through a dialog box or other method when
+     * certain attempts to use this key are made. The precise behavior is
+     * specified by the cryptographic service provider (CSP) being used.
+     *
+     * <p>
+     * Prior to Internet Explorer 4.0, Microsoft cryptographic service providers
+     * ignored this flag. Starting with Internet Explorer 4.0, Microsoft
+     * providers support this flag.</p>
+     *
+     * <p>
+     * If the provider context was opened with the CRYPT_SILENT flag set, using
+     * this flag causes a failure and the last error is set to
+     * NTE_SILENT_CONTEXT.</p>
+     */
+    int CRYPT_USER_PROTECTED = 0x00000002;
+
+    /**
+     * The private keys are stored under the local computer and not under the
+     * current user.
+     */
+    int CRYPT_MACHINE_KEYSET = 0x00000020;
+
+    /**
+     * The private keys are stored under the current user and not under the
+     * local computer even if the PFX BLOB specifies that they should go into
+     * the local computer.
+     */
+    int CRYPT_USER_KEYSET = 0x00001000;
+
+    /**
+     * Indicates that the CNG key storage provider (KSP) is preferred. If the
+     * CSP is specified in the PFX file, then the CSP is used, otherwise the KSP
+     * is preferred. If the CNG KSP is unavailable, the PFXImportCertStore
+     * function will fail.
+     */
+    int PKCS12_PREFER_CNG_KSP = 0x00000100;
+
+    /**
+     * Indicates that the CNG KSP is always used. When specified,
+     * PFXImportCertStore attempts to use the CNG KSP irrespective of provider
+     * information in the PFX file. If the CNG KSP is unavailable, the import
+     * will not fail.
+     */
+    int PKCS12_ALWAYS_CNG_KSP = 0x00000200;
+
+    /**
+     * Allow overwrite of the existing key. Specify this flag when you encounter
+     * a scenario in which you must import a PFX file that contains a key name
+     * that already exists. For example, when you import a PFX file, it is
+     * possible that a container of the same name is already present because
+     * there is no unique namespace for key containers. If you have created a
+     * "TestKey" on your computer, and then you import a PFX file that also has
+     * "TestKey" as the key container, the PKCS12_ALLOW_OVERWRITE_KEY setting
+     * allows the key to be overwritten.
+     */
+    int PKCS12_ALLOW_OVERWRITE_KEY = 0x00004000;
+
+    /**
+     * Do not persist the key. Specify this flag when you do not want to persist
+     * the key. For example, if it is not necessary to store the key after
+     * verification, then instead of creating a container and then deleting it,
+     * you can specify this flag to dispose of the key immediately.
+     */
+    int PKCS12_NO_PERSIST_KEY = 0x00008000;
+
+    /**
+     * Import all extended properties on the certificate that were saved on the
+     * certificate when it was exported.
+     */
+    int PKCS12_INCLUDE_EXTENDED_PROPERTIES = 0x0010;
+    
+    /**
+     * Checks for nonfreed certificate, CRL, and CTL contexts. A returned error
+     * code indicates that one or more store elements is still in use. This flag
+     * should only be used as a diagnostic tool in the development of
+     * applications.
+     */
+    int CERT_CLOSE_STORE_FORCE_FLAG = 0x00000001;
+    /**
+     * Forces the freeing of memory for all contexts associated with the store.
+     * This flag can be safely used only when the store is opened in a function
+     * and neither the store handle nor any of its contexts are passed to any
+     * called functions. For details, see Remarks.
+     */
+    int CERT_CLOSE_STORE_CHECK_FLAG = 0x00000002;
 }

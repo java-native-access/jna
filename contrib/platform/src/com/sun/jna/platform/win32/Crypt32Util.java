@@ -23,6 +23,9 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinCrypt.CRYPTPROTECT_PROMPTSTRUCT;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
@@ -173,5 +176,49 @@ public abstract class Crypt32Util {
         }
 
         return unProtectedData;
+    }
+
+    /**
+     * Utility method to call to Crypt32's CertNameToStr that allocates the
+     * assigns the required memory for the psz parameter based on the type
+     * mapping used, calls to CertNameToStr, and returns the received string.
+     *
+     * @param dwCertEncodingType The certificate encoding type that was used to
+     * encode the name. The message encoding type identifier, contained in the
+     * high WORD of this value, is ignored by this function.
+     * @param pName A pointer to the CERT_NAME_BLOB structure to be converted.
+     * @param dwStrType This parameter specifies the format of the output
+     * string. This parameter also specifies other options for the contents of
+     * the string.
+     * @return Returns the retrieved string.
+     */
+    public static String CertNameToStr(int dwCertEncodingType, int dwStrType, DATA_BLOB pName) {
+        int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
+
+        // Initialize the signature structure.
+        int requiredSize = Crypt32.INSTANCE.CertNameToStr(
+                dwCertEncodingType,
+                pName,
+                dwStrType,
+                Pointer.NULL,
+                0);
+
+        Memory mem = new Memory(requiredSize * charToBytes);
+
+        // Initialize the signature structure.
+        int resultBytes = Crypt32.INSTANCE.CertNameToStr(
+                dwCertEncodingType,
+                pName,
+                dwStrType,
+                mem,
+                requiredSize);
+
+        assert resultBytes == requiredSize;
+
+        if (Boolean.getBoolean("w32.ascii")) {
+            return mem.getString(0);
+        } else {
+            return mem.getWideString(0);
+        }
     }
 }
