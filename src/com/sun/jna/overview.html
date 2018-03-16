@@ -200,9 +200,9 @@ Java types must be chosen to match native types of the same size.  Following are
 <li>Java arrays of primitive type may be wrapped by {@link java.nio.Buffer} in
   order to access a subset of the array (changing the effective size and/or
   offest).
-<li>Java arrays of primitive type are only valid for use within the scope of a
+<li>Java arrays of primitive type and non-direct {@link java.nio.Buffer}s are only valid for use within the scope of a
   single call.  If the native code keeps a reference to the memory, use {@link
-  com.sun.jna.Memory} or {@link java.nio.Buffer} instead.
+  com.sun.jna.Memory} or direct {@link java.nio.ByteBuffer}s instead.
 <li>Primitive arrays and structures as members of a structure are overlaid on the parent structure memory.  
 <li>Bitfields must be manually packed into an integer type.  
 <li>All other types must eventually be converted to one of the types in the this table.  Methods with arguments or return values of types other than these must either use types deriving from {@link com.sun.jna.NativeMapped} or supply type conversion information for the unsupported types.  
@@ -280,10 +280,14 @@ The {@link com.sun.jna.WString} class is used to identify wide character strings
 
 <a name="buffers"></a>
 <h3>Buffers/Memory Blocks</h3>
-Use arrays to represent buffers of primitive types passed to a function for use only during the function invocation.  A native method cannot return a Java array, since there is no canonical way to indicate the intended length of the returned array.  Instead, use one of the array access methods in the Pointer class, supplying the length of the returned array.<p>
+Use arrays to represent buffers of primitive types passed to a function for use only during the function invocation.  If the native code
+keeps a pointer to the memory after the native function returns, use direct {@link java.nio.ByteBuffer}s or {@link com.sun.jna.Memory} instead.
+<p>A native method cannot return a Java array, since there is no canonical way to indicate the intended length of the returned array.
+Instead, use one of the array access methods in the Pointer class, supplying the length of the returned array.<p>
 {@link java.nio.Buffer}s may also be used as a memory buffer input
 argument; direct byte buffers can often provide much improved performance over
-primitive arrays.  A pointer provided by native code may be converted to a {@link java.nio.Buffer} by calling {@link com.sun.jna.Pointer#getByteBuffer}.
+primitive arrays.
+A pointer provided by native code may be converted to a {@link java.nio.Buffer} by calling {@link com.sun.jna.Pointer#getByteBuffer}.
 <p>
 If you need to pass in a subset of a primitive array, you can do so by
 wrapping it in a {@link java.nio.Buffer} subclass, such as {@link
