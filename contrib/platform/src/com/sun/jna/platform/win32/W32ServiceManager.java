@@ -24,7 +24,12 @@
 
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
+import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS_PROCESS;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
+import com.sun.jna.ptr.IntByReference;
 
 /**
  * Win32 Service Manager wrapper 
@@ -98,5 +103,72 @@ public class W32ServiceManager {
 	 */
 	public SC_HANDLE getHandle() {
 		return _handle;
-	}	
+	}
+
+        /**
+         * Enumerates services in the specified service control manager database.
+         * The name and status of each service are provided, along with additional
+         * data based on the specified information level.
+         *
+         * @param dwServiceType      The type of services to be enumerated. This
+         *                           parameter can be one or more of the following
+         *                           values.
+         * 
+         * <table>
+         * <tr><th>Value</th><th>Meaning</th></tr>
+         * <tr><td>{@link WinNT#SERVICE_DRIVER}</td><td>Services of type {@link WinNT#SERVICE_KERNEL_DRIVER} and {@link WinNT#SERVICE_FILE_SYSTEM_DRIVER}.</td></tr>
+         * <tr><td>{@link WinNT#SERVICE_FILE_SYSTEM_DRIVER}</td><td>File system driver services.</td></tr>
+         * <tr><td>{@link WinNT#SERVICE_KERNEL_DRIVER}</td><td>Driver services.</td></tr>
+         * <tr><td>{@link WinNT#SERVICE_WIN32}</td><td>Services of type {@link WinNT#SERVICE_WIN32_OWN_PROCESS} and {@link WinNT#SERVICE_WIN32_SHARE_PROCESS}.</td></tr>
+         * <tr><td>{@link WinNT#SERVICE_WIN32_OWN_PROCESS}</td><td>Services that run in their own processes.</td></tr>
+         * <tr><td>{@link WinNT#SERVICE_WIN32_SHARE_PROCESS}</td><td>Services that share a process with one or more other services. For more information, see Service Programs.</td></tr>
+         * </table>
+         * 
+         * @param dwServiceState     The state of the services to be enumerated.
+         *                           This parameter can be one of the following
+         *                           values.
+         * <table>
+         * <tr><th>Value</th><th>Meaning</th></tr>
+         * <tr><td>{@link Winsvc#SERVICE_ACTIVE}</td><td>Enumerates services that
+         * are in the following states:
+         * {@link Winsvc#SERVICE_START_PENDING}, {@link Winsvc#SERVICE_STOP_PENDING}, {@link Winsvc#SERVICE_RUNNING}, {@link Winsvc#SERVICE_CONTINUE_PENDING}, {@link Winsvc#SERVICE_PAUSE_PENDING},
+         * and {@link Winsvc#SERVICE_PAUSED}.</td></tr>
+         * <tr><td>{@link Winsvc#SERVICE_INACTIVE}</td><td>Enumerates services that
+         * are in the {@link Winsvc#SERVICE_STOPPED} state.</td></tr>
+         * <tr><td>{@link Winsvc#SERVICE_STATE_ALL}</td><td>Combines the following
+         * states: {@link Winsvc#SERVICE_ACTIVE} and
+         * {@link Winsvc#SERVICE_INACTIVE}.</td></tr>
+         * </table>
+         * @param groupName          The load-order group name. If this parameter is
+         *                           a string, the only services enumerated are
+         *                           those that belong to the group that has the
+         *                           name specified by the string. If this parameter
+         *                           is an empty string, only services that do not
+         *                           belong to any group are enumerated. If this
+         *                           parameter is NULL, group membership is ignored
+         *                           and all services are enumerated.
+         * 
+         * @return array of ENUM_SERVICE_STATUS_PROCESS structures.
+         */
+        public ENUM_SERVICE_STATUS_PROCESS[] enumServicesStatusExProcess(int dwServiceType, int dwServiceState, String groupName) {
+                IntByReference pcbBytesNeeded = new IntByReference(0);
+                IntByReference lpServicesReturned = new IntByReference(0);
+                IntByReference lpResumeHandle = new IntByReference(0);
+                Advapi32.INSTANCE.EnumServicesStatusEx(_handle, Winsvc.SC_ENUM_PROCESS_INFO, dwServiceType, dwServiceState, Pointer.NULL, 0, pcbBytesNeeded, lpServicesReturned,lpResumeHandle,groupName);
+                int lastError = Kernel32.INSTANCE.GetLastError();
+                if (lastError != WinError.ERROR_MORE_DATA) {
+                    throw new Win32Exception(lastError);
+                }
+                Memory buffer = new Memory(pcbBytesNeeded.getValue());
+                boolean result = Advapi32.INSTANCE.EnumServicesStatusEx(_handle, Winsvc.SC_ENUM_PROCESS_INFO, dwServiceType, dwServiceState, buffer, (int) buffer.size(), pcbBytesNeeded, lpServicesReturned,lpResumeHandle,groupName);
+                if (!result) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+                if (lpServicesReturned.getValue() == 0) {
+                    return new Winsvc.ENUM_SERVICE_STATUS_PROCESS[0];
+                }
+                ENUM_SERVICE_STATUS_PROCESS status = Structure.newInstance(ENUM_SERVICE_STATUS_PROCESS.class, buffer);
+                status.read();
+                return (ENUM_SERVICE_STATUS_PROCESS[]) status.toArray(lpServicesReturned.getValue());
+        }
 }

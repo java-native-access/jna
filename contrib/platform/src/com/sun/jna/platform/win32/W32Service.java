@@ -28,11 +28,13 @@ import java.util.List;
 
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.LUID;
 import com.sun.jna.platform.win32.WinNT.LUID_AND_ATTRIBUTES;
 import com.sun.jna.platform.win32.WinNT.TOKEN_PRIVILEGES;
+import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SC_ACTION;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
@@ -315,7 +317,6 @@ public class W32Service {
 		}
 	}
 	
-	
 	/**
 	 * Gets the service handle.
 	 * @return 
@@ -324,4 +325,50 @@ public class W32Service {
 	public SC_HANDLE getHandle() {
 		return _handle;
 	}
+
+        /**
+         * Retrieves the name and status of each service that depends on the
+         * specified service; that is, the specified service must be running before
+         * the dependent services can run.
+
+         * @param dwServiceState     The state of the services to be enumerated.
+         *                           This parameter can be one of the following
+         *                           values.
+         * <table>
+         * <tr><th>Value</th><th>Meaning</th></tr>
+         * <tr><td>{@link Winsvc#SERVICE_ACTIVE}</td><td>Enumerates services that
+         * are in the following states:
+         * {@link Winsvc#SERVICE_START_PENDING}, {@link Winsvc#SERVICE_STOP_PENDING}, {@link Winsvc#SERVICE_RUNNING}, {@link Winsvc#SERVICE_CONTINUE_PENDING}, {@link Winsvc#SERVICE_PAUSE_PENDING},
+         * and {@link Winsvc#SERVICE_PAUSED}.</td></tr>
+         * <tr><td>{@link Winsvc#SERVICE_INACTIVE}</td><td>Enumerates services that
+         * are in the {@link Winsvc#SERVICE_STOPPED} state.</td></tr>
+         * <tr><td>{@link Winsvc#SERVICE_STATE_ALL}</td><td>Combines the following
+         * states: {@link Winsvc#SERVICE_ACTIVE} and
+         * {@link Winsvc#SERVICE_INACTIVE}.</td></tr>
+         * </table>
+         * 
+         * @return array of ENUM_SERVICE_STATUS structures that receives the name
+         *         and service status information for each dependent service in the
+         *         database.
+         */
+        public ENUM_SERVICE_STATUS[] enumDependentServices(int dwServiceState) {
+                IntByReference pcbBytesNeeded = new IntByReference(0);
+                IntByReference lpServicesReturned = new IntByReference(0);
+                Advapi32.INSTANCE.EnumDependentServices(_handle, dwServiceState, Pointer.NULL, 0, pcbBytesNeeded, lpServicesReturned);
+                int lastError = Kernel32.INSTANCE.GetLastError();
+                if(lastError != WinError.ERROR_MORE_DATA) {
+                    throw new Win32Exception(lastError);
+                }
+                Memory buffer = new Memory(pcbBytesNeeded.getValue());
+                boolean result = Advapi32.INSTANCE.EnumDependentServices(_handle, dwServiceState, buffer, (int) buffer.size(), pcbBytesNeeded, lpServicesReturned);
+                if(! result) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+                if(lpServicesReturned.getValue() == 0) {
+                    return new ENUM_SERVICE_STATUS[0];
+                }
+                ENUM_SERVICE_STATUS status = Structure.newInstance(ENUM_SERVICE_STATUS.class, buffer);
+                status.read();
+                return (ENUM_SERVICE_STATUS[]) status.toArray(lpServicesReturned.getValue());
+        }
 }

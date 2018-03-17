@@ -29,6 +29,7 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import static com.sun.jna.Structure.createFieldsOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -444,6 +445,13 @@ public interface Winsvc {
         | SERVICE_USER_DEFINED_CONTROL;
 
     //
+    //  Service State -- for Enum Requests (Bit Mask)
+    //
+    int SERVICE_ACTIVE = 0x00000001;
+    int SERVICE_INACTIVE = 0x00000002;
+    int SERVICE_STATE_ALL = SERVICE_ACTIVE | SERVICE_INACTIVE;
+    
+    //
     // Controls
     //
     /**
@@ -561,6 +569,8 @@ public interface Winsvc {
     int SC_ACTION_REBOOT				= 0x00000002;
     int SC_ACTION_RUN_COMMAND				= 0x00000003;
 	
+    int SC_ENUM_PROCESS_INFO  = 0;
+    
     /**
      * The SC_STATUS_TYPE enumeration type contains values
      */
@@ -850,6 +860,90 @@ public interface Winsvc {
 
         public SERVICE_STATUS_HANDLE(Pointer p) {
             super(p);
+        }
+    }
+    
+    /**
+     * Contains the name of a service in a service control manager database and
+     * information about that service. It is used by the EnumDependentServices
+     * and EnumServicesStatus functions.
+     */
+    public static class ENUM_SERVICE_STATUS extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder(
+                "lpServiceName", "lpDisplayName", "ServiceStatus");
+
+        /**
+         * The name of a service in the service control manager database. The
+         * maximum string length is 256 characters. The service control manager
+         * database preserves the case of the characters, but service name
+         * comparisons are always case insensitive. A slash (/), backslash (\),
+         * comma, and space are invalid service name characters.
+         */
+        public String lpServiceName;
+        /**
+         * A display name that can be used by service control programs, such as
+         * Services in Control Panel, to identify the service. This string has a
+         * maximum length of 256 characters. The name is case-preserved in the
+         * service control manager. Display name comparisons are always
+         * case-insensitive.
+         */
+        public String lpDisplayName;
+        /**
+         * A {@link Winsvc#SERVICE_STATUS} structure that contains status
+         * information for the lpServiceName service.
+         */
+        public SERVICE_STATUS ServiceStatus;
+
+        public ENUM_SERVICE_STATUS() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
+    /**
+     * Contains the name of a service in a service control manager database and
+     * information about the service. It is used by the EnumServicesStatusEx
+     * function.
+     */
+    public static class ENUM_SERVICE_STATUS_PROCESS extends Structure {
+
+        public static final List<String> FIELDS = createFieldsOrder(
+                "lpServiceName", "lpDisplayName", "ServiceStatusProcess");
+
+        /**
+         * The name of a service in the service control manager database. The
+         * maximum string length is 256 characters. The service control manager
+         * database preserves the case of the characters, but service name
+         * comparisons are always case insensitive. A slash (/), backslash (\),
+         * comma, and space are invalid service name characters.
+         */
+        public String lpServiceName;
+        /**
+         * A display name that can be used by service control programs, such as
+         * Services in Control Panel, to identify the service. This string has a
+         * maximum length of 256 characters. The name is case-preserved in the
+         * service control manager. Display name comparisons are always
+         * case-insensitive.
+         */
+        public String lpDisplayName;
+        /**
+         * A {@link SERVICE_STATUS_PROCESS} structure that contains status information
+         * for the lpServiceName service.
+         */
+        public SERVICE_STATUS_PROCESS ServiceStatusProcess;
+
+        public ENUM_SERVICE_STATUS_PROCESS() {
+            super(W32APITypeMapper.DEFAULT);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 }

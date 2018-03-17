@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS;
 import java.util.List;
 import java.util.LinkedList;
 
@@ -140,5 +141,16 @@ public class W32ServiceTest extends TestCase {
         assertTrue(prevFlag != service.getFailureActionsFlag());
         service.setFailureActionsFlag(prevFlag);
         service.close();
+    }
+    
+    public void testEnumDependendServices() {
+        W32Service service = _serviceManager.openService("SystemEventsBroker", Winsvc.SERVICE_ENUMERATE_DEPENDENTS);
+        ENUM_SERVICE_STATUS[] dependants = service.enumDependentServices(Winsvc.SERVICE_STATE_ALL);
+        assertTrue(dependants.length > 0);
+        for(ENUM_SERVICE_STATUS ess: dependants) {
+//            System.out.printf("%-40s%-40s%n", ess.lpServiceName, ess.lpDisplayName);
+            assertNotNull(ess.lpDisplayName);
+            assertNotNull(ess.lpServiceName);
+        }
     }
 }
