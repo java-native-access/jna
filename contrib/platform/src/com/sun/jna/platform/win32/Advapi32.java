@@ -1624,6 +1624,25 @@ public interface Advapi32 extends StdCallLibrary {
                                  IntByReference pcbBytesNeeded);
 
     /**
+     * Retrieves the current status of the specified service based on the
+     * specified information level.
+     *
+     * @param hService
+     *            A handle to the service. This handle is returned by the
+     *            OpenService(SC_HANDLE, String, int) or CreateService()
+     *            function, and it must have the SERVICE_QUERY_STATUS access
+     *            right. For more information, see <a
+     *            href="http://msdn.microsoft.com/en-us/library/ms685981.aspx"
+     *            >Service Security and Access Rights</a>.
+     * @param lpServiceStatus
+     *            A pointer to a SERVICE_STATUS structure that receives the status information.
+     * @return If the function succeeds, the return value is true. If the
+     *         function fails, the return value is false. To get extended error
+     *         information, call GetLastError.
+     */
+    boolean QueryServiceStatus(SC_HANDLE hService, SERVICE_STATUS lpServiceStatus);
+    
+    /**
      * Sends a control code to a service. To specify additional information when
      * stopping a service, use the ControlServiceEx function.
      *

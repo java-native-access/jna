@@ -38,8 +38,10 @@ import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SC_ACTION;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.platform.win32.Winsvc.SC_STATUS_TYPE;
+import static com.sun.jna.platform.win32.Winsvc.SERVICE_CONTROL_STOP;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS_FLAG;
+import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
 
@@ -204,19 +206,46 @@ public class W32Service {
 		}
 	}
 	
+        /**
+         * Stop service.
+         */
+        public void stopService() {
+                stopService(30000);
+        }
+        
 	/**
 	 * Stop service.
-	 */
-	public void stopService() {
+         *
+         * @param timeout timeout in ms until the service must report to be
+         *                stopped
+         */
+	void stopService(long timeout) {
+                long startTime = System.currentTimeMillis();
 		waitForNonPendingState();
 		// If the service is already stopped - return
 		if (queryStatus().dwCurrentState == Winsvc.SERVICE_STOPPED) {
 			return;
 		}
-		if (! Advapi32.INSTANCE.ControlService(_handle, Winsvc.SERVICE_CONTROL_STOP, 
-				new Winsvc.SERVICE_STATUS())) {
+                SERVICE_STATUS status = new SERVICE_STATUS();
+		if (! Advapi32.INSTANCE.ControlService(_handle, SERVICE_CONTROL_STOP, status)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
+                // This following the sample from the MSDN
+                // the previouos implementation queried the service status and
+                // failed if the application did not correctly update its state
+                while(status.dwCurrentState != Winsvc.SERVICE_STOPPED) {
+                        try {
+				Thread.sleep( status.dwWaitHint );
+			} catch (InterruptedException e){
+				throw new RuntimeException(e);
+			}
+                        if(! Advapi32.INSTANCE.QueryServiceStatus(_handle, status)) {
+                                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                        }
+                        if((System.currentTimeMillis() - startTime) > timeout) {
+                                throw new RuntimeException(String.format("Service stop exceeded timeout time of %d ms", timeout));
+                        }
+                }
 		waitForNonPendingState();
 		if (queryStatus().dwCurrentState != Winsvc.SERVICE_STOPPED) {
 			throw new RuntimeException("Unable to stop the service");
@@ -269,7 +298,7 @@ public class W32Service {
 		SERVICE_STATUS_PROCESS status = queryStatus(); 
 
 		int previousCheckPoint = status.dwCheckPoint;
-		int checkpointStartTickCount = Kernel32.INSTANCE.GetTickCount();;
+		int checkpointStartTickCount = Kernel32.INSTANCE.GetTickCount();
 
 		while (isPendingState(status.dwCurrentState)) { 
 
