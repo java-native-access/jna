@@ -30,26 +30,84 @@ import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS_PROCESS;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
 import com.sun.jna.ptr.IntByReference;
+import java.io.Closeable;
 
 /**
  * Win32 Service Manager wrapper 
  * @author EugineLev
  */
-public class W32ServiceManager {
+public class W32ServiceManager implements Closeable {
 	SC_HANDLE _handle = null; 
 	String _machineName = null;
 	String _databaseName = null;
 	
+        /**
+         * Instantiate a W32ServiceManager for the local computer and the 
+         * SERVICES_ACTIVE_DATABASE ("ServicesActive") database.
+         * 
+         * <p>The connection is not established until {@link #open(int)} is 
+         * called.</p>
+         */
 	public W32ServiceManager() {
 	}
 	
+        /**
+         * Instantiate a W32ServiceManager for the local computer and the 
+         * SERVICES_ACTIVE_DATABASE ("ServicesActive") database.
+         * 
+         * <p>A connection is opened directly with the requested permissions.</p>
+         * 
+         * @param permissions requested permissions for access
+         */
+	public W32ServiceManager(int permissions) {
+                open(permissions);
+	}
+        
+        /**
+         * Instantiate a W32ServiceManager.
+         *
+         * @param machineName  The name of the target computer. If the pointer
+         *                     is NULL or points to an empty string, the
+         *                     function connects to the service control manager
+         *                     on the local computer.
+         * @param databaseName The name of the service control manager database.
+         *                     This parameter should be set to "ServicesActive".
+         *                     If it is NULL, the "ServicesActive"
+         *                     (SERVICES_ACTIVE_DATABASE) database is opened by
+         *                     default.
+         * <p>The connection is not established until {@link #open(int)} is 
+         * called.</p>
+         */
 	public W32ServiceManager(String machineName, String databaseName) {
 		_machineName = machineName;
 		_databaseName = databaseName;
 	}
 	
+       /**
+         * Instantiate a W32ServiceManager.
+         * 
+         * <p>
+         * A connection is opened directly with the requested permissions.</p>
+         *
+         * @param machineName  The name of the target computer. If the pointer
+         *                     is NULL or points to an empty string, the
+         *                     function connects to the service control manager
+         *                     on the local computer.
+         * @param databaseName The name of the service control manager database.
+         *                     This parameter should be set to "ServicesActive".
+         *                     If it is NULL, the "ServicesActive"
+         *                     (SERVICES_ACTIVE_DATABASE) database is opened by
+         *                     default.
+         * @param permissions  requested permissions for access
+         */
+	public W32ServiceManager(String machineName, String databaseName, int permissions) {
+		_machineName = machineName;
+		_databaseName = databaseName;
+                open(permissions);
+	}
+        
 	/**
-	 * Opens the Service Manager with the supplied permissions.
+	 * (Re-)Opens the Service Manager with the supplied permissions.
 	 * @param permissions
 	 * 	Permissions.
 	 */
@@ -67,6 +125,7 @@ public class W32ServiceManager {
 	/**
 	 * Closes the previously opened Service Manager.
 	 */
+        @Override
 	public void close() {
 		if (_handle != null) {
 			if (! Advapi32.INSTANCE.CloseServiceHandle(_handle)) {

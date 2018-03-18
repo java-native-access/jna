@@ -44,13 +44,14 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_FAILURE_ACTIONS_FLAG;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS;
 import com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS_PROCESS;
 import com.sun.jna.ptr.IntByReference;
+import java.io.Closeable;
 
 
 /**
  * Win32 Service wrapper 
  * @author EugineLev
  */
-public class W32Service {
+public class W32Service implements Closeable {
 	SC_HANDLE _handle = null;
 
 	/**
@@ -66,6 +67,7 @@ public class W32Service {
 	/**
 	 * Close service.
 	 */
+        @Override
 	public void close() {
 		if (_handle != null) {
 			if (! Advapi32.INSTANCE.CloseServiceHandle(_handle)) {
