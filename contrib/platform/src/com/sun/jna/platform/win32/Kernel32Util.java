@@ -41,6 +41,7 @@ import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Kernel32 utility API.
@@ -1082,6 +1083,59 @@ public abstract class Kernel32Util implements WinDef {
             if (we != null) {
                 throw we;
             }
+        }
+    }
+    
+    /**
+     * Expands environment-variable strings and replaces them with the values
+     * defined for the current user.
+     * 
+     * @param input A string that contains one or more environment-variable
+     *              strings in the form: %variableName%. For each such
+     *              reference, the %variableName% portion is replaced with the
+     *              current value of that environment variable.
+     *
+     *              <p>Case is ignored when looking up the environment-variable 
+     *              name. If the name is not found, the %variableName% portion 
+     *              is left unexpanded.</p>
+     * 
+     *              <p>Note that this function does not support all the features
+     *              that Cmd.exe supports. For example, it does not support 
+     *              %variableName:str1=str2% or %variableName:~offset,length%.</p>
+     *
+     * @return the replaced string
+     * @throws Win32Exception if an error occurs
+     */
+    public static String expandEnvironmentStrings(String input) {
+        if(input == null) {
+            return "";
+        }
+        
+        int resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, null, 0);
+        
+        if(resultChars == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        
+        Memory resultMemory;
+        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+            resultMemory = new Memory(resultChars * Native.WCHAR_SIZE);
+        } else {
+            // return value is length in chars including terminating NULL,
+            // documentation for ANSI version says: buffer size should be the
+            // string length, plus terminating null character, plus one
+            resultMemory = new Memory(resultChars + 1);
+        }
+        resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, resultMemory, resultChars);
+        
+        if(resultChars == 0) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        
+        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+            return resultMemory.getWideString(0);
+        } else {
+            return resultMemory.getString(0);
         }
     }
 }

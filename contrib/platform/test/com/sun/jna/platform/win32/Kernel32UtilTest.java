@@ -342,4 +342,9 @@ public class Kernel32UtilTest extends TestCase {
         // so assert total count is at least two
         assertTrue("This is supposed to return all the modules in a process, so there should be an EXE and at least 1 Windows API DLL.", results.size() > 2);
     }
+    
+    public void testExpandEnvironmentStrings() {
+        Kernel32.INSTANCE.SetEnvironmentVariable("DemoVariable", "DemoValue");
+        assertEquals("DemoValue", Kernel32Util.expandEnvironmentStrings("%DemoVariable%"));
+    }
 }
