@@ -100,10 +100,11 @@ public class Advapi32Test extends TestCase {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Advapi32.class);
         if (dupSet.size() > 0) {
             for (String name : new String[] {
-                    // has several overloads by design since the output value can be several types of data
+                    // these have several overloads by design since the input/output values can be several types of data
                     "RegQueryValueEx",
-                    // has several overloads by design since the input value can be several types of data
-                    "RegSetValueEx"
+                    "RegSetValueEx",
+                    "RegGetValue",
+                    "RegEnumValue"
                 }) {
                 dupSet.remove(name);
             }
@@ -640,7 +641,7 @@ public class Advapi32Test extends TestCase {
     		IntByReference lpType = new IntByReference();
         	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegEnumValue(
         			phKey.getValue(), i, name, lpcchValueName, null,
-        			lpType, null, null));
+        			lpType, (Pointer) null, null));
         	assertEquals(Native.toString(name).length(), lpcchValueName.getValue());
     	}
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
