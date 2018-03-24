@@ -156,6 +156,20 @@
   </target>
 
   <target name="-dynamic-properties" depends="-prepare-anttools">
+    <property name="build.os.name" value="${os.name}"/> 
+    <condition property="build.os.family" value="windows">
+        <contains string="${build.os.name}" substring="windows" casesensitive="false"/>
+    </condition>
+    <condition property="build.os.family" value="mac">
+        <or>
+            <contains string="${build.os.name}" substring="darwin" casesensitive="false"/>
+            <contains string="${build.os.name}" substring="mac" casesensitive="false" />
+        </or>
+    </condition>
+    <property name="build.os.family" value="other"/>
+    <property name="build.os.arch" value="${os.arch}" />
+    <property name="build.os.endianess" value="${sun.cpu.endian}" />
+    
     <condition property="-native" value="true">
       <not><isset property="build-native"/></not>
     </condition>
@@ -185,43 +199,6 @@
     <condition property="cross-compile" value="true">
       <isset property="os.prefix"/>
     </condition>
-    <!-- Sun 1.6 VM for windows doesn't support -d32/-d64 switch -->
-    <condition property="vm.64" value="-d64" else="-Ddummy">
-      <not><os family="windows"/></not>
-    </condition>
-    <condition property="vm.32" value="-d32" else="-Ddummy">
-      <not><os family="windows"/></not>
-    </condition>
-    <condition property="vmopt.arch" value="${vm.64}" else="${vm.32}">
-      <and>
-        <not>
-          <and>
-            <matches pattern="^android-" string="${os.prefix}"/>
-            <not><matches pattern="64$" string="${os.prefix}"/></not>
-          </and>
-        </not>
-        <or>
-          <equals arg1="${sun.arch.data.model}" arg2="64" trim="true"/>
-          <equals arg1="${com.ibm.vm.bitmode}" arg2="64" trim="true"/>
-          <os arch="x86_64"/>
-          <os arch="amd64"/>
-          <os arch="em64t"/>
-          <os arch="sparcv9"/>
-          <os arch="ppc64"/>
-          <os arch="ppc64le"/>
-          <os arch="ia64"/>
-          <os arch="aarch64"/>
-          <os arch="mips64el"/>
-          <os arch="s390x"/>
-        </or>
-      </and>
-    </condition>
-    <condition property="ld.preload" value="LD_PRELOAD_64" else="LD_PRELOAD">
-      <and>
-        <os name="SunOS"/>
-        <equals arg1="${vmopt.arch}" arg2="${vm.64}"/>
-      </and>
-    </condition>
 
     <property name="classes" location="${build}/classes"/>
     <property name="eclipse.classes" location="build.eclipse/classes"/>
@@ -239,62 +216,62 @@
 
     <!-- Add other supported platforms here -->
     <condition property="jre.arch" value="x86">
-      <matches pattern="(i[3456]86|pentium)" string="${os.arch}"/>
+      <matches pattern="(i[3456]86|pentium)" string="${build.os.arch}"/>
     </condition>
     <condition property="jre.arch" value="x86-64">
-      <matches pattern="(x86_64|amd64|em64t)" string="${os.arch}"/>
+      <matches pattern="(x86_64|amd64|em64t)" string="${build.os.arch}"/>
     </condition>
     <condition property="jre.arch" value="ppc">
-      <matches pattern="(powerpc|power)" string="${os.arch}"/>
+      <matches pattern="(powerpc|power)" string="${build.os.arch}"/>
     </condition>
     <condition property="jre.arch" value="ppc64le">
       <or>
-	<matches pattern="(powerpc64le|power64le|ppc64le)" string="${os.arch}"/>
+	<matches pattern="(powerpc64le|power64le|ppc64le)" string="${build.os.arch}"/>
 	<and>
-	  <matches pattern="(powerpc64|power64|ppc64)" string="${os.arch}"/>
-	  <matches pattern="little" string="${sun.cpu.endian}"/>
+	  <matches pattern="(powerpc64|power64|ppc64)" string="${build.os.arch}"/>
+	  <matches pattern="little" string="${build.os.endianess}"/>
 	</and>
       </or>
     </condition>
     <condition property="jre.arch" value="ppc64">
-      <matches pattern="(powerpc64|power64)" string="${os.arch}"/>
+      <matches pattern="(powerpc64|power64)" string="${build.os.arch}"/>
     </condition>
     <condition property="jre.arch" value="armel">
       <and>
-        <matches pattern="arm" string="${os.arch}"/>
+        <matches pattern="arm" string="${build.os.arch}"/>
         <matches pattern="true" string="${build.isArmSoftFloat}"/>
       </and>
     </condition>
     
-    <property name="jre.arch" value="${os.arch}"/>
+    <property name="jre.arch" value="${build.os.arch}"/>
     
     <condition property="os.prefix" value="linux-${jre.arch}">
-      <os name="Linux"/>
+      <equals arg1="${build.os.name}" arg2="Linux"/>
     </condition>
     <condition property="os.prefix" value="aix-${jre.arch}">
-      <os name="AIX"/>
+      <equals arg1="${build.os.name}" arg2="AIX"/>
     </condition>
     <condition property="os.prefix" value="win32-${jre.arch}">
-      <os family="windows"/>
+      <equals arg1="${build.os.family}" arg2="windows"/>
     </condition>
     <!-- Darwin builds are universal, no arch required -->
     <condition property="os.prefix" value="darwin">
-      <os family="mac"/>
+      <equals arg1="${build.os.family}" arg2="mac"/>
     </condition>
     <condition property="os.prefix" value="sunos-${jre.arch}">
-      <os name="SunOS"/>
+      <equals arg1="${build.os.name}" arg2="SunOS"/>
     </condition>
     <condition property="os.prefix" value="freebsd-${jre.arch}">
-      <os name="FreeBSD"/>
+      <equals arg1="${build.os.name}" arg2="FreeBSD"/>
     </condition>
     <condition property="os.prefix" value="openbsd-${jre.arch}">
-	<os name="OpenBSD"/>
+	<equals arg1="${build.os.name}" arg2="OpenBSD"/>
     </condition>
     <condition property="os.prefix" value="netbsd-${jre.arch}">
-      <os name="NetBSD"/>
+      <equals arg1="${build.os.name}" arg2="NetBSD"/>
     </condition>
     <condition property="os.prefix" value="kfreebsd-${jre.arch}">
-      <os name="GNU/kFreeBSD"/>
+      <equals arg1="${build.os.name}" arg2="GNU/kFreeBSD"/>
     </condition>
     <fail unless="os.prefix" message="OS/arch not supported (${os.name}/${jre.arch}), edit build.xml and native/Makefile to add it."/>
     <!-- Keep all natives separate -->
@@ -314,16 +291,19 @@
                value="${java.home}/lib/${libarch}/libjsig.so" else="">
       <available file="${java.home}/lib/${libarch}/libjsig.so"/>
     </condition>
-    <condition property="ld.preload.name" value="${ld.preload}" else="IGNORE">
+    <condition property="ld.preload.name" value="LD_PRELOAD" else="IGNORE">
       <not><equals arg1="${libjsig}" arg2=""/></not>
     </condition>
     <property name="native.jar" value="${os.prefix}.jar"/>
     <property name="build.native" location="${build}/${native.subdir}"/>
+    <property name="build.headers" location="${build}/headers"/>
     <property name="build.aar" location="${build}/aar"/>
-    <property name="md5.file" location="${build.native}/jni.checksum"/>
+    <property name="md5.file" location="${build.headers}/jni.checksum"/>
+    <property name="jni.info" location="${build.headers}/jni.properties"/>
 
     <mkdir dir="${build}"/>
     <mkdir dir="${build.native}"/>
+    <mkdir dir="${build.headers}"/>
     <mkdir dir="${classes}"/>
     <mkdir dir="${test.classes}"/>
     <mkdir dir="${reports}"/>
@@ -336,10 +316,11 @@
     <echo>java.home=${java.home}</echo>
     <echo>java.library.path=${java.library.path}</echo>
     <echo>os.prefix=${os.prefix}</echo>
-    <echo>os.name=${os.name}</echo>
-    <echo>os.arch=${os.arch} (${sun.cpu.endian})</echo>
+    <echo>os.name=${build.os.name}</echo>
+    <echo>os.arch=${build.os.arch} (${build.os.endianess})</echo>
     <echo>build=${build}</echo>
     <echo>build.native=${build.native}</echo>
+    <echo>build.headers=${build.headers}</echo>
     <echo>build.aar=${build.aar}</echo>
 
   </target>
@@ -377,7 +358,8 @@
            includeantruntime="false"
            deprecation="on" 
            debug="${debug}"
-           encoding="UTF-8">
+           encoding="UTF-8"
+           nativeheaderdir="${build.headers}">
       <src refid="src.path"/>
     </javac>
   </target>
@@ -665,11 +647,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   </target>
 
   <target name="javah" depends="compile" unless="-native">
-    <javah classpath="${classes}" destdir="${build.native}" force="yes">
-      <class name="com.sun.jna.Function"/>
-      <class name="com.sun.jna.Native"/>
-      <class name="com.sun.jna.win32.DLLCallback"/>
-    </javah>
     <condition property="grep" value="/usr/sfw/bin/ggrep">
       <os name="SunOS"/>
     </condition>
@@ -681,12 +658,12 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <os name="AIX"/>
     </condition>
     <!-- args are based on GNU grep, other versions may differ -->
-    <apply dir="${build.native}" executable="${grep}" parallel="true"
+    <apply dir="${build.headers}" executable="${grep}" parallel="true"
            failonerror="${grep.required}" relative="true" output="${md5.file}">
       <arg value="-A"/>
       <arg value="1"/>
       <arg value="JNIEXPORT"/>
-      <fileset dir="${build.native}" includes="*.h"/>
+      <fileset dir="${build.headers}" includes="*.h"/>
     </apply>
     <!-- Clean up gcj javah output to match that of Sun's javah -->
     <fixcrlf file="${md5.file}" eol="unix"/>
@@ -703,6 +680,10 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 		   flags="m"
                    file="${md5.file}"/>
     <checksum property="md5" file="${md5.file}" />
+    <propertyfile file="${jni.info}">
+        <entry key="checksum" value="${md5}" />
+        <entry key="version" value="${jni.version}" />
+    </propertyfile>
     <condition property="jni.valid" value="true">
       <or>
         <os name="AIX"/>
@@ -755,7 +736,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
   <target name=":rsrc">
     <condition property="-rsrc">
       <and>
-        <not><os family="windows"/></not>
+        <not><equals arg1="${build.os.family}" arg2="windows"/></not>
         <not><equals arg1="${os.prefix}" arg2="w32ce-arm"/></not>
       </and>
     </condition>
@@ -790,16 +771,8 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
                    file="${rsrc}" byline="true"/>
   </target>
 
-  <target name="native" depends="-enable-native,-setup,javah,-native-api-check,rsrc" unless="-native"
-          description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
+  <target name="-prepare-native" depends="-setup,rsrc">
     <property name="comment" value="# auto-generated by ant"/>
-    <replaceregexp match="^JNA_JNI_VERSION=.*"
-                   replace="JNA_JNI_VERSION=${jni.version} ${comment}"
-                   file="native/Makefile" byline="true"/>
-    <replaceregexp match="^CHECKSUM=.*"
-                   replace="CHECKSUM=${jni.md5} ${comment}"
-                   file="native/Makefile" byline="true"/>
-    <!-- Handle cross-compilation -->
     <condition property="make.OS" value="OS=w32ce">
       <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
     </condition>
@@ -840,7 +813,7 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     </condition>
     <!-- ensure ARCH is set properly for 64-bit capable platforms -->
     <!-- use ANT_OPTS=-d64/-d32 to build 64-bit/32-bit if not the platform default -->
-    <property name="ARCH" value="${os.arch}"/>
+    <property name="ARCH" value="${build.os.arch}"/>
     <condition property="make.USE_MSVC" value="USE_MSVC=${USE_MSVC}" else="IGNORE=">
       <isset property="USE_MSVC"/>
     </condition>
@@ -899,24 +872,24 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
     <!-- Windows' drive letters and spaces in absolute paths wreak havoc on
          make -->
     <condition property="make.BUILD" value="BUILD=../${build}/${native.subdir}" else="BUILD=${build.native}">
-      <os family="windows"/>
+      <equals arg1="${build.os.family}" arg2="windows"/>
     </condition>
     <condition property="make.PATH" value="PATH=/opt/csw/bin:/usr/sfw/bin:/usr/bin:/usr/ccs/bin" else="IGNORE=">
-      <os name="SunOS"/>
+      <equals arg1="${build.os.name}" arg2="SunOS"/>
     </condition>
     <condition property="make" value="/usr/sfw/bin/gmake">
       <and>
-        <os name="SunOS"/>
+        <equals arg1="${build.os.name}" arg2="SunOS"/>
         <available file="/usr/sfw/bin/gmake"/>
       </and>
     </condition>
     <condition property="make" value="gmake">
       <or>
-        <os name="FreeBSD"/>
-        <os name="OpenBSD"/>
-        <os name="NetBSD"/>
-        <os name="SunOS"/>
-        <os name="AIX"/>
+        <equals arg1="${build.os.name}" arg2="FreeBSD"/>
+        <equals arg1="${build.os.name}" arg2="OpenBSD"/>
+        <equals arg1="${build.os.name}" arg2="NetBSD"/>
+        <equals arg1="${build.os.name}" arg2="SunOS"/>
+        <equals arg1="${build.os.name}" arg2="AIX"/>
       </or>
     </condition>
     <!-- Allow explicit override of make variables -->
@@ -928,10 +901,73 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
 
     <!-- Default make program -->
     <property name="make" value="make"/>
+  </target>
 
+  <target name="native-build-package" depends="javah,-native-api-check,-prepare-native">
+    <echo file="${build}/build.sh">#!/bin/sh
+cwd=$(pwd)
+if [ -z "$JAVA_HOME" ]; then
+    echo "Please make sure JAVA_HOME is set"
+    exit 1
+fi
+cd native
+${make}\
+ JAVA_HOME=$JAVA_HOME\
+ JAVAH=$cwd/headers\
+ DEBUG=${debug.native}\
+ CFLAGS_EXTRA=${cflags_extra.native}\
+ DYNAMIC_LIBFFI=${dynlink.native}\
+ ${make.CC}\
+ ${make.USE_MSVC}\
+ BUILD=../build\
+ ${make.SDKROOT}\
+ ${make.ARCH}\
+ ${make.PATH}\
+ ${make.OS}\
+ ${make.OPTS}\
+ JNA_JNI_VERSION=${jni.version}\
+ CHECKSUM=${jni.md5}
+cd ..
+cd build
+zip ../${os.prefix}.jar libjnidispatch.so jnidispatch.dll
+cd ..
+    </echo>
+    <jar jarfile="${build}/${os.prefix}.jar">
+      <manifest>
+        <attribute name="Implementation-Version" value="${jni.version} b${jni.build}"/>
+        <attribute name="Specification-Version" value="${jni.version}"/>
+      </manifest>
+    </jar>
+    <zip destfile="${build}/build-package-${os.prefix}-${jni.version}.zip">
+        <zipfileset dir="native" 
+                    prefix="build-package-${os.prefix}-${jni.version}/native"
+            >
+            <!-- Exclude generated files from the ZIP -->
+            <exclude name="libffi/autom4te.cache/**" />
+            <exclude name="libffi/Makefile.in" />
+            <exclude name="libffi/aclocal.m4" />
+            <exclude name="libffi/compile" />
+            <exclude name="libffi/config.guess" />
+            <exclude name="libffi/config.sub" />
+            <exclude name="libffi/configure" />
+            <exclude name="libffi/depcomp" />
+            <exclude name="libffi/fficonfig.h.in" />
+            <exclude name="libffi/install-sh" />
+            <exclude name="libffi/ltmain.sh" />
+            <exclude name="libffi/mdate-sh" />
+            <exclude name="libffi/missing" />
+        </zipfileset>
+        <zipfileset dir="${build}" includes="${os.prefix}.jar" prefix="build-package-${os.prefix}-${jni.version}"/>
+        <zipfileset dir="${build}" includes="build.sh" prefix="build-package-${os.prefix}-${jni.version}"/>
+        <zipfileset dir="build/headers" prefix="build-package-${os.prefix}-${jni.version}/headers" />
+    </zip>
+  </target>
+
+  <target name="native" depends="-enable-native,javah,-native-api-check,-prepare-native" unless="-native"
+          description="Build native libraries.  Use 'ant -DCC=xxx' to build using a compiler other than gcc">
     <exec executable="${make}" dir="${native}" failonerror="true">
       <arg value="JAVA_HOME=${jdk.home}"/>
-      <arg value="JAVAH=${build.native}"/>
+      <arg value="JAVAH=${build.headers}"/>
       <arg value="DEBUG=${debug.native}"/>
       <arg value="CFLAGS_EXTRA=${cflags_extra.native}"/>
       <arg value="DYNAMIC_LIBFFI=${dynlink.native}"/>
@@ -1132,7 +1168,6 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
       <sysproperty key="jna.nosys" value="true"/>
       <sysproperty key="jna.builddir" file="${build}"/>
       <sysproperty key="jna.nativedir" file="${build.native}"/>
-      <jvmarg value="${vmopt.arch}"/>
       <classpath><path refid="test.runpath"/></classpath>
       <formatter type="brief" usefile="false"/>
       <formatter type="xml"/>
