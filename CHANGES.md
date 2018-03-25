@@ -12,6 +12,7 @@ Features
 * [#822](https://github.com/java-native-access/jna/issues/822): `Native#loadLibrary` requires that the interface class passed in is an instance of Library. The runtime check can be enhanced by using a constraint generic. This breaks binary compatibility (see notes below) - [@d-noll](https://github.com/d-noll).
 * [#889](https://github.com/java-native-access/jna/issues/889): The `Structure#newInstance` receive the target type as a parameter. This adds a limited generic type, so that the return type ist the target type and not a generic structure, removing the necessity to do an explizit cast - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#913](https://github.com/java-native-access/jna/issues/913): Add `@ComInterface` annotation to `com.sun.jna.platform.win32.COM.util.IConnectionPoint` to make it possible to retrieve it via `IUnknown#queryInterface` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* Bind `com.sun.jna.platform.win32.Kernel32.ExpandEnvironmentStrings` and add helper method for it as `Kernel32Util#expandEnvironmentStrings` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -25,6 +26,7 @@ Bug Fixes
 * [#887](https://github.com/java-native-access/jna/issues/887): MacFileUtils.moveToTrash() doesn't work in a sandboxed app fix suggested by [@sobakasu](https://github.com/sobakasu) - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#894](https://github.com/java-native-access/jna/issues/894): NullPointerException can be caused by calling `com.sun.jna.platform.win32.COM.util.ProxyObject#dispose` multiple times - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#925](https://github.com/java-native-access/jna/issues/925): Optimize `Structure#validate` and prevent `ArrayIndexOutOfBoundsException` in `SAFEARRAY#read` for zero dimensions - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#340](https://github.com/java-native-access/jna/issues/340): Guard registry handling against out-of-bounds reads by ensuring all read strings are NULL terminated - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------

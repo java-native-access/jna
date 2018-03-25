@@ -3557,4 +3557,43 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the function fails, the return value is 0</p>
      */
     int SetThreadExecutionState(int esFlags);
+    
+    /**
+     * Expands environment-variable strings and replaces them with the values
+     * defined for the current user.
+     * 
+     * @param lpSrc A buffer that contains one or more environment-variable
+     *              strings in the form: %variableName%. For each such
+     *              reference, the %variableName% portion is replaced with the
+     *              current value of that environment variable.
+     *
+     *              <p>Case is ignored when looking up the environment-variable
+     *              name. If the name is not found, the %variableName% portion 
+     *              is left unexpanded.</p>
+     *
+     *              <p>Note that this function does not support all the features
+     *              that Cmd.exe supports. For example, it does not support
+     *              %variableName:str1=str2% or %variableName:~offset,length%.</p>
+     *
+     * @param lpDst A pointer to a buffer that receives the result of expanding
+     *              the environment variable strings in the lpSrc buffer. Note
+     *              that this buffer cannot be the same as the lpSrc buffer.
+     *
+     * @param nSize The maximum number of characters that can be stored in the
+     *              buffer pointed to by the lpDst parameter. When using ANSI
+     *              strings, the buffer size should be the string length, plus
+     *              terminating null character, plus one. When using Unicode
+     *              strings, the buffer size should be the string length plus
+     *              the terminating null character.
+     *
+     * @return If the function succeeds, the return value is the number of
+     *         TCHARs stored in the destination buffer, including the
+     *         terminating null character. If the destination buffer is too
+     *         small to hold the expanded string, the return value is the
+     *         required buffer size, in characters.
+     *
+     * <p>If the function fails, the return value is zero. To get extended error
+     * information, call GetLastError.</p>
+     */
+    int ExpandEnvironmentStrings(String lpSrc, Pointer lpDst, int nSize);
 }
