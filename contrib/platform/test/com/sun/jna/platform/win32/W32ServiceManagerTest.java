@@ -13,6 +13,13 @@
 
 package com.sun.jna.platform.win32;
 
+import static com.sun.jna.platform.win32.WinNT.SERVICE_WIN32;
+import com.sun.jna.platform.win32.Winsvc.ENUM_SERVICE_STATUS_PROCESS;
+import static com.sun.jna.platform.win32.Winsvc.SC_MANAGER_CONNECT;
+import static com.sun.jna.platform.win32.Winsvc.SC_MANAGER_ENUMERATE_SERVICE;
+import static com.sun.jna.platform.win32.Winsvc.SERVICE_STATE_ALL;
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.TestCase;
 
 public class W32ServiceManagerTest extends TestCase {
@@ -42,4 +49,29 @@ public class W32ServiceManagerTest extends TestCase {
 			manager.close();
 		}
 	}
+        
+        public void testEnumServices() {
+                W32ServiceManager manager = new W32ServiceManager();
+                
+                // It is expected, that these services are present
+                List<String> expectedServices = new ArrayList<String>(4);
+                expectedServices.add("Schedule");
+                expectedServices.add("SystemEventsBroker");
+                expectedServices.add("Power");
+                expectedServices.add("Netlogon");
+                
+                manager.open(SC_MANAGER_ENUMERATE_SERVICE | SC_MANAGER_CONNECT);
+                try {
+                        for(ENUM_SERVICE_STATUS_PROCESS essp: manager.enumServicesStatusExProcess(SERVICE_WIN32, SERVICE_STATE_ALL, null)) {
+//                                System.out.printf("%-40s%-40s%n", essp.lpServiceName, essp.lpDisplayName );
+                                assertNotNull(essp.lpDisplayName);
+                                assertNotNull(essp.lpServiceName);
+                                expectedServices.remove(essp.lpServiceName);
+                        }
+                } finally {
+                        manager.close();
+                }
+                
+                assertEquals( "Not all expected services were found: " + expectedServices,0, expectedServices.size());
+        }
 }
