@@ -90,7 +90,7 @@ import com.sun.jna.platform.win32.WinReg.HKEYByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
-
+import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Advapi32 utility API.
@@ -607,7 +607,7 @@ public abstract class Advapi32Util {
 			IntByReference lpcbData = new IntByReference();
 			IntByReference lpType = new IntByReference();
 			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (char[]) null, lpcbData);
+					lpType, (Pointer) null, lpcbData);
 			switch (rc) {
 			case W32Errors.ERROR_SUCCESS:
 			case W32Errors.ERROR_MORE_DATA:
@@ -670,7 +670,7 @@ public abstract class Advapi32Util {
 		IntByReference lpcbData = new IntByReference();
 		IntByReference lpType = new IntByReference();
 		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
+				lpType, (Pointer) null, lpcbData);
 		if (rc != W32Errors.ERROR_SUCCESS
 				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
@@ -681,14 +681,23 @@ public abstract class Advapi32Util {
 					+ lpType.getValue()
 					+ ", expected REG_SZ or REG_EXPAND_SZ");
 		}
-		char[] data = new char[lpcbData.getValue()];
+                if(lpcbData.getValue() == 0) {
+                    return "";
+                }
+                // See comment in #registryGetValue
+                Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+                mem.clear();
 		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
+				lpType, mem, lpcbData);
 		if (rc != W32Errors.ERROR_SUCCESS
 				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
 		}
-		return Native.toString(data);
+                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                        return mem.getWideString(0);
+                } else {
+                        return mem.getString(0);
+                }
 	}
 
 	/**
@@ -742,14 +751,23 @@ public abstract class Advapi32Util {
 			throw new RuntimeException("Unexpected registry type "
 					+ lpType.getValue() + ", expected REG_SZ");
 		}
-		char[] data = new char[lpcbData.getValue()];
+                if(lpcbData.getValue() == 0) {
+                    return "";
+                }
+                // See comment in #registryGetValue
+                Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+                mem.clear();
 		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
+				lpType, mem, lpcbData);
 		if (rc != W32Errors.ERROR_SUCCESS
 				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
 		}
-		return Native.toString(data);
+                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                        return mem.getWideString(0);
+                } else {
+                        return mem.getString(0);
+                }
 	}
 
 	/**
@@ -803,7 +821,10 @@ public abstract class Advapi32Util {
 			throw new RuntimeException("Unexpected registry type "
 					+ lpType.getValue() + ", expected REG_SZ");
 		}
-		Memory data = new Memory(lpcbData.getValue());
+                // Allocate enougth memroy to hold value and ensure terminating
+                // double NULL chars are present
+		Memory data = new Memory(lpcbData.getValue() + 2 * Native.WCHAR_SIZE);
+                data.clear();
 		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
 				lpType, data, lpcbData);
 		if (rc != W32Errors.ERROR_SUCCESS
@@ -813,16 +834,27 @@ public abstract class Advapi32Util {
 		ArrayList<String> result = new ArrayList<String>();
 		int offset = 0;
 		while (offset < data.size()) {
-			String s = data.getWideString(offset);
-			offset += s.length() * Native.WCHAR_SIZE;
-			offset += Native.WCHAR_SIZE;
-			if (s.length() == 0 && offset == data.size()) {
-				// skip the final NULL
+			String s;
+                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                                s = data.getWideString(offset);
+                                offset += s.length() * Native.WCHAR_SIZE;
+                                offset += Native.WCHAR_SIZE;
+                        } else {
+                                s = data.getString(offset);
+                                offset += s.length();
+                                offset += 1;
+                        }
+
+			if (s.length() == 0) {
+                                // A sequence of null-terminated strings,
+                                // terminated by an empty string (\0).
+                                // => The first empty string terminates the 
+				break;
 			} else {
 				result.add(s);
 			}
 		}
-		return result.toArray(new String[0]);
+		return result.toArray(new String[result.size()]);
 	}
 
 	/**
@@ -867,7 +899,7 @@ public abstract class Advapi32Util {
 		IntByReference lpcbData = new IntByReference();
 		IntByReference lpType = new IntByReference();
 		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
+				lpType, (Pointer) null, lpcbData);
 		if (rc != W32Errors.ERROR_SUCCESS
 				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
 			throw new Win32Exception(rc);
@@ -1022,11 +1054,10 @@ public abstract class Advapi32Util {
 			String lpValueName) {
 		Object result = null;
 		IntByReference lpType = new IntByReference();
-		byte[] lpData = new byte[Advapi32.MAX_VALUE_NAME];
-		IntByReference lpcbData = new IntByReference(Advapi32.MAX_VALUE_NAME);
+		IntByReference lpcbData = new IntByReference();
 
 		int rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
-				Advapi32.RRF_RT_ANY, lpType, lpData, lpcbData);
+				Advapi32.RRF_RT_ANY, lpType, (Pointer) null, lpcbData);
 
 		// if lpType == 0 then the value is empty (REG_NONE)!
 		if (lpType.getValue() == WinNT.REG_NONE)
@@ -1037,18 +1068,33 @@ public abstract class Advapi32Util {
 			throw new Win32Exception(rc);
 		}
 
-		Memory byteData = new Memory(lpcbData.getValue());
-		byteData.write(0, lpData, 0, lpcbData.getValue());
-
+                // Buffer is intentionally allocated larger than
+                // indicated, as function adds terminating NULL char, if it is
+                // missing. WCHAR_SIZE is added, as returning string can be
+                // char[] or wchar[] depending on w32.ascii
+		Memory byteData = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+                byteData.clear();
+                
+		rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
+				Advapi32.RRF_RT_ANY, lpType, byteData, lpcbData);
+                
+                if(rc != W32Errors.ERROR_SUCCESS) {
+                    throw new Win32Exception(rc);
+                }
+                
 		if (lpType.getValue() == WinNT.REG_DWORD) {
-			result = Integer.valueOf(byteData.getInt(0));
+			result = byteData.getInt(0);
 		} else if (lpType.getValue() == WinNT.REG_QWORD) {
-			result = Long.valueOf(byteData.getLong(0));
+			result = byteData.getLong(0);
 		} else if (lpType.getValue() == WinNT.REG_BINARY) {
 			result = byteData.getByteArray(0, lpcbData.getValue());
 		} else if ((lpType.getValue() == WinNT.REG_SZ)
 				|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
-			result = byteData.getWideString(0);
+                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                                result = byteData.getWideString(0);
+                        } else {
+                                result = byteData.getString(0);
+                        }
 		}
 
 		return result;
@@ -1230,9 +1276,19 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY hKey, String name,
 			String value) {
-		char[] data = Native.toCharArray(value);
+                if(value == null) {
+                        value = "";
+                }
+                Memory data;
+                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                        data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
+                        data.setWideString(0, value);
+                } else {
+                        data = new Memory((value.length() + 1));
+                        data.setString(0, value);
+                }
 		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ,
-				data, data.length * Native.WCHAR_SIZE);
+				data, (int) data.size());
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1280,9 +1336,16 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetExpandableStringValue(HKEY hKey, String name,
 			String value) {
-		char[] data = Native.toCharArray(value);
+                Memory data;
+                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                        data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
+                        data.setWideString(0, value);
+                } else {
+                        data = new Memory((value.length() + 1));
+                        data.setString(0, value);
+                }
 		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_EXPAND_SZ, data, data.length * Native.WCHAR_SIZE);
+				WinNT.REG_EXPAND_SZ, data, (int) data.size());
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1330,26 +1393,31 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringArray(HKEY hKey, String name,
 			String[] arr) {
+            
+                int charwidth = W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ? Native.WCHAR_SIZE : 1;
+            
 		int size = 0;
 		for (String s : arr) {
-			size += s.length() * Native.WCHAR_SIZE;
-			size += Native.WCHAR_SIZE;
+			size += s.length() * charwidth;
+			size += charwidth;
 		}
-		size += Native.WCHAR_SIZE;
+		size += charwidth;
 
 		int offset = 0;
 		Memory data = new Memory(size);
+                data.clear();
 		for (String s : arr) {
-			data.setWideString(offset, s);
-			offset += s.length() * Native.WCHAR_SIZE;
-			offset += Native.WCHAR_SIZE;
-		}
-		for (int i = 0; i < Native.WCHAR_SIZE; i++) {
-			data.setByte(offset++, (byte) 0);
+                        if(W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                                data.setWideString(offset, s);
+                        } else {
+                                data.setString(offset, s);
+                        }
+			offset += s.length() * charwidth;
+			offset += charwidth;
 		}
 
 		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_MULTI_SZ, data.getByteArray(0, size), size);
+				WinNT.REG_MULTI_SZ, data, size);
 
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -1635,15 +1703,19 @@ public abstract class Advapi32Util {
 		}
 		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
 		char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
-		byte[] data = new byte[lpcMaxValueLen.getValue()];
+                // Allocate enough memory to hold largest value and two 
+                // terminating WCHARs -- the memory is zeroed so after
+                // value request we should not overread when reading strings
+		Memory byteData = new Memory(lpcMaxValueLen.getValue() + 2 * Native.WCHAR_SIZE);
 		for (int i = 0; i < lpcValues.getValue(); i++) {
+                        byteData.clear();
 			IntByReference lpcchValueName = new IntByReference(
 					lpcMaxValueNameLen.getValue() + 1);
 			IntByReference lpcbData = new IntByReference(
 					lpcMaxValueLen.getValue());
 			IntByReference lpType = new IntByReference();
 			rc = Advapi32.INSTANCE.RegEnumValue(hKey, i, name, lpcchValueName,
-					null, lpType, data, lpcbData);
+					null, lpType, byteData, lpcbData);
 			if (rc != W32Errors.ERROR_SUCCESS) {
 				throw new Win32Exception(rc);
 			}
@@ -1676,9 +1748,6 @@ public abstract class Advapi32Util {
 				continue;
 			}
 
-			Memory byteData = new Memory(lpcbData.getValue());
-			byteData.write(0, data, 0, lpcbData.getValue());
-
 			switch (lpType.getValue()) {
 			case WinNT.REG_QWORD: {
 				keyValues.put(nameString, byteData.getLong(0));
@@ -1690,7 +1759,11 @@ public abstract class Advapi32Util {
 			}
 			case WinNT.REG_SZ:
 			case WinNT.REG_EXPAND_SZ: {
-				keyValues.put(nameString, byteData.getWideString(0));
+                                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                                        keyValues.put(nameString, byteData.getWideString(0));
+                                } else {
+                                        keyValues.put(nameString, byteData.getString(0));
+                                }
 				break;
 			}
 			case WinNT.REG_BINARY: {
@@ -1699,20 +1772,29 @@ public abstract class Advapi32Util {
 				break;
 			}
 			case WinNT.REG_MULTI_SZ: {
-				Memory stringData = new Memory(lpcbData.getValue());
-				stringData.write(0, data, 0, lpcbData.getValue());
-				ArrayList<String> result = new ArrayList<String>();
-				int offset = 0;
-				while (offset < stringData.size()) {
-					String s = stringData.getWideString(offset);
-					offset += s.length() * Native.WCHAR_SIZE;
-					offset += Native.WCHAR_SIZE;
-					if (s.length() == 0 && offset == stringData.size()) {
-						// skip the final NULL
-					} else {
-						result.add(s);
-					}
-				}
+                                ArrayList<String> result = new ArrayList<String>();
+                                int offset = 0;
+                                while (offset < byteData.size()) {
+                                        String s;
+                                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
+                                                s = byteData.getWideString(offset);
+                                                offset += s.length() * Native.WCHAR_SIZE;
+                                                offset += Native.WCHAR_SIZE;
+                                        } else {
+                                                s = byteData.getString(offset);
+                                                offset += s.length();
+                                                offset += 1;
+                                        }
+
+                                        if (s.length() == 0) {
+                                                // A sequence of null-terminated strings,
+                                                // terminated by an empty string (\0).
+                                                // => The first empty string terminates the 
+                                                break;
+                                        } else {
+                                                result.add(s);
+                                        }
+                                }
 				keyValues.put(nameString, result.toArray(new String[0]));
 				break;
 			}

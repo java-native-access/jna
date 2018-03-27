@@ -976,11 +976,20 @@ public interface Advapi32 extends StdCallLibrary {
      *         defined in Winerror.h.
      */
     int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
+                  int dwType, Pointer lpData, int cbData);
+
+    /**
+     * See {@link #RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, com.sun.jna.Pointer, int) }
+     */
+    int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
                       int dwType, char[] lpData, int cbData);
 
+    /**
+     * See {@link #RegSetValueEx(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, int, int, com.sun.jna.Pointer, int) }
+     */
     int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
                       int dwType, byte[] lpData, int cbData);
-
+    
     /**
      *
      * @param hKey registry key
@@ -1100,6 +1109,13 @@ public interface Advapi32 extends StdCallLibrary {
      * @return If the function succeeds, the return value is ERROR_SUCCESS. If
      *         the function fails, the return value is a nonzero error code
      *         defined in Winerror.h.
+     */
+    int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName,
+                     IntByReference lpcchValueName, IntByReference reserved,
+                     IntByReference lpType, Pointer lpData, IntByReference lpcbData);
+    
+    /**
+     * See {@link #RegEnumValue(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)}.
      */
     int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName,
                      IntByReference lpcchValueName, IntByReference reserved,
@@ -1295,9 +1311,16 @@ public interface Advapi32 extends StdCallLibrary {
      * @return status
      */
     int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
+                    int dwFlags, IntByReference pdwType, Pointer pvData,
+                    IntByReference pcbData);
+    
+    /**
+     * See {@link #RegGetValue(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)}.
+     */
+    int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
                     int dwFlags, IntByReference pdwType, byte[] pvData,
                     IntByReference pcbData);
-
+    
     /**
      * Retrieves a registered handle to the specified event log.
      *
