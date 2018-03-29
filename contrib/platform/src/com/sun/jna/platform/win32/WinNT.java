@@ -2565,11 +2565,16 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public ACL(Pointer pointer) {
+            this(pointer, false);
+        }
+
+        public ACL(Pointer pointer, boolean tolerateUnknownAceTypes) {
             super(pointer);
             read();
             ACEs = new ACCESS_ACEStructure[AceCount];
             int offset = size();
             for (int i = 0; i < AceCount; i++) {
+                short aceSize = 0;
                 Pointer share = pointer.share(offset);
                 // ACE_HEADER.AceType
                 final byte aceType = share.getByte(0);
@@ -2577,15 +2582,22 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
                 switch (aceType) {
                     case ACCESS_ALLOWED_ACE_TYPE:
                         ace = new ACCESS_ALLOWED_ACE(share);
+                        aceSize = ace.AceSize;
                         break;
                     case ACCESS_DENIED_ACE_TYPE:
                         ace = new ACCESS_DENIED_ACE(share);
+                        aceSize = ace.AceSize;
                         break;
                     default:
-                        throw new IllegalArgumentException("Unknown ACE type " + aceType);
+                        if (! tolerateUnknownAceTypes) {
+                            throw new IllegalArgumentException("Unknown ACE type " + aceType);
+                        }
+                        ace = null;
+                        aceSize = (new ACCESS_DENIED_ACE(share)).AceSize;
+                        break;
                 }
                 ACEs[i] = ace;
-                offset += ace.AceSize;
+                offset += aceSize;
             }
         }
 
