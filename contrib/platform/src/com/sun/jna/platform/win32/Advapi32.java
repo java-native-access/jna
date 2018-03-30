@@ -878,8 +878,15 @@ public interface Advapi32 extends StdCallLibrary {
      *            identifying the predefined handle on the remote computer.
      * @return If the function succeeds, the return value is
      *         {@link WinError#ERROR_SUCCESS}.<br />
-     *         If the function fails, the return value is a nonzero error code
-     *         defined in Winerror.h. You can use the
+     *         If the remote computer cannot be found or if its Remote Registry
+     *         service is disabled, the function fails and returns 
+     *         {@link WinError#ERROR_BAD_NETPATH}.<br />
+     *         If attempting to use a registry handle other than one of the
+     *         three predefined handles, the function fails and returns
+     *         {@link WinError#ERROR_INVALID_HANDLE}.<br />
+     *         If access to the registry is denied, the function fails and
+     *         returns {@link WinError#ERROR_ACCESS_DENIED}. <br />
+     *         If the function fails for some other reason, you can use the
      *         {@link Native#getLastError} method to get a generic description
      *         of the error.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms724840.aspx">RegConnectRegistry function (Windows)</a>
