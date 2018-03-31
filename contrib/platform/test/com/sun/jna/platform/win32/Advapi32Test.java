@@ -493,6 +493,26 @@ public class Advapi32Test extends TestCase {
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
 
+    public void testRegConnectRegistry() {
+    	HKEYByReference phkResult = new HKEYByReference();
+    	int connectResult = Advapi32.INSTANCE.RegConnectRegistry(
+    			"\\\\localhost", WinReg.HKEY_LOCAL_MACHINE, phkResult);
+    
+    	if (connectResult == W32Errors.ERROR_BAD_NETPATH) {
+    		System.err.println("Failed to connect to registry with RegConnectRegistry, remote registry service is probably disabled");
+    		return;
+    	}
+    
+    	if (connectResult == W32Errors.ERROR_ACCESS_DENIED) {
+    		System.err.println("Access was denied when connecting to registry with RegConnectRegistry");
+    		return;
+    	}
+    
+    	assertEquals(W32Errors.ERROR_SUCCESS, connectResult);
+    	assertTrue(WinBase.INVALID_HANDLE_VALUE != phkResult.getValue());
+    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phkResult.getValue()));
+    }
+
     public void testRegQueryValueEx() {
     	HKEYByReference phKey = new HKEYByReference();
     	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
