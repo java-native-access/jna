@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -2553,8 +2554,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public short AceCount;
         public short Sbz2;
 
-        private ACCESS_ACEStructure[] ACEs;
-
         public ACL() {
             super();
         }
@@ -2565,44 +2564,44 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public ACL(Pointer pointer) {
-            this(pointer, false);
-        }
-
-        public ACL(Pointer pointer, boolean tolerateUnknownAceTypes) {
             super(pointer);
             read();
-            ACEs = new ACCESS_ACEStructure[AceCount];
-            int offset = size();
-            for (int i = 0; i < AceCount; i++) {
-                short aceSize = 0;
-                Pointer share = pointer.share(offset);
-                // ACE_HEADER.AceType
-                final byte aceType = share.getByte(0);
-                ACCESS_ACEStructure ace;
-                switch (aceType) {
-                    case ACCESS_ALLOWED_ACE_TYPE:
-                        ace = new ACCESS_ALLOWED_ACE(share);
-                        aceSize = ace.AceSize;
-                        break;
-                    case ACCESS_DENIED_ACE_TYPE:
-                        ace = new ACCESS_DENIED_ACE(share);
-                        aceSize = ace.AceSize;
-                        break;
-                    default:
-                        if (! tolerateUnknownAceTypes) {
-                            throw new IllegalArgumentException("Unknown ACE type " + aceType);
-                        }
-                        ace = null;
-                        aceSize = (new ACCESS_DENIED_ACE(share)).AceSize;
-                        break;
-                }
-                ACEs[i] = ace;
-                offset += aceSize;
-            }
         }
 
         public ACCESS_ACEStructure[] getACEStructures() {
-            return ACEs;
+            return getACEStructures(true);
+        }
+
+        public ACCESS_ACEStructure[] getACEStructures(boolean tolerateUnknownAceTypes) {
+            final List<ACCESS_ACEStructure> ACEs = new ArrayList<ACCESS_ACEStructure>(AceCount);
+            final Pointer pointer = this.getPointer();
+            int offset = size();
+            for (int i = 0; i < AceCount; i++) {
+                final Pointer share = pointer.share(offset);
+                final byte aceType = share.getByte(0); // ACE_HEADER.AceType
+                final short aceSize;
+                switch (aceType) {
+                    case ACCESS_ALLOWED_ACE_TYPE:
+                        final ACCESS_ALLOWED_ACE allowedAce = new ACCESS_ALLOWED_ACE(share);
+                        aceSize = allowedAce.AceSize;
+                        ACEs.add(allowedAce);
+                        break;
+                    case ACCESS_DENIED_ACE_TYPE:
+                        final ACCESS_DENIED_ACE deniedAce = new ACCESS_DENIED_ACE(share);
+                        aceSize = deniedAce.AceSize;
+                        ACEs.add(deniedAce);
+                        break;
+                    default:
+                        if (! tolerateUnknownAceTypes) {
+                            throw new IllegalStateException("Unknown ACE type " + aceType);
+                        }
+                        final ACE_HEADER aceHeader = new ACE_HEADER(share);
+                        aceSize = aceHeader.AceSize;
+                        break;
+                }
+                offset += aceSize;
+            }
+            return ACEs.toArray(new ACCESS_ACEStructure[ACEs.size()]);
         }
 
         @Override
