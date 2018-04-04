@@ -2569,7 +2569,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public ACCESS_ACEStructure[] getACEStructures() {
-            return getACEStructures(true);
+            return getACEStructures(false);
         }
 
         public ACCESS_ACEStructure[] getACEStructures(boolean tolerateUnknownAceTypes) {
