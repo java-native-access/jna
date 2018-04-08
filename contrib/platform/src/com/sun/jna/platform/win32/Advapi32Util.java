@@ -72,6 +72,7 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.ULONGByReference;
 import com.sun.jna.platform.win32.WinNT.ACCESS_ACEStructure;
 import com.sun.jna.platform.win32.WinNT.ACCESS_ALLOWED_ACE;
+import com.sun.jna.platform.win32.WinNT.ACE_HEADER;
 import com.sun.jna.platform.win32.WinNT.ACL;
 import com.sun.jna.platform.win32.WinNT.EVENTLOGRECORD;
 import com.sun.jna.platform.win32.WinNT.GENERIC_MAPPING;
@@ -91,6 +92,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APITypeMapper;
+import java.util.List;
 
 /**
  * Advapi32 utility API.
@@ -2200,7 +2202,12 @@ public abstract class Advapi32Util {
 		}
 	}
 
-	public static ACCESS_ACEStructure[] getFileSecurity(String fileName,
+        /**
+         * @param fileName path to the file
+         * @param compact if true compatible ACEs are merged if possible
+         * @return
+         */
+	public static ACE_HEADER[] getFileSecurity(String fileName,
 			boolean compact) {
 		int infoType = WinNT.DACL_SECURITY_INFORMATION;
 		int nLength = 1024;
@@ -2231,29 +2238,35 @@ public abstract class Advapi32Util {
 
 		SECURITY_DESCRIPTOR_RELATIVE sdr = new WinNT.SECURITY_DESCRIPTOR_RELATIVE(
 				memory);
-		memory.clear();
 		ACL dacl = sdr.getDiscretionaryACL();
-		ACCESS_ACEStructure[] aceStructures = dacl.getACEStructures();
+		ACE_HEADER[] aceStructures = dacl.getACEs();
 
 		if (compact) {
+                        List<ACE_HEADER> result = new ArrayList<ACE_HEADER>();
 			Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
-			for (ACCESS_ACEStructure aceStructure : aceStructures) {
-				boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
-				String key = aceStructure.getSidString() + "/" + inherted + "/"
-						+ aceStructure.getClass().getName();
-				ACCESS_ACEStructure aceStructure2 = aceMap.get(key);
-				if (aceStructure2 != null) {
-					int accessMask = aceStructure2.Mask;
-					accessMask = accessMask | aceStructure.Mask;
-					aceStructure2.Mask = accessMask;
-				} else {
-					aceMap.put(key, aceStructure);
-				}
+			for (ACE_HEADER aceStructure : aceStructures) {
+                                if(aceStructure instanceof ACCESS_ACEStructure) {
+                                        ACCESS_ACEStructure accessACEStructure = (ACCESS_ACEStructure) aceStructure;
+                                        boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
+                                        String key = accessACEStructure.getSidString() + "/" + inherted + "/"
+                                                        + aceStructure.getClass().getName();
+                                        ACCESS_ACEStructure aceStructure2 = aceMap.get(key);
+                                        if (aceStructure2 != null) {
+                                                int accessMask = aceStructure2.Mask;
+                                                accessMask = accessMask | accessACEStructure.Mask;
+                                                aceStructure2.Mask = accessMask;
+                                        } else {
+                                                aceMap.put(key, accessACEStructure);
+                                                result.add(aceStructure2);
+                                        }
+                                } else {
+                                        result.add(aceStructure);
+                                }
 			}
-			return aceMap.values().toArray(
-					new ACCESS_ACEStructure[aceMap.size()]);
+			return result.toArray(new ACE_HEADER[result.size()]);
 		}
-		return aceStructures;
+
+                return aceStructures;
 	}
 
     public static enum AccessCheckPermission {

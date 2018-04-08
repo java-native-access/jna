@@ -15,6 +15,7 @@ Features
 * [#797](https://github.com/java-native-access/jna/issues/797): Binding `Advapi32#EnumDependendServices`, `Advapi32#EnumServicesStatusEx` and `Advapi32#QueryServiceStatus`. `W32Service#stopService` was modified to be more resilent when stopping service - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * Bind `com.sun.jna.platform.win32.Kernel32.ExpandEnvironmentStrings` and add helper method for it as `Kernel32Util#expandEnvironmentStrings` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#935](https://github.com/java-native-access/jna/pull/935): Add RegConnectRegistry to Advapi32 mappings. - [@cxcorp](https://github.com/cxcorp).
+* [#947](https://github.com/java-native-access/jna/pull/947):  Allow retrieval of `ACEs` from `com.sun.jna.platform.win32.WinNT.ACL` even if the contained `ACE` is not currently supported - [@jrobhoward](https://github.com/jrobhoward).
 
 Bug Fixes
 ---------
@@ -84,6 +85,14 @@ Breaking Changes
   was changed from `PointerByReference` to `STRRET` and matching this,
   the first parameter of `com.sun.jna.platform.win32.Shlwapi.StrRetToStr` was
   changed identically.
+* `ACE_HEADER` replaces `ACEStructure` as the base class for `ACEs`.
+  `com.sun.jna.platform.win32.WinNT.ACL` was modified to support ACLS, that contain
+  `ACEs` other than `ACCESS_ALLOWED_ACE_TYPE` and `ACCESS_DENIED_ACE_TYPE` by
+   widening the return type of `getACEStructures` to `ACE_HEADER[]` and renaming
+   the method to `getACEs`. In
+   consequence `com.sun.jna.platform.win32.Advapi32Util#getFileSecurity` was
+   changed similarly. The SID accessors `getSidString` and `getSID` were moved
+   from `ACEStructure` to `ACCESS_ACEStructure`.
 
 Release 4.5.0
 =============
