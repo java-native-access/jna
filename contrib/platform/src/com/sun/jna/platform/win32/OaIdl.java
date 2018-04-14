@@ -26,6 +26,7 @@ import java.util.List;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -288,7 +289,7 @@ public interface OaIdl {
             return FIELDS;
         }
     }
-
+    
     /**
      * The Class DISPID.
      */
@@ -631,7 +632,7 @@ public interface OaIdl {
          * @param size array of dimension size
          * @return SAFEARRAYWrapper or {@code NULL} if creation fails.
          */
-        public static SAFEARRAY createSafeArray(int... size) {
+        public static SAFEARRAY.ByReference createSafeArray(int... size) {
             return createSafeArray(new WTypes.VARTYPE(Variant.VT_VARIANT), size);
         }
  
@@ -647,7 +648,7 @@ public interface OaIdl {
          * @param size array of dimension size
          * @return SAFEARRAYWrapper or {@code NULL} if creation fails.
          */
-        public static SAFEARRAY createSafeArray(VARTYPE vartype, int... size) {
+        public static SAFEARRAY.ByReference createSafeArray(VARTYPE vartype, int... size) {
             OaIdl.SAFEARRAYBOUND[] rgsabound = (OaIdl.SAFEARRAYBOUND[]) new OaIdl.SAFEARRAYBOUND().toArray(size.length);
             for (int i = 0; i < size.length; i++) {
                 rgsabound[i].lLbound = new WinDef.LONG(0);
@@ -1039,6 +1040,30 @@ public interface OaIdl {
          */
         public long getElemsize() {
             return OleAuto.INSTANCE.SafeArrayGetElemsize(this).longValue();
+        }
+    }
+
+    public static class SAFEARRAYByReference extends Structure implements Structure.ByReference {
+
+        public SAFEARRAYByReference() {
+        }
+
+        public SAFEARRAYByReference(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public SAFEARRAYByReference(SAFEARRAY.ByReference safeArray) {
+            pSAFEARRAY = safeArray;
+        }
+
+        public static final List<String> FIELDS = createFieldsOrder("pSAFEARRAY");
+
+        public SAFEARRAY.ByReference pSAFEARRAY;
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
         }
     }
 
