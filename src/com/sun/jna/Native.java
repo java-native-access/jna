@@ -48,6 +48,8 @@ import java.net.URLClassLoader;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -107,7 +109,8 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native implements Version {
 
-    public static final String DEFAULT_ENCODING = Charset.defaultCharset().name();
+    public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
+    public static final String DEFAULT_ENCODING = Native.DEFAULT_CHARSET.name();
     public static boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
     public static boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
 
@@ -347,6 +350,35 @@ public final class Native implements Version {
     private static native long _getDirectBufferPointer(Buffer b);
 
     /**
+     * Gets the charset belonging to the given {@code encoding}.
+     * @param encoding The encoding - if {@code null} then the default platform
+     * encoding is used.
+     * @return The charset belonging to the given {@code encoding} or the platform default.
+     * Never {@code null}.
+     */
+    private static Charset getCharset(String encoding) {
+        Charset charset = null;
+        if (encoding != null) {
+            try {
+                charset = Charset.forName(encoding);
+            }
+            catch(IllegalCharsetNameException e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported (" + e.getMessage() + ")");
+            }
+            catch(UnsupportedCharsetException  e) {
+                System.err.println("JNA Warning: Encoding '"
+                                   + encoding + "' is unsupported (" + e.getMessage() + ")");
+            }
+        }
+        if (charset == null) {
+            System.err.println("JNA Warning: Using fallback encoding " + System.getProperty("file.encoding"));
+            charset = Native.DEFAULT_CHARSET;
+        }
+        return charset;
+    }
+
+    /**
      * Obtain a Java String from the given native byte array.  If there is
      * no NUL terminator, the String will comprise the entire array.  The
      * encoding is obtained from {@link #getDefaultStringEncoding()}.
@@ -367,11 +399,27 @@ public final class Native implements Version {
      * holds a {@code char} array. This means only single-byte encodings are
      * supported.</p>
      * 
-     * @param buf The buffer containing the encoded bytes
+     * @param buf The buffer containing the encoded bytes.  Must not be {@code null}.
      * @param encoding The encoding name - if {@code null} then the platform
      * default encoding will be used
      */
     public static String toString(byte[] buf, String encoding) {
+        return Native.toString(buf, Native.getCharset(encoding));
+    }
+
+    /**
+     * Obtain a Java String from the given native byte array, using the given
+     * encoding.  If there is no NUL terminator, the String will comprise the
+     * entire array.
+     *
+     * <p><strong>Usage note</strong>: This function assumes, that {@code buf}
+     * holds a {@code char} array. This means only single-byte encodings are
+     * supported.</p>
+     * 
+     * @param buf The buffer containing the encoded bytes. Must not be {@code null}.
+     * @param charset The charset to decode {@code buf}. Must not be {@code null}.
+     */
+    public static String toString(byte[] buf, Charset charset) {
         int len = buf.length;
         // find out the effective length
         for (int index = 0; index < len; index++) {
@@ -385,18 +433,7 @@ public final class Native implements Version {
             return "";
         }
 
-        if (encoding != null) {
-            try {
-                return new String(buf, 0, len, encoding);
-            }
-            catch(UnsupportedEncodingException e) {
-                System.err.println("JNA Warning: Encoding '"
-                                   + encoding + "' is unsupported");
-            }
-        }
-
-        System.err.println("JNA Warning: Decoding with fallback " + System.getProperty("file.encoding"));
-        return new String(buf, 0, len);
+        return new String(buf, 0, len, charset);
     }
 
     /**
@@ -744,7 +781,7 @@ public final class Native implements Version {
     }
 
     /**
-     * @param s The string
+     * @param s The string. Must not be {@code null}.
      * @param encoding The encoding - if {@code null} then the default platform
      * encoding is used
      * @return A byte array corresponding to the given String, using the given
@@ -752,18 +789,17 @@ public final class Native implements Version {
      * encoding.
     */
     static byte[] getBytes(String s, String encoding) {
-        if (encoding != null) {
-            try {
-                return s.getBytes(encoding);
-            }
-            catch(UnsupportedEncodingException e) {
-                System.err.println("JNA Warning: Encoding '"
-                                   + encoding + "' is unsupported");
-            }
-        }
-        System.err.println("JNA Warning: Encoding with fallback "
-                           + System.getProperty("file.encoding"));
-        return s.getBytes();
+        return Native.getBytes(s, Native.getCharset(encoding));
+    }
+
+    /**
+     * @param s The string. Must not be {@code null}.
+     * @param charset The charset used to encode {@code s}. Must not be {@code null}.
+     * @return A byte array corresponding to the given String, using the given
+     * charset.
+    */
+    static byte[] getBytes(String s, Charset charset) {
+        return s.getBytes(charset);
     }
 
     /**
@@ -777,13 +813,26 @@ public final class Native implements Version {
     }
 
     /**
-     * @param s The string
+     * @param s The string. Must not be {@code null}.
+     * @param encoding The encoding - if {@code null} then the default platform
+     * encoding is used
      * @return A NUL-terminated byte buffer equivalent to the given String,
      * using the given encoding.
      * @see #getBytes(String, String)
      */
     public static byte[] toByteArray(String s, String encoding) {
-        byte[] bytes = getBytes(s, encoding);
+        return Native.toByteArray(s, Native.getCharset(encoding));
+    }
+
+    /**
+     * @param s The string. Must not be {@code null}.
+     * @param charset The charset used to encode {@code s}. Must not be {@code null}.
+     * @return A NUL-terminated byte buffer equivalent to the given String,
+     * using the given charset.
+     * @see #getBytes(String, String)
+     */
+    public static byte[] toByteArray(String s, Charset charset) {
+        byte[] bytes = Native.getBytes(s, charset);
         byte[] buf = new byte[bytes.length+1];
         System.arraycopy(bytes, 0, buf, 0, bytes.length);
         return buf;

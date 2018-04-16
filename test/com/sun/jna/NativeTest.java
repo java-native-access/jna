@@ -391,6 +391,15 @@ public class NativeTest extends TestCase {
         assertEquals("Wrong byte array contents", VALUE, new String(buf, 0, buf.length-1, ENCODING));
     }
 
+    public void testToByteArrayWithCharset() throws Exception {
+        final Charset CHARSET = Charset.forName("UTF-8");
+        final String VALUE = getName() + UNICODE;
+        byte[] buf = Native.toByteArray(VALUE, CHARSET);
+        assertEquals("Wrong byte array length", VALUE.getBytes(CHARSET).length+1, buf.length);
+        assertEquals("Missing NUL terminator", (byte)0, buf[buf.length-1]);
+        assertEquals("Wrong byte array contents", VALUE, new String(buf, 0, buf.length-1, CHARSET));
+    }
+
     public void testToCharArray() {
         final String VALUE = getName() + UNICODE;
         char[] buf = Native.toCharArray(VALUE);
@@ -443,6 +452,12 @@ public class NativeTest extends TestCase {
         assertEquals("Encoded C string improperly converted", getName() + UNICODE, Native.toString(buf, "utf8"));
     }
 
+    public void testStringConversionWithCharset() throws Exception {
+        final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+        byte[] buf = (getName() + UNICODE + NUL).getBytes(CHARSET_UTF8);
+        assertEquals("Encoded C string improperly converted", getName() + UNICODE, Native.toString(buf, CHARSET_UTF8));
+    }
+
     public void testWideStringConversion() {
         char[] buf = (getName() + NUL).toCharArray();
         assertEquals("Wide C string improperly converted", getName(), Native.toString(buf));
@@ -451,6 +466,12 @@ public class NativeTest extends TestCase {
     public void testGetBytes() throws Exception {
         byte[] buf = Native.getBytes(getName() + UNICODE, "utf8");
         assertEquals("Incorrect native bytes from Java String", getName() + UNICODE, new String(buf, "utf8"));
+    }
+
+    public void testGetBytesWithCharset() throws Exception {
+        final Charset CHARSET_UTF8 = Charset.forName("UTF-8");
+        byte[] buf = Native.getBytes(getName() + UNICODE, CHARSET_UTF8);
+        assertEquals("Incorrect native bytes from Java String", getName() + UNICODE, new String(buf, CHARSET_UTF8));
     }
 
     public void testGetBytesBadEncoding() throws Exception {
