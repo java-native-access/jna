@@ -154,8 +154,17 @@ public class ProxyObjectFactory_Test {
             assertNotNull("fetchObject on a non-running Object must raise an exception", exceptionRaised);
             assertEquals("Unexpected error code", exceptionRaised.getHresult().intValue(), WinError.MK_E_UNAVAILABLE);
             assertTrue("Error code not matched", exceptionRaised.matchesErrorCode(WinError.MK_E_UNAVAILABLE));
+            boolean callingMethodPartOfStackTrace = false;
+            for(StackTraceElement ste: exceptionRaised.getStackTrace()) {
+                if("testFetchNotExistingObject".equals(ste.getMethodName())
+                        && getClass().getName().equals(ste.getClassName())) {
+                    callingMethodPartOfStackTrace = true;
+                    break;
+                }
+            }
+            assertTrue("The calling method must be part of the reported stack trace", callingMethodPartOfStackTrace);
         }
-
+        
 	@Test
 	public void equals() {
 		MsWordApp comObj1 = this.factory.createObject(MsWordApp.class);

@@ -177,10 +177,12 @@ public class Factory extends ObjectFactory {
         } catch (ExecutionException ex) {
             Throwable cause = ex.getCause();
             if (cause instanceof RuntimeException) {
+                appendStacktrace(ex, cause);
                 throw (RuntimeException) cause;
             } else if (cause instanceof InvocationTargetException) {
                 cause = ((InvocationTargetException) cause).getTargetException();
                 if (cause instanceof RuntimeException) {
+                    appendStacktrace(ex, cause);
                     throw (RuntimeException) cause;
                 }
             }
@@ -188,6 +190,19 @@ public class Factory extends ObjectFactory {
         }
     }
 
+    /**
+     * Append the stack trace available via caughtException to the stack trace
+     * of toBeThrown. The combined stack trace is reassigned to toBeThrown
+     */
+    private static void appendStacktrace(Exception caughtException, Throwable toBeThrown) {
+        StackTraceElement[] upperTrace = caughtException.getStackTrace();
+        StackTraceElement[] lowerTrace = toBeThrown.getStackTrace();
+        StackTraceElement[] trace = new StackTraceElement[upperTrace.length + lowerTrace.length];
+        System.arraycopy(upperTrace, 0, trace, lowerTrace.length, upperTrace.length);
+        System.arraycopy(lowerTrace, 0, trace, 0, lowerTrace.length);
+        toBeThrown.setStackTrace(trace);
+    }
+    
     public ComThread getComThread() {
         return comThread;
     }
