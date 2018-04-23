@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -2553,8 +2554,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public short AceCount;
         public short Sbz2;
 
-        private ACCESS_ACEStructure[] ACEs;
-
         public ACL() {
             super();
         }
@@ -2567,29 +2566,37 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public ACL(Pointer pointer) {
             super(pointer);
             read();
-            ACEs = new ACCESS_ACEStructure[AceCount];
-            int offset = size();
-            for (int i = 0; i < AceCount; i++) {
-                Pointer share = pointer.share(offset);
-                // ACE_HEADER.AceType
-                final byte aceType = share.getByte(0);
-                ACCESS_ACEStructure ace;
-                switch (aceType) {
-                    case ACCESS_ALLOWED_ACE_TYPE:
-                        ace = new ACCESS_ALLOWED_ACE(share);
-                        break;
-                    case ACCESS_DENIED_ACE_TYPE:
-                        ace = new ACCESS_DENIED_ACE(share);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Unknown ACE type " + aceType);
-                }
-                ACEs[i] = ace;
-                offset += ace.AceSize;
-            }
         }
 
-        public ACCESS_ACEStructure[] getACEStructures() {
+        /**
+         * Extract the contained ACEs from the ACL.
+         * 
+         * <p>ACE types as decoded to their native JNA counterparts. ACE types,
+         * that are currently unsupported by JNA are returned as 
+         * {@link WinNT.ACE_HEADER} objects.</p>
+         * 
+         * @return array holding the contained ACEs
+         */
+        public ACE_HEADER[] getACEs() {
+            ACE_HEADER[] ACEs = new ACE_HEADER[AceCount];
+            final Pointer pointer = this.getPointer();
+            int offset = size();
+            for (int i = 0; i < AceCount; i++) {
+                final Pointer share = pointer.share(offset);
+                final byte aceType = share.getByte(0); // ACE_HEADER.AceType
+                switch (aceType) {
+                    case ACCESS_ALLOWED_ACE_TYPE:
+                        ACEs[i] = new ACCESS_ALLOWED_ACE(share);
+                        break;
+                    case ACCESS_DENIED_ACE_TYPE:
+                        ACEs[i] = new ACCESS_DENIED_ACE(share);
+                        break;
+                    default:
+                        ACEs[i] = new ACE_HEADER(share);
+                        break;
+                }
+                offset += ACEs[i].AceSize;
+            }
             return ACEs;
         }
 
@@ -2701,48 +2708,13 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
     }
 
-    public static abstract class ACEStructure extends Structure {
+    public static class ACE_HEADER extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("AceType", "AceFlags", "AceSize");
 
         public byte AceType;
         public byte AceFlags;
         public short AceSize;
 
-        PSID psid;
-
-        public ACEStructure() {
-            super();
-        }
-
-        public ACEStructure(Pointer p) {
-            super(p);
-        }
-
-        public ACEStructure(byte AceType, byte AceFlags, short AceSize, PSID psid) {
-            super();
-            this.AceType = AceType;
-            this.AceFlags = AceFlags;
-            this.AceSize = AceSize;
-            this.psid = psid;
-            write();
-        }
-
-        public String getSidString() {
-            return Advapi32Util.convertSidToStringSid(psid);
-        }
-
-        public PSID getSID() {
-            return psid;
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    }
-
-    /* ACE header */
-    public static class ACE_HEADER extends ACEStructure {
         public ACE_HEADER() {
             super();
         }
@@ -2751,13 +2723,26 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(p);
             read();
         }
-    }
 
+        public ACE_HEADER(byte AceType, byte AceFlags, short AceSize) {
+            super();
+            this.AceType = AceType;
+            this.AceFlags = AceFlags;
+            this.AceSize = AceSize;
+            write();
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
+    
     /**
      * ACCESS_ALLOWED_ACE and ACCESS_DENIED_ACE have the same structure layout
      */
-    public static abstract class ACCESS_ACEStructure extends ACEStructure {
-        public static final List<String> FIELDS = createFieldsOrder(ACEStructure.FIELDS, "Mask", "SidStart");
+    public static abstract class ACCESS_ACEStructure extends ACE_HEADER {
+        public static final List<String> FIELDS = createFieldsOrder(ACE_HEADER.FIELDS, "Mask", "SidStart");
 
         public int Mask;
         /**
@@ -2765,6 +2750,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * Only used to have a valid field defined - use sid!
          */
         public byte[] SidStart = new byte[4];
+
+        PSID psid;
 
         public ACCESS_ACEStructure() {
             super();
@@ -2786,6 +2773,14 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public ACCESS_ACEStructure(Pointer p) {
             super(p);
             read();
+        }
+
+        public String getSidString() {
+            return Advapi32Util.convertSidToStringSid(psid);
+        }
+
+        public PSID getSID() {
+            return psid;
         }
 
         /**
