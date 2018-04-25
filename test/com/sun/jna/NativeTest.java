@@ -294,10 +294,10 @@ public class NativeTest extends TestCase {
 
     @Native.LibraryConfig("testlib")
     public interface TestLoadLibrary_nameByConfig extends Library {
-        List<TestLoadLibraryWithConfig> instances = Arrays.asList(
+        List<TestLoadLibrary_nameByConfig> instances = Arrays.asList(
             Native.loadLibrary(), // this tests both interfaceClassByStack and nameByConfig
-            Native.loadLibrary(TestLoadLibraryWithConfig.class),
-            Native.loadLibrary(TestLoadLibraryWithConfig.class, new HashMap<String, Object>())
+            Native.loadLibrary(TestLoadLibrary_nameByConfig.class),
+            Native.loadLibrary(TestLoadLibrary_nameByConfig.class, new HashMap<String, Object>())
         );
 
         double returnDoubleArgument(double arg);
