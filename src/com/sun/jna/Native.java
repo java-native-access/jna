@@ -33,9 +33,15 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Array;
+import java.lang.ClassNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -509,6 +515,78 @@ public final class Native implements Version {
         return list;
     }
 
+    /**
+     * Used to decllare configurations on a librarry
+     * @author 26 Apr 2018 idosu
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface LibraryConfig {
+        /**
+         * An empty config
+         */
+        LibraryConfig NONE = (LibraryConfig)Proxy.newProxyInstance(LibraryConfig.class.getClassLoader(), new Class<?>[] { LibraryConfig.class }, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) {
+                return null;
+            }
+        });
+
+        /**
+         * name to use inside #loadLibrary(String)
+         * @return name
+         */
+        String value();
+    }
+
+    /**
+     * Gets the config for the class clazz
+     * @param clazz the class
+     * @return the LibraryConfig of the class or LibraryConfig.NONE if not avail
+     */
+    private static LibraryConfig LibraryConfig_forClass(Class<?> clazz) {
+        LibraryConfig config = clazz.getAnnotation(LibraryConfig.class);
+        return config != null ? config : LibraryConfig.NONE;
+    }
+
+    /**
+     * LibraryConfig_forClass(clazz).value()
+     */
+    private static String LibraryConfig_getName(Class<?> clazz) {
+        return LibraryConfig_forClass(clazz).value();
+    }
+
+    /** Gets the class of the method who called the method who called this method
+     * <pre><code>
+     * interface MyLib extends Library {
+     *     MyLib INSTANCE = Native.loadLibrary("mylib");
+     * }
+     *
+     * ... loadLibrary(...) {
+     *     getCallerClass() // this is MyLib.class
+     *     ...
+     * }
+     * </code></pre>
+     * @param <T> Type of expected class
+     * @return the class of the method who caled the method who called thuis method.
+     * @throws RuntimeException if could not find the caller class
+     * @author 26 Apr 2018 idosu
+     */
+    @SuppressWarnings("unchecked")
+    private static <T> Class<T> getCallerClass() {
+        // Gets the class name of the caller class
+        Exception e = new Exception();
+        // 0 - this, 1 - loadLibrary, 2 - caller
+        String callerName = e.getStackTrace()[2].getClassName();
+
+        try {
+            return (Class<T>)Class.forName(callerName);
+        } catch (ClassNotFoundException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
+
     /** Map a library interface to the current process, providing
      * the explicit interface class.
      * Native libraries loaded via this method may be found in
@@ -521,7 +599,7 @@ public final class Native implements Version {
      * dependent libraries are missing.
      */
     public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
-        return loadLibrary(null, interfaceClass);
+        return loadLibrary(LibraryConfig_getName(interfaceClass), interfaceClass);
     }
 
     /** Map a library interface to the current process, providing
@@ -540,7 +618,64 @@ public final class Native implements Version {
      * @see #loadLibrary(String, Class, Map)
      */
     public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map<String, ?> options) {
-        return loadLibrary(null, interfaceClass, options);
+        return loadLibrary(LibraryConfig_getName(interfaceClass), interfaceClass, options);
+    }
+
+    /** Map a library interface to the given shared library, providing
+     * the explicit interface class.
+     * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
+     * <pre><code>
+     * // How to use
+     * {@literal @}LibraryConfig("mylib")
+     * public interface MyLib extends Library {
+     *     // use
+     *     MyLib INSTANCE = Native.loadLibrary();
+     *     // instead of
+     *     // MyLib INSTANCE = Native.loadLibrary("mylib", MyLib.class);
+     * }
+     * </code></pre>
+     * @param <T> Type of expected wrapper
+     * @param name Library base name
+     * @return an instance of the requested interface, mapped to the indicated
+     * native library.
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
+     * @throws RuntimeException if could not find the caller class
+     * @see #loadLibrary(String, Class)
+     * @author 25 Apr 2018 idosu
+     */
+    public static <T extends Library> T loadLibrary() {
+        return loadLibrary(Native.<T>getCallerClass());
+    }
+
+    /** Map a library interface to the given shared library, providing
+     * the explicit interface class.
+     * If <code>name</code> is null, attempts to map onto the current process.
+     * Native libraries loaded via this method may be found in
+     * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
+     * <pre><code>
+     * // How to use
+     * public interface MyLib extends Library {
+     *     // use
+     *     MyLib INSTANCE = Native.loadLibrary("mylib");
+     *     // instead of
+     *     // MyLib INSTANCE = Native.loadLibrary("mylib", MyLib.class);
+     * }
+     * </code></pre>
+     * @param <T> Type of expected wrapper
+     * @param name Library base name
+     * @return an instance of the requested interface, mapped to the indicated
+     * native library.
+     * @throws UnsatisfiedLinkError if the library cannot be found or
+     * dependent libraries are missing.
+     * @throws RuntimeException if could not find the caller class
+     * @see #loadLibrary(String, Class)
+     * @author 25 Apr 2018 idosu
+     */
+    public static <T extends Library> T loadLibrary(String name) {
+        return loadLibrary(name, Native.<T>getCallerClass());
     }
 
     /** Map a library interface to the given shared library, providing
