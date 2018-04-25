@@ -30,6 +30,18 @@ Bug Fixes
 * [#894](https://github.com/java-native-access/jna/issues/894): NullPointerException can be caused by calling `com.sun.jna.platform.win32.COM.util.ProxyObject#dispose` multiple times - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#925](https://github.com/java-native-access/jna/issues/925): Optimize `Structure#validate` and prevent `ArrayIndexOutOfBoundsException` in `SAFEARRAY#read` for zero dimensions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#340](https://github.com/java-native-access/jna/issues/340): Guard registry handling against out-of-bounds reads by ensuring all read strings are NULL terminated - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#902](https://github.com/java-native-access/jna/issues/902): Allow building JNA on JDK 10. `javah` 
+  was removed from the JDK and `javac` is now used to create the necessary headers. 
+  JNA now has JDK 8 as the minimum build version, at runtime Java 6 is the minimum version.<br />
+  Native code for platforms with a JDK version lower than 8 can still be build by (demonstrated for Solaris x86): 
+  <ol>
+      <li>Run `ant -Dbuild.os.name=SunOS -Dbuild.os.arch=x86 native-build-package`</li>
+      <li>Transfer the `build/build-package-sunos-x86-5.2.1.zip` file to the target system. The file holds the native sources, the necessary headers and and a shell script for the build.</li>
+      <li>Expand the zip on the target system.</li>
+      <li>Setup `JAVA_HOME` to point to the JDK sources.</li>
+      <li>Change into the expanded directory and run `bash build.sh`.</li>
+      <li>The resulting `sunos-x86.jar` is copied back to the original build system to `lib/native/sunos-x86.jar`</li>
+  </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------

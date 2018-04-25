@@ -336,7 +336,9 @@ endif
 ifeq ($(CC),gcc)
     GCC_MAJOR_VERSION = $(shell gcc -dumpversion | cut -f 1 -d '.')
     ifneq ($(GCC_MAJOR_VERSION),4)
-	LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+	ifneq ($(GCC_MAJOR_VERSION),3)
+	    LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
+	endif
     endif
 else
     LOC_CC_OPTS=-Wno-unknown-warning-option -Werror -Wno-clobbered -Wno-unused-variable
@@ -478,7 +480,7 @@ $(FFI_LIB):
 	@mkdir -p $(FFI_BUILD)
 	@if [ ! -f $(FFI_SRC)/configure ]; then \
 	  echo "Generating configure"; \
-	  (cd $(FFI_SRC); ./autogen.sh); \
+	  (cd $(FFI_SRC); /bin/sh autogen.sh); \
 	fi
 	@if [ ! -f $(FFI_BUILD)/Makefile ]; then \
 	  echo "Configuring libffi ($(ARCH))"; \

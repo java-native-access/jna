@@ -60,17 +60,23 @@ public class Function extends Pointer {
     }
 
     /** Maximum number of arguments supported by a JNA function call. */
+    @java.lang.annotation.Native
     public static final int MAX_NARGS = 256;
 
     /** Standard C calling convention. */
+    @java.lang.annotation.Native
     public static final int C_CONVENTION = 0;
     /** First alternate convention (currently used only for w32 stdcall). */
+    @java.lang.annotation.Native
     public static final int ALT_CONVENTION = 0x3F;
 
+    @java.lang.annotation.Native
     private static final int MASK_CC = 0x3F;
     /** Whether to throw an exception if last error is non-zero after call. */
+    @java.lang.annotation.Native
     public static final int THROW_LAST_ERROR = 0x40;
     /** Mask for number of fixed args (1-3) for varargs calls. */
+    @java.lang.annotation.Native
     public static final int USE_VARARGS = 0x180;
 
     static final Integer INTEGER_TRUE = Integer.valueOf(-1);
