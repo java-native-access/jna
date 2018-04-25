@@ -297,7 +297,7 @@ public class NativeTest extends TestCase {
         List<TestLoadLibraryWithConfig> instances = Arrays.asList(
             Native.loadLibrary(), // this tests both interfaceClassByStack and nameByConfig
             Native.loadLibrary(TestLoadLibraryWithConfig.class),
-            Native.loadLibrary(TestLoadLibraryWithConfig.class, new HashMap<>())
+            Native.loadLibrary(TestLoadLibraryWithConfig.class, new HashMap<String, Object>())
         );
 
         double returnDoubleArgument(double arg);
