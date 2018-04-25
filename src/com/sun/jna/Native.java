@@ -526,7 +526,7 @@ public final class Native implements Version {
         /**
          * An empty config
          */
-        LibraryConfig NONE = (LibraryConfig)Proxy.newProxyInstance(System.class.getClassLoader(), new Class<?>[] { LibraryConfig.class }, new InvocationHandler() {
+        LibraryConfig NONE = (LibraryConfig)Proxy.newProxyInstance(LibraryConfig.class.getClassLoader(), new Class<?>[] { LibraryConfig.class }, new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) {
                 return null;
