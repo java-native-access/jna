@@ -279,23 +279,23 @@ public class NativeTest extends TestCase {
     }
 
     public interface TestLoadLibrary_interfaceClassByStack extends Library {
-        TestLoadLibraryOnlyName INSTANCE = Native.loadLibrary("testlib");
+        TestLoadLibrary_interfaceClassByStack INSTANCE = Native.loadLibrary("testlib");
 
         double returnDoubleArgument(double arg);
     }
     public void testLoadLibrary_interfaceClassByStack() {
         double arg = Math.random();
         assertEquals(
-            "calling returnInt32Argument with " + arg + " failed",
+            "calling returnDoubleArgument with " + arg + " failed",
             arg,
-            TestLoadLibrary_interfaceClassByStack.INSTANCE.returnInt32Argument(arg)
+            TestLoadLibrary_interfaceClassByStack.INSTANCE.returnDoubleArgument(arg)
         );
     }
 
     @Native.LibraryConfig("testlib")
     public interface TestLoadLibrary_nameByConfig extends Library {
         List<TestLoadLibrary_nameByConfig> instances = Arrays.asList(
-            Native.loadLibrary(), // this tests both interfaceClassByStack and nameByConfig
+            Native.<TestLoadLibrary_nameByConfig>loadLibrary(), // this tests both interfaceClassByStack and nameByConfig
             Native.loadLibrary(TestLoadLibrary_nameByConfig.class),
             Native.loadLibrary(TestLoadLibrary_nameByConfig.class, new HashMap<String, Object>())
         );
@@ -303,12 +303,12 @@ public class NativeTest extends TestCase {
         double returnDoubleArgument(double arg);
     }
     public void testLoadLibrary_nameByConfig() {
-        for (TestLoadLibrary_nameByConfig test : TestLoadLibraryWithConfig.instances) {
+        for (TestLoadLibrary_nameByConfig test : TestLoadLibrary_nameByConfig.instances) {
             double arg = Math.random();
             assertEquals(
-                "calling returnInt32Argument with " + arg + " failed",
+                "calling returnDoubleArgument with " + arg + " failed",
                 arg,
-                test.returnInt32Argument(arg)
+                test.returnDoubleArgument(arg)
             );
         }
     }
