@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 
 import junit.framework.TestCase;
 
@@ -266,14 +267,49 @@ public class NativeTest extends TestCase {
         String[] desc = { "interface", "structure from interface" };
         for (int i=0;i < classes.length;i++) {
             assertEquals("Wrong type mapper found for " + desc[i],
-                         TestInterfaceWithInstance.TEST_MAPPER,
-                         Native.getTypeMapper(classes[i]));
+                    TestInterfaceWithInstance.TEST_MAPPER,
+                    Native.getTypeMapper(classes[i]));
             assertEquals("Wrong alignment found for " + desc[i],
-                         TestInterfaceWithInstance.TEST_ALIGNMENT,
-                         Native.getStructureAlignment(classes[i]));
+                    TestInterfaceWithInstance.TEST_ALIGNMENT,
+                    Native.getStructureAlignment(classes[i]));
             assertEquals("Wrong string encoding found for " + desc[i],
-                         TestInterfaceWithInstance.TEST_ENCODING,
-                         Native.getStringEncoding(classes[i]));
+                    TestInterfaceWithInstance.TEST_ENCODING,
+                    Native.getStringEncoding(classes[i]));
+        }
+    }
+
+    public interface TestLoadLibrary_interfaceClassByStack extends Library {
+        TestLoadLibraryOnlyName INSTANCE = Native.loadLibrary("testlib");
+
+        double returnDoubleArgument(double arg);
+    }
+    public void testLoadLibrary_interfaceClassByStack() {
+        double arg = Math.random();
+        assertEquals(
+            "calling returnInt32Argument with " + arg + " failed",
+            arg,
+            TestLoadLibrary_interfaceClassByStack.INSTANCE.returnInt32Argument(arg)
+        );
+    }
+
+    @Native.LibraryConfig("testlib")
+    public interface TestLoadLibrary_nameByConfig extends Library {
+        List<TestLoadLibraryWithConfig> instances = Arrays.asList(
+            Native.loadLibrary(), // this tests both interfaceClassByStack and nameByConfig
+            Native.loadLibrary(TestLoadLibraryWithConfig.class),
+            Native.loadLibrary(TestLoadLibraryWithConfig.class, new HashMap<>())
+        );
+
+        double returnDoubleArgument(double arg);
+    }
+    public void testLoadLibrary_nameByConfig() {
+        for (TestLoadLibrary_nameByConfig test : TestLoadLibraryWithConfig.instances) {
+            double arg = Math.random();
+            assertEquals(
+                "calling returnInt32Argument with " + arg + " failed",
+                arg,
+                test.returnInt32Argument(arg)
+            );
         }
     }
 
