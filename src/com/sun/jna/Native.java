@@ -628,7 +628,7 @@ public final class Native implements Version {
      * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
      * <pre><code>
      * // How to use
-     * {@literal @}Native.Library("mylib")
+     * {@literal @}LibraryConfig("mylib")
      * public interface MyLib extends Library {
      *     // use
      *     MyLib INSTANCE = Native.loadLibrary();
