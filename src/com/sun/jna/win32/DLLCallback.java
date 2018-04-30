@@ -33,5 +33,6 @@ import com.sun.jna.Callback;
  */
 public interface DLLCallback extends Callback {  
     /** Total number of DLL callbacks available for allocation. */
+    @java.lang.annotation.Native
     int DLL_FPTRS = 16;
 }
