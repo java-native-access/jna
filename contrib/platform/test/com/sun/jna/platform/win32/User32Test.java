@@ -59,12 +59,12 @@ public class User32Test extends AbstractWin32TestSupport {
     public static void main(String[] args) {
         JUnitCore.runClasses(User32Test.class);
     }
-    
+
     @Before
     public void setUp() {
         Native.setLastError(0);
     }
-    
+
     /**
      * Iterates over all currently available Desktop windows and searches for
      * the window with the associated process whose full PE file path ends with

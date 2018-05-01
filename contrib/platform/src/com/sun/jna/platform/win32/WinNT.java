@@ -2802,6 +2802,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         @Override
         public void read() {
+            if(SidStart == null) {
+                SidStart = new byte[4];
+            }
             super.read();
             int offsetOfSID = super.fieldOffset("SidStart");
             int sizeOfSID = super.AceSize - super.fieldOffset("SidStart");
