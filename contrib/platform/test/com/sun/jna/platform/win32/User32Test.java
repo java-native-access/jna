@@ -49,6 +49,7 @@ import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
+import org.junit.Before;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -57,6 +58,11 @@ public class User32Test extends AbstractWin32TestSupport {
 
     public static void main(String[] args) {
         JUnitCore.runClasses(User32Test.class);
+    }
+
+    @Before
+    public void setUp() {
+        Native.setLastError(0);
     }
 
     /**
@@ -339,7 +345,6 @@ public class User32Test extends AbstractWin32TestSupport {
     public void testIsWindow() {
         boolean iwResult = User32.INSTANCE.IsWindow(null);
         assertFalse("IsWindow result should be false", iwResult);
-        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
     }
     
     @Test
@@ -356,7 +361,6 @@ public class User32Test extends AbstractWin32TestSupport {
         
         HWND result = User32.INSTANCE.GetAncestor(desktopWindow, WinUser.GA_PARENT);
         assertNull("GetAncestor result should be null", result);
-        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
     }
     
     @Test
@@ -414,10 +418,8 @@ public class User32Test extends AbstractWin32TestSupport {
     
     @Test
     public void testGetActiveWindow() {
-        
         HWND result = User32.INSTANCE.GetActiveWindow();
-        assertNull("GetActiveWindow result should be null", result);
-        assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
+        assertNull("GetActiveWindow result should be null (there is no active window)", result);
     }
     
     @Test

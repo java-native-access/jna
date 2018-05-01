@@ -22,6 +22,7 @@
  */
 package com.sun.jna.platform.win32;
 
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Winsvc.HandlerEx;
 import com.sun.jna.platform.win32.Winsvc.SC_HANDLE;
@@ -33,7 +34,7 @@ import com.sun.jna.platform.win32.Winsvc.SERVICE_TABLE_ENTRY;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
+import java.security.ProtectionDomain;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
@@ -100,29 +101,27 @@ public class Win32ServiceDemo {
         // a) an URLClassLoader
         // b) holds all relevant dependencies
         String invocation;
-        ClassLoader cl = W32ServiceTest.class.getClassLoader();
-        if (cl instanceof URLClassLoader) {
-            StringBuilder sb = new StringBuilder();
-            for (URL u : ((URLClassLoader) cl).getURLs()) {
-                if ("file".equals(u.getProtocol())) {
-                    try {
-                        File f = new File(u.toURI());
-                        if (SUFFIXES.contains(f.getName())) {
-                            if (sb.length() != 0) {
-                                sb.append(";");
-                            }
-                            sb.append(f.getAbsolutePath());
+        StringBuilder sb = new StringBuilder();
+        for(Class c : new Class[]{W32ServiceTest.class,Native.class,W32Service.class}) {
+            ProtectionDomain pd = c.getProtectionDomain();
+            URL u = pd.getCodeSource().getLocation();
+
+            if ("file".equals(u.getProtocol())) {
+                try {
+                    File f = new File(u.toURI());
+                    if (SUFFIXES.contains(f.getName())) {
+                        if (sb.length() != 0) {
+                            sb.append(";");
                         }
-                    } catch (URISyntaxException ex) {
-                        Logger.getLogger(W32ServiceTest.class.getName()).log(Level.SEVERE, null, ex);
+                        sb.append(f.getAbsolutePath());
                     }
+                } catch (URISyntaxException ex) {
+                    Logger.getLogger(W32ServiceTest.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            invocation = String.format("java.exe -cp %s com.sun.jna.platform.win32.Win32ServiceDemo", sb.toString());
-            System.out.println("Invocation: " + invocation);
-        } else {
-            throw new IllegalStateException("Classloader loading Win32ServiceDemo must be an URLClassLoader");
         }
+        invocation = String.format("java.exe -cp %s com.sun.jna.platform.win32.Win32ServiceDemo", sb.toString());
+        System.out.println("Invocation: " + invocation);
 
         SERVICE_DESCRIPTION desc = new SERVICE_DESCRIPTION();
         desc.lpDescription = description;
