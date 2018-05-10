@@ -16,6 +16,7 @@ Features
 * Bind `com.sun.jna.platform.win32.Kernel32.ExpandEnvironmentStrings` and add helper method for it as `Kernel32Util#expandEnvironmentStrings` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#935](https://github.com/java-native-access/jna/pull/935): Add RegConnectRegistry to Advapi32 mappings. - [@cxcorp](https://github.com/cxcorp).
 * [#947](https://github.com/java-native-access/jna/pull/947):  Allow retrieval of `ACEs` from `com.sun.jna.platform.win32.WinNT.ACL` even if the contained `ACE` is not currently supported - [@jrobhoward](https://github.com/jrobhoward).
+* Add `c.s.j.Structure.FieldOrder` annotation to define the field order of a structures without implementing `Structure#getFieldOrder()` - [@idosu](https://github.com/idosu).
 
 Bug Fixes
 ---------

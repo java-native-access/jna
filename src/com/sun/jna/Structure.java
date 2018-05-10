@@ -23,6 +23,11 @@
  */
 package com.sun.jna;
 
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -38,6 +43,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,11 +72,12 @@ import java.util.WeakHashMap;
  * public.  If your structure is to have no fields of its own, it must be
  * declared abstract.
  * </p>
- * <p>You <em>must</em> define {@link #getFieldOrder} to return a List of
- * field names (Strings) indicating the proper order of the fields.  When
- * dealing with multiple levels of subclasses of Structure, you must add to
- * the list provided by the superclass {@link #getFieldOrder}
- * the fields defined in the current class.
+ * <p>You <em>must</em> annotate the class with {@link FieldOrder} or implement
+ * {@link #getFieldOrder}, whichever you choose it must contain the field names
+ * (Strings) indicating the proper order of the fields. If you chose to implement
+ * {@link #getFieldOrder} notice that when dealing with multiple levels of
+ * subclasses of Structure, you must add to the list provided by the superclass
+ * {@link #getFieldOrder} the fields defined in the current class.
  * </p>
  * <p>In the past, most VMs would return them in a predictable order, but the JVM
  * spec does not require it, so {@link #getFieldOrder} is now required to
@@ -865,20 +872,66 @@ public abstract class Structure {
         }
     }
 
-    /** Return this Structure's field names in their proper order.  For
-     * example,
+    /** Used to declare fields order as metadata instead of method.
+     * example:
      * <pre><code>
-     * protected List getFieldOrder() {
-     *     return Arrays.asList(new String[] { ... });
+     * // New
+     * {@literal @}FieldOrder({ "n", "s" })
+     * class Parent extends Structure {
+     *     public int n;
+     *     public String s;
+     * }
+     * {@literal @}FieldOrder({ "d", "c" })
+     * class Son extends Parent {
+     *     public double d;
+     *     public char c;
+     * }
+     * // Old
+     * class Parent extends Structure {
+     *     public int n;
+     *     public String s;
+     *     protected List<String> getFieldOrder() {
+     *         return Arrays.asList("n", "s");
+     *     }
+     * }
+     * class Son extends Parent {
+     *     public double d;
+     *     public char c;
+     *     protected List<String> getFieldOrder() {
+     *         List<String> fields = new LinkedList<String>(super.getFieldOrder());
+     *         fields.addAll(Arrays.asList("d", "c"));
+     *         return fields;
+     *     }
+     * }
+     * </code></pre>
+     */
+    @Documented
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.TYPE)
+    public @interface FieldOrder {
+        String[] value();
+    }
+
+    /** Returns this Structure's field names in their proper order.<br>
+     * 
+     * When defining a new {@link Structure} you shouldn't override this
+     * method, but use {@link FieldOrder} annotation to define your field
+     * order(this also works with inheritance)<br>
+     * 
+     * If you want to do something non-standard you can override the method
+     * and define it as followed
+     * <pre><code>
+     * protected List<String> getFieldOrder() {
+     *     return Arrays.asList(...);
      * }
      * </code></pre>
      * <strong>IMPORTANT</strong>
      * When deriving from an existing Structure subclass, ensure that
      * you augment the list provided by the superclass, e.g.
      * <pre><code>
-     * protected List getFieldOrder() {
-     *     List fields = new ArrayList(super.getFieldOrder());
-     *     fields.addAll(Arrays.asList(new String[] { ... }));
+     * protected List<String> getFieldOrder() {
+     *     List<String> fields = new LinkedList<String>(super.getFieldOrder());
+     *     fields.addAll(Arrays.asList(...));
      *     return fields;
      * }
      * </code></pre>
@@ -888,7 +941,19 @@ public abstract class Structure {
      * guaranteed to be predictable.
      * @return ordered list of field names
      */
-    protected abstract List<String> getFieldOrder();
+    // TODO(idosu 28 Apr 2018): Maybe deprecate this method to let users know they should use @FieldOrder
+    protected List<String> getFieldOrder() {
+        List<String> fields = new LinkedList<String>();
+        for (Class<?> clazz = getClass(); clazz != Structure.class; clazz = clazz.getSuperclass()) {
+            FieldOrder order = clazz.getAnnotation(FieldOrder.class);
+            if (order != null) {
+                fields.addAll(0, Arrays.asList(order.value()));
+            }
+        }
+
+        // fields.isEmpty() can be true because it is check somewhere else
+        return Collections.unmodifiableList(fields);
+    }
 
     /** Sort the structure fields according to the given array of names.
      * @param fields list of fields to be sorted
@@ -1855,6 +1920,7 @@ public abstract class Structure {
      * structure for use by libffi.  The lifecycle of this structure is easier
      * to manage on the Java side than in native code.
      */
+    @FieldOrder({ "size", "alignment", "type", "elements" })
     static class FFIType extends Structure {
         public static class size_t extends IntegerType {
             private static final long serialVersionUID = 1L;
@@ -1951,11 +2017,7 @@ public abstract class Structure {
             }
             init(els);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "size", "alignment", "type", "elements" });
-        }
+        
         private void init(Pointer[] els) {
             elements = new Memory(Native.POINTER_SIZE * els.length);
             elements.write(0, els, 0, els.length);
