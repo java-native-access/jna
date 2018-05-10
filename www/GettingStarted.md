@@ -6,34 +6,35 @@ Java Native Access (JNA) has a single component, `jna.jar`; the supporting nativ
 Begin by downloading the latest release of JNA and referencing `jna.jar` in your project's `CLASSPATH`.
 
 The following example maps the printf function from the standard C library and calls it. 
+``` java
+package com.sun.jna.examples;
 
-    package com.sun.jna.examples;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Platform;
 
-    import com.sun.jna.Library;
-    import com.sun.jna.Native;
-    import com.sun.jna.Platform;
+/** Simple example of JNA interface mapping and usage. */
+public class HelloWorld {
 
-    /** Simple example of JNA interface mapping and usage. */
-    public class HelloWorld {
+    // This is the standard, stable way of mapping, which supports extensive
+    // customization and mapping of Java to native types.
 
-        // This is the standard, stable way of mapping, which supports extensive
-        // customization and mapping of Java to native types.
+    public interface CLibrary extends Library {
+        CLibrary INSTANCE = (CLibrary)
+            Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
+                                CLibrary.class);
 
-        public interface CLibrary extends Library {
-            CLibrary INSTANCE = (CLibrary)
-                Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
-                                   CLibrary.class);
+        void printf(String format, Object... args);
+    }
 
-            void printf(String format, Object... args);
-        }
-
-        public static void main(String[] args) {
-            CLibrary.INSTANCE.printf("Hello, World\n");
-            for (int i=0;i < args.length;i++) {
-                CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
-            }
+    public static void main(String[] args) {
+        CLibrary.INSTANCE.printf("Hello, World\n");
+        for (int i=0;i < args.length;i++) {
+            CLibrary.INSTANCE.printf("Argument %d: %s\n", i, args[i]);
         }
     }
+}
+```
 
 Identify a native target library that you want to use. This can be any shared library with exported functions. Many examples of mappings for common system libraries, especially on Windows, may be found in the platform package.
 
@@ -46,56 +47,56 @@ Make your target library available to your Java program. There are several ways 
 Declare a Java interface to hold the native library methods by extending the Library interface.
 
 Following is an example of mapping for the Windows kernel32 library.
+``` java
+package com.sun.jna.examples.win32;
 
-    package com.sun.jna.examples.win32;
+import com.sun.jna.*;
 
-    import com.sun.jna.*;
-
-    // kernel32.dll uses the __stdcall calling convention (check the function
-    // declaration for "WINAPI" or "PASCAL"), so extend StdCallLibrary
-    // Most C libraries will just extend com.sun.jna.Library,
-    public interface Kernel32 extends StdCallLibrary { 
-        // Method declarations, constant and structure definitions go here
-    }
+// kernel32.dll uses the __stdcall calling convention (check the function
+// declaration for "WINAPI" or "PASCAL"), so extend StdCallLibrary
+// Most C libraries will just extend com.sun.jna.Library,
+public interface Kernel32 extends StdCallLibrary { 
+    // Method declarations, constant and structure definitions go here
+}
+```
 
 Within this interface, define an instance of the native library using the Native.loadLibrary(Class) method, providing the native library interface you defined previously.
-
-    Kernel32 INSTANCE = (Kernel32)
-        Native.loadLibrary("kernel32", Kernel32.class);
-    // Optional: wraps every call to the native library in a
-    // synchronized block, limiting native calls to one at a time
-    Kernel32 SYNC_INSTANCE = (Kernel32)
-        Native.synchronizedLibrary(INSTANCE);
+``` java
+Kernel32 INSTANCE = (Kernel32)
+    Native.loadLibrary("kernel32", Kernel32.class);
+// Optional: wraps every call to the native library in a
+// synchronized block, limiting native calls to one at a time
+Kernel32 SYNC_INSTANCE = (Kernel32)
+    Native.synchronizedLibrary(INSTANCE);
+```
 
 The `INSTANCE` variable is for convenient reuse of a single instance of the library. Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope. A Map of options may be provided as the third argument to loadLibrary to customize the library behavior; some of these options are explained in more detail below. The `SYNC_INSTANCE` is also optional; use it if you need to ensure that your native library has only one call to it at a time.
 
 Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the basic mappings below or the detailed table of type mappings). You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends Structure and add public fields (which may include arrays or nested structures). 
+``` java
+@FieldOrder({ "wYear", "wMonth", "wDayOfWeek", "wDay", "wHour", "wMinute", "wSecond", "wMilliseconds" })
+public static class SYSTEMTIME extends Structure {
+    public short wYear;
+    public short wMonth;
+    public short wDayOfWeek;
+    public short wDay;
+    public short wHour;
+    public short wMinute;
+    public short wSecond;
+    public short wMilliseconds;
+}
 
-    public static class SYSTEMTIME extends Structure {
-        public short wYear;
-        public short wMonth;
-        public short wDayOfWeek;
-        public short wDay;
-        public short wHour;
-        public short wMinute;
-        public short wSecond;
-        public short wMilliseconds;
-        protected List getFieldOrder() { 
-            return Arrays.asList(new String[] { 
-                "wYear", "wMonth", "wDayOfWeek", "wDay", "wHour", "wMinute", "wSecond", "wMilliseconds",
-            });
-        }
-    }
-
-    void GetSystemTime(SYSTEMTIME result);
+void GetSystemTime(SYSTEMTIME result);
+```
 
 You can now invoke methods on the library instance just like any other Java class.
+``` java
+Kernel32 lib = Kernel32.INSTANCE;
+SYSTEMTIME time = new SYSTEMTIME();
+lib.GetSystemTime(time);
 
-    Kernel32 lib = Kernel32.INSTANCE;
-    SYSTEMTIME time = new SYSTEMTIME();
-    lib.GetSystemTime(time);
-
-    System.out.println("Today's integer value is " + time.wDay);
+System.out.println("Today's integer value is " + time.wDay);
+```
     
 Several [example applications](https://github.com/java-native-access/jna/tree/master/contrib) are available, as well as [platform-specific mappings](https://github.com/java-native-access/jna/tree/master/contrib/platform).
 
