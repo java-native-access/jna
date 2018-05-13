@@ -393,13 +393,13 @@ public class Kernel32Test extends TestCase {
             FILETIME lpUserTime = new FILETIME();
             boolean b = Kernel32.INSTANCE.GetProcessTimes(h, lpCreationTime, lpExitTime, lpKernelTime, lpUserTime);
             assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process times", b);
-            // Process must have started after 1970 and before now.
-            assertTrue(lpCreationTime.toTime() > 0);
-            assertTrue(lpCreationTime.toTime() <= System.currentTimeMillis());
+            // Process must have started before now.
+            long upTimeMillis = System.currentTimeMillis() - lpCreationTime.toTime();
+            assertTrue(upTimeMillis >= 0);
             // lpExitTime is undefined for a running process, do not test
-            // Kernel and User time must be >= 0
-            assertTrue(lpKernelTime.toTime() >= 0);
-            assertTrue(lpUserTime.toTime() >= 0);
+            // Kernel and User time must be < up time (in 100ns ticks)
+            assertTrue(lpKernelTime.toDWordLong().longValue()
+                    + lpUserTime.toDWordLong().longValue() < (upTimeMillis + 1L) * 10000L);
         } finally {
             Kernel32Util.closeHandle(h);
         }
