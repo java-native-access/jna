@@ -37,10 +37,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import com.sun.jna.Function;
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
-import com.sun.jna.NativeLibrary;
 import com.sun.jna.NativeMappedConverter;
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
@@ -378,6 +376,51 @@ public class Kernel32Test extends TestCase {
             boolean b = Kernel32.INSTANCE.QueryFullProcessImageName(h, 0, path, lpdwSize);
             assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to query process image name", b);
             assertTrue("Failed to query process image name, empty path returned", lpdwSize.getValue() > 0);
+        } finally {
+            Kernel32Util.closeHandle(h);
+        }
+    }
+
+    public void testGetProcessTimes() {
+        int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, pid);
+        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process ID=" + pid + " handle", h);
+
+        try {
+            FILETIME lpCreationTime = new FILETIME();
+            FILETIME lpExitTime = new FILETIME();
+            FILETIME lpKernelTime = new FILETIME();
+            FILETIME lpUserTime = new FILETIME();
+            boolean b = Kernel32.INSTANCE.GetProcessTimes(h, lpCreationTime, lpExitTime, lpKernelTime, lpUserTime);
+            assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process times", b);
+            // Process must have started after 1970 and before now.
+            assertTrue(lpCreationTime.toTime() > 0);
+            assertTrue(lpCreationTime.toTime() <= System.currentTimeMillis());
+            // lpExitTime is undefined for a running process, do not test
+            // Kernel and User time must be >= 0
+            assertTrue(lpKernelTime.toTime() >= 0);
+            assertTrue(lpUserTime.toTime() >= 0);
+        } finally {
+            Kernel32Util.closeHandle(h);
+        }
+    }
+
+    public void testGetProcessIoCounters() {
+        int pid = Kernel32.INSTANCE.GetCurrentProcessId();
+        HANDLE h = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION, false, pid);
+        assertNotNull("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process ID=" + pid + " handle", h);
+
+        try {
+            WinNT.IO_COUNTERS lpIoCounters = new WinNT.IO_COUNTERS();
+            boolean b = Kernel32.INSTANCE.GetProcessIoCounters(h, lpIoCounters);
+            assertTrue("Failed (" + Kernel32.INSTANCE.GetLastError() + ") to get process IO counters", b);
+            // IO must be nonzero
+            assertTrue(lpIoCounters.ReadOperationCount >= 0);
+            assertTrue(lpIoCounters.WriteOperationCount >= 0);
+            assertTrue(lpIoCounters.OtherOperationCount >= 0);
+            assertTrue(lpIoCounters.ReadTransferCount >= 0);
+            assertTrue(lpIoCounters.WriteTransferCount >= 0);
+            assertTrue(lpIoCounters.OtherTransferCount >= 0);
         } finally {
             Kernel32Util.closeHandle(h);
         }

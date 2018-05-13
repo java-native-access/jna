@@ -3596,4 +3596,56 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * information, call GetLastError.</p>
      */
     int ExpandEnvironmentStrings(String lpSrc, Pointer lpDst, int nSize);
+
+    /**
+     * Retrieves timing information for the specified process.
+     * 
+     * @param hProcess
+     *            A handle to the process whose timing information is sought.
+     *            The handle must have the PROCESS_QUERY_INFORMATION or
+     *            PROCESS_QUERY_LIMITED_INFORMATION access right.
+     * @param lpCreationTime
+     *            A pointer to a FILETIME structure that receives the creation
+     *            time of the process.
+     * @param lpExitTime
+     *            A pointer to a FILETIME structure that receives the exit time
+     *            of the process. If the process has not exited, the content of
+     *            this structure is undefined.
+     * @param lpKernelTime
+     *            A pointer to a FILETIME structure that receives the amount of
+     *            time that the process has executed in kernel mode. The time
+     *            that each of the threads of the process has executed in kernel
+     *            mode is determined, and then all of those times are summed
+     *            together to obtain this value.
+     * @param lpUserTime
+     *            A pointer to a FILETIME structure that receives the amount of
+     *            time that the process has executed in user mode. The time that
+     *            each of the threads of the process has executed in user mode
+     *            is determined, and then all of those times are summed together
+     *            to obtain this value. Note that this value can exceed the
+     *            amount of real time elapsed (between lpCreationTime and
+     *            lpExitTime) if the process executes across multiple CPU cores.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     */
+    boolean GetProcessTimes(HANDLE hProcess, FILETIME lpCreationTime, FILETIME lpExitTime, FILETIME lpKernelTime,
+            FILETIME lpUserTime);
+
+    /**
+     * Retrieves accounting information for all I/O operations performed by the
+     * specified process.
+     * 
+     * @param hProcess
+     *            A handle to the process. The handle must have the
+     *            PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
+     *            access right.
+     * @param lpIoCounters
+     *            A pointer to an IO_COUNTERS structure that receives the I/O
+     *            accounting information for the process.
+     * @return If the function succeeds, the return value is nonzero. If the
+     *         function fails, the return value is zero. To get extended error
+     *         information, call GetLastError.
+     */
+    boolean GetProcessIoCounters(HANDLE hProcess, WinNT.IO_COUNTERS lpIoCounters);
 }

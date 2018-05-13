@@ -23,7 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -3617,4 +3616,60 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     public static final LCID LOCALE_NEUTRAL        = LocaleMacros.MAKELCID(LocaleMacros.MAKELANGID(LANG_NEUTRAL, SUBLANG_NEUTRAL), SORT_DEFAULT);
 
     public static final LCID LOCALE_INVARIANT      = LocaleMacros.MAKELCID(LocaleMacros.MAKELANGID(LANG_INVARIANT, SUBLANG_NEUTRAL), SORT_DEFAULT);
+
+    /**
+     * The IO_COUNTERS structure contains I/O accounting information for a
+     * process or a job object. For a job object, the counters include all
+     * operations performed by all processes that have ever been associated with
+     * the job, in addition to all processes currently associated with the job.
+     */
+    public static class IO_COUNTERS extends Structure {
+        public static final List<String> FIELDS = createFieldsOrder("ReadOperationCount", "WriteOperationCount",
+                "OtherOperationCount", "ReadTransferCount", "WriteTransferCount", "OtherTransferCount");
+
+        /**
+         * The number of read operations performed.
+         */
+        public long ReadOperationCount;
+
+        /**
+         * The number of write operations performed.
+         */
+        public long WriteOperationCount;
+
+        /**
+         * The number of I/O operations performed, other than read and write
+         * operations.
+         */
+        public long OtherOperationCount;
+
+        /**
+         * The number of bytes read.
+         */
+        public long ReadTransferCount;
+
+        /**
+         * The number of bytes written.
+         */
+        public long WriteTransferCount;
+
+        /**
+         * The number of bytes transferred during operations other than read and
+         * write operations.
+         */
+        public long OtherTransferCount;
+
+        public IO_COUNTERS() {
+            super();
+        }
+
+        public IO_COUNTERS(Pointer memory) {
+            super(memory);
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            return FIELDS;
+        }
+    }
 }
