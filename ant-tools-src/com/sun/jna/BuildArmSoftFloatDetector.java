@@ -60,7 +60,7 @@ public class BuildArmSoftFloatDetector {
             // The self.getCanonicalPath() resolves the symblink to the backing
             // realfile and passes that to the detection routines
             ELFAnalyser ahfd = ELFAnalyser.analyse(self.getCanonicalPath());
-            result = ahfd.isArmSoftFloat();
+            result = ! ahfd.isArmHardFloat();
         } catch (IOException ex) {
             result = false;
         }
