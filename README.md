@@ -44,7 +44,6 @@ JNA is a mature library with dozens of contributors and hundreds of commercial a
 *Interesting Investigations/Experiments*
 
 - [Drive Lego Mindstorm NXT](http://epirsch.blogspot.com/2008/02/jna-love-nxt.html) by Emmanuel Pirsch.
-- [A JavaFX Clock](http://sellmic.com/blog/2007/05/22/javafx-clock-update-now-with-transparency) by Augusto Sellhorn.
 - [Detect User Inactivity](http://ochafik.free.fr/blog/?p=98) by Olivier Chafik.
 - [IAXClient Applet](http://callino.cc/jiaxcapplet/) provides VOIP for Java, by Wolfgang Pichler.
 
