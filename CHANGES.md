@@ -44,6 +44,7 @@ Bug Fixes
       <li>Change into the expanded directory and run `bash build.sh`.</li>
       <li>The resulting `sunos-x86.jar` is copied back to the original build system to `lib/native/sunos-x86.jar`</li>
   </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------

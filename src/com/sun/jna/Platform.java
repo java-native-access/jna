@@ -268,7 +268,7 @@ public final class Platform {
             File self = new File("/proc/self/exe");
             if (self.exists()) {
                 ELFAnalyser ahfd = ELFAnalyser.analyse(self.getCanonicalPath());
-                return ahfd.isArmSoftFloat();
+                return ! ahfd.isArmHardFloat();
             }
         } catch (IOException ex) {
             // asume hardfloat
