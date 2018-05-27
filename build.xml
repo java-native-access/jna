@@ -1015,11 +1015,17 @@ osname=macosx;processor=x86;processor=x86-64;processor=ppc
         <include name="*testlib-jar*"/>
       </fileset>
     </copy>
+    <copy todir="${test.classes}">
+        <fileset dir="${test.src}">
+            <include name="**/data/**" />
+        </fileset>
+    </copy>
     <!-- Create a jar for easy movement of tests, and jar load test -->
     <jar jarfile="${build}/${testjar}">
       <fileset dir="${test.classes}">
         <patternset refid="jar-compiled"/>
         <include name="**/*testlib-jar*"/>
+        <include name="**/data/**" />
       </fileset>
       <manifest>
         <attribute name="permissions" value="all-permissions"/>
