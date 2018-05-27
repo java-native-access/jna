@@ -101,10 +101,6 @@ public interface WTypes {
      * as a string containing zero characters.</p>
      */
     public static class BSTR extends PointerType {
-        public static class ByReference extends BSTR implements
-                Structure.ByReference {
-        }
-
         public BSTR() {
             super(Pointer.NULL);
         }

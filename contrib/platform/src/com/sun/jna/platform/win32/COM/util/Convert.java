@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
-import com.sun.jna.platform.win32.OaIdl.DATE;
-import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import java.lang.reflect.InvocationHandler;
@@ -36,13 +34,7 @@ import java.util.Date;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.WinDef.BOOL;
-import com.sun.jna.platform.win32.WinDef.BYTE;
-import com.sun.jna.platform.win32.WinDef.CHAR;
-import com.sun.jna.platform.win32.WinDef.LONG;
-import com.sun.jna.platform.win32.WinDef.SHORT;
 import com.sun.jna.platform.win32.OaIdl;
-import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
 import static com.sun.jna.platform.win32.Variant.VT_ARRAY;
 import static com.sun.jna.platform.win32.Variant.VT_BOOL;
 import static com.sun.jna.platform.win32.Variant.VT_BSTR;
@@ -70,6 +62,7 @@ import static com.sun.jna.platform.win32.Variant.VT_UINT;
 import static com.sun.jna.platform.win32.Variant.VT_UNKNOWN;
 import static com.sun.jna.platform.win32.Variant.VT_VARIANT;
 import com.sun.jna.platform.win32.WinDef.PVOID;
+import java.lang.reflect.Constructor;
 
 /**
  * This class is considered internal to the package.
@@ -78,42 +71,26 @@ class Convert {
         /**
          * Convert a java value into a VARIANT suitable for passing in a COM
          * invocation.
-         * 
+         *
          * <p><i>Implementation notes</i></p>
-         * 
+         *
          * <ul>
          * <li>VARIANTs are not rewrapped, but passed through unmodified</li>
          * <li>A string is wrapped into a BSTR, that is wrapped into the VARIANT.
          *  The string is allocated as native memory by the VARIANT constructor.
          *  The BSTR needs to be freed by {@link com.sun.jna.platform.win32.OleAuto#SysFreeString}.</li>
          * </ul>
-         * 
+         *
          * @param value to be wrapped
          * @return wrapped VARIANT
          */
 	public static VARIANT toVariant(Object value) {
-                if (value instanceof VARIANT) {
+                if(value instanceof VARIANT) {
                         return (VARIANT) value;
-                } else if (value instanceof BSTR) {
-                        return new VARIANT((BSTR) value);
-                } else if (value instanceof VARIANT_BOOL) {
-                        return new VARIANT((VARIANT_BOOL) value);
-                } else if (value instanceof BOOL) {
-                        return new VARIANT((BOOL) value);
-                } else if (value instanceof LONG) {
-                        return new VARIANT((LONG) value);
-                } else if (value instanceof SHORT) {
-                        return new VARIANT((SHORT) value);
-                } else if (value instanceof DATE) {
-                        return new VARIANT((DATE) value);
-                } else if (value instanceof BYTE) {
-                        return new VARIANT((BYTE) value);
                 } else if (value instanceof Byte) {
                         return new VARIANT((Byte) value);
                 } else if (value instanceof Character) {
                         return new VARIANT((Character) value);
-                } else if (value instanceof CHAR) {
-                        return new VARIANT((CHAR) value);
 		} else if (value instanceof Short) {
 			return new VARIANT((Short) value);
 		} else if (value instanceof Integer) {
@@ -132,27 +109,42 @@ class Convert {
 			return new VARIANT((com.sun.jna.platform.win32.COM.IDispatch) value);
 		} else if (value instanceof Date) {
 			return new VARIANT((Date) value);
-		} else if (value instanceof Proxy) {
+                } else if (value instanceof Proxy) {
 			InvocationHandler ih = Proxy.getInvocationHandler(value);
 			ProxyObject pobj = (ProxyObject) ih;
 			return new VARIANT(pobj.getRawDispatch());
 		} else if (value instanceof IComEnum) {
 			IComEnum enm = (IComEnum) value;
 			return new VARIANT(new WinDef.LONG(enm.getValue()));
-                } else if (value instanceof SAFEARRAY) {
-                        return new VARIANT((SAFEARRAY) value);
-		} else {
-			return null;
-		}
-	}
-	
+                } else {
+                        Constructor<VARIANT> constructor = null;
+                        if (value != null) {
+                                for (Constructor<VARIANT> m : (Constructor<VARIANT>[]) VARIANT.class.getConstructors()) {
+                                        if (m.getParameterCount() > 0
+                                                && m.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
+                                                constructor = m;
+                                        }
+                                }
+                        }
+
+                        if (constructor != null) {
+                                try {
+                                        return constructor.newInstance(value);
+                                } catch (Exception ex) {
+                                        throw new RuntimeException(ex);
+                                }
+                        }
+                        return null;
+                }
+        }
+
 	public static Object toJavaObject(VARIANT value, Class<?> targetClass, ObjectFactory factory, boolean addReference, boolean freeValue) {
-		if (null==value 
-                        || value.getVarType().intValue() == VT_EMPTY 
+		if (null==value
+                        || value.getVarType().intValue() == VT_EMPTY
                         || value.getVarType().intValue() == VT_NULL) {
                     return null;
                 }
-                
+
                 if (targetClass != null  && (!targetClass.isAssignableFrom(Object.class))) {
                     if (targetClass.isAssignableFrom(value.getClass())) {
                         return value;
@@ -163,86 +155,67 @@ class Convert {
                         return vobj;
                     }
                 }
-                
+
                 VARIANT inputValue = value;
-                
+
                 if (value.getVarType().intValue() == (VT_BYREF | VT_VARIANT)) {
                     value = (VARIANT) value.getValue();
                 }
-                
+
                 // Passing null or Object.class as targetClass switch to default
                 // handling
                 if (targetClass == null || (targetClass.isAssignableFrom(Object.class))) {
-                    
+
                     targetClass = null;
-                    
+
                     int varType = value.getVarType().intValue();
-                    
+
                     switch (value.getVarType().intValue()) {
                         case VT_UI1:
                         case VT_I1:
-                        case VT_BYREF | VT_UI1:
-                        case VT_BYREF | VT_I1:
                             targetClass = Byte.class;
                             break;
                         case VT_I2:
-                        case VT_BYREF | VT_I2:
                             targetClass = Short.class;
                             break;
                         case VT_UI2:
-                        case VT_BYREF | VT_UI2:
                             targetClass = Character.class;
                             break;
                         case VT_INT:
                         case VT_UINT:
                         case VT_UI4:
                         case VT_I4:
-                        case VT_BYREF | VT_I4:
-                        case VT_BYREF | VT_UI4:
-                        case VT_BYREF | VT_INT:
-                        case VT_BYREF | VT_UINT:
                             targetClass = Integer.class;
                             break;
                         case VT_UI8:
                         case VT_I8:
-                        case VT_BYREF | VT_I8:
-                        case VT_BYREF | VT_UI8:
                             targetClass = Long.class;
                             break;
                         case VT_R4:
-                        case VT_BYREF | VT_R4:
                             targetClass = Float.class;
                             break;
                         case VT_R8:
-                        case VT_BYREF | VT_R8:
                             targetClass = Double.class;
                             break;
                         case VT_BOOL:
-                        case VT_BYREF | VT_BOOL:
                             targetClass = Boolean.class;
                             break;
                         case VT_ERROR:
-                        case VT_BYREF | VT_ERROR:
                             targetClass = WinDef.SCODE.class;
                             break;
                         case VT_CY:
-                        case VT_BYREF | VT_CY:
                             targetClass = OaIdl.CURRENCY.class;
                             break;
                         case VT_DATE:
-                        case VT_BYREF | VT_DATE:
                             targetClass = Date.class;
                             break;
                         case VT_BSTR:
-                        case VT_BYREF | VT_BSTR:
                             targetClass = String.class;
                             break;
                         case VT_UNKNOWN:
-                        case VT_BYREF | VT_UNKNOWN:
                             targetClass = com.sun.jna.platform.win32.COM.IUnknown.class;
                             break;
                         case VT_DISPATCH:
-                        case VT_BYREF | VT_DISPATCH:
                             targetClass = IDispatch.class;
                             break;
                         case VT_BYREF | VT_VARIANT:
@@ -261,7 +234,7 @@ class Convert {
                             }
                     }
                 }
-                
+
                 Object result;
                 if(Byte.class.equals(targetClass) || byte.class.equals(targetClass)) {
                     result = value.byteValue();
@@ -308,14 +281,14 @@ class Convert {
                 if (IComEnum.class.isAssignableFrom(targetClass)) {
                     result = targetClass.cast(Convert.toComEnum((Class<? extends IComEnum>) targetClass, result));
                 }
-                
+
                 if(freeValue) {
                     free(inputValue, result);
                 }
-                
+
                 return result;
 	}
-	
+
 	public static <T extends IComEnum> T toComEnum(Class<T> enumType, Object value) {
 		try {
 			Method m = enumType.getMethod("values");
@@ -332,13 +305,13 @@ class Convert {
 		}
 		return null;
 	}
-        
+
         /**
          * Free the contents of the supplied VARIANT.
-         * 
+         *
          * <p>This method is a companion to {@link #toVariant}. Primary usage is
          * to free BSTRs contained in VARIANTs.</p>
-         * 
+         *
          * @param variant to be cleared
          * @param javaType type before/after conversion
          */
@@ -352,13 +325,13 @@ class Convert {
                 }
             }
         }
-        
+
         /**
          * Free the contents of the supplied VARIANT.
-         * 
+         *
          * <p>This method is a companion to {@link #toVariant}. Primary usage is
          * to free BSTRs contained in VARIANTs.</p>
-         * 
+         *
          * @param variant to be cleared
          * @param value value before/after conversion
          */
