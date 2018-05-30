@@ -367,6 +367,10 @@ public interface LibKstat extends Library {
         }
     }
 
+    /**
+     * A kstat control structure. Only one thread may actively use a KstatCtl
+     * value at any time. Synchronization is left to the application.
+     */
     class KstatCtl extends Structure {
 
         public int kc_chain_id; // current kstat chain ID
