@@ -3,7 +3,7 @@ Frequently Asked Questions
 
 I'm having trouble generating correct library mappings
 ------------------------------------------------------
-Make sure you've read [this page](https://github.com/java-native-access/jna/blob/master/www/Mappings.md) and [this one](http://java-native-access.github.io/jna/4.2.1/overview-summary.html#overview.description).  Try [JNAerator](http://code.google.com/p/jnaerator/).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
+Make sure you've read [this page](https://github.com/java-native-access/jna/blob/master/www/Mappings.md) and [this one](http://java-native-access.github.io/jna/4.2.1/overview-summary.html#overview.description).  Try [JNAerator](https://github.com/nativelibs4java/JNAerator).  If you find its output too verbose, delete the mappings you don't need, or copy out the ones you do need.
 
 JNA is missing function XXX in its platform library mappings
 ------------------------------------------------------------
