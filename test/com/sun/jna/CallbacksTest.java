@@ -230,7 +230,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
     @Override
     protected void setUp() {
-        lib = Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.load("testlib", TestLibrary.class);
     }
 
     @Override
@@ -1108,7 +1108,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     protected CallbackTestLibrary loadCallbackTestLibrary() {
-        return Native.loadLibrary("testlib", CallbackTestLibrary.class, CallbackTestLibrary._OPTIONS);
+        return Native.load("testlib", CallbackTestLibrary.class, CallbackTestLibrary._OPTIONS);
     }
 
     /** This test is here instead of NativeTest in order to facilitate running
@@ -1524,7 +1524,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCallingConventionFromInterface() {
-        TaggedCallingConventionTestLibrary lib = Native.loadLibrary("testlib", TaggedCallingConventionTestLibrary.class);
+        TaggedCallingConventionTestLibrary lib = Native.load("testlib", TaggedCallingConventionTestLibrary.class);
         TaggedCallingConventionTestLibrary.TestCallbackTagged cb = new TaggedCallingConventionTestLibrary.TestCallbackTagged() {
             @Override
             public void invoke() { }
@@ -1548,7 +1548,7 @@ public class CallbacksTest extends TestCase implements Paths {
 
     public void testCallingConventionFromOptions() {
         OptionCallingConventionTestLibrary lib =
-                Native.loadLibrary("testlib", OptionCallingConventionTestLibrary.class, Collections.singletonMap(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION));
+                Native.load("testlib", OptionCallingConventionTestLibrary.class, Collections.singletonMap(Library.OPTION_CALLING_CONVENTION, Function.ALT_CONVENTION));
         assertNotNull("Library not loaded", lib);
         OptionCallingConventionTestLibrary.TestCallback cb = new OptionCallingConventionTestLibrary.TestCallback() {
             @Override

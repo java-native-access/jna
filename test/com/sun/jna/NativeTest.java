@@ -58,7 +58,7 @@ public class NativeTest extends TestCase {
             signature.append(')');
 
             try {
-                Method m = Native.class.getMethod("loadLibrary", paramTypes);
+                Method m = Native.class.getMethod("load", paramTypes);
                 Class<?> returnType = m.getReturnType();
                 signature.append(Native.getSignature(returnType));
                 assertSame("Mismatched return type for signature=" + signature, Library.class, returnType);
@@ -189,7 +189,7 @@ public class NativeTest extends TestCase {
     public void testSynchronizedAccess() throws Exception {
         final boolean[] lockHeld = { false };
         final NativeLibrary nlib = NativeLibrary.getInstance("testlib", TestLib.class.getClassLoader());
-        final TestLib lib = Native.loadLibrary("testlib", TestLib.class);
+        final TestLib lib = Native.load("testlib", TestLib.class);
         final TestLib synchlib = (TestLib)Native.synchronizedLibrary(lib);
         final TestLib.VoidCallback cb = new TestLib.VoidCallback() {
             @Override
@@ -258,7 +258,7 @@ public class NativeTest extends TestCase {
                 put(OPTION_STRING_ENCODING, TEST_ENCODING);
             }
         };
-        TestInterfaceWithInstance ARBITRARY = Native.loadLibrary("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
+        TestInterfaceWithInstance ARBITRARY = Native.load("testlib", TestInterfaceWithInstance.class, TEST_OPTS);
         abstract class TestStructure extends Structure {}
     }
     public void testOptionsInferenceFromInstanceField() {
@@ -355,7 +355,7 @@ public class NativeTest extends TestCase {
     public interface OptionsSubclass extends OptionsBase, Library {
         TypeMapper _MAPPER = new DefaultTypeMapper();
         Map<String, ?> _OPTIONS = Collections.singletonMap(Library.OPTION_TYPE_MAPPER, _MAPPER);
-        OptionsSubclass INSTANCE = Native.loadLibrary("testlib", OptionsSubclass.class, _OPTIONS);
+        OptionsSubclass INSTANCE = Native.load("testlib", OptionsSubclass.class, _OPTIONS);
     }
     public void testStructureOptionsInference() {
         Structure s = new OptionsBase.TypeMappedStructure();

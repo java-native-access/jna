@@ -91,7 +91,7 @@ following:<br>
 <blockquote><code><pre>
 // Alternative 1: interface-mapped class, dynamically load the C library
 public interface CLibrary extends Library {
-    CLibrary INSTANCE = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+    CLibrary INSTANCE = (CLibrary)Native.load("c", CLibrary.class);
 }
 
 // Alternative 2: direct-mapped class (uses a concrete class rather than an
@@ -104,7 +104,7 @@ public class CLibrary {
 }
 </pre></code></blockquote>
 The <code>String</code> passed to the
-{@link com.sun.jna.Native#loadLibrary(String,Class)}
+{@link com.sun.jna.Native#load(String,Class)}
 (or {@link com.sun.jna.NativeLibrary#getInstance(String)}) method
 is the undecorated name of the shared library file.  Here are some examples of
 library name mappings.<p>  
@@ -153,7 +153,7 @@ public class CLibrary {
 }
 </pre></code></blockquote>
 
-If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options {@link java.util.Map} passed to {@link com.sun.jna.Native#loadLibrary(String,Class,java.util.Map) Native.loadLibrary()} which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
+If you prefer to rename the Java methods to conform to Java coding conventions, then you can provide an entry ({@link com.sun.jna.Library#OPTION_FUNCTION_MAPPER}/{@link com.sun.jna.FunctionMapper}) in the options {@link java.util.Map} passed to {@link com.sun.jna.Native#load(String,Class,java.util.Map) Native.load()} which maps the Java names to the native names.  While this keeps your Java code a little cleaner, the additional mapping of names may make it a little less obvious the native functions being called.<p>
 An instance of the {@link com.sun.jna.Function} class is obtained through the {@link com.sun.jna.NativeLibrary} instance corresponding to the containing native library.  This {@link com.sun.jna.Function} instance handles argument marshalling and delegation to the native function. 
 
 <p>

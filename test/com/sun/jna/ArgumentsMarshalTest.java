@@ -158,7 +158,7 @@ public class ArgumentsMarshalTest extends TestCase {
     TestLibrary lib;
     @Override
     protected void setUp() {
-        lib = Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.load("testlib", TestLibrary.class);
     }
 
     @Override
@@ -310,7 +310,7 @@ public class ArgumentsMarshalTest extends TestCase {
         }
     }
     protected NativeMappedLibrary loadNativeMappedLibrary() {
-        return Native.loadLibrary("testlib", NativeMappedLibrary.class);
+        return Native.load("testlib", NativeMappedLibrary.class);
     }
     public void testNativeMappedArgument() {
         NativeMappedLibrary lib = loadNativeMappedLibrary();

@@ -33,7 +33,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Version extends StdCallLibrary {
 
-    Version INSTANCE = Native.loadLibrary("version", Version.class, W32APIOptions.DEFAULT_OPTIONS);
+    Version INSTANCE = Native.load("version", Version.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Determines whether the operating system can retrieve version information for a specified file. If version

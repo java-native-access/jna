@@ -40,7 +40,7 @@ import com.sun.jna.Union;
  */
 public interface LibKstat extends Library {
 
-    LibKstat INSTANCE = Native.loadLibrary("kstat", LibKstat.class);
+    LibKstat INSTANCE = Native.load("kstat", LibKstat.class);
 
     /*
      * Kstat Data Types

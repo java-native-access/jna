@@ -84,8 +84,8 @@ public class W32APIMapperTest extends TestCase {
 
     @Override
     protected void setUp() {
-        unicode = Native.loadLibrary("testlib", UnicodeLibrary.class, W32APIOptions.UNICODE_OPTIONS);
-        ascii = Native.loadLibrary("testlib", ASCIILibrary.class, W32APIOptions.ASCII_OPTIONS);
+        unicode = Native.load("testlib", UnicodeLibrary.class, W32APIOptions.UNICODE_OPTIONS);
+        ascii = Native.load("testlib", ASCIILibrary.class, W32APIOptions.ASCII_OPTIONS);
     }
 
     @Override

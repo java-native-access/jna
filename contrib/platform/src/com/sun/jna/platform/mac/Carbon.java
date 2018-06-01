@@ -40,7 +40,7 @@ import com.sun.jna.ptr.PointerByReference;
  * Date: 7/25/11
  */
 public interface Carbon extends Library {
-    Carbon INSTANCE = Native.loadLibrary("Carbon", Carbon.class);
+    Carbon INSTANCE = Native.load("Carbon", Carbon.class);
 
     int cmdKey = 0x0100;
     int shiftKey = 0x0200;

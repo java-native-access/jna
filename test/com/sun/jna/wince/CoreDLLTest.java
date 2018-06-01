@@ -35,7 +35,7 @@ public class CoreDLLTest extends TestCase {
     }
 
     public interface CoreDLL extends StdCallLibrary {
-        CoreDLL INSTANCE = Native.loadLibrary("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
+        CoreDLL INSTANCE = Native.load("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
 
         public static class SECURITY_ATTRIBUTES extends Structure {
             public static final List<String> FIELDS = createFieldsOrder("dwLength", "lpSecurityDescriptor", "bInheritHandle");

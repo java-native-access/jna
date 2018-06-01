@@ -37,7 +37,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface NtDll extends StdCallLibrary {
 	
-	NtDll INSTANCE = Native.loadLibrary("NtDll", NtDll.class, W32APIOptions.DEFAULT_OPTIONS);
+	NtDll INSTANCE = Native.load("NtDll", NtDll.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * The ZwQueryKey routine provides information about the class of a registry key, 

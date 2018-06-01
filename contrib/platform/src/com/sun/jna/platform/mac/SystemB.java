@@ -40,7 +40,7 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public interface SystemB extends Library {
 
-    SystemB INSTANCE = Native.loadLibrary("System", SystemB.class);
+    SystemB INSTANCE = Native.load("System", SystemB.class);
 
     // host_statistics()
     int HOST_LOAD_INFO = 1;// System loading stats

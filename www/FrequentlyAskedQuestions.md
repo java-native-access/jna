@@ -11,14 +11,14 @@ No, it's not, it's just waiting for you to add it :)
 
     public interface MyUser32 extends User32 {
         // DEFAULT_OPTIONS is critical for W32 API functions to simplify ASCII/UNICODE details
-        MyUser32 INSTANCE = (MyUser32)Native.loadLibrary("user32", W32APIOptions.DEFAULT_OPTIONS);
+        MyUser32 INSTANCE = (MyUser32)Native.load("user32", W32APIOptions.DEFAULT_OPTIONS);
         void ThatFunctionYouReallyNeed();
     }
     
 That's all it takes.  If you'd like to submit the change back to JNA, make sure you provide a change log entry and corresponding test that invokes the function to prove that the mapping works.  We don't really care what the API actually does, the call can be a very minimal invocation, but should ensure all the parameters are correctly passed and that you get a reasonable return value.
 
-Calling `Native.loadLibrary()` causes an UnsatisfiedLinkError
--------------------------------------------------------------
+Calling `Native.load()` causes an UnsatisfiedLinkError
+------------------------------------------------------
 
 Set the system property `jna.debug_load=true`, and JNA will print its library 
 search steps to the console. `jna.debug_load.jna` will trace the search for 

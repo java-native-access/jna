@@ -94,7 +94,7 @@ DLL functions are mapped into Unicode interfaces of the same name, like this
    * @author dblock[at]dblock.org
    */
   public interface Advapi32 extends StdCallLibrary {
-    Advapi32 INSTANCE = (Advapi32) Native.loadLibrary("Advapi32", 
+    Advapi32 INSTANCE = (Advapi32) Native.load("Advapi32", 
       Advapi32.class, W32APIOptions.UNICODE_OPTIONS);
 
     // function definitions go here

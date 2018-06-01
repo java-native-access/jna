@@ -40,7 +40,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface SetupApi extends StdCallLibrary {
 
-    SetupApi INSTANCE = Native.loadLibrary("setupapi", SetupApi.class, W32APIOptions.DEFAULT_OPTIONS);
+    SetupApi INSTANCE = Native.load("setupapi", SetupApi.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * The GUID_DEVINTERFACE_DISK device interface class is defined for hard disk storage devices.

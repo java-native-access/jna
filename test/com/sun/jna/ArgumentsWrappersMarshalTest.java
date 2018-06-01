@@ -47,7 +47,7 @@ public class ArgumentsWrappersMarshalTest extends TestCase {
     TestLibrary lib;
     @Override
     protected void setUp() {
-        lib = Native.loadLibrary("testlib", TestLibrary.class);
+        lib = Native.load("testlib", TestLibrary.class);
     }
 
     @Override

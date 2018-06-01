@@ -47,7 +47,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Winspool extends StdCallLibrary {
 
-    Winspool INSTANCE = Native.loadLibrary("Winspool.drv", Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
+    Winspool INSTANCE = Native.load("Winspool.drv", Winspool.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	public static final int CCHDEVICENAME = 32;
 

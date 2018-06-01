@@ -23,7 +23,7 @@ public interface CLibrary extends Library {
     int raise(int sig);
 }
 /* ... */
-CLibrary lib = (CLibrary)Native.loadLibrary("c", CLibrary.class);
+CLibrary lib = (CLibrary)Native.load("c", CLibrary.class);
 // WARNING: you must keep a reference to the callback object
 // until you deregister the callback; if the callback object
 // is garbage-collected, the native callback invocation will

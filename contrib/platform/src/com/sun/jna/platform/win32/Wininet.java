@@ -41,7 +41,7 @@ public interface Wininet extends StdCallLibrary {
     /**
      * A usable instance of this interface
      */
-    Wininet INSTANCE = Native.loadLibrary("wininet", Wininet.class, W32APIOptions.DEFAULT_OPTIONS);
+    Wininet INSTANCE = Native.load("wininet", Wininet.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Normal cache entry; can be deleted to recover space for new entries.

@@ -42,7 +42,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373083(v=vs.85).aspx">Performance Counters</A>
  */
 public interface Pdh extends StdCallLibrary {
-    Pdh INSTANCE = Native.loadLibrary("Pdh", Pdh.class, W32APIOptions.DEFAULT_OPTIONS);
+    Pdh INSTANCE = Native.load("Pdh", Pdh.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /** Maximum counter name length. */
     int PDH_MAX_COUNTER_NAME = 1024;

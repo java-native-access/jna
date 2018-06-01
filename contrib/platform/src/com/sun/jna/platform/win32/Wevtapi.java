@@ -38,7 +38,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Minoru Sakamoto
  */
 public interface Wevtapi extends StdCallLibrary {
-    Wevtapi INSTANCE = (Wevtapi) Native.loadLibrary("wevtapi", Wevtapi.class, W32APIOptions.UNICODE_OPTIONS);
+    Wevtapi INSTANCE = (Wevtapi) Native.load("wevtapi", Wevtapi.class, W32APIOptions.UNICODE_OPTIONS);
 
     /**
      * Establishes a connection to a remote computer that you can use when calling the other Windows Event Log functions.

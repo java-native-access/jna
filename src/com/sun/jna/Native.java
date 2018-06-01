@@ -101,7 +101,7 @@ import com.sun.jna.Structure.FFIType;
  * resources in a finalizer).</p>
  * <a name=native_library_loading></a>
  * <h2>Native Library Loading</h2>
- * Native libraries loaded via {@link #loadLibrary(Class)} may be found in
+ * Native libraries loaded via {@link #load(Class)} may be found in
  * <a href="NativeLibrary.html#library_search_paths">several locations</a>.
  * @see Library
  * @author Todd Fast, todd.fast@sun.com
@@ -520,8 +520,8 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T extends Library> T loadLibrary(Class<T> interfaceClass) {
-        return loadLibrary(null, interfaceClass);
+    public static <T extends Library> T load(Class<T> interfaceClass) {
+        return load(null, interfaceClass);
     }
 
     /** Map a library interface to the current process, providing
@@ -537,10 +537,10 @@ public final class Native implements Version {
      * process.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
-     * @see #loadLibrary(String, Class, Map)
+     * @see #load(String, Class, Map)
      */
-    public static <T extends Library> T loadLibrary(Class<T> interfaceClass, Map<String, ?> options) {
-        return loadLibrary(null, interfaceClass, options);
+    public static <T extends Library> T load(Class<T> interfaceClass, Map<String, ?> options) {
+        return load(null, interfaceClass, options);
     }
 
     /** Map a library interface to the given shared library, providing
@@ -555,10 +555,10 @@ public final class Native implements Version {
      * native library.
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
-     * @see #loadLibrary(String, Class, Map)
+     * @see #load(String, Class, Map)
      */
-    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass) {
-        return loadLibrary(name, interfaceClass, Collections.<String, Object>emptyMap());
+    public static <T extends Library> T load(String name, Class<T> interfaceClass) {
+        return load(name, interfaceClass, Collections.<String, Object>emptyMap());
     }
 
     /** Load a library interface from the given shared library, providing
@@ -577,7 +577,57 @@ public final class Native implements Version {
      * @throws UnsatisfiedLinkError if the library cannot be found or
      * dependent libraries are missing.
      */
-    public static <T extends Library> T loadLibrary(String name, Class<T> interfaceClass, Map<String, ?> options) {
+    public static <T extends Library> T load(String name, Class<T> interfaceClass, Map<String, ?> options) {
+        if (!Library.class.isAssignableFrom(interfaceClass)) {
+            // Maybe still possible if the caller is not using generics?
+            throw new IllegalArgumentException("Interface (" + interfaceClass.getSimpleName() + ")"
+                    + " of library=" + name + " does not extend " + Library.class.getSimpleName());
+        }
+
+        Library.Handler handler = new Library.Handler(name, interfaceClass, options);
+        ClassLoader loader = interfaceClass.getClassLoader();
+        Object proxy = Proxy.newProxyInstance(loader, new Class[] {interfaceClass}, handler);
+        cacheOptions(interfaceClass, options, proxy);
+        return interfaceClass.cast(proxy);
+    }
+
+    /**
+     * Provided for improved compatibility between JNA 4.X and 5.X
+     *
+     * @see Native#load(java.lang.Class)
+     */
+    @Deprecated
+    public static <T> T loadLibrary(Class<T> interfaceClass) {
+        return loadLibrary(null, interfaceClass);
+    }
+
+    /**
+     * Provided for improved compatibility between JNA 4.X and 5.X
+     *
+     * @see Native#load(java.lang.Class, java.util.Map)
+     */
+    @Deprecated
+    public static <T> T loadLibrary(Class<T> interfaceClass, Map<String, ?> options) {
+        return loadLibrary(null, interfaceClass, options);
+    }
+
+    /**
+     * Provided for improved compatibility between JNA 4.X and 5.X
+     *
+     * @see Native#load(java.lang.String, java.lang.Class) 
+     */
+    @Deprecated
+    public static <T> T loadLibrary(String name, Class<T> interfaceClass) {
+        return loadLibrary(name, interfaceClass, Collections.<String, Object>emptyMap());
+    }
+
+    /**
+     * Provided for improved compatibility between JNA 4.X and 5.X
+     *
+     * @see Native#load(java.lang.String, java.lang.Class, java.util.Map)
+     */
+    @Deprecated
+    public static <T> T loadLibrary(String name, Class<T> interfaceClass, Map<String, ?> options) {
         if (!Library.class.isAssignableFrom(interfaceClass)) {
             // Maybe still possible if the caller is not using generics?
             throw new IllegalArgumentException("Interface (" + interfaceClass.getSimpleName() + ")"

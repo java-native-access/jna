@@ -138,10 +138,10 @@ public class ReturnTypesTest extends TestCase {
 
     @Override
     protected void setUp() {
-        lib = Native.loadLibrary("testlib", TestLibrary.class);
-        libSupportingObject = Native.loadLibrary("testlib", TestLibrary.class,
+        lib = Native.load("testlib", TestLibrary.class);
+        libSupportingObject = Native.load("testlib", TestLibrary.class,
                 Collections.singletonMap(Library.OPTION_ALLOW_OBJECTS, Boolean.TRUE));
-        libNativeMapped = Native.loadLibrary("testlib", NativeMappedLibrary.class);
+        libNativeMapped = Native.load("testlib", NativeMappedLibrary.class);
     }
 
     @Override

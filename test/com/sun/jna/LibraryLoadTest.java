@@ -124,15 +124,15 @@ public class LibraryLoadTest extends TestCase implements Paths {
     }
 
     private Object load() {
-        return Native.loadLibrary(Platform.C_LIBRARY_NAME, CLibrary.class);
+        return Native.load(Platform.C_LIBRARY_NAME, CLibrary.class);
     }
 
     public void testLoadProcess() {
-        Native.loadLibrary(CLibrary.class);
+        Native.load(CLibrary.class);
     }
 
     public void testLoadProcessWithOptions() {
-        Native.loadLibrary(CLibrary.class, Collections.EMPTY_MAP);
+        Native.load(CLibrary.class, Collections.EMPTY_MAP);
     }
 
     public void testLoadCLibrary() {
@@ -266,7 +266,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     // dependent libraries in the same directory as the original
     public void testLoadDependentLibraryWithAlteredSearchPath() {
         try {
-            TestLib2 lib = Native.loadLibrary("testlib2", TestLib2.class);
+            TestLib2 lib = Native.load("testlib2", TestLib2.class);
             lib.dependentReturnFalse();
         }
         catch(UnsatisfiedLinkError e) {
@@ -282,7 +282,7 @@ public class LibraryLoadTest extends TestCase implements Paths {
     public void testLoadProperCLibraryVersion() {
         if (Platform.isWindows()) return;
 
-        CLibrary lib = Native.loadLibrary("c", CLibrary.class);
+        CLibrary lib = Native.load("c", CLibrary.class);
         assertNotNull("Couldn't get current user",
                       lib.getpwuid(lib.geteuid()));
     }

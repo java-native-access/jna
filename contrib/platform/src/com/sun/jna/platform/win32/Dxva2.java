@@ -66,7 +66,7 @@ public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, Hi
     /**
      * The only instance of the library
      */
-    Dxva2 INSTANCE = Native.loadLibrary("Dxva2", Dxva2.class, DXVA_OPTIONS);
+    Dxva2 INSTANCE = Native.load("Dxva2", Dxva2.class, DXVA_OPTIONS);
 
 
     /******************************************************************************

@@ -327,7 +327,7 @@ public class StructureTest extends TestCase {
     }
     private void testStructureSize(String prefix, int index) {
         try {
-            SizeTest lib = Native.loadLibrary("testlib", SizeTest.class);
+            SizeTest lib = Native.load("testlib", SizeTest.class);
             Class<? extends Structure> cls = (Class<? extends Structure>) Class.forName(getClass().getName() + "$" + prefix + "TestStructure" + index);
             Structure s = Structure.newInstance(cls);
             assertEquals("Incorrect size for structure " + index + "=>" + s.toString(true), lib.getStructureSize(index), s.size());
@@ -385,7 +385,7 @@ public class StructureTest extends TestCase {
         testAlignStruct("", index);
     }
     private void testAlignStruct(String prefix,int index) {
-        AlignmentTest lib = Native.loadLibrary("testlib", AlignmentTest.class);
+        AlignmentTest lib = Native.load("testlib", AlignmentTest.class);
         try {
             IntByReference offset = new IntByReference();
             LongByReference value = new LongByReference();

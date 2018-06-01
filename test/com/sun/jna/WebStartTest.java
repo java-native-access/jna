@@ -121,19 +121,19 @@ public class WebStartTest extends TestCase implements Paths {
     public void testJNLPFindCustomLibrary() {
         assertNotNull("Custom library path not found by JNLP class loader",
                       Native.getWebStartLibraryPath("jnidispatch"));
-        Native.loadLibrary("jnidispatch", Dummy.class);
+        Native.load("jnidispatch", Dummy.class);
     }
 
     public void testJNLPFindProcessLibrary() {
         String libname = Platform.C_LIBRARY_NAME;
         assertNull("Process library path not expected to be found by JNLP class loader",
                    Native.getWebStartLibraryPath(libname));
-        Native.loadLibrary(libname, Dummy.class);
+        Native.load(libname, Dummy.class);
     }
 
     public void testJNLPFindLibraryFailure() {
         try {
-            Native.loadLibrary("xyzzy", Dummy.class);
+            Native.load("xyzzy", Dummy.class);
             fail("Missing native libraries should throw UnsatisfiedLinkError");
         }
         catch(UnsatisfiedLinkError e) {
@@ -305,7 +305,7 @@ public class WebStartTest extends TestCase implements Paths {
             }
             // NOTE: win64 only includes javaws in the system path
             if (Platform.isWindows()) {
-                FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
+                FolderInfo info = Native.load("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
                 //int result =
                         info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
@@ -335,7 +335,7 @@ public class WebStartTest extends TestCase implements Paths {
             vendor = vendor.substring(0, vendor.indexOf(" "));
         }
         if (Platform.isWindows()) {
-            FolderInfo info = Native.loadLibrary("shell32", FolderInfo.class);
+            FolderInfo info = Native.load("shell32", FolderInfo.class);
             char[] buf = new char[FolderInfo.MAX_PATH];
             info.SHGetFolderPathW(null, FolderInfo.CSIDL_APPDATA,
                                   null, 0, buf);

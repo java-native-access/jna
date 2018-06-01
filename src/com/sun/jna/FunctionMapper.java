@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 
 /** Provides mapping of Java method names to native function names.  
  * An instance of this interface may be provided to 
- * {@link Native#loadLibrary(String, Class, java.util.Map)} as an entry in
+ * {@link Native#load(String, Class, java.util.Map)} as an entry in
  * the options map with key {@link Library#OPTION_FUNCTION_MAPPER}.
  * <p>
  * There are several circumstances where this option might prove useful.

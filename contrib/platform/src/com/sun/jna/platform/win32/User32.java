@@ -45,7 +45,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
     /** The instance. */
-    User32 INSTANCE = Native.loadLibrary("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
+    User32 INSTANCE = Native.load("user32", User32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * Handle for message-only window.
