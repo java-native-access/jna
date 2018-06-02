@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -92,9 +93,8 @@ public interface DBT {
     /**
      * The Class DEV_BROADCAST_HDR.
      */
+    @FieldOrder({"dbch_size", "dbch_devicetype", "dbch_reserved"})
     public class DEV_BROADCAST_HDR extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbch_size", "dbch_devicetype", "dbch_reserved");
-
         /** The dbch_size. */
         public int dbch_size = size();
 
@@ -131,11 +131,6 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /** The dbt devtyp oem. */
@@ -162,10 +157,8 @@ public interface DBT {
     /**
      * The Class DEV_BROADCAST_OEM.
      */
+    @FieldOrder({"dbco_size", "dbco_devicetype", "dbco_reserved", "dbco_identifier", "dbco_suppfunc"})
     public class DEV_BROADCAST_OEM extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbco_size", "dbco_devicetype",
-                "dbco_reserved", "dbco_identifier", "dbco_suppfunc");
-
         /** The dbco_size. */
         public int dbco_size = size();
 
@@ -198,19 +191,13 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The Class DEV_BROADCAST_DEVNODE.
      */
+    @FieldOrder({"dbcd_size", "dbcd_devicetype", "dbcd_reserved", "dbcd_devnode"})
     public class DEV_BROADCAST_DEVNODE extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbcd_size", "dbcd_devicetype",
-                "dbcd_reserved", "dbcd_devnode");
         /** The dbcd_size. */
         public int dbcd_size = size();
 
@@ -240,20 +227,13 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The Class DEV_BROADCAST_VOLUME.
      */
+    @FieldOrder({"dbcv_size", "dbcv_devicetype", "dbcv_reserved", "dbcv_unitmask", "dbcv_flags"})
     public class DEV_BROADCAST_VOLUME extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbcv_size", "dbcv_devicetype",
-                "dbcv_reserved", "dbcv_unitmask", "dbcv_flags");
-
         /** The dbcv_size. */
         public int dbcv_size = size();
 
@@ -286,11 +266,6 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /** The dbt change affects media in drive, not physical device or drive. */
@@ -302,9 +277,8 @@ public interface DBT {
     /**
      * The Class DEV_BROADCAST_PORT.
      */
+    @FieldOrder({"dbcp_size", "dbcp_devicetype", "dbcp_reserved", "dbcp_name"})
     public class DEV_BROADCAST_PORT extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbcp_size", "dbcp_devicetype", "dbcp_reserved", "dbcp_name");
-
         /** The dbcp_size. */
         public int dbcp_size = size();
 
@@ -334,20 +308,14 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The Class DEV_BROADCAST_NET.
      */
+    @FieldOrder({"dbcn_size", "dbcn_devicetype",
+                "dbcn_reserved", "dbcn_resource", "dbcn_flags"})
     public class DEV_BROADCAST_NET extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbcn_size", "dbcn_devicetype",
-                "dbcn_reserved", "dbcn_resource", "dbcn_flags");
-
         /** The dbcn_size. */
         public int dbcn_size = size();
 
@@ -380,20 +348,14 @@ public interface DBT {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The Class DEV_BROADCAST_DEVICEINTERFACE.
      */
+    @FieldOrder({"dbcc_size", "dbcc_devicetype",
+        "dbcc_reserved", "dbcc_classguid", "dbcc_name"})
     public class DEV_BROADCAST_DEVICEINTERFACE extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbcc_size", "dbcc_devicetype",
-                "dbcc_reserved", "dbcc_classguid", "dbcc_name");
-
         /** The dbcc_size. */
         public int dbcc_size;
 
@@ -449,21 +411,14 @@ public interface DBT {
         public String getDbcc_name() {
             return Native.toString(this.dbcc_name);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The Class DEV_BROADCAST_HANDLE.
      */
+    @FieldOrder({"dbch_size", "dbch_devicetype", "dbch_reserved", "dbch_handle",
+        "dbch_hdevnotify", "dbch_eventguid", "dbch_nameoffset", "dbch_data"})
     public class DEV_BROADCAST_HANDLE extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dbch_size", "dbch_devicetype",
-                "dbch_reserved", "dbch_handle", "dbch_hdevnotify",
-                "dbch_eventguid", "dbch_nameoffset", "dbch_data");
-
         /** The dbch_size. */
         public int dbch_size = size();
 
@@ -504,11 +459,6 @@ public interface DBT {
         public DEV_BROADCAST_HANDLE(Pointer memory) {
             super(memory);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

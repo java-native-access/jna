@@ -24,6 +24,7 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.*;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -160,6 +161,7 @@ public interface Winevt {
      * Contains event data or property values.
      * https://msdn.microsoft.com/en-us/library/windows/desktop/aa385611(v=vs.85).aspx
      */
+    @FieldOrder({"field1", "Count", "Type"})
     public static class EVT_VARIANT extends Structure {
         /**
          * <strong>Exposed to follow JNA rules, use the
@@ -216,10 +218,6 @@ public interface Winevt {
 
         public EVT_VARIANT() {
             super(W32APITypeMapper.DEFAULT);
-        }
-
-        protected List<String> getFieldOrder() {
-            return Arrays.asList("field1", "Count", "Type");
         }
 
         public EVT_VARIANT(Pointer peer) {
@@ -606,6 +604,7 @@ public interface Winevt {
      * Contains the information used to connect to a remote computer.
      * https://msdn.microsoft.com/en-us/library/windows/desktop/aa385566(v=vs.85).aspx
      */
+    @FieldOrder({"Server", "User", "Domain", "Password", "Flags"})
     public class EVT_RPC_LOGIN extends Structure {
 
         /** The name of the remote computer to connect to. */
@@ -628,10 +627,6 @@ public interface Winevt {
 
         public EVT_RPC_LOGIN() {
             super(W32APITypeMapper.UNICODE);
-        }
-
-        protected List<String> getFieldOrder() {
-            return Arrays.asList("Server", "User", "Domain", "Password", "Flags");
         }
 
         public EVT_RPC_LOGIN(String Server, String User, String Domain, String Password, int Flags) {

@@ -23,10 +23,9 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.List;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
@@ -43,14 +42,12 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
+@FieldOrder({"QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback",
+    "GetTypeInfoCountCallback", "GetTypeInfoCallback",
+    "GetIDsOfNamesCallback", "InvokeCallback"})
 public class DispatchVTable extends Structure {
 	public static class ByReference extends DispatchVTable implements Structure.ByReference {
 	}
-
-	public static final List<String> FIELDS = createFieldsOrder(
-	        "QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback",
-	        "GetTypeInfoCountCallback", "GetTypeInfoCallback",
-            "GetIDsOfNamesCallback", "InvokeCallback");
 
 	public QueryInterfaceCallback QueryInterfaceCallback;
 	public AddRefCallback AddRefCallback;
@@ -59,11 +56,6 @@ public class DispatchVTable extends Structure {
 	public GetTypeInfoCallback GetTypeInfoCallback;
 	public GetIDsOfNamesCallback GetIDsOfNamesCallback;
 	public InvokeCallback InvokeCallback;
-
-	@Override
-	protected List<String> getFieldOrder() {
-		return FIELDS;
-	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
 		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);

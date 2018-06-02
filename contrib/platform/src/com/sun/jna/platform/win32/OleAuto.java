@@ -29,6 +29,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.OaIdl.DISPID;
 import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
@@ -719,6 +720,7 @@ public interface OleAuto extends StdCallLibrary {
 	/**
 	 * The Class DISPPARAMS.
 	 */
+        @FieldOrder({"rgvarg", "rgdispidNamedArgs", "cArgs", "cNamedArgs"})
 	public class DISPPARAMS extends Structure {
 
 		/**
@@ -727,7 +729,6 @@ public interface OleAuto extends StdCallLibrary {
 		public static class ByReference extends DISPPARAMS implements
 				Structure.ByReference {
 		}
-		public static final List<String> FIELDS = createFieldsOrder("rgvarg", "rgdispidNamedArgs", "cArgs", "cNamedArgs");
 
 		/** The rgvarg. */
 		public VariantArg.ByReference rgvarg;
@@ -803,11 +804,6 @@ public interface OleAuto extends StdCallLibrary {
 		public DISPPARAMS(Pointer memory) {
 			super(memory);
 			this.read();
-		}
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return FIELDS;
 		}
 	}
 

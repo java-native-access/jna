@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 
 /**
  * Ported from Wdm.h.
@@ -40,9 +41,8 @@ public interface Wdm {
      * The KEY_BASIC_INFORMATION structure defines a subset of
      * the full information that is available for a registry key.
      */
+    @FieldOrder({"LastWriteTime", "TitleIndex", "NameLength", "Name"})
     public static class KEY_BASIC_INFORMATION extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("LastWriteTime", "TitleIndex", "NameLength", "Name");
-
         /**
          * The last time the key or any of its values changed.
          */
@@ -76,10 +76,6 @@ public interface Wdm {
             read();
         }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
         /**
          * Name of the key.
          * @return String.

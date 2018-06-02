@@ -25,8 +25,8 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
-import java.util.List;
 
 /**
  * Ported from ShTypes.h. Microsoft Windows SDK.
@@ -35,11 +35,12 @@ public interface ShTypes {
     /**
      * structure for returning strings from IShellFolder member functions
      */
+    @FieldOrder({"uType", "u"})
     public static class STRRET extends Structure {
         public static final int TYPE_WSTR = 0;
         public static final int TYPE_OFFSET = 0x1;
         public static final int TYPE_CSTR = 0x2;
-        
+
         public static class UNION extends Union {
 
             public static class ByReference extends UNION implements Structure.ByReference {
@@ -50,12 +51,10 @@ public interface ShTypes {
             public int uOffset;
             public byte[] cStr = new byte[260];
         }
-        
-        public static final List<String> FIELDS = createFieldsOrder("uType", "u");
 
         /**
          * indicate which union member to use:
-         * 
+         *
          * <table>
          * <tr><td>{@link #TYPE_WSTR}</td><td>0x0</td><td>Use STRRET.pOleStr</td><td>must be freed by caller of GetDisplayNameOf</td></tr>
          * <tr><td>{@link #TYPE_OFFSET}</td><td>0x1</td><td>Use STRRET.uOffset</td><td>Offset into SHITEMID for ANSI string</td></tr>
@@ -90,11 +89,6 @@ public interface ShTypes {
                     break;
             }
             u.read();
-        }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

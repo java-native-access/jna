@@ -24,9 +24,9 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
 
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.EnumUtils;
 import com.sun.jna.platform.win32.WinDef.BYTE;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -40,8 +40,8 @@ public interface LowLevelMonitorConfigurationAPI
     /**
      * Contains information from a monitor's timing report.
      */
+    @FieldOrder({"dwHorizontalFrequencyInHZ", "dwVerticalFrequencyInHZ", "bTimingStatusByte"})
     class MC_TIMING_REPORT extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dwHorizontalFrequencyInHZ", "dwVerticalFrequencyInHZ", "bTimingStatusByte");
         /**
          * The monitor's horizontal synchronization frequency in Hz.
          */
@@ -57,11 +57,6 @@ public interface LowLevelMonitorConfigurationAPI
          * Interface (DDC/CI) standard.
          */
         public BYTE bTimingStatusByte;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**

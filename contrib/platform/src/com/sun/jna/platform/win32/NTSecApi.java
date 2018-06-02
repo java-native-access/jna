@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 import com.sun.jna.platform.win32.WinNT.PSID;
@@ -43,12 +44,12 @@ public interface NTSecApi {
      * The LSA_UNICODE_STRING structure is used by various Local Security Authority (LSA)
      * functions to specify a Unicode string.
      */
+    @FieldOrder({"Length", "MaximumLength", "Buffer"})
     public static class LSA_UNICODE_STRING extends Structure {
         public static class ByReference extends LSA_UNICODE_STRING implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("Length", "MaximumLength", "Buffer");
         /**
          * Specifies the length, in bytes, of the string pointed to by the Buffer member,
          * not including the terminating null character, if any.
@@ -64,11 +65,6 @@ public interface NTSecApi {
          * various LSA functions might not be null terminated.
          */
         public Pointer Buffer;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
         /**
          * String representation of the buffer.
@@ -111,31 +107,20 @@ public interface NTSecApi {
      */
     int ForestTrustDomainInfo = 2;
 
+    @FieldOrder({"Sid", "DnsName", "NetbiosName"})
     public static class LSA_FOREST_TRUST_DOMAIN_INFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("Sid", "DnsName", "NetbiosName");
-
         public PSID.ByReference Sid;
         public LSA_UNICODE_STRING DnsName;
         public LSA_UNICODE_STRING NetbiosName;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"Length", "Buffer"})
     public static class LSA_FOREST_TRUST_BINARY_DATA extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("Length", "Buffer");
-
         public int Length;
         public Pointer Buffer;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"Flags", "ForestTrustType", "Time", "u"})
     public static class LSA_FOREST_TRUST_RECORD extends Structure {
 
         public static class ByReference extends LSA_FOREST_TRUST_RECORD  implements Structure.ByReference {
@@ -152,7 +137,6 @@ public interface NTSecApi {
             public LSA_FOREST_TRUST_BINARY_DATA Data;
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("Flags", "ForestTrustType", "Time", "u");
         /**
          * Flags that control the behavior of the operation.
          */
@@ -179,11 +163,6 @@ public interface NTSecApi {
         public UNION u;
 
         @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-
-        @Override
         public void read() {
             super.read();
 
@@ -204,28 +183,23 @@ public interface NTSecApi {
         }
     }
 
+    @FieldOrder({"tr"})
     public static class PLSA_FOREST_TRUST_RECORD extends Structure {
         public static class ByReference extends PLSA_FOREST_TRUST_RECORD implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("tr");
-
         public LSA_FOREST_TRUST_RECORD.ByReference tr;
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"RecordCount", "Entries"})
     public static class LSA_FOREST_TRUST_INFORMATION extends Structure {
 
         public static class ByReference extends LSA_FOREST_TRUST_INFORMATION implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("RecordCount", "Entries");
         /**
          * Number of LSA_FOREST_TRUST_RECORD structures in the array pointed to by the
          * Entries member.
@@ -236,11 +210,6 @@ public interface NTSecApi {
          * each of which contains one piece of forest trust information.
          */
         public PLSA_FOREST_TRUST_RECORD.ByReference Entries;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
         /**
          * Get an array of LSA_FOREST_TRUST_RECORD entries.
@@ -255,18 +224,13 @@ public interface NTSecApi {
      * The LSA_FOREST_TRUST_INFORMATION structure contains Local Security Authority
      * forest trust information.
      */
+    @FieldOrder({"fti"})
     public static class PLSA_FOREST_TRUST_INFORMATION extends Structure {
 
         public static class ByReference extends PLSA_FOREST_TRUST_INFORMATION implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("fti");
         public LSA_FOREST_TRUST_INFORMATION.ByReference fti;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 }

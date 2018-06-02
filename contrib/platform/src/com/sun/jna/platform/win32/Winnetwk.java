@@ -28,6 +28,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.win32.W32APITypeMapper;
 
 /**
@@ -280,6 +281,7 @@ public abstract class Winnetwk {
     /**
      * The NETRESOURCE structure contains information about a network resource.
      */
+    @FieldOrder({"dwScope", "dwType", "dwDisplayType", "dwUsage", "lpLocalName", "lpRemoteName", "lpComment", "lpProvider"})
     public static class NETRESOURCE extends Structure {
 
         public static class ByReference extends NETRESOURCE implements Structure.ByReference {
@@ -292,9 +294,6 @@ public abstract class Winnetwk {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "dwScope", "dwType", "dwDisplayType", "dwUsage", "lpLocalName", "lpRemoteName", "lpComment", "lpProvider");
 
         /**
          * The scope of the enumeration. This member can be one of the values
@@ -364,11 +363,6 @@ public abstract class Winnetwk {
             super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     //
@@ -381,6 +375,7 @@ public abstract class Winnetwk {
      * The UNIVERSAL_NAME_INFO structure contains a pointer to a Universal
      * Naming Convention (UNC) name string for a network resource.
      */
+    @FieldOrder({"lpUniversalName"})
     public static class UNIVERSAL_NAME_INFO extends Structure {
 
         public static class ByReference extends REMOTE_NAME_INFO implements Structure.ByReference {
@@ -394,7 +389,6 @@ public abstract class Winnetwk {
             }
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("lpUniversalName");
         /**
          * Pointer to the null-terminated UNC name string that identifies a
          * network resource.
@@ -409,11 +403,6 @@ public abstract class Winnetwk {
             super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -422,6 +411,7 @@ public abstract class Winnetwk {
      * Universal Naming Convention (UNC) name string for the resource, and two
      * members that point to additional network connection information strings.
      */
+    @FieldOrder({"lpUniversalName", "lpConnectionName", "lpRemainingPath"})
     public static class REMOTE_NAME_INFO extends Structure {
 
         public static class ByReference extends REMOTE_NAME_INFO implements Structure.ByReference {
@@ -434,8 +424,6 @@ public abstract class Winnetwk {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("lpUniversalName", "lpConnectionName", "lpRemainingPath");
 
         /**
          * Pointer to the null-terminated UNC name string that identifies a
@@ -461,11 +449,6 @@ public abstract class Winnetwk {
         public REMOTE_NAME_INFO(Pointer address) {
             super(address, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

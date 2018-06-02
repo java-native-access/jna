@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.win32.W32APITypeMapper;
 
 /**
@@ -472,12 +473,11 @@ public interface Sspi {
     /**
      * Security handle.
      */
+    @FieldOrder({"dwLower", "dwUpper"})
     public static class SecHandle extends Structure {
 
         public static class ByReference extends SecHandle implements Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("dwLower", "dwUpper");
 
         public Pointer dwLower;
         public Pointer dwUpper;
@@ -497,22 +497,17 @@ public interface Sspi {
         public boolean isNull() {
             return dwLower == null && dwUpper == null;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * A pointer to a SecHandle
      */
+    @FieldOrder({"secHandle"})
     public static class PSecHandle extends Structure {
 
         public static class ByReference extends PSecHandle implements Structure.ByReference {
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("secHandle");
         /**
          * The first entry in an array of SecPkgInfo structures.
          */
@@ -525,11 +520,6 @@ public interface Sspi {
         public PSecHandle(SecHandle h) {
             super(h.getPointer());
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -549,6 +539,7 @@ public interface Sspi {
      * The SecBuffer structure describes a buffer allocated by a transport application
      * to pass to a security package.
      */
+    @FieldOrder({"cbBuffer", "BufferType", "pvBuffer"})
     public static class SecBuffer extends Structure {
 
         /**
@@ -577,7 +568,6 @@ public interface Sspi {
             }
     	}
 
-    	public static final List<String> FIELDS = createFieldsOrder("cbBuffer", "BufferType", "pvBuffer");
         /**
          * Specifies the size, in bytes, of the buffer pointed to by the pvBuffer member.
          */
@@ -635,12 +625,8 @@ public interface Sspi {
             return pvBuffer == null ? null : pvBuffer.getByteArray(0, cbBuffer);
         }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * The SecBufferDesc structure describes an array of SecBuffer structures to
      * pass from a transport application to a security package.
@@ -652,9 +638,8 @@ public interface Sspi {
      * <p>If the SecBufferDesc is managed from the java side, <b>prefer to use 
      * {@link com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc ManagedSecBufferDesc}.</b></p>
      */
+    @FieldOrder({"ulVersion", "cBuffers", "pBuffers"})
     public static class SecBufferDesc extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("ulVersion", "cBuffers", "pBuffers");
-
         /**
          * Version number.
          */
@@ -674,25 +659,16 @@ public interface Sspi {
         public SecBufferDesc() {
             super();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
     
     /**
      * A security integer.
      */
+    @FieldOrder({"dwLower", "dwUpper"})
     public static class SECURITY_INTEGER extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dwLower", "dwUpper");
+        public static final List<String> FIELDS = createFieldsOrder();
         public int dwLower;
         public int dwUpper;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -704,13 +680,12 @@ public interface Sspi {
     /**
      * A pointer to an array of SecPkgInfo structures.
      */
+    @FieldOrder({"pPkgInfo"})
     public static class PSecPkgInfo extends Structure {
 
         public static class ByReference extends PSecPkgInfo implements Structure.ByReference {
 
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("pPkgInfo");
 
         /**
          * The first entry in an array of SecPkgInfo structures.
@@ -719,11 +694,6 @@ public interface Sspi {
 
         public PSecPkgInfo() {
             super();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         /**
@@ -739,6 +709,7 @@ public interface Sspi {
      * The SecPkgInfo structure provides general information about a security package,
      * such as its name and capabilities.
      */
+    @FieldOrder({"fCapabilities", "wVersion", "wRPCID", "cbMaxToken", "Name", "Comment"})
     public static class SecPkgInfo extends Structure {
 
         /**
@@ -746,9 +717,6 @@ public interface Sspi {
          */
         public static class ByReference extends SecPkgInfo implements Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "fCapabilities", "wVersion", "wRPCID", "cbMaxToken", "Name", "Comment");
 
         /**
          * Set of bit flags that describes the capabilities of the security package.
@@ -780,24 +748,18 @@ public interface Sspi {
         public SecPkgInfo() {
             super(W32APITypeMapper.DEFAULT);
         }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * The SecPkgContext_PackageInfo structure.
      */
+    @FieldOrder({"PackageInfo"})
     public static class SecPkgContext_PackageInfo extends Structure {
         /**
          * A reference pointer to a SecPkgContext_PackageInfo structure.
          */
         public static class ByReference extends SecPkgContext_PackageInfo implements Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("PackageInfo");
 
         /**
          * Pointer to a SecPkgInfo structure containing the name of the SSP in
@@ -807,11 +769,6 @@ public interface Sspi {
 
         public SecPkgContext_PackageInfo() {
             super(W32APITypeMapper.DEFAULT);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -824,13 +781,12 @@ public interface Sspi {
      * {@link Secur32#QueryCredentialsAttributes(com.sun.jna.platform.win32.Sspi.CredHandle, int, com.sun.jna.Structure)}
      * function uses this structure.</p>
      */
+    @FieldOrder({"sUserName"})
     public static class SecPkgCredentials_Names extends Structure {
 
         public static class ByReference extends SecPkgCredentials_Names implements Structure.ByReference {
 
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("sUserName");
 
         /**
          * Pointer to a null-terminated string containing the name of the user
@@ -842,11 +798,6 @@ public interface Sspi {
 
         public SecPkgCredentials_Names() {
             super(W32APITypeMapper.DEFAULT);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         /**
@@ -882,29 +833,28 @@ public interface Sspi {
      * The {@link Secur32#QueryContextAttributes(com.sun.jna.platform.win32.Sspi.CtxtHandle, int, com.sun.jna.Structure)
      * } function uses this structure.</p>
      */
+    @FieldOrder({"cbMaxToken", "cbMaxSignature", "cbBlockSize", "cbSecurityTrailer"})
     public static class SecPkgContext_Sizes extends Structure {
 
         public static class ByReference extends SecPkgContext_Sizes implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("cbMaxToken", "cbMaxSignature", "cbBlockSize", "cbSecurityTrailer");
-
         /**
          * Specifies the maximum size of the security token used in the authentication exchanges.
          */
         public int cbMaxToken;
-        
+
         /**
          * Specifies the maximum size of the signature created by the MakeSignature function. This member must be zero if integrity services are not requested or available.
          */
         public int cbMaxSignature;
-        
+
         /**
          * Specifies the preferred integral size of the messages. For example, eight indicates that messages should be of size zero mod eight for optimal performance. Messages other than this block size can be padded.
          */
         public int cbBlockSize;
-        
+
         /**
          * Size of the security trailer to be appended to messages. This member should be zero if the relevant services are not requested or available.
          */
@@ -915,11 +865,6 @@ public interface Sspi {
         }
 
         @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-
-        @Override
         public String toString() {
             return "SecPkgContext_Sizes{" + "cbMaxToken=" + cbMaxToken +
                     ", cbMaxSignature=" + cbMaxSignature + ", cbBlockSize=" +
@@ -927,20 +872,19 @@ public interface Sspi {
                     '}';
         }
     }
-    
+
+    @FieldOrder({"SessionKeyLength", "SessionKey"})
     public static class SecPkgContext_SessionKey extends Structure {
 
         public static class ByReference extends SecPkgContext_SessionKey implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("SessionKeyLength", "SessionKey");
-
         /**
          * Size, in bytes, of the session key.
          */
         public int SessionKeyLength;
-        
+
         /**
          * The session key for the security context.
          */
@@ -950,18 +894,13 @@ public interface Sspi {
             super(W32APITypeMapper.DEFAULT);
         }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-
         public byte[] getSessionKey() {
             if(SessionKey == null) {
                 return null;
             }
             return SessionKey.getByteArray(0, SessionKeyLength);
         }
-        
+
         public synchronized void free() {
             if(SessionKey != null) {
                 Secur32.INSTANCE.FreeContextBuffer(SessionKey);
@@ -969,35 +908,29 @@ public interface Sspi {
             }
         }
     }
-    
+
+    @FieldOrder({"sSignatureAlgorithmName", "sEncryptAlgorithmName","KeySize", "SignatureAlgorithm", "EncryptAlgorithm"})
     public static class SecPkgContext_KeyInfo extends Structure {
-
-        public static class ByReference extends SecPkgContext_KeyInfo implements Structure.ByReference {
-
-        }
-
-        public static final List<String> FIELDS = createFieldsOrder("sSignatureAlgorithmName", "sEncryptAlgorithmName","KeySize", "SignatureAlgorithm", "EncryptAlgorithm");
-
         /**
          * Name, if available, of the algorithm used for generating signatures, for example "MD5" or "SHA-2".
          */
         public Pointer sSignatureAlgorithmName;
-        
+
         /**
          * Name, if available, of the algorithm used for encrypting messages. Reserved for future use.
          */
         public Pointer sEncryptAlgorithmName;
-        
+
         /**
          * Specifies the effective key length, in bits, for the session key. This is typically 40, 56, or 128 bits.
          */
         public int KeySize;
-        
+
         /**
          * Specifies the algorithm identifier (ALG_ID) used for generating signatures, if available.
          */
         public int SignatureAlgorithm;
-        
+
         /**
          * Specifies the algorithm identifier (ALG_ID) used for encrypting messages. Reserved for future use.
          */
@@ -1005,11 +938,6 @@ public interface Sspi {
 
         public SecPkgContext_KeyInfo() {
             super(W32APITypeMapper.DEFAULT);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         public synchronized String getSignatureAlgorithmName() {
@@ -1037,20 +965,19 @@ public interface Sspi {
             }
         }
     }
-    
+
+    @FieldOrder({"tsStart", "tsExpiry"})
     public static class SecPkgContext_Lifespan extends Structure {
 
         public static class ByReference extends SecPkgContext_Lifespan implements Structure.ByReference {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("tsStart", "tsExpiry");
-
         /**
          * Time at which the context was established.
          */
         public TimeStamp tsStart;
-        
+
         /**
          * Time at which the context will expire.
          */
@@ -1059,20 +986,14 @@ public interface Sspi {
         public SecPkgContext_Lifespan() {
             super(W32APITypeMapper.DEFAULT);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
+    @FieldOrder({"PackageInfo", "NegotiationState"})
     public static class SecPkgContext_NegotiationInfo extends Structure {
 
         public static class ByReference extends SecPkgContext_NegotiationInfo implements Structure.ByReference {
 
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("PackageInfo", "NegotiationState");
 
         /**
          * Time at which the context was established.
@@ -1088,11 +1009,6 @@ public interface Sspi {
             super(W32APITypeMapper.DEFAULT);
         }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-        
         public synchronized void free() {
             if(PackageInfo != null) {
                 Secur32.INSTANCE.FreeContextBuffer(PackageInfo.pPkgInfo.getPointer());
@@ -1100,14 +1016,13 @@ public interface Sspi {
             }
         }
     }
-    
+
+    @FieldOrder({"Flags"})
     public static class SecPkgContext_Flags extends Structure {
 
         public static class ByReference extends SecPkgContext_Flags implements Structure.ByReference {
 
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("Flags");
 
         /**
          * Flag values for the current security context. These values correspond
@@ -1118,11 +1033,6 @@ public interface Sspi {
 
         public SecPkgContext_Flags() {
             super(W32APITypeMapper.DEFAULT);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
     
@@ -1135,11 +1045,8 @@ public interface Sspi {
      */
     public static final int SEC_WINNT_AUTH_IDENTITY_UNICODE = 0x2;
 
-    
+    @FieldOrder({"User", "UserLength", "Domain", "DomainLength", "Password", "PasswordLength", "Flags"})
     public static class SEC_WINNT_AUTH_IDENTITY extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder("User", "UserLength", "Domain", "DomainLength", "Password", "PasswordLength", "Flags");
-
         /**
          * A string that contains the user name.
          */
@@ -1190,7 +1097,6 @@ public interface Sspi {
          * value!</strong>
          */
         public int Flags = SEC_WINNT_AUTH_IDENTITY_UNICODE;
-    
 
         /**
          * Create a new SecBufferDesc with one SECBUFFER_EMPTY buffer.
@@ -1205,11 +1111,6 @@ public interface Sspi {
             DomainLength = Domain == null ? 0 : Domain.length();
             PasswordLength = Password == null ? 0 : Password.length();
             super.write();
-        }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

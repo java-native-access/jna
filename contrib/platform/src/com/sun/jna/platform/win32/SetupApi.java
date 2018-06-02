@@ -27,6 +27,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinReg.HKEY;
@@ -384,6 +385,7 @@ public interface SetupApi extends StdCallLibrary {
     /**
      * An SP_DEVICE_INTERFACE_DATA structure defines a device interface in a device information set.
      */
+    @FieldOrder({"cbSize", "InterfaceClassGuid", "Flags", "Reserved"})
     public static class SP_DEVICE_INTERFACE_DATA extends Structure {
 
         public static class ByReference extends SP_DEVINFO_DATA implements Structure.ByReference {
@@ -394,8 +396,6 @@ public interface SetupApi extends StdCallLibrary {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "InterfaceClassGuid", "Flags", "Reserved");
 
         /**
          * The size, in bytes, of the SP_DEVICE_INTERFACE_DATA structure.
@@ -428,16 +428,12 @@ public interface SetupApi extends StdCallLibrary {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * An SP_DEVINFO_DATA structure defines a device instance that is a member of a device information set.
      */
+    @FieldOrder({"cbSize", "InterfaceClassGuid", "DevInst", "Reserved"})
     public static class SP_DEVINFO_DATA extends Structure {
 
         public static class ByReference extends SP_DEVINFO_DATA implements Structure.ByReference {
@@ -448,8 +444,6 @@ public interface SetupApi extends StdCallLibrary {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "InterfaceClassGuid", "DevInst", "Reserved");
 
         /**
          * The size, in bytes, of the SP_DEVINFO_DATA structure.
@@ -482,11 +476,6 @@ public interface SetupApi extends StdCallLibrary {
         public SP_DEVINFO_DATA(Pointer memory) {
             super(memory);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

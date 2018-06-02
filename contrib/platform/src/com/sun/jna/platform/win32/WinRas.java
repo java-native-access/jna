@@ -23,13 +23,11 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -80,6 +78,7 @@ public interface WinRas {
 	 * The RASEAPINFO structure contains user-specific Extensible Authentication Protocol (EAP) information.
 	 * Use RASEAPINFO to pass this information to the RasDial function.
 	 */
+        @FieldOrder({"dwSizeofEapInfo", "pbEapInfo"})
 	public static class RASEAPINFO extends Structure {
 		public RASEAPINFO() {
 			super();
@@ -110,10 +109,6 @@ public interface WinRas {
 		 */
 		public Pointer pbEapInfo;
 
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSizeofEapInfo", "pbEapInfo", });
-		}
 		/**
 		 * Get byte data.
 		 * @return
@@ -128,6 +123,7 @@ public interface WinRas {
 	 * The RASDEVSPECIFICINFO structure is used to send a cookie for server validation and bypass
 	 * point-to-point (PPP) authentication.
 	 */
+        @FieldOrder({"dwSize", "pbDevSpecificInfo"})
 	public static class RASDEVSPECIFICINFO extends Structure {
 		public RASDEVSPECIFICINFO() {
 			super();
@@ -158,10 +154,6 @@ public interface WinRas {
 		 */
 		public Pointer pbDevSpecificInfo;
 
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "pbDevSpecificInfo", });
-		}
 		/**
 		 * Get byte data.
 		 * @return
@@ -178,6 +170,7 @@ public interface WinRas {
 	 * If you do not pass a pointer to a RASDIALEXTENSIONS structure to RasDial, RasDial uses the default settings that are
 	 * noted in the following descriptions.
 	 */
+        @FieldOrder({"dwSize", "dwfOptions", "hwndParent", "reserved", "reserved1", "RasEapInfo", "fSkipPppAuth", "RasDevSpecificInfo"})
 	public static class RASDIALEXTENSIONS extends Structure {
 		public RASDIALEXTENSIONS() {
 			super();
@@ -227,16 +220,12 @@ public interface WinRas {
 		 * This cookie is only valid if fSkipPppAuth is TRUE.
 		 */
 		public RASDEVSPECIFICINFO RasDevSpecificInfo;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "dwfOptions", "hwndParent", "reserved", "reserved1", "RasEapInfo", "fSkipPppAuth", "RasDevSpecificInfo", });
-		}
 	}
 
 	/**
 	 * The RASDIALPARAMS structure contains parameters that are used by RasDial to establish a remote access connection.
 	 */
+        @FieldOrder({"dwSize", "szEntryName", "szPhoneNumber", "szCallbackNumber", "szUserName", "szPassword", "szDomain"})
 	public static class RASDIALPARAMS extends Structure {
 		public RASDIALPARAMS() {
 			super();
@@ -284,16 +273,12 @@ public interface WinRas {
 		 * which the remote access server is a member. An asterisk specifies the domain stored in the phone book for the entry.
 		 */
 		public char[] szDomain = new char[DNLEN + 1];
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "szEntryName", "szPhoneNumber", "szCallbackNumber", "szUserName", "szPassword", "szDomain",  });
-		}
 	}
 
 	/**
 	 * The RASCONN structure provides information about a remote access connection. The RasEnumConnections function returns an array of RASCONN structures.
 	 */
+        @FieldOrder({"dwSize", "hrasconn", "szEntryName", "szDeviceType", "szDeviceName", "szPhonebook", "dwSubEntry", "guidEntry", "dwFlags", "luid", "guidCorrelationId"})
 	public static class RASCONN extends Structure {
 		public RASCONN() {
 			super();
@@ -354,16 +339,12 @@ public interface WinRas {
 		 * and identifies the RAS connection event logs on the client and server.
 		 */
 		public GUID guidCorrelationId;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "hrasconn", "szEntryName", "szDeviceType", "szDeviceName", "szPhonebook", "dwSubEntry", "guidEntry", "dwFlags", "luid", "guidCorrelationId" });
-		}
 	}
 
 	/**
 	 * The RAS_STATS structure stores the statistics for a single-link RAS connection, or for one of the links in a multilink RAS connection.
 	 */
+        @FieldOrder({"dwSize", "dwBytesXmited", "dwBytesRcved", "dwFramesXmited", "dwFramesRcved", "dwCrcErr", "dwTimeoutErr", "dwAlignmentErr", "dwHardwareOverrunErr", "dwFramingErr", "dwBufferOverrunErr", "dwCompressionRatioIn", "dwCompressionRatioOut", "dwBps", "dwConnectDuration"})
 	public static class RAS_STATS extends Structure {
 		public RAS_STATS() {
 			super();
@@ -435,16 +416,12 @@ public interface WinRas {
 		 * The amount of time, in milliseconds, that the connection or link has been connected.
 		 */
 		public int dwConnectDuration;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "dwBytesXmited", "dwBytesRcved", "dwFramesXmited", "dwFramesRcved", "dwCrcErr", "dwTimeoutErr", "dwAlignmentErr", "dwHardwareOverrunErr", "dwFramingErr", "dwBufferOverrunErr", "dwCompressionRatioIn", "dwCompressionRatioOut", "dwBps", "dwConnectDuration", });
-		}
 	}
 
 	/**
 	 * This RASTUNNELENDPOINT structure is used to define the end-point of a virtual private network (VPN) tunnel.
 	 */
+        @FieldOrder({"addr"})
 	public static class RASIPV4ADDR extends Structure {
 		public RASIPV4ADDR() {
 			super();
@@ -459,16 +436,12 @@ public interface WinRas {
 		 * A value that determines endpoint type
 		 */
 		public byte[] addr = new byte[8];
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "addr",	});
-		}
 	}
 
 	/**
 	 * This RASTUNNELENDPOINT structure is used to define the end-point of a virtual private network (VPN) tunnel.
 	 */
+        @FieldOrder({"addr"})
 	public static class RASIPV6ADDR extends Structure {
 		public RASIPV6ADDR() {
 			super();
@@ -483,16 +456,12 @@ public interface WinRas {
 		 * A value that determines endpoint type
 		 */
 		public byte[] addr = new byte[16];
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "addr",	});
-		}
 	}
 
 	/**
 	 * The RASPPPIP structure contains the result of a PPP IP projection operation.
 	 */
+        @FieldOrder({"dwSize", "dwError", "szIpAddress",	"szServerIpAddress", "dwOptions", "dwServerOptions"})
 	public static class RASPPPIP extends Structure {
 		public RASPPPIP() {
 			super();
@@ -536,16 +505,12 @@ public interface WinRas {
 		 * A value that specifies IPCP options for the remote server.
 		 */
 		public int dwServerOptions;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "dwError", "szIpAddress",	"szServerIpAddress", "dwOptions", "dwServerOptions",});
-		}
 	}
 
 	/**
 	 * This RASTUNNELENDPOINT structure is used to define the end-point of a virtual private network (VPN) tunnel.
 	 */
+        @FieldOrder({"dwType", "u"})
 	public static class RASTUNNELENDPOINT extends Structure {
 		public RASTUNNELENDPOINT() {
 			super();
@@ -575,11 +540,6 @@ public interface WinRas {
 		public UNION u;
 
 		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwType", "u",	});
-		}
-
-		@Override
 		public void read() {
 			super.read();
 
@@ -602,6 +562,7 @@ public interface WinRas {
 	/**
 	 * The RASCONNSTATUS structure describes the current status of a remote access connection. It is returned by the RasGetConnectStatus function.
 	 */
+        @FieldOrder({"dwSize", "rasconnstate", "dwError", "szDeviceType", "szDeviceName", "szPhoneNumber", "localEndPoint", "remoteEndPoint", "rasconnsubstate"})
 	public static class RASCONNSTATUS extends Structure {
 		public RASCONNSTATUS() {
 			super();
@@ -654,16 +615,12 @@ public interface WinRas {
 		 * A RASCONNSUBSTATE enumeration that specifies state information of an Internet Key Exchange version 2 (IKEv2) VPN tunnel.
 		 */
 		public int rasconnsubstate;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "rasconnstate", "dwError", "szDeviceType", "szDeviceName", "szPhoneNumber", "localEndPoint", "remoteEndPoint", "rasconnsubstate" });
-		}
 	}
 
 	/**
 	 * The RASCREDENTIALS structure is used with the RasGetCredentials and RasSetCredentials functions to specify the user credentials associated with a RAS phone-book entry.
 	 */
+        @FieldOrder({"dwSize", "dwMask", "szUserName", "szPassword", "szDomain"})
 	public static class RASCREDENTIALS extends Structure {
 		public RASCREDENTIALS() {
 			super();
@@ -698,17 +655,13 @@ public interface WinRas {
 		 * A null-terminated string that contains a domain name.
 		 */
 		public char[] szDomain = new char[DNLEN + 1];
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "dwMask", "szUserName", "szPassword", "szDomain",  });
-		}
 	}
 
 	/**
 	 * The RASIPADDR structure contains an IP address of the form "a.b.c.d".
 	 * The RASENTRY structure uses this structure to specify the IP addresses of various servers associated with an entry in a RAS phone book.
 	 */
+        @FieldOrder({"addr"})
 	public static class RASIPADDR extends Structure {
 		public RASIPADDR() {
 			super();
@@ -720,17 +673,19 @@ public interface WinRas {
 		}
 
 		public byte[] addr = new byte[4];
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "addr",  });
-		}
 	}
 
 	/**
 	 * The RASENTRY structure describes a phone-book entry. The RasSetEntryProperties and RasGetEntryProperties
 	 * functions use this structure to set and retrieve the properties of a phone-book entry.
 	 */
+        @FieldOrder({"dwSize", "dwfOptions", "dwCountryID", "dwCountryCode", "szAreaCode", "szLocalPhoneNumber", "dwAlternateOffset",
+            "ipaddr", "ipaddrDns", "ipaddrDnsAlt", "ipaddrWins", "ipaddrWinsAlt", "dwFrameSize", "dwfNetProtocols", "dwFramingProtocol",
+            "szScript", "szAutodialDll", "szAutodialFunc", "szDeviceType", "szDeviceName", "szX25PadType", "szX25Address", "szX25Facilities", "szX25UserData",
+            "dwChannels", "dwReserved1", "dwReserved2", "dwSubEntries", "dwDialMode", "dwDialExtraPercent", "dwDialExtraSampleSeconds", "dwHangUpExtraPercent",
+            "dwHangUpExtraSampleSeconds", "dwIdleDisconnectSeconds", "dwType", "dwEncryptionType", "dwCustomAuthKey", "guidId", "szCustomDialDll",
+            "dwVpnStrategy", "dwfOptions2", "dwfOptions3", "szDnsSuffix", "dwTcpWindowSize", "szPrerequisitePbk", "szPrerequisiteEntry", "dwRedialCount",
+            "dwRedialPause", "ipv6addrDns", "ipv6addrDnsAlt", "dwIPv4InterfaceMetric", "dwIPv6InterfaceMetric", "ipv6addr", "dwIPv6PrefixLength", "dwNetworkOutageTime"})
 	public static class RASENTRY extends Structure {
 		public RASENTRY() {
 			super();
@@ -1013,18 +968,6 @@ public interface WinRas {
 		 * Increase this value to support connection persistence during network outages.
 		 */
 		public int dwNetworkOutageTime;
-
-		@Override
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwSize", "dwfOptions", "dwCountryID", "dwCountryCode", "szAreaCode", "szLocalPhoneNumber", "dwAlternateOffset",
-					"ipaddr", "ipaddrDns", "ipaddrDnsAlt", "ipaddrWins", "ipaddrWinsAlt", "dwFrameSize", "dwfNetProtocols", "dwFramingProtocol",
-					"szScript", "szAutodialDll", "szAutodialFunc", "szDeviceType", "szDeviceName", "szX25PadType", "szX25Address", "szX25Facilities", "szX25UserData" ,
-					"dwChannels", "dwReserved1", "dwReserved2", "dwSubEntries", "dwDialMode", "dwDialExtraPercent", "dwDialExtraSampleSeconds", "dwHangUpExtraPercent",
-					"dwHangUpExtraSampleSeconds", "dwIdleDisconnectSeconds", "dwType", "dwEncryptionType", "dwCustomAuthKey", "guidId", "szCustomDialDll",
-					"dwVpnStrategy", "dwfOptions2", "dwfOptions3", "szDnsSuffix", "dwTcpWindowSize", "szPrerequisitePbk", "szPrerequisiteEntry", "dwRedialCount",
-					"dwRedialPause", "ipv6addrDns", "ipv6addrDnsAlt", "dwIPv4InterfaceMetric", "dwIPv6InterfaceMetric", "ipv6addr", "dwIPv6PrefixLength", "dwNetworkOutageTime",
-			});
-		}
 	}
 
 	/**

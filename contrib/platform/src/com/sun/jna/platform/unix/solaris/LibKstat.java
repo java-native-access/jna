@@ -30,6 +30,7 @@ import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 
 /**
@@ -96,6 +97,9 @@ public interface LibKstat extends Library {
      * Each kstat has a common header section and a type-specific data section.
      * The header section is defined by the kstat_t structure
      */
+    @FieldOrder({"ks_crtime", "ks_next", "ks_kid", "ks_module", "ks_resv", "ks_instance",
+        "ks_name", "ks_type", "ks_class", "ks_flags", "ks_data", "ks_ndata", "ks_data_size", "ks_snaptime",
+        "ks_update", "ks_private", "ks_snapshot", "ks_lock"})
     class Kstat extends Structure {
 
         // Fields relevant to both kernel and user
@@ -145,18 +149,12 @@ public interface LibKstat extends Library {
             n.read();
             return n;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "ks_crtime", "ks_next", "ks_kid", "ks_module", "ks_resv", "ks_instance",
-                    "ks_name", "ks_type", "ks_class", "ks_flags", "ks_data", "ks_ndata", "ks_data_size", "ks_snaptime",
-                    "ks_update", "ks_private", "ks_snapshot", "ks_lock" });
-        }
     }
 
     /**
      * A list of arbitrary name=value statistics.
      */
+    @FieldOrder({"name", "data_type", "value"})
     class KstatNamed extends Structure {
 
         public byte[] name = new byte[KSTAT_STRLEN]; // name of counter
@@ -179,16 +177,13 @@ public interface LibKstat extends Library {
 
             public STR str;
 
+            @FieldOrder({"addr", "len"})
             public static class STR extends Structure {
 
                 public Pointer addr;
 
                 public int len; // length of string
 
-                @Override
-                protected List<String> getFieldOrder() {
-                    return Arrays.asList(new String[] { "addr", "len" });
-                }
             }
         }
 
@@ -224,11 +219,6 @@ public interface LibKstat extends Library {
             }
             value.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "name", "data_type", "value" });
-        }
     }
 
     /**
@@ -240,20 +230,19 @@ public interface LibKstat extends Library {
      * detected and serviced just prior to returning from any of the other
      * types).
      */
+    @FieldOrder({"intrs"})
     class KstatIntr extends Structure {
 
         public int[] intrs = new int[KSTAT_NUM_INTRS]; // interrupt counters
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "intrs" });
-        }
     }
 
     /**
      * Event timer statistics. These provide basic counting and timing
      * information for any type of event.
      */
+    @FieldOrder({"name", "resv", "num_events", "elapsed_time", "min_time", "max_time",
+        "start_time", "stop_time"})
     class KstatTimer extends Structure {
 
         public byte[] name = new byte[KSTAT_STRLEN]; // event name
@@ -272,16 +261,13 @@ public interface LibKstat extends Library {
 
         public long stop_time; // previous event stop time
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "name", "resv", "num_events", "elapsed_time", "min_time", "max_time",
-                    "start_time", "stop_time" });
-        }
     }
 
     /**
      * IO Statistics.
      */
+    @FieldOrder({"nread", "nwritten", "reads", "writes", "wtime", "wlentime",
+        "wlastupdate", "rtime", "rlentime", "rlastupdate", "wcnt", "rcnt"})
     class KstatIO extends Structure {
 
         // Basic counters.
@@ -359,18 +345,13 @@ public interface LibKstat extends Library {
             super(p);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "nread", "nwritten", "reads", "writes", "wtime", "wlentime",
-                    "wlastupdate", "rtime", "rlentime", "rlastupdate", "wcnt", "rcnt" });
-        }
     }
 
     /**
      * A kstat control structure. Only one thread may actively use a KstatCtl
      * value at any time. Synchronization is left to the application.
      */
+    @FieldOrder({"kc_chain_id", "kc_chain", "kc_kd"})
     class KstatCtl extends Structure {
 
         public int kc_chain_id; // current kstat chain ID
@@ -379,10 +360,6 @@ public interface LibKstat extends Library {
 
         public int kc_kd; // /dev/kstat descriptor - not public interface
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "kc_chain_id", "kc_chain", "kc_kd" });
-        }
     }
 
     /**

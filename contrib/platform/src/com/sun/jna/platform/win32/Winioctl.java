@@ -21,10 +21,10 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 
 /**
  * Interface for the Winioctl.h header file.
@@ -136,6 +136,7 @@ public interface Winioctl {
     /**
      * Contains information about a device. This structure is used by the IOCTL_STORAGE_GET_DEVICE_NUMBER control code.
      */
+    @FieldOrder({"DeviceType", "DeviceNumber", "PartitionNumber"})
     public static class STORAGE_DEVICE_NUMBER extends Structure {
 
 		public static class ByReference extends STORAGE_DEVICE_NUMBER implements
@@ -147,8 +148,6 @@ public interface Winioctl {
                 super(memory);
             }
         }
-
-		public static final List<String> FIELDS = createFieldsOrder("DeviceType", "DeviceNumber", "PartitionNumber");
 
         /**
          * The type of device. Values from 0 through 32,767 are reserved for use by Microsoft. Values from 32,768
@@ -173,11 +172,6 @@ public interface Winioctl {
         public STORAGE_DEVICE_NUMBER(Pointer memory) {
             super(memory);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

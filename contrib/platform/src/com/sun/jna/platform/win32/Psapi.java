@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.BaseTSD.SIZE_T;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
@@ -264,24 +265,19 @@ public interface Psapi extends StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/ms683210(VS.85).aspx">MSDN</a>
      */
     boolean GetPerformanceInfo(PERFORMANCE_INFORMATION pPerformanceInformation, int cb);
-    
-    class MODULEINFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("lpBaseOfDll", "SizeOfImage", "EntryPoint");
 
+    @FieldOrder({"lpBaseOfDll", "SizeOfImage", "EntryPoint"})
+    class MODULEINFO extends Structure {
         public Pointer EntryPoint;
         public Pointer lpBaseOfDll;
         public int     SizeOfImage;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
+    @FieldOrder({"cb", "CommitTotal", "CommitLimit", "CommitPeak",
+        "PhysicalTotal", "PhysicalAvailable", "SystemCache", "KernelTotal",
+        "KernelPaged", "KernelNonpaged", "PageSize", "HandleCount",
+        "ProcessCount", "ThreadCount"})
     class PERFORMANCE_INFORMATION extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("cb", "CommitTotal", "CommitLimit", 
-            "CommitPeak", "PhysicalTotal", "PhysicalAvailable", "SystemCache", "KernelTotal", "KernelPaged",
-            "KernelNonpaged", "PageSize", "HandleCount", "ProcessCount", "ThreadCount");
 
         public DWORD cb;
         public SIZE_T CommitTotal;
@@ -297,10 +293,5 @@ public interface Psapi extends StdCallLibrary {
         public DWORD HandleCount;
         public DWORD ProcessCount;
         public DWORD ThreadCount;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 }

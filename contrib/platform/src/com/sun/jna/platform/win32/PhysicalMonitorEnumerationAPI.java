@@ -25,9 +25,9 @@
 
 package com.sun.jna.platform.win32;
 
-import java.util.List;
 
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 
 /**
@@ -54,8 +54,8 @@ public interface PhysicalMonitorEnumerationAPI
     /**
      * Contains a handle and text description corresponding to a physical monitor.
      */
+    @FieldOrder({"hPhysicalMonitor", "szPhysicalMonitorDescription"})
     public class PHYSICAL_MONITOR extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("hPhysicalMonitor", "szPhysicalMonitorDescription");
         /**
          * Handle to the physical monitor.
          */
@@ -65,10 +65,5 @@ public interface PhysicalMonitorEnumerationAPI
          * Text description of the physical monitor (always 128 chars)
          */
         public char[] szPhysicalMonitorDescription = new char[PHYSICAL_MONITOR_DESCRIPTION_SIZE];
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 }
