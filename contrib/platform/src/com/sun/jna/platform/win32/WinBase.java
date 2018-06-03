@@ -2557,4 +2557,8 @@ public interface WinBase extends WinDef, BaseTSD {
      * be set.
      */
     int ES_USER_PRESENT = 0x00000004;
+
+
+    int MUTEX_MODIFY_STATE = WinNT.MUTANT_QUERY_STATE;
+    int MUTEX_ALL_ACCESS = WinNT.MUTANT_ALL_ACCESS;
 }

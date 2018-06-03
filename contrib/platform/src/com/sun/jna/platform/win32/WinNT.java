@@ -76,6 +76,10 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
     int SPECIFIC_RIGHTS_ALL = 0x0000FFFF;
 
+    int MUTANT_QUERY_STATE = 0x0001;
+    int MUTANT_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE
+            | MUTANT_QUERY_STATE;
+
     //
     // Token Specific Access Rights.
     //
