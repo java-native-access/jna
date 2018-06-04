@@ -26,10 +26,10 @@ import java.util.List;
 
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
-import com.sun.jna.Native;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -93,6 +93,9 @@ public interface OaIdl {
     /**
      * The Class EXCEPINFO.
      */
+    @FieldOrder({"wCode", "wReserved", "bstrSource", "bstrDescription",
+        "bstrHelpFile", "dwHelpContext", "pvReserved", "pfnDeferredFillIn",
+        "scode"})
     public static class EXCEPINFO extends Structure {
 
         /**
@@ -101,10 +104,6 @@ public interface OaIdl {
         public static class ByReference extends EXCEPINFO implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("wCode", "wReserved", "bstrSource",
-                "bstrDescription", "bstrHelpFile", "dwHelpContext",
-                "pvReserved", "pfnDeferredFillIn", "scode");
 
         /** The w code. */
         public WORD wCode;
@@ -148,11 +147,6 @@ public interface OaIdl {
          */
         public EXCEPINFO(Pointer p) {
             super(p);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -227,14 +221,14 @@ public interface OaIdl {
         }
     }
 
+    @FieldOrder({"date"})
     public static class DATE extends Structure {
         private final static long MICRO_SECONDS_PER_DAY = 24L * 60L * 60L * 1000L;
-        
+
         public static class ByReference extends DATE implements
                 Structure.ByReference {
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("date");
         public double date;
 
         public DATE() {
@@ -244,7 +238,7 @@ public interface OaIdl {
         public DATE(double date) {
             this.date = date;
         }
-        
+
         public DATE(Date javaDate) {
             setFromJavaDate(javaDate);
         }
@@ -259,7 +253,7 @@ public interface OaIdl {
             int seconds = (int) timePart;
             timePart = 1000 * (timePart - ((int) timePart));
             int milliseconds = (int) timePart;
-            
+
             Date baseDate = new Date(days);
             baseDate.setHours(hours);
             baseDate.setMinutes(minutes);
@@ -267,29 +261,24 @@ public interface OaIdl {
             baseDate.setTime(baseDate.getTime() + milliseconds);
             return baseDate;
         }
-        
+
         public void setFromJavaDate(Date javaDate) {
             double msSinceOrigin = javaDate.getTime() - DATE_OFFSET;
             double daysAsFract = msSinceOrigin / MICRO_SECONDS_PER_DAY;
-            
+
             Date dayDate = new Date(javaDate.getTime());
             dayDate.setHours(0);
             dayDate.setMinutes(0);
             dayDate.setSeconds(0);
             dayDate.setTime(dayDate.getTime() / 1000 * 1000); // Clear milliseconds
-            
+
             double integralPart = Math.floor(daysAsFract);
             double fractionalPart = Math.signum(daysAsFract) * ((javaDate.getTime() - dayDate.getTime()) / (24d * 60 * 60 * 1000));
-            
+
             this.date = integralPart + fractionalPart;
         }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * The Class DISPID.
      */
@@ -444,6 +433,7 @@ public interface OaIdl {
     /** Bits reserved for future use. */
     public final static int FADF_RESERVED = 0xF008;
 
+    @FieldOrder({"value"})
     public static class TYPEKIND extends Structure {
         public static class ByReference extends TYPEKIND implements
                 Structure.ByReference {
@@ -461,7 +451,6 @@ public interface OaIdl {
             }
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public TYPEKIND() {
@@ -495,19 +484,13 @@ public interface OaIdl {
         public static final int TKIND_UNION = TYPEKIND.TKIND_ALIAS + 1;
         // / <i>native declaration : line 12</i>
         public static final int TKIND_MAX = TYPEKIND.TKIND_UNION + 1;
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"value"})
     public static class DESCKIND extends Structure {
         public static class ByReference extends DESCKIND implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("value");
 
         public int value;
 
@@ -536,12 +519,7 @@ public interface OaIdl {
         public static final int DESCKIND_IMPLICITAPPOBJ = DESCKIND.DESCKIND_TYPECOMP + 1;
         // / <i>native declaration : line 9</i>
         public static final int DESCKIND_MAX = DESCKIND.DESCKIND_IMPLICITAPPOBJ + 1;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
+    }
 
     /**
      * Implementation of SAFEARRAY. Implements Closable, which in this case 
@@ -578,14 +556,12 @@ public interface OaIdl {
      * 
      * <blockquote>A 32-bit signed integer. The range is �2147483648 through 2147483647 decimal.</blockquote>
      */
+    @FieldOrder({"cDims", "fFeatures", "cbElements", "cLocks", "pvData", "rgsabound"})
     public static class SAFEARRAY extends Structure implements Closeable {
 
         public static class ByReference extends SAFEARRAY implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cDims", "fFeatures", "cbElements", "cLocks", "pvData", "rgsabound");
 
         public USHORT cDims;
         public USHORT fFeatures;
@@ -613,11 +589,6 @@ public interface OaIdl {
             } else {
                 rgsabound = new SAFEARRAYBOUND[]{ new SAFEARRAYBOUND() };
             }
-        }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         /**
@@ -1043,6 +1014,7 @@ public interface OaIdl {
         }
     }
 
+    @FieldOrder({"pSAFEARRAY"})
     public static class SAFEARRAYByReference extends Structure implements Structure.ByReference {
 
         public SAFEARRAYByReference() {
@@ -1057,22 +1029,14 @@ public interface OaIdl {
             pSAFEARRAY = safeArray;
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("pSAFEARRAY");
-
         public SAFEARRAY.ByReference pSAFEARRAY;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"cElements", "lLbound"})
     public static class SAFEARRAYBOUND extends Structure {
         public static class ByReference extends SAFEARRAYBOUND implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("cElements", "lLbound");
 
         public ULONG cElements;
         public LONG lLbound;
@@ -1090,11 +1054,6 @@ public interface OaIdl {
             this.cElements = new ULONG(cElements);
             this.lLbound = new LONG(lLbound);
             this.write();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -1116,9 +1075,8 @@ public interface OaIdl {
             this.read();
         }
 
+        @FieldOrder({"Lo", "Hi"})
         public static class _CURRENCY extends Structure {
-            public static final List<String> FIELDS = createFieldsOrder("Lo", "Hi");
-
             public ULONG Lo;
             public LONG Hi;
 
@@ -1130,17 +1088,11 @@ public interface OaIdl {
                 super(pointer);
                 this.read();
             }
-
-            @Override
-            protected List<String> getFieldOrder() {
-                return FIELDS;
-            }
         }
     }
 
+    @FieldOrder({"wReserved", "decimal1", "Hi32", "decimal2"})
     public static class DECIMAL extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("wReserved", "decimal1", "Hi32", "decimal2");
-
         public static class ByReference extends DECIMAL implements
                 Structure.ByReference {
         };
@@ -1161,8 +1113,8 @@ public interface OaIdl {
                 this.read();
             }
 
+            @FieldOrder({"scale", "sign"})
             public static class _DECIMAL1_DECIMAL extends Structure {
-                public static final List<String> FIELDS = createFieldsOrder("scale", "sign");
                 public BYTE scale;
                 public BYTE sign;
 
@@ -1172,11 +1124,6 @@ public interface OaIdl {
 
                 public _DECIMAL1_DECIMAL(Pointer pointer) {
                     super(pointer);
-                }
-
-                @Override
-                protected List<String> getFieldOrder() {
-                    return FIELDS;
                 }
             }
         }
@@ -1195,8 +1142,8 @@ public interface OaIdl {
                 this.read();
             }
 
+            @FieldOrder({"Lo32", "Mid32"})
             public static class _DECIMAL2_DECIMAL extends Structure {
-                public static final List<String> FIELDS = createFieldsOrder("Lo32", "Mid32");
 
                 public BYTE Lo32;
                 public BYTE Mid32;
@@ -1207,11 +1154,6 @@ public interface OaIdl {
 
                 public _DECIMAL2_DECIMAL(Pointer pointer) {
                     super(pointer);
-                }
-
-                @Override
-                protected List<String> getFieldOrder() {
-                    return FIELDS;
                 }
             }
         }
@@ -1228,19 +1170,13 @@ public interface OaIdl {
         public DECIMAL(Pointer pointer) {
             super(pointer);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"value"})
     public static class SYSKIND extends Structure {
         public static class ByReference extends SYSKIND implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("value");
 
         public int value;
         public SYSKIND() {
@@ -1260,19 +1196,14 @@ public interface OaIdl {
         public static final int SYS_WIN32 = SYSKIND.SYS_WIN16 + 1;
         public static final int SYS_MAC = SYSKIND.SYS_WIN32 + 1;
         public static final int SYS_WIN64 = SYSKIND.SYS_MAC + 1;
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"value"})
     public static class LIBFLAGS extends Structure {
         public static class ByReference extends LIBFLAGS implements
                 Structure.ByReference {
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
         public int value;
 
         public LIBFLAGS() {
@@ -1292,13 +1223,9 @@ public interface OaIdl {
         public static final int LIBFLAG_FCONTROL = 0x2;
         public static final int LIBFLAG_FHIDDEN = 0x4;
         public static final int LIBFLAG_FHASDISKIMAGE = 0x8;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     };
 
+    @FieldOrder({"guid", "lcid", "syskind", "wMajorVerNum", "wMinorVerNum", "wLibFlags"})
     public static class TLIBATTR extends Structure {
         public static class ByReference extends TLIBATTR implements
                 Structure.ByReference {
@@ -1311,10 +1238,7 @@ public interface OaIdl {
                 super(pointer);
                 this.read();
             }
-        };
-
-        public static final List<String> FIELDS = createFieldsOrder("guid", "lcid", "syskind",
-                "wMajorVerNum", "wMinorVerNum", "wLibFlags");
+        }
 
         public GUID guid;
         public LCID lcid;
@@ -1330,11 +1254,6 @@ public interface OaIdl {
         public TLIBATTR(Pointer pointer) {
             super(pointer);
             this.read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -1376,15 +1295,13 @@ public interface OaIdl {
         }
     }
 
+    @FieldOrder({"memid", "lprgscode", "lprgelemdescParam", "funckind",
+        "invkind", "callconv", "cParams", "cParamsOpt", "oVft", "cScodes",
+        "elemdescFunc", "wFuncFlags"})
     public static class FUNCDESC extends Structure {
         public static class ByReference extends FUNCDESC implements
                 Structure.ByReference {
         };
-
-        public static final List<String> FIELDS = createFieldsOrder("memid", "lprgscode",
-                "lprgelemdescParam", "funckind", "invkind", "callconv",
-                "cParams", "cParamsOpt", "oVft", "cScodes", "elemdescFunc",
-                "wFuncFlags");
 
         public MEMBERID memid;
         public ScodeArg.ByReference lprgscode;
@@ -1413,19 +1330,13 @@ public interface OaIdl {
                 this.lprgelemdescParam.read();
             }
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"elemDescArg"})
     public static class ElemDescArg extends Structure {
         public static class ByReference extends ElemDescArg implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("elemDescArg");
 
         public ELEMDESC[] elemDescArg = { new ELEMDESC() };
 
@@ -1437,19 +1348,13 @@ public interface OaIdl {
             super(pointer);
             this.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"scodeArg"})
     public static class ScodeArg extends Structure {
         public static class ByReference extends ScodeArg implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("scodeArg");
 
         public SCODE[] scodeArg = { new SCODE() };
 
@@ -1461,20 +1366,13 @@ public interface OaIdl {
             super(pointer);
             this.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"memid", "lpstrSchema", "_vardesc", "elemdescVar", "wVarFlags", "varkind"})
     public class VARDESC extends Structure {
         public static class ByReference extends VARDESC implements
                 Structure.ByReference {
         };
-
-        public static final List<String> FIELDS = createFieldsOrder("memid", "lpstrSchema", "_vardesc",
-                "elemdescVar", "wVarFlags", "varkind");
 
         // / C type : MEMBERID
         public MEMBERID memid;
@@ -1543,19 +1441,14 @@ public interface OaIdl {
             this._vardesc.setType("lpvarValue");
             this.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"tdesc", "_elemdesc"})
     public static class ELEMDESC extends Structure {
         public static class ByReference extends ELEMDESC implements
                 Structure.ByReference {
         };
 
-        public static final List<String> FIELDS = createFieldsOrder("tdesc", "_elemdesc");
         /**
          * the type of the element<br>
          * C type : TYPEDESC
@@ -1620,13 +1513,9 @@ public interface OaIdl {
             super(pointer);
             this.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"value"})
     public static class FUNCKIND extends Structure {
         public static class ByReference extends FUNCKIND implements
                 Structure.ByReference {
@@ -1643,8 +1532,6 @@ public interface OaIdl {
         // / <i>native declaration : line 24</i>
         public static final int FUNC_DISPATCH = FUNC_STATIC + 1;
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
-
         public int value;
 
         public FUNCKIND() {
@@ -1655,20 +1542,14 @@ public interface OaIdl {
             this.value = value;
 
         }
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"value"})
     public static class INVOKEKIND extends Structure {
         public static class ByReference extends INVOKEKIND implements
                 Structure.ByReference {
-        };
+        }
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
-        
         // / <i>native declaration : line 30</i>
         public static final INVOKEKIND INVOKE_FUNC = new INVOKEKIND(1);
         // / <i>native declaration : line 31</i>
@@ -1688,19 +1569,13 @@ public interface OaIdl {
             this.value = value;
 
         }
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"value"})
     public static class CALLCONV extends Structure {
         public static class ByReference extends CALLCONV implements
                 Structure.ByReference {
-        };
-
-        public static final List<String> FIELDS = createFieldsOrder("value");
+        }
 
         // / <i>native declaration : line 4</i>
         public static final int CC_FASTCALL = 0;
@@ -1733,13 +1608,9 @@ public interface OaIdl {
         public CALLCONV(int value) {
             this.value = value;
         }
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"value"})
     public static class VARKIND extends Structure {
         public static class ByReference extends VARKIND implements
                 Structure.ByReference {
@@ -1754,8 +1625,6 @@ public interface OaIdl {
         // / <i>native declaration : line 7</i>
         public static final int VAR_DISPATCH = VAR_CONST + 1;
 
-        public static final List<String> FIELDS = createFieldsOrder("value");
-
         public int value;
 
         public VARKIND() {
@@ -1765,13 +1634,9 @@ public interface OaIdl {
         public VARKIND(int value) {
             this.value = value;
         }
+    }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
-
+    @FieldOrder({"_typedesc", "vt"})
     public static class TYPEDESC extends Structure {
         public static class ByReference extends TYPEDESC implements
                 Structure.ByReference {
@@ -1825,7 +1690,6 @@ public interface OaIdl {
             }
         };
 
-        public static final List<String> FIELDS = createFieldsOrder("_typedesc", "vt");
         public _TYPEDESC _typedesc;
         public VARTYPE vt;
 
@@ -1842,13 +1706,9 @@ public interface OaIdl {
             this._typedesc = _typedesc;
             this.vt = vt;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"dwReserved", "wIDLFlags"})
     public static class IDLDESC extends Structure {
         public static class ByReference extends IDLDESC implements
                 Structure.ByReference {
@@ -1861,8 +1721,6 @@ public interface OaIdl {
                 super(idldesc.dwReserved, idldesc.wIDLFlags);
             }
         };
-
-        public static final List<String> FIELDS = createFieldsOrder("dwReserved", "wIDLFlags");
 
         // / C type : ULONG_PTR
         public ULONG_PTR dwReserved;
@@ -1882,15 +1740,10 @@ public interface OaIdl {
             this.dwReserved = dwReserved;
             this.wIDLFlags = wIDLFlags;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"tdescElem", "cDims", "rgbounds"})
     public class ARRAYDESC extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("tdescElem", "cDims", "rgbounds");
         // / C type : TYPEDESC
         public TYPEDESC tdescElem;
         public short cDims;
@@ -1907,11 +1760,6 @@ public interface OaIdl {
         public ARRAYDESC(Pointer pointer) {
             super(pointer);
             this.read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         /**
@@ -1936,12 +1784,11 @@ public interface OaIdl {
         };
     }
 
+    @FieldOrder({"pparamdescex", "wParamFlags"})
     public static class PARAMDESC extends Structure {
         public static class ByReference extends PARAMDESC implements
                 Structure.ByReference {
-        };
-
-        public static final List<String> FIELDS = createFieldsOrder("pparamdescex", "wParamFlags");
+        }
 
         // replaced PARAMDESCEX.ByReference with Pointer
         // because of JNA 4 has a problem with ByReference
@@ -1956,19 +1803,13 @@ public interface OaIdl {
             super(pointer);
             this.read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"cBytes", "varDefaultValue"})
     public static class PARAMDESCEX extends Structure {
         public static class ByReference extends PARAMDESCEX implements
                 Structure.ByReference {
         };
-
-        public static final List<String> FIELDS = createFieldsOrder("cBytes", "varDefaultValue");
 
         public ULONG cBytes;
         public VariantArg varDefaultValue;
@@ -1980,11 +1821,6 @@ public interface OaIdl {
         public PARAMDESCEX(Pointer pointer) {
             super(pointer);
             this.read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -2019,17 +1855,15 @@ public interface OaIdl {
         }
     }
 
+    @FieldOrder({"guid", "lcid", "dwReserved", "memidConstructor",
+        "memidDestructor", "lpstrSchema", "cbSizeInstance", "typekind",
+        "cFuncs", "cVars", "cImplTypes", "cbSizeVft", "cbAlignment",
+        "wTypeFlags", "wMajorVerNum", "wMinorVerNum", "tdescAlias",
+        "idldescType"})
     public class TYPEATTR extends Structure {
         public static class ByReference extends TYPEATTR implements
                 Structure.ByReference {
         };
-
-        public static final List<String> FIELDS = createFieldsOrder("guid", "lcid", "dwReserved", "memidConstructor",
-                "memidDestructor", "lpstrSchema", "cbSizeInstance",
-                "typekind", "cFuncs", "cVars", "cImplTypes",
-                "cbSizeVft", "cbAlignment", "wTypeFlags",
-                "wMajorVerNum", "wMinorVerNum", "tdescAlias",
-                "idldescType");
 
         // / C type : GUID
         public GUID guid;
@@ -2066,11 +1900,6 @@ public interface OaIdl {
         public TYPEATTR(Pointer pointer) {
             super(pointer);
             this.read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         /**

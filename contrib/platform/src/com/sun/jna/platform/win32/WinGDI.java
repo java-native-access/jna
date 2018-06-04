@@ -28,6 +28,7 @@ import java.util.List;
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinDef.HBITMAP;
 import com.sun.jna.platform.win32.WinDef.RECT;
@@ -41,22 +42,17 @@ import com.sun.jna.platform.win32.WinDef.RECT;
 public interface WinGDI {
     int RDH_RECTANGLES = 1;
 
+    @FieldOrder({"dwSize", "iType", "nCount", "nRgnSize", "rcBound"})
     class RGNDATAHEADER extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dwSize", "iType", "nCount", "nRgnSize", "rcBound");
         public int dwSize = size();
         public int iType = RDH_RECTANGLES; // required
         public int nCount;
         public int nRgnSize;
         public RECT rcBound;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"rdh", "Buffer"})
     class RGNDATA extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("rdh", "Buffer" );
         public RGNDATAHEADER rdh;
         public byte[] Buffer;
 
@@ -66,11 +62,6 @@ public interface WinGDI {
         public RGNDATA(int bufferSize) {
             Buffer = new byte[bufferSize];
             allocateMemory();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -119,11 +110,10 @@ public interface WinGDI {
     int PFD_GENERIC_ACCELERATED = 0x00001000;
     int PFD_SUPPORT_DIRECTDRAW = 0x00002000;
 
+    @FieldOrder({"biSize", "biWidth", "biHeight", "biPlanes", "biBitCount",
+        "biCompression", "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter",
+        "biClrUsed", "biClrImportant"})
     class BITMAPINFOHEADER extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("biSize",
-                "biWidth", "biHeight", "biPlanes", "biBitCount", "biCompression",
-                "biSizeImage", "biXPelsPerMeter", "biYPelsPerMeter", "biClrUsed", "biClrImportant");
-
         public int biSize = size();
         public int biWidth;
         public int biHeight;
@@ -135,28 +125,18 @@ public interface WinGDI {
         public int biYPelsPerMeter;
         public int biClrUsed;
         public int biClrImportant;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"rgbBlue", "rgbGreen", "rgbRed", "rgbReserved"})
     class RGBQUAD extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("rgbBlue", "rgbGreen", "rgbRed", "rgbReserved");
-
         public byte rgbBlue;
         public byte rgbGreen;
         public byte rgbRed;
         public byte rgbReserved = 0;
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"bmiHeader", "bmiColors"})
     class BITMAPINFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("bmiHeader", "bmiColors");
 
         public BITMAPINFOHEADER bmiHeader = new BITMAPINFOHEADER();
         public RGBQUAD[] bmiColors = new RGBQUAD[1];
@@ -166,29 +146,20 @@ public interface WinGDI {
         public BITMAPINFO(int size) {
             bmiColors = new RGBQUAD[size];
         }
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"fIcon", "xHotspot", "yHotspot", "hbmMask", "hbmColor"})
     class ICONINFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("fIcon", "xHotspot", "yHotspot", "hbmMask", "hbmColor");
-
         public boolean fIcon;
         public int xHotspot;
         public int yHotspot;
         public HBITMAP hbmMask;
         public HBITMAP hbmColor;
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"bmType", "bmWidth", "bmHeight", "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits"})
     class BITMAP extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("bmType", "bmWidth", "bmHeight",
-                "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits");
+        public static final List<String> FIELDS = createFieldsOrder();
         public NativeLong bmType;
         public NativeLong bmWidth;
         public NativeLong bmHeight;
@@ -196,25 +167,15 @@ public interface WinGDI {
         public short bmPlanes;
         public short bmBitsPixel;
         public Pointer bmBits;
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @FieldOrder({"dsBm", "dsBmih", "dsBitfields", "dshSection", "dsOffset"})
     class DIBSECTION extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("dsBm", "dsBmih", "dsBitfields", "dshSection", "dsOffset");
-
         public BITMAP           dsBm;
         public BITMAPINFOHEADER dsBmih;
         public int[]            dsBitfields = new int[3];
         public HANDLE           dshSection;
         public int              dsOffset;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     int DIB_RGB_COLORS = 0;
@@ -223,12 +184,11 @@ public interface WinGDI {
     /**
      * The PIXELFORMATDESCRIPTOR structure describes the pixel format of a drawing surface.
      */
+    @FieldOrder({"nSize", "nVersion", "dwFlags", "iPixelType",
+        "cColorBits", "cRedBits", "cRedShift", "cGreenBits", "cGreenShift", "cBlueBits", "cBlueShift", "cAlphaBits", "cAlphaShift",
+        "cAccumBits", "cAccumRedBits", "cAccumGreenBits", "cAccumBlueBits", "cAccumAlphaBits",
+        "cDepthBits", "cStencilBits", "cAuxBuffers", "iLayerType", "bReserved", "dwLayerMask", "dwVisibleMask", "dwDamageMask"})
     class PIXELFORMATDESCRIPTOR extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("nSize", "nVersion", "dwFlags", "iPixelType",
-                "cColorBits", "cRedBits", "cRedShift", "cGreenBits", "cGreenShift", "cBlueBits", "cBlueShift", "cAlphaBits", "cAlphaShift",
-                "cAccumBits", "cAccumRedBits", "cAccumGreenBits", "cAccumBlueBits", "cAccumAlphaBits",
-                "cDepthBits", "cStencilBits", "cAuxBuffers", "iLayerType", "bReserved", "dwLayerMask", "dwVisibleMask", "dwDamageMask");
-
         public PIXELFORMATDESCRIPTOR() {
             nSize = (short) size();
         }
@@ -345,10 +305,5 @@ public interface WinGDI {
          * Ignored. Earlier implementations of OpenGL used this member, but it is no longer used.
          */
         public int dwDamageMask;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 }

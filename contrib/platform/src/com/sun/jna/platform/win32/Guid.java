@@ -25,11 +25,11 @@ package com.sun.jna.platform.win32;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
-import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 
 /**
  * Ported from Guid.h. Microsoft Windows SDK 6.0A.
@@ -46,6 +46,7 @@ public interface Guid {
      *
      * @author Tobias Wolf, wolf.tobias@gmx.net
      */
+    @FieldOrder({"Data1", "Data2", "Data3", "Data4"})
     public static class GUID extends Structure {
 
     	public static class ByValue extends GUID implements Structure.ByValue {
@@ -104,8 +105,6 @@ public interface Guid {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("Data1", "Data2", "Data3", "Data4");
 
         /** The Data1. */
         public int Data1;
@@ -396,14 +395,9 @@ public interface Guid {
          * Write fields to backing memory.
          */
         protected void writeFieldsToMemory() {
-            for (String name : FIELDS) {
+            for (String name : getFieldOrder()) {
                 this.writeField(name);
             }
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 

@@ -26,6 +26,7 @@ package com.sun.jna.platform.unix;
 import java.util.List;
 
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 
 /**
  * Definitions related to {@code getrlimit}/{@code setrlimit}
@@ -92,19 +93,13 @@ public interface Resource {
     /** Number of {@code rlimit} values */
     int RLIMIT_NLIMITS = 16;
 
+    @FieldOrder({"rlim_cur", "rlim_max"})
     public static class Rlimit extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("rlim_cur", "rlim_max");
-
         /** The current (soft) limit.  */
         public long rlim_cur;
 
         /** The hard limit.  */
         public long rlim_max;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     // see man(2) rlimit

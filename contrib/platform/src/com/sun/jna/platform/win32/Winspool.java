@@ -23,12 +23,11 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -265,10 +264,8 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162844(v=vs.85).aspx">
 	 *      PRINTER_INFO_1 structure</a>
 	 */
+        @FieldOrder({"Flags", "pDescription", "pName", "pComment"})
 	public static class PRINTER_INFO_1 extends Structure {
-		
-		public static final List<String> FIELDS = createFieldsOrder("Flags", "pDescription", "pName", "pComment");
-		
 		/**
 		 * Specifies information about the returned data. Following are the
 		 * values for this member.
@@ -297,11 +294,6 @@ public interface Winspool extends StdCallLibrary {
         public PRINTER_INFO_1(int size) {
             super(new Memory(size));
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 	
 	/**
@@ -312,13 +304,11 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162845(v=vs.85).aspx">
 	 *      PRINTER_INFO_2 structure</a>
 	 */
+        @FieldOrder({"pServerName", "pPrinterName", "pShareName",
+            "pPortName", "pDriverName", "pComment", "pLocation", "pDevMode", "pSepFile", "pPrintProcessor",
+            "pDatatype", "pParameters", "pSecurityDescriptor", "Attributes", "Priority", "DefaultPriority",
+            "StartTime", "UntilTime", "Status", "cJobs", "AveragePPM"})
 	public static class PRINTER_INFO_2 extends Structure {
-		
-		public static final List<String> FIELDS = createFieldsOrder("pServerName", "pPrinterName", "pShareName",
-				"pPortName", "pDriverName", "pComment", "pLocation", "pDevMode", "pSepFile", "pPrintProcessor",
-				"pDatatype", "pParameters", "pSecurityDescriptor", "Attributes", "Priority", "DefaultPriority",
-				"StartTime", "UntilTime", "Status", "cJobs", "AveragePPM");
-		
 		/**
 		 * A pointer to a null-terminated string identifying the server that
 		 * controls the printer. If this string is NULL, the printer is
@@ -440,11 +430,6 @@ public interface Winspool extends StdCallLibrary {
 		public PRINTER_INFO_2(int size) {
 			super(new Memory(size));
 		}
-		
-		@Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
 		/**
 		 * Checks if the printer attributes have one of the values PRINTER_ATTRIBUTE_XXX.
@@ -466,10 +451,8 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd162847(v=vs.85).aspx">
 	 *      PRINTER_INFO_4 structure</a>
 	 */
+        @FieldOrder({"pPrinterName", "pServerName", "Attributes"})
 	public static class PRINTER_INFO_4 extends Structure {
-		
-		public static final List<String> FIELDS = createFieldsOrder("pPrinterName", "pServerName", "Attributes");
-		
 		/**
 		 * Pointer to a null-terminated string that specifies the name of the
 		 * printer (local or remote).
@@ -491,11 +474,6 @@ public interface Winspool extends StdCallLibrary {
         public PRINTER_INFO_4(int size) {
             super(new Memory(size));
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -504,10 +482,8 @@ public interface Winspool extends StdCallLibrary {
      *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/dd162839(v=vs.85).aspx">PRINTER_DEFAULTS structure</a>
      */
+    @FieldOrder({"pDatatype", "pDevMode", "DesiredAccess"})
     public class LPPRINTER_DEFAULTS extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder("pDatatype", "pDevMode", "DesiredAccess");
-
         /**
          * Pointer to a null-terminated string that specifies the default data
          * type for a printer.
@@ -525,11 +501,6 @@ public interface Winspool extends StdCallLibrary {
          * functions.
          */
         public int DesiredAccess;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -811,14 +782,11 @@ public interface Winspool extends StdCallLibrary {
 	 *      "https://msdn.microsoft.com/en-us/library/windows/desktop/dd145019(v=vs.85).aspx">
 	 *      JOB_INFO_1 structure</a>
 	 */
+
+        @FieldOrder({"JobId", "pPrinterName", "pMachineName", "pUserName",
+                "pDocument", "pDatatype", "pStatus", "Status", "Priority",
+                "Position", "TotalPages", "PagesPrinted", "Submitted"})
 	public static class JOB_INFO_1 extends Structure {
-		
-		public static final List<String> FIELDS = createFieldsOrder(
-                "JobId", "pPrinterName",
-                "pMachineName", "pUserName", "pDocument", "pDatatype",
-                "pStatus", "Status", "Priority", "Position", "TotalPages",
-                "PagesPrinted", "Submitted");
-		
 		/**
 		 * A job identifier.
 		 */
@@ -898,11 +866,6 @@ public interface Winspool extends StdCallLibrary {
 
         public JOB_INFO_1(int size) {
             super(new Memory(size));
-        }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

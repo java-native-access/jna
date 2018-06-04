@@ -65,34 +65,23 @@ public interface SystemB extends Library {
     int UINT64_SIZE = Native.getNativeSize(long.class);
     int INT_SIZE = Native.getNativeSize(int.class);
 
+    @Structure.FieldOrder({"cpu_ticks"})
     public static class HostCpuLoadInfo extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("cpu_ticks");
         public int cpu_ticks[] = new int[CPU_STATE_MAX];
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
+    @Structure.FieldOrder({"avenrun", "mach_factor"})
     public static class HostLoadInfo extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("avenrun", "mach_factor");
         public int[] avenrun = new int[3]; // scaled by LOAD_SCALE
         public int[] mach_factor = new int[3]; // scaled by LOAD_SCALE
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
-    public static class VMStatistics extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("free_count", "active_count",
+    @Structure.FieldOrder({"free_count", "active_count",
                 "inactive_count", "wire_count", "zero_fill_count",
                 "reactivations", "pageins", "pageouts", "faults",
                 "cow_faults", "lookups", "hits", "purgeable_count",
-                "purges", "speculative_count");
-
+                "purges", "speculative_count"})
+    public static class VMStatistics extends Structure {
         public int free_count; // # of pages free
         public int active_count; // # of pages active
         public int inactive_count; // # of pages inactive
@@ -109,15 +98,9 @@ public interface SystemB extends Library {
         public int purges; // # of pages purged
         // # of pages speculative (included in free_count)
         public int speculative_count;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
-    public static class VMStatistics64 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("free_count", "active_count",
+    @Structure.FieldOrder({"free_count", "active_count",
                 "inactive_count", "wire_count",
                 "zero_fill_count", "reactivations",
                 "pageins", "pageouts",
@@ -129,8 +112,8 @@ public interface SystemB extends Library {
                 "swapins", "swapouts",
                 "compressor_page_count", "throttled_count",
                 "external_page_count", "internal_page_count",
-                "total_uncompressed_pages_in_compressor");
-
+                "total_uncompressed_pages_in_compressor"})
+    public static class VMStatistics64 extends Structure {
         public int free_count; // # of pages free
         public int active_count; // # of pages active
         public int inactive_count; // # of pages inactive
@@ -161,11 +144,6 @@ public interface SystemB extends Library {
         public int internal_page_count; // # of pages that are anonymous
         // # of pages (uncompressed) held within the compressor.
         public long total_uncompressed_pages_in_compressor;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**

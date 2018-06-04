@@ -23,13 +23,12 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.win32.W32APITypeMapper;
 import com.sun.jna.platform.win32.Guid.GUID;
@@ -50,11 +49,10 @@ public interface WinCrypt {
     /**
      * The CryptoAPI CRYPTOAPI_BLOB structure is used for an arbitrary array of bytes.
      */
+    @FieldOrder({"cbData", "pbData"})
     public static class DATA_BLOB extends Structure {
-		public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
-		
-        public static final List<String> FIELDS = createFieldsOrder("cbData", "pbData");
-		
+	public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
+
         /**
          * The count of bytes in the buffer pointed to by pbData.
          */
@@ -84,11 +82,6 @@ public interface WinCrypt {
             this(Native.toByteArray(s));
         }
 
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
         /**
          * Get byte data.
          * @return
@@ -108,21 +101,13 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377590(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwErrorStatus", "dwInfoStatus"})
     public static class CERT_TRUST_STATUS extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwErrorStatus", "dwInfoStatus");
-        
         public static class ByReference extends CERT_TRUST_STATUS implements Structure.ByReference {
         }
 
         public int dwErrorStatus;
         public int dwInfoStatus;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -131,11 +116,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381487(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"SubjectIdentifier", "cAttribute", "rgAttribute"})
     public static class CTL_ENTRY extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "SubjectIdentifier", "cAttribute", "rgAttribute");
-        
         public static class ByReference extends CTL_ENTRY implements Structure.ByReference {
         }
 
@@ -153,11 +135,6 @@ public interface WinCrypt {
                         .toArray(cAttribute);
             }
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -168,12 +145,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377509(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "pBaseCRLContext", "pDeltaCRLContext", "pCrlEntry",
+                "fDeltaCrlEntry"})
     public static class CERT_REVOCATION_CRL_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "pBaseCRLContext", "pDeltaCRLContext", "pCrlEntry", 
-                "fDeltaCrlEntry");
-
         public static class ByReference extends CERT_REVOCATION_CRL_INFO implements Structure.ByReference {
         }
 
@@ -186,11 +160,6 @@ public interface WinCrypt {
         public CERT_REVOCATION_CRL_INFO() {
             super(W32APITypeMapper.DEFAULT);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -200,12 +169,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377519(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "dwRevocationResult", "pszRevocationOid",
+        "pvOidSpecificInfo", "fHasFreshnessTime", "dwFreshnessTime", "pCrlInfo"})
     public static class CERT_REVOCATION_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder("cbSize", 
-                "dwRevocationResult", "pszRevocationOid", "pvOidSpecificInfo",
-                "fHasFreshnessTime", "dwFreshnessTime", "pCrlInfo");
-        
         public static class ByReference extends CERT_REVOCATION_INFO implements Structure.ByReference {
         }
 
@@ -220,11 +186,6 @@ public interface WinCrypt {
         public CERT_REVOCATION_INFO() {
             super(W32APITypeMapper.ASCII);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -237,12 +198,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377183(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "pCertContext", "TrustStatus", "pRevocationInfo",
+        "pIssuanceUsage", "pApplicationUsage", "pwszExtendedErrorInfo"})
     public static class CERT_CHAIN_ELEMENT extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder("cbSize",
-                "pCertContext", "TrustStatus", "pRevocationInfo", "pIssuanceUsage",
-                "pApplicationUsage", "pwszExtendedErrorInfo");
-        
         public static class ByReference extends CERT_CHAIN_ELEMENT implements Structure.ByReference {
         }
 
@@ -262,11 +220,6 @@ public interface WinCrypt {
         public CERT_CHAIN_ELEMENT(Pointer p) {
             super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -276,13 +229,10 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/es-xl/library/windows/desktop/aa381491(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwVersion", "SubjectUsage", "ListIdentifier", "SequenceNumber",
+                "ThisUpdate", "NextUpdate", "SubjectAlgorithm", "cCTLEntry",
+                "rgCTLEntry", "cExtension", "rgExtension"})
     public static class CTL_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwVersion", "SubjectUsage", "ListIdentifier", "SequenceNumber",
-                "ThisUpdate", "NextUpdate", "SubjectAlgorithm", "cCTLEntry", 
-                "rgCTLEntry", "cExtension", "rgExtension");
-        
         public static class ByReference extends CTL_INFO implements Structure.ByReference {
         }
 
@@ -319,11 +269,6 @@ public interface WinCrypt {
                         .toArray(cExtension);
             }
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -335,13 +280,10 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381486(v=vs.85).aspx">MSDN</a>
      */
-    public static class CTL_CONTEXT extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwMsgAndCertEncodingType", "pbCtlEncoded", "cbCtlEncoded", 
+    @FieldOrder({"dwMsgAndCertEncodingType", "pbCtlEncoded", "cbCtlEncoded",
                 "pCtlInfo", "hCertStore", "hCryptMsg", "pbCtlContent",
-                "cbCtlContent");
-
+                "cbCtlContent"})
+    public static class CTL_CONTEXT extends Structure {
         public static class ByReference extends CTL_CONTEXT implements Structure.ByReference {
         }
 
@@ -353,11 +295,6 @@ public interface WinCrypt {
         public HCRYPTMSG hCryptMsg;
         public Pointer pbCtlContent;
         public int cbCtlContent;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -366,22 +303,14 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377585(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "pCtlEntry", "pCtlContext"})
     public static class CERT_TRUST_LIST_INFO extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "pCtlEntry", "pCtlContext");
-
         public static class ByReference extends CERT_TRUST_LIST_INFO implements Structure.ByReference {
         }
 
         public int cbSize;
         public CTL_ENTRY.ByReference pCtlEntry;
         public CTL_CONTEXT.ByReference pCtlContext;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -392,10 +321,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381493(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cUsageIdentifier", "rgpszUsageIdentifier"})
     public static class CTL_USAGE extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cUsageIdentifier", "rgpszUsageIdentifier");
 
         public static class ByReference extends CTL_USAGE implements Structure.ByReference {
         }
@@ -424,11 +351,6 @@ public interface WinCrypt {
                 rgpszUsageIdentifier = new StringArray(array);
             }
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -438,21 +360,13 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwType", "Usage"})
     public static class CERT_USAGE_MATCH extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwType", "Usage");
-        
         public static class ByReference extends CERT_USAGE_MATCH implements Structure.ByReference {
         }
 
         public int dwType;
         public CTL_USAGE Usage;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -462,14 +376,11 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377186(v=vs.85).aspx">MSDN</a>
      */
-    public static class CERT_CHAIN_PARA extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "RequestedUsage", "RequestedIssuancePolicy",
+    @FieldOrder({"cbSize", "RequestedUsage", "RequestedIssuancePolicy",
                 "dwUrlRetrievalTimeout", "fCheckRevocationFreshnessTime",
                 "dwRevocationFreshnessTime", "pftCacheResync", "pStrongSignPara",
-                "dwStrongSignFlags");
-
+                "dwStrongSignFlags"})
+    public static class CERT_CHAIN_PARA extends Structure {
         public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
         }
 
@@ -486,11 +397,6 @@ public interface WinCrypt {
         public CERT_CHAIN_PARA() {
             super(W32APITypeMapper.DEFAULT);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -501,11 +407,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/hh870262(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "dwInfoChoice", "DUMMYUNIONNAME"})
     public static class CERT_STRONG_SIGN_PARA extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "dwInfoChoice", "DUMMYUNIONNAME");
-
         public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
         }
 
@@ -519,11 +422,6 @@ public interface WinCrypt {
             CERT_STRONG_SIGN_SERIALIZED_INFO.ByReference pSerializedInfo;
             LPSTR pszOID;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -534,11 +432,8 @@ public interface WinCrypt {
      * @see
      * <a href= "https://msdn.microsoft.com/en-us/library/windows/desktop/hh870263(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwFlags", "pwszCNGSignHashAlgids", "pwszCNGPubKeyMinBitLengths"})
     public static class CERT_STRONG_SIGN_SERIALIZED_INFO extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwFlags", "pwszCNGSignHashAlgids", "pwszCNGPubKeyMinBitLengths");
-
         public static class ByReference extends CERT_CHAIN_PARA implements Structure.ByReference {
         }
 
@@ -548,11 +443,6 @@ public interface WinCrypt {
 
         public CERT_STRONG_SIGN_SERIALIZED_INFO() {
             super(W32APITypeMapper.UNICODE);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
         }
     }
 
@@ -564,12 +454,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377188(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "dwError", "lChainIndex", "lElementIndex",
+                "pvExtraPolicyStatus"})
     public static class CERT_CHAIN_POLICY_STATUS extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "dwError", "lChainIndex", "lElementIndex",
-                "pvExtraPolicyStatus");
-
         public static class ByReference extends CERT_CHAIN_POLICY_STATUS implements Structure.ByReference {
         }
 
@@ -578,11 +465,6 @@ public interface WinCrypt {
         public int lChainIndex;
         public int lElementIndex;
         public Pointer pvExtraPolicyStatus;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -592,12 +474,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377544(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "TrustStatus", "cElement", "rgpElement", "pTrustListInfo",
+                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime"})
     public static class CERT_SIMPLE_CHAIN extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "TrustStatus", "cElement", "rgpElement", "pTrustListInfo",
-                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime");
-
         public static class ByReference extends CERT_SIMPLE_CHAIN implements Structure.ByReference {
         }
 
@@ -624,11 +503,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -639,22 +513,14 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377187(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "dwFlags", "pvExtraPolicyPara"})
     public static class CERT_CHAIN_POLICY_PARA extends Structure {
-        
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "dwFlags", "pvExtraPolicyPara");
-
         public static class ByReference extends CERT_CHAIN_POLICY_PARA implements Structure.ByReference {
         }
 
         public int cbSize;
         public int dwFlags;
         public Pointer pvExtraPolicyPara;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -665,14 +531,11 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377182(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "TrustStatus", "cChain", "rgpChain",
+        "cLowerQualityChainContext", "rgpLowerQualityChainContext",
+        "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime",
+        "dwCreateFlags", "ChainId"})
     public static class CERT_CHAIN_CONTEXT extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "TrustStatus", "cChain", "rgpChain",
-                "cLowerQualityChainContext", "rgpLowerQualityChainContext", 
-                "fHasRevocationFreshnessTime", "dwRevocationFreshnessTime",
-                "dwCreateFlags", "ChainId");
-        
         public static class ByReference extends CERT_CHAIN_CONTEXT implements Structure.ByReference {
         }
 
@@ -712,11 +575,6 @@ public interface WinCrypt {
         public CERT_CHAIN_CONTEXT() {
             super(W32APITypeMapper.DEFAULT);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -730,12 +588,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377189(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwCertEncodingType", "pbCertEncoded", "cbCertEncoded",
+        "pCertInfo", "hCertStore"})
     public static class CERT_CONTEXT extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwCertEncodingType", "pbCertEncoded", "cbCertEncoded",
-                "pCertInfo", "hCertStore");
-        
         public static class ByReference extends CERT_CONTEXT implements Structure.ByReference {
         }
 
@@ -744,11 +599,6 @@ public interface WinCrypt {
         public int cbCertEncoded;
         public CERT_INFO.ByReference pCertInfo;
         public HCERTSTORE hCertStore;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -759,11 +609,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377195(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"pszObjId", "fCritical", "Value"})
     public static class CERT_EXTENSION extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "pszObjId", "fCritical", "Value");
-        
         public static class ByReference extends CERT_EXTENSION implements Structure.ByReference {
         }
 
@@ -774,11 +621,6 @@ public interface WinCrypt {
         public CERT_EXTENSION() {
             super(W32APITypeMapper.ASCII);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -787,11 +629,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377196(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cExtension", "rgExtension"})
     public static class CERT_EXTENSIONS extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cExtension", "rgExtension");
-        
         public static class ByReference extends CERT_EXTENSIONS implements Structure.ByReference {
         }
 
@@ -808,11 +647,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -821,13 +655,10 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377200(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwVersion", "SerialNumber", "SignatureAlgorithm", "Issuer",
+        "NotBefore", "NotAfter", "Subject", "SubjectPublicKeyInfo",
+        "IssuerUniqueId", "SubjectUniqueId", "cExtension", "rgExtension"})
     public static class CERT_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwVersion", "SerialNumber", "SignatureAlgorithm", "Issuer", 
-                "NotBefore", "NotAfter", "Subject", "SubjectPublicKeyInfo", 
-                "IssuerUniqueId", "SubjectUniqueId", "cExtension", "rgExtension");
-        
         public static class ByReference extends CERT_INFO implements Structure.ByReference {
         }
 
@@ -854,11 +685,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -868,21 +694,13 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377463(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"Algorithm", "PublicKey"})
     public static class CERT_PUBLIC_KEY_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "Algorithm", "PublicKey");
-        
         public static class ByReference extends CERT_PUBLIC_KEY_INFO implements Structure.ByReference {
         }
 
         public CRYPT_ALGORITHM_IDENTIFIER Algorithm;
         public CRYPT_BIT_BLOB PublicKey;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -894,12 +712,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379873(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwCertEncodingType", "pbCrlEncoded", "cbCrlEncoded",
+                "pCrlInfo", "hCertStore"})
     public static class CRL_CONTEXT extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwCertEncodingType", "pbCrlEncoded", "cbCrlEncoded",
-                "pCrlInfo", "hCertStore");
-        
         public static class ByReference extends CRL_CONTEXT implements Structure.ByReference {
         }
 
@@ -908,11 +723,6 @@ public interface WinCrypt {
         public int cbCrlEncoded;
         public CRL_INFO.ByReference pCrlInfo;
         public HCERTSTORE hCertStore;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -922,11 +732,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379878(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"SerialNumber", "RevocationDate", "cExtension", "rgExtension"})
     public static class CRL_ENTRY extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "SerialNumber", "RevocationDate", "cExtension", "rgExtension");
-        
         public static class ByReference extends CRL_ENTRY implements Structure.ByReference {
         }
 
@@ -945,11 +752,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -959,13 +761,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa379880(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwVersion", "SignatureAlgorithm", "Issuer", "ThisUpdate",
+        "NextUpdate", "cCRLEntry", "rgCRLEntry", "cExtension", "rgExtension"})
     public static class CRL_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwVersion", "SignatureAlgorithm", "Issuer", "ThisUpdate", 
-                "NextUpdate", "cCRLEntry", "rgCRLEntry", "cExtension", 
-                "rgExtension");
-        
         public static class ByReference extends CRL_INFO implements Structure.ByReference {
         }
 
@@ -1000,11 +798,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -1016,11 +809,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381133(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"pszObjId", "Parameters"})
     public static class CRYPT_ALGORITHM_IDENTIFIER extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "pszObjId", "Parameters");
-        
         public static class ByReference extends CRYPT_ALGORITHM_IDENTIFIER implements Structure.ByReference {
         }
 
@@ -1029,11 +819,6 @@ public interface WinCrypt {
 
         public CRYPT_ALGORITHM_IDENTIFIER() {
             super(W32APITypeMapper.ASCII);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
         }
     }
 
@@ -1044,11 +829,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381139(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"pszObjId", "cValue", "rgValue"})
     public static class CRYPT_ATTRIBUTE extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "pszObjId", "cValue", "rgValue");
-        
         public static class ByReference extends CRYPT_ATTRIBUTE implements Structure.ByReference {
         }
 
@@ -1063,11 +845,6 @@ public interface WinCrypt {
         public CRYPT_ATTRIBUTE() {
             super(W32APITypeMapper.ASCII);
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -1077,22 +854,14 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381165(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbData", "pbData", "cUnusedBits"})
     public static class CRYPT_BIT_BLOB extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbData", "pbData", "cUnusedBits");
-        
         public static class ByReference extends CRYPT_BIT_BLOB implements Structure.ByReference {
         }
 
         public int cbData;
         public Pointer pbData;
         public int cUnusedBits;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -1102,12 +871,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381420(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"pwszContainerName", "pwszProvName", "dwProvType", "dwFlags",
+                "cProvParam", "rgProvParam", "dwKeySpec"})
     public static class CRYPT_KEY_PROV_INFO extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "pwszContainerName", "pwszProvName", "dwProvType", "dwFlags", 
-                "cProvParam", "rgProvParam", "dwKeySpec");
-        
         public static class ByReference extends CRYPT_KEY_PROV_INFO implements Structure.ByReference {
         }
 
@@ -1133,11 +899,6 @@ public interface WinCrypt {
             }
             return elements;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -1148,11 +909,8 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381423(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwParam", "pbData", "cbData", "dwFlags"})
     public static class CRYPT_KEY_PROV_PARAM extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "dwParam", "pbData", "cbData", "dwFlags");
-        
         public static class ByReference extends CRYPT_KEY_PROV_PARAM implements Structure.ByReference {
         }
 
@@ -1160,11 +918,6 @@ public interface WinCrypt {
         public Pointer pbData;
         public int cbData;
         public int dwFlags;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
         
     /**
@@ -1174,15 +927,12 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381468(v=vs.85).aspx">MSDN</a>
      */
-    public static class CRYPT_SIGN_MESSAGE_PARA extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "dwMsgEncodingType", "pSigningCert", "HashAlgorithm",
+    @FieldOrder({"cbSize", "dwMsgEncodingType", "pSigningCert", "HashAlgorithm",
                 "pvHashAuxInfo", "cMsgCert", "rgpMsgCert", "cMsgCrl",
-                "rgpMsgCrl", "cAuthAttr", "rgAuthAttr", "cUnauthAttr", 
-                "rgUnauthAttr", "dwFlags", "dwInnerContentType", 
-                "HashEncryptionAlgorithm", "pvHashEncryptionAuxInfo");
-        
+                "rgpMsgCrl", "cAuthAttr", "rgAuthAttr", "cUnauthAttr",
+                "rgUnauthAttr", "dwFlags", "dwInnerContentType",
+                "HashEncryptionAlgorithm", "pvHashEncryptionAuxInfo"})
+    public static class CRYPT_SIGN_MESSAGE_PARA extends Structure {
         public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
         }
 
@@ -1247,11 +997,6 @@ public interface WinCrypt {
                         .toArray(cUnauthAttr);
             }
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
-        }
     }
 
     /**
@@ -1298,12 +1043,9 @@ public interface WinCrypt {
      * @see
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381477(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"cbSize", "dwMsgAndCertEncodingType", "hCryptProv",
+                "pfnGetSignerCertificate", "pvGetArg", "pStrongSignPara"})
     public static class CRYPT_VERIFY_MESSAGE_PARA extends Structure {
-
-        private static final List<String> fieldOrder = createFieldsOrder(
-                "cbSize", "dwMsgAndCertEncodingType", "hCryptProv", 
-                "pfnGetSignerCertificate", "pvGetArg", "pStrongSignPara");
-        
         public static class ByReference extends CRYPT_SIGN_MESSAGE_PARA implements Structure.ByReference {
         }
 
@@ -1318,11 +1060,6 @@ public interface WinCrypt {
         public void write() {
             cbSize = size();
             super.write();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return fieldOrder;
         }
     }
 
@@ -1409,8 +1146,8 @@ public interface WinCrypt {
      * information about when and where that prompt is to be displayed when using
      * the CryptProtectData and CryptUnprotectData functions.
      */
+    @FieldOrder({"cbSize", "dwPromptFlags", "hwndApp", "szPrompt"})
     public static class CRYPTPROTECT_PROMPTSTRUCT extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "dwPromptFlags", "hwndApp", "szPrompt");
         /**
          * Size of this structure in bytes.
          */
@@ -1435,11 +1172,6 @@ public interface WinCrypt {
         public CRYPTPROTECT_PROMPTSTRUCT(Pointer memory) {
             super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Arrays;
 
 import com.sun.jna.*;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.*;
 import com.sun.jna.platform.win32.WinNT.*;
 import com.sun.jna.platform.win32.OaIdl.*;
@@ -18,6 +19,7 @@ import com.sun.jna.platform.win32.Guid.*;
  * helpstring(${helpstring})
  *
  */
+@FieldOrder({"value"})
 public class ${classname} extends Structure {
 	public static class ByReference extends ${classname} implements
 			Structure.ByReference {
@@ -38,9 +40,4 @@ public class ${classname} extends Structure {
 	}
 
 ${content}
-		
-	@Override
-	protected List<String> getFieldOrder() {
-		return Arrays.asList(new String[] { "value" });
-	}
 }

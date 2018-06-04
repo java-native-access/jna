@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.win32.W32APITypeMapper;
 
 /**
@@ -74,11 +75,9 @@ public interface LMShare {
     /**
      * Contains information about the shared resource, including name of the resource, type and permissions, number of connections, and other pertinent information.
      */
+    @FieldOrder({"shi2_netname", "shi2_type", "shi2_remark", "shi2_permissions",
+        "shi2_max_uses", "shi2_current_uses", "shi2_path", "shi2_passwd"})
     public static class SHARE_INFO_2 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("shi2_netname",
-                "shi2_type", "shi2_remark", "shi2_permissions", "shi2_max_uses", "shi2_current_uses",
-                "shi2_path", "shi2_passwd");
-
         /**
          * Pointer to a Unicode string specifying the name of a shared resource. Calls to the NetShareSetInfo function ignore this member.
          */
@@ -137,22 +136,16 @@ public interface LMShare {
             super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * Contains information about the shared resource, including name of the resource, type and permissions, number of connections, and other pertinent information.
      */
+    @FieldOrder({"shi502_netname", "shi502_type", "shi502_remark",
+        "shi502_permissions", "shi502_max_uses", "shi502_current_uses",
+        "shi502_path", "shi502_passwd", "shi502_reserved",
+        "shi502_security_descriptor"})
     public static class SHARE_INFO_502 extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("shi502_netname",
-                "shi502_type", "shi502_remark", "shi502_permissions", "shi502_max_uses",
-                "shi502_current_uses", "shi502_path", "shi502_passwd", "shi502_reserved",
-                "shi502_security_descriptor");
-
         /**
          * Pointer to a Unicode string specifying the name of a shared resource. Calls to the NetShareSetInfo function ignore this member.
          */
@@ -220,11 +213,6 @@ public interface LMShare {
         public SHARE_INFO_502(Pointer memory) {
             super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.UNICODE);
             read();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

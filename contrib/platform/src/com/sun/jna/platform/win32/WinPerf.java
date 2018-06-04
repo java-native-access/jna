@@ -26,6 +26,7 @@ package com.sun.jna.platform.win32;
 import java.util.List;
 
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinBase.SYSTEMTIME;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
 
@@ -39,14 +40,12 @@ public interface WinPerf {
      * Describes the performance data block that you queried
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373157(v=vs.85).aspx">PERF_DATA_BLOCK</A>
      */
-    public class PERF_DATA_BLOCK extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder(
-                "Signature", "LittleEndian", "Version",
+    @FieldOrder({"Signature", "LittleEndian", "Version",
                 "Revision", "TotalByteLength", "HeaderLength",
                 "NumObjectTypes", "DefaultObject", "SystemTime",
                 "PerfTime", "PerfFreq", "PerfTime100nSec",
-                "SystemNameLength", "SystemNameOffset");
-
+                "SystemNameLength", "SystemNameOffset"})
+    public class PERF_DATA_BLOCK extends Structure {
         public char[]        Signature = new char[4];
         public int           LittleEndian;
         public int           Version;
@@ -61,34 +60,22 @@ public interface WinPerf {
         public LARGE_INTEGER PerfTime100nSec = new LARGE_INTEGER();
         public int           SystemNameLength;
         public int           SystemNameOffset;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     };
 
     /**
      * Describes an instance of a performance object
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373159(v=vs.85).aspx">PERF_INSTANCE_DEFINITION</A>
      */
+    @FieldOrder({"ByteLength", "ParentObjectTitleIndex", "ParentObjectInstance",
+                "UniqueID", "NameOffset", "NameLength"})
     public class PERF_INSTANCE_DEFINITION extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder(
-                "ByteLength", "ParentObjectTitleIndex", "ParentObjectInstance",
-                "UniqueID", "NameOffset", "NameLength");
-
         public int ByteLength;
         public int ParentObjectTitleIndex;
         public int ParentObjectInstance;
         public int UniqueID;
         public int NameOffset;
         public int NameLength;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-    };
+    }
 
     int PERF_NO_INSTANCES = -1;  // no instances (see NumInstances above)
 

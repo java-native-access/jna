@@ -27,24 +27,20 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WinNT;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 
+@FieldOrder({"QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback"})
 public class UnknownVTable extends Structure {
 	public static class ByReference extends UnknownVTable implements Structure.ByReference {
 	}
 
-	public static final List<String> FIELDS = createFieldsOrder("QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback");
 	public QueryInterfaceCallback QueryInterfaceCallback;
 	public AddRefCallback AddRefCallback;
 	public ReleaseCallback ReleaseCallback;
-
-	@Override
-	protected List<String> getFieldOrder() {
-		return FIELDS;
-	}
 
 	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
 		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);

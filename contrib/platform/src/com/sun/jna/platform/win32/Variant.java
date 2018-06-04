@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.OaIdl.CURRENCY;
 import com.sun.jna.platform.win32.OaIdl.DATE;
@@ -615,17 +616,14 @@ public interface Variant {
             }
         }
 
+        @FieldOrder({"vt", "wReserved1", "wReserved2", "wReserved3", "__variant"})
         public static class _VARIANT extends Structure {
-            public static final List<String> FIELDS = createFieldsOrder("vt",
-                    "wReserved1", "wReserved2", "wReserved3", "__variant");
-
             public static class __VARIANT extends Union {
+                @FieldOrder({"pvRecord", "pRecInfo"})
                 public static class BRECORD extends Structure {
                     public static class ByReference extends BRECORD implements
                             Structure.ByReference {
                     }
-
-                    public static final List<String> FIELDS = createFieldsOrder("pvRecord", "pRecInfo");
 
                     public PVOID pvRecord;
                     public Pointer pRecInfo;
@@ -636,11 +634,6 @@ public interface Variant {
 
                     public BRECORD(Pointer pointer) {
                         super(pointer);
-                    }
-
-                    @Override
-                    protected List<String> getFieldOrder() {
-                        return FIELDS;
                     }
                 }
 
@@ -760,14 +753,10 @@ public interface Variant {
                 super(pointer);
                 this.read();
             }
-
-            @Override
-            protected List<String> getFieldOrder() {
-                return FIELDS;
-            }
         }
     }
 
+    @FieldOrder({"variantArg"})
     public static class VariantArg extends Structure {
         public static class ByReference extends VariantArg implements
                 Structure.ByReference {
@@ -780,7 +769,6 @@ public interface Variant {
             }
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("variantArg");
         public VARIANT[] variantArg = new VARIANT[1];
 
         public VariantArg() {
@@ -799,16 +787,9 @@ public interface Variant {
             this.variantArg = variantArg;
         }
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
-
         public void setArraySize(int size) {
         	this.variantArg = new VARIANT[size];
         	this.read();
         }
-
-
     }
 }

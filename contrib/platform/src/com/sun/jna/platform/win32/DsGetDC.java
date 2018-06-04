@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinNT.PSID;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -42,16 +43,15 @@ public interface DsGetDC {
      * The DOMAIN_CONTROLLER_INFO structure is used with the DsGetDcName
      * function to receive data about a domain controller.
      */
+    @FieldOrder({"DomainControllerName",
+        "DomainControllerAddress", "DomainControllerAddressType",
+        "DomainGuid", "DomainName", "DnsForestName", "Flags",
+        "DcSiteName", "ClientSiteName"})
     public static class DOMAIN_CONTROLLER_INFO extends Structure {
 
         public static class ByReference extends DOMAIN_CONTROLLER_INFO
                 implements Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("DomainControllerName",
-                "DomainControllerAddress", "DomainControllerAddressType",
-                "DomainGuid", "DomainName", "DnsForestName", "Flags",
-                "DcSiteName", "ClientSiteName");
 
         /**
          * Pointer to a null-terminated string that specifies the computer name
@@ -126,16 +126,12 @@ public interface DsGetDC {
             super(memory, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * Pointer to DOMAIN_CONTROLLER_INFO.
      */
+    @FieldOrder({"dci"})
     public static class PDOMAIN_CONTROLLER_INFO extends Structure {
 
         public static class ByReference extends PDOMAIN_CONTROLLER_INFO
@@ -143,14 +139,7 @@ public interface DsGetDC {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("dci");
-
         public DOMAIN_CONTROLLER_INFO.ByReference dci;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -188,15 +177,14 @@ public interface DsGetDC {
      * The DS_DOMAIN_TRUSTS structure is used with the DsEnumerateDomainTrusts
      * function to contain trust data for a domain.
      */
+    @FieldOrder({"NetbiosDomainName",
+                "DnsDomainName", "Flags", "ParentIndex", "TrustType",
+                "TrustAttributes", "DomainSid", "DomainGuid"})
     public static class DS_DOMAIN_TRUSTS extends Structure {
 
         public static class ByReference extends DS_DOMAIN_TRUSTS implements
                 Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("NetbiosDomainName",
-                "DnsDomainName", "Flags", "ParentIndex", "TrustType",
-                "TrustAttributes", "DomainSid", "DomainGuid");
 
         /**
          * Pointer to a null-terminated string that contains the NetBIOS name of
@@ -240,11 +228,6 @@ public interface DsGetDC {
          * Contains the GUID of the domain represented by this structure.
          */
         public GUID DomainGuid;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
         public DS_DOMAIN_TRUSTS() {
             super(W32APITypeMapper.DEFAULT);

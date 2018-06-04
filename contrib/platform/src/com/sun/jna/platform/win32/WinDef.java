@@ -31,6 +31,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.BaseTSD.LONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
@@ -764,8 +765,8 @@ public interface WinDef {
     /**
      * The Class RECT.
      */
+    @FieldOrder({"left", "top", "right", "bottom"})
     public class RECT extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("left", "top", "right", "bottom");
         /** The left. */
         public int left;
 
@@ -777,11 +778,6 @@ public interface WinDef {
 
         /** The bottom. */
         public int bottom;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
         /**
          * To rectangle.
@@ -1061,6 +1057,7 @@ public interface WinDef {
     /**
      * The Class POINT.
      */
+    @FieldOrder({"x", "y"})
     public class POINT extends Structure {
 
         /**
@@ -1099,8 +1096,6 @@ public interface WinDef {
 
         }
 
-        public static final List<String> FIELDS = createFieldsOrder("x", "y");
-
         /** The x. */
         public int x;
         /** The y. */
@@ -1134,11 +1129,6 @@ public interface WinDef {
         public POINT(int x, int y) {
             this.x = x;
             this.y = y;
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 

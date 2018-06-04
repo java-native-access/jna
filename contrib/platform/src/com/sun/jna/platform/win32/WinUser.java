@@ -30,6 +30,7 @@ import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -83,6 +84,8 @@ public interface WinUser extends WinDef {
     int LR_COPYFROMRESOURCE = 0x4000;
     int LR_SHARED = 0x8000;
 
+    @FieldOrder({"cbSize", "flags", "hwndActive", "hwndFocus", "hwndCapture",
+        "hwndMenuOwner", "hwndMoveSize", "hwndCaret", "rcCaret"})
     public class GUITHREADINFO extends Structure {
         public int cbSize = size();
         public int flags;
@@ -93,15 +96,11 @@ public interface WinUser extends WinDef {
         public HWND hwndMoveSize;
         public HWND hwndCaret;
         public RECT rcCaret;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "flags",
-                                                "hwndActive", "hwndFocus", "hwndCapture", "hwndMenuOwner",
-                                                "hwndMoveSize", "hwndCaret", "rcCaret" });
-        }
     }
 
+    @FieldOrder({"cbSize", "rcWindow", "rcClient", "dwStyle", "dwExStyle",
+        "dwWindowStatus", "cxWindowBorders", "cyWindowBorders", "atomWindowType",
+        "wCreatorVersion"})
     public class WINDOWINFO extends Structure {
         public int cbSize = size();
         public RECT rcWindow;
@@ -113,19 +112,12 @@ public interface WinUser extends WinDef {
         public int cyWindowBorders;
         public short atomWindowType;
         public short wCreatorVersion;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "rcWindow",
-                                                "rcClient", "dwStyle", "dwExStyle", "dwWindowStatus",
-                                                "cxWindowBorders", "cyWindowBorders", "atomWindowType",
-                                                "wCreatorVersion" });
-        }
     }
 
     /**
      * Contains information about the placement of a window on the screen.
      */
+    @FieldOrder({"length","flags","showCmd","ptMinPosition","ptMaxPosition", "rcNormalPosition"})
     public class WINDOWPLACEMENT extends Structure {
         /**
          * The coordinates of the minimized window may be specified.
@@ -182,12 +174,6 @@ public interface WinUser extends WinDef {
          * coordinates.
          */
         public RECT rcNormalPosition;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[]{"length","flags","showCmd","ptMinPosition","ptMaxPosition",
-                    "rcNormalPosition"});
-        }
     }
 
     /* Get/SetWindowLong properties */
@@ -336,6 +322,7 @@ public interface WinUser extends WinDef {
     int ULW_ALPHA = 2;
     int ULW_OPAQUE = 4;
 
+    @FieldOrder({"hWnd", "message", "wParam", "lParam", "time", "pt"})
     public class MSG extends Structure {
         public HWND hWnd;
         public int message;
@@ -343,51 +330,36 @@ public interface WinUser extends WinDef {
         public LPARAM lParam;
         public int time;
         public POINT pt;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "hWnd", "message", "wParam",
-                                                "lParam", "time", "pt" });
-        }
     }
 
-    
     /**
      * Contains data to be passed to another application by the WM_COPYDATA message.
      */
+    @FieldOrder({"dwData", "cbData", "lpData"})
     public class COPYDATASTRUCT extends Structure {
 
 		public COPYDATASTRUCT() {
 			super();
 		}
-		
+
 		public COPYDATASTRUCT(Pointer p) {
 			super(p);
 			//Receiving data and read it from native memory to fill the structure.
 			read();
 		}
-		
+
 		public ULONG_PTR dwData;
 		public int cbData;
 		public Pointer lpData;
-
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "dwData", "cbData", "lpData" });
-		}
 	}
-    
+
+    @FieldOrder({"cbSize", "hWnd", "dwFlags", "uCount", "dwTimeout"})
     public class FLASHWINFO extends Structure {
         public int cbSize = size();
         public HANDLE hWnd;
         public int dwFlags;
         public int uCount;
         public int dwTimeout;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "hWnd", "dwFlags",
-                                                "uCount", "dwTimeout" });
-        }
     }
 
     public interface WNDENUMPROC extends StdCallCallback {
@@ -456,6 +428,7 @@ public interface WinUser extends WinDef {
     }
 
     /** Specifies the width and height of a rectangle. */
+    @FieldOrder({"cx", "cy"})
     public class SIZE extends Structure {
         public int cx, cy;
 
@@ -466,11 +439,6 @@ public interface WinUser extends WinDef {
             this.cx = w;
             this.cy = h;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cx", "cy" });
-        }
     }
 
     int AC_SRC_OVER = 0x00;
@@ -478,18 +446,12 @@ public interface WinUser extends WinDef {
     int AC_SRC_NO_PREMULT_ALPHA = 0x01;
     int AC_SRC_NO_ALPHA = 0x02;
 
+    @FieldOrder({"BlendOp", "BlendFlags", "SourceConstantAlpha", "AlphaFormat"})
     public class BLENDFUNCTION extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("BlendOp", "BlendFlags", "SourceConstantAlpha", "AlphaFormat");
-
         public byte BlendOp = AC_SRC_OVER; // only valid value
         public byte BlendFlags = 0; // only valid value
         public byte SourceConstantAlpha;
         public byte AlphaFormat;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     int VK_SHIFT = 16;
@@ -521,12 +483,13 @@ public interface WinUser extends WinDef {
     /**
      * Defines the message parameters passed to a WH_CALLWNDPROC hook procedure, CallWndProc.
      */
+    @FieldOrder({"lParam", "wParam", "message", "hwnd"})
     public class CWPSTRUCT extends Structure {
 
     	public CWPSTRUCT() {
     		super();
 		}
-    	
+
 		public CWPSTRUCT(Pointer p) {
 			super(p);
 			//Receiving data and read it from native memory to fill the structure.
@@ -537,12 +500,8 @@ public interface WinUser extends WinDef {
 		public WPARAM wParam;
 		public int message;
 		public HWND hwnd;
-
-		protected List<String> getFieldOrder() {
-			return Arrays.asList(new String[] { "lParam", "wParam", "message", "hwnd"});
-		}
     }
-    
+
     /**
      * The WM_PAINT message is sent when the system or another application makes
      * a request to paint a portion of an \ application's window.
@@ -653,18 +612,13 @@ public interface WinUser extends WinDef {
      */
     int ICON_SMALL2 = 2;
 
+    @FieldOrder({"vkCode", "scanCode", "flags", "time", "dwExtraInfo"})
     public class KBDLLHOOKSTRUCT extends Structure {
         public int vkCode;
         public int scanCode;
         public int flags;
         public int time;
         public ULONG_PTR dwExtraInfo;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "vkCode", "scanCode", "flags",
-                                                "time", "dwExtraInfo" });
-        }
     }
 
     /* System Metrics */
@@ -1080,6 +1034,7 @@ public interface WinUser extends WinDef {
      * Contains information about a simulated message generated by an input
      * device other than a keyboard or mouse.
      */
+    @FieldOrder({"uMsg", "wParamL", "wParamH"})
     public static class HARDWAREINPUT extends Structure {
 
         public static class ByReference extends HARDWAREINPUT implements
@@ -1103,17 +1058,13 @@ public interface WinUser extends WinDef {
         public WinDef.DWORD uMsg;
         public WinDef.WORD wParamL;
         public WinDef.WORD wParamH;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "uMsg", "wParamL", "wParamH" });
-        }
     }
 
     /**
      * Used by SendInput to store information for synthesizing input events such
      * as keystrokes, mouse movement, and mouse clicks.
      */
+    @FieldOrder({"type", "input"})
     public static class INPUT extends Structure {
 
         public static final int INPUT_MOUSE = 0;
@@ -1141,11 +1092,6 @@ public interface WinUser extends WinDef {
         public WinDef.DWORD type;
         public INPUT_UNION input = new INPUT_UNION();
 
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "type", "input" });
-        }
-
         public static class INPUT_UNION extends Union {
 
             public INPUT_UNION() {
@@ -1165,6 +1111,7 @@ public interface WinUser extends WinDef {
     /**
      * Contains information about a simulated keyboard event.
      */
+    @FieldOrder({"wVk", "wScan", "dwFlags", "time", "dwExtraInfo"})
     public static class KEYBDINPUT extends Structure {
 
         /**
@@ -1239,17 +1186,12 @@ public interface WinUser extends WinDef {
          * GetMessageExtraInfo function to obtain this information.
          */
         public BaseTSD.ULONG_PTR dwExtraInfo;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "wVk", "wScan", "dwFlags",
-                                                "time", "dwExtraInfo" });
-        }
     }
 
     /**
      * Contains information about a simulated mouse event.
      */
+    @FieldOrder({"dx", "dy", "mouseData", "dwFlags", "time", "dwExtraInfo"})
     public static class MOUSEINPUT extends Structure {
 
         public static class ByReference extends MOUSEINPUT implements
@@ -1276,27 +1218,17 @@ public interface WinUser extends WinDef {
         public WinDef.DWORD dwFlags;
         public WinDef.DWORD time;
         public BaseTSD.ULONG_PTR dwExtraInfo;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "dx", "dy", "mouseData",
-                                                "dwFlags", "time", "dwExtraInfo" });
-        }
     }
 
     /**
      * Contains the time of the last input.
      */
+    @FieldOrder({"cbSize", "dwTime"})
     public static class LASTINPUTINFO extends Structure {
         public int cbSize = size();
 
         // Tick count of when the last input event was received.
         public int dwTime;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "dwTime" });
-        }
     }
 
     /**
@@ -1308,6 +1240,9 @@ public interface WinUser extends WinDef {
      * the size of the structure, and the hIconSm member, which contains a
      * handle to a small icon associated with the window class.
      */
+    @FieldOrder({"cbSize", "style", "lpfnWndProc", "cbClsExtra", "cbWndExtra",
+        "hInstance", "hIcon", "hCursor", "hbrBackground", "lpszMenuName",
+        "lpszClassName", "hIconSm"})
     public class WNDCLASSEX extends Structure {
 
         /**
@@ -1370,14 +1305,6 @@ public interface WinUser extends WinDef {
 
         /** The h icon sm. */
         public HICON hIconSm;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return Arrays.asList(new String[] { "cbSize", "style",
-                                                "lpfnWndProc", "cbClsExtra", "cbWndExtra", "hInstance",
-                                                "hIcon", "hCursor", "hbrBackground", "lpszMenuName",
-                                                "lpszClassName", "hIconSm" });
-        }
     }
 
     /**
@@ -1475,8 +1402,8 @@ public interface WinUser extends WinDef {
      * information into a MONITORINFO structure</p>
      * The MONITORINFO structure is a subset of the MONITORINFOEX structure.
      */
+    @FieldOrder({"cbSize", "rcMonitor", "rcWork", "dwFlags"})
     public class MONITORINFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "rcMonitor", "rcWork", "dwFlags");
         /**
          * The size, in bytes, of the structure.
          */
@@ -1504,11 +1431,6 @@ public interface WinUser extends WinDef {
          * <ul><li>MONITORINFOF_PRIMARY</li></ul>
          */
         public int     dwFlags;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -1518,8 +1440,8 @@ public interface WinUser extends WinDef {
      * The MONITORINFOEX structure is a superset of the MONITORINFO structure.
      * The MONITORINFOEX structure adds a string member to contain a name for the display monitor.
      */
+    @FieldOrder({"cbSize", "rcMonitor", "rcWork", "dwFlags", "szDevice"})
     public class MONITORINFOEX extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "rcMonitor", "rcWork", "dwFlags", "szDevice");
         /**
          * The size, in bytes, of the structure.
          */
@@ -1558,11 +1480,6 @@ public interface WinUser extends WinDef {
         public MONITORINFOEX() {
             szDevice = new char[CCHDEVICENAME];
             cbSize = size();
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 
@@ -1893,8 +1810,8 @@ public interface WinUser extends WinDef {
      * Contains information about a raw input device.
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/ms645568(v=vs.85).aspx"></A>
      */
+    @FieldOrder({"hDevice", "dwType"})
     public class RAWINPUTDEVICELIST extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("hDevice", "dwType");
         public HANDLE hDevice;
         public int dwType;
 
@@ -1908,11 +1825,6 @@ public interface WinUser extends WinDef {
 
         public int sizeof() {
             return calculateSize(false);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
 
         @Override

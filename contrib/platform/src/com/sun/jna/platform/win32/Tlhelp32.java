@@ -27,6 +27,7 @@ import java.util.List;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HMODULE;
 
@@ -92,6 +93,9 @@ public interface Tlhelp32 {
     /**
      * Describes an entry from a list of the processes residing in the system address space when a snapshot was taken.
      */
+    @FieldOrder({"dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID",
+        "th32ModuleID", "cntThreads", "th32ParentProcessID", "pcPriClassBase",
+        "dwFlags", "szExeFile"})
     public static class PROCESSENTRY32 extends Structure {
 
         public static class ByReference extends PROCESSENTRY32 implements Structure.ByReference {
@@ -102,10 +106,6 @@ public interface Tlhelp32 {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "dwSize", "cntUsage", "th32ProcessID", "th32DefaultHeapID", "th32ModuleID",
-                "cntThreads", "th32ParentProcessID", "pcPriClassBase", "dwFlags", "szExeFile");
 
         /**
          * The size of the structure, in bytes. Before calling the Process32First function, set this member to
@@ -169,11 +169,6 @@ public interface Tlhelp32 {
             super(memory);
             read();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -182,6 +177,9 @@ public interface Tlhelp32 {
      *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms684225(v=vs.85).aspx">MSDN</a>
      */
+    @FieldOrder({"dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
+        "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule",
+        "szModule", "szExePath"})
     public class MODULEENTRY32W extends Structure {
 
         /**
@@ -195,10 +193,6 @@ public interface Tlhelp32 {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "dwSize", "th32ModuleID", "th32ProcessID", "GlblcntUsage",
-                "ProccntUsage", "modBaseAddr", "modBaseSize", "hModule", "szModule", "szExePath");
 
         /**
          * The size of the structure, in bytes. Before calling the Module32First
@@ -275,11 +269,6 @@ public interface Tlhelp32 {
          */
         public String szExePath() {
             return Native.toString(this.szExePath);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

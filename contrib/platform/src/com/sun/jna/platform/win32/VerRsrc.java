@@ -21,10 +21,10 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 
 /**
  * Interface for the VerRsrc.h header file.
@@ -34,6 +34,12 @@ public interface VerRsrc {
     /**
      * Contains version information for a file. This information is language and code page independent.
      */
+    @FieldOrder({"dwSignature", "dwStrucVersion",
+                "dwFileVersionMS", "dwFileVersionLS",
+                "dwProductVersionMS", "dwProductVersionLS",
+                "dwFileFlagsMask", "dwFileFlags", "dwFileOS",
+                "dwFileType", "dwFileSubtype",
+                "dwFileDateMS", "dwFileDateLS"})
     public static class VS_FIXEDFILEINFO extends Structure {
 
         public static class ByReference extends VS_FIXEDFILEINFO implements Structure.ByReference {
@@ -44,14 +50,6 @@ public interface VerRsrc {
                 super(memory);
             }
         }
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "dwSignature", "dwStrucVersion",
-                "dwFileVersionMS", "dwFileVersionLS",
-                "dwProductVersionMS", "dwProductVersionLS",
-                "dwFileFlagsMask", "dwFileFlags", "dwFileOS",
-                "dwFileType", "dwFileSubtype",
-                "dwFileDateMS", "dwFileDateLS");
 
         /**
          * Contains the value 0xFEEF04BD. This is used with the szKey member of the VS_VERSIONINFO structure when
@@ -165,11 +163,6 @@ public interface VerRsrc {
 
         public int getProductVersionBuild() {
             return dwProductVersionLS.intValue() & 0xffff;
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
         }
     }
 }

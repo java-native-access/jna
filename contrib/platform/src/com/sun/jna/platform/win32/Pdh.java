@@ -27,6 +27,7 @@ import java.util.List;
 
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -110,22 +111,15 @@ public interface Pdh extends StdCallLibrary {
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373041(v=vs.85).aspx">PDH_COUNTER_PATH_ELEMENTS</A>
      * @see <A HREF="https://technet.microsoft.com/en-us/library/cc776490(v=ws.10).aspx">Windows Server 2003 Performance Counters Reference</A>
      */
+    @FieldOrder({"szMachineName", "szObjectName", "szInstanceName",
+                "szParentInstance", "dwInstanceIndex", "szCounterName"})
     public class PDH_COUNTER_PATH_ELEMENTS extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder(
-                "szMachineName", "szObjectName", "szInstanceName",
-                "szParentInstance", "dwInstanceIndex", "szCounterName");
-
         public String szMachineName;
         public String szObjectName;
         public String szInstanceName;
         public String szParentInstance;
         public int  dwInstanceIndex;
         public String szCounterName;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     // flags for the PdhMakeCounterPath
@@ -178,9 +172,8 @@ public interface Pdh extends StdCallLibrary {
      * formatting, or other interpretation is performed on the data.
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373060(v=vs.85).aspx">PDH_RAW_COUNTER</A>
      */
+    @FieldOrder({"CStatus", "TimeStamp", "FirstValue", "SecondValue", "MultiCount"})
     public class PDH_RAW_COUNTER extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("CStatus", "TimeStamp", "FirstValue", "SecondValue", "MultiCount");
-
         /** Counter status that indicates if the counter value is valid. */
         public int CStatus;
         /** Local time for when the data was collected */
@@ -195,11 +188,6 @@ public interface Pdh extends StdCallLibrary {
          * calculation
          */
         public int MultiCount;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -272,19 +260,14 @@ public interface Pdh extends StdCallLibrary {
      * Information on time intervals as applied to the sampling of performance data.
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373071(v=vs.85).aspx">PDH_TIME_INFO</A>
      */
+    @FieldOrder({"StartTime", "EndTime", "SampleCount"})
     public class PDH_TIME_INFO extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder("StartTime", "EndTime", "SampleCount");
         /** Starting time of the sample interval, in local FILETIME format. */
         public long StartTime;
         /** Ending time of the sample interval, in local FILETIME format. */
         public long EndTime;
         /** Number of samples collected during the interval. */
         public int SampleCount;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**

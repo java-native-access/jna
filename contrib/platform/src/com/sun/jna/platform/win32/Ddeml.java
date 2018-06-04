@@ -26,6 +26,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.PointerType;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.BaseTSD.DWORD_PTR;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.HWND;
@@ -71,9 +72,8 @@ public interface Ddeml extends StdCallLibrary {
     /**
      * The following structure is for use with {@link #XTYP_WILDCONNECT} processing.
      */
+    @FieldOrder({"service", "topic"})
     public class HSZPAIR extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder("service", "topic");
 
         public HSZ service;
         public HSZ topic;
@@ -85,22 +85,15 @@ public interface Ddeml extends StdCallLibrary {
             this.service = service;
             this.topic = topic;
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
      * The following structure is used by {@link #DdeConnect} and {@link #DdeConnectList} and
      * by {@link #XTYP_CONNECT} and {@link #XTYP_WILDCONNECT} callbacks.
      */
+    @FieldOrder({"cb", "wFlags", "wCountryID", "iCodePage", "dwLangID",
+        "dwSecurity", "qos"})
     public class CONVCONTEXT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "wFlags", "wCountryID", "iCodePage", "dwLangID",
-                "dwSecurity", "qos");
         /**
          * set to sizeof(CONVCONTEXT)
          */
@@ -145,11 +138,6 @@ public interface Ddeml extends StdCallLibrary {
             this.cb = size();
             super.write();
         }
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
 
     /**
@@ -157,12 +145,10 @@ public interface Ddeml extends StdCallLibrary {
      *
      * @see #DdeQueryConvInfo(HCONV hConv, int idTransaction, CONVINFO pConvInfo)
      */
-    public class CONVINFO extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "hUser", "hConvPartner", "hszSvcPartner", "hszServiceReq",
+    @FieldOrder({"cb", "hUser", "hConvPartner", "hszSvcPartner", "hszServiceReq",
                 "hszTopic", "hszItem", "wFmt", "wType", "wStatus", "wConvst",
-                "wLastError", "hConvList", "ConvCtxt", "hwnd", "hwndPartner");
+                "wLastError", "hConvList", "ConvCtxt", "hwnd", "hwndPartner"})
+    public class CONVINFO extends Structure {
         /** The structure's size, in bytes. */
         public int cb;
         /** User specified field  */
@@ -201,27 +187,18 @@ public interface Ddeml extends StdCallLibrary {
             this.cb = size();
             super.write();
         }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * Contains information about the current Dynamic Data Exchange (DDE)
      * transaction. A DDE debugging application can use this structure when
      * monitoring transactions that the system passes to the DDE callback
      * functions of other applications.
      */
+    @FieldOrder({"cb", "dwTime", "hTask", "dwRet", "wType", "wFmt", "hConv",
+        "hsz1", "hsz2", "hData", "dwData1", "dwData2", "cc", "cbData",
+        "Data"})
     public class MONCBSTRUCT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "dwTime", "hTask", "dwRet", "wType", "wFmt", "hConv",
-                "hsz1", "hsz2", "hData", "dwData1", "dwData2", "cc", "cbData",
-                "Data"
-        );
-
         /**
          * The structure's size, in bytes.
          */
@@ -288,13 +265,8 @@ public interface Ddeml extends StdCallLibrary {
          * (8 * sizeof(DWORD)).
          */
         public byte[] Data = new byte[32];
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * <p>
      * Contains information about a Dynamic Data Exchange (DDE) conversation. A
@@ -316,13 +288,9 @@ public interface Ddeml extends StdCallLibrary {
      * the conversation. Instead, they hold a globally unique pair of values
      * that identify the conversation.</p>
      */
+    @FieldOrder({"cb", "fConnect", "dwTime", "hTask", "hszSvc", "hszTopic",
+                "hConvClient", "hConvServer"})
     public class MONCONVSTRUCT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "fConnect", "dwTime", "hTask", "hszSvc", "hszTopic",
-                "hConvClient", "hConvServer"
-        );
-
         /**
          * The structure's size, in bytes.
          */
@@ -361,24 +329,15 @@ public interface Ddeml extends StdCallLibrary {
          * A handle to the server conversation.
          */
         public HCONV hConvServer;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * Contains information about the current Dynamic Data Exchange (DDE) error.
      * A DDE monitoring application can use this structure to monitor errors
      * returned by DDE Management Library functions.
      */
+    @FieldOrder({"cb", "wLastError", "dwTime", "hTask"})
     public class MONERRSTRUCT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "wLastError", "dwTime", "hTask"
-        );
-
         /**
          * The structure's size, in bytes.
          */
@@ -397,24 +356,15 @@ public interface Ddeml extends StdCallLibrary {
          * function that caused the error.
          */
         public HANDLE hTask;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * Contains information about a Dynamic Data Exchange (DDE) string handle. A
      * DDE monitoring application can use this structure when monitoring the
      * activity of the string manager component of the DDE Management Library.
      */
+    @FieldOrder({"cb", "fsAction", "dwTime", "hsz", "hTask", "str"})
     public class MONHSZSTRUCT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "fsAction", "dwTime", "hsz", "hTask", "str"
-        );
-
         /**
          * The structure's size, in bytes.
          */
@@ -483,7 +433,7 @@ public interface Ddeml extends StdCallLibrary {
             allocateMemory(cb);
             super.read();
         }
-        
+
         public String getStr() {
             int offset = fieldOffset("str");
             if(W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
@@ -492,13 +442,8 @@ public interface Ddeml extends StdCallLibrary {
                 return getPointer().getString(offset);
             }
         }
-        
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
     /**
      * Contains information about a Dynamic Data Exchange (DDE) advise loop. A
      * DDE monitoring application can use this structure to obtain information
@@ -517,14 +462,10 @@ public interface Ddeml extends StdCallLibrary {
      * the conversation. Instead, they hold a globally unique pair of values
      * that identify the conversation.</p>
      */
+    @FieldOrder({"cb", "dwTime", "hTask", "fEstablished", "fNoData", "hszSvc",
+        "hszTopic", "hszItem", "wFmt", "fServer", "hConvServer",
+        "hConvClient"})
     public class MONLINKSTRUCT extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "dwTime", "hTask", "fEstablished", "fNoData", "hszSvc",
-                "hszTopic", "hszItem", "wFmt", "fServer", "hConvServer",
-                "hConvClient"
-        );
-
         /**
          * The structure's size, in bytes.
          */
@@ -581,19 +522,11 @@ public interface Ddeml extends StdCallLibrary {
          * A handle to the client conversation.
          */
         public HCONV hConvClient;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
-    public class MONMSGSTRUCT extends Structure {
 
-        public static final List<String> FIELDS = createFieldsOrder(
-                "cb", "hwndTo", "dwTime", "hTask", "wMsg", "wParam", "lParam",
-                "dmhd"
-        );
+    @FieldOrder({"cb", "hwndTo", "dwTime", "hTask", "wMsg", "wParam", "lParam",
+                "dmhd"})
+    public class MONMSGSTRUCT extends Structure {
 
         /**
          * The structure's size, in bytes.
@@ -630,19 +563,10 @@ public interface Ddeml extends StdCallLibrary {
          * Additional information about the DDE message.
          */
         public DDEML_MSG_HOOK_DATA dmhd;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
-    
+
+    @FieldOrder({"uiLo", "uiHi", "cbData", "Data"})
     public class DDEML_MSG_HOOK_DATA extends Structure {
-
-        public static final List<String> FIELDS = createFieldsOrder(
-                "uiLo", "uiHi", "cbData", "Data"
-        );
-
         /**
          * The unpacked low-order word of the lParam parameter associated with
          * the DDE message.
@@ -663,11 +587,6 @@ public interface Ddeml extends StdCallLibrary {
          * sizeof(DWORD)).
          */
         public byte[] Data = new byte[32];
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
     }
     
     /* conversation states (usState) */

@@ -23,11 +23,10 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.TypeMapper;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
@@ -81,10 +80,8 @@ public interface ShellAPI extends StdCallLibrary {
     /**
      * Contains information that the SHFileOperation function uses to perform file operations.
      */
+    @FieldOrder({"hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle"})
     public static class SHFILEOPSTRUCT extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder(
-                "hwnd", "wFunc", "pFrom", "pTo", "fFlags", "fAnyOperationsAborted", "pNameMappings", "lpszProgressTitle");
-
         /**
          * A window handle to the dialog box to display information about
          * the status of the file operation.
@@ -123,11 +120,6 @@ public interface ShellAPI extends StdCallLibrary {
          * A pointer to the title of a progress dialog box. This is a null-terminated string.
          */
         public String lpszProgressTitle;
-
-        @Override
-        protected List<String> getFieldOrder() {
-            return FIELDS;
-        }
 
         /** Use this to encode <code>pFrom/pTo</code> paths.
          * @param paths Paths to encode
@@ -199,11 +191,10 @@ public interface ShellAPI extends StdCallLibrary {
     /**
      * Contains information about a system appbar message.
      */
+    @FieldOrder({"cbSize", "hWnd", "uCallbackMessage", "uEdge",  "rc", "lParam"})
     public static class APPBARDATA extends Structure {
         public static class ByReference extends APPBARDATA implements Structure.ByReference {
         }
-
-        public static final List<String> FIELDS = createFieldsOrder("cbSize", "hWnd", "uCallbackMessage", "uEdge",  "rc", "lParam");
 
         public DWORD cbSize;
         public HWND hWnd;
@@ -218,11 +209,6 @@ public interface ShellAPI extends StdCallLibrary {
 
         public APPBARDATA(Pointer p) {
         	super(p);
-        }
-
-        @Override
-        protected List<String> getFieldOrder() {
-        	return FIELDS;
         }
     }
 
@@ -308,10 +294,10 @@ public interface ShellAPI extends StdCallLibrary {
 	 * <em>example:</em>, and <em>"quoted text"</em>.
 	 * </p>
 	 */
-	public class SHELLEXECUTEINFO extends Structure {
-	    public static final List<String> FIELDS = createFieldsOrder("cbSize", "fMask", "hwnd", "lpVerb", "lpFile", "lpParameters",
+        @FieldOrder({"cbSize", "fMask", "hwnd", "lpVerb", "lpFile", "lpParameters",
                 "lpDirectory", "nShow", "hInstApp", "lpIDList", "lpClass", "hKeyClass", "dwHotKey", "hMonitor",
-                "hProcess");
+                "hProcess"})
+	public class SHELLEXECUTEINFO extends Structure {
 		/**
 		 * <p>
 		 * Type: <strong>DWORD</strong>
@@ -1057,11 +1043,5 @@ public interface ShellAPI extends StdCallLibrary {
 		 * </a>.</div>
 		 */
 		public HANDLE hProcess;
-
-		@Override
-        protected List<String> getFieldOrder() {
-			return FIELDS;
-		}
 	}
-
 }

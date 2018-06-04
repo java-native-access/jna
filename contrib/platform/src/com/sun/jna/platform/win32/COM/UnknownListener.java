@@ -23,27 +23,21 @@
  */
 package com.sun.jna.platform.win32.COM;
 
-import java.util.List;
-
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.REFIID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
 
+@FieldOrder({"vtbl"})
 public class UnknownListener extends Structure {
-    public static final List<String> FIELDS = createFieldsOrder("vtbl");
     public UnknownVTable.ByReference vtbl;
 
 	public UnknownListener(IUnknownCallback callback) {
 		this.vtbl = this.constructVTable();
 		this.initVTable(callback);
 		super.write();
-	}
-
-	@Override
-	protected List<String> getFieldOrder() {
-		return FIELDS;
 	}
 
 	protected UnknownVTable.ByReference constructVTable() {
