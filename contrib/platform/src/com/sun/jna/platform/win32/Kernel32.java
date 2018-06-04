@@ -3648,4 +3648,136 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         information, call GetLastError.
      */
     boolean GetProcessIoCounters(HANDLE hProcess, WinNT.IO_COUNTERS lpIoCounters);
+
+    /**
+     * Creates or opens a named or unnamed mutex object.
+     *
+     * @param lpMutexAttributes
+     *
+     * A pointer to a {@link WinBase.SECURITY_ATTRIBUTES} structure. If this
+     * parameter is NULL, the mutex handle cannot be inherited by child
+     * processes.
+     *
+     * <p>
+     * The lpSecurityDescriptor member of the structure specifies a security
+     * descriptor for the new mutex. If lpMutexAttributes is NULL, the mutex
+     * gets a default security descriptor. The ACLs in the default security
+     * descriptor for a mutex come from the primary or impersonation token of
+     * the creator.</p>
+     *
+     * @param bInitialOwner
+     *
+     * If this value is TRUE and the caller created the mutex, the calling
+     * thread obtains initial ownership of the mutex object. Otherwise, the
+     * calling thread does not obtain ownership of the mutex. To determine if
+     * the caller created the mutex, see the Return Values section.
+     *
+     * @param lpName
+     *
+     * The name of the mutex object. The name is limited to
+     * {@link WinDef#MAX_PATH} characters. Name comparison is case sensitive.
+     *
+     * <p>
+     * If lpName matches the name of an existing named mutex object, this
+     * function requests the {@link WinBase#MUTEX_ALL_ACCESS} access right. In
+     * this case, the bInitialOwner parameter is ignored because it has already
+     * been set by the creating process. If the lpMutexAttributes parameter is
+     * not NULL, it determines whether the handle can be inherited, but its
+     * security-descriptor member is ignored.</p>
+     *
+     * <p>
+     * If lpName is NULL, the mutex object is created without a name.</p>
+     *
+     * <p>
+     * If lpName matches the name of an existing event, semaphore, waitable
+     * timer, job, or file-mapping object, the function fails and the
+     * {@link com.sun.jna.Native#getLastError()} function returns
+     * {@link WinError#ERROR_INVALID_HANDLE}. This occurs because these objects
+     * share the same namespace.</p>
+     *
+     * <p>
+     * The name can have a "Global\" or "Local\" prefix to explicitly create the
+     * object in the global or session namespace. The remainder of the name can
+     * contain any character except the backslash character (\).</p>
+     *
+     * @return
+     *
+     * If the function succeeds, the return value is a handle to the newly
+     * created mutex object.
+     *
+     * <p>
+     * If the function fails, the return value is NULL. To get extended error
+     * information, call {@link com.sun.jna.Native#getLastError()}.</p>
+     *
+     * <p>If the mutex is a named mutex and the object existed before this function
+     * call, the return value is a handle to the existing object,
+     * {@link com.sun.jna.Native#getLastError()} returns
+     * {@link WinError#ERROR_ALREADY_EXISTS}, bInitialOwner is ignored, and the
+     * calling thread is not granted ownership. However, if the caller has
+     * limited access rights, the function will fail with
+     * {@link WinError#ERROR_ACCESS_DENIED} and the caller should use the
+     * {@link #OpenMutex} function.</p>
+     */
+    HANDLE CreateMutex(SECURITY_ATTRIBUTES lpMutexAttributes,
+            boolean bInitialOwner,
+            String lpName);
+
+    /**
+     * Opens an existing named mutex object.
+     *
+     * @param dwDesiredAccess
+     *
+     * The access to the mutex object. Only the {@link WinNT#SYNCHRONIZE} access
+     * right is required to use a mutex; to change the mutex's security, specify
+     * {@link WinBase#MUTEX_ALL_ACCESS}.
+     *
+     * @param bInheritHandle
+     *
+     * If this value is TRUE, processes created by this process will inherit the
+     * handle. Otherwise, the processes do not inherit this handle.
+     *
+     * @param lpName
+     *
+     * The name of the mutex to be opened. Name comparisons are case sensitive.
+     *
+     * <p>
+     * This function can open objects in a private namespace.</p>
+     *
+     * <p>
+     * Terminal Services: The name can have a "Global\" or "Local\" prefix to
+     * explicitly open an object in the global or session namespace. The
+     * remainder of the name can contain any character except the backslash
+     * character (\).</p>
+     *
+     * @return
+     *
+     * If the function succeeds, the return value is a handle to the mutex object.
+     *
+     * <p>If the function fails, the return value is NULL. To get extended error
+     * information, call {@link com.sun.jna.Native#getLastError()}.</p>
+     *
+     * <p>If a named mutex does not exist, the function fails and
+     * {@link com.sun.jna.Native#getLastError()} returns
+     * ERROR_FILE_NOT_FOUND.</p>
+     */
+    HANDLE OpenMutex(int dwDesiredAccess,
+            boolean bInheritHandle,
+            String lpName);
+
+    /**
+     * Releases ownership of the specified mutex object.
+     *
+     * @param handle
+     *
+     * A handle to the mutex object. The CreateMutex or OpenMutex function
+     * returns this handle.
+     *
+     * @return
+     *
+     * If the function succeeds, the return value is nonzero.
+     *
+     * <p>If the function fails, the return value is zero. To get extended error
+     * information, call {@link com.sun.jna.Native#getLastError()}.</p>
+     */
+    boolean ReleaseMutex(HANDLE handle);
 }

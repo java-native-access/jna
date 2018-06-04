@@ -67,6 +67,8 @@ import com.sun.jna.platform.win32.WinNT.OSVERSIONINFO;
 import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.ShortByReference;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import junit.framework.TestCase;
 
@@ -1695,5 +1697,56 @@ public class Kernel32Test extends TestCase {
         assertEquals(WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_AWAYMODE_REQUIRED, intermediateExecutionState);
         
         Kernel32.INSTANCE.SetThreadExecutionState(originalExecutionState);
+    }
+
+    public void testMutex() throws InterruptedException {
+       HANDLE mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, "JNA-Test-Mutex");
+
+        assertNotNull(mutexHandle);
+
+        final CountDownLatch preWait = new CountDownLatch(1);
+        final CountDownLatch postWait = new CountDownLatch(1);
+        final CountDownLatch postRelease = new CountDownLatch(1);
+
+        final Exception[] exceptions = new Exception[1];
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    HANDLE mutexHandle2 = Kernel32.INSTANCE.OpenMutex(WinNT.SYNCHRONIZE, false, "JNA-Test-Mutex");
+                    try {
+                        assertNotNull(mutexHandle2);
+                        preWait.countDown();
+                        int result = Kernel32.INSTANCE.WaitForSingleObject(mutexHandle2, WinBase.INFINITE);
+                        assertEquals(result, WinBase.WAIT_OBJECT_0);
+                        postWait.countDown();
+                    } finally {
+                        Kernel32.INSTANCE.ReleaseMutex(mutexHandle2);
+                        Kernel32.INSTANCE.CloseHandle(mutexHandle2);
+                        postRelease.countDown();
+                    }
+                } catch (Exception ex) {
+                    exceptions[0] = ex;
+                }
+            }
+        };
+
+        t.start();
+
+        assertTrue(preWait.await(2, TimeUnit.SECONDS));
+
+        Kernel32.INSTANCE.ReleaseMutex(mutexHandle);
+
+        assertTrue(postWait.await(2, TimeUnit.SECONDS));
+
+        Kernel32.INSTANCE.CloseHandle(mutexHandle);
+
+        assertTrue(postRelease.await(2, TimeUnit.SECONDS));
+
+        assertNull(exceptions[0]);
+
+        mutexHandle = Kernel32.INSTANCE.OpenMutex(WinNT.SYNCHRONIZE, false, "JNA-Test-Mutex");
+
+        assertNull(mutexHandle);
     }
 }
