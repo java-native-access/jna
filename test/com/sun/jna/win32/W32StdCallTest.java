@@ -91,7 +91,7 @@ public class W32StdCallTest extends TestCase {
 
     @Override
     protected void setUp() {
-        testlib = Native.loadLibrary("testlib", TestLibrary.class,
+        testlib = Native.load("testlib", TestLibrary.class,
                 Collections.singletonMap(Library.OPTION_FUNCTION_MAPPER, StdCallLibrary.FUNCTION_MAPPER));
     }
 

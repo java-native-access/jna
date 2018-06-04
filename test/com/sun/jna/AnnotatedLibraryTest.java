@@ -90,7 +90,7 @@ public class AnnotatedLibraryTest extends TestCase {
         });
 
         AnnotationTestLibrary lib =
-                Native.loadLibrary("testlib", AnnotationTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+                Native.load("testlib", AnnotationTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert integer return to boolean TRUE", true,
                      lib.returnInt32Argument(true));
         assertTrue("Failed to get annotation from ParameterContext", hasAnnotation[0]);

@@ -33,14 +33,14 @@ import java.util.WeakHashMap;
  * Define an instance of your library like this:
  * <pre><code>
  * MyNativeLibrary INSTANCE = (MyNativeLibrary)
- *     Native.loadLibrary("mylib", MyNativeLibrary.class);
+ *     Native.load("mylib", MyNativeLibrary.class);
  * </code></pre>
  * <p>
  * By convention, method names are identical to the native names, although you
  * can map java names to different native names by providing a
  * {@link FunctionMapper} as a value for key {@link #OPTION_FUNCTION_MAPPER}
  * in the options map passed to the
- * {@link Native#loadLibrary(String, Class, Map)} call.
+ * {@link Native#load(String, Class, Map)} call.
  * <p>
  * Although the names for structures and structure fields may be chosen
  * arbitrarily, they should correspond as closely as possible to the native
@@ -56,10 +56,10 @@ import java.util.WeakHashMap;
  * <b>Optional fields</b><br>
  * Interface options will be automatically propagated to structures defined
  * within the library provided a call to
- * {@link Native#loadLibrary(String,Class,Map)} is made prior to instantiating
+ * {@link Native#load(String,Class,Map)} is made prior to instantiating
  * any of those structures.  One common way of ensuring this is to declare
  * an <b>INSTANCE</b> field in the interface which holds the
- * <code>loadLibrary</code> result.
+ * <code>load</code> result.
  * <p>
  * <b>OPTIONS</b> (an instance of {@link Map}),
  * <b>TYPE_MAPPER</b> (an instance of {@link TypeMapper}),

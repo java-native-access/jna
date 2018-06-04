@@ -37,7 +37,7 @@ import com.sun.jna.platform.win32.WinCrypt.*;
  */
 public interface Cryptui extends StdCallLibrary {
 
-	Cryptui INSTANCE = (Cryptui) Native.loadLibrary("Cryptui", Cryptui.class, W32APIOptions.UNICODE_OPTIONS);
+	Cryptui INSTANCE = (Cryptui) Native.load("Cryptui", Cryptui.class, W32APIOptions.UNICODE_OPTIONS);
 
 	/**
 	 * The CryptUIDlgSelectCertificateFromStore function displays a dialog box that

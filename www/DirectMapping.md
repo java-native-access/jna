@@ -6,7 +6,7 @@ approaching that of custom JNI. Method signatures are the same as they would be
 in a JNA interface mapping, but they can be any static or object methods. You 
 only need register them within the static initializer of the defining class,
 as in the example below. The `Native.register()` method takes the name of your 
-native library, the same as `Native.loadLibrary()` would.
+native library, the same as `Native.load()` would.
 
     import com.sun.jna.*;
 
@@ -41,7 +41,7 @@ Methods may be either static or member methods; the class or object is ignored o
 You can easily convert from interface mapping to direct mapping by creating a 
 direct mapping class which implements your library interface, with all methods 
 defined as native methods. Then your library instance variable can be assigned 
-an instance of this new class instead of the object returned by `Native.loadLibrary()`.
+an instance of this new class instead of the object returned by `Native.load()`.
 
 If you are using a profiler which rewrites native methods, you may need to
 set the system property `jna.profiler.prefix` to the prefix used by the

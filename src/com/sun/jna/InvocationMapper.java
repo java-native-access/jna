@@ -27,7 +27,7 @@ import java.lang.reflect.Method;
 
 /** Provide a method for overriding how a given function is invoked.
  * An instance of this interface may be provided to 
- * {@link Native#loadLibrary(String, Class, java.util.Map)} as an entry in
+ * {@link Native#load(String, Class, java.util.Map)} as an entry in
  * the options map with key {@link Library#OPTION_INVOCATION_MAPPER}.<p>
  * This is useful for implementing inlined functions, or functions which
  * are actually C preprocessor macros.  Given a native library and JNA

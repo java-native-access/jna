@@ -16,7 +16,7 @@ return value.
 
 Interface Mapping
 -----------------
-When you instantiate a native library interface via `Native.loadLibrary()`,
+When you instantiate a native library interface via `Native.load()`,
 JNA creates a proxy which routes all method invocations through a single
 `invoke` function in `Library.Handler`.  This method looks up an appropriate
 `Function` object which represents a function exported by the native library.

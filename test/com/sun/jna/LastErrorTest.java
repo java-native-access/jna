@@ -66,7 +66,7 @@ public class LastErrorTest extends TestCase {
     }
 
     public void testLastErrorPerThreadStorage() throws Exception {
-        final TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
+        final TestLibrary lib = Native.load("testlib", TestLibrary.class);
         final int NTHREADS = 100;
         final int[] errors = new int[NTHREADS];
         List<Thread> threads = new ArrayList<Thread>(NTHREADS);
@@ -101,7 +101,7 @@ public class LastErrorTest extends TestCase {
 
     private final int ERROR = Platform.isWindows() ? 1 : -1;
     public void testThrowLastError() {
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, OPTIONS);
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, OPTIONS);
 
         lib.noThrowLastError(ERROR);
         assertEquals("Last error not preserved", ERROR, Native.getLastError());

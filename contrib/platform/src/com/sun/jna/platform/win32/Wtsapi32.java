@@ -30,7 +30,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 public interface Wtsapi32 extends StdCallLibrary {
 
-	Wtsapi32 INSTANCE = Native.loadLibrary("Wtsapi32", Wtsapi32.class, W32APIOptions.DEFAULT_OPTIONS);
+	Wtsapi32 INSTANCE = Native.load("Wtsapi32", Wtsapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	int NOTIFY_FOR_ALL_SESSIONS = 1;
 

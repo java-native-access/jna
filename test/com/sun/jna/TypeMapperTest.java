@@ -55,7 +55,7 @@ public class TypeMapperTest extends TestCase {
                 return Integer.class;
             }
         });
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert Boolean argument to Int", MAGIC, lib.returnInt32Argument(true));
     }
     public void testStringToIntArgumentConversion() {
@@ -71,7 +71,7 @@ public class TypeMapperTest extends TestCase {
             }
         });
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert String argument to Int", MAGIC,
                      lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
@@ -88,7 +88,7 @@ public class TypeMapperTest extends TestCase {
             }
         });
         final String MAGIC = "magic" + UNICODE;
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert String argument to WString", new WString(MAGIC),
                      lib.returnWStringArgument(MAGIC));
     }
@@ -105,7 +105,7 @@ public class TypeMapperTest extends TestCase {
             }
         });
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert String argument to Int", MAGIC, lib.returnInt32Argument(Integer.toHexString(MAGIC)));
     }
     public void testNumberToIntArgumentConversion() {
@@ -122,7 +122,7 @@ public class TypeMapperTest extends TestCase {
         });
 
         final int MAGIC = 0x7BEDCF23;
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert Double argument to Int", MAGIC,
                      lib.returnInt32Argument(Double.valueOf(MAGIC)));
     }
@@ -142,7 +142,7 @@ public class TypeMapperTest extends TestCase {
                 return WString.class;
             }
         });
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        TestLibrary lib = Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert WString result to String", MAGIC, lib.returnWStringArgument(new WString(MAGIC)));
     }
 
@@ -172,7 +172,7 @@ public class TypeMapperTest extends TestCase {
                 return Integer.class;
             }
         });
-        BooleanTestLibrary lib = Native.loadLibrary("testlib", BooleanTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        BooleanTestLibrary lib = Native.load("testlib", BooleanTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Failed to convert integer return to boolean TRUE", true, lib.returnInt32Argument(true));
         assertEquals("Failed to convert integer return to boolean FALSE", false, lib.returnInt32Argument(false));
     }
@@ -206,7 +206,7 @@ public class TypeMapperTest extends TestCase {
             }
         };
         mapper.addTypeConverter(Boolean.class, converter);
-		Native.loadLibrary("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+		Native.load("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         StructureTestLibrary.TestStructure s = new StructureTestLibrary.TestStructure(mapper);
         assertEquals("Wrong native size", 4, s.size());
 
@@ -252,7 +252,7 @@ public class TypeMapperTest extends TestCase {
             }
         };
         mapper.addTypeConverter(Enumeration.class, converter);
-        EnumerationTestLibrary lib = Native.loadLibrary("testlib", EnumerationTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        EnumerationTestLibrary lib = Native.load("testlib", EnumerationTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         assertEquals("Enumeration improperly converted", Enumeration.STATUS_1, lib.returnInt32Argument(Enumeration.STATUS_1));
     }
 

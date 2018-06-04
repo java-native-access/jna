@@ -67,7 +67,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author dblock[at]dblock.org
  */
 public interface Advapi32 extends StdCallLibrary {
-    Advapi32 INSTANCE = Native.loadLibrary("Advapi32", Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Advapi32 INSTANCE = Native.load("Advapi32", Advapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     int MAX_KEY_LENGTH = 255;
     int MAX_VALUE_NAME = 16383;

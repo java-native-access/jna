@@ -39,7 +39,7 @@ import com.sun.jna.win32.W32APIOptions;
 public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /** The instance. */
-    Kernel32 INSTANCE = Native.loadLibrary("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Kernel32 INSTANCE = Native.load("kernel32", Kernel32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * <strong>LOAD_LIBRARY_AS_DATAFILE</strong> <br>

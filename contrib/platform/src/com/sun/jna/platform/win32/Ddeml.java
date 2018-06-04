@@ -55,7 +55,7 @@ import com.sun.jna.win32.W32APITypeMapper;
  */
 public interface Ddeml extends StdCallLibrary {
 
-    Ddeml INSTANCE = Native.loadLibrary("user32", Ddeml.class, W32APIOptions.DEFAULT_OPTIONS);
+    Ddeml INSTANCE = Native.load("user32", Ddeml.class, W32APIOptions.DEFAULT_OPTIONS);
     
     public class HCONVLIST extends PointerType {
     };

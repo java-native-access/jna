@@ -42,7 +42,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author dblock[at]dblock.org
  */
 public interface Secur32 extends StdCallLibrary {
-    Secur32 INSTANCE = Native.loadLibrary("Secur32", Secur32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Secur32 INSTANCE = Native.load("Secur32", Secur32.class, W32APIOptions.DEFAULT_OPTIONS);
 	
     /**
      * Specifies a format for a directory service object name.

@@ -57,7 +57,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface OleAuto extends StdCallLibrary {
 	/** The instance. */
-	OleAuto INSTANCE = Native.loadLibrary("OleAut32", OleAuto.class, W32APIOptions.DEFAULT_OPTIONS);
+	OleAuto INSTANCE = Native.load("OleAut32", OleAuto.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/* Flags for IDispatch::Invoke */
 	/** The Constant DISPATCH_METHOD. */

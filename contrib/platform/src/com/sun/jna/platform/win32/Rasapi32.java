@@ -44,7 +44,7 @@ import com.sun.jna.win32.W32APIOptions;
  * Rasapi32.dll Interface.
  */
 public interface Rasapi32 extends StdCallLibrary {
-	Rasapi32 INSTANCE = Native.loadLibrary("Rasapi32", Rasapi32.class, W32APIOptions.DEFAULT_OPTIONS);
+	Rasapi32 INSTANCE = Native.load("Rasapi32", Rasapi32.class, W32APIOptions.DEFAULT_OPTIONS);
 
 	/**
 	 * The RasDial function establishes a RAS connection between a RAS client and a RAS server.

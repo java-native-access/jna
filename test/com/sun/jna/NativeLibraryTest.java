@@ -87,7 +87,7 @@ public class NativeLibraryTest extends TestCase {
         // occasionally get the same library handle back on subsequent dlopen
         Thread.sleep(2);
 
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib = Native.load("testlib", TestLibrary.class);
         assertEquals("Library should be newly loaded after explicit dispose of all native libraries",
                      1, lib.callCount());
         if (lib.callCount() <= 1) {
@@ -96,28 +96,28 @@ public class NativeLibraryTest extends TestCase {
     }
 
     public void testUseSingleLibraryInstance() {
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib = Native.load("testlib", TestLibrary.class);
         int count = lib.callCount();
-        TestLibrary lib2 = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib2 = Native.load("testlib", TestLibrary.class);
         int count2 = lib2.callCount();
         assertEquals("Interfaces should share a library instance",
                      count + 1, count2);
     }
 
     public void testAliasLibraryFilename() {
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib = Native.load("testlib", TestLibrary.class);
         int count = lib.callCount();
         NativeLibrary nl = NativeLibrary.getInstance("testlib");
-        TestLibrary lib2 = Native.loadLibrary(nl.getFile().getName(), TestLibrary.class);
+        TestLibrary lib2 = Native.load(nl.getFile().getName(), TestLibrary.class);
         int count2 = lib2.callCount();
         assertEquals("Simple filename load not aliased", count + 1, count2);
     }
 
     public void testAliasLibraryFullPath() {
-        TestLibrary lib = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib = Native.load("testlib", TestLibrary.class);
         int count = lib.callCount();
         NativeLibrary nl = NativeLibrary.getInstance("testlib");
-        TestLibrary lib2 = Native.loadLibrary(nl.getFile().getAbsolutePath(), TestLibrary.class);
+        TestLibrary lib2 = Native.load(nl.getFile().getAbsolutePath(), TestLibrary.class);
         int count2 = lib2.callCount();
         assertEquals("Full pathname load not aliased", count + 1, count2);
     }
@@ -135,9 +135,9 @@ public class NativeLibraryTest extends TestCase {
                 fail("Timed out waiting for library to be GC'd");
             }
         }
-        TestLibrary lib = Native.loadLibrary(file.getAbsolutePath(), TestLibrary.class);
+        TestLibrary lib = Native.load(file.getAbsolutePath(), TestLibrary.class);
         int count = lib.callCount();
-        TestLibrary lib2 = Native.loadLibrary("testlib", TestLibrary.class);
+        TestLibrary lib2 = Native.load("testlib", TestLibrary.class);
         int count2 = lib2.callCount();
         assertEquals("Simple library name not aliased", count + 1, count2);
     }
@@ -272,7 +272,7 @@ public class NativeLibraryTest extends TestCase {
     }
 
     public void testLoadLibraryWithOptions() {
-        Native.loadLibrary("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_OPEN_FLAGS, Integer.valueOf(-1)));
+        Native.load("testlib", TestLibrary.class, Collections.singletonMap(Library.OPTION_OPEN_FLAGS, Integer.valueOf(-1)));
     }
 
     public interface Kernel32 {

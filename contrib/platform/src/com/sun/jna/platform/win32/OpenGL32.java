@@ -32,7 +32,7 @@ import com.sun.jna.win32.StdCallLibrary;
  * opengl32.dll Interface.
  */
 public interface OpenGL32 extends StdCallLibrary {
-    OpenGL32 INSTANCE = Native.loadLibrary("opengl32", OpenGL32.class);
+    OpenGL32 INSTANCE = Native.load("opengl32", OpenGL32.class);
 
     /**
      * The glGetString function returns a string describing the current OpenGL connection.

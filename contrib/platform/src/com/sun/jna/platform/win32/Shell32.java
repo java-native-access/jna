@@ -42,7 +42,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Shell32 extends ShellAPI, StdCallLibrary {
     /** The instance **/
-    Shell32 INSTANCE = Native.loadLibrary("shell32", Shell32.class, W32APIOptions.DEFAULT_OPTIONS);
+    Shell32 INSTANCE = Native.load("shell32", Shell32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     /**
      * No dialog box confirming the deletion of the objects will be displayed.

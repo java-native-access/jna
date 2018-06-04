@@ -29,7 +29,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 public interface Winsock2 extends Library {
 
-    Winsock2 INSTANCE = (Winsock2) Native.loadLibrary("ws2_32", Winsock2.class, W32APIOptions.ASCII_OPTIONS);
+    Winsock2 INSTANCE = (Winsock2) Native.load("ws2_32", Winsock2.class, W32APIOptions.ASCII_OPTIONS);
 
     /**
      * The gethostname function retrieves the standard host name for the local

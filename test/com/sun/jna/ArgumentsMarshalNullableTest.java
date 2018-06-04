@@ -179,7 +179,7 @@ public class ArgumentsMarshalNullableTest extends TestCase {
     TestLibrary lib;
     @Override
     protected void setUp() {
-        lib = Native.loadLibrary("testlib", TestLibrary.class,
+        lib = Native.load("testlib", TestLibrary.class,
                 Collections.singletonMap(Library.OPTION_TYPE_MAPPER, new TypeMapper() {
                     public FromNativeConverter getFromNativeConverter(Class<?> javaType) {
                         if(javaType == Int32.class) {

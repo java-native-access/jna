@@ -21,7 +21,7 @@ public class HelloWorld {
 
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
-            Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
+            Native.load((Platform.isWindows() ? "msvcrt" : "c"),
                                 CLibrary.class);
 
         void printf(String format, Object... args);
@@ -60,17 +60,17 @@ public interface Kernel32 extends StdCallLibrary {
 }
 ```
 
-Within this interface, define an instance of the native library using the Native.loadLibrary(Class) method, providing the native library interface you defined previously.
+Within this interface, define an instance of the native library using the Native.load(Class) method, providing the native library interface you defined previously.
 ``` java
 Kernel32 INSTANCE = (Kernel32)
-    Native.loadLibrary("kernel32", Kernel32.class);
+    Native.load("kernel32", Kernel32.class);
 // Optional: wraps every call to the native library in a
 // synchronized block, limiting native calls to one at a time
 Kernel32 SYNC_INSTANCE = (Kernel32)
     Native.synchronizedLibrary(INSTANCE);
 ```
 
-The `INSTANCE` variable is for convenient reuse of a single instance of the library. Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope. A Map of options may be provided as the third argument to loadLibrary to customize the library behavior; some of these options are explained in more detail below. The `SYNC_INSTANCE` is also optional; use it if you need to ensure that your native library has only one call to it at a time.
+The `INSTANCE` variable is for convenient reuse of a single instance of the library. Alternatively, you can load the library into a local variable so that it will be available for garbage collection when it goes out of scope. A Map of options may be provided as the third argument to load to customize the library behavior; some of these options are explained in more detail below. The `SYNC_INSTANCE` is also optional; use it if you need to ensure that your native library has only one call to it at a time.
 
 Declare methods that mirror the functions in the target library by defining Java methods with the same name and argument types as the native function (refer to the basic mappings below or the detailed table of type mappings). You may also need to declare native structures to pass to your native functions. To do this, create a class within the interface definition that extends Structure and add public fields (which may include arrays or nested structures). 
 ``` java

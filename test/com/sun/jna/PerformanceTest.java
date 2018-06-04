@@ -130,7 +130,7 @@ public class PerformanceTest extends TestCase implements Paths {
         Pointer pb = Native.getDirectBufferPointer(b);
 
         String mname = Platform.MATH_LIBRARY_NAME;
-        MathInterface mlib = Native.loadLibrary(mname, MathInterface.class);
+        MathInterface mlib = Native.load(mname, MathInterface.class);
         Function f = NativeLibrary.getInstance(mname).getFunction("cos");
 
         ///////////////////////////////////////////
@@ -222,7 +222,7 @@ public class PerformanceTest extends TestCase implements Paths {
                 }
             });
         }
-        CInterface clib = Native.loadLibrary(cname, CInterface.class, options);
+        CInterface clib = Native.load(cname, CInterface.class, options);
 
         ///////////////////////////////////////////
         // getpid
@@ -477,7 +477,7 @@ public class PerformanceTest extends TestCase implements Paths {
 
         ///////////////////////////////////////////
         // Callbacks
-        TestInterface tlib = Native.loadLibrary("testlib", TestInterface.class);
+        TestInterface tlib = Native.load("testlib", TestInterface.class);
         start = System.currentTimeMillis();
         TestInterface.Int32Callback cb = new TestInterface.Int32Callback() {
             @Override

@@ -45,7 +45,7 @@ import com.sun.jna.win32.W32APIOptions;
  * @author Andreas "PAX" L&uuml;ck, onkelpax-git[at]yahoo.de
  */
 public interface Psapi extends StdCallLibrary {
-    Psapi INSTANCE = Native.loadLibrary("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
+    Psapi INSTANCE = Native.load("psapi", Psapi.class, W32APIOptions.DEFAULT_OPTIONS);
     
     /**
      * Retrieves the fully qualified path for the file containing the specified

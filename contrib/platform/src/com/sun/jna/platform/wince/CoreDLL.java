@@ -33,6 +33,6 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface CoreDLL extends WinNT, Library {
 
-    CoreDLL INSTANCE = Native.loadLibrary("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
+    CoreDLL INSTANCE = Native.load("coredll", CoreDLL.class, W32APIOptions.UNICODE_OPTIONS);
 
 }

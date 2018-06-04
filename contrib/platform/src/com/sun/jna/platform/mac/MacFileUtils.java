@@ -42,7 +42,7 @@ public class MacFileUtils extends FileUtils {
 
     public interface FileManager extends Library {
 
-        FileManager INSTANCE = Native.loadLibrary("CoreServices", FileManager.class);
+        FileManager INSTANCE = Native.load("CoreServices", FileManager.class);
 
         int kFSFileOperationDefaultOptions = 0;
         int kFSFileOperationsOverwrite = 0x01;
