@@ -12,10 +12,14 @@
  */
 package com.sun.jna.platform.win32;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -155,4 +159,54 @@ public class PdhTest extends AbstractWin32TestSupport {
         
         return Native.toString(szFullPathBuffer);
     }
+    
+    @Test
+    public void testLookupPerfIndex() {
+        // Index 238 is "Processor"
+        int processor = 238;
+        String processorStr = "Processor";
+
+        // Test index-to-name
+        // Call lookup with null buffer and 0 index to get buffer size
+        DWORDByReference pcchNameBufferSize = new DWORDByReference(new DWORD(0));
+        Pdh.INSTANCE.PdhLookupPerfNameByIndex(null, processor, null, pcchNameBufferSize);
+        assertTrue(pcchNameBufferSize.getValue().intValue() > 0);
+        // Allocate buffer and call again
+        char[] szNameBuffer = new char[pcchNameBufferSize.getValue().intValue()];
+        Pdh.INSTANCE.PdhLookupPerfNameByIndex(null, processor, szNameBuffer, pcchNameBufferSize);
+        assertEquals(processorStr, Native.toString(szNameBuffer));
+
+        // Test name-to-index
+        DWORDByReference pdwIndex = new DWORDByReference();
+        Pdh.INSTANCE.PdhLookupPerfIndexByName(null, processorStr, pdwIndex);
+        assertEquals(processor, pdwIndex.getValue().intValue());
+    }
+
+    @Test
+    public void testEnumObjectItems() {
+        String processorStr = "Processor";
+        String processorTimeStr = "% Processor Time";
+
+        // Fetch the instance names
+        // Call once to get string lengths
+        DWORDByReference pcchCounterListLength = new DWORDByReference(new DWORD(0));
+        DWORDByReference pcchInstanceListLength = new DWORDByReference(new DWORD(0));
+        Pdh.INSTANCE.PdhEnumObjectItems(null, null, processorStr, null, pcchCounterListLength, null,
+                pcchInstanceListLength, 100, 0);
+        assertTrue(pcchCounterListLength.getValue().intValue() > 0);
+        assertTrue(pcchInstanceListLength.getValue().intValue() > 0);
+        // Allocate memory and call again to populate strings
+        char[] mszCounterList = new char[pcchCounterListLength.getValue().intValue()];
+        char[] mszInstanceList = new char[pcchInstanceListLength.getValue().intValue()];
+        Pdh.INSTANCE.PdhEnumObjectItems(null, null, processorStr, mszCounterList, pcchCounterListLength,
+                mszInstanceList, pcchInstanceListLength, 100, 0);
+        // Should have at least one processor and a "_Total" instance
+        List<String> instances = Native.toStringList(mszInstanceList);
+        assertTrue(instances.contains("0"));
+        assertTrue(instances.contains("_Total"));
+        // Should have a "% Processor Time" counter
+        List<String> counters = Native.toStringList(mszCounterList);
+        assertTrue(counters.contains(processorTimeStr));
+    }
+    
 }
