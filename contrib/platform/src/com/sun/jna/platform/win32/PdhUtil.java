@@ -117,7 +117,7 @@ public abstract class PdhUtil {
                 pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
 
         // Fetch counters
-        List<String> counters = new LinkedList<>();
+        List<String> counters = new LinkedList<String>();
         int offset = 0;
         while (offset < mszCounterList.size()) {
             String s = null;
@@ -134,7 +134,7 @@ public abstract class PdhUtil {
             offset += (s.length() + 1) * charToBytes;
         }
 
-        List<String> instances = new LinkedList<>();
+        List<String> instances = new LinkedList<String>();
         offset = 0;
         while (offset < mszInstanceList.size()) {
             String s = null;
@@ -152,7 +152,7 @@ public abstract class PdhUtil {
             offset += (s.length() + 1) * charToBytes;
         }
 
-        List<List<String>> objectItems = new ArrayList<>(2);
+        List<List<String>> objectItems = new ArrayList<List<String>>(2);
         objectItems.add(counters);
         objectItems.add(instances);
         return objectItems;
