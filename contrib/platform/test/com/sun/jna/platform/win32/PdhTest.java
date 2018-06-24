@@ -12,9 +12,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
@@ -182,18 +179,18 @@ public class PdhTest extends AbstractWin32TestSupport {
     @Test
     public void testEnumObjectItems() {
         if (AbstractWin32TestSupport.isEnglishLocale) {
-            String processorStr = "Process";
+			String processorStr = "Processor";
             String processorTimeStr = "% Processor Time";
 
             // Fetch the counter and instance names
-            List<List<String>> objectItems = PdhUtil.PdhEnumObjectItems(null, null, processorStr, 100);
-            List<String> counters = objectItems.get(0);
-            List<String> instances = objectItems.get(1);
+			List<String> instances = PdhUtil.PdhEnumObjectItemInstances(null, null, processorStr, 100);
 
             // Should have at least one processor and total instance
 			assertTrue(instances.contains("0"));
 			assertTrue(instances.contains("_Total"));
+
             // Should have a "% Processor Time" counter
+			List<String> counters = PdhUtil.PdhEnumObjectItemCounters(null, null, processorStr, 100);
 			assertTrue(counters.contains(processorTimeStr));
         } else {
             System.err.println("testEnumObjectItems test can only be run with english locale.");

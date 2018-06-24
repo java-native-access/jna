@@ -24,7 +24,6 @@
 package com.sun.jna.platform.win32;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.sun.jna.Memory;
@@ -73,34 +72,32 @@ public abstract class PdhUtil {
     }
 
     /**
-     * Utility method to call Pdh's PdhEnumObjectItems that allocates the
-     * required memory for the mszCounterList and mszInstanceList parameters
-     * based on the type mapping used, calls to PdhEnumObjectItems, and returns
-     * the received lists of strings.
-     * 
-     * @param szDataSource
-     *            String that specifies the name of the log file used to
-     *            enumerate the counter and instance names. If NULL, the
-     *            function uses the computer specified in the szMachineName
-     *            parameter to enumerate the names.
-     * @param szMachineName
-     *            String that specifies the name of the computer that contains
-     *            the counter and instance names that you want to enumerate.
-     *            Include the leading slashes in the computer name, for example,
-     *            \\computername. If the szDataSource parameter is NULL, you can
-     *            set szMachineName to NULL to specify the local computer.
-     * @param szObjectName
-     *            String that specifies the name of the object whose counter and
-     *            instance names you want to enumerate.
-     * @param dwDetailLevel
-     *            Detail level of the performance items to return. All items
-     *            that are of the specified detail level or less will be
-     *            returned.
-     * @return Returns a List with two elements. Index 0 contains a List of
-     *         Strings of the counters for the object. Index 1 contains a List
-     *         of Strings of the instances of the object.
-     */
-    public static List<List<String>> PdhEnumObjectItems(String szDataSource, String szMachineName, String szObjectName,
+	 * Utility method to call Pdh's PdhEnumObjectItems that allocates the
+	 * required memory for the mszCounterList parameter based on the type
+	 * mapping used, calls to PdhEnumObjectItems, and returns the received lists
+	 * of strings.
+	 * 
+	 * @param szDataSource
+	 *            String that specifies the name of the log file used to
+	 *            enumerate the counter and instance names. If NULL, the
+	 *            function uses the computer specified in the szMachineName
+	 *            parameter to enumerate the names.
+	 * @param szMachineName
+	 *            String that specifies the name of the computer that contains
+	 *            the counter and instance names that you want to enumerate.
+	 *            Include the leading slashes in the computer name, for example,
+	 *            \\computername. If the szDataSource parameter is NULL, you can
+	 *            set szMachineName to NULL to specify the local computer.
+	 * @param szObjectName
+	 *            String that specifies the name of the object whose counter and
+	 *            instance names you want to enumerate.
+	 * @param dwDetailLevel
+	 *            Detail level of the performance items to return. All items
+	 *            that are of the specified detail level or less will be
+	 *            returned.
+	 * @return Returns a List of Strings of the counters for the object.
+	 */
+	public static List<String> PdhEnumObjectItemCounters(String szDataSource, String szMachineName, String szObjectName,
             int dwDetailLevel) {
         int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
 
@@ -117,7 +114,7 @@ public abstract class PdhUtil {
                 pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
 
         // Fetch counters
-        List<String> counters = new LinkedList<String>();
+		List<String> counters = new ArrayList<String>();
         int offset = 0;
         while (offset < mszCounterList.size()) {
             String s = null;
@@ -131,11 +128,57 @@ public abstract class PdhUtil {
                 break;
             }
             counters.add(s);
+			// Increment for string + null terminator
             offset += (s.length() + 1) * charToBytes;
         }
 
-        List<String> instances = new LinkedList<String>();
-        offset = 0;
+		return counters;
+	}
+
+	/**
+	 * Utility method to call Pdh's PdhEnumObjectItems that allocates the
+	 * required memory for the mszInstanceList parameters based on the type
+	 * mapping used, calls to PdhEnumObjectItems, and returns the received lists
+	 * of strings.
+	 * 
+	 * @param szDataSource
+	 *            String that specifies the name of the log file used to
+	 *            enumerate the counter and instance names. If NULL, the
+	 *            function uses the computer specified in the szMachineName
+	 *            parameter to enumerate the names.
+	 * @param szMachineName
+	 *            String that specifies the name of the computer that contains
+	 *            the counter and instance names that you want to enumerate.
+	 *            Include the leading slashes in the computer name, for example,
+	 *            \\computername. If the szDataSource parameter is NULL, you can
+	 *            set szMachineName to NULL to specify the local computer.
+	 * @param szObjectName
+	 *            String that specifies the name of the object whose counter and
+	 *            instance names you want to enumerate.
+	 * @param dwDetailLevel
+	 *            Detail level of the performance items to return. All items
+	 *            that are of the specified detail level or less will be
+	 *            returned.
+	 * @return Returns a Lists of Strings of the instances of the object.
+	 */
+	public static List<String> PdhEnumObjectItemInstances(String szDataSource, String szMachineName,
+			String szObjectName, int dwDetailLevel) {
+		int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
+
+		// Call once to get string lengths
+		DWORDByReference pcchCounterListLength = new DWORDByReference(new DWORD(0));
+		DWORDByReference pcchInstanceListLength = new DWORDByReference(new DWORD(0));
+		Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, null, pcchCounterListLength, null,
+				pcchInstanceListLength, dwDetailLevel, 0);
+
+		// Allocate memory and call again to populate strings
+		Memory mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * charToBytes);
+		Memory mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * charToBytes);
+		Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
+				pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
+
+		List<String> instances = new ArrayList<String>();
+		int offset = 0;
         while (offset < mszInstanceList.size()) {
             String s = null;
             if (charToBytes == 1) {
@@ -152,9 +195,6 @@ public abstract class PdhUtil {
             offset += (s.length() + 1) * charToBytes;
         }
 
-        List<List<String>> objectItems = new ArrayList<List<String>>(2);
-        objectItems.add(counters);
-        objectItems.add(instances);
-        return objectItems;
+		return instances;
     }
 }
