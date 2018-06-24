@@ -686,6 +686,14 @@ dispatch_callback(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     else {
       attach_status = (*jvm)->AttachCurrentThread(jvm, (void *)&env, &args);
     }
+    if (attach_status != JNI_OK) {
+      free((void *)args.name);
+      if (args.group) {
+        (*env)->DeleteWeakGlobalRef(env, args.group);
+      }
+      fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d (check stacksize for callbacks)\n", attach_status);
+      return;
+    }
     tls = get_thread_storage(env);
     if (tls) {
       snprintf(tls->name, sizeof(tls->name), "%s", args.name ? args.name : "<unconfigured native thread>");
@@ -694,15 +702,11 @@ dispatch_callback(ffi_cif* cif, void* resp, void** cbargs, void* user_data) {
     }
     // Dispose of allocated memory
     free((void *)args.name);
-    if (attach_status != JNI_OK) {
-      fprintf(stderr, "JNA: Can't attach native thread to VM for callback: %d\n", attach_status);
-      return;
-    }
     if (args.group) {
       (*env)->DeleteWeakGlobalRef(env, args.group);
     }
   }
-						
+		
   if (!tls) {
     fprintf(stderr, "JNA: couldn't obtain thread-local storage\n");
     return;

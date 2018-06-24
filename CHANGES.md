@@ -12,6 +12,7 @@ Bug Fixes
 ---------
 * [#925](https://github.com/java-native-access/jna/issues/925): Optimize `Structure#validate` and prevent `ArrayIndexOutOfBoundsException` in `SAFEARRAY#read` for zero dimensions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#974](https://github.com/java-native-access/jna/issues/974): If the callback code failed to attach to the JVM, this lead to a segfault. The success of attaching to the JVM was checked to late and an invalid `JNIEnv` pointer was used to access the JVM - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 4.5.1
 =============

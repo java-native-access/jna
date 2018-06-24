@@ -54,7 +54,7 @@ typedef __int64 int64_t;
 #define EXPORT __declspec(dllexport)
 #define SLEEP(MS) Sleep(MS)
 #define THREAD_T DWORD
-#define THREAD_CREATE(TP, FN, DATA) CreateThread(NULL, 0, FN, DATA, 0, TP)
+#define THREAD_CREATE(TP, FN, DATA, STACKSIZE) CreateThread(NULL, STACKSIZE, FN, DATA, 0, TP)
 #define THREAD_EXIT() ExitThread(0)
 #define THREAD_FUNC(FN,ARG) DWORD WINAPI FN(LPVOID ARG)
 #define THREAD_CURRENT() GetCurrentThreadId()
@@ -69,7 +69,15 @@ typedef __int64 int64_t;
 #include <pthread.h>
 #define SLEEP(MS) usleep(MS*1000)
 #define THREAD_T pthread_t
-#define THREAD_CREATE(TP, FN, DATA) pthread_create(TP, NULL, FN, DATA)
+#define THREAD_CREATE(TP, FN, DATA, STACKSIZE) {\
+  pthread_attr_t attr;\
+  pthread_attr_init(&attr);\
+  if (STACKSIZE > 0) {\
+    pthread_attr_setstacksize(&attr, STACKSIZE);\
+  }\
+  pthread_create(TP, &attr, FN, DATA);\
+  pthread_attr_destroy(&attr);\
+}
 #define THREAD_EXIT() pthread_exit(NULL)
 #define THREAD_FUNC(FN,ARG) void* FN(void *ARG)
 #define THREAD_RETURN return NULL
@@ -676,7 +684,7 @@ static THREAD_FUNC(thread_function, arg) {
 }
 
 EXPORT void
-callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
+callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name, int stacksize) {
   THREAD_T thread;
   thread_data* data = (thread_data*)malloc(sizeof(thread_data));
 
@@ -684,7 +692,7 @@ callVoidCallbackThreaded(void (*func)(void), int n, int ms, const char* name) {
   data->sleep_time = ms;
   data->func = func;
   snprintf(data->name, sizeof(data->name), "%s", name);
-  THREAD_CREATE(&thread, &thread_function, data);
+  THREAD_CREATE(&thread, &thread_function, data, stacksize);
 }
 
 EXPORT int 
