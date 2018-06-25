@@ -78,7 +78,7 @@ public class MSOfficeDemo {
             Helper.sleep(10);
             // save in different formats
             // pdf format is only supported in MSWord 2007 and above
-            System.out.println("Wrinting files to: " + Helper.tempDir);
+            System.out.println("Writing files to: " + Helper.tempDir);
             msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.doc").getAbsolutePath(), wdFormatDocument);
             msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.pdf").getAbsolutePath(), wdFormatPDF);
             msWord.SaveAs(new File(Helper.tempDir, "jnatestSaveAs.rtf").getAbsolutePath(), wdFormatRTF);
