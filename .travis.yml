@@ -4,7 +4,7 @@ dist: trusty
 language: java
 
 install:
-  - '[ "${TRAVIS_OS_NAME}" = "linux" ] && wget http://apache.mirror.iphh.net/ant/binaries/apache-ant-1.9.11-bin.tar.gz && tar xzf apache-ant-1.9.11-bin.tar.gz && sudo mv apache-ant-1.9.11 /usr/local/apache-ant-1.9.11 && sudo rm -f /usr/local/ant && sudo ln -s /usr/local/apache-ant-1.9.11 /usr/local/ant && sudo ln -s /usr/local/apache-ant-1.9.11/bin/ant /usr/local/bin/ant || true'
+  - '[ "${TRAVIS_OS_NAME}" = "linux" ] && wget http://apache.mirror.iphh.net/ant/binaries/apache-ant-1.9.12-bin.tar.gz && tar xzf apache-ant-1.9.12-bin.tar.gz && sudo mv apache-ant-1.9.12 /usr/local/apache-ant-1.9.12 && sudo rm -f /usr/local/ant && sudo ln -s /usr/local/apache-ant-1.9.12 /usr/local/ant && sudo ln -s /usr/local/apache-ant-1.9.12/bin/ant /usr/local/bin/ant || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew update || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew uninstall libtool && brew install libtool || true'
   - '[ "${TRAVIS_OS_NAME}" = "osx" ] && brew install ant || true'
