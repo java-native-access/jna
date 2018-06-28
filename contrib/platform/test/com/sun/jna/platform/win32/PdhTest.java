@@ -16,6 +16,7 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -154,5 +155,45 @@ public class PdhTest extends AbstractWin32TestSupport {
         assertErrorSuccess("PdhMakeCounterPath", pdh.PdhMakeCounterPath(pathElements, szFullPathBuffer,  pcchBufferSize, 0), true);
         
         return Native.toString(szFullPathBuffer);
+    }
+    
+    @Test
+    public void testLookupPerfIndex() {
+        int processorIndex = 238;
+        String processorStr = "Processor"; // English locale
+
+        // Test index-to-name
+        String testStr = PdhUtil.PdhLookupPerfNameByIndex(null, processorIndex);
+        if (AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals(processorStr, testStr);
+        } else {
+            assertTrue(testStr.length() > 0);
+        }
+
+        // Test name-to-index
+        DWORDByReference pdwIndex = new DWORDByReference();
+        Pdh.INSTANCE.PdhLookupPerfIndexByName(null, testStr, pdwIndex);
+        assertEquals(processorIndex, pdwIndex.getValue().intValue());
+    }
+
+    @Test
+    public void testEnumObjectItems() {
+        if (AbstractWin32TestSupport.isEnglishLocale) {
+			String processorStr = "Processor";
+            String processorTimeStr = "% Processor Time";
+
+            // Fetch the counter and instance names
+			List<String> instances = PdhUtil.PdhEnumObjectItemInstances(null, null, processorStr, 100);
+
+            // Should have at least one processor and total instance
+			assertTrue(instances.contains("0"));
+			assertTrue(instances.contains("_Total"));
+
+            // Should have a "% Processor Time" counter
+			List<String> counters = PdhUtil.PdhEnumObjectItemCounters(null, null, processorStr, 100);
+			assertTrue(counters.contains(processorTimeStr));
+        } else {
+            System.err.println("testEnumObjectItems test can only be run with english locale.");
+        }
     }
 }
