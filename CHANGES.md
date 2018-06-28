@@ -20,6 +20,7 @@ Features
 * [#959](https://github.com/java-native-access/jna/pull/959): Added `GetProcessTimes` and `GetProcessIoCounters` to `com.sun.jna.platform.win32.Kernel32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#952](https://github.com/java-native-access/jna/issues/952): Added `CreateMutex`, `OpenMutex` and `ReleaseMutex` to `com.sun.jna.platform.win32.Kernel32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#973](https://github.com/java-native-access/jna/issues/973): Added `PdhLookupPerfNameByIndex`, `PdhLookupPerfIndexByName`, and `PdhEnumObjectItems` to `c.s.j.platform.win32.Pdh` and a `c.s.j.platform.win32.PdhUtil` class to access them - [@dbwiddis](https://github.com/dbwiddis).
+* [#980](https://github.com/java-native-access/jna/issues/980): Added `PERF_OBJECT_TYPE`, `PERF_COUNTER_BLOCK`, and `PERF_COUNTER_DEFINITION` to `c.s.j.platform.win32.WinPerf` and added `Pointer` constructors to ``PERF_INSTANCE_DEFINITION` and `PERF_DATA_BLOCK` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
