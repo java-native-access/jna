@@ -27,7 +27,6 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
-import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.LARGE_INTEGER;
@@ -36,6 +35,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
+import com.sun.jna.win32.W32APITypeMapper;
 
 public interface Wtsapi32 extends StdCallLibrary {
 
@@ -103,12 +103,12 @@ public interface Wtsapi32 extends StdCallLibrary {
     /**
      * Specifies the current session (SessionId)
      */
-    DWORD WTS_CURRENT_SESSION = new DWORD(-1L);
+    int WTS_CURRENT_SESSION = -1;
 
     /**
      * Specifies any-session (SessionId)
      */
-    DWORD WTS_ANY_SESSION = new DWORD(-2L);
+    int WTS_ANY_SESSION = -2;
 
     int WTS_PROCESS_INFO_LEVEL_0 = 0;
     int WTS_PROCESS_INFO_LEVEL_1 = 1;
@@ -127,25 +127,25 @@ public interface Wtsapi32 extends StdCallLibrary {
     @FieldOrder({ "SessionId", "ProcessId", "pProcessName", "pUserSid", "NumberOfThreads", "HandleCount",
             "PagefileUsage", "PeakPagefileUsage", "WorkingSetSize", "PeakWorkingSetSize", "UserTime", "KernelTime" })
     class WTS_PROCESS_INFO_EX extends Structure {
-        public DWORD SessionId;
-        public DWORD ProcessId;
-        public Pointer pProcessName; // Either LPSTR or LPWSTR
+        public int SessionId;
+        public int ProcessId;
+        public String pProcessName; // Either LPSTR or LPWSTR
         public PSID pUserSid;
-        public DWORD NumberOfThreads;
-        public DWORD HandleCount;
-        public DWORD PagefileUsage;
-        public DWORD PeakPagefileUsage;
-        public DWORD WorkingSetSize;
-        public DWORD PeakWorkingSetSize;
+        public int NumberOfThreads;
+        public int HandleCount;
+        public int PagefileUsage;
+        public int PeakPagefileUsage;
+        public int WorkingSetSize;
+        public int PeakWorkingSetSize;
         public LARGE_INTEGER UserTime;
         public LARGE_INTEGER KernelTime;
 
         public WTS_PROCESS_INFO_EX() {
-            super();
+            super(W32APITypeMapper.DEFAULT);
         }
 
         public WTS_PROCESS_INFO_EX(Pointer p) {
-            super(p);
+            super(p, Structure.ALIGN_DEFAULT, W32APITypeMapper.DEFAULT);
             read();
         }
     }
@@ -218,7 +218,7 @@ public interface Wtsapi32 extends StdCallLibrary {
      *         the function fails, the return value is zero. To get extended
      *         error information, call the GetLastError function.
      */
-    boolean WTSEnumerateProcessesEx(HANDLE hServer, IntByReference pLevel, DWORD SessionID,
+    boolean WTSEnumerateProcessesEx(HANDLE hServer, IntByReference pLevel, int SessionID,
             PointerByReference ppProcessInfo, IntByReference pCount);
 
     /**
@@ -238,5 +238,5 @@ public interface Wtsapi32 extends StdCallLibrary {
      *         the function fails, the return value is zero. To get extended
      *         error information, call the GetLastError function.
      */
-    boolean WTSFreeMemoryEx(int WTSTypeClass, Pointer pMemory, long NumberOfEntries);
+    boolean WTSFreeMemoryEx(int WTSTypeClass, Pointer pMemory, int NumberOfEntries);
 }

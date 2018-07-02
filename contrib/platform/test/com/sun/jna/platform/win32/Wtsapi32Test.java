@@ -43,8 +43,6 @@ public class Wtsapi32Test extends TestCase {
 	}
 	
     public void testWTSEnumerateProcessesEx() {
-        int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
-
         // Get processes from WTS
         PointerByReference ppProcessInfo = new PointerByReference();
         IntByReference pCount = new IntByReference(0);
@@ -59,11 +57,9 @@ public class Wtsapi32Test extends TestCase {
         Set<Integer> pidSet = new HashSet<Integer>();
         for (WTS_PROCESS_INFO_EX procInfo : processInfo) {
             // PIDs should be unique
-            int pid = procInfo.ProcessId.intValue();
-            assertTrue(pid >= 0);
-            if (pid > 0) {
-                assertFalse(pidSet.contains(pid));
-                pidSet.add(pid);
+            if (procInfo.ProcessId != 0) {
+                assertFalse(pidSet.contains(procInfo.ProcessId));
+                pidSet.add(procInfo.ProcessId);
             }
 
             // A process cannot time travel and use negative CPU ticks
@@ -71,13 +67,8 @@ public class Wtsapi32Test extends TestCase {
             assertTrue(procInfo.UserTime.getValue() >= 0);
 
             // Process name should be nonempty except for the Idle process
-            String name;
-            if (charToBytes > 1) {
-                name = procInfo.pProcessName.getWideString(0);
-            } else {
-                name = procInfo.pProcessName.getString(0);
-            }
-            if (pid > 0) {
+            String name = procInfo.pProcessName;
+            if (procInfo.ProcessId != 0) {
                 assertFalse(name.isEmpty());
             }
 
