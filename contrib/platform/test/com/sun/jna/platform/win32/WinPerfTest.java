@@ -93,7 +93,7 @@ public class WinPerfTest extends AbstractWin32TestSupport {
 
             // PERF_DATA_BLOCK test
             // Test the signature, a char[] containing [P, E, R, F]
-            PERF_DATA_BLOCK perfData = new PERF_DATA_BLOCK(pPerfData.share(0));
+            PERF_DATA_BLOCK perfData = new PERF_DATA_BLOCK(pPerfData);
             assertEquals("PERF", Native.toString(perfData.Signature));
 
             // PERF_OBJECT_TYPE test
@@ -121,7 +121,6 @@ public class WinPerfTest extends AbstractWin32TestSupport {
             }
 
             // PERF_INSTANCE_DEFINITION test
-            // Parent object title index should be the Process object
             long perfInstanceOffset = perfObjectOffset + perfObject.DefinitionLength;
             Set<Integer> pidSet = new HashSet<Integer>();
             for (int inst = 0; inst < perfObject.NumInstances; inst++) {
