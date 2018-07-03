@@ -29,10 +29,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.WinDef.UCHAR;
-import com.sun.jna.platform.win32.WinDef.UINT;
-import com.sun.jna.platform.win32.WinDef.ULONG;
-import com.sun.jna.platform.win32.WinDef.ULONGByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
@@ -106,16 +103,16 @@ public interface IPHlpAPI extends Library {
             "InUcastOctets", "InMulticastOctets", "InBroadcastOctets", "OutOctets", "OutUcastPkts", "OutNUcastPkts",
             "OutDiscards", "OutErrors", "OutUcastOctets", "OutMulticastOctets", "OutBroadcastOctets", "OutQLen" })
     class MIB_IF_ROW2 extends Structure {
-        public long InterfaceLuid; // 64-bit union
-        public ULONG InterfaceIndex;
+        public long InterfaceLuid; // 64-bit union NET_LUID
+        public int InterfaceIndex;
         public GUID InterfaceGuid;
         public char[] Alias = new char[IF_MAX_STRING_SIZE + 1];
         public char[] Description = new char[IF_MAX_STRING_SIZE + 1];
-        public ULONG PhysicalAddressLength;
-        public UCHAR[] PhysicalAddress = new UCHAR[IF_MAX_PHYS_ADDRESS_LENGTH];
-        public UCHAR[] PermanentPhysicalAddress = new UCHAR[IF_MAX_PHYS_ADDRESS_LENGTH];
-        public ULONG Mtu;
-        public ULONG Type;
+        public int PhysicalAddressLength;
+        public byte[] PhysicalAddress = new byte[IF_MAX_PHYS_ADDRESS_LENGTH];
+        public byte[] PermanentPhysicalAddress = new byte[IF_MAX_PHYS_ADDRESS_LENGTH];
+        public int Mtu;
+        public int Type;
         // enums
         public int TunnelType;
         public int MediaType;
@@ -177,7 +174,7 @@ public interface IPHlpAPI extends Library {
      */
     @FieldOrder({ "Next", "IpAddress", "IpMask", "Context" })
     class IP_ADDR_STRING extends Structure {
-        public ByReference Next;
+        public IP_ADDR_STRING.ByReference Next;
         public IP_ADDRESS_STRING IpAddress;
         public IP_ADDRESS_STRING IpMask;
         public int Context;
@@ -200,11 +197,11 @@ public interface IPHlpAPI extends Library {
         public byte[] DomainName = new byte[MAX_DOMAIN_NAME_LEN + 4];
         public IP_ADDR_STRING.ByReference CurrentDnsServer; // IP_ADDR_STRING
         public IP_ADDR_STRING DnsServerList;
-        public UINT NodeType;
+        public int NodeType;
         public byte[] ScopeId = new byte[MAX_SCOPE_ID_LEN + 4];
-        public UINT EnableRouting;
-        public UINT EnableProxy;
-        public UINT EnableDns;
+        public int EnableRouting;
+        public int EnableProxy;
+        public int EnableDns;
 
         public FIXED_INFO(Pointer p) {
             super(p);
@@ -276,5 +273,6 @@ public interface IPHlpAPI extends Library {
      *            ERROR_BUFFER_OVERFLOW.
      * @return If the function succeeds, the return value is ERROR_SUCCESS.
      */
-    int GetNetworkParams(FIXED_INFO pFixedInfo, ULONGByReference pOutBufLen);
+    int GetNetworkParams(FIXED_INFO pFixedInfo, IntByReference pOutBufLen);
 }
+

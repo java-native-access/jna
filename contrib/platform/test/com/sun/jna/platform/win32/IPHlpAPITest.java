@@ -39,7 +39,7 @@ import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.IPHlpAPI.FIXED_INFO;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IFROW;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IF_ROW2;
-import com.sun.jna.platform.win32.WinDef.ULONG;
+import com.sun.jna.ptr.IntByReference;
 
 public class IPHlpAPITest {
 
@@ -83,9 +83,9 @@ public class IPHlpAPITest {
             Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
             for (NetworkInterface netint : Collections.list(interfaces)) {
                 if (!netint.isLoopback() && netint.getHardwareAddress() != null) {
-                    // Create new MIB_IFROW2, set index to this interface index
+                    // Create new MIB_IF_ROW2, set index to this interface index
                     MIB_IF_ROW2 ifRow = new MIB_IF_ROW2();
-                    ifRow.InterfaceIndex = new ULONG(netint.getIndex());
+                    ifRow.InterfaceIndex = netint.getIndex();
                     assertEquals(WinError.NO_ERROR, IPHlpAPI.INSTANCE.GetIfEntry2(ifRow));
                     // Bytes should exceed packets
                     // These originate from unsigned longs.
@@ -114,9 +114,9 @@ public class IPHlpAPITest {
     public void testGetNetworkParams() {
         Pattern ValidIP = Pattern.compile("^(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.){3}([01]?\\d\\d?|2[0-4]\\d|25[0-5])$");
 
-        WinDef.ULONGByReference bufferSize = new WinDef.ULONGByReference();
+        IntByReference bufferSize = new IntByReference();
         assertEquals(WinError.ERROR_BUFFER_OVERFLOW, IPHlpAPI.INSTANCE.GetNetworkParams(null, bufferSize));
-        FIXED_INFO buffer = new FIXED_INFO(new Memory(bufferSize.getValue().longValue()));
+        FIXED_INFO buffer = new FIXED_INFO(new Memory(bufferSize.getValue()));
         assertEquals(WinError.ERROR_SUCCESS, IPHlpAPI.INSTANCE.GetNetworkParams(buffer, bufferSize));
 
         // Check all DNS servers are valid IPs
