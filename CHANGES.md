@@ -7,6 +7,7 @@ Release 5.0.0 (Next release)
 
 Features
 --------
+* [#975](https://github.com/java-native-access/jna/pull/982): Add package versions to OSGi metadata. - [@io7m](https://github.com/io7m).
 * [#915](https://github.com/java-native-access/jna/pull/915): Adding interfaces to call to Cryptui and Crypt32 windows libraries and adding related structures to Wincrypt. - [@rosh89](https://github.com/rosh89).
 * [#903](https://github.com/java-native-access/jna/pull/903): Carry `HRESULT` in `c.s.j.p.win32.COM.COMException`, introduce `c.s.j.p.win32.COM.COMInvokeException` as subclass of `COMException` for exception as the result of a `IDispatch#Invoke`. The `EXECPINFO` is unwrapped into fields in the `COMInvokeException` and correctly freed. - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#822](https://github.com/java-native-access/jna/issues/822): `Native#loadLibrary` requires that the interface class passed in is an instance of Library. The runtime check can be enhanced by using a constraint generic. This breaks binary compatibility (see notes below) - [@d-noll](https://github.com/d-noll).<br /><br />In a followup, the original `loadLibrary` methods were deprecated and `Native#load` methods were introduced, that hold the new generic definitions. So this change is now binary compatible.
