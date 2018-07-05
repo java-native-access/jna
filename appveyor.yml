@@ -1,0 +1,22 @@
+os: Windows Server 2012
+
+environment:
+  ANT_VERSION: 1.9.7
+
+install:
+  - cmd: choco install ant -y -f -i > nul
+  - cmd: choco install cygwin -y -f -i > nul
+  - cmd: set JAVA_HOME=C:\Program Files\Java\jdk1.8.0
+  - cmd: set PATH=%JAVA_HOME%\bin;%PATH%
+  - cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"'
+  - cmd: refreshenv
+
+build_script:
+  - cmd: ant dist
+
+test_script:
+  - cmd: C:\cygwin\bin\sh -lc "uname -a;
+         cd /cygdrive/c/projects/jna;
+         ant test;
+         ant test-platform"
+
