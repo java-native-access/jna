@@ -127,7 +127,7 @@ public class CallbacksTest extends TestCase implements Paths {
             void callback();
         }
         void callVoidCallback(VoidCallback c);
-        void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name);
+        void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name, int stacksize);
         interface VoidCallbackCustom extends Callback {
             void customMethodName();
         }
@@ -1215,7 +1215,7 @@ public class CallbacksTest extends TestCase implements Paths {
         if (cti != null) {
             Native.setCallbackThreadInitializer(cb, cti);
         }
-        lib.callVoidCallbackThreaded(cb, repeat, sleepms, getName());
+        lib.callVoidCallbackThreaded(cb, repeat, sleepms, getName(), 0);
 
         long start = System.currentTimeMillis();
         while (called[0] < returnAfter) {
@@ -1302,6 +1302,25 @@ public class CallbacksTest extends TestCase implements Paths {
 	}
 
         waitFor(t[0]);
+    }
+
+    public void testSmallStackCallback() throws Exception {
+        // This test runs the callback in a thread, that is allocated a very
+        // small size. It was observed on linux amd64, that a library allocated
+        // a stack size of 64kB, this prevented the JVM to attach to that
+        // thread. The JNIEnv pointer was not checked and this lead to a
+        // hard crash of the JVM.
+        TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
+            @Override
+            public void callback() {
+                System.out.println("Callback called");
+            }
+        };
+
+        lib.callVoidCallbackThreaded(cb, 1, 0, "Test Callback", 32 * 1024);
+
+        // Give the JVM enough time to run the call back
+        Thread.sleep(1 * 1000);
     }
 
     // Detach preference is indicated by the initializer.  Thread is attached
