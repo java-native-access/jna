@@ -174,12 +174,18 @@ public interface IPHlpAPI extends Library {
      */
     @FieldOrder({ "Next", "IpAddress", "IpMask", "Context" })
     class IP_ADDR_STRING extends Structure {
-        public IP_ADDR_STRING.ByReference Next;
+        public Pointer Next; // IP_ADDR_STRING
         public IP_ADDRESS_STRING IpAddress;
         public IP_ADDRESS_STRING IpMask;
         public int Context;
 
-        public static class ByReference extends IP_ADDR_STRING implements Structure.ByReference {
+        public IP_ADDR_STRING(Pointer p) {
+            super(p);
+            read();
+        }
+
+        public IP_ADDR_STRING() {
+            super();
         }
     }
 
@@ -195,7 +201,7 @@ public interface IPHlpAPI extends Library {
     class FIXED_INFO extends Structure {
         public byte[] HostName = new byte[MAX_HOSTNAME_LEN + 4];
         public byte[] DomainName = new byte[MAX_DOMAIN_NAME_LEN + 4];
-        public IP_ADDR_STRING.ByReference CurrentDnsServer; // IP_ADDR_STRING
+        public Pointer CurrentDnsServer; // IP_ADDR_STRING
         public IP_ADDR_STRING DnsServerList;
         public int NodeType;
         public byte[] ScopeId = new byte[MAX_SCOPE_ID_LEN + 4];
