@@ -5,7 +5,7 @@
 Java Native Access (JNA)
 ========================
 
-The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.io/jna/4.5.1/javadoc/).  Please read the [overview](http://java-native-access.github.io/jna/4.5.1/javadoc/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
+The definitive JNA reference (including an overview and usage details) is in the [JavaDoc](http://java-native-access.github.io/jna/4.5.2/javadoc/).  Please read the [overview](http://java-native-access.github.io/jna/4.5.2/javadoc/overview-summary.html#overview_description).  Questions, comments, or exploratory conversations should begin on the [mailing list](http://groups.google.com/group/jna-users), although you may find it easier to find answers to already-solved problems on [StackOverflow](http://stackoverflow.com/questions/tagged/jna).
 
 JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required. This functionality is comparable to Windows' Platform/Invoke and Python's ctypes.
 
@@ -58,12 +58,12 @@ Pre-built platform support may be found [here](https://github.com/java-native-ac
 Download
 ========
 
-Version 4.5.1
+Version 4.5.2
 
 JNA
 ---
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna)&nbsp;[jna.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/4.5.1/jna-4.5.1.jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna)&nbsp;[jna.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna/4.5.2/jna-4.5.2.jar)
   
 This is the core artifact of JNA and contains only the binding library and the
 core helper classes.
@@ -71,7 +71,7 @@ core helper classes.
 JNA Platform
 ------------
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp; [jna-platform.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/4.5.1/jna-platform-4.5.1.jar)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform/badge.svg)](https://maven-badges.herokuapp.com/maven-central/net.java.dev.jna/jna-platform) &nbsp; [jna-platform.jar](http://repo1.maven.org/maven2/net/java/dev/jna/jna-platform/4.5.2/jna-platform-4.5.2.jar)
 
 This artifact holds cross-platform mappings and mappings for a number of commonly used platform 
 functions, including a large number of Win32 mappings as well as a set of utility classes 
@@ -139,12 +139,12 @@ Using the Library
 * [Platform Library](https://github.com/java-native-access/jna/blob/master/www/PlatformLibrary.md)
 * [Direct Method Mapping](https://github.com/java-native-access/jna/blob/master/www/DirectMapping.md) (Optimization)
 * [Frequently Asked Questions (FAQ)](https://github.com/java-native-access/jna/blob/master/www/FrequentlyAskedQuestions.md)
-* [Avoiding Crashes](http://java-native-access.github.io/jna/4.5.1/javadoc/overview-summary.html#crash-protection)
+* [Avoiding Crashes](http://java-native-access.github.io/jna/4.5.2/javadoc/overview-summary.html#crash-protection)
 
 Primary Documentation (JavaDoc)
 ===============================
 
-The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.5.1/javadoc/).
+The definitive JNA reference is in the [JavaDoc](http://java-native-access.github.io/jna/4.5.2/javadoc/).
 
 Developers
 ==========
