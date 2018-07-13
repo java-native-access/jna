@@ -2260,12 +2260,6 @@ public final class Native implements Version {
      */
     public static native void free(long ptr);
 
-    /**
-     * @deprecated retained to keep native signature
-     */
-    @Deprecated
-    private static native ByteBuffer getDirectByteBuffer(long addr, long length);
-
     private static final ThreadLocal<Memory> nativeThreadTerminationFlag =
         new ThreadLocal<Memory>() {
             @Override

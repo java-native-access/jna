@@ -75,6 +75,7 @@ Breaking Changes
 * the parameters of the methods `gethostname`, `sethostname`, `getdomainname` 
    and `setdomainname` in the interface `com.sun.jna.platform.unix.LibCAPI`
   were changed from `(char[] name, int len)` to `(byte[] name, int len)`
+* `com.sun.jna.Platform#isAix` was replaced by `com.sun.jna.Platform#isAIX`
 * `com.sun.jna.platform.win32.Sspi.SecBufferDesc` was incompatibly changed to 
   match the correct native semantics. SecBufferDesc describing more than one
   buffer were broken. For most usecases 
@@ -110,6 +111,10 @@ Breaking Changes
    consequence `com.sun.jna.platform.win32.Advapi32Util#getFileSecurity` was
    changed similarly. The SID accessors `getSidString` and `getSID` were moved
    from `ACEStructure` to `ACCESS_ACEStructure`.
+* `com.sun.jna.platform.win32.Ole32#CoCreateGuid(GUID.ByReference pguid)` was replaced by
+  `com.sun.jna.platform.win32.Ole32#CoCreateGuid(GUID pguid)` and 
+  `com.sun.jna.platform.win32.Ole32#CLSIDFromString(WString lpsz, CLSID.ByReference pclsid)` was replaced by
+  `com.sun.jna.platform.win32.Ole32#CLSIDFromString(String lpsz, CLSID.ByReference pclsid)`
 
 Release 4.5.0
 =============

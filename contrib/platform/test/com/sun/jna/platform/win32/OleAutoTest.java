@@ -14,7 +14,6 @@ package com.sun.jna.platform.win32;
 
 import junit.framework.TestCase;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef.LCID;
@@ -50,8 +49,8 @@ public class OleAutoTest extends TestCase {
     public void testLoadRegTypeLib() {
         CLSID.ByReference clsid = new CLSID.ByReference();
         // get CLSID from string, Microsoft Scripting Engine
-        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(
-                "{420B2830-E718-11CF-893D-00A0C9054228}"), clsid);
+        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(
+                "{420B2830-E718-11CF-893D-00A0C9054228}", clsid);
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
 
