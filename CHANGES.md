@@ -23,6 +23,7 @@ Features
 * [#980](https://github.com/java-native-access/jna/issues/980): Added `PERF_OBJECT_TYPE`, `PERF_COUNTER_BLOCK`, and `PERF_COUNTER_DEFINITION` to `c.s.j.platform.win32.WinPerf` and added `Pointer` constructors to ``PERF_INSTANCE_DEFINITION` and `PERF_DATA_BLOCK` - [@dbwiddis](https://github.com/dbwiddis).
 * [#981](https://github.com/java-native-access/jna/issues/981): Added `WTS_PROCESS_INFO_EX`, `WTSEnumerateProcessesEx`, and `WTSFreeMemoryEx` to `c.s.j.platform.win32.Wtsapi32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#983](https://github.com/java-native-access/jna/issues/983): Added `GetIfEntry`, `GetIfEntry2`, and `GetNetworkParams` and supporting structures `MIB_IFROW`, `MIB_IF_ROW2`, and `FIXED_INFO` to `c.s.j.platform.win32.IPHlpAPI.java` - [@dbwiddis](https://github.com/dbwiddis).
+* [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
