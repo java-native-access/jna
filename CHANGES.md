@@ -51,6 +51,7 @@ Bug Fixes
       <li>The resulting `sunos-x86.jar` is copied back to the original build system to `lib/native/sunos-x86.jar`</li>
   </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#974](https://github.com/java-native-access/jna/issues/974): If the callback code failed to attach to the JVM, this lead to a segfault. The success of attaching to the JVM was checked to late and an invalid `JNIEnv` pointer was used to access the JVM - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------
@@ -75,6 +76,7 @@ Breaking Changes
 * the parameters of the methods `gethostname`, `sethostname`, `getdomainname` 
    and `setdomainname` in the interface `com.sun.jna.platform.unix.LibCAPI`
   were changed from `(char[] name, int len)` to `(byte[] name, int len)`
+* `com.sun.jna.Platform#isAix` was replaced by `com.sun.jna.Platform#isAIX`
 * `com.sun.jna.platform.win32.Sspi.SecBufferDesc` was incompatibly changed to 
   match the correct native semantics. SecBufferDesc describing more than one
   buffer were broken. For most usecases 
@@ -110,6 +112,10 @@ Breaking Changes
    consequence `com.sun.jna.platform.win32.Advapi32Util#getFileSecurity` was
    changed similarly. The SID accessors `getSidString` and `getSID` were moved
    from `ACEStructure` to `ACCESS_ACEStructure`.
+* `com.sun.jna.platform.win32.Ole32#CoCreateGuid(GUID.ByReference pguid)` was replaced by
+  `com.sun.jna.platform.win32.Ole32#CoCreateGuid(GUID pguid)` and 
+  `com.sun.jna.platform.win32.Ole32#CLSIDFromString(WString lpsz, CLSID.ByReference pclsid)` was replaced by
+  `com.sun.jna.platform.win32.Ole32#CLSIDFromString(String lpsz, CLSID.ByReference pclsid)`
 
 Release 4.5.0
 =============

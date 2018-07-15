@@ -2525,21 +2525,6 @@ JNIEXPORT jlong JNICALL Java_com_sun_jna_Native__1getPointer
 /*
  * Class:     com_sun_jna_Native
  * Method:    getDirectByteBuffer
- * Signature: (JJ)Ljava/nio/ByteBuffer;
- */
-JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__JJ
-    (JNIEnv *env, jclass UNUSED(cls), jlong addr, jlong length)
-{
-#ifdef NO_NIO_BUFFERS
-    return NULL;
-#else
-    return (*env)->NewDirectByteBuffer(env, L2A(addr), length);
-#endif
-}
-
-/*
- * Class:     com_sun_jna_Native
- * Method:    getDirectByteBuffer
  * Signature: (Lcom/sun/jna/Pointer;JJJ)Ljava/nio/ByteBuffer;
  */
 JNIEXPORT jobject JNICALL Java_com_sun_jna_Native_getDirectByteBuffer__Lcom_sun_jna_Pointer_2JJJ
@@ -2810,6 +2795,7 @@ Java_com_sun_jna_Native_sizeof(JNIEnv *env, jclass UNUSED(cls), jint type)
   case com_sun_jna_Native_TYPE_WCHAR_T: return sizeof(wchar_t);
   case com_sun_jna_Native_TYPE_SIZE_T: return sizeof(size_t);
   case com_sun_jna_Native_TYPE_BOOL: return sizeof(bool);
+  case com_sun_jna_Native_TYPE_LONG_DOUBLE: return sizeof(long double);
   default:
     {
       char msg[MSG_SIZE];
