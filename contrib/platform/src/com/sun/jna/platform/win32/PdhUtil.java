@@ -147,15 +147,16 @@ public abstract class PdhUtil {
         Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, null, pcchCounterListLength, null,
                 pcchInstanceListLength, dwDetailLevel, 0);
 
-        // Can't allocate 0 memory
-        if (pcchCounterListLength.getValue().intValue() < 1 || pcchInstanceListLength.getValue().intValue() < 1) {
+        // Can't allocate 0 memory if no counters
+        if (pcchCounterListLength.getValue().intValue() < 1) {
             return counters;
         }
         // Allocate memory and call again to populate strings
         Memory mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * CHAR_TO_BYTES);
-        Memory mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * CHAR_TO_BYTES);
+        // Don't need the instances
+        pcchInstanceListLength.getValue().setValue(0);
         Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
-                pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
+                pcchCounterListLength, null, pcchInstanceListLength, dwDetailLevel, 0);
 
         // Fetch counters
         int offset = 0;
@@ -214,16 +215,18 @@ public abstract class PdhUtil {
         Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, null, pcchCounterListLength, null,
                 pcchInstanceListLength, dwDetailLevel, 0);
 
-        // Can't allocate 0 memory
-        if (pcchCounterListLength.getValue().intValue() < 1 || pcchInstanceListLength.getValue().intValue() < 1) {
+        // Can't allocate 0 memory if no instances
+        if (pcchInstanceListLength.getValue().intValue() < 1) {
             return instances;
         }
         // Allocate memory and call again to populate strings
-        Memory mszCounterList = new Memory(pcchCounterListLength.getValue().intValue() * CHAR_TO_BYTES);
         Memory mszInstanceList = new Memory(pcchInstanceListLength.getValue().intValue() * CHAR_TO_BYTES);
-        Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, mszCounterList,
-                pcchCounterListLength, mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
+        // Don't need the counters
+        pcchCounterListLength.getValue().setValue(0);
+        Pdh.INSTANCE.PdhEnumObjectItems(szDataSource, szMachineName, szObjectName, null, pcchCounterListLength,
+                mszInstanceList, pcchInstanceListLength, dwDetailLevel, 0);
 
+        // Fetch instances
         int offset = 0;
         while (offset < mszInstanceList.size()) {
             String s = null;
