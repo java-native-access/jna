@@ -51,18 +51,33 @@ public abstract class Cfgmgr32Util {
         IntByReference pulLen = new IntByReference();
         Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
 
-        // Allocate buffer including null terminator
+        // Add 1 for null terminator
         int deviceIdLength = pulLen.getValue() + 1;
         Memory buffer = new Memory(deviceIdLength * charToBytes);
-
         // Fetch the buffer
-        Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, deviceIdLength, 0);
+        int ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, deviceIdLength, 0);
+        // In the unlikely event the device id changes this might not be big
+        // enough, try again
+        while (ret == Cfgmgr32.CR_BUFFER_SMALL) {
+            Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
+            deviceIdLength = pulLen.getValue() + 1;
+            buffer = new Memory(deviceIdLength * charToBytes);
+            ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, deviceIdLength, 0);
+        }
 
         // Convert buffer to Java String
+        String deviceId;
         if (charToBytes == 1) {
-            return buffer.getString(0);
+            deviceId = buffer.getString(0);
         } else {
-            return buffer.getWideString(0);
+            deviceId = buffer.getWideString(0);
         }
+        // Edge case where there's not enough room for null terminator
+        // but returns successfully. In this case getString() grabs stray
+        // characters from memory outside our buffer.
+        if (deviceId.length() > deviceIdLength) {
+            deviceId = deviceId.substring(0, deviceIdLength);
+        }
+        return deviceId;
     }
 }

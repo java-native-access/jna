@@ -30,7 +30,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.W32APIOptions;
 
 /**
- * Windows Cfgmgr32. 
+ * Windows Cfgmgr32.
  *
  * @author widdis[at]gmail[dot]com
  */
@@ -38,6 +38,7 @@ public interface Cfgmgr32 extends Library {
     Cfgmgr32 INSTANCE = Native.load("Cfgmgr32", Cfgmgr32.class, W32APIOptions.DEFAULT_OPTIONS);
 
     public final static int CR_SUCCESS = 0;
+    public final static int CR_BUFFER_SMALL = 0x0000001A;
 
     public final static int CM_LOCATE_DEVNODE_NORMAL = 0;
     public final static int CM_LOCATE_DEVNODE_PHANTOM = 1;
