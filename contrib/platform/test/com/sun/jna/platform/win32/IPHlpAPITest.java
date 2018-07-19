@@ -37,7 +37,6 @@ import org.junit.Test;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.IPHlpAPI.FIXED_INFO;
-import com.sun.jna.platform.win32.IPHlpAPI.IP_ADDR_STRING;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IFROW;
 import com.sun.jna.platform.win32.IPHlpAPI.MIB_IF_ROW2;
 import com.sun.jna.ptr.IntByReference;
@@ -121,7 +120,7 @@ public class IPHlpAPITest {
         assertEquals(WinError.ERROR_SUCCESS, IPHlpAPI.INSTANCE.GetNetworkParams(buffer, bufferSize));
 
         // Check all DNS servers are valid IPs
-        IP_ADDR_STRING dns = buffer.DnsServerList;
+        IPHlpAPI.IP_ADDR_STRING dns = buffer.DnsServerList;
         while (dns != null) {
             // Start with 16-char byte array
             String addr = new String(dns.IpAddress.String);
@@ -132,7 +131,7 @@ public class IPHlpAPITest {
             }
             // addr is now a dotted-notation IP string. Test valid
             assertTrue(ValidIP.matcher(addr).matches());
-            dns = dns.Next == null ? null : new IP_ADDR_STRING(dns.Next);
+            dns = dns.Next;
         }
     }
 }
