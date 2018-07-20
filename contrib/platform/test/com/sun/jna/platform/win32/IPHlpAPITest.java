@@ -116,11 +116,12 @@ public class IPHlpAPITest {
 
         IntByReference bufferSize = new IntByReference();
         assertEquals(WinError.ERROR_BUFFER_OVERFLOW, IPHlpAPI.INSTANCE.GetNetworkParams(null, bufferSize));
-        FIXED_INFO buffer = new FIXED_INFO(new Memory(bufferSize.getValue()));
+        Memory buffer = new Memory(bufferSize.getValue());
         assertEquals(WinError.ERROR_SUCCESS, IPHlpAPI.INSTANCE.GetNetworkParams(buffer, bufferSize));
+        FIXED_INFO fixedInfo = new FIXED_INFO(buffer);
 
         // Check all DNS servers are valid IPs
-        IPHlpAPI.IP_ADDR_STRING dns = buffer.DnsServerList;
+        IPHlpAPI.IP_ADDR_STRING dns = fixedInfo.DnsServerList;
         while (dns != null) {
             // Start with 16-char byte array
             String addr = new String(dns.IpAddress.String);
