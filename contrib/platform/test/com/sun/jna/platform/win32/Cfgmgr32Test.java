@@ -66,7 +66,7 @@ public class Cfgmgr32Test {
      * @throws UnsupportedEncodingException
      */
     @Test
-    public void testDeviceID() throws UnsupportedEncodingException {
+    public void testDeviceID() {
         // Fetch the root node
         IntByReference outputNode = new IntByReference();
         assertEquals(Cfgmgr32.CR_SUCCESS,

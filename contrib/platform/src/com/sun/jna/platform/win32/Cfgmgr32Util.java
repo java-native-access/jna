@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.io.UnsupportedEncodingException;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.ptr.IntByReference;
@@ -57,25 +55,26 @@ public abstract class Cfgmgr32Util {
      *            Caller-supplied device instance handle that is bound to the
      *            local machine.
      * @return The device instance ID string.
-     * @throws UnsupportedEncodingException
      */
-    public static String CM_Get_Device_ID(int devInst) throws UnsupportedEncodingException {
+    public static String CM_Get_Device_ID(int devInst) {
         int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
 
         // Get Device ID character count
         IntByReference pulLen = new IntByReference();
         Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
 
-        // Zero and Fetch the buffer
-        Memory buffer = new Memory(pulLen.getValue() * charToBytes);
+        // Add one to length to allow null terminator
+        // Zero the buffer (including the extra character)
+        Memory buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
         buffer.clear();
+        // Fetch the buffer specifying only the current length
         int ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
         // In the unlikely event the device id changes this might not be big
         // enough, try again. This happens rarely enough one retry should be
         // sufficient.
         if (ret == Cfgmgr32.CR_BUFFER_SMALL) {
             Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
-            buffer = new Memory(pulLen.getValue() * charToBytes);
+            buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
             buffer.clear();
             ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
         }
@@ -83,14 +82,11 @@ public abstract class Cfgmgr32Util {
         if (ret != Cfgmgr32.CR_SUCCESS) {
             throw new Cfgmgr32Exception(ret);
         }
-        // Convert buffer to Java String (may include a null). Since we've
-        // cleared it we can rely on trim()
-        String deviceId;
+        // Convert buffer to Java String
         if (charToBytes == 1) {
-            deviceId = new String(buffer.getByteArray(0, pulLen.getValue()), "US-ASCII");
+            return buffer.getString(0);
         } else {
-            deviceId = new String(buffer.getCharArray(0, pulLen.getValue()));
+            return buffer.getWideString(0);
         }
-        return deviceId.trim();
     }
 }
