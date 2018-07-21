@@ -26,6 +26,8 @@ package com.sun.jna.platform.win32;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.UnsupportedEncodingException;
+
 import org.junit.Test;
 
 import com.sun.jna.ptr.IntByReference;
@@ -60,9 +62,11 @@ public class Cfgmgr32Test {
 
     /**
      * Tests CM_Locate_DevNode, CM_Get_Device_ID_Size, CM_Get_Device_ID
+     * 
+     * @throws UnsupportedEncodingException
      */
     @Test
-    public void testDeviceID() {
+    public void testDeviceID() throws UnsupportedEncodingException {
         // Fetch the root node
         IntByReference outputNode = new IntByReference();
         assertEquals(Cfgmgr32.CR_SUCCESS,
