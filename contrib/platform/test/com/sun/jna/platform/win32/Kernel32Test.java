@@ -335,8 +335,6 @@ public class Kernel32Test extends TestCase {
         HANDLE h = Kernel32.INSTANCE.GetCurrentThread();
         assertNotNull("No current thread handle", h);
         assertFalse("Null current thread handle", h.equals(0));
-        // Calling the CloseHandle function with this handle has no effect
-        Kernel32Util.closeHandle(h);
     }
 
     public void testOpenThread() {
@@ -355,8 +353,6 @@ public class Kernel32Test extends TestCase {
         HANDLE h = Kernel32.INSTANCE.GetCurrentProcess();
         assertNotNull("No current process handle", h);
         assertFalse("Null current process handle", h.equals(0));
-        // Calling the CloseHandle function with a pseudo handle has no effect
-        Kernel32Util.closeHandle(h);
     }
 
     public void testOpenProcess() {
