@@ -24,6 +24,7 @@ Features
 * [#980](https://github.com/java-native-access/jna/issues/980): Added `PERF_OBJECT_TYPE`, `PERF_COUNTER_BLOCK`, and `PERF_COUNTER_DEFINITION` to `c.s.j.platform.win32.WinPerf` and added `Pointer` constructors to ``PERF_INSTANCE_DEFINITION` and `PERF_DATA_BLOCK` - [@dbwiddis](https://github.com/dbwiddis).
 * [#981](https://github.com/java-native-access/jna/issues/981): Added `WTS_PROCESS_INFO_EX`, `WTSEnumerateProcessesEx`, and `WTSFreeMemoryEx` to `c.s.j.platform.win32.Wtsapi32` - [@dbwiddis](https://github.com/dbwiddis).
 * [#983](https://github.com/java-native-access/jna/issues/983): Added `GetIfEntry`, `GetIfEntry2`, and `GetNetworkParams` and supporting structures `MIB_IFROW`, `MIB_IF_ROW2`, and `FIXED_INFO` to `c.s.j.platform.win32.IPHlpAPI.java` - [@dbwiddis](https://github.com/dbwiddis).
+* [#984](https://github.com/java-native-access/jna/issues/984): Added `CM_Locate_DevNode`, `CM_Get_Parent`, `CM_Get_Child`, `CM_Get_Sibling`, `CM_Get_Device_ID`, and `CM_Get_Device_ID_Size` to `c.s.j.platform.win32.Cfgmgr32.java` and a `c.s.j.platform.win32.Cfgmgr32Util` class for `CM_Get_Device_ID` - [@dbwiddis](https://github.com/dbwiddis).
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
