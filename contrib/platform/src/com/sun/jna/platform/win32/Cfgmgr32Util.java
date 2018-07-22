@@ -55,25 +55,32 @@ public abstract class Cfgmgr32Util {
      *            Caller-supplied device instance handle that is bound to the
      *            local machine.
      * @return The device instance ID string.
+     * @throws Cfgmgr32Exception
      */
-    public static String CM_Get_Device_ID(int devInst) {
+    public static String CM_Get_Device_ID(int devInst) throws Cfgmgr32Exception {
         int charToBytes = Boolean.getBoolean("w32.ascii") ? 1 : Native.WCHAR_SIZE;
 
         // Get Device ID character count
         IntByReference pulLen = new IntByReference();
-        Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
+        int ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
+        if (ret != Cfgmgr32.CR_SUCCESS) {
+            throw new Cfgmgr32Exception(ret);
+        }
 
         // Add one to length to allow null terminator
-        // Zero the buffer (including the extra character)
         Memory buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
+        // Zero the buffer (including the extra character)
         buffer.clear();
         // Fetch the buffer specifying only the current length
-        int ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
+        ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
         // In the unlikely event the device id changes this might not be big
         // enough, try again. This happens rarely enough one retry should be
         // sufficient.
         if (ret == Cfgmgr32.CR_BUFFER_SMALL) {
-            Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
+            ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID_Size(pulLen, devInst, 0);
+            if (ret != Cfgmgr32.CR_SUCCESS) {
+                throw new Cfgmgr32Exception(ret);
+            }
             buffer = new Memory((pulLen.getValue() + 1) * charToBytes);
             buffer.clear();
             ret = Cfgmgr32.INSTANCE.CM_Get_Device_ID(devInst, buffer, pulLen.getValue(), 0);
