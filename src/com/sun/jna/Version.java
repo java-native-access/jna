@@ -24,5 +24,5 @@
 package com.sun.jna;
 interface Version {
     String VERSION = "5.0.0-SNAPSHOT";
-    String VERSION_NATIVE = "5.2.1";
+    String VERSION_NATIVE = "6.0.0";
 }

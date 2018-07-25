@@ -25,7 +25,6 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Kernel32;
 import com.sun.jna.platform.win32.OaIdl.MEMBERID;
@@ -87,8 +86,7 @@ public class TypeLibUtil {
     public TypeLibUtil(String clsidStr, int wVerMajor, int wVerMinor) {
         CLSID.ByReference clsid = new CLSID.ByReference();
         // get CLSID from string
-        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(clsidStr),
-                clsid);
+        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(clsidStr, clsid);
         COMUtils.checkRC(hr);
 
         // load typelib

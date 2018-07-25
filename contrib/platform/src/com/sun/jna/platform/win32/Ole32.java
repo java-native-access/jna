@@ -25,7 +25,6 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WinDef.DWORD;
@@ -55,13 +54,6 @@ public interface Ole32 extends StdCallLibrary {
      * @return S_OK if the GUID was successfully created.
      */
     HRESULT CoCreateGuid(GUID pguid);
-
-    /**
-     * @deprecated use {@link #CoCreateGuid(Guid.GUID)}.
-     * @param pguid GUID reference
-     * @return result
-     */
-    HRESULT CoCreateGuid(GUID.ByReference pguid);
 
     /**
      * Converts a globally unique identifier (GUID) into a string of printable
@@ -228,8 +220,6 @@ public interface Ole32 extends StdCallLibrary {
      *         REGDB_E_READREGDB The registry could not be opened for reading.
      */
     HRESULT CLSIDFromString(String lpsz, CLSID.ByReference pclsid);
-    /** @deprecated use the String version */
-    HRESULT CLSIDFromString(WString lpsz, CLSID.ByReference pclsid);
 
 	/**
 	 * Allocates a block of task memory in the same way that IMalloc::Alloc does. CoTaskMemAlloc uses the default

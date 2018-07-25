@@ -174,6 +174,9 @@ public class PdhTest extends AbstractWin32TestSupport {
         DWORDByReference pdwIndex = new DWORDByReference();
         Pdh.INSTANCE.PdhLookupPerfIndexByName(null, testStr, pdwIndex);
         assertEquals(processorIndex, pdwIndex.getValue().intValue());
+        
+        // Test English name to index
+        assertEquals(processorIndex, PdhUtil.PdhLookupPerfIndexByEnglishName(processorStr));
     }
 
     @Test

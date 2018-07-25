@@ -26,7 +26,6 @@ import com.sun.jna.platform.win32.OaIdl.TYPEKIND;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.WTypes;
-import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinDef.LCID;
 import com.sun.jna.platform.win32.WinDef.UINT;
@@ -59,7 +58,7 @@ public class ITypeLibTest extends TestCase {
     private ITypeLib loadShellTypeLib() {
         CLSID.ByReference clsid = new CLSID.ByReference();
         // get CLSID from string
-        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(new WString(SHELL_CLSID), clsid);
+        HRESULT hr = Ole32.INSTANCE.CLSIDFromString(SHELL_CLSID, clsid);
         assertTrue(COMUtils.SUCCEEDED(hr));
 
         // get user default lcid

@@ -73,7 +73,7 @@ public class DirectCallbacksTest extends CallbacksTest {
         @Override
         public native void callVoidCallback(VoidCallback c);
         @Override
-        public native void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name);
+        public native void callVoidCallbackThreaded(VoidCallback c, int count, int ms, String name, int stacksize);
 
         @Override
         public native int callInt32Callback(CustomCallback cb, int arg1, int arg2);
