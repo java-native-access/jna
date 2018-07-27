@@ -1,10 +1,11 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
-import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.OaIdl.DATE;
 import com.sun.jna.platform.win32.OaIdl.VARIANT_BOOL;
 import com.sun.jna.platform.win32.Ole32;
@@ -20,25 +21,34 @@ import java.util.Date;
 import org.junit.AfterClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 
 // Untested: IDispatch
 // Untested: Proxy
 public class ConvertTest {
 
+    private static boolean initialized = false;
     private static ObjectFactory fact;
 
     @BeforeClass
     public static void init() {
-        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        // Check that FileSystemObject is registered in the registry
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered("{0D43FE01-F093-11CF-8940-00A0C9054228}"));
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
         fact = new ObjectFactory();
     }
 
     @AfterClass
     public static void destruct() {
-        fact.disposeAll();
+        if(fact != null) {
+            fact.disposeAll();
+        }
         fact = null;
-        Ole32.INSTANCE.CoUninitialize();
+        if(initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
     @Test

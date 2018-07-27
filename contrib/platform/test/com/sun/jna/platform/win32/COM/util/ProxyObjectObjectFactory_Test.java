@@ -13,8 +13,10 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMInvokeException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import static org.junit.Assert.*;
 
 import java.lang.reflect.Proxy;
@@ -32,6 +34,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.WinError;
+import org.junit.Assume;
 
 public class ProxyObjectObjectFactory_Test {
         private static final Logger LOG = Logger.getLogger(ProxyObjectObjectFactory_Test.class.getName());
@@ -101,11 +104,15 @@ public class ProxyObjectObjectFactory_Test {
 	interface MsWordApp extends Application {
 	}
 
-	ObjectFactory factory;
+	private ObjectFactory factory;
+        private boolean initialized = false;
 
 	@Before
 	public void before() {
-                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+                // Check Existence of Word Application
+                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+                COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+                initialized = true;
 		this.factory = new ObjectFactory();
 		//ensure there are no word applications running.
 		while(true) {
@@ -143,8 +150,12 @@ public class ProxyObjectObjectFactory_Test {
 
 	@After
 	public void after() {
+            if(factory != null) {
                 factory.disposeAll();
+            }
+            if(initialized) {
 		Ole32.INSTANCE.CoUninitialize();
+            }
 	}
 
 	@Test
