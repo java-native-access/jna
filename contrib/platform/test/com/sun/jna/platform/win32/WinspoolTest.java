@@ -20,17 +20,29 @@ import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_2;
 import com.sun.jna.platform.win32.Winspool.PRINTER_INFO_4;
 import com.sun.jna.ptr.IntByReference;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Assume;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * @author dblock[at]dblock[dot]org
  */
-public class WinspoolTest extends TestCase {
+public class WinspoolTest {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(WinspoolTest.class);
+    @BeforeClass
+    public static void setUp() throws Exception {
+        HANDLEByReference hbr = new HANDLEByReference();
+        boolean result = Winspool.INSTANCE.OpenPrinter("Will not be found", hbr, null);
+        Assume.assumeFalse(result);
+        int error = Native.getLastError();
+        Assume.assumeTrue("Print service not available", error != WinError.RPC_S_SERVER_UNAVAILABLE);
     }
 
+    @Test
     public void testEnumPrinters_4() {
     	IntByReference pcbNeeded = new IntByReference();
     	IntByReference pcReturned = new IntByReference();
@@ -47,7 +59,8 @@ public class WinspoolTest extends TestCase {
 	    	}
     	}
     }
-    
+
+    @Test
     public void testEnumPrinters_2() {
         IntByReference pcbNeeded = new IntByReference();
         IntByReference pcReturned = new IntByReference();
@@ -64,7 +77,8 @@ public class WinspoolTest extends TestCase {
             }
         }
     }
-    
+
+    @Test
     public void testEnumPrinters_1() {
     	IntByReference pcbNeeded = new IntByReference();
     	IntByReference pcReturned = new IntByReference();
@@ -81,7 +95,8 @@ public class WinspoolTest extends TestCase {
 	    	}
     	}
     }
-    
+
+    @Test
     public void testOpenPrinter() {
         HANDLEByReference hbr = new HANDLEByReference();
         boolean result = Winspool.INSTANCE.OpenPrinter("1234567890A123", hbr, null);
@@ -89,13 +104,15 @@ public class WinspoolTest extends TestCase {
         assertNull("The pointer-to-a-printer-handle should be null on failure.", hbr.getValue());
         assertEquals("GetLastError() should return ERROR_INVALID_PRINTER_NAME", WinError.ERROR_INVALID_PRINTER_NAME, Native.getLastError());
     }
-    
+
+    @Test
     public void testClosePrinter() {
         boolean result = Winspool.INSTANCE.ClosePrinter(null);
         assertFalse("ClosePrinter should return false on failure.", result);
         assertEquals("GetLastError() should return ERROR_INVALID_HANDLE", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
     }
-    
+
+    @Test
     public void testCorrectDeclarationOfMembers() throws InstantiationException, IllegalAccessException {
         for(Class klass: Winspool.class.getDeclaredClasses()) {
             if(Structure.class.isAssignableFrom(klass)) {

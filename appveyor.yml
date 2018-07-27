@@ -15,5 +15,6 @@ build_script:
 - cmd: ant dist
 
 test_script:
+- cmd: net start spooler
 - cmd: ant test
 - cmd: ant test-platform
