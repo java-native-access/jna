@@ -14,9 +14,7 @@ package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import junit.framework.TestCase;
 
-import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Kernel32;
@@ -33,24 +31,25 @@ import com.sun.jna.platform.win32.WinDef.ULONG;
 import com.sun.jna.platform.win32.WinDef.USHORTByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.ptr.PointerByReference;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 /**
  * @author dblock[at]dblock[dot]org
  */
-public class ITypeLibTest extends TestCase {
+public class ITypeLibTest {
     static {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
-    
+
     // Microsoft Shell Controls And Automation
     private static final String SHELL_CLSID = "{50A7E9B0-70EF-11D1-B75A-00A0C90564FE}";
     // Version 1.0
     private static final int SHELL_MAJOR = 1;
     private static final int SHELL_MINOR = 0;
-    
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(ITypeLibTest.class);
-    }
 
     public ITypeLibTest() {
     }
@@ -73,12 +72,17 @@ public class ITypeLibTest extends TestCase {
         return new TypeLib(pShellTypeLib.getValue());
     }
 
+    @Test
     public void testGetTypeInfoCount() {
         ITypeLib shellTypeLib = loadShellTypeLib();
         UINT typeInfoCount = shellTypeLib.GetTypeInfoCount();
-        assertEquals(38, typeInfoCount.intValue());
+        // Validate correct method count range
+        // Observed values in the wild were 37 (Windows 2012 Serve R2) + 38
+        assertTrue(typeInfoCount.intValue() >= 30);
+        assertTrue(typeInfoCount.intValue() <= 40);
     }
 
+    @Test
     public void testGetTypeInfo() {
         ITypeLib shellTypeLib = loadShellTypeLib();
         
@@ -90,6 +94,7 @@ public class ITypeLibTest extends TestCase {
         //System.out.println("ITypeInfo: " + ppTInfo.toString());
     }
 
+    @Test
     public void testGetTypeInfoType() {
         ITypeLib shellTypeLib = loadShellTypeLib();
 
@@ -101,6 +106,7 @@ public class ITypeLibTest extends TestCase {
         //System.out.println("TYPEKIND: " + pTKind);
     }
 
+    @Test
     public void testGetTypeInfoOfGuid() {
          ITypeLib shellTypeLib = loadShellTypeLib();
         
@@ -112,6 +118,7 @@ public class ITypeLibTest extends TestCase {
          assertTrue(COMUtils.SUCCEEDED(hr));
     }
 
+    @Test
     public void testLibAttr() {
          ITypeLib shellTypeLib = loadShellTypeLib();
         
@@ -129,6 +136,7 @@ public class ITypeLibTest extends TestCase {
          shellTypeLib.ReleaseTLibAttr(tlibAttr);
     }
 
+    @Test
     public void testGetTypeComp() {
         ITypeLib shellTypeLib = loadShellTypeLib();
 
@@ -139,6 +147,7 @@ public class ITypeLibTest extends TestCase {
         assertTrue(COMUtils.SUCCEEDED(hr));
     }
 
+    @Test
     public void testIsName() {
         ITypeLib shellTypeLib = loadShellTypeLib();
 
@@ -157,7 +166,8 @@ public class ITypeLibTest extends TestCase {
         
         Ole32.INSTANCE.CoTaskMemFree(p);
     }
-    
+
+    @Test
     public void testFindName() {
         ITypeLib shellTypeLib = loadShellTypeLib();
         
