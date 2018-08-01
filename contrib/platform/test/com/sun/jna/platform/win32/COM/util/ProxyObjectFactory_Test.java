@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMInvokeException;
 import static org.junit.Assert.*;
@@ -29,6 +30,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.WinError;
+import org.junit.Assume;
 
 public class ProxyObjectFactory_Test {
         private static final Logger LOG = Logger.getLogger(ProxyObjectFactory_Test.class.getName());
@@ -98,10 +100,13 @@ public class ProxyObjectFactory_Test {
 	interface MsWordApp extends Application {
 	}
 
-	Factory factory;
+	private Factory factory;
 
 	@Before
 	public void before() {
+                // Check Existence of Word Application
+                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+            
 		this.factory = new Factory();
 		//ensure there are no word applications running.
 		while(true) {
@@ -139,8 +144,11 @@ public class ProxyObjectFactory_Test {
 
 	@After
 	public void after() {
+            if(factory != null) {
                 factory.disposeAll();
                 factory.getComThread().terminate(10000);
+                factory = null;
+            }
 	}
 
 	@Test

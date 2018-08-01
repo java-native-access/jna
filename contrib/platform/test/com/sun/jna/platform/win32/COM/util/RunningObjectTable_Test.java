@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import static org.junit.Assert.*;
 
 import java.util.List;
@@ -22,11 +23,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jna.platform.win32.COM.COMException;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.platform.win32.Ole32;
+import org.junit.Assume;
 
 public class RunningObjectTable_Test {
 
@@ -50,12 +53,18 @@ public class RunningObjectTable_Test {
 	interface MsWordApp extends Application {
 	}
 	
-	ObjectFactory factory;
-	MsWordApp msWord;
+	private ObjectFactory factory;
+	private MsWordApp msWord;
+        private boolean initialized = false;
 
 	@Before
 	public void before() {
-                Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+                // Check Existence of Word Application
+                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+            
+                COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+                initialized = true;
+                
 		this.factory = new ObjectFactory();
 		//ensure there is only one word application running.
 		while(true) {
@@ -85,15 +94,21 @@ public class RunningObjectTable_Test {
 	
 	@After
 	public void after() {
-		this.msWord.Quit(true, null, null);
-		try {
-			//wait for it to quit
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+            if(this.msWord != null) {
+                this.msWord.Quit(true, null, null);
+            }
+            try {
+                    //wait for it to quit
+                    Thread.sleep(100);
+            } catch (InterruptedException e) {
+                    e.printStackTrace();
+            }
+            if(factory != null) {
                 factory.disposeAll();
+            }
+            if(initialized) {
                 Ole32.INSTANCE.CoUninitialize();
+            }
 	}
 	
 	@Test

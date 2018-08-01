@@ -2,6 +2,8 @@ package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.AbstractWin32TestSupport;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
@@ -14,25 +16,34 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import org.junit.Assume;
 
 public class IDispatchTest {
-
-    ObjectFactory factory;
+    private boolean initialized = false;
+    private ObjectFactory factory;
 
     @Before
     public void before() {
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered("{0002DF01-0000-0000-C000-000000000046}"));
+        
         AbstractWin32TestSupport.killProcessByName("iexplore.exe");
         try {
             Thread.sleep(5 * 1000);
         } catch (InterruptedException ex) {}
-        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
         this.factory = new ObjectFactory();
     }
 
     @After
     public void after() {
-        this.factory.disposeAll();
-        Ole32.INSTANCE.CoUninitialize();
+        if(this.factory != null) {
+            this.factory.disposeAll();
+        }
+        if(initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+            initialized = false;
+        }
     }
     
     @Test

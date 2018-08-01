@@ -1,6 +1,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMLateBindingObject;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -33,6 +34,7 @@ import static org.hamcrest.CoreMatchers.is;
 import org.junit.After;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 import org.junit.Before;
 
 /**
@@ -59,15 +61,23 @@ public class HybdridCOMInvocationTest {
     private static final GUID CLSID_WORD = new GUID(CLSID_WORD_STRING);
     private static final IID IID_APPLICATION = new IID(new GUID(IID_APPLICATION_STRING));
     
+    private boolean initialized = false;
+    
     @After
     public void tearDown() throws Exception {
-        Ole32.INSTANCE.CoUninitialize();
+        if(initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+            initialized = false;
+        }
     }
     
     @Before
     public void setUp() throws Exception {
         // Initialize COM for this thread...
-        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        // Check that FileSystemObject is registered in the registry
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered(CLSID_WORD_STRING));
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
     }
     
     @Test

@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.platform.win32.AbstractWin32TestSupport;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -36,6 +37,7 @@ import org.hamcrest.CoreMatchers;
 import static com.sun.jna.platform.win32.COM.IUnknown.IID_IUNKNOWN;
 import static com.sun.jna.platform.win32.COM.IDispatch.IID_IDISPATCH;
 import static org.junit.Assert.*;
+import org.junit.Assume;
 
 public class ComEventCallbacksFactory_Test {
 
@@ -47,6 +49,8 @@ public class ComEventCallbacksFactory_Test {
 	
 	@Before
 	public void before() {
+                // Check that Internet Explorer is registered in the registry
+                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{0002DF01-0000-0000-C000-000000000046}"));
                 AbstractWin32TestSupport.killProcessByName("iexplore.exe");
                 try {
                     Thread.sleep(5 * 1000);
@@ -63,8 +67,10 @@ public class ComEventCallbacksFactory_Test {
 
 	@After
 	public void after() {
-		this.factory.disposeAll();
-                this.factory.getComThread().terminate(10000);
+                if(this.factory != null) {
+                        this.factory.disposeAll();
+                        this.factory.getComThread().terminate(10000);
+                }
         }
 	
 	
