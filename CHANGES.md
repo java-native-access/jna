@@ -26,6 +26,7 @@ Features
 * [#983](https://github.com/java-native-access/jna/issues/983): Added `GetIfEntry`, `GetIfEntry2`, and `GetNetworkParams` and supporting structures `MIB_IFROW`, `MIB_IF_ROW2`, and `FIXED_INFO` to `c.s.j.platform.win32.IPHlpAPI.java` - [@dbwiddis](https://github.com/dbwiddis).
 * [#984](https://github.com/java-native-access/jna/issues/984): Added `CM_Locate_DevNode`, `CM_Get_Parent`, `CM_Get_Child`, `CM_Get_Sibling`, `CM_Get_Device_ID`, and `CM_Get_Device_ID_Size` to `c.s.j.platform.win32.Cfgmgr32.java` and a `c.s.j.platform.win32.Cfgmgr32Util` class for `CM_Get_Device_ID` - [@dbwiddis](https://github.com/dbwiddis).
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
+* [#992](https://github.com/java-native-access/jna/pull/992): Improve stability of windows tests and add appveyor configuration for windows CI builds - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

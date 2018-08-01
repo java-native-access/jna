@@ -1,6 +1,7 @@
 ![Java Native Access - JNA](https://github.com/java-native-access/jna/raw/master/www/images/jnalogo.jpg "Java Native Access - JNA")
 
 [![Build Status](https://travis-ci.org/java-native-access/jna.svg?branch=master)](https://travis-ci.org/java-native-access/jna)
+[![Build status](https://ci.appveyor.com/api/projects/status/j6vmpjrw5iktb8iu/branch/master?svg=true)](https://ci.appveyor.com/project/dblock/jna-gsxuq/branch/master)
 
 Java Native Access (JNA)
 ========================
