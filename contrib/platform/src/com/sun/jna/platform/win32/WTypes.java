@@ -212,7 +212,7 @@ public interface WTypes {
     }
 
     public static class LPWSTR extends PointerType {
-        public static class ByReference extends BSTR implements
+        public static class ByReference extends LPWSTR implements
                 Structure.ByReference {
         }
 
