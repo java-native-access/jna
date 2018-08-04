@@ -17,7 +17,8 @@ gcc, autotools (for libffi), ant (1.8+), a JDK (1.4+), and a few other typical
 command-line utilities available.  Feel free to report any issues, we'll
 generally pull build fixes immediately. 
 
-Native bits are built by passing `-Dskip-native=false` to `ant`.  It's
+Native bits are built by invoking `ant native`.  The build system is configured
+to rebuild the native library automaticly if necessary. It's
 safe to skip the native build as long as your modifications are restricted to
 Java code.
 
