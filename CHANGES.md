@@ -27,6 +27,7 @@ Features
 * [#984](https://github.com/java-native-access/jna/issues/984): Added `CM_Locate_DevNode`, `CM_Get_Parent`, `CM_Get_Child`, `CM_Get_Sibling`, `CM_Get_Device_ID`, and `CM_Get_Device_ID_Size` to `c.s.j.platform.win32.Cfgmgr32.java` and a `c.s.j.platform.win32.Cfgmgr32Util` class for `CM_Get_Device_ID` - [@dbwiddis](https://github.com/dbwiddis).
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#992](https://github.com/java-native-access/jna/pull/992): Improve stability of windows tests and add appveyor configuration for windows CI builds - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#994](https://github.com/java-native-access/jna/issues/994): Added `CoInitializeSecurity` and `CoSetProxyBlanket` to `c.s.j.platform.win32.Ole32`, added new `c.s.j.platform.win32.Wbemcli` classes needed to query WMI, and added a `WbemcliUtil` class implementing WMI queries. - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
