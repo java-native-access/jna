@@ -805,7 +805,7 @@ callCallbackWithStructByValue(TestStructureByValue (*func)(TestStructureByValue)
 
 EXPORT callback_t
 callCallbackWithCallback(cb_callback_t cb) {
-  return (*cb)((callback_t)cb);
+  return (*cb)((callback_t)(void*)cb);
 }
 
 static int32_t 

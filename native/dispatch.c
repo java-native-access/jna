@@ -653,7 +653,7 @@ dispatch(JNIEnv *env, void* func, jint flags, jobjectArray args,
       int err = GET_LAST_ERROR();
       JNA_set_last_error(env, err);
       if ((flags & THROW_LAST_ERROR) && err) {
-        char emsg[MSG_SIZE];
+        char emsg[MSG_SIZE - 3 /* literal characters */ - 10 /* max length of %d */];
         snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
@@ -1896,7 +1896,7 @@ dispatch_direct(ffi_cif* cif, void* volatile resp, void** argp, void *cdata) {
       int err = GET_LAST_ERROR();
       JNA_set_last_error(env, err);
       if (data->throw_last_error && err) {
-        char emsg[MSG_SIZE];
+        char emsg[MSG_SIZE - 3 /* literal characters */ - 10 /* max length of %d */];
         snprintf(msg, sizeof(msg), "[%d] %s", err, STR_ERROR(err, emsg, sizeof(emsg)));
         throw_type = ELastError;
         throw_msg = msg;
@@ -3096,7 +3096,7 @@ Java_com_sun_jna_Native_getWindowHandle0(JNIEnv* UNUSED_JAWT(env), jclass UNUSED
       return -1;
     }
     if ((pJAWT_GetAWT = (void*)FIND_ENTRY(jawt_handle, METHOD_NAME)) == NULL) {
-      char msg[MSG_SIZE], buf[MSG_SIZE];
+      char msg[MSG_SIZE], buf[MSG_SIZE - 31 /* literal characters */ - sizeof(METHOD_NAME)];
       snprintf(msg, sizeof(msg), "Error looking up JAWT method %s: %s",
                METHOD_NAME, LOAD_ERROR(buf, sizeof(buf)));
       throwByName(env, EUnsatisfiedLink, msg);
