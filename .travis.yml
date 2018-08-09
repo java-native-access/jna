@@ -1,5 +1,6 @@
 sudo: false
 dist: trusty
+osx_image: xcode7.3
 
 language: java
 
