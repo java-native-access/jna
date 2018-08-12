@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.Wbemcli.IEnumWbemClassObject;
@@ -41,7 +41,7 @@ import com.sun.jna.platform.win32.Wbemcli.IWbemServices;
 import com.sun.jna.platform.win32.Wbemcli.WbemcliException;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -58,12 +58,8 @@ public class WbemcliUtil {
      */
     public static final String DEFAULT_NAMESPACE = "ROOT\\CIMV2";
 
-    // Constants for WMI used often
-    private static final BSTR WQL = new BSTR("WQL");
-    private static final NativeLong ZERO = new NativeLong(0L);
-    private static final NativeLong ONE = new NativeLong(1L);
-    private static final NativeLong ASYNCH_FORWARD_FLAGS = new NativeLong(
-            Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY);
+    // Constant for WMI used often.
+    private static final BSTR WQL = OleAuto.INSTANCE.SysAllocString("WQL");
 
     // Track initialization of COM and Security
     private static boolean comInitialized = false;
@@ -368,6 +364,7 @@ public class WbemcliUtil {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                OleAuto.INSTANCE.SysFreeString(WQL);
                 unInitCOM();
             }
         });
@@ -537,8 +534,8 @@ public class WbemcliUtil {
         // Step 2: --------------------------------------------------
         // Set general COM security levels --------------------------
         if (!isSecurityInitialized()) {
-            hres = Ole32.INSTANCE.CoInitializeSecurity(null, new NativeLong(-1), null, null,
-                    Ole32.RPC_C_AUTHN_LEVEL_DEFAULT, Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE, null);
+            hres = Ole32.INSTANCE.CoInitializeSecurity(null, -1, null, null, Ole32.RPC_C_AUTHN_LEVEL_DEFAULT,
+                    Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE, null);
             // If security already initialized we get RPC_E_TOO_LATE
             // This can be safely ignored
             if (COMUtils.FAILED(hres) && hres.intValue() != WinError.RPC_E_TOO_LATE) {
@@ -569,7 +566,9 @@ public class WbemcliUtil {
         // Connect to WMI through the IWbemLocator::ConnectServer method
         // Connect to the namespace with the current user and obtain pointer
         // pSvc to make IWbemServices calls.
-        HRESULT hres = loc.ConnectServer(new BSTR(namespace), null, null, null, null, null, null, pSvc);
+        BSTR namespaceStr = OleAuto.INSTANCE.SysAllocString(namespace);
+        HRESULT hres = loc.ConnectServer(namespaceStr, null, null, null, 0, null, null, pSvc);
+        OleAuto.INSTANCE.SysFreeString(namespaceStr);
         // Release the locator. If successful, pSvc contains connection
         // information
         loc.Release();
@@ -613,8 +612,10 @@ public class WbemcliUtil {
         sb.append(" FROM ").append(query.getWmiClassName());
         // Send the query. The flags allow us to return immediately and begin
         // enumerating in the forward direction as results come in.
-        HRESULT hres = svc.ExecQuery(WQL, new BSTR(sb.toString().replaceAll("\\\\", "\\\\\\\\")), ASYNCH_FORWARD_FLAGS,
-                null, pEnumerator);
+        BSTR queryStr = OleAuto.INSTANCE.SysAllocString(sb.toString().replaceAll("\\\\", "\\\\\\\\"));
+        HRESULT hres = svc.ExecQuery(WQL, queryStr,
+                Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null, pEnumerator);
+        OleAuto.INSTANCE.SysFreeString(queryStr);
         if (COMUtils.FAILED(hres)) {
             svc.Release();
             throw new WbemcliException(String.format("Query '%s' failed.", sb.toString()), hres.intValue());
@@ -677,16 +678,16 @@ public class WbemcliUtil {
         // Step 7: -------------------------------------------------
         // Get the data from the query in step 6 -------------------
         PointerByReference pclsObj = new PointerByReference();
-        LongByReference uReturn = new LongByReference(0L);
-        Map<T, BSTR> bstrMap = new HashMap<T, BSTR>();
+        IntByReference uReturn = new IntByReference(0);
+        Map<T, WString> wstrMap = new HashMap<T, WString>();
         HRESULT hres = null;
         for (T property : propertyEnum.getEnumConstants()) {
-            bstrMap.put(property, new BSTR(property.name()));
+            wstrMap.put(property, new WString(property.name()));
         }
         while (enumerator.getPointer() != Pointer.NULL) {
             // Enumerator will be released by calling method so no need to
             // release it here.
-            hres = enumerator.Next(new NativeLong(timeout), ONE, pclsObj, uReturn);
+            hres = enumerator.Next(timeout, 1, pclsObj, uReturn);
             // Enumeration complete or no more data; we're done, exit the loop
             if (hres.intValue() == Wbemcli.WBEM_S_FALSE || hres.intValue() == Wbemcli.WBEM_S_NO_MORE_DATA) {
                 break;
@@ -705,7 +706,7 @@ public class WbemcliUtil {
             // Get the value of the properties
             IWbemClassObject clsObj = new IWbemClassObject(pclsObj.getValue());
             for (T property : propertyEnum.getEnumConstants()) {
-                clsObj.Get(bstrMap.get(property), ZERO, pVal, null, null);
+                clsObj.Get(wstrMap.get(property), 0, pVal, null, null);
                 int type = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();
                 switch (type) {
                 case Variant.VT_BSTR:

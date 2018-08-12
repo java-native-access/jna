@@ -24,14 +24,14 @@
 package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
-import com.sun.jna.platform.win32.WTypes.BSTR;
+import com.sun.jna.platform.win32.WTypes.LPOLESTR;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinNT.SECURITY_DESCRIPTOR;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
@@ -223,7 +223,7 @@ public interface Ole32 extends StdCallLibrary {
      *
      *         E_OUT_OF_MEMORY Out of memory.
      */
-    HRESULT CoInitializeSecurity(Pointer pSecDesc, NativeLong cAuthSvc, Pointer asAuthSvc, Pointer pReserved1,
+    HRESULT CoInitializeSecurity(SECURITY_DESCRIPTOR pSecDesc, int cAuthSvc, Pointer asAuthSvc, Pointer pReserved1,
             int dwAuthnLevel, int dwImpLevel, Pointer pAuthList, int dwCapabilities, Pointer pReserved3);
 
     /**
@@ -339,7 +339,7 @@ public interface Ole32 extends StdCallLibrary {
     HRESULT CoSetProxyBlanket(Pointer pProxy, //
             int dwAuthnSvc, //
             int dwAuthzSvc, //
-            BSTR pServerPrincName, // OLECHAR
+            LPOLESTR pServerPrincName, // 
             int dwAuthnLevel, //
             int dwImpLevel, //
             Pointer pAuthInfo, // RPC_AUTH_IDENTITY_HANDLE

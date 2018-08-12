@@ -23,16 +23,17 @@
  */
 package com.sun.jna.platform.win32;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
+import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.Unknown;
-import com.sun.jna.ptr.LongByReference;
+import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
@@ -66,8 +67,8 @@ public interface Wbemcli {
             super(pvInstance);
         }
 
-        public HRESULT Get(BSTR wszName, NativeLong lFlags, VARIANT.ByReference pVal, Pointer pvtType,
-                LongByReference plFlavor) {
+        public HRESULT Get(WString wszName, int lFlags, VARIANT.ByReference pVal, IntByReference pvtType,
+                IntByReference plFlavor) {
             // Get is 5th method of IWbemClassObjectVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(4,
                     new Object[] { getPointer(), wszName, lFlags, pVal, pvtType, plFlavor }, HRESULT.class);
@@ -83,8 +84,7 @@ public interface Wbemcli {
             super(pvInstance);
         }
 
-        public HRESULT Next(NativeLong lTimeOut, NativeLong uCount, PointerByReference ppObjects,
-                LongByReference puReturned) {
+        public HRESULT Next(int lTimeOut, int uCount, PointerByReference ppObjects, IntByReference puReturned) {
             // Next is 5th method of IEnumWbemClassObjectVtbl in
             // WbemCli.h
             return (HRESULT) _invokeNativeObject(4,
@@ -117,7 +117,7 @@ public interface Wbemcli {
         }
 
         public HRESULT ConnectServer(BSTR strNetworkResource, BSTR strUser, BSTR strPassword, BSTR strLocale,
-                NativeLong lSecurityFlags, BSTR strAuthority, Pointer pCtx, PointerByReference ppNamespace) {
+                int lSecurityFlags, BSTR strAuthority, Pointer pCtx, PointerByReference ppNamespace) {
             // ConnectServier is 4th method of IWbemLocatorVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(3, new Object[] { getPointer(), strNetworkResource, strUser,
                     strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace }, HRESULT.class);
@@ -133,7 +133,7 @@ public interface Wbemcli {
             super(pvInstance);
         }
 
-        public HRESULT ExecQuery(BSTR strQueryLanguage, BSTR strQuery, NativeLong lFlags, Pointer pCtx,
+        public HRESULT ExecQuery(BSTR strQueryLanguage, BSTR strQuery, int lFlags, Pointer pCtx,
                 PointerByReference ppEnum) {
             // ExecQuery is 21st method of IWbemServicesVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(20,
