@@ -1,6 +1,8 @@
 package com.sun.jna.platform.win32.COM.util;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
+import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -8,6 +10,7 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,18 +20,26 @@ public class ComEventCallbacks2_Test {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
-    Factory factory;
+    private boolean initialized = false;
+    private Factory factory;
 
     @Before
     public void before() {
-        Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
+        // Check if Word is registered in the registry
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered("{000209FF-0000-0000-C000-000000000046}"));
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
         this.factory = new Factory();
     }
 
     @After
     public void after() {
-        this.factory.disposeAll();
-        Ole32.INSTANCE.CoUninitialize();
+        if(this.factory != null) {
+            this.factory.disposeAll();
+        }
+        if(initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+        }
     }
 
     @Test

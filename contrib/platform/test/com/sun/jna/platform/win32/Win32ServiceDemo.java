@@ -120,7 +120,18 @@ public class Win32ServiceDemo {
                 }
             }
         }
-        invocation = String.format("java.exe -cp %s com.sun.jna.platform.win32.Win32ServiceDemo", sb.toString());
+
+        String JAVA_HOME = System.getenv("JAVA_HOME");
+        String javaBinary = "java.exe";
+        if(JAVA_HOME != null) {
+            javaBinary = "\"" + new File(JAVA_HOME, "\\bin\\java.exe").getAbsolutePath() + "\"";
+        } else {
+            javaBinary = "java.exe";
+        }
+
+        invocation = String.format("%s -Djna.nosys=true -cp %s com.sun.jna.platform.win32.Win32ServiceDemo",
+                javaBinary,
+                sb.toString());
         System.out.println("Invocation: " + invocation);
 
         SERVICE_DESCRIPTION desc = new SERVICE_DESCRIPTION();

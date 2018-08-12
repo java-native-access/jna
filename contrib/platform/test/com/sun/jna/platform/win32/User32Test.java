@@ -379,13 +379,18 @@ public class User32Test extends AbstractWin32TestSupport {
         assertTrue("GetCursorPos should return true", result);
         assertTrue("X coordinate in POINT should be >= 0", cursorPos.x >= 0);
         
-        boolean scpResult = User32.INSTANCE.SetCursorPos(cursorPos.x - 20, cursorPos.y);
+        boolean scpResult = User32.INSTANCE.SetCursorPos(cursorPos.x + 20, cursorPos.y);
         assertTrue("SetCursorPos should return true", scpResult);
         
         POINT cursorPos2 = new POINT();
         boolean result2 = User32.INSTANCE.GetCursorPos(cursorPos2);
         assertTrue("GetCursorPos should return true", result2);
-        assertTrue("X coordinate in POINT should be original cursor position - 20", cursorPos2.x  == cursorPos.x - 20);
+        assertTrue(String.format(
+                "X coordinate in POINT should be original cursor position - 20 (Old: %dx%d, New: %dx%d)",
+                cursorPos.x, cursorPos.y, cursorPos2.x, cursorPos2.y
+                ),
+                cursorPos2.x == cursorPos.x + 20
+        );
     }
     
     @Test

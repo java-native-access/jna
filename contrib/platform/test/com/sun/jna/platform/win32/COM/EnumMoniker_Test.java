@@ -13,6 +13,7 @@
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -32,6 +33,7 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 import com.sun.jna.ptr.PointerByReference;
+import org.junit.Assume;
 
 public class EnumMoniker_Test {
         static {
@@ -54,15 +56,17 @@ public class EnumMoniker_Test {
 	interface MsWordApp extends Application {
 	}
 	
-	ObjectFactory factory;
-	MsWordApp ob1;
-	MsWordApp ob2;
+	private ObjectFactory factory;
+	private MsWordApp ob1;
+	private MsWordApp ob2;
+        private boolean initialized = false;
 
 	@Before
 	public void before() {
-                WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-                COMUtils.checkRC(hr);
-                
+                // Check Existence of Word Application
+                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+                COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+                initialized = true;
 		this.factory = new ObjectFactory();
 		// Two COM objects are require to be running for these tests to work
 		this.ob1 = this.factory.createObject(MsWordApp.class);
@@ -77,7 +81,12 @@ public class EnumMoniker_Test {
                 if(ob2 != null) {
                     ob2.Quit();
                 }
-		Ole32.INSTANCE.CoUninitialize();
+                if(factory != null) {
+                    factory.disposeAll();
+                }
+                if(initialized) {
+                    Ole32.INSTANCE.CoUninitialize();
+                }
 	}
 
 	@Test

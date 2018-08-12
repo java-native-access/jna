@@ -14,6 +14,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMUtils;
 import com.sun.jna.platform.win32.COM.util.ObjectFactory;
@@ -63,6 +64,7 @@ import static com.sun.jna.platform.win32.OaIdlUtil.toPrimitiveArray;
 import com.sun.jna.platform.win32.WTypes.VARTYPE;
 import com.sun.jna.platform.win32.WinDef.LONG;
 import java.lang.reflect.Field;
+import org.junit.Assume;
 
 public class SAFEARRAYTest {
     static {
@@ -492,7 +494,11 @@ public class SAFEARRAYTest {
         // Open a record set with a sample search (basicly get the first five
         // entries from the search index
         Connection conn = fact.createObject(Connection.class);
-        conn.Open("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';", "", "", -1);
+        try {
+            conn.Open("Provider=Search.CollatorDSO;Extended Properties='Application=Windows';", "", "", -1);
+        } catch (COMException ex) {
+            Assume.assumeNoException(ex);
+        }
 
         Recordset recordset = fact.createObject(Recordset.class);
         recordset.Open("SELECT TOP 5 System.ItemPathDisplay, System.ItemName, System.ItemUrl, System.DateCreated FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);

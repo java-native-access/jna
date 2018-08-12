@@ -12,7 +12,7 @@
        (cross-compile currently only configured/tested on w32ce-arm and
        android targets) 
 
-       Use ANT_OPTS=-Dskip-native=false to build native parts, or directly
+       Use ANT_OPTS=-D-native=true to build native parts, or directly
          invoke the native or test targets
        Use ANT_OPTS=-Dheadless to run tests headless
        Use ANT_OPTS=-Drelease to stage a final, non-snapshot version

@@ -16,7 +16,6 @@ import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -24,6 +23,8 @@ import org.junit.Test;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Pdh.PDH_COUNTER_PATH_ELEMENTS;
 import com.sun.jna.platform.win32.Pdh.PDH_RAW_COUNTER;
+import com.sun.jna.platform.win32.PdhUtil.PdhEnumObjectItems;
+import com.sun.jna.platform.win32.PdhUtil.PdhException;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
@@ -182,21 +183,32 @@ public class PdhTest extends AbstractWin32TestSupport {
     @Test
     public void testEnumObjectItems() {
         if (AbstractWin32TestSupport.isEnglishLocale) {
-			String processorStr = "Processor";
+            String processorStr = "Processor";
             String processorTimeStr = "% Processor Time";
 
             // Fetch the counter and instance names
-			List<String> instances = PdhUtil.PdhEnumObjectItemInstances(null, null, processorStr, 100);
+            PdhEnumObjectItems objects = PdhUtil.PdhEnumObjectItems(null, null, processorStr, 100);
 
-            // Should have at least one processor and total instance
-			assertTrue(instances.contains("0"));
-			assertTrue(instances.contains("_Total"));
+            assertTrue(objects.getInstances().contains("0"));
+            assertTrue(objects.getInstances().contains("_Total"));
 
             // Should have a "% Processor Time" counter
-			List<String> counters = PdhUtil.PdhEnumObjectItemCounters(null, null, processorStr, 100);
-			assertTrue(counters.contains(processorTimeStr));
+            assertTrue(objects.getCounters().contains(processorTimeStr));
         } else {
             System.err.println("testEnumObjectItems test can only be run with english locale.");
         }
+    }
+    
+    @Test
+    public void testEnumObjectItemsNonExisting() {
+        Exception caughtException = null;
+        try {
+            PdhUtil.PdhEnumObjectItems(null, null, "Unknown counter", 100);
+        } catch (Exception ex) {
+            caughtException = ex;
+        }
+        assertNotNull(caughtException);
+        assertTrue(caughtException instanceof PdhException);
+        assertEquals(Pdh.PDH_CSTATUS_NO_OBJECT, ((PdhException) caughtException).getErrorCode());
     }
 }

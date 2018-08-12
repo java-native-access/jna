@@ -1,0 +1,20 @@
+version: 1.0.{build}
+image: Visual Studio 2015
+
+install:
+- cmd: set PATH=%PATH%;c:\cygwin64;c:\cygwin64\bin
+- cmd: choco install -y -f -i ant
+- cmd: choco install -y -f -i cygwin
+- cmd: C:\cygwin64\cygwinsetup.exe --root C:\cygwin64 --local-package-dir C:\cygwin64\packages --quiet-mode --no-desktop --no-startmenu --packages git,make,automake,automake1.15,libtool,mingw64-x86_64-gcc-g++,mingw64-x86_64-gcc-core,gcc-g++
+- cmd: set JAVA_HOME=C:\Program Files\Java\jdk1.8.0
+- cmd: set PATH=%JAVA_HOME%\bin;%PATH%
+- cmd: set PATH=c:\cygwin64;c:\cygwin64\bin;%PATH%
+- cmd: '"C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x64'
+
+build_script:
+- cmd: ant dist
+
+test_script:
+- cmd: net start spooler
+- cmd: ant test
+- cmd: ant test-platform

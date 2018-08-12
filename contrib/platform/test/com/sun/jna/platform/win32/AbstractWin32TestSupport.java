@@ -145,4 +145,38 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
         }
         Kernel32.INSTANCE.CloseHandle(hSnapShot);
     }
+    
+    /**
+     * Return true if the supplied uuid can be found in the registry.
+     * 
+     * @param uuid Format: {&lt;UID&gt;}
+     */
+    public static boolean checkCOMRegistered(String uuid) {
+        WinReg.HKEYByReference phkKey = null;
+        try {
+            phkKey = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT, "Interface\\" + uuid, WinNT.KEY_READ);
+            if(phkKey != null) {
+                return true;
+            }
+        } catch (Win32Exception ex) {
+            // Ok - failed ...
+        } finally {
+            if(phkKey != null && phkKey.getValue() != null) {
+                Advapi32Util.registryCloseKey(phkKey.getValue());
+            }
+        }
+        try {
+            phkKey = Advapi32Util.registryGetKey(WinReg.HKEY_CLASSES_ROOT, "CLSID\\" + uuid, WinNT.KEY_READ);
+            if(phkKey != null) {
+                return true;
+            }
+        } catch (Win32Exception ex) {
+            // Ok - failed ...
+        } finally {
+            if(phkKey != null && phkKey.getValue() != null) {
+                Advapi32Util.registryCloseKey(phkKey.getValue());
+            }
+        }
+        return false;
+    }
 }

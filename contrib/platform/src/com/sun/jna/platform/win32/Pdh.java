@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -54,6 +52,12 @@ public interface Pdh extends StdCallLibrary {
     int PDH_MAX_COUNTER_PATH = 2048;
     /** Maximum full counter log name length. */
     int PDH_MAX_DATASOURCE_PATH = 1024;
+
+    int PDH_MORE_DATA = 0x800007D2;
+    int PDH_INVALID_ARGUMENT =  0xC0000BBD;
+    int PDH_MEMORY_ALLOCATION_FAILURE = 0xC0000BBB;
+    int PDH_CSTATUS_NO_MACHINE = 0x800007D0;
+    int PDH_CSTATUS_NO_OBJECT = 0xC0000BB8;
 
     /* TODO
      * LPVOID CALLBACK AllocateMemory(_In_ SIZE_T AllocSize,_In_ LPVOID pContext)
