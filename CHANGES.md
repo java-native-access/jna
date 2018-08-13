@@ -27,6 +27,7 @@ Features
 * [#984](https://github.com/java-native-access/jna/issues/984): Added `CM_Locate_DevNode`, `CM_Get_Parent`, `CM_Get_Child`, `CM_Get_Sibling`, `CM_Get_Device_ID`, and `CM_Get_Device_ID_Size` to `c.s.j.platform.win32.Cfgmgr32.java` and a `c.s.j.platform.win32.Cfgmgr32Util` class for `CM_Get_Device_ID` - [@dbwiddis](https://github.com/dbwiddis).
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#992](https://github.com/java-native-access/jna/pull/992): Improve stability of windows tests and add appveyor configuration for windows CI builds - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#995](https://github.com/java-native-access/jna/pull/995): Added structures and methods to `c.s.j.platform.mac.SystemB` for Process, Network interface, Swapfile, Time, and Filesystem info - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
