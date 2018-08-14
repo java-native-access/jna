@@ -57,6 +57,10 @@ public class NativeMappedConverter implements TypeConverter {
     }
 
     public NativeMapped defaultValue() {
+        if (type.isEnum()) {
+            return (NativeMapped) type.getEnumConstants()[0];
+        }
+
         try {
             return (NativeMapped)type.newInstance();
         } catch (InstantiationException e) {
