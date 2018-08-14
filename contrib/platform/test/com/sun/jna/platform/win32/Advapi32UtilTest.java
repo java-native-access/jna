@@ -259,19 +259,19 @@ public class Advapi32UtilTest extends TestCase {
     public void testRegistryCreateDeleteKeySamExtra() {
         if (!is64bitWindows()) return;
 
-        Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, "Software", "JNA", WinNT.KEY_WOW64_64KEY);
-        assertTrue(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_64KEY));
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_32KEY));
-        Advapi32Util.registryDeleteKey(WinReg.HKEY_LOCAL_MACHINE, "Software", "JNA", WinNT.KEY_WOW64_64KEY);
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_64KEY));
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
+        assertTrue(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_64KEY));
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_64KEY));
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_32KEY));
 
-        Advapi32Util.registryCreateKey(WinReg.HKEY_LOCAL_MACHINE, "Software", "JNA", WinNT.KEY_WOW64_32KEY);
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_64KEY));
-        assertTrue(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_32KEY));
-        Advapi32Util.registryDeleteKey(WinReg.HKEY_LOCAL_MACHINE, "Software", "JNA", WinNT.KEY_WOW64_32KEY);
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_64KEY));
-        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_LOCAL_MACHINE, "Software\\JNA", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_64KEY));
+        assertTrue(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_64KEY));
+        assertFalse(Advapi32Util.registryKeyExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", WinNT.KEY_WOW64_32KEY));
     }
 
     public void testRegistryCreateKeyDisposition() {
@@ -312,12 +312,18 @@ public class Advapi32UtilTest extends TestCase {
     public void testRegistryDeleteValueSamExtra() {
         if (!is64bitWindows()) return;
 
-        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
-        Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", 42);
-        assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue"));
-        Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue");
-        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue"));
-        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA", WinNT.KEY_WOW64_64KEY);
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", 64, WinNT.KEY_WOW64_64KEY);
+        Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", 32, WinNT.KEY_WOW64_32KEY);
+        assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
+        assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY);
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
+        Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY);
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA", WinNT.KEY_WOW64_64KEY);
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA", WinNT.KEY_WOW64_32KEY);
     }
 
     public void testRegistrySetGetIntValue() {

@@ -567,7 +567,7 @@ public abstract class Advapi32Util {
 	 * @return True if the key exists.
 	 */
 	public static boolean registryKeyExists(HKEY root, String key) {
-		return registryKeyExists(root, key, WinNT.REG_NONE);
+		return registryKeyExists(root, key, 0);
 	}
 
 	/**
@@ -610,7 +610,7 @@ public abstract class Advapi32Util {
 	 */
 	public static boolean registryValueExists(HKEY root, String key,
 											  String value) {
-		return registryValueExists(root, key, value, WinNT.REG_NONE);
+		return registryValueExists(root, key, value, 0);
 	}
 
 	/**
@@ -678,7 +678,7 @@ public abstract class Advapi32Util {
 	 */
 	public static String registryGetStringValue(HKEY root, String key,
 												String value) {
-		return registryGetStringValue(root, key, value, WinNT.REG_NONE);
+		return registryGetStringValue(root, key, value, 0);
 	}
 
 	/**
@@ -769,7 +769,7 @@ public abstract class Advapi32Util {
 	 */
 	public static String registryGetExpandableStringValue(HKEY root,
 			String key, String value) {
-		return registryGetExpandableStringValue(root, key, value, WinNT.REG_NONE);
+		return registryGetExpandableStringValue(root, key, value, 0);
 	}
 
 	/**
@@ -858,7 +858,7 @@ public abstract class Advapi32Util {
 	 */
 	public static String[] registryGetStringArray(HKEY root, String key,
 			String value) {
-		return registryGetStringArray(root, key, value, WinNT.REG_NONE);
+		return registryGetStringArray(root, key, value, 0);
 	}
 
 	/**
@@ -964,7 +964,7 @@ public abstract class Advapi32Util {
 	 */
 	public static byte[] registryGetBinaryValue(HKEY root, String key,
 			String value) {
-		return registryGetBinaryValue(root, key, value, WinNT.REG_NONE);
+		return registryGetBinaryValue(root, key, value, 0);
 	}
 
 	/**
@@ -1043,7 +1043,7 @@ public abstract class Advapi32Util {
 	 * @return Integer value.
 	 */
 	public static int registryGetIntValue(HKEY root, String key, String value) {
-		return registryGetIntValue(root, key, value, WinNT.REG_NONE);
+		return registryGetIntValue(root, key, value, 0);
 	}
 
 	/**
@@ -1121,7 +1121,7 @@ public abstract class Advapi32Util {
 	 * @return Integer value.
 	 */
 	public static long registryGetLongValue(HKEY root, String key, String value) {
-		return registryGetLongValue(root, key, value, WinNT.REG_NONE);
+		return registryGetLongValue(root, key, value, 0);
 	}
 
 	/**
@@ -1259,7 +1259,7 @@ public abstract class Advapi32Util {
 	 * @return True if the key was created, false otherwise.
 	 */
 	public static boolean registryCreateKey(HKEY hKey, String keyName) {
-		return registryCreateKey(hKey, keyName, WinNT.REG_NONE);
+		return registryCreateKey(hKey, keyName, 0);
 	}
 
 	/**
@@ -1303,7 +1303,7 @@ public abstract class Advapi32Util {
 	 */
 	public static boolean registryCreateKey(HKEY root, String parentPath,
 			String keyName) {
-		return registryCreateKey(root, parentPath, keyName, WinNT.REG_NONE);
+		return registryCreateKey(root, parentPath, keyName, 0);
 	}
 
 	/**
@@ -1375,7 +1375,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetIntValue(HKEY root, String keyPath,
 			String name, int value) {
-		registrySetIntValue(root, keyPath, name, value, WinNT.REG_NONE);
+		registrySetIntValue(root, keyPath, name, value, 0);
 	}
 
 	/**
@@ -1452,7 +1452,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetLongValue(HKEY root, String keyPath,
 			String name, long value) {
-		registrySetLongValue(root, keyPath, name, value, WinNT.REG_NONE);
+		registrySetLongValue(root, keyPath, name, value, 0);
 	}
 
 	/**
@@ -1532,7 +1532,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY root, String keyPath,
 			String name, String value) {
-		registrySetStringValue(root, keyPath, name, value, WinNT.REG_NONE);
+		registrySetStringValue(root, keyPath, name, value, 0);
 	}
 
 	/**
@@ -1609,7 +1609,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetExpandableStringValue(HKEY root,
 			String keyPath, String name, String value) {
-		registrySetExpandableStringValue(root, keyPath, name, value, WinNT.REG_NONE);
+		registrySetExpandableStringValue(root, keyPath, name, value, 0);
 	}
 
 	/**
@@ -1702,7 +1702,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringArray(HKEY root, String keyPath,
 			String name, String[] arr) {
-		registrySetStringArray(root, keyPath, name, arr, WinNT.REG_NONE);
+		registrySetStringArray(root, keyPath, name, arr, 0);
 	}
 
 	/**
@@ -1771,7 +1771,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetBinaryValue(HKEY root, String keyPath,
 			String name, byte[] data) {
-		registrySetBinaryValue(root, keyPath, name, data, WinNT.REG_NONE);
+		registrySetBinaryValue(root, keyPath, name, data, 0);
 	}
 
 	/**
@@ -1834,7 +1834,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registryDeleteKey(HKEY root, String keyPath,
 										 String keyName) {
-		registryDeleteKey(root, keyPath, keyName, WinNT.REG_NONE);
+		registryDeleteKey(root, keyPath, keyName, 0);
 	}
 
 	/**
@@ -1895,7 +1895,7 @@ public abstract class Advapi32Util {
 	 */
 	public static void registryDeleteValue(HKEY root, String keyPath,
 			String valueName) {
-		registryDeleteValue(root, keyPath, valueName, WinNT.REG_NONE);
+		registryDeleteValue(root, keyPath, valueName, 0);
 	}
 
 	/**
@@ -1970,7 +1970,7 @@ public abstract class Advapi32Util {
 	 * @return Array of registry key names.
 	 */
 	public static String[] registryGetKeys(HKEY root, String keyPath) {
-		return registryGetKeys(root, keyPath, WinNT.REG_NONE);
+		return registryGetKeys(root, keyPath, 0);
 	}
 
 	/**
@@ -2173,7 +2173,7 @@ public abstract class Advapi32Util {
 	 */
 	public static TreeMap<String, Object> registryGetValues(HKEY root,
 			String keyPath) {
-		return registryGetValues(root, keyPath, WinNT.REG_NONE);
+		return registryGetValues(root, keyPath, 0);
 	}
 
 	/**
