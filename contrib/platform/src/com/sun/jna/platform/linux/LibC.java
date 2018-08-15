@@ -31,16 +31,14 @@ import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.platform.unix.LibCAPI;
 
 /**
- * <I>libc</I> API
- * 
- * @author Daniel Widdis
+ * LibC structures and functions unique to Linux
  */
 public interface LibC extends LibCAPI, Library {
     String NAME = "c";
     LibC INSTANCE = Native.load(NAME, LibC.class);
 
     @FieldOrder({ "uptime", "loads", "totalram", "freeram", "sharedram", "bufferram", "totalswap", "freeswap", "procs",
-            "totalhigh", "freehigh", "mem_unit", "_f" })
+            "totalhigh", "freehigh", "mem_unit" })
     class Sysinfo extends Structure {
         public NativeLong uptime; // Seconds since boot
         // 1, 5, and 15 minute load averages
@@ -55,12 +53,16 @@ public interface LibC extends LibCAPI, Library {
         public NativeLong totalhigh; // Total high memory size
         public NativeLong freehigh; // Available high memory size
         public int mem_unit; // Memory unit size in bytes
-        // Padding is based on the size of NativeLong. When the size is 4 we
-        // need 8 bytes of padding. When this size is 8, zero padding is needed
-        // but we are not allowed to declare an array of size zero. It's safe to
-        // declare extra padding in the structure; these bytes simply will not
-        // be written on 64-bit systems.
-        public byte[] _f = new byte[8]; // padding to 64 bytes
+    }
+
+    /**
+     * Sysinfo structure for OS bitness < 64.
+     */
+    @FieldOrder({ "uptime", "loads", "totalram", "freeram", "sharedram", "bufferram", "totalswap", "freeswap", "procs",
+            "totalhigh", "freehigh", "mem_unit", "_f" })
+    class Sysinfo32 extends Sysinfo {
+        // Padding to 64 bytes
+        public byte[] _f = new byte[20 - 2 * NativeLong.SIZE - 4];
     }
 
     /**
