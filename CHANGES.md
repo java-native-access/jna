@@ -28,6 +28,7 @@ Features
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#992](https://github.com/java-native-access/jna/pull/992): Improve stability of windows tests and add appveyor configuration for windows CI builds - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#994](https://github.com/java-native-access/jna/issues/994): Added `CoInitializeSecurity` and `CoSetProxyBlanket` to `c.s.j.platform.win32.Ole32`, added new `c.s.j.platform.win32.Wbemcli` classes needed to query WMI, and added a `WbemcliUtil` class implementing WMI queries. - [@dbwiddis](https://github.com/dbwiddis).
+* [#995](https://github.com/java-native-access/jna/pull/995): Added structures and methods to `c.s.j.platform.mac.SystemB` for Process, Network interface, Swapfile, Time, and Filesystem info - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
