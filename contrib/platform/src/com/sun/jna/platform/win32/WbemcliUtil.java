@@ -351,24 +351,19 @@ public class WbemcliUtil {
             this.resultCount++;
         }
     }
-
+    
     /**
-     * Private constructor so this class can't be instantiated from the outside.
-     * Also initializes COM and sets up hooks to uninit if necessary.
+     * Private construtor for cleanup hook
      */
     private WbemcliUtil() {
-        // Initialize COM
-        initCOM();
-
-        // Set up hook to uninit on shutdown
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 OleAuto.INSTANCE.SysFreeString(WQL);
-                unInitCOM();
             }
         });
     }
+
 
     /**
      * Create a WMI Query
@@ -475,12 +470,6 @@ public class WbemcliUtil {
                     query.getPropertyEnum().getEnumConstants().length);
         }
 
-        // Initialize COM if not already done. Needed if COM was previously
-        // initialized externally but is no longer initialized.
-        if (!isComInitialized()) {
-            initCOM();
-        }
-
         // Connect to the server
         IWbemServices svc = connectServer(query.getNameSpace());
 
@@ -503,48 +492,11 @@ public class WbemcliUtil {
      * https://docs.microsoft.com/en-us/windows/desktop/WmiSdk/example--getting-
      * wmi-data-from-the-local-computer
      *
-     * Steps 1 - 7 in the comments correspond to the above link. Steps 1 through
-     * 5 contain all the steps required to set up and connect to WMI, and steps
-     * 6 and 7 are where data is queried and received.
+     * Steps in the comments correspond to the above link. Steps 1 - 2 are the
+     * responsibility of the user. Steps 3 - 5 contain all the steps required to
+     * set up and connect to WMI, and steps 6 and 7 are where data is queried
+     * and received.
      */
-
-    /**
-     * Initializes COM library and sets security to impersonate the local user
-     */
-    public static void initCOM() {
-        HRESULT hres = null;
-        // Step 1: --------------------------------------------------
-        // Initialize COM. ------------------------------------------
-        if (!isComInitialized()) {
-            hres = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
-            switch (hres.intValue()) {
-            // Successful local initialization
-            case COMUtils.S_OK:
-                comInitialized = true;
-                break;
-            // COM was already initialized
-            case COMUtils.S_FALSE:
-            case WinError.RPC_E_CHANGED_MODE:
-                break;
-            // Any other results is an error
-            default:
-                throw new Wbemcli.WbemcliException("Failed to initialize COM library.", hres.intValue());
-            }
-        }
-        // Step 2: --------------------------------------------------
-        // Set general COM security levels --------------------------
-        if (!isSecurityInitialized()) {
-            hres = Ole32.INSTANCE.CoInitializeSecurity(null, -1, null, null, Ole32.RPC_C_AUTHN_LEVEL_DEFAULT,
-                    Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE, null);
-            // If security already initialized we get RPC_E_TOO_LATE
-            // This can be safely ignored
-            if (COMUtils.FAILED(hres) && hres.intValue() != WinError.RPC_E_TOO_LATE) {
-                Ole32.INSTANCE.CoUninitialize();
-                throw new Wbemcli.WbemcliException("Failed to initialize security.", hres.intValue());
-            }
-            securityInitialized = true;
-        }
-    }
 
     /**
      * Obtains a locator to the WMI server and connects to the specified
@@ -744,41 +696,5 @@ public class WbemcliUtil {
             values.incrementResultCount();
         }
         return values;
-    }
-
-    /**
-     * UnInitializes COM library if it was initialized by the {@link #initCOM()}
-     * method. Otherwise, does nothing.
-     */
-    public static void unInitCOM() {
-        if (isComInitialized()) {
-            Ole32.INSTANCE.CoUninitialize();
-            comInitialized = false;
-        }
-    }
-
-    /*
-     * Getters
-     */
-
-    /**
-     * COM may already have been initialized outside this class. This boolean is
-     * a flag whether this class initialized it, to avoid uninitializing later
-     * and killing the external initialization
-     * 
-     * @return Returns whether this class initialized COM
-     */
-    public static boolean isComInitialized() {
-        return comInitialized;
-    }
-
-    /**
-     * Security only needs to be initialized once. This boolean identifies
-     * whether that has happened.
-     * 
-     * @return Returns the securityInitialized.
-     */
-    public static boolean isSecurityInitialized() {
-        return securityInitialized;
     }
 }

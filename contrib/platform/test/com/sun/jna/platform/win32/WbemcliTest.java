@@ -32,11 +32,14 @@ import static org.junit.Assert.fail;
 
 import java.util.concurrent.TimeoutException;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.sun.jna.platform.win32.Wbemcli.WbemcliException;
 import com.sun.jna.platform.win32.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.WbemcliUtil.WmiResult;
+import com.sun.jna.platform.win32.COM.COMUtils;
 
 /**
  * Test class for Wbemcli and WbemcliUti methods and classes used to query WMI.
@@ -62,6 +65,19 @@ public class WbemcliTest {
         FOREGROUNDAPPLICATIONBOOST, // UINT8
         OSTYPE, // UINT16
         PRIMARY; // BOOLEAN
+    }
+
+    @Before
+    public void initCom() {
+        assertEquals(COMUtils.S_OK, Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED).intValue());
+        assertEquals(COMUtils.S_OK,
+                Ole32.INSTANCE.CoInitializeSecurity(null, -1, null, null, Ole32.RPC_C_AUTHN_LEVEL_DEFAULT,
+                        Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE, null).intValue());
+    }
+
+    @After
+    public void unInitCom() {
+        Ole32.INSTANCE.CoUninitialize();
     }
 
     @Test
