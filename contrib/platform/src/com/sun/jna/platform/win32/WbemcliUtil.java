@@ -58,13 +58,6 @@ public class WbemcliUtil {
      */
     public static final String DEFAULT_NAMESPACE = "ROOT\\CIMV2";
 
-    // Constant for WMI used often.
-    private static final BSTR WQL = OleAuto.INSTANCE.SysAllocString("WQL");
-
-    // Track initialization of COM and Security
-    private static boolean comInitialized = false;
-    private static boolean securityInitialized = false;
-
     /**
      * Enum containing the property used for WMI Namespace query.
      */
@@ -353,19 +346,6 @@ public class WbemcliUtil {
     }
     
     /**
-     * Private construtor for cleanup hook
-     */
-    private WbemcliUtil() {
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                OleAuto.INSTANCE.SysFreeString(WQL);
-            }
-        });
-    }
-
-
-    /**
      * Create a WMI Query
      * 
      * @param <T>
@@ -565,9 +545,11 @@ public class WbemcliUtil {
         // Send the query. The flags allow us to return immediately and begin
         // enumerating in the forward direction as results come in.
         BSTR queryStr = OleAuto.INSTANCE.SysAllocString(sb.toString().replaceAll("\\\\", "\\\\\\\\"));
-        HRESULT hres = svc.ExecQuery(WQL, queryStr,
+        BSTR wql = OleAuto.INSTANCE.SysAllocString("WQL");
+        HRESULT hres = svc.ExecQuery(wql, queryStr,
                 Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null, pEnumerator);
         OleAuto.INSTANCE.SysFreeString(queryStr);
+        OleAuto.INSTANCE.SysFreeString(wql);
         if (COMUtils.FAILED(hres)) {
             svc.Release();
             throw new WbemcliException(String.format("Query '%s' failed.", sb.toString()), hres.intValue());

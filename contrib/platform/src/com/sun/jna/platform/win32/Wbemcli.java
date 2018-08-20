@@ -28,7 +28,6 @@ import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes;
 import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.COMUtils;
@@ -37,7 +36,9 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
 /**
- * This header is used by Remote Desktop Services.
+ * This header is used by Remote Desktop Services. It contains programming
+ * interfaces for enumerating and querying Common Information Model (CIM)
+ * objects.
  */
 public interface Wbemcli {
 
@@ -109,7 +110,6 @@ public interface Wbemcli {
             HRESULT hres = Ole32.INSTANCE.CoCreateInstance(CLSID_WbemLocator, null, WTypes.CLSCTX_INPROC_SERVER,
                     IID_IWbemLocator, pbr);
             if (COMUtils.FAILED(hres)) {
-                Ole32.INSTANCE.CoUninitialize();
                 throw new WbemcliException("Failed to create WbemLocator object.", hres.intValue());
             }
 
