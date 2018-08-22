@@ -28,6 +28,7 @@ Features
 * [#988](https://github.com/java-native-access/jna/issues/988): Added `PdhLookupPerfIndexByEnglishName` to `c.s.j.platform.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#992](https://github.com/java-native-access/jna/pull/992): Improve stability of windows tests and add appveyor configuration for windows CI builds - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#995](https://github.com/java-native-access/jna/pull/995): Added structures and methods to `c.s.j.platform.mac.SystemB` for Process, Network interface, Swapfile, Time, and Filesystem info - [@dbwiddis](https://github.com/dbwiddis).
+* [#997](https://github.com/java-native-access/jna/issues/997): Added `Sysinfo` structure and function to `c.s.j.platform.linux.LibC` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
