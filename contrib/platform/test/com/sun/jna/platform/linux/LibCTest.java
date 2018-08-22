@@ -25,22 +25,18 @@ package com.sun.jna.platform.linux;
 
 import org.junit.Test;
 
-import com.sun.jna.NativeLong;
 import com.sun.jna.platform.linux.LibC.Sysinfo;
-import com.sun.jna.platform.linux.LibC.Sysinfo32;
 
 import junit.framework.TestCase;
 
 /**
  * Exercise the {@link LibC} class.
- *
- * @author widdis@gmail.com
  */
 public class LibCTest extends TestCase {
 
     @Test
     public void testSysinfo() {
-        Sysinfo info = NativeLong.SIZE < 8 ? new Sysinfo32() : new Sysinfo();
+        Sysinfo info = new Sysinfo();
         assertEquals(0, LibC.INSTANCE.sysinfo(info));
 
         // Get loadavg for comparison (rounds to nearest hundredth)
