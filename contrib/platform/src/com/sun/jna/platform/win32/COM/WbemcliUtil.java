@@ -42,7 +42,6 @@ import com.sun.jna.platform.win32.COM.Wbemcli.IEnumWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemLocator;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemServices;
-import com.sun.jna.platform.win32.COM.Wbemcli.WbemcliException;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -172,7 +171,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_BSTR)) {
                 return (String) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a String type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a String type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -194,7 +194,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_I4)) {
                 return (Integer) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not an Integer type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not an Integer type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -216,7 +217,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_I2)) {
                 return (Short) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a Short type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a Short type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -238,7 +240,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_UI1)) {
                 return (Byte) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a Byte type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a Byte type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -258,7 +261,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_BOOL)) {
                 return (Boolean) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a Boolean type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a Boolean type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -278,7 +282,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_R4)) {
                 return (Float) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a Float type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a Float type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -298,7 +303,8 @@ public class WbemcliUtil {
             } else if (vtTypeMap.get(property).equals(Variant.VT_R8)) {
                 return (Double) o;
             }
-            throw new Wbemcli.WbemcliException(property.name() + " is not a Double type.", vtTypeMap.get(property));
+            throw new ClassCastException(
+                    property.name() + " is not a Double type. Type is " + vtTypeMap.get(property));
         }
 
         /**
@@ -422,8 +428,7 @@ public class WbemcliUtil {
         try {
             return queryWMI(query, Wbemcli.WBEM_INFINITE);
         } catch (TimeoutException e) {
-            throw new WbemcliException("Got a WMI timeout when infinite wait was specified. This should never happen.",
-                    Wbemcli.WBEM_INFINITE);
+            throw new COMException("Got a WMI timeout when infinite wait was specified. This should never happen.");
         }
     }
 
@@ -448,8 +453,7 @@ public class WbemcliUtil {
     public static <T extends Enum<T>> WmiResult<T> queryWMI(WmiQuery<T> query, int timeout) throws TimeoutException {
         // Idiot check
         if (query.getPropertyEnum().getEnumConstants().length < 1) {
-            throw new WbemcliException("The query's property enum has no values.",
-                    query.getPropertyEnum().getEnumConstants().length);
+            throw new IllegalArgumentException("The query's property enum has no values.");
         }
 
         // Connect to the server
@@ -495,6 +499,9 @@ public class WbemcliUtil {
         // Step 3: ---------------------------------------------------
         // Obtain the initial locator to WMI -------------------------
         IWbemLocator loc = IWbemLocator.create();
+        if (loc == null) {
+            throw new COMException("Failed to create WbemLocator object.");
+        }
 
         // Step 4: -----------------------------------------------------
         // Connect to WMI through the IWbemLocator::ConnectServer method
@@ -507,7 +514,7 @@ public class WbemcliUtil {
         // information
         loc.Release();
         if (COMUtils.FAILED(hres)) {
-            throw new WbemcliException(String.format("Could not connect to namespace %s.", namespace), hres.intValue());
+            throw new COMException(String.format("Could not connect to namespace %s.", namespace), hres);
         }
 
         // Step 5: --------------------------------------------------
@@ -516,7 +523,7 @@ public class WbemcliUtil {
                 Ole32.RPC_C_AUTHN_LEVEL_CALL, Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE);
         if (COMUtils.FAILED(hres)) {
             new IWbemServices(pSvc.getValue()).Release();
-            throw new WbemcliException("Could not set proxy blanket.", hres.intValue());
+            throw new COMException("Could not set proxy blanket.", hres);
         }
         return new IWbemServices(pSvc.getValue());
     }
@@ -554,7 +561,7 @@ public class WbemcliUtil {
         OleAuto.INSTANCE.SysFreeString(wql);
         if (COMUtils.FAILED(hres)) {
             svc.Release();
-            throw new WbemcliException(String.format("Query '%s' failed.", sb.toString()), hres.intValue());
+            throw new COMException(String.format("Query '%s' failed.", sb.toString()), hres);
         }
         return new IEnumWbemClassObject(pEnumerator.getValue());
     }
@@ -634,7 +641,7 @@ public class WbemcliUtil {
             }
             // Other exceptions here.
             if (COMUtils.FAILED(hres)) {
-                throw new WbemcliException("Failed to enumerate results.", hres.intValue());
+                throw new COMException("Failed to enumerate results.", hres);
             }
 
             VARIANT.ByReference pVal = new VARIANT.ByReference();

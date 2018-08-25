@@ -110,7 +110,7 @@ public interface Wbemcli {
             HRESULT hres = Ole32.INSTANCE.CoCreateInstance(CLSID_WbemLocator, null, WTypes.CLSCTX_INPROC_SERVER,
                     IID_IWbemLocator, pbr);
             if (COMUtils.FAILED(hres)) {
-                throw new WbemcliException("Failed to create WbemLocator object.", hres.intValue());
+                return null;
             }
 
             return new IWbemLocator(pbr.getValue());
@@ -138,35 +138,6 @@ public interface Wbemcli {
             // ExecQuery is 21st method of IWbemServicesVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(20,
                     new Object[] { getPointer(), strQueryLanguage, strQuery, lFlags, pCtx, ppEnum }, HRESULT.class);
-        }
-    }
-
-    /**
-     * Exception encountered in this class
-     */
-    @SuppressWarnings("serial")
-    class WbemcliException extends RuntimeException {
-        private final int errorCode;
-
-        /**
-         * Creates a new exception
-         * 
-         * @param message
-         *            The message to display. The error code will be appended to
-         *            this message.
-         * @param error
-         *            The error code.
-         */
-        public WbemcliException(String message, int error) {
-            super(String.format("%s Error code 0x%08x", message, error));
-            this.errorCode = error;
-        }
-
-        /**
-         * @return Returns the errorCode.
-         */
-        public int getErrorCode() {
-            return errorCode;
         }
     }
 }
