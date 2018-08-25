@@ -36,10 +36,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jna.platform.win32.Wbemcli.WbemcliException;
-import com.sun.jna.platform.win32.WbemcliUtil.WmiQuery;
-import com.sun.jna.platform.win32.WbemcliUtil.WmiResult;
 import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Wbemcli;
+import com.sun.jna.platform.win32.COM.WbemcliUtil;
+import com.sun.jna.platform.win32.COM.Wbemcli.WbemcliException;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
+import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
 /**
  * Test class for Wbemcli and WbemcliUti methods and classes used to query WMI.

@@ -21,7 +21,7 @@
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
-package com.sun.jna.platform.win32;
+package com.sun.jna.platform.win32.COM;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -32,15 +32,17 @@ import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.platform.win32.Ole32;
+import com.sun.jna.platform.win32.OleAuto;
+import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
 import com.sun.jna.platform.win32.WTypes.BSTR;
-import com.sun.jna.platform.win32.Wbemcli.IEnumWbemClassObject;
-import com.sun.jna.platform.win32.Wbemcli.IWbemClassObject;
-import com.sun.jna.platform.win32.Wbemcli.IWbemLocator;
-import com.sun.jna.platform.win32.Wbemcli.IWbemServices;
-import com.sun.jna.platform.win32.Wbemcli.WbemcliException;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.COM.COMUtils;
+import com.sun.jna.platform.win32.COM.Wbemcli.IEnumWbemClassObject;
+import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
+import com.sun.jna.platform.win32.COM.Wbemcli.IWbemLocator;
+import com.sun.jna.platform.win32.COM.Wbemcli.IWbemServices;
+import com.sun.jna.platform.win32.COM.Wbemcli.WbemcliException;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
