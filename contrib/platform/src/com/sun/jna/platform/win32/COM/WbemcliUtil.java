@@ -348,7 +348,7 @@ public class WbemcliUtil {
         /**
          * Increment the result count by one.
          */
-        public void incrementResultCount() {
+        private void incrementResultCount() {
             this.resultCount++;
         }
     }
@@ -460,17 +460,20 @@ public class WbemcliUtil {
         IWbemServices svc = connectServer(query.getNameSpace());
 
         // Send query
-        IEnumWbemClassObject enumerator = selectProperties(svc, query);
-
         try {
-            return enumerateProperties(enumerator, query.getPropertyEnum(), timeout);
-        } catch (TimeoutException e) {
-            throw new TimeoutException(e.getMessage());
+            IEnumWbemClassObject enumerator = selectProperties(svc, query);
+
+            try {
+                return enumerateProperties(enumerator, query.getPropertyEnum(), timeout);
+            } finally {
+                // Cleanup
+                enumerator.Release();
+            }
         } finally {
             // Cleanup
-            enumerator.Release();
             svc.Release();
         }
+
     }
 
     /*
@@ -560,7 +563,6 @@ public class WbemcliUtil {
         OleAuto.INSTANCE.SysFreeString(queryStr);
         OleAuto.INSTANCE.SysFreeString(wql);
         if (COMUtils.FAILED(hres)) {
-            svc.Release();
             throw new COMException(String.format("Query '%s' failed.", sb.toString()), hres);
         }
         return new IEnumWbemClassObject(pEnumerator.getValue());
