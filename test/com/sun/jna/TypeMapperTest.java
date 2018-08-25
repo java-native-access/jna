@@ -232,28 +232,49 @@ public class TypeMapperTest extends TestCase {
             }
         }
     }
+
     public static interface EnumerationTestLibrary extends Library {
         Enumeration returnInt32Argument(Enumeration arg);
+
+        @Structure.FieldOrder({"field"})
+        class MinTestStructure extends Structure {
+            public Enumeration field;
+        }
+        MinTestStructure testStructurePointerArgument(MinTestStructure s);
     }
+
     public void testEnumConversion() throws Exception {
         DefaultTypeMapper mapper = new DefaultTypeMapper();
         TypeConverter converter = new TypeConverter() {
             @Override
             public Object toNative(Object value, ToNativeContext ctx) {
-                return Integer.valueOf(((Enumeration)value).getCode());
+                if(value == null) {
+                    // NULL needs to be explicityl handled for size calculation
+                    // in structure use
+                    return Enumeration.STATUS_ERROR.getCode();
+                } else {
+                    return ((Enumeration)value).getCode();
+                }
             }
             @Override
             public Object fromNative(Object value, FromNativeContext context) {
-                return Enumeration.fromCode(((Integer)value).intValue());
+                return Enumeration.fromCode(((Integer)value));
             }
             @Override
             public Class<?> nativeType() {
                 return Integer.class;
             }
         };
+
         mapper.addTypeConverter(Enumeration.class, converter);
         EnumerationTestLibrary lib = Native.load("testlib", EnumerationTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        assertEquals("Enumeration improperly converted", Enumeration.STATUS_0, lib.returnInt32Argument(Enumeration.STATUS_0));
         assertEquals("Enumeration improperly converted", Enumeration.STATUS_1, lib.returnInt32Argument(Enumeration.STATUS_1));
+        EnumerationTestLibrary.MinTestStructure struct = new EnumerationTestLibrary.MinTestStructure();
+        struct.field = Enumeration.STATUS_0;
+        assertEquals("Enumeration in structure improperly converted", Enumeration.STATUS_0, lib.testStructurePointerArgument(struct).field);
+        struct.field = Enumeration.STATUS_1;
+        assertEquals("Enumeration in structure improperly converted", Enumeration.STATUS_1, lib.testStructurePointerArgument(struct).field);
     }
 
     public static void main(String[] args) {
