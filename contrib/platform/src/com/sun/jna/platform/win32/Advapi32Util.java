@@ -567,8 +567,24 @@ public abstract class Advapi32Util {
 	 * @return True if the key exists.
 	 */
 	public static boolean registryKeyExists(HKEY root, String key) {
+		return registryKeyExists(root, key, 0);
+	}
+
+	/**
+	 * Checks whether a registry key exists.
+	 *
+	 * @param root
+	 *            HKEY_LOCAL_MACHINE, etc.
+	 * @param key
+	 *            Path to the registry key.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return True if the key exists.
+	 */
+	public static boolean registryKeyExists(HKEY root, String key, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		switch (rc) {
 		case W32Errors.ERROR_SUCCESS:
@@ -593,9 +609,28 @@ public abstract class Advapi32Util {
 	 * @return True if the value exists.
 	 */
 	public static boolean registryValueExists(HKEY root, String key,
-			String value) {
+											  String value) {
+		return registryValueExists(root, key, value, 0);
+	}
+
+	/**
+	 * Checks whether a registry value exists.
+	 *
+	 * @param root
+	 *            HKEY_LOCAL_MACHINE, etc.
+	 * @param key
+	 *            Registry key path.
+	 * @param value
+	 *            Value name.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return True if the value exists.
+	 */
+	public static boolean registryValueExists(HKEY root, String key,
+			String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		try {
 			switch (rc) {
@@ -642,9 +677,28 @@ public abstract class Advapi32Util {
 	 * @return String value.
 	 */
 	public static String registryGetStringValue(HKEY root, String key,
-			String value) {
+												String value) {
+		return registryGetStringValue(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry REG_SZ value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return String value.
+	 */
+	public static String registryGetStringValue(HKEY root, String key,
+			String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra ,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -715,8 +769,27 @@ public abstract class Advapi32Util {
 	 */
 	public static String registryGetExpandableStringValue(HKEY root,
 			String key, String value) {
+		return registryGetExpandableStringValue(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry REG_EXPAND_SZ value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return String value.
+	 */
+	public static String registryGetExpandableStringValue(HKEY root,
+														  String key, String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -785,8 +858,27 @@ public abstract class Advapi32Util {
 	 */
 	public static String[] registryGetStringArray(HKEY root, String key,
 			String value) {
+		return registryGetStringArray(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry REG_MULTI_SZ value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return String value.
+	 */
+	public static String[] registryGetStringArray(HKEY root, String key,
+												  String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -872,8 +964,27 @@ public abstract class Advapi32Util {
 	 */
 	public static byte[] registryGetBinaryValue(HKEY root, String key,
 			String value) {
+		return registryGetBinaryValue(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry REG_BINARY value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return String value.
+	 */
+	public static byte[] registryGetBinaryValue(HKEY root, String key,
+												String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -932,8 +1043,26 @@ public abstract class Advapi32Util {
 	 * @return Integer value.
 	 */
 	public static int registryGetIntValue(HKEY root, String key, String value) {
+		return registryGetIntValue(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry DWORD value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry key path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return Integer value.
+	 */
+	public static int registryGetIntValue(WinReg.HKEY root, String key, String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -992,8 +1121,26 @@ public abstract class Advapi32Util {
 	 * @return Integer value.
 	 */
 	public static long registryGetLongValue(HKEY root, String key, String value) {
+		return registryGetLongValue(root, key, value, 0);
+	}
+
+	/**
+	 * Get a registry QWORD value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param key
+	 *            Registry key path.
+	 * @param value
+	 *            Name of the value to retrieve.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return Integer value.
+	 */
+	public static long registryGetLongValue(HKEY root, String key, String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ,
+		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -1112,10 +1259,26 @@ public abstract class Advapi32Util {
 	 * @return True if the key was created, false otherwise.
 	 */
 	public static boolean registryCreateKey(HKEY hKey, String keyName) {
+		return registryCreateKey(hKey, keyName, 0);
+	}
+
+	/**
+	 * Create a registry key.
+	 *
+	 * @param hKey
+	 *            Parent key.
+	 * @param keyName
+	 *            Key name.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return True if the key was created, false otherwise.
+	 */
+	public static boolean registryCreateKey(WinReg.HKEY hKey, String keyName, int samDesiredExtra) {
 		HKEYByReference phkResult = new HKEYByReference();
 		IntByReference lpdwDisposition = new IntByReference();
 		int rc = Advapi32.INSTANCE.RegCreateKeyEx(hKey, keyName, 0, null,
-				WinNT.REG_OPTION_NON_VOLATILE, WinNT.KEY_READ, null, phkResult,
+				WinNT.REG_OPTION_NON_VOLATILE, WinNT.KEY_READ | samDesiredExtra, null, phkResult,
 				lpdwDisposition);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
@@ -1140,9 +1303,28 @@ public abstract class Advapi32Util {
 	 */
 	public static boolean registryCreateKey(HKEY root, String parentPath,
 			String keyName) {
+		return registryCreateKey(root, parentPath, keyName, 0);
+	}
+
+	/**
+	 * Create a registry key.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param parentPath
+	 *            Path to an existing registry key.
+	 * @param keyName
+	 *            Key name.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_CREATE_SUB_KEY.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return True if the key was created, false otherwise.
+	 */
+	public static boolean registryCreateKey(HKEY root, String parentPath,
+											String keyName, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, parentPath, 0,
-				WinNT.KEY_CREATE_SUB_KEY, phkKey);
+				WinNT.KEY_CREATE_SUB_KEY | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1193,9 +1375,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetIntValue(HKEY root, String keyPath,
 			String name, int value) {
-		HKEYByReference phkKey = new HKEYByReference();
+		registrySetIntValue(root, keyPath, name, value, 0);
+	}
+
+	/**
+	 * Set an integer value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param value
+	 *            Value to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetIntValue(WinReg.HKEY root, String keyPath,
+										   String name, int value, int samDesiredExtra) {
+		WinReg.HKEYByReference phkKey = new WinReg.HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1250,9 +1452,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetLongValue(HKEY root, String keyPath,
 			String name, long value) {
+		registrySetLongValue(root, keyPath, name, value, 0);
+	}
+
+	/**
+	 * Set a long value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param value
+	 *            Value to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetLongValue(HKEY root, String keyPath,
+											String name, long value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1310,9 +1532,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringValue(HKEY root, String keyPath,
 			String name, String value) {
+		registrySetStringValue(root, keyPath, name, value, 0);
+	}
+
+	/**
+	 * Set a string value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param value
+	 *            Value to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetStringValue(HKEY root, String keyPath,
+											  String name, String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1367,9 +1609,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetExpandableStringValue(HKEY root,
 			String keyPath, String name, String value) {
+		registrySetExpandableStringValue(root, keyPath, name, value, 0);
+	}
+
+	/**
+	 * Set a string value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param value
+	 *            Value to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetExpandableStringValue(HKEY root,
+														String keyPath, String name, String value, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1440,9 +1702,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetStringArray(HKEY root, String keyPath,
 			String name, String[] arr) {
+		registrySetStringArray(root, keyPath, name, arr, 0);
+	}
+
+	/**
+	 * Set a string array value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param arr
+	 *            Array of strings to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetStringArray(HKEY root, String keyPath,
+											  String name, String[] arr, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1489,9 +1771,29 @@ public abstract class Advapi32Util {
 	 */
 	public static void registrySetBinaryValue(HKEY root, String keyPath,
 			String name, byte[] data) {
+		registrySetBinaryValue(root, keyPath, name, data, 0);
+	}
+
+	/**
+	 * Set a binary value in registry.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param name
+	 *            Value name.
+	 * @param data
+	 *            Data to write to registry.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registrySetBinaryValue(HKEY root, String keyPath,
+											  String name, byte[] data, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1531,10 +1833,28 @@ public abstract class Advapi32Util {
 	 *            Name of the key to delete.
 	 */
 	public static void registryDeleteKey(HKEY root, String keyPath,
-			String keyName) {
+										 String keyName) {
+		registryDeleteKey(root, keyPath, keyName, 0);
+	}
+
+	/**
+	 * Delete a registry key.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param keyName
+	 *            Name of the key to delete.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registryDeleteKey(HKEY root, String keyPath,
+			String keyName, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1575,9 +1895,27 @@ public abstract class Advapi32Util {
 	 */
 	public static void registryDeleteValue(HKEY root, String keyPath,
 			String valueName) {
+		registryDeleteValue(root, keyPath, valueName, 0);
+	}
+
+	/**
+	 * Delete a registry value.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to an existing registry key.
+	 * @param valueName
+	 *            Name of the value to delete.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 */
+	public static void registryDeleteValue(HKEY root, String keyPath,
+										   String valueName, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE, phkKey);
+				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1632,9 +1970,25 @@ public abstract class Advapi32Util {
 	 * @return Array of registry key names.
 	 */
 	public static String[] registryGetKeys(HKEY root, String keyPath) {
+		return registryGetKeys(root, keyPath, 0);
+	}
+
+	/**
+	 * Get names of the registry key's sub-keys.
+	 *
+	 * @param root
+	 *            Root key.
+	 * @param keyPath
+	 *            Path to a registry key.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return Array of registry key names.
+	 */
+	public static String[] registryGetKeys(HKEY root, String keyPath, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ, phkKey);
+				WinNT.KEY_READ | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
@@ -1819,9 +2173,26 @@ public abstract class Advapi32Util {
 	 */
 	public static TreeMap<String, Object> registryGetValues(HKEY root,
 			String keyPath) {
+		return registryGetValues(root, keyPath, 0);
+	}
+
+	/**
+	 * Get a table of registry values.
+	 *
+	 * @param root
+	 *            Registry root.
+	 * @param keyPath
+	 *            Regitry key path.
+	 * @param samDesiredExtra
+	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+	 * @return Table of values.
+	 */
+	public static TreeMap<String, Object> registryGetValues(HKEY root,
+															String keyPath, int samDesiredExtra) {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ, phkKey);
+				WinNT.KEY_READ | samDesiredExtra, phkKey);
 		if (rc != W32Errors.ERROR_SUCCESS) {
 			throw new Win32Exception(rc);
 		}
