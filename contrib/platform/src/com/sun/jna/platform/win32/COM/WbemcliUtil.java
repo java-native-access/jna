@@ -153,163 +153,11 @@ public class WbemcliUtil {
         }
 
         /**
-         * Gets a String value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a BSTR, including results of UINT64 and
-         * DATETIME type which must be further parsed by the user.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The String containing the specified value, or empty String if
-         *         null
-         */
-        public String getString(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return "";
-            } else if (vtTypeMap.get(property).equals(Variant.VT_BSTR)) {
-                return (String) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a String type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets an Integer value from the WmiResult. This is the return type
-         * when the WMI result is mapped to a VT_I4 (4-byte integer) value,
-         * including results of UINT32 and UINT16. If an unsigned result is
-         * desired, it may require further processing by the user.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Integer containing the specified value, or 0 if null
-         */
-        public Integer getInteger(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return 0;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_I4)) {
-                return (Integer) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not an Integer type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a Short value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a VT_I2 (2-byte integer) value. If an
-         * unsigned result is desired, it may require further processing by the
-         * user.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Short containing the specified value, or 0 if null
-         */
-        public Short getShort(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return 0;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_I2)) {
-                return (Short) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a Short type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a Byte value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a VT_UI1 (1-byte integer) value. If an
-         * unsigned result is desired, it may require further processing by the
-         * user.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Byte containing the specified value, or 0 if null
-         */
-        public Byte getByte(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return 0;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_UI1)) {
-                return (Byte) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a Byte type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a Boolean value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a VT_BOOL (boolean) value.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Boolean containing the specified value, or false if null
-         */
-        public Boolean getBoolean(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return Boolean.FALSE;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_BOOL)) {
-                return (Boolean) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a Boolean type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a Float value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a VT_R4 (4-byte real) value.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Float containing the specified value, or 0.0 if null
-         */
-        public Float getFloat(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return 0f;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_R4)) {
-                return (Float) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a Float type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a Double value from the WmiResult. This is the return type when
-         * the WMI result is mapped to a VT_R8 (8-byte real) value.
-         * 
-         * @param property
-         *            The property (column) to fetch
-         * @param index
-         *            The index (row) to fetch
-         * @return The Double containing the specified value, or 0.0 if null
-         */
-        public Double getDouble(T property, int index) {
-            Object o = this.propertyMap.get(property).get(index);
-            if (o == null) {
-                return 0d;
-            } else if (vtTypeMap.get(property).equals(Variant.VT_R8)) {
-                return (Double) o;
-            }
-            throw new ClassCastException(
-                    property.name() + " is not a Double type. Type is " + vtTypeMap.get(property));
-        }
-
-        /**
-         * Gets a value from the WmiResult, which may be null. Works with any
-         * return type. User must check for null and cast the result.
+         * Gets a value from the WmiResult, which may be null. User must check
+         * for null and cast the result. Types correlate to the CIM Type of the
+         * enumerated WMI property and will be consistent for a given property,
+         * and may be validated by the user using {@link #getVtType} or the
+         * Class of the returned Object.
          * 
          * @param property
          *            The property (column) to fetch
@@ -319,6 +167,19 @@ public class WbemcliUtil {
          */
         public Object getValue(T property, int index) {
             return this.propertyMap.get(property).get(index);
+        }
+
+        /**
+         * Gets the Variant type from the WmiResult. The integer value is
+         * defined as a VT_* constant in the
+         * {@link com.sun.jna.platform.win32.Variant} interface.
+         * 
+         * @param property
+         *            The property (column) whose type to fetch
+         * @return An integer representing the Variant type
+         */
+        public int getVtType(T property) {
+            return this.vtTypeMap.get(property);
         }
 
         /**
@@ -406,7 +267,7 @@ public class WbemcliUtil {
         WmiQuery<NamespaceProperty> namespaceQuery = createQuery("ROOT", "__NAMESPACE", NamespaceProperty.class);
         WmiResult<NamespaceProperty> namespaces = queryWMI(namespaceQuery);
         for (int i = 0; i < namespaces.getResultCount(); i++) {
-            if (ns.equalsIgnoreCase(namespaces.getString(NamespaceProperty.NAME, i))) {
+            if (ns.equalsIgnoreCase((String) namespaces.getValue(NamespaceProperty.NAME, i))) {
                 return true;
             }
         }
