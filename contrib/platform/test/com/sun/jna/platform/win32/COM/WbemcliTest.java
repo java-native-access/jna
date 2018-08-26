@@ -38,10 +38,6 @@ import org.junit.Test;
 
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
-import com.sun.jna.platform.win32.COM.COMException;
-import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.Wbemcli;
-import com.sun.jna.platform.win32.COM.WbemcliUtil;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 
@@ -58,7 +54,7 @@ public class WbemcliTest {
         PROCESSID, // UINT32
         WORKINGSETSIZE, // UINT64
         CREATIONDATE, // DATETIME
-        EXECUTIONSTATE, // Always NULL
+        EXECUTIONSTATE, // UINT16, Always NULL
         COMMANDLINE; // STRING
     }
 
@@ -140,21 +136,25 @@ public class WbemcliTest {
         int lastProcessIndex = processes.getResultCount() - 1;
 
         // PID is UINT32 = VT_I4
+        assertEquals(Wbemcli.CIM_UINT32, processes.getCIMType(ProcessProperty.PROCESSID));
         assertEquals(Variant.VT_I4, processes.getVtType(ProcessProperty.PROCESSID));
         assertTrue((Integer) processes.getValue(ProcessProperty.PROCESSID, lastProcessIndex) >= 0);
 
         // WSS is UINT64 = STRING
+        assertEquals(Wbemcli.CIM_UINT64, processes.getCIMType(ProcessProperty.WORKINGSETSIZE));
         assertEquals(Variant.VT_BSTR, processes.getVtType(ProcessProperty.WORKINGSETSIZE));
         String wssStr = (String) processes.getValue(ProcessProperty.WORKINGSETSIZE, lastProcessIndex);
         assertTrue(Long.parseLong(wssStr) > 0);
 
-        // EXECUTIONSTATE is always null
+        // EXECUTIONSTATE is UINT16 but is always null
+        assertEquals(Wbemcli.CIM_UINT16, processes.getCIMType(ProcessProperty.EXECUTIONSTATE));
         assertEquals(Variant.VT_NULL, processes.getVtType(ProcessProperty.EXECUTIONSTATE));
         Object state = processes.getValue(ProcessProperty.EXECUTIONSTATE, lastProcessIndex);
         assertNull(state);
 
         // CreationDate is DATETIME = STRING
         // and be in CIM_DATETIME format yyyymmddhhmmss.mmmmmm+zzz
+        assertEquals(Wbemcli.CIM_DATETIME, processes.getCIMType(ProcessProperty.CREATIONDATE));
         assertEquals(Variant.VT_BSTR, processes.getVtType(ProcessProperty.CREATIONDATE));
         String cdate = (String) processes.getValue(ProcessProperty.CREATIONDATE, lastProcessIndex);
 
@@ -175,15 +175,18 @@ public class WbemcliTest {
         assertTrue(os.getResultCount() > 0);
 
         // ForegroundApplicationBoost is UINT8 = VT_UI1
+        assertEquals(Wbemcli.CIM_UINT8, os.getCIMType(OperatingSystemProperty.FOREGROUNDAPPLICATIONBOOST));
         assertEquals(Variant.VT_UI1, os.getVtType(OperatingSystemProperty.FOREGROUNDAPPLICATIONBOOST));
         assertTrue((Byte) os.getValue(OperatingSystemProperty.FOREGROUNDAPPLICATIONBOOST, 0) >= 0);
 
         // OSTYPE is UINT16 = VT_I4
+        assertEquals(Wbemcli.CIM_UINT16, os.getCIMType(OperatingSystemProperty.OSTYPE));
         assertEquals(Variant.VT_I4, os.getVtType(OperatingSystemProperty.OSTYPE));
         assertTrue((Integer) os.getValue(OperatingSystemProperty.OSTYPE, 0) >= 0);
 
         // PRIMARY is BOOLEAN = VT_BOOL
+        assertEquals(Wbemcli.CIM_BOOLEAN, os.getCIMType(OperatingSystemProperty.PRIMARY));
         assertEquals(Variant.VT_BOOL, os.getVtType(OperatingSystemProperty.PRIMARY));
-        assertNotNull((Boolean) os.getValue(OperatingSystemProperty.PRIMARY, 0));
+        assertNotNull(os.getValue(OperatingSystemProperty.PRIMARY, 0));
     }
 }

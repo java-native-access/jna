@@ -49,6 +49,7 @@ import com.sun.jna.ptr.PointerByReference;
  * Utility class providing access to Windows Management Interface (WMI) via COM.
  */
 public class WbemcliUtil {
+
     /**
      * Instance to generate the WmiQuery class.
      */
@@ -137,6 +138,7 @@ public class WbemcliUtil {
     public class WmiResult<T extends Enum<T>> {
         private Map<T, List<Object>> propertyMap;
         private Map<T, Integer> vtTypeMap;
+        private Map<T, Integer> cimTypeMap;
         private int resultCount = 0;
 
         /**
@@ -146,9 +148,11 @@ public class WbemcliUtil {
         public WmiResult(Class<T> propertyEnum) {
             propertyMap = new EnumMap<T, List<Object>>(propertyEnum);
             vtTypeMap = new EnumMap<T, Integer>(propertyEnum);
-            for (T type : propertyEnum.getEnumConstants()) {
-                propertyMap.put(type, new ArrayList<Object>());
-                vtTypeMap.put(type, Variant.VT_NULL);
+            cimTypeMap = new EnumMap<T, Integer>(propertyEnum);
+            for (T prop : propertyEnum.getEnumConstants()) {
+                propertyMap.put(prop, new ArrayList<Object>());
+                vtTypeMap.put(prop, Variant.VT_NULL);
+                cimTypeMap.put(prop, Wbemcli.CIM_EMPTY);
             }
         }
 
@@ -183,19 +187,36 @@ public class WbemcliUtil {
         }
 
         /**
+         * Gets the CIM type from the WmiResult. The integer value is defined as
+         * a CIM_* constant in the {@link Wbemcli} interface.
+         * 
+         * @param property
+         *            The property (column) whose type to fetch
+         * @return An integer representing the CIM type
+         */
+        public int getCIMType(T property) {
+            return this.cimTypeMap.get(property);
+        }
+
+        /**
          * Adds a value to the WmiResult at the next index for that property
          * 
          * @param vtType
          *            The Variant type of this object
+         * @param cimType
+         *            The CIM type of this property
          * @param property
          *            The property (column) to store
          * @param o
          *            The object to store
          */
-        private void add(int vtType, T property, Object o) {
+        private void add(int vtType, int cimType, T property, Object o) {
             this.propertyMap.get(property).add(o);
             if (vtType != Variant.VT_NULL && this.vtTypeMap.get(property).equals(Variant.VT_NULL)) {
                 this.vtTypeMap.put(property, vtType);
+            }
+            if (this.cimTypeMap.get(property).equals(Wbemcli.CIM_EMPTY)) {
+                this.cimTypeMap.put(property, cimType);
             }
         }
 
@@ -508,40 +529,42 @@ public class WbemcliUtil {
             }
 
             VARIANT.ByReference pVal = new VARIANT.ByReference();
+            IntByReference pType = new IntByReference();
 
             // Get the value of the properties
             IWbemClassObject clsObj = new IWbemClassObject(pclsObj.getValue());
             for (T property : propertyEnum.getEnumConstants()) {
-                clsObj.Get(wstrMap.get(property), 0, pVal, null, null);
-                int type = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();
-                switch (type) {
+                clsObj.Get(wstrMap.get(property), 0, pVal, pType, null);
+                int vtType = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();
+                int cimType = pType.getValue();
+                switch (vtType) {
                 case Variant.VT_BSTR:
-                    values.add(type, property, pVal.stringValue());
+                    values.add(vtType, cimType, property, pVal.stringValue());
                     break;
                 case Variant.VT_I4:
-                    values.add(type, property, pVal.intValue());
+                    values.add(vtType, cimType, property, pVal.intValue());
                     break;
                 case Variant.VT_UI1:
-                    values.add(type, property, pVal.byteValue());
+                    values.add(vtType, cimType, property, pVal.byteValue());
                     break;
                 case Variant.VT_I2:
-                    values.add(type, property, pVal.shortValue());
+                    values.add(vtType, cimType, property, pVal.shortValue());
                     break;
                 case Variant.VT_BOOL:
-                    values.add(type, property, pVal.booleanValue());
+                    values.add(vtType, cimType, property, pVal.booleanValue());
                     break;
                 case Variant.VT_R4:
-                    values.add(type, property, pVal.floatValue());
+                    values.add(vtType, cimType, property, pVal.floatValue());
                     break;
                 case Variant.VT_R8:
-                    values.add(type, property, pVal.doubleValue());
+                    values.add(vtType, cimType, property, pVal.doubleValue());
                     break;
                 case Variant.VT_NULL:
-                    values.add(type, property, null);
+                    values.add(vtType, cimType, property, null);
                     break;
                 // Unimplemented type. User must cast
                 default:
-                    values.add(type, property, pVal.getValue());
+                    values.add(vtType, cimType, property, pVal.getValue());
                 }
                 OleAuto.INSTANCE.VariantClear(pVal);
             }

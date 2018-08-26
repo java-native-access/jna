@@ -59,6 +59,27 @@ public interface Wbemcli {
     public static final int WBEM_E_INVALID_CLASS = 0x80041010;
     public static final int WBEM_E_INVALID_QUERY = 0x80041017;
 
+    // CIM Types
+    public static final int CIM_ILLEGAL = 0xfff;
+    public static final int CIM_EMPTY = 0;
+    public static final int CIM_SINT8 = 16;
+    public static final int CIM_UINT8 = 17;
+    public static final int CIM_SINT16 = 2;
+    public static final int CIM_UINT16 = 18;
+    public static final int CIM_SINT32 = 3;
+    public static final int CIM_UINT32 = 19;
+    public static final int CIM_SINT64 = 20;
+    public static final int CIM_UINT64 = 21;
+    public static final int CIM_REAL32 = 4;
+    public static final int CIM_REAL64 = 5;
+    public static final int CIM_BOOLEAN = 11;
+    public static final int CIM_STRING = 8;
+    public static final int CIM_DATETIME = 101;
+    public static final int CIM_REFERENCE = 102;
+    public static final int CIM_CHAR16 = 103;
+    public static final int CIM_OBJECT = 13;
+    public static final int CIM_FLAG_ARRAY = 0x2000;
+
     /**
      * Holds a row of results of a WMI query
      */
@@ -68,11 +89,11 @@ public interface Wbemcli {
             super(pvInstance);
         }
 
-        public HRESULT Get(WString wszName, int lFlags, VARIANT.ByReference pVal, IntByReference pvtType,
+        public HRESULT Get(WString wszName, int lFlags, VARIANT.ByReference pVal, IntByReference pType,
                 IntByReference plFlavor) {
             // Get is 5th method of IWbemClassObjectVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(4,
-                    new Object[] { getPointer(), wszName, lFlags, pVal, pvtType, plFlavor }, HRESULT.class);
+                    new Object[] { getPointer(), wszName, lFlags, pVal, pType, plFlavor }, HRESULT.class);
         }
     }
 
