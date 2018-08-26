@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JNA" default="default" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+<project name="JNA" default="default" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:if="ant:if">
   <description>Builds and tests JNA</description>
 
   <!-- Default build compiles all platform-independent stuff as well
@@ -1127,6 +1127,12 @@ cd ..
   <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
     <property name="test.fork" value="yes"/>
+    <property name="test.forkmode" value="perTest"/>
+    
+    <condition property="test.jdwp" value="-Xrunjdwp:transport=dt_socket,address=${test.debugport},server=y,suspend=y">
+        <isset property="test.debugport" />
+    </condition>
+
     <property name="reports.junit" location="${reports}/junit/${os.prefix}"/>
     <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
     <mkdir dir="${results.junit}"/>
@@ -1148,6 +1154,7 @@ cd ..
       </and>
     </condition>
     <property name="tests.platform" value=""/>
+    <property name="tests.include" value="com/sun/jna/*Test.java"/>
     <property name="tests.exclude" value=""/>
     <property name="tests.exclude-patterns" value=""/>
     <condition property="java.awt.headless" value="true">
@@ -1156,8 +1163,8 @@ cd ..
     <propertyset id="headless">
       <propertyref prefix="java.awt.headless"/>
     </propertyset>
-    <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build}">
-        <!--<jvmarg value="-Xrunjdwp:transport=dt_socket,address=8787,server=y,suspend=y" />-->
+    <junit fork="${test.fork}" forkmode="${test.forkmode}" failureproperty="testfailure" tempdir="${build}">
+      <jvmarg if:set="test.jdwp" value="${test.jdwp}" />
       <!-- optionally run headless -->
       <syspropertyset refid="headless"/>
       <!-- avoid VM conflicts with JNA protected mode -->
@@ -1173,7 +1180,7 @@ cd ..
       <formatter type="xml"/>
       <batchtest todir="${results.junit}">
         <fileset dir="${test.src}" excludes="${tests.exclude-patterns}">
-          <include name="com/sun/jna/*Test.java"/>
+          <include name="${tests.include}"/>
           <include name="${tests.platform}"/>
           <exclude name="${tests.exclude}"/>
         </fileset>
