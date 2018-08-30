@@ -30,6 +30,7 @@ Features
 * [#995](https://github.com/java-native-access/jna/pull/995): Added structures and methods to `c.s.j.platform.mac.SystemB` for Process, Network interface, Swapfile, Time, and Filesystem info - [@dbwiddis](https://github.com/dbwiddis).
 * [#997](https://github.com/java-native-access/jna/issues/997): Added `Sysinfo` structure and function to `c.s.j.platform.linux.LibC` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1001](https://github.com/java-native-access/jna/pull/1001): Added overloads to `c.s.j.platform.win32.Advapi32Util` methods which allow the caller to specify `samDesiredExtra` to request additional registry key security and access rights - [@camw](https://github.com/camw).
+* [#1007](https://github.com/java-native-access/jna/pull/1007): Added OSGi export of Solaris package - [@swimmesberger](https://github.com/swimmesberger).
 
 Bug Fixes
 ---------
