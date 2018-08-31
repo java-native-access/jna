@@ -33,6 +33,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1003](https://github.com/java-native-access/jna/pull/1003): Allow `NativeMapped` to be used with enums - [@koraktor](https://github.com/koraktor)
 * [#652](https://github.com/java-native-access/jna/issues/652): Dead Lock in class initialization - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#843](https://github.com/java-native-access/jna/pull/843): Correctly bind `com.sun.jna.platform.win32.SecBufferDesc` and add convenience binding as `com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc`. Bind SSPI functions `InitializeSecurityContext`, `AcceptSecurityContext`, `QueryCredentialsAttributes`, `QuerySecurityPackageInfo`, `EncryptMessage`, `DecryptMessage`, `MakeSignature`, `VerifySignature` in `com.sun.jna.platform.win32.Secur32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#863](https://github.com/java-native-access/jna/pull/863): Fix ARM softfloat/hardfloat detection by modifying armSoftFloat condition in ELFAnalyser. Before this fix a softfloat binary could be misdetected as hardfloat. - [@kunkun26](https://github.com/kunkun26).
