@@ -214,7 +214,6 @@ public abstract class Advapi32Util {
 
 		Account account = new Account();
 		account.accountType = peUse.getPointer().getInt(0);
-		account.name = accountName;
 
 		String[] accountNamePartsBs = accountName.split("\\\\", 2);
 		String[] accountNamePartsAt = accountName.split("@", 2);
@@ -459,7 +458,7 @@ public abstract class Advapi32Util {
 		ArrayList<Account> userGroups = new ArrayList<Account>();
 		// make array of names
 		for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
-			Account group = null;
+			Account group;
 			try {
 				group = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
 			} catch (Exception e) {
@@ -2329,7 +2328,7 @@ public abstract class Advapi32Util {
 	 * An event log record.
 	 */
 	public static class EventLogRecord {
-		private EVENTLOGRECORD _record = null;
+		private EVENTLOGRECORD _record;
 		private String _source;
 		private byte[] _data;
 		private String[] _strings;
@@ -2463,14 +2462,14 @@ public abstract class Advapi32Util {
 	public static class EventLogIterator implements Iterable<EventLogRecord>,
 			Iterator<EventLogRecord> {
 
-		private HANDLE _h = null;
+		private HANDLE _h;
 		private Memory _buffer = new Memory(1024 * 64); // memory buffer to
 														// store events
 		private boolean _done = false; // no more events
 		private int _dwRead = 0; // number of bytes remaining in the current
 									// buffer
 		private Pointer _pevlr = null; // pointer to the current record
-		private int _flags = WinNT.EVENTLOG_FORWARDS_READ;
+		private int _flags;
 
 		public EventLogIterator(String sourceName) {
 			this(null, sourceName, WinNT.EVENTLOG_FORWARDS_READ);
@@ -2582,8 +2581,8 @@ public abstract class Advapi32Util {
 			boolean compact) {
 		int infoType = WinNT.DACL_SECURITY_INFORMATION;
 		int nLength = 1024;
-		boolean repeat = false;
-		Memory memory = null;
+		boolean repeat;
+		Memory memory;
 
 		do {
 			repeat = false;
@@ -2934,7 +2933,7 @@ public abstract class Advapi32Util {
      */
     public static SECURITY_DESCRIPTOR_RELATIVE getFileSecurityDescriptor(File file, boolean getSACL)
     {
-    	SECURITY_DESCRIPTOR_RELATIVE sdr = null;
+    	SECURITY_DESCRIPTOR_RELATIVE sdr;
     	Memory securityDesc = getSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, getSACL);
     	sdr = new SECURITY_DESCRIPTOR_RELATIVE(securityDesc);
     	return sdr;
