@@ -467,7 +467,7 @@ Release 3.5.0
 
 Features
 --------
-* [#62](https://github.com/java-native-access/jna/issues/62) If a callback is required to reside in a DLL, use [`DLLCallback`](http://twall.github.com/jna/3.5.1/javadoc/com/sun/jna/win32/DLLCallback.html) to tag your Callback object - [@twall](https://github.com/twall).
+* [#62](https://github.com/java-native-access/jna/issues/62) If a callback is required to reside in a DLL, use [`DLLCallback`](https://java-native-access.github.io/jna/3.5.1/javadoc/com/sun/jna/win32/DLLCallback.html) to tag your Callback object - [@twall](https://github.com/twall).
 * `Structure.getFieldOrder()` supersedes `Structure.setFieldOrder()` and is now required - [@twall](https://github.com/twall).
 * Search `~/Library/Frameworks` and `/Library/Frameworks` on OSX - [@shaneholloway](https://github.com/shaneholloway).
 * Automatic cleanup of native threads (based on suggestions from neil smith) - [@twall](https://github.com/twall).
