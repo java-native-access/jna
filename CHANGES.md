@@ -31,10 +31,10 @@ Features
 * [#997](https://github.com/java-native-access/jna/issues/997): Added `Sysinfo` structure and function to `c.s.j.platform.linux.LibC` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1001](https://github.com/java-native-access/jna/pull/1001): Added overloads to `c.s.j.platform.win32.Advapi32Util` methods which allow the caller to specify `samDesiredExtra` to request additional registry key security and access rights - [@camw](https://github.com/camw).
 * [#1007](https://github.com/java-native-access/jna/pull/1007): Added OSGi export of Solaris package - [@swimmesberger](https://github.com/swimmesberger).
+* [#1003](https://github.com/java-native-access/jna/pull/1003): Allow `NativeMapped` to be used with enums - [@koraktor](https://github.com/koraktor).
 
 Bug Fixes
 ---------
-* [#1003](https://github.com/java-native-access/jna/pull/1003): Allow `NativeMapped` to be used with enums - [@koraktor](https://github.com/koraktor)
 * [#652](https://github.com/java-native-access/jna/issues/652): Dead Lock in class initialization - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#843](https://github.com/java-native-access/jna/pull/843): Correctly bind `com.sun.jna.platform.win32.SecBufferDesc` and add convenience binding as `com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc`. Bind SSPI functions `InitializeSecurityContext`, `AcceptSecurityContext`, `QueryCredentialsAttributes`, `QuerySecurityPackageInfo`, `EncryptMessage`, `DecryptMessage`, `MakeSignature`, `VerifySignature` in `com.sun.jna.platform.win32.Secur32` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#863](https://github.com/java-native-access/jna/pull/863): Fix ARM softfloat/hardfloat detection by modifying armSoftFloat condition in ELFAnalyser. Before this fix a softfloat binary could be misdetected as hardfloat. - [@kunkun26](https://github.com/kunkun26).
