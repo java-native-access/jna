@@ -36,7 +36,6 @@ import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.Variant.VARIANT;
-import com.sun.jna.platform.win32.WTypes.BSTR;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.COM.Wbemcli.IEnumWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
@@ -380,7 +379,6 @@ public class WbemcliUtil {
      *         should be released by the user
      */
     public static IWbemServices connectServer(String namespace) {
-        PointerByReference pSvc = new PointerByReference();
         // Step 3: ---------------------------------------------------
         // Obtain the initial locator to WMI -------------------------
         IWbemLocator loc = IWbemLocator.create();
@@ -392,25 +390,20 @@ public class WbemcliUtil {
         // Connect to WMI through the IWbemLocator::ConnectServer method
         // Connect to the namespace with the current user and obtain pointer
         // pSvc to make IWbemServices calls.
-        BSTR namespaceStr = OleAuto.INSTANCE.SysAllocString(namespace);
-        HRESULT hres = loc.ConnectServer(namespaceStr, null, null, null, 0, null, null, pSvc);
-        OleAuto.INSTANCE.SysFreeString(namespaceStr);
+        IWbemServices services = loc.ConnectServer(namespace, null, null, null, 0, null, null);
         // Release the locator. If successful, pSvc contains connection
         // information
         loc.Release();
-        if (COMUtils.FAILED(hres)) {
-            throw new COMException(String.format("Could not connect to namespace %s.", namespace), hres);
-        }
 
         // Step 5: --------------------------------------------------
         // Set security levels on the proxy -------------------------
-        hres = Ole32.INSTANCE.CoSetProxyBlanket(pSvc.getValue(), Ole32.RPC_C_AUTHN_WINNT, Ole32.RPC_C_AUTHZ_NONE, null,
+        HRESULT hres = Ole32.INSTANCE.CoSetProxyBlanket(services, Ole32.RPC_C_AUTHN_WINNT, Ole32.RPC_C_AUTHZ_NONE, null,
                 Ole32.RPC_C_AUTHN_LEVEL_CALL, Ole32.RPC_C_IMP_LEVEL_IMPERSONATE, null, Ole32.EOAC_NONE);
         if (COMUtils.FAILED(hres)) {
-            new IWbemServices(pSvc.getValue()).Release();
+            services.Release();
             throw new COMException("Could not set proxy blanket.", hres);
         }
-        return new IWbemServices(pSvc.getValue());
+        return services;
     }
 
     /**
@@ -438,16 +431,8 @@ public class WbemcliUtil {
         sb.append(" FROM ").append(query.getWmiClassName());
         // Send the query. The flags allow us to return immediately and begin
         // enumerating in the forward direction as results come in.
-        BSTR queryStr = OleAuto.INSTANCE.SysAllocString(sb.toString().replaceAll("\\\\", "\\\\\\\\"));
-        BSTR wql = OleAuto.INSTANCE.SysAllocString("WQL");
-        HRESULT hres = svc.ExecQuery(wql, queryStr,
-                Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null, pEnumerator);
-        OleAuto.INSTANCE.SysFreeString(queryStr);
-        OleAuto.INSTANCE.SysFreeString(wql);
-        if (COMUtils.FAILED(hres)) {
-            throw new COMException(String.format("Query '%s' failed.", sb.toString()), hres);
-        }
-        return new IEnumWbemClassObject(pEnumerator.getValue());
+        return svc.ExecQuery("WQL", sb.toString().replaceAll("\\\\", "\\\\\\\\"),
+                Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null);
     }
 
     /*-
@@ -504,7 +489,7 @@ public class WbemcliUtil {
         WmiResult<T> values = INSTANCE.new WmiResult<T>(propertyEnum);
         // Step 7: -------------------------------------------------
         // Get the data from the query in step 6 -------------------
-        PointerByReference pclsObj = new PointerByReference();
+        Pointer[] pclsObj = new Pointer[1];
         IntByReference uReturn = new IntByReference(0);
         Map<T, WString> wstrMap = new HashMap<T, WString>();
         HRESULT hres = null;
@@ -514,7 +499,7 @@ public class WbemcliUtil {
         while (enumerator.getPointer() != Pointer.NULL) {
             // Enumerator will be released by calling method so no need to
             // release it here.
-            hres = enumerator.Next(timeout, 1, pclsObj, uReturn);
+            hres = enumerator.Next(timeout, pclsObj.length, pclsObj, uReturn);
             // Enumeration complete or no more data; we're done, exit the loop
             if (hres.intValue() == Wbemcli.WBEM_S_FALSE || hres.intValue() == Wbemcli.WBEM_S_NO_MORE_DATA) {
                 break;
@@ -532,7 +517,7 @@ public class WbemcliUtil {
             IntByReference pType = new IntByReference();
 
             // Get the value of the properties
-            IWbemClassObject clsObj = new IWbemClassObject(pclsObj.getValue());
+            IWbemClassObject clsObj = new IWbemClassObject(pclsObj[0]);
             for (T property : propertyEnum.getEnumConstants()) {
                 clsObj.Get(wstrMap.get(property), 0, pVal, pType, null);
                 int vtType = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();

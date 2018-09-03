@@ -25,6 +25,7 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
 import com.sun.jna.platform.win32.WTypes.LPOLESTR;
@@ -336,7 +337,7 @@ public interface Ole32 extends StdCallLibrary {
      *
      *         E_INVALIDARG One or more arguments is invalid.
      */
-    HRESULT CoSetProxyBlanket(Pointer pProxy, //
+    HRESULT CoSetProxyBlanket(Unknown pProxy, //
             int dwAuthnSvc, //
             int dwAuthzSvc, //
             LPOLESTR pServerPrincName, // 
