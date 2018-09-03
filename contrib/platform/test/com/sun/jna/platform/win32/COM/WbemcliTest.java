@@ -98,7 +98,7 @@ public class WbemcliTest {
             processQuery.execute();
             fail("Win32_ClassDoesNotExist does not exist.");
         } catch (COMException expected) {
-            assertEquals(Wbemcli.WBEM_E_INVALID_CLASS, expected.getHresult());
+            assertEquals(Wbemcli.WBEM_E_INVALID_CLASS, expected.getHresult().intValue());
         }
 
         // Valid class but properties don't match the class
@@ -107,7 +107,7 @@ public class WbemcliTest {
             processQuery.execute();
             fail("Properties in the process enum aren't in Win32_OperatingSystem");
         } catch (COMException expected) {
-            assertEquals(Wbemcli.WBEM_E_INVALID_QUERY, expected.getHresult());
+            assertEquals(Wbemcli.WBEM_E_INVALID_QUERY, expected.getHresult().intValue());
         }
 
         // Invalid namespace
@@ -116,7 +116,7 @@ public class WbemcliTest {
             processQuery.execute();
             fail("This is an invalid namespace.");
         } catch (COMException expected) {
-            assertEquals(Wbemcli.WBEM_E_INVALID_NAMESPACE, expected.getHresult());
+            assertEquals(Wbemcli.WBEM_E_INVALID_NAMESPACE, expected.getHresult().intValue());
         }
     }
 
