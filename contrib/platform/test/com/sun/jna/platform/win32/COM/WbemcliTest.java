@@ -82,10 +82,10 @@ public class WbemcliTest {
 
     @Test
     public void testWmiExceptions() {
-        WmiQuery<ProcessProperty> processQuery = WbemcliUtil.createQuery("Win32_Process", ProcessProperty.class);
+        WmiQuery<ProcessProperty> processQuery = new WmiQuery<ProcessProperty>("Win32_Process", ProcessProperty.class);
         try {
             // This query should take more than 0 ms
-            WbemcliUtil.queryWMI(processQuery, 0);
+            processQuery.execute(0);
             // Highly unlikely to get this far, but if we do, no failure
             System.err.println("Warning: Win32_Process WMI query returned in 0 ms. This is unusual.");
         } catch (TimeoutException expected) {
@@ -95,7 +95,7 @@ public class WbemcliTest {
         // Invalid class
         processQuery.setWmiClassName("Win32_ClassDoesNotExist");
         try {
-            WbemcliUtil.queryWMI(processQuery);
+            processQuery.execute();
             fail("Win32_ClassDoesNotExist does not exist.");
         } catch (COMException expected) {
             assertEquals(Wbemcli.WBEM_E_INVALID_CLASS, expected.getHresult());
@@ -104,7 +104,7 @@ public class WbemcliTest {
         // Valid class but properties don't match the class
         processQuery.setWmiClassName("Win32_OperatingSystem");
         try {
-            WbemcliUtil.queryWMI(processQuery);
+            processQuery.execute();
             fail("Properties in the process enum aren't in Win32_OperatingSystem");
         } catch (COMException expected) {
             assertEquals(Wbemcli.WBEM_E_INVALID_QUERY, expected.getHresult());
@@ -113,7 +113,7 @@ public class WbemcliTest {
         // Invalid namespace
         processQuery.setNameSpace("Invalid");
         try {
-            WbemcliUtil.queryWMI(processQuery);
+            processQuery.execute();
             fail("This is an invalid namespace.");
         } catch (COMException expected) {
             assertEquals(Wbemcli.WBEM_E_INVALID_NAMESPACE, expected.getHresult());
@@ -128,9 +128,9 @@ public class WbemcliTest {
 
     @Test
     public void testWmiProcesses() {
-        WmiQuery<ProcessProperty> processQuery = WbemcliUtil.createQuery("Win32_Process", ProcessProperty.class);
+        WmiQuery<ProcessProperty> processQuery = new WmiQuery<ProcessProperty>("Win32_Process", ProcessProperty.class);
 
-        WmiResult<ProcessProperty> processes = WbemcliUtil.queryWMI(processQuery);
+        WmiResult<ProcessProperty> processes = processQuery.execute();
         // There has to be at least one process (this one!)
         assertTrue(processes.getResultCount() > 0);
         int lastProcessIndex = processes.getResultCount() - 1;
@@ -167,10 +167,10 @@ public class WbemcliTest {
 
     @Test
     public void testWmiOperatingSystem() {
-        WmiQuery<OperatingSystemProperty> operatingSystemQuery = WbemcliUtil.createQuery("Win32_OperatingSystem",
+        WmiQuery<OperatingSystemProperty> operatingSystemQuery = new WmiQuery<OperatingSystemProperty>("Win32_OperatingSystem",
                 OperatingSystemProperty.class);
 
-        WmiResult<OperatingSystemProperty> os = WbemcliUtil.queryWMI(operatingSystemQuery);
+        WmiResult<OperatingSystemProperty> os = operatingSystemQuery.execute();
         // There has to be at least one os (this one!)
         assertTrue(os.getResultCount() > 0);
 

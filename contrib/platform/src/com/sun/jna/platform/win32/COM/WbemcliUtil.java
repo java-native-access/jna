@@ -69,7 +69,8 @@ public class WbemcliUtil {
     /**
      * Helper class wrapping information required for a WMI query.
      */
-    public class WmiQuery<T extends Enum<T>> {
+    public static class WmiQuery<T extends Enum<T>> {
+
         private String nameSpace;
         private String wmiClassName;
         private Class<T> propertyEnum;
@@ -91,6 +92,17 @@ public class WbemcliUtil {
             this.nameSpace = nameSpace;
             this.wmiClassName = wmiClassName;
             this.propertyEnum = propertyEnum;
+        }
+
+        /**
+         * Instantiate a WMI Query in the default namespace
+         *
+         * @param wmiClassName The WMI Class to use. May include a WHERE clause
+         *                     with filtering conditions.
+         * @param propertyEnum An Enum that contains the properties to query
+         */
+        public WmiQuery(String wmiClassName, Class<T> propertyEnum) {
+            this(DEFAULT_NAMESPACE, wmiClassName, propertyEnum);
         }
 
         /**
@@ -128,6 +140,218 @@ public class WbemcliUtil {
          */
         public void setWmiClassName(String wmiClassName) {
             this.wmiClassName = wmiClassName;
+        }
+
+        /**
+         * Query WMI for values, with no timeout.
+         *
+         * @param query A WmiQuery object encapsulating the namespace, class,
+         *              and properties
+         *
+         * @return a WmiResult object containing the query results, wrapping an
+         *         EnumMap
+         */
+        public WmiResult<T> execute() {
+            try {
+                return execute(Wbemcli.WBEM_INFINITE);
+            } catch (TimeoutException e) {
+                throw new COMException("Got a WMI timeout when infinite wait was specified. This should never happen.");
+            }
+        }
+
+        /**
+         * Query WMI for values, with a specified timeout.
+         *
+         * @param <T> an enum
+         * @param query A WmiQuery object encapsulating the namespace, class,
+         *                and properties
+         * @param timeout Number of milliseconds to wait for results before
+         *                timing out. If
+         *                {@link IEnumWbemClassObject#WBEM_INFINITE} (-1), will
+         *                always wait for results. If a timeout occurs, throws a
+         *                {@link TimeoutException}.
+         *
+         * @return a WmiResult object containing the query results, wrapping an
+         *         EnumMap
+         *
+         * @throws TimeoutException if the query times out before completion
+         */
+        public WmiResult<T> execute(int timeout) throws TimeoutException {
+            // Idiot check
+            if (getPropertyEnum().getEnumConstants().length < 1) {
+                throw new IllegalArgumentException("The query's property enum has no values.");
+            }
+
+            // Connect to the server
+            IWbemServices svc = connectServer(getNameSpace());
+
+            // Send query
+            try {
+                IEnumWbemClassObject enumerator = selectProperties(svc, this);
+
+                try {
+                    return enumerateProperties(enumerator, getPropertyEnum(), timeout);
+                } finally {
+                    // Cleanup
+                    enumerator.Release();
+                }
+            } finally {
+                // Cleanup
+                svc.Release();
+            }
+
+        }
+
+        /**
+         * Selects properties from WMI. Returns immediately (asynchronously),
+         * even while results are being retrieved; results may begun to be
+         * enumerated in the forward direction only.
+         *
+         * @param svc A WbemServices object to make the calls
+         * @param query A WmiQuery object encapsulating the details of the query
+         *
+         * @return An enumerator to receive the results of the query
+         */
+        private static <T extends Enum<T>> IEnumWbemClassObject selectProperties(IWbemServices svc, WmiQuery<T> query) {
+            PointerByReference pEnumerator = new PointerByReference();
+            // Step 6: --------------------------------------------------
+            // Use the IWbemServices pointer to make requests of WMI ----
+            T[] props = query.getPropertyEnum().getEnumConstants();
+            StringBuilder sb = new StringBuilder("SELECT ");
+            // We earlier checked for at least one enum constant
+            sb.append(props[0].name());
+            for (int i = 1; i < props.length; i++) {
+                sb.append(',').append(props[i].name());
+            }
+            sb.append(" FROM ").append(query.getWmiClassName());
+            // Send the query. The flags allow us to return immediately and begin
+            // enumerating in the forward direction as results come in.
+            return svc.ExecQuery("WQL", sb.toString().replaceAll("\\\\", "\\\\\\\\"),
+                    Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null);
+        }
+
+        /*-
+         * The following table maps WMI return types (CIM type) to the VT type of
+         * the returned VARIANT.
+         *
+         * CIM type  |  VT type
+         * ----------|----------
+         * BOOLEAN   |  VT_BOOL
+         * ----------|----------
+         * UINT8     |  VT_UI1
+         * ----------|----------
+         * SINT8     |  VT_I2
+         * SINT16    |  VT_I2
+         * CHAR16    |  VT_I2
+         * ----------|----------
+         * UINT16    |  VT_I4
+         * SINT32    |  VT_I4
+         * UINT32    |  VT_I4
+         * ----------|----------
+         * SINT64    |  VT_BSTR
+         * UINT64    |  VT_BSTR
+         * DATETIME  |  VT_BSTR
+         * REFERENCE |  VT_BSTR
+         * STRING    |  VT_BSTR
+         * ----------|----------
+         * REAL32    |  VT_R4
+         * ----------|----------
+         * REAL64    |  VT_R8
+         * ----------|----------
+         * OBJECT    |  VT_UNKNOWN (not implemented)
+         */
+        /**
+         * Enumerate the results of a WMI query. This method is called while
+         * results are still being retrieved and may iterate in the forward
+         * direction only.
+         *
+         * @param enumerator The enumerator with the results
+         * @param propertyEnum The enum containing the properties to enumerate,
+         *                     which are the keys to the WmiResult map
+         * @param timeout Number of milliseconds to wait for results before
+         *                     timing out. If
+         *                     {@link IEnumWbemClassObject#WBEM_INFINITE} (-1),
+         *                     will always wait for results.
+         *
+         * @return A WmiResult object encapsulating an EnumMap which will hold
+         *         the results.
+         *
+         * @throws TimeoutException if the query times out before completion
+         */
+        private static <T extends Enum<T>> WmiResult<T> enumerateProperties(IEnumWbemClassObject enumerator,
+                Class<T> propertyEnum, int timeout) throws TimeoutException {
+            WmiResult<T> values = INSTANCE.new WmiResult<T>(propertyEnum);
+            // Step 7: -------------------------------------------------
+            // Get the data from the query in step 6 -------------------
+            Pointer[] pclsObj = new Pointer[1];
+            IntByReference uReturn = new IntByReference(0);
+            Map<T, WString> wstrMap = new HashMap<T, WString>();
+            HRESULT hres = null;
+            for (T property : propertyEnum.getEnumConstants()) {
+                wstrMap.put(property, new WString(property.name()));
+            }
+            while (enumerator.getPointer() != Pointer.NULL) {
+                // Enumerator will be released by calling method so no need to
+                // release it here.
+                hres = enumerator.Next(timeout, pclsObj.length, pclsObj, uReturn);
+                // Enumeration complete or no more data; we're done, exit the loop
+                if (hres.intValue() == Wbemcli.WBEM_S_FALSE || hres.intValue() == Wbemcli.WBEM_S_NO_MORE_DATA) {
+                    break;
+                }
+                // Throw exception to notify user of timeout
+                if (hres.intValue() == Wbemcli.WBEM_S_TIMEDOUT) {
+                    throw new TimeoutException("No results after " + timeout + " ms.");
+                }
+                // Other exceptions here.
+                if (COMUtils.FAILED(hres)) {
+                    throw new COMException("Failed to enumerate results.", hres);
+                }
+
+                VARIANT.ByReference pVal = new VARIANT.ByReference();
+                IntByReference pType = new IntByReference();
+
+                // Get the value of the properties
+                IWbemClassObject clsObj = new IWbemClassObject(pclsObj[0]);
+                for (T property : propertyEnum.getEnumConstants()) {
+                    clsObj.Get(wstrMap.get(property), 0, pVal, pType, null);
+                    int vtType = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();
+                    int cimType = pType.getValue();
+                    switch (vtType) {
+                        case Variant.VT_BSTR:
+                            values.add(vtType, cimType, property, pVal.stringValue());
+                            break;
+                        case Variant.VT_I4:
+                            values.add(vtType, cimType, property, pVal.intValue());
+                            break;
+                        case Variant.VT_UI1:
+                            values.add(vtType, cimType, property, pVal.byteValue());
+                            break;
+                        case Variant.VT_I2:
+                            values.add(vtType, cimType, property, pVal.shortValue());
+                            break;
+                        case Variant.VT_BOOL:
+                            values.add(vtType, cimType, property, pVal.booleanValue());
+                            break;
+                        case Variant.VT_R4:
+                            values.add(vtType, cimType, property, pVal.floatValue());
+                            break;
+                        case Variant.VT_R8:
+                            values.add(vtType, cimType, property, pVal.doubleValue());
+                            break;
+                        case Variant.VT_NULL:
+                            values.add(vtType, cimType, property, null);
+                            break;
+                        // Unimplemented type. User must cast
+                        default:
+                            values.add(vtType, cimType, property, pVal.getValue());
+                    }
+                    OleAuto.INSTANCE.VariantClear(pVal);
+                }
+                clsObj.Release();
+
+                values.incrementResultCount();
+            }
+            return values;
         }
     }
 
@@ -233,41 +457,7 @@ public class WbemcliUtil {
             this.resultCount++;
         }
     }
-    
-    /**
-     * Create a WMI Query
-     * 
-     * @param <T>
-     *            an enum
-     * @param nameSpace
-     *            The WMI Namespace to use
-     * @param wmiClassName
-     *            The WMI Class to use. May include a WHERE clause with
-     *            filtering conditions.
-     * @param propertyEnum
-     *            An Enum that contains the properties to query
-     * @return A WmiQuery object wrapping the parameters
-     */
-    public static <T extends Enum<T>> WmiQuery<T> createQuery(String nameSpace, String wmiClassName,
-            Class<T> propertyEnum) {
-        return INSTANCE.new WmiQuery<T>(nameSpace, wmiClassName, propertyEnum);
-    }
 
-    /**
-     * Create a WMI Query in the default namespace
-     * 
-     * @param <T>
-     *            an enum
-     * @param wmiClassName
-     *            The WMI Class to use. May include a WHERE clause with
-     *            filtering conditions.
-     * @param propertyEnum
-     *            An Enum that contains the properties to query
-     * @return A WmiQuery object wrapping the parameters
-     */
-    public static <T extends Enum<T>> WmiQuery<T> createQuery(String wmiClassName, Class<T> propertyEnum) {
-        return createQuery(DEFAULT_NAMESPACE, wmiClassName, propertyEnum);
-    }
 
     /**
      * Determine if WMI has the requested namespace. Some namespaces only exist
@@ -284,77 +474,14 @@ public class WbemcliUtil {
             ns = namespace.substring(5);
         }
         // Test
-        WmiQuery<NamespaceProperty> namespaceQuery = createQuery("ROOT", "__NAMESPACE", NamespaceProperty.class);
-        WmiResult<NamespaceProperty> namespaces = queryWMI(namespaceQuery);
+        WmiQuery<NamespaceProperty> namespaceQuery = new WmiQuery<NamespaceProperty>("ROOT", "__NAMESPACE", NamespaceProperty.class);
+        WmiResult<NamespaceProperty> namespaces = namespaceQuery.execute();
         for (int i = 0; i < namespaces.getResultCount(); i++) {
             if (ns.equalsIgnoreCase((String) namespaces.getValue(NamespaceProperty.NAME, i))) {
                 return true;
             }
         }
         return false;
-    }
-
-    /**
-     * Query WMI for values, with no timeout.
-     * 
-     * @param <T>
-     *            an enum
-     * @param query
-     *            A WmiQuery object encapsulating the namespace, class, and
-     *            properties
-     * @return a WmiResult object containing the query results, wrapping an
-     *         EnumMap
-     */
-    public static <T extends Enum<T>> WmiResult<T> queryWMI(WmiQuery<T> query) {
-        try {
-            return queryWMI(query, Wbemcli.WBEM_INFINITE);
-        } catch (TimeoutException e) {
-            throw new COMException("Got a WMI timeout when infinite wait was specified. This should never happen.");
-        }
-    }
-
-    /**
-     * Query WMI for values, with a specified timeout.
-     * 
-     * @param <T>
-     *            an enum
-     * @param query
-     *            A WmiQuery object encapsulating the namespace, class, and
-     *            properties
-     * @param timeout
-     *            Number of milliseconds to wait for results before timing out.
-     *            If {@link IEnumWbemClassObject#WBEM_INFINITE} (-1), will
-     *            always wait for results. If a timeout occurs, throws a
-     *            {@link TimeoutException}.
-     * @return a WmiResult object containing the query results, wrapping an
-     *         EnumMap
-     * @throws TimeoutException
-     *             if the query times out before completion
-     */
-    public static <T extends Enum<T>> WmiResult<T> queryWMI(WmiQuery<T> query, int timeout) throws TimeoutException {
-        // Idiot check
-        if (query.getPropertyEnum().getEnumConstants().length < 1) {
-            throw new IllegalArgumentException("The query's property enum has no values.");
-        }
-
-        // Connect to the server
-        IWbemServices svc = connectServer(query.getNameSpace());
-
-        // Send query
-        try {
-            IEnumWbemClassObject enumerator = selectProperties(svc, query);
-
-            try {
-                return enumerateProperties(enumerator, query.getPropertyEnum(), timeout);
-            } finally {
-                // Cleanup
-                enumerator.Release();
-            }
-        } finally {
-            // Cleanup
-            svc.Release();
-        }
-
     }
 
     /*
@@ -406,157 +533,4 @@ public class WbemcliUtil {
         return services;
     }
 
-    /**
-     * Selects properties from WMI. Returns immediately (asynchronously), even
-     * while results are being retrieved; results may begun to be enumerated in
-     * the forward direction only.
-     *
-     * @param svc
-     *            A WbemServices object to make the calls
-     * @param query
-     *            A WmiQuery object encapsulating the details of the query
-     * @return An enumerator to receive the results of the query
-     */
-    public static <T extends Enum<T>> IEnumWbemClassObject selectProperties(IWbemServices svc, WmiQuery<T> query) {
-        PointerByReference pEnumerator = new PointerByReference();
-        // Step 6: --------------------------------------------------
-        // Use the IWbemServices pointer to make requests of WMI ----
-        T[] props = query.getPropertyEnum().getEnumConstants();
-        StringBuilder sb = new StringBuilder("SELECT ");
-        // We earlier checked for at least one enum constant
-        sb.append(props[0].name());
-        for (int i = 1; i < props.length; i++) {
-            sb.append(',').append(props[i].name());
-        }
-        sb.append(" FROM ").append(query.getWmiClassName());
-        // Send the query. The flags allow us to return immediately and begin
-        // enumerating in the forward direction as results come in.
-        return svc.ExecQuery("WQL", sb.toString().replaceAll("\\\\", "\\\\\\\\"),
-                Wbemcli.WBEM_FLAG_FORWARD_ONLY | Wbemcli.WBEM_FLAG_RETURN_IMMEDIATELY, null);
-    }
-
-    /*-
-     * The following table maps WMI return types (CIM type) to the VT type of
-     * the returned VARIANT. 
-     * 
-     * CIM type  |  VT type
-     * ----------|----------
-     * BOOLEAN   |  VT_BOOL 
-     * ----------|----------
-     * UINT8     |  VT_UI1 
-     * ----------|----------
-     * SINT8     |  VT_I2 
-     * SINT16    |  VT_I2 
-     * CHAR16    |  VT_I2
-     * ----------|----------
-     * UINT16    |  VT_I4
-     * SINT32    |  VT_I4
-     * UINT32    |  VT_I4
-     * ----------|----------
-     * SINT64    |  VT_BSTR
-     * UINT64    |  VT_BSTR
-     * DATETIME  |  VT_BSTR
-     * REFERENCE |  VT_BSTR
-     * STRING    |  VT_BSTR
-     * ----------|----------
-     * REAL32    |  VT_R4
-     * ----------|----------
-     * REAL64    |  VT_R8
-     * ----------|----------
-     * OBJECT    |  VT_UNKNOWN (not implemented)
-     */
-
-    /**
-     * Enumerate the results of a WMI query. This method is called while results
-     * are still being retrieved and may iterate in the forward direction only.
-     * 
-     * @param enumerator
-     *            The enumerator with the results
-     * @param propertyEnum
-     *            The enum containing the properties to enumerate, which are the
-     *            keys to the WmiResult map
-     * @param timeout
-     *            Number of milliseconds to wait for results before timing out.
-     *            If {@link IEnumWbemClassObject#WBEM_INFINITE} (-1), will
-     *            always wait for results.
-     * @return A WmiResult object encapsulating an EnumMap which will hold the
-     *         results.
-     * @throws TimeoutException
-     *             if the query times out before completion
-     */
-    public static <T extends Enum<T>> WmiResult<T> enumerateProperties(IEnumWbemClassObject enumerator,
-            Class<T> propertyEnum, int timeout) throws TimeoutException {
-        WmiResult<T> values = INSTANCE.new WmiResult<T>(propertyEnum);
-        // Step 7: -------------------------------------------------
-        // Get the data from the query in step 6 -------------------
-        Pointer[] pclsObj = new Pointer[1];
-        IntByReference uReturn = new IntByReference(0);
-        Map<T, WString> wstrMap = new HashMap<T, WString>();
-        HRESULT hres = null;
-        for (T property : propertyEnum.getEnumConstants()) {
-            wstrMap.put(property, new WString(property.name()));
-        }
-        while (enumerator.getPointer() != Pointer.NULL) {
-            // Enumerator will be released by calling method so no need to
-            // release it here.
-            hres = enumerator.Next(timeout, pclsObj.length, pclsObj, uReturn);
-            // Enumeration complete or no more data; we're done, exit the loop
-            if (hres.intValue() == Wbemcli.WBEM_S_FALSE || hres.intValue() == Wbemcli.WBEM_S_NO_MORE_DATA) {
-                break;
-            }
-            // Throw exception to notify user of timeout
-            if (hres.intValue() == Wbemcli.WBEM_S_TIMEDOUT) {
-                throw new TimeoutException("No results after " + timeout + " ms.");
-            }
-            // Other exceptions here.
-            if (COMUtils.FAILED(hres)) {
-                throw new COMException("Failed to enumerate results.", hres);
-            }
-
-            VARIANT.ByReference pVal = new VARIANT.ByReference();
-            IntByReference pType = new IntByReference();
-
-            // Get the value of the properties
-            IWbemClassObject clsObj = new IWbemClassObject(pclsObj[0]);
-            for (T property : propertyEnum.getEnumConstants()) {
-                clsObj.Get(wstrMap.get(property), 0, pVal, pType, null);
-                int vtType = (pVal.getValue() == null ? Variant.VT_NULL : pVal.getVarType()).intValue();
-                int cimType = pType.getValue();
-                switch (vtType) {
-                case Variant.VT_BSTR:
-                    values.add(vtType, cimType, property, pVal.stringValue());
-                    break;
-                case Variant.VT_I4:
-                    values.add(vtType, cimType, property, pVal.intValue());
-                    break;
-                case Variant.VT_UI1:
-                    values.add(vtType, cimType, property, pVal.byteValue());
-                    break;
-                case Variant.VT_I2:
-                    values.add(vtType, cimType, property, pVal.shortValue());
-                    break;
-                case Variant.VT_BOOL:
-                    values.add(vtType, cimType, property, pVal.booleanValue());
-                    break;
-                case Variant.VT_R4:
-                    values.add(vtType, cimType, property, pVal.floatValue());
-                    break;
-                case Variant.VT_R8:
-                    values.add(vtType, cimType, property, pVal.doubleValue());
-                    break;
-                case Variant.VT_NULL:
-                    values.add(vtType, cimType, property, null);
-                    break;
-                // Unimplemented type. User must cast
-                default:
-                    values.add(vtType, cimType, property, pVal.getValue());
-                }
-                OleAuto.INSTANCE.VariantClear(pVal);
-            }
-            clsObj.Release();
-
-            values.incrementResultCount();
-        }
-        return values;
-    }
 }
