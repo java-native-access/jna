@@ -42,7 +42,6 @@ import com.sun.jna.platform.win32.COM.Wbemcli.IWbemClassObject;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemLocator;
 import com.sun.jna.platform.win32.COM.Wbemcli.IWbemServices;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 
 /**
  * Utility class providing access to Windows Management Interface (WMI) via COM.
@@ -145,9 +144,6 @@ public class WbemcliUtil {
         /**
          * Query WMI for values, with no timeout.
          *
-         * @param query A WmiQuery object encapsulating the namespace, class,
-         *              and properties
-         *
          * @return a WmiResult object containing the query results, wrapping an
          *         EnumMap
          */
@@ -162,19 +158,17 @@ public class WbemcliUtil {
         /**
          * Query WMI for values, with a specified timeout.
          *
-         * @param <T> an enum
-         * @param query A WmiQuery object encapsulating the namespace, class,
-         *                and properties
-         * @param timeout Number of milliseconds to wait for results before
-         *                timing out. If
-         *                {@link IEnumWbemClassObject#WBEM_INFINITE} (-1), will
-         *                always wait for results. If a timeout occurs, throws a
-         *                {@link TimeoutException}.
+         * @param timeout
+         *            Number of milliseconds to wait for results before timing
+         *            out. If {@link IEnumWbemClassObject#WBEM_INFINITE} (-1),
+         *            will always wait for results. If a timeout occurs, throws
+         *            a {@link TimeoutException}.
          *
          * @return a WmiResult object containing the query results, wrapping an
          *         EnumMap
          *
-         * @throws TimeoutException if the query times out before completion
+         * @throws TimeoutException
+         *             if the query times out before completion
          */
         public WmiResult<T> execute(int timeout) throws TimeoutException {
             // Idiot check
@@ -207,13 +201,14 @@ public class WbemcliUtil {
          * even while results are being retrieved; results may begun to be
          * enumerated in the forward direction only.
          *
-         * @param svc A WbemServices object to make the calls
-         * @param query A WmiQuery object encapsulating the details of the query
+         * @param svc
+         *            A WbemServices object to make the calls
+         * @param query
+         *            A WmiQuery object encapsulating the details of the query
          *
          * @return An enumerator to receive the results of the query
          */
         private static <T extends Enum<T>> IEnumWbemClassObject selectProperties(IWbemServices svc, WmiQuery<T> query) {
-            PointerByReference pEnumerator = new PointerByReference();
             // Step 6: --------------------------------------------------
             // Use the IWbemServices pointer to make requests of WMI ----
             T[] props = query.getPropertyEnum().getEnumConstants();
@@ -265,18 +260,21 @@ public class WbemcliUtil {
          * results are still being retrieved and may iterate in the forward
          * direction only.
          *
-         * @param enumerator The enumerator with the results
-         * @param propertyEnum The enum containing the properties to enumerate,
-         *                     which are the keys to the WmiResult map
-         * @param timeout Number of milliseconds to wait for results before
-         *                     timing out. If
-         *                     {@link IEnumWbemClassObject#WBEM_INFINITE} (-1),
-         *                     will always wait for results.
+         * @param enumerator
+         *            The enumerator with the results
+         * @param propertyEnum
+         *            The enum containing the properties to enumerate, which are
+         *            the keys to the WmiResult map
+         * @param timeout
+         *            Number of milliseconds to wait for results before timing
+         *            out. If {@link IEnumWbemClassObject#WBEM_INFINITE} (-1),
+         *            will always wait for results.
          *
          * @return A WmiResult object encapsulating an EnumMap which will hold
          *         the results.
          *
-         * @throws TimeoutException if the query times out before completion
+         * @throws TimeoutException
+         *             if the query times out before completion
          */
         private static <T extends Enum<T>> WmiResult<T> enumerateProperties(IEnumWbemClassObject enumerator,
                 Class<T> propertyEnum, int timeout) throws TimeoutException {

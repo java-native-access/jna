@@ -82,7 +82,8 @@ public interface Wbemcli {
     public static final int CIM_FLAG_ARRAY = 0x2000;
 
     /**
-     * Holds a row of results of a WMI query
+     * Contains and manipulates both WMI class definitions and class object
+     * instances.
      */
     class IWbemClassObject extends Unknown {
 
@@ -97,12 +98,12 @@ public interface Wbemcli {
                 IntByReference plFlavor) {
             // Get is 5th method of IWbemClassObjectVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(4,
-                    new Object[]{getPointer(), wszName, lFlags, pVal, pType, plFlavor}, HRESULT.class);
+                    new Object[] { getPointer(), wszName, lFlags, pVal, pType, plFlavor }, HRESULT.class);
         }
     }
 
     /**
-     * Iterates to the next row of results of a WMI query
+     * Used to enumerate Common Information Model (CIM) objects.
      */
     class IEnumWbemClassObject extends Unknown {
 
@@ -117,7 +118,7 @@ public interface Wbemcli {
             // Next is 5th method of IEnumWbemClassObjectVtbl in
             // WbemCli.h
             return (HRESULT) _invokeNativeObject(4,
-                    new Object[]{getPointer(), lTimeOut, uCount, ppObjects, puReturned}, HRESULT.class);
+                    new Object[] { getPointer(), lTimeOut, uCount, ppObjects, puReturned }, HRESULT.class);
         }
 
         public IWbemClassObject[] Next(int lTimeOut, int uCount) {
@@ -126,7 +127,7 @@ public interface Wbemcli {
             HRESULT result = Next(lTimeOut, uCount, resultArray, resultCount);
             COMUtils.checkRC(result);
             IWbemClassObject[] returnValue = new IWbemClassObject[resultCount.getValue()];
-            for(int i = 0; i < resultCount.getValue(); i++) {
+            for (int i = 0; i < resultCount.getValue(); i++) {
                 returnValue[i] = new IWbemClassObject(resultArray[i]);
             }
             return returnValue;
@@ -134,7 +135,8 @@ public interface Wbemcli {
     }
 
     /**
-     * Locates and connects to a WMI namespace
+     * Used to obtain the initial namespace pointer to the IWbemServices
+     * interface for WMI on a specific host computer.
      */
     class IWbemLocator extends Unknown {
 
@@ -163,12 +165,12 @@ public interface Wbemcli {
         public HRESULT ConnectServer(BSTR strNetworkResource, BSTR strUser, BSTR strPassword, BSTR strLocale,
                 int lSecurityFlags, BSTR strAuthority, IWbemContext pCtx, PointerByReference ppNamespace) {
             // ConnectServier is 4th method of IWbemLocatorVtbl in WbemCli.h
-            return (HRESULT) _invokeNativeObject(3, new Object[]{getPointer(), strNetworkResource, strUser,
-                strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace}, HRESULT.class);
+            return (HRESULT) _invokeNativeObject(3, new Object[] { getPointer(), strNetworkResource, strUser,
+                    strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace }, HRESULT.class);
         }
 
-        public IWbemServices ConnectServer(String strNetworkResource, String strUser, String strPassword, String strLocale,
-                int lSecurityFlags, String strAuthority, IWbemContext pCtx) {
+        public IWbemServices ConnectServer(String strNetworkResource, String strUser, String strPassword,
+                String strLocale, int lSecurityFlags, String strAuthority, IWbemContext pCtx) {
             BSTR strNetworkResourceBSTR = OleAuto.INSTANCE.SysAllocString(strNetworkResource);
             BSTR strUserBSTR = OleAuto.INSTANCE.SysAllocString(strUser);
             BSTR strPasswordBSTR = OleAuto.INSTANCE.SysAllocString(strPassword);
@@ -178,8 +180,8 @@ public interface Wbemcli {
             PointerByReference pbr = new PointerByReference();
 
             try {
-                HRESULT result = (HRESULT) ConnectServer(strNetworkResourceBSTR, strUserBSTR,
-                    strPasswordBSTR, strLocaleBSTR, lSecurityFlags, strAuthorityBSTR, pCtx, pbr);
+                HRESULT result = ConnectServer(strNetworkResourceBSTR, strUserBSTR, strPasswordBSTR, strLocaleBSTR,
+                        lSecurityFlags, strAuthorityBSTR, pCtx, pbr);
 
                 COMUtils.checkRC(result);
 
@@ -195,7 +197,8 @@ public interface Wbemcli {
     }
 
     /**
-     * Executes a WMI Query
+     * Used by clients and providers to access WMI services. The interface is
+     * implemented by WMI and WMI providers, and is the primary WMI interface.
      */
     class IWbemServices extends Unknown {
 
@@ -210,7 +213,7 @@ public interface Wbemcli {
                 PointerByReference ppEnum) {
             // ExecQuery is 21st method of IWbemServicesVtbl in WbemCli.h
             return (HRESULT) _invokeNativeObject(20,
-                    new Object[]{getPointer(), strQueryLanguage, strQuery, lFlags, pCtx, ppEnum}, HRESULT.class);
+                    new Object[] { getPointer(), strQueryLanguage, strQuery, lFlags, pCtx, ppEnum }, HRESULT.class);
         }
 
         public IEnumWbemClassObject ExecQuery(String strQueryLanguage, String strQuery, int lFlags, Pointer pCtx) {
@@ -220,7 +223,7 @@ public interface Wbemcli {
                 PointerByReference pbr = new PointerByReference();
 
                 HRESULT res = ExecQuery(strQueryLanguageBSTR, strQueryBSTR, lFlags, pCtx, pbr);
-                
+
                 COMUtils.checkRC(res);
 
                 return new IEnumWbemClassObject(pbr.getValue());
@@ -231,6 +234,10 @@ public interface Wbemcli {
         }
     }
 
+    /**
+     * Optionally used to communicate additional context information to
+     * providers when submitting IWbemServices calls to WMI
+     */
     class IWbemContext extends Unknown {
 
         public IWbemContext() {
@@ -239,6 +246,5 @@ public interface Wbemcli {
         public IWbemContext(Pointer pvInstance) {
             super(pvInstance);
         }
-
     }
 }
