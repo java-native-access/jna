@@ -32,6 +32,7 @@ Features
 * [#1001](https://github.com/java-native-access/jna/pull/1001): Added overloads to `c.s.j.platform.win32.Advapi32Util` methods which allow the caller to specify `samDesiredExtra` to request additional registry key security and access rights - [@camw](https://github.com/camw).
 * [#1007](https://github.com/java-native-access/jna/pull/1007): Added OSGi export of Solaris package - [@swimmesberger](https://github.com/swimmesberger).
 * [#1003](https://github.com/java-native-access/jna/pull/1003): Allow `NativeMapped` to be used with enums - [@koraktor](https://github.com/koraktor).
+* [#994](https://github.com/java-native-access/jna/issues/994): Added `CoInitializeSecurity` and `CoSetProxyBlanket` to `c.s.j.platform.win32.Ole32`, added new `c.s.j.platform.win32.Wbemcli` classes needed to query WMI, and added a `WbemcliUtil` class implementing WMI queries. - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
