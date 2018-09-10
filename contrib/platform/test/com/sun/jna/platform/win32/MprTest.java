@@ -17,6 +17,7 @@ package com.sun.jna.platform.win32;
 import java.io.File;
 
 import com.sun.jna.Memory;
+import com.sun.jna.Native;
 import com.sun.jna.platform.win32.LMShare.SHARE_INFO_2;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winnetwk.ConnectFlag;
@@ -27,6 +28,8 @@ import com.sun.jna.platform.win32.Winnetwk.RESOURCETYPE;
 import com.sun.jna.platform.win32.Winnetwk.RESOURCEUSAGE;
 import com.sun.jna.platform.win32.Winnetwk.UNIVERSAL_NAME_INFO;
 import com.sun.jna.ptr.IntByReference;
+import static com.sun.jna.win32.W32APIOptions.DEFAULT_OPTIONS;
+import static com.sun.jna.win32.W32APIOptions.UNICODE_OPTIONS;
 
 import junit.framework.TestCase;
 
@@ -61,7 +64,24 @@ public class MprTest extends TestCase {
             // Cancel any existing connections of the same name
             Mpr.INSTANCE.WNetCancelConnection2(resource.lpRemoteName, 0, true);
             // Establish a new one
-            assertEquals(WinError.ERROR_SUCCESS, Mpr.INSTANCE.WNetUseConnection(null, resource, null, null, 0, null, null, null));
+            Memory lpAccessName;
+            if(DEFAULT_OPTIONS==UNICODE_OPTIONS) {
+                lpAccessName = new Memory((WinDef.MAX_PATH + 1) * Native.WCHAR_SIZE);
+            } else {
+                lpAccessName = new Memory(WinDef.MAX_PATH + 1);
+            }
+            IntByReference lpAccessNameSize = new IntByReference(WinDef.MAX_PATH);
+            assertEquals(WinError.ERROR_SUCCESS, Mpr.INSTANCE.WNetUseConnection(null, resource, null, null, 0, lpAccessName, lpAccessNameSize, null));
+            String accessName;
+            if(DEFAULT_OPTIONS==UNICODE_OPTIONS) {
+                accessName = lpAccessName.getWideString(0);
+            } else {
+                accessName = lpAccessName.getString(0);
+            }
+            // System.out.println("Size: " + lpAccessNameSize.getValue());
+            // System.out.println("lpAccessName: " + accessName);
+            assertNotNull(accessName);
+            assertFalse(accessName.isEmpty());
         } finally {
             // Clean up resources
             Mpr.INSTANCE.WNetCancelConnection2(resource.lpRemoteName, 0, true);
