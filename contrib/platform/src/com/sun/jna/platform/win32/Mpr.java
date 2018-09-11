@@ -30,7 +30,6 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.Winnetwk.*;
 import com.sun.jna.ptr.IntByReference;
-import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
@@ -308,7 +307,7 @@ public interface Mpr extends StdCallLibrary {
      *         (v=vs.85).aspx
      */
     public int WNetUseConnection(HWND hwndOwner, NETRESOURCE lpNETRESOURCE, String lpPassword, String lpUserID, int dwFlags,
-            PointerByReference lpAccessName, IntByReference lpBufferSize, IntByReference lpResult);
+            Pointer lpAccessName, IntByReference lpBufferSize, IntByReference lpResult);
 
     /**
      * The WNetAddConnection3 function makes a connection to a network resource.
