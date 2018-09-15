@@ -980,7 +980,8 @@ public final class Native implements Version {
                 }
             }
         }
-        if (!Boolean.getBoolean("jna.nosys")) {
+        String jnaNosys = System.getProperty("jna.nosys", "true");
+        if (!Boolean.parseBoolean(jnaNosys)) {
             try {
                 if (DEBUG_JNA_LOAD) {
                     System.out.println("Trying (via loadLibrary) " + libName);
