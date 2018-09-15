@@ -1137,6 +1137,9 @@ public final class Native implements Version {
                 if (!Boolean.getBoolean("jnidispatch.preserve")) {
                     lib.deleteOnExit();
                 }
+                if (DEBUG) {
+                    System.out.println("Extracting library to " + lib.getAbsolutePath());
+                }
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -1288,10 +1291,27 @@ public final class Native implements Version {
         }
         else {
             File tmp = new File(System.getProperty("java.io.tmpdir"));
-            // Loading DLLs via System.load() under a directory with a unicode
-            // name will fail on windows, so use a hash code of the user's
-            // name in case the user's name contains non-ASCII characters
-            jnatmp = new File(tmp, "jna-" + System.getProperty("user.name").hashCode());
+            if(Platform.isMac()) {
+                // https://developer.apple.com/library/archive/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/MacOSXDirectories/MacOSXDirectories.html
+                jnatmp = new File(System.getProperty("user.home"), "Library/Caches/JNA/temp");
+            } else if (Platform.isLinux() || Platform.isSolaris() || Platform.isAIX() || Platform.isFreeBSD() || Platform.isNetBSD() || Platform.isOpenBSD() || Platform.iskFreeBSD()) {
+                // https://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html
+                // The XDG_CACHE_DIR is expected to be per user
+                String xdgCacheEnvironment = System.getenv("XDG_CACHE_HOME");
+                File xdgCacheFile;
+                if(xdgCacheEnvironment == null || xdgCacheEnvironment.trim().isEmpty()) {
+                    xdgCacheFile = new File(System.getProperty("user.home"), ".cache");
+                } else {
+                    xdgCacheFile = new File(xdgCacheEnvironment);
+                }
+                jnatmp = new File(xdgCacheFile, "JNA/temp");
+            } else {
+                // Loading DLLs via System.load() under a directory with a unicode
+                // name will fail on windows, so use a hash code of the user's
+                // name in case the user's name contains non-ASCII characters
+                jnatmp = new File(tmp, "jna-" + System.getProperty("user.name").hashCode());
+            }
+
             jnatmp.mkdirs();
             if (!jnatmp.exists() || !jnatmp.canWrite()) {
                 jnatmp = tmp;
