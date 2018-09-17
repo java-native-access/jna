@@ -130,9 +130,9 @@ public class Pointer {
      * Indirect the native pointer, copying <em>from</em> memory pointed to by
      * native pointer, into the specified array.
      *
-     * @param offset byte offset from pointer into which data is copied
+     * @param offset byte offset from pointer from which data is copied
      * @param buf    <code>byte</code> array into which data is copied
-     * @param index  array index from which to start copying
+     * @param index  array index to which data is copied
      * @param length number of elements from native pointer that must be copied
      */
     public void read(long offset, byte[] buf, int index, int length) {
