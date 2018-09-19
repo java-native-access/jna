@@ -3780,4 +3780,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * information, call {@link com.sun.jna.Native#getLastError()}.</p>
      */
     boolean ReleaseMutex(HANDLE handle);
+	
+    /**
+     * Ends the calling process (this process) and all its threads.
+     *
+     * From Java, this will will cause the process to terminate without
+     * execution of any shutdown hooks 
+     */
+    void ExitProcess(int exitCode);
 }
