@@ -34,6 +34,7 @@ Features
 * [#1003](https://github.com/java-native-access/jna/pull/1003): Allow `NativeMapped` to be used with enums - [@koraktor](https://github.com/koraktor).
 * [#994](https://github.com/java-native-access/jna/issues/994): Added `CoInitializeSecurity` and `CoSetProxyBlanket` to `c.s.j.platform.win32.Ole32`, added new `c.s.j.platform.win32.Wbemcli` classes needed to query WMI, and added a `WbemcliUtil` class implementing WMI queries. - [@dbwiddis](https://github.com/dbwiddis).
 * [#1013](https://github.com/java-native-access/jna/pull/1013): Add automatic module name entries to manifest of jna and jna-platform - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#985](https://github.com/java-native-access/jna/issues/985): Improve handling of dynamicaly extracted native library. On Mac OS X systems `~/Library/Application Support/JNA/temp` and on other Unix like systems `$XDG_CACHE_DIR/JNA/temp` (Default value is: `~/.cache/JNA/temp`) is used - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
@@ -62,7 +63,8 @@ Bug Fixes
   </ol> - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#958](https://github.com/java-native-access/jna/issues/958): Update for PR 863: Old toolchains produce binaries without hard-/softfloat markers. Rasbian is missinng the markers and the oracle JDK is also affected. For hardfloat detection now also the Arm EABI section is also considered - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#974](https://github.com/java-native-access/jna/issues/974): If the callback code failed to attach to the JVM, this lead to a segfault. The success of attaching to the JVM was checked to late and an invalid `JNIEnv` pointer was used to access the JVM - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#1010](https://github.com/java-native-access/jna/issues/1010): Fix binding of `lpAccessName` parameter of `com.sun.jna.platform.win32.Mpr#WNetUseConnection` 
+* [#1010](https://github.com/java-native-access/jna/issues/1010): Fix binding of `lpAccessName` parameter of `com.sun.jna.platform.win32.Mpr#WNetUseConnection` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#384](https://github.com/java-native-access/jna/issues/384): Switch default value for `jna.nosys` to `true`. By default then the embedded native library is used - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Breaking Changes
 ----------------

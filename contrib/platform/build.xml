@@ -178,7 +178,6 @@ com.sun.jna.platform.wince;version=${osgi.version}
         <!-- avoid VM conflicts with JNA protected mode -->
         <env key="${ld.preload.name}" file="${libjsig}"/>
         <!-- Ignore any system install of JNA -->
-        <sysproperty key="jna.nosys" value="true"/>
         <sysproperty key="jna.builddir" file="${file.reference.jna.build}"/>
         <jvmarg value="${vmopt.arch}"/>
         <classpath><path path="${run.test.classpath}"/><path path="${file.reference.jna.build}/test-classes"/></classpath>
@@ -206,7 +205,6 @@ com.sun.jna.platform.wince;version=${osgi.version}
 
     <!-- One-off test to check field order definitions -->
     <target name="test-field-order" depends="-pre-test-run-single" >
-        <!-- @todo How to ensure sys prop: jna.nosys=true is seen in tests? -->
         <!--<property name="test.includes" value="com/sun/jna/platform/**/*.java"/>-->
         <property name="test.includes" value="com/sun/jna/platform/StructureFieldOrderTest.java"/>
         <property name="javac.includes" value="**/*"/>

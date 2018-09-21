@@ -59,19 +59,19 @@ additional JNI or native code.
 JNA includes a small, platform-specific shared library which enables all
 native access.  When the {@link com.sun.jna.Native} class is first accessed,
 JNA will first attempt to load this library from the directories specified
-in <code>jna.boot.library.path</code>.  If that fails, it will fall back to
-loading from the system library paths. Finally it will attempt to extract the
-stub library from from the JNA jar file, and load it. 
+in <code>jna.boot.library.path</code>. If that fails and <code>jna.nosys=false</code>
+is set, it will fall back to loading from the system library paths. Finally it
+will attempt to extract the stub library from from the JNA jar file, and load it.
 <p/>
 The <code>jna.boot.library.path</code> property is mainly to support
 jna.jar being included in -Xbootclasspath, where
 <code>java.library.path</code> and LD_LIBRARY_PATH are ignored.  It is also
 useful for designating a version of the library to use in preference to any
-which may already be installed on the system.  
+which may already be installed on the system.
 <p/>
-Loading from the system may be disabled by <code>jna.nosys=true</code>,
+Loading from the system may be enabled by <code>jna.nosys=false</code>,
 and unpacking from the jar file may be disabled by
-<code>jna.nounpack=true</code>. 
+<code>jna.nounpack=true</code>.
 <p/>
 The library name used to search for JNA's native library may be altered
 by setting <code>jna.boot.library.name</code>, which defaults to

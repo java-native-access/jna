@@ -125,7 +125,7 @@ public class JNALoadTest extends TestCase implements Paths {
         String path = (String)field.get(null);
         assertNotNull("Native library path unavailable", path);
         assertTrue("Native library not unpacked from jar: " + path,
-                   path.startsWith(System.getProperty("java.io.tmpdir")));
+                path.startsWith(Native.getTempDir().getAbsolutePath()));
 
         Reference<Class<?>> ref = new WeakReference<Class<?>>(cls);
         Reference<ClassLoader> clref = new WeakReference<ClassLoader>(loader);
