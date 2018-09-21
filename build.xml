@@ -389,6 +389,7 @@
         <attribute name="Specification-Title" value="${spec.title}"/>
         <attribute name="Specification-Vendor" value="${spec.vendor}"/>
         <attribute name="Specification-Version" value="${spec.version}"/>
+        <attribute name="Automatic-Module-Name" value="com.sun.jna"/>
         <!--
             OSGi Bundle attributes
             See http://www.osgi.org/Specifications/Reference
