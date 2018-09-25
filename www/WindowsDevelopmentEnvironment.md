@@ -70,7 +70,7 @@ This builds the library based on the Visual C++ compiler.
 <pre>
 0. Start-Point: A clean Windows 10 Installation with all patches as of 2017-11-05
 1. Install Visual C++ Build Tools 2015 (http://landinghub.visualstudio.com/visual-cpp-build-tools) (the 8.1 SDK is enough)
-2. Install Oracle JDK 8u152 (64 bit)
+2. Install Oracle JDK 8u181 (64 bit)
 3. Install Cygwin 64 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
@@ -94,7 +94,7 @@ For 32bit:
 
 0. Start-Point: A clean Windows 10 Installation with all patches as of 2017-11-05
 1. Install Visual C++ Build Tools 2015 (http://landinghub.visualstudio.com/visual-cpp-build-tools) (the 8.1 SDK is enough)
-2. Install Oracle JDK 8u152 (32 bit)
+2. Install Oracle JDK 8u181 (32 bit)
 3. Install Cygwin 32 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
@@ -104,9 +104,9 @@ For 32bit:
         - mingw64-i686-gcc-core (Version 5.4.0-4)
 	- gcc-g++
 	- diffutils
-        - git 
+        - git
 4. Ensure ant, maven, cygwin (32 Bit!) are accessible from the PATH
-5. Run 
+5. Run
         set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.8.0_152
         set PATH=c:\cygwin\bin\;%PATH%
 	"C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" x86

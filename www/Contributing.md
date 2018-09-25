@@ -4,10 +4,11 @@ Contributing to JNA
 JNA contains work from many developers. You're encouraged to contribute to both JNA's core `jna.jar` as well as platform-specific `platform.jar` libraries.
 
 - Install Git and configure it to work with Github
-- Fork the code from [github.com/twall/jna](https://github.com/java-native-access/jna)
+- Fork the code from [github.com/java-native-access/jna](https://github.com/java-native-access/jna)
 - Check out the code with `git clone git@github.com:username/jna.git`
 - Ensure you can build the project with `ant dist test test-platform`
 - Make your code changes, write tests, build
+- Add entry to CHANGES.md describing the change
 - Submit pull requests, forks and/or topical branches are encouraged.
 
 Build Environment

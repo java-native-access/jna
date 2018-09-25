@@ -68,7 +68,7 @@ public class WebStartTest extends TestCase implements Paths {
         + "  <information>\n"
         + "    <title>JNLP Web Start Test</title>\n"
         + "    <vendor>JNA</vendor>\n"
-        + "    <homepage href='http://github.com/twall/jna'/>\n"
+        + "    <homepage href='https://github.com/java-native-access/jna'/>\n"
         + "    <description>Local JNLP launch test.</description>\n"
         + "    <description kind='short'>Launch Test</description>\n"
         + "  </information>\n"
