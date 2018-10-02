@@ -24,21 +24,17 @@
  */
 package com.sun.jna.platform.linux;
 
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class XAttrUtilTest {
-    private static final Logger log = LoggerFactory.getLogger(XAttrTest.class);
-
     private static final String TEST_STRING = "Žluťoučký kůň úpěl nebo tak něco.";
     private static final String TEST_STRING_2 = "Příliš žluťoučký kůň úpěl ďábelské ódy.";
     private static final String TEST_ATTRIBUTE = "user.test";
@@ -48,7 +44,6 @@ public class XAttrUtilTest {
     public void setXAttr() throws IOException {
         File file = File.createTempFile("xattr", "test");
         file.deleteOnExit();
-        log.info("Test file is {}", file.getAbsolutePath());
 
         XAttrUtil.setXAttr(file.getAbsolutePath(), TEST_ATTRIBUTE, TEST_STRING);
         XAttrUtil.setXAttr(file.getAbsolutePath(), TEST_ATTRIBUTE_FOO, TEST_STRING_2);
@@ -64,7 +59,6 @@ public class XAttrUtilTest {
         assertEquals(TEST_STRING_2, retrievedValue);
 
         Collection<String> xattrs = XAttrUtil.listXAttr(file.getAbsolutePath());
-        log.info("Extended attributes on {}: {}", file.getAbsolutePath(), xattrs);
         assertTrue(xattrs.contains(TEST_ATTRIBUTE));
         assertTrue(xattrs.contains(TEST_ATTRIBUTE_FOO));
 
