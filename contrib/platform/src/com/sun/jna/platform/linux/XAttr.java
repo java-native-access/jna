@@ -30,7 +30,7 @@ import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 
 public interface XAttr extends Library {
-    XAttr INSTANCE = Native.loadLibrary(null, XAttr.class);
+    XAttr INSTANCE = Native.load(XAttr.class);
 
     class size_t extends IntegerType {
         public static final size_t ZERO = new size_t();
