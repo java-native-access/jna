@@ -2575,7 +2575,7 @@ public abstract class Advapi32Util {
         /**
          * @param fileName path to the file
          * @param compact if true compatible ACEs are merged if possible
-         * @return
+         * @return list of ACEs in the DACL of the referenced file
          */
 	public static ACE_HEADER[] getFileSecurity(String fileName,
 			boolean compact) {

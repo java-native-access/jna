@@ -1029,7 +1029,8 @@ public interface WinCrypt {
          * signer.
          * @param hMsgCertStore A handle to the certificate store containing all
          * the certificates and CRLs in the signed message.
-         * @return
+         * @return Pointer to a read-only {@link com.sun.jna.platform.win32.WinCrypt.CERT_CONTEXT}
+         * if a signer certificate is found, {@code null} if the function fails.
          */
         public CERT_CONTEXT.ByReference callback(Pointer pvGetArg, int dwCertEncodingType,
                               CERT_INFO pSignerId,

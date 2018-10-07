@@ -1932,7 +1932,7 @@ public interface Advapi32 extends StdCallLibrary {
      *
      * @param hSCManager         A handle to the service control manager
      *                           database. This handle is returned by the
-     *                           {@link OpenSCManager} function, and must have
+     *                           {@link #OpenSCManager} function, and must have
      *                           the {@link Winsvc#SC_MANAGER_ENUMERATE_SERVICE}
      *                           access right. For more information, see Service
      *                           Security and Access Rights.
@@ -2006,14 +2006,14 @@ public interface Advapi32 extends StdCallLibrary {
      * @param lpResumeHandle     A pointer to a variable that, on input,
      *                           specifies the starting point of enumeration.
      *                           You must set this value to zero the first time
-     *                           the {@link EnumServicesStatusEx} function is
+     *                           the {@link #EnumServicesStatusEx} function is
      *                           called. On output, this value is zero if the
      *                           function succeeds. However, if the function
      *                           returns zero and the
      *                           {@link Kernel32#GetLastError} function returns
      *                           {@link WinError#ERROR_MORE_DATA}, this value
      *                           indicates the next service entry to be read
-     *                           when the {@link EnumServicesStatusEx} function
+     *                           when the {@link #EnumServicesStatusEx} function
      *                           is called to retrieve the additional data.
      * @param pszGroupName       The load-order group name. If this parameter is
      *                           a string, the only services enumerated are

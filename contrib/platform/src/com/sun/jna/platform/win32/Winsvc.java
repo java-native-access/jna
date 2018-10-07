@@ -842,7 +842,7 @@ public interface Winsvc {
          */
         public String lpDisplayName;
         /**
-         * A {@link Winsvc#SERVICE_STATUS} structure that contains status
+         * A {@link com.sun.jna.platform.win32.Winsvc.SERVICE_STATUS} structure that contains status
          * information for the lpServiceName service.
          */
         public SERVICE_STATUS ServiceStatus;
