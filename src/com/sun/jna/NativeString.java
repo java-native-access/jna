@@ -21,9 +21,6 @@
  */
 package com.sun.jna;
 
-import java.nio.CharBuffer;
-
-
 /** Provides a temporary allocation of an immutable C string
  * (<code>const char*</code> or <code>const wchar_t*</code>) for use when
  * converting a Java String into a native memory function argument.
@@ -111,9 +108,7 @@ class NativeString implements CharSequence, Comparable {
     @Override
     public String toString() {
         boolean wide = WIDE_STRING.equals(encoding);
-        String s = wide ? "const wchar_t*" : "const char*";
-        s += "(" + (wide ? pointer.getWideString(0) : pointer.getString(0, encoding)) + ")";
-        return s;
+        return (wide ? pointer.getWideString(0) : pointer.getString(0, encoding));
     }
 
     public Pointer getPointer() {
@@ -132,7 +127,7 @@ class NativeString implements CharSequence, Comparable {
 
     @Override
     public CharSequence subSequence(int start, int end) {
-        return CharBuffer.wrap(toString()).subSequence(start, end);
+        return toString().subSequence(start, end);
     }
 
     @Override
