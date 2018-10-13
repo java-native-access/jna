@@ -68,51 +68,55 @@ windows.
 This builds the library based on the Visual C++ compiler.
 
 <pre>
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2017-11-05
-1. Install Visual C++ Build Tools 2015 (http://landinghub.visualstudio.com/visual-cpp-build-tools) (the 8.1 SDK is enough)
+0. Start-Point: A clean Windows 10 Installation with all patches as of 2018-10-12
+1. Install Visual C++ Build Tools 2017 (https://visualstudio.microsoft.com/de/downloads/)
+   (Install "Windows 8.1 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
 2. Install Oracle JDK 8u181 (64 bit)
 3. Install Cygwin 64 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
 	- automake1.15
 	- libtool
-	- mingw64-x86_64-gcc-g++ (Version 5.4.0-4)
-	- mingw64-x86_64-gcc-core (Version 5.4.0-4)
+	- mingw64-x86_64-gcc-g++ (Version 7.3.0-1)
+	- mingw64-x86_64-gcc-core (Version 7.3.0-1)
 	- gcc-g++
-	- diffutils
-        - git 
-4. Ensure ant, maven, cygwin (64 Bit!) are accessible from the PATH
-5. Run 
-        set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_152
-        set PATH=c:\cygwin64\bin\;%PATH%
-	"C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" x64
-   inside a windows command prompt
-6. Point JAVA_HOME to the root of a 64 Bit JDK
-7. Run native build
+        - git
+4. Open a cmd for the following actions
+5. Point JAVA_HOME to the root of a 64 Bit JDK,
+   set JAVA_HOME=c:\Program Files\Java\jdk1.8.0_181
+6. Ensure ant is accessible from the PATH
+   set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
+7, Include 64 Bit Cygwin in the path
+   set PATH=c:\cygwin64\bin\;%PATH%
+8. Setup the Visual Studio build environment for 64 Bit builds
+   "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=amd64
+9. Run native build
 
 For 32bit:
 
-0. Start-Point: A clean Windows 10 Installation with all patches as of 2017-11-05
-1. Install Visual C++ Build Tools 2015 (http://landinghub.visualstudio.com/visual-cpp-build-tools) (the 8.1 SDK is enough)
+0. Start-Point: A clean Windows 10 Installation with all patches as of 2018-10-12
+1. Install Visual C++ Build Tools 2017 (https://visualstudio.microsoft.com/de/downloads/)
+   (Install "Windows 8.1 SDK", "VC++ 2017 Version 15.7 v14.14 toolset", "Windows Universal CRT SDK")
 2. Install Oracle JDK 8u181 (32 bit)
 3. Install Cygwin 32 Bit (https://cygwin.com/install.html)
 	- make
 	- automake
 	- automake1.15
 	- libtool
-        - mingw64-i686-gcc-g++ (Version 5.4.0-4)
-        - mingw64-i686-gcc-core (Version 5.4.0-4)
+        - mingw64-i686-gcc-g++ (Version 7.3.0-1)
+        - mingw64-i686-gcc-core (Version 7.3.0-1)
 	- gcc-g++
-	- diffutils
         - git
-4. Ensure ant, maven, cygwin (32 Bit!) are accessible from the PATH
-5. Run
-        set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.8.0_152
-        set PATH=c:\cygwin\bin\;%PATH%
-	"C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" x86
-   inside a windows command prompt
-6. Point JAVA_HOME to the root of a 32 Bit JDK
-7. Run native build
+4. Open a cmd for the following actions
+5. Point JAVA_HOME to the root of a 32 Bit JDK,
+   set JAVA_HOME=c:\Program Files (x86)\Java\jdk1.8.0_181
+6. Ensure ant is accessible from the PATH
+   set PATH=c:\temp\apache-ant-1.9.11\bin;%PATH%
+7, Include 32 Bit Cygwin in the path
+   set PATH=c:\cygwin\bin\;%PATH%
+8. Setup the Visual Studio build environment for 32 Bit builds
+   "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\Tools\VsDevCmd.bat" -arch=x86
+9. Run native build
 </pre>
 
 To build without Visual C++, using only Cygwin, just skip steps 1 and 5.
