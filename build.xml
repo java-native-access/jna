@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="JNA" default="default" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant" xmlns:if="ant:if">
+<project name="JNA" default="default" basedir="." 
+         xmlns:artifact="antlib:org.apache.maven.artifact.ant"
+         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer"
+         xmlns:if="ant:if">
   <description>Builds and tests JNA</description>
 
   <!-- Default build compiles all platform-independent stuff as well
@@ -135,6 +138,18 @@
   <target name="init" depends="-setup"/>
   <target name="compile-test-single" depends="compile-tests"/>
   <target name="compile-single" depends="compile"/>
+
+  <!-- Prepare additional ant task -->
+  <path id="maven-ant-tasks.classpath">
+      <pathelement location="lib/animal-sniffer-ant-tasks-1.17.jar" />
+      <pathelement location="lib/maven-ant-tasks-2.1.3.jar" />
+  </path>
+  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
+           uri="antlib:org.apache.maven.artifact.ant"
+           classpathref="maven-ant-tasks.classpath" />
+  <typedef resource="org/codehaus/mojo/animal_sniffer/antlib.xml"
+           uri="antlib:org.codehaus.mojo.animal_sniffer"
+           classpathref="maven-ant-tasks.classpath" />
 
   <target name="-prepare-anttools">
       <mkdir dir="${build}/ant-tools" />
@@ -1127,6 +1142,17 @@ cd ..
   <!-- to where the test library (testlib) is found.                   -->
   <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
           description="Run all unit tests">
+
+    <echo>Checking JDK compatibility 1.6</echo>
+
+    <echo></echo>
+
+    <as:check-signature signature="lib/java16-1.1.signature">
+        <path path="${classes}"/>
+    </as:check-signature>
+
+    <echo></echo>
+
     <property name="test.fork" value="yes"/>
     <property name="test.forkmode" value="perTest"/>
     
@@ -1369,12 +1395,6 @@ cd ..
       <arg value="-Djavadoc=${platform-javadoc-jar}"/>
     </artifact:mvn>
   </target>
-
-
-  <path id="maven-ant-tasks.classpath" path="lib/maven-ant-tasks-2.1.3.jar" />
-  <typedef resource="org/apache/maven/artifact/ant/antlib.xml"
-           uri="antlib:org.apache.maven.artifact.ant"
-           classpathref="maven-ant-tasks.classpath" />
 
   <!-- NOTE: The 'deploy' target works only if the version (jna.version in build.xml) ends in '-SNAPSHOT'. -->
   <target name="deploy" depends="dist" description="deploy snapshot version to Maven snapshot repository">

@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-
+* [#1025](https://github.com/java-native-access/jna/pull/1025): Restore java 6 compatibility and introduce animal-sniffer to prevent regressions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.0.0
 =============

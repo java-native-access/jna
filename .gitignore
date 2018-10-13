@@ -30,3 +30,4 @@ pom-jna-platform.xml.asc
 /contrib/platform/${build.generated.sources.dir}/
 /contrib/platform/${build}/
 /contrib/platform/nbproject/private/
+/nbproject/private/

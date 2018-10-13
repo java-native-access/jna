@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="platform" default="default" basedir=".">
+<project name="platform"
+         default="default"
+         basedir="."
+         xmlns:as="antlib:org.codehaus.mojo.animal_sniffer">
     <description>Builds and tests platform-specific code.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -63,7 +66,16 @@
     nbproject/build-impl.xml file.
 
     -->
-    
+
+    <!-- Prepare additional ant task -->
+    <path id="maven-ant-tasks.classpath">
+        <pathelement location="../../lib/animal-sniffer-ant-tasks-1.17.jar" />
+        <pathelement location="../../lib/maven-ant-tasks-2.1.3.jar" />
+    </path>
+    <typedef resource="org/codehaus/mojo/animal_sniffer/antlib.xml"
+             uri="antlib:org.codehaus.mojo.animal_sniffer"
+             classpathref="maven-ant-tasks.classpath" />
+
     <!-- the -init-macrodef-copylibs target superseeds the target defined in
     build-impl.xml. The classpath that the base copylibs target adds to the
     MANIFEST.MF interferes with spring-boot and tomcat   -->
@@ -98,7 +110,7 @@
             </sequential>
         </macrodef>
     </target>
-    
+
     <target name="-pre-jar">
         <tempfile deleteonexit="true" destdir="${build.dir}" property="tmp.manifest.file"/>
         <manifest file="${tmp.manifest.file}" mode="replace">
@@ -140,6 +152,17 @@ com.sun.jna.platform.wince;version=${osgi.version}
     </target>
 
     <target name="test" depends="init,compile,compile-test,-pre-test-run" description="Run platform unit tests.">
+
+      <echo>Checking JDK compatibility 1.6</echo>
+
+      <echo></echo>
+
+      <as:check-signature signature="../../lib/java16-1.1.signature" classpath="${javac.classpath}">
+          <path path="${build.classes.dir}"/>
+      </as:check-signature>
+
+      <echo></echo>
+
       <echo>Running platform tests: ${test.src.dir}</echo>
       <property name="test.fork" value="yes"/>
       <property name="reports.junit" location="${build}/reports/junit/${os.prefix}"/>

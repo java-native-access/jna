@@ -120,8 +120,9 @@ class Convert {
                         Constructor<VARIANT> constructor = null;
                         if (value != null) {
                                 for (Constructor<VARIANT> m : (Constructor<VARIANT>[]) VARIANT.class.getConstructors()) {
-                                        if (m.getParameterCount() > 0
-                                                && m.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
+                                        Class<?>[] parameters = m.getParameterTypes();
+                                        if (parameters.length == 1
+                                                && parameters[0].isAssignableFrom(value.getClass())) {
                                                 constructor = m;
                                         }
                                 }
