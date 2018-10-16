@@ -169,16 +169,22 @@ com.sun.jna.platform.wince;version=${osgi.version}
       <property name="results.junit" location="${build}/junit-results/${os.prefix}"/>
       <mkdir dir="${results.junit}"/>
       <echo>Saving test results in ${results.junit}</echo>
-      <condition property="tests.platform" value="**/mac/**/*Test.java">
+      <condition property="tests.platform.mac" value="**/mac/**/*Test.java">
         <os family="mac"/>
       </condition>
-      <condition property="tests.platform" value="**/win32/**/*Test.java">
+      <condition property="tests.platform.windows" value="**/win32/**/*Test.java">
         <os family="windows"/>
       </condition>
-      <condition property="tests.platform" value="**/unix/**/*Test.java">
-        <os family="unix"/>
+      <condition property="tests.platform.linux" value="**/linux/**/*Test.java">
+        <os name="Linux"/>
       </condition>
-      <property name="tests.platform" value=""/>
+      <condition property="tests.platform.unix" value="**/unix/**/*Test.java">
+        <and><os family="unix"/><not><os family="mac"/></not></and>
+      </condition>
+      <property name="tests.platform.mac" value=""/>
+      <property name="tests.platform.windows" value=""/>
+      <property name="tests.platform.linux" value=""/>
+      <property name="tests.platform.unix" value=""/>
       <property name="tests.exclude" value=""/>
       <property name="tests.exclude-patterns" value=""/>
       <condition property="java.awt.headless" value="true">
@@ -194,7 +200,10 @@ com.sun.jna.platform.wince;version=${osgi.version}
       <propertyset id="headless">
         <propertyref prefix="java.awt.headless"/>
       </propertyset>
-      <echo>tests.platform=${tests.platform}</echo>
+      <echo>tests.platform.mac=${tests.platform.mac}</echo>
+      <echo>tests.platform.windows=${tests.platform.windows}</echo>
+      <echo>tests.platform.linux=${tests.platform.linux}</echo>
+      <echo>tests.platform.unix=${tests.platform.unix}</echo>
       <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build.dir}">
         <!-- optionally run headless -->
         <syspropertyset refid="headless"/>
@@ -211,16 +220,19 @@ com.sun.jna.platform.wince;version=${osgi.version}
             <!-- Until StructureFieldOrderTest gets fixed up a little -->
             <exclude name="**/StructureFieldOrderTest.java"/>
             <exclude name="com/sun/jna/platform/AbstractWin32TestSupport.java"/>
-            <include name="${tests.platform}"/>
+            <include name="${tests.platform.mac}"/>
+            <include name="${tests.platform.windows}"/>
+            <include name="${tests.platform.linux}"/>
+            <include name="${tests.platform.unix}"/>
             <exclude name="${tests.exclude}"/>
           </fileset>
         </batchtest>
       </junit>
       <junitreport todir="${results.junit}">
-	<fileset dir="${results.junit}">
-	  <include name="TEST-*.xml"/>
-	</fileset>
-	<report todir="${reports.junit}"/>
+        <fileset dir="${results.junit}">
+          <include name="TEST-*.xml"/>
+        </fileset>
+        <report todir="${reports.junit}"/>
       </junitreport>
       <echo message="View test report in file://${reports.junit}/index.html" />
       <fail if="testfailure">One or more tests failed</fail>
