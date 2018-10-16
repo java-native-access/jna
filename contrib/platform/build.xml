@@ -200,10 +200,10 @@ com.sun.jna.platform.wince;version=${osgi.version}
       <propertyset id="headless">
         <propertyref prefix="java.awt.headless"/>
       </propertyset>
-      <echo>tests.platform=${tests.platform.mac}</echo>
-      <echo>tests.platform=${tests.platform.windows}</echo>
-      <echo>tests.platform=${tests.platform.linux}</echo>
-      <echo>tests.platform=${tests.platform.unix}</echo>
+      <echo>tests.platform.mac=${tests.platform.mac}</echo>
+      <echo>tests.platform.windows=${tests.platform.windows}</echo>
+      <echo>tests.platform.linux=${tests.platform.linux}</echo>
+      <echo>tests.platform.unix=${tests.platform.unix}</echo>
       <junit fork="${test.fork}" failureproperty="testfailure" tempdir="${build.dir}">
         <!-- optionally run headless -->
         <syspropertyset refid="headless"/>
