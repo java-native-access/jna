@@ -89,8 +89,8 @@ public interface LibC extends LibCAPI, Library {
         @Override
         protected List<String> getFieldOrder() {
             List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
-            if (PADDING_SIZE > 0) {
-                fieldOrder.add("_f");
+            if (PADDING_SIZE == 0) {
+                fieldOrder.remove("_f");
             }
             return fieldOrder;
         }
