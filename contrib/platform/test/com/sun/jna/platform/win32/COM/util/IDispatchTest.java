@@ -4,7 +4,6 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -362,35 +361,35 @@ public class IDispatchTest {
     @ComInterface(iid = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
     interface DWebBrowserEvents2EventTestUtilIUnknown {
 
-        @ComEventCallback(dispid = 0x000000fc)
+        @ComMethod(dispId = 0x000000fc)
         void NavigateComplete2UtilIUnknown(IUnknown source, Object url);
     }
 
     @ComInterface(iid = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
     interface DWebBrowserEvents2EventTestUtilIDispatch {
 
-        @ComEventCallback(dispid = 0x000000fc)
+        @ComMethod(dispId = 0x000000fc)
         void NavigateComplete2UtilIDispatch(IDispatch source, Object url);
     }
 
     @ComInterface(iid = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
     interface DWebBrowserEvents2EventTestIUnknown {
 
-        @ComEventCallback(dispid = 0x000000fc)
+        @ComMethod(dispId = 0x000000fc)
         void NavigateComplete2IUnknown(com.sun.jna.platform.win32.COM.IUnknown source, Object url);
     }
 
     @ComInterface(iid = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
     interface DWebBrowserEvents2EventTestIDispatch {
 
-        @ComEventCallback(dispid = 0x000000fc)
+        @ComMethod(dispId = 0x000000fc)
         void NavigateComplete2IDispatch(com.sun.jna.platform.win32.COM.IDispatch source, Object url);
     }
 
     @ComInterface(iid = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}")
     interface DWebBrowserEvents2EventTestSubclass {
 
-        @ComEventCallback(dispid = 0x000000fc)
+        @ComMethod(dispId = 0x000000fc)
         void NavigateComplete2Subclass(ComIWebBrowser2EventTest source, Object url);
     }
 

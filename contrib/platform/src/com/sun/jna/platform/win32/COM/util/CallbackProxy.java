@@ -53,6 +53,7 @@ import com.sun.jna.platform.win32.COM.IDispatchCallback;
 import com.sun.jna.platform.win32.COM.Unknown;
 import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 
@@ -100,11 +101,23 @@ public class CallbackProxy implements IDispatchCallback {
 		Map<DISPID, Method> map = new HashMap<DISPID, Method>();
 
 		for (Method meth : comEventCallbackInterface.getMethods()) {
-			ComEventCallback annotation = meth.getAnnotation(ComEventCallback.class);
-			if (null != annotation) {
-				int dispId = annotation.dispid();
+			ComEventCallback callbackAnnotation = meth.getAnnotation(ComEventCallback.class);
+                        ComMethod methodAnnotation = meth.getAnnotation(ComMethod.class);
+                        if (methodAnnotation != null) {
+				int dispId = methodAnnotation.dispId();
 				if (-1 == dispId) {
-					dispId = this.fetchDispIdFromName(annotation);
+					dispId = this.fetchDispIdFromName(callbackAnnotation);
+				}
+                                if(dispId == -1) {
+                                        CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(
+                                            "DISPID for " + meth.getName() + " not found",
+                                            null);
+                                }
+				map.put(new DISPID(dispId), meth);
+                        } else if (null != callbackAnnotation) {
+				int dispId = callbackAnnotation.dispid();
+				if (-1 == dispId) {
+					dispId = this.fetchDispIdFromName(callbackAnnotation);
 				}
                                 if(dispId == -1) {
                                         CallbackProxy.this.comEventCallbackListener.errorReceivingCallbackEvent(

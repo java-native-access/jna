@@ -29,9 +29,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @deprecated Use {@link ComMethod} as a replacement
+ */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
 @Inherited
+@Deprecated
 public @interface ComEventCallback {
 	int dispid() default -1; // default to dispid unknown
 	String name() default "";

@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
@@ -116,13 +115,13 @@ public class ComEventCallbacksFactory_Test {
 	interface DWebBrowserEvents2 {
                 public static final String IID = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}";
             
-		@ComEventCallback(dispid=0x000000fd)
+		@ComMethod(dispId = 0x000000fd)
 		void OnQuit();
 		
-		@ComEventCallback(dispid=0x000000fc)
+		@ComMethod(dispId = 0x000000fc)
 		void NavigateComplete2(IUnknown source, Object url);
 
-		@ComEventCallback(dispid=0x000000fa)
+		@ComMethod(dispId = 0x000000fa)
 		void BeforeNavigate2(IUnknown pDisp, 
                         String URL,
                         long Flags,

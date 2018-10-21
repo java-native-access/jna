@@ -3,8 +3,8 @@ package com.sun.jna.platform.win32.COM.util;
 import com.sun.jna.Pointer;
 import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMUtils;
-import com.sun.jna.platform.win32.COM.util.annotation.ComEventCallback;
 import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
+import com.sun.jna.platform.win32.COM.util.annotation.ComMethod;
 import com.sun.jna.platform.win32.COM.util.annotation.ComObject;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Variant;
@@ -241,14 +241,14 @@ public class ComEventCallbacks2_Test {
          * <p>
          * id(0x3)</p>
          */
-        @ComEventCallback(dispid = 0x3)
+        @ComMethod(dispId = 0x3)
         void DocumentChange();
 
         /**
          * <p>
          * id(0x6)</p>
          */
-        @ComEventCallback(dispid = 0x6)
+        @ComMethod(dispId = 0x6)
         void DocumentBeforeClose(IDispatch Doc, Variant.VARIANT Cancel);
     }
     
@@ -259,14 +259,14 @@ public class ComEventCallbacks2_Test {
          * <p>
          * id(0x3)</p>
          */
-        @ComEventCallback(dispid = 0x3)
+        @ComMethod(dispId = 0x3)
         void DocumentChange();
 
         /**
          * <p>
          * id(0x6)</p>
          */
-        @ComEventCallback(dispid = 0x6)
+        @ComMethod(dispId = 0x6)
         void DocumentBeforeClose();
     }
     
@@ -277,14 +277,14 @@ public class ComEventCallbacks2_Test {
          * <p>
          * id(0x3)</p>
          */
-        @ComEventCallback(dispid = 0x3)
+        @ComMethod(dispId = 0x3)
         void DocumentChange();
 
         /**
          * <p>
          * id(0x6)</p>
          */
-        @ComEventCallback(dispid = 0x6)
+        @ComMethod(dispId = 0x6)
         void DocumentBeforeClose(IDispatch Doc, Variant.VARIANT Cancel, Boolean fakeArgumentObject, int fakeArgumentInt);
     }
 
