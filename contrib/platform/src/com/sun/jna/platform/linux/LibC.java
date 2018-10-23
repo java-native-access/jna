@@ -96,6 +96,59 @@ public interface LibC extends LibCAPI, Library {
         }
     }
 
+    @FieldOrder({ "fsBlockSize", "fsFragmentSize", "fsSizeInBlocks", "fsBlocksFree", "fsBlocksFreeUnpriv",
+            "fsTotalInodeCount", "fsFreeInodeCount", "fsFreeInodeCountUnpriv", "fsId", "_f_unused", "fsMountFlags",
+            "fsMaxFilenameLength", "_fSpare" })
+    class Statvfs extends Structure {
+        private static final int PADDING_SIZE = 8 / NativeLong.SIZE - 1;
+
+        public NativeLong fsBlockSize;
+        public NativeLong fsFragmentSize;
+        public NativeLong fsSizeInBlocks;
+        public NativeLong fsBlocksFree;
+        public NativeLong fsBlocksFreeUnpriv;
+        public NativeLong fsTotalInodeCount;
+        public NativeLong fsFreeInodeCount;
+        public NativeLong fsFreeInodeCountUnpriv;
+        public NativeLong fsId;
+        public int[] _f_unused = new int[PADDING_SIZE]; // 0 on 64-bit systems
+        public NativeLong fsMountFlags;
+        public NativeLong fsMaxFilenameLength;
+        public int[] _fSpare = new int[6];
+
+        /*
+         * getFieldList and getFieldOrder are overridden because PADDING_SIZE
+         * might be 0 - that is a GCC only extension and not supported by JNA
+         * 
+         * The dummy field in the structure is just padding and so if the field
+         * is the zero length array, it is stripped from the fields and field
+         * order.
+         */
+        @Override
+        protected List<Field> getFieldList() {
+            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            if (PADDING_SIZE == 0) {
+                Iterator<Field> fieldIterator = fields.iterator();
+                while (fieldIterator.hasNext()) {
+                    Field field = fieldIterator.next();
+                    if ("_f_unused".equals(field.getName())) {
+                        fieldIterator.remove();
+                    }
+                }
+            }
+            return fields;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
+            if (PADDING_SIZE == 0) {
+                fieldOrder.remove("_f_unused");
+            }
+            return fieldOrder;
+        }
+    }
+
     /**
      * sysinfo() provides a simple way of getting overall system statistics.
      * This is more portable than reading /dev/kmem.
@@ -106,4 +159,16 @@ public interface LibC extends LibCAPI, Library {
      *         is set appropriately.
      */
     int sysinfo(Sysinfo info);
+
+    /**
+     * The function statvfs() returns information about a mounted filesystem.
+     * 
+     * @param path
+     *            the pathname of any file within the mounted filesystem.
+     * @param buf
+     *            a pointer to a statvfs structure
+     * @return On success, zero is returned. On error, -1 is returned, and errno
+     *         is set appropriately.
+     */
+    int statvfs(String path, Statvfs buf);
 }

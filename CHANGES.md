@@ -7,6 +7,7 @@ Release 5.0.1 (Next release)
 
 Features
 --------
+* [#1029](https://github.com/java-native-access/jna/issues/1029): Add `statvfs` to `c.s.j.platform.linux.LibC` - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
