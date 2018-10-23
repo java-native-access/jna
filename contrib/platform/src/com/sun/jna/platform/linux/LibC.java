@@ -96,6 +96,55 @@ public interface LibC extends LibCAPI, Library {
         }
     }
 
+    @FieldOrder({ "f_bsize", "f_frsize", "f_blocks", "f_bfree", "f_bavail",
+            "f_files", "f_ffree", "f_favail", "f_fsid", "_f_unused", "f_flag",
+            "f_namemax", "_f_spare" })
+    class Statvfs extends Structure {
+        public NativeLong f_bsize;
+        public NativeLong f_frsize;
+        public NativeLong f_blocks;
+        public NativeLong f_bfree;
+        public NativeLong f_bavail;
+        public NativeLong f_files;
+        public NativeLong f_ffree;
+        public NativeLong f_favail;
+        public NativeLong f_fsid;
+        public int _f_unused; // Only in 32-bit
+        public NativeLong f_flag;
+        public NativeLong f_namemax;
+        public int[] _f_spare = new int[6];
+
+        /*
+         * getFieldList and getFieldOrder are overridden because _f_unused is
+         * only present in 32-bit wordsize. The dummy field in the structure is
+         * just padding and so if the field is the zero length array, it is
+         * stripped from the fields and field order.
+         */
+        @Override
+        protected List<Field> getFieldList() {
+            List<Field> fields = new ArrayList<Field>(super.getFieldList());
+            if (NativeLong.SIZE > 4) {
+                Iterator<Field> fieldIterator = fields.iterator();
+                while (fieldIterator.hasNext()) {
+                    Field field = fieldIterator.next();
+                    if ("_f_unused".equals(field.getName())) {
+                        fieldIterator.remove();
+                    }
+                }
+            }
+            return fields;
+        }
+
+        @Override
+        protected List<String> getFieldOrder() {
+            List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
+            if (NativeLong.SIZE > 4) {
+                fieldOrder.remove("_f_unused");
+            }
+            return fieldOrder;
+        }
+    }
+
     /**
      * sysinfo() provides a simple way of getting overall system statistics.
      * This is more portable than reading /dev/kmem.
@@ -106,4 +155,16 @@ public interface LibC extends LibCAPI, Library {
      *         is set appropriately.
      */
     int sysinfo(Sysinfo info);
+
+    /**
+     * The function statvfs() returns information about a mounted filesystem.
+     * 
+     * @param path
+     *            the pathname of any file within the mounted filesystem.
+     * @param buf
+     *            a pointer to a statvfs structure
+     * @return On success, zero is returned. On error, -1 is returned, and errno
+     *         is set appropriately.
+     */
+    int statvfs(String path, Statvfs buf);
 }

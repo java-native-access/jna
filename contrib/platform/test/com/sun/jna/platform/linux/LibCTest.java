@@ -23,8 +23,16 @@
  */
 package com.sun.jna.platform.linux;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
+import com.sun.jna.platform.linux.LibC.Statvfs;
 import com.sun.jna.platform.linux.LibC.Sysinfo;
 
 import junit.framework.TestCase;
@@ -50,5 +58,44 @@ public class LibCTest extends TestCase {
         assertTrue(info.totalram.longValue() > 0);
         assertTrue(info.freeram.longValue() <= info.totalram.longValue());
         assertTrue(info.freeswap.longValue() <= info.totalswap.longValue());
+    }
+
+    @Test
+    public void testStatvfs() throws IOException, InterruptedException {
+        Statvfs vfs = new Statvfs();
+
+        // Iterate 'mounts' for mounted file systems
+        List<String> mountList = mounts();
+        for (String mount : mountList) {
+            // Skip proc, etc.
+            if (!mount.startsWith("/")) {
+                continue;
+            }
+            String fs = mount.split(" ")[0];
+
+            vfs.clear();
+            assertEquals(0, LibC.INSTANCE.statvfs(fs, vfs));
+            File f = new File(fs);
+            assertEquals(f.getTotalSpace(), vfs.f_blocks.longValue() * vfs.f_bsize.longValue());
+            assertEquals(f.getUsableSpace(), vfs.f_bavail.longValue() * vfs.f_bsize.longValue());
+            assertTrue(vfs.f_bsize.longValue() > 0);
+            assertTrue(vfs.f_bfree.longValue() <= vfs.f_blocks.longValue());
+            assertTrue(vfs.f_ffree.longValue() <= vfs.f_files.longValue());
+            assertTrue(vfs.f_namemax.longValue() > 0);
+        }
+    }
+
+    private static List<String> mounts() throws IOException, InterruptedException {
+        Process p = Runtime.getRuntime().exec("mount");
+
+        ArrayList<String> mounts = new ArrayList<String>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            mounts.add(line);
+        }
+        p.waitFor();
+        reader.close();
+        return mounts;
     }
 }
