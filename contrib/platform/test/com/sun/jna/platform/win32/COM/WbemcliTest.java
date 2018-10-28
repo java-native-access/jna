@@ -238,7 +238,7 @@ public class WbemcliTest {
                         assertTrue(year > 1970);
                         assertTrue(month >= 1 && month <= 12);
                         assertTrue(day >= 1 && day <= 31);
-                        assertTrue(hour >= 0 && day <= 23);
+                        assertTrue(hour >= 0 && hour <= 23);
                         assertTrue(minute >= 0 && minute <= 59);
                         assertTrue(second >= 0 && second <= 59);
                         OleAuto.INSTANCE.VariantClear(pVal);
