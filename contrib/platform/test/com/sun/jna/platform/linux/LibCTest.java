@@ -76,12 +76,12 @@ public class LibCTest extends TestCase {
             vfs.clear();
             assertEquals(0, LibC.INSTANCE.statvfs(fs, vfs));
             File f = new File(fs);
-            assertEquals(f.getTotalSpace(), vfs.fsSizeInBlocks.longValue() * vfs.fsBlockSize.longValue());
-            assertEquals(f.getUsableSpace(), vfs.fsBlocksFree.longValue() * vfs.fsBlockSize.longValue());
-            assertTrue(vfs.fsBlockSize.longValue() > 0);
-            assertTrue(vfs.fsBlocksFree.longValue() <= vfs.fsSizeInBlocks.longValue());
-            assertTrue(vfs.fsFreeInodeCount.longValue() <= vfs.fsTotalInodeCount.longValue());
-            assertTrue(vfs.fsMaxFilenameLength.longValue() > 0);
+            assertEquals(f.getTotalSpace(), vfs.f_blocks.longValue() * vfs.f_bsize.longValue());
+            assertEquals(f.getUsableSpace(), vfs.f_bfree.longValue() * vfs.f_bsize.longValue());
+            assertTrue(vfs.f_bsize.longValue() > 0);
+            assertTrue(vfs.f_bfree.longValue() <= vfs.f_blocks.longValue());
+            assertTrue(vfs.f_ffree.longValue() <= vfs.f_files.longValue());
+            assertTrue(vfs.f_namemax.longValue() > 0);
         }
     }
 

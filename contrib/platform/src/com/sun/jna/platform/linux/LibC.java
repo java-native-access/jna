@@ -96,38 +96,33 @@ public interface LibC extends LibCAPI, Library {
         }
     }
 
-    @FieldOrder({ "fsBlockSize", "fsFragmentSize", "fsSizeInBlocks", "fsBlocksFree", "fsBlocksFreeUnpriv",
-            "fsTotalInodeCount", "fsFreeInodeCount", "fsFreeInodeCountUnpriv", "fsId", "_f_unused", "fsMountFlags",
-            "fsMaxFilenameLength", "_fSpare" })
+    @FieldOrder({ "f_frsize", "f_blocks", "f_bfree", "f_bavail", "f_files", "f_ffree", "f_favail", "f_fsid",
+            "_f_unused", "f_flag", "f_namemax", "_f_spare " })
     class Statvfs extends Structure {
-        private static final int PADDING_SIZE = 8 / NativeLong.SIZE - 1;
-
-        public NativeLong fsBlockSize;
-        public NativeLong fsFragmentSize;
-        public NativeLong fsSizeInBlocks;
-        public NativeLong fsBlocksFree;
-        public NativeLong fsBlocksFreeUnpriv;
-        public NativeLong fsTotalInodeCount;
-        public NativeLong fsFreeInodeCount;
-        public NativeLong fsFreeInodeCountUnpriv;
-        public NativeLong fsId;
-        public int[] _f_unused = new int[PADDING_SIZE]; // 0 on 64-bit systems
-        public NativeLong fsMountFlags;
-        public NativeLong fsMaxFilenameLength;
-        public int[] _fSpare = new int[6];
+        public NativeLong f_bsize;
+        public NativeLong f_frsize;
+        public NativeLong f_blocks;
+        public NativeLong f_bfree;
+        public NativeLong f_bavail;
+        public NativeLong f_files;
+        public NativeLong f_ffree;
+        public NativeLong f_favail;
+        public NativeLong f_fsid;
+        public int _f_unused; // Only in 32-bi
+        public NativeLong f_flag;
+        public NativeLong f_namemax;
+        public int[] _f_spare = new int[6];
 
         /*
-         * getFieldList and getFieldOrder are overridden because PADDING_SIZE
-         * might be 0 - that is a GCC only extension and not supported by JNA
-         * 
-         * The dummy field in the structure is just padding and so if the field
-         * is the zero length array, it is stripped from the fields and field
-         * order.
+         * getFieldList and getFieldOrder are overridden because _f_unused is
+         * only present in 32-bit wordsize. The dummy field in the structure is
+         * just padding and so if the field is the zero length array, it is
+         * stripped from the fields and field order.
          */
         @Override
         protected List<Field> getFieldList() {
             List<Field> fields = new ArrayList<Field>(super.getFieldList());
-            if (PADDING_SIZE == 0) {
+            if (NativeLong.SIZE > 4) {
                 Iterator<Field> fieldIterator = fields.iterator();
                 while (fieldIterator.hasNext()) {
                     Field field = fieldIterator.next();
@@ -142,7 +137,7 @@ public interface LibC extends LibCAPI, Library {
         @Override
         protected List<String> getFieldOrder() {
             List<String> fieldOrder = new ArrayList<String>(super.getFieldOrder());
-            if (PADDING_SIZE == 0) {
+            if (NativeLong.SIZE > 4) {
                 fieldOrder.remove("_f_unused");
             }
             return fieldOrder;
