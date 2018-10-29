@@ -23,6 +23,8 @@
  */
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
+
 /** Type representing a type-safe native pointer.
  * Derived classes may override the {@link NativeMapped#fromNative} method,
  * which should instantiate a new object (or look up an existing one)
@@ -78,17 +80,9 @@ public abstract class PointerType implements NativeMapped {
         if (nativeValue == null) {
             return null;
         }
-        try {
-            PointerType pt = getClass().newInstance();
-            pt.pointer = (Pointer)nativeValue;
-            return pt;
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException("Can't instantiate " + getClass());
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Not allowed to instantiate " + getClass());
-        }
+        PointerType pt = Klass.newInstance(getClass());
+        pt.pointer = (Pointer)nativeValue;
+        return pt;
     }
 
     /** The hash code for a <code>PointerType</code> is the same as that for

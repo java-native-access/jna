@@ -14,6 +14,7 @@ Bug Fixes
 ---------
 * [#1025](https://github.com/java-native-access/jna/issues/1025): Restore java 6 compatibility and introduce animal-sniffer to prevent regressions - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1027](https://github.com/java-native-access/jna/issues/1027): Fix Linux LibC.Sysinfo FieldOrder - [@dbwiddis](https://github.com/dbwiddis).
+* [#1033](https://github.com/java-native-access/jna/pull/1033): Replace deprecated Class#newInstance calls
 
 Release 5.0.0
 =============

@@ -118,7 +118,7 @@ public class WinspoolTest {
             if(Structure.class.isAssignableFrom(klass)) {
                 boolean writeWorked = false;
                 try {
-                    Structure struct = (Structure) klass.newInstance();
+                    Structure struct = Structure.newInstance((Class<? extends Structure>) klass);
                     struct.write();
                     writeWorked = true;
                 } catch (java.lang.Throwable ex) {

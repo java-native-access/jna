@@ -390,7 +390,7 @@ public class StructureTest extends TestCase {
             IntByReference offset = new IntByReference();
             LongByReference value = new LongByReference();
             Class<?> cls = Class.forName(getClass().getName() + "$" + prefix + "TestStructure" + index);
-            Structure s = (Structure)cls.newInstance();
+            Structure s = Structure.newInstance((Class<? extends Structure>) cls);
             int result = lib.testStructureAlignment(s, index, offset, value);
             assertEquals("Wrong native value at field " + result
                          + "=0x" + Long.toHexString(value.getValue())

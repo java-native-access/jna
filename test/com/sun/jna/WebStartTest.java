@@ -417,7 +417,7 @@ public class WebStartTest extends TestCase implements Paths {
     }
 
     private static Throwable runTestCaseTest(String testClass, String method, int port) throws Exception {
-        TestCase test = (TestCase)Class.forName(testClass).newInstance();
+        TestCase test = (TestCase)Class.forName(testClass).getConstructor().newInstance();
         test.setName(method);
         TestResult result = new TestResult();
         test.run(result);
