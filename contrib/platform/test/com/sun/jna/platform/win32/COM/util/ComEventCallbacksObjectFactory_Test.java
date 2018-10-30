@@ -176,6 +176,70 @@ public class ComEventCallbacksObjectFactory_Test {
 		}	
 	}
 
+	@ComInterface(iid=DWebBrowserEvents2.IID)
+	interface DWebBrowserEvents2Method {
+                public static final String IID = "{34A715A0-6587-11D0-924A-0020AFC7AC4D}";
+
+		@ComMethod(dispId=0x000000fd)
+		void OnQuit();
+
+		@ComMethod(dispId=0x000000fc)
+		void NavigateComplete2(IUnknown source, Object url);
+
+		@ComMethod(dispId=0x000000fa)
+		void BeforeNavigate2(IUnknown pDisp,
+                        String URL,
+                        long Flags,
+                        String TargetFrameName,
+                        VARIANT.ByReference PostData,
+                        VARIANT.ByReference Headers,
+                        OaIdl.VARIANT_BOOLByReference Cancel);
+	}
+
+	class DWebBrowserEvents2_ListenerMethod extends AbstractComEventCallbackListener implements DWebBrowserEvents2Method {
+
+		@Override
+		public void errorReceivingCallbackEvent(String message, Exception exception) {
+//                    System.err.println(message);
+//                    if(exception != null) {
+//                        System.err.println(exception.getMessage());
+//                        exception.printStackTrace(System.err);
+//                    }
+		}
+
+                volatile boolean blockNavigate = false;
+
+                public void BeforeNavigate2(
+                        IUnknown pDisp,
+                        String URL,
+                        long Flags,
+                        String TargetFrameName,
+                        VARIANT.ByReference PostData,
+                        VARIANT.ByReference Headers,
+                        OaIdl.VARIANT_BOOLByReference Cancel) {
+                    // The utilizing unittest is adviseBeforeNavigate
+                    if(blockNavigate){
+                        Cancel.setValue(Variant.VARIANT_TRUE);
+                    }
+                }
+
+                volatile boolean navigateComplete2Called = false;
+                volatile String navigateComplete2URL = null;
+                @Override
+                public void NavigateComplete2( IUnknown source, Object url) {
+                    navigateComplete2Called = true;
+                    if(url != null) {
+                        navigateComplete2URL = url.toString();
+                    }
+                }
+
+		volatile Boolean Quit_called = null;
+		@Override
+		public void OnQuit() {
+			Quit_called = true;
+		}
+	}
+
 	@Test
 	public void advise_Quit() throws InterruptedException {
 		ComInternetExplorer ieApp = factory.createObject(ComInternetExplorer.class);
@@ -189,6 +253,23 @@ public class ComEventCallbacksObjectFactory_Test {
 		//Wait for event to happen
                 Thread.sleep(200);
 		
+		Assert.assertNotNull(listener.Quit_called);
+		Assert.assertTrue(listener.Quit_called);
+	}
+
+	@Test
+	public void advise_Quit_Method() throws InterruptedException {
+		ComInternetExplorer ieApp = factory.createObject(ComInternetExplorer.class);
+		ComIWebBrowser2 iWebBrowser2 = ieApp.queryInterface(ComIWebBrowser2.class);
+		iWebBrowser2.setVisible(true);
+		DWebBrowserEvents2_ListenerMethod listener = new DWebBrowserEvents2_ListenerMethod();
+		iWebBrowser2.advise(DWebBrowserEvents2Method.class, listener);
+
+		iWebBrowser2.Quit();
+
+		//Wait for event to happen
+                Thread.sleep(200);
+
 		Assert.assertNotNull(listener.Quit_called);
 		Assert.assertTrue(listener.Quit_called);
 	}
