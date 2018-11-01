@@ -1864,28 +1864,18 @@ public abstract class Structure {
         return s;
     }
 
-    /** Create a new Structure instance of the given type
+    /**
+     * Create a new Structure instance of the given type
      * @param type desired Structure type
      * @return the new instance
      * @throws IllegalArgumentException if the instantiation fails
      */
     public static <T extends Structure> T newInstance(Class<T> type) throws IllegalArgumentException {
-        try {
-            T s = type.newInstance();
-            if (s instanceof ByValue) {
-                s.allocateMemory();
-            }
-            return s;
+        T s = Klass.newInstance(type);
+        if (s instanceof ByValue) {
+            s.allocateMemory();
         }
-        catch(InstantiationException e) {
-            String msg = "Can't instantiate " + type;
-            throw new IllegalArgumentException(msg, e);
-        }
-        catch(IllegalAccessException e) {
-            String msg = "Instantiation of " + type
-                + " not allowed, is it public?";
-            throw new IllegalArgumentException(msg, e);
-        }
+        return s;
     }
 
     /** Keep track of the largest aggregate field of the union to use for

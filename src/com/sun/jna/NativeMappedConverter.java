@@ -25,6 +25,7 @@ package com.sun.jna;
 
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -61,18 +62,9 @@ public class NativeMappedConverter implements TypeConverter {
             return (NativeMapped) type.getEnumConstants()[0];
         }
 
-        try {
-            return (NativeMapped)type.newInstance();
-        } catch (InstantiationException e) {
-            String msg = "Can't create an instance of " + type
-                + ", requires a no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg);
-        } catch (IllegalAccessException e) {
-            String msg = "Not allowed to create an instance of " + type
-                + ", requires a public, no-arg constructor: " + e;
-            throw new IllegalArgumentException(msg);
-        }
+        return (NativeMapped) Klass.newInstance(type);
     }
+
     @Override
     public Object fromNative(Object nativeValue, FromNativeContext context) {
         return instance.fromNative(nativeValue, context);

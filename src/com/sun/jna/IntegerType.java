@@ -24,6 +24,8 @@
 
 package com.sun.jna;
 
+import java.lang.reflect.InvocationTargetException;
+
 /**
  * Represents a native integer value, which may have a platform-specific size
  * (e.g. <code>long</code> on unix-based platforms).
@@ -116,19 +118,9 @@ public abstract class IntegerType extends Number implements NativeMapped {
         // be forgiving of null values read from memory
         long value = nativeValue == null
             ? 0 : ((Number) nativeValue).longValue();
-        try {
-            IntegerType number = getClass().newInstance();
-            number.setValue(value);
-            return number;
-        }
-        catch (InstantiationException e) {
-            throw new IllegalArgumentException("Can't instantiate "
-                    + getClass());
-        }
-        catch (IllegalAccessException e) {
-            throw new IllegalArgumentException("Not allowed to instantiate "
-                    + getClass());
-        }
+        IntegerType number = Klass.newInstance(getClass());
+        number.setValue(value);
+        return number;
     }
 
     @Override
