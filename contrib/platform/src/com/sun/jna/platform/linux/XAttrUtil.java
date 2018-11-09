@@ -79,8 +79,7 @@ public abstract class XAttrUtil {
      * @throws IOException on any error
      */
     public static void setXAttr(String path, String name, byte[] value) throws IOException {
-        Memory valueMem = bytesToMemory(value);
-        int retval = XAttr.INSTANCE.setxattr(path, name, valueMem, new size_t(valueMem.size()), 0);
+        int retval = XAttr.INSTANCE.setxattr(path, name, value, new size_t(value.length), 0);
         if (retval != 0) {
             final int eno = Native.getLastError();
             throw new IOException("errno: " + eno);
@@ -126,9 +125,7 @@ public abstract class XAttrUtil {
      * @throws IOException on any error
      */
     public static void lSetXAttr(String path, String name, byte[] value) throws IOException {
-        Memory valueMem = bytesToMemory(value);
-        final int retval = XAttr.INSTANCE.lsetxattr(path, name, valueMem,
-            new size_t(valueMem.size()), 0);
+        final int retval = XAttr.INSTANCE.lsetxattr(path, name, value, new size_t(value.length), 0);
         if (retval != 0) {
             final int eno = Native.getLastError();
             throw new IOException("errno: " + eno);
@@ -171,9 +168,7 @@ public abstract class XAttrUtil {
      * @throws IOException on any error
      */
     public static void fSetXAttr(int fd, String name, byte[] value) throws IOException {
-        Memory valueMem = bytesToMemory(value);
-        final int retval = XAttr.INSTANCE.fsetxattr(fd, name, valueMem, new size_t(valueMem.size()),
-            0);
+        final int retval = XAttr.INSTANCE.fsetxattr(fd, name, value, new size_t(value.length), 0);
         if (retval != 0) {
             final int eno = Native.getLastError();
             throw new IOException("errno: " + eno);
@@ -203,10 +198,8 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static String getXAttr(String path, String name, String encoding) throws IOException {
-        Memory valueMem = getXAttrAsMemory(path, name);
-        return Charset.forName(encoding)
-            .decode(valueMem.getByteBuffer(0, valueMem.size()))
-            .toString();
+        byte[] valueMem = getXAttrBytes(path, name);
+        return new String(valueMem, Charset.forName(encoding));
     }
 
     /**
@@ -218,8 +211,28 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static byte[] getXAttrBytes(String path, String name) throws IOException {
-        Memory valueMem = getXAttrAsMemory(path, name);
-        return valueMem.getByteArray(0, (int) valueMem.size());
+        ssize_t retval;
+        byte[] valueMem;
+        int eno = 0;
+
+        do {
+            retval = XAttr.INSTANCE.getxattr(path, name, (byte[]) null, size_t.ZERO);
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                throw new IOException("errno: " + eno);
+            }
+
+            valueMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.getxattr(path, name, valueMem, new size_t(valueMem.length));
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                if (eno != XAttr.ERANGE) {
+                    throw new IOException("errno: " + eno);
+                }
+            }
+        } while (retval.longValue() < 0 && eno == XAttr.ERANGE);
+
+        return valueMem;
     }
 
     /**
@@ -236,7 +249,7 @@ public abstract class XAttrUtil {
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.getxattr(path, name, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.getxattr(path, name, (Memory) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
@@ -280,10 +293,8 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static String lGetXAttr(String path, String name, String encoding) throws IOException {
-        Memory valueMem = lGetXAttrAsMemory(path, name);
-        return Charset.forName(encoding)
-            .decode(valueMem.getByteBuffer(0, valueMem.size()))
-            .toString();
+        byte[] valueMem = lGetXAttrBytes(path, name);
+        return new String(valueMem, Charset.forName(encoding));
     }
 
     /**
@@ -296,8 +307,28 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static byte[] lGetXAttrBytes(String path, String name) throws IOException {
-        Memory valueMem = lGetXAttrAsMemory(path, name);
-        return valueMem.getByteArray(0, (int) valueMem.size());
+        ssize_t retval;
+        byte[] valueMem;
+        int eno = 0;
+
+        do {
+            retval = XAttr.INSTANCE.lgetxattr(path, name, (byte[]) null, size_t.ZERO);
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                throw new IOException("errno: " + eno);
+            }
+
+            valueMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.lgetxattr(path, name, valueMem, new size_t(valueMem.length));
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                if (eno != XAttr.ERANGE) {
+                    throw new IOException("errno: " + eno);
+                }
+            }
+        } while (retval.longValue() < 0 && eno == XAttr.ERANGE);
+
+        return valueMem;
     }
 
     /**
@@ -315,7 +346,7 @@ public abstract class XAttrUtil {
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.lgetxattr(path, name, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.lgetxattr(path, name, (Memory) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
@@ -357,10 +388,8 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static String fGetXAttr(int fd, String name, String encoding) throws IOException {
-        Memory valueMem = fGetXAttrAsMemory(fd, name);
-        return Charset.forName(encoding)
-            .decode(valueMem.getByteBuffer(0, valueMem.size()))
-            .toString();
+        byte[] valueMem = fGetXAttrBytes(fd, name);
+        return new String(valueMem, Charset.forName(encoding));
     }
 
     /**
@@ -372,8 +401,28 @@ public abstract class XAttrUtil {
      * @throws IOException on any error except <code>ERANGE</code> which handled internally
      */
     public static byte[] fGetXAttrBytes(int fd, String name) throws IOException {
-        Memory valueMem = fGetXAttrAsMemory(fd, name);
-        return valueMem.getByteArray(0, (int) valueMem.size());
+        ssize_t retval;
+        byte[] valueMem;
+        int eno = 0;
+
+        do {
+            retval = XAttr.INSTANCE.fgetxattr(fd, name, (byte[]) null, size_t.ZERO);
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                throw new IOException("errno: " + eno);
+            }
+
+            valueMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.fgetxattr(fd, name, valueMem, new size_t(valueMem.length));
+            if (retval.longValue() < 0) {
+                eno = Native.getLastError();
+                if (eno != XAttr.ERANGE) {
+                    throw new IOException("errno: " + eno);
+                }
+            }
+        } while (retval.longValue() < 0 && eno == XAttr.ERANGE);
+
+        return valueMem;
     }
 
     /**
@@ -390,7 +439,7 @@ public abstract class XAttrUtil {
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.fgetxattr(fd, name, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.fgetxattr(fd, name, (Memory) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
@@ -431,18 +480,18 @@ public abstract class XAttrUtil {
      */
     public static Collection<String> listXAttr(String path, String encoding) throws IOException {
         ssize_t retval;
-        Memory listMem;
+        byte[] listMem;
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.listxattr(path, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.listxattr(path, (byte[]) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
             }
 
-            listMem = new Memory(retval.longValue());
-            retval = XAttr.INSTANCE.listxattr(path, listMem, new size_t(listMem.size()));
+            listMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.listxattr(path, listMem, new size_t(listMem.length));
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 if (eno != XAttr.ERANGE) {
@@ -478,18 +527,18 @@ public abstract class XAttrUtil {
      */
     public static Collection<String> lListXAttr(String path, String encoding) throws IOException {
         ssize_t retval;
-        Memory listMem;
+        byte[] listMem;
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.llistxattr(path, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.llistxattr(path, (byte[]) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
             }
 
-            listMem = new Memory(retval.longValue());
-            retval = XAttr.INSTANCE.llistxattr(path, listMem, new size_t(listMem.size()));
+            listMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.llistxattr(path, listMem, new size_t(listMem.length));
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 if (eno != XAttr.ERANGE) {
@@ -523,18 +572,18 @@ public abstract class XAttrUtil {
      */
     public static Collection<String> fListXAttr(int fd, String encoding) throws IOException {
         ssize_t retval;
-        Memory listMem;
+        byte[] listMem;
         int eno = 0;
 
         do {
-            retval = XAttr.INSTANCE.flistxattr(fd, null, size_t.ZERO);
+            retval = XAttr.INSTANCE.flistxattr(fd, (byte[]) null, size_t.ZERO);
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
             }
 
-            listMem = new Memory(retval.longValue());
-            retval = XAttr.INSTANCE.flistxattr(fd, listMem, new size_t(listMem.size()));
+            listMem = new byte[retval.intValue()];
+            retval = XAttr.INSTANCE.flistxattr(fd, listMem, new size_t(listMem.length));
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 if (eno != XAttr.ERANGE) {
@@ -593,33 +642,19 @@ public abstract class XAttrUtil {
         }
     }
 
-    private static Memory bytesToMemory(byte[] value) {
-        Memory valueMem = new Memory(value.length);
-        valueMem.write(0, value, 0, value.length);
-        return valueMem;
-    }
-
-    private static Collection<String> splitBufferToStrings(Memory valueMem, String encoding)
+    private static Collection<String> splitBufferToStrings(byte[] valueMem, String encoding)
         throws IOException {
         final Charset charset = Charset.forName(encoding);
         final Set<String> attributesList = new LinkedHashSet<String>(1);
-        long offset = 0;
-        while (offset != valueMem.size()) {
-            // Find terminating NUL character.
-            long nulOffset = valueMem.indexOf(offset, (byte) 0);
-            if (nulOffset == -1) {
-                throw new IOException("Expected NUL character not found.");
+        int offset = 0;
+        for(int i = 0; i < valueMem.length; i++) {
+            // each entry is terminated by a single \0 byte
+            if(valueMem[i] == 0) {
+                // Convert bytes of the name to String.
+                final String name = new String(valueMem, offset, i - offset, charset);
+                attributesList.add(name);
+                offset = i + 1;
             }
-
-            // Duplicate buffer with limit at end of name.
-            final ByteBuffer nameBuffer = valueMem.getByteBuffer(offset, nulOffset);
-
-            // Convert bytes of the name to String.
-            final String name = charset.decode(nameBuffer).toString();
-            attributesList.add(name);
-
-            // Move past NUL.
-            offset += nulOffset + 1;
         }
         return attributesList;
     }

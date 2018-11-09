@@ -69,16 +69,25 @@ public interface XAttr extends Library {
     int EDQUOT = 122;
 
     int setxattr(String path, String name, Pointer value, size_t size, int flags);
+    int setxattr(String path, String name, byte[] value, size_t size, int flags);
     int lsetxattr(String path, String name, Pointer value, size_t size, int flags);
+    int lsetxattr(String path, String name, byte[] value, size_t size, int flags);
     int fsetxattr(int fd, String name, Pointer value, size_t size, int flags);
+    int fsetxattr(int fd, String name, byte[] value, size_t size, int flags);
 
     ssize_t getxattr(String path, String name, Pointer value, size_t size);
+    ssize_t getxattr(String path, String name, byte[] value, size_t size);
     ssize_t lgetxattr(String path, String name, Pointer value, size_t size);
+    ssize_t lgetxattr(String path, String name, byte[] value, size_t size);
     ssize_t fgetxattr(int fd, String name, Pointer value, size_t size);
+    ssize_t fgetxattr(int fd, String name, byte[] value, size_t size);
 
     ssize_t listxattr(String path, Pointer list, size_t size);
+    ssize_t listxattr(String path, byte[] list, size_t size);
     ssize_t llistxattr(String path, Pointer list, size_t size);
+    ssize_t llistxattr(String path, byte[] list, size_t size);
     ssize_t flistxattr(int fd, Pointer list, size_t size);
+    ssize_t flistxattr(int fd, byte[] list, size_t size);
 
     int removexattr(String path, String name);
     int lremovexattr(String path, String name);
