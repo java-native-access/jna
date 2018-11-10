@@ -175,6 +175,157 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            String name, VARIANT[] pArgs) throws COMException {
+
+        // variable declaration
+        WString[] ptName = new WString[] { new WString(name) };
+        DISPIDByReference pdispID = new DISPIDByReference();
+
+        // Get DISPID for name passed...
+        HRESULT hr = iDispatch.GetIDsOfNames(new REFIID(Guid.IID_NULL), ptName, 1,
+                LOCALE_USER_DEFAULT, pdispID);
+
+        COMUtils.checkRC(hr);
+
+        return this
+                .oleMethod(nType, pvResult, iDispatch, pdispID.getValue(), pArgs);
+    }
+
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            DISPID dispId, VARIANT[] pArgs)
+            throws COMException {
+
+        // variable declaration
+        int _argsLen = 0;
+        VARIANT[] _args = null;
+        DISPPARAMS.ByReference dp = new DISPPARAMS.ByReference();
+        EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+        IntByReference puArgErr = new IntByReference();
+
+        // make parameter reverse ordering as expected by COM runtime
+        if ((pArgs != null) && (pArgs.length > 0)) {
+            _argsLen = pArgs.length;
+            _args = new VARIANT[_argsLen];
+
+            int revCount = _argsLen;
+            for (int i = 0; i < _argsLen; i++) {
+                _args[i] = pArgs[--revCount];
+            }
+        }
+
+        // Handle special-case for property-puts!
+        if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
+            dp.setRgdispidNamedArgs(new DISPID[] {OaIdl.DISPID_PROPERTYPUT});
+        }
+
+        // Build DISPPARAMS
+        if (_argsLen > 0) {
+            dp.setArgs(_args);
+
+            // write 'DISPPARAMS' structure to memory
+            dp.write();
+        }
+
+        // Apply "fix" according to
+        // https://www.delphitools.info/2013/04/30/gaining-visual-basic-ole-super-powers/
+        // https://msdn.microsoft.com/en-us/library/windows/desktop/ms221486(v=vs.85).aspx
+        //
+        // Summary: there are methods in the word typelibrary that require both
+        // PROPERTYGET _and_ METHOD to be set. With only one of these set the call
+        // fails.
+        //
+        // The article from delphitools argues, that automation compatible libraries
+        // need to be compatible with VisualBasic which does not distingish methods
+        // and property getters and will set both flags always.
+        //
+        // The MSDN article advises this behaviour: "[...] Some languages cannot
+        // distinguish between retrieving a property and calling a method. In this
+        //case, you should set the flags DISPATCH_PROPERTYGET and DISPATCH_METHOD.
+        // [...]"))
+        //
+        // This was found when trying to bind InchesToPoints from the _Application
+        // dispatch interface of the MS Word 15 type library
+        //
+        // The signature according the ITypeLib Viewer (OLE/COM Object Viewer):
+        // [id(0x00000172), helpcontext(0x09700172)]
+        // single InchesToPoints([in] single Inches);
+
+        final int finalNType;
+        if (nType == OleAuto.DISPATCH_METHOD || nType == OleAuto.DISPATCH_PROPERTYGET) {
+            finalNType = OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET;
+        } else {
+            finalNType = nType;
+        }
+
+        // Make the call!
+        HRESULT hr = iDispatch.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT,
+                new WinDef.WORD(finalNType), dp, pvResult, pExcepInfo, puArgErr);
+
+        COMUtils.checkRC(hr, pExcepInfo, puArgErr);
+        return hr;
+    }
+
+    /**
+     * Ole method.
+     *
+     * @param nType
+     *            the n type
+     * @param pvResult
+     *            the pv result
+     * @param pDisp
+     *            the disp
+     * @param name
+     *            the name
+     * @param pArg
+     *            the arg
+     * @return the hresult
+     * @throws COMException
+     *             the cOM exception
+     */
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            String name, VARIANT pArg) throws COMException {
+
+        return this.oleMethod(nType, pvResult, name, new VARIANT[] { pArg });
+    }
+
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            DISPID dispId, VARIANT pArg) throws COMException {
+
+        return this.oleMethod(nType, pvResult, dispId, new VARIANT[] { pArg });
+    }
+
+    /**
+     * Ole method.
+     *
+     * @param nType
+     *            the n type
+     * @param pvResult
+     *            the pv result
+     * @param pDisp
+     *            the disp
+     * @param name
+     *            the name
+     * @return the hresult
+     * @throws COMException
+     *             the cOM exception
+     */
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            String name) throws COMException {
+
+        return this.oleMethod(nType, pvResult, name, (VARIANT[]) null);
+    }
+
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
+            DISPID dispId) throws COMException {
+
+        return this.oleMethod(nType, pvResult, dispId, (VARIANT[]) null);
+    }
+
+    /**
+     * @deprecated {@link COMBindingBaseObject#oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[]) }
+     */
+    @Deprecated
+    protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, String name, VARIANT[] pArgs) throws COMException {
 
         if (pDisp == null)
@@ -194,6 +345,10 @@ public class COMBindingBaseObject extends COMInvoker {
                 .oleMethod(nType, pvResult, pDisp, pdispID.getValue(), pArgs);
     }
 
+    /**
+     * @deprecated {@link COMBindingBaseObject#oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.DISPID, com.sun.jna.platform.win32.Variant.VARIANT[]) }
+     */
+    @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, DISPID dispId, VARIANT[] pArgs)
             throws COMException {
@@ -272,22 +427,9 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     /**
-     * Ole method.
-     *
-     * @param nType
-     *            the n type
-     * @param pvResult
-     *            the pv result
-     * @param pDisp
-     *            the disp
-     * @param name
-     *            the name
-     * @param pArg
-     *            the arg
-     * @return the hresult
-     * @throws COMException
-     *             the cOM exception
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)
      */
+    @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, String name, VARIANT pArg) throws COMException {
 
@@ -295,6 +437,10 @@ public class COMBindingBaseObject extends COMInvoker {
                 new VARIANT[] { pArg });
     }
 
+    /**
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.DISPID, com.sun.jna.platform.win32.Variant.VARIANT)
+     */
+    @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, DISPID dispId, VARIANT pArg) throws COMException {
 
@@ -303,26 +449,19 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     /**
-     * Ole method.
-     *
-     * @param nType
-     *            the n type
-     * @param pvResult
-     *            the pv result
-     * @param pDisp
-     *            the disp
-     * @param name
-     *            the name
-     * @return the hresult
-     * @throws COMException
-     *             the cOM exception
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String)
      */
+    @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, String name) throws COMException {
 
         return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
     }
 
+    /**
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.DISPID) }
+     */
+    @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
             IDispatch pDisp, DISPID dispId) throws COMException {
 
@@ -334,7 +473,9 @@ public class COMBindingBaseObject extends COMInvoker {
      *
      * @param hr
      *            the hr
+     * @deprecated Use {@link COMUtils#checkRC(com.sun.jna.platform.win32.WinNT.HRESULT)
      */
+    @Deprecated
     protected void checkFailed(HRESULT hr) {
         COMUtils.checkRC(hr);
     }
