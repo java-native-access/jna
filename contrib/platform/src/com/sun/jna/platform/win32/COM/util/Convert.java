@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant;
 import java.lang.reflect.InvocationHandler;
@@ -105,8 +106,8 @@ class Convert {
 			return new VARIANT((String) value);
                 } else if (value instanceof Boolean) {
 			return new VARIANT((Boolean) value);
-                } else if (value instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-			return new VARIANT((com.sun.jna.platform.win32.COM.IDispatch) value);
+                } else if (value instanceof com.sun.jna.platform.win32.COM.Dispatch) {
+			return new VARIANT((com.sun.jna.platform.win32.COM.Dispatch) value);
 		} else if (value instanceof Date) {
 			return new VARIANT((Date) value);
                 } else if (value instanceof Proxy) {
@@ -257,15 +258,19 @@ class Convert {
                     result = value.dateValue();
                 } else if (String.class.equals(targetClass)) {
                     result = value.stringValue();
-                } else if (value.getValue() instanceof com.sun.jna.platform.win32.COM.IDispatch) {
-                    com.sun.jna.platform.win32.COM.IDispatch d = (com.sun.jna.platform.win32.COM.IDispatch) value.getValue();
-                    Object proxy = factory.createProxy(targetClass, d);
-                    // must release a COM reference, createProxy adds one, as does the
-                    // call
-                    if (!addReference) {
-                        int n = d.Release();
+                } else if (value.getValue() instanceof com.sun.jna.platform.win32.COM.Dispatch) {
+                    com.sun.jna.platform.win32.COM.Dispatch d = (com.sun.jna.platform.win32.COM.Dispatch) value.getValue();
+                    if(targetClass != null && targetClass.isInterface()) {
+                        Object proxy = factory.createProxy(targetClass, d);
+                        // must release a COM reference, createProxy adds one, as does the
+                        // call
+                        if (!addReference) {
+                            int n = d.Release();
+                        }
+                        result = proxy;
+                    } else {
+                        result = d;
                     }
-                    result = proxy;
                 } else {
                     /*
                     WinDef.SCODE.class.equals(targetClass) 
