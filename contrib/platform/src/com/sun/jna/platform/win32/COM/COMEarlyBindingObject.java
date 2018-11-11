@@ -56,15 +56,13 @@ public class COMEarlyBindingObject extends COMBindingBaseObject implements
 
     protected String getStringProperty(DISPID dispId) {
         VARIANT.ByReference result = new VARIANT.ByReference();
-        this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result,
-                this.getIDispatch(), dispId);
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, dispId);
 
         return result.getValue().toString();
     }
 
     protected void setProperty(DISPID dispId, boolean value) {
-        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getIDispatch(),
-                dispId, new VARIANT(value));
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, dispId, new VARIANT(value));
     }
 
     @Override

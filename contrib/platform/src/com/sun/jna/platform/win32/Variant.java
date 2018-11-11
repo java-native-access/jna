@@ -23,7 +23,6 @@
 package com.sun.jna.platform.win32;
 
 import java.util.Date;
-import java.util.List;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -285,11 +284,20 @@ public interface Variant {
             this.setValue(VT_BOOL, new VARIANT_BOOL(value));
         }
 
+        /**
+         * @deprecated Use {@link #VARIANT(com.sun.jna.platform.win32.COM.Dispatch) 
+         */
+        @Deprecated
         public VARIANT(IDispatch value) {
             this();
             this.setValue(Variant.VT_DISPATCH, value);
         }
 
+        public VARIANT(Dispatch value) {
+            this();
+            this.setValue(Variant.VT_DISPATCH, value);
+        }
+        
         public VARIANT(Date value) {
             this();
             this.setValue(VT_DATE, new DATE(value));
