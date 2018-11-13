@@ -769,4 +769,15 @@ public class Secur32Test extends TestCase {
     	assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
     			phClientCredential));
     }
+
+    public void testCompleteAuthToken() {
+        /*
+        This is not a real test of the function, it just ensures, that it is
+        callable and returns a sane error code.
+        */
+        int result = Secur32.INSTANCE.CompleteAuthToken(null, null);
+        assertTrue(String.format("Unexpected error code: 0x%08X%n", result),
+                result == WinError.SEC_E_INVALID_HANDLE
+                || result == WinError.SEC_E_INVALID_TOKEN);
+    }
 }

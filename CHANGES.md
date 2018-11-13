@@ -10,6 +10,7 @@ Features
 * [#1029](https://github.com/java-native-access/jna/issues/1029): Add `statvfs` to `c.s.j.platform.linux.LibC` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1032](https://github.com/java-native-access/jna/pull/1032): Deprecate `c.s.j.platform.win32.COM.util.annotation.ComEventCallback` in favour of `c.s.j.platform.win32.COM.util.annotation.ComMethod` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1021](https://github.com/java-native-access/jna/pull/1021): Added `com.sun.jna.platform.linux.XAttr` and `com.sun.jna.platform.linux.XAttrUtil` JNA wrapper for `<sys/xattr.h>` for Linux - [@wilx](https://github.com/wilx).
+* [#381](https://github.com/java-native-access/jna/issues/381): Bind `c.s.j.p.win32.Secur32#CompleteAuthToken` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------

@@ -252,7 +252,37 @@ public interface Secur32 extends StdCallLibrary {
                                      SecBufferDesc pInput, int fContextReq, int TargetDataRep,
                                      CtxtHandle phNewContext, SecBufferDesc pOutput, IntByReference pfContextAttr,
                                      TimeStamp ptsTimeStamp);
-    
+
+    /**
+     * The CompleteAuthToken function completes an authentication token. This
+     * function is used by protocols, such as DCE, that need to revise the
+     * security information after the transport application has updated some
+     * message parameters.
+     * <p>
+     * This function is supported only by the Digest security support provider
+     * (SSP).</p>
+     * <p>
+     * CompleteAuthToken is used on the server side only.</p>
+     *
+     * @param phContext A handle of the context that needs to be completed.
+     * @param pToken    A {@link Sspi.SecBufferDesc} structure that contains the
+     *                  buffer descriptor for the entire message.
+     *
+     * @return If the function succeeds, the function returns SEC_E_OK.
+     *
+     * <p>
+     * If the function fails, it returns one of the following error codes.</p>
+     * <table>
+     * <tr><th>Return code</th><th>Description</th></tr>
+     * <tr><td>SEC_E_INVALID_HANDLE</td><td>The handle that was passed to the function is not valid.</td></tr>
+     * <tr><td>SEC_E_INVALID_TOKEN</td><td>The token that was passed to the function is not valid.</td></tr>
+     * <tr><td>SEC_E_OUT_OF_SEQUENCE</td><td>The client's security context was located, but the message number is incorrect. This return value is used with the Digest SSP.</td></tr>
+     * <tr><td>SEC_E_MESSAGE_ALTERED</td><td>The client's security context was located, but the client's message has been tampered with. This return value is used with the Digest SSP.</td></tr>
+     * <tr><td>SEC_E_INTERNAL_ERROR</td><td>An error occurred that did not map to an SSPI error code.</td></tr>
+     * </table>
+     */
+    int CompleteAuthToken(CtxtHandle phContext, SecBufferDesc pToken);
+
     /**
      * The EnumerateSecurityPackages function returns an array of SecPkgInfo structures that 
      * describe the security packages available to the client.
