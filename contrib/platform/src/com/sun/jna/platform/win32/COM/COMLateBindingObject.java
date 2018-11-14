@@ -498,6 +498,14 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      * @param value
      *            the value
      */
+    protected void setProperty(String propertyName, Dispatch value) {
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, propertyName, new VARIANT(value));
+    }
+
+    /**
+     * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.COM.Dispatch) 
+     */
+    @Deprecated
     protected void setProperty(String propertyName, IDispatch value) {
         this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, propertyName, new VARIANT(value));
     }
