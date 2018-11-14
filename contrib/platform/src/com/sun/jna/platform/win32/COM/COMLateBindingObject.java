@@ -315,7 +315,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String)
+     * @deprecated Use {@link #invokeNoReply(java.lang.String)}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, IDispatch dispatch) {
@@ -323,7 +323,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String)
+     * @deprecated Use {@link #invokeNoReply(java.lang.String)}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, COMLateBindingObject comObject) {
@@ -344,7 +344,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)
+     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, IDispatch dispatch,
@@ -353,7 +353,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])
+     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, IDispatch dispatch,
@@ -363,7 +363,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])
+     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, COMLateBindingObject comObject,
@@ -373,7 +373,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)
+     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     protected void invokeNoReply(String methodName,
             COMLateBindingObject comObject, VARIANT arg) {
@@ -383,7 +383,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
 
     /**
-     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[]) 
+     * @deprecated Use {@link #invokeNoReply(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT[])}
      */
     @Deprecated
     protected void invokeNoReply(String methodName, IDispatch dispatch,
@@ -503,7 +503,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
     }
 
     /**
-     * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.COM.Dispatch) 
+     * @deprecated Use {@link #setProperty(java.lang.String, com.sun.jna.platform.win32.COM.Dispatch)}
      */
     @Deprecated
     protected void setProperty(String propertyName, IDispatch value) {

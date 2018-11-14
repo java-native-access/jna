@@ -272,8 +272,6 @@ public class COMBindingBaseObject extends COMInvoker {
      *            the n type
      * @param pvResult
      *            the pv result
-     * @param pDisp
-     *            the disp
      * @param name
      *            the name
      * @param pArg
@@ -301,8 +299,6 @@ public class COMBindingBaseObject extends COMInvoker {
      *            the n type
      * @param pvResult
      *            the pv result
-     * @param pDisp
-     *            the disp
      * @param name
      *            the name
      * @return the hresult
@@ -427,7 +423,7 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     /**
-     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
@@ -438,7 +434,7 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     /**
-     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.DISPID, com.sun.jna.platform.win32.Variant.VARIANT)
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, com.sun.jna.platform.win32.OaIdl.DISPID, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
     @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
@@ -449,7 +445,7 @@ public class COMBindingBaseObject extends COMInvoker {
     }
 
     /**
-     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String)
+     * @deprecated Use {@link #oleMethod(int, com.sun.jna.platform.win32.Variant.VARIANT.ByReference, java.lang.String)}
      */
     @Deprecated
     protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult,
@@ -473,7 +469,7 @@ public class COMBindingBaseObject extends COMInvoker {
      *
      * @param hr
      *            the hr
-     * @deprecated Use {@link COMUtils#checkRC(com.sun.jna.platform.win32.WinNT.HRESULT)
+     * @deprecated Use {@link COMUtils#checkRC(com.sun.jna.platform.win32.WinNT.HRESULT)}
      */
     @Deprecated
     protected void checkFailed(HRESULT hr) {

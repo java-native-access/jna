@@ -285,7 +285,7 @@ public interface Variant {
         }
 
         /**
-         * @deprecated Use {@link #VARIANT(com.sun.jna.platform.win32.COM.Dispatch) 
+         * @deprecated Use {@link #VARIANT(com.sun.jna.platform.win32.COM.Dispatch)}
          */
         @Deprecated
         public VARIANT(IDispatch value) {
