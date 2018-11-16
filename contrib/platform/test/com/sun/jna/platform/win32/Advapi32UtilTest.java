@@ -160,8 +160,8 @@ public class Advapi32UtilTest extends TestCase {
         try {
             HANDLEByReference phUser = new HANDLEByReference();
             try {
-                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
-                                                       null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK,
+                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name,
+                                                       null, userInfo.usri1_password, WinBase.LOGON32_LOGON_NETWORK,
                                                        WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
                 Account[] groups = Advapi32Util.getTokenGroups(phUser.getValue());
                 assertTrue(groups.length > 0);
@@ -179,7 +179,7 @@ public class Advapi32UtilTest extends TestCase {
         } finally {
             assertEquals("Error in NetUserDel",
                          LMErr.NERR_Success,
-                         Netapi32.INSTANCE.NetUserDel(null, userInfo.usri1_name.toString()));
+                         Netapi32.INSTANCE.NetUserDel(null, userInfo.usri1_name));
         }
     }
 
@@ -195,12 +195,12 @@ public class Advapi32UtilTest extends TestCase {
         try {
             HANDLEByReference phUser = new HANDLEByReference();
             try {
-                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
-                                                       null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK,
+                assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name,
+                                                       null, userInfo.usri1_password, WinBase.LOGON32_LOGON_NETWORK,
                                                        WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
                 Advapi32Util.Account account = Advapi32Util.getTokenAccount(phUser.getValue());
                 assertTrue(account.name.length() > 0);
-                assertEquals(userInfo.usri1_name.toString(), account.name);
+                assertEquals(userInfo.usri1_name, account.name);
             } finally {
                 HANDLE hUser = phUser.getValue();
                 if (!WinBase.INVALID_HANDLE_VALUE.equals(hUser)) {
@@ -208,7 +208,7 @@ public class Advapi32UtilTest extends TestCase {
                 }
             }
         } finally {
-            assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(null, userInfo.usri1_name.toString()));
+            assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(null, userInfo.usri1_name));
         }
     }
 
@@ -245,6 +245,7 @@ public class Advapi32UtilTest extends TestCase {
                                                      "Software\\Microsoft", "KeyDoesNotExist"));
         assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE,
                                                     "SYSTEM\\CurrentControlSet\\Control", "SystemBootDevice"));
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "FAIL", "Path"));
     }
 
     public void testRegistryValueExistsSamExtra() {
@@ -584,7 +585,7 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testRegistryGetValues() {
-        String uu = new String("A" + "\\u00ea" + "\\u00f1" + "\\u00fc" + "C");
+        String uu = "A\\u00ea\\u00f1\\u00fcC";
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software", "JNA");
         Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "FourtyTwo" + uu, 42);
         Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, "Software\\JNA", "42" + uu, "FourtyTwo" + uu);
@@ -619,7 +620,7 @@ public class Advapi32UtilTest extends TestCase {
     public void testRegistryGetValuesSamExtra() {
         if (!is64bitWindows()) return;
 
-        String uu = new String("A" + "\\u00ea" + "\\u00f1" + "\\u00fc" + "C");
+        String uu = "A\\u00ea\\u00f1\\u00fcC";
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
         Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "Number" + uu, 64, WinNT.KEY_WOW64_64KEY);

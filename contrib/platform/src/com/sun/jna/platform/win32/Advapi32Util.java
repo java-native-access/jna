@@ -607,8 +607,7 @@ public abstract class Advapi32Util {
 	 *            Value name.
 	 * @return True if the value exists.
 	 */
-	public static boolean registryValueExists(HKEY root, String key,
-											  String value) {
+	public static boolean registryValueExists(HKEY root, String key, String value) {
 		return registryValueExists(root, key, value, 0);
 	}
 
@@ -631,15 +630,15 @@ public abstract class Advapi32Util {
 		HKEYByReference phkKey = new HKEYByReference();
 		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
 				phkKey);
+                switch (rc) {
+                case W32Errors.ERROR_SUCCESS:
+                        break;
+                case W32Errors.ERROR_FILE_NOT_FOUND:
+                        return false;
+                default:
+                        throw new Win32Exception(rc);
+                }
 		try {
-			switch (rc) {
-			case W32Errors.ERROR_SUCCESS:
-				break;
-			case W32Errors.ERROR_FILE_NOT_FOUND:
-				return false;
-			default:
-				throw new Win32Exception(rc);
-			}
 			IntByReference lpcbData = new IntByReference();
 			IntByReference lpType = new IntByReference();
 			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
