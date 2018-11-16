@@ -245,6 +245,7 @@ public class Advapi32UtilTest extends TestCase {
                                                      "Software\\Microsoft", "KeyDoesNotExist"));
         assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_LOCAL_MACHINE,
                                                     "SYSTEM\\CurrentControlSet\\Control", "SystemBootDevice"));
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "FAIL", "Path"));
     }
 
     public void testRegistryValueExistsSamExtra() {
