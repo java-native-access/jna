@@ -468,8 +468,8 @@ public class Advapi32Test extends TestCase {
 		try {
 			HANDLEByReference phUser = new HANDLEByReference();
 			try {
-				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name.toString(),
-						null, userInfo.usri1_password.toString(), WinBase.LOGON32_LOGON_NETWORK,
+				assertTrue(Advapi32.INSTANCE.LogonUser(userInfo.usri1_name,
+						null, userInfo.usri1_password, WinBase.LOGON32_LOGON_NETWORK,
 						WinBase.LOGON32_PROVIDER_DEFAULT, phUser));
 				assertTrue(Advapi32.INSTANCE.ImpersonateLoggedOnUser(phUser.getValue()));
 				assertTrue(Advapi32.INSTANCE.RevertToSelf());
@@ -481,7 +481,7 @@ public class Advapi32Test extends TestCase {
 			}
 		} finally {
 	    	assertEquals(LMErr.NERR_Success, Netapi32.INSTANCE.NetUserDel(
-	    			null, userInfo.usri1_name.toString()));
+	    			null, userInfo.usri1_name));
 		}
     }
 
@@ -777,19 +777,17 @@ public class Advapi32Test extends TestCase {
         SECURITY_DESCRIPTOR sd = new SECURITY_DESCRIPTOR(64 * 1024);
         assertTrue(Advapi32.INSTANCE.InitializeSecurityDescriptor(sd, WinNT.SECURITY_DESCRIPTOR_REVISION));
 
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
         cbAcl += (sidLength - DWORD.SIZE);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
         assertTrue(Advapi32.INSTANCE.AddAccessAllowedAce(pAcl, WinNT.ACL_REVISION, WinNT.STANDARD_RIGHTS_ALL, pSid));
         assertTrue(Advapi32.INSTANCE.SetSecurityDescriptorDacl(sd, true, pAcl, false));
@@ -805,36 +803,32 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testInitializeAcl() throws IOException {
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
         cbAcl += (sidLength - DWORD.SIZE);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
     }
 
     public void testGetAce() throws IOException {
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Native.getNativeSize(ACCESS_ALLOWED_ACE.class, null);
         cbAcl += (sidLength - DWORD.SIZE);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
         assertTrue(Advapi32.INSTANCE.AddAccessAllowedAce(pAcl, WinNT.ACL_REVISION, WinNT.STANDARD_RIGHTS_ALL, pSid));
 
@@ -846,18 +840,16 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testAddAce() throws IOException {
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         ACCESS_ALLOWED_ACE pace = new ACCESS_ALLOWED_ACE(WinNT.STANDARD_RIGHTS_ALL,
                 WinNT.INHERITED_ACE,
                 pSid);
@@ -873,18 +865,16 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testAddAccessAllowedAce() throws IOException {
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
         assertTrue(Advapi32.INSTANCE.AddAccessAllowedAce(pAcl, WinNT.ACL_REVISION, WinNT.STANDARD_RIGHTS_ALL, pSid));
 
@@ -896,18 +886,16 @@ public class Advapi32Test extends TestCase {
     }
 
     public void testAddAccessAllowedAceEx() throws IOException {
-        ACL pAcl;
-        int cbAcl = 0;
         PSID pSid = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
         IntByReference cbSid = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
         assertTrue("Failed to create well-known SID",
                 Advapi32.INSTANCE.CreateWellKnownSid(WELL_KNOWN_SID_TYPE.WinBuiltinAdministratorsSid, null, pSid, cbSid));
 
         int sidLength = Advapi32.INSTANCE.GetLengthSid(pSid);
-        cbAcl = Native.getNativeSize(ACL.class, null);
+        int cbAcl = Native.getNativeSize(ACL.class, null);
         cbAcl += Advapi32Util.getAceSize(sidLength);
         cbAcl = Advapi32Util.alignOnDWORD(cbAcl);
-        pAcl = new ACL(cbAcl);
+        ACL pAcl = new ACL(cbAcl);
         assertTrue(Advapi32.INSTANCE.InitializeAcl(pAcl, cbAcl, WinNT.ACL_REVISION));
         assertTrue(Advapi32.INSTANCE.AddAccessAllowedAceEx(pAcl, WinNT.ACL_REVISION, WinNT.INHERIT_ONLY_ACE, WinNT.STANDARD_RIGHTS_ALL, pSid));
 
@@ -1060,8 +1048,8 @@ public class Advapi32Test extends TestCase {
                 pevlr = pevlr.share(record.Length.intValue());
             }
     	}
-        assertTrue("Unexpected error after reading event log: "
-                   + new Win32Exception(rc),
+        assertTrue(String.format("Unexpected error after reading event log: 0x%08X (%s)"
+                   , rc, Kernel32Util.formatMessage(rc)),
                    rc == W32Errors.ERROR_HANDLE_EOF || rc == 0);
         assertTrue("Error closing event log",
                    Advapi32.INSTANCE.CloseEventLog(h));
@@ -2099,7 +2087,7 @@ public class Advapi32Test extends TestCase {
         Advapi32.INSTANCE.CloseEncryptedFileRaw(pvContext2.getValue());
 
         file.delete();
-        new File(lbFileName2.toString()).delete();
+        new File(lbFileName2).delete();
     }
 
     private File createTempFile() throws Exception {
