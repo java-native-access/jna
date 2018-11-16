@@ -90,13 +90,31 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the automation property.
+     *
+     * @param propertyName
+     *            the property name
+     * @param value
+     *            parameter to pass to the getter
+     * @return the automation property
+     */
+    protected IDispatch getAutomationProperty(String propertyName, VARIANT value) {
+        VARIANT.ByReference result = new VARIANT.ByReference();
+        this.oleMethod(OleAuto.DISPATCH_PROPERTYGET, result, propertyName, value);
+
+        return ((IDispatch) result.getValue());
+    }
+
+    /**
+     * Gets the automation property.
      * 
      * @param propertyName
      *            the property name
      * @param comObject
      *            the com object
      * @return the automation property
+     * @deprecated Use {@link #getAutomationProperty(java.lang.String)}
      */
+    @Deprecated
     protected IDispatch getAutomationProperty(String propertyName,
             COMLateBindingObject comObject) {
         VARIANT.ByReference result = new VARIANT.ByReference();
@@ -115,7 +133,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      * @param value
      *            the value
      * @return the automation property
+     * @deprecated Use {@link #getAutomationProperty(java.lang.String, com.sun.jna.platform.win32.Variant.VARIANT)}
      */
+    @Deprecated
     protected IDispatch getAutomationProperty(String propertyName,
             COMLateBindingObject comObject, VARIANT value) {
         VARIANT.ByReference result = new VARIANT.ByReference();
@@ -132,7 +152,9 @@ public class COMLateBindingObject extends COMBindingBaseObject {
      * @param iDispatch
      *            the i dispatch
      * @return the automation property
+     * @deprecated Use {@link #getAutomationProperty(java.lang.String)}
      */
+    @Deprecated
     protected IDispatch getAutomationProperty(String propertyName,
             IDispatch iDispatch) {
         VARIANT.ByReference result = new VARIANT.ByReference();

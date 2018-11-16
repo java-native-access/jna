@@ -26,8 +26,6 @@ package com.sun.jna.platform.win32.COM.util;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Proxy;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
@@ -83,6 +81,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	private final ObjectFactory factory;
 	private final com.sun.jna.platform.win32.COM.IDispatch rawDispatch;
     
+        @SuppressWarnings("LeakingThisInConstructor")
 	public ProxyObject(Class<?> theInterface, IDispatch rawDispatch, ObjectFactory factory) {
 		this.unknownId = -1;
 		this.rawDispatch = rawDispatch;
@@ -134,6 +133,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 	@Override
 	protected void finalize() throws Throwable {
 		this.dispose();
+                super.finalize();
 	}
 
 	public synchronized void dispose() {
@@ -275,6 +275,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		return rawCp;
 	}
 
+        @Override
 	public IComEventCallbackCookie advise(Class<?> comEventCallbackInterface,
 			final IComEventCallbackListener comEventCallbackListener)
                         throws COMException {
@@ -316,6 +317,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
+        @Override
 	public void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
@@ -523,79 +525,104 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		}
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+        @SuppressWarnings("deprecation")
+        protected DISPID resolveDispId(String name) {
+                return resolveDispId(getRawDispatch(), name);
+        }
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, String name, VARIANT pArg)
+			throws COMException {
+		return this.oleMethod(nType, pvResult, name, new VARIANT[] { pArg });
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, DISPID dispId, VARIANT pArg)
+			throws COMException {
+		return this.oleMethod(nType, pvResult, dispId, new VARIANT[] { pArg });
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, String name)
+			throws COMException {
+		return this.oleMethod(nType, pvResult, name, (VARIANT[]) null);
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, DISPID dispId)
+			throws COMException {
+
+		return this.oleMethod(nType, pvResult, dispId, (VARIANT[]) null);
+	}
+
+	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, String name,
+			VARIANT[] pArgs) throws COMException {
+
+                return this.oleMethod(nType, pvResult, resolveDispId(name), pArgs);
+	}
+
+        @SuppressWarnings("deprecation")
+	protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult,
+			final DISPID dispId, VARIANT[] pArgs) throws COMException {
+                return oleMethod(nType, pvResult, getRawDispatch(), dispId, pArgs);
+	}
+
+        @Deprecated
+        protected DISPID resolveDispId(final IDispatch pDisp, String name) {
+                assert COMUtils.comIsInitialized() : "COM not initialized";
+
+                if (pDisp == null)
+                        throw new COMException("pDisp (IDispatch) parameter is null!");
+
+                final WString[] ptName = new WString[] { new WString(name) };
+                final DISPIDByReference pdispID = new DISPIDByReference();
+
+                HRESULT hr = pDisp.GetIDsOfNames(
+                        new REFIID(Guid.IID_NULL),
+                        ptName,
+                        1,
+                        factory.getLCID(),
+                        pdispID);
+
+                COMUtils.checkRC(hr);
+
+                return pdispID.getValue();
+        }
+
+        @Deprecated
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, String name, VARIANT pArg)
 			throws COMException {
 		return this.oleMethod(nType, pvResult, pDisp, name, new VARIANT[] { pArg });
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+        @Deprecated
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, DISPID dispId, VARIANT pArg)
 			throws COMException {
 		return this.oleMethod(nType, pvResult, pDisp, dispId, new VARIANT[] { pArg });
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+        @Deprecated
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, String name)
 			throws COMException {
 		return this.oleMethod(nType, pvResult, pDisp, name, (VARIANT[]) null);
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+        @Deprecated
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, IDispatch pDisp, DISPID dispId)
 			throws COMException {
 
 		return this.oleMethod(nType, pvResult, pDisp, dispId, (VARIANT[]) null);
 	}
 
-        protected DISPID resolveDispId(final IDispatch pDisp, String name) {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
-                if (pDisp == null)
-                        throw new COMException("pDisp (IDispatch) parameter is null!");
-
-                // variable declaration
-                final WString[] ptName = new WString[] { new WString(name) };
-                final DISPIDByReference pdispID = new DISPIDByReference();
-
-                // Get DISPID for name passed...
-                HRESULT hr = pDisp.GetIDsOfNames(
-                        new REFIID(Guid.IID_NULL), 
-                        ptName, 
-                        1, 
-                        factory.getLCID(), 
-                        pdispID);
-
-                COMUtils.checkRC(hr);
-                
-                return pdispID.getValue();
-        }
-        
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+	@Deprecated
 	protected HRESULT oleMethod(int nType, VARIANT.ByReference pvResult, final IDispatch pDisp, String name,
 			VARIANT[] pArgs) throws COMException {
 
                 return this.oleMethod(nType, pvResult, pDisp, resolveDispId(pDisp, name), pArgs);
 	}
 
-	/*
-	 * @see com.sun.jna.platform.win32.COM.COMBindingBaseObject#oleMethod
-	 */
+        @Deprecated
 	protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult, final IDispatch pDisp,
 			final DISPID dispId, VARIANT[] pArgs) throws COMException {
 
                assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
 		if (pDisp == null)
 			throw new COMException("pDisp (IDispatch) parameter is null!");
 
@@ -621,7 +648,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 		if (nType == OleAuto.DISPATCH_PROPERTYPUT) {
 			dp.setRgdispidNamedArgs(new DISPID[] {OaIdl.DISPID_PROPERTYPUT});
 		}
-                
+
                 // Apply "fix" according to
                 // https://www.delphitools.info/2013/04/30/gaining-visual-basic-ole-super-powers/
                 // https://msdn.microsoft.com/en-us/library/windows/desktop/ms221486(v=vs.85).aspx
