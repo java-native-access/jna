@@ -10,7 +10,7 @@ Features
 
 Bug Fixes
 ---------
-* [#1036](https://github.com/java-native-access/jna/issues/1036): `Advapi32Util.registryValueExists` called on non existig key raises exception instead of returning `false` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1036](https://github.com/java-native-access/jna/issues/1036): `Advapi32Util.registryValueExists` called on non existing key raises exception instead of returning `false` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.1.0
 =============
