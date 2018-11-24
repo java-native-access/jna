@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides management of native library resources.  One instance of this
@@ -148,6 +151,7 @@ public class NativeLibrary {
             System.out.println("Looking for library '" + libraryName + "'");
         }
 
+        List<Throwable> exceptions = new ArrayList<Throwable>();
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
         List<String> searchPath = new ArrayList<String>();
         int openFlags = openFlags(options);
@@ -192,8 +196,10 @@ public class NativeLibrary {
         } catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
             if (Native.DEBUG_LOAD) {
+                System.out.println("Loading failed with message: " + e.getMessage());
                 System.out.println("Adding system paths: " + librarySearchPath);
             }
+            exceptions.add(e);
             searchPath.addAll(librarySearchPath);
         }
 
@@ -208,7 +214,11 @@ public class NativeLibrary {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
                 }
             }
-        } catch(UnsatisfiedLinkError e) {
+        } catch(UnsatisfiedLinkError ule) {
+            if (Native.DEBUG_LOAD) {
+                System.out.println("Loading failed with message: " + ule.getMessage());
+            }
+            exceptions.add(ule);
             // For android, try to "preload" the library using
             // System.loadLibrary(), which looks into the private /data/data
             // path, not found in any properties
@@ -221,7 +231,10 @@ public class NativeLibrary {
                     handle = Native.open(libraryPath, openFlags);
                 }
                 catch(UnsatisfiedLinkError e2) {
-                    e = e2;
+                    if (Native.DEBUG_LOAD) {
+                        System.out.println("Loading failed with message: " + e2.getMessage());
+                    }
+                    exceptions.add(e2);
                 }
             }
             else if (Platform.isLinux() || Platform.isFreeBSD()) {
@@ -240,7 +253,10 @@ public class NativeLibrary {
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) {
-                        e = e2;
+                        if (Native.DEBUG_LOAD) {
+                            System.out.println("Loading failed with message: " + e2.getMessage());
+                        }
+                        exceptions.add(e2);
                     }
                 }
             }
@@ -258,7 +274,10 @@ public class NativeLibrary {
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) {
-                        e = e2;
+                        if (Native.DEBUG_LOAD) {
+                            System.out.println("Loading failed with message: " + e2.getMessage());
+                        }
+                        exceptions.add(e2);
                     }
                 }
             }
@@ -275,7 +294,10 @@ public class NativeLibrary {
                     try {
                         handle = Native.open(libraryPath, openFlags);
                     } catch(UnsatisfiedLinkError e2) {
-                        e = e2;
+                        if (Native.DEBUG_LOAD) {
+                            System.out.println("Loading failed with message: " + e2.getMessage());
+                        }
+                        exceptions.add(e2);
                     }
                 }
             }
@@ -295,12 +317,27 @@ public class NativeLibrary {
                     }
                 }
                 catch(IOException e2) {
-                    e = new UnsatisfiedLinkError(e2.getMessage());
+                    if (Native.DEBUG_LOAD) {
+                        System.out.println("Loading failed with message: " + e2.getMessage());
+                    }
+                    exceptions.add(e2);
                 }
             }
 
             if (handle == 0) {
-                throw new UnsatisfiedLinkError("Unable to load library '" + libraryName + "': " + e.getMessage());
+                StringBuilder sb = new StringBuilder();
+                sb.append("Unable to load library '");
+                sb.append(libraryName);
+                sb.append("':");
+                for(Throwable t: exceptions) {
+                    sb.append("\n");
+                    sb.append(t.getMessage());
+                }
+                UnsatisfiedLinkError res = new UnsatisfiedLinkError(sb.toString());
+                for(Throwable t: exceptions) {
+                    addSuppressedReflected(res, t);
+                }
+                throw res;
             }
         }
 
@@ -308,6 +345,33 @@ public class NativeLibrary {
             System.out.println("Found library '" + libraryName + "' at " + libraryPath);
         }
         return new NativeLibrary(libraryName, libraryPath, handle, options);
+    }
+
+    private static Method addSuppressedMethod = null;
+    static {
+        try {
+            addSuppressedMethod = Throwable.class.getMethod("addSuppressed", Throwable.class);
+        } catch (NoSuchMethodException ex) {
+            // This is the case for JDK < 7
+        } catch (SecurityException ex) {
+            Logger.getLogger(NativeLibrary.class.getName()).log(Level.SEVERE, "Failed to initialize 'addSuppressed' method", ex);
+        }
+    }
+
+    private static void addSuppressedReflected(Throwable target, Throwable suppressed) {
+        if(addSuppressedMethod == null) {
+            // Make this a NOOP on an unsupported JDK
+            return;
+        }
+        try {
+            addSuppressedMethod.invoke(target, suppressed);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
+        } catch (IllegalArgumentException ex) {
+            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
+        } catch (InvocationTargetException ex) {
+            throw new RuntimeException("Failed to call addSuppressedMethod", ex);
+        }
     }
 
     /** Look for a matching framework (OSX) */

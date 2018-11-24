@@ -7,6 +7,7 @@ Release 5.1.1 (Next release)
 
 Features
 --------
+* [#1038](https://github.com/java-native-access/jna/issues/1038): Improve exception when native library loading fails by preserving the original exceptions and messages - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
