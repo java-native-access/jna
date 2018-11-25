@@ -36,8 +36,12 @@ import com.sun.jna.platform.win32.WinNT.FILE_NOTIFY_INFORMATION;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class W32FileMonitor extends FileMonitor {
+
+    private static final Logger LOG = Logger.getLogger(W32FileMonitor.class.getName());
 
     private static final int BUFFER_SIZE = 4096;
 
@@ -90,7 +94,7 @@ public class W32FileMonitor extends FileMonitor {
                 break;
             default:
                 // TODO: other actions...
-                System.err.println("Unrecognized file action '" + fni.Action + "'");
+                LOG.log(Level.WARNING, "Unrecognized file action ''{0}''", fni.Action);
             }
 
             if (event != null) {

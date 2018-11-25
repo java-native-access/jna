@@ -40,6 +40,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** Provides simplified drop handling for a component.
  * Usage:<br>    
@@ -96,6 +98,8 @@ import java.util.Set;
 // want to remove the default TransferHandler.DropHandler, which uses
 // the TransferHandler to drop
 public abstract class DropHandler implements DropTargetListener {
+
+    private static final Logger LOG = Logger.getLogger(DropHandler.class.getName());
 
     private int acceptedActions;
     private List<DataFlavor> acceptedFlavors;
@@ -275,26 +279,36 @@ public abstract class DropHandler implements DropTargetListener {
 
     private String lastAction;
     private void describe(String type, DropTargetEvent e) {
-        if (false) {
-            String msg = "drop: " + type;
+        if(LOG.isLoggable(Level.FINE)) {
+            StringBuilder msgBuilder = new StringBuilder();
+            msgBuilder.append("drop: ");
+            msgBuilder.append(type);
             if (e instanceof DropTargetDragEvent) {
                 DropTargetContext dtc = e.getDropTargetContext();
                 DropTarget dt = dtc.getDropTarget();
-                DropTargetDragEvent ev = (DropTargetDragEvent)e;
-                msg += ": src=" + DragHandler.actionString(ev.getSourceActions())
-                    + " tgt=" + DragHandler.actionString(dt.getDefaultActions())
-                    + " act=" + DragHandler.actionString(ev.getDropAction());
+                DropTargetDragEvent ev = (DropTargetDragEvent) e;
+                msgBuilder.append(": src=");
+                msgBuilder.append(DragHandler.actionString(ev.getSourceActions()));
+                msgBuilder.append(" tgt=");
+                msgBuilder.append(DragHandler.actionString(dt.getDefaultActions()));
+                msgBuilder.append(" act=");
+                msgBuilder.append(DragHandler.actionString(ev.getDropAction()));
             }
             else if (e instanceof DropTargetDropEvent) {
                 DropTargetContext dtc = e.getDropTargetContext();
                 DropTarget dt = dtc.getDropTarget();
                 DropTargetDropEvent ev = (DropTargetDropEvent)e;
-                msg += ": src=" + DragHandler.actionString(ev.getSourceActions())
-                + " tgt=" + DragHandler.actionString(dt.getDefaultActions())
-                + " act=" + DragHandler.actionString(ev.getDropAction());
+                msgBuilder.append(": src=");
+                msgBuilder.append(DragHandler.actionString(ev.getSourceActions()));
+                msgBuilder.append(" tgt=");
+                msgBuilder.append(DragHandler.actionString(dt.getDefaultActions()));
+                msgBuilder.append(" act=");
+                msgBuilder.append(DragHandler.actionString(ev.getDropAction()));
             }
+            String msg = msgBuilder.toString();
             if (!msg.equals(lastAction)) {
-                System.out.println(lastAction = msg);
+                LOG.log(Level.FINE, msg);
+                lastAction = msg;
             }
         }
     }
@@ -317,23 +331,27 @@ public abstract class DropHandler implements DropTargetListener {
         return action;
     }
 
+    @Override
     public void dragEnter(DropTargetDragEvent e) {
         describe("enter(tgt)", e);
         int action = acceptOrReject(e);
         paintDropTarget(e, action, e.getLocation());
     }
 
+    @Override
     public void dragOver(DropTargetDragEvent e) {
         describe("over(tgt)", e);
         int action = acceptOrReject(e);
         paintDropTarget(e, action, e.getLocation());
     }
 
+    @Override
     public void dragExit(DropTargetEvent e) {
         describe("exit(tgt)", e);
         paintDropTarget(e, DragHandler.NONE, null);
     }
 
+    @Override
     public void dropActionChanged(DropTargetDragEvent e) {
         describe("change(tgt)", e);
         int action = acceptOrReject(e);
@@ -344,6 +362,7 @@ public abstract class DropHandler implements DropTargetListener {
      * standard drop validity checking and handling, then invokes
      * {@link #drop(DropTargetDropEvent,int)} if the drop looks acceptable.
      */
+    @Override
     public void drop(DropTargetDropEvent e) {
         describe("drop(tgt)", e);
         int action = getDropAction(e);
@@ -353,12 +372,10 @@ public abstract class DropHandler implements DropTargetListener {
                 drop(e, action);
                 // Just in case this hasn't been done yet
                 e.dropComplete(true);
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 e.dropComplete(false);
             }
-        }
-        else {
+        } else {
             e.rejectDrop();
         }
         paintDropTarget(e, DragHandler.NONE, e.getLocation());

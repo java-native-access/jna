@@ -114,6 +114,8 @@ import com.sun.jna.platform.win32.WinUser.WNDENUMPROC;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides additional features on a Java {@link Window}.
@@ -158,6 +160,8 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: setWindowMask() should accept a threshold; some cases want a
 // 50% threshold, some might want zero/non-zero
 public class WindowUtils {
+
+    private static final Logger LOG = Logger.getLogger(WindowUtils.class.getName());
 
     private static final String TRANSPARENT_OLD_BG = "transparent-old-bg";
     private static final String TRANSPARENT_OLD_OPAQUE = "transparent-old-opaque";
@@ -1365,7 +1369,8 @@ public class WindowUtils {
                 if (oldDraggable == null) {
                     p.putClientProperty(WDRAG, Boolean.FALSE);
                     if (w.isDisplayable()) {
-                        System.err.println(context + "(): To avoid content dragging, " + context + "() must be called before the window is realized, or " + WDRAG + " must be set to Boolean.FALSE before the window is realized.  If you really want content dragging, set " + WDRAG + " on the window's root pane to Boolean.TRUE before calling " + context + "() to hide this message.");
+                        LOG.log(Level.WARNING, "{0}(): To avoid content dragging, {1}() must be called before the window is realized, or " + WDRAG + " must be set to Boolean.FALSE before the window is realized.  If you really want content dragging, set " + WDRAG + " on the window''s root pane to Boolean.TRUE before calling {2}() to hide this message.",
+                                new Object[]{context, context, context});
                     }
                 }
             }
