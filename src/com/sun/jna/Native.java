@@ -63,6 +63,8 @@ import java.util.WeakHashMap;
 
 import com.sun.jna.Callback.UncaughtExceptionHandler;
 import com.sun.jna.Structure.FFIType;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** Provides generation of invocation plumbing for a defined native
  * library interface.  Also provides various utilities for native operations.
@@ -109,10 +111,13 @@ import com.sun.jna.Structure.FFIType;
  */
 public final class Native implements Version {
 
+    private static final Logger LOG = Logger.getLogger(Native.class.getName());
+
     public static final Charset DEFAULT_CHARSET = Charset.defaultCharset();
     public static final String DEFAULT_ENCODING = Native.DEFAULT_CHARSET.name();
-    public static boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
-    public static boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
+    public static final boolean DEBUG_LOAD = Boolean.getBoolean("jna.debug_load");
+    public static final boolean DEBUG_JNA_LOAD = Boolean.getBoolean("jna.debug_load.jna");
+    private final static Level DEBUG_JNA_LOAD_LEVEL = DEBUG_JNA_LOAD ? Level.INFO : Level.FINE;
 
     // Used by tests, do not remove
     static String jnidispatchPath = null;
@@ -123,8 +128,7 @@ public final class Native implements Version {
         new UncaughtExceptionHandler() {
             @Override
             public void uncaughtException(Callback c, Throwable e) {
-                System.err.println("JNA: Callback " + c + " threw the following exception:");
-                e.printStackTrace();
+                LOG.log(Level.WARNING, "JNA: Callback " + c + " threw the following exception", e);
             }
         };
     private static UncaughtExceptionHandler callbackExceptionHandler = DEFAULT_HANDLER;
@@ -231,8 +235,9 @@ public final class Native implements Version {
     /** Force a dispose when the Native class is GC'd. */
     private static final Object finalizer = new Object() {
         @Override
-        protected void finalize() {
+        protected void finalize() throws Throwable {
             dispose();
+            super.finalize();
         }
     };
 
@@ -367,16 +372,16 @@ public final class Native implements Version {
                 charset = Charset.forName(encoding);
             }
             catch(IllegalCharsetNameException e) {
-                System.err.println("JNA Warning: Encoding '"
-                                   + encoding + "' is unsupported (" + e.getMessage() + ")");
+                LOG.log(Level.WARNING, "JNA Warning: Encoding ''{0}'' is unsupported ({1})",
+                        new Object[]{encoding, e.getMessage()});
             }
             catch(UnsupportedCharsetException  e) {
-                System.err.println("JNA Warning: Encoding '"
-                                   + encoding + "' is unsupported (" + e.getMessage() + ")");
+                LOG.log(Level.WARNING, "JNA Warning: Encoding ''{0}'' is unsupported ({1})",
+                        new Object[]{encoding, e.getMessage()});
             }
         }
         if (charset == null) {
-            System.err.println("JNA Warning: Using fallback encoding " + System.getProperty("file.encoding"));
+            LOG.log(Level.WARNING, "JNA Warning: Using fallback encoding {0}", Native.DEFAULT_CHARSET);
             charset = Native.DEFAULT_CHARSET;
         }
         return charset;
@@ -822,7 +827,7 @@ public final class Native implements Version {
      */
     public static int getStructureAlignment(Class<?> cls) {
         Integer alignment = (Integer)getLibraryOptions(cls).get(Library.OPTION_STRUCTURE_ALIGNMENT);
-        return alignment == null ? Structure.ALIGN_DEFAULT : alignment.intValue();
+        return alignment == null ? Structure.ALIGN_DEFAULT : alignment;
     }
 
     /**
@@ -914,7 +919,7 @@ public final class Native implements Version {
                 removeTemporaryFiles();
             }
             catch(IOException e) {
-                System.err.println("JNA Warning: IOException removing temporary files: " + e.getMessage());
+                LOG.log(Level.WARNING, "JNA Warning: IOException removing temporary files", e);
             }
         }
 
@@ -927,20 +932,14 @@ public final class Native implements Version {
                 String dir = dirs.nextToken();
                 File file = new File(new File(dir), System.mapLibraryName(libName).replace(".dylib", ".jnilib"));
                 String path = file.getAbsolutePath();
-                if (DEBUG_JNA_LOAD) {
-                    System.out.println("Looking in " + path);
-                }
+                LOG.log(DEBUG_JNA_LOAD_LEVEL, "Looking in {0}", path);
                 if (file.exists()) {
                     try {
-                        if (DEBUG_JNA_LOAD) {
-                            System.out.println("Trying " + path);
-                        }
+                        LOG.log(DEBUG_JNA_LOAD_LEVEL, "Trying {0}", path);
                         System.setProperty("jnidispatch.path", path);
                         System.load(path);
                         jnidispatchPath = path;
-                        if (DEBUG_JNA_LOAD) {
-                            System.out.println("Found jnidispatch at " + path);
-                        }
+                        LOG.log(DEBUG_JNA_LOAD_LEVEL, "Found jnidispatch at {0}", path);
                         return;
                     } catch (UnsatisfiedLinkError ex) {
                         // Not a problem if already loaded in anoteher class loader
@@ -958,23 +957,17 @@ public final class Native implements Version {
                         ext = "dylib";
                     }
                     path = path.substring(0, path.lastIndexOf(orig)) + ext;
-                    if (DEBUG_JNA_LOAD) {
-                        System.out.println("Looking in " + path);
-                    }
+                    LOG.log(DEBUG_JNA_LOAD_LEVEL, "Looking in {0}", path);
                     if (new File(path).exists()) {
                         try {
-                            if (DEBUG_JNA_LOAD) {
-                                System.out.println("Trying " + path);
-                            }
+                            LOG.log(DEBUG_JNA_LOAD_LEVEL, "Trying {0}", path);
                             System.setProperty("jnidispatch.path", path);
                             System.load(path);
                             jnidispatchPath = path;
-                            if (DEBUG_JNA_LOAD) {
-                                System.out.println("Found jnidispatch at " + path);
-                            }
+                            LOG.log(DEBUG_JNA_LOAD_LEVEL, "Found jnidispatch at {0}", path);
                             return;
                         } catch (UnsatisfiedLinkError ex) {
-                            System.err.println("File found at " + path + " but not loadable: " + ex.getMessage());
+                            LOG.log(Level.WARNING, "File found at " + path + " but not loadable: " + ex.getMessage(), ex);
                         }
                     }
                 }
@@ -983,13 +976,9 @@ public final class Native implements Version {
         String jnaNosys = System.getProperty("jna.nosys", "true");
         if (!Boolean.parseBoolean(jnaNosys)) {
             try {
-                if (DEBUG_JNA_LOAD) {
-                    System.out.println("Trying (via loadLibrary) " + libName);
-                }
+                LOG.log(DEBUG_JNA_LOAD_LEVEL, "Trying (via loadLibrary) {0}", libName);
                 System.loadLibrary(libName);
-                if (DEBUG_JNA_LOAD) {
-                    System.out.println("Found jnidispatch on system path");
-                }
+                LOG.log(DEBUG_JNA_LOAD_LEVEL, "Found jnidispatch on system path");
                 return;
             }
             catch(UnsatisfiedLinkError e) {
@@ -1017,15 +1006,13 @@ public final class Native implements Version {
                     throw new UnsatisfiedLinkError("Could not find JNA native support");
                 }
             }
-            if (DEBUG_JNA_LOAD) {
-                System.out.println("Trying " + lib.getAbsolutePath());
-            }
+
+            LOG.log(DEBUG_JNA_LOAD_LEVEL, "Trying {0}", lib.getAbsolutePath());
             System.setProperty("jnidispatch.path", lib.getAbsolutePath());
             System.load(lib.getAbsolutePath());
             jnidispatchPath = lib.getAbsolutePath();
-            if (DEBUG_JNA_LOAD) {
-                System.out.println("Found jnidispatch at " + jnidispatchPath);
-            }
+            LOG.log(DEBUG_JNA_LOAD_LEVEL, "Found jnidispatch at {0}", jnidispatchPath);
+
             // Attempt to delete immediately once jnidispatch is successfully
             // loaded.  This avoids the complexity of trying to do so on "exit",
             // which point can vary under different circumstances (native
@@ -1073,8 +1060,9 @@ public final class Native implements Version {
      * @throws IOException if resource not found
      */
     public static File extractFromResourcePath(String name, ClassLoader loader) throws IOException {
-        final boolean DEBUG = DEBUG_LOAD
-            || (DEBUG_JNA_LOAD && name.indexOf("jnidispatch") != -1);
+
+        final Level DEBUG = (DEBUG_LOAD
+            || (DEBUG_JNA_LOAD && name.contains("jnidispatch"))) ? Level.INFO : Level.FINE;
         if (loader == null) {
             loader = Thread.currentThread().getContextClassLoader();
             // Context class loader is not guaranteed to be set
@@ -1082,9 +1070,7 @@ public final class Native implements Version {
                 loader = Native.class.getClassLoader();
             }
         }
-        if (DEBUG) {
-            System.out.println("Looking in classpath from " + loader + " for " + name);
-        }
+        LOG.log(DEBUG, "Looking in classpath from {0} for {1}", new Object[]{loader, name});
         String libname = name.startsWith("/") ? name : NativeLibrary.mapSharedLibraryName(name);
         String resourcePath = name.startsWith("/") ? name : Platform.RESOURCE_PREFIX + "/" + libname;
         if (resourcePath.startsWith("/")) {
@@ -1102,9 +1088,7 @@ public final class Native implements Version {
             }
             throw new IOException("Native library (" + resourcePath + ") not found in resource path (" + path + ")");
         }
-        if (DEBUG) {
-            System.out.println("Found library resource at " + url);
-        }
+        LOG.log(DEBUG, "Found library resource at {0}", url);
 
         File lib = null;
         if (url.getProtocol().toLowerCase().equals("file")) {
@@ -1114,9 +1098,7 @@ public final class Native implements Version {
             catch(URISyntaxException e) {
                 lib = new File(url.getPath());
             }
-            if (DEBUG) {
-                System.out.println("Looking in " + lib.getAbsolutePath());
-            }
+            LOG.log(DEBUG, "Looking in {0}", lib.getAbsolutePath());
             if (!lib.exists()) {
                 throw new IOException("File URL " + url + " could not be properly decoded");
             }
@@ -1137,9 +1119,7 @@ public final class Native implements Version {
                 if (!Boolean.getBoolean("jnidispatch.preserve")) {
                     lib.deleteOnExit();
                 }
-                if (DEBUG) {
-                    System.out.println("Extracting library to " + lib.getAbsolutePath());
-                }
+                LOG.log(DEBUG, "Extracting library to {0}", lib.getAbsolutePath());
                 fos = new FileOutputStream(lib);
                 int count;
                 byte[] buf = new byte[1024];
@@ -1516,8 +1496,8 @@ public final class Native implements Version {
         CallbackReference.setCallbackThreadInitializer(cb, initializer);
     }
 
-    private static Map<Class<?>, long[]> registeredClasses = new WeakHashMap<Class<?>, long[]>();
-    private static Map<Class<?>, NativeLibrary> registeredLibraries = new WeakHashMap<Class<?>, NativeLibrary>();
+    private static final Map<Class<?>, long[]> registeredClasses = new WeakHashMap<Class<?>, long[]>();
+    private static final Map<Class<?>, NativeLibrary> registeredLibraries = new WeakHashMap<Class<?>, NativeLibrary>();
 
     private static void unregisterAll() {
         synchronized(registeredClasses) {

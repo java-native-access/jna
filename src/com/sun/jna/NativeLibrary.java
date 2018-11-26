@@ -25,6 +25,7 @@
 
 package com.sun.jna;
 
+import static com.sun.jna.Native.DEBUG_LOAD;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -81,6 +82,9 @@ import java.util.logging.Logger;
  * @author twall
  */
 public class NativeLibrary {
+
+    private static final Logger LOG = Logger.getLogger(NativeLibrary.class.getName());
+    private final static Level DEBUG_LOAD_LEVEL = DEBUG_LOAD ? Level.INFO : Level.FINE;
 
     private long handle;
     private final String libraryName;
@@ -147,9 +151,7 @@ public class NativeLibrary {
     }
 
     private static NativeLibrary loadLibrary(String libraryName, Map<String, ?> options) {
-        if (Native.DEBUG_LOAD) {
-            System.out.println("Looking for library '" + libraryName + "'");
-        }
+        LOG.log(DEBUG_LOAD_LEVEL, "Looking for library '" + libraryName + "'");
 
         List<Throwable> exceptions = new ArrayList<Throwable>();
         boolean isAbsolutePath = new File(libraryName).isAbsolute();
@@ -160,9 +162,7 @@ public class NativeLibrary {
         // attempt any library name variations
         String webstartPath = Native.getWebStartLibraryPath(libraryName);
         if (webstartPath != null) {
-            if (Native.DEBUG_LOAD) {
-                System.out.println("Adding web start path " + webstartPath);
-            }
+            LOG.log(DEBUG_LOAD_LEVEL, "Adding web start path " + webstartPath);
             searchPath.add(webstartPath);
         }
 
@@ -176,9 +176,7 @@ public class NativeLibrary {
             }
         }
 
-        if (Native.DEBUG_LOAD) {
-            System.out.println("Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
-        }
+        LOG.log(DEBUG_LOAD_LEVEL, "Adding paths from jna.library.path: " + System.getProperty("jna.library.path"));
 
         searchPath.addAll(initPaths("jna.library.path"));
         String libraryPath = findLibraryPath(libraryName, searchPath);
@@ -189,16 +187,12 @@ public class NativeLibrary {
         // name if it cannot find the library.
         //
         try {
-            if (Native.DEBUG_LOAD) {
-                System.out.println("Trying " + libraryPath);
-            }
+            LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
             handle = Native.open(libraryPath, openFlags);
         } catch(UnsatisfiedLinkError e) {
             // Add the system paths back for all fallback searching
-            if (Native.DEBUG_LOAD) {
-                System.out.println("Loading failed with message: " + e.getMessage());
-                System.out.println("Adding system paths: " + librarySearchPath);
-            }
+            LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e.getMessage());
+            LOG.log(DEBUG_LOAD_LEVEL, "Adding system paths: " + librarySearchPath);
             exceptions.add(e);
             searchPath.addAll(librarySearchPath);
         }
@@ -206,34 +200,26 @@ public class NativeLibrary {
         try {
             if (handle == 0) {
                 libraryPath = findLibraryPath(libraryName, searchPath);
-                if (Native.DEBUG_LOAD) {
-                    System.out.println("Trying " + libraryPath);
-                }
+                LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
                 handle = Native.open(libraryPath, openFlags);
                 if (handle == 0) {
                     throw new UnsatisfiedLinkError("Failed to load library '" + libraryName + "'");
                 }
             }
         } catch(UnsatisfiedLinkError ule) {
-            if (Native.DEBUG_LOAD) {
-                System.out.println("Loading failed with message: " + ule.getMessage());
-            }
+            LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + ule.getMessage());
             exceptions.add(ule);
             // For android, try to "preload" the library using
             // System.loadLibrary(), which looks into the private /data/data
             // path, not found in any properties
             if (Platform.isAndroid()) {
                 try {
-                    if (Native.DEBUG_LOAD) {
-                        System.out.println("Preload (via System.loadLibrary) " + libraryName);
-                    }
+                    LOG.log(DEBUG_LOAD_LEVEL, "Preload (via System.loadLibrary) " + libraryName);
                     System.loadLibrary(libraryName);
                     handle = Native.open(libraryPath, openFlags);
                 }
                 catch(UnsatisfiedLinkError e2) {
-                    if (Native.DEBUG_LOAD) {
-                        System.out.println("Loading failed with message: " + e2.getMessage());
-                    }
+                    LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                     exceptions.add(e2);
                 }
             }
@@ -241,62 +227,44 @@ public class NativeLibrary {
                 //
                 // Failed to load the library normally - try to match libfoo.so.*
                 //
-                if (Native.DEBUG_LOAD) {
-                    System.out.println("Looking for version variants");
-                }
+                LOG.log(DEBUG_LOAD_LEVEL, "Looking for version variants");
                 libraryPath = matchLibrary(libraryName, searchPath);
                 if (libraryPath != null) {
-                    if (Native.DEBUG_LOAD) {
-                        System.out.println("Trying " + libraryPath);
-                    }
+                    LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
                     try {
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) {
-                        if (Native.DEBUG_LOAD) {
-                            System.out.println("Loading failed with message: " + e2.getMessage());
-                        }
+                        LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                         exceptions.add(e2);
                     }
                 }
             }
             // Search framework libraries on OS X
             else if (Platform.isMac() && !libraryName.endsWith(".dylib")) {
-                if (Native.DEBUG_LOAD) {
-                    System.out.println("Looking for matching frameworks");
-                }
+                LOG.log(DEBUG_LOAD_LEVEL, "Looking for matching frameworks");
                 libraryPath = matchFramework(libraryName);
                 if (libraryPath != null) {
                     try {
-                        if (Native.DEBUG_LOAD) {
-                            System.out.println("Trying " + libraryPath);
-                        }
+                        LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
                         handle = Native.open(libraryPath, openFlags);
                     }
                     catch(UnsatisfiedLinkError e2) {
-                        if (Native.DEBUG_LOAD) {
-                            System.out.println("Loading failed with message: " + e2.getMessage());
-                        }
+                        LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                         exceptions.add(e2);
                     }
                 }
             }
             // Try the same library with a "lib" prefix
             else if (Platform.isWindows() && !isAbsolutePath) {
-                if (Native.DEBUG_LOAD) {
-                    System.out.println("Looking for lib- prefix");
-                }
+                LOG.log(DEBUG_LOAD_LEVEL, "Looking for lib- prefix");
                 libraryPath = findLibraryPath("lib" + libraryName, searchPath);
                 if (libraryPath != null) {
-                    if (Native.DEBUG_LOAD) {
-                        System.out.println("Trying " + libraryPath);
-                    }
+                    LOG.log(DEBUG_LOAD_LEVEL, "Trying " + libraryPath);
                     try {
                         handle = Native.open(libraryPath, openFlags);
                     } catch(UnsatisfiedLinkError e2) {
-                        if (Native.DEBUG_LOAD) {
-                            System.out.println("Loading failed with message: " + e2.getMessage());
-                        }
+                        LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                         exceptions.add(e2);
                     }
                 }
@@ -317,9 +285,7 @@ public class NativeLibrary {
                     }
                 }
                 catch(IOException e2) {
-                    if (Native.DEBUG_LOAD) {
-                        System.out.println("Loading failed with message: " + e2.getMessage());
-                    }
+                    LOG.log(DEBUG_LOAD_LEVEL, "Loading failed with message: " + e2.getMessage());
                     exceptions.add(e2);
                 }
             }
@@ -341,9 +307,7 @@ public class NativeLibrary {
             }
         }
 
-        if (Native.DEBUG_LOAD) {
-            System.out.println("Found library '" + libraryName + "' at " + libraryPath);
-        }
+        LOG.log(DEBUG_LOAD_LEVEL, "Found library '" + libraryName + "' at " + libraryPath);
         return new NativeLibrary(libraryName, libraryPath, handle, options);
     }
 

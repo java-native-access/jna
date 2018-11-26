@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a native structure with a Java peer class.  When used as a
@@ -108,6 +110,8 @@ import java.util.WeakHashMap;
  * @author twall@users.sf.net
  */
 public abstract class Structure {
+
+    private static final Logger LOG = Logger.getLogger(Structure.class.getName());
 
     /** Tagging interface to indicate the value of an instance of the
      * <code>Structure</code> type is to be used in function invocations rather
@@ -1376,6 +1380,7 @@ public abstract class Structure {
      * Initialize any null-valued fields that should have a non-null default
      * value.
      */
+    @SuppressWarnings("UseSpecificCatch")
     private void initializeFields() {
         // Get the full field list, don't care about sorting
         List<Field> flist = getFieldList();
@@ -1821,7 +1826,7 @@ public abstract class Structure {
             return s;
         }
         catch(Throwable e) {
-            System.err.println("JNA: Error creating structure: " + e);
+            LOG.log(Level.WARNING, "JNA: Error creating structure", e);
             return null;
         }
     }
@@ -1854,7 +1859,6 @@ public abstract class Structure {
         }
         catch(InvocationTargetException e) {
             String msg = "Exception thrown while instantiating an instance of " + type;
-            e.printStackTrace();
             throw new IllegalArgumentException(msg, e);
         }
         T s = newInstance(type);
