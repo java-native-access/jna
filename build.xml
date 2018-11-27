@@ -52,15 +52,15 @@
   <property name="javadoc" location="${doc}/javadoc"/>
   <property name="stylesheet" location="${javadoc}/doc/css/javadoc.css"/>
   <property name="vendor" value="JNA Development Team"/>
-  <property name="year" value="2017"/>
+  <property name="year" value="2018"/>
   <property name="copyright"
             value="Copyright &amp;copy; 2007-${year} Timothy Wall. All Rights Reserved."/>
   <buildnumber/>
 
   <!-- JNA library release version - android versionCode is derived from mjar/minor/revision -->
   <property name="jna.major" value="5"/>
-  <property name="jna.minor" value="1"/>
-  <property name="jna.revision" value="1"/>
+  <property name="jna.minor" value="2"/>
+  <property name="jna.revision" value="0"/>
   <property name="jna.build" value="0"/> <!--${build.number}-->
   <condition property="version.suffix" value="" else="-SNAPSHOT">
     <or>
