@@ -974,7 +974,7 @@ public final class Native implements Version {
             }
         }
         String jnaNosys = System.getProperty("jna.nosys", "true");
-        if (!Boolean.parseBoolean(jnaNosys)) {
+        if ((!Boolean.parseBoolean(jnaNosys)) || Platform.isAndroid()) {
             try {
                 LOG.log(DEBUG_JNA_LOAD_LEVEL, "Trying (via loadLibrary) {0}", libName);
                 System.loadLibrary(libName);

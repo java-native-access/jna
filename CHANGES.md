@@ -2,7 +2,7 @@ NOTE: as of JNA 4.0, JNA is now dual-licensed under LGPL and AL 2.0 (see LICENSE
 
 NOTE: JNI native support is typically incompatible between minor versions, and almost always incompatible between major versions.
 
-Release 5.1.1 (Next release)
+Release 5.2.0 (Next release)
 ============================
 
 Features
@@ -13,6 +13,7 @@ Features
 Bug Fixes
 ---------
 * [#1036](https://github.com/java-native-access/jna/issues/1036): `Advapi32Util.registryValueExists` called on non existing key raises exception instead of returning `false` - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#384](https://github.com/java-native-access/jna/issues/384): Android only supports loading libraries through the JVM `System#loadLibrary` mechanism, defaulting `jna.nosys` to `true` disabled that code path - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.1.0
 =============
