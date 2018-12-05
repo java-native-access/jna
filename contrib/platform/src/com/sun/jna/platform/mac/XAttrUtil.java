@@ -58,6 +58,9 @@ public class XAttrUtil {
 		if (bufferLength < 0)
 			return null;
 
+		if (bufferLength == 0)
+			return "";
+
 		Memory valueBuffer = new Memory(bufferLength);
 		long valueLength = XAttr.INSTANCE.getxattr(path, name, valueBuffer, bufferLength, 0, 0);
 
