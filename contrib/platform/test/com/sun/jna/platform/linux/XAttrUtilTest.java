@@ -24,6 +24,7 @@
  */
 package com.sun.jna.platform.linux;
 
+import com.sun.jna.Memory;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -33,12 +34,16 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertNotNull;
 
 public class XAttrUtilTest {
     private static final String TEST_STRING = "Žluťoučký kůň úpěl nebo tak něco.";
     private static final String TEST_STRING_2 = "Příliš žluťoučký kůň úpěl ďábelské ódy.";
+    private static final String TEST_EMPTY_STRING = "";
     private static final String TEST_ATTRIBUTE = "user.test";
     private static final String TEST_ATTRIBUTE_FOO = TEST_ATTRIBUTE + ".foo";
+    private static final String TEST_ATTRIBUTE_EMPTY = TEST_ATTRIBUTE + ".empty";
 
     @Test
     public void setXAttr() throws IOException {
@@ -66,5 +71,26 @@ public class XAttrUtilTest {
         xattrs = XAttrUtil.lListXAttr(file.getAbsolutePath());
         assertFalse(xattrs.contains(TEST_ATTRIBUTE));
         assertTrue(xattrs.contains(TEST_ATTRIBUTE_FOO));
+
+        file.delete();
+    }
+
+    @Test
+    public void testGetXAttr() throws IOException {
+        File file = File.createTempFile("xattr", "test");
+        file.deleteOnExit();
+
+        XAttrUtil.setXAttr(file.getAbsolutePath(), TEST_ATTRIBUTE_EMPTY, TEST_EMPTY_STRING);
+
+        Memory memoryReadMissing = XAttrUtil.getXAttrAsMemory(file.getAbsolutePath(), TEST_ATTRIBUTE_EMPTY);
+        byte[] byteReadMissing = XAttrUtil.getXAttrBytes(file.getAbsolutePath(), TEST_ATTRIBUTE_EMPTY);
+        String stringReadMissing = XAttrUtil.getXAttr(file.getAbsolutePath(), TEST_ATTRIBUTE_EMPTY);
+        assertNull(memoryReadMissing);
+        assertNotNull(byteReadMissing);
+        assertEquals(0, byteReadMissing.length);
+        assertNotNull(stringReadMissing);
+        assertTrue(stringReadMissing.isEmpty());
+
+        file.delete();
     }
 }

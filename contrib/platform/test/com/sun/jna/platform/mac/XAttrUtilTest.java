@@ -12,6 +12,8 @@
  */
 package com.sun.jna.platform.mac;
 
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
@@ -58,6 +60,10 @@ public class XAttrUtilTest extends TestCase {
 		value = XAttrUtil.getXAttr(testPath, "JNA");
 
 		assertEquals(Arrays.toString("Java Native Access".getBytes()), Arrays.toString(value.getBytes()));
+
+                XAttr.INSTANCE.setxattr(testPath, "JNA.empty", Pointer.NULL, 0, 0, 0);
+                value = XAttrUtil.getXAttr(testPath, "JNA.empty");
+                assertEquals("", value);
 	}
 
 	public void testSetXAttr() {

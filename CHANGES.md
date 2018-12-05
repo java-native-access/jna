@@ -14,6 +14,7 @@ Bug Fixes
 ---------
 * [#1036](https://github.com/java-native-access/jna/issues/1036): `Advapi32Util.registryValueExists` called on non existing key raises exception instead of returning `false` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#384](https://github.com/java-native-access/jna/issues/384): Android only supports loading libraries through the JVM `System#loadLibrary` mechanism, defaulting `jna.nosys` to `true` disabled that code path - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1041](https://github.com/java-native-access/jna/pull/1041): Avoid IllegalArgumentException when reading xattrs with zero length - [@jrobhoward](https://github.com/jrobhoward).
 
 Release 5.1.0
 =============
