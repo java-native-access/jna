@@ -1285,17 +1285,30 @@ public class WindowUtils {
 
             final HANDLE process = Kernel32.INSTANCE.OpenProcess(WinNT.PROCESS_QUERY_INFORMATION | WinNT.PROCESS_VM_READ,
                                                                  false, pid.getValue());
-            if (process == null
-                && Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            if (process == null) {
+                if(Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_ACCESS_DENIED) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                } else {
+                    // Ignore windows, that can't be accessed
+                    return "";
+                }
             }
-            final int length = Psapi.INSTANCE.GetModuleFileNameExW(process,
-                                                                   null, filePath, filePath.length);
-            if (length == 0
-                && Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_INVALID_HANDLE) {
-                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+
+            try {
+                final int length = Psapi.INSTANCE.GetModuleFileNameExW(process,
+                                                                       null, filePath, filePath.length);
+                if (length == 0) {
+                    if(Kernel32.INSTANCE.GetLastError() != WinNT.ERROR_INVALID_HANDLE) {
+                        throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                    } else {
+                        // ignore invalid handles
+                        return "";
+                    }
+                }
+                return Native.toString(filePath).trim();
+            } finally {
+                Kernel32.INSTANCE.CloseHandle(process);
             }
-            return Native.toString(filePath).trim();
         }
 
         @Override

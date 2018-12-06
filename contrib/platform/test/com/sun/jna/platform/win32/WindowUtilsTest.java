@@ -22,14 +22,12 @@ import com.sun.jna.Pointer;
 
 import com.sun.jna.platform.WindowUtils;
 import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HICON;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
 import com.sun.jna.platform.win32.WinDef.WPARAM;
-import com.sun.jna.platform.win32.WinUser;
 
 public class WindowUtilsTest extends TestCase {
 
