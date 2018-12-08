@@ -255,6 +255,10 @@ public abstract class XAttrUtil {
                 throw new IOException("errno: " + eno);
             }
 
+            if (retval.longValue() == 0) {
+                return null;
+            }
+
             valueMem = new Memory(retval.longValue());
             retval = XAttr.INSTANCE.getxattr(path, name, valueMem, new size_t(valueMem.size()));
             if (retval.longValue() < 0) {
@@ -352,6 +356,10 @@ public abstract class XAttrUtil {
                 throw new IOException("errno: " + eno);
             }
 
+            if (retval.longValue() == 0) {
+                return null;
+            }
+
             valueMem = new Memory(retval.longValue());
             retval = XAttr.INSTANCE.lgetxattr(path, name, valueMem, new size_t(valueMem.size()));
             if (retval.longValue() < 0) {
@@ -443,6 +451,10 @@ public abstract class XAttrUtil {
             if (retval.longValue() < 0) {
                 eno = Native.getLastError();
                 throw new IOException("errno: " + eno);
+            }
+
+            if (retval.longValue() == 0) {
+                return null;
             }
 
             valueMem = new Memory(retval.longValue());

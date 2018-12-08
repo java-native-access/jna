@@ -989,6 +989,7 @@ Bug Fixes
 * Ensure structure size is calculated prior to converting to array
 * Avoid creating new windows when setting a window mask
 * Fix bug in Pointer.setChar.
+* Avoid IllegalArgumentException when reading xattrs with zero length
 
 Release 3.0
 ===========
