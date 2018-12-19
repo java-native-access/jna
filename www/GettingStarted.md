@@ -21,7 +21,7 @@ public class HelloWorld {
 
     public interface CLibrary extends Library {
         CLibrary INSTANCE = (CLibrary)
-            Native.load((Platform.isWindows() ? "msvcrt" : "c"),
+            Native.loadLibrary((Platform.isWindows() ? "msvcrt" : "c"),
                                 CLibrary.class);
 
         void printf(String format, Object... args);
