@@ -218,8 +218,7 @@ com.sun.jna.platform.wince;version=${osgi.version}
         <batchtest todir="${results.junit}">
           <fileset dir="${test.src.dir}" excludes="${tests.exclude-patterns}">
             <!-- Until StructureFieldOrderTest gets fixed up a little -->
-            <exclude name="**/StructureFieldOrderTest.java"/>
-            <exclude name="com/sun/jna/platform/AbstractWin32TestSupport.java"/>
+            <include name="com/sun/jna/platform/*Test.java" />
             <include name="${tests.platform.mac}"/>
             <include name="${tests.platform.windows}"/>
             <include name="${tests.platform.linux}"/>
