@@ -23,9 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Collections;
-import java.util.List;
-
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.IntegerType;
 import com.sun.jna.Memory;
@@ -2940,7 +2937,6 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      */
     @FieldOrder({"level", "associativity", "lineSize", "size", "type"})
     public static class CACHE_DESCRIPTOR extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder();
         /**
          * The cache level. This member can be 1, 2 or 3, corresponding to L1, L2 or L3 cache, respectively (other
          * values may be supported in the future.)

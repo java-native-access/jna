@@ -33,8 +33,6 @@ import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.PVOID;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
-import java.util.List;
-import static com.sun.jna.Structure.createFieldsOrder;
 import com.sun.jna.platform.win32.WinDef.BOOL;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
@@ -695,6 +693,7 @@ public interface Ddeml extends StdCallLibrary {
      * that has blocked conversations should unblock them.
      * </p>
      */
+    @SuppressWarnings("PointlessBitwiseExpression")
     public int XTYP_ERROR = 0x0000 | XCLASS_NOTIFICATION | XTYPF_NOBLOCK;
     /**
      * Informs the client that the value of the data item has changed. The

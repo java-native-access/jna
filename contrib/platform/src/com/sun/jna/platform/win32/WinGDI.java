@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.NativeLong;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -159,7 +157,6 @@ public interface WinGDI {
 
     @FieldOrder({"bmType", "bmWidth", "bmHeight", "bmWidthBytes", "bmPlanes", "bmBitsPixel", "bmBits"})
     class BITMAP extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder();
         public NativeLong bmType;
         public NativeLong bmWidth;
         public NativeLong bmHeight;
