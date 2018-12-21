@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.unix;
 
-import java.util.List;
-
 import com.sun.jna.Callback;
 import com.sun.jna.FromNativeContext;
 import com.sun.jna.Library;
@@ -1473,7 +1471,6 @@ public interface X11 extends Library {
 
     @FieldOrder({"type", "serial", "send_event", "display", "window"})
     public static class XAnyEvent extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder();
         public int type;
         public NativeLong serial;   // # of last request processed by server
         public int send_event;      // true if this came from a SendEvent request
@@ -1752,7 +1749,7 @@ public interface X11 extends Library {
         public int x, y;
     }
 
-    @FieldOrder({"type", "serial", "send_event", "display", "parent", "window", "x", "y", "width", "height", "border_width", "above", "detail", "value_mask"})
+    @FieldOrder({"type", "serial", "send_event", "display", "window", "width", "height"})
     class XResizeRequestEvent extends Structure {
         public int type;
         public NativeLong serial;   // # of last request processed by server

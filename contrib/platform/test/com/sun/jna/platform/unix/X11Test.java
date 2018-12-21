@@ -12,6 +12,7 @@
  */
 package com.sun.jna.platform.unix;
 
+import com.sun.jna.StructureFieldOrderInspector;
 import java.awt.GraphicsEnvironment;
 
 import com.sun.jna.ptr.PointerByReference;
@@ -102,6 +103,10 @@ public class X11Test extends TestCase {
         Assert.assertNotEquals("Bad status for XGetWMProtocols", 0, status);
         Assert.assertEquals("Wrong number of protocols returned for XGetWMProtocols", sentAtoms.length, receivedAtoms.length);
         Assert.assertArrayEquals("Sent protocols were not equal to returned procols for XGetWMProtocols", sentAtoms, receivedAtoms);
+    }
+
+    public void testStructureFieldOrder() {
+        StructureFieldOrderInspector.batchCheckStructureGetFieldOrder(X11.class, null, true);
     }
 
     public static void main(java.lang.String[] argList) {

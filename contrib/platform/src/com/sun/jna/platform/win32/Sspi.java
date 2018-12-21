@@ -23,8 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.List;
-
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -666,7 +664,6 @@ public interface Sspi {
      */
     @FieldOrder({"dwLower", "dwUpper"})
     public static class SECURITY_INTEGER extends Structure {
-        public static final List<String> FIELDS = createFieldsOrder();
         public int dwLower;
         public int dwUpper;
     }
