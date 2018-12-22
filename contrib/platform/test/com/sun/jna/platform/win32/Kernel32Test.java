@@ -274,6 +274,25 @@ public class Kernel32Test extends TestCase {
         }
     }
 
+    public void testOpenEvent() {
+        HANDLE handle = null, handle2 = null;
+
+        try {
+            handle = Kernel32.INSTANCE.CreateEvent(null, false, false, "jna-kernel32test");
+            assertNotNull("Failed to create event: " + Kernel32.INSTANCE.GetLastError(), handle);
+
+            handle2 = Kernel32.INSTANCE.OpenEvent(WinNT.EVENT_MODIFY_STATE, false, "jna-kernel32test");
+            assertNotNull("Failed to open event: " + Kernel32.INSTANCE.GetLastError(), handle2);
+
+            Kernel32.INSTANCE.SetEvent(handle2);
+
+            assertEquals(WinBase.WAIT_OBJECT_0, Kernel32.INSTANCE.WaitForSingleObject(handle, 1000));
+        } finally {
+            Kernel32Util.closeHandle(handle);
+            Kernel32Util.closeHandle(handle2);
+        }
+    }
+
     public void testResetEvent() {
         HANDLE handle = Kernel32.INSTANCE.CreateEvent(null, true, false, null);
         assertNotNull("Failed to create event: " + Kernel32.INSTANCE.GetLastError(), handle);

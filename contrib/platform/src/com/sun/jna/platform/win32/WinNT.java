@@ -3518,4 +3518,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             super(memory);
         }
     }
+
+    public int EVENT_MODIFY_STATE = 0x0002;
+    public int EVENT_ALL_ACCESS = (STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x3);
 }

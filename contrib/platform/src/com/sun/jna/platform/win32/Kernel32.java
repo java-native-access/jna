@@ -933,6 +933,43 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
             boolean bManualReset, boolean bInitialState, String lpName);
 
     /**
+     * Opens an existing named event object.
+     *
+     * @param dwDesiredAccess The access to the event object. The function fails
+     *                        if the security descriptor of the specified object
+     *                        does not permit the requested access for the
+     *                        calling process. For a list of access rights, see
+     *                        Synchronization Object Security and Access Rights.
+     * @param bInheritHandle  If this value is TRUE, processes created by this
+     *                        process will inherit the handle. Otherwise, the
+     *                        processes do not inherit this handle.
+     * @param lpName          The name of the event to be opened. Name
+     *                        comparisons are case sensitive.
+     * <p>
+     * This function can open objects in a private namespace. For more
+     * information, see Object Namespaces.
+     * <p>
+     * <strong>Terminal Services:</strong> The name can have a "Global" or
+     * "Local" prefix to explicitly open an object in the global or session
+     * namespace. The remainder of the name can contain any character except the
+     * backslash character (). For more information, see Kernel Object
+     * Namespaces.
+     * <p>
+     * <strong>Note</strong> Fast user switching is implemented using Terminal Services
+     * sessions. The first user to log on uses session 0, the next user to log
+     * on uses session 1, and so on. Kernel object names must follow the
+     * guidelines outlined for Terminal Services so that applications can
+     * support multiple users.
+     *
+     * @return If the function succeeds, the return value is a handle to the
+     *         event object.
+     * <p>
+     * If the function fails, the return value is {@code NULL}. To get extended
+     * error information, call {@link #GetLastError()}.
+     */
+    HANDLE OpenEvent(int dwDesiredAccess, boolean bInheritHandle, String lpName);
+
+    /**
      * Sets the specified event object to the signaled state.
      *
      * @param hEvent
