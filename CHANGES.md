@@ -15,8 +15,8 @@ Bug Fixes
 * [#1036](https://github.com/java-native-access/jna/issues/1036): `Advapi32Util.registryValueExists` called on non existing key raises exception instead of returning `false` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#384](https://github.com/java-native-access/jna/issues/384): Android only supports loading libraries through the JVM `System#loadLibrary` mechanism, defaulting `jna.nosys` to `true` disabled that code path - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1041](https://github.com/java-native-access/jna/pull/1041): Avoid IllegalArgumentException when reading xattrs with zero length - [@jrobhoward](https://github.com/jrobhoward).
-* [#1042](https://github.com/java-native-access/jna/issues/1042): `com.sun.jna.platform.WindowUtils.W32WindowUtils.getProcessFilePath(HWND)` does not close process handle - [@matthiasblaesing](https://github.com/matthiasblaesing).
-* [#1044](https://github.com/java-native-access/jna/issues/1044): `com.sun.jna.platform.WindowUtils.W32WindowUtils.getProcessFilePath(HWND)` does not close process handle - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1042](https://github.com/java-native-access/jna/issues/1042): `c.s.j.p.WindowUtils.W32WindowUtils.getProcessFilePath(HWND)` does not close process handle - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1044](https://github.com/java-native-access/jna/issues/1044): Fix field order for `c.s.j.p.unix.X11.XResizeRequestEvent` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.1.0
 =============
