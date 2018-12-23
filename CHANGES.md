@@ -9,6 +9,7 @@ Features
 --------
 * [#1038](https://github.com/java-native-access/jna/pull/1038): Improve exception when native library loading fails by preserving the original exceptions and messages - [@matthiasblaesing](https://github.com/matthiasblaesing).
 * [#1039](https://github.com/java-native-access/jna/pull/1039): Remove use of `System.out` and `System.err` in favor of regular logging - [@matthiasblaesing](https://github.com/matthiasblaesing).
+* [#1048](https://github.com/java-native-access/jna/pull/1048): Bind `c.s.j.p.win32.Kernel32#OpenEvent` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Bug Fixes
 ---------
