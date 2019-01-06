@@ -7,6 +7,7 @@ Next release (5.2.1)
 
 Features
 --------
+* [#1050](https://github.com/java-native-access/jna/pull/1050): Add `c.s.j.p.win32.VersionHelpers` and supporting functions - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
