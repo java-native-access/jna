@@ -10,6 +10,7 @@ Features
 
 Bug Fixes
 ---------
+* [#1052](https://github.com/java-native-access/jna/issues/1052): WinXP compatibility for `c.s.j.p.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 
 Release 5.2.0
 =============

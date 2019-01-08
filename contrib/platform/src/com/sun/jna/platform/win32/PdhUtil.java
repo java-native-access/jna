@@ -30,7 +30,6 @@ import com.sun.jna.Memory;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
-import java.util.Collections;
 
 /**
  * Pdh utility API.
@@ -60,10 +59,16 @@ public abstract class PdhUtil {
      * @return Returns the name of the performance object or counter.
      */
     public static String PdhLookupPerfNameByIndex(String szMachineName, int dwNameIndex) {
-        // Call once to get required buffer size
+        // Call once with null buffer to get required buffer size
         DWORDByReference pcchNameBufferSize = new DWORDByReference(new DWORD(0));
         int result = Pdh.INSTANCE.PdhLookupPerfNameByIndex(szMachineName, dwNameIndex, null, pcchNameBufferSize);
-        if(result != WinError.ERROR_SUCCESS && result != Pdh.PDH_MORE_DATA) {
+        // Windows XP requires a non-null buffer
+        if (result == PdhMsg.PDH_INVALID_ARGUMENT) {
+            pcchNameBufferSize = new DWORDByReference(new DWORD(1));
+            result = Pdh.INSTANCE.PdhLookupPerfNameByIndex(szMachineName, dwNameIndex, new Memory(1),
+                    pcchNameBufferSize);
+        }
+        if (result != WinError.ERROR_SUCCESS && result != Pdh.PDH_MORE_DATA && result != Pdh.PDH_INSUFFICIENT_BUFFER) {
             throw new PdhException(result);
         }
         
