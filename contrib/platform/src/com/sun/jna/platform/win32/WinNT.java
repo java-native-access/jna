@@ -1988,13 +1988,13 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
     }
 
-    byte VER_EQUAL = 1;
-    byte VER_GREATER = 2;
-    byte VER_GREATER_EQUAL = 3;
-    byte VER_LESS = 4;
-    byte VER_LESS_EQUAL = 5;
-    byte VER_AND = 6;
-    byte VER_OR = 7;
+    int VER_EQUAL = 1;
+    int VER_GREATER = 2;
+    int VER_GREATER_EQUAL = 3;
+    int VER_LESS = 4;
+    int VER_LESS_EQUAL = 5;
+    int VER_AND = 6;
+    int VER_OR = 7;
 
     int VER_CONDITION_MASK = 7;
     int VER_NUM_BITS_PER_CONDITION_MASK = 3;
