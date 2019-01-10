@@ -94,9 +94,9 @@ public abstract class PdhUtil {
         
         // Convert buffer to Java String
         if (CHAR_TO_BYTES == 1) {
-            return mem.getString(0);
+            return mem.getString(0); // NOSONAR squid:S2259
         } else {
-            return mem.getWideString(0);
+            return mem.getWideString(0); // NOSONAR squid:S2259
         }
     }
 
