@@ -1414,6 +1414,73 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     boolean GetVersionEx(OSVERSIONINFOEX lpVersionInfo);
 
     /**
+     * Compares a set of operating system version requirements to the
+     * corresponding values for the currently running version of the system.
+     * This function is subject to manifest-based behavior.
+     * 
+     * @param lpVersionInformation
+     *            A pointer to an {@link WinNT#OSVERSIONINFOEX} structure
+     *            containing the operating system version requirements to
+     *            compare. The {@code dwTypeMask} parameter indicates the
+     *            members of this structure that contain information to compare.
+     *            <p>
+     *            You must set the {@code dwOSVersionInfoSize} member of this
+     *            structure to {@code sizeof(OSVERSIONINFOEX)}. You must also
+     *            specify valid data for the members indicated by
+     *            {@code dwTypeMask}. The function ignores structure members for
+     *            which the corresponding {@code dwTypeMask} bit is not set.
+     * @param dwTypeMask
+     *            A mask that indicates the members of the
+     *            {@link WinNT#OSVERSIONINFOEX} structure to be tested.
+     * @param dwlConditionMask
+     *            The type of comparison to be used for each
+     *            {@code lpVersionInfo} member being compared. To build this
+     *            value, call the {@link #VerSetConditionMask} function once for
+     *            each {@link WinNT#OSVERSIONINFOEX} member being compared.
+     * @return If the currently running operating system satisfies the specified
+     *         requirements, the return value is a nonzero value.
+     *         <p>
+     *         If the current system does not satisfy the requirements, the
+     *         return value is zero and {@link #GetLastError()} returns
+     *         {@link WinError#ERROR_OLD_WIN_VERSION}.
+     *         <p>
+     *         If the function fails, the return value is zero and
+     *         {@link #GetLastError()} returns an error code other than
+     *         {@link WinError#ERROR_OLD_WIN_VERSION}.
+     */
+    boolean VerifyVersionInfoW(OSVERSIONINFOEX lpVersionInformation, int dwTypeMask, long dwlConditionMask);
+
+    /**
+     * Sets the bits of a 64-bit value to indicate the comparison operator to
+     * use for a specified operating system version attribute. This function is
+     * used to build the {@code dwlConditionMask} parameter of the
+     * {@link #VerifyVersionInfo} function.
+     * 
+     * @param conditionMask
+     *            A value to be passed as the {@code dwlConditionMask} parameter
+     *            of the {@link #VerifyVersionInfo} function. The function
+     *            stores the comparison information in the bits of this
+     *            variable.
+     *            <p>
+     *            Before the first call to {@link #VerSetConditionMask},
+     *            initialize this variable to zero. For subsequent calls, pass
+     *            in the variable used in the previous call.
+     * @param typeMask
+     *            A mask that indicates the member of the
+     *            {@link WinNT#OSVERSIONINFOEX} structure whose comparison
+     *            operator is being set. This value corresponds to one of the
+     *            bits specified in the {@code dwTypeMask} parameter for the
+     *            {@link #VerifyVersionInfo} function.
+     * @param condition
+     *            The operator to be used for the comparison. The
+     *            {@link #VerifyVersionInfo} function uses this operator to
+     *            compare a specified attribute value to the corresponding value
+     *            for the currently running system.
+     * @return The function returns the condition mask value.
+     */
+    long VerSetConditionMask(long conditionMask, int typeMask, byte condition);
+
+    /**
      * The GetSystemInfo function returns information about the current system.
      *
      * @param lpSystemInfo
