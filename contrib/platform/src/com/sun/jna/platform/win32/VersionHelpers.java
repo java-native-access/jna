@@ -35,6 +35,10 @@ import com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX;
  * robust means to determine the operating system version.
  */
 public class VersionHelpers {
+    /*
+     * Code in this class is an attempt to faithfully port the inline macros in
+     * the versionhelpers.h header file of the Windows 10 SDK.
+     */
 
     /**
      * This function is useful in confirming a version of Windows Server that
@@ -69,6 +73,15 @@ public class VersionHelpers {
         return Kernel32.INSTANCE.VerifyVersionInfoW(osvi,
                 WinNT.VER_MAJORVERSION | WinNT.VER_MINORVERSION | WinNT.VER_SERVICEPACKMAJOR, dwlConditionMask);
     }
+
+    /*
+     * The constants Kernel32.WIN32_WINNT_* are 2-byte encodings of windows
+     * version numbers, for example Windows XP is version 5.1 and is encoded as
+     * 0x0501. To pass to IsWindowsVersionOrGreater, we pass the HIBYTE (e.g.,
+     * 0x05) as the first argument and LOBYTE (e.g., 0x01) as the second. To get
+     * the high byte of a short, we shift right 8 bits and cast to byte, e.g.,
+     * (byte) (word>>>8); to get the low byte wse simply cast to byte.
+     */
 
     /**
      * @return true if the current OS version matches, or is greater than, the
@@ -189,6 +202,9 @@ public class VersionHelpers {
      * @return true if the current OS is a Windows Server release.
      */
     public static boolean IsWindowsServer() {
+        // This should properly be OSVERSIONINFOEXW which is not defined in JNA.
+        // The OSVERSIONINFOEX structure in JNA is the (W) Unicode-compliant
+        // version.
         OSVERSIONINFOEX osvi = new OSVERSIONINFOEX();
         osvi.dwOSVersionInfoSize = new DWORD(osvi.size());
         osvi.wProductType = WinNT.VER_NT_WORKSTATION;
