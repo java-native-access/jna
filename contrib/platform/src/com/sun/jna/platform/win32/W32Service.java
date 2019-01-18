@@ -221,7 +221,7 @@ public class W32Service implements Closeable {
          * @param timeout timeout in ms until the service must report to be
          *                stopped
          */
-	void stopService(long timeout) {
+	public void stopService(long timeout) {
                 long startTime = System.currentTimeMillis();
 		waitForNonPendingState();
 		// If the service is already stopped - return
@@ -236,22 +236,23 @@ public class W32Service implements Closeable {
                 // the previouos implementation queried the service status and
                 // failed if the application did not correctly update its state
                 while(status.dwCurrentState != Winsvc.SERVICE_STOPPED) {
-                        try {
-				Thread.sleep( status.dwWaitHint );
+			long msRemainingBeforeTimeout = timeout - (System.currentTimeMillis() - startTime);
+
+			if (msRemainingBeforeTimeout < 0) {
+				throw new RuntimeException(String.format("Service stop exceeded timeout time of %d ms", timeout));
+			}
+
+			int dwWaitTime = Math.min(sanitizeWaitTime(status.dwWaitHint), (int)msRemainingBeforeTimeout);
+
+			try {
+				Thread.sleep( dwWaitTime );
 			} catch (InterruptedException e){
 				throw new RuntimeException(e);
 			}
                         if(! Advapi32.INSTANCE.QueryServiceStatus(_handle, status)) {
                                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
                         }
-                        if((System.currentTimeMillis() - startTime) > timeout) {
-                                throw new RuntimeException(String.format("Service stop exceeded timeout time of %d ms", timeout));
-                        }
                 }
-		waitForNonPendingState();
-		if (queryStatus().dwCurrentState != Winsvc.SERVICE_STOPPED) {
-			throw new RuntimeException("Unable to stop the service");
-		}
 	}
 
 	/**
@@ -292,7 +293,22 @@ public class W32Service implements Closeable {
 		}
 	}
 
-    /**
+	/**
+	 *  do not wait longer than the wait hint. A good interval is
+	 *  one-tenth the wait hint, but no less than 1 second and no
+	 *  more than 10 seconds.
+	 */
+	int sanitizeWaitTime(int dwWaitHint) {
+		int dwWaitTime = dwWaitHint / 10;
+
+		if (dwWaitTime < 1000)
+			dwWaitTime = 1000;
+		else if (dwWaitTime > 10000)
+			dwWaitTime = 10000;
+		return dwWaitTime;
+	}
+
+	/**
      * Wait for the state to change to something other than a pending state.
      */
 	public void waitForNonPendingState() {
@@ -315,16 +331,7 @@ public class W32Service implements Closeable {
 				throw new RuntimeException("Timeout waiting for service to change to a non-pending state.");
 			}
 
-			// do not wait longer than the wait hint. A good interval is 
-			// one-tenth the wait hint, but no less than 1 second and no 
-			// more than 10 seconds. 
-
-			int dwWaitTime = status.dwWaitHint / 10;
-
-			if (dwWaitTime < 1000)
-				dwWaitTime = 1000;
-			else if (dwWaitTime > 10000)
-				dwWaitTime = 10000;
+			int dwWaitTime = sanitizeWaitTime(status.dwWaitHint);
 
 			try {
 				Thread.sleep( dwWaitTime );
