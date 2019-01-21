@@ -242,7 +242,7 @@ public class W32Service implements Closeable {
 				throw new RuntimeException(String.format("Service stop exceeded timeout time of %d ms", timeout));
 			}
 
-			int dwWaitTime = Math.min(sanitizeWaitTime(status.dwWaitHint), (int)msRemainingBeforeTimeout);
+			long dwWaitTime = Math.min(sanitizeWaitTime(status.dwWaitHint), msRemainingBeforeTimeout);
 
 			try {
 				Thread.sleep( dwWaitTime );
