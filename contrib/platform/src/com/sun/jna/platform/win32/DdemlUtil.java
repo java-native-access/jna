@@ -1751,7 +1751,7 @@ public abstract class DdemlUtil {
             for(WildconnectHandler handler: wildconnectHandler) {
                 hszpairs.addAll(handler.onWildconnect(transactionType, topic, service, convcontext, sameInstance));
             }
-            return hszpairs.toArray(new HSZPAIR[hszpairs.size()]);
+            return hszpairs.toArray(new HSZPAIR[0]);
         }
         
         

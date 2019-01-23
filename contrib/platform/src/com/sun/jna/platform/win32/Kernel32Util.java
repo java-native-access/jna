@@ -674,7 +674,7 @@ public abstract class Kernel32Util implements WinDef {
         int returnedStructCount = bufferSize.getValue().intValue()
                 / sizePerStruct;
         return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation
-                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[returnedStructCount]);
+                .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[0]);
     }
 
     /**

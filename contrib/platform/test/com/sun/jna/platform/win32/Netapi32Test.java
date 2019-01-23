@@ -247,7 +247,7 @@ public class Netapi32Test extends TestCase {
     	assertTrue(domainTrustCount.getValue() >= 0);
 
         DS_DOMAIN_TRUSTS domainTrustRefs = new DS_DOMAIN_TRUSTS(domainsPointerRef.getValue());
-        DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[domainTrustCount.getValue()]);
+        DS_DOMAIN_TRUSTS[] domainTrusts = (DS_DOMAIN_TRUSTS[]) domainTrustRefs.toArray(new DS_DOMAIN_TRUSTS[0]);
 
     	for(DS_DOMAIN_TRUSTS trust : domainTrusts) {
 			assertTrue(trust.DnsDomainName.length() > 0);

@@ -346,7 +346,7 @@ public class CallbackReference extends WeakReference<Callback> {
             }
         }
 
-        Method[] methods = pmethods.toArray(new Method[pmethods.size()]);
+        Method[] methods = pmethods.toArray(new Method[0]);
         if (methods.length == 1) {
             return checkMethod(methods[0]);
         }
