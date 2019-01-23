@@ -755,7 +755,7 @@ public class Pointer {
             addOffset += Native.POINTER_SIZE;
             p = getPointer(offset + addOffset);
         }
-        return array.toArray(new Pointer[array.size()]);
+        return array.toArray(new Pointer[0]);
     }
 
     /** Returns an array of {@link Pointer} of the requested size. */
@@ -837,7 +837,7 @@ public class Pointer {
                 addOffset += Native.POINTER_SIZE;
             }
         }
-        return strings.toArray(new String[strings.size()]);
+        return strings.toArray(new String[0]);
     }
 
     //////////////////////////////////////////////////////////////////////////

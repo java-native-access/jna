@@ -941,7 +941,7 @@ public class NativeLibrary {
                     }
                     ldPaths.add(0, paths[i]);
                 }
-                paths = ldPaths.toArray(new String[ldPaths.size()]);
+                paths = ldPaths.toArray(new String[0]);
             }
 
             for (int i=0;i < paths.length;i++) {

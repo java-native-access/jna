@@ -243,8 +243,8 @@ public class RasterRangesUtils {
     private static Set<Rectangle> mergeRects(Set<Rectangle> prev, Set<Rectangle> current) {
         Set<Rectangle> unmerged = new HashSet<Rectangle>(prev);
         if (!prev.isEmpty() && !current.isEmpty()) {
-            Rectangle[] pr = prev.toArray(new Rectangle[prev.size()]);
-            Rectangle[] cr = current.toArray(new Rectangle[current.size()]);
+            Rectangle[] pr = prev.toArray(new Rectangle[0]);
+            Rectangle[] cr = current.toArray(new Rectangle[0]);
             int ipr = 0;
             int icr = 0;
             while (ipr < pr.length && icr < cr.length) {

@@ -946,7 +946,7 @@ public abstract class Advapi32Util {
 				result.add(s);
 			}
 		}
-		return result.toArray(new String[result.size()]);
+		return result.toArray(new String[0]);
 	}
 
 	/**
@@ -2632,7 +2632,7 @@ public abstract class Advapi32Util {
                                         result.add(aceStructure);
                                 }
 			}
-			return result.toArray(new ACE_HEADER[result.size()]);
+			return result.toArray(new ACE_HEADER[0]);
 		}
 
                 return aceStructures;
