@@ -720,23 +720,20 @@ public abstract class Kernel32Util implements WinDef {
     }
 
     /**
-     * Retrieves all the keys and values for the specified section of an
-     * initialization file.
+     * Retrieves all the keys and values for the specified section of an initialization file.
      *
      * <p>
      * Each string has the following format: {@code key=string}.
      * </p>
      * <p>
-     * This operation is atomic; no updates to the specified initialization file
-     * are allowed while this method is executed.
+     * This operation is atomic; no updates to the specified initialization file are allowed while this method is executed.
      * </p>
      *
      * @param appName
      *            The name of the section in the initialization file.
      * @param fileName
-     *            The name of the initialization file. If this parameter does
-     *            not contain a full path to the file, the system searches for
-     *            the file in the Windows directory.
+     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
+     *            Windows directory.
      * @return The key name and value pairs associated with the named section.
      */
     public static final String[] getPrivateProfileSection(final String appName, final String fileName) {
@@ -986,6 +983,7 @@ public abstract class Kernel32Util implements WinDef {
 
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
+            @Override
             public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
                 // simulate IS_INTRESOURCE macro defined in WinUser.h
                 // basically that means that if "type" is less than or equal to 65,535
@@ -1002,6 +1000,7 @@ public abstract class Kernel32Util implements WinDef {
 
         WinBase.EnumResNameProc ernp = new WinBase.EnumResNameProc() {
 
+            @Override
             public boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam) {
                 String typeName = "";
 
