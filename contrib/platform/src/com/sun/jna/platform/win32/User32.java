@@ -2658,7 +2658,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         {@link #MODIFIER_RESERVED2_MASK}.</dd>
 	 *         </dl>
 	 *         If the function finds no key that translates to the passed character
-	 *         code, both the low-order and high-order bytes contain –1.
+	 *         code, both the low-order and high-order bytes contain -1.
 	 */
 	short VkKeyScanEx(char ch, HKL dwhkl);
 
