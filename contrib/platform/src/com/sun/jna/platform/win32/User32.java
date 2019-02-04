@@ -32,6 +32,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+
 /**
  * Provides access to the w32 user32 library. Incomplete implementation to
  * support demos.
@@ -2484,5 +2485,231 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *  - with a WM_COPYDATA msg value : wParam is the length of the structure and lParam a pointer to a COPYDATASTRUCT 
 	 */
     LRESULT SendMessage(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
-	
+
+    /**
+     * Retrieves the input locale identifiers (formerly called keyboard layout
+     * handles) corresponding to the current set of input locales in the system. The
+     * function copies the identifiers to the specified buffer.
+     * 
+     * @param nBuff  The maximum number of handles that the buffer can hold.
+     * @param lpList A pointer to the buffer that receives the array of input locale
+     *               identifiers.
+     * @return If the function succeeds, the return value is the number of input
+     *         locale identifiers copied to the buffer or, if nBuff is zero, the
+     *         return value is the size, in array elements, of the buffer needed to
+     *         receive all current input locale identifiers. If the function fails,
+     *         the return value is zero. To get extended error information, call
+     *         GetLastError.
+     */
+    int GetKeyboardLayoutList(int nBuff, HKL[] lpList);
+
+    /**
+     * Retrieves the active input locale identifier (formerly called the keyboard
+     * layout).
+     * 
+     * @param idThread The identifier of the thread to query, or 0 for the current
+     *                 thread.
+     * @return The return value is the input locale identifier for the thread. The
+     *         low word contains a Language Identifier for the input language and
+     *         the high word contains a device handle to the physical layout of the
+     *         keyboard.
+     */
+    HKL GetKeyboardLayout(int idThread);
+
+    /**
+     * This function retrieves the name of the active keyboard layout.
+     * 
+     * @param pwszKLID [in] Pointer to the buffer of at least {@link #KL_NAMELENGTH}
+     *                 characters that is to receive the name of the keyboard
+     *                 layout, including the terminating null character.
+     * @return Nonzero indicates success. Zero indicates failure. To get extended
+     *         error information, call GetLastError.
+     */
+    boolean GetKeyboardLayoutName(char[] pwszKLID);
+
+    /**
+     * Translates a character to the corresponding virtual-key code and shift state.
+     * The function translates the character using the input language and physical
+     * keyboard layout identified by the input locale identifier.
+     * 
+     * @param ch    The character to be translated into a virtual-key code.
+     * @param dwhkl Input locale identifier to use for translating the specified
+     *              code. This parameter can be any input locale identifier
+     *              previously returned by the {@link #LoadKeyboardLayout()}
+     *              function.
+     * @return If the function succeeds, the low-order byte of the return value
+     *         contains the virtual-key code and the high-order byte contains the
+     *         shift state, which can be a combination of the following flag bits.
+     *         <dl>
+     *         <dt>1</dt>
+     *         <dd>Either SHIFT key is pressed. Use
+     *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
+     *         <dt>2</dt>
+     *         <dd>Either CTRL key is pressed. Use
+     *         {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
+     *         <dt>4</dt>
+     *         <dd>Either ALT key is pressed. Use
+     *         {@link WinUser#MODIFIER_ALT_MASK}.</dd>
+     *         <dt>8</dt>
+     *         <dd>The Hankaku key is pressed. Use
+     *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
+     *         <dt>16</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
+     *         <dt>32</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
+     *         </dl>
+     *         If the function finds no key that translates to the passed character
+     *         code, both the low-order and high-order bytes contain -1.
+     */
+    short VkKeyScanExA(byte ch, HKL dwhkl);
+
+    /**
+     * Translates a character to the corresponding virtual-key code and shift state.
+     * The function translates the character using the input language and physical
+     * keyboard layout identified by the input locale identifier.
+     * 
+     * @param ch    The character to be translated into a virtual-key code.
+     * @param dwhkl Input locale identifier to use for translating the specified
+     *              code. This parameter can be any input locale identifier
+     *              previously returned by the {@link #LoadKeyboardLayout()}
+     *              function.
+     * @return If the function succeeds, the low-order byte of the return value
+     *         contains the virtual-key code and the high-order byte contains the
+     *         shift state, which can be a combination of the following flag bits.
+     *         <dl>
+     *         <dt>1</dt>
+     *         <dd>Either SHIFT key is pressed. Use
+     *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
+     *         <dt>2</dt>
+     *         <dd>Either CTRL key is pressed. Use
+     *         {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
+     *         <dt>4</dt>
+     *         <dd>Either ALT key is pressed. Use
+     *         {@link WinUser#MODIFIER_ALT_MASK}.</dd>
+     *         <dt>8</dt>
+     *         <dd>The Hankaku key is pressed. Use
+     *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
+     *         <dt>16</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
+     *         <dt>32</dt>
+     *         <dd>Reserved (defined by the keyboard layout driver). Use
+     *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
+     *         </dl>
+     *         If the function finds no key that translates to the passed character
+     *         code, both the low-order and high-order bytes contain -1.
+     */
+    short VkKeyScanExW(char ch, HKL dwhkl);
+
+    /**
+     * Translates (maps) a virtual-key code into a scan code or character value, or
+     * translates a scan code into a virtual-key code. The function translates the
+     * codes using the input language and an input locale identifier.
+     * 
+     * @param uCode    The virtual-key code or scan code for a key. How this value
+     *                 is interpreted depends on the value of the uMapType
+     *                 parameter. Starting with Windows Vista, the high byte of the
+     *                 uCode value can contain either 0xe0 or 0xe1 to specify the
+     *                 extended scan code.
+     * @param uMapType The translation to perform. The value of this parameter
+     *                 depends on the value of the uCode parameter. One of
+     *                 {@link WinUser#MAPVK_VK_TO_CHAR},
+     *                 {@link WinUser#MAPVK_VK_TO_VSC},
+     *                 {@link WinUser#MAPVK_VK_TO_VSC_EX},
+     *                 {@link WinUser#MAPVK_VSC_TO_VK},
+     *                 {@link WinUser#MAPVK_VSC_TO_VK_EX}
+     * 
+     * @param dwhkl    Input locale identifier to use for translating the specified
+     *                 code. This parameter can be any input locale identifier
+     *                 previously returned by the {@link #LoadKeyboardLayout()}
+     *                 function.
+     * @return The return value is either a scan code, a virtual-key code, or a
+     *         character value, depending on the value of uCode and uMapType. If
+     *         there is no translation, the return value is zero.
+     */
+    int MapVirtualKeyEx(int uCode, int uMapType, HKL dwhkl);
+
+    /**
+     * Translates the specified virtual-key code and keyboard state to the
+     * corresponding Unicode character or characters.
+     * 
+     * @param wVirtKey   The virtual-key code to be translated.
+     * @param wScanCode  The hardware scan code of the key to be translated. The
+     *                   high-order bit of this value is set if the key is up.
+     * @param lpKeyState A pointer to a 256-byte array that contains the current
+     *                   keyboard state. Each element (byte) in the array contains
+     *                   the state of one key. If the high-order bit of a byte is
+     *                   set, the key is down.
+     * @param pwszBuff   The buffer that receives the translated Unicode character
+     *                   or characters. However, this buffer may be returned without
+     *                   being null-terminated even though the variable name
+     *                   suggests that it is null-terminated.
+     * @param cchBuff    The size, in characters, of the buffer pointed to by the
+     *                   pwszBuff parameter.
+     * @param wFlags     The behavior of the function. If bit 0 is set, a menu is
+     *                   active. If bit 2 is set, keyboard state is not changed
+     *                   (Windows 10, version 1607 and newer) All other bits
+     *                   (through 31) are reserved.
+     * @param dwhkl      Input locale identifier to use for translating the
+     *                   specified code. This parameter can be any input locale
+     *                   identifier previously returned by the
+     *                   {@link #LoadKeyboardLayout()} function.
+     * @return The function returns one of the following values.
+     *         <dl>
+     *         <dt>-1</dt>
+     *         <dd>The specified virtual key is a dead-key character (accent or
+     *         diacritic). This value is returned regardless of the keyboard layout,
+     *         even if several characters have been typed and are stored in the
+     *         keyboard state. If possible, even with Unicode keyboard layouts, the
+     *         function has written a spacing version of the dead-key character to
+     *         the buffer specified by pwszBuff. For example, the function writes
+     *         the character SPACING ACUTE (0x00B4), rather than the character
+     *         NON_SPACING ACUTE (0x0301).</dd>
+     *         <dt>0</dt>
+     *         <dd>The specified virtual key has no translation for the current
+     *         state of the keyboard. Nothing was written to the buffer specified by
+     *         pwszBuff.</dd>
+     *         <dt>1</dt>
+     *         <dd>One character was written to the buffer specified by
+     *         pwszBuff.</dd>
+     *         <dt>2&le;value</dt>
+     *         <dd>Two or more characters were written to the buffer specified by
+     *         pwszBuff. The most common cause for this is that a dead-key character
+     *         (accent or diacritic) stored in the keyboard layout could not be
+     *         combined with the specified virtual key to form a single character.
+     *         However, the buffer may contain more characters than the return value
+     *         specifies. When this happens, any extra characters are invalid and
+     *         should be ignored.</dd>
+     *         </dl>
+     * 
+     */
+    int ToUnicodeEx(int wVirtKey, int wScanCode, byte[] lpKeyState, char[] pwszBuff, int cchBuff, int wFlags,
+            HKL dwhkl);
+
+    /**
+     * Loads a string resource from the executable file associated with a specified
+     * module, copies the string into a buffer, and appends a terminating null
+     * character.
+     * 
+     * @param hInstance    A handle to an instance of the module whose executable
+     *                     file contains the string resource. To get the handle to
+     *                     the application itself, call the GetModuleHandle function
+     *                     with NULL.
+     * @param uID          The identifier of the string to be loaded.
+     * @param lpBuffer     The buffer is to receive the string. Must be of
+     *                     sufficient length to hold a pointer (8 bytes).
+     * @param cchBufferMax The size of the buffer, in characters. The string is
+     *                     truncated and null-terminated if it is longer than the
+     *                     number of characters specified. If this parameter is 0,
+     *                     then lpBuffer receives a read-only pointer to the
+     *                     resource itself.
+     * @return If the function succeeds, the return value is the number of
+     *         characters copied into the buffer, not including the terminating null
+     *         character, or zero if the string resource does not exist. To get
+     *         extended error information, call GetLastError.
+     * 
+     */
+    int LoadString(HINSTANCE hInstance, int uID, Pointer lpBuffer, int cchBufferMax);
 }
