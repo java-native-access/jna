@@ -34,6 +34,7 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
+
 /**
  * Provides access to the w32 user32 library. Incomplete implementation to
  * support demos.
@@ -2537,26 +2538,31 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 * The uCode parameter is a virtual-key code and is translated into a scan code.
 	 * If it is a virtual-key code that does not distinguish between left- and
 	 * right-hand keys, the left-hand scan code is returned. If there is no
-	 * translation, the function returns 0.
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
 	 */
 	UINT MAPVK_VK_TO_VSC = new UINT(0);
 	/**
 	 * The uCode parameter is a scan code and is translated into a virtual-key code
 	 * that does not distinguish between left- and right-hand keys. If there is no
-	 * translation, the function returns 0.
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
 	 */
 	UINT MAPVK_VSC_TO_VK = new UINT(1);
 	/**
 	 * The uCode parameter is a virtual-key code and is translated into an unshifted
 	 * character value in the low order word of the return value. Dead keys
 	 * (diacritics) are indicated by setting the top bit of the return value. If
-	 * there is no translation, the function returns 0.
+	 * there is no translation, the function returns 0. Used in uMapType parameter
+	 * to
+	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
 	 */
 	UINT MAPVK_VK_TO_CHAR = new UINT(2);
 	/**
 	 * The uCode parameter is a scan code and is translated into a virtual-key code
 	 * that distinguishes between left- and right-hand keys. If there is no
-	 * translation, the function returns 0.
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
 	 */
 	UINT MAPVK_VSC_TO_VK_EX = new UINT(3);
 	// WINVER >= 0x0600
@@ -2566,10 +2572,26 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 * right-hand keys, the left-hand scan code is returned. If the scan code is an
 	 * extended scan code, the high byte of the uCode value can contain either 0xe0
 	 * or 0xe1 to specify the extended scan code. If there is no translation, the
-	 * function returns 0.
+	 * function returns 0. Used in uMapType parameter to
+	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
 	 */
 	UINT MAPVK_VK_TO_VSC_EX = new UINT(4);
 
+	/**
+	 * Retrieves the input locale identifiers (formerly called keyboard layout
+	 * handles) corresponding to the current set of input locales in the system. The
+	 * function copies the identifiers to the specified buffer.
+	 * 
+	 * @param nBuff  The maximum number of handles that the buffer can hold.
+	 * @param lpList A pointer to the buffer that receives the array of input locale
+	 *               identifiers.
+	 * @return If the function succeeds, the return value is the number of input
+	 *         locale identifiers copied to the buffer or, if nBuff is zero, the
+	 *         return value is the size, in array elements, of the buffer needed to
+	 *         receive all current input locale identifiers. If the function fails,
+	 *         the return value is zero. To get extended error information, call
+	 *         GetLastError.
+	 */
 	int GetKeyboardLayoutList(int nBuff, HKL[] lpList);
 
 	/**
@@ -2587,6 +2609,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 
 	/**
 	 * The minimum length of a keyboard layout name.
+	 * {@link #GetKeyboardLayoutName(char[])}
 	 */
 	int KL_NAMELENGTH = 9;
 
