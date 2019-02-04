@@ -39,6 +39,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.platform.win32.WinNT.HANDLEByReference;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -671,27 +673,70 @@ public abstract class Kernel32Util implements WinDef {
         }
         WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION firstInformation = new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION(
                 memory);
-        int returnedStructCount = bufferSize.getValue().intValue()
-                / sizePerStruct;
         return (WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[]) firstInformation
                 .toArray(new WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION[0]);
     }
 
     /**
-     * Retrieves all the keys and values for the specified section of an initialization file.
+     * Convenience method to get the processor information. Takes care of
+     * auto-growing the array and populating variable-length arrays in
+     * structures.
+     * 
+     * @param relationshipType
+     *            The type of relationship to retrieve. This parameter can be
+     *            one of the following values:
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
+     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+     *            or {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationAll}
+     * @return the array of processor information.
+     */
+    public static final SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[] getLogicalProcessorInformationEx(
+            int relationshipType) {
+        WinDef.DWORDByReference bufferSize = new WinDef.DWORDByReference(new WinDef.DWORD(1));
+        Memory memory;
+        while (true) {
+            memory = new Memory(bufferSize.getValue().intValue());
+            if (!Kernel32.INSTANCE.GetLogicalProcessorInformationEx(relationshipType, memory, bufferSize)) {
+                int err = Kernel32.INSTANCE.GetLastError();
+                if (err != WinError.ERROR_INSUFFICIENT_BUFFER)
+                    throw new Win32Exception(err);
+            } else {
+                break;
+            }
+        }
+        // Array elements have variable size; iterate to populate array
+        List<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX> procInfoList = new ArrayList<SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>();
+        int offset = 0;
+        while (offset < bufferSize.getValue().intValue()) {
+            SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX information = SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX
+                    .fromPointer(memory.share(offset));
+            procInfoList.add(information);
+            offset += information.size;
+        }
+        return procInfoList.toArray(new SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX[0]);
+    }
+
+    /**
+     * Retrieves all the keys and values for the specified section of an
+     * initialization file.
      *
      * <p>
      * Each string has the following format: {@code key=string}.
      * </p>
      * <p>
-     * This operation is atomic; no updates to the specified initialization file are allowed while this method is executed.
+     * This operation is atomic; no updates to the specified initialization file
+     * are allowed while this method is executed.
      * </p>
      *
      * @param appName
      *            The name of the section in the initialization file.
      * @param fileName
-     *            The name of the initialization file. If this parameter does not contain a full path to the file, the system searches for the file in the
-     *            Windows directory.
+     *            The name of the initialization file. If this parameter does
+     *            not contain a full path to the file, the system searches for
+     *            the file in the Windows directory.
      * @return The key name and value pairs associated with the named section.
      */
     public static final String[] getPrivateProfileSection(final String appName, final String fileName) {
@@ -941,7 +986,6 @@ public abstract class Kernel32Util implements WinDef {
 
         WinBase.EnumResTypeProc ertp = new WinBase.EnumResTypeProc() {
 
-            @Override
             public boolean invoke(HMODULE module, Pointer type, Pointer lParam) {
                 // simulate IS_INTRESOURCE macro defined in WinUser.h
                 // basically that means that if "type" is less than or equal to 65,535
@@ -958,7 +1002,6 @@ public abstract class Kernel32Util implements WinDef {
 
         WinBase.EnumResNameProc ernp = new WinBase.EnumResNameProc() {
 
-            @Override
             public boolean invoke(HMODULE module, Pointer type, Pointer name, Pointer lParam) {
                 String typeName = "";
 
