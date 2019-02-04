@@ -3,7 +3,7 @@ package com.sun.jna.platform.win32;
 /**
  * Windows API Virtual Key codes.
  * 
- * @author Keve Müller
+ * @author Keve M&uuml;ller
  */
 public enum Win32VK {
 	VK_UNDEFINED(0x00, false),
