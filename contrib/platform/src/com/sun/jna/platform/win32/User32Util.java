@@ -29,11 +29,15 @@ import java.util.List;
 
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
 import com.sun.jna.platform.win32.WinDef.HMENU;
+import com.sun.jna.platform.win32.WinDef.HMODULE;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPVOID;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinUser.MSG;
 import com.sun.jna.platform.win32.WinUser.RAWINPUTDEVICELIST;
 import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -243,6 +247,32 @@ public final class User32Util {
         public void exit() {
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_QUIT, null, null);
         }
+
+
+        /**
+         * Load a string value from the string table of an executable.
+         * 
+         * @param location the location, eg. %SystemRoot%\system32\input.dll,-5011
+         * @return
+         */
+    	public static String loadString(String location) {
+    		int x = location.lastIndexOf(',');
+    		String moduleName = location.substring(0, x);
+    		int index = Math.abs(Integer.parseInt(location.substring(x + 1)));
+    		String path = Kernel32Util.expandEnvironmentStrings(moduleName);
+    		HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+    		if (target == null) {
+    			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    		}
+    		PointerByReference lpBuffer = new PointerByReference();
+    		UINT id = new UINT(index);
+    		x = User32.INSTANCE.LoadString(target, id, lpBuffer, 0);
+    		if (0 == x) {
+    			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+    		}
+    		return new String(lpBuffer.getValue().getCharArray(0, x));
+    	}
+        
         
         /**
          * The method is called from the thread, that run the message dispatcher,
