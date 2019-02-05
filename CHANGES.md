@@ -10,6 +10,7 @@ Features
 * [#1058](https://github.com/java-native-access/jna/pull/1058): Add selectable timeout to stopService() and improve timeout handling - [@keithharp](https://github.com/keithharp).
 * [#1050](https://github.com/java-native-access/jna/pull/1050): Add `c.s.j.p.win32.VersionHelpers` and supporting functions - [@dbwiddis](https://github.com/dbwiddis).
 * [#1061](https://github.com/java-native-access/jna/pull/1061): replace toArray(new T[size]) with toArray(new T[0]) for better performance - [@hc-codersatlas](https://github.com/hc-codersatlas).
+* [#1065](https://github.com/java-native-access/jna/pull/1065): Add `c.s.j.p.win32.PowrProf#CallNTPowerInformation` and some supporting structures - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
