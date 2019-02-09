@@ -172,6 +172,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int THREAD_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0x3FF;
 
     /**
+     * Flag identifying hyperthreading / simultaneous multithreading (SMT)
+     */
+    int LTP_PC_SMT = 0x1;
+
+    /**
      * The SECURITY_IMPERSONATION_LEVEL enumeration type contains values that
      * specify security impersonation levels. Security impersonation levels
      * govern the degree to which a server process can act on behalf of a client
@@ -2898,6 +2903,387 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
              * A non-NUMA multiprocessor system will report that all processors belong to one NUMA node.
              */
             public DWORD nodeNumber;
+        }
+    }
+
+    /**
+     * Contains information about the relationships of logical processors and
+     * related hardware. The {@link Kernel32#GetLogicalProcessorInformationEx}
+     * function uses this structure.
+     * <p>
+     * The native structure contains a union, which is mapped to JNA as
+     * subclasses.
+     */
+    @FieldOrder({ "relationship", "size" })
+    public abstract class SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX extends Structure {
+
+        /**
+         * The type of relationship between the logical processors. This
+         * parameter can be one of the following values:
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}, or
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}.
+         * <p>
+         * This field identifies which subclass will be instantiated by the
+         * {@link #fromPointer(Pointer)} method.
+         */
+        public int /* LOGICAL_PROCESSOR_RELATIONSHIP */ relationship;
+
+        /**
+         * The size of the structure, in bytes.
+         */
+        public int size;
+
+        public SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX() {
+            super();
+        }
+
+        /**
+         * This constructor should only be called by a subclass to ensure memory
+         * is properly allocated to the subclass fields.
+         * 
+         * @param memory
+         *            A pointer to the allocated native memory.
+         */
+        protected SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer memory) {
+            super(memory);
+        }
+
+        /**
+         * Create a new instance of the appropriate subclass of
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} from the provided
+         * {@link Pointer} to native memory. Use this method rather than
+         * {@link #SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer)} to properly
+         * cast the Pointer to the appropriate subclass and populate variable
+         * length arrays.
+         * 
+         * @param memory
+         *            A pointer to allocated memory to be cast to this class.
+         * @return An instance of the appropriate subclass depending on the
+         *         value of the {@link #relationship} field. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}
+         *         or
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+         *         the return type will be {@link PROCESSOR_RELATIONSHIP}. If
+         *         the {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode}, the
+         *         return type will be {@link NUMA_NODE_RELATIONSHIP}. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache}, the
+         *         return type will be {@link CACHE_RELATIONSHIP}. If the
+         *         {@link #relationship} member is
+         *         {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup}, the
+         *         return type will be {@link GROUP_RELATIONSHIP}.
+         */
+        public static SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX fromPointer(Pointer memory) {
+            int relationship = memory.getInt(0);
+            SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX result;
+            switch (relationship) {
+            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                result = new PROCESSOR_RELATIONSHIP(memory);
+                break;
+            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                result = new NUMA_NODE_RELATIONSHIP(memory);
+                break;
+            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                result = new CACHE_RELATIONSHIP(memory);
+                break;
+            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                result = new GROUP_RELATIONSHIP(memory);
+                break;
+            default:
+                throw new IllegalStateException("Unmapped relationship: " + relationship);
+            }
+            result.read();
+            return result;
+        }
+    }
+
+    /**
+     * Describes the logical processors associated with either a processor core
+     * or a processor package.
+     */
+    @FieldOrder({ "flags", "efficiencyClass", "reserved", "groupCount", "groupMask" })
+    public static class PROCESSOR_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore}, this
+         * member is {@link #LTP_PC_SMT} if the core has more than one logical
+         * processor, or 0 if the core has one logical processor.
+         * <p>
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage}, this
+         * member is always 0.
+         */
+        public byte flags;
+
+        /**
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
+         * EfficiencyClass specifies the intrinsic tradeoff between performance
+         * and power for the applicable core. A core with a higher value for the
+         * efficiency class has intrinsically greater performance and less
+         * efficiency than a core with a lower value for the efficiency class.
+         * EfficiencyClass is only nonzero on systems with a heterogeneous set
+         * of cores.
+         * <p>
+         * If the {@link #relationship} member of the
+         * {@link SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX} structure is
+         * {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+         * EfficiencyClass is always 0.
+         * <p>
+         * The minimum operating system version that supports this member is
+         * Windows 10.
+         */
+        public byte efficiencyClass;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * This member specifies the number of entries in the GroupMask array.
+         * <p>
+         * If the PROCESSOR_RELATIONSHIP structure represents a processor core,
+         * the GroupCount member is always 1.
+         * <p>
+         * If the {@link PROCESSOR_RELATIONSHIP} structure represents a
+         * processor package, the {@link #groupCount} member is 1 only if all
+         * processors are in the same processor group. If the package contains
+         * more than one NUMA node, the system might assign different NUMA nodes
+         * to different processor groups. In this case, the {@link #groupCount}
+         * member is the number of groups to which NUMA nodes in the package are
+         * assigned.
+         */
+        public short groupCount;
+
+        /**
+         * An array of {@link GROUP_AFFINITY} structures. The
+         * {@link #groupCount} member specifies the number of structures in the
+         * array. Each structure in the array specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY[] groupMask = new GROUP_AFFINITY[1];
+
+        public PROCESSOR_RELATIONSHIP() {
+        }
+
+        public PROCESSOR_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+
+        @Override
+        public void read() {
+            readField("groupCount");
+            groupMask = new GROUP_AFFINITY[groupCount];
+            super.read();
+        }
+    }
+
+    /**
+     * Represents information about a NUMA node in a processor group.
+     */
+    @FieldOrder({ "nodeNumber", "reserved", "groupMask" })
+    public static class NUMA_NODE_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * Identifies the NUMA node. Valid values are {@code 0} to the highest
+         * NUMA node number inclusive. A non-NUMA multiprocessor system will
+         * report that all processors belong to one NUMA node.
+         */
+        public int nodeNumber;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * A {@link GROUP_AFFINITY} structure that specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY groupMask;
+
+        public NUMA_NODE_RELATIONSHIP() {
+        }
+
+        public NUMA_NODE_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+    }
+
+    /**
+     * Describes cache attributes.
+     */
+    @FieldOrder({ "level", "associativity", "lineSize", "cacheSize", "type", "reserved", "groupMask" })
+    public static class CACHE_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * The cache level. This member can be 1 (L1), 2 (L2), 3 (L3), or 4
+         * (L4).
+         */
+        public byte level;
+
+        /**
+         * The cache associativity. If this member is
+         * {@link #CACHE_FULLY_ASSOCIATIVE}, the cache is fully associative.
+         */
+        public byte associativity;
+
+        /**
+         * The cache line size, in bytes.
+         */
+        public short lineSize;
+
+        /**
+         * The cache size, in bytes.
+         */
+        public int cacheSize;
+
+        /**
+         * The cache type. This member is a {@link PROCESSOR_CACHE_TYPE} value.
+         */
+        public int /* PROCESSOR_CACHE_TYPE */ type;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * A {@link GROUP_AFFINITY} structure that specifies a group number and
+         * processor affinity within the group.
+         */
+        public GROUP_AFFINITY groupMask;
+
+        public CACHE_RELATIONSHIP() {
+        }
+
+        public CACHE_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+    }
+
+    /**
+     * Represents information about processor groups.
+     */
+    @FieldOrder({ "maximumGroupCount", "activeGroupCount", "reserved", "groupInfo" })
+    public static class GROUP_RELATIONSHIP extends SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX {
+
+        /**
+         * The maximum number of processor groups on the system.
+         */
+        public short maximumGroupCount;
+
+        /**
+         * The number of active groups on the system. This member indicates the
+         * number of {@link PROCESSOR_GROUP_INFO} structures in the GroupInfo
+         * array.
+         */
+        public short activeGroupCount;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[20];
+
+        /**
+         * An array of {@link PROCESSOR_GROUP_INFO} structures. The
+         * {@link #activeGroupCount} member specifies the number of structures
+         * in the array. Each structure in the array specifies the number and
+         * affinity of processors in an active group on the system.
+         */
+        public PROCESSOR_GROUP_INFO[] groupInfo = new PROCESSOR_GROUP_INFO[1];
+
+        public GROUP_RELATIONSHIP() {
+        }
+
+        public GROUP_RELATIONSHIP(Pointer memory) {
+            super(memory);
+        }
+
+        @Override
+        public void read() {
+            readField("activeGroupCount");
+            groupInfo = new PROCESSOR_GROUP_INFO[activeGroupCount];
+            super.read();
+        }
+    }
+
+    /**
+     * Represents a processor group-specific affinity, such as the affinity of a
+     * thread.
+     */
+    @FieldOrder({ "mask", "group", "reserved" })
+    public static class GROUP_AFFINITY extends Structure {
+
+        /**
+         * A bitmap that specifies the affinity for zero or more processors
+         * within the specified group.
+         */
+        public ULONG_PTR /* KAFFINITY */ mask;
+
+        /**
+         * The processor group number.
+         */
+        public short group;
+
+        /**
+         * This member is reserved.
+         */
+        public short[] reserved = new short[3];
+
+        public GROUP_AFFINITY(Pointer memory) {
+            super(memory);
+        }
+
+        public GROUP_AFFINITY() {
+            super();
+        }
+    }
+
+    /**
+     * Represents the number and affinity of processors in a processor group.
+     */
+    @FieldOrder({ "maximumProcessorCount", "activeProcessorCount", "reserved", "activeProcessorMask" })
+    public static class PROCESSOR_GROUP_INFO extends Structure {
+
+        /**
+         * The maximum number of processors in the group.
+         */
+        public byte maximumProcessorCount;
+
+        /**
+         * The number of active processors in the group.
+         */
+        public byte activeProcessorCount;
+
+        /**
+         * This member is reserved.
+         */
+        public byte[] reserved = new byte[38];
+
+        /**
+         * A bitmap that specifies the affinity for zero or more active
+         * processors within the group.
+         */
+        public ULONG_PTR /* KAFFINITY */ activeProcessorMask;
+
+        public PROCESSOR_GROUP_INFO(Pointer memory) {
+            super(memory);
+        }
+
+        public PROCESSOR_GROUP_INFO() {
+            super();
         }
     }
 
