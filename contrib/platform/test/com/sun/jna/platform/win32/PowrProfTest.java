@@ -34,6 +34,11 @@ import junit.framework.TestCase;
 public class PowrProfTest extends TestCase {
 
     public void testProcessorPowerInformation() {
+        // MSDN docs for CallNTPowerInformation specify use of GetSystemInfo to
+        // count logical processors for this InformationLevel. The GetSystemInfo
+        // function only counts logical processors on the current Processor
+        // Group. However, the array of results from ProcessorPowerInformation
+        // also are restricted to the current Processor Group.
         SYSTEM_INFO info = new SYSTEM_INFO();
         Kernel32.INSTANCE.GetSystemInfo(info);
         int numProcs = info.dwNumberOfProcessors.intValue();
@@ -47,7 +52,7 @@ public class PowrProfTest extends TestCase {
                 mem, bufferSize));
         for (int i = 0; i < freqs.length; i++) {
             ppi = new ProcessorPowerInformation(mem.share(i * (long) ppi.size()));
-            assertTrue(ppi.currentMhz <= ppi.maxMhz);
+            assertTrue(ppi.CurrentMhz <= ppi.MaxMhz);
         }
     }
 
@@ -57,11 +62,11 @@ public class PowrProfTest extends TestCase {
         assertEquals(NTStatus.STATUS_SUCCESS, 
                 PowrProf.INSTANCE.CallNtPowerInformation(POWER_INFORMATION_LEVEL.SYSTEM_BATTERY_STATE, null, 0, mem, size));
         SystemBatteryState batteryState = new SystemBatteryState(mem);
-        if (batteryState.batteryPresent > 0) {
-            if (batteryState.acOnLine == 0 && batteryState.charging == 0 && batteryState.discharging > 0) {
-                assertTrue(batteryState.estimatedTime >= 0);
+        if (batteryState.BatteryPresent > 0) {
+            if (batteryState.AcOnLine == 0 && batteryState.Charging == 0 && batteryState.Discharging > 0) {
+                assertTrue(batteryState.EstimatedTime >= 0);
             }
-            assertTrue(batteryState.remainingCapacity <= batteryState.maxCapacity);
+            assertTrue(batteryState.RemainingCapacity <= batteryState.MaxCapacity);
         }
     }
 }

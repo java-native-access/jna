@@ -55,21 +55,21 @@ public interface PowrProf extends Library {
     /**
      * Contains information about the current state of the system battery.
      */
-    @FieldOrder({ "acOnLine", "batteryPresent", "charging", "discharging", "spare1", "tag", "maxCapacity",
-            "remainingCapacity", "rate", "estimatedTime", "defaultAlert1", "defaultAlert2" })
+    @FieldOrder({ "AcOnLine", "BatteryPresent", "Charging", "Discharging", "Spare1", "Tag", "MaxCapacity",
+            "RemainingCapacity", "Rate", "EstimatedTime", "DefaultAlert1", "DefaultAlert2" })
     class SystemBatteryState extends Structure {
-        public byte acOnLine;
-        public byte batteryPresent;
-        public byte charging;
-        public byte discharging;
-        public byte[] spare1 = new byte[3];
-        public byte tag;
-        public int maxCapacity;
-        public int remainingCapacity;
-        public int rate;
-        public int estimatedTime;
-        public int defaultAlert1;
-        public int defaultAlert2;
+        public byte AcOnLine;
+        public byte BatteryPresent;
+        public byte Charging;
+        public byte Discharging;
+        public byte[] Spare1 = new byte[3];
+        public byte Tag;
+        public int MaxCapacity;
+        public int RemainingCapacity;
+        public int Rate;
+        public int EstimatedTime;
+        public int DefaultAlert1;
+        public int DefaultAlert2;
 
         public SystemBatteryState(Pointer p) {
             super(p);
@@ -84,14 +84,14 @@ public interface PowrProf extends Library {
     /**
      * Contains information about a processor.
      */
-    @FieldOrder({ "number", "maxMhz", "currentMhz", "mhzLimit", "maxIdleState", "currentIdleState" })
+    @FieldOrder({ "Number", "MaxMhz", "CurrentMhz", "MhzLimit", "MaxIdleState", "CurrentIdleState" })
     class ProcessorPowerInformation extends Structure {
-        public int number;
-        public int maxMhz;
-        public int currentMhz;
-        public int mhzLimit;
-        public int maxIdleState;
-        public int currentIdleState;
+        public int Number;
+        public int MaxMhz;
+        public int CurrentMhz;
+        public int MhzLimit;
+        public int MaxIdleState;
+        public int CurrentIdleState;
 
         public ProcessorPowerInformation(Pointer p) {
             super(p);
