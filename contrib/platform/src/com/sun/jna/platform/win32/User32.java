@@ -2488,95 +2488,6 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 */
     LRESULT SendMessage(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam);
 
-    
-	/**
-	 * Handle to a input locale identifier (formerly called keyboard layout handle).
-	 */
-	public static class HKL extends HANDLE {
-
-		/**
-		 * Instantiates a new hkl.
-		 */
-		public HKL() {
-
-		}
-
-		/**
-		 * Instantiates a new hkl.
-		 *
-		 * @param p the p
-		 */
-		public HKL(Pointer p) {
-			super(p);
-		}
-
-		public HKL(int i) {
-			super(Pointer.createConstant(i));
-		}
-
-		/**
-		 * Get the low word (unsigned short).
-		 * 
-		 * @return
-		 */
-		public int getLanguageIdentifier() {
-			return (int) (Pointer.nativeValue(getPointer()) & 0xFFFF);
-		}
-
-		public int getDeviceHandle() {
-			return (int) (Pointer.nativeValue(getPointer()) >> 16 & 0xFFFF);
-		}
-
-		@Override
-		public String toString() {
-			return String.format("%08x", Pointer.nativeValue(getPointer()));
-		}
-	}
-
-	// WINVER >= 0x0400
-	/**
-	 * The uCode parameter is a virtual-key code and is translated into a scan code.
-	 * If it is a virtual-key code that does not distinguish between left- and
-	 * right-hand keys, the left-hand scan code is returned. If there is no
-	 * translation, the function returns 0. Used in uMapType parameter to
-	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
-	 */
-	UINT MAPVK_VK_TO_VSC = new UINT(0);
-	/**
-	 * The uCode parameter is a scan code and is translated into a virtual-key code
-	 * that does not distinguish between left- and right-hand keys. If there is no
-	 * translation, the function returns 0. Used in uMapType parameter to
-	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
-	 */
-	UINT MAPVK_VSC_TO_VK = new UINT(1);
-	/**
-	 * The uCode parameter is a virtual-key code and is translated into an unshifted
-	 * character value in the low order word of the return value. Dead keys
-	 * (diacritics) are indicated by setting the top bit of the return value. If
-	 * there is no translation, the function returns 0. Used in uMapType parameter
-	 * to
-	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
-	 */
-	UINT MAPVK_VK_TO_CHAR = new UINT(2);
-	/**
-	 * The uCode parameter is a scan code and is translated into a virtual-key code
-	 * that distinguishes between left- and right-hand keys. If there is no
-	 * translation, the function returns 0. Used in uMapType parameter to
-	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
-	 */
-	UINT MAPVK_VSC_TO_VK_EX = new UINT(3);
-	// WINVER >= 0x0600
-	/**
-	 * The uCode parameter is a virtual-key code and is translated into a scan code.
-	 * If it is a virtual-key code that does not distinguish between left- and
-	 * right-hand keys, the left-hand scan code is returned. If the scan code is an
-	 * extended scan code, the high byte of the uCode value can contain either 0xe0
-	 * or 0xe1 to specify the extended scan code. If there is no translation, the
-	 * function returns 0. Used in uMapType parameter to
-	 * {@link #MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
-	 */
-	UINT MAPVK_VK_TO_VSC_EX = new UINT(4);
-
 	/**
 	 * Retrieves the input locale identifiers (formerly called keyboard layout
 	 * handles) corresponding to the current set of input locales in the system. The
@@ -2607,11 +2518,6 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 */
 	HKL GetKeyboardLayout(DWORD idThread);
 
-	/**
-	 * The minimum length of a keyboard layout name.
-	 * {@link #GetKeyboardLayoutName(char[])}
-	 */
-	int KL_NAMELENGTH = 9;
 
 	/**
 	 * This function retrieves the name of the active keyboard layout.
@@ -2622,32 +2528,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 * @return Nonzero indicates success. Zero indicates failure. To get extended
 	 *         error information, call GetLastError.
 	 */
-	BOOL GetKeyboardLayoutName(char[] pwszKLID);
-
-	/**
-	 * Bitmask for the SHIFT key modifier.
-	 */
-	int MODIFIER_SHIFT_MASK = 1;
-	/**
-	 * Bitmask for the CTRL key modifier.
-	 */
-	int MODIFIER_CTRL_MASK = 2;
-	/**
-	 * Bitmask for the ALT key modifier.
-	 */
-	int MODIFIER_ALT_MASK = 4;
-	/**
-	 * Bitmask for the HANKAKU key modifier.
-	 */
-	int MODIFIER_HANKAKU_MASK = 8;
-	/**
-	 * Bitmask for the RESERVED1 key modifier.
-	 */
-	int MODIFIER_RESERVED1_MASK = 16;
-	/**
-	 * Bitmask for the RESERVED2 key modifier.
-	 */
-	int MODIFIER_RESERVED2_MASK = 32;
+	boolean GetKeyboardLayoutName(char[] pwszKLID);
 
 	/**
 	 * Translates a character to the corresponding virtual-key code and shift state.
@@ -2665,26 +2546,62 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         <dl>
 	 *         <dt>1</dt>
 	 *         <dd>Either SHIFT key is pressed. Use
-	 *         {@link #MODIFIER_SHIFT_MASK}.</dd>
+	 *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
 	 *         <dt>2</dt>
-	 *         <dd>Either CTRL key is pressed. Use {@link #MODIFIER_CTRL_MASK}.</dd>
+	 *         <dd>Either CTRL key is pressed. Use {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
 	 *         <dt>4</dt>
-	 *         <dd>Either ALT key is pressed. Use {@link #MODIFIER_ALT_MASK}.</dd>
+	 *         <dd>Either ALT key is pressed. Use {@link WinUser#MODIFIER_ALT_MASK}.</dd>
 	 *         <dt>8</dt>
 	 *         <dd>The Hankaku key is pressed. Use
-	 *         {@link #MODIFIER_HANKAKU_MASK}.</dd>
+	 *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
 	 *         <dt>16</dt>
 	 *         <dd>Reserved (defined by the keyboard layout driver). Use
-	 *         {@link #MODIFIER_RESERVED1_MASK}.</dd>
+	 *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
 	 *         <dt>32</dt>
 	 *         <dd>Reserved (defined by the keyboard layout driver). Use
-	 *         {@link #MODIFIER_RESERVED2_MASK}.</dd>
+	 *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
 	 *         </dl>
 	 *         If the function finds no key that translates to the passed character
 	 *         code, both the low-order and high-order bytes contain -1.
 	 */
-	short VkKeyScanEx(char ch, HKL dwhkl);
+	short VkKeyScanExA(byte ch, HKL dwhkl);
 
+	/**
+	 * Translates a character to the corresponding virtual-key code and shift state.
+	 * The function translates the character using the input language and physical
+	 * keyboard layout identified by the input locale identifier.
+	 * 
+	 * @param ch    The character to be translated into a virtual-key code.
+	 * @param dwhkl Input locale identifier to use for translating the specified
+	 *              code. This parameter can be any input locale identifier
+	 *              previously returned by the {@link #LoadKeyboardLayout()}
+	 *              function.
+	 * @return If the function succeeds, the low-order byte of the return value
+	 *         contains the virtual-key code and the high-order byte contains the
+	 *         shift state, which can be a combination of the following flag bits.
+	 *         <dl>
+	 *         <dt>1</dt>
+	 *         <dd>Either SHIFT key is pressed. Use
+	 *         {@link WinUser#MODIFIER_SHIFT_MASK}.</dd>
+	 *         <dt>2</dt>
+	 *         <dd>Either CTRL key is pressed. Use {@link WinUser#MODIFIER_CTRL_MASK}.</dd>
+	 *         <dt>4</dt>
+	 *         <dd>Either ALT key is pressed. Use {@link WinUser#MODIFIER_ALT_MASK}.</dd>
+	 *         <dt>8</dt>
+	 *         <dd>The Hankaku key is pressed. Use
+	 *         {@link WinUser#MODIFIER_HANKAKU_MASK}.</dd>
+	 *         <dt>16</dt>
+	 *         <dd>Reserved (defined by the keyboard layout driver). Use
+	 *         {@link WinUser#MODIFIER_RESERVED1_MASK}.</dd>
+	 *         <dt>32</dt>
+	 *         <dd>Reserved (defined by the keyboard layout driver). Use
+	 *         {@link WinUser#MODIFIER_RESERVED2_MASK}.</dd>
+	 *         </dl>
+	 *         If the function finds no key that translates to the passed character
+	 *         code, both the low-order and high-order bytes contain -1.
+	 */
+	short VkKeyScanExW(char ch, HKL dwhkl);
+	
 	/**
 	 * Translates (maps) a virtual-key code into a scan code or character value, or
 	 * translates a scan code into a virtual-key code. The function translates the
@@ -2697,9 +2614,9 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *                 extended scan code.
 	 * @param uMapType The translation to perform. The value of this parameter
 	 *                 depends on the value of the uCode parameter. One of
-	 *                 {@link #MAPVK_VK_TO_CHAR}, {@link #MAPVK_VK_TO_VSC},
-	 *                 {@link #MAPVK_VK_TO_VSC_EX}, {@link #MAPVK_VSC_TO_VK},
-	 *                 {@link #MAPVK_VSC_TO_VK_EX}
+	 *                 {@link WinUser#MAPVK_VK_TO_CHAR}, {@link WinUser#MAPVK_VK_TO_VSC},
+	 *                 {@link WinUser#MAPVK_VK_TO_VSC_EX}, {@link WinUser#MAPVK_VSC_TO_VK},
+	 *                 {@link WinUser#MAPVK_VSC_TO_VK_EX}
 	 * 
 	 * @param dwhkl    Input locale identifier to use for translating the specified
 	 *                 code. This parameter can be any input locale identifier
@@ -2791,7 +2708,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         extended error information, call GetLastError.
 	 * 
 	 */
-	int LoadString(HINSTANCE hInstance, UINT uID, LPSTR lpBuffer, int cchBufferMax);
+	int LoadString(HINSTANCE hInstance, UINT uID, Pointer lpBuffer, int cchBufferMax);
 
 	/**
 	 * Loads a string resource from the executable file associated with a specified

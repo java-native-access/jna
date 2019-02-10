@@ -33,6 +33,8 @@ import com.sun.jna.Structure;
 import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
+import com.sun.jna.platform.win32.WinDef.HKL;
+import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -2001,4 +2003,83 @@ public interface WinUser extends WinDef {
      * or 22 kHz PCM.
      */
     public int CF_WAVE = 12;
+
+
+
+	// WINVER >= 0x0400
+	/**
+	 * The uCode parameter is a virtual-key code and is translated into a scan code.
+	 * If it is a virtual-key code that does not distinguish between left- and
+	 * right-hand keys, the left-hand scan code is returned. If there is no
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+	 */
+	UINT MAPVK_VK_TO_VSC = new UINT(0);
+	/**
+	 * The uCode parameter is a scan code and is translated into a virtual-key code
+	 * that does not distinguish between left- and right-hand keys. If there is no
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+	 */
+	UINT MAPVK_VSC_TO_VK = new UINT(1);
+	/**
+	 * The uCode parameter is a virtual-key code and is translated into an unshifted
+	 * character value in the low order word of the return value. Dead keys
+	 * (diacritics) are indicated by setting the top bit of the return value. If
+	 * there is no translation, the function returns 0. Used in uMapType parameter
+	 * to
+	 * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+	 */
+	UINT MAPVK_VK_TO_CHAR = new UINT(2);
+	/**
+	 * The uCode parameter is a scan code and is translated into a virtual-key code
+	 * that distinguishes between left- and right-hand keys. If there is no
+	 * translation, the function returns 0. Used in uMapType parameter to
+	 * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+	 */
+	UINT MAPVK_VSC_TO_VK_EX = new UINT(3);
+	// WINVER >= 0x0600
+	/**
+	 * The uCode parameter is a virtual-key code and is translated into a scan code.
+	 * If it is a virtual-key code that does not distinguish between left- and
+	 * right-hand keys, the left-hand scan code is returned. If the scan code is an
+	 * extended scan code, the high byte of the uCode value can contain either 0xe0
+	 * or 0xe1 to specify the extended scan code. If there is no translation, the
+	 * function returns 0. Used in uMapType parameter to
+	 * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+	 */
+	UINT MAPVK_VK_TO_VSC_EX = new UINT(4);
+
+
+	/**
+	 * The minimum length of a keyboard layout name.
+	 * {@link User32#GetKeyboardLayoutName(char[])}
+	 */
+	int KL_NAMELENGTH = 9;
+	
+	/**
+	 * Bitmask for the SHIFT key modifier.
+	 */
+	int MODIFIER_SHIFT_MASK = 1;
+	/**
+	 * Bitmask for the CTRL key modifier.
+	 */
+	int MODIFIER_CTRL_MASK = 2;
+	/**
+	 * Bitmask for the ALT key modifier.
+	 */
+	int MODIFIER_ALT_MASK = 4;
+	/**
+	 * Bitmask for the HANKAKU key modifier.
+	 */
+	int MODIFIER_HANKAKU_MASK = 8;
+	/**
+	 * Bitmask for the RESERVED1 key modifier.
+	 */
+	int MODIFIER_RESERVED1_MASK = 16;
+	/**
+	 * Bitmask for the RESERVED2 key modifier.
+	 */
+	int MODIFIER_RESERVED2_MASK = 32;
+
 }
