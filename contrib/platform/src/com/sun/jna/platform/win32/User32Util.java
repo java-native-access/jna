@@ -26,7 +26,6 @@
 package com.sun.jna.platform.win32;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinDef.HINSTANCE;
@@ -313,7 +312,7 @@ public final class User32Util {
         /**
          * Set of {@link Win32VK} members that can be mapped to a UniCode code point via a keyboard layout.
          */
-		public static final Set<Win32VK> WIN32VK_MAPPABLE = EnumSet.of(Win32VK.VK_BACK, Win32VK.VK_TAB, Win32VK.VK_CLEAR, Win32VK.VK_RETURN,
+		public static final EnumSet<Win32VK> WIN32VK_MAPPABLE = EnumSet.of(Win32VK.VK_BACK, Win32VK.VK_TAB, Win32VK.VK_CLEAR, Win32VK.VK_RETURN,
 				Win32VK.VK_ESCAPE, Win32VK.VK_SPACE, Win32VK.VK_SELECT, Win32VK.VK_EXECUTE, Win32VK.VK_0, Win32VK.VK_1,
 				Win32VK.VK_2, Win32VK.VK_3, Win32VK.VK_4, Win32VK.VK_5, Win32VK.VK_6, Win32VK.VK_7, Win32VK.VK_8,
 				Win32VK.VK_9, Win32VK.VK_A, Win32VK.VK_B, Win32VK.VK_C, Win32VK.VK_D, Win32VK.VK_E, Win32VK.VK_F,
