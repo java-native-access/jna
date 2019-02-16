@@ -16,6 +16,7 @@ Bug Fixes
 ---------
 * [#1052](https://github.com/java-native-access/jna/pull/1052), [#1053](https://github.com/java-native-access/jna/issues/1053): WinXP compatibility for `c.s.j.p.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1055](https://github.com/java-native-access/jna/pull/1055): Include `c.s.j.p.linux` in OSGi bundle. - [@dbwiddis](https://github.com/dbwiddis).
+* [#1066](https://github.com/java-native-access/jna/issues/1066): On AIX OpenJDK differs from IBM J9 in the mapping of library names. While J9 maps jnidispatch to `libjnidispatch.a`, OpenJDK maps to `libjnidispatch.so`, which causes the native library extractor to fail. AIX is now hard-coded to `libjnidispatch.a` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.2.0
 =============
