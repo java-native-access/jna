@@ -3396,6 +3396,35 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     }
 
     /**
+     * Defines values that are used to specify system power action types.
+     */
+    public interface POWER_ACTION {
+        int PowerActionNone = 0;
+        int PowerActionReserved = 1;
+        int PowerActionSleep = 2;
+        int PowerActionHibernate = 3;
+        int PowerActionShutdown = 4;
+        int PowerActionShutdownReset = 5;
+        int PowerActionShutdownOff = 6;
+        int PowerActionWarmEject = 7;
+        int PowerActionDisplayOff = 8;
+    }
+
+    /**
+     * Defines values that are used to specify system power states.
+     */
+    public interface SYSTEM_POWER_STATE {
+        int PowerSystemUnspecified = 0;
+        int PowerSystemWorking = 1;
+        int PowerSystemSleeping1 = 2;
+        int PowerSystemSleeping2 = 3;
+        int PowerSystemSleeping3 = 4;
+        int PowerSystemHibernate = 5; // S4
+        int PowerSystemShutdown = 6; // S5
+        int PowerSystemMaximum = 7;
+    }
+
+    /**
      * Indicates committed pages for which physical storage has been allocated, either in memory or in the paging file on disk.
      */
     int MEM_COMMIT = 0x1000;
