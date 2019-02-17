@@ -25,13 +25,13 @@ package com.sun.jna.platform.win32;
 
 import com.sun.jna.Memory;
 import com.sun.jna.platform.win32.PowrProf.POWER_INFORMATION_LEVEL;
-import com.sun.jna.platform.win32.PowrProf.PROCESSOR_POWER_INFORMATION;
-import com.sun.jna.platform.win32.PowrProf.SYSTEM_BATTERY_STATE;
-import com.sun.jna.platform.win32.PowrProf.SYSTEM_POWER_CAPABILITIES;
-import com.sun.jna.platform.win32.PowrProf.SYSTEM_POWER_INFORMATION;
-import com.sun.jna.platform.win32.PowrProf.SYSTEM_POWER_POLICY;
 import com.sun.jna.platform.win32.WinBase.SYSTEM_INFO;
 import com.sun.jna.platform.win32.WinNT.POWER_ACTION;
+import com.sun.jna.platform.win32.WinNT.PROCESSOR_POWER_INFORMATION;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_BATTERY_STATE;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_CAPABILITIES;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_INFORMATION;
+import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY;
 import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_STATE;
 
 import junit.framework.TestCase;
@@ -84,7 +84,8 @@ public class PowrProfTest extends TestCase {
         mem = new Memory(size);
         assertEquals(NTStatus.STATUS_SUCCESS, PowrProf.INSTANCE
                 .CallNtPowerInformation(POWER_INFORMATION_LEVEL.SystemPowerCapabilities, null, 0, mem, size));
-        SYSTEM_POWER_CAPABILITIES powerCapabilities = new SYSTEM_POWER_CAPABILITIES(mem);
+        SYSTEM_POWER_CAPABILITIES powerCapabilities = new SYSTEM_POWER_CAPABILITIES(
+                mem);
         assertEquals(powerCapabilities.SystemBatteriesPresent > 0, batteryState.BatteryPresent > 0);
     }
 
