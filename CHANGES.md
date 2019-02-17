@@ -11,6 +11,7 @@ Features
 * [#1050](https://github.com/java-native-access/jna/pull/1050): Add `c.s.j.p.win32.VersionHelpers` and supporting functions - [@dbwiddis](https://github.com/dbwiddis).
 * [#1061](https://github.com/java-native-access/jna/pull/1061): replace toArray(new T[size]) with toArray(new T[0]) for better performance - [@hc-codersatlas](https://github.com/hc-codersatlas).
 * [#1064](https://github.com/java-native-access/jna/pull/1064): Add `c.s.j.p.win32.Kernel32.GetLogicalProcessorInformationEx` function, convenience Util method and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
+* [#1065](https://github.com/java-native-access/jna/pull/1065): Add `c.s.j.p.win32.PowrProf#CallNTPowerInformation` and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
