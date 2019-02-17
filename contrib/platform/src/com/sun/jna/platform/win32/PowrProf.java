@@ -26,11 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.WinNT.PROCESSOR_POWER_INFORMATION;
-import com.sun.jna.platform.win32.WinNT.SYSTEM_BATTERY_STATE;
-import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_CAPABILITIES;
-import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_INFORMATION;
-import com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY;
 
 /**
  * Functions used with power management.
@@ -69,10 +64,11 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives one
-         * {@link PROCESSOR_POWER_INFORMATION} structure for each processor that
-         * is installed on the system. Use the {@link Kernel32#GetSystemInfo()}
-         * function to retrieve the number of processors, which will be the
-         * number of logical processors on the current Processor Group.
+         * {@link WinNT#PROCESSOR_POWER_INFORMATION} structure for each
+         * processor that is installed on the system. Use the
+         * {@link Kernel32#GetSystemInfo()} function to retrieve the number of
+         * processors, which will be the number of logical processors on the
+         * current Processor Group.
          */
         int ProcessorInformation = 11;
 
@@ -81,8 +77,8 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_BATTERY_STATE} structure containing information about
-         * the current system battery.
+         * {@link WinNT#SYSTEM_BATTERY_STATE} structure containing information
+         * about the current system battery.
          */
         int SystemBatteryState = 5;
 
@@ -105,8 +101,8 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_POWER_CAPABILITIES} structure containing the current
-         * system power capabilities.
+         * {@link WinNT#SYSTEM_POWER_CAPABILITIES} structure containing the
+         * current system power capabilities.
          * <p>
          * This information represents the currently supported power
          * capabilities. It may change as drivers are installed in the system.
@@ -120,7 +116,7 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_POWER_INFORMATION} structure.
+         * {@link WinNT#SYSTEM_POWER_INFORMATION} structure.
          * <p>
          * Applications can use this level to retrieve information about the
          * idleness of the system.
@@ -129,13 +125,14 @@ public interface PowrProf extends Library {
 
         /**
          * If {@code lpInBuffer} is not {@code NULL}, the function applies the
-         * {@link SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer} to
-         * the current system power policy used while the system is running on
-         * AC (utility) power.
+         * {@link WinNT#SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer}
+         * to the current system power policy used while the system is running
+         * on AC (utility) power.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_POWER_POLICY} structure containing the current system
-         * power policy used while the system is running on AC (utility) power.
+         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
+         * system power policy used while the system is running on AC (utility)
+         * power.
          */
         int SystemPowerPolicyAc = 0;
 
@@ -144,20 +141,22 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_POWER_POLICY} structure containing the current system
-         * power policy used while the system is running on AC (utility) power.
+         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
+         * system power policy used while the system is running on AC (utility)
+         * power.
          */
         int SystemPowerPolicyCurrent = 8;
 
         /**
          * If {@code lpInBuffer} is not {@code NULL}, the function applies the
-         * {@link SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer} to
-         * the current system power policy used while the system is running on
-         * battery power.
+         * {@link WinNT#SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer}
+         * to the current system power policy used while the system is running
+         * on battery power.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link SYSTEM_POWER_POLICY} structure containing the current system
-         * power policy used while the system is running on battery power.
+         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
+         * system power policy used while the system is running on battery
+         * power.
          */
         int SystemPowerPolicyDc = 1;
 
