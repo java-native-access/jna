@@ -105,5 +105,14 @@ public interface NTStatus {
     //  Indicates a particular Security ID may not be assigned as the owner of an object.
     //
     int  STATUS_INVALID_OWNER = 0xC000005A;
+
+    // MessageId: STATUS_ACCESS_DENIED
+    //
+    // MessageText:
+    //
+    // A process has requested access to an object, but has not been granted
+    // those access rights.
+    //
+    int STATUS_ACCESS_DENIED = 0xC0000022;
 }
 

@@ -999,7 +999,13 @@ public final class Native implements Version {
      */
     private static void loadNativeDispatchLibraryFromClasspath() {
         try {
-            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+            String mappedName = System.mapLibraryName("jnidispatch").replace(".dylib", ".jnilib");
+            if(Platform.isAIX()) {
+                // OpenJDK is reported to map to .so -- this works around the
+                // difference between J9 and OpenJDK
+                mappedName = "libjnidispatch.a";
+            }
+            String libName = "/com/sun/jna/" + Platform.RESOURCE_PREFIX + "/" + mappedName;
             File lib = extractFromResourcePath(libName, Native.class.getClassLoader());
             if (lib == null) {
                 if (lib == null) {

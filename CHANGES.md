@@ -12,11 +12,13 @@ Features
 * [#1061](https://github.com/java-native-access/jna/pull/1061): replace toArray(new T[size]) with toArray(new T[0]) for better performance - [@hc-codersatlas](https://github.com/hc-codersatlas).
 * [#1063](https://github.com/java-native-access/jna/pull/1063): User32 extensions to support Keyboard related functionality. - [@kevemueller](https://github.com/kevemueller).
 * [#1064](https://github.com/java-native-access/jna/pull/1064): Add `c.s.j.p.win32.Kernel32.GetLogicalProcessorInformationEx` function, convenience Util method and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
+* [#1065](https://github.com/java-native-access/jna/pull/1065): Add `c.s.j.p.win32.PowrProf#CallNTPowerInformation` and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
 
 Bug Fixes
 ---------
 * [#1052](https://github.com/java-native-access/jna/issues/1052), [#1053](https://github.com/java-native-access/jna/issues/1053): WinXP compatibility for `c.s.j.p.win32.PdhUtil` - [@dbwiddis](https://github.com/dbwiddis).
 * [#1055](https://github.com/java-native-access/jna/pull/1055): Include `c.s.j.p.linux` in OSGi bundle. - [@dbwiddis](https://github.com/dbwiddis).
+* [#1066](https://github.com/java-native-access/jna/issues/1066): On AIX OpenJDK differs from IBM J9 in the mapping of library names. While J9 maps jnidispatch to `libjnidispatch.a`, OpenJDK maps to `libjnidispatch.so`, which causes the native library extractor to fail. AIX is now hard-coded to `libjnidispatch.a` - [@matthiasblaesing](https://github.com/matthiasblaesing).
 
 Release 5.2.0
 =============
