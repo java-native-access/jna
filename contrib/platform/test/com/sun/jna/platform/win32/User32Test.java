@@ -21,6 +21,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.JUnitCore;
@@ -35,6 +36,7 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 import com.sun.jna.platform.win32.WinDef.HDC;
 import com.sun.jna.platform.win32.WinDef.HICON;
+import com.sun.jna.platform.win32.WinDef.HKL;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinDef.LPARAM;
 import com.sun.jna.platform.win32.WinDef.LRESULT;
@@ -49,7 +51,6 @@ import com.sun.jna.platform.win32.WinUser.LASTINPUTINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORENUMPROC;
 import com.sun.jna.platform.win32.WinUser.MONITORINFO;
 import com.sun.jna.platform.win32.WinUser.MONITORINFOEX;
-import org.junit.Before;
 
 /**
  * @author dblock[at]dblock[dot]org
@@ -442,5 +443,97 @@ public class User32Test extends AbstractWin32TestSupport {
          assertNotEquals(0, result);
     	
     }
-    
+
+	/**
+	 * Test the retrieval of the keyboard layouts.
+	 */
+	@Test
+	public void testGetKeyboardLayoutList() {
+		int n = User32.INSTANCE.GetKeyboardLayoutList(0, null);
+		assertNotEquals(0, n);
+
+		HKL[] lpList = new HKL[n];
+		int n2 = User32.INSTANCE.GetKeyboardLayoutList(lpList.length, lpList);
+		assertEquals(n, n2);
+	}
+
+	/**
+	 * Test the retrieval of the active keyboard layouts. Check that is is in the
+	 * list of all keyboard layouts.
+	 */
+	@Test
+	public void testGetKeyboardLayout() {
+		HKL[] lpList = new HKL[32];
+		int n = User32.INSTANCE.GetKeyboardLayoutList(lpList.length, lpList);
+		assertNotEquals(0, n);
+		HKL hkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		assertNotNull(hkl);
+		for (int i = 0; i < n; i++) {
+			if (lpList[i].equals(hkl)) {
+				return;
+			}
+		}
+		fail("Active keyboard layout not in list of keyboard layouts.");
+	}
+
+	/**
+	 * Test the retrieval of the active keyboard layout's name.
+	 */
+	@Test
+	public void testGetKeyboardLayoutName() {
+		char[] name = new char[User32.KL_NAMELENGTH];
+		boolean success = User32.INSTANCE.GetKeyboardLayoutName(name);
+		assertTrue(success);
+		assertNotEquals(0, name[0]);
+	}
+
+	/** 
+	 * Test the mapping of a single byte character to Modifier state + VK.
+	 * Assumes A is mapped to VK_A, which is likely but not necessary.
+	 */
+	@Test
+	public void testVkKeyScanExA() {
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		short code = User32.INSTANCE.VkKeyScanExA((byte) 'A', dwhkl);
+
+		int shiftState = code >>> 8;
+		assertEquals(User32.MODIFIER_SHIFT_MASK, shiftState);
+
+		Win32VK vk = Win32VK.fromValue(code & 0xFF);
+		assertEquals(Win32VK.VK_A, vk);
+	}
+
+	/** 
+	 * Test the mapping of a multi byte character to Modifier state + VK.
+	 * Assumes A is mapped to VK_A, which is likely but not necessary.
+	 */
+	@Test
+	public void testVkKeyScanExW() {
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		short code = User32.INSTANCE.VkKeyScanExW('A', dwhkl);
+
+		int shiftState = code >>> 8;
+		assertEquals(User32.MODIFIER_SHIFT_MASK, shiftState);
+
+		Win32VK vk = Win32VK.fromValue(code & 0xFF);
+		assertEquals(Win32VK.VK_A, vk);
+	}
+	
+	/**
+	 * Test the mapping of a VK to a character value.
+	 * Assumes A is mapped to VK_A, which is likely but not necessary.
+	 */
+	@Test
+	public void testMapVirtualKeyEx() {
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		UINT charValue = User32.INSTANCE.MapVirtualKeyEx(new UINT(Win32VK.VK_A.code), WinUser.MAPVK_VK_TO_CHAR, dwhkl);
+		assertEquals('A', charValue.intValue());
+	}
+	
+	
+	@Test
+	public void testToUnicodeEx() {
+		// this function cannot be tested reliably as it interacts with the system keyboard stack
+		// which is in an undefined state at test execution and may change arbitrarily during the test.
+	}
 }

@@ -250,39 +250,7 @@ public final class User32Util {
         
         public void exit() {
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_QUIT, null, null);
-        }
-
-        
-        /**
-         * Load a string value from the string table of an executable.
-         * 
-         * @param location the location, eg. %SystemRoot%\system32\input.dll,-5011
-         * @return
-         * @throws UnsupportedEncodingException 
-         */
-    	public static String loadString(String location) throws UnsupportedEncodingException {
-    		int x = location.lastIndexOf(',');
-    		String moduleName = location.substring(0, x);
-    		int index = Math.abs(Integer.parseInt(location.substring(x + 1)));
-    		String path = Kernel32Util.expandEnvironmentStrings(moduleName);
-    		HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
-    		if (target == null) {
-    			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-    		}
-    		PointerByReference lpBuffer = new PointerByReference();
-    		UINT id = new UINT(index);
-    		x = User32.INSTANCE.LoadString(target, id, lpBuffer, 0);
-    		if (0 == x) {
-    			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-    		}
-
-            if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-            	return new String(lpBuffer.getValue().getCharArray(0, x));
-            } else {
-            	return new String(lpBuffer.getValue().getByteArray(0, x), Native.getDefaultStringEncoding());
-            }
-    	}
-        
+        }      
         
         /**
          * The method is called from the thread, that run the message dispatcher,
@@ -307,31 +275,61 @@ public final class User32Util {
                             lastError);
             return true;
         }
-        
-        
-        /**
-         * Set of {@link Win32VK} members that can be mapped to a UniCode code point via a keyboard layout.
-         */
-		public static final EnumSet<Win32VK> WIN32VK_MAPPABLE = EnumSet.of(Win32VK.VK_BACK, Win32VK.VK_TAB, Win32VK.VK_CLEAR, Win32VK.VK_RETURN,
-				Win32VK.VK_ESCAPE, Win32VK.VK_SPACE, Win32VK.VK_SELECT, Win32VK.VK_EXECUTE, Win32VK.VK_0, Win32VK.VK_1,
-				Win32VK.VK_2, Win32VK.VK_3, Win32VK.VK_4, Win32VK.VK_5, Win32VK.VK_6, Win32VK.VK_7, Win32VK.VK_8,
-				Win32VK.VK_9, Win32VK.VK_A, Win32VK.VK_B, Win32VK.VK_C, Win32VK.VK_D, Win32VK.VK_E, Win32VK.VK_F,
-				Win32VK.VK_G, Win32VK.VK_H, Win32VK.VK_I, Win32VK.VK_J, Win32VK.VK_K, Win32VK.VK_L, Win32VK.VK_M,
-				Win32VK.VK_N, Win32VK.VK_O, Win32VK.VK_P, Win32VK.VK_Q, Win32VK.VK_R, Win32VK.VK_S, Win32VK.VK_T,
-				Win32VK.VK_U, Win32VK.VK_V, Win32VK.VK_W, Win32VK.VK_X, Win32VK.VK_Y, Win32VK.VK_Z, Win32VK.VK_NUMPAD0,
-				Win32VK.VK_NUMPAD1, Win32VK.VK_NUMPAD2, Win32VK.VK_NUMPAD3, Win32VK.VK_NUMPAD4, Win32VK.VK_NUMPAD5,
-				Win32VK.VK_NUMPAD6, Win32VK.VK_NUMPAD7, Win32VK.VK_NUMPAD8, Win32VK.VK_NUMPAD9, Win32VK.VK_MULTIPLY,
-				Win32VK.VK_ADD, Win32VK.VK_SEPARATOR, Win32VK.VK_SUBTRACT, Win32VK.VK_DECIMAL, Win32VK.VK_DIVIDE,
-				Win32VK.VK_OEM_NEC_EQUAL, Win32VK.VK_OEM_FJ_MASSHOU, Win32VK.VK_OEM_FJ_TOUROKU, Win32VK.VK_OEM_FJ_LOYA,
-				Win32VK.VK_OEM_FJ_ROYA, Win32VK.VK_OEM_1, Win32VK.VK_OEM_PLUS, Win32VK.VK_OEM_COMMA,
-				Win32VK.VK_OEM_MINUS, Win32VK.VK_OEM_PERIOD, Win32VK.VK_OEM_2, Win32VK.VK_OEM_3, Win32VK.VK_RESERVED_C1,
-				Win32VK.VK_RESERVED_C2, Win32VK.VK_OEM_4, Win32VK.VK_OEM_5, Win32VK.VK_OEM_6, Win32VK.VK_OEM_7,
-				Win32VK.VK_OEM_8, Win32VK.VK_OEM_AX, Win32VK.VK_OEM_102, Win32VK.VK_ICO_HELP, Win32VK.VK_PROCESSKEY,
-				Win32VK.VK_ICO_CLEAR, Win32VK.VK_PACKET, Win32VK.VK_OEM_RESET, Win32VK.VK_OEM_JUMP, Win32VK.VK_OEM_PA1,
-				Win32VK.VK_OEM_PA2, Win32VK.VK_OEM_PA3, Win32VK.VK_OEM_WSCTRL, Win32VK.VK_OEM_CUSEL,
-				Win32VK.VK_OEM_ATTN, Win32VK.VK_OEM_FINISH, Win32VK.VK_OEM_COPY, Win32VK.VK_OEM_AUTO,
-				Win32VK.VK_OEM_ENLW, Win32VK.VK_OEM_BACKTAB, Win32VK.VK_ATTN, Win32VK.VK_CRSEL, Win32VK.VK_EXSEL,
-				Win32VK.VK_EREOF, Win32VK.VK_PLAY, Win32VK.VK_ZOOM, Win32VK.VK_NONAME, Win32VK.VK_PA1,
-				Win32VK.VK_OEM_CLEAR);
     }
+       
+	/**
+	 * Load a string value from the string table of an executable.
+	 * 
+	 * @param location the location, eg. %SystemRoot%\system32\input.dll,-5011
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	public static String loadString(String location) throws UnsupportedEncodingException {
+		int x = location.lastIndexOf(',');
+		String moduleName = location.substring(0, x);
+		int index = Math.abs(Integer.parseInt(location.substring(x + 1)));
+		String path = Kernel32Util.expandEnvironmentStrings(moduleName);
+		HMODULE target = Kernel32.INSTANCE.LoadLibraryEx(path, null, Kernel32.LOAD_LIBRARY_AS_DATAFILE);
+		if (target == null) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+		PointerByReference lpBuffer = new PointerByReference();
+		UINT id = new UINT(index);
+		x = User32.INSTANCE.LoadString(target, id, lpBuffer, 0);
+		if (0 == x) {
+			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+		}
+
+		if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+			return new String(lpBuffer.getValue().getCharArray(0, x));
+		} else {
+			return new String(lpBuffer.getValue().getByteArray(0, x), Native.getDefaultStringEncoding());
+		}
+	}
+
+	/**
+	 * Set of {@link Win32VK} members that can be mapped to a UniCode code point via
+	 * a keyboard layout.
+	 */
+	public static final EnumSet<Win32VK> WIN32VK_MAPPABLE = EnumSet.of(Win32VK.VK_BACK, Win32VK.VK_TAB,
+			Win32VK.VK_CLEAR, Win32VK.VK_RETURN, Win32VK.VK_ESCAPE, Win32VK.VK_SPACE, Win32VK.VK_SELECT,
+			Win32VK.VK_EXECUTE, Win32VK.VK_0, Win32VK.VK_1, Win32VK.VK_2, Win32VK.VK_3, Win32VK.VK_4, Win32VK.VK_5,
+			Win32VK.VK_6, Win32VK.VK_7, Win32VK.VK_8, Win32VK.VK_9, Win32VK.VK_A, Win32VK.VK_B, Win32VK.VK_C,
+			Win32VK.VK_D, Win32VK.VK_E, Win32VK.VK_F, Win32VK.VK_G, Win32VK.VK_H, Win32VK.VK_I, Win32VK.VK_J,
+			Win32VK.VK_K, Win32VK.VK_L, Win32VK.VK_M, Win32VK.VK_N, Win32VK.VK_O, Win32VK.VK_P, Win32VK.VK_Q,
+			Win32VK.VK_R, Win32VK.VK_S, Win32VK.VK_T, Win32VK.VK_U, Win32VK.VK_V, Win32VK.VK_W, Win32VK.VK_X,
+			Win32VK.VK_Y, Win32VK.VK_Z, Win32VK.VK_NUMPAD0, Win32VK.VK_NUMPAD1, Win32VK.VK_NUMPAD2, Win32VK.VK_NUMPAD3,
+			Win32VK.VK_NUMPAD4, Win32VK.VK_NUMPAD5, Win32VK.VK_NUMPAD6, Win32VK.VK_NUMPAD7, Win32VK.VK_NUMPAD8,
+			Win32VK.VK_NUMPAD9, Win32VK.VK_MULTIPLY, Win32VK.VK_ADD, Win32VK.VK_SEPARATOR, Win32VK.VK_SUBTRACT,
+			Win32VK.VK_DECIMAL, Win32VK.VK_DIVIDE, Win32VK.VK_OEM_NEC_EQUAL, Win32VK.VK_OEM_FJ_MASSHOU,
+			Win32VK.VK_OEM_FJ_TOUROKU, Win32VK.VK_OEM_FJ_LOYA, Win32VK.VK_OEM_FJ_ROYA, Win32VK.VK_OEM_1,
+			Win32VK.VK_OEM_PLUS, Win32VK.VK_OEM_COMMA, Win32VK.VK_OEM_MINUS, Win32VK.VK_OEM_PERIOD, Win32VK.VK_OEM_2,
+			Win32VK.VK_OEM_3, Win32VK.VK_RESERVED_C1, Win32VK.VK_RESERVED_C2, Win32VK.VK_OEM_4, Win32VK.VK_OEM_5,
+			Win32VK.VK_OEM_6, Win32VK.VK_OEM_7, Win32VK.VK_OEM_8, Win32VK.VK_OEM_AX, Win32VK.VK_OEM_102,
+			Win32VK.VK_ICO_HELP, Win32VK.VK_PROCESSKEY, Win32VK.VK_ICO_CLEAR, Win32VK.VK_PACKET, Win32VK.VK_OEM_RESET,
+			Win32VK.VK_OEM_JUMP, Win32VK.VK_OEM_PA1, Win32VK.VK_OEM_PA2, Win32VK.VK_OEM_PA3, Win32VK.VK_OEM_WSCTRL,
+			Win32VK.VK_OEM_CUSEL, Win32VK.VK_OEM_ATTN, Win32VK.VK_OEM_FINISH, Win32VK.VK_OEM_COPY, Win32VK.VK_OEM_AUTO,
+			Win32VK.VK_OEM_ENLW, Win32VK.VK_OEM_BACKTAB, Win32VK.VK_ATTN, Win32VK.VK_CRSEL, Win32VK.VK_EXSEL,
+			Win32VK.VK_EREOF, Win32VK.VK_PLAY, Win32VK.VK_ZOOM, Win32VK.VK_NONAME, Win32VK.VK_PA1,
+			Win32VK.VK_OEM_CLEAR);
 }

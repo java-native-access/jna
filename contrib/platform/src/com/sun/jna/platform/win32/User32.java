@@ -26,7 +26,6 @@ package com.sun.jna.platform.win32;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import com.sun.jna.platform.win32.WTypes.LPSTR;
 import com.sun.jna.platform.win32.WinGDI.ICONINFO;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
@@ -2708,8 +2707,10 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         extended error information, call GetLastError.
 	 * 
 	 */
-	int LoadString(HINSTANCE hInstance, UINT uID, Pointer lpBuffer, int cchBufferMax);
-
+//	int LoadString(HINSTANCE hInstance, UINT uID, Pointer lpBuffer, int cchBufferMax);
+//  disabled as testNoDuplicateMethodsNames does not allow multiple methods with the same name.
+	
+	
 	/**
 	 * Loads a string resource from the executable file associated with a specified
 	 * module and return a read-only pointer to the resource itself.
