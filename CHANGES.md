@@ -13,6 +13,7 @@ Features
 * [#1064](https://github.com/java-native-access/jna/pull/1064): Add `c.s.j.p.win32.Kernel32.GetLogicalProcessorInformationEx` function, convenience Util method and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
 * [#1065](https://github.com/java-native-access/jna/pull/1065): Add `c.s.j.p.win32.PowrProf#CallNTPowerInformation` and supporting structures - [@dbwiddis](https://github.com/dbwiddis).
 * [#1063](https://github.com/java-native-access/jna/pull/1063): Enhance `c.s.j.p.win32.User32` and associated classes to support keyboard related functionality. - [@kevemueller](https://github.com/kevemueller).
+* [#1068](https://github.com/java-native-access/jna/pull/1068): `c.s.j.p.win32.Advapi32Util.getAccountBySid(String systemName, PSID sid)` ignored parameter instead of passing it to the native function - [@nirud](https://github.com/nirud).
 
 Bug Fixes
 ---------
