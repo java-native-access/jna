@@ -68,24 +68,24 @@ public final class User32UtilTest extends TestCase {
 //        }
 	}
 
-	/**
-	 * Assert we can load a String from the string table of an executable.
-	 * 
-	 * @throws UnsupportedEncodingException should never happen
-	 */
-	public void testLoadString() throws UnsupportedEncodingException {
-		String value = User32Util.loadString("%SystemRoot%\\system32\\input.dll,-5011");
-		assertEquals("German", value);
-	}
+    /**
+     * Assert we can load a String from the string table of an executable.
+     * 
+     * @throws UnsupportedEncodingException should never happen
+     */
+    public void testLoadString() throws UnsupportedEncodingException {
+        String value = User32Util.loadString("%SystemRoot%\\system32\\input.dll,-5011");
+        assertEquals("German", value);
+    }
 
-	/**
-	 * Assert some well known VK are members or not members of
-	 * {@link com.sun.jna.platform.win32.User32Util#WIN32VK_MAPPABLE}
-	 * 
-	 */
-	public void testVkMappable() {
-		assertTrue(User32Util.WIN32VK_MAPPABLE.contains(Win32VK.VK_A));
-		assertFalse(EnumSet.complementOf(User32Util.WIN32VK_MAPPABLE).contains(Win32VK.VK_A));
-		assertTrue(EnumSet.complementOf(User32Util.WIN32VK_MAPPABLE).contains(Win32VK.VK_SHIFT));
-	}
+    /**
+     * Assert some well known VK are members or not members of
+     * {@link com.sun.jna.platform.win32.User32Util#WIN32VK_MAPPABLE}
+     * 
+     */
+    public void testVkMappable() {
+        assertTrue(User32Util.WIN32VK_MAPPABLE.contains(Win32VK.VK_A));
+        assertFalse(EnumSet.complementOf(User32Util.WIN32VK_MAPPABLE).contains(Win32VK.VK_A));
+        assertTrue(EnumSet.complementOf(User32Util.WIN32VK_MAPPABLE).contains(Win32VK.VK_SHIFT));
+    }
 }
