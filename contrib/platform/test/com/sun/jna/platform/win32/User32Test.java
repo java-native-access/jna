@@ -466,7 +466,7 @@ public class User32Test extends AbstractWin32TestSupport {
 		HKL[] lpList = new HKL[32];
 		int n = User32.INSTANCE.GetKeyboardLayoutList(lpList.length, lpList);
 		assertNotEquals(0, n);
-		HKL hkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		HKL hkl = User32.INSTANCE.GetKeyboardLayout(0);
 		assertNotNull(hkl);
 		for (int i = 0; i < n; i++) {
 			if (lpList[i].equals(hkl)) {
@@ -493,7 +493,7 @@ public class User32Test extends AbstractWin32TestSupport {
 	 */
 	@Test
 	public void testVkKeyScanExA() {
-		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(0);
 		short code = User32.INSTANCE.VkKeyScanExA((byte) 'A', dwhkl);
 
 		int shiftState = code >>> 8;
@@ -509,7 +509,7 @@ public class User32Test extends AbstractWin32TestSupport {
 	 */
 	@Test
 	public void testVkKeyScanExW() {
-		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(0);
 		short code = User32.INSTANCE.VkKeyScanExW('A', dwhkl);
 
 		int shiftState = code >>> 8;
@@ -525,7 +525,7 @@ public class User32Test extends AbstractWin32TestSupport {
 	 */
 	@Test
 	public void testMapVirtualKeyEx() {
-		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(new DWORD(0));
+		HKL dwhkl = User32.INSTANCE.GetKeyboardLayout(0);
 		UINT charValue = User32.INSTANCE.MapVirtualKeyEx(new UINT(Win32VK.VK_A.code), WinUser.MAPVK_VK_TO_CHAR, dwhkl);
 		assertEquals('A', charValue.intValue());
 	}

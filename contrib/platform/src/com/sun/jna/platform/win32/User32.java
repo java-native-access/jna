@@ -2515,7 +2515,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         the high word contains a device handle to the physical layout of the
 	 *         keyboard.
 	 */
-	HKL GetKeyboardLayout(DWORD idThread);
+	HKL GetKeyboardLayout(int idThread);
 
 
 	/**
@@ -2681,7 +2681,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         </dl>
 	 * 
 	 */
-	int ToUnicodeEx(UINT wVirtKey, UINT wScanCode, byte[] lpKeyState, char[] pwszBuff, int cchBuff, UINT wFlags,
+	int ToUnicodeEx(int wVirtKey, UINT wScanCode, byte[] lpKeyState, char[] pwszBuff, int cchBuff, int wFlags,
 			HKL dwhkl);
 
 	/**
@@ -2729,5 +2729,5 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
 	 *         extended error information, call GetLastError.
 	 * 
 	 */
-	int LoadString(HINSTANCE hInstance, UINT uID, PointerByReference lpBuffer, int cchBufferMax);
+	int LoadString(HINSTANCE hInstance, int uID, PointerByReference lpBuffer, int cchBufferMax);
 }
