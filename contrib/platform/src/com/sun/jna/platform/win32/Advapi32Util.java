@@ -263,7 +263,7 @@ public abstract class Advapi32Util {
 		IntByReference cchDomainName = new IntByReference();
 		PointerByReference peUse = new PointerByReference();
 
-		if (Advapi32.INSTANCE.LookupAccountSid(null, sid, null, cchName, null,
+		if (Advapi32.INSTANCE.LookupAccountSid(systemName, sid, null, cchName, null,
 				cchDomainName, peUse)) {
 			throw new RuntimeException(
 					"LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
@@ -278,7 +278,7 @@ public abstract class Advapi32Util {
 		char[] domainName = new char[cchDomainName.getValue()];
 		char[] name = new char[cchName.getValue()];
 
-		if (!Advapi32.INSTANCE.LookupAccountSid(null, sid, name, cchName,
+		if (!Advapi32.INSTANCE.LookupAccountSid(systemName, sid, name, cchName,
 				domainName, cchDomainName, peUse)) {
 			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
 		}
