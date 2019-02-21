@@ -1420,7 +1420,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * This function is subject to manifest-based behavior.
      * 
      * @param lpVersionInformation
-     *            A pointer to an {@link WinNT#OSVERSIONINFOEX} structure
+     *            A pointer to an {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure
      *            containing the operating system version requirements to
      *            compare. The {@code dwTypeMask} parameter indicates the
      *            members of this structure that contain information to compare.
@@ -1432,12 +1432,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            which the corresponding {@code dwTypeMask} bit is not set.
      * @param dwTypeMask
      *            A mask that indicates the members of the
-     *            {@link WinNT#OSVERSIONINFOEX} structure to be tested.
+     *            {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure to be tested.
      * @param dwlConditionMask
      *            The type of comparison to be used for each
      *            {@code lpVersionInfo} member being compared. To build this
      *            value, call the {@link #VerSetConditionMask} function once for
-     *            each {@link WinNT#OSVERSIONINFOEX} member being compared.
+     *            each {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} member being compared.
      * @return If the currently running operating system satisfies the specified
      *         requirements, the return value is a nonzero value.
      *         <p>
@@ -1455,11 +1455,11 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Sets the bits of a 64-bit value to indicate the comparison operator to
      * use for a specified operating system version attribute. This function is
      * used to build the {@code dwlConditionMask} parameter of the
-     * {@link #VerifyVersionInfo} function.
+     * {@link #VerifyVersionInfoW} function.
      * 
      * @param conditionMask
      *            A value to be passed as the {@code dwlConditionMask} parameter
-     *            of the {@link #VerifyVersionInfo} function. The function
+     *            of the {@link #VerifyVersionInfoW} function. The function
      *            stores the comparison information in the bits of this
      *            variable.
      *            <p>
@@ -1468,13 +1468,13 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *            in the variable used in the previous call.
      * @param typeMask
      *            A mask that indicates the member of the
-     *            {@link WinNT#OSVERSIONINFOEX} structure whose comparison
+     *            {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure whose comparison
      *            operator is being set. This value corresponds to one of the
      *            bits specified in the {@code dwTypeMask} parameter for the
-     *            {@link #VerifyVersionInfo} function.
+     *            {@link #VerifyVersionInfoW} function.
      * @param condition
      *            The operator to be used for the comparison. The
-     *            {@link #VerifyVersionInfo} function uses this operator to
+     *            {@link #VerifyVersionInfoW} function uses this operator to
      *            compare a specified attribute value to the corresponding value
      *            for the currently running system.
      * @return The function returns the condition mask value.
@@ -1542,12 +1542,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @param relationshipType
      *            The type of relationship to retrieve. This parameter can be
      *            one of the following values:
-     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
-     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
-     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
-     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
-     *            {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
-     *            or {@link LOGICAL_PROCESSOR_RELATIONSHIP#RelationAll}
+     *            {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationCache},
+     *            {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationGroup},
+     *            {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationNumaNode},
+     *            {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorCore},
+     *            {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationProcessorPackage},
+     *            or {@link com.sun.jna.platform.win32.WinNT.LOGICAL_PROCESSOR_RELATIONSHIP#RelationAll}
      * @param buffer
      *            A pointer to a buffer that receives an array of
      *            {@link WinNT.SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX}

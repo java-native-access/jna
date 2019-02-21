@@ -35,7 +35,7 @@ public interface PowrProf extends Library {
 
     /**
      * Enum which indicates the power information level requested from
-     * {@link #CallNtPowerInformation()}. This value indicates the specific
+     * {@link #CallNtPowerInformation}. This value indicates the specific
      * power information to be set or retrieved.
      */
     public interface POWER_INFORMATION_LEVEL {
@@ -43,9 +43,10 @@ public interface PowrProf extends Library {
          * The {@code lpInBuffer} parameter must be {@code NULL}; otherwise, the
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
-         * The {@code lpOutputBuffer} buffer receives a {@link WinDef#ULONGLONG}
-         * that specifies the interrupt-time count, in 100-nanosecond units, at
-         * the last system sleep time.
+         * The {@code lpOutputBuffer} buffer receives a
+         * {@link com.sun.jna.platform.win32.WinDef.ULONGLONG} that specifies
+         * the interrupt-time count, in 100-nanosecond units, at the last system
+         * sleep time.
          */
         int LastSleepTime = 15;
 
@@ -53,9 +54,10 @@ public interface PowrProf extends Library {
          * The {@code lpInBuffer} parameter must be {@code NULL}; otherwise, the
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
-         * The {@code lpOutputBuffer} buffer receives a {@link WinDef#ULONGLONG}
-         * that specifies the interrupt-time count, in 100-nanosecond units, at
-         * the last system wake time.
+         * The {@code lpOutputBuffer} buffer receives a
+         * {@link com.sun.jna.platform.win32.WinDef.ULONGLONG} that specifies
+         * the interrupt-time count, in 100-nanosecond units, at the last system
+         * wake time.
          */
         int LastWakeTime = 14;
 
@@ -64,9 +66,9 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives one
-         * {@link WinNT#PROCESSOR_POWER_INFORMATION} structure for each
-         * processor that is installed on the system. Use the
-         * {@link Kernel32#GetSystemInfo()} function to retrieve the number of
+         * {@link com.sun.jna.platform.win32.WinNT.PROCESSOR_POWER_INFORMATION}
+         * structure for each processor that is installed on the system. Use the
+         * {@link Kernel32#GetSystemInfo} function to retrieve the number of
          * processors, which will be the number of logical processors on the
          * current Processor Group.
          */
@@ -77,22 +79,22 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_BATTERY_STATE} structure containing information
-         * about the current system battery.
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_BATTERY_STATE}
+         * structure containing information about the current system battery.
          */
         int SystemBatteryState = 5;
 
         /**
-         * The {@code lpInBuffer} parameter must be {@code NULL}; otherwise, the
+         * The {@code lpInBuffer} parameter must be {@code NULL} otherwise, the
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
-         * The {@code lpOutputBuffer} buffer receives a {@link WinDef#ULONG}
-         * value containing the system execution state buffer. This value may
-         * contain any combination of the following values:
-         * {@link WinBase#ES_SYSTEM_REQUIRED},
+         * The {@code lpOutputBuffer} buffer receives a
+         * {@link com.sun.jna.platform.win32.WinDef.ULONG} value containing the
+         * system execution state buffer. This value may contain any combination
+         * of the following values:          {@link WinBase#ES_SYSTEM_REQUIRED},
          * {@link WinBase#ES_DISPLAY_REQUIRED}, or
          * {@link WinBase#ES_USER_PRESENT}. For more information, see the
-         * {@link {@link Kernel32#SetThreadExecutionState()} function.
+         * {@link Kernel32#SetThreadExecutionState} function.
          */
         int SystemExecutionState = 16;
 
@@ -101,7 +103,7 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_POWER_CAPABILITIES} structure containing the
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_CAPABILITIES} structure containing the
          * current system power capabilities.
          * <p>
          * This information represents the currently supported power
@@ -116,7 +118,7 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_POWER_INFORMATION} structure.
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_INFORMATION} structure.
          * <p>
          * Applications can use this level to retrieve information about the
          * idleness of the system.
@@ -125,14 +127,14 @@ public interface PowrProf extends Library {
 
         /**
          * If {@code lpInBuffer} is not {@code NULL}, the function applies the
-         * {@link WinNT#SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer}
-         * to the current system power policy used while the system is running
-         * on AC (utility) power.
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY} values
+         * passed in {@code lpInBuffer} to the current system power policy used
+         * while the system is running on AC (utility) power.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
-         * system power policy used while the system is running on AC (utility)
-         * power.
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY}
+         * structure containing the current system power policy used while the
+         * system is running on AC (utility) power.
          */
         int SystemPowerPolicyAc = 0;
 
@@ -141,7 +143,7 @@ public interface PowrProf extends Library {
          * function returns {@link WinError#ERROR_INVALID_PARAMETER}.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY} structure containing the current
          * system power policy used while the system is running on AC (utility)
          * power.
          */
@@ -149,14 +151,14 @@ public interface PowrProf extends Library {
 
         /**
          * If {@code lpInBuffer} is not {@code NULL}, the function applies the
-         * {@link WinNT#SYSTEM_POWER_POLICY} values passed in {@code lpInBuffer}
-         * to the current system power policy used while the system is running
-         * on battery power.
+         * {@link  com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY} values
+         * passed in {@code lpInBuffer} to the current system power policy used
+         * while the system is running on battery power.
          * <p>
          * The {@code lpOutputBuffer} buffer receives a
-         * {@link WinNT#SYSTEM_POWER_POLICY} structure containing the current
-         * system power policy used while the system is running on battery
-         * power.
+         * {@link com.sun.jna.platform.win32.WinNT.SYSTEM_POWER_POLICY}
+         * structure containing the current system power policy used while the
+         * system is running on battery power.
          */
         int SystemPowerPolicyDc = 1;
 
@@ -177,10 +179,10 @@ public interface PowrProf extends Library {
      * Sets or retrieves power information.
      * <p>
      * Changes made to the current system power policy using
-     * {@link #CallNtPowerInformation()} are immediate, but they are not
+     * {@link #CallNtPowerInformation} are immediate, but they are not
      * persistent; that is, the changes are not stored as part of a power
      * scheme. Any changes to system power policy made with
-     * {@link #CallNtPowerInformation()} may be overwritten by changes to a
+     * {@link #CallNtPowerInformation} may be overwritten by changes to a
      * policy scheme made by the user in the Power Options control panel
      * program, or by subsequent calls to {@code WritePwrScheme},
      * {@code SetActivePwrScheme}, or other power scheme functions.

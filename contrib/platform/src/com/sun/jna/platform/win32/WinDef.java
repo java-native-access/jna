@@ -658,8 +658,6 @@ public interface WinDef {
 
         /**
          * Get the low word (unsigned short).
-         *
-         * @return
          */
         public int getLanguageIdentifier() {
             return (int) (Pointer.nativeValue(getPointer()) & 0xFFFF);

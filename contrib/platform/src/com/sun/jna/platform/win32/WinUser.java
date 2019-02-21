@@ -23,9 +23,6 @@
  */
 package com.sun.jna.platform.win32;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.sun.jna.Callback;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
@@ -34,7 +31,6 @@ import com.sun.jna.Structure.FieldOrder;
 import com.sun.jna.Union;
 import com.sun.jna.platform.win32.BaseTSD.ULONG_PTR;
 import com.sun.jna.platform.win32.WinDef.HKL;
-import com.sun.jna.platform.win32.WinDef.UINT;
 import com.sun.jna.platform.win32.WinNT.HANDLE;
 import com.sun.jna.win32.StdCallLibrary.StdCallCallback;
 import com.sun.jna.win32.W32APITypeMapper;
@@ -2011,14 +2007,14 @@ public interface WinUser extends WinDef {
      * If it is a virtual-key code that does not distinguish between left- and
      * right-hand keys, the left-hand scan code is returned. If there is no
      * translation, the function returns 0. Used in uMapType parameter to
-     * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+     * {@link User32#MapVirtualKeyEx}
      */
     int MAPVK_VK_TO_VSC = 0;
     /**
      * The uCode parameter is a scan code and is translated into a virtual-key code
      * that does not distinguish between left- and right-hand keys. If there is no
      * translation, the function returns 0. Used in uMapType parameter to
-     * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+     * {@link User32#MapVirtualKeyEx}
      */
     int MAPVK_VSC_TO_VK = 1;
     /**
@@ -2027,14 +2023,14 @@ public interface WinUser extends WinDef {
      * (diacritics) are indicated by setting the top bit of the return value. If
      * there is no translation, the function returns 0. Used in uMapType parameter
      * to
-     * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+     * {@link User32#MapVirtualKeyEx}
      */
     int MAPVK_VK_TO_CHAR = 2;
     /**
      * The uCode parameter is a scan code and is translated into a virtual-key code
      * that distinguishes between left- and right-hand keys. If there is no
      * translation, the function returns 0. Used in uMapType parameter to
-     * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+     * {@link User32#MapVirtualKeyEx}
      */
     int MAPVK_VSC_TO_VK_EX = 3;
     // WINVER >= 0x0600
@@ -2045,7 +2041,7 @@ public interface WinUser extends WinDef {
      * extended scan code, the high byte of the uCode value can contain either 0xe0
      * or 0xe1 to specify the extended scan code. If there is no translation, the
      * function returns 0. Used in uMapType parameter to
-     * {@link User32#MapVirtualKeyEx(com.sun.jna.platform.win32.WinDef.UINT, com.sun.jna.platform.win32.WinDef.UINT, HKL)}
+     * {@link User32#MapVirtualKeyEx}
      */
     int MAPVK_VK_TO_VSC_EX = 4;
 

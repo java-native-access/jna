@@ -276,12 +276,12 @@ public final class User32Util {
             return true;
         }
     }
-       
+
     /**
      * Load a string value from the string table of an executable.
-     * 
+     *
      * @param location the location, eg. %SystemRoot%\system32\input.dll,-5011
-     * @return
+     * @return the string located at the designated location
      * @throws UnsupportedEncodingException
      */
     public static String loadString(String location) throws UnsupportedEncodingException {

@@ -2535,7 +2535,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @param ch    The character to be translated into a virtual-key code.
      * @param dwhkl Input locale identifier to use for translating the specified
      *              code. This parameter can be any input locale identifier
-     *              previously returned by the {@link #LoadKeyboardLayout()}
+     *              previously returned by the #LoadKeyboardLayout()
      *              function.
      * @return If the function succeeds, the low-order byte of the return value
      *         contains the virtual-key code and the high-order byte contains the
@@ -2573,7 +2573,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @param ch    The character to be translated into a virtual-key code.
      * @param dwhkl Input locale identifier to use for translating the specified
      *              code. This parameter can be any input locale identifier
-     *              previously returned by the {@link #LoadKeyboardLayout()}
+     *              previously returned by the #LoadKeyboardLayout()
      *              function.
      * @return If the function succeeds, the low-order byte of the return value
      *         contains the virtual-key code and the high-order byte contains the
@@ -2623,7 +2623,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * 
      * @param dwhkl    Input locale identifier to use for translating the specified
      *                 code. This parameter can be any input locale identifier
-     *                 previously returned by the {@link #LoadKeyboardLayout()}
+     *                 previously returned by the #LoadKeyboardLayout()
      *                 function.
      * @return The return value is either a scan code, a virtual-key code, or a
      *         character value, depending on the value of uCode and uMapType. If
@@ -2655,7 +2655,7 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      * @param dwhkl      Input locale identifier to use for translating the
      *                   specified code. This parameter can be any input locale
      *                   identifier previously returned by the
-     *                   {@link #LoadKeyboardLayout()} function.
+     *                   #LoadKeyboardLayout() function.
      * @return The function returns one of the following values.
      *         <dl>
      *         <dt>-1</dt>
