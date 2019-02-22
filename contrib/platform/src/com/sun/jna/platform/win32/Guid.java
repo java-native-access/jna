@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -49,8 +49,9 @@ public interface Guid {
     @FieldOrder({"Data1", "Data2", "Data3", "Data4"})
     public static class GUID extends Structure {
 
-    	public static class ByValue extends GUID implements Structure.ByValue {
-    		public ByValue() {
+        public static class ByValue extends GUID implements Structure.ByValue {
+
+            public ByValue() {
                 super();
             }
             public ByValue(GUID guid) {
@@ -64,7 +65,7 @@ public interface Guid {
             public ByValue(Pointer memory) {
                 super(memory);
             }
-    	}
+        }
 
         /**
          * The Class ByReference.
@@ -517,7 +518,7 @@ public interface Guid {
         public REFIID(IID guid) {
             super(guid.getPointer());
         }
-        
+
         public void setValue(IID value) {
             setPointer(value.getPointer());
         }
@@ -547,7 +548,7 @@ public interface Guid {
             return getValue().hashCode();
         }
     }
-    
+
     /**
      * The Class IID.
      *

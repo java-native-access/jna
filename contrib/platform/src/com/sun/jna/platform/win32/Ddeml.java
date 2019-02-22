@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -46,15 +46,15 @@ import com.sun.jna.win32.W32APITypeMapper;
 
 /**
  * Ported from Ddeml.h. Microsoft Windows SDK 7.1.
- * 
+ *
  * <p>Bindings for the DDEML - Dynamic Data Exchange Management Library (DDEML)</p>
- * 
+ *
  * @see <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/ms648713(v=vs.85).aspx">MSDN: About the DDEML</a>
  */
 public interface Ddeml extends StdCallLibrary {
 
     Ddeml INSTANCE = Native.load("user32", Ddeml.class, W32APIOptions.DEFAULT_OPTIONS);
-    
+
     public class HCONVLIST extends PointerType {
     };
 
@@ -449,7 +449,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * <p>
      * <strong>Remarks</strong></p>
-     * 
+     *
      * <p>
      * Because string handles are local to the process, the hszSvc, hszTopic,
      * and hszItem members are global atoms.</p>
@@ -586,7 +586,7 @@ public interface Ddeml extends StdCallLibrary {
          */
         public byte[] Data = new byte[32];
     }
-    
+
     /* conversation states (usState) */
     /* quiescent states */
     public int XST_NULL = 0;
@@ -712,7 +712,7 @@ public interface Ddeml extends StdCallLibrary {
      * item name pair. This parameter is NULL if the client specified the
      * {@link #XTYPF_NODATA} flag when it requested the advise loop.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *
      * <p>
@@ -735,7 +735,7 @@ public interface Ddeml extends StdCallLibrary {
      * data corresponding to the topic name and item name pair has changed. The
      * system sends this transaction to the Dynamic Data Exchange (DDE) callback
      * function, DdeCallback, after the server calls the {@link #DdePostAdvise} function.
-     * 
+     *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -756,7 +756,7 @@ public interface Ddeml extends StdCallLibrary {
      * <br><br>
      * The high-order word is not used.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *<p>
      * The server should first call the {@link #DdeCreateDataHandle} function to create a
@@ -786,7 +786,7 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>hsz1</dt><dd>A handle to the topic name.</dd>
      * <dt>hsz2</dt><dd>A handle to the item name.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      * <p>
      * A server callback function should return TRUE to allow an advise loop on
@@ -839,27 +839,27 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>hsz1</dt><dd>A handle to the topic name.</dd>
      * <dt>hdata</dt><dd>A handle to the command string.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *
      * <p>
      * A server callback function should return {@link #DDE_FACK} if it processes this
      * transaction, {@link #DDE_FBUSY} if it is too busy to process this transaction, or
      * {@link #DDE_FNOTPROCESSED} if it rejects this transaction.</p>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
      * This transaction is filtered if the server application specified the
      * {@link #CBF_FAIL_EXECUTES} flag in the {@link #DdeInitialize} function.</p>
-     * 
+     *
      * <p>
      * An application must free the data handle obtained during this
      * transaction. An application must, however, copy the command string
      * associated with the data handle if the application must process the
      * string after the callback function returns. An application can use the
      * {@link #DdeGetData} function to copy the data.</p>
-     * 
+     *
      * <p>
      * Because most client applications expect a server application to perform
      * an XTYP_EXECUTE transaction synchronously, a server should attempt to
@@ -876,7 +876,7 @@ public interface Ddeml extends StdCallLibrary {
      * receives this transaction when a client specifies a service name that the
      * server supports (and a topic name that is not NULL) in a call to the
      * {@link #DdeConnect} function.
-     * 
+     *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -890,7 +890,7 @@ public interface Ddeml extends StdCallLibrary {
      * instance. If the parameter is 0, the client is a different instance.
      * </dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *
      * <p>
@@ -902,7 +902,7 @@ public interface Ddeml extends StdCallLibrary {
      * issuing an {@link #XTYP_CONNECT_CONFIRM} transaction to the server's callback
      * function (unless the server specified the {@link #CBF_SKIP_CONNECT_CONFIRMS} flag
      * in the {@link #DdeInitialize function}).</p>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
@@ -931,7 +931,7 @@ public interface Ddeml extends StdCallLibrary {
      * instance. If the parameter is 0, the client is a different instance.
      * </dd>
      * </dl>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
@@ -947,7 +947,7 @@ public interface Ddeml extends StdCallLibrary {
      * receives the XTYP_XACT_COMPLETE transaction when an asynchronous
      * transaction, initiated by a call to the {@link #DdeClientTransaction} function,
      * has completed.
-     * 
+     *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -959,7 +959,7 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>dwData1</dt><dd>The transaction identifier of the completed transaction.</dd>
      * <dt>dwData2</dt><dd>Any applicable DDE_ status flags in the low word. This parameter provides support for applications dependent on DDE_APPSTATUS bits. It is recommended that applications no longer use these bits — they may not be supported in future versions of the DDEML.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
@@ -976,7 +976,7 @@ public interface Ddeml extends StdCallLibrary {
      * server. A Dynamic Data Exchange (DDE) server callback function,
      * DdeCallback, receives this transaction when a client specifies XTYP_POKE
      * in the {@link #DdeClientTransaction} function.
-     * 
+     *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -986,7 +986,7 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>hsz2</dt><dd>A handle to the service name.</dd>
      * <dt>hdata</dt><dd>A handle to the data that the client is sending to the server.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *
      * <p>
@@ -994,7 +994,7 @@ public interface Ddeml extends StdCallLibrary {
      * processes this transaction, the {@link #DDE_FBUSY} flag if it is too busy to
      * process this transaction, or the {@link #DDE_FNOTPROCESSED} flag if it rejects
      * this transaction. </p>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
@@ -1008,7 +1008,7 @@ public interface Ddeml extends StdCallLibrary {
      * Management Library (DDEML) server application uses the {@link #DdeNameService}
      * function to register a service name, or whenever a non-DDEML application
      * that supports the System topic is started.
-     * 
+     *
      * <p>Used Parameters</p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -1038,7 +1038,7 @@ public interface Ddeml extends StdCallLibrary {
      * A Dynamic Data Exchange (DDE) server callback function, DdeCallback,
      * receives this transaction when a client specifies XTYP_REQUEST in the
      * {@link #DdeClientTransaction} function.
-     * 
+     *
      * <p><strong>Used Parameters</strong></p>
      * <dl>
      * <dt>uType</dt><dd>The transaction type.</dd>
@@ -1047,7 +1047,7 @@ public interface Ddeml extends StdCallLibrary {
      * <dt>hsz1</dt><dd>A handle to the topic name.</dd>
      * <dt>hsz2</dt><dd>A handle to the service name.</dd>
      * </dl>
-     * 
+     *
      * <p><strong>Return value</strong></p>
      *
      * <p>
@@ -1056,7 +1056,7 @@ public interface Ddeml extends StdCallLibrary {
      * should return NULL if it is unable to complete the transaction. If the
      * server returns NULL, the client will receive a {@link #DDE_FNOTPROCESSED}
      * flag.</p>
-     * 
+     *
      * <p><strong>Remarks</strong></p>
      *
      * <p>
@@ -1435,7 +1435,7 @@ public interface Ddeml extends StdCallLibrary {
     /**
      * Prevents the callback function from receiving {@link #XTYP_DISCONNECT}
      * notifications.
-     */    
+     */
     public int CBF_SKIP_DISCONNECTS = 0x00200000;
     /**
      * Prevents the callback function from receiving any notifications. This
@@ -1447,7 +1447,7 @@ public interface Ddeml extends StdCallLibrary {
      * Prevents the application from becoming a server in a DDE conversation.
      * The application can only be a client. This flag reduces consumption of
      * resources by the DDEML. It includes the functionality of the
-     * {@link #CBF_FAIL_ALLSVRXACTIONS} 
+     * {@link #CBF_FAIL_ALLSVRXACTIONS}
      */
     public int APPCMD_CLIENTONLY = 0x00000010;
     /**
@@ -1526,12 +1526,12 @@ public interface Ddeml extends StdCallLibrary {
     public int DNS_UNREGISTER = 0x0002;
     public int DNS_FILTERON = 0x0004;
     public int DNS_FILTEROFF = 0x0008;
-    
+
     /**
-     * Registers an application with the Dynamic Data Exchange Management 
-     * Library (DDEML). An application must call this function before calling 
-     * any other Dynamic Data Exchange Management Library (DDEML) function. 
-     * 
+     * Registers an application with the Dynamic Data Exchange Management
+     * Library (DDEML). An application must call this function before calling
+     * any other Dynamic Data Exchange Management Library (DDEML) function.
+     *
      * @param pidInst The application instance identifier. At initialization,
      * this parameter should point to 0. If the function succeeds, this
      * parameter points to the instance identifier for the application. This
@@ -1543,12 +1543,12 @@ public interface Ddeml extends StdCallLibrary {
      * <p>If pidInst points to a nonzero value, reinitialization of the DDEML is
      * implied. In this case, pidInst must point to a valid application-instance
      * identifier.</p>
-     * 
+     *
      * @param fnCallback A pointer to the application-defined DDE callback function.
      * This function processes DDE transactions sent by the system.
-     * For more information, see the DdeCallback callback function. 
-     * 
-     * @param afCmd A set of APPCMD_, CBF_, and MF_ flags. The APPCMD_ flags 
+     * For more information, see the DdeCallback callback function.
+     *
+     * @param afCmd A set of APPCMD_, CBF_, and MF_ flags. The APPCMD_ flags
      * provide special instructions to DdeInitialize. The CBF_ flags specify
      * filters that prevent specific types of transactions from reaching the
      * callback function. The MF_ flags specify the types of DDE activity that a
@@ -1557,7 +1557,7 @@ public interface Ddeml extends StdCallLibrary {
      * callback function.
      *
      * <p>This parameter can be one or more of the following values.</p>
-     * 
+     *
      * <table>
      * <tr ><th>Value</th><th>Meaning</th></tr>
      * <tr><td><dl>
@@ -1794,7 +1794,7 @@ public interface Ddeml extends StdCallLibrary {
      *
      * @param ulRes Reserved; must be set to zero.
      * @return If the function succeeds, the return value is {@link #DMLERR_NO_ERROR}.
-     * 
+     *
      * <p>If the function fails, the return value is one of the following values:</p>
      * <ul>
      *   <li>{@link #DMLERR_DLL_USAGE}</li>
@@ -1806,53 +1806,53 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Frees all Dynamic Data Exchange Management Library (DDEML) resources
-     * associated with the calling application. 
-     * 
-     * @param idInst The application instance identifier obtained by a previous 
+     * associated with the calling application.
+     *
+     * @param idInst The application instance identifier obtained by a previous
      * call to the {@link #DdeInitialize} function.
-     * 
+     *
      * @return true if function succeeded
      */
     public boolean DdeUninitialize(int idInst);
 
     /**
-     * Establishes a conversation with all server applications that support the 
-     * specified service name and topic name pair. An application can also use 
-     * this function to obtain a list of conversation handles by passing the 
-     * function an existing conversation handle. The Dynamic Data Exchange 
-     * Management Library removes the handles of any terminated conversations 
-     * from the conversation list. The resulting conversation list contains the 
-     * handles of all currently established conversations that support the 
-     * specified service name and topic name. 
-     * 
-     * @param idInst The application instance identifier obtained by a previous 
+     * Establishes a conversation with all server applications that support the
+     * specified service name and topic name pair. An application can also use
+     * this function to obtain a list of conversation handles by passing the
+     * function an existing conversation handle. The Dynamic Data Exchange
+     * Management Library removes the handles of any terminated conversations
+     * from the conversation list. The resulting conversation list contains the
+     * handles of all currently established conversations that support the
+     * specified service name and topic name.
+     *
+     * @param idInst The application instance identifier obtained by a previous
      * call to the {@link #DdeInitialize} function.
-     * 
-     * @param hszService A handle to the string that specifies the service name 
+     *
+     * @param hszService A handle to the string that specifies the service name
      * of the server application with which a conversation is to be established.
-     * If this parameter is 0L, the system attempts to establish conversations 
+     * If this parameter is 0L, the system attempts to establish conversations
      * with all available servers that support the specified topic name.
-     * 
+     *
      * @param hszTopic A handle to the string that specifies the name of the
      * topic on which a conversation is to be established. This handle must
-     * have been created by a previous call to the {@link #DdeCreateStringHandle} 
+     * have been created by a previous call to the {@link #DdeCreateStringHandle}
      * function. If this parameter is 0L, the system will attempt to establish
      * conversations on all topics supported by the selected server (or servers).
-     * 
+     *
      * @param hConvList A handle to the conversation list to be enumerated.
      * This parameter should be 0L if a new conversation list is to be established.
-     * 
-     * @param pCC A pointer to the CONVCONTEXT structure that contains 
-     * conversation-context information. If this parameter is NULL, the server 
-     * receives the default CONVCONTEXT structure during the {@link #XTYP_CONNECT} or 
+     *
+     * @param pCC A pointer to the CONVCONTEXT structure that contains
+     * conversation-context information. If this parameter is NULL, the server
+     * receives the default CONVCONTEXT structure during the {@link #XTYP_CONNECT} or
      * {@link #XTYP_WILDCONNECT} transaction.
-     * 
-     * @return If the function succeeds, the return value is the handle to a 
+     *
+     * @return If the function succeeds, the return value is the handle to a
      * new conversation list.
-     * 
+     *
      * <p>If the function fails, the return value is 0L. The handle to the old
      * conversation list is no longer valid.</p>
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
@@ -1867,30 +1867,30 @@ public interface Ddeml extends StdCallLibrary {
             HCONVLIST hConvList, CONVCONTEXT pCC);
 
     /**
-     * Retrieves the next conversation handle in the specified conversation list. 
-     * 
+     * Retrieves the next conversation handle in the specified conversation list.
+     *
      * @param hConvList A handle to the conversation list. This handle must have
-     * been created by a previous call to the {@link #DdeConnectList} function. 
-     * 
+     * been created by a previous call to the {@link #DdeConnectList} function.
+     *
      * @param hConvPrev A handle to the conversation handle previously returned
      * by this function. If this parameter is 0L, the function returns the first
-     * conversation handle in the list. 
-     * 
-     * @return If the list contains any more conversation handles, the return 
-     * value is the next conversation handle in the list; otherwise, it is 0L. 
+     * conversation handle in the list.
+     *
+     * @return If the list contains any more conversation handles, the return
+     * value is the next conversation handle in the list; otherwise, it is 0L.
      */
     public HCONV DdeQueryNextServer( HCONVLIST hConvList, HCONV hConvPrev);
 
     /**
-     * Destroys the specified conversation list and terminates all 
-     * conversations associated with the list. 
-     * 
+     * Destroys the specified conversation list and terminates all
+     * conversations associated with the list.
+     *
      * @param hConvList A handle to the conversation list. This handle must have
-     * been created by a previous call to the {@link #DdeConnectList} function. 
-     * 
+     * been created by a previous call to the {@link #DdeConnectList} function.
+     *
      * @return true if the function succeeds, the return value is nonzero.
-     * 
-     * <p>The {@link #DdeGetLastError} function can be used to get the error code, 
+     *
+     * <p>The {@link #DdeGetLastError} function can be used to get the error code,
      * which can be one of the following values:</p>
      * <ul>
      *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
@@ -1992,7 +1992,7 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Retrieves information about a Dynamic Data Exchange (DDE) transaction and about the conversation in which the transaction takes place.
-     * 
+     *
      * @param hConv A handle to the conversation.
      * @param idTransaction The transaction. For asynchronous transactions, this
      * parameter should be a transaction identifier returned by the
@@ -2092,7 +2092,7 @@ public interface Ddeml extends StdCallLibrary {
      * set this parameter to 0L.
      *
      * @return true if the function succeeds
-     * 
+     *
      * <p>
      * The {@link #DdeGetLastError} function can be used to get the error code, which can
      * be one of the following values:</p>
@@ -2230,49 +2230,49 @@ public interface Ddeml extends StdCallLibrary {
      * </ul>
      */
     public HDDEDATA DdeNameService(int idInst,HSZ hsz1, HSZ hsz2, int afCmd);
-    
+
     /**
-     * Begins a data transaction between a client and a server. Only a Dynamic 
-     * Data Exchange (DDE) client application can call this function, and the 
-     * application can use it only after establishing a conversation with the 
-     * server. 
-     * 
+     * Begins a data transaction between a client and a server. Only a Dynamic
+     * Data Exchange (DDE) client application can call this function, and the
+     * application can use it only after establishing a conversation with the
+     * server.
+     *
      * @param pData The beginning of the data the client must pass to the server.
-     * 
+     *
      * <p>Optionally, an application can specify the data handle (HDDEDATA) to
      * pass to the server and in that case the cbData parameter should be set
-     * to -1. This parameter is required only if the wType parameter is 
+     * to -1. This parameter is required only if the wType parameter is
      * {@link #XTYP_EXECUTE} or {@link #XTYP_POKE}. Otherwise, this parameter should be NULL.</p>
-     * 
+     *
      * <p>For the optional usage of this parameter, {@link #XTYP_POKE} transactions where
      * pData is a data handle, the handle must have been created by a previous
      * call to the {@link #DdeCreateDataHandle} function, employing the same data format
      * specified in the wFmt parameter.</p>
-     * 
-     * @param cbData The length, in bytes, of the data pointed to by the pData 
-     * parameter, including the terminating NULL, if the data is a string. 
-     * A value of -1 indicates that pData is a data handle that identifies the 
+     *
+     * @param cbData The length, in bytes, of the data pointed to by the pData
+     * parameter, including the terminating NULL, if the data is a string.
+     * A value of -1 indicates that pData is a data handle that identifies the
      * data being sent.
-     * 
-     * @param hConv A handle to the conversation in which the transaction is to 
+     *
+     * @param hConv A handle to the conversation in which the transaction is to
      * take place.
-     * 
-     * @param hszItem A handle to the data item for which data is being 
-     * exchanged during the transaction. This handle must have been created by 
+     *
+     * @param hszItem A handle to the data item for which data is being
+     * exchanged during the transaction. This handle must have been created by
      * a previous call to the {@link #DdeCreateStringHandle} function. This parameter is
      * ignored (and should be set to 0L) if the wType parameter is {@link #XTYP_EXECUTE}.
-     * 
-     * @param wFmt The standard clipboard format in which the data item is 
+     *
+     * @param wFmt The standard clipboard format in which the data item is
      * being submitted or requested.
-     * 
+     *
      * <p>If the transaction specified by the wType parameter does not pass
      * data or is {@link #XTYP_EXECUTE}, this parameter should be zero.</p>
-     * 
-     * <p>If the transaction specified by the wType parameter references 
-     * non-execute DDE data ( {@link #XTYP_POKE}, {@link #XTYP_ADVSTART}, {@link #XTYP_ADVSTOP}, {@link #XTYP_REQUEST}), 
+     *
+     * <p>If the transaction specified by the wType parameter references
+     * non-execute DDE data ( {@link #XTYP_POKE}, {@link #XTYP_ADVSTART}, {@link #XTYP_ADVSTOP}, {@link #XTYP_REQUEST}),
      * the wFmt value must be either a valid predefined (CF_) DDE format or a
      * valid registered clipboard format.</p>
-     * 
+     *
      * @param wType     The transaction type. This parameter can be one of the
      *                  following values.
      *
@@ -2300,32 +2300,32 @@ public interface Ddeml extends StdCallLibrary {
      * </table>
      *
      * @param dwTimeout The maximum amount of time, in milliseconds, that the
-     * client will wait for a response from the server application in a 
-     * synchronous transaction. This parameter should be {@link #TIMEOUT_ASYNC} for 
+     * client will wait for a response from the server application in a
+     * synchronous transaction. This parameter should be {@link #TIMEOUT_ASYNC} for
      * asynchronous transactions.
-     * 
+     *
      * @param pdwResult A pointer to a variable that receives the result of the
      * transaction. An application that does not check the result can use NULL
-     * for this value. For synchronous transactions, the low-order word of this 
-     * variable contains any applicable DDE_ flags resulting from the 
-     * transaction. This provides support for applications dependent on 
-     * DDE_APPSTATUS bits. It is, however, recommended that applications no 
-     * longer use these bits because they may not be supported in future 
+     * for this value. For synchronous transactions, the low-order word of this
+     * variable contains any applicable DDE_ flags resulting from the
+     * transaction. This provides support for applications dependent on
+     * DDE_APPSTATUS bits. It is, however, recommended that applications no
+     * longer use these bits because they may not be supported in future
      * versions of the Dynamic Data Exchange Management Library (DDEML).
-     * For asynchronous transactions, this variable is filled with a unique 
-     * transaction identifier for use with the {@link #DdeAbandonTransaction} function 
+     * For asynchronous transactions, this variable is filled with a unique
+     * transaction identifier for use with the {@link #DdeAbandonTransaction} function
      * and the {@link #XTYP_XACT_COMPLETE} transaction.
-     * 
+     *
      * @return If the function succeeds, the return value is a data handle that
-     * identifies the data for successful synchronous transactions in which the 
+     * identifies the data for successful synchronous transactions in which the
      * client expects data from the server. The return value is nonzero for
      * successful asynchronous transactions and for synchronous transactions
      * in which the client does not expect data. The return value is zero
      * for all unsuccessful transactions.
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code,
      * which can be one of the following values:</p>
-     * 
+     *
      * <ul>
      *   <li>{@link #DMLERR_ADVACKTIMEOUT}</li>
      *   <li>{@link #DMLERR_BUSY}</li>
@@ -2358,45 +2358,45 @@ public interface Ddeml extends StdCallLibrary {
      * Creates a Dynamic Data Exchange (DDE) object and fills the object with
      * data from the specified buffer. A DDE application uses this function
      * during transactions that involve passing data to the partner application.
-     * 
-     * @param idInst The application instance identifier obtained by a previous 
+     *
+     * @param idInst The application instance identifier obtained by a previous
      * call to the {@link #DdeInitialize} function.
-     * 
+     *
      * @param pSrc The data to be copied to the DDE object. If this parameter
      * is NULL, no data is copied to the object.
-     * 
+     *
      * @param cb The amount of memory, in bytes, to copy from the buffer pointed
      * to by pSrc. (include the terminating NULL, if the data is a string).
      * If this parameter is zero, the pSrc parameter is ignored.
-     * 
-     * @param cbOff An offset, in bytes, from the beginning of the buffer 
-     * pointed to by the pSrc parameter. The data beginning at this offset is 
+     *
+     * @param cbOff An offset, in bytes, from the beginning of the buffer
+     * pointed to by the pSrc parameter. The data beginning at this offset is
      * copied from the buffer to the DDE object.
-     * 
-     * @param hszItem A handle to the string that specifies the data item 
-     * corresponding to the DDE object. This handle must have been created by a 
-     * previous call to the {@link #DdeCreateStringHandle} function. If the data handle 
+     *
+     * @param hszItem A handle to the string that specifies the data item
+     * corresponding to the DDE object. This handle must have been created by a
+     * previous call to the {@link #DdeCreateStringHandle} function. If the data handle
      * is to be used in an {@link #XTYP_EXECUTE} transaction, this parameter must be 0L.
-     * 
+     *
      * @param wFmt The standard clipboard format of the data.
-     * 
-     * @param afCmd The creation flags. This parameter can be HDATA_APPOWNED, 
-     * which specifies that the server application calling the 
+     *
+     * @param afCmd The creation flags. This parameter can be HDATA_APPOWNED,
+     * which specifies that the server application calling the
      * DdeCreateDataHandle function owns the data handle this function creates.
-     * This flag enables the application to share the data handle with other 
+     * This flag enables the application to share the data handle with other
      * DDEML applications rather than creating a separate handle to pass to each
-     * application. If this flag is specified, the application must eventually 
+     * application. If this flag is specified, the application must eventually
      * free the shared memory object associated with the handle by using the
-     * {@link #DdeFreeDataHandle} function. If this flag is not specified, the handle 
-     * becomes invalid in the application that created the handle after the 
-     * data handle is returned by the application's DDE callback function or 
+     * {@link #DdeFreeDataHandle} function. If this flag is not specified, the handle
+     * becomes invalid in the application that created the handle after the
+     * data handle is returned by the application's DDE callback function or
      * is used as a parameter in another DDEML function.
-     * 
+     *
      * @return If the function succeeds, the return value is a data handle.
-     * 
+     *
      * <p>If the function fails, the return value is 0L.</p>
-     * 
-     * <p>The {@link #DdeGetLastError} function can be used to get the error code, 
+     *
+     * <p>The {@link #DdeGetLastError} function can be used to get the error code,
      * which can be one of the following values:</p>
      * <ul>
      *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
@@ -2416,27 +2416,27 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Adds data to the specified Dynamic Data Exchange (DDE) object. An
-     * application can add data starting at any offset from the beginning of 
-     * the object. If new data overlaps data already in the object, 
-     * the new data overwrites the old data in the bytes where the overlap 
-     * occurs. The contents of locations in the object that have not been 
-     * written to are undefined. 
-     * 
+     * application can add data starting at any offset from the beginning of
+     * the object. If new data overlaps data already in the object,
+     * the new data overwrites the old data in the bytes where the overlap
+     * occurs. The contents of locations in the object that have not been
+     * written to are undefined.
+     *
      * @param hData A handle to the DDE object that receives additional data.
-     * 
+     *
      * @param pSrc The data to be added to the DDE object.
-     * 
-     * @param cb The length, in bytes, of the data to be added to the DDE 
+     *
+     * @param cb The length, in bytes, of the data to be added to the DDE
      * object, including the terminating NULL, if the data is a string.
-     * 
+     *
      * @param cbOff An offset, in bytes, from the beginning of the DDE object.
      * The additional data is copied to the object beginning at this offset.
-     * 
-     * @return If the function succeeds, the return value is a new handle to 
+     *
+     * @return If the function succeeds, the return value is a new handle to
      * the DDE object. The new handle is used in all references to the object.
-     * 
+     *
      * <p>If the function fails, the return value is zero.</p>
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
@@ -2450,29 +2450,29 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Copies data from the specified Dynamic Data Exchange (DDE) object to
-     * the specified local buffer. 
-     * 
+     * the specified local buffer.
+     *
      * @param hData A handle to the DDE object that contains the data to copy.
-     * 
+     *
      * @param pDst A pointer to the buffer that receives the data. If this
-     * parameter is NULL, the DdeGetData function returns the amount of data, 
+     * parameter is NULL, the DdeGetData function returns the amount of data,
      * in bytes, that would be copied to the buffer.
-     * 
-     * @param cbMax The maximum amount of data, in bytes, to copy to the buffer 
+     *
+     * @param cbMax The maximum amount of data, in bytes, to copy to the buffer
      * pointed to by the pDst parameter. Typically, this parameter specifies
      * the length of the buffer pointed to by pDst.
-     * 
-     * @param cbOff An offset within the DDE object. Data is copied from the 
+     *
+     * @param cbOff An offset within the DDE object. Data is copied from the
      * object beginning at this offset.
-     * 
+     *
      * @return If the pDst parameter points to a buffer, the return value is
-     * the size, in bytes, of the memory object associated with the data handle 
+     * the size, in bytes, of the memory object associated with the data handle
      * or the size specified in the cbMax parameter, whichever is lower.
-     * 
+     *
      * <p>If the pDst parameter is NULL, the return value is the size, in bytes,
      * of the memory object associated with the data handle.</p>
-     * 
-     * <p>The {@link #DdeGetLastError} function can be used to get the error code, which 
+     *
+     * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
      *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
@@ -2510,15 +2510,15 @@ public interface Ddeml extends StdCallLibrary {
 
     /**
      * Unaccesses a Dynamic Data Exchange (DDE) object. An application must call
-     * this function after it has finished accessing the object. 
-     * 
+     * this function after it has finished accessing the object.
+     *
      * @param hData A handle to the DDE object.
-     * 
+     *
      * @return true if the function succeeds
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
      * can be one of the following values:</p>
-     * 
+     *
      * <ul>
      *   <li>{@link #DMLERR_DLL_NOT_INITIALIZED}</li>
      *   <li>{@link #DMLERR_INVALIDPARAMETER}</li>
@@ -2530,13 +2530,13 @@ public interface Ddeml extends StdCallLibrary {
     /**
      * Frees a Dynamic Data Exchange (DDE) object and deletes the data handle
      * associated with the object.
-     * 
-     * @param hData A handle to the DDE object to be freed. This handle must 
+     *
+     * @param hData A handle to the DDE object to be freed. This handle must
      * have been created by a previous call to the {@link #DdeCreateDataHandle} function
      * or returned by the {@link #DdeClientTransaction} function.
-     * 
+     *
      * @return true if freeing succeeded
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code,
      * which can be one of the following values:</p>
      * <ul>
@@ -2547,36 +2547,36 @@ public interface Ddeml extends StdCallLibrary {
     public boolean DdeFreeDataHandle(HDDEDATA hData);
 
     /**
-     * 
+     *
      * @param idInst The application instance identifier obtained by a previous
-     * call to the {@link #DdeInitialize} function. 
-     * 
+     * call to the {@link #DdeInitialize} function.
+     *
      * @return See {@link Ddeml}.DMLERR_*
      */
     public int DdeGetLastError(int idInst);
 
     /**
-     * Creates a handle that identifies the specified string. A Dynamic 
-     * Data Exchange (DDE) client or server application can pass the string 
-     * handle as a parameter to other Dynamic Data Exchange Management 
-     * Library (DDEML) functions. 
-     * 
+     * Creates a handle that identifies the specified string. A Dynamic
+     * Data Exchange (DDE) client or server application can pass the string
+     * handle as a parameter to other Dynamic Data Exchange Management
+     * Library (DDEML) functions.
+     *
      * @param idInst The application instance identifier obtained by a previous
      * call to the {@link #DdeInitialize} function.
-     * 
-     * @param psz The null-terminated string for which a handle is to be created. 
+     *
+     * @param psz The null-terminated string for which a handle is to be created.
      * This string can be up to 255 characters. The reason for this limit is that
      * DDEML string management functions are implemented using atoms.
-     * 
-     * @param iCodePage The code page to be used to render the string. This 
-     * value should be either {@link #CP_WINANSI} (the default code page) or 
+     *
+     * @param iCodePage The code page to be used to render the string. This
+     * value should be either {@link #CP_WINANSI} (the default code page) or
      * {@link #CP_WINUNICODE}, depending on whether the ANSI or Unicode version of
      * {@link #DdeInitialize} was called by the client application.
-     * 
+     *
      * @return If the function succeeds, the return value is a string handle.
-     * 
+     *
      * <p>If the function fails, the return value is 0L.</p>
-     * 
+     *
      * <p>The {@link #DdeGetLastError} function can be used to get the error code, which
      * can be one of the following values:</p>
      * <ul>
@@ -2588,37 +2588,37 @@ public interface Ddeml extends StdCallLibrary {
     public HSZ DdeCreateStringHandle(int idInst, String psz, int iCodePage);
 
     /**
-     * Copies text associated with a string handle into a buffer.    
-     * 
+     * Copies text associated with a string handle into a buffer.
+     *
      * @param idInst The application instance identifier obtained by a previous
      * call to the {@link #DdeInitialize} function.
-     * 
+     *
      * @param hsz A handle to the string to copy. This handle must have been
      * created by a previous call to the {@link #DdeCreateStringHandle} function.
-     * 
+     *
      * @param psz A pointer to a buffer that receives the string. To obtain the
      * length of the string, this parameter should be set to NULL.
-     * 
-     * @param cchMax The length, in characters, of the buffer pointed to by the 
-     * psz parameter. For the ANSI version of the function, this is the number 
-     * of bytes; for the Unicode version, this is the number of characters. 
-     * If the string is longer than ( cchMax� 1), it will be truncated. If the 
+     *
+     * @param cchMax The length, in characters, of the buffer pointed to by the
+     * psz parameter. For the ANSI version of the function, this is the number
+     * of bytes; for the Unicode version, this is the number of characters.
+     * If the string is longer than ( cchMax� 1), it will be truncated. If the
      * psz parameter is set to NULL, this parameter is ignored.
-     * 
-     * @param iCodePage The code page used to render the string. This value 
+     *
+     * @param iCodePage The code page used to render the string. This value
      * should be either {@link #CP_WINANSI} or {@link #CP_WINUNICODE}.
-     * 
-     * @return If the psz parameter specified a valid pointer, the return value 
-     * is the length, in characters, of the returned text 
-     * (not including the terminating null character). If the psz parameter 
+     *
+     * @return If the psz parameter specified a valid pointer, the return value
+     * is the length, in characters, of the returned text
+     * (not including the terminating null character). If the psz parameter
      * specified a NULL pointer, the return value is the length of the text
-     * associated with the hsz parameter (not including the terminating null 
+     * associated with the hsz parameter (not including the terminating null
      * character).
-     * 
+     *
      * <p>If an error occurs, the return value is 0L</p>
      */
     public int DdeQueryString(int idInst, HSZ hsz, Pointer psz, int cchMax, int iCodePage);
-    
+
     /**
      * Frees a string handle in the calling application.
      *

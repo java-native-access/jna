@@ -18,7 +18,7 @@ import com.sun.jna.platform.win32.Guid.*;
 * helpstring(${helpstring})
 *
 */
-public interface ${classname} extends IDispatch {	
+public interface ${classname} extends IDispatch {
 
 ${content}
 }

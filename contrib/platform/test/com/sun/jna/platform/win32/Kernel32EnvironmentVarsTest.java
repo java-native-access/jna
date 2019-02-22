@@ -40,7 +40,7 @@ public class Kernel32EnvironmentVarsTest extends AbstractWin32TestSupport {
             char[]  data=new char[expected.length() + 1];
             int     size=Kernel32.INSTANCE.GetEnvironmentVariable(name, data, data.length);
             assertEquals("Mismatched retrieved length for " + name, data.length - 1 /* w/o the '\0' */, size);
-            
+
             String  actual=Native.toString(data);
             assertEquals("Mismatched retrieved value for " + name, expected, actual);
         }
@@ -54,10 +54,10 @@ public class Kernel32EnvironmentVarsTest extends AbstractWin32TestSupport {
         try {
             int size = Kernel32.INSTANCE.GetEnvironmentVariable(name, null, 0);
             assertEquals("Mismatched required buffer size", expected.length() + 1, size);
-    
+
             char[] data = new char[size];
             assertEquals("Mismatched retrieved variable data length", size - 1, Kernel32.INSTANCE.GetEnvironmentVariable(name, data, size));
-            
+
             String  actual=Native.toString(data);
             assertEquals("Mismatched retrieved variable value", expected, actual);
         } finally {

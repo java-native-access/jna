@@ -1,23 +1,23 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -231,14 +231,14 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int GetTickCount();
 
     /**
-     * The GetTickCount64 function retrieves the number of milliseconds that 
+     * The GetTickCount64 function retrieves the number of milliseconds that
      * have elapsed since the system was started.
      *
      * @return Number of milliseconds that have elapsed since the system was
      *         started.
      */
     long GetTickCount64();
-  
+
     /**
      * The GetCurrentThreadId function retrieves the thread identifier of the
      * calling thread.
@@ -1321,9 +1321,9 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the caller has enabled the SeDebugPrivilege privilege, the requested
      * access is granted regardless of the contents of the security
      * descriptor.</p>
-     * 
+     *
      * @param fInherit If this value is TRUE, processes created by this process will inherit the handle. Otherwise, the processes do not inherit this handle.
-     * 
+     *
      * @param IDProcess
      *            Specifies the process identifier of the process to open.
      * @return An open handle to the specified process indicates success. NULL
@@ -1418,7 +1418,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Compares a set of operating system version requirements to the
      * corresponding values for the currently running version of the system.
      * This function is subject to manifest-based behavior.
-     * 
+     *
      * @param lpVersionInformation
      *            A pointer to an {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure
      *            containing the operating system version requirements to
@@ -1456,7 +1456,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * use for a specified operating system version attribute. This function is
      * used to build the {@code dwlConditionMask} parameter of the
      * {@link #VerifyVersionInfoW} function.
-     * 
+     *
      * @param conditionMask
      *            A value to be passed as the {@code dwlConditionMask} parameter
      *            of the {@link #VerifyVersionInfoW} function. The function
@@ -1538,7 +1538,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves information about the relationships of logical processors and
      * related hardware.
-     * 
+     *
      * @param relationshipType
      *            The type of relationship to retrieve. This parameter can be
      *            one of the following values:
@@ -1591,18 +1591,18 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Retrieves file information for the specified file.
      * To set file information using a file handle, see SetFileInformationByHandle.
      * @param hFile
-     * 				A handle to the file that contains the information to be retrieved.
+     *                 A handle to the file that contains the information to be retrieved.
      * @param FileInformationClass
-     * 				A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of
-     * 				information to be retrieved.
+     *                 A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of
+     *                 information to be retrieved.
      * @param lpFileInformation
-     * 				A pointer to the buffer that receives the requested file information.
-     * 				The structure that is returned corresponds to the class that is specified
-     * 				by FileInformationClass.
+     *                 A pointer to the buffer that receives the requested file information.
+     *                 The structure that is returned corresponds to the class that is specified
+     *                 by FileInformationClass.
      * @param dwBufferSize
-     * 				The size of the lpFileInformation buffer, in bytes.
+     *                 The size of the lpFileInformation buffer, in bytes.
      * @return If the function succeeds, the return value is nonzero and file information
-     * 		   data is contained in the buffer pointed to by the lpFileInformation parameter.
+     *            data is contained in the buffer pointed to by the lpFileInformation parameter.
      *         If the function fails, the return value is zero. To get extended error
      *         information, call GetLastError.
      */
@@ -1612,19 +1612,19 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Sets the file information for the specified file. To retrieve file information using a
      * file handle, see GetFileInformationByHandleEx.
      * @param hFile
-     * 				A handle to the file for which to change information.
-     * 				This handle must be opened with the appropriate permissions for the
-     * 				requested change. This handle should not be a pipe handle.
+     *                 A handle to the file for which to change information.
+     *                 This handle must be opened with the appropriate permissions for the
+     *                 requested change. This handle should not be a pipe handle.
      * @param FileInformationClass
-     * 				A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of information to be changed.
-     * 				Valid values are FILE_BASIC_INFO, FILE_RENAME_INFO, FILE_DISPOSITION_INFO, FILE_ALLOCATION_INFO,
-     * 				FILE_END_OF_FILE_INFO, and FILE_IO_PRIORITY_HINT_INFO
+     *                 A FILE_INFO_BY_HANDLE_CLASS enumeration value that specifies the type of information to be changed.
+     *                 Valid values are FILE_BASIC_INFO, FILE_RENAME_INFO, FILE_DISPOSITION_INFO, FILE_ALLOCATION_INFO,
+     *                 FILE_END_OF_FILE_INFO, and FILE_IO_PRIORITY_HINT_INFO
      * @param lpFileInformation
-     * 				A pointer to the buffer that contains the information to change for the specified file
-     * 				information class. The structure that this parameter points to corresponds to the class
-     * 				that is specified by FileInformationClass.
+     *                 A pointer to the buffer that contains the information to change for the specified file
+     *                 information class. The structure that this parameter points to corresponds to the class
+     *                 that is specified by FileInformationClass.
      * @param dwBufferSize
-     * 				The size of the lpFileInformation buffer, in bytes.
+     *                 The size of the lpFileInformation buffer, in bytes.
      * @return Returns nonzero if successful or zero otherwise. To get extended error information, call GetLastError.
      */
     boolean SetFileInformationByHandle(HANDLE hFile, int FileInformationClass, Pointer lpFileInformation, DWORD dwBufferSize);
@@ -2683,12 +2683,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Converts a file time to system time format. System time is based on Coordinated Universal Time (UTC).
      * @param lpFileTime
-     * 				[in] A pointer to a FILETIME structure containing the file time to be converted to system (UTC) date and time format.
-					This value must be less than 0x8000000000000000. Otherwise, the function fails.
+     *                 [in] A pointer to a FILETIME structure containing the file time to be converted to system (UTC) date and time format.
+                    This value must be less than 0x8000000000000000. Otherwise, the function fails.
      * @param lpSystemTime
-     * 				A pointer to a SYSTEMTIME structure to receive the converted file time.
+     *                 A pointer to a SYSTEMTIME structure to receive the converted file time.
      * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
-     * 				To get extended error information, call GetLastError.
+     *                 To get extended error information, call GetLastError.
      */
     boolean FileTimeToSystemTime(FILETIME lpFileTime, SYSTEMTIME lpSystemTime);
 
@@ -2829,27 +2829,27 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Searches a directory for a file or subdirectory with a name that matches a specific name (or partial name if wildcards are used).
      * To specify additional attributes to use in a search, use the FindFirstFileEx function.
      * @param lpFileName
-     * 				The directory or path, and the file name. The file name can include wildcard characters,
-     * 				for example, an asterisk (*) or a question mark (?).
-     * 				This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
-     * 				missing the terminating null character), or end in a trailing backslash (\).
-     * 				If the string ends with a wildcard, period, or directory name, the user must have access to the root
-     * 				and all subdirectories on the path.
-     * 				In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
-     * 				limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
-     * 				and prepend "\\?\" to the path. For more information, see Naming a File.
-     * 				<b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
-     * 				you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
-     * 				See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
+     *                 The directory or path, and the file name. The file name can include wildcard characters,
+     *                 for example, an asterisk (*) or a question mark (?).
+     *                 This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
+     *                 missing the terminating null character), or end in a trailing backslash (\).
+     *                 If the string ends with a wildcard, period, or directory name, the user must have access to the root
+     *                 and all subdirectories on the path.
+     *                 In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
+     *                 limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
+     *                 and prepend "\\?\" to the path. For more information, see Naming a File.
+     *                 <b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
+     *                 you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
+     *                 See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
      * @param lpFindFileData
-     * 				A pointer to the buffer that receives the file data. The pointer type is determined by the level of
-     * 				information that is specified in the fInfoLevelId parameter.
+     *                 A pointer to the buffer that receives the file data. The pointer type is determined by the level of
+     *                 information that is specified in the fInfoLevelId parameter.
      * @return If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose,
-     * 				and the lpFindFileData parameter contains information about the first file or directory found.
-     * 				If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
-     * 				value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
-     * 				To get extended error information, call the GetLastError function.
-     * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
+     *                 and the lpFindFileData parameter contains information about the first file or directory found.
+     *                 If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
+     *                 value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+     *                 To get extended error information, call the GetLastError function.
+     *                 If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
      */
     HANDLE FindFirstFile(String lpFileName, Pointer lpFindFileData);
 
@@ -2857,55 +2857,55 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Searches a directory for a file or subdirectory with a name and attributes that match those specified. For the most basic
      * version of this function, see FindFirstFile.
      * @param lpFileName
-     * 				The directory or path, and the file name. The file name can include wildcard characters,
-     * 				for example, an asterisk (*) or a question mark (?).
-     * 				This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
-     * 				missing the terminating null character), or end in a trailing backslash (\).
-     * 				If the string ends with a wildcard, period, or directory name, the user must have access to the root
-     * 				and all subdirectories on the path.
-     * 				In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
-     * 				limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
-     * 				and prepend "\\?\" to the path. For more information, see Naming a File.
-     * 				<b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
-     * 				you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
-     * 				See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
+     *                 The directory or path, and the file name. The file name can include wildcard characters,
+     *                 for example, an asterisk (*) or a question mark (?).
+     *                 This parameter should not be NULL, an invalid string (for example, an empty string or a string that is
+     *                 missing the terminating null character), or end in a trailing backslash (\).
+     *                 If the string ends with a wildcard, period, or directory name, the user must have access to the root
+     *                 and all subdirectories on the path.
+     *                 In the ANSI version of this function, the name is limited to MAX_PATH characters. To extend this
+     *                 limit to approximately 32,000 wide characters, call the Unicode version of the function (FindFirstFileExW),
+     *                 and prepend "\\?\" to the path. For more information, see Naming a File.
+     *                 <b>Tip</b> Starting in Windows 10, version 1607, for the unicode version of this function (FindFirstFileExW),
+     *                 you can opt-in to remove the MAX_PATH character limitation without prepending "\\?\".
+     *                 See the "Maximum Path Limitation" section of Naming Files, Paths, and Namespaces for details.
      * @param fInfoLevelId
-     * 				The information level of the returned data. This parameter is one of the FINDEX_INFO_LEVELS enumeration values.
+     *                 The information level of the returned data. This parameter is one of the FINDEX_INFO_LEVELS enumeration values.
      * @param lpFindFileData
-     * 				A pointer to the buffer that receives the file data. The pointer type is determined by the level of
-     * 				information that is specified in the fInfoLevelId parameter.
+     *                 A pointer to the buffer that receives the file data. The pointer type is determined by the level of
+     *                 information that is specified in the fInfoLevelId parameter.
      * @param fSearchOp
-     * 				The type of filtering to perform that is different from wildcard matching. This parameter is one of
-     * 				the FINDEX_SEARCH_OPS enumeration values.
+     *                 The type of filtering to perform that is different from wildcard matching. This parameter is one of
+     *                 the FINDEX_SEARCH_OPS enumeration values.
      * @param lpSearchFilter
-     * 				A pointer to the search criteria if the specified fSearchOp needs structured search information.
-     * 				At this time, none of the supported fSearchOp values require extended search information. Therefore,
-     * 				this pointer must be NULL.
+     *                 A pointer to the search criteria if the specified fSearchOp needs structured search information.
+     *                 At this time, none of the supported fSearchOp values require extended search information. Therefore,
+     *                 this pointer must be NULL.
      * @param dwAdditionalFlags
-     * 				Specifies additional flags that control the search.
-     * 				FIND_FIRST_EX_CASE_SENSITIVE (0x01) - Searches are case-sensitive.
-     * 				FIND_FIRST_EX_LARGE_FETCH (0x02) - Uses a larger buffer for directory queries, which can increase performance
-     * 				of the find operation. <b>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value
-     * 				is not supported until Windows Server 2008 R2 and Windows 7.</b>
+     *                 Specifies additional flags that control the search.
+     *                 FIND_FIRST_EX_CASE_SENSITIVE (0x01) - Searches are case-sensitive.
+     *                 FIND_FIRST_EX_LARGE_FETCH (0x02) - Uses a larger buffer for directory queries, which can increase performance
+     *                 of the find operation. <b>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This value
+     *                 is not supported until Windows Server 2008 R2 and Windows 7.</b>
      * @return If the function succeeds, the return value is a search handle used in a subsequent call to FindNextFile or FindClose,
-     * 				and the lpFindFileData parameter contains information about the first file or directory found.
-     * 				If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
-     * 				value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
-     * 				To get extended error information, call the GetLastError function.
-     * 				If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
+     *                 and the lpFindFileData parameter contains information about the first file or directory found.
+     *                 If the function fails or fails to locate files from the search string in the lpFileName parameter, the return
+     *                 value is INVALID_HANDLE_VALUE and the contents of lpFindFileData are indeterminate.
+     *                 To get extended error information, call the GetLastError function.
+     *                 If the function fails because no matching files can be found, the GetLastError function returns ERROR_FILE_NOT_FOUND.
      */
     HANDLE FindFirstFileEx(String lpFileName, int fInfoLevelId, Pointer lpFindFileData, int fSearchOp, Pointer lpSearchFilter, DWORD dwAdditionalFlags);
 
     /**
      * Continues a file search from a previous call to the FindFirstFile, FindFirstFileEx, or FindFirstFileTransacted functions.
      * @param hFindFile
-     * 				The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.
+     *                 The search handle returned by a previous call to the FindFirstFile or FindFirstFileEx function.
      * @param lpFindFileData
-     * 				A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory.
+     *                 A pointer to the WIN32_FIND_DATA structure that receives information about the found file or subdirectory.
      * @return If the function succeeds, the return value is nonzero and the lpFindFileData parameter contains
-     * 				information about the next file or directory found. If the function fails, the return value is zero and the
-     * 				contents of lpFindFileData are indeterminate. To get extended error information, call the GetLastError function.
-     * 				If the function fails because no more matching files can be found, the GetLastError function returns ERROR_NO_MORE_FILES.
+     *                 information about the next file or directory found. If the function fails, the return value is zero and the
+     *                 contents of lpFindFileData are indeterminate. To get extended error information, call the GetLastError function.
+     *                 If the function fails because no more matching files can be found, the GetLastError function returns ERROR_NO_MORE_FILES.
      */
     boolean FindNextFile(HANDLE hFindFile, Pointer lpFindFileData);
 
@@ -2913,9 +2913,9 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Closes a file search handle opened by the FindFirstFile, FindFirstFileEx, FindFirstFileNameW, FindFirstFileNameTransactedW,
      * FindFirstFileTransacted, FindFirstStreamTransactedW, or FindFirstStreamW functions.
      * @param hFindFile
-     * 			The file search handle.
+     *             The file search handle.
      * @return If the function succeeds, the return value is nonzero. If the function fails, the return value is zero.
-     * 			To get extended error information, call GetLastError.
+     *             To get extended error information, call GetLastError.
      */
     boolean FindClose(HANDLE hFindFile);
 
@@ -3645,19 +3645,19 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         not contain module information.
      */
     boolean Module32NextW(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32W lpme);
-    
+
     /**
      * Controls whether the system will handle the specified types of serious
      * errors or whether the process will handle them.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680621(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param umode
      *            The process error mode.
      * @return The return value is the previous state of the error-mode bit
      *         flags.
      */
     int SetErrorMode(int umode);
-    
+
     /**
      * Retrieves the address of an exported function or variable from the
      * specified dynamic-link library (DLL).
@@ -3678,7 +3678,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return address of the exported function
      */
     Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
-    
+
     /**
      * Enables an application to inform the system that it is in use, thereby
      * preventing the system from entering sleep or turning off the display
@@ -3686,7 +3686,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *
      * @param esFlags The thread's execution requirements. This parameter can be
      *                one or more of the following values (ORed together)
-     * 
+     *
      * <ul>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_AWAYMODE_REQUIRED}</li>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_CONTINUOUS}</li>
@@ -3701,18 +3701,18 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the function fails, the return value is 0</p>
      */
     int SetThreadExecutionState(int esFlags);
-    
+
     /**
      * Expands environment-variable strings and replaces them with the values
      * defined for the current user.
-     * 
+     *
      * @param lpSrc A buffer that contains one or more environment-variable
      *              strings in the form: %variableName%. For each such
      *              reference, the %variableName% portion is replaced with the
      *              current value of that environment variable.
      *
      *              <p>Case is ignored when looking up the environment-variable
-     *              name. If the name is not found, the %variableName% portion 
+     *              name. If the name is not found, the %variableName% portion
      *              is left unexpanded.</p>
      *
      *              <p>Note that this function does not support all the features
@@ -3743,7 +3743,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /**
      * Retrieves timing information for the specified process.
-     * 
+     *
      * @param hProcess
      *            A handle to the process whose timing information is sought.
      *            The handle must have the PROCESS_QUERY_INFORMATION or
@@ -3779,7 +3779,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves accounting information for all I/O operations performed by the
      * specified process.
-     * 
+     *
      * @param hProcess
      *            A handle to the process. The handle must have the
      *            PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
@@ -3924,12 +3924,12 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * information, call {@link com.sun.jna.Native#getLastError()}.</p>
      */
     boolean ReleaseMutex(HANDLE handle);
-	
+
     /**
      * Ends the calling process (this process) and all its threads.
      *
      * From Java, this will will cause the process to terminate without
-     * execution of any shutdown hooks 
+     * execution of any shutdown hooks
      */
     void ExitProcess(int exitCode);
 }

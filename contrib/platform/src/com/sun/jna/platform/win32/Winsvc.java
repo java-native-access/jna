@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 EugineLev, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -218,10 +218,10 @@ public interface Winsvc {
     }
 
     /**
-     * Represents the action the service controller should take on each failure of a service. A 
-     * service is considered failed when it terminates without reporting a status of SERVICE_STOPPED 
+     * Represents the action the service controller should take on each failure of a service. A
+     * service is considered failed when it terminates without reporting a status of SERVICE_STOPPED
      * to the service controller.
-     * To configure additional circumstances under which the failure actions are to be executed, see 
+     * To configure additional circumstances under which the failure actions are to be executed, see
      * SERVICE_FAILURE_ACTIONS_FLAG.
      */
     @FieldOrder({"dwResetPeriod", "lpRebootMsg", "lpCommand", "cActions", "lpsaActions"})
@@ -229,34 +229,34 @@ public interface Winsvc {
         public static class ByReference extends SERVICE_FAILURE_ACTIONS implements Structure.ByReference {}
 
         /**
-         * The time after which to reset the failure count to zero if there are no failures, in 
+         * The time after which to reset the failure count to zero if there are no failures, in
          * seconds. Specify INFINITE to indicate that this value should never be reset.
          */
         public int dwResetPeriod;
         /**
-         * The message to be broadcast to server users before rebooting in response to the 
+         * The message to be broadcast to server users before rebooting in response to the
          * SC_ACTION_REBOOT service controller action.
-         * If this value is NULL, the reboot message is unchanged. If the value is an empty string 
+         * If this value is NULL, the reboot message is unchanged. If the value is an empty string
          * (""), the reboot message is deleted and no message is broadcast.
          * This member can specify a localized string using the following format:
          * "@[path]dllname,-strID"
-         * The string with identifier strID is loaded from dllname; the path is optional. For more 
+         * The string with identifier strID is loaded from dllname; the path is optional. For more
          * information, see RegLoadMUIString.
-         * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows 
+         * Windows Server 2003 and Windows XP:  Localized strings are not supported until Windows
          * Vista.
          */
         public String lpRebootMsg;
         /**
-         * The command line of the process for the CreateProcess function to execute in response to 
-         * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same 
+         * The command line of the process for the CreateProcess function to execute in response to
+         * the SC_ACTION_RUN_COMMAND service controller action. This process runs under the same
          * account as the service.
-         * If this value is NULL, the command is unchanged. If the value is an empty string (""), 
+         * If this value is NULL, the command is unchanged. If the value is an empty string (""),
          * the command is deleted and no program is run when the service fails.
          */
         public String lpCommand;
         /**
          * The number of elements in the lpsaActions array.
-         * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure 
+         * If this value is 0, but lpsaActions is not NULL, the reset period and array of failure
          * actions are deleted.
          */
         public int cActions;
@@ -283,7 +283,7 @@ public interface Winsvc {
     public class SC_ACTION extends Structure {
         public static class ByReference extends SC_ACTION implements Structure.ByReference {}
         /**
-         * The action to be performed. This member can be one of the following values from the 
+         * The action to be performed. This member can be one of the following values from the
          * SC_ACTION_TYPE enumeration type.
          */
         public int type;
@@ -294,20 +294,20 @@ public interface Winsvc {
     }
 
     /**
-     * Contains the failure actions flag setting of a service. This setting determines when failure 
+     * Contains the failure actions flag setting of a service. This setting determines when failure
      * actions are to be executed.
      */
     @FieldOrder({"fFailureActionsOnNonCrashFailures"})
     public class SERVICE_FAILURE_ACTIONS_FLAG extends ChangeServiceConfig2Info {
         /**
-         * If this member is TRUE and the service has configured failure actions, the failure 
-         * actions are queued if the service process terminates without reporting a status of 
-         * SERVICE_STOPPED or if it enters the SERVICE_STOPPED state but the dwWin32ExitCode member 
+         * If this member is TRUE and the service has configured failure actions, the failure
+         * actions are queued if the service process terminates without reporting a status of
+         * SERVICE_STOPPED or if it enters the SERVICE_STOPPED state but the dwWin32ExitCode member
          * of the SERVICE_STATUS structure is not ERROR_SUCCESS (0).
-         * If this member is FALSE and the service has configured failure actions, the failure 
-         * actions are queued only if the service terminates without reporting a status of 
+         * If this member is FALSE and the service has configured failure actions, the failure
+         * actions are queued only if the service terminates without reporting a status of
          * SERVICE_STOPPED.
-         * This setting is ignored unless the service has configured failure actions. For 
+         * This setting is ignored unless the service has configured failure actions. For
          * information on configuring failure actions, see ChangeServiceConfig2.
          */
         public int fFailureActionsOnNonCrashFailures;
@@ -332,12 +332,12 @@ public interface Winsvc {
     //
     // Service Control Manager object specific access types
     //
-    int SC_MANAGER_CONNECT				= 0x0001;
-    int SC_MANAGER_CREATE_SERVICE		= 0x0002;
-    int SC_MANAGER_ENUMERATE_SERVICE	= 0x0004;
-    int SC_MANAGER_LOCK					= 0x0008;
-    int SC_MANAGER_QUERY_LOCK_STATUS	= 0x0010;
-    int SC_MANAGER_MODIFY_BOOT_CONFIG	= 0x0020;
+    int SC_MANAGER_CONNECT              = 0x0001;
+    int SC_MANAGER_CREATE_SERVICE       = 0x0002;
+    int SC_MANAGER_ENUMERATE_SERVICE    = 0x0004;
+    int SC_MANAGER_LOCK                 = 0x0008;
+    int SC_MANAGER_QUERY_LOCK_STATUS    = 0x0010;
+    int SC_MANAGER_MODIFY_BOOT_CONFIG   = 0x0020;
 
     int SC_MANAGER_ALL_ACCESS =
         WinNT.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT
@@ -353,7 +353,7 @@ public interface Winsvc {
      * {@link com.sun.jna.platform.win32.Advapi32#QueryServiceConfig2}
      * functions to query the service configuration.
      */
-    int SERVICE_QUERY_CONFIG			= 0x0001;
+    int SERVICE_QUERY_CONFIG = 0x0001;
     /**
      * Required to call the ChangeServiceConfig or
      * {@link com.sun.jna.platform.win32.Advapi32#ChangeServiceConfig2} function
@@ -361,7 +361,7 @@ public interface Winsvc {
      * right to change the executable file that the system runs, it should be
      * granted only to administrators.
      */
-    int SERVICE_CHANGE_CONFIG			= 0x0002;
+    int SERVICE_CHANGE_CONFIG = 0x0002;
     /**
      * Required to call the QueryServiceStatus or
      * {@link com.sun.jna.platform.win32.Advapi32#QueryServiceStatusEx} function
@@ -371,14 +371,14 @@ public interface Winsvc {
      * Required to call the NotifyServiceStatusChange function to receive
      * notification when a service changes status.</p>
      */
-    int SERVICE_QUERY_STATUS			= 0x0004;
-    int SERVICE_ENUMERATE_DEPENDENTS	= 0x0008;
+    int SERVICE_QUERY_STATUS = 0x0004;
+    int SERVICE_ENUMERATE_DEPENDENTS = 0x0008;
     /**
      * Required to call the
      * {@link com.sun.jna.platform.win32.Advapi32#StartService} function to
      * start the service.
      */
-    int SERVICE_START					= 0x0010;
+    int SERVICE_START = 0x0010;
     /**
      * Required to call the
      * {@link com.sun.jna.platform.win32.Advapi32#ControlService} function to
@@ -402,7 +402,7 @@ public interface Winsvc {
      * {@link com.sun.jna.platform.win32.Advapi32#ControlService} function to
      * ask the service to report its status immediately.
      */
-    int SERVICE_USER_DEFINED_CONTROL	= 0x0100;
+    int SERVICE_USER_DEFINED_CONTROL = 0x0100;
 
     int SERVICE_ALL_ACCESS =
         WinNT.STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG
@@ -417,7 +417,7 @@ public interface Winsvc {
     int SERVICE_ACTIVE = 0x00000001;
     int SERVICE_INACTIVE = 0x00000002;
     int SERVICE_STATE_ALL = SERVICE_ACTIVE | SERVICE_INACTIVE;
-    
+
     //
     // Controls
     //
@@ -491,60 +491,60 @@ public interface Winsvc {
     //
     // Service State -- for CurrentState
     //
-    int SERVICE_STOPPED				= 0x00000001;
-    int SERVICE_START_PENDING		= 0x00000002;
-    int SERVICE_STOP_PENDING		= 0x00000003;
-    int SERVICE_RUNNING				= 0x00000004;
-    int SERVICE_CONTINUE_PENDING	= 0x00000005;
-    int SERVICE_PAUSE_PENDING		= 0x00000006;
-    int SERVICE_PAUSED				= 0x00000007;
+    int SERVICE_STOPPED          = 0x00000001;
+    int SERVICE_START_PENDING    = 0x00000002;
+    int SERVICE_STOP_PENDING     = 0x00000003;
+    int SERVICE_RUNNING          = 0x00000004;
+    int SERVICE_CONTINUE_PENDING = 0x00000005;
+    int SERVICE_PAUSE_PENDING    = 0x00000006;
+    int SERVICE_PAUSED           = 0x00000007;
 
     //
     // Controls Accepted  (Bit Mask)
     //
-    int SERVICE_ACCEPT_STOP						= 0x00000001;
-    int SERVICE_ACCEPT_PAUSE_CONTINUE			= 0x00000002;
-    int SERVICE_ACCEPT_SHUTDOWN					= 0x00000004;
-    int SERVICE_ACCEPT_PARAMCHANGE				= 0x00000008;
-    int SERVICE_ACCEPT_NETBINDCHANGE			= 0x00000010;
-    int SERVICE_ACCEPT_HARDWAREPROFILECHANGE	= 0x00000020;
-    int SERVICE_ACCEPT_POWEREVENT				= 0x00000040;
-    int SERVICE_ACCEPT_SESSIONCHANGE			= 0x00000080;
-    int SERVICE_ACCEPT_PRESHUTDOWN				= 0x00000100;
-    int SERVICE_ACCEPT_TIMECHANGE				= 0x00000200;
-    int SERVICE_ACCEPT_TRIGGEREVENT				= 0x00000400;
+    int SERVICE_ACCEPT_STOP                  = 0x00000001;
+    int SERVICE_ACCEPT_PAUSE_CONTINUE        = 0x00000002;
+    int SERVICE_ACCEPT_SHUTDOWN              = 0x00000004;
+    int SERVICE_ACCEPT_PARAMCHANGE           = 0x00000008;
+    int SERVICE_ACCEPT_NETBINDCHANGE         = 0x00000010;
+    int SERVICE_ACCEPT_HARDWAREPROFILECHANGE = 0x00000020;
+    int SERVICE_ACCEPT_POWEREVENT            = 0x00000040;
+    int SERVICE_ACCEPT_SESSIONCHANGE         = 0x00000080;
+    int SERVICE_ACCEPT_PRESHUTDOWN           = 0x00000100;
+    int SERVICE_ACCEPT_TIMECHANGE            = 0x00000200;
+    int SERVICE_ACCEPT_TRIGGEREVENT          = 0x00000400;
 
     //
     // ChangeServiceConfig2 dwInfoLevel values
     //
-    int SERVICE_CONFIG_DESCRIPTION			= 0x00000001;
-    int SERVICE_CONFIG_FAILURE_ACTIONS			= 0x00000002;
-    int SERVICE_CONFIG_DELAYED_AUTO_START_INFO		= 0x00000003;
-    int SERVICE_CONFIG_FAILURE_ACTIONS_FLAG		= 0x00000004;
-    int SERVICE_CONFIG_SERVICE_SID_INFO		= 0x00000005;
-    int SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO	= 0x00000006;
-    int SERVICE_CONFIG_PRESHUTDOWN_INFO		= 0x00000007;
-    int SERVICE_CONFIG_TRIGGER_INFO			= 0x00000008;
-    int SERVICE_CONFIG_PREFERRED_NODE			= 0x00000009;
-    int SERVICE_CONFIG_LAUNCH_PROTECTED		= 0x0000000c;
+    int SERVICE_CONFIG_DESCRIPTION              = 0x00000001;
+    int SERVICE_CONFIG_FAILURE_ACTIONS          = 0x00000002;
+    int SERVICE_CONFIG_DELAYED_AUTO_START_INFO  = 0x00000003;
+    int SERVICE_CONFIG_FAILURE_ACTIONS_FLAG     = 0x00000004;
+    int SERVICE_CONFIG_SERVICE_SID_INFO         = 0x00000005;
+    int SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO = 0x00000006;
+    int SERVICE_CONFIG_PRESHUTDOWN_INFO         = 0x00000007;
+    int SERVICE_CONFIG_TRIGGER_INFO             = 0x00000008;
+    int SERVICE_CONFIG_PREFERRED_NODE           = 0x00000009;
+    int SERVICE_CONFIG_LAUNCH_PROTECTED         = 0x0000000c;
 
     //
     // Service failure actions
     //
-    int SC_ACTION_NONE					= 0x00000000;
-    int SC_ACTION_RESTART				= 0x00000001;
-    int SC_ACTION_REBOOT				= 0x00000002;
-    int SC_ACTION_RUN_COMMAND				= 0x00000003;
-	
+    int SC_ACTION_NONE        = 0x00000000;
+    int SC_ACTION_RESTART     = 0x00000001;
+    int SC_ACTION_REBOOT      = 0x00000002;
+    int SC_ACTION_RUN_COMMAND = 0x00000003;
+
     int SC_ENUM_PROCESS_INFO  = 0;
-    
+
     /**
      * The SC_STATUS_TYPE enumeration type contains values
      */
     public abstract class SC_STATUS_TYPE {
         public static final int SC_STATUS_PROCESS_INFO = 0;
     }
-    
+
     /**
      * The entry point for a service.
      */
@@ -561,7 +561,7 @@ public interface Winsvc {
          *                 followed by any additional arguments (lpszArgv[1]
          *                 through lpszArgv[dwArgc-1]).
          *
-         *                 <p>If the user starts a manual service using the 
+         *                 <p>If the user starts a manual service using the
          *                 Services snap-in from the Control Panel, the strings
          *                 for the lpszArgv parameter come from the properties
          *                 dialog box for the service (from the Services snap-in,
@@ -602,9 +602,9 @@ public interface Winsvc {
          * <tr><td>SERVICE_CONTROL_SHUTDOWN<br>0x00000005</td><td>Notifies a service that the system is shutting down so the service can perform cleanup tasks.<br>If a service accepts this control code, it must stop after it performs its cleanup tasks and return NO_ERROR. After the SCM sends this control code, it will not send other control codes to the service.</td></tr>
          * <tr><td>SERVICE_CONTROL_STOP<br>0x00000001</td><td>Notifies a service that it should stop.<br>If a service accepts this control code, it must stop upon receipt and return NO_ERROR. After the SCM sends this control code, it does not send other control codes.<br>Windows XP:  If the service returns NO_ERROR and continues to run, it continues to receive control codes. This behavior changed starting with Windows Server 2003 and Windows XP with SP2.</td></tr>
          * </table>
-         * 
+         *
          * <p>This parameter can also be a user-defined control code, as described in the following table.</p>
-         * 
+         *
          * <table>
          * <tr><th>Control code</th><th>Meaning</th></tr>
          * <tr><td>Range 128 to 255.</td><td>The service defines the action associated with the control code.</td></tr>
@@ -645,9 +645,9 @@ public interface Winsvc {
          * <tr><td>SERVICE_CONTROL_SHUTDOWN<br>0x00000005</td><td>Notifies a service that the system is shutting down so the service can perform cleanup tasks.<br>If a service accepts this control code, it must stop after it performs its cleanup tasks and return NO_ERROR. After the SCM sends this control code, it will not send other control codes to the service.</td></tr>
          * <tr><td>SERVICE_CONTROL_STOP<br>0x00000001</td><td>Notifies a service that it should stop.<br>If a service accepts this control code, it must stop upon receipt and return NO_ERROR. After the SCM sends this control code, it does not send other control codes.<br>Windows XP:  If the service returns NO_ERROR and continues to run, it continues to receive control codes. This behavior changed starting with Windows Server 2003 and Windows XP with SP2.</td></tr>
          * </table>
-         * 
+         *
          * <p>This parameter can also be one of the following extended control codes. Note that these control codes are not supported by the {@link Handler} function.</p>
-         * 
+         *
          * <table>
          * <tr><th>Control code</th><th>Meaning</th></tr>
          * <tr><td>SERVICE_CONTROL_DEVICEEVENT<br>0x0000000B</td><td>Notifies a service of device events. (The service must have registered to receive these notifications using the RegisterDeviceNotification function.) The dwEventType and lpEventData parameters contain additional information.</td></tr>
@@ -658,14 +658,14 @@ public interface Winsvc {
          * <tr><td>SERVICE_CONTROL_TRIGGEREVENT<br>0x00000020</td><td>Notifies a service registered for a service trigger event that the event has occurred.<br>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This control code is not supported.</td></tr>
          * <tr><td>SERVICE_CONTROL_USERMODEREBOOT<br>0x00000040</td><td>Notifies a service that the user has initiated a reboot.<br>Windows Server 2008 R2, Windows 7, Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:  This control code is not supported.</td></tr>
          * </table>
-         * 
+         *
          * <p>This parameter can also be a user-defined control code, as described in the following table.</p>
-         * 
+         *
          * <table>
          * <tr><th>Control code</th><th>Meaning</th></tr>
          * <tr><td>Range 128 to 255.</td><td>The service defines the action associated with the control code.</td></tr>
          * </table>
-         * 
+         *
          * @param dwEventType The type of event that has occurred. This
          *                    parameter is used if dwControl is
          *                    SERVICE_CONTROL_DEVICEEVENT,
@@ -719,12 +719,12 @@ public interface Winsvc {
          *
          * <p>If dwControl is SERVICE_CONTROL_TIMECHANGE, this data is a pointer to
          * a SERVICE_TIMECHANGE_INFO structure.</p>
-         * 
+         *
          * @param lpContext   [in] User-defined data passed from
          *                    {@link com.sun.jna.platform.win32.Advapi32#RegisterServiceCtrlHandlerEx}. When multiple
          *                    services share a process, the lpContext parameter
          *                    can help identify the service.
-         * 
+         *
          * @return The return value for this function depends on the control
          *         code received.
          *
@@ -752,7 +752,7 @@ public interface Winsvc {
         public int callback(int dwControl, int dwEventType,
                 Pointer lpEventData, Pointer lpContext);
     }
-    
+
     /**
      * Specifies the ServiceMain function for a service that can run in the
      * calling process. It is used by the StartServiceCtrlDispatcher function.
@@ -778,7 +778,7 @@ public interface Winsvc {
             super(W32APITypeMapper.DEFAULT);
         }
     }
-    
+
     /**
      *
      * Contains a service description.

@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -78,11 +78,11 @@ public abstract class DdemlUtil {
             messageLoop.setDaemon(true);
             messageLoop.start();
         }
-        
+
         public Integer getInstanceIdentitifier() {
             return ddeClient.getInstanceIdentitifier();
         }
-        
+
         public void initialize(int afCmd) throws DdemlException {
             clientDelegate.initialize(afCmd);
         }
@@ -141,7 +141,7 @@ public abstract class DdemlUtil {
         public void postAdvise(Ddeml.HSZ hszTopic, Ddeml.HSZ hszItem) {
             clientDelegate.postAdvise(hszTopic, hszItem);
         }
-        
+
         public void close() throws IOException {
             clientDelegate.uninitialize();
             messageLoop.exit();
@@ -186,7 +186,7 @@ public abstract class DdemlUtil {
         public boolean uninitialize() {
             return clientDelegate.uninitialize();
         }
-        
+
         @Override
         public void postAdvise(String hszTopic, String hszItem) {
             clientDelegate.postAdvise(hszTopic, hszItem);
@@ -362,7 +362,7 @@ public abstract class DdemlUtil {
             clientDelegate.unregisterMonitorHandler(handler);
         }
     }
-    
+
     private static class MessageLoopWrapper implements InvocationHandler {
         private final Object delegate;
         private final MessageLoopThread loopThread;
@@ -371,7 +371,7 @@ public abstract class DdemlUtil {
             this.loopThread = thread;
             this.delegate = delegate;
         }
-        
+
         public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
             try {
                 Object result = method.invoke(delegate, args);
@@ -396,7 +396,7 @@ public abstract class DdemlUtil {
                 }
             }
         }
-        
+
         private <V> V wrap(V delegate, Class clazz) {
             V messageLoopHandler = (V) Proxy.newProxyInstance(StandaloneDdeClient.class.getClassLoader(),
                     new Class[]{clazz},
@@ -407,7 +407,7 @@ public abstract class DdemlUtil {
             return clientDelegate;
         }
     }
-        
+
     public static class DdeConnection implements IDdeConnection {
         private HCONV conv;
         private final IDdeClient client;
@@ -420,7 +420,7 @@ public abstract class DdemlUtil {
         public Ddeml.HCONV getConv() {
             return conv;
         }
-       
+
         @Override
         public void abandonTransaction(int transactionId) {
             boolean result = Ddeml.INSTANCE.DdeAbandonTransaction(client.getInstanceIdentitifier(), conv, transactionId);
@@ -435,11 +435,11 @@ public abstract class DdemlUtil {
                 throw DdemlException.create(client.getLastError());
             }
         }
-        
+
         @Override
         public Ddeml.HDDEDATA clientTransaction(Pointer data, int dataLength, Ddeml.HSZ item, int wFmt, int transaction, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             if(timeout == Ddeml.TIMEOUT_ASYNC && result == null) {
-                result = new WinDef.DWORDByReference(); 
+                result = new WinDef.DWORDByReference();
             }
             Ddeml.HDDEDATA returnData = Ddeml.INSTANCE.DdeClientTransaction(data, dataLength, conv, item, wFmt, transaction, timeout, result);
             if(returnData == null) {
@@ -464,12 +464,12 @@ public abstract class DdemlUtil {
                 client.freeStringHandle(itemHSZ);
             }
         }
-        
+
         @Override
         public void poke(Pointer data, int dataLength, Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             clientTransaction(data, dataLength, item, wFmt, Ddeml.XTYP_POKE, timeout, result, userHandle);
         }
-        
+
         public void poke(Pointer data, int dataLength, String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             HSZ itemHSZ = null;
             try {
@@ -479,12 +479,12 @@ public abstract class DdemlUtil {
                 client.freeStringHandle(itemHSZ);
             }
         }
-        
+
         @Override
         public Ddeml.HDDEDATA request(Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             return clientTransaction(Pointer.NULL, 0, item, wFmt, Ddeml.XTYP_REQUEST, timeout, result, userHandle);
         }
-        
+
         public Ddeml.HDDEDATA request(String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             HSZ itemHSZ = null;
             try {
@@ -516,12 +516,12 @@ public abstract class DdemlUtil {
                 client.freeStringHandle(itemHSZ);
             }
         }
-        
+
         @Override
         public void advstop(Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             clientTransaction(Pointer.NULL, 0, item, wFmt, Ddeml.XTYP_ADVSTOP, timeout, result, userHandle);
         }
-        
+
         public void advstop(String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle) {
             HSZ itemHSZ = null;
             try {
@@ -581,13 +581,13 @@ public abstract class DdemlUtil {
             }
             return convInfo;
         }
-       
+
     }
-    
+
     public static class DdeConnectionList implements IDdeConnectionList {
         private final IDdeClient client;
         private final HCONVLIST convList;
-        
+
         public DdeConnectionList(IDdeClient client, Ddeml.HCONVLIST convList) {
             this.convList = convList;
             this.client = client;
@@ -618,15 +618,15 @@ public abstract class DdemlUtil {
             }
         }
     }
-    
+
     public static class DdeClient implements IDdeClient {
         private Integer idInst;
         private final DdeAdapter ddeAdapter = new DdeAdapter();
-        
+
         public Integer getInstanceIdentitifier() {
             return idInst;
         }
-        
+
         public void initialize(int afCmd) throws DdemlException {
             WinDef.DWORDByReference pidInst = new WinDef.DWORDByReference();
             Integer result = Ddeml.INSTANCE.DdeInitialize(pidInst, ddeAdapter, afCmd, 0);
@@ -638,7 +638,7 @@ public abstract class DdemlUtil {
                 ddeAdapter.setInstanceIdentifier(idInst);
             }
         }
-        
+
         public Ddeml.HSZ createStringHandle(String value) throws DdemlException {
             if(value == null) {
                 return null;
@@ -655,7 +655,7 @@ public abstract class DdemlUtil {
             }
             return handle;
         }
-        
+
         public void nameService(Ddeml.HSZ name, int afCmd) throws DdemlException {
             Ddeml.HDDEDATA handle = Ddeml.INSTANCE.DdeNameService(idInst, name, new Ddeml.HSZ(), afCmd);
             if (handle == null) {
@@ -676,7 +676,7 @@ public abstract class DdemlUtil {
         public int getLastError() {
             return Ddeml.INSTANCE.DdeGetLastError(idInst);
         }
-        
+
         public IDdeConnection connect(Ddeml.HSZ service, Ddeml.HSZ topic, Ddeml.CONVCONTEXT convcontext) {
             Ddeml.HCONV hconv = Ddeml.INSTANCE.DdeConnect(idInst, service, topic, convcontext);
             if(hconv == null) {
@@ -684,7 +684,7 @@ public abstract class DdemlUtil {
             }
             return new DdeConnection(this, hconv);
         }
-        
+
         public IDdeConnection connect(String service, String topic, Ddeml.CONVCONTEXT convcontext) {
             HSZ serviceHSZ = null;
             HSZ topicHSZ = null;
@@ -720,8 +720,8 @@ public abstract class DdemlUtil {
                 buffer.valid();
             }
         }
-        
-        
+
+
         public Ddeml.HDDEDATA createDataHandle(Pointer pSrc, int cb, int cbOff, Ddeml.HSZ hszItem, int wFmt, int afCmd) {
             Ddeml.HDDEDATA returnData = Ddeml.INSTANCE.DdeCreateDataHandle(idInst, pSrc, cb, cbOff, hszItem, wFmt, afCmd);
             if(returnData == null) {
@@ -775,7 +775,7 @@ public abstract class DdemlUtil {
                 throw DdemlException.create(getLastError());
             }
         }
-        
+
         public void postAdvise(String topic, String item) {
             HSZ itemHSZ = null;
             HSZ topicHSZ = null;
@@ -828,7 +828,7 @@ public abstract class DdemlUtil {
                 freeStringHandle(serviceHSZ);
             }
         }
-        
+
         public boolean enableCallback(int wCmd) {
             boolean result = Ddeml.INSTANCE.DdeEnableCallback(idInst, null, wCmd);
             if ((!result) && wCmd != Ddeml.EC_QUERYWAITING) {
@@ -839,11 +839,11 @@ public abstract class DdemlUtil {
             }
             return result;
         }
-        
+
         public boolean uninitialize() {
             return Ddeml.INSTANCE.DdeUninitialize(idInst);
         }
-        
+
         public void close() {
             uninitialize();
         }
@@ -851,12 +851,12 @@ public abstract class DdemlUtil {
         public IDdeConnection wrap(HCONV hconv) {
             return new DdeConnection(this, hconv);
         }
-        
+
 
         public void unregisterDisconnectHandler(DisconnectHandler handler) {
             ddeAdapter.unregisterDisconnectHandler(handler);
         }
-        
+
         public void registerAdvstartHandler(AdvstartHandler handler) {
             ddeAdapter.registerAdvstartHandler(handler);
         }
@@ -944,7 +944,7 @@ public abstract class DdemlUtil {
         public void registerErrorHandler(ErrorHandler handler) {
             ddeAdapter.registerErrorHandler(handler);
         }
-        
+
         public void unregisterErrorHandler(ErrorHandler handler) {
             ddeAdapter.unregisterErrorHandler(handler);
         }
@@ -1003,16 +1003,16 @@ public abstract class DdemlUtil {
          * This transaction is filtered if the server application specified the
          * CBF_FAIL_ADVISES flag in the DdeInitialize function.</p>
          *
-         * @param transactionType uType - The transaction type. 
-         * @param dataFormat uFmt - The data format requested by the client. 
-         * @param hconv A handle to the conversation. 
+         * @param transactionType uType - The transaction type.
+         * @param dataFormat uFmt - The data format requested by the client.
+         * @param hconv A handle to the conversation.
          * @param topic hsz1 - A handle to the topic name.
          * @param item hsz2 - A handle to the item name.
          * @return true if advise loop can be started
          */
         boolean onAdvstart(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item);
     }
-    
+
     public interface AdvstopHandler {
 
         /**
@@ -1030,7 +1030,7 @@ public abstract class DdemlUtil {
          */
         void onAdvstop(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item);
     }
-    
+
     public interface ConnectHandler {
         /**
          * A client uses the XTYP_CONNECT transaction to establish a
@@ -1051,7 +1051,7 @@ public abstract class DdemlUtil {
          */
         boolean onConnect(int transactionType, HSZ topic, HSZ service, CONVCONTEXT convcontext, boolean sameInstance);
     }
-    
+
     public interface AdvreqHandler {
 
         /**
@@ -1085,7 +1085,7 @@ public abstract class DdemlUtil {
          */
         HDDEDATA onAdvreq(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item, int count);
     }
-    
+
     public interface RequestHandler {
         /**
          * A client uses the XTYP_REQUEST transaction to request data from a
@@ -1106,7 +1106,7 @@ public abstract class DdemlUtil {
          */
         HDDEDATA onRequest(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item);
     }
-    
+
     public interface WildconnectHandler {
 
         /**
@@ -1134,7 +1134,7 @@ public abstract class DdemlUtil {
          */
         List<HSZPAIR> onWildconnect(int transactionType, HSZ topic, HSZ service, CONVCONTEXT convcontext, boolean sameInstance);
     }
-    
+
     public interface AdvdataHandler {
         /**
          * Informs the client that the value of the data item has changed. The
@@ -1158,7 +1158,7 @@ public abstract class DdemlUtil {
          */
         int onAdvdata(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item, HDDEDATA hdata);
     }
-    
+
     public interface ConnectConfirmHandler {
 
         /**
@@ -1179,7 +1179,7 @@ public abstract class DdemlUtil {
          */
         void onConnectConfirm(int transactionType, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HSZ service, boolean sameInstance);
     }
-        
+
     public interface DisconnectHandler {
 
         /**
@@ -1210,7 +1210,7 @@ public abstract class DdemlUtil {
          */
         void onDisconnect(int transactionType, HCONV hconv, boolean sameInstance);
     }
-        
+
     public interface ErrorHandler {
 
         /**
@@ -1238,11 +1238,11 @@ public abstract class DdemlUtil {
          */
         void onError(int transactionType, HCONV hconv, int errorCode);
     }
-        
+
     public interface RegisterHandler {
         /**
-         * A Dynamic Data Exchange (DDE) callback function, DdeCallback, receives the XTYP_REGISTER transaction type whenever a Dynamic Data Exchange Management Library (DDEML) server application uses the DdeNameService function to register a service name, or whenever a non-DDEML application that supports the System topic is started. 
-         * 
+         * A Dynamic Data Exchange (DDE) callback function, DdeCallback, receives the XTYP_REGISTER transaction type whenever a Dynamic Data Exchange Management Library (DDEML) server application uses the DdeNameService function to register a service name, or whenever a non-DDEML application that supports the System topic is started.
+         *
          * <p>
          * <strong>Remarks</strong></p>
          *<p>
@@ -1265,7 +1265,7 @@ public abstract class DdemlUtil {
          */
         void onRegister(int transactionType, HSZ baseServiceName, HSZ instanceSpecificServiceName);
     }
-    
+
     public interface XactCompleteHandler {
         /**
          * A Dynamic Data Exchange (DDE) client callback function, DdeCallback,
@@ -1301,11 +1301,11 @@ public abstract class DdemlUtil {
          */
         void onXactComplete(int transactionType, int dataFormat, HCONV hConv, HSZ topic, HSZ item, HDDEDATA hdata, ULONG_PTR transactionIdentifier, ULONG_PTR statusFlag);
     }
-        
+
     public interface UnregisterHandler {
         /**
-         * A Dynamic Data Exchange (DDE) callback function, DdeCallback, receives the XTYP_REGISTER transaction type whenever a Dynamic Data Exchange Management Library (DDEML) server application uses the DdeNameService function to register a service name, or whenever a non-DDEML application that supports the System topic is started. 
-         * 
+         * A Dynamic Data Exchange (DDE) callback function, DdeCallback, receives the XTYP_REGISTER transaction type whenever a Dynamic Data Exchange Management Library (DDEML) server application uses the DdeNameService function to register a service name, or whenever a non-DDEML application that supports the System topic is started.
+         *
          * <p>
          * <strong>Remarks</strong></p>
          * <p>
@@ -1328,7 +1328,7 @@ public abstract class DdemlUtil {
          */
         void onUnregister(int transactionType, HSZ baseServiceName, HSZ instanceSpecificServiceName);
     }
-    
+
     public interface ExecuteHandler {
             /**
          * A client uses the XTYP_EXECUTE transaction to send a command string
@@ -1349,7 +1349,7 @@ public abstract class DdemlUtil {
          * CBR_BLOCK return code. If the hdata parameter is a command that
          * instructs the server to terminate, the server should do so after
          * processing the XTYP_EXECUTE transaction. </p>
-         * 
+         *
          * @param transactionType uType - The transaction type.
          * @param hconv A handle to the conversation.
          * @param topic hsz1 - A handle to the topic name.
@@ -1362,7 +1362,7 @@ public abstract class DdemlUtil {
          */
         int onExecute(int transactionType, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HDDEDATA commandString);
     }
-    
+
     public interface PokeHandler {
         /**
          * A client uses the XTYP_POKE transaction to send unsolicited data to
@@ -1385,7 +1385,7 @@ public abstract class DdemlUtil {
          */
         int onPoke(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item, HDDEDATA hdata);
     }
-    
+
     public interface MonitorHandler {
 
         /**
@@ -1401,7 +1401,7 @@ public abstract class DdemlUtil {
          * to obtain a pointer to the object.
          * @param eventCode dwData2 - The DDE event. This parameter can be one
          * of the following values:
-         * 
+         *
          * <table>
          * <tr>
          * <th>Value</th><th>Meaning</th>
@@ -1480,11 +1480,11 @@ public abstract class DdemlUtil {
          */
         void onMonitor(int transactionType, HDDEDATA hdata, int eventCode);
     }
-    
+
     /**
      * DdeAdapter implements DdeCallback and allow dynamic registration for
      * mulitple handlers, that can be registered and unregistered at runtime.
-     * 
+     *
      * <dl>
      * <dt>AdvstartHandler</dt>
      * <dd>All registered AdvstartHandler are evaluated. If at least one returns
@@ -1531,15 +1531,15 @@ public abstract class DdemlUtil {
     public static class DdeAdapter implements Ddeml.DdeCallback {
 
         public static class BlockException extends RuntimeException{};
-        
+
         private static final Logger LOG = Logger.getLogger(DdeAdapter.class.getName());
 
         private int idInst;
-        
+
         public void setInstanceIdentifier(int idInst) {
             this.idInst = idInst;
         }
-        
+
         public WinDef.PVOID ddeCallback(int wType, int wFmt, Ddeml.HCONV hConv, Ddeml.HSZ hsz1, Ddeml.HSZ hsz2, Ddeml.HDDEDATA hData, BaseTSD.ULONG_PTR lData1, BaseTSD.ULONG_PTR lData2) {
             boolean booleanResult;
             Ddeml.HDDEDATA data;
@@ -1639,17 +1639,17 @@ public abstract class DdemlUtil {
             }
             return new WinDef.PVOID();
         };
-        
+
         private final List<AdvstartHandler> advstartHandler = new CopyOnWriteArrayList<AdvstartHandler>();
-        
+
         public void registerAdvstartHandler(AdvstartHandler handler) {
             advstartHandler.add(handler);
         }
-        
+
         public void unregisterAdvstartHandler(AdvstartHandler handler) {
             advstartHandler.remove(handler);
         }
-        
+
         private boolean onAdvstart(int transactionType, int dataFormat, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HSZ item) {
             boolean oneHandlerTrue = false;
             for (AdvstartHandler handler : advstartHandler) {
@@ -1659,33 +1659,33 @@ public abstract class DdemlUtil {
             }
             return oneHandlerTrue;
         }
-        
+
         private final List<AdvstopHandler> advstopHandler = new CopyOnWriteArrayList<AdvstopHandler>();
-        
+
         public void registerAdvstopHandler(AdvstopHandler handler) {
             advstopHandler.add(handler);
         }
-        
+
         public void unregisterAdvstopHandler(AdvstopHandler handler) {
             advstopHandler.remove(handler);
         }
-        
+
         private void onAdvstop(int transactionType, int dataFormat, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HSZ item) {
             for (AdvstopHandler handler : advstopHandler) {
                 handler.onAdvstop(transactionType, dataFormat, hconv, topic, item);
             }
         }
-        
+
         private final List<ConnectHandler> connectHandler = new CopyOnWriteArrayList<ConnectHandler>();
-        
+
         public void registerConnectHandler(ConnectHandler handler) {
             connectHandler.add(handler);
         }
-        
+
         public void unregisterConnectHandler(ConnectHandler handler) {
             connectHandler.remove(handler);
         }
-        
+
         private boolean onConnect(int transactionType, Ddeml.HSZ topic, Ddeml.HSZ service, Ddeml.CONVCONTEXT convcontext, boolean sameInstance) {
             boolean oneHandlerTrue = false;
             for (ConnectHandler handler : connectHandler) {
@@ -1695,17 +1695,17 @@ public abstract class DdemlUtil {
             }
             return oneHandlerTrue;
         }
-        
+
         private final List<AdvreqHandler> advReqHandler = new CopyOnWriteArrayList<AdvreqHandler>();
-        
+
         public void registerAdvReqHandler(AdvreqHandler handler) {
             advReqHandler.add(handler);
         }
-        
+
         public void unregisterAdvReqHandler(AdvreqHandler handler) {
             advReqHandler.remove(handler);
         }
-        
+
         private Ddeml.HDDEDATA onAdvreq(int transactionType, int dataFormat, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HSZ item, int count) {
             for (AdvreqHandler handler : advReqHandler) {
                 HDDEDATA result = handler.onAdvreq(transactionType, dataFormat, hconv, topic, item, count);
@@ -1715,17 +1715,17 @@ public abstract class DdemlUtil {
             }
             return null;
         }
-        
+
         private final List<RequestHandler> requestHandler = new CopyOnWriteArrayList<RequestHandler>();
-        
+
         public void registerRequestHandler(RequestHandler handler) {
             requestHandler.add(handler);
         }
-        
+
         public void unregisterRequestHandler(RequestHandler handler) {
             requestHandler.remove(handler);
         }
-        
+
         private Ddeml.HDDEDATA onRequest(int transactionType, int dataFormat, Ddeml.HCONV hconv, Ddeml.HSZ topic, Ddeml.HSZ item) {
             for (RequestHandler handler : requestHandler) {
                 HDDEDATA result = handler.onRequest(transactionType, dataFormat, hconv, topic, item);
@@ -1735,17 +1735,17 @@ public abstract class DdemlUtil {
             }
             return null;
         }
-        
+
         private final List<WildconnectHandler> wildconnectHandler = new CopyOnWriteArrayList<WildconnectHandler>();
-        
+
         public void registerWildconnectHandler(WildconnectHandler handler) {
             wildconnectHandler.add(handler);
         }
-        
+
         public void unregisterWildconnectHandler(WildconnectHandler handler) {
             wildconnectHandler.remove(handler);
         }
-        
+
         private Ddeml.HSZPAIR[] onWildconnect(int transactionType, HSZ topic, HSZ service, CONVCONTEXT convcontext, boolean sameInstance) {
             List<HSZPAIR> hszpairs = new ArrayList<HSZPAIR>(1);
             for(WildconnectHandler handler: wildconnectHandler) {
@@ -1753,18 +1753,18 @@ public abstract class DdemlUtil {
             }
             return hszpairs.toArray(new HSZPAIR[0]);
         }
-        
-        
+
+
         private final List<AdvdataHandler> advdataHandler = new CopyOnWriteArrayList<AdvdataHandler>();
-        
+
         public void registerAdvdataHandler(AdvdataHandler handler) {
             advdataHandler.add(handler);
         }
-        
+
         public void unregisterAdvdataHandler(AdvdataHandler handler) {
             advdataHandler.remove(handler);
         }
-        
+
         private int onAdvdata(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item, HDDEDATA hdata) {
             for (AdvdataHandler handler : advdataHandler) {
                 int result = handler.onAdvdata(transactionType, dataFormat, hconv, topic, item, hdata);
@@ -1774,17 +1774,17 @@ public abstract class DdemlUtil {
             }
             return Ddeml.DDE_FNOTPROCESSED;
         }
-        
+
         private final List<ExecuteHandler> executeHandler = new CopyOnWriteArrayList<ExecuteHandler>();
-        
+
         public void registerExecuteHandler(ExecuteHandler handler) {
             executeHandler.add(handler);
         }
-        
+
         public void unregisterExecuteHandler(ExecuteHandler handler) {
             executeHandler.remove(handler);
         }
-        
+
         private int onExecute(int transactionType, HCONV hconv, HSZ topic, HDDEDATA commandString) {
             for (ExecuteHandler handler : executeHandler) {
                 int result = handler.onExecute(transactionType, hconv, topic, commandString);
@@ -1796,15 +1796,15 @@ public abstract class DdemlUtil {
         }
 
         private final List<PokeHandler> pokeHandler = new CopyOnWriteArrayList<PokeHandler>();
-        
+
         public void registerPokeHandler(PokeHandler handler) {
             pokeHandler.add(handler);
         }
-        
+
         public void unregisterPokeHandler(PokeHandler handler) {
             pokeHandler.remove(handler);
         }
-        
+
         private int onPoke(int transactionType, int dataFormat, HCONV hconv, HSZ topic, HSZ item, HDDEDATA hdata) {
             for (PokeHandler handler : pokeHandler) {
                 int result = handler.onPoke(transactionType, dataFormat, hconv, topic, item, hdata);
@@ -1816,31 +1816,31 @@ public abstract class DdemlUtil {
         }
 
         private final List<ConnectConfirmHandler> connectConfirmHandler = new CopyOnWriteArrayList<ConnectConfirmHandler>();
-        
+
         public void registerConnectConfirmHandler(ConnectConfirmHandler handler) {
             connectConfirmHandler.add(handler);
         }
-        
+
         public void unregisterConnectConfirmHandler(ConnectConfirmHandler handler) {
             connectConfirmHandler.remove(handler);
         }
-        
+
         private void onConnectConfirm(int transactionType, HCONV hconv, HSZ topic, HSZ service, boolean sameInstance) {
             for(ConnectConfirmHandler handler: connectConfirmHandler) {
                 handler.onConnectConfirm(transactionType, hconv, topic, service, sameInstance);
             }
         }
-        
+
         private final List<DisconnectHandler> disconnectHandler = new CopyOnWriteArrayList<DisconnectHandler>();
-        
+
         public void registerDisconnectHandler(DisconnectHandler handler) {
             disconnectHandler.add(handler);
         }
-        
+
         public void unregisterDisconnectHandler(DisconnectHandler handler) {
             disconnectHandler.remove(handler);
         }
-        
+
         private void onDisconnect(int transactionType, Ddeml.HCONV hconv, boolean sameInstance) {
             for(DisconnectHandler handler: disconnectHandler) {
                 handler.onDisconnect(transactionType, hconv, sameInstance);
@@ -1848,27 +1848,27 @@ public abstract class DdemlUtil {
         }
 
         private final List<ErrorHandler> errorHandler = new CopyOnWriteArrayList<ErrorHandler>();
-        
+
         public void registerErrorHandler(ErrorHandler handler) {
             errorHandler.add(handler);
         }
-        
+
         public void unregisterErrorHandler(ErrorHandler handler) {
             errorHandler.remove(handler);
         }
-        
+
         private void onError(int transactionType, Ddeml.HCONV hconv, int errorCode) {
             for(ErrorHandler handler: errorHandler) {
                 handler.onError(transactionType, hconv, errorCode);
             }
         }
-        
+
         private final List<RegisterHandler> registerHandler = new CopyOnWriteArrayList<RegisterHandler>();
-        
+
         public void registerRegisterHandler(RegisterHandler handler) {
             registerHandler.add(handler);
         }
-        
+
         public void unregisterRegisterHandler(RegisterHandler handler) {
             registerHandler.remove(handler);
         }
@@ -1880,83 +1880,83 @@ public abstract class DdemlUtil {
         }
 
         private final List<XactCompleteHandler> xactCompleteHandler = new CopyOnWriteArrayList<XactCompleteHandler>();
-        
+
         public void registerXactCompleteHandler(XactCompleteHandler handler) {
             xactCompleteHandler.add(handler);
         }
-        
+
         public void xactCompleteXactCompleteHandler(XactCompleteHandler handler) {
             xactCompleteHandler.remove(handler);
         }
-        
+
         private void onXactComplete(int transactionType, int dataFormat, HCONV hConv, HSZ topic, HSZ item, HDDEDATA hdata, ULONG_PTR transactionIdentifier, ULONG_PTR statusFlag) {
             for(XactCompleteHandler handler: xactCompleteHandler) {
                 handler.onXactComplete(transactionType, dataFormat, hConv, topic, item, hdata, transactionIdentifier, statusFlag);
             }
         }
-        
+
         private final List<UnregisterHandler> unregisterHandler = new CopyOnWriteArrayList<UnregisterHandler>();
-        
+
         public void registerUnregisterHandler(UnregisterHandler handler) {
             unregisterHandler.add(handler);
         }
-        
+
         public void unregisterUnregisterHandler(UnregisterHandler handler) {
             unregisterHandler.remove(handler);
         }
-        
+
         private void onUnregister(int transactionType, HSZ baseServiceName, HSZ instanceSpecificServiceName) {
             for(UnregisterHandler handler: unregisterHandler) {
                 handler.onUnregister(transactionType, baseServiceName, instanceSpecificServiceName);
             }
         }
-        
+
         private final List<MonitorHandler> monitorHandler = new CopyOnWriteArrayList<MonitorHandler>();
-        
+
         public void registerMonitorHandler(MonitorHandler handler) {
             monitorHandler.add(handler);
         }
-        
+
         public void unregisterMonitorHandler(MonitorHandler handler) {
             monitorHandler.remove(handler);
         }
-        
+
         private void onMonitor(int transactionType, HDDEDATA hdata, int dwData2) {
             for(MonitorHandler handler: monitorHandler) {
                 handler.onMonitor(transactionType, hdata, dwData2);
             }
         }
     }
-    
+
     /**
      * DdemlException wraps error codes reported by the DDEML functions as an
      * exception.
      */
     public static class DdemlException extends RuntimeException {
         private static final Map<Integer,String> ERROR_CODE_MAP;
-        
+
         static {
-             Map<Integer,String> errorCodeMapBuilder = new HashMap<Integer,String>();
-             for(Field f: Ddeml.class.getFields()) {
-                 String name = f.getName();
-                 if(name.startsWith("DMLERR_") && (! name.equals("DMLERR_FIRST")) && (! name.equals("DMLERR_LAST"))) {
-                     try {
-                         errorCodeMapBuilder.put(f.getInt(null), name);
-                     } catch (IllegalArgumentException ex) {
-                         throw new RuntimeException(ex);
-                     } catch (IllegalAccessException ex) {
-                         throw new RuntimeException(ex);
-                     }
-                 }
-             }
-             ERROR_CODE_MAP = Collections.unmodifiableMap(errorCodeMapBuilder);
+            Map<Integer, String> errorCodeMapBuilder = new HashMap<Integer, String>();
+            for (Field f : Ddeml.class.getFields()) {
+                String name = f.getName();
+                if (name.startsWith("DMLERR_") && (!name.equals("DMLERR_FIRST")) && (!name.equals("DMLERR_LAST"))) {
+                    try {
+                        errorCodeMapBuilder.put(f.getInt(null), name);
+                    } catch (IllegalArgumentException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IllegalAccessException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+            ERROR_CODE_MAP = Collections.unmodifiableMap(errorCodeMapBuilder);
         }
-        
+
         private final int errorCode;
-        
+
         public static DdemlException create(int errorCode) {
             String errorName = ERROR_CODE_MAP.get(errorCode);
-            return new DdemlException(errorCode, String.format("%s (Code: 0x%X)", 
+            return new DdemlException(errorCode, String.format("%s (Code: 0x%X)",
                     errorName != null ? errorName : "",
                     errorCode));
         }
@@ -1965,12 +1965,12 @@ public abstract class DdemlUtil {
             super(message);
             this.errorCode = errorCode;
         }
-  
+
         public int getErrorCode() {
             return errorCode;
         }
     }
-    
+
     /**
      * The IDdeConnection defines the functions, that work an a concrete
      * connection/conversation.
@@ -1980,7 +1980,7 @@ public abstract class DdemlUtil {
 
         /**
          * Run an XTYP_EXECUTE client transaction.
-         * 
+         *
          * @param executeString The string passed to the server for execution
          * @param timeout The maximum amount of time, in milliseconds, that
          * the client will wait for a response from the server application in a
@@ -1999,11 +1999,11 @@ public abstract class DdemlUtil {
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
          * @param userHandle data to associate with the transaction
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_BUSY</li>
          * <li>DMLERR_NOTPROCESSED</li>
@@ -2013,7 +2013,7 @@ public abstract class DdemlUtil {
 
         /**
          * Run an XTYP_POKE client transaction
-         * 
+         *
          * @param data The beginning of the data the client must pass to the
          * server.
          *
@@ -2058,7 +2058,7 @@ public abstract class DdemlUtil {
          * the client will wait for a response from the server application in a
          * synchronous transaction. This parameter should be TIMEOUT_ASYNC for
          * asynchronous transactions.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @param result A pointer to a variable that receives the result of
@@ -2073,21 +2073,21 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_BUSY</li>
          * <li>DMLERR_NOTPROCESSED</li>
          * </ul>
          */
         public void poke(Pointer data, int dataLength, Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Run an XTYP_POKE client transaction
-         * 
+         *
          * @param data The beginning of the data the client must pass to the
          * server.
          *
@@ -2130,7 +2130,7 @@ public abstract class DdemlUtil {
          * the client will wait for a response from the server application in a
          * synchronous transaction. This parameter should be TIMEOUT_ASYNC for
          * asynchronous transactions.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @param result A pointer to a variable that receives the result of
@@ -2145,18 +2145,18 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_BUSY</li>
          * <li>DMLERR_NOTPROCESSED</li>
          * </ul>
          */
         public void poke(Pointer data, int dataLength, String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
@@ -2171,7 +2171,7 @@ public abstract class DdemlUtil {
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
-         * 
+         *
          * <p>
          * If the transaction specified by the wType parameter references
          * non-execute DDE data ( XTYP_POKE, XTYP_ADVSTART, XTYP_ADVSTOP,
@@ -2195,7 +2195,7 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @return If the function succeeds, the return value is a data handle
@@ -2214,7 +2214,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public Ddeml.HDDEDATA request(Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
@@ -2227,7 +2227,7 @@ public abstract class DdemlUtil {
          *
          * @param wFmt The standard clipboard format in which the data item is
          * being submitted or requested.
-         * 
+         *
          * <p>
          * If the transaction specified by the wType parameter references
          * non-execute DDE data ( XTYP_POKE, XTYP_ADVSTART, XTYP_ADVSTOP,
@@ -2251,7 +2251,7 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @return If the function succeeds, the return value is a data handle
@@ -2270,7 +2270,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public Ddeml.HDDEDATA request(String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
@@ -2360,7 +2360,7 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @return If the function succeeds, the return value is a data handle
@@ -2393,7 +2393,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public Ddeml.HDDEDATA clientTransaction(Pointer data, int dataLength, Ddeml.HSZ item, int wFmt, int transaction, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
@@ -2481,7 +2481,7 @@ public abstract class DdemlUtil {
          * filled with a unique transaction identifier for use with the
          * DdeAbandonTransaction function and the XTYP_XACT_COMPLETE
          * transaction.
-         * 
+         *
          * @param userHandle data to associate with the transaction
          *
          * @return If the function succeeds, the return value is a data handle
@@ -2514,13 +2514,13 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public Ddeml.HDDEDATA clientTransaction(Pointer data, int dataLength, String item, int wFmt, int transaction, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
          * function, and the application can use it only after establishing a
          * conversation with the server.
-         * 
+         *
          * @param item A handle to the data item for which data is being
          * exchanged during the transaction. This handle must have been created
          * by a previous call to the DdeCreateStringHandle function. This
@@ -2549,7 +2549,7 @@ public abstract class DdemlUtil {
          * transaction.
          *
          * @param userHandle data to associate with the transaction
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
@@ -2559,13 +2559,13 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void advstart(Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Begins a data transaction between a client and a server. Only a
          * Dynamic Data Exchange (DDE) client application can call this
          * function, and the application can use it only after establishing a
          * conversation with the server.
-         * 
+         *
          * @param item The data item for which data is being exchanged during
          * the transaction. This parameter is ignored (and should be set to NULL)
          * if the wType parameter is XTYP_EXECUTE.
@@ -2592,7 +2592,7 @@ public abstract class DdemlUtil {
          * transaction.
          *
          * @param userHandle data to associate with the transaction
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
@@ -2602,7 +2602,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void advstart(String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * A client uses the XTYP_ADVSTOP transaction to end an advise loop with
          * a server. A Dynamic Data Exchange (DDE) server callback function,
@@ -2637,7 +2637,7 @@ public abstract class DdemlUtil {
          * transaction.
          *
          * @param userHandle data to associate with the transaction
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
@@ -2647,7 +2647,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void advstop(Ddeml.HSZ item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * A client uses the XTYP_ADVSTOP transaction to end an advise loop with
          * a server. A Dynamic Data Exchange (DDE) server callback function,
@@ -2680,7 +2680,7 @@ public abstract class DdemlUtil {
          * transaction.
          *
          * @param userHandle data to associate with the transaction
-         * 
+         *
          * <p>
          * If an error occurs, a DdemlException is raised with the appropriate
          * error code:</p>
@@ -2690,7 +2690,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void advstop(String item, int wFmt, int timeout, WinDef.DWORDByReference result, DWORD_PTR userHandle);
-        
+
         /**
          * Abandons the specified asynchronous transaction and releases all
          * resources associated with the transaction.
@@ -2700,7 +2700,7 @@ public abstract class DdemlUtil {
          * specified conversation are abandoned.
          *
          * <p>
-         * If the method fails a DdeException will be raised with the 
+         * If the method fails a DdeException will be raised with the
          * corresponding errorCode:</p>
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
@@ -2710,13 +2710,13 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void abandonTransaction(int transactionId);
-        
+
         /**
          * Abandons all transactions of this conversation and releases all
          * resources associated with the transaction.
          *
          * <p>
-         * If the method fails a DdeException will be raised with the 
+         * If the method fails a DdeException will be raised with the
          * corresponding errorCode:</p>
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
@@ -2726,25 +2726,25 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void abandonTransactions();
-        
+
         /**
          * Impersonates a Dynamic Data Exchange (DDE) client application in a
          * DDE client conversation.
          */
         public void impersonateClient();
-        
+
         /**
          * Terminates a conversation started by either the DdeConnect or
          * DdeConnectList function and invalidates the specified conversation
          * handle.
-         * 
+         *
          * <p>Note: This wraps the DdeDisconnect function and aligns the name
          * with the Closable-wording.</p>
-         * 
+         *
          * <p>
-         * If the method fails a DdeException will be raised with the 
+         * If the method fails a DdeException will be raised with the
          * corresponding errorCode:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_NO_CONV_ESTABLISHED</li>
@@ -2752,7 +2752,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void close();
-        
+
         /**
          * Enables a client Dynamic Data Exchange Management Library (DDEML)
          * application to attempt to reestablish a conversation with a service
@@ -2828,7 +2828,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public boolean enableCallback(int wCmd);
-        
+
         /**
          * Associates an application-defined value with a conversation handle or
          * a transaction identifier. This is useful for simplifying the
@@ -2840,7 +2840,7 @@ public abstract class DdemlUtil {
          * parameter to QID_SYNC to associate hUser with the conversation
          * identified by the hConv parameter.
          * @param hUser The value to be associated with the conversation handle.
-         * 
+         *
          * <p>
          * If the method fails a DdeException will be raised with the
          * corresponding errorCode:</p>
@@ -2852,7 +2852,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void setUserHandle(int id, DWORD_PTR hUser) throws DdemlException;
-        
+
         /**
          * Retrieves information about a Dynamic Data Exchange (DDE) transaction
          * and about the conversation in which the transaction takes place.
@@ -2876,7 +2876,7 @@ public abstract class DdemlUtil {
         public CONVINFO queryConvInfo(int idTransaction) throws DdemlException;
     }
 
-    /** 
+    /**
      * The IDdeClient defines functions that wrap a ddeml instance. and are
      * not tied to conversation.
      */
@@ -2887,7 +2887,7 @@ public abstract class DdemlUtil {
          * Library (DDEML). An application must call this function before
          * calling any other Dynamic Data Exchange Management Library (DDEML)
          * function.
-         * 
+         *
          * @param afCmd A set of APPCMD_, CBF_, and MF_ flags. The APPCMD_ flags
          * provide special instructions to DdeInitialize. The CBF_ flags specify
          * filters that prevent specific types of transactions from reaching the
@@ -3154,7 +3154,7 @@ public abstract class DdemlUtil {
          * created. This string can be up to 255 characters. The reason for this
          * limit is that DDEML string management functions are implemented using
          * atoms.
-         * 
+         *
          * @return If the function succeeds, the return value is a string
          * handle. A parameter NULL will cause NULL to be returned.
          *
@@ -3176,14 +3176,14 @@ public abstract class DdemlUtil {
          * @return String corresponding to the supplied handle
          */
         public String queryString(Ddeml.HSZ value) throws DdemlException;
-       
+
         /**
          * Frees a string handle in the calling application.
-         * 
+         *
          * @param value A handle to the string handle to be freed. This handle
          * must have been created by a previous call to the
          * createStringHandle function. A NULL value will be silently ignored.
-         * 
+         *
          * @return true if the function succeeds.
          */
         public boolean freeStringHandle(Ddeml.HSZ value);
@@ -3201,7 +3201,7 @@ public abstract class DdemlUtil {
          * @return true if the function succeeded
          */
         public boolean keepStringHandle(Ddeml.HSZ value);
-        
+
         /**
          * Registers or unregisters the service names a Dynamic Data Exchange
          * (DDE) server supports. This function causes the system to send
@@ -3238,7 +3238,7 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails, a DdemlException is raised with the
          * corresponding errorCode:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_DLL_USAGE</li>
@@ -3247,7 +3247,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void nameService(Ddeml.HSZ name, int afCmd) throws DdemlException;
-        
+
         /**
          * Registers or unregisters the service names a Dynamic Data Exchange
          * (DDE) server supports. This function causes the system to send
@@ -3283,7 +3283,7 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails, a DdemlException is raised with the
          * corresponding errorCode:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_DLL_USAGE</li>
@@ -3292,12 +3292,12 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void nameService(String name, int afCmd) throws DdemlException;
-        
+
         /**
          * @return See {@link Ddeml}.DMLERR_*
          */
         public int getLastError();
-        
+
         /**
          * Establishes a conversation with a server application that supports
          * the specified service name and topic name pair. If more than one such
@@ -3333,7 +3333,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public IDdeConnection connect(Ddeml.HSZ service, Ddeml.HSZ topic, Ddeml.CONVCONTEXT convcontext);
-        
+
         /**
          * Establishes a conversation with a server application that supports
          * the specified service name and topic name pair. If more than one such
@@ -3365,13 +3365,13 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public IDdeConnection connect(String service, String topic, Ddeml.CONVCONTEXT convcontext);
-        
+
         /**
          * Creates a Dynamic Data Exchange (DDE) object and fills the object
          * with data from the specified buffer. A DDE application uses this
          * function during transactions that involve passing data to the partner
          * application.
-         * 
+         *
          * @param pSrc The data to be copied to the DDE object. If this
          * parameter is NULL, no data is copied to the object.
          *
@@ -3409,7 +3409,7 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails a DdeException is raised with the following
          * errorCodes:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_INVALIDPARAMETER</li>
@@ -3424,7 +3424,7 @@ public abstract class DdemlUtil {
                 Ddeml.HSZ hszItem,
                 int wFmt,
                 int afCmd);
-        
+
         /**
          * Frees a Dynamic Data Exchange (DDE) object and deletes the data
          * handle associated with the object.
@@ -3432,7 +3432,7 @@ public abstract class DdemlUtil {
          * @param hData A handle to the DDE object to be freed. This handle must
          * have been created by a previous call to the DdeCreateDataHandle
          * function or returned by the DdeClientTransaction function.
-         * 
+         *
          * <p>
          * If the function fails a DdeException is raised with the following
          * errorCodes:</p>
@@ -3471,7 +3471,7 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails a DdeException is raised with the following
          * errorCodes:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_INVALIDPARAMETER</li>
@@ -3507,7 +3507,7 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails a DdeException is raised with the following
          * errorCodes:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_INVALIDPARAMETER</li>
@@ -3545,7 +3545,7 @@ public abstract class DdemlUtil {
          * call this function after it has finished accessing the object.
          *
          * @param hData A handle to the DDE object.
-         * 
+         *
          * <p>
          * If the function fails a DdeException is raised with the following
          * errorCodes:</p>
@@ -3557,7 +3557,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void unaccessData(Ddeml.HDDEDATA hData);
-        
+
         /**
          * Causes the system to send an XTYP_ADVREQ transaction to the calling
          * (server) application's Dynamic Data Exchange (DDE) callback function
@@ -3584,7 +3584,7 @@ public abstract class DdemlUtil {
          *
          */
         public void postAdvise(Ddeml.HSZ hszTopic, Ddeml.HSZ hszItem);
-        
+
         /**
          * Causes the system to send an XTYP_ADVREQ transaction to the calling
          * (server) application's Dynamic Data Exchange (DDE) callback function
@@ -3611,13 +3611,13 @@ public abstract class DdemlUtil {
          *
          */
         public void postAdvise(String hszTopic, String hszItem);
-        
+
         /**
          * Abandons all asynchronous transaction and releases all
          * resources associated with the transaction.
          *
          * <p>
-         * If the method fails a DdeException will be raised with the 
+         * If the method fails a DdeException will be raised with the
          * corresponding errorCode:</p>
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
@@ -3627,7 +3627,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public void abandonTransactions();
-        
+
         /**
          * Establishes a conversation with all server applications that support
          * the specified service name and topic name pair. An application can
@@ -3637,7 +3637,7 @@ public abstract class DdemlUtil {
          * terminated conversations from the conversation list. The resulting
          * conversation list contains the handles of all currently established
          * conversations that support the specified service name and topic name.
-         * 
+         *
          * @param service A handle to the string that specifies the service
          * name of the server application with which a conversation is to be
          * established. If this parameter is 0L, the system attempts to
@@ -3650,7 +3650,7 @@ public abstract class DdemlUtil {
          * function. If this parameter is 0L, the system will attempt to
          * establish conversations on all topics supported by the selected
          * server (or servers).
-         * 
+         *
          * @param existingList An existinct conversation list to be enumerated.
          * This parameter should be NULL if a new conversation list is to be
          * established.
@@ -3674,7 +3674,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public IDdeConnectionList connectList(Ddeml.HSZ service, Ddeml.HSZ topic, IDdeConnectionList existingList, Ddeml.CONVCONTEXT ctx);
-        
+
         /**
          * Establishes a conversation with all server applications that support
          * the specified service name and topic name pair. An application can
@@ -3684,7 +3684,7 @@ public abstract class DdemlUtil {
          * terminated conversations from the conversation list. The resulting
          * conversation list contains the handles of all currently established
          * conversations that support the specified service name and topic name.
-         * 
+         *
          * @param service A string that specifies the service name of the server
          * application with which a conversation is to be established. If this
          * parameter is NULL, the system attempts to establish conversations with
@@ -3694,7 +3694,7 @@ public abstract class DdemlUtil {
          * conversation is to be established. If this parameter is NULL, the
          * system will attempt to establish conversations on all topics
          * supported by the selected server (or servers).
-         * 
+         *
          * @param existingList An existinct conversation list to be enumerated.
          * This parameter should be NULL if a new conversation list is to be
          * established.
@@ -3718,7 +3718,7 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public IDdeConnectionList connectList(String service, String topic, IDdeConnectionList existingList, Ddeml.CONVCONTEXT ctx);
-        
+
         /**
          * Enables or disables transactions for a specific conversation or for
          * all conversations currently established by the calling application.
@@ -3775,23 +3775,23 @@ public abstract class DdemlUtil {
          * </ul>
          */
         public boolean enableCallback(int wCmd);
-        
+
         /**
          * Frees all Dynamic Data Exchange Management Library (DDEML) resources
-         * associated with the calling application. 
-         * 
+         * associated with the calling application.
+         *
          * @return true if function succeeded
          */
         public boolean uninitialize();
-        
+
         /**
          * Wrap a connection handle into a IDdeConnection helper class.
-         * 
+         *
          * @param conv HCONV structure to wrap
          * @return wrapped IDdeConnection
          */
         public IDdeConnection wrap(HCONV conv);
-        
+
         public void registerAdvstartHandler(AdvstartHandler handler);
 
         public void unregisterAdvstartHandler(AdvstartHandler handler);
@@ -3833,11 +3833,11 @@ public abstract class DdemlUtil {
         public void unregisterConnectConfirmHandler(ConnectConfirmHandler handler);
 
         public void registerDisconnectHandler(DisconnectHandler handler);
-        
+
         public void unregisterDisconnectHandler(DisconnectHandler handler);
 
         public void registerErrorHandler(ErrorHandler handler);
-        
+
         public void unregisterErrorHandler(ErrorHandler handler);
 
         public void registerRegisterHandler(RegisterHandler handler);
@@ -3851,12 +3851,12 @@ public abstract class DdemlUtil {
         public void registerUnregisterHandler(UnregisterHandler handler);
 
         public void unregisterUnregisterHandler(UnregisterHandler handler);
-        
+
         public void registerMonitorHandler(MonitorHandler handler);
 
         public void unregisterMonitorHandler(MonitorHandler handler);
     }
-    
+
     /**
      * The IDdeConnectionList wraps a connectionlist.
      */
@@ -3866,7 +3866,7 @@ public abstract class DdemlUtil {
         /**
          * Retrieves the next conversation handle in the specified conversation
          * list.
-         * 
+         *
          * @param prevConnection A handle to the conversation handle previously
          * returned by this function. If this parameter is NULL, the function
          * returns the first conversation handle in the list.
@@ -3876,7 +3876,7 @@ public abstract class DdemlUtil {
          * otherwise it is NULL.
          */
         public IDdeConnection queryNextServer(IDdeConnection prevConnection);
-        
+
         /**
          * Destroys the specified conversation list and terminates all
          * conversations associated with the list.
@@ -3884,15 +3884,15 @@ public abstract class DdemlUtil {
          * <p>
          * If the function fails a DdeException is raised with the
          * appropriate errorCode:</p>
-         * 
+         *
          * <ul>
          * <li>DMLERR_DLL_NOT_INITIALIZED</li>
          * <li>DMLERR_INVALIDPARAMETER</li>
          * <li>DMLERR_NO_ERROR</li>
          * </ul>
-         * 
+         *
          * <p>Note: This wraps DdeDisconnectList to align with Closeable wording.</p>
          */
         public void close();
-    }    
+    }
 }

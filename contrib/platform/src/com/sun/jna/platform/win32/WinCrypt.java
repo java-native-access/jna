@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -51,7 +51,7 @@ public interface WinCrypt {
      */
     @FieldOrder({"cbData", "pbData"})
     public static class DATA_BLOB extends Structure {
-	public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
+        public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
 
         /**
          * The count of bytes in the buffer pointed to by pbData.
@@ -91,7 +91,7 @@ public interface WinCrypt {
             return pbData == null ? null : pbData.getByteArray(0, cbData);
         }
     }
-	
+
     /**
      * The CERT_TRUST_STATUS structure contains trust information about a
      * certificate in a certificate chain, summary trust information about a
@@ -919,7 +919,7 @@ public interface WinCrypt {
         public int cbData;
         public int dwFlags;
     }
-        
+
     /**
      * The CRYPT_SIGN_MESSAGE_PARA structure contains information for signing
      * messages using a specified signing certificate context.
@@ -1006,7 +1006,7 @@ public interface WinCrypt {
      */
     public interface CryptGetSignerCertificateCallback extends StdCallLibrary.StdCallCallback {
         /**
-         * 
+         *
          * @param pvGetArg
          * A pointer to user-defined data passed on to the
          * verification function as specified in the CRYPT_VERIFY_MESSAGE_PARA
@@ -1019,7 +1019,7 @@ public interface WinCrypt {
          * <p><code>X509_ASN_ENCODING | PKCS_7_ASN_ENCODING</code></p>
          *
          * <p>Currently defined encoding types are:</p>
-         * 
+         *
          * <ul>
          * <li>X509_ASN_ENCODING</li>
          * <li>PKCS_7_ASN_ENCODING</li>
@@ -1085,7 +1085,7 @@ public interface WinCrypt {
             super(p);
         }
     }
-	
+
     /**
      * Handle to a certificate store.
      */
@@ -1108,8 +1108,8 @@ public interface WinCrypt {
             super(p);
         }
     }
-	
-	/**
+
+    /**
      * Handle to a cryptographic message.
      */
     public static class HCRYPTMSG extends HANDLE {
@@ -1141,7 +1141,7 @@ public interface WinCrypt {
             super(value);
         }
     }
-    
+
     /**
      * The CRYPTPROTECT_PROMPTSTRUCT structure provides the text of a prompt and
      * information about when and where that prompt is to be displayed when using
@@ -1350,59 +1350,59 @@ public interface WinCrypt {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
      */
     int CRYPT_E_ASN1_NOEOD = 0x80093202;
-	
+
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int CRYPT_ASN_ENCODING = 0x00000001;
 
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int CRYPT_NDR_ENCODING = 0x00000002;
 
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int X509_ASN_ENCODING = 0x00000001;
 
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int X509_NDR_ENCODING = 0x00000002;
 
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int PKCS_7_ASN_ENCODING = 0x00010000;
 
     /**
      * Message Encoding Type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376511(v=vs.85).aspx">MSDN</a>
      */
     int PKCS_7_NDR_ENCODING = 0x00020000;
 
     /**
      * Determines the kind of issuer matching to be done.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
      */
     int USAGE_MATCH_TYPE_AND = 0x00000000;
 
     /**
      * Determines the kind of issuer matching to be done.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377593(v=vs.85).aspx">MSDN</a>
      */
     int USAGE_MATCH_TYPE_OR = 0x00000001;
@@ -1410,53 +1410,53 @@ public interface WinCrypt {
     /**
      * Set the window handle that the provider uses as the parent of any dialog
      * boxes it creates.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa380276(v=vs.85).aspx">MSDN</a>
      */
     int PP_CLIENT_HWND = 1;
 
     /**
      * Certificate name string type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
      */
     int CERT_SIMPLE_NAME_STR = 1;
 
     /**
      * Certificate name string type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
      */
     int CERT_OID_NAME_STR = 2;
 
     /**
      * Certificate name string type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
      */
     int CERT_X500_NAME_STR = 3;
 
     /**
      * Certificate name string type.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376556(v=vs.85).aspx">MSDN</a>
      */
     int CERT_XML_NAME_STR = 4;
 
     /**
      * Predefined verify chain policies.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa377163(v=vs.85).aspx">MSDN</a>
      */
     int CERT_CHAIN_POLICY_BASE = 1;
 
     /**
      * Algorithm object identifiers RSA.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381133(v=vs.85).aspx">MSDN</a>
      */
     String szOID_RSA_SHA1RSA = "1.2.840.113549.1.1.5";
-	
+
     /**
      * Predefined certificate chain engine values.
      *
@@ -1472,7 +1472,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376078(v=vs.85).aspx">MSDN</a>
      */
     HCERTCHAINENGINE HCCE_LOCAL_MACHINE = new HCERTCHAINENGINE(Pointer.createConstant(0x1));
-	
+
     /**
      * Predefined certificate chain engine values.
      *
@@ -1598,7 +1598,7 @@ public interface WinCrypt {
      * certificate when it was exported.
      */
     int PKCS12_INCLUDE_EXTENDED_PROPERTIES = 0x0010;
-    
+
     /**
      * Checks for nonfreed certificate, CRL, and CTL contexts. A returned error
      * code indicates that one or more store elements is still in use. This flag

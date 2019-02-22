@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -32,30 +32,30 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 @ComInterface(iid="{000208D5-0000-0000-C000-000000000046}")
 public interface ComIApplication extends IUnknown, IConnectionPoint {
 
-	@ComProperty
-	String getVersion();
-	
-	@ComProperty
-	boolean getVisible();
+    @ComProperty
+    String getVersion();
 
-	@ComProperty
-	void setVisible(boolean value);
-	
-	@ComProperty
-	ComIWorkbooks getWorkbooks();
-	
-	@ComProperty
-	ComIWorksheet getActiveSheet();
+    @ComProperty
+    boolean getVisible();
 
-	@ComProperty
-	ComIWorkbook getActiveWorkbook();
+    @ComProperty
+    void setVisible(boolean value);
 
-	@ComMethod
-	void Quit();
-        
-        @ComProperty
-        boolean getUserControl();
-        
-        @ComProperty
-        void setUserControl(boolean value);
+    @ComProperty
+    ComIWorkbooks getWorkbooks();
+
+    @ComProperty
+    ComIWorksheet getActiveSheet();
+
+    @ComProperty
+    ComIWorkbook getActiveWorkbook();
+
+    @ComMethod
+    void Quit();
+
+    @ComProperty
+    boolean getUserControl();
+
+    @ComProperty
+    void setUserControl(boolean value);
 }

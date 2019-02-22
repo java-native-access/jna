@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -33,7 +33,7 @@ import com.sun.jna.platform.win32.WinDef.DWORDByReference;
 
 /**
  * Pdh utility API.
- * 
+ *
  * @author widdis[at]gmail[dot]com
  */
 public abstract class PdhUtil {
@@ -48,7 +48,7 @@ public abstract class PdhUtil {
      * Utility method to call Pdh's PdhLookupPerfNameByIndex that allocates the
      * required memory for the szNameBuffer parameter based on the type mapping
      * used, calls to PdhLookupPerfNameByIndex, and returns the received string.
-     * 
+     *
      * @param szMachineName
      *            Null-terminated string that specifies the name of the computer
      *            where the specified performance object or counter is located.
@@ -91,7 +91,7 @@ public abstract class PdhUtil {
         if (result != WinError.ERROR_SUCCESS) {
             throw new PdhException(result);
         }
-        
+
         // Convert buffer to Java String
         if (CHAR_TO_BYTES == 1) {
             return mem.getString(0); // NOSONAR squid:S2259
@@ -105,7 +105,7 @@ public abstract class PdhUtil {
      * counter index corresponding to the specified counter name in English.
      * Uses the registry on the local machine to find the index in the English
      * locale, regardless of the current language setting on the machine.
-     * 
+     *
      * @param szNameBuffer
      *            The English name of the performance counter
      * @return The counter's index if it exists, or 0 otherwise.
@@ -136,7 +136,7 @@ public abstract class PdhUtil {
      * Utility method to call Pdh's PdhEnumObjectItems that allocates the
      * required memory for the lists parameters based on the type mapping used,
      * calls to PdhEnumObjectItems, and returns the received lists of strings.
-     * 
+     *
      * @param szDataSource
      *            String that specifies the name of the log file used to
      *            enumerate the counter and instance names. If NULL, the
@@ -275,10 +275,10 @@ public abstract class PdhUtil {
             return "PdhEnumObjectItems{" + "counters=" + counters + ", instances=" + instances + '}';
         }
     }
-    
+
     public static final class PdhException extends RuntimeException {
         private final int errorCode;
-        
+
         public PdhException(int errorCode) {
             super(String.format("Pdh call failed with error code 0x%08X", errorCode));
             this.errorCode = errorCode;

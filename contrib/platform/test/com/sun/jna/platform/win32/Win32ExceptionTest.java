@@ -53,19 +53,19 @@ public class Win32ExceptionTest extends TestCase {
 
     public void testAddSuppressed() {
         Assume.assumeTrue(isMethodPresent(Win32Exception.class, "addSuppressed", Throwable.class));
-        
+
         Win32Exception demoException = new Win32Exception(WinError.E_FAIL);
         demoException.addSuppressed(new RuntimeException("Demo"));
-        
+
         assertEquals(1, demoException.getSuppressed().length);
         assertEquals("Demo", demoException.getSuppressed()[0].getMessage());
     }
-    
+
     private void assertLastErrorValue(LastErrorException e, int code, String msg) {
         assertEquals("Mismatched error code", code, e.getErrorCode());
         assertEquals("Mismatched error message", msg, e.getMessage());
     }
-    
+
     private boolean isMethodPresent(Class<?> baseClass, String methodName, Class... parameters) throws SecurityException {
         try {
             baseClass.getMethod(methodName, parameters);

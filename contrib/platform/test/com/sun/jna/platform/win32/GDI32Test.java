@@ -43,40 +43,44 @@ public class GDI32Test extends TestCase {
         assertEquals("Wrong size for BITMAPINFO(16)", 104, info.size());
     }
 
-	public void testGetObject() throws Exception {
-		final ICONINFO iconInfo = new ICONINFO();
-		final HANDLE hImage = User32.INSTANCE.LoadImage(null, new File(
-				getClass().getResource("/res/test_icon.ico").toURI())
-				.getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
-				WinUser.LR_LOADFROMFILE);
+    public void testGetObject() throws Exception {
+        final ICONINFO iconInfo = new ICONINFO();
+        final HANDLE hImage = User32.INSTANCE.LoadImage(null, new File(
+                getClass().getResource("/res/test_icon.ico").toURI())
+                .getAbsolutePath(), WinUser.IMAGE_ICON, 0, 0,
+                WinUser.LR_LOADFROMFILE);
 
-		try {
-			// obtain test icon from classpath
-			if (!User32.INSTANCE.GetIconInfo(new HICON(hImage), iconInfo))
-				throw new Exception(
-						"Invocation of User32.GetIconInfo() failed: "
-								+ Kernel32Util.getLastErrorMessage());
-			iconInfo.read();
+        try {
+            // obtain test icon from classpath
+            if (!User32.INSTANCE.GetIconInfo(new HICON(hImage), iconInfo)) {
+                throw new Exception(
+                        "Invocation of User32.GetIconInfo() failed: "
+                        + Kernel32Util.getLastErrorMessage());
+            }
+            iconInfo.read();
 
-			// test GetObject method
-			BITMAP bmp = new BITMAP();
-			int nWrittenBytes = GDI32.INSTANCE.GetObject(iconInfo.hbmColor,
-					bmp.size(), bmp.getPointer());
-			bmp.read();
-			if (nWrittenBytes <= 0)
-				throw new Exception("Detection of bitmap information failed: "
-						+ Kernel32Util.getLastErrorMessage());
+            // test GetObject method
+            BITMAP bmp = new BITMAP();
+            int nWrittenBytes = GDI32.INSTANCE.GetObject(iconInfo.hbmColor,
+                    bmp.size(), bmp.getPointer());
+            bmp.read();
+            if (nWrittenBytes <= 0) {
+                throw new Exception("Detection of bitmap information failed: "
+                        + Kernel32Util.getLastErrorMessage());
+            }
 
-			// verify that bitmap information was successfully detected
-			assertEquals(32, bmp.bmHeight.intValue());
-			assertEquals(32, bmp.bmWidth.intValue());
-		} finally {
-			if (iconInfo.hbmColor != null
-					&& iconInfo.hbmColor.getPointer() != Pointer.NULL)
-				GDI32.INSTANCE.DeleteObject(iconInfo.hbmColor);
-			if (iconInfo.hbmMask != null
-					&& iconInfo.hbmMask.getPointer() != Pointer.NULL)
-				GDI32.INSTANCE.DeleteObject(iconInfo.hbmMask);
-		}
-	}
+            // verify that bitmap information was successfully detected
+            assertEquals(32, bmp.bmHeight.intValue());
+            assertEquals(32, bmp.bmWidth.intValue());
+        } finally {
+            if (iconInfo.hbmColor != null
+                    && iconInfo.hbmColor.getPointer() != Pointer.NULL) {
+                GDI32.INSTANCE.DeleteObject(iconInfo.hbmColor);
+            }
+            if (iconInfo.hbmMask != null
+                    && iconInfo.hbmMask.getPointer() != Pointer.NULL) {
+                GDI32.INSTANCE.DeleteObject(iconInfo.hbmMask);
+            }
+        }
+    }
 }

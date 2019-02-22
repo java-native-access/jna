@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -36,33 +36,33 @@ import com.sun.jna.win32.W32APIOptions;
  * @author dblock[at]dblock.org
  */
 public interface NtDll extends StdCallLibrary {
-	
-	NtDll INSTANCE = Native.load("NtDll", NtDll.class, W32APIOptions.DEFAULT_OPTIONS);
 
-	/**
-	 * The ZwQueryKey routine provides information about the class of a registry key, 
-	 * and the number and sizes of its subkeys.
-	 * @param KeyHandle
-	 *  Handle to the registry key to obtain information about. This handle is created by 
-	 *  a successful call to ZwCreateKey or ZwOpenKey. 
-	 * @param KeyInformationClass
-	 *  Specifies a KEY_INFORMATION_CLASS value that determines the type of information 
-	 *  returned in the KeyInformation buffer. 
-	 * @param KeyInformation
-	 *  Pointer to a caller-allocated buffer that receives the requested information.
-	 * @param Length
-	 *  Specifies the size, in bytes, of the KeyInformation buffer. 
-	 * @param ResultLength
-	 *  Pointer to a variable that receives the size, in bytes, of the requested key 
-	 *  information. If ZwQueryKey returns STATUS_SUCCESS, the variable contains the amount 
-	 *  of data returned. If ZwQueryKey returns STATUS_BUFFER_OVERFLOW or 
-	 *  STATUS_BUFFER_TOO_SMALL, you can use the value of the variable to determine the 
-	 *  required buffer size. 
-	 * @return
-	 *  ZwQueryKey returns STATUS_SUCCESS on success, or the appropriate error code on failure.
-	 */
-	public int ZwQueryKey(HANDLE KeyHandle, int KeyInformationClass,
-			Structure KeyInformation, int Length, IntByReference ResultLength);
+    NtDll INSTANCE = Native.load("NtDll", NtDll.class, W32APIOptions.DEFAULT_OPTIONS);
+
+    /**
+     * The ZwQueryKey routine provides information about the class of a registry key,
+     * and the number and sizes of its subkeys.
+     * @param KeyHandle
+     *  Handle to the registry key to obtain information about. This handle is created by
+     *  a successful call to ZwCreateKey or ZwOpenKey.
+     * @param KeyInformationClass
+     *  Specifies a KEY_INFORMATION_CLASS value that determines the type of information
+     *  returned in the KeyInformation buffer.
+     * @param KeyInformation
+     *  Pointer to a caller-allocated buffer that receives the requested information.
+     * @param Length
+     *  Specifies the size, in bytes, of the KeyInformation buffer.
+     * @param ResultLength
+     *  Pointer to a variable that receives the size, in bytes, of the requested key
+     *  information. If ZwQueryKey returns STATUS_SUCCESS, the variable contains the amount
+     *  of data returned. If ZwQueryKey returns STATUS_BUFFER_OVERFLOW or
+     *  STATUS_BUFFER_TOO_SMALL, you can use the value of the variable to determine the
+     *  required buffer size.
+     * @return
+     *  ZwQueryKey returns STATUS_SUCCESS on success, or the appropriate error code on failure.
+     */
+    public int ZwQueryKey(HANDLE KeyHandle, int KeyInformationClass,
+            Structure KeyInformation, int Length, IntByReference ResultLength);
 
     /**
      * The NtSetSecurityObject routine sets an object's security state.

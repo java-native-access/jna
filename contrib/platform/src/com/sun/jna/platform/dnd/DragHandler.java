@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -61,7 +61,7 @@ import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.text.JTextComponent;
 
-/** Provides simplified drag handling for a component.  
+/** Provides simplified drag handling for a component.
  * Usage:<br>
  * <pre><code>
  * int actions = DnDConstants.MOVE_OR_COPY;
@@ -70,19 +70,19 @@ import javax.swing.text.JTextComponent;
  * </code></pre>
  * <ul>
  * <li>Supports painting an arbitrary {@link Icon} with transparency to
- * represent the item being dragged (restricted to the {@link java.awt.Window} 
+ * represent the item being dragged (restricted to the {@link java.awt.Window}
  * of the drag source if the platform doesn't support drag images).
  * <li>Disallow starting a drag if the user requests an unsupported action.
  * <li>Adjusts the cursor on drags with no modifier for which the default action
- * is disallowed but where one or more non-default actions are allowed, e.g. a 
- * drag (with no modifiers) to a target which supports "link" should change the 
- * cursor to "link" (prior to 1.6, the JRE behavior is to display a 
- * "not allowed" cursor, even though the action actually depends on how the 
- * drop target responds).  
+ * is disallowed but where one or more non-default actions are allowed, e.g. a
+ * drag (with no modifiers) to a target which supports "link" should change the
+ * cursor to "link" (prior to 1.6, the JRE behavior is to display a
+ * "not allowed" cursor, even though the action actually depends on how the
+ * drop target responds).
  * <a href="http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4869264">
  * The bug</a> is fixed in java 1.6.
- * <li>Disallow drops to targets if the non-default (user-requested) action 
- * is not supported by the target, e.g. the user requests a "copy" when the 
+ * <li>Disallow drops to targets if the non-default (user-requested) action
+ * is not supported by the target, e.g. the user requests a "copy" when the
  * target only supports "move".  This is generally the responsibility of the
  * drop handler, which decides whether or not to accept a drag.  The DragHandler
  * provides static modifier state information since the drop handler doesn't
@@ -103,14 +103,14 @@ import javax.swing.text.JTextComponent;
 // * SwingDropTarget allows listeners, so target highlighting is possible
 
 //NOTE: acceptDrag(int) is simply indicates the drag is accepted; the action
-// value doesn't get propagated anywhere, it's certainly not communicated to 
+// value doesn't get propagated anywhere, it's certainly not communicated to
 // the drag source
 //MAYBE: should Transferable/Icon provision be a separate interface
-//(i.e. TransferHandler)?  only if the rest of the drag handler is constant and 
-// only the image needs to change (for standard components, e.g. tree cells, 
+//(i.e. TransferHandler)?  only if the rest of the drag handler is constant and
+// only the image needs to change (for standard components, e.g. tree cells,
 // table cells, etc.)
 
-public abstract class DragHandler 
+public abstract class DragHandler
     implements DragSourceListener, DragSourceMotionListener, DragGestureListener {
 
     private static final Logger LOG = Logger.getLogger(DragHandler.class.getName());
@@ -125,8 +125,8 @@ public abstract class DragHandler
      * modifiers state is unknown.
      */
     public static final int UNKNOWN_MODIFIERS = -1;
-    
-    /** {@link #getTransferable} returns this value when 
+
+    /** {@link #getTransferable} returns this value when
      * the current {@link Transferable} is unknown.
      */
     public static final Transferable UNKNOWN_TRANSFERABLE = null;
@@ -138,18 +138,18 @@ public abstract class DragHandler
     protected static final int LINK = DnDConstants.ACTION_LINK;
     /** Convenience to reference {@link DnDConstants#ACTION_NONE}. */
     protected static final int NONE = DnDConstants.ACTION_NONE;
-    
+
     // TODO: w32 explorer: link=alt or ctrl+shift, copy=ctrl or shift
     // w32 others: copy=ctrl
     /** Modifier mask for a user-requested move. */
     static final int MOVE_MASK = InputEvent.SHIFT_DOWN_MASK;
     static final boolean OSX = Platform.isMac();
     /** Modifier mask for a user-requested copy. */
-    static final int COPY_MASK = 
+    static final int COPY_MASK =
         OSX ? InputEvent.ALT_DOWN_MASK : InputEvent.CTRL_DOWN_MASK;
     /** Modifier mask for a user-requested link. */
     static final int LINK_MASK =
-        OSX ? InputEvent.ALT_DOWN_MASK|InputEvent.META_DOWN_MASK 
+        OSX ? InputEvent.ALT_DOWN_MASK|InputEvent.META_DOWN_MASK
             : InputEvent.CTRL_DOWN_MASK|InputEvent.SHIFT_DOWN_MASK;
     /** Modifier mask for any user-requested action. */
     static final int KEY_MASK =
@@ -159,7 +159,7 @@ public abstract class DragHandler
 
     private static int modifiers = UNKNOWN_MODIFIERS;
     private static Transferable transferable = UNKNOWN_TRANSFERABLE;
-    
+
     /** Used to communicate modifier state to {@link DropHandler}.  Note that
      * this field will only be accurate when a {@link DragHandler} in
      * the same VM started the drag.  Otherwise, {@link #UNKNOWN_MODIFIERS}
@@ -169,10 +169,10 @@ public abstract class DragHandler
     static int getModifiers() {
         return modifiers;
     }
-    
-    /** Used to communicate the current {@link Transferable} during a drag, 
-     * if available.  Work around absence of access to the data when dragging 
-     * pre-1.5. 
+
+    /** Used to communicate the current {@link Transferable} during a drag,
+     * if available.  Work around absence of access to the data when dragging
+     * pre-1.5.
      * @param e event
      * @return {@link Transferable} representation of the item being dragged.
      */
@@ -188,13 +188,13 @@ public abstract class DragHandler
         }
         return transferable;
     }
-    
+
     private int supportedActions;
     private boolean fixCursor = true;
     private Component dragSource;
     private GhostedDragImage ghost;
     private Point imageOffset;
-	private Dimension maxGhostSize = MAX_GHOST_SIZE;
+    private Dimension maxGhostSize = MAX_GHOST_SIZE;
     private float ghostAlpha = DEFAULT_GHOST_ALPHA;
 
     /** Enable drags from the given component, supporting the actions in
@@ -253,9 +253,9 @@ public abstract class DragHandler
         }
     }
 
-    /** Override to control whether a drag is started.  The default 
+    /** Override to control whether a drag is started.  The default
      * implementation disallows the drag if the user is applying modifiers
-     * and the user-requested action is not supported.  
+     * and the user-requested action is not supported.
      * @param e event
      * @return Whether to allow a drag
      */
@@ -287,25 +287,25 @@ public abstract class DragHandler
      * returned by this method by default is <code>null</code>, which results
      * in no drag image.
      * @param e event
-     * @param srcOffset set this to be the offset from the drag source 
-     * component's upper left corner to the image's upper left corner.  
-     * For example, when dragging a row from a list, the offset would be the 
+     * @param srcOffset set this to be the offset from the drag source
+     * component's upper left corner to the image's upper left corner.
+     * For example, when dragging a row from a list, the offset would be the
      * row's bounding rectangle's (x,y) coordinate.<p>
      * The default value is (0,0), so if unchanged, the image is will
-     * use the same origin as the drag source component.  
+     * use the same origin as the drag source component.
      * @return drag icon (defaults to none)
      */
     protected Icon getDragIcon(DragGestureEvent e, Point srcOffset) {
-        return null; 
+        return null;
     }
-    
-    /** Override to perform any decoration of the target at the start of a drag, 
-     * if desired. 
+
+    /** Override to perform any decoration of the target at the start of a drag,
+     * if desired.
      * @param e event
      */
     protected void dragStarted(DragGestureEvent e) { }
 
-    /** Called when a user drag gesture is recognized.  This method is 
+    /** Called when a user drag gesture is recognized.  This method is
      * responsible for initiating the drag operation.
      * @param e event
      */
@@ -328,7 +328,7 @@ public abstract class DragHandler
                 Cursor cursor = null;
                 if (dragIcon != null && DragSource.isDragImageSupported()) {
                     GraphicsConfiguration gc = e.getComponent().getGraphicsConfiguration();
-                    e.startDrag(cursor, createDragImage(gc, dragIcon), 
+                    e.startDrag(cursor, createDragImage(gc, dragIcon),
                                 imageOffset, transferable, this);
                 }
                 else {
@@ -336,7 +336,7 @@ public abstract class DragHandler
                         Point screen = dragSource.getLocationOnScreen();
                         screen.translate(origin.x, origin.y);
                         Point cursorOffset = new Point(-imageOffset.x, -imageOffset.y);
-                        ghost = new GhostedDragImage(dragSource, dragIcon, 
+                        ghost = new GhostedDragImage(dragSource, dragIcon,
                                                      getImageLocation(screen), cursorOffset);
                         ghost.setAlpha(ghostAlpha);
                     }
@@ -368,7 +368,7 @@ public abstract class DragHandler
         if (icon != null && maxGhostSize != null) {
             if (icon.getIconWidth() > maxGhostSize.width
                 || icon.getIconHeight() > maxGhostSize.height) {
-                Icon scaled = new ScaledIcon(icon, maxGhostSize.width, 
+                Icon scaled = new ScaledIcon(icon, maxGhostSize.width,
                                              maxGhostSize.height);
                 double scale = (double)scaled.getIconWidth()/icon.getIconWidth();
                 imageOffset.x *= scale;
@@ -412,14 +412,14 @@ public abstract class DragHandler
 
     protected Cursor getCursorForAction(int actualAction) {
         switch(actualAction) {
-        case MOVE: 
-            return DragSource.DefaultMoveDrop; 
-        case COPY:
-            return DragSource.DefaultCopyDrop;
-        case LINK: 
-            return DragSource.DefaultLinkDrop;
-        default:
-            return DragSource.DefaultMoveNoDrop;
+            case MOVE:
+                return DragSource.DefaultMoveDrop;
+            case COPY:
+                return DragSource.DefaultCopyDrop;
+            case LINK:
+                return DragSource.DefaultLinkDrop;
+            default:
+                return DragSource.DefaultMoveNoDrop;
         }
     }
 
@@ -430,7 +430,7 @@ public abstract class DragHandler
     protected int getAcceptableDropAction(int targetActions) {
         return reduce(supportedActions & targetActions);
     }
-    
+
     /** Get the currently requested drop action.
      * @param ev event
      * @return effective drop action
@@ -464,7 +464,7 @@ public abstract class DragHandler
         }
         return action;
     }
-    
+
     /**
      * Hook to update the cursor on various {@link DragSourceEvent} updates.
      * @param ev event
@@ -475,17 +475,17 @@ public abstract class DragHandler
         Cursor cursor = getCursorForAction(adjustDropAction(ev));
         ev.getDragSourceContext().setCursor(cursor);
     }
-    
+
     static String actionString(int action) {
         switch(action) {
-        case MOVE: return "MOVE";
-        case MOVE|COPY: return "MOVE|COPY";
-        case MOVE|LINK: return "MOVE|LINK";
-        case MOVE|COPY|LINK: return "MOVE|COPY|LINK";
-        case COPY: return "COPY";
-        case COPY|LINK: return "COPY|LINK";
-        case LINK: return "LINK";
-        default: return "NONE";
+            case MOVE: return "MOVE";
+            case MOVE|COPY: return "MOVE|COPY";
+            case MOVE|LINK: return "MOVE|LINK";
+            case MOVE|COPY|LINK: return "MOVE|COPY|LINK";
+            case COPY: return "COPY";
+            case COPY|LINK: return "COPY|LINK";
+            case LINK: return "LINK";
+            default: return "NONE";
         }
     }
     private String lastAction;
@@ -526,7 +526,7 @@ public abstract class DragHandler
         setModifiers(UNKNOWN_MODIFIERS);
         transferable = UNKNOWN_TRANSFERABLE;
         if (ghost != null) {
-            if (e.getDropSuccess()) { 
+            if (e.getDropSuccess()) {
                 ghost.dispose();
             }
             else {
@@ -543,7 +543,7 @@ public abstract class DragHandler
         where.translate(imageOffset.x, imageOffset.y);
         return where;
     }
-    
+
     @Override
     public void dragEnter(DragSourceDragEvent e) {
         describe("enter", e);
@@ -563,7 +563,7 @@ public abstract class DragHandler
         if (ghost != null) {
             ghost.move(getImageLocation(e.getLocation()));
         }
-        if (moved) 
+        if (moved)
             updateCursor(e);
         moved = true;
     }

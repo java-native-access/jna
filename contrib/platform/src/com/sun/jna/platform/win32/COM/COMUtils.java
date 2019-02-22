@@ -1,23 +1,23 @@
 /* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -45,7 +45,7 @@ import com.sun.jna.ptr.IntByReference;
 
 /**
  * The Class COMUtils.
- * 
+ *
  * @author wolf.tobias@gmx.net The Class COMUtils.
  */
 public abstract class COMUtils {
@@ -57,7 +57,7 @@ public abstract class COMUtils {
 
     /**
      * Succeeded.
-     * 
+     *
      * @param hr
      *            the hr
      * @return true, if successful
@@ -68,7 +68,7 @@ public abstract class COMUtils {
 
     /**
      * Succeeded.
-     * 
+     *
      * @param hr
      *            the hr
      * @return true, if successful
@@ -79,7 +79,7 @@ public abstract class COMUtils {
 
     /**
      * Failed.
-     * 
+     *
      * @param hr
      *            the hr
      * @return true, if successful
@@ -90,7 +90,7 @@ public abstract class COMUtils {
 
     /**
      * Failed.
-     * 
+     *
      * @param hr
      *            the hr
      * @return true, if successful
@@ -101,7 +101,7 @@ public abstract class COMUtils {
 
     /**
      * Throw new exception.
-     * 
+     *
      * @param hr
      *            the hr
      */
@@ -121,11 +121,11 @@ public abstract class COMUtils {
     /**
      * Check status of HRESULT if it indicates a failed call a COMInvokeException
      * is reaised.
-     * 
+     *
      * <p>The string members of the pExcepInfo are freed in this call and can't
      * be used afterwards. The structure is not freeed, as it is expected, that
      * is allocated via the Memory object of JNA.</p>
-     * 
+     *
      * @param hr
      *            the hr
      * @param pExcepInfo
@@ -135,9 +135,9 @@ public abstract class COMUtils {
      */
     public static void checkRC(HRESULT hr, EXCEPINFO pExcepInfo,
             IntByReference puArgErr) {
-        
+
         COMException resultException = null;
-        
+
         if (FAILED(hr)) {
             StringBuilder formatMessage = new StringBuilder();
 
@@ -148,7 +148,7 @@ public abstract class COMUtils {
             String helpFile = null;
             Integer helpCtx = null;
             String source = null;
-            
+
             if(puArgErr != null) {
                 errorArg = puArgErr.getValue();
             }
@@ -158,16 +158,16 @@ public abstract class COMUtils {
             } catch (LastErrorException ex) {
                 // throws if HRESULT can't be resolved
             }
-            
+
             formatMessage.append("(HRESULT: ");
             formatMessage.append(Integer.toHexString(hr.intValue()));
             formatMessage.append(")");
-            
+
             if(pExcepInfo != null) {
                 wCode = pExcepInfo.wCode.intValue();
                 scode = pExcepInfo.scode.intValue();
                 helpCtx = pExcepInfo.dwHelpContext.intValue();
-                
+
                 if(pExcepInfo.bstrSource != null) {
                     source = pExcepInfo.bstrSource.getValue();
                     formatMessage.append("\nSource:      ");
@@ -182,10 +182,10 @@ public abstract class COMUtils {
                     helpFile = pExcepInfo.bstrHelpFile.getValue();
                 }
             }
-            
+
             throw new COMInvokeException(
-                    formatMessage.toString(), 
-                    hr, 
+                    formatMessage.toString(),
+                    hr,
                     errorArg,
                     description,
                     helpCtx,
@@ -195,7 +195,7 @@ public abstract class COMUtils {
                     wCode
             );
         }
-        
+
         if(pExcepInfo != null) {
             if(pExcepInfo.bstrSource != null) {
                 OleAuto.INSTANCE.SysFreeString(pExcepInfo.bstrSource);
@@ -207,7 +207,7 @@ public abstract class COMUtils {
                 OleAuto.INSTANCE.SysFreeString(pExcepInfo.bstrHelpFile);
             }
         }
-        
+
         if(resultException != null) {
             throw resultException;
         }
@@ -215,7 +215,7 @@ public abstract class COMUtils {
 
     /**
      * Gets the all com info on system.
-     * 
+     *
      * @return the all com info on system
      */
     public static ArrayList<COMInfo> getAllCOMInfoOnSystem() {
@@ -287,7 +287,7 @@ public abstract class COMUtils {
      * Check if COM was initialized correctly. The initialization status is not changed!
      *
      * <p>This is a debug function, not for normal usage!</p>
-     * 
+     *
      * @return whether COM has been initialized
      */
     public static boolean comIsInitialized() {
@@ -315,7 +315,7 @@ public abstract class COMUtils {
 
     /**
      * The Class COMInfo.
-     * 
+     *
      * @author wolf.tobias@gmx.net The Class COMInfo.
      */
     public static class COMInfo {
@@ -346,7 +346,7 @@ public abstract class COMUtils {
 
         /**
          * Instantiates a new cOM info.
-         * 
+         *
          * @param clsid
          *            the clsid
          */

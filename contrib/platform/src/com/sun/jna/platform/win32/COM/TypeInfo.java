@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -52,7 +52,7 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: Auto-generated Javadoc
 /**
  * Wrapper class for the ITypeInfo interface.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class TypeInfo extends Unknown implements ITypeInfo {
@@ -69,7 +69,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Instantiates a new i type info.
-     * 
+     *
      * @param pvInstance
      *            the pv instance
      */
@@ -79,7 +79,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the type attr.
-     * 
+     *
      * @param ppTypeAttr
      *            the pp type attr
      * @return the hresult
@@ -93,7 +93,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the type comp.
-     * 
+     *
      * @param ppTComp
      *            the pp t comp
      * @return the hresult
@@ -107,7 +107,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the func desc.
-     * 
+     *
      * @param index
      *            the index
      * @param ppFuncDesc
@@ -125,7 +125,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the var desc.
-     * 
+     *
      * @param index
      *            the index
      * @param ppVarDesc
@@ -143,7 +143,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the names.
-     * 
+     *
      * @param memid
      *            the memid
      * @param rgBstrNames
@@ -154,20 +154,20 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pc names
      * @return the hresult
      */
-    public/* [local] */HRESULT GetNames(
-    /* [in] */MEMBERID memid,
-    /* [length_is][size_is][out] */BSTR[] rgBstrNames,
-    /* [in] */UINT cMaxNames,
-    /* [out] */UINTByReference pcNames) {
+    public/* [local] */ HRESULT GetNames(
+            /* [in] */MEMBERID memid,
+            /* [length_is][size_is][out] */ BSTR[] rgBstrNames,
+            /* [in] */ UINT cMaxNames,
+            /* [out] */ UINTByReference pcNames) {
 
         return (HRESULT) this._invokeNativeObject(7,
-                new Object[] { this.getPointer(), memid, rgBstrNames,
-                        cMaxNames, pcNames }, HRESULT.class);
+            new Object[]{this.getPointer(), memid, rgBstrNames,
+                cMaxNames, pcNames}, HRESULT.class);
     }
 
     /**
      * Gets the ref type of impl type.
-     * 
+     *
      * @param index
      *            the index
      * @param pRefType
@@ -185,7 +185,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the impl type flags.
-     * 
+     *
      * @param index
      *            the index
      * @param pImplTypeFlags
@@ -203,7 +203,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the i ds of names.
-     * 
+     *
      * @param rgszNames
      *            the rgsz names
      * @param cNames
@@ -224,7 +224,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Invoke.
-     * 
+     *
      * @param pvInstance
      *            the pv instance
      * @param memid
@@ -241,24 +241,24 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pu arg err
      * @return the hresult
      */
-    public/* [local] */HRESULT Invoke(
-    /* [in] */PVOID pvInstance,
-    /* [in] */MEMBERID memid,
-    /* [in] */WORD wFlags,
-    /* [out][in] */DISPPARAMS.ByReference pDispParams,
-    /* [out] */VARIANT.ByReference pVarResult,
-    /* [out] */EXCEPINFO.ByReference pExcepInfo,
-    /* [out] */UINTByReference puArgErr) {
+    public/* [local] */ HRESULT Invoke(
+            /* [in] */PVOID pvInstance,
+            /* [in] */ MEMBERID memid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS.ByReference pDispParams,
+            /* [out] */ VARIANT.ByReference pVarResult,
+            /* [out] */ EXCEPINFO.ByReference pExcepInfo,
+            /* [out] */ UINTByReference puArgErr) {
 
         return (HRESULT) this._invokeNativeObject(11,
-                new Object[] { this.getPointer(), pvInstance, memid, wFlags,
-                        pDispParams, pVarResult, pExcepInfo, puArgErr },
-                HRESULT.class);
+            new Object[]{this.getPointer(), pvInstance, memid, wFlags,
+                pDispParams, pVarResult, pExcepInfo, puArgErr},
+            HRESULT.class);
     }
 
     /**
      * Gets the documentation.
-     * 
+     *
      * @param memid
      *            the memid
      * @param pBstrName
@@ -271,22 +271,22 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the bstr help file
      * @return the hresult
      */
-    public/* [local] */HRESULT GetDocumentation(
-    /* [in] */MEMBERID memid,
-    /* [out] */BSTRByReference pBstrName,
-    /* [out] */BSTRByReference pBstrDocString,
-    /* [out] */DWORDByReference pdwHelpContext,
-    /* [out] */BSTRByReference pBstrHelpFile) {
+    public/* [local] */ HRESULT GetDocumentation(
+            /* [in] */MEMBERID memid,
+            /* [out] */ BSTRByReference pBstrName,
+            /* [out] */ BSTRByReference pBstrDocString,
+            /* [out] */ DWORDByReference pdwHelpContext,
+            /* [out] */ BSTRByReference pBstrHelpFile) {
 
         return (HRESULT) this._invokeNativeObject(12,
-                new Object[] { this.getPointer(), memid, pBstrName,
-                        pBstrDocString, pdwHelpContext, pBstrHelpFile },
-                HRESULT.class);
+            new Object[]{this.getPointer(), memid, pBstrName,
+                pBstrDocString, pdwHelpContext, pBstrHelpFile},
+            HRESULT.class);
     }
 
     /**
      * Gets the dll entry.
-     * 
+     *
      * @param memid
      *            the memid
      * @param invKind
@@ -299,21 +299,21 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pw ordinal
      * @return the hresult
      */
-    public/* [local] */HRESULT GetDllEntry(
-    /* [in] */MEMBERID memid,
-    /* [in] */INVOKEKIND invKind,
-    /* [out] */BSTRByReference pBstrDllName,
-    /* [out] */BSTRByReference pBstrName,
-    /* [out] */WORDByReference pwOrdinal) {
+    public/* [local] */ HRESULT GetDllEntry(
+            /* [in] */MEMBERID memid,
+            /* [in] */ INVOKEKIND invKind,
+            /* [out] */ BSTRByReference pBstrDllName,
+            /* [out] */ BSTRByReference pBstrName,
+            /* [out] */ WORDByReference pwOrdinal) {
 
         return (HRESULT) this._invokeNativeObject(13,
-                new Object[] { this.getPointer(), memid, invKind, pBstrDllName,
-                        pBstrName, pwOrdinal }, HRESULT.class);
+            new Object[]{this.getPointer(), memid, invKind, pBstrDllName,
+                pBstrName, pwOrdinal}, HRESULT.class);
     }
 
     /**
      * Gets the ref type info.
-     * 
+     *
      * @param hRefType
      *            the h ref type
      * @param ppTInfo
@@ -331,7 +331,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Address of member.
-     * 
+     *
      * @param memid
      *            the memid
      * @param invKind
@@ -352,7 +352,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Creates the instance.
-     * 
+     *
      * @param pUnkOuter
      *            the unk outer
      * @param riid
@@ -373,7 +373,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the mops.
-     * 
+     *
      * @param memid
      *            the memid
      * @param pBstrMops
@@ -391,7 +391,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Gets the containing type lib.
-     * 
+     *
      * @param ppTLib
      *            the pp t lib
      * @param pIndex
@@ -409,7 +409,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Release type attr.
-     * 
+     *
      * @param pTypeAttr
      *            the type attr
      */
@@ -420,7 +420,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Release func desc.
-     * 
+     *
      * @param pFuncDesc
      *            the func desc
      */
@@ -431,7 +431,7 @@ public class TypeInfo extends Unknown implements ITypeInfo {
 
     /**
      * Release var desc.
-     * 
+     *
      * @param pVarDesc
      *            the var desc
      */

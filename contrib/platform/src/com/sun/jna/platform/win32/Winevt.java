@@ -1544,7 +1544,7 @@ public interface Winevt {
 
     /**
      * Defines the identifiers that identify the metadata properties of an event definition.
-     * 
+     *
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa385517%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396">MSDN</a>
      */
     public static interface EVT_EVENT_METADATA_PROPERTY_ID {

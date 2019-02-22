@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -879,7 +879,7 @@ public interface Advapi32 extends StdCallLibrary {
      * @return If the function succeeds, the return value is
      *         {@link WinError#ERROR_SUCCESS}.<br />
      *         If the remote computer cannot be found or if its Remote Registry
-     *         service is disabled, the function fails and returns 
+     *         service is disabled, the function fails and returns
      *         {@link WinError#ERROR_BAD_NETPATH}.<br />
      *         If attempting to use a registry handle other than one of the
      *         three predefined handles, the function fails and returns
@@ -940,21 +940,21 @@ public interface Advapi32 extends StdCallLibrary {
      *         defined in Winerror.h.
      */
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, char[] lpData, IntByReference lpcbData);
+            IntByReference lpType, char[] lpData, IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, byte[] lpData, IntByReference lpcbData);
+            IntByReference lpType, byte[] lpData, IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, IntByReference lpData,
-			IntByReference lpcbData);
+            IntByReference lpType, IntByReference lpData,
+            IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, LongByReference lpData,
-			IntByReference lpcbData);
+            IntByReference lpType, LongByReference lpData,
+            IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
+            IntByReference lpType, Pointer lpData, IntByReference lpcbData);
 
     /**
      * The RegCloseKey function releases a handle to the specified registry key.
@@ -1029,7 +1029,7 @@ public interface Advapi32 extends StdCallLibrary {
      */
     int RegSetValueEx(HKEY hKey, String lpValueName, int Reserved,
                       int dwType, byte[] lpData, int cbData);
-    
+
     /**
      *
      * @param hKey registry key
@@ -1153,7 +1153,7 @@ public interface Advapi32 extends StdCallLibrary {
     int RegEnumValue(HKEY hKey, int dwIndex, char[] lpValueName,
                      IntByReference lpcchValueName, IntByReference reserved,
                      IntByReference lpType, Pointer lpData, IntByReference lpcbData);
-    
+
     /**
      * See {@link #RegEnumValue(com.sun.jna.platform.win32.WinReg.HKEY, int, char[], com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)}.
      */
@@ -1212,12 +1212,12 @@ public interface Advapi32 extends StdCallLibrary {
      *         defined in Winerror.h.
      */
     int RegQueryInfoKey(HKEY hKey, char[] lpClass,
-			IntByReference lpcClass, IntByReference lpReserved,
-			IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
-			IntByReference lpcMaxClassLen, IntByReference lpcValues,
-			IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
-			IntByReference lpcbSecurityDescriptor,
-			WinBase.FILETIME lpftLastWriteTime);
+            IntByReference lpcClass, IntByReference lpReserved,
+            IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
+            IntByReference lpcMaxClassLen, IntByReference lpcValues,
+            IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
+            IntByReference lpcbSecurityDescriptor,
+            WinBase.FILETIME lpftLastWriteTime);
 
     /**
      * Retrieves the type and data for the specified registry value.
@@ -1353,14 +1353,14 @@ public interface Advapi32 extends StdCallLibrary {
     int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
                     int dwFlags, IntByReference pdwType, Pointer pvData,
                     IntByReference pcbData);
-    
+
     /**
      * See {@link #RegGetValue(com.sun.jna.platform.win32.WinReg.HKEY, java.lang.String, java.lang.String, int, com.sun.jna.ptr.IntByReference, com.sun.jna.Pointer, com.sun.jna.ptr.IntByReference)}.
      */
     int RegGetValue(HKEY hkey, String lpSubKey, String lpValue,
                     int dwFlags, IntByReference pdwType, byte[] pvData,
                     IntByReference pcbData);
-    
+
     /**
      * Retrieves a registered handle to the specified event log.
      *
@@ -1482,8 +1482,8 @@ public interface Advapi32 extends StdCallLibrary {
      *         GetLastError.
      */
     boolean ReportEvent(HANDLE hEventLog, int wType, int wCategory,
-			int dwEventID, PSID lpUserSid, int wNumStrings, int dwDataSize,
-			String[] lpStrings, Pointer lpRawData);
+            int dwEventID, PSID lpUserSid, int wNumStrings, int dwDataSize,
+            String[] lpStrings, Pointer lpRawData);
 
     /**
      * Clears the specified event log, and optionally saves the current copy of
@@ -1704,7 +1704,7 @@ public interface Advapi32 extends StdCallLibrary {
      *         information, call GetLastError.
      */
     boolean QueryServiceStatus(SC_HANDLE hService, SERVICE_STATUS lpServiceStatus);
-    
+
     /**
      * Sends a control code to a service. To specify additional information when
      * stopping a service, use the ControlServiceEx function.
@@ -1912,7 +1912,7 @@ public interface Advapi32 extends StdCallLibrary {
      * <p>The following error codes may be set by the service control manager.
      * Other error codes may be set by the registry functions that are called by
      * the service control manager.</p>
-     * 
+     *
      * <table>
      * <tr><th>Return code</th><th>Description</th></tr>
      * <tr><td>{@link WinError#ERROR_ACCESS_DENIED}</td><td>The handle does not have the {@link Winsvc#SERVICE_ENUMERATE_DEPENDENTS} access right.</td></tr>
@@ -1922,9 +1922,9 @@ public interface Advapi32 extends StdCallLibrary {
      * </table>
      */
     boolean EnumDependentServices(SC_HANDLE hService, int dwServiceState,
-            Pointer lpService, int cbBufSize, IntByReference pcbBytesNeeded, 
+            Pointer lpService, int cbBufSize, IntByReference pcbBytesNeeded,
             IntByReference lpServicesReturned);
-    
+
     /**
      * Enumerates services in the specified service control manager database.
      * The name and status of each service are provided, along with additional
@@ -1951,7 +1951,7 @@ public interface Advapi32 extends StdCallLibrary {
      * @param dwServiceType      The type of services to be enumerated. This
      *                           parameter can be one or more of the following
      *                           values.
-     * 
+     *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
      * <tr><td>{@link WinNT#SERVICE_DRIVER}</td><td>Services of type {@link WinNT#SERVICE_KERNEL_DRIVER} and {@link WinNT#SERVICE_FILE_SYSTEM_DRIVER}.</td></tr>
@@ -1961,7 +1961,7 @@ public interface Advapi32 extends StdCallLibrary {
      * <tr><td>{@link WinNT#SERVICE_WIN32_OWN_PROCESS}</td><td>Services that run in their own processes.</td></tr>
      * <tr><td>{@link WinNT#SERVICE_WIN32_SHARE_PROCESS}</td><td>Services that share a process with one or more other services. For more information, see Service Programs.</td></tr>
      * </table>
-     * 
+     *
      * @param dwServiceState     The state of the services to be enumerated.
      *                           This parameter can be one of the following
      *                           values.
@@ -2023,7 +2023,7 @@ public interface Advapi32 extends StdCallLibrary {
      *                           belong to any group are enumerated. If this
      *                           parameter is NULL, group membership is ignored
      *                           and all services are enumerated.
-     * 
+     *
      * @return If the function succeeds, the return value is nonzero.
      *
      * <p>
@@ -2042,12 +2042,12 @@ public interface Advapi32 extends StdCallLibrary {
      * <tr><td>{@link WinError#ERROR_SHUTDOWN_IN_PROGRESS}</td><td>The system is shutting down; this function cannot be called.</td></tr>
      * </table>
      */
-    boolean EnumServicesStatusEx(SC_HANDLE hSCManager, int InfoLevel, 
-            int dwServiceType, int dwServiceState, Pointer lpServices, 
-            int cbBufSize, IntByReference pcbBytesNeeded, 
+    boolean EnumServicesStatusEx(SC_HANDLE hSCManager, int InfoLevel,
+            int dwServiceType, int dwServiceState, Pointer lpServices,
+            int cbBufSize, IntByReference pcbBytesNeeded,
             IntByReference lpServicesReturned, IntByReference lpResumeHandle,
             String pszGroupName);
-    
+
     /**
      * Creates a new process and its primary thread. The new process runs in the
      * security context of the user represented by the specified token.
@@ -2450,7 +2450,7 @@ public interface Advapi32 extends StdCallLibrary {
      *            which to set security information. This can be
      *            the name of a local or remote file or directory on an NTFS file
      *            system, network share, registry key, semaphore, event, mutex,
-     *            file mapping, or waitable timer.	 *
+     *            file mapping, or waitable timer. *
      *            For descriptions of the string formats for the different
      *            object types, see SE_OBJECT_TYPE.
      * @param ObjectType [in]
@@ -3116,7 +3116,7 @@ public interface Advapi32 extends StdCallLibrary {
      *                       that can execute in the calling process. The
      *                       members of the last entry in the table must have
      *                       NULL values to designate the end of the table.
-     * 
+     *
      * @return true if function succeeds. To get extended error information, call
      * GetLastError. Possible error codes:
      * <table>
@@ -3196,7 +3196,7 @@ public interface Advapi32 extends StdCallLibrary {
      * @param lpServiceStatus A pointer to the SERVICE_STATUS structure the
      *                        contains the latest status information for the
      *                        calling service.
-     *  
+     *
      * @return true if function succeeds. To get extended error information, call
      * GetLastError. Possible error codes:
      * <table>
@@ -3247,17 +3247,17 @@ public interface Advapi32 extends StdCallLibrary {
      * <tr><td>SERVICE_WIN32_OWN_PROCESS<br>0x00000010</td><td>Service that runs in its own process.</td></tr>
      * <tr><td>SERVICE_WIN32_SHARE_PROCESS<br>0x00000020</td><td>Service that shares a process with one or more other services. For more information, see Service Programs.</td></tr>
      * </table>
-     * 
+     *
      * <p>If you specify either SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS, and the service is running in the context of the LocalSystem account, you can also specify the following value.</p>
-     * 
+     *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
      * <tr><td>SERVICE_INTERACTIVE_PROCESS<br>0x00000100</td><td>The service can interact with the desktop.</td></tr>
      * </table>
-     * 
+     *
      * @param dwStartType        [in] The service start options. This parameter
      *                           can be one of the following values.
-     * 
+     *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
      * <tr><td>SERVICE_AUTO_START<br>0x00000002</td><td>A service started automatically by the service control manager during system startup.</td></tr>
@@ -3270,7 +3270,7 @@ public interface Advapi32 extends StdCallLibrary {
      * @param dwErrorControl     [in] The severity of the error, and action
      *                           taken, if this service fails to start. This
      *                           parameter can be one of the following values.
-     * 
+     *
      * <table>
      * <tr><th>Value</th><th>Meaning</th></tr>
      * <tr><td>SERVICE_ERROR_CRITICAL<br>0x00000003</td><td>The startup program logs the error in the event log, if possible. If the last-known-good configuration is being started, the startup operation fails. Otherwise, the system is restarted with the last-known good configuration.</td></tr>
@@ -3286,29 +3286,29 @@ public interface Advapi32 extends StdCallLibrary {
      *                           share\\myservice.exe" should be specified as
      *                           "\"d:\\my share\\myservice.exe\"".
      *
-     *                           <p>The path can also include arguments for an 
-     *                           auto-start service. For example, 
+     *                           <p>The path can also include arguments for an
+     *                           auto-start service. For example,
      *                           "d:\\myshare\\myservice.exe arg1 arg2". These
-     *                           passed to the service entry point (typically 
+     *                           passed to the service entry point (typically
      *                           the main function).</p>
      *
-     *                           <p>If you specify a path on another computer, 
-     *                           the share must be accessible by the computer 
-     *                           account of the local computer because this is 
-     *                           the security context used in the remote call. 
+     *                           <p>If you specify a path on another computer,
+     *                           the share must be accessible by the computer
+     *                           account of the local computer because this is
+     *                           the security context used in the remote call.
      *                           However, this requirement allows any potential
-     *                           vulnerabilities in the remote computer to 
+     *                           vulnerabilities in the remote computer to
      *                           affect the local computer. Therefore, it is
      *                           best to use a local file.</p>
-     * 
+     *
      * @param lpLoadOrderGroup   [in, optional] The names of the load ordering
      *                           group of which this service is a member.
      *                           Specify NULL or an empty string if the service
      *                           does not belong to a group.
      *
-     *                           <p>The startup program uses load ordering 
-     *                           groups to load groups of services in a 
-     *                           specified order with respect to the other 
+     *                           <p>The startup program uses load ordering
+     *                           groups to load groups of services in a
+     *                           specified order with respect to the other
      *                           groups. The list of load ordering groups is
      *                           contained in the following registry value:</p>
      *
@@ -3319,15 +3319,15 @@ public interface Advapi32 extends StdCallLibrary {
      *                           parameter. Specify NULL if you are not changing
      *                           the existing tag.
      *
-     *                           <p>You can use a tag for ordering service 
-     *                           startup within a load ordering group by 
+     *                           <p>You can use a tag for ordering service
+     *                           startup within a load ordering group by
      *                           specifying a tag order vector in the following
      *                           registry value:</p>
      *
      * <p>HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\GroupOrderList</p>
      *
      *                           <p>Tags are only evaluated for driver services
-     *                           that have SERVICE_BOOT_START or 
+     *                           that have SERVICE_BOOT_START or
      *                           SERVICE_SYSTEM_START start types.</p>
      * @param lpDependencies     [in, optional] A pointer to a double
      *                           null-terminated array of null-separated names
@@ -3339,9 +3339,9 @@ public interface Advapi32 extends StdCallLibrary {
      *                           the group is running after an attempt to start
      *                           all members of the group.
      *
-     *                           <p>You must prefix group names with 
+     *                           <p>You must prefix group names with
      *                           SC_GROUP_IDENTIFIER so that they can be
-     *                           distinguished from a service name, because 
+     *                           distinguished from a service name, because
      *                           services and service groups share the same name
      *                           space.</p>
      * @param lpServiceStartName [in, optional] The name of the account under
@@ -3352,8 +3352,8 @@ public interface Advapi32 extends StdCallLibrary {
      *                           user. If the account belongs to the built-in
      *                           domain, you can specify .\UserName.
      *
-     *                           <p>If this parameter is NULL, CreateService 
-     *                           uses the LocalSystem account. If the service 
+     *                           <p>If this parameter is NULL, CreateService
+     *                           uses the LocalSystem account. If the service
      *                           type specifies SERVICE_INTERACTIVE_PROCESS, the
      *                           service must run in the LocalSystem account.</p>
      *
@@ -3378,7 +3378,7 @@ public interface Advapi32 extends StdCallLibrary {
      *                           If the service is configured to use a virtual
      *                           account, specify the name as NT
      *                           SERVICE\ServiceName. For more information about
-     *                           managed service accounts and virtual accounts, 
+     *                           managed service accounts and virtual accounts,
      *                           see the Service Accounts Step-by-Step Guide.
      *
      * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and Windows XP:</strong>
@@ -3392,8 +3392,8 @@ public interface Advapi32 extends StdCallLibrary {
      *                           account. For more information, see Service
      *                           Record List.
      *
-     *                           <p>If the account name specified by the 
-     *                           lpServiceStartName parameter is the name of a 
+     *                           <p>If the account name specified by the
+     *                           lpServiceStartName parameter is the name of a
      *                           managed service account or virtual account
      *                           name, the lpPassword parameter must be NULL.</p>
      *
@@ -3401,7 +3401,7 @@ public interface Advapi32 extends StdCallLibrary {
      *
      * @return SC_HANDLE on success, NULL on error. Call GetLastError to
      * get extended error condition. Possible error codes:
-     * 
+     *
      * <table>
      * <tr><th>Return code</th><th>Description</th></tr>
      * <tr><td>ERROR_ACCESS_DENIED</td><td>The handle to the SCM database does not have the SC_MANAGER_CREATE_SERVICE access right.</td></tr>
@@ -3423,14 +3423,14 @@ public interface Advapi32 extends StdCallLibrary {
 
     /**
      * Marks the specified service for deletion from the service control manager database.
-     * 
+     *
      * @param hService [in] A handle to the service. This handle is returned by
      *                 the OpenService or CreateService function, and it must
      *                 have the DELETE access right.
-     * 
+     *
      * @return true if function succeeds. To get extended error information, call
      * GetLastError. Possible error codes:
-     * 
+     *
      * <table>
      * <tr><th>Return code</th><th>Description</th></tr>
      * <tr><td>ERROR_ACCESS_DENIED</td><td>The handle does not have the DELETE access right.</td></tr>

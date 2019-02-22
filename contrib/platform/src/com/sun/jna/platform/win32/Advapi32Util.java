@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -100,287 +100,287 @@ import java.util.List;
  * @author dblock[at]dblock.org
  */
 public abstract class Advapi32Util {
-	/**
-	 * An account.
-	 */
-	public static class Account {
-		/**
-		 * Account name.
-		 */
-		public String name;
+    /**
+     * An account.
+     */
+    public static class Account {
+        /**
+         * Account name.
+         */
+        public String name;
 
-		/**
-		 * Account domain.
-		 */
-		public String domain;
+        /**
+         * Account domain.
+         */
+        public String domain;
 
-		/**
-		 * Account SID.
-		 */
-		public byte[] sid;
+        /**
+         * Account SID.
+         */
+        public byte[] sid;
 
-		/**
-		 * String representation of the account SID.
-		 */
-		public String sidString;
+        /**
+         * String representation of the account SID.
+         */
+        public String sidString;
 
-		/**
-		 * Account type, one of SID_NAME_USE.
-		 */
-		public int accountType;
+        /**
+         * Account type, one of SID_NAME_USE.
+         */
+        public int accountType;
 
-		/**
-		 * Fully qualified account name.
-		 */
-		public String fqn;
-	}
+        /**
+         * Fully qualified account name.
+         */
+        public String fqn;
+    }
 
 
-	/**
-	 * Retrieves the name of the user associated with the current thread.
-	 *
-	 * @return A user name.
-	 */
-	public static String getUserName() {
-		char[] buffer = new char[128];
-		IntByReference len = new IntByReference(buffer.length);
-		boolean result = Advapi32.INSTANCE.GetUserNameW(buffer, len);
+    /**
+     * Retrieves the name of the user associated with the current thread.
+     *
+     * @return A user name.
+     */
+    public static String getUserName() {
+        char[] buffer = new char[128];
+        IntByReference len = new IntByReference(buffer.length);
+        boolean result = Advapi32.INSTANCE.GetUserNameW(buffer, len);
 
-		if (!result) {
-			switch (Kernel32.INSTANCE.GetLastError()) {
-    			case W32Errors.ERROR_INSUFFICIENT_BUFFER:
-    				buffer = new char[len.getValue()];
-    				break;
+        if (!result) {
+            switch (Kernel32.INSTANCE.GetLastError()) {
+                case W32Errors.ERROR_INSUFFICIENT_BUFFER:
+                    buffer = new char[len.getValue()];
+                    break;
 
-    			default:
-    				throw new Win32Exception(Native.getLastError());
-			}
+                default:
+                    throw new Win32Exception(Native.getLastError());
+            }
 
-			result = Advapi32.INSTANCE.GetUserNameW(buffer, len);
-		}
+            result = Advapi32.INSTANCE.GetUserNameW(buffer, len);
+        }
 
-		if (!result) {
-			throw new Win32Exception(Native.getLastError());
-		}
+        if (!result) {
+            throw new Win32Exception(Native.getLastError());
+        }
 
-		return Native.toString(buffer);
-	}
+        return Native.toString(buffer);
+    }
 
-	/**
-	 * Retrieves a security identifier (SID) for the account on the current
-	 * system.
-	 *
-	 * @param accountName
-	 *            Specifies the account name.
-	 * @return A structure containing the account SID;
-	 */
-	public static Account getAccountByName(String accountName) {
-		return getAccountByName(null, accountName);
-	}
+    /**
+     * Retrieves a security identifier (SID) for the account on the current
+     * system.
+     *
+     * @param accountName
+     *            Specifies the account name.
+     * @return A structure containing the account SID;
+     */
+    public static Account getAccountByName(String accountName) {
+        return getAccountByName(null, accountName);
+    }
 
-	/**
-	 * Retrieves a security identifier (SID) for a given account.
-	 *
-	 * @param systemName
-	 *            Name of the system.
-	 * @param accountName
-	 *            Account name.
-	 * @return A structure containing the account SID.
-	 */
-	public static Account getAccountByName(String systemName, String accountName) {
-		IntByReference pSid = new IntByReference(0);
-		IntByReference cchDomainName = new IntByReference(0);
-		PointerByReference peUse = new PointerByReference();
+    /**
+     * Retrieves a security identifier (SID) for a given account.
+     *
+     * @param systemName
+     *            Name of the system.
+     * @param accountName
+     *            Account name.
+     * @return A structure containing the account SID.
+     */
+    public static Account getAccountByName(String systemName, String accountName) {
+        IntByReference pSid = new IntByReference(0);
+        IntByReference cchDomainName = new IntByReference(0);
+        PointerByReference peUse = new PointerByReference();
 
-		if (Advapi32.INSTANCE.LookupAccountName(systemName, accountName, null,
-				pSid, null, cchDomainName, peUse)) {
-			throw new RuntimeException(
-					"LookupAccountNameW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
-		}
+        if (Advapi32.INSTANCE.LookupAccountName(systemName, accountName, null,
+                pSid, null, cchDomainName, peUse)) {
+            throw new RuntimeException(
+                    "LookupAccountNameW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
 
-		int rc = Kernel32.INSTANCE.GetLastError();
-		if (pSid.getValue() == 0 || rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (pSid.getValue() == 0 || rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
 
-		Memory sidMemory = new Memory(pSid.getValue());
-		PSID result = new PSID(sidMemory);
-		char[] referencedDomainName = new char[cchDomainName.getValue() + 1];
+        Memory sidMemory = new Memory(pSid.getValue());
+        PSID result = new PSID(sidMemory);
+        char[] referencedDomainName = new char[cchDomainName.getValue() + 1];
 
-		if (!Advapi32.INSTANCE.LookupAccountName(systemName, accountName,
-				result, pSid, referencedDomainName, cchDomainName, peUse)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
+        if (!Advapi32.INSTANCE.LookupAccountName(systemName, accountName,
+                result, pSid, referencedDomainName, cchDomainName, peUse)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
 
-		Account account = new Account();
-		account.accountType = peUse.getPointer().getInt(0);
+        Account account = new Account();
+        account.accountType = peUse.getPointer().getInt(0);
 
-		String[] accountNamePartsBs = accountName.split("\\\\", 2);
-		String[] accountNamePartsAt = accountName.split("@", 2);
+        String[] accountNamePartsBs = accountName.split("\\\\", 2);
+        String[] accountNamePartsAt = accountName.split("@", 2);
 
-		if (accountNamePartsBs.length == 2) {
-			account.name = accountNamePartsBs[1];
-		} else if (accountNamePartsAt.length == 2) {
-			account.name = accountNamePartsAt[0];
-		} else {
-			account.name = accountName;
-		}
+        if (accountNamePartsBs.length == 2) {
+            account.name = accountNamePartsBs[1];
+        } else if (accountNamePartsAt.length == 2) {
+            account.name = accountNamePartsAt[0];
+        } else {
+            account.name = accountName;
+        }
 
-		if (cchDomainName.getValue() > 0) {
-			account.domain = Native.toString(referencedDomainName);
-			account.fqn = account.domain + "\\" + account.name;
-		} else {
-			account.fqn = account.name;
-		}
+        if (cchDomainName.getValue() > 0) {
+            account.domain = Native.toString(referencedDomainName);
+            account.fqn = account.domain + "\\" + account.name;
+        } else {
+            account.fqn = account.name;
+        }
 
-		account.sid = result.getBytes();
-		account.sidString = convertSidToStringSid(new PSID(account.sid));
-		return account;
-	}
+        account.sid = result.getBytes();
+        account.sidString = convertSidToStringSid(new PSID(account.sid));
+        return account;
+    }
 
-	/**
-	 * Get the account by SID on the local system.
-	 *
-	 * @param sid
-	 *            SID.
-	 * @return Account.
-	 */
-	public static Account getAccountBySid(PSID sid) {
-		return getAccountBySid(null, sid);
-	}
+    /**
+     * Get the account by SID on the local system.
+     *
+     * @param sid SID.
+     *
+     * @return Account.
+     */
+    public static Account getAccountBySid(PSID sid) {
+        return getAccountBySid(null, sid);
+    }
 
-	/**
-	 * Get the account by SID.
-	 *
-	 * @param systemName
-	 *            Name of the system.
-	 * @param sid
-	 *            SID.
-	 * @return Account.
-	 */
-	public static Account getAccountBySid(String systemName, PSID sid) {
-		IntByReference cchName = new IntByReference();
-		IntByReference cchDomainName = new IntByReference();
-		PointerByReference peUse = new PointerByReference();
+    /**
+     * Get the account by SID.
+     *
+     * @param systemName
+     *            Name of the system.
+     * @param sid
+     *            SID.
+     * @return Account.
+     */
+    public static Account getAccountBySid(String systemName, PSID sid) {
+        IntByReference cchName = new IntByReference();
+        IntByReference cchDomainName = new IntByReference();
+        PointerByReference peUse = new PointerByReference();
 
-		if (Advapi32.INSTANCE.LookupAccountSid(systemName, sid, null, cchName, null,
-				cchDomainName, peUse)) {
-			throw new RuntimeException(
-					"LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
-		}
+        if (Advapi32.INSTANCE.LookupAccountSid(systemName, sid, null, cchName, null,
+                cchDomainName, peUse)) {
+            throw new RuntimeException(
+                    "LookupAccountSidW was expected to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
 
-		int rc = Kernel32.INSTANCE.GetLastError();
-		if (cchName.getValue() == 0
-				|| rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (cchName.getValue() == 0
+                || rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
 
-		char[] domainName = new char[cchDomainName.getValue()];
-		char[] name = new char[cchName.getValue()];
+        char[] domainName = new char[cchDomainName.getValue()];
+        char[] name = new char[cchName.getValue()];
 
-		if (!Advapi32.INSTANCE.LookupAccountSid(systemName, sid, name, cchName,
-				domainName, cchDomainName, peUse)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
+        if (!Advapi32.INSTANCE.LookupAccountSid(systemName, sid, name, cchName,
+                domainName, cchDomainName, peUse)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
 
-		Account account = new Account();
-		account.accountType = peUse.getPointer().getInt(0);
-		account.name = Native.toString(name);
+        Account account = new Account();
+        account.accountType = peUse.getPointer().getInt(0);
+        account.name = Native.toString(name);
 
-		if (cchDomainName.getValue() > 0) {
-			account.domain = Native.toString(domainName);
-			account.fqn = account.domain + "\\" + account.name;
-		} else {
-			account.fqn = account.name;
-		}
+        if (cchDomainName.getValue() > 0) {
+            account.domain = Native.toString(domainName);
+            account.fqn = account.domain + "\\" + account.name;
+        } else {
+            account.fqn = account.name;
+        }
 
-		account.sid = sid.getBytes();
-		account.sidString = convertSidToStringSid(sid);
-		return account;
-	}
+        account.sid = sid.getBytes();
+        account.sidString = convertSidToStringSid(sid);
+        return account;
+    }
 
-	/**
-	 * Convert a security identifier (SID) to a string format suitable for
-	 * display, storage, or transmission.
-	 *
-	 * @param sid
-	 *            SID bytes.
-	 * @return String SID.
-	 */
-	public static String convertSidToStringSid(PSID sid) {
-		PointerByReference stringSid = new PointerByReference();
-		if (!Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
+    /**
+     * Convert a security identifier (SID) to a string format suitable for
+     * display, storage, or transmission.
+     *
+     * @param sid
+     *            SID bytes.
+     * @return String SID.
+     */
+    public static String convertSidToStringSid(PSID sid) {
+        PointerByReference stringSid = new PointerByReference();
+        if (!Advapi32.INSTANCE.ConvertSidToStringSid(sid, stringSid)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
 
-		Pointer ptr = stringSid.getValue();
-		try {
-			return ptr.getWideString(0);
-		} finally {
-		    Kernel32Util.freeLocalMemory(ptr);
-		}
-	}
+        Pointer ptr = stringSid.getValue();
+        try {
+            return ptr.getWideString(0);
+        } finally {
+            Kernel32Util.freeLocalMemory(ptr);
+        }
+    }
 
-	/**
-	 * Convert a string representation of a security identifier (SID) to a
-	 * binary format.
-	 *
-	 * @param sidString
-	 *            String SID.
-	 * @return SID bytes.
-	 */
-	public static byte[] convertStringSidToSid(String sidString) {
-		PSIDByReference pSID = new PSIDByReference();
-		if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
+    /**
+     * Convert a string representation of a security identifier (SID) to a
+     * binary format.
+     *
+     * @param sidString
+     *            String SID.
+     * @return SID bytes.
+     */
+    public static byte[] convertStringSidToSid(String sidString) {
+        PSIDByReference pSID = new PSIDByReference();
+        if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
 
-		PSID value = pSID.getValue();
-		try {
-			return value.getBytes();
-		} finally {
-		    Kernel32Util.freeLocalMemory(value.getPointer());
-		}
-	}
+        PSID value = pSID.getValue();
+        try {
+            return value.getBytes();
+        } finally {
+            Kernel32Util.freeLocalMemory(value.getPointer());
+        }
+    }
 
-	/**
-	 * Compares a SID to a well known SID and returns TRUE if they match.
-	 *
-	 * @param sidString
-	 *            String representation of a SID.
-	 * @param wellKnownSidType
-	 *            Member of the WELL_KNOWN_SID_TYPE enumeration to compare with
-	 *            the SID at pSid.
-	 * @return True if the SID is of the well-known type, false otherwise.
-	 */
-	public static boolean isWellKnownSid(String sidString, int wellKnownSidType) {
-		PSIDByReference pSID = new PSIDByReference();
-		if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
+    /**
+     * Compares a SID to a well known SID and returns TRUE if they match.
+     *
+     * @param sidString
+     *            String representation of a SID.
+     * @param wellKnownSidType
+     *            Member of the WELL_KNOWN_SID_TYPE enumeration to compare with
+     *            the SID at pSid.
+     * @return True if the SID is of the well-known type, false otherwise.
+     */
+    public static boolean isWellKnownSid(String sidString, int wellKnownSidType) {
+        PSIDByReference pSID = new PSIDByReference();
+        if (!Advapi32.INSTANCE.ConvertStringSidToSid(sidString, pSID)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
 
-		PSID value = pSID.getValue();
-		try {
-			return Advapi32.INSTANCE.IsWellKnownSid(value, wellKnownSidType);
-		} finally {
-		    Kernel32Util.freeLocalMemory(value.getPointer());
-		}
-	}
+        PSID value = pSID.getValue();
+        try {
+            return Advapi32.INSTANCE.IsWellKnownSid(value, wellKnownSidType);
+        } finally {
+            Kernel32Util.freeLocalMemory(value.getPointer());
+        }
+    }
 
-	/**
-	 * Compares a SID to a well known SID and returns TRUE if they match.
-	 *
-	 * @param sidBytes
-	 *            Byte representation of a SID.
-	 * @param wellKnownSidType
-	 *            Member of the WELL_KNOWN_SID_TYPE enumeration to compare with
-	 *            the SID at pSid.
-	 * @return True if the SID is of the well-known type, false otherwise.
-	 */
-	public static boolean isWellKnownSid(byte[] sidBytes, int wellKnownSidType) {
-		PSID pSID = new PSID(sidBytes);
-		return Advapi32.INSTANCE.IsWellKnownSid(pSID, wellKnownSidType);
-	}
+    /**
+     * Compares a SID to a well known SID and returns TRUE if they match.
+     *
+     * @param sidBytes
+     *            Byte representation of a SID.
+     * @param wellKnownSidType
+     *            Member of the WELL_KNOWN_SID_TYPE enumeration to compare with
+     *            the SID at pSid.
+     * @return True if the SID is of the well-known type, false otherwise.
+     */
+    public static boolean isWellKnownSid(byte[] sidBytes, int wellKnownSidType) {
+        PSID pSID = new PSID(sidBytes);
+        return Advapi32.INSTANCE.IsWellKnownSid(pSID, wellKnownSidType);
+    }
 
     /**
      * Align cbAcl on a DWORD
@@ -391,7 +391,7 @@ public abstract class Advapi32Util {
         return (cbAcl + (DWORD.SIZE - 1)) & 0xfffffffc;
     }
 
-	/**
+    /**
      * Helper function to calculate the size of an ACE for a given PSID size
      * @param sidLength length of the sid
      * @return size of the ACE
@@ -403,2240 +403,2240 @@ public abstract class Advapi32Util {
     }
 
     /**
-	 * Get an account name from a string SID on the local machine.
-	 *
-	 * @param sidString
-	 *            SID.
-	 * @return Account.
-	 */
-	public static Account getAccountBySid(String sidString) {
-		return getAccountBySid(null, sidString);
-	}
+     * Get an account name from a string SID on the local machine.
+     *
+     * @param sidString
+     *            SID.
+     * @return Account.
+     */
+    public static Account getAccountBySid(String sidString) {
+        return getAccountBySid(null, sidString);
+    }
 
-	/**
-	 * Get an account name from a string SID.
-	 *
-	 * @param systemName
-	 *            System name.
-	 * @param sidString
-	 *            SID.
-	 * @return Account.
-	 */
-	public static Account getAccountBySid(String systemName, String sidString) {
-		return getAccountBySid(systemName, new PSID(convertStringSidToSid(sidString)));
-	}
+    /**
+     * Get an account name from a string SID.
+     *
+     * @param systemName
+     *            System name.
+     * @param sidString
+     *            SID.
+     * @return Account.
+     */
+    public static Account getAccountBySid(String systemName, String sidString) {
+        return getAccountBySid(systemName, new PSID(convertStringSidToSid(sidString)));
+    }
 
-	/**
-	 * This function returns the groups associated with a security token, such
-	 * as a user token.
-	 *
-	 * @param hToken
-	 *            Token.
-	 * @return Token groups.
-	 */
-	public static Account[] getTokenGroups(HANDLE hToken) {
-		// get token group information size
-		IntByReference tokenInformationLength = new IntByReference();
-		if (Advapi32.INSTANCE.GetTokenInformation(hToken,
-				WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0,
-				tokenInformationLength)) {
-			throw new RuntimeException(
-					"Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
-		}
-		int rc = Kernel32.INSTANCE.GetLastError();
-		if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		// get token group information
-		WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(
-				tokenInformationLength.getValue());
-		if (!Advapi32.INSTANCE.GetTokenInformation(hToken,
-				WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups,
-				tokenInformationLength.getValue(), tokenInformationLength)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
-		ArrayList<Account> userGroups = new ArrayList<Account>();
-		// make array of names
-		for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
-			Account group;
-			try {
-				group = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
-			} catch (Exception e) {
-				group = new Account();
-				group.sid = sidAndAttribute.Sid.getBytes();
-				group.sidString = Advapi32Util
-						.convertSidToStringSid(sidAndAttribute.Sid);
-				group.name = group.sidString;
-				group.fqn = group.sidString;
-				group.accountType = SID_NAME_USE.SidTypeGroup;
-			}
-			userGroups.add(group);
-		}
-		return userGroups.toArray(new Account[0]);
-	}
+    /**
+     * This function returns the groups associated with a security token, such
+     * as a user token.
+     *
+     * @param hToken
+     *            Token.
+     * @return Token groups.
+     */
+    public static Account[] getTokenGroups(HANDLE hToken) {
+        // get token group information size
+        IntByReference tokenInformationLength = new IntByReference();
+        if (Advapi32.INSTANCE.GetTokenInformation(hToken,
+                WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, null, 0,
+                tokenInformationLength)) {
+            throw new RuntimeException(
+                    "Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        // get token group information
+        WinNT.TOKEN_GROUPS groups = new WinNT.TOKEN_GROUPS(
+                tokenInformationLength.getValue());
+        if (!Advapi32.INSTANCE.GetTokenInformation(hToken,
+                WinNT.TOKEN_INFORMATION_CLASS.TokenGroups, groups,
+                tokenInformationLength.getValue(), tokenInformationLength)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        ArrayList<Account> userGroups = new ArrayList<Account>();
+        // make array of names
+        for (SID_AND_ATTRIBUTES sidAndAttribute : groups.getGroups()) {
+            Account group;
+            try {
+                group = Advapi32Util.getAccountBySid(sidAndAttribute.Sid);
+            } catch (Exception e) {
+                group = new Account();
+                group.sid = sidAndAttribute.Sid.getBytes();
+                group.sidString = Advapi32Util
+                        .convertSidToStringSid(sidAndAttribute.Sid);
+                group.name = group.sidString;
+                group.fqn = group.sidString;
+                group.accountType = SID_NAME_USE.SidTypeGroup;
+            }
+            userGroups.add(group);
+        }
+        return userGroups.toArray(new Account[0]);
+    }
 
-	/**
-	 * This function returns the information about the user who owns a security
-	 * token,
-	 *
-	 * @param hToken
-	 *            Token.
-	 * @return Token user.
-	 */
-	public static Account getTokenAccount(HANDLE hToken) {
-		// get token group information size
-		IntByReference tokenInformationLength = new IntByReference();
-		if (Advapi32.INSTANCE.GetTokenInformation(hToken,
-				WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0,
-				tokenInformationLength)) {
-			throw new RuntimeException(
-					"Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
-		}
-		int rc = Kernel32.INSTANCE.GetLastError();
-		if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		// get token user information
-		WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(
-				tokenInformationLength.getValue());
-		if (!Advapi32.INSTANCE.GetTokenInformation(hToken,
-				WinNT.TOKEN_INFORMATION_CLASS.TokenUser, user,
-				tokenInformationLength.getValue(), tokenInformationLength)) {
-			throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-		}
-		return getAccountBySid(user.User.Sid);
-	}
+    /**
+     * This function returns the information about the user who owns a security
+     * token,
+     *
+     * @param hToken
+     *            Token.
+     * @return Token user.
+     */
+    public static Account getTokenAccount(HANDLE hToken) {
+        // get token group information size
+        IntByReference tokenInformationLength = new IntByReference();
+        if (Advapi32.INSTANCE.GetTokenInformation(hToken,
+                WinNT.TOKEN_INFORMATION_CLASS.TokenUser, null, 0,
+                tokenInformationLength)) {
+            throw new RuntimeException(
+                    "Expected GetTokenInformation to fail with ERROR_INSUFFICIENT_BUFFER");
+        }
+        int rc = Kernel32.INSTANCE.GetLastError();
+        if (rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        // get token user information
+        WinNT.TOKEN_USER user = new WinNT.TOKEN_USER(
+                tokenInformationLength.getValue());
+        if (!Advapi32.INSTANCE.GetTokenInformation(hToken,
+                WinNT.TOKEN_INFORMATION_CLASS.TokenUser, user,
+                tokenInformationLength.getValue(), tokenInformationLength)) {
+            throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+        }
+        return getAccountBySid(user.User.Sid);
+    }
 
-	/**
-	 * Return the group memberships of the currently logged on user.
-	 *
-	 * @return An array of groups.
-	 */
-	public static Account[] getCurrentUserGroups() {
-		HANDLEByReference phToken = new HANDLEByReference();
-		Win32Exception err = null;
-		try {
-			// open thread or process token
-			HANDLE threadHandle = Kernel32.INSTANCE.GetCurrentThread();
-			if (!Advapi32.INSTANCE.OpenThreadToken(threadHandle,
-					TOKEN_DUPLICATE | TOKEN_QUERY, true, phToken)) {
-			    int rc = Kernel32.INSTANCE.GetLastError();
-				if (rc != W32Errors.ERROR_NO_TOKEN) {
-					throw new Win32Exception(rc);
-				}
+    /**
+     * Return the group memberships of the currently logged on user.
+     *
+     * @return An array of groups.
+     */
+    public static Account[] getCurrentUserGroups() {
+        HANDLEByReference phToken = new HANDLEByReference();
+        Win32Exception err = null;
+        try {
+            // open thread or process token
+            HANDLE threadHandle = Kernel32.INSTANCE.GetCurrentThread();
+            if (!Advapi32.INSTANCE.OpenThreadToken(threadHandle,
+                    TOKEN_DUPLICATE | TOKEN_QUERY, true, phToken)) {
+                int rc = Kernel32.INSTANCE.GetLastError();
+                if (rc != W32Errors.ERROR_NO_TOKEN) {
+                    throw new Win32Exception(rc);
+                }
 
-				HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
-				if (!Advapi32.INSTANCE.OpenProcessToken(processHandle,
-						TOKEN_DUPLICATE | TOKEN_QUERY, phToken)) {
-					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-				}
-			}
+                HANDLE processHandle = Kernel32.INSTANCE.GetCurrentProcess();
+                if (!Advapi32.INSTANCE.OpenProcessToken(processHandle,
+                        TOKEN_DUPLICATE | TOKEN_QUERY, phToken)) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+            }
 
-			return getTokenGroups(phToken.getValue());
-		} catch(Win32Exception e) {
-	        err = e;
-		    throw err;    // re-throw in order to invoke finally block
-		} finally {
-		    HANDLE hToken = phToken.getValue();
-			if (!WinBase.INVALID_HANDLE_VALUE.equals(hToken)) {
-				try {
-				    Kernel32Util.closeHandle(hToken);
-				} catch(Win32Exception e) {
-				    if (err == null) {
-				        err = e;
-				    } else {
-				        err.addSuppressedReflected(e);
-				    }
-				}
-			}
+            return getTokenGroups(phToken.getValue());
+        } catch(Win32Exception e) {
+            err = e;
+            throw err;    // re-throw in order to invoke finally block
+        } finally {
+            HANDLE hToken = phToken.getValue();
+            if (!WinBase.INVALID_HANDLE_VALUE.equals(hToken)) {
+                try {
+                    Kernel32Util.closeHandle(hToken);
+                } catch(Win32Exception e) {
+                    if (err == null) {
+                        err = e;
+                    } else {
+                        err.addSuppressedReflected(e);
+                    }
+                }
+            }
 
-			if (err != null) {
-			    throw err;
-			}
-		}
-	}
+            if (err != null) {
+                throw err;
+            }
+        }
+    }
 
-	/**
-	 * Checks whether a registry key exists.
-	 *
-	 * @param root
-	 *            HKEY_LOCAL_MACHINE, etc.
-	 * @param key
-	 *            Path to the registry key.
-	 * @return True if the key exists.
-	 */
-	public static boolean registryKeyExists(HKEY root, String key) {
-		return registryKeyExists(root, key, 0);
-	}
+    /**
+     * Checks whether a registry key exists.
+     *
+     * @param root
+     *            HKEY_LOCAL_MACHINE, etc.
+     * @param key
+     *            Path to the registry key.
+     * @return True if the key exists.
+     */
+    public static boolean registryKeyExists(HKEY root, String key) {
+        return registryKeyExists(root, key, 0);
+    }
 
-	/**
-	 * Checks whether a registry key exists.
-	 *
-	 * @param root
-	 *            HKEY_LOCAL_MACHINE, etc.
-	 * @param key
-	 *            Path to the registry key.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return True if the key exists.
-	 */
-	public static boolean registryKeyExists(HKEY root, String key, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		switch (rc) {
-		case W32Errors.ERROR_SUCCESS:
-			Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			return true;
-		case W32Errors.ERROR_FILE_NOT_FOUND:
-			return false;
-		default:
-			throw new Win32Exception(rc);
-		}
-	}
+    /**
+     * Checks whether a registry key exists.
+     *
+     * @param root
+     *            HKEY_LOCAL_MACHINE, etc.
+     * @param key
+     *            Path to the registry key.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return True if the key exists.
+     */
+    public static boolean registryKeyExists(HKEY root, String key, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        switch (rc) {
+            case W32Errors.ERROR_SUCCESS:
+                Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+                return true;
+            case W32Errors.ERROR_FILE_NOT_FOUND:
+                return false;
+            default:
+                throw new Win32Exception(rc);
+        }
+    }
 
-	/**
-	 * Checks whether a registry value exists.
-	 *
-	 * @param root
-	 *            HKEY_LOCAL_MACHINE, etc.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Value name.
-	 * @return True if the value exists.
-	 */
-	public static boolean registryValueExists(HKEY root, String key, String value) {
-		return registryValueExists(root, key, value, 0);
-	}
+    /**
+     * Checks whether a registry value exists.
+     *
+     * @param root
+     *            HKEY_LOCAL_MACHINE, etc.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Value name.
+     * @return True if the value exists.
+     */
+    public static boolean registryValueExists(HKEY root, String key, String value) {
+        return registryValueExists(root, key, value, 0);
+    }
 
-	/**
-	 * Checks whether a registry value exists.
-	 *
-	 * @param root
-	 *            HKEY_LOCAL_MACHINE, etc.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Value name.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return True if the value exists.
-	 */
-	public static boolean registryValueExists(HKEY root, String key,
-			String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-                switch (rc) {
+    /**
+     * Checks whether a registry value exists.
+     *
+     * @param root
+     *            HKEY_LOCAL_MACHINE, etc.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Value name.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return True if the value exists.
+     */
+    public static boolean registryValueExists(HKEY root, String key,
+            String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+            phkKey);
+        switch (rc) {
+            case W32Errors.ERROR_SUCCESS:
+                break;
+            case W32Errors.ERROR_FILE_NOT_FOUND:
+                return false;
+            default:
+                throw new Win32Exception(rc);
+        }
+        try {
+            IntByReference lpcbData = new IntByReference();
+            IntByReference lpType = new IntByReference();
+            rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
+                    lpType, (Pointer) null, lpcbData);
+            switch (rc) {
                 case W32Errors.ERROR_SUCCESS:
-                        break;
+                case W32Errors.ERROR_MORE_DATA:
+                case W32Errors.ERROR_INSUFFICIENT_BUFFER:
+                    return true;
                 case W32Errors.ERROR_FILE_NOT_FOUND:
-                        return false;
+                    return false;
                 default:
-                        throw new Win32Exception(rc);
+                    throw new Win32Exception(rc);
+            }
+        } finally {
+            if (phkKey.getValue() != WinBase.INVALID_HANDLE_VALUE) {
+                rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+                if (rc != W32Errors.ERROR_SUCCESS) {
+                    throw new Win32Exception(rc);
                 }
-		try {
-			IntByReference lpcbData = new IntByReference();
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegQueryValueEx(phkKey.getValue(), value, 0,
-					lpType, (Pointer) null, lpcbData);
-			switch (rc) {
-			case W32Errors.ERROR_SUCCESS:
-			case W32Errors.ERROR_MORE_DATA:
-			case W32Errors.ERROR_INSUFFICIENT_BUFFER:
-				return true;
-			case W32Errors.ERROR_FILE_NOT_FOUND:
-				return false;
-			default:
-				throw new Win32Exception(rc);
-			}
-		} finally {
-			if (phkKey.getValue() != WinBase.INVALID_HANDLE_VALUE) {
-				rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-				if (rc != W32Errors.ERROR_SUCCESS) {
-					throw new Win32Exception(rc);
-				}
-			}
-		}
-	}
+            }
+        }
+    }
 
-	/**
-	 * Get a registry REG_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String registryGetStringValue(HKEY root, String key,
-												String value) {
-		return registryGetStringValue(root, key, value, 0);
-	}
+    /**
+     * Get a registry REG_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String registryGetStringValue(HKEY root, String key,
+                                                String value) {
+        return registryGetStringValue(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry REG_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return String value.
-	 */
-	public static String registryGetStringValue(HKEY root, String key,
-			String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra ,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetStringValue(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry REG_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return String value.
+     */
+    public static String registryGetStringValue(HKEY root, String key,
+            String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra ,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetStringValue(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry REG_SZ value.
-	 *
-	 * @param hKey
-	 *            Parent Key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String registryGetStringValue(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (Pointer) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_SZ
-				&& lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue()
-					+ ", expected REG_SZ or REG_EXPAND_SZ");
-		}
-                if(lpcbData.getValue() == 0) {
-                    return "";
-                }
-                // See comment in #registryGetValue
-                Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
-                mem.clear();
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, mem, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                        return mem.getWideString(0);
-                } else {
-                        return mem.getString(0);
-                }
-	}
+    /**
+     * Get a registry REG_SZ value.
+     *
+     * @param hKey
+     *            Parent Key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String registryGetStringValue(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (Pointer) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_SZ
+                && lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue()
+                    + ", expected REG_SZ or REG_EXPAND_SZ");
+        }
+        if (lpcbData.getValue() == 0) {
+            return "";
+        }
+        // See comment in #registryGetValue
+        Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+        mem.clear();
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, mem, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+            return mem.getWideString(0);
+        } else {
+            return mem.getString(0);
+        }
+    }
 
-	/**
-	 * Get a registry REG_EXPAND_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String registryGetExpandableStringValue(HKEY root,
-			String key, String value) {
-		return registryGetExpandableStringValue(root, key, value, 0);
-	}
+    /**
+     * Get a registry REG_EXPAND_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String registryGetExpandableStringValue(HKEY root,
+            String key, String value) {
+        return registryGetExpandableStringValue(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry REG_EXPAND_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return String value.
-	 */
-	public static String registryGetExpandableStringValue(HKEY root,
-														  String key, String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetExpandableStringValue(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry REG_EXPAND_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return String value.
+     */
+    public static String registryGetExpandableStringValue(HKEY root,
+                                                          String key, String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetExpandableStringValue(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry REG_EXPAND_SZ value.
-	 *
-	 * @param hKey
-	 *            Parent Key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String registryGetExpandableStringValue(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue() + ", expected REG_SZ");
-		}
-                if(lpcbData.getValue() == 0) {
-                    return "";
-                }
-                // See comment in #registryGetValue
-                Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
-                mem.clear();
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, mem, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                        return mem.getWideString(0);
-                } else {
-                        return mem.getString(0);
-                }
-	}
+    /**
+     * Get a registry REG_EXPAND_SZ value.
+     *
+     * @param hKey
+     *            Parent Key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String registryGetExpandableStringValue(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (char[]) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_EXPAND_SZ) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue() + ", expected REG_SZ");
+        }
+        if (lpcbData.getValue() == 0) {
+            return "";
+        }
+        // See comment in #registryGetValue
+        Memory mem = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+        mem.clear();
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+            lpType, mem, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+            return mem.getWideString(0);
+        } else {
+            return mem.getString(0);
+        }
+    }
 
-	/**
-	 * Get a registry REG_MULTI_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String[] registryGetStringArray(HKEY root, String key,
-			String value) {
-		return registryGetStringArray(root, key, value, 0);
-	}
+    /**
+     * Get a registry REG_MULTI_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String[] registryGetStringArray(HKEY root, String key,
+            String value) {
+        return registryGetStringArray(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry REG_MULTI_SZ value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return String value.
-	 */
-	public static String[] registryGetStringArray(HKEY root, String key,
-												  String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetStringArray(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry REG_MULTI_SZ value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return String value.
+     */
+    public static String[] registryGetStringArray(HKEY root, String key,
+                                                  String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetStringArray(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry REG_MULTI_SZ value.
-	 *
-	 * @param hKey
-	 *            Parent Key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static String[] registryGetStringArray(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue() + ", expected REG_SZ");
-		}
+    /**
+     * Get a registry REG_MULTI_SZ value.
+     *
+     * @param hKey
+     *            Parent Key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static String[] registryGetStringArray(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (char[]) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_MULTI_SZ) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue() + ", expected REG_SZ");
+        }
                 // Allocate enougth memroy to hold value and ensure terminating
                 // double NULL chars are present
-		Memory data = new Memory(lpcbData.getValue() + 2 * Native.WCHAR_SIZE);
-                data.clear();
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		ArrayList<String> result = new ArrayList<String>();
-		int offset = 0;
-		while (offset < data.size()) {
-			String s;
-                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                                s = data.getWideString(offset);
-                                offset += s.length() * Native.WCHAR_SIZE;
-                                offset += Native.WCHAR_SIZE;
-                        } else {
-                                s = data.getString(offset);
-                                offset += s.length();
-                                offset += 1;
-                        }
+        Memory data = new Memory(lpcbData.getValue() + 2 * Native.WCHAR_SIZE);
+        data.clear();
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, data, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        ArrayList<String> result = new ArrayList<String>();
+        int offset = 0;
+        while (offset < data.size()) {
+            String s;
+            if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                s = data.getWideString(offset);
+                offset += s.length() * Native.WCHAR_SIZE;
+                offset += Native.WCHAR_SIZE;
+            } else {
+                s = data.getString(offset);
+                offset += s.length();
+                offset += 1;
+            }
 
-			if (s.length() == 0) {
-                                // A sequence of null-terminated strings,
-                                // terminated by an empty string (\0).
-                                // => The first empty string terminates the 
-				break;
-			} else {
-				result.add(s);
-			}
-		}
-		return result.toArray(new String[0]);
-	}
+            if (s.length() == 0) {
+                // A sequence of null-terminated strings,
+                // terminated by an empty string (\0).
+                // => The first empty string terminates the
+                break;
+            } else {
+                result.add(s);
+            }
+        }
+        return result.toArray(new String[0]);
+    }
 
-	/**
-	 * Get a registry REG_BINARY value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static byte[] registryGetBinaryValue(HKEY root, String key,
-			String value) {
-		return registryGetBinaryValue(root, key, value, 0);
-	}
+    /**
+     * Get a registry REG_BINARY value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static byte[] registryGetBinaryValue(HKEY root, String key,
+            String value) {
+        return registryGetBinaryValue(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry REG_BINARY value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return String value.
-	 */
-	public static byte[] registryGetBinaryValue(HKEY root, String key,
-												String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetBinaryValue(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry REG_BINARY value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return String value.
+     */
+    public static byte[] registryGetBinaryValue(HKEY root, String key,
+                                                String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetBinaryValue(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry REG_BINARY value.
-	 *
-	 * @param hKey
-	 *            Parent Key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return String value.
-	 */
-	public static byte[] registryGetBinaryValue(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (Pointer) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_BINARY) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue() + ", expected REG_BINARY");
-		}
-		byte[] data = new byte[lpcbData.getValue()];
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		return data;
-	}
+    /**
+     * Get a registry REG_BINARY value.
+     *
+     * @param hKey
+     *            Parent Key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return String value.
+     */
+    public static byte[] registryGetBinaryValue(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (Pointer) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_BINARY) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue() + ", expected REG_BINARY");
+        }
+        byte[] data = new byte[lpcbData.getValue()];
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, data, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        return data;
+    }
 
-	/**
-	 * Get a registry DWORD value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return Integer value.
-	 */
-	public static int registryGetIntValue(HKEY root, String key, String value) {
-		return registryGetIntValue(root, key, value, 0);
-	}
+    /**
+     * Get a registry DWORD value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return Integer value.
+     */
+    public static int registryGetIntValue(HKEY root, String key, String value) {
+        return registryGetIntValue(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry DWORD value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return Integer value.
-	 */
-	public static int registryGetIntValue(WinReg.HKEY root, String key, String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetIntValue(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry DWORD value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return Integer value.
+     */
+    public static int registryGetIntValue(WinReg.HKEY root, String key, String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetIntValue(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry DWORD value.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return Integer value.
-	 */
-	public static int registryGetIntValue(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_DWORD) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue() + ", expected REG_DWORD");
-		}
-		IntByReference data = new IntByReference();
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		return data.getValue();
-	}
+    /**
+     * Get a registry DWORD value.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return Integer value.
+     */
+    public static int registryGetIntValue(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (char[]) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_DWORD) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue() + ", expected REG_DWORD");
+        }
+        IntByReference data = new IntByReference();
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, data, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        return data.getValue();
+    }
 
-	/**
-	 * Get a registry QWORD value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return Integer value.
-	 */
-	public static long registryGetLongValue(HKEY root, String key, String value) {
-		return registryGetLongValue(root, key, value, 0);
-	}
+    /**
+     * Get a registry QWORD value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return Integer value.
+     */
+    public static long registryGetLongValue(HKEY root, String key, String value) {
+        return registryGetLongValue(root, key, value, 0);
+    }
 
-	/**
-	 * Get a registry QWORD value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param key
-	 *            Registry key path.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return Integer value.
-	 */
-	public static long registryGetLongValue(HKEY root, String key, String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetLongValue(phkKey.getValue(), value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
+    /**
+     * Get a registry QWORD value.
+     *
+     * @param root
+     *            Root key.
+     * @param key
+     *            Registry key path.
+     * @param value
+     *            Name of the value to retrieve.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return Integer value.
+     */
+    public static long registryGetLongValue(HKEY root, String key, String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, key, 0, WinNT.KEY_READ | samDesiredExtra,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetLongValue(phkKey.getValue(), value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Get a registry QWORD value.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param value
-	 *            Name of the value to retrieve.
-	 * @return Integer value.
-	 */
-	public static long registryGetLongValue(HKEY hKey, String value) {
-		IntByReference lpcbData = new IntByReference();
-		IntByReference lpType = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, (char[]) null, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		if (lpType.getValue() != WinNT.REG_QWORD) {
-			throw new RuntimeException("Unexpected registry type "
-					+ lpType.getValue() + ", expected REG_QWORD");
-		}
-		LongByReference data = new LongByReference();
-		rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
-				lpType, data, lpcbData);
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
-		return data.getValue();
-	}
+    /**
+     * Get a registry QWORD value.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param value
+     *            Name of the value to retrieve.
+     * @return Integer value.
+     */
+    public static long registryGetLongValue(HKEY hKey, String value) {
+        IntByReference lpcbData = new IntByReference();
+        IntByReference lpType = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, (char[]) null, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        if (lpType.getValue() != WinNT.REG_QWORD) {
+            throw new RuntimeException("Unexpected registry type "
+                    + lpType.getValue() + ", expected REG_QWORD");
+        }
+        LongByReference data = new LongByReference();
+        rc = Advapi32.INSTANCE.RegQueryValueEx(hKey, value, 0,
+                lpType, data, lpcbData);
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
+        return data.getValue();
+    }
 
-	/**
-	 * Get a registry value and returns a java object depending on the value
-	 * type.
-	 *
-	 * @param hkKey
-	 *            Root key.
-	 * @param subKey
-	 *            Registry key path.
-	 * @param lpValueName
-	 *            Name of the value to retrieve or null for the default value.
-	 * @return Object value.
-	 */
-	public static Object registryGetValue(HKEY hkKey, String subKey,
-			String lpValueName) {
-		Object result = null;
-		IntByReference lpType = new IntByReference();
-		IntByReference lpcbData = new IntByReference();
+    /**
+     * Get a registry value and returns a java object depending on the value
+     * type.
+     *
+     * @param hkKey
+     *            Root key.
+     * @param subKey
+     *            Registry key path.
+     * @param lpValueName
+     *            Name of the value to retrieve or null for the default value.
+     * @return Object value.
+     */
+    public static Object registryGetValue(HKEY hkKey, String subKey,
+            String lpValueName) {
+        Object result = null;
+        IntByReference lpType = new IntByReference();
+        IntByReference lpcbData = new IntByReference();
 
-		int rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
-				Advapi32.RRF_RT_ANY, lpType, (Pointer) null, lpcbData);
+        int rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
+                Advapi32.RRF_RT_ANY, lpType, (Pointer) null, lpcbData);
 
-		// if lpType == 0 then the value is empty (REG_NONE)!
-		if (lpType.getValue() == WinNT.REG_NONE)
-			return null;
+        // if lpType == 0 then the value is empty (REG_NONE)!
+        if (lpType.getValue() == WinNT.REG_NONE)
+            return null;
 
-		if (rc != W32Errors.ERROR_SUCCESS
-				&& rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-			throw new Win32Exception(rc);
-		}
+        if (rc != W32Errors.ERROR_SUCCESS
+                && rc != W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+            throw new Win32Exception(rc);
+        }
 
                 // Buffer is intentionally allocated larger than
                 // indicated, as function adds terminating NULL char, if it is
                 // missing. WCHAR_SIZE is added, as returning string can be
                 // char[] or wchar[] depending on w32.ascii
-		Memory byteData = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
-                byteData.clear();
-                
-		rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
-				Advapi32.RRF_RT_ANY, lpType, byteData, lpcbData);
-                
-                if(rc != W32Errors.ERROR_SUCCESS) {
-                    throw new Win32Exception(rc);
+        Memory byteData = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
+        byteData.clear();
+
+        rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
+            Advapi32.RRF_RT_ANY, lpType, byteData, lpcbData);
+
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+
+        if (lpType.getValue() == WinNT.REG_DWORD) {
+            result = byteData.getInt(0);
+        } else if (lpType.getValue() == WinNT.REG_QWORD) {
+            result = byteData.getLong(0);
+        } else if (lpType.getValue() == WinNT.REG_BINARY) {
+            result = byteData.getByteArray(0, lpcbData.getValue());
+        } else if ((lpType.getValue() == WinNT.REG_SZ)
+            || (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
+            if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                result = byteData.getWideString(0);
+            } else {
+                result = byteData.getString(0);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Create a registry key.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param keyName
+     *            Key name.
+     * @return True if the key was created, false otherwise.
+     */
+    public static boolean registryCreateKey(HKEY hKey, String keyName) {
+        return registryCreateKey(hKey, keyName, 0);
+    }
+
+    /**
+     * Create a registry key.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param keyName
+     *            Key name.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return True if the key was created, false otherwise.
+     */
+    public static boolean registryCreateKey(WinReg.HKEY hKey, String keyName, int samDesiredExtra) {
+        HKEYByReference phkResult = new HKEYByReference();
+        IntByReference lpdwDisposition = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegCreateKeyEx(hKey, keyName, 0, null,
+                WinNT.REG_OPTION_NON_VOLATILE, WinNT.KEY_READ | samDesiredExtra, null, phkResult,
+                lpdwDisposition);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        rc = Advapi32.INSTANCE.RegCloseKey(phkResult.getValue());
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        return WinNT.REG_CREATED_NEW_KEY == lpdwDisposition.getValue();
+    }
+
+    /**
+     * Create a registry key.
+     *
+     * @param root
+     *            Root key.
+     * @param parentPath
+     *            Path to an existing registry key.
+     * @param keyName
+     *            Key name.
+     * @return True if the key was created, false otherwise.
+     */
+    public static boolean registryCreateKey(HKEY root, String parentPath,
+            String keyName) {
+        return registryCreateKey(root, parentPath, keyName, 0);
+    }
+
+    /**
+     * Create a registry key.
+     *
+     * @param root
+     *            Root key.
+     * @param parentPath
+     *            Path to an existing registry key.
+     * @param keyName
+     *            Key name.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_CREATE_SUB_KEY.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return True if the key was created, false otherwise.
+     */
+    public static boolean registryCreateKey(HKEY root, String parentPath,
+                                            String keyName, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, parentPath, 0,
+                WinNT.KEY_CREATE_SUB_KEY | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryCreateKey(phkKey.getValue(), keyName);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set an integer value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetIntValue(HKEY hKey, String name, int value) {
+        byte[] data = new byte[4];
+        data[0] = (byte) (value & 0xff);
+        data[1] = (byte) ((value >> 8) & 0xff);
+        data[2] = (byte) ((value >> 16) & 0xff);
+        data[3] = (byte) ((value >> 24) & 0xff);
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
+                WinNT.REG_DWORD, data, 4);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set an integer value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetIntValue(HKEY root, String keyPath,
+            String name, int value) {
+        registrySetIntValue(root, keyPath, name, value, 0);
+    }
+
+    /**
+     * Set an integer value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetIntValue(WinReg.HKEY root, String keyPath,
+                                           String name, int value, int samDesiredExtra) {
+        WinReg.HKEYByReference phkKey = new WinReg.HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetIntValue(phkKey.getValue(), name, value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set a long value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetLongValue(HKEY hKey, String name, long value) {
+        byte[] data = new byte[8];
+        data[0] = (byte) (value & 0xff);
+        data[1] = (byte) ((value >> 8) & 0xff);
+        data[2] = (byte) ((value >> 16) & 0xff);
+        data[3] = (byte) ((value >> 24) & 0xff);
+        data[4] = (byte) ((value >> 32) & 0xff);
+        data[5] = (byte) ((value >> 40) & 0xff);
+        data[6] = (byte) ((value >> 48) & 0xff);
+        data[7] = (byte) ((value >> 56) & 0xff);
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
+                WinNT.REG_QWORD, data, 8);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set a long value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetLongValue(HKEY root, String keyPath,
+            String name, long value) {
+        registrySetLongValue(root, keyPath, name, value, 0);
+    }
+
+    /**
+     * Set a long value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetLongValue(HKEY root, String keyPath,
+                                            String name, long value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetLongValue(phkKey.getValue(), name, value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set a string value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetStringValue(HKEY hKey, String name,
+        String value) {
+        if (value == null) {
+            value = "";
+        }
+        Memory data;
+        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+            data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
+            data.setWideString(0, value);
+        } else {
+            data = new Memory((value.length() + 1));
+            data.setString(0, value);
+        }
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ,
+            data, (int) data.size());
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set a string value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetStringValue(HKEY root, String keyPath,
+            String name, String value) {
+        registrySetStringValue(root, keyPath, name, value, 0);
+    }
+
+    /**
+     * Set a string value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetStringValue(HKEY root, String keyPath,
+                                              String name, String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetStringValue(phkKey.getValue(), name, value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set an expandable string value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetExpandableStringValue(HKEY hKey, String name,
+        String value) {
+        Memory data;
+        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+            data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
+            data.setWideString(0, value);
+        } else {
+            data = new Memory((value.length() + 1));
+            data.setString(0, value);
+        }
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
+                WinNT.REG_EXPAND_SZ, data, (int) data.size());
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set a string value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     */
+    public static void registrySetExpandableStringValue(HKEY root,
+            String keyPath, String name, String value) {
+        registrySetExpandableStringValue(root, keyPath, name, value, 0);
+    }
+
+    /**
+     * Set a string value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param value
+     *            Value to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetExpandableStringValue(HKEY root,
+                                                        String keyPath, String name, String value, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetExpandableStringValue(phkKey.getValue(), name, value);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set a string array value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Name.
+     * @param arr
+     *            Array of strings to write to registry.
+     */
+    public static void registrySetStringArray(HKEY hKey, String name,
+        String[] arr) {
+
+        int charwidth = W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ? Native.WCHAR_SIZE : 1;
+
+        int size = 0;
+        for (String s : arr) {
+            size += s.length() * charwidth;
+            size += charwidth;
+        }
+        size += charwidth;
+
+        int offset = 0;
+        Memory data = new Memory(size);
+        data.clear();
+        for (String s : arr) {
+            if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                data.setWideString(offset, s);
+            } else {
+                data.setString(offset, s);
+            }
+            offset += s.length() * charwidth;
+            offset += charwidth;
+        }
+
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
+            WinNT.REG_MULTI_SZ, data, size);
+
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set a string array value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param arr
+     *            Array of strings to write to registry.
+     */
+    public static void registrySetStringArray(HKEY root, String keyPath,
+            String name, String[] arr) {
+        registrySetStringArray(root, keyPath, name, arr, 0);
+    }
+
+    /**
+     * Set a string array value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param arr
+     *            Array of strings to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetStringArray(HKEY root, String keyPath,
+                                              String name, String[] arr, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetStringArray(phkKey.getValue(), name, arr);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Set a binary value in registry.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param name
+     *            Value name.
+     * @param data
+     *            Data to write to registry.
+     */
+    public static void registrySetBinaryValue(HKEY hKey, String name,
+            byte[] data) {
+        int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
+                WinNT.REG_BINARY, data, data.length);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Set a binary value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param data
+     *            Data to write to registry.
+     */
+    public static void registrySetBinaryValue(HKEY root, String keyPath,
+            String name, byte[] data) {
+        registrySetBinaryValue(root, keyPath, name, data, 0);
+    }
+
+    /**
+     * Set a binary value in registry.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param name
+     *            Value name.
+     * @param data
+     *            Data to write to registry.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registrySetBinaryValue(HKEY root, String keyPath,
+                                              String name, byte[] data, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registrySetBinaryValue(phkKey.getValue(), name, data);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Delete a registry key.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param keyName
+     *            Name of the key to delete.
+     */
+    public static void registryDeleteKey(HKEY hKey, String keyName) {
+        int rc = Advapi32.INSTANCE.RegDeleteKey(hKey, keyName);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Delete a registry key.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param keyName
+     *            Name of the key to delete.
+     */
+    public static void registryDeleteKey(HKEY root, String keyPath,
+                                         String keyName) {
+        registryDeleteKey(root, keyPath, keyName, 0);
+    }
+
+    /**
+     * Delete a registry key.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param keyName
+     *            Name of the key to delete.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registryDeleteKey(HKEY root, String keyPath,
+            String keyName, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registryDeleteKey(phkKey.getValue(), keyName);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Delete a registry value.
+     *
+     * @param hKey
+     *            Parent key.
+     * @param valueName
+     *            Name of the value to delete.
+     */
+    public static void registryDeleteValue(HKEY hKey, String valueName) {
+        int rc = Advapi32.INSTANCE.RegDeleteValue(hKey, valueName);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Delete a registry value.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param valueName
+     *            Name of the value to delete.
+     */
+    public static void registryDeleteValue(HKEY root, String keyPath,
+            String valueName) {
+        registryDeleteValue(root, keyPath, valueName, 0);
+    }
+
+    /**
+     * Delete a registry value.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to an existing registry key.
+     * @param valueName
+     *            Name of the value to delete.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     */
+    public static void registryDeleteValue(HKEY root, String keyPath,
+                                           String valueName, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            registryDeleteValue(phkKey.getValue(), valueName);
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Get names of the registry key's sub-keys.
+     *
+     * @param hKey
+     *            Registry key.
+     * @return Array of registry key names.
+     */
+    public static String[] registryGetKeys(HKEY hKey) {
+        IntByReference lpcSubKeys = new IntByReference();
+        IntByReference lpcMaxSubKeyLen = new IntByReference();
+        int rc = Advapi32.INSTANCE
+                .RegQueryInfoKey(hKey, null, null, null, lpcSubKeys,
+                        lpcMaxSubKeyLen, null, null, null, null, null, null);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        ArrayList<String> keys = new ArrayList<String>(lpcSubKeys.getValue());
+        char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
+        for (int i = 0; i < lpcSubKeys.getValue(); i++) {
+            IntByReference lpcchValueName = new IntByReference(
+                    lpcMaxSubKeyLen.getValue() + 1);
+            rc = Advapi32.INSTANCE.RegEnumKeyEx(hKey, i, name, lpcchValueName,
+                    null, null, null, null);
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+            keys.add(Native.toString(name));
+        }
+        return keys.toArray(new String[0]);
+    }
+
+    /**
+     * Get names of the registry key's sub-keys.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to a registry key.
+     * @return Array of registry key names.
+     */
+    public static String[] registryGetKeys(HKEY root, String keyPath) {
+        return registryGetKeys(root, keyPath, 0);
+    }
+
+    /**
+     * Get names of the registry key's sub-keys.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to a registry key.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return Array of registry key names.
+     */
+    public static String[] registryGetKeys(HKEY root, String keyPath, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetKeys(phkKey.getValue());
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
+
+    /**
+     * Get a registry key, the caller is responsible to close the key after use.
+     *
+     * @param root
+     *            Root key.
+     * @param keyPath
+     *            Path to a registry key.
+     *
+     * @param samDesired
+     *            Access level (e.g. WinNT.KEY_READ)
+     *
+     * @return HKEYByReference.
+     */
+    public static HKEYByReference registryGetKey(HKEY root, String keyPath,
+            int samDesired) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, samDesired,
+                phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+
+        return phkKey;
+    }
+
+    /**
+     * Close the registry key
+     *
+     * @param hKey
+     *            Registry key.
+     */
+    public static void registryCloseKey(HKEY hKey) {
+        int rc = Advapi32.INSTANCE.RegCloseKey(hKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+    }
+
+    /**
+     * Get a table of registry values.
+     *
+     * @param hKey
+     *            Registry key.
+     * @return Table of values.
+     */
+    public static TreeMap<String, Object> registryGetValues(HKEY hKey) {
+        IntByReference lpcValues = new IntByReference();
+        IntByReference lpcMaxValueNameLen = new IntByReference();
+        IntByReference lpcMaxValueLen = new IntByReference();
+        int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, null, null, null,
+            null, null, null, lpcValues, lpcMaxValueNameLen,
+            lpcMaxValueLen, null, null);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
+        char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
+        // Allocate enough memory to hold largest value and two
+        // terminating WCHARs -- the memory is zeroed so after
+        // value request we should not overread when reading strings
+        Memory byteData = new Memory(lpcMaxValueLen.getValue() + 2 * Native.WCHAR_SIZE);
+        for (int i = 0; i < lpcValues.getValue(); i++) {
+            byteData.clear();
+            IntByReference lpcchValueName = new IntByReference(
+                lpcMaxValueNameLen.getValue() + 1);
+            IntByReference lpcbData = new IntByReference(
+                lpcMaxValueLen.getValue());
+            IntByReference lpType = new IntByReference();
+            rc = Advapi32.INSTANCE.RegEnumValue(hKey, i, name, lpcchValueName,
+                null, lpType, byteData, lpcbData);
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+
+            String nameString = Native.toString(name);
+
+            if (lpcbData.getValue() == 0) {
+                switch (lpType.getValue()) {
+                    case WinNT.REG_BINARY: {
+                        keyValues.put(nameString, new byte[0]);
+                        break;
+                    }
+                    case WinNT.REG_SZ:
+                    case WinNT.REG_EXPAND_SZ: {
+                        keyValues.put(nameString, new char[0]);
+                        break;
+                    }
+                    case WinNT.REG_MULTI_SZ: {
+                        keyValues.put(nameString, new String[0]);
+                        break;
+                    }
+                    case WinNT.REG_NONE: {
+                        keyValues.put(nameString, null);
+                        break;
+                    }
+                    default:
+                        throw new RuntimeException("Unsupported empty type: "
+                            + lpType.getValue());
                 }
-                
-		if (lpType.getValue() == WinNT.REG_DWORD) {
-			result = byteData.getInt(0);
-		} else if (lpType.getValue() == WinNT.REG_QWORD) {
-			result = byteData.getLong(0);
-		} else if (lpType.getValue() == WinNT.REG_BINARY) {
-			result = byteData.getByteArray(0, lpcbData.getValue());
-		} else if ((lpType.getValue() == WinNT.REG_SZ)
-				|| (lpType.getValue() == WinNT.REG_EXPAND_SZ)) {
-                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                                result = byteData.getWideString(0);
+                continue;
+            }
+
+            switch (lpType.getValue()) {
+                case WinNT.REG_QWORD: {
+                    keyValues.put(nameString, byteData.getLong(0));
+                    break;
+                }
+                case WinNT.REG_DWORD: {
+                    keyValues.put(nameString, byteData.getInt(0));
+                    break;
+                }
+                case WinNT.REG_SZ:
+                case WinNT.REG_EXPAND_SZ: {
+                    if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                        keyValues.put(nameString, byteData.getWideString(0));
+                    } else {
+                        keyValues.put(nameString, byteData.getString(0));
+                    }
+                    break;
+                }
+                case WinNT.REG_BINARY: {
+                    keyValues.put(nameString,
+                        byteData.getByteArray(0, lpcbData.getValue()));
+                    break;
+                }
+                case WinNT.REG_MULTI_SZ: {
+                    ArrayList<String> result = new ArrayList<String>();
+                    int offset = 0;
+                    while (offset < byteData.size()) {
+                        String s;
+                        if (W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
+                            s = byteData.getWideString(offset);
+                            offset += s.length() * Native.WCHAR_SIZE;
+                            offset += Native.WCHAR_SIZE;
                         } else {
-                                result = byteData.getString(0);
+                            s = byteData.getString(offset);
+                            offset += s.length();
+                            offset += 1;
                         }
-		}
 
-		return result;
-	}
-
-	/**
-	 * Create a registry key.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param keyName
-	 *            Key name.
-	 * @return True if the key was created, false otherwise.
-	 */
-	public static boolean registryCreateKey(HKEY hKey, String keyName) {
-		return registryCreateKey(hKey, keyName, 0);
-	}
-
-	/**
-	 * Create a registry key.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param keyName
-	 *            Key name.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return True if the key was created, false otherwise.
-	 */
-	public static boolean registryCreateKey(WinReg.HKEY hKey, String keyName, int samDesiredExtra) {
-		HKEYByReference phkResult = new HKEYByReference();
-		IntByReference lpdwDisposition = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegCreateKeyEx(hKey, keyName, 0, null,
-				WinNT.REG_OPTION_NON_VOLATILE, WinNT.KEY_READ | samDesiredExtra, null, phkResult,
-				lpdwDisposition);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		rc = Advapi32.INSTANCE.RegCloseKey(phkResult.getValue());
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		return WinNT.REG_CREATED_NEW_KEY == lpdwDisposition.getValue();
-	}
-
-	/**
-	 * Create a registry key.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param parentPath
-	 *            Path to an existing registry key.
-	 * @param keyName
-	 *            Key name.
-	 * @return True if the key was created, false otherwise.
-	 */
-	public static boolean registryCreateKey(HKEY root, String parentPath,
-			String keyName) {
-		return registryCreateKey(root, parentPath, keyName, 0);
-	}
-
-	/**
-	 * Create a registry key.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param parentPath
-	 *            Path to an existing registry key.
-	 * @param keyName
-	 *            Key name.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_CREATE_SUB_KEY.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return True if the key was created, false otherwise.
-	 */
-	public static boolean registryCreateKey(HKEY root, String parentPath,
-											String keyName, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, parentPath, 0,
-				WinNT.KEY_CREATE_SUB_KEY | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryCreateKey(phkKey.getValue(), keyName);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set an integer value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetIntValue(HKEY hKey, String name, int value) {
-		byte[] data = new byte[4];
-		data[0] = (byte) (value & 0xff);
-		data[1] = (byte) ((value >> 8) & 0xff);
-		data[2] = (byte) ((value >> 16) & 0xff);
-		data[3] = (byte) ((value >> 24) & 0xff);
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_DWORD, data, 4);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Set an integer value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetIntValue(HKEY root, String keyPath,
-			String name, int value) {
-		registrySetIntValue(root, keyPath, name, value, 0);
-	}
-
-	/**
-	 * Set an integer value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetIntValue(WinReg.HKEY root, String keyPath,
-										   String name, int value, int samDesiredExtra) {
-		WinReg.HKEYByReference phkKey = new WinReg.HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetIntValue(phkKey.getValue(), name, value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set a long value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetLongValue(HKEY hKey, String name, long value) {
-		byte[] data = new byte[8];
-		data[0] = (byte) (value & 0xff);
-		data[1] = (byte) ((value >> 8) & 0xff);
-		data[2] = (byte) ((value >> 16) & 0xff);
-		data[3] = (byte) ((value >> 24) & 0xff);
-		data[4] = (byte) ((value >> 32) & 0xff);
-		data[5] = (byte) ((value >> 40) & 0xff);
-		data[6] = (byte) ((value >> 48) & 0xff);
-		data[7] = (byte) ((value >> 56) & 0xff);
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_QWORD, data, 8);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Set a long value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetLongValue(HKEY root, String keyPath,
-			String name, long value) {
-		registrySetLongValue(root, keyPath, name, value, 0);
-	}
-
-	/**
-	 * Set a long value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetLongValue(HKEY root, String keyPath,
-											String name, long value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetLongValue(phkKey.getValue(), name, value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set a string value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetStringValue(HKEY hKey, String name,
-			String value) {
-                if(value == null) {
-                        value = "";
-                }
-                Memory data;
-                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                        data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
-                        data.setWideString(0, value);
-                } else {
-                        data = new Memory((value.length() + 1));
-                        data.setString(0, value);
-                }
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0, WinNT.REG_SZ,
-				data, (int) data.size());
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Set a string value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetStringValue(HKEY root, String keyPath,
-			String name, String value) {
-		registrySetStringValue(root, keyPath, name, value, 0);
-	}
-
-	/**
-	 * Set a string value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetStringValue(HKEY root, String keyPath,
-											  String name, String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetStringValue(phkKey.getValue(), name, value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set an expandable string value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetExpandableStringValue(HKEY hKey, String name,
-			String value) {
-                Memory data;
-                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                        data = new Memory((value.length() + 1) * Native.WCHAR_SIZE);
-                        data.setWideString(0, value);
-                } else {
-                        data = new Memory((value.length() + 1));
-                        data.setString(0, value);
-                }
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_EXPAND_SZ, data, (int) data.size());
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Set a string value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 */
-	public static void registrySetExpandableStringValue(HKEY root,
-			String keyPath, String name, String value) {
-		registrySetExpandableStringValue(root, keyPath, name, value, 0);
-	}
-
-	/**
-	 * Set a string value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param value
-	 *            Value to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetExpandableStringValue(HKEY root,
-														String keyPath, String name, String value, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetExpandableStringValue(phkKey.getValue(), name, value);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set a string array value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Name.
-	 * @param arr
-	 *            Array of strings to write to registry.
-	 */
-	public static void registrySetStringArray(HKEY hKey, String name,
-			String[] arr) {
-            
-                int charwidth = W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ? Native.WCHAR_SIZE : 1;
-            
-		int size = 0;
-		for (String s : arr) {
-			size += s.length() * charwidth;
-			size += charwidth;
-		}
-		size += charwidth;
-
-		int offset = 0;
-		Memory data = new Memory(size);
-                data.clear();
-		for (String s : arr) {
-                        if(W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE) {
-                                data.setWideString(offset, s);
+                        if (s.length() == 0) {
+                            // A sequence of null-terminated strings,
+                            // terminated by an empty string (\0).
+                            // => The first empty string terminates the
+                            break;
                         } else {
-                                data.setString(offset, s);
+                            result.add(s);
                         }
-			offset += s.length() * charwidth;
-			offset += charwidth;
-		}
+                    }
+                    keyValues.put(nameString, result.toArray(new String[0]));
+                    break;
+                }
+                default:
+                    throw new RuntimeException("Unsupported type: "
+                        + lpType.getValue());
+            }
+        }
+        return keyValues;
+    }
 
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_MULTI_SZ, data, size);
+    /**
+     * Get a table of registry values.
+     *
+     * @param root
+     *            Registry root.
+     * @param keyPath
+     *            Regitry key path.
+     * @return Table of values.
+     */
+    public static TreeMap<String, Object> registryGetValues(HKEY root,
+            String keyPath) {
+        return registryGetValues(root, keyPath, 0);
+    }
 
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
+    /**
+     * Get a table of registry values.
+     *
+     * @param root
+     *            Registry root.
+     * @param keyPath
+     *            Regitry key path.
+     * @param samDesiredExtra
+     *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
+     *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
+     * @return Table of values.
+     */
+    public static TreeMap<String, Object> registryGetValues(HKEY root,
+                                                            String keyPath, int samDesiredExtra) {
+        HKEYByReference phkKey = new HKEYByReference();
+        int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
+                WinNT.KEY_READ | samDesiredExtra, phkKey);
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
+        try {
+            return registryGetValues(phkKey.getValue());
+        } finally {
+            rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
+            if (rc != W32Errors.ERROR_SUCCESS) {
+                throw new Win32Exception(rc);
+            }
+        }
+    }
 
-	/**
-	 * Set a string array value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param arr
-	 *            Array of strings to write to registry.
-	 */
-	public static void registrySetStringArray(HKEY root, String keyPath,
-			String name, String[] arr) {
-		registrySetStringArray(root, keyPath, name, arr, 0);
-	}
-
-	/**
-	 * Set a string array value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param arr
-	 *            Array of strings to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetStringArray(HKEY root, String keyPath,
-											  String name, String[] arr, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetStringArray(phkKey.getValue(), name, arr);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Set a binary value in registry.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param name
-	 *            Value name.
-	 * @param data
-	 *            Data to write to registry.
-	 */
-	public static void registrySetBinaryValue(HKEY hKey, String name,
-			byte[] data) {
-		int rc = Advapi32.INSTANCE.RegSetValueEx(hKey, name, 0,
-				WinNT.REG_BINARY, data, data.length);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Set a binary value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param data
-	 *            Data to write to registry.
-	 */
-	public static void registrySetBinaryValue(HKEY root, String keyPath,
-			String name, byte[] data) {
-		registrySetBinaryValue(root, keyPath, name, data, 0);
-	}
-
-	/**
-	 * Set a binary value in registry.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param name
-	 *            Value name.
-	 * @param data
-	 *            Data to write to registry.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registrySetBinaryValue(HKEY root, String keyPath,
-											  String name, byte[] data, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registrySetBinaryValue(phkKey.getValue(), name, data);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Delete a registry key.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param keyName
-	 *            Name of the key to delete.
-	 */
-	public static void registryDeleteKey(HKEY hKey, String keyName) {
-		int rc = Advapi32.INSTANCE.RegDeleteKey(hKey, keyName);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Delete a registry key.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param keyName
-	 *            Name of the key to delete.
-	 */
-	public static void registryDeleteKey(HKEY root, String keyPath,
-										 String keyName) {
-		registryDeleteKey(root, keyPath, keyName, 0);
-	}
-
-	/**
-	 * Delete a registry key.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param keyName
-	 *            Name of the key to delete.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registryDeleteKey(HKEY root, String keyPath,
-			String keyName, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registryDeleteKey(phkKey.getValue(), keyName);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Delete a registry value.
-	 *
-	 * @param hKey
-	 *            Parent key.
-	 * @param valueName
-	 *            Name of the value to delete.
-	 */
-	public static void registryDeleteValue(HKEY hKey, String valueName) {
-		int rc = Advapi32.INSTANCE.RegDeleteValue(hKey, valueName);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Delete a registry value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param valueName
-	 *            Name of the value to delete.
-	 */
-	public static void registryDeleteValue(HKEY root, String keyPath,
-			String valueName) {
-		registryDeleteValue(root, keyPath, valueName, 0);
-	}
-
-	/**
-	 * Delete a registry value.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to an existing registry key.
-	 * @param valueName
-	 *            Name of the value to delete.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ and WinNT.KEY_WRITE.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 */
-	public static void registryDeleteValue(HKEY root, String keyPath,
-										   String valueName, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | WinNT.KEY_WRITE | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			registryDeleteValue(phkKey.getValue(), valueName);
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Get names of the registry key's sub-keys.
-	 *
-	 * @param hKey
-	 *            Registry key.
-	 * @return Array of registry key names.
-	 */
-	public static String[] registryGetKeys(HKEY hKey) {
-		IntByReference lpcSubKeys = new IntByReference();
-		IntByReference lpcMaxSubKeyLen = new IntByReference();
-		int rc = Advapi32.INSTANCE
-				.RegQueryInfoKey(hKey, null, null, null, lpcSubKeys,
-						lpcMaxSubKeyLen, null, null, null, null, null, null);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		ArrayList<String> keys = new ArrayList<String>(lpcSubKeys.getValue());
-		char[] name = new char[lpcMaxSubKeyLen.getValue() + 1];
-		for (int i = 0; i < lpcSubKeys.getValue(); i++) {
-			IntByReference lpcchValueName = new IntByReference(
-					lpcMaxSubKeyLen.getValue() + 1);
-			rc = Advapi32.INSTANCE.RegEnumKeyEx(hKey, i, name, lpcchValueName,
-					null, null, null, null);
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-			keys.add(Native.toString(name));
-		}
-		return keys.toArray(new String[0]);
-	}
-
-	/**
-	 * Get names of the registry key's sub-keys.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to a registry key.
-	 * @return Array of registry key names.
-	 */
-	public static String[] registryGetKeys(HKEY root, String keyPath) {
-		return registryGetKeys(root, keyPath, 0);
-	}
-
-	/**
-	 * Get names of the registry key's sub-keys.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to a registry key.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return Array of registry key names.
-	 */
-	public static String[] registryGetKeys(HKEY root, String keyPath, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetKeys(phkKey.getValue());
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Get a registry key, the caller is responsible to close the key after use.
-	 *
-	 * @param root
-	 *            Root key.
-	 * @param keyPath
-	 *            Path to a registry key.
-	 *
-	 * @param samDesired
-	 *            Access level (e.g. WinNT.KEY_READ)
-	 *
-	 * @return HKEYByReference.
-	 */
-	public static HKEYByReference registryGetKey(HKEY root, String keyPath,
-			int samDesired) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0, samDesired,
-				phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-
-		return phkKey;
-	}
-
-	/**
-	 * Close the registry key
-	 *
-	 * @param hKey
-	 *            Registry key.
-	 */
-	public static void registryCloseKey(HKEY hKey) {
-		int rc = Advapi32.INSTANCE.RegCloseKey(hKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-	}
-
-	/**
-	 * Get a table of registry values.
-	 *
-	 * @param hKey
-	 *            Registry key.
-	 * @return Table of values.
-	 */
-	public static TreeMap<String, Object> registryGetValues(HKEY hKey) {
-		IntByReference lpcValues = new IntByReference();
-		IntByReference lpcMaxValueNameLen = new IntByReference();
-		IntByReference lpcMaxValueLen = new IntByReference();
-		int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, null, null, null,
-				null, null, null, lpcValues, lpcMaxValueNameLen,
-				lpcMaxValueLen, null, null);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
-		char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
-                // Allocate enough memory to hold largest value and two 
-                // terminating WCHARs -- the memory is zeroed so after
-                // value request we should not overread when reading strings
-		Memory byteData = new Memory(lpcMaxValueLen.getValue() + 2 * Native.WCHAR_SIZE);
-		for (int i = 0; i < lpcValues.getValue(); i++) {
-                        byteData.clear();
-			IntByReference lpcchValueName = new IntByReference(
-					lpcMaxValueNameLen.getValue() + 1);
-			IntByReference lpcbData = new IntByReference(
-					lpcMaxValueLen.getValue());
-			IntByReference lpType = new IntByReference();
-			rc = Advapi32.INSTANCE.RegEnumValue(hKey, i, name, lpcchValueName,
-					null, lpType, byteData, lpcbData);
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-
-			String nameString = Native.toString(name);
-
-			if (lpcbData.getValue() == 0) {
-				switch (lpType.getValue()) {
-				case WinNT.REG_BINARY: {
-					keyValues.put(nameString, new byte[0]);
-					break;
-				}
-				case WinNT.REG_SZ:
-				case WinNT.REG_EXPAND_SZ: {
-					keyValues.put(nameString, new char[0]);
-					break;
-				}
-				case WinNT.REG_MULTI_SZ: {
-					keyValues.put(nameString, new String[0]);
-					break;
-				}
-				case WinNT.REG_NONE: {
-					keyValues.put(nameString, null);
-					break;
-				}
-				default:
-					throw new RuntimeException("Unsupported empty type: "
-							+ lpType.getValue());
-				}
-				continue;
-			}
-
-			switch (lpType.getValue()) {
-			case WinNT.REG_QWORD: {
-				keyValues.put(nameString, byteData.getLong(0));
-				break;
-			}
-			case WinNT.REG_DWORD: {
-				keyValues.put(nameString, byteData.getInt(0));
-				break;
-			}
-			case WinNT.REG_SZ:
-			case WinNT.REG_EXPAND_SZ: {
-                                if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                                        keyValues.put(nameString, byteData.getWideString(0));
-                                } else {
-                                        keyValues.put(nameString, byteData.getString(0));
-                                }
-				break;
-			}
-			case WinNT.REG_BINARY: {
-				keyValues.put(nameString,
-						byteData.getByteArray(0, lpcbData.getValue()));
-				break;
-			}
-			case WinNT.REG_MULTI_SZ: {
-                                ArrayList<String> result = new ArrayList<String>();
-                                int offset = 0;
-                                while (offset < byteData.size()) {
-                                        String s;
-                                        if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
-                                                s = byteData.getWideString(offset);
-                                                offset += s.length() * Native.WCHAR_SIZE;
-                                                offset += Native.WCHAR_SIZE;
-                                        } else {
-                                                s = byteData.getString(offset);
-                                                offset += s.length();
-                                                offset += 1;
-                                        }
-
-                                        if (s.length() == 0) {
-                                                // A sequence of null-terminated strings,
-                                                // terminated by an empty string (\0).
-                                                // => The first empty string terminates the 
-                                                break;
-                                        } else {
-                                                result.add(s);
-                                        }
-                                }
-				keyValues.put(nameString, result.toArray(new String[0]));
-				break;
-			}
-			default:
-				throw new RuntimeException("Unsupported type: "
-						+ lpType.getValue());
-			}
-		}
-		return keyValues;
-	}
-
-	/**
-	 * Get a table of registry values.
-	 *
-	 * @param root
-	 *            Registry root.
-	 * @param keyPath
-	 *            Regitry key path.
-	 * @return Table of values.
-	 */
-	public static TreeMap<String, Object> registryGetValues(HKEY root,
-			String keyPath) {
-		return registryGetValues(root, keyPath, 0);
-	}
-
-	/**
-	 * Get a table of registry values.
-	 *
-	 * @param root
-	 *            Registry root.
-	 * @param keyPath
-	 *            Regitry key path.
-	 * @param samDesiredExtra
-	 *            Registry key security and access rights to be requested in addition to WinNT.KEY_READ.
-	 *            (e.g WinNT.KEY_WOW64_32KEY or WinNT.KEY_WOW64_64KEY to force 32bit or 64bit registry access.)
-	 * @return Table of values.
-	 */
-	public static TreeMap<String, Object> registryGetValues(HKEY root,
-															String keyPath, int samDesiredExtra) {
-		HKEYByReference phkKey = new HKEYByReference();
-		int rc = Advapi32.INSTANCE.RegOpenKeyEx(root, keyPath, 0,
-				WinNT.KEY_READ | samDesiredExtra, phkKey);
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
-		try {
-			return registryGetValues(phkKey.getValue());
-		} finally {
-			rc = Advapi32.INSTANCE.RegCloseKey(phkKey.getValue());
-			if (rc != W32Errors.ERROR_SUCCESS) {
-				throw new Win32Exception(rc);
-			}
-		}
-	}
-
-	/**
-	 * Queries the information about a specified key.
-	 *
-	 * @param hKey
-	 *            Current registry key.
+    /**
+     * Queries the information about a specified key.
+     *
+     * @param hKey
+     *            Current registry key.
          * @param lpcbSecurityDescriptor security descriptor
-	 *
-	 * @return A InfoKey value object.
-	 */
-	public static InfoKey registryQueryInfoKey(HKEY hKey,
+     *
+     * @return A InfoKey value object.
+     */
+    public static InfoKey registryQueryInfoKey(HKEY hKey,
                                                    int lpcbSecurityDescriptor) {
 
-		InfoKey infoKey = new InfoKey(hKey, lpcbSecurityDescriptor);
-		int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, infoKey.lpClass,
-				infoKey.lpcClass, null, infoKey.lpcSubKeys,
-				infoKey.lpcMaxSubKeyLen, infoKey.lpcMaxClassLen,
-				infoKey.lpcValues, infoKey.lpcMaxValueNameLen,
-				infoKey.lpcMaxValueLen, infoKey.lpcbSecurityDescriptor,
-				infoKey.lpftLastWriteTime);
+        InfoKey infoKey = new InfoKey(hKey, lpcbSecurityDescriptor);
+        int rc = Advapi32.INSTANCE.RegQueryInfoKey(hKey, infoKey.lpClass,
+                infoKey.lpcClass, null, infoKey.lpcSubKeys,
+                infoKey.lpcMaxSubKeyLen, infoKey.lpcMaxClassLen,
+                infoKey.lpcValues, infoKey.lpcMaxValueNameLen,
+                infoKey.lpcMaxValueLen, infoKey.lpcbSecurityDescriptor,
+                infoKey.lpftLastWriteTime);
 
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
 
-		return infoKey;
-	}
+        return infoKey;
+    }
 
-	public static class InfoKey {
-		public HKEY hKey;
-		public char[] lpClass = new char[WinNT.MAX_PATH];
-		public IntByReference lpcClass = new IntByReference(WinNT.MAX_PATH);
-		public IntByReference lpcSubKeys = new IntByReference();
-		public IntByReference lpcMaxSubKeyLen = new IntByReference();
-		public IntByReference lpcMaxClassLen = new IntByReference();
-		public IntByReference lpcValues = new IntByReference();
-		public IntByReference lpcMaxValueNameLen = new IntByReference();
-		public IntByReference lpcMaxValueLen = new IntByReference();
-		public IntByReference lpcbSecurityDescriptor = new IntByReference();
-		public FILETIME lpftLastWriteTime = new FILETIME();
+    public static class InfoKey {
+        public HKEY hKey;
+        public char[] lpClass = new char[WinNT.MAX_PATH];
+        public IntByReference lpcClass = new IntByReference(WinNT.MAX_PATH);
+        public IntByReference lpcSubKeys = new IntByReference();
+        public IntByReference lpcMaxSubKeyLen = new IntByReference();
+        public IntByReference lpcMaxClassLen = new IntByReference();
+        public IntByReference lpcValues = new IntByReference();
+        public IntByReference lpcMaxValueNameLen = new IntByReference();
+        public IntByReference lpcMaxValueLen = new IntByReference();
+        public IntByReference lpcbSecurityDescriptor = new IntByReference();
+        public FILETIME lpftLastWriteTime = new FILETIME();
 
-		public InfoKey() {
-		}
+        public InfoKey() {
+        }
 
-		public InfoKey(HKEY hKey, int securityDescriptor) {
-			this.hKey = hKey;
-			this.lpcbSecurityDescriptor = new IntByReference(securityDescriptor);
-		}
-	}
+        public InfoKey(HKEY hKey, int securityDescriptor) {
+            this.hKey = hKey;
+            this.lpcbSecurityDescriptor = new IntByReference(securityDescriptor);
+        }
+    }
 
-	/**
-	 * Queries the information about a specified key.
-	 *
-	 * @param hKey
-	 *            Current registry key.
+    /**
+     * Queries the information about a specified key.
+     *
+     * @param hKey
+     *            Current registry key.
          * @param dwIndex
-	 *
-	 * @return A InfoKey value object.
-	 */
-	public static EnumKey registryRegEnumKey(HKEY hKey, int dwIndex) {
-		EnumKey enumKey = new EnumKey(hKey, dwIndex);
-		int rc = Advapi32.INSTANCE.RegEnumKeyEx(hKey, enumKey.dwIndex,
-				enumKey.lpName, enumKey.lpcName, null, enumKey.lpClass,
-				enumKey.lpcbClass, enumKey.lpftLastWriteTime);
+     *
+     * @return A InfoKey value object.
+     */
+    public static EnumKey registryRegEnumKey(HKEY hKey, int dwIndex) {
+        EnumKey enumKey = new EnumKey(hKey, dwIndex);
+        int rc = Advapi32.INSTANCE.RegEnumKeyEx(hKey, enumKey.dwIndex,
+                enumKey.lpName, enumKey.lpcName, null, enumKey.lpClass,
+                enumKey.lpcbClass, enumKey.lpftLastWriteTime);
 
-		if (rc != W32Errors.ERROR_SUCCESS) {
-			throw new Win32Exception(rc);
-		}
+        if (rc != W32Errors.ERROR_SUCCESS) {
+            throw new Win32Exception(rc);
+        }
 
-		return enumKey;
-	}
+        return enumKey;
+    }
 
-	public static class EnumKey {
-		public HKEY hKey;
-		public int dwIndex = 0;
-		public char[] lpName = new char[Advapi32.MAX_KEY_LENGTH];
-		public IntByReference lpcName = new IntByReference(
-				Advapi32.MAX_KEY_LENGTH);
-		public char[] lpClass = new char[Advapi32.MAX_KEY_LENGTH];
-		public IntByReference lpcbClass = new IntByReference(
-				Advapi32.MAX_KEY_LENGTH);
-		public FILETIME lpftLastWriteTime = new FILETIME();
+    public static class EnumKey {
+        public HKEY hKey;
+        public int dwIndex = 0;
+        public char[] lpName = new char[Advapi32.MAX_KEY_LENGTH];
+        public IntByReference lpcName = new IntByReference(
+                Advapi32.MAX_KEY_LENGTH);
+        public char[] lpClass = new char[Advapi32.MAX_KEY_LENGTH];
+        public IntByReference lpcbClass = new IntByReference(
+                Advapi32.MAX_KEY_LENGTH);
+        public FILETIME lpftLastWriteTime = new FILETIME();
 
-		public EnumKey() {
-		}
+        public EnumKey() {
+        }
 
-		public EnumKey(HKEY hKey, int dwIndex) {
-			this.hKey = hKey;
-			this.dwIndex = dwIndex;
-		}
-	}
+        public EnumKey(HKEY hKey, int dwIndex) {
+            this.hKey = hKey;
+            this.dwIndex = dwIndex;
+        }
+    }
 
-	/**
-	 * Converts a map of environment variables to an environment block suitable
-	 * for {@link Advapi32#CreateProcessAsUser}. This environment block consists
-	 * of null-terminated blocks of null-terminated strings. Each string is in
-	 * the following form: name=value\0
-	 *
-	 * @param environment
-	 *            Environment variables
-	 * @return A environment block
-	 */
-	public static String getEnvironmentBlock(Map<String, String> environment) {
-		StringBuilder out = new StringBuilder(environment.size() * 32 /* some guess about average name=value length*/);
-		for (Entry<String, String> entry : environment.entrySet()) {
-		    String    key=entry.getKey(), value=entry.getValue();
-			if (value != null) {
-				out.append(key).append("=").append(value).append('\0');
-			}
-		}
-		return out.append('\0').toString();
-	}
+    /**
+     * Converts a map of environment variables to an environment block suitable
+     * for {@link Advapi32#CreateProcessAsUser}. This environment block consists
+     * of null-terminated blocks of null-terminated strings. Each string is in
+     * the following form: name=value\0
+     *
+     * @param environment
+     *            Environment variables
+     * @return A environment block
+     */
+    public static String getEnvironmentBlock(Map<String, String> environment) {
+        StringBuilder out = new StringBuilder(environment.size() * 32 /* some guess about average name=value length*/);
+        for (Entry<String, String> entry : environment.entrySet()) {
+            String    key=entry.getKey(), value=entry.getValue();
+            if (value != null) {
+                out.append(key).append("=").append(value).append('\0');
+            }
+        }
+        return out.append('\0').toString();
+    }
 
-	/**
-	 * Event log types.
-	 */
-	public static enum EventLogType {
-		Error, Warning, Informational, AuditSuccess, AuditFailure
-	}
+    /**
+     * Event log types.
+     */
+    public static enum EventLogType {
+        Error, Warning, Informational, AuditSuccess, AuditFailure
+    }
 
-	/**
-	 * An event log record.
-	 */
-	public static class EventLogRecord {
-		private EVENTLOGRECORD _record;
-		private String _source;
-		private byte[] _data;
-		private String[] _strings;
+    /**
+     * An event log record.
+     */
+    public static class EventLogRecord {
+        private EVENTLOGRECORD _record;
+        private String _source;
+        private byte[] _data;
+        private String[] _strings;
 
-		/**
-		 * Raw record data.
-		 *
-		 * @return EVENTLOGRECORD.
-		 */
-		public EVENTLOGRECORD getRecord() {
-			return _record;
-		}
+        /**
+         * Raw record data.
+         *
+         * @return EVENTLOGRECORD.
+         */
+        public EVENTLOGRECORD getRecord() {
+            return _record;
+        }
 
-		/**
-		 * Event Id.
-		 *
-		 * @return Integer.
-		 */
-		public int getEventId() {
-			return _record.EventID.intValue();
-		}
+        /**
+         * Event Id.
+         *
+         * @return Integer.
+         */
+        public int getEventId() {
+            return _record.EventID.intValue();
+        }
 
-		/**
-		 * Event source.
-		 *
-		 * @return String.
-		 */
-		public String getSource() {
-			return _source;
-		}
+        /**
+         * Event source.
+         *
+         * @return String.
+         */
+        public String getSource() {
+            return _source;
+        }
 
-		/**
-		 * Status code for the facility, part of the Event ID.
-		 *
-		 * @return Status code.
-		 */
-		public int getStatusCode() {
-			return _record.EventID.intValue() & 0xFFFF;
-		}
+        /**
+         * Status code for the facility, part of the Event ID.
+         *
+         * @return Status code.
+         */
+        public int getStatusCode() {
+            return _record.EventID.intValue() & 0xFFFF;
+        }
 
-		/**
-		 * Record number of the record. This value can be used with the
-		 * EVENTLOG_SEEK_READ flag in the ReadEventLog function to begin reading
-		 * at a specified record.
-		 *
-		 * @return Integer.
-		 */
-		public int getRecordNumber() {
-			return _record.RecordNumber.intValue();
-		}
+        /**
+         * Record number of the record. This value can be used with the
+         * EVENTLOG_SEEK_READ flag in the ReadEventLog function to begin reading
+         * at a specified record.
+         *
+         * @return Integer.
+         */
+        public int getRecordNumber() {
+            return _record.RecordNumber.intValue();
+        }
 
-		/**
-		 * Record length, with data.
-		 *
-		 * @return Number of bytes in the record including data.
-		 */
-		public int getLength() {
-			return _record.Length.intValue();
-		}
+        /**
+         * Record length, with data.
+         *
+         * @return Number of bytes in the record including data.
+         */
+        public int getLength() {
+            return _record.Length.intValue();
+        }
 
-		/**
-		 * Strings associated with this event.
-		 *
-		 * @return Array of strings or null.
-		 */
-		public String[] getStrings() {
-			return _strings;
-		}
+        /**
+         * Strings associated with this event.
+         *
+         * @return Array of strings or null.
+         */
+        public String[] getStrings() {
+            return _strings;
+        }
 
-		/**
-		 * Event log type.
-		 *
-		 * @return Event log type.
-		 */
-		public EventLogType getType() {
-			switch (_record.EventType.intValue()) {
-			case WinNT.EVENTLOG_SUCCESS:
-			case WinNT.EVENTLOG_INFORMATION_TYPE:
-				return EventLogType.Informational;
-			case WinNT.EVENTLOG_AUDIT_FAILURE:
-				return EventLogType.AuditFailure;
-			case WinNT.EVENTLOG_AUDIT_SUCCESS:
-				return EventLogType.AuditSuccess;
-			case WinNT.EVENTLOG_ERROR_TYPE:
-				return EventLogType.Error;
-			case WinNT.EVENTLOG_WARNING_TYPE:
-				return EventLogType.Warning;
-			default:
-				throw new RuntimeException("Invalid type: "
-						+ _record.EventType.intValue());
-			}
-		}
+        /**
+         * Event log type.
+         *
+         * @return Event log type.
+         */
+        public EventLogType getType() {
+            switch (_record.EventType.intValue()) {
+                case WinNT.EVENTLOG_SUCCESS:
+                case WinNT.EVENTLOG_INFORMATION_TYPE:
+                    return EventLogType.Informational;
+                case WinNT.EVENTLOG_AUDIT_FAILURE:
+                    return EventLogType.AuditFailure;
+                case WinNT.EVENTLOG_AUDIT_SUCCESS:
+                    return EventLogType.AuditSuccess;
+                case WinNT.EVENTLOG_ERROR_TYPE:
+                    return EventLogType.Error;
+                case WinNT.EVENTLOG_WARNING_TYPE:
+                    return EventLogType.Warning;
+                default:
+                    throw new RuntimeException("Invalid type: "
+                            + _record.EventType.intValue());
+            }
+        }
 
-		/**
-		 * Raw data associated with the record.
-		 *
-		 * @return Array of bytes or null.
-		 */
-		public byte[] getData() {
-			return _data;
-		}
+        /**
+         * Raw data associated with the record.
+         *
+         * @return Array of bytes or null.
+         */
+        public byte[] getData() {
+            return _data;
+        }
 
-		public EventLogRecord(Pointer pevlr) {
-			_record = new EVENTLOGRECORD(pevlr);
-			_source = pevlr.getWideString(_record.size());
-			// data
-			if (_record.DataLength.intValue() > 0) {
-				_data = pevlr.getByteArray(_record.DataOffset.intValue(),
-						_record.DataLength.intValue());
-			}
-			// strings
-			if (_record.NumStrings.intValue() > 0) {
-				ArrayList<String> strings = new ArrayList<String>();
-				int count = _record.NumStrings.intValue();
-				long offset = _record.StringOffset.intValue();
-				while (count > 0) {
-					String s = pevlr.getWideString(offset);
-					strings.add(s);
-					offset += s.length() * Native.WCHAR_SIZE;
-					offset += Native.WCHAR_SIZE;
-					count--;
-				}
-				_strings = strings.toArray(new String[0]);
-			}
-		}
-	}
+        public EventLogRecord(Pointer pevlr) {
+            _record = new EVENTLOGRECORD(pevlr);
+            _source = pevlr.getWideString(_record.size());
+            // data
+            if (_record.DataLength.intValue() > 0) {
+                _data = pevlr.getByteArray(_record.DataOffset.intValue(),
+                        _record.DataLength.intValue());
+            }
+            // strings
+            if (_record.NumStrings.intValue() > 0) {
+                ArrayList<String> strings = new ArrayList<String>();
+                int count = _record.NumStrings.intValue();
+                long offset = _record.StringOffset.intValue();
+                while (count > 0) {
+                    String s = pevlr.getWideString(offset);
+                    strings.add(s);
+                    offset += s.length() * Native.WCHAR_SIZE;
+                    offset += Native.WCHAR_SIZE;
+                    count--;
+                }
+                _strings = strings.toArray(new String[0]);
+            }
+        }
+    }
 
-	/**
-	 * An iterator for Event Log entries.
-	 */
-	public static class EventLogIterator implements Iterable<EventLogRecord>,
-			Iterator<EventLogRecord> {
+    /**
+     * An iterator for Event Log entries.
+     */
+    public static class EventLogIterator implements Iterable<EventLogRecord>,
+            Iterator<EventLogRecord> {
 
-		private HANDLE _h;
-		private Memory _buffer = new Memory(1024 * 64); // memory buffer to
-														// store events
-		private boolean _done = false; // no more events
-		private int _dwRead = 0; // number of bytes remaining in the current
-									// buffer
-		private Pointer _pevlr = null; // pointer to the current record
-		private int _flags;
+        private HANDLE _h;
+        private Memory _buffer = new Memory(1024 * 64); // memory buffer to
+                                                        // store events
+        private boolean _done = false; // no more events
+        private int _dwRead = 0; // number of bytes remaining in the current
+                                    // buffer
+        private Pointer _pevlr = null; // pointer to the current record
+        private int _flags;
 
-		public EventLogIterator(String sourceName) {
-			this(null, sourceName, WinNT.EVENTLOG_FORWARDS_READ);
-		}
+        public EventLogIterator(String sourceName) {
+            this(null, sourceName, WinNT.EVENTLOG_FORWARDS_READ);
+        }
 
-		public EventLogIterator(String serverName, String sourceName, int flags) {
-			_flags = flags;
-			_h = Advapi32.INSTANCE.OpenEventLog(serverName, sourceName);
-			if (_h == null) {
-				throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-			}
-		}
+        public EventLogIterator(String serverName, String sourceName, int flags) {
+            _flags = flags;
+            _h = Advapi32.INSTANCE.OpenEventLog(serverName, sourceName);
+            if (_h == null) {
+                throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+            }
+        }
 
-		private boolean read() {
-			// finished or bytes remain, don't read any new data
-			if (_done || _dwRead > 0) {
-				return false;
-			}
+        private boolean read() {
+            // finished or bytes remain, don't read any new data
+            if (_done || _dwRead > 0) {
+                return false;
+            }
 
-			IntByReference pnBytesRead = new IntByReference();
-			IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
+            IntByReference pnBytesRead = new IntByReference();
+            IntByReference pnMinNumberOfBytesNeeded = new IntByReference();
 
-			if (!Advapi32.INSTANCE
-					.ReadEventLog(_h, WinNT.EVENTLOG_SEQUENTIAL_READ | _flags,
-							0, _buffer, (int) _buffer.size(), pnBytesRead,
-							pnMinNumberOfBytesNeeded)) {
+            if (!Advapi32.INSTANCE
+                    .ReadEventLog(_h, WinNT.EVENTLOG_SEQUENTIAL_READ | _flags,
+                            0, _buffer, (int) _buffer.size(), pnBytesRead,
+                            pnMinNumberOfBytesNeeded)) {
 
-				int rc = Kernel32.INSTANCE.GetLastError();
+                int rc = Kernel32.INSTANCE.GetLastError();
 
-				// not enough bytes in the buffer, resize
-				if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
-					_buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
+                // not enough bytes in the buffer, resize
+                if (rc == W32Errors.ERROR_INSUFFICIENT_BUFFER) {
+                    _buffer = new Memory(pnMinNumberOfBytesNeeded.getValue());
 
-					if (!Advapi32.INSTANCE.ReadEventLog(_h,
-							WinNT.EVENTLOG_SEQUENTIAL_READ | _flags, 0,
-							_buffer, (int) _buffer.size(), pnBytesRead,
-							pnMinNumberOfBytesNeeded)) {
-						throw new Win32Exception(
-								Kernel32.INSTANCE.GetLastError());
-					}
-				} else {
-					// read failed, no more entries or error
-					close();
-					if (rc != W32Errors.ERROR_HANDLE_EOF) {
-						throw new Win32Exception(rc);
-					}
-					return false;
-				}
-			}
+                    if (!Advapi32.INSTANCE.ReadEventLog(_h,
+                            WinNT.EVENTLOG_SEQUENTIAL_READ | _flags, 0,
+                            _buffer, (int) _buffer.size(), pnBytesRead,
+                            pnMinNumberOfBytesNeeded)) {
+                        throw new Win32Exception(
+                                Kernel32.INSTANCE.GetLastError());
+                    }
+                } else {
+                    // read failed, no more entries or error
+                    close();
+                    if (rc != W32Errors.ERROR_HANDLE_EOF) {
+                        throw new Win32Exception(rc);
+                    }
+                    return false;
+                }
+            }
 
-			_dwRead = pnBytesRead.getValue();
-			_pevlr = _buffer;
-			return true;
-		}
+            _dwRead = pnBytesRead.getValue();
+            _pevlr = _buffer;
+            return true;
+        }
 
-		/**
-		 * Call close() in the case when the caller needs to abandon the
-		 * iterator before the iteration completes.
-		 */
-		public void close() {
-			_done = true;
-			if (_h != null) {
-				if (!Advapi32.INSTANCE.CloseEventLog(_h)) {
-					throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
-				}
-				_h = null;
-			}
-		}
+        /**
+         * Call close() in the case when the caller needs to abandon the
+         * iterator before the iteration completes.
+         */
+        public void close() {
+            _done = true;
+            if (_h != null) {
+                if (!Advapi32.INSTANCE.CloseEventLog(_h)) {
+                    throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
+                }
+                _h = null;
+            }
+        }
 
-		// @Override - @todo restore Override annotation after we move to source
-		// level 1.6
-		@Override
+        // @Override - @todo restore Override annotation after we move to source
+        // level 1.6
+        @Override
         public Iterator<EventLogRecord> iterator() {
-			return this;
-		}
+            return this;
+        }
 
-		// @Override - @todo restore Override annotation after we move to source
-		// level 1.6
-		@Override
+        // @Override - @todo restore Override annotation after we move to source
+        // level 1.6
+        @Override
         public boolean hasNext() {
-			read();
-			return !_done;
-		}
+            read();
+            return !_done;
+        }
 
-		// @Override - @todo restore Override annotation after we move to source
-		// level 1.6
-		@Override
+        // @Override - @todo restore Override annotation after we move to source
+        // level 1.6
+        @Override
         public EventLogRecord next() {
-			read();
-			EventLogRecord record = new EventLogRecord(_pevlr);
-			_dwRead -= record.getLength();
-			_pevlr = _pevlr.share(record.getLength());
-			return record;
-		}
+            read();
+            EventLogRecord record = new EventLogRecord(_pevlr);
+            _dwRead -= record.getLength();
+            _pevlr = _pevlr.share(record.getLength());
+            return record;
+        }
 
-		// @Override - @todo restore Override annotation after we move to source
-		// level 1.6
-		@Override
+        // @Override - @todo restore Override annotation after we move to source
+        // level 1.6
+        @Override
         public void remove() {
-		}
-	}
+        }
+    }
 
         /**
          * @param fileName path to the file
          * @param compact if true compatible ACEs are merged if possible
          * @return list of ACEs in the DACL of the referenced file
          */
-	public static ACE_HEADER[] getFileSecurity(String fileName,
-			boolean compact) {
-		int infoType = WinNT.DACL_SECURITY_INFORMATION;
-		int nLength = 1024;
-		boolean repeat;
-		Memory memory;
+    public static ACE_HEADER[] getFileSecurity(String fileName,
+            boolean compact) {
+        int infoType = WinNT.DACL_SECURITY_INFORMATION;
+        int nLength = 1024;
+        boolean repeat;
+        Memory memory;
 
-		do {
-			repeat = false;
-			memory = new Memory(nLength);
-			IntByReference lpnSize = new IntByReference();
-			boolean succeded = Advapi32.INSTANCE.GetFileSecurity(
-					fileName, infoType, memory, nLength, lpnSize);
+        do {
+            repeat = false;
+            memory = new Memory(nLength);
+            IntByReference lpnSize = new IntByReference();
+            boolean succeded = Advapi32.INSTANCE.GetFileSecurity(
+                    fileName, infoType, memory, nLength, lpnSize);
 
-			if (!succeded) {
-				int lastError = Kernel32.INSTANCE.GetLastError();
-				memory.clear();
-				if (W32Errors.ERROR_INSUFFICIENT_BUFFER != lastError) {
-					throw new Win32Exception(lastError);
-				}
-			}
-			int lengthNeeded = lpnSize.getValue();
-			if (nLength < lengthNeeded) {
-				repeat = true;
-				nLength = lengthNeeded;
-				memory.clear();
-			}
-		} while (repeat);
+            if (!succeded) {
+                int lastError = Kernel32.INSTANCE.GetLastError();
+                memory.clear();
+                if (W32Errors.ERROR_INSUFFICIENT_BUFFER != lastError) {
+                    throw new Win32Exception(lastError);
+                }
+            }
+            int lengthNeeded = lpnSize.getValue();
+            if (nLength < lengthNeeded) {
+                repeat = true;
+                nLength = lengthNeeded;
+                memory.clear();
+            }
+        } while (repeat);
 
-		SECURITY_DESCRIPTOR_RELATIVE sdr = new WinNT.SECURITY_DESCRIPTOR_RELATIVE(
-				memory);
-		ACL dacl = sdr.getDiscretionaryACL();
-		ACE_HEADER[] aceStructures = dacl.getACEs();
+        SECURITY_DESCRIPTOR_RELATIVE sdr = new WinNT.SECURITY_DESCRIPTOR_RELATIVE(
+                memory);
+        ACL dacl = sdr.getDiscretionaryACL();
+        ACE_HEADER[] aceStructures = dacl.getACEs();
 
-		if (compact) {
-                        List<ACE_HEADER> result = new ArrayList<ACE_HEADER>();
-			Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
-			for (ACE_HEADER aceStructure : aceStructures) {
-                                if(aceStructure instanceof ACCESS_ACEStructure) {
-                                        ACCESS_ACEStructure accessACEStructure = (ACCESS_ACEStructure) aceStructure;
-                                        boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
-                                        String key = accessACEStructure.getSidString() + "/" + inherted + "/"
-                                                        + aceStructure.getClass().getName();
-                                        ACCESS_ACEStructure aceStructure2 = aceMap.get(key);
-                                        if (aceStructure2 != null) {
-                                                int accessMask = aceStructure2.Mask;
-                                                accessMask = accessMask | accessACEStructure.Mask;
-                                                aceStructure2.Mask = accessMask;
-                                        } else {
-                                                aceMap.put(key, accessACEStructure);
-                                                result.add(aceStructure2);
-                                        }
-                                } else {
-                                        result.add(aceStructure);
-                                }
-			}
-			return result.toArray(new ACE_HEADER[0]);
-		}
+        if (compact) {
+            List<ACE_HEADER> result = new ArrayList<ACE_HEADER>();
+            Map<String, ACCESS_ACEStructure> aceMap = new HashMap<String, ACCESS_ACEStructure>();
+            for (ACE_HEADER aceStructure : aceStructures) {
+                if (aceStructure instanceof ACCESS_ACEStructure) {
+                    ACCESS_ACEStructure accessACEStructure = (ACCESS_ACEStructure) aceStructure;
+                    boolean inherted = ((aceStructure.AceFlags & WinNT.VALID_INHERIT_FLAGS) != 0);
+                    String key = accessACEStructure.getSidString() + "/" + inherted + "/"
+                        + aceStructure.getClass().getName();
+                    ACCESS_ACEStructure aceStructure2 = aceMap.get(key);
+                    if (aceStructure2 != null) {
+                        int accessMask = aceStructure2.Mask;
+                        accessMask = accessMask | accessACEStructure.Mask;
+                        aceStructure2.Mask = accessMask;
+                    } else {
+                        aceMap.put(key, accessACEStructure);
+                        result.add(aceStructure2);
+                    }
+                } else {
+                    result.add(aceStructure);
+                }
+            }
+            return result.toArray(new ACE_HEADER[0]);
+        }
 
-                return aceStructures;
-	}
+        return aceStructures;
+    }
 
     public static enum AccessCheckPermission {
         READ(GENERIC_READ),
@@ -2709,14 +2709,14 @@ public abstract class Advapi32Util {
         PointerByReference ppSecurityDescriptor = new PointerByReference();
 
         int lastError = Advapi32.INSTANCE.GetNamedSecurityInfo(
-		                absoluteObjectPath,
-		                objectType,
-		                infoType,
-		                null,
-		                null,
-		                null,
-		                null,
-		                ppSecurityDescriptor);
+                        absoluteObjectPath,
+                        objectType,
+                        infoType,
+                        null,
+                        null,
+                        null,
+                        null,
+                        ppSecurityDescriptor);
 
         if (lastError != 0) {
             throw new Win32Exception(lastError);
@@ -2774,14 +2774,14 @@ public abstract class Advapi32Util {
                                                       boolean setDACLProtectedStatus,
                                                       boolean setSACLProtectedStatus) {
 
-    	final PSID psidOwner = securityDescriptor.getOwner();
-    	final PSID psidGroup = securityDescriptor.getGroup();
-    	final ACL dacl = securityDescriptor.getDiscretionaryACL();
-    	final ACL sacl = securityDescriptor.getSystemACL();
+        final PSID psidOwner = securityDescriptor.getOwner();
+        final PSID psidGroup = securityDescriptor.getGroup();
+        final ACL dacl = securityDescriptor.getDiscretionaryACL();
+        final ACL sacl = securityDescriptor.getSystemACL();
 
-    	int infoType = 0;
-    	// Parameter validation and infoType flag setting.
-    	if (setOwner) {
+        int infoType = 0;
+        // Parameter validation and infoType flag setting.
+        if (setOwner) {
             if (psidOwner == null)
                 throw new IllegalArgumentException("SECURITY_DESCRIPTOR_RELATIVE does not contain owner");
             if (!Advapi32.INSTANCE.IsValidSid(psidOwner))
@@ -2813,11 +2813,11 @@ public abstract class Advapi32Util {
             infoType |= SACL_SECURITY_INFORMATION;
         }
 
-    	/*
-    	 * Control bits SE_DACL_PROTECTED/SE_SACL_PROTECTED indicate the *ACL is protected. The *ACL_SECURITY_INFORMATION flags
-    	 * are meta flags for SetNamedSecurityInfo and are not stored in the SD.  If either *ACLProtectedStatus is set,
-    	 * get the current status from the securityDescriptor and apply as such, otherwise the ACL remains at its default.
-    	*/
+        /*
+         * Control bits SE_DACL_PROTECTED/SE_SACL_PROTECTED indicate the *ACL is protected. The *ACL_SECURITY_INFORMATION flags
+         * are meta flags for SetNamedSecurityInfo and are not stored in the SD.  If either *ACLProtectedStatus is set,
+         * get the current status from the securityDescriptor and apply as such, otherwise the ACL remains at its default.
+        */
         if (setDACLProtectedStatus) {
             if ((securityDescriptor.Control & SE_DACL_PROTECTED) != 0) {
                 infoType |= PROTECTED_DACL_SECURITY_INFORMATION;
@@ -2830,8 +2830,7 @@ public abstract class Advapi32Util {
         if (setSACLProtectedStatus) {
             if ((securityDescriptor.Control & SE_SACL_PROTECTED) != 0) {
                 infoType |= PROTECTED_SACL_SECURITY_INFORMATION;
-        }
-            else if ((securityDescriptor.Control & SE_SACL_PROTECTED) == 0) {
+            } else if ((securityDescriptor.Control & SE_SACL_PROTECTED) == 0) {
                 infoType |= UNPROTECTED_SACL_SECURITY_INFORMATION;
             }
         }
@@ -2862,7 +2861,7 @@ public abstract class Advapi32Util {
         HANDLEByReference openedAccessToken = new HANDLEByReference();
         HANDLEByReference duplicatedToken = new HANDLEByReference();
         Win32Exception err = null;
-        try{
+        try {
             int desireAccess = TOKEN_IMPERSONATE | TOKEN_QUERY | TOKEN_DUPLICATE | STANDARD_RIGHTS_READ;
             HANDLE hProcess = Kernel32.INSTANCE.GetCurrentProcess();
             if (!Advapi32.INSTANCE.OpenProcessToken(hProcess, desireAccess, openedAccessToken)) {
@@ -2889,21 +2888,21 @@ public abstract class Advapi32Util {
             DWORDByReference grantedAccess = new DWORDByReference();
             BOOLByReference result = new BOOLByReference();
             if (!Advapi32.INSTANCE.AccessCheck(securityDescriptorMemoryPointer,
-                    duplicatedToken.getValue(),
-                    rights.getValue(),
-                    mapping,
-                    privileges, privilegeLength, grantedAccess, result)) {
+                duplicatedToken.getValue(),
+                rights.getValue(),
+                mapping,
+                privileges, privilegeLength, grantedAccess, result)) {
                 throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
             }
 
-           return result.getValue().booleanValue();
-        } catch(Win32Exception e) {
+            return result.getValue().booleanValue();
+        } catch (Win32Exception e) {
             err = e;
             throw err;  // re-throw so finally block executed
         } finally {
             try {
                 Kernel32Util.closeHandleRefs(openedAccessToken, duplicatedToken);
-            } catch(Win32Exception e) {
+            } catch (Win32Exception e) {
                 if (err == null) {
                     err = e;
                 } else {
@@ -2932,10 +2931,10 @@ public abstract class Advapi32Util {
      */
     public static SECURITY_DESCRIPTOR_RELATIVE getFileSecurityDescriptor(File file, boolean getSACL)
     {
-    	SECURITY_DESCRIPTOR_RELATIVE sdr;
-    	Memory securityDesc = getSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, getSACL);
-    	sdr = new SECURITY_DESCRIPTOR_RELATIVE(securityDesc);
-    	return sdr;
+        SECURITY_DESCRIPTOR_RELATIVE sdr;
+        Memory securityDesc = getSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, getSACL);
+        sdr = new SECURITY_DESCRIPTOR_RELATIVE(securityDesc);
+        return sdr;
     }
 
     /**
@@ -2967,7 +2966,7 @@ public abstract class Advapi32Util {
                         boolean setDACLProtectedStatus,
                         boolean setSACLProtectedStatus)
     {
-    	setSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, securityDescriptor, setOwner, setGroup, setDACL, setSACL, setDACLProtectedStatus, setSACLProtectedStatus);
+        setSecurityDescriptorForObject(file.getAbsolutePath().replaceAll("/", "\\"), AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT, securityDescriptor, setOwner, setGroup, setDACL, setSACL, setDACLProtectedStatus, setSACLProtectedStatus);
     }
 
     /**

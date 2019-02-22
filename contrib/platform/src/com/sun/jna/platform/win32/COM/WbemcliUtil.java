@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -76,7 +76,7 @@ public class WbemcliUtil {
 
         /**
          * Instantiate a WmiQuery.
-         * 
+         *
          * @param nameSpace
          *            The WMI namespace to use.
          * @param wmiClassName
@@ -383,7 +383,7 @@ public class WbemcliUtil {
          * enumerated WMI property and will be consistent for a given property,
          * and may be validated by the user using {@link #getVtType} or the
          * Class of the returned Object.
-         * 
+         *
          * @param property
          *            The property (column) to fetch
          * @param index
@@ -398,7 +398,7 @@ public class WbemcliUtil {
          * Gets the Variant type from the WmiResult. The integer value is
          * defined as a VT_* constant in the
          * {@link com.sun.jna.platform.win32.Variant} interface.
-         * 
+         *
          * @param property
          *            The property (column) whose type to fetch
          * @return An integer representing the Variant type
@@ -410,7 +410,7 @@ public class WbemcliUtil {
         /**
          * Gets the CIM type from the WmiResult. The integer value is defined as
          * a CIM_* constant in the {@link Wbemcli} interface.
-         * 
+         *
          * @param property
          *            The property (column) whose type to fetch
          * @return An integer representing the CIM type
@@ -421,7 +421,7 @@ public class WbemcliUtil {
 
         /**
          * Adds a value to the WmiResult at the next index for that property
-         * 
+         *
          * @param vtType
          *            The Variant type of this object
          * @param cimType

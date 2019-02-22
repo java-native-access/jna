@@ -29,7 +29,7 @@ public class ConfigurateLCID_Test {
         this.factory = new Factory();
         // switch to english locale (the test is only valid if office is
         // installed in a non-english locale
-        this.factory.setLCID(new LCID(0x0409)); 
+        this.factory.setLCID(new LCID(0x0409));
     }
 
     @After
@@ -62,10 +62,10 @@ public class ConfigurateLCID_Test {
         sheet.getProperty(IDispatch.class, "Range", "A3").setProperty("Formula", "=SUM(A1:A2)");
 
         Number result = sheet.getProperty(IDispatch.class, "Range", "A3").getProperty(Number.class, "Value");
-        
+
         // The formula should report the sum
         Assert.assertEquals(65, result.intValue());
-        
+
         excelApp.invokeMethod(Void.class, "Quit");
     }
 

@@ -3,24 +3,24 @@
  */
 
 /* Copyright (c) 2010 Timothy Wall, All Rights Reserved
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -75,15 +75,15 @@ public interface WTypes {
 
     /**
      * BSTR wrapper.
-     * 
+     *
      * <p>From MSDN:</p>
-     * 
-     * <blockquote>A BSTR (Basic string or binary string) is a string data type 
-     * that is used by COM, Automation, and Interop functions. Use the BSTR data 
+     *
+     * <blockquote>A BSTR (Basic string or binary string) is a string data type
+     * that is used by COM, Automation, and Interop functions. Use the BSTR data
      * type in all interfaces that will be accessed from script.</blockquote>
-     * 
+     *
      * <p>The memory structure:</p>
-     * 
+     *
      * <dl>
      * <dt>Length prefix</dt>
      * <dd>Length of the data array holding the string data and does not include
@@ -93,10 +93,10 @@ public interface WTypes {
      * <dt>Terminator</dt>
      * <dd>Two null characters</dd>
      * </dl>
-     * 
+     *
      * <p>The "value" of the BSTR is the pointer to the start of the Data String,
      * the length prefix is the four bytes before that.</p>
-     * 
+     *
      * <p>The MSDN states, that a BSTR derived from a Nullpointer is treated
      * as a string containing zero characters.</p>
      */
@@ -296,7 +296,7 @@ public interface WTypes {
             super(value);
         }
     }
-    
+
     public static class VARTYPEByReference extends ByReference {
         public VARTYPEByReference() {
             super(VARTYPE.SIZE);
@@ -306,12 +306,12 @@ public interface WTypes {
             super(VARTYPE.SIZE);
             setValue(type);
         }
-        
+
         public VARTYPEByReference(short type) {
             super(VARTYPE.SIZE);
             getPointer().setShort(0, type);
         }
-        
+
         public void setValue(VARTYPE value) {
             getPointer().setShort(0, value.shortValue());
         }

@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Wayne Meissner, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -206,7 +206,7 @@ public class TypeMapperTest extends TestCase {
             }
         };
         mapper.addTypeConverter(Boolean.class, converter);
-		Native.load("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        Native.load("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         StructureTestLibrary.TestStructure s = new StructureTestLibrary.TestStructure(mapper);
         assertEquals("Wrong native size", 4, s.size());
 
@@ -226,9 +226,12 @@ public class TypeMapperTest extends TestCase {
         public int getCode() { return code; }
         public static Enumeration fromCode(int code) {
             switch(code) {
-            case 0: return STATUS_0;
-            case 1: return STATUS_1;
-            default: return STATUS_ERROR;
+                case 0:
+                    return STATUS_0;
+                case 1:
+                    return STATUS_1;
+                default:
+                    return STATUS_ERROR;
             }
         }
     }

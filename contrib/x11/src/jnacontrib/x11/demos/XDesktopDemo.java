@@ -1,23 +1,23 @@
 /* Copyright (c) 2008 Stefan Endrullis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -232,8 +232,7 @@ public class XDesktopDemo extends JFrame {
         int activeWindowNumber = -1;
         X.Window[] windows = display.getWindows();
         String[] head = new String[]{
-                "ID", "Desktop", "Title",
-                "X", "Y", "Width", "Height"
+            "ID", "Desktop", "Title", "X", "Y", "Width", "Height"
         };
         String[][] data = new String[windows.length][head.length];
         for (int i = 0; i < windows.length; i++) {
@@ -369,8 +368,8 @@ public class XDesktopDemo extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(showSubwindows, gbc);
 
-		setContentPane(mainPanel);
-	}
+        setContentPane(mainPanel);
+    }
 
     /**
      * A simple ListModel managing a list of objects.

@@ -1,21 +1,22 @@
-/* The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -178,7 +179,7 @@ public class Function extends Pointer {
     public static Function getFunction(Pointer p, int callFlags) {
         return getFunction(p, callFlags, null);
     }
-    
+
     /**
      * Obtain a <code>Function</code> representing a native
      * function pointer.  In general, this function should be used by dynamic
@@ -403,13 +404,13 @@ public class Function extends Pointer {
 
     /* @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
     Object invoke(Object[] args, Class<?> returnType, boolean allowObjects) {
-	return invoke(args, returnType, allowObjects, 0);
+        return invoke(args, returnType, allowObjects, 0);
     }
 
     /* @see NativeLibrary#NativeLibrary(String,String,long,Map) implementation */
     Object invoke(Object[] args, Class<?> returnType, boolean allowObjects, int fixedArgs) {
         Object result = null;
-	int callFlags = this.callFlags | ((fixedArgs & 0x3) << 7);
+        int callFlags = this.callFlags | ((fixedArgs & 0x3) << 7);
         if (returnType == null || returnType==void.class || returnType==Void.class) {
             Native.invokeVoid(this, this.peer, callFlags, args);
             result = null;
@@ -530,9 +531,9 @@ public class Function extends Pointer {
             Structure struct = (Structure)arg;
             struct.autoWrite();
             if (struct instanceof Structure.ByValue) {
-            	// Double-check against the method signature, if available
+                // Double-check against the method signature, if available
                 Class<?> ptype = struct.getClass();
-            	if (invokingMethod != null) {
+                if (invokingMethod != null) {
                     Class<?>[] ptypes = invokingMethod.getParameterTypes();
                     if (IS_VARARGS.isVarArgs(invokingMethod)) {
                         if (index < ptypes.length-1) {
@@ -638,8 +639,7 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param	args
-     *			Arguments to pass to the native function
+     * @param args Arguments to pass to the native function
      */
     public void invoke(Object[] args) {
         invoke(Void.class, args);
@@ -649,12 +649,12 @@ public class Function extends Pointer {
     /**
      * Call the native function being represented by this object
      *
-     * @param   callFlags calling convention to be used
-     * @param	args
-     *			Arguments to pass to the native function
-     * @param   wide whether the native string uses <code>wchar_t</code>;
-     * if false, <code>char</code> is assumed
-     * @return	The value returned by the target native function, as a String
+     * @param callFlags calling convention to be used
+     * @param args      Arguments to pass to the native function
+     * @param wide      whether the native string uses <code>wchar_t</code>; if
+     *                  false, <code>char</code> is assumed
+     *
+     * @return The value returned by the target native function, as a String
      */
     private String invokeString(int callFlags, Object[] args, boolean wide) {
         Pointer ptr = invokePointer(callFlags, args);

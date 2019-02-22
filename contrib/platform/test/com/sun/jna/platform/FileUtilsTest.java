@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform;
 
@@ -19,10 +19,10 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 public class FileUtilsTest extends TestCase {
-    
+
     public void testMoveToTrash() throws Exception {
         FileUtils utils = FileUtils.getInstance();
-        if (!utils.hasTrash()) 
+        if (!utils.hasTrash())
             return;
 
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
@@ -41,13 +41,13 @@ public class FileUtilsTest extends TestCase {
             file.delete();
         }
     }
-    
+
     public void testMoveSymlinkToTrash() throws Exception {
         if (Platform.isWindows()) {
             return;
         }
         FileUtils utils = FileUtils.getInstance();
-        if (!utils.hasTrash()) 
+        if (!utils.hasTrash())
             return;
 
         File tmpdir = new File(System.getProperty("java.io.tmpdir"));
@@ -79,7 +79,7 @@ public class FileUtilsTest extends TestCase {
             file.delete();
         }
     }
-    
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(FileUtilsTest.class);
     }

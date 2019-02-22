@@ -88,12 +88,12 @@ public class X11Test extends TestCase {
     public void testXGetWMProtocols() {
         X11.Atom[] sentAtoms = new X11.Atom[]{ X11.INSTANCE.XInternAtom(display, "WM_DELETE_WINDOW", false), X11.INSTANCE.XInternAtom(display, "WM_TAKE_FOCUS", false) };
         X11.INSTANCE.XSetWMProtocols(display, root, sentAtoms, sentAtoms.length);
-        
+
         PointerByReference protocols = new PointerByReference();
         IntByReference count = new IntByReference();
-        
+
         int status = X11.INSTANCE.XGetWMProtocols(display, root, protocols, count);
-        
+
         X11.Atom[] receivedAtoms = new X11.Atom[count.getValue()];
         for(int i = count.getValue() - 1; i >= 0; i--) {
             receivedAtoms[i] = new X11.Atom(protocols.getValue().getLong(X11.Atom.SIZE * i));

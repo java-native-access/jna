@@ -22,12 +22,11 @@ public class ShellApplicationWindowsTest {
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-        
+
         // Launch IE in a manner that should ensure it opens even if the system default browser is Chrome, Firefox, or something else.
-    	Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
+        Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
 
         // Even when going to "about:blank", IE still needs a few seconds to start up and add itself to Shell.Application.Windows
         // Removing this delay will cause the test to fail even on the fastest boxes I can find.
@@ -47,8 +46,8 @@ public class ShellApplicationWindowsTest {
         boolean pageFound = false;
         for (InternetExplorer ie : sa.Windows())
         {
-        	// For reasons unknown, Shell.Application.Windows can have null members inside it.
-        	// All I care about is whether or not the collection contains the window I opened.
+            // For reasons unknown, Shell.Application.Windows can have null members inside it.
+            // All I care about is whether or not the collection contains the window I opened.
             if (ie != null && "about:blank".equals(ie.getURL()))
             {
                 pageFound = true;
@@ -57,7 +56,7 @@ public class ShellApplicationWindowsTest {
 
         // Finally, did we find our page in the collection?
         assertTrue("No IE page was found", pageFound);
-        
+
         Ole32.INSTANCE.CoUninitialize();
     }
 

@@ -48,21 +48,21 @@ public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
 
         // NOTE: we don't really care what the returned values are only that the call succeeds
         try {
-            IntByReference    lpFlags=new IntByReference(0);
-            IntByReference    lpOutBuffferSize=new IntByReference(0);
-            IntByReference    lpInBufferSize=new IntByReference(0);
-                IntByReference    lpMaxInstances=new IntByReference(0);
-                assertCallSucceeded("GetNamedPipeInfo",
-                                    Kernel32.INSTANCE.GetNamedPipeInfo(hNamedPipe, lpFlags,
-                                            lpOutBuffferSize, lpInBufferSize, lpMaxInstances));
+            IntByReference lpFlags = new IntByReference(0);
+            IntByReference lpOutBuffferSize = new IntByReference(0);
+            IntByReference lpInBufferSize = new IntByReference(0);
+            IntByReference lpMaxInstances = new IntByReference(0);
+            assertCallSucceeded("GetNamedPipeInfo",
+                Kernel32.INSTANCE.GetNamedPipeInfo(hNamedPipe, lpFlags,
+                    lpOutBuffferSize, lpInBufferSize, lpMaxInstances));
 
-                ULONGByReference    ServerProcessId=new ULONGByReference();
-                assertCallSucceeded("GetNamedPipeServerProcessId", Kernel32.INSTANCE.GetNamedPipeServerProcessId(hNamedPipe, ServerProcessId));
+            ULONGByReference ServerProcessId = new ULONGByReference();
+            assertCallSucceeded("GetNamedPipeServerProcessId", Kernel32.INSTANCE.GetNamedPipeServerProcessId(hNamedPipe, ServerProcessId));
 
-                ULONGByReference ServerSessionId=new ULONGByReference();
-                assertCallSucceeded("GetNamedPipeServerSessionId", Kernel32.INSTANCE.GetNamedPipeServerSessionId(hNamedPipe, ServerSessionId));
+            ULONGByReference ServerSessionId = new ULONGByReference();
+            assertCallSucceeded("GetNamedPipeServerSessionId", Kernel32.INSTANCE.GetNamedPipeServerSessionId(hNamedPipe, ServerSessionId));
 
-                assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
+            assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
         } finally {    // clean up
             assertCallSucceeded("Named pipe handle close", Kernel32.INSTANCE.CloseHandle(hNamedPipe));
         }

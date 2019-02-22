@@ -1,23 +1,23 @@
 /* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -38,7 +38,7 @@ import com.sun.jna.platform.win32.COM.TypeLibUtil;
 // TODO: Auto-generated Javadoc
 /**
  * The Class TlbBase.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public abstract class TlbBase {
@@ -59,7 +59,7 @@ public abstract class TlbBase {
     protected TypeLibUtil typeLibUtil;
 
     protected TypeInfoUtil typeInfoUtil;
-    
+
     /** The index. */
     protected int index;
 
@@ -77,15 +77,15 @@ public abstract class TlbBase {
     protected String name = "DefaultName";
 
     /** The iunknown methods. */
-    public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
-            "Release" };
+    public static String[] IUNKNOWN_METHODS = {"QueryInterface", "AddRef",
+        "Release"};
 
     /** The idispatch methods. */
-    public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
-            "GetTypeInfo", "GetIDsOfNames", "Invoke" };
+    public static String[] IDISPATCH_METHODS = {"GetTypeInfoCount",
+        "GetTypeInfo", "GetIDsOfNames", "Invoke"};
 
     protected String bindingMode = TlbConst.BINDING_MODE_DISPID;
-    
+
     public TlbBase(int index, TypeLibUtil typeLibUtil, TypeInfoUtil typeInfoUtil) {
         this(index, typeLibUtil, typeInfoUtil, TlbConst.BINDING_MODE_DISPID);
     }
@@ -95,7 +95,7 @@ public abstract class TlbBase {
         this.typeLibUtil = typeLibUtil;
         this.typeInfoUtil = typeInfoUtil;
         this.bindingMode = bindingMode;
-        
+
         String filename = this.getClassTemplate();
         try {
             this.readTemplateFile(filename);
@@ -107,7 +107,7 @@ public abstract class TlbBase {
 
     /**
      * Log error.
-     * 
+     *
      * @param msg
      *            the msg
      */
@@ -117,7 +117,7 @@ public abstract class TlbBase {
 
     /**
      * Log info.
-     * 
+     *
      * @param msg
      *            the msg
      */
@@ -127,7 +127,7 @@ public abstract class TlbBase {
 
     /**
      * Gets the class buffer.
-     * 
+     *
      * @return the class buffer
      */
     public StringBuffer getClassBuffer() {
@@ -136,7 +136,7 @@ public abstract class TlbBase {
 
     /**
      * Creates the content.
-     * 
+     *
      * @param content
      *            the content
      */
@@ -164,7 +164,7 @@ public abstract class TlbBase {
 
     /**
      * Log.
-     * 
+     *
      * @param level
      *            the level
      * @param msg
@@ -177,7 +177,7 @@ public abstract class TlbBase {
 
     /**
      * Gets the time.
-     * 
+     *
      * @return the time
      */
     private String getTime() {
@@ -187,14 +187,14 @@ public abstract class TlbBase {
 
     /**
      * Gets the class template.
-     * 
+     *
      * @return the class template
      */
     abstract protected String getClassTemplate();
 
     /**
      * Read template file.
-     * 
+     *
      * @param filename
      *            the filename
      * @throws IOException
@@ -218,7 +218,7 @@ public abstract class TlbBase {
 
     /**
      * Replace variable.
-     * 
+     *
      * @param name
      *            the name
      * @param value
@@ -247,7 +247,7 @@ public abstract class TlbBase {
 
     /**
      * Creates the class name.
-     * 
+     *
      * @param name
      *            the name
      */
@@ -257,7 +257,7 @@ public abstract class TlbBase {
 
     /**
      * Checks if is reserved method.
-     * 
+     *
      * @param method
      *            the method
      * @return true, if is reserved method
@@ -275,14 +275,14 @@ public abstract class TlbBase {
 
         return false;
     }
-    
+
     protected boolean isVTableMode() {
         if(this.bindingMode.equalsIgnoreCase(TlbConst.BINDING_MODE_VTABLE))
             return true;
         else
             return false;
     }
-    
+
     protected boolean isDispIdMode() {
         if(this.bindingMode.equalsIgnoreCase(TlbConst.BINDING_MODE_DISPID))
             return true;

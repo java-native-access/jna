@@ -106,7 +106,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowLocationAndSize() {
 
         final JFrame w = new JFrame();
@@ -129,7 +129,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowTitle() {
 
         final JFrame w = new JFrame("A super unique title by PAX! "
@@ -145,9 +145,9 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetIconSize() throws Exception {
-        
+
         final JFrame w = new JFrame();
         try {
             final BufferedImage expectedIcon = ImageIO
@@ -157,16 +157,16 @@ public class WindowUtilsTest extends TestCase {
             Pointer p = Native.getComponentPointer(w);
             assertNotNull("Could not obtain native HANDLE for JFrame", p);
             HWND hwnd = new HWND(p);
-            
+
             final DWORDByReference hIconNumber = new DWORDByReference();
             LRESULT result = User32.INSTANCE
                 .SendMessageTimeout(hwnd, WinUser.WM_GETICON,
                                     new WPARAM(WinUser.ICON_BIG),
                                     new LPARAM(0),
                                     WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
-            
+
             assertNotEquals(0, result.intValue());
-            
+
             final HICON hIcon = new HICON(new Pointer(hIconNumber.getValue()
                                                       .longValue()));
             assertTrue(WindowUtils.getIconSize(hIcon).width >= 32);
@@ -177,19 +177,19 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetProcessFilePath() {
         if (!Platform.isWindows()) {
             return;
         }
-        
+
         final JFrame w = new JFrame();
         try {
             w.setVisible(true);
-            
+
             final String searchSubStr = "\\bin\\java";
             final HWND hwnd = new HWND(Native.getComponentPointer(w));
-            
+
             assertTrue("Path didn't contain '" + searchSubStr + "': "
                        + WindowUtils.getProcessFilePath(hwnd),
                        WindowUtils.getProcessFilePath(hwnd).toLowerCase()

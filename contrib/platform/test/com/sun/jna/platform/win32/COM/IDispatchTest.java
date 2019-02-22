@@ -1,14 +1,14 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32.COM;
 
@@ -33,7 +33,7 @@ public class IDispatchTest extends TestCase {
     static {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
-        
+
     /** The Constant LOCALE_SYSTEM_DEFAULT. */
     public final static LCID LOCALE_SYSTEM_DEFAULT = Kernel32.INSTANCE
             .GetSystemDefaultLCID();
@@ -80,27 +80,27 @@ public class IDispatchTest extends TestCase {
 
     public void testGetTypeInfoCount() {
         Dispatch dispatch = this.createIDispatch();
-        
+
         UINTByReference pctinfo = new UINTByReference();
         dispatch.GetTypeInfoCount(pctinfo);
-        
+
         int intValue = pctinfo.getValue().intValue();
         assertEquals(1, intValue);
     }
 
     public void testGetTypeInfo() {
         Dispatch dispatch = this.createIDispatch();
-        
+
         PointerByReference ppTInfo = new PointerByReference();
         HRESULT hr = dispatch.GetTypeInfo(new UINT(0), LOCALE_SYSTEM_DEFAULT, ppTInfo);
-        
+
         COMUtils.checkRC(hr);
         assertEquals(0, hr.intValue());
     }
 
     public void testGetIDsOfNames() {
         Dispatch dispatch = this.createIDispatch();
-        
+
         WString[] ptName = new WString[] { new WString("Application") };
         DISPIDByReference pdispID = new DISPIDByReference();
 

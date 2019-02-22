@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -30,23 +30,23 @@ public class SspiUtil {
     /**
      * The SecBufferDesc structure describes an array of SecBuffer structures
      * to pass from a transport application to a security package.
-     * 
+     *
      * <p>
      * ManagedSecBufferDesc is a convenience binding, that makes dealing with
      * {@link com.sun.jna.platform.win32.Sspi.SecBufferDesc SecBufferDesc}
      * easier by providing direct, bound access, to the contained
      * {@link com.sun.jna.platform.win32.Sspi.SecBuffer SecBuffer}s.
      * </p>
-     * 
+     *
      * <p>
      * ManagedSecBufferDesc assumes, that the size (entry count) of the
      * SecBufferDesc is known at construction time. It is assumed, that this
      * covers all relevant use-cases.</p>
      */
     public static class ManagedSecBufferDesc extends Sspi.SecBufferDesc {
-                
+
         private final Sspi.SecBuffer[] secBuffers;
-        
+
         /**
          * Create a new SecBufferDesc with initial data.
          * @param type Token type.
@@ -68,7 +68,7 @@ public class SspiUtil {
             pBuffers = secBuffers[0].getPointer();
             cBuffers = secBuffers.length;
         }
-        
+
         public ManagedSecBufferDesc(int bufferCount) {
             cBuffers = bufferCount;
             secBuffers = (Sspi.SecBuffer[]) new Sspi.SecBuffer().toArray(bufferCount);

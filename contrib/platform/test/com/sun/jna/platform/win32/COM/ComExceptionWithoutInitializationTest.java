@@ -15,7 +15,7 @@ public class ComExceptionWithoutInitializationTest {
         } catch (COMException ex) {
             message = ex.getMessage();
         }
-        
+
         // This invocation must raise an exception, as the COM thread is not
         // initialized, in the message it is expected, that the HRESULT is reported
         // and the HRESULT resulting from calling into COM with it being initialized
@@ -40,7 +40,7 @@ public class ComExceptionWithoutInitializationTest {
         public InternetExplorer() {
             super(new Guid.CLSID("{0002DF01-0000-0000-C000-000000000046}"), true);
         }
-        
+
         /**
          * IWebBrowser2::get_LocationURL<br>
          * Read-only COM property.<br>

@@ -1,23 +1,23 @@
 /* Copyright (c) 2017 Daniel Widdis, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -66,7 +66,7 @@ public interface LibC extends LibCAPI, Library {
         /*
          * getFieldList and getFieldOrder are overridden because PADDING_SIZE
          * might be 0 - that is a GCC only extension and not supported by JNA
-         * 
+         *
          * The dummy field at the end of the structure is just padding and so if
          * the field is the zero length array, it is stripped from the fields
          * and field order.
@@ -148,7 +148,7 @@ public interface LibC extends LibCAPI, Library {
     /**
      * sysinfo() provides a simple way of getting overall system statistics.
      * This is more portable than reading /dev/kmem.
-     * 
+     *
      * @param info
      *            A Sysinfo structure which will be populated
      * @return On success, zero is returned. On error, -1 is returned, and errno
@@ -158,7 +158,7 @@ public interface LibC extends LibCAPI, Library {
 
     /**
      * The function statvfs() returns information about a mounted filesystem.
-     * 
+     *
      * @param path
      *            the pathname of any file within the mounted filesystem.
      * @param buf

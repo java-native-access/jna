@@ -66,11 +66,11 @@ public final class User32UtilTest extends TestCase {
 //        for (RAWINPUTDEVICELIST device : deviceList) {
 //            System.out.append('\t').append("Found device of type: ").println(device.dwType);
 //        }
-	}
+    }
 
     /**
      * Assert we can load a String from the string table of an executable.
-     * 
+     *
      * @throws UnsupportedEncodingException should never happen
      */
     public void testLoadString() throws UnsupportedEncodingException {
@@ -86,7 +86,7 @@ public final class User32UtilTest extends TestCase {
     /**
      * Assert some well known VK are members or not members of
      * {@link com.sun.jna.platform.win32.User32Util#WIN32VK_MAPPABLE}
-     * 
+     *
      */
     public void testVkMappable() {
         assertTrue(User32Util.WIN32VK_MAPPABLE.contains(Win32VK.VK_A));

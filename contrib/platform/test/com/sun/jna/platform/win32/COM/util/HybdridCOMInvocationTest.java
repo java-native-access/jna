@@ -55,14 +55,14 @@ public class HybdridCOMInvocationTest {
     }
 
     private static final Logger LOG = Logger.getLogger(HybdridCOMInvocationTest.class.getName());
-    
+
     private static final String CLSID_WORD_STRING = "{000209FF-0000-0000-C000-000000000046}";
     private static final String IID_APPLICATION_STRING = "{00020970-0000-0000-C000-000000000046}";
     private static final GUID CLSID_WORD = new GUID(CLSID_WORD_STRING);
     private static final IID IID_APPLICATION = new IID(new GUID(IID_APPLICATION_STRING));
-    
+
     private boolean initialized = false;
-    
+
     @After
     public void tearDown() throws Exception {
         if(initialized) {
@@ -70,7 +70,7 @@ public class HybdridCOMInvocationTest {
             initialized = false;
         }
     }
-    
+
     @Before
     public void setUp() throws Exception {
         // Initialize COM for this thread...
@@ -79,7 +79,7 @@ public class HybdridCOMInvocationTest {
         COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
         initialized = true;
     }
-    
+
     @Test
     public void testOfficeInvocationProblemCOMUtil() {
         ObjectFactory fact = new ObjectFactory();
@@ -95,7 +95,7 @@ public class HybdridCOMInvocationTest {
         assertThat(app.InchesToPoints(1F), is(72.0f));
         fact.disposeAll();
     }
-    
+
     @Test
     public void testOfficeInvocationProblemCOMBindingObject() {
         WordApplication app;
@@ -107,13 +107,13 @@ public class HybdridCOMInvocationTest {
         }
         assertThat(app.InchesToPoints(1F), is(72.0f));
     }
-    
-    
+
+
     public void testOfficeInvocationDemonstration() {
         // THIS IS NOT A TEST
         //
         // This reproduces the problem by using the dispatch directly.
-        
+
         PointerByReference pDispatch = new PointerByReference();
 
         HRESULT hr = Ole32.INSTANCE.CoCreateInstance(CLSID_WORD, null,
@@ -125,7 +125,7 @@ public class HybdridCOMInvocationTest {
         }
 
         Dispatch dp = new Dispatch(pDispatch.getValue());
-        
+
         // DispID of InchesToPoints
         DISPID dispId = new OaIdl.DISPID(0x00000172);
         // Interface _Application of MS Word type library
@@ -133,27 +133,27 @@ public class HybdridCOMInvocationTest {
         Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
         OaIdl.EXCEPINFO.ByReference pExcepInfo = new OaIdl.EXCEPINFO.ByReference();
         IntByReference puArgErr = new IntByReference();
-        
+
         WORD wFlagsMethod = new WinDef.WORD(OleAuto.DISPATCH_METHOD);
         WORD wFlagsGet = new WinDef.WORD(OleAuto.DISPATCH_PROPERTYGET);
         WORD wFlagsCombined = new WinDef.WORD(OleAuto.DISPATCH_METHOD | OleAuto.DISPATCH_PROPERTYGET);
-        
+
         OleAuto.DISPPARAMS.ByReference pDispParams = new OleAuto.DISPPARAMS.ByReference();
         VARIANT[] params = new VARIANT[] {new VARIANT(1f)};
         pDispParams.setArgs(params);
-        
+
         // Call InchesToPoints as a method
         hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsMethod, pDispParams, result, pExcepInfo, puArgErr);
         assertTrue(COMUtils.FAILED(hr));
-        
+
         // Call InchesToPoints as a property getter
         hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsGet, pDispParams, result, pExcepInfo, puArgErr);
         assertTrue(COMUtils.FAILED(hr));
-       
+
         // Call InchesToPoints as a hybrid
         hr = dp.Invoke(dispId, new REFIID(Guid.IID_NULL), LOCALE_SYSTEM_DEFAULT, wFlagsCombined, pDispParams, result, pExcepInfo, puArgErr);
         assertTrue(COMUtils.SUCCEEDED(hr));
-        
+
         assertEquals(72.0f, result.floatValue());
     }
 
@@ -166,7 +166,7 @@ public class HybdridCOMInvocationTest {
         @ComMethod
         Float InchesToPoints(Float value);
     }
-    
+
     public static class WordApplication extends COMLateBindingObject {
 
         public WordApplication(boolean useActiveInstance) {
@@ -177,6 +177,6 @@ public class HybdridCOMInvocationTest {
             VARIANT.ByReference pvResult = new VARIANT.ByReference();
             this.oleMethod(OleAuto.DISPATCH_METHOD , pvResult, this.getIDispatch(), "InchesToPoints", new VARIANT[] {new VARIANT(value)});
             return pvResult.floatValue();
-        } 
+        }
     }
 }

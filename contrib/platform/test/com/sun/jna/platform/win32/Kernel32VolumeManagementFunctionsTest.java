@@ -35,7 +35,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
             if (lpszDeviceName.charAt(lpszDeviceName.length() - 1) == File.separatorChar) {
                 lpszDeviceName = lpszDeviceName.substring(0, lpszDeviceName.length() - 1);
             }
-            
+
             Collection<String> devices = Kernel32Util.queryDosDevice(lpszDeviceName, WinBase.MAX_PATH);
             assertTrue("No devices for " + lpszDeviceName, devices.size() > 0);
             for (String name : devices) {
@@ -67,9 +67,9 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
             if (lpszVolumeMountPoint.charAt(lpszVolumeMountPoint.length() - 1) != File.separatorChar) {
                 lpszVolumeMountPoint += File.separator;
             }
-            
+
             int driveType = Kernel32.INSTANCE.GetDriveType(lpszVolumeMountPoint);
-            // network mapped drives fail GetVolumeNameForVolumeMountPoint call 
+            // network mapped drives fail GetVolumeNameForVolumeMountPoint call
             if (driveType != WinBase.DRIVE_FIXED) {
 //                System.out.append('\t').append('[').append(lpszVolumeMountPoint).append(']').println(" - skipped: non-fixed drive");
                 continue;
@@ -82,11 +82,11 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
             } else {
                 int hr = Kernel32.INSTANCE.GetLastError();
                 if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., hidden volumes
-                 || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
+                    || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
 //                    System.out.append('\t').append('[').append(lpszVolumeMountPoint).append(']').append(" - skipped: reason=").println(hr);
                     continue;
                 }
-                
+
                 fail("Cannot (error=" + hr + ") get volume information mount point " + lpszVolumeMountPoint);
             }
         }
@@ -114,11 +114,11 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
                         lpFileSystemNameBuffer, lpFileSystemNameBuffer.length)) {
                 int hr = Kernel32.INSTANCE.GetLastError();
                 if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., network or hidden volumes
-                 || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
+                    || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
 //                    System.out.append('\t').append('[').append(lpRootPathName).append(']').append(" - skipped: reason=").println(hr);
                     continue;
                 }
-                
+
                 fail("Cannot (error=" + hr + ") get volume information for " + lpRootPathName);
             }
 
@@ -142,16 +142,16 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
                 testEnumVolumeMountMoints(volumeGUID);
                 foundPaths += testGetVolumePathNamesForVolumeName(volumeGUID);
             } while(Kernel32.INSTANCE.FindNextVolume(hFindVolume, lpszVolumeName, lpszVolumeName.length));
-            
+
             assertTrue("No paths were found", foundPaths > 0);
-            
+
             int hr = Kernel32.INSTANCE.GetLastError();
             assertEquals("Bad volumes enum termination reason", WinError.ERROR_NO_MORE_FILES, hr);
         } finally {
             assertCallSucceeded("FindVolumeClose", Kernel32.INSTANCE.FindVolumeClose(hFindVolume));
         }
     }
-    
+
     private int testGetVolumePathNamesForVolumeName(String lpszVolumeName) {
         Collection<String> paths = Kernel32Util.getVolumePathNamesForVolumeName(lpszVolumeName);
         for (String p : paths) {
@@ -167,13 +167,13 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         if (WinNT.INVALID_HANDLE_VALUE.equals(hFindVolumeMountPoint)) {
             int hr = Kernel32.INSTANCE.GetLastError();
             if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., network or hidden volumes
-             || (hr == WinError.ERROR_NOT_READY)        // e.g., DVD drive
-             || (hr == WinError.ERROR_NO_MORE_FILES)    // No folders found
-             || (hr == WinError.ERROR_PATH_NOT_FOUND)) {
+                || (hr == WinError.ERROR_NOT_READY)        // e.g., DVD drive
+                || (hr == WinError.ERROR_NO_MORE_FILES)    // No folders found
+                || (hr == WinError.ERROR_PATH_NOT_FOUND)) {
 //                System.out.append('\t').append('[').append(volumeGUID).append(']').append(" - skipped: reason=").println(hr);
                 return;
             }
-            
+
             fail("Cannot (error=" + hr + ") open mount point search handle for " + volumeGUID);
         }
 
@@ -183,7 +183,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
                 assertTrue("Empty mount point for " + volumeGUID, name.length() > 0);
 //                System.out.append('\t').append("testEnumVolumeMountMoints").append('[').append(volumeGUID).append(']').append(" - ").println(name);
             } while(Kernel32.INSTANCE.FindNextVolumeMountPoint(hFindVolumeMountPoint, lpszVolumeMountPoint, lpszVolumeMountPoint.length));
-            
+
             int hr = Kernel32.INSTANCE.GetLastError();
             assertEquals("Mount points enum termination reason for " + volumeGUID, WinError.ERROR_NO_MORE_FILES, hr);
         } finally {

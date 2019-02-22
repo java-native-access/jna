@@ -1,23 +1,23 @@
 /* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -495,8 +495,8 @@ public abstract class Structure {
             }
         }
         public Structure[] getElements() {
-			return elements;
-		}
+            return elements;
+        }
         @Override
         public int size() { return count; }
         @Override
@@ -604,11 +604,12 @@ public abstract class Structure {
      * @return return offset of the given field
      */
     protected int fieldOffset(String name) {
-	ensureAllocated();
-	StructField f = fields().get(name);
-        if (f == null)
+        ensureAllocated();
+        StructField f = fields().get(name);
+        if (f == null) {
             throw new IllegalArgumentException("No such field: " + name);
-	return f.offset;
+        }
+        return f.offset;
     }
 
     /** Force a read of the given field from native memory.  The Java field
@@ -917,11 +918,11 @@ public abstract class Structure {
     }
 
     /** Returns this Structure's field names in their proper order.<br>
-     * 
+     *
      * When defining a new {@link Structure} you shouldn't override this
      * method, but use {@link FieldOrder} annotation to define your field
      * order(this also works with inheritance)<br>
-     * 
+     *
      * If you want to do something non-standard you can override the method
      * and define it as followed
      * <pre><code>
@@ -1065,8 +1066,8 @@ public abstract class Structure {
         if (fieldOrder.size() != flist.size() && flist.size() > 1) {
             if (force) {
                 throw new Error("Structure.getFieldOrder() on " + getClass()
-                                + (fieldOrder.size() < flist.size() 
-                                    ? " does not provide enough" 
+                                + (fieldOrder.size() < flist.size()
+                                    ? " does not provide enough"
                                     : " provides too many")
                                 + " names [" + fieldOrder.size()
                                 + "] ("
@@ -1550,40 +1551,41 @@ public abstract class Structure {
         String contents = LS;
         if (!showContents) {
             contents = "...}";
-        }
-        else for (Iterator<StructField> i = fields().values().iterator(); i.hasNext();) {
-            StructField sf = i.next();
-            Object value = getFieldValue(sf.field);
-            String type = format(sf.type);
-            String index = "";
-            contents += prefix;
-            if (sf.type.isArray() && value != null) {
-                type = format(sf.type.getComponentType());
-                index = "[" + Array.getLength(value) + "]";
+        } else {
+            for (Iterator<StructField> i = fields().values().iterator(); i.hasNext();) {
+                StructField sf = i.next();
+                Object value = getFieldValue(sf.field);
+                String type = format(sf.type);
+                String index = "";
+                contents += prefix;
+                if (sf.type.isArray() && value != null) {
+                    type = format(sf.type.getComponentType());
+                    index = "[" + Array.getLength(value) + "]";
+                }
+                contents += String.format("  %s %s%s@0x%X", type, sf.name, index, sf.offset);
+                if (value instanceof Structure) {
+                    value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference), dumpMemory);
+                }
+                contents += "=";
+                if (value instanceof Long) {
+                    contents += String.format("0x%08X", (Long) value);
+                }
+                else if (value instanceof Integer) {
+                    contents += String.format("0x%04X", (Integer) value);
+                }
+                else if (value instanceof Short) {
+                    contents += String.format("0x%02X", (Short) value);
+                }
+                else if (value instanceof Byte) {
+                    contents += String.format("0x%01X", (Byte) value);
+                }
+                else {
+                    contents += String.valueOf(value).trim();
+                }
+                contents += LS;
+                if (!i.hasNext())
+                    contents += prefix + "}";
             }
-            contents += String.format("  %s %s%s@0x%X", type, sf.name, index, sf.offset);
-            if (value instanceof Structure) {
-                value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference), dumpMemory);
-            }
-            contents += "=";
-            if (value instanceof Long) {
-                contents += String.format("0x%08X", (Long) value);
-            }
-            else if (value instanceof Integer) {
-                contents += String.format("0x%04X", (Integer) value);
-            }
-            else if (value instanceof Short) {
-                contents += String.format("0x%02X", (Short) value);
-            }
-            else if (value instanceof Byte) {
-                contents += String.format("0x%01X", (Byte) value);
-            }
-            else {
-                contents += String.valueOf(value).trim();
-            }
-            contents += LS;
-            if (!i.hasNext())
-                contents += prefix + "}";
         }
         if (indent == 0 && dumpMemory) {
             final int BYTES_PER_ROW = 4;
@@ -1674,12 +1676,12 @@ public abstract class Structure {
      * @return equality result
      */
     public boolean dataEquals(Structure s, boolean clear) {
-	if (clear) {
-	    s.getPointer().clear(s.size());
-	    s.write();
-	    getPointer().clear(size());
-	    write();
-	}
+        if (clear) {
+            s.getPointer().clear(s.size());
+            s.write();
+            getPointer().clear(size());
+            write();
+        }
         byte[] data = s.getPointer().getByteArray(0, s.size());
         byte[] ref = getPointer().getByteArray(0, size());
         if (data.length == ref.length) {
@@ -2014,7 +2016,7 @@ public abstract class Structure {
             }
             init(els);
         }
-        
+
         private void init(Pointer[] els) {
             elements = new Memory(Native.POINTER_SIZE * els.length);
             elements.write(0, els, 0, els.length);

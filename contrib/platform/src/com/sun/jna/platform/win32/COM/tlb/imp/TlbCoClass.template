@@ -19,8 +19,8 @@ import com.sun.jna.platform.win32.Guid.*;
 * clsid(${clsid})
 *
 */
-public class ${classname} extends COMEarlyBindingObject implements ${interfaces} {	
-	
+public class ${classname} extends COMEarlyBindingObject implements ${interfaces} {
+
     public static final CLSID ${clsidname}_CLSID = new CLSID("${clsid}");
 
     public ${classname}() {
@@ -28,7 +28,7 @@ public class ${classname} extends COMEarlyBindingObject implements ${interfaces}
     }
     
     public ${classname}(CLSID clsid, boolean useActiveInstance, int dwClsContext) {
-    	super(clsid, useActiveInstance, dwClsContext);
+        super(clsid, useActiveInstance, dwClsContext);
     }
 
 ${content}

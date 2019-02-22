@@ -1,23 +1,23 @@
 /* Copyright (c) 2019 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -186,7 +186,7 @@ public interface PowrProf extends Library {
      * policy scheme made by the user in the Power Options control panel
      * program, or by subsequent calls to {@code WritePwrScheme},
      * {@code SetActivePwrScheme}, or other power scheme functions.
-     * 
+     *
      * @param informationLevel
      *            The information level requested. This value indicates the
      *            specific power information to be set or retrieved. This

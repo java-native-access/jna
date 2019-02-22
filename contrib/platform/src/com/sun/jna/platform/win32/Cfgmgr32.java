@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -50,7 +50,7 @@ public interface Cfgmgr32 extends Library {
      * The CM_Locate_DevNode function obtains a device instance handle to the
      * device node that is associated with a specified device instance ID on the
      * local machine.
-     * 
+     *
      * @param pdnDevInst
      *            A pointer to a device instance handle that CM_Locate_DevNode
      *            retrieves. The retrieved handle is bound to the local machine.
@@ -78,7 +78,7 @@ public interface Cfgmgr32 extends Library {
      * The CM_Get_Parent function obtains a device instance handle to the parent
      * node of a specified device node (devnode) in the local machine's device
      * tree.
-     * 
+     *
      * @param pdnDevInst
      *            Caller-supplied pointer to the device instance handle to the
      *            parent node that this function retrieves. The retrieved handle
@@ -101,7 +101,7 @@ public interface Cfgmgr32 extends Library {
      * The CM_Get_Child function is used to retrieve a device instance handle to
      * the first child node of a specified device node (devnode) in the local
      * machine's device tree.
-     * 
+     *
      * @param pdnDevInst
      *            Caller-supplied pointer to the device instance handle to the
      *            child node that this function retrieves. The retrieved handle
@@ -124,7 +124,7 @@ public interface Cfgmgr32 extends Library {
      * The CM_Get_Sibling function obtains a device instance handle to the next
      * sibling node of a specified device node (devnode) in the local machine's
      * device tree.
-     * 
+     *
      * @param pdnDevInst
      *            Caller-supplied pointer to the device instance handle to the
      *            sibling node that this function retrieves. The retrieved
@@ -146,7 +146,7 @@ public interface Cfgmgr32 extends Library {
     /**
      * The CM_Get_Device_ID function retrieves the device instance ID for a
      * specified device instance on the local machine.
-     * 
+     *
      * @param devInst
      *            Caller-supplied device instance handle that is bound to the
      *            local machine.
@@ -172,7 +172,7 @@ public interface Cfgmgr32 extends Library {
     /**
      * The CM_Get_Device_ID_Size function retrieves the buffer size required to
      * hold a device instance ID for a device instance on the local machine.
-     * 
+     *
      * @param pulLen
      *            Receives a value representing the required buffer size, in
      *            characters.

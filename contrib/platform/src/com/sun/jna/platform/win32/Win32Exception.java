@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -45,7 +45,7 @@ public class Win32Exception extends LastErrorException {
      * @return HRESULT value
      */
     public HRESULT getHR() {
-    	return _hr;
+        return _hr;
     }
 
     /**
@@ -53,7 +53,7 @@ public class Win32Exception extends LastErrorException {
      * @param code Error code.
      */
     public Win32Exception(int code) {
-    	this(code, W32Errors.HRESULT_FROM_WIN32(code));
+        this(code, W32Errors.HRESULT_FROM_WIN32(code));
     }
 
 
@@ -73,7 +73,7 @@ public class Win32Exception extends LastErrorException {
         super(code, msg);
         _hr = hr;
     }
-    
+
     private static Method addSuppressedMethod = null;
     static {
         try {
@@ -84,7 +84,7 @@ public class Win32Exception extends LastErrorException {
             Logger.getLogger(Win32Exception.class.getName()).log(Level.SEVERE, "Failed to initialize 'addSuppressed' method", ex);
         }
     }
-    
+
     void addSuppressedReflected(Throwable exception) {
         if(addSuppressedMethod == null) {
             // Make this a NOOP on an unsupported JDK

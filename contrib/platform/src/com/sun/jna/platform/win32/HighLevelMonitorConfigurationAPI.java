@@ -1,24 +1,24 @@
 /*
  * Copyright 2014 Martin Steiger
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -99,11 +99,11 @@ public interface HighLevelMonitorConfigurationAPI
         MC_CAPS_RESTORE_FACTORY_COLOR_DEFAULTS                   (0x00000800),
 
         /**
-         * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of 
-         * the monitor settings used by the high-level monitor configuration functions. For more 
+         * If this flag is present, calling the RestoreMonitorFactoryDefaults function enables all of
+         * the monitor settings used by the high-level monitor configuration functions. For more
          * information, see the Remarks section in RestoreMonitorFactoryDefaults.
          */
-        MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS     (0x00001000);         
+        MC_RESTORE_FACTORY_DEFAULTS_ENABLES_MONITOR_SETTINGS     (0x00001000);
 
         private int flag;
 
@@ -332,7 +332,7 @@ public interface HighLevelMonitorConfigurationAPI
         /**
          * Vertical position
          */
-        MC_VERTICAL_POSITION 
+        MC_VERTICAL_POSITION
 
     }
 
@@ -359,47 +359,47 @@ public interface HighLevelMonitorConfigurationAPI
     public enum MC_COLOR_TEMPERATURE
     {
         /**
-         * Unknown temperature. 
+         * Unknown temperature.
          */
         MC_COLOR_TEMPERATURE_UNKNOWN,
 
         /**
-         * 4,000 kelvins (K). 
+         * 4,000 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_4000K, 
+        MC_COLOR_TEMPERATURE_4000K,
 
         /**
-         * 5,000 kelvins (K). 
+         * 5,000 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_5000K, 
+        MC_COLOR_TEMPERATURE_5000K,
 
         /**
-         * 6,500 kelvins (K). 
+         * 6,500 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_6500K, 
+        MC_COLOR_TEMPERATURE_6500K,
 
         /**
-         * 7,500 kelvins (K). 
+         * 7,500 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_7500K, 
+        MC_COLOR_TEMPERATURE_7500K,
 
         /**
-         * 8,200 kelvins (K). 
+         * 8,200 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_8200K, 
+        MC_COLOR_TEMPERATURE_8200K,
 
         /**
-         * 9,300 kelvins (K). 
+         * 9,300 kelvins (K).
          */
-        MC_COLOR_TEMPERATURE_9300K, 
+        MC_COLOR_TEMPERATURE_9300K,
 
         /**
-         * 10,000 kelvins (K). 
+         * 10,000 kelvins (K).
          */
         MC_COLOR_TEMPERATURE_10000K,
 
         /**
-         * 11,500 kelvins (K). 
+         * 11,500 kelvins (K).
          */
         MC_COLOR_TEMPERATURE_11500K;
 

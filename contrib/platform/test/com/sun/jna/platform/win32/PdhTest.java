@@ -46,21 +46,21 @@ public class PdhTest extends AbstractWin32TestSupport {
 
         HANDLEByReference ref = new HANDLEByReference();
         assertErrorSuccess("PdhOpenQuery", pdh.PdhOpenQuery(null, null, ref), true);
-        
+
         HANDLE hQuery = ref.getValue();
         try {
             ref.setValue(null);
             assertErrorSuccess("PdhAddEnglishCounter", pdh.PdhAddEnglishCounter(hQuery, counterName, null, ref), true);
-            
+
             HANDLE hCounter = ref.getValue();
             try {
                 assertErrorSuccess("PdhCollectQueryData", pdh.PdhCollectQueryData(hQuery), true);
-                
+
                 DWORDByReference lpdwType = new DWORDByReference();
                 PDH_RAW_COUNTER rawCounter = new PDH_RAW_COUNTER();
                 assertErrorSuccess("PdhGetRawCounterValue", pdh.PdhGetRawCounterValue(hCounter, lpdwType, rawCounter), true);
                 assertEquals("Bad counter data status", PdhMsg.PDH_CSTATUS_VALID_DATA, rawCounter.CStatus);
-                
+
                 DWORD dwType = lpdwType.getValue();
                 int typeValue = dwType.intValue();
                 // see https://technet.microsoft.com/en-us/library/cc786359(v=ws.10).aspx
@@ -73,7 +73,7 @@ public class PdhTest extends AbstractWin32TestSupport {
             assertErrorSuccess("PdhCloseQuery", pdh.PdhCloseQuery(hQuery), true);
         }
     }
-    
+
     @Test
     public void testQueryMultipleCounters() {
         Collection<String> names = new LinkedList<String>();
@@ -88,7 +88,7 @@ public class PdhTest extends AbstractWin32TestSupport {
 
         HANDLEByReference ref = new HANDLEByReference();
         assertErrorSuccess("PdhOpenQuery", pdh.PdhOpenQuery(null, null, ref), true);
-        
+
         HANDLE hQuery = ref.getValue();
         try {
             Map<String, HANDLE> handlesMap = new HashMap<String, HANDLE>(names.size());
@@ -102,7 +102,7 @@ public class PdhTest extends AbstractWin32TestSupport {
                 }
 
                 assertErrorSuccess("PdhCollectQueryData", pdh.PdhCollectQueryData(hQuery), true);
-                
+
                 for (Map.Entry<String, HANDLE> ch : handlesMap.entrySet()) {
                     String counterName = ch.getKey();
                     HANDLE hCounter = ch.getValue();
@@ -123,7 +123,7 @@ public class PdhTest extends AbstractWin32TestSupport {
                         names.add(name);
                     }
                 }
-                
+
                 if (names.size() > 0) {
                     fail("Failed to remove counters: " + names);
                 }
@@ -143,21 +143,21 @@ public class PdhTest extends AbstractWin32TestSupport {
     }
 
     private static String makeCounterPath(Pdh pdh, PDH_COUNTER_PATH_ELEMENTS pathElements) {
-        DWORDByReference pcchBufferSize = new DWORDByReference(); 
+        DWORDByReference pcchBufferSize = new DWORDByReference();
         int status = pdh.PdhMakeCounterPath(pathElements, null, pcchBufferSize, 0);
         assertEquals("Unexpected status code: 0x" + Integer.toHexString(status), PdhMsg.PDH_MORE_DATA, status);
-        
+
         DWORD bufSize = pcchBufferSize.getValue();
         int numChars = bufSize.intValue();
         assertTrue("Bad required buffer size: " + numChars, numChars > 0);
-        
+
         char[] szFullPathBuffer = new char[numChars + 1 /* the \0 */];
         pcchBufferSize.setValue(new DWORD(szFullPathBuffer.length));
         assertErrorSuccess("PdhMakeCounterPath", pdh.PdhMakeCounterPath(pathElements, szFullPathBuffer,  pcchBufferSize, 0), true);
-        
+
         return Native.toString(szFullPathBuffer);
     }
-    
+
     @Test
     public void testLookupPerfIndex() {
         int processorIndex = 238;
@@ -175,7 +175,7 @@ public class PdhTest extends AbstractWin32TestSupport {
         DWORDByReference pdwIndex = new DWORDByReference();
         Pdh.INSTANCE.PdhLookupPerfIndexByName(null, testStr, pdwIndex);
         assertEquals(processorIndex, pdwIndex.getValue().intValue());
-        
+
         // Test English name to index
         assertEquals(processorIndex, PdhUtil.PdhLookupPerfIndexByEnglishName(processorStr));
     }
@@ -198,7 +198,7 @@ public class PdhTest extends AbstractWin32TestSupport {
             System.err.println("testEnumObjectItems test can only be run with english locale.");
         }
     }
-    
+
     @Test
     public void testEnumObjectItemsNonExisting() {
         Exception caughtException = null;

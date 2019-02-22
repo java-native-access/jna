@@ -350,7 +350,7 @@ public class Kernel32UtilTest extends TestCase {
         // so assert total count is at least two
         assertTrue("This is supposed to return all the modules in a process, so there should be an EXE and at least 1 Windows API DLL.", results.size() > 2);
     }
-    
+
     public void testExpandEnvironmentStrings() {
         Kernel32.INSTANCE.SetEnvironmentVariable("DemoVariable", "DemoValue");
         assertEquals("DemoValue", Kernel32Util.expandEnvironmentStrings("%DemoVariable%"));
@@ -368,23 +368,23 @@ public class Kernel32UtilTest extends TestCase {
         for (int i = 0; i < procInfo.length; i++) {
             // Build list from relationship
             switch (procInfo[i].relationship) {
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
-                groups.add((GROUP_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
-                packages.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
-                numaNodes.add((NUMA_NODE_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
-                caches.add((CACHE_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
-                cores.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
-                break;
-            default:
-                throw new IllegalStateException("Unmapped relationship.");
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                    groups.add((GROUP_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                    packages.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                    numaNodes.add((NUMA_NODE_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                    caches.add((CACHE_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+                    cores.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
+                    break;
+                default:
+                    throw new IllegalStateException("Unmapped relationship.");
             }
             // Test that native provided size matches JNA structure size
             assertEquals(procInfo[i].size, procInfo[i].size());
