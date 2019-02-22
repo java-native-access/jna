@@ -31,5 +31,5 @@ import com.sun.jna.platform.win32.COM.IDispatch;
  *
  */
 public interface IRawDispatchHandle {
-	IDispatch getRawDispatch();
+    IDispatch getRawDispatch();
 }

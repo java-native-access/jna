@@ -1922,7 +1922,7 @@ public final class Native implements Version {
     }
     // Called from native code
     private static NativeMapped fromNative(Method m, Object value) {
-    	Class<?> cls = m.getReturnType();
+        Class<?> cls = m.getReturnType();
         return (NativeMapped)NativeMappedConverter.getInstance(cls).fromNative(value, new MethodResultContext(cls, null, null, m));
     }
     // Called from native code

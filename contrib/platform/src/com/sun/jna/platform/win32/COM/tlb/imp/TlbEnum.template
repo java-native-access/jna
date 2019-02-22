@@ -21,23 +21,23 @@ import com.sun.jna.platform.win32.Guid.*;
  */
 @FieldOrder({"value"})
 public class ${classname} extends Structure {
-	public static class ByReference extends ${classname} implements
-			Structure.ByReference {
-	}
+    public static class ByReference extends ${classname} implements
+        Structure.ByReference {
+    }
 
-	public int value;
+    public int value;
 
-	public  ${classname}() {
-	}
+    public  ${classname}() {
+    }
 
-	public  ${classname}(int value) {
-		this.value = value;
-	}
+    public  ${classname}(int value) {
+        this.value = value;
+    }
 
-	public  ${classname}(Pointer pointer) {
-		super(pointer);
-		this.read();
-	}
+    public  ${classname}(Pointer pointer) {
+        super(pointer);
+        this.read();
+    }
 
 ${content}
 }

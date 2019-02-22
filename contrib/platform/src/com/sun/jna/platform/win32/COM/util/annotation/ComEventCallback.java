@@ -37,6 +37,6 @@ import java.lang.annotation.Target;
 @Inherited
 @Deprecated
 public @interface ComEventCallback {
-	int dispid() default -1; // default to dispid unknown
-	String name() default "";
+    int dispid() default -1; // default to dispid unknown
+    String name() default "";
 }

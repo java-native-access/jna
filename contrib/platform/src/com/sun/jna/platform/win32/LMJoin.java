@@ -37,7 +37,7 @@ public interface LMJoin {
         public static final int NetSetupUnknownStatus = 0;
         public static final int NetSetupUnjoined = 1;
         public static final int NetSetupWorkgroupName = 2;
-        public static final int NetSetupDomainName = 3;		
+        public static final int NetSetupDomainName = 3;
     };
 
 }

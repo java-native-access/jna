@@ -26,24 +26,24 @@ public class Crypt32UtilTest extends TestCase {
     }
     
     public void testCryptProtectUnprotectData() {
-    	byte[] data = new byte[2];
-    	data[0] = 42;
-    	data[1] = 12;
-    	byte[] protectedData = Crypt32Util.cryptProtectData(data);
-    	byte[] unprotectedData = Crypt32Util.cryptUnprotectData(protectedData);
-    	assertEquals(data.length, unprotectedData.length);
-    	assertEquals(data[0], unprotectedData[0]);
-    	assertEquals(data[1], unprotectedData[1]);
+        byte[] data = new byte[2];
+        data[0] = 42;
+        data[1] = 12;
+        byte[] protectedData = Crypt32Util.cryptProtectData(data);
+        byte[] unprotectedData = Crypt32Util.cryptUnprotectData(protectedData);
+        assertEquals(data.length, unprotectedData.length);
+        assertEquals(data[0], unprotectedData[0]);
+        assertEquals(data[1], unprotectedData[1]);
     }
     
     public void testCryptProtectUnprotectMachineKey() {
-    	String s = "Hello World";
-    	byte[] data = Native.toByteArray(s);
-    	byte[] protectedData = Crypt32Util.cryptProtectData(data, 
-    			WinCrypt.CRYPTPROTECT_LOCAL_MACHINE | WinCrypt.CRYPTPROTECT_UI_FORBIDDEN);
-    	byte[] unprotectedData = Crypt32Util.cryptUnprotectData(protectedData, 
-    			WinCrypt.CRYPTPROTECT_LOCAL_MACHINE);
-    	String unprotectedString = Native.toString(unprotectedData);
-    	assertEquals(s, unprotectedString);
+        String s = "Hello World";
+        byte[] data = Native.toByteArray(s);
+        byte[] protectedData = Crypt32Util.cryptProtectData(data,
+                WinCrypt.CRYPTPROTECT_LOCAL_MACHINE | WinCrypt.CRYPTPROTECT_UI_FORBIDDEN);
+        byte[] unprotectedData = Crypt32Util.cryptUnprotectData(protectedData,
+                WinCrypt.CRYPTPROTECT_LOCAL_MACHINE);
+        String unprotectedString = Native.toString(unprotectedData);
+        assertEquals(s, unprotectedString);
     }
 }

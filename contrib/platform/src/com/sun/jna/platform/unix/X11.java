@@ -174,7 +174,7 @@ public interface X11 extends Library {
         }
     }
     class Colormap extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Colormap None = null;
         public Colormap() { }
         public Colormap(long id) { super(id); }
@@ -186,7 +186,7 @@ public interface X11 extends Library {
         }
     }
     class Font extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Font None = null;
         public Font() { }
         public Font(long id) { super(id); }
@@ -198,7 +198,7 @@ public interface X11 extends Library {
         }
     }
     class Cursor extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final Cursor None = null;
         public Cursor() { }
         public Cursor(long id) { super(id); }
@@ -210,7 +210,7 @@ public interface X11 extends Library {
         }
     }
     class KeySym extends XID {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         public static final KeySym None = null;
         public KeySym() { }
         public KeySym(long id) { super(id); }

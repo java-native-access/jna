@@ -47,10 +47,10 @@ abstract class VarArgsChecker {
             return m.isVarArgs();
         }
         
-	int fixedArgs(Method m) {
-	    // In Java, final argument contains all "varargs"
-	    return m.isVarArgs() ? m.getParameterTypes().length - 1 : 0;
-	}
+        int fixedArgs(Method m) {
+            // In Java, final argument contains all "varargs"
+            return m.isVarArgs() ? m.getParameterTypes().length - 1 : 0;
+        }
     }
     
     /**
@@ -63,9 +63,9 @@ abstract class VarArgsChecker {
             return false;
         }
         
-	int fixedArgs(Method m) {
-	    return 0;
-	}
+        int fixedArgs(Method m) {
+            return 0;
+        }
     }
     
     /**

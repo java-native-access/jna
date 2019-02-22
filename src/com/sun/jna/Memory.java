@@ -38,9 +38,9 @@ import java.util.WeakHashMap;
  * <code>malloc</code>.  For example, <code>Memory</code> helps
  * accomplish the following idiom:
  * <pre>
- * 		void *buf = malloc(BUF_LEN * sizeof(char));
- *		call_some_function(buf);
- *		free(buf);
+ *        void *buf = malloc(BUF_LEN * sizeof(char));
+ *        call_some_function(buf);
+ *        free(buf);
  * </pre>
  *
  * <p>The {@link #finalize} method will free allocated memory when

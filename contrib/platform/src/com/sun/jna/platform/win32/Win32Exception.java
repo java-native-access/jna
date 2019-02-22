@@ -45,7 +45,7 @@ public class Win32Exception extends LastErrorException {
      * @return HRESULT value
      */
     public HRESULT getHR() {
-    	return _hr;
+        return _hr;
     }
 
     /**
@@ -53,7 +53,7 @@ public class Win32Exception extends LastErrorException {
      * @param code Error code.
      */
     public Win32Exception(int code) {
-    	this(code, W32Errors.HRESULT_FROM_WIN32(code));
+        this(code, W32Errors.HRESULT_FROM_WIN32(code));
     }
 
 

@@ -30,22 +30,22 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 @ComInterface(iid = "{00020846-0000-0000-C000-000000000046}")
 public interface ComIRange {
 
-	@ComProperty
-	ComIApplication getApplication();
+        @ComProperty
+        ComIApplication getApplication();
 
-	@ComProperty
-	String getText();
+        @ComProperty
+        String getText();
 
-	@ComMethod
-	void Select();
+        @ComMethod
+        void Select();
 
-	@ComProperty
-	void setValue(String value);
+        @ComProperty
+        void setValue(String value);
 
-	@ComMethod
-	void Activate();
+        @ComMethod
+        void Activate();
         
-	@ComProperty
+        @ComProperty
         ComIRange getItem(Object rowIndex, Object columnIndex);
         
         @ComProperty

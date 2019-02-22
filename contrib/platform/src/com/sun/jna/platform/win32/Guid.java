@@ -49,8 +49,9 @@ public interface Guid {
     @FieldOrder({"Data1", "Data2", "Data3", "Data4"})
     public static class GUID extends Structure {
 
-    	public static class ByValue extends GUID implements Structure.ByValue {
-    		public ByValue() {
+        public static class ByValue extends GUID implements Structure.ByValue {
+
+            public ByValue() {
                 super();
             }
             public ByValue(GUID guid) {
@@ -64,7 +65,7 @@ public interface Guid {
             public ByValue(Pointer memory) {
                 super(memory);
             }
-    	}
+        }
 
         /**
          * The Class ByReference.

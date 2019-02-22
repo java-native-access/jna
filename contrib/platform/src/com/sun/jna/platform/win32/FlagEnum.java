@@ -30,10 +30,10 @@ package com.sun.jna.platform.win32;
  * set based on an integer value 
  * @author Martin Steiger
  */
-public interface FlagEnum
-{
-	/**
-	 * @return the flag value - usually 2^n
-	 */
-	int getFlag();
+public interface FlagEnum {
+
+    /**
+     * @return the flag value - usually 2^n
+     */
+    int getFlag();
 }

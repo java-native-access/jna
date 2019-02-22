@@ -36,7 +36,7 @@ import com.sun.jna.TypeConverter;
  * @author Martin Steiger
  */
 public class EnumConverter<T extends Enum<T>> implements TypeConverter {
-	 
+
     private final Class<T> clazz;
  
     /**
@@ -44,11 +44,11 @@ public class EnumConverter<T extends Enum<T>> implements TypeConverter {
      */
     public EnumConverter(Class<T> clazz)
     {
-    	this.clazz = clazz;
+        this.clazz = clazz;
     }
     
     @Override
-	public T fromNative(Object input, FromNativeContext context) {
+    public T fromNative(Object input, FromNativeContext context) {
         Integer i = (Integer) input;
         
         T[] vals = clazz.getEnumConstants();
@@ -56,14 +56,14 @@ public class EnumConverter<T extends Enum<T>> implements TypeConverter {
     }
  
     @Override
-	public Integer toNative(Object input, ToNativeContext context) {
-    	T t = clazz.cast(input);
-    	
+    public Integer toNative(Object input, ToNativeContext context) {
+        T t = clazz.cast(input);
+
         return Integer.valueOf(t.ordinal());
     }
  
     @Override
-	public Class<Integer> nativeType() {
+    public Class<Integer> nativeType() {
         return Integer.class;
     }
 }

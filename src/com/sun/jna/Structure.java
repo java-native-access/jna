@@ -495,8 +495,8 @@ public abstract class Structure {
             }
         }
         public Structure[] getElements() {
-			return elements;
-		}
+            return elements;
+        }
         @Override
         public int size() { return count; }
         @Override
@@ -604,11 +604,12 @@ public abstract class Structure {
      * @return return offset of the given field
      */
     protected int fieldOffset(String name) {
-	ensureAllocated();
-	StructField f = fields().get(name);
-        if (f == null)
+        ensureAllocated();
+        StructField f = fields().get(name);
+        if (f == null) {
             throw new IllegalArgumentException("No such field: " + name);
-	return f.offset;
+        }
+        return f.offset;
     }
 
     /** Force a read of the given field from native memory.  The Java field
@@ -1674,12 +1675,12 @@ public abstract class Structure {
      * @return equality result
      */
     public boolean dataEquals(Structure s, boolean clear) {
-	if (clear) {
-	    s.getPointer().clear(s.size());
-	    s.write();
-	    getPointer().clear(size());
-	    write();
-	}
+        if (clear) {
+            s.getPointer().clear(s.size());
+            s.write();
+            getPointer().clear(size());
+            write();
+        }
         byte[] data = s.getPointer().getByteArray(0, s.size());
         byte[] ref = getPointer().getByteArray(0, size());
         if (data.length == ref.length) {

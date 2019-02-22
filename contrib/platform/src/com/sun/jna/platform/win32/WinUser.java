@@ -336,20 +336,20 @@ public interface WinUser extends WinDef {
     @FieldOrder({"dwData", "cbData", "lpData"})
     public class COPYDATASTRUCT extends Structure {
 
-		public COPYDATASTRUCT() {
-			super();
-		}
+        public COPYDATASTRUCT() {
+            super();
+        }
 
-		public COPYDATASTRUCT(Pointer p) {
-			super(p);
-			//Receiving data and read it from native memory to fill the structure.
-			read();
-		}
+        public COPYDATASTRUCT(Pointer p) {
+            super(p);
+            //Receiving data and read it from native memory to fill the structure.
+            read();
+        }
 
-		public ULONG_PTR dwData;
-		public int cbData;
-		public Pointer lpData;
-	}
+        public ULONG_PTR dwData;
+        public int cbData;
+        public Pointer lpData;
+    }
 
     @FieldOrder({"cbSize", "hWnd", "dwFlags", "uCount", "dwTimeout"})
     public class FLASHWINFO extends Structure {
@@ -484,20 +484,20 @@ public interface WinUser extends WinDef {
     @FieldOrder({"lParam", "wParam", "message", "hwnd"})
     public class CWPSTRUCT extends Structure {
 
-    	public CWPSTRUCT() {
-    		super();
-		}
+        public CWPSTRUCT() {
+            super();
+        }
 
-		public CWPSTRUCT(Pointer p) {
-			super(p);
-			//Receiving data and read it from native memory to fill the structure.
-			read();
-		}
+        public CWPSTRUCT(Pointer p) {
+            super(p);
+            //Receiving data and read it from native memory to fill the structure.
+            read();
+        }
 
-		public LPARAM lParam;
-		public WPARAM wParam;
-		public int message;
-		public HWND hwnd;
+        public LPARAM lParam;
+        public WPARAM wParam;
+        public int message;
+        public HWND hwnd;
     }
 
     /**
@@ -821,7 +821,7 @@ public interface WinUser extends WinDef {
      * its execution while other threads process the request.
      */
     int SWP_ASYNCWINDOWPOS = 0x4000; 
-    		
+
     /**
      * Prevents generation of the WM_SYNCPAINT message.
      */
@@ -894,7 +894,7 @@ public interface WinUser extends WinDef {
      * Retains the current size (ignores the cx and cy parameters).
      */
     int SWP_NOSIZE = 0x0001;
-    		
+
     /**
      * Retains the current Z order (ignores the hWndInsertAfter parameter).
      */

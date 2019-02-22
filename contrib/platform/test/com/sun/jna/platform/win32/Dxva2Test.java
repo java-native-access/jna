@@ -43,12 +43,11 @@ import com.sun.jna.platform.win32.WinUser.HMONITOR;
  */
 public class Dxva2Test {
 
-	private int monitorCount;
-	private PHYSICAL_MONITOR[] physMons;
+    private int monitorCount;
+    private PHYSICAL_MONITOR[] physMons;
 
     @Before
-	public void setUp()
-    {
+    public void setUp() {
         HMONITOR hMonitor = User32.INSTANCE.MonitorFromWindow(User32.INSTANCE.GetDesktopWindow(), WinUser.MONITOR_DEFAULTTOPRIMARY);
 
         DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
@@ -56,13 +55,12 @@ public class Dxva2Test {
 
         monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
         physMons = new PHYSICAL_MONITOR[monitorCount];
-        
+
         assumeTrue(Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons).booleanValue());
     }
 
     @After
-	public void tearDown()
-    {
+    public void tearDown() {
         Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons);
     }
 

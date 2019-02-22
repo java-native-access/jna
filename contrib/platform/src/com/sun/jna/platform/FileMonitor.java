@@ -59,7 +59,7 @@ public abstract class FileMonitor {
         public void fileChanged(FileEvent e);
     }
     
-	public class FileEvent extends EventObject {
+    public class FileEvent extends EventObject {
         private final File file;
         private final int type;
         public FileEvent(File file, int type) {
@@ -101,9 +101,9 @@ public abstract class FileMonitor {
     }
     
     protected void notify(FileEvent e) {
-    	for (FileListener listener : listeners) {
-    		listener.fileChanged(e);
-    	}
+        for (FileListener listener : listeners) {
+            listener.fileChanged(e);
+        }
     }
     
     public synchronized void addFileListener(FileListener listener) {
@@ -119,10 +119,10 @@ public abstract class FileMonitor {
     }
     
     protected void finalize() {
-    	for (File watchedFile : watched.keySet()) {
-    		removeWatch(watchedFile);
-    	}
-    	
+        for (File watchedFile : watched.keySet()) {
+            removeWatch(watchedFile);
+        }
+
         dispose();
     }
     

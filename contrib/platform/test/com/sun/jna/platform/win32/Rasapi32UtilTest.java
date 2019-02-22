@@ -21,52 +21,52 @@ import com.sun.jna.platform.win32.Rasapi32Util.Ras32Exception;
  */
 public class Rasapi32UtilTest extends TestCase {
 
-	public static void main(String[] args) {
-		junit.textui.TestRunner.run(Rasapi32UtilTest.class);
-	}
+    public static void main(String[] args) {
+        junit.textui.TestRunner.run(Rasapi32UtilTest.class);
+    }
 
-	public void testGetRasConnection() {
-		assertNull(Rasapi32Util.getRasConnection("TEST"));
-	}
+    public void testGetRasConnection() {
+        assertNull(Rasapi32Util.getRasConnection("TEST"));
+    }
 
-	public void testGetPhonebookEntry() {
-		try {
-			Rasapi32Util.getPhoneBookEntry("TEST");
-			fail("Test expected to fail");
-		} catch (Ras32Exception e) {
-			assertEquals(623, e.getCode());
-		}
-	}
+    public void testGetPhonebookEntry() {
+        try {
+            Rasapi32Util.getPhoneBookEntry("TEST");
+            fail("Test expected to fail");
+        } catch (Ras32Exception e) {
+            assertEquals(623, e.getCode());
+        }
+    }
 
-	public void testGetPhonebookDialingParams() {
-		try {
-			Rasapi32Util.getPhoneBookDialingParams("TEST");
-		} catch (Ras32Exception e) {
-			assertEquals(623, e.getCode());
-		}
-	}
+    public void testGetPhonebookDialingParams() {
+        try {
+            Rasapi32Util.getPhoneBookDialingParams("TEST");
+        } catch (Ras32Exception e) {
+            assertEquals(623, e.getCode());
+        }
+    }
 
-	public void testDialEntry() {
-		try {
-			Rasapi32Util.dialEntry("TEST");
-		} catch (Ras32Exception e) {
-			assertEquals(623, e.getCode());
-		}
-	}
+    public void testDialEntry() {
+        try {
+            Rasapi32Util.dialEntry("TEST");
+        } catch (Ras32Exception e) {
+            assertEquals(623, e.getCode());
+        }
+    }
 
-	public void testGetRasErrorString() {
-                if(AbstractWin32TestSupport.isEnglishLocale) {
-                    assertEquals("An incorrect structure size was detected.", Rasapi32Util.getRasErrorString(632));
-                } else {
-                    System.err.println("testGetRasErrorString test can only be run with english locale.");
-                }
-	}
+    public void testGetRasErrorString() {
+        if (AbstractWin32TestSupport.isEnglishLocale) {
+            assertEquals("An incorrect structure size was detected.", Rasapi32Util.getRasErrorString(632));
+        } else {
+            System.err.println("testGetRasErrorString test can only be run with english locale.");
+        }
+    }
 
-	public void testGetRasConnectionStatusText() {
-		assertEquals("Disconnected", Rasapi32Util.getRasConnectionStatusText(8193));
-	}
+    public void testGetRasConnectionStatusText() {
+        assertEquals("Disconnected", Rasapi32Util.getRasConnectionStatusText(8193));
+    }
 
-	public void testhangupRasConnection() {
-		Rasapi32Util.hangupRasConnection("TEST");
-	}
+    public void testhangupRasConnection() {
+        Rasapi32Util.hangupRasConnection("TEST");
+    }
 }

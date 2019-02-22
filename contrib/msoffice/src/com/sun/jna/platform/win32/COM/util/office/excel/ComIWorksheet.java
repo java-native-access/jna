@@ -31,17 +31,17 @@ public interface ComIWorksheet {
         @ComProperty
         ComIWorkbook getParent();
     
-	@ComProperty
-	String getName();
-	
-	@ComProperty
-	ComIRange getRange(String cell1);
+        @ComProperty
+        String getName();
+
+        @ComProperty
+        ComIRange getRange(String cell1);
         
         @ComProperty
         ComIRange getRange(String cell1, String cell2);
 
-	@ComProperty
-	ComIApplication getApplication();
+        @ComProperty
+        ComIApplication getApplication();
 
         @ComProperty
         ComIRange getCells();
@@ -49,9 +49,9 @@ public interface ComIWorksheet {
         @ComProperty
         Shapes getShapes();
         
-	@ComProperty
-	ComIRange getRows(Object identifier);
+        @ComProperty
+        ComIRange getRows(Object identifier);
         
-	@ComProperty
-	ComIRange getColumns(Object identifier);
+        @ComProperty
+        ComIRange getColumns(Object identifier);
 }

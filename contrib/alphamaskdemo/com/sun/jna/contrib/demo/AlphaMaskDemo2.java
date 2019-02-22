@@ -159,9 +159,9 @@ public class AlphaMaskDemo2 implements Runnable {
         JPanel p = new JPanel(new BorderLayout(8, 8));
         p.setBorder(new EmptyBorder(8, 8, 8, 8));
         p.setTransferHandler(new TransferHandler() {
-			private static final long serialVersionUID = 1L;
-			public boolean canImport(JComponent comp,
-                                     DataFlavor[] transferFlavors) {
+            private static final long serialVersionUID = 1L;
+            public boolean canImport(JComponent comp,
+                    DataFlavor[] transferFlavors) {
                 List<DataFlavor> list = Arrays.asList(transferFlavors);
                 if (list.contains(URL_FLAVOR) || list.contains(URI_LIST_FLAVOR)
                     || list.contains(DataFlavor.imageFlavor)

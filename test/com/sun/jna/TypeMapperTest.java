@@ -206,7 +206,7 @@ public class TypeMapperTest extends TestCase {
             }
         };
         mapper.addTypeConverter(Boolean.class, converter);
-		Native.load("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
+        Native.load("testlib", StructureTestLibrary.class, Collections.singletonMap(Library.OPTION_TYPE_MAPPER, mapper));
         StructureTestLibrary.TestStructure s = new StructureTestLibrary.TestStructure(mapper);
         assertEquals("Wrong native size", 4, s.size());
 

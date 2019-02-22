@@ -34,35 +34,35 @@ import com.sun.jna.ptr.PointerByReference;
 public class UnknownListener extends Structure {
     public UnknownVTable.ByReference vtbl;
 
-	public UnknownListener(IUnknownCallback callback) {
-		this.vtbl = this.constructVTable();
-		this.initVTable(callback);
-		super.write();
-	}
+    public UnknownListener(IUnknownCallback callback) {
+        this.vtbl = this.constructVTable();
+        this.initVTable(callback);
+        super.write();
+    }
 
-	protected UnknownVTable.ByReference constructVTable() {
-		return new UnknownVTable.ByReference();
-	}
+    protected UnknownVTable.ByReference constructVTable() {
+        return new UnknownVTable.ByReference();
+    }
 
-	protected void initVTable(final IUnknownCallback callback) {
-		this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
-				return callback.QueryInterface(refid, ppvObject);
-			}
-		};
-		this.vtbl.AddRefCallback = new UnknownVTable.AddRefCallback() {
-			@Override
-			public int invoke(Pointer thisPointer) {
-				return callback.AddRef();
-			}
-		};
-		this.vtbl.ReleaseCallback = new UnknownVTable.ReleaseCallback() {
-			@Override
-			public int invoke(Pointer thisPointer) {
-				return callback.Release();
-			}
-		};
-	}
+    protected void initVTable(final IUnknownCallback callback) {
+        this.vtbl.QueryInterfaceCallback = new UnknownVTable.QueryInterfaceCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
+                return callback.QueryInterface(refid, ppvObject);
+            }
+        };
+        this.vtbl.AddRefCallback = new UnknownVTable.AddRefCallback() {
+            @Override
+            public int invoke(Pointer thisPointer) {
+                return callback.AddRef();
+            }
+        };
+        this.vtbl.ReleaseCallback = new UnknownVTable.ReleaseCallback() {
+            @Override
+            public int invoke(Pointer thisPointer) {
+                return callback.Release();
+            }
+        };
+    }
 
 }

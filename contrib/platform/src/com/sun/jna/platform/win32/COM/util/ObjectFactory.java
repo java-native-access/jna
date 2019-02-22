@@ -52,23 +52,23 @@ import java.util.List;
  * Factory keeps track of COM objects - all objects created with this factory
  * can be disposed by calling {@link Factory#disposeAll() }.
  */
-public class ObjectFactory {	
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			this.disposeAll();
-		} finally {
-			super.finalize();
-		}
-	}
+public class ObjectFactory {
+        @Override
+        protected void finalize() throws Throwable {
+                try {
+                        this.disposeAll();
+                } finally {
+                        super.finalize();
+                }
+        }
 
-	/**
-	 * CoInitialize must be called be fore this method. Either explicitly or
-	 * implicitly via other methods.
-	 * 
-	 * @return running object table
-	 */
-	public IRunningObjectTable getRunningObjectTable() {
+        /**
+         * CoInitialize must be called be fore this method. Either explicitly or
+         * implicitly via other methods.
+         *
+         * @return running object table
+         */
+        public IRunningObjectTable getRunningObjectTable() {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 final PointerByReference rotPtr = new PointerByReference();
@@ -82,24 +82,24 @@ public class ObjectFactory {
                 return rot;
         }
 
-	/**
-	 * Creates a ProxyObject for the given interface and IDispatch pointer.
-	 * 
-	 */
-	public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
+        /**
+         * Creates a ProxyObject for the given interface and IDispatch pointer.
+         *
+         */
+        public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
-		ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
-		Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
-		T result = comInterface.cast(proxy);
-		return result;
-	}
-	
-	/**
-	 * Creates a new COM object (CoCreateInstance) for the given progId and
-	 * returns a ProxyObject for the given interface.
-	 */
-	public <T> T createObject(Class<T> comInterface) {
+                ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
+                Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
+                T result = comInterface.cast(proxy);
+                return result;
+        }
+
+        /**
+         * Creates a new COM object (CoCreateInstance) for the given progId and
+         * returns a ProxyObject for the given interface.
+         */
+        public <T> T createObject(Class<T> comInterface) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
@@ -120,13 +120,13 @@ public class ObjectFactory {
                 //Note: the createProxy adds one
                 int n = d.Release();
                 return t;
-	}
+        }
 
-	/**
-	 * Gets and existing COM object (GetActiveObject) for the given progId and
-	 * returns a ProxyObject for the given interface.
-	 */
-	public <T> T fetchObject(Class<T> comInterface) throws COMException {
+        /**
+         * Gets and existing COM object (GetActiveObject) for the given progId and
+         * returns a ProxyObject for the given interface.
+         */
+        public <T> T fetchObject(Class<T> comInterface) throws COMException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
@@ -147,9 +147,9 @@ public class ObjectFactory {
                 d.Release();
 
                 return t;
-	}
+        }
 
-	GUID discoverClsId(ComObject annotation) {
+        GUID discoverClsId(ComObject annotation) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 String clsIdStr = annotation.clsId();
@@ -166,27 +166,27 @@ public class ObjectFactory {
                 } else {
                         throw new COMException("ComObject must define a value for either clsId or progId");
                 }
-	}
+        }
         
         IDispatchCallback createDispatchCallback(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
             return new CallbackProxy(this, comEventCallbackInterface, comEventCallbackListener);
         }
 
-	// Proxy object release their COM interface reference latest in the
+        // Proxy object release their COM interface reference latest in the
         // finalize method, which is run when garbadge collection removes the
         // object.
         // When the factory is finished, the referenced objects loose their
         // environment and can't be used anymore. registeredObjects is used
         // to dispose interfaces even if garbadge collection has not yet collected
         // the proxy objects.
-	private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<WeakReference<ProxyObject>>();
-	public void register(ProxyObject proxyObject) {
+        private final List<WeakReference<ProxyObject>> registeredObjects = new LinkedList<WeakReference<ProxyObject>>();
+        public void register(ProxyObject proxyObject) {
             synchronized (this.registeredObjects) {
                 this.registeredObjects.add(new WeakReference<ProxyObject>(proxyObject));
             }
-	}
-	
-	public void unregister(ProxyObject proxyObject) {
+        }
+
+        public void unregister(ProxyObject proxyObject) {
             synchronized (this.registeredObjects) {
                 Iterator<WeakReference<ProxyObject>> iterator = this.registeredObjects.iterator();
                 while(iterator.hasNext()) {
@@ -198,8 +198,8 @@ public class ObjectFactory {
                 }
             }
         }
-	
-	public void disposeAll() {
+
+        public void disposeAll() {
             synchronized (this.registeredObjects) {
                 List<WeakReference<ProxyObject>> s = new ArrayList<WeakReference<ProxyObject>>(this.registeredObjects);
                 for(WeakReference<ProxyObject> weakRef : s) {
@@ -210,7 +210,7 @@ public class ObjectFactory {
                 }
                 this.registeredObjects.clear();
             }
-	}
+        }
         
         /**
          * The Constant LOCALE_USER_DEFAULT.

@@ -84,7 +84,7 @@ public class BalloonTipManager {
    * The BalloonTip class defines the look of the BalloonTip object.
    */
   private static final class BalloonTip extends JWindow {
-		private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private static final Integer HMARGIN = 10;
     private static final Integer VMARGIN = 6;
     private static final Integer VSPACER = 4;

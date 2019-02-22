@@ -38,63 +38,63 @@ import com.sun.jna.Pointer;
  */
 public interface IMoniker extends IPersistStream {
 
-	/**
-	 * Binds to the specified object. The binding process involves finding the
-	 * object, putting it into the running state if necessary, and providing the
-	 * caller with a pointer to a specified interface on the identified object.
-	 * 
-	 * {@code
-	 *   HRESULT BindToObject(
-	 *     [in]   IBindCtx *pbc,
-	 *     [in]   IMoniker *pmkToLeft,
-	 *     [in]   REFIID riidResult,
-	 *     [out]  void **ppvResult
-	 *   );
-	 * }
-	 * 
-	 * @see <a
-	 *      href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms691433%28v=vs.85%29.aspx">MSDN</a>
-	 */
-	void BindToObject();
+    /**
+     * Binds to the specified object. The binding process involves finding the
+     * object, putting it into the running state if necessary, and providing the
+     * caller with a pointer to a specified interface on the identified object.
+     *
+     * {@code
+     *   HRESULT BindToObject(
+     *     [in]   IBindCtx *pbc,
+     *     [in]   IMoniker *pmkToLeft,
+     *     [in]   REFIID riidResult,
+     *     [out]  void **ppvResult
+     *   );
+     * }
+     *
+     * @see <a
+     *      href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms691433%28v=vs.85%29.aspx">MSDN</a>
+     */
+    void BindToObject();
 
-	void BindToStorage();
+    void BindToStorage();
 
-	void Reduce();
+    void Reduce();
 
-	void ComposeWith();
+    void ComposeWith();
 
-	void Enum();
+    void Enum();
 
-	void IsEqual();
+    void IsEqual();
 
-	void Hash();
+    void Hash();
 
-	void IsRunning();
+    void IsRunning();
 
-	void GetTimeOfLastChange();
+    void GetTimeOfLastChange();
 
-	void Inverse();
+    void Inverse();
 
-	void CommonPrefixWith();
+    void CommonPrefixWith();
 
-	/**
-	 * Retrieves the display name for the moniker.
-	 * 
-	 * {@code
-	 *   HRESULT GetDisplayName(
-	 *     [in]   IBindCtx *pbc,
-	 *     [in]   IMoniker *pmkToLeft,
-	 *     [out]  LPOLESTR *ppszDisplayName
-	 *   );
-	 * }
+    /**
+     * Retrieves the display name for the moniker.
+     *
+     * {@code
+     *   HRESULT GetDisplayName(
+     *     [in]   IBindCtx *pbc,
+     *     [in]   IMoniker *pmkToLeft,
+     *     [out]  LPOLESTR *ppszDisplayName
+     *   );
+     * }
          * 
-	 * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms680754%28v=vs.85%29.aspx">MSDN</a>
-	 */
-	String GetDisplayName(Pointer bindContext, Pointer pmkToLeft);
+     * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms680754%28v=vs.85%29.aspx">MSDN</a>
+     */
+    String GetDisplayName(Pointer bindContext, Pointer pmkToLeft);
 
-	void ParseDisplayName();
+    void ParseDisplayName();
 
-	void IsSystemMoniker();
-	
-	void RelativePathTo();
+    void IsSystemMoniker();
+
+    void RelativePathTo();
 }

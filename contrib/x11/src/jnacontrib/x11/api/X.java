@@ -508,7 +508,7 @@ public class X {
          *
          * @return array of modifier lists
          */
-        public ArrayList<Byte>[] getAllModifiers() {        	
+        public ArrayList<Byte>[] getAllModifiers() {
             return new ArrayList[] {
                     shift, lock, control, mod1, mod2, mod3, mod4, mod5
             };
@@ -1021,9 +1021,9 @@ public class X {
             X11.Atom xa_ret_type = xa_ret_type_ref.getValue();
             Pointer ret_prop = ret_prop_ref.getValue();
             
-            if( xa_ret_type == null ){
-            	//the specified property does not exist for the specified window
-            	return null;
+            if (xa_ret_type == null) {
+                //the specified property does not exist for the specified window
+                return null;
             }
 
             if( xa_ret_type == null ){

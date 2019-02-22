@@ -36,16 +36,16 @@ import com.sun.jna.platform.win32.Guid.CLSID;
  */
 public interface IPersist extends IUnknown {
 
-	/**
-	 * Retrieves the class identifier (CLSID) of the object.
-	 * 
-	 * {@code
-	 *   HRESULT GetClassID(
-	 *     [out]  CLSID *pClassID
-	 *   );
-	 * }
-	 * 
-	 * <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms688664%28v=vs.85%29.aspx">MSDN</a>
-	 */
-	CLSID GetClassID();
+    /**
+     * Retrieves the class identifier (CLSID) of the object.
+     *
+     * {@code
+     *   HRESULT GetClassID(
+     *     [out]  CLSID *pClassID
+     *   );
+     * }
+     * 
+     * <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms688664%28v=vs.85%29.aspx">MSDN</a>
+     */
+    CLSID GetClassID();
 }

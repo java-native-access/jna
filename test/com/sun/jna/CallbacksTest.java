@@ -67,13 +67,16 @@ public class CallbacksTest extends TestCase implements Paths {
 
     protected void waitFor(Thread thread) {
         long start = System.currentTimeMillis();
-	while (thread.isAlive()) {
-	    try { Thread.sleep(10); } catch(InterruptedException e) { }
-	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-		fail("Timed out waiting for native thread " + thread
-                     + " to detach and terminate");
-	    }
-	}
+        while (thread.isAlive()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+            }
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+                fail("Timed out waiting for native thread " + thread
+                        + " to detach and terminate");
+            }
+        }
     }
 
     public static class SmallTestStructure extends Structure {
@@ -182,7 +185,7 @@ public class CallbacksTest extends TestCase implements Paths {
         }
         WString callWideStringCallback(WideStringCallback c, WString arg, WString arg2);
         interface CopyArgToByReference extends Callback {
-        	int callback(int arg, IntByReference result);
+            int callback(int arg, IntByReference result);
         }
         interface StringArrayCallback extends Callback {
             String[] callback(String[] arg);
@@ -755,7 +758,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCallCallbackWithByReferenceArgument() {
-    	final boolean[] called = {false};
+        final boolean[] called = {false};
         TestLibrary.CopyArgToByReference cb = new TestLibrary.CopyArgToByReference() {
             @Override
             public int callback(int arg, IntByReference result) {
@@ -795,15 +798,15 @@ public class CallbacksTest extends TestCase implements Paths {
                    + arg[0].getPointer(), arg[0].getPointer() instanceof Memory);
         assertTrue("ByValue result should own its own memory, instead was "
                    + result.getPointer(), result.getPointer() instanceof Memory);
-	if (!s.dataEquals(arg[0], true)) {
-	    System.out.println("Mismatch: " + s);
-	    System.out.println("  versus: " + arg[0]);
-	}
+        if (!s.dataEquals(arg[0], true)) {
+            System.out.println("Mismatch: " + s);
+            System.out.println("  versus: " + arg[0]);
+        }
         assertTrue("Wrong value for callback argument", s.dataEquals(arg[0], true));
-	if (!s.dataEquals(result, true)) {
-	    System.out.println("Mismatch: " + s);
-	    System.out.println("  versus: " + result);
-	}
+        if (!s.dataEquals(result, true)) {
+            System.out.println("Mismatch: " + s);
+            System.out.println("  versus: " + result);
+        }
         assertTrue("Wrong value for callback result", s.dataEquals(result, true));
     }
 
@@ -979,7 +982,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCustomCallbackMethodName() {
-    	final boolean[] called = {false};
+        final boolean[] called = {false};
         TestLibrary.VoidCallbackCustom cb = new TestLibrary.VoidCallbackCustom() {
             @Override
             public void customMethodName() {
@@ -995,7 +998,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testDisallowDetachFromJVMThread() {
-    	final boolean[] called = {false};
+        final boolean[] called = {false};
         final boolean[] exceptionThrown = {true};
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {
             @Override
@@ -1014,7 +1017,7 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCustomCallbackVariedInheritance() {
-    	final boolean[] called = {false};
+        final boolean[] called = {false};
         TestLibrary.VoidCallbackCustom cb =
             new TestLibrary.VoidCallbackCustomDerived();
         lib.callVoidCallback(cb);
@@ -1205,7 +1208,7 @@ public class CallbacksTest extends TestCase implements Paths {
                                         CallbackThreadInitializer cti,
                                         int repeat, int sleepms,
                                         int[] called) throws Exception {
-	callThreadedCallback(cb, cti, repeat, sleepms, called, repeat);
+        callThreadedCallback(cb, cti, repeat, sleepms, called, repeat);
     }
 
     protected void callThreadedCallback(TestLibrary.VoidCallback cb,
@@ -1227,8 +1230,8 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCallbackThreadDefaults() throws Exception {
-    	final int[] called = {0};
-    	final boolean[] daemon = {false};
+        final int[] called = {0};
+        final boolean[] daemon = {false};
         final String[] name = { null };
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
@@ -1252,8 +1255,8 @@ public class CallbacksTest extends TestCase implements Paths {
     }
 
     public void testCustomizeCallbackThread() throws Exception {
-    	final int[] called = {0};
-    	final boolean[] daemon = {false};
+        final int[] called = {0};
+        final boolean[] daemon = {false};
         final String[] name = { null };
         final ThreadGroup[] group = { null };
         final Thread[] t = { null };
@@ -1294,12 +1297,12 @@ public class CallbacksTest extends TestCase implements Paths {
         assertTrue("Thread should still be alive", t[0].isAlive());
 
         long start = System.currentTimeMillis();
-	while (called[0] < 2) {
-	    Thread.sleep(10);
-	    if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
-		fail("Timed out waiting for second callback invocation, which indicates detach");
-	    }
-	}
+        while (called[0] < 2) {
+            Thread.sleep(10);
+            if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
+                fail("Timed out waiting for second callback invocation, which indicates detach");
+            }
+        }
 
         waitFor(t[0]);
     }
@@ -1326,7 +1329,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // Detach preference is indicated by the initializer.  Thread is attached
     // as daemon to avoid VM having to wait for it.
     public void testCallbackThreadPersistence() throws Exception {
-    	final int[] called = {0};
+        final int[] called = {0};
         final Set<Thread> threads = new HashSet<Thread>();
 
         final int COUNT = 5;
@@ -1370,10 +1373,10 @@ public class CallbacksTest extends TestCase implements Paths {
         };
         // Always attach as daemon to ensure tests will exit
         CallbackThreadInitializer asDaemon = new CallbackThreadInitializer(true) {
-    	    @Override
+            @Override
             public String getName(Callback cb) {
-    	        return "Test thread (native) for " + CallbacksTest.this.getName();
-    	    }
+                return "Test thread (native) for " + CallbacksTest.this.getName();
+            }
         };
         callThreadedCallback(cb, asDaemon, 2, 100, called);
         // Wait for it to start up
@@ -1389,8 +1392,8 @@ public class CallbacksTest extends TestCase implements Paths {
         while (ref.get() != null) {
             System.gc();
             Thread.sleep(100);
-    	    Thread[] remaining = new Thread[Thread.activeCount()];
-    	    Thread.enumerate(remaining);
+            Thread[] remaining = new Thread[Thread.activeCount()];
+            Thread.enumerate(remaining);
             if (System.currentTimeMillis() - start > THREAD_TIMEOUT) {
                 Thread t = ref.get();
                 Pointer terminationFlag = Native.getTerminationFlag(t);
@@ -1409,7 +1412,7 @@ public class CallbacksTest extends TestCase implements Paths {
     // CallbackThreadInitializer); thread is non-daemon (default),
     // but callback explicitly detaches it on final invocation.
     public void testCallbackIndicatedThreadDetach() throws Exception {
-    	final int[] called = {0};
+        final int[] called = {0};
         final Set<Thread> threads = new HashSet<Thread>();
         final int COUNT = 5;
         TestLibrary.VoidCallback cb = new TestLibrary.VoidCallback() {

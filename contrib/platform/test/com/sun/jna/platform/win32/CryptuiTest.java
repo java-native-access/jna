@@ -39,9 +39,9 @@ public class CryptuiTest extends TestCase {
         junit.textui.TestRunner.run(CryptuiTest.class);
     }
 
-	public void testCryptUIDlgSelectCertificateFromStore() {
-		CERT_CONTEXT.ByReference context = Cryptui.INSTANCE.CryptUIDlgSelectCertificateFromStore(null, null, "", "", 2, 0, null);
+    public void testCryptUIDlgSelectCertificateFromStore() {
+        CERT_CONTEXT.ByReference context = Cryptui.INSTANCE.CryptUIDlgSelectCertificateFromStore(null, null, "", "", 2, 0, null);
 
-		assertNull("Context should be null as a valid certificate store handle was not provided.", context);
-	}
+        assertNull("Context should be null as a valid certificate store handle was not provided.", context);
+    }
 }

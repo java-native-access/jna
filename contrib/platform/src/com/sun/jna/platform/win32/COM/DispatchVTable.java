@@ -46,45 +46,45 @@ import com.sun.jna.win32.StdCallLibrary;
     "GetTypeInfoCountCallback", "GetTypeInfoCallback",
     "GetIDsOfNamesCallback", "InvokeCallback"})
 public class DispatchVTable extends Structure {
-	public static class ByReference extends DispatchVTable implements Structure.ByReference {
-	}
+    public static class ByReference extends DispatchVTable implements Structure.ByReference {
+    }
 
-	public QueryInterfaceCallback QueryInterfaceCallback;
-	public AddRefCallback AddRefCallback;
-	public ReleaseCallback ReleaseCallback;
-	public GetTypeInfoCountCallback GetTypeInfoCountCallback;
-	public GetTypeInfoCallback GetTypeInfoCallback;
-	public GetIDsOfNamesCallback GetIDsOfNamesCallback;
-	public InvokeCallback InvokeCallback;
+    public QueryInterfaceCallback QueryInterfaceCallback;
+    public AddRefCallback AddRefCallback;
+    public ReleaseCallback ReleaseCallback;
+    public GetTypeInfoCountCallback GetTypeInfoCountCallback;
+    public GetTypeInfoCallback GetTypeInfoCallback;
+    public GetIDsOfNamesCallback GetIDsOfNamesCallback;
+    public InvokeCallback InvokeCallback;
 
-	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
-	}
+    public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
+    }
 
-	public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
-		int invoke(Pointer thisPointer);
-	}
+    public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
+        int invoke(Pointer thisPointer);
+    }
 
-	public static interface ReleaseCallback extends StdCallLibrary.StdCallCallback {
-		int invoke(Pointer thisPointer);
-	}
+    public static interface ReleaseCallback extends StdCallLibrary.StdCallCallback {
+        int invoke(Pointer thisPointer);
+    }
 
-	public static interface GetTypeInfoCountCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo);
-	}
+    public static interface GetTypeInfoCountCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo);
+    }
 
-	public static interface GetTypeInfoCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, UINT iTInfo, LCID lcid, PointerByReference ppTInfo);
-	}
+    public static interface GetTypeInfoCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, UINT iTInfo, LCID lcid, PointerByReference ppTInfo);
+    }
 
-	public static interface GetIDsOfNamesCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
-				DISPIDByReference rgDispId);
-	}
+    public static interface GetIDsOfNamesCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
+                DISPIDByReference rgDispId);
+    }
 
-	public static interface InvokeCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
-				DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-				IntByReference puArgErr);
-	}
+    public static interface InvokeCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
+                DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+                IntByReference puArgErr);
+    }
 }

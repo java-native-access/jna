@@ -543,7 +543,7 @@ public interface Sspi {
         /**
          * A ByReference SecBuffer.
          */
-    	public static class ByReference extends SecBuffer implements Structure.ByReference {
+        public static class ByReference extends SecBuffer implements Structure.ByReference {
             /**
              * Create a SECBUFFER_EMPTY SecBuffer.
              */
@@ -564,7 +564,7 @@ public interface Sspi {
             public ByReference(int type, byte[] token) {
                 super(type, token);
             }
-    	}
+        }
 
         /**
          * Specifies the size, in bytes, of the buffer pointed to by the pvBuffer member.

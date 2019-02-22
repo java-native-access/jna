@@ -430,18 +430,18 @@ public class User32Test extends AbstractWin32TestSupport {
     
     @Test
     public void testSendMessage() {
-    	 DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+        DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-         assertNotNull(explorerProc);
+        assertNotNull(explorerProc);
 
-         LRESULT result = User32.INSTANCE
-                     .SendMessage(explorerProc.getHWND(),
-                                         WinUser.WM_USER,
-                                         new WPARAM(124),
-                                         new LPARAM(12345));
+        LRESULT result = User32.INSTANCE
+                .SendMessage(explorerProc.getHWND(),
+                        WinUser.WM_USER,
+                        new WPARAM(124),
+                        new LPARAM(12345));
 
-         assertNotEquals(0, result);
-    	
+        assertNotEquals(0, result);
+
     }
 
     /**

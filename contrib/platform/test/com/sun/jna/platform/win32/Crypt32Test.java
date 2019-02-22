@@ -48,7 +48,7 @@ public class Crypt32Test extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Crypt32Test.class);
     }
-	
+
     @Override
     protected void setUp() {
         HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(Pointer.NULL, "MY");
@@ -68,69 +68,69 @@ public class Crypt32Test extends TestCase {
 
     @Override
     protected void tearDown() {
-    	if(createdCertificate) {
-    		removeTestCertificate();
-    	}
+        if(createdCertificate) {
+            removeTestCertificate();
+        }
     }
 
     public void testCryptProtectUnprotectData() {
-    	DATA_BLOB pDataIn = new DATA_BLOB("hello world");
-    	DATA_BLOB pDataEncrypted = new DATA_BLOB();
-    	try {
-        	assertTrue("CryptProtectData(Initial)",
-        	        Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
-        	                null, null, null, 0, pDataEncrypted));
-        	PointerByReference pDescription = new PointerByReference();
-        	try {
+        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        DATA_BLOB pDataEncrypted = new DATA_BLOB();
+        try {
+            assertTrue("CryptProtectData(Initial)",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                            null, null, null, 0, pDataEncrypted));
+            PointerByReference pDescription = new PointerByReference();
+            try {
                 DATA_BLOB pDataDecrypted = new DATA_BLOB();
                 try {
-                	assertTrue("CryptProtectData(Crypt)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                null, null, null, 0, pDataDecrypted));
-                	assertEquals("description", pDescription.getValue().getWideString(0));
-                	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                    assertTrue("CryptProtectData(Crypt)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    null, null, null, 0, pDataDecrypted));
+                    assertEquals("description", pDescription.getValue().getWideString(0));
+                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
                 }
-        	} finally {
+            } finally {
                 Kernel32Util.freeLocalMemory(pDescription.getValue());
-        	}
-    	} finally {
-    	    Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
-    	}
+            }
+        } finally {
+            Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
+        }
     }
 
     public void testCryptProtectUnprotectDataWithEntropy() {
-    	DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
         DATA_BLOB pEntropy = new DATA_BLOB("entropy");
-    	DATA_BLOB pDataEncrypted = new DATA_BLOB();
-    	try {
-        	assertTrue("CryptProtectData(Initial)",
-        	        Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
-        	                pEntropy, null, null, 0, pDataEncrypted));
-        	PointerByReference pDescription = new PointerByReference();
-        	try {
-            	DATA_BLOB pDataDecrypted = new DATA_BLOB();
-            	try {
-                	// can't decrypt without entropy
-                	assertFalse("CryptUnprotectData(NoEntropy)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                null, null, null, 0, pDataDecrypted));
-                	// decrypt with entropy
-                	assertTrue("CryptUnprotectData(WithEntropy)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                pEntropy, null, null, 0, pDataDecrypted));
-                	assertEquals("description", pDescription.getValue().getWideString(0));
-                	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
-            	} finally {
+        DATA_BLOB pDataEncrypted = new DATA_BLOB();
+        try {
+            assertTrue("CryptProtectData(Initial)",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                            pEntropy, null, null, 0, pDataEncrypted));
+            PointerByReference pDescription = new PointerByReference();
+            try {
+                DATA_BLOB pDataDecrypted = new DATA_BLOB();
+                try {
+                    // can't decrypt without entropy
+                    assertFalse("CryptUnprotectData(NoEntropy)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    null, null, null, 0, pDataDecrypted));
+                    // decrypt with entropy
+                    assertTrue("CryptUnprotectData(WithEntropy)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    pEntropy, null, null, 0, pDataDecrypted));
+                    assertEquals("description", pDescription.getValue().getWideString(0));
+                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
-            	}
-        	} finally {
+                }
+            } finally {
                 Kernel32Util.freeLocalMemory(pDescription.getValue());
-        	}
-    	} finally {
+            }
+        } finally {
             Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
-    	}
+        }
     }
 
     public void testCertAddEncodedCertificateToSystemStore() {

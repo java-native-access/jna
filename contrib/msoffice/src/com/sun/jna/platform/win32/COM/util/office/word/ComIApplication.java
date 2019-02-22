@@ -30,27 +30,27 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 @ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
 public interface ComIApplication {
 
-	@ComProperty
-	String getVersion();
+        @ComProperty
+        String getVersion();
 
-	@ComProperty
-	boolean getVisible();
-	
-	@ComProperty
-	void setVisible(boolean value);
+        @ComProperty
+        boolean getVisible();
 
-	@ComProperty
-	ComIDocuments getDocuments();
+        @ComProperty
+        void setVisible(boolean value);
 
-	@ComProperty
-	ComISelection getSelection();
-	
-	@ComProperty
-	ComIDocument getActiveDocument();
+        @ComProperty
+        ComIDocuments getDocuments();
 
-	@ComMethod
-	void Quit();
-	
+        @ComProperty
+        ComISelection getSelection();
+
+        @ComProperty
+        ComIDocument getActiveDocument();
+
+        @ComMethod
+        void Quit();
+
         /**
          * <p>
          * id(0x172)</p>

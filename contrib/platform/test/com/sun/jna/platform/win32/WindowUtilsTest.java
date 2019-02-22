@@ -106,7 +106,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowLocationAndSize() {
 
         final JFrame w = new JFrame();
@@ -129,7 +129,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowTitle() {
 
         final JFrame w = new JFrame("A super unique title by PAX! "
@@ -145,7 +145,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetIconSize() throws Exception {
         
         final JFrame w = new JFrame();
@@ -177,7 +177,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetProcessFilePath() {
         if (!Platform.isWindows()) {
             return;

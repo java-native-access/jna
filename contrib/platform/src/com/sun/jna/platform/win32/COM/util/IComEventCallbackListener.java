@@ -27,8 +27,8 @@ import com.sun.jna.platform.win32.COM.IDispatchCallback;
 
 public interface IComEventCallbackListener {
 
-	void setDispatchCallbackListener(IDispatchCallback dispatchCallback);
+    void setDispatchCallbackListener(IDispatchCallback dispatchCallback);
 
-	void errorReceivingCallbackEvent(String message, Exception exception);
+    void errorReceivingCallbackEvent(String message, Exception exception);
 
 }

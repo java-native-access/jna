@@ -34,7 +34,7 @@ import com.sun.jna.win32.StdCallLibrary;
 
 public abstract class AccCtrl implements StdCallLibrary {
 
-	/**
+    /**
     * The SE_OBJECT_TYPE enumeration contains values that correspond to the 
     * types of Windows objects that support security. The functions, such as 
     * GetSecurityInfo and SetSecurityInfo, that set and retrieve the security 

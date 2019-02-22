@@ -35,22 +35,22 @@ import com.sun.jna.win32.StdCallLibrary;
 
 @FieldOrder({"QueryInterfaceCallback", "AddRefCallback", "ReleaseCallback"})
 public class UnknownVTable extends Structure {
-	public static class ByReference extends UnknownVTable implements Structure.ByReference {
-	}
+    public static class ByReference extends UnknownVTable implements Structure.ByReference {
+    }
 
-	public QueryInterfaceCallback QueryInterfaceCallback;
-	public AddRefCallback AddRefCallback;
-	public ReleaseCallback ReleaseCallback;
+    public QueryInterfaceCallback QueryInterfaceCallback;
+    public AddRefCallback AddRefCallback;
+    public ReleaseCallback ReleaseCallback;
 
-	public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
-		WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
-	}
+    public static interface QueryInterfaceCallback extends StdCallLibrary.StdCallCallback {
+        WinNT.HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject);
+    }
 
-	public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
-		int invoke(Pointer thisPointer);
-	}
+    public static interface AddRefCallback extends StdCallLibrary.StdCallCallback {
+        int invoke(Pointer thisPointer);
+    }
 
-	public static interface ReleaseCallback extends StdCallLibrary.StdCallCallback {
-		int invoke(Pointer thisPointer);
-	}
+    public static interface ReleaseCallback extends StdCallLibrary.StdCallCallback {
+        int invoke(Pointer thisPointer);
+    }
 }

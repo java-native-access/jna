@@ -32,26 +32,26 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 @ComInterface(iid="{000208D5-0000-0000-C000-000000000046}")
 public interface ComIApplication extends IUnknown, IConnectionPoint {
 
-	@ComProperty
-	String getVersion();
-	
-	@ComProperty
-	boolean getVisible();
+        @ComProperty
+        String getVersion();
 
-	@ComProperty
-	void setVisible(boolean value);
-	
-	@ComProperty
-	ComIWorkbooks getWorkbooks();
-	
-	@ComProperty
-	ComIWorksheet getActiveSheet();
+        @ComProperty
+        boolean getVisible();
 
-	@ComProperty
-	ComIWorkbook getActiveWorkbook();
+        @ComProperty
+        void setVisible(boolean value);
 
-	@ComMethod
-	void Quit();
+        @ComProperty
+        ComIWorkbooks getWorkbooks();
+
+        @ComProperty
+        ComIWorksheet getActiveSheet();
+
+        @ComProperty
+        ComIWorkbook getActiveWorkbook();
+
+        @ComMethod
+        void Quit();
         
         @ComProperty
         boolean getUserControl();

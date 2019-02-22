@@ -37,11 +37,11 @@ import com.sun.jna.platform.win32.FlagEnum;
  */
 public class EnumUtils
 {
-	/**
-	 * Uninitialized integer flag
-	 */
-	public static final int UNINITIALIZED = -1;
-	
+    /**
+     * Uninitialized integer flag
+     */
+    public static final int UNINITIALIZED = -1;
+
     /**
      * @param val the enum
      * @return the index of the enum in the enum list
@@ -49,15 +49,15 @@ public class EnumUtils
     public static <E extends Enum<E>> int toInteger(E val)
     {
         @SuppressWarnings("unchecked")
-		E[] vals = (E[]) val.getClass().getEnumConstants();
-        
-    	for (int idx = 0; idx < vals.length; idx++)
-    	{
-    		if (vals[idx] == val)
-    			return idx;
-    	}
-    	
-    	throw new IllegalArgumentException();
+        E[] vals = (E[]) val.getClass().getEnumConstants();
+
+        for (int idx = 0; idx < vals.length; idx++) {
+            if (vals[idx] == val) {
+                return idx;
+            }
+        }
+
+        throw new IllegalArgumentException();
     }
     
     /**
@@ -67,11 +67,11 @@ public class EnumUtils
      */
     public static <E extends Enum<E>> E fromInteger(int idx, Class<E> clazz)
     {
-    	if (idx == UNINITIALIZED)
-    		return null;
-    	
-    	E[] vals = clazz.getEnumConstants();
-    	return vals[idx];
+        if (idx == UNINITIALIZED)
+            return null;
+
+        E[] vals = clazz.getEnumConstants();
+        return vals[idx];
     }
     
     /**
@@ -86,28 +86,28 @@ public class EnumUtils
         
         for (T val : vals)
         {
-        	if ((flags & val.getFlag()) != 0)
-        	{
-        		result.add(val);
-        	}
+            if ((flags & val.getFlag()) != 0)
+            {
+                result.add(val);
+            }
         }
         
         return result;
     }
     
-	/**
-	 * @param set the set to convert
-	 * @return the flags combined into an integer
-	 */
-	public static <T extends FlagEnum> int setToInteger(Set<T> set) {
-    	int sum = 0;
-    	
-    	for (T t : set)
-    	{
-    		sum |= t.getFlag();
-    	}
+    /**
+     * @param set the set to convert
+     * @return the flags combined into an integer
+     */
+    public static <T extends FlagEnum> int setToInteger(Set<T> set) {
+        int sum = 0;
 
-    	return sum;
+        for (T t : set)
+        {
+            sum |= t.getFlag();
+        }
+
+        return sum;
     }
 }
 

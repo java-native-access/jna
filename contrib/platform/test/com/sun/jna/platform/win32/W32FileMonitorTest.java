@@ -30,7 +30,7 @@ public class W32FileMonitorTest extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(W32FileMonitorTest.class);
     }
-	
+
     private Map<Integer, FileEvent> events;
     private FileMonitor monitor;
     private File tmpdir;

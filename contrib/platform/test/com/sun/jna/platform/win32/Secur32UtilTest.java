@@ -25,25 +25,25 @@ public class Secur32UtilTest extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Secur32UtilTest.class);
         System.out.println("Current user: " + Secur32Util.getUserNameEx(
-        		EXTENDED_NAME_FORMAT.NameSamCompatible));
+                EXTENDED_NAME_FORMAT.NameSamCompatible));
         System.out.println("Security packages:");
-		for(SecurityPackage sp : Secur32Util.getSecurityPackages()) {
-			System.out.println(" " + sp.name + ": " + sp.comment);
-		}
+        for (SecurityPackage sp : Secur32Util.getSecurityPackages()) {
+            System.out.println(" " + sp.name + ": " + sp.comment);
+        }
     }
-    
-	public void testGetUsernameEx() {
-		String usernameSamCompatible = Secur32Util.getUserNameEx(
-				EXTENDED_NAME_FORMAT.NameSamCompatible); 
-		assertTrue(usernameSamCompatible.length() > 1);
-		assertTrue(usernameSamCompatible.indexOf('\\') > 0);
-	}	
-	
-	public void testGetSecurityPackages() {
-		SecurityPackage[] sps = Secur32Util.getSecurityPackages();
-		for(SecurityPackage sp : sps) {
-			assertTrue(sp.name.length() > 0);
-			assertTrue(sp.comment.length() >= 0);
-		}
-	}
+
+    public void testGetUsernameEx() {
+        String usernameSamCompatible = Secur32Util.getUserNameEx(
+                EXTENDED_NAME_FORMAT.NameSamCompatible);
+        assertTrue(usernameSamCompatible.length() > 1);
+        assertTrue(usernameSamCompatible.indexOf('\\') > 0);
+    }
+
+    public void testGetSecurityPackages() {
+        SecurityPackage[] sps = Secur32Util.getSecurityPackages();
+        for (SecurityPackage sp : sps) {
+            assertTrue(sp.name.length() > 0);
+            assertTrue(sp.comment.length() >= 0);
+        }
+    }
 }

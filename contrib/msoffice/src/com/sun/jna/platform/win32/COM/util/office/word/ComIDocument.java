@@ -28,11 +28,11 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 
 public interface ComIDocument {
 
-	@ComMethod
-	void SaveAs(String string, WdSaveFormat wdFormatDocument);
+        @ComMethod
+        void SaveAs(String string, WdSaveFormat wdFormatDocument);
 
-	@ComMethod
-	void Close(boolean saveChanges);
+        @ComMethod
+        void Close(boolean saveChanges);
         
         /**
          * <p>id(0x451)</p>

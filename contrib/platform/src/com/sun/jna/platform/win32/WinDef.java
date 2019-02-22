@@ -1730,28 +1730,27 @@ public interface WinDef {
         }
     }
 
-	/**
-	 * handle to an OpenGL rendering context
-	 */
-	public static class HGLRC extends HANDLE {
+    /**
+     * handle to an OpenGL rendering context
+     */
+    public static class HGLRC extends HANDLE {
 
-	    /**
-	     * Instantiates a new HGLRC .
-	     */
-	    public HGLRC() {
+        /**
+         * Instantiates a new HGLRC .
+         */
+        public HGLRC() {
 
-	    }
+        }
 
-	    /**
-	     * Instantiates a new HGLRC .
-	     *
-	     * @param p
-	     *            the p
-	     */
-	    public HGLRC(Pointer p) {
-	        super(p);
-	    }
-	}
+        /**
+         * Instantiates a new HGLRC .
+         *
+         * @param p the p
+         */
+        public HGLRC(Pointer p) {
+            super(p);
+        }
+    }
 
     /**
      * handle to an OpenGL rendering context

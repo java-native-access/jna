@@ -33,116 +33,117 @@ import org.junit.Assume;
 
 public class RunningObjectTable_Test {
 
-        static {
-                ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
-        }
-    
-	@ComInterface(iid="{00020970-0000-0000-C000-000000000046}")
-	interface Application extends IUnknown {
-		@ComProperty
-		Boolean getVisible();
-		
-		@ComProperty
-		void setVisible(Boolean value);
-		
-		@ComMethod
-		void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
-	}	
-	
-	@ComObject(progId="Word.Application")
-	interface MsWordApp extends Application {
-	}
-	
-	private ObjectFactory factory;
-	private MsWordApp msWord;
-        private boolean initialized = false;
+    static {
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+    }
 
-	@Before
-	public void before() {
-                // Check Existence of Word Application
-                Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
-            
-                COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
-                initialized = true;
-                
-		this.factory = new ObjectFactory();
-		//ensure there is only one word application running.
-		while(true) {
-			try {
-				MsWordApp ao = this.factory.fetchObject(MsWordApp.class);
-				Application a = ao.queryInterface(Application.class);
-				try {
-					a.Quit(true, null, null);
-					try {
-						//wait for it to quit
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				} catch (Exception e) {
-					e.printStackTrace();e.getCause().printStackTrace();
-				}
-			} catch(Exception e) {
-				break;
-			}
-		}
-		
-		
-		this.msWord = this.factory.createObject(MsWordApp.class);
-		msWord.setVisible(true);
-	}
-	
-	@After
-	public void after() {
-            if(this.msWord != null) {
-                this.msWord.Quit(true, null, null);
-            }
+    @ComInterface(iid = "{00020970-0000-0000-C000-000000000046}")
+    interface Application extends IUnknown {
+
+        @ComProperty
+        Boolean getVisible();
+
+        @ComProperty
+        void setVisible(Boolean value);
+
+        @ComMethod
+        void Quit(boolean SaveChanges, Object OriginalFormat, Boolean RouteDocument);
+    }
+
+    @ComObject(progId = "Word.Application")
+    interface MsWordApp extends Application {
+    }
+
+    private ObjectFactory factory;
+    private MsWordApp msWord;
+    private boolean initialized = false;
+
+    @Before
+    public void before() {
+        // Check Existence of Word Application
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+
+        COMUtils.checkRC(Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED));
+        initialized = true;
+
+        this.factory = new ObjectFactory();
+        //ensure there is only one word application running.
+        while (true) {
             try {
-                    //wait for it to quit
-                    Thread.sleep(100);
-            } catch (InterruptedException e) {
+                MsWordApp ao = this.factory.fetchObject(MsWordApp.class);
+                Application a = ao.queryInterface(Application.class);
+                try {
+                    a.Quit(true, null, null);
+                    try {
+                        //wait for it to quit
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
+                    e.getCause().printStackTrace();
+                }
+            } catch (Exception e) {
+                break;
             }
-            if(factory != null) {
-                factory.disposeAll();
+        }
+
+        this.msWord = this.factory.createObject(MsWordApp.class);
+        msWord.setVisible(true);
+    }
+
+    @After
+    public void after() {
+        if (this.msWord != null) {
+            this.msWord.Quit(true, null, null);
+        }
+        try {
+            //wait for it to quit
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (factory != null) {
+            factory.disposeAll();
+        }
+        if (initialized) {
+            Ole32.INSTANCE.CoUninitialize();
+        }
+    }
+
+    @Test
+    public void getRunningObjectTable() {
+        IRunningObjectTable rot = this.factory.getRunningObjectTable();
+
+        assertNotNull(rot);
+    }
+
+    @Test
+    public void enumRunning() {
+        IRunningObjectTable rot = this.factory.getRunningObjectTable();
+
+        for (IUnknown obj : rot.enumRunning()) {
+            try {
+                Application msw = obj.queryInterface(Application.class);
+            } catch (COMException ex) {
+                int i = 0;
             }
-            if(initialized) {
-                Ole32.INSTANCE.CoUninitialize();
-            }
-	}
-	
-	@Test
-	public void getRunningObjectTable() {
-		IRunningObjectTable rot = this.factory.getRunningObjectTable();
+        }
+    }
 
-		assertNotNull(rot);
-	}
+    @Test
+    public void getActiveObjectsByInterface() {
+        IRunningObjectTable rot = this.factory.getRunningObjectTable();
 
-	@Test
-	public void enumRunning() {
-		IRunningObjectTable rot = this.factory.getRunningObjectTable();
+        List<Application> objs = rot.getActiveObjectsByInterface(Application.class);
+        assertTrue(objs.size() > 0);
 
-		for(IUnknown obj: rot.enumRunning()) {
-			try {
-				Application msw = obj.queryInterface(Application.class);
-			} catch(COMException ex) {
-				int i= 0;
-			}
-		}
-	}
-	
-	@Test
-	public void getActiveObjectsByInterface() {
-		IRunningObjectTable rot = this.factory.getRunningObjectTable();
-		
-		List<Application> objs = rot.getActiveObjectsByInterface(Application.class);
-		assertTrue(objs.size() > 0);
-		
-		for(Application dobj: objs) {
-			msWord.setVisible(true);
-			boolean v2 = dobj.getVisible();
-			assertEquals(true, v2);
-		}
-		
-	}
+        for (Application dobj : objs) {
+            msWord.setVisible(true);
+            boolean v2 = dobj.getVisible();
+            assertEquals(true, v2);
+        }
+
+    }
 }

@@ -36,13 +36,13 @@ import com.sun.jna.ptr.ByReference;
  * @author dblock[at]dblock.org
  */
 public interface WinReg {
-	
+
     public static class HKEY extends HANDLE {
         public HKEY() { }
         public HKEY(Pointer p) { super(p); }
         public HKEY(int value) { super(new Pointer(value)); }
     }
-	
+
     public static class HKEYByReference extends ByReference {
         public HKEYByReference() {
             this(null);
@@ -68,7 +68,7 @@ public interface WinReg {
             return h;
         }
     }
-	
+
     HKEY HKEY_CLASSES_ROOT = new HKEY(0x80000000);
     HKEY HKEY_CURRENT_USER = new HKEY(0x80000001);
     HKEY HKEY_LOCAL_MACHINE = new HKEY(0x80000002);

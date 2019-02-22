@@ -47,21 +47,21 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author Martin Steiger
  */
 public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, HighLevelMonitorConfigurationAPI, LowLevelMonitorConfigurationAPI {
-	Map<String, Object> DXVA_OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
-		private static final long serialVersionUID = -1987971664975780480L;
 
-		{
-			put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper()
-			{
-				{
-					addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
-					addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
-					addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
-					addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
-				}
-			});
-		}
-	});
+    Map<String, Object> DXVA_OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
+        private static final long serialVersionUID = -1987971664975780480L;
+
+        {
+            put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper() {
+                {
+                    addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
+                    addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
+                    addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
+                    addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
+                }
+            });
+        }
+    });
 
     /**
      * The only instance of the library

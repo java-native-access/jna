@@ -131,11 +131,11 @@ public class Advapi32UtilTest extends TestCase {
     }
     
     public void testConvertSid() {
-    	String sidString = "S-1-1-0"; // Everyone
-    	byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);
-    	assertTrue(sidBytes.length > 0);
-    	String convertedSidString = Advapi32Util.convertSidToStringSid(new PSID(sidBytes));
-    	assertEquals(convertedSidString, sidString);
+        String sidString = "S-1-1-0"; // Everyone
+        byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);
+        assertTrue(sidBytes.length > 0);
+        String convertedSidString = Advapi32Util.convertSidToStringSid(new PSID(sidBytes));
+        assertEquals(convertedSidString, sidString);
     }
 
     public void testGetCurrentUserGroups() {
@@ -149,10 +149,10 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testGetUserGroups() {
-    	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = "JNANetapi32TestUser";
-    	userInfo.usri1_password = "!JNAP$$Wrd0";
-    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        USER_INFO_1 userInfo = new USER_INFO_1();
+        userInfo.usri1_name = "JNANetapi32TestUser";
+        userInfo.usri1_password = "!JNAP$$Wrd0";
+        userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
             return;
@@ -184,10 +184,10 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testGetUserAccount() {
-    	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = "JNANetapi32TestUser";
-    	userInfo.usri1_password = "!JNAP$$Wrd0";
-    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        USER_INFO_1 userInfo = new USER_INFO_1();
+        userInfo.usri1_name = "JNANetapi32TestUser";
+        userInfo.usri1_password = "!JNAP$$Wrd0";
+        userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
             return;
@@ -249,20 +249,22 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testRegistryValueExistsSamExtra() {
-        if (!is64bitWindows()) return;
+        if (!is64bitWindows()) {
+            return;
+        }
 
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
         Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_32KEY);
         assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
-		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
         Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY);
         assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
-		assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
     }
 
     public void testRegistryCreateDeleteKey() {

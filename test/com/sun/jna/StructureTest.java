@@ -1453,32 +1453,32 @@ public class StructureTest extends TestCase {
     }
 
     public void testNativeMappedWrite() {
-    	class TestStructure extends Structure {
+        class TestStructure extends Structure {
             public ByteByReference ref;
             @Override
             protected List<String> getFieldOrder() {
                 return Arrays.asList("ref");
             }
-    	}
-    	TestStructure s = new TestStructure();
+        }
+        TestStructure s = new TestStructure();
         ByteByReference ref = s.ref = new ByteByReference();
         s.write();
         assertEquals("Value not properly written", ref.getPointer(), s.getPointer().getPointer(0));
 
-    	s.ref = null;
-    	s.write();
+        s.ref = null;
+        s.write();
         assertNull("Non-null value was written: " + s.getPointer().getPointer(0), s.getPointer().getPointer(0));
     }
 
     public void testNativeMappedRead() {
-    	class TestStructure extends Structure {
+        class TestStructure extends Structure {
             public ByteByReference ref;
             @Override
             protected List<String> getFieldOrder() {
                 return Arrays.asList("ref");
             }
-    	}
-    	TestStructure s = new TestStructure();
+        }
+        TestStructure s = new TestStructure();
         s.read();
         assertNull("Should read null for initial field value", s.ref);
 
@@ -1659,10 +1659,10 @@ public class StructureTest extends TestCase {
     public static class XTestStructure extends Structure {
         public static final List<String> FIELDS = createFieldsOrder("first");
         public int first = 1;
-    	@Override
+        @Override
         protected List<String> getFieldOrder() {
-    	    return FIELDS;
-	    }
+            return FIELDS;
+        }
     }
 
     public static class XTestStructureSub extends XTestStructure {
@@ -1680,12 +1680,12 @@ public class StructureTest extends TestCase {
 
             return fields;
         }
-    	public int second = 2;
+        public int second = 2;
 
-    	@Override
+        @Override
         protected List<String> getFieldOrder() {
-    	    return resolveEffectiveFields(super.getFieldOrder());
-    	}
+            return resolveEffectiveFields(super.getFieldOrder());
+        }
     }
 
     public void testInheritedStructureFieldOrder() {
@@ -2212,7 +2212,7 @@ public class StructureTest extends TestCase {
     }
 
     public void testThreadLocalSetReleasesReferences() {
-    	class TestStructure extends Structure {
+        class TestStructure extends Structure {
             public String field;
             @Override
             protected List<String> getFieldOrder() {
@@ -2220,15 +2220,15 @@ public class StructureTest extends TestCase {
             }
         }
 
-    	TestStructure ts1 = new TestStructure();
-    	TestStructure ts2 = new TestStructure();
+        TestStructure ts1 = new TestStructure();
+        TestStructure ts2 = new TestStructure();
 
-    	StructureSet structureSet = (StructureSet) Structure.busy();
-    	structureSet.add(ts1);
-    	structureSet.add(ts2);
-    	structureSet.remove(ts1);
-    	assertNotNull(structureSet.elements[0]);
-    	structureSet.remove(ts2);
-    	assertNull(structureSet.elements[0]);
+        StructureSet structureSet = (StructureSet) Structure.busy();
+        structureSet.add(ts1);
+        structureSet.add(ts2);
+        structureSet.remove(ts1);
+        assertNotNull(structureSet.elements[0]);
+        structureSet.remove(ts2);
+        assertNull(structureSet.elements[0]);
     }
 }

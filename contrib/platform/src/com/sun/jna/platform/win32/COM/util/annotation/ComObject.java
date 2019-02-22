@@ -33,6 +33,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Inherited
 public @interface ComObject {
-	String clsId() default "";
-	String progId() default "";
+    String clsId() default "";
+    String progId() default "";
 }

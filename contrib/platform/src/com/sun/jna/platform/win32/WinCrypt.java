@@ -51,7 +51,7 @@ public interface WinCrypt {
      */
     @FieldOrder({"cbData", "pbData"})
     public static class DATA_BLOB extends Structure {
-	public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
+        public static class ByReference extends DATA_BLOB implements Structure.ByReference {}
 
         /**
          * The count of bytes in the buffer pointed to by pbData.
@@ -91,7 +91,7 @@ public interface WinCrypt {
             return pbData == null ? null : pbData.getByteArray(0, cbData);
         }
     }
-	
+
     /**
      * The CERT_TRUST_STATUS structure contains trust information about a
      * certificate in a certificate chain, summary trust information about a
@@ -1085,7 +1085,7 @@ public interface WinCrypt {
             super(p);
         }
     }
-	
+
     /**
      * Handle to a certificate store.
      */
@@ -1108,8 +1108,8 @@ public interface WinCrypt {
             super(p);
         }
     }
-	
-	/**
+
+    /**
      * Handle to a cryptographic message.
      */
     public static class HCRYPTMSG extends HANDLE {
@@ -1350,7 +1350,7 @@ public interface WinCrypt {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa375564(v=vs.85).aspx">MSDN</a>
      */
     int CRYPT_E_ASN1_NOEOD = 0x80093202;
-	
+
     /**
      * Message Encoding Type.
      * 
@@ -1456,7 +1456,7 @@ public interface WinCrypt {
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa381133(v=vs.85).aspx">MSDN</a>
      */
     String szOID_RSA_SHA1RSA = "1.2.840.113549.1.1.5";
-	
+
     /**
      * Predefined certificate chain engine values.
      *
@@ -1472,7 +1472,7 @@ public interface WinCrypt {
      * <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/aa376078(v=vs.85).aspx">MSDN</a>
      */
     HCERTCHAINENGINE HCCE_LOCAL_MACHINE = new HCERTCHAINENGINE(Pointer.createConstant(0x1));
-	
+
     /**
      * Predefined certificate chain engine values.
      *

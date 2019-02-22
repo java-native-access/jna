@@ -49,7 +49,7 @@ public class RasterRangesUtilsTest extends TestCase {
                 add(new Rectangle(0, 0, 100, 50));
                 add(new Rectangle(0, 50, 50, 50));
             }
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
         };
 
         Area mask = new Area(new Rectangle(0, 0, 100, 100));
@@ -68,7 +68,7 @@ public class RasterRangesUtilsTest extends TestCase {
                 add(new Rectangle(75, 25, 25, 50));
                 add(new Rectangle(0, 75, 100, 25));
             }
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
         };
 
         Area mask = new Area(new Rectangle(0, 0, 100, 100));

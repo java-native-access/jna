@@ -117,7 +117,7 @@ public class WindowUtilsTest extends TestCase {
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = (rgb & 0xFF);
-	
+
         assertEquals(expectedRed, r);
         assertEquals(expectedGreen, g);
         assertEquals(expectedBlue, b);
@@ -136,7 +136,7 @@ public class WindowUtilsTest extends TestCase {
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = (rgb & 0xFF);
-	
+
         return new int[]{r,g,b};
     }
     
@@ -161,8 +161,9 @@ public class WindowUtilsTest extends TestCase {
         final Window f = w;
         WindowUtils.setWindowTransparent(f, true);
         content.add(new JButton("Quit") {
-			private static final long serialVersionUID = 1L;
-			{
+            private static final long serialVersionUID = 1L;
+
+            {
                 addActionListener(new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
                         System.exit(0);
@@ -171,7 +172,8 @@ public class WindowUtilsTest extends TestCase {
             }
         }, BorderLayout.SOUTH);
         content.add(new JComponent() {
-			private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
+
             public Dimension getPreferredSize() {
                 return new Dimension(SIZE, SIZE);
             }
@@ -227,8 +229,9 @@ public class WindowUtilsTest extends TestCase {
         transparent.setLocation(X, Y);
         ((JComponent)transparent.getContentPane()).setOpaque(false);
         transparent.getContentPane().add(new JComponent() {
-			private static final long serialVersionUID = 1L;
-			public Dimension getPreferredSize() {
+            private static final long serialVersionUID = 1L;
+
+            public Dimension getPreferredSize() {
                 return new Dimension(W, H);
             }
             protected void paintComponent(Graphics g) {
@@ -383,52 +386,55 @@ public class WindowUtilsTest extends TestCase {
     */
     
     public void testDisposeHeavyweightForcer() throws Exception {
-		if (GraphicsEnvironment.isHeadless())
-			return;
-		// Forcer not required on OSX
-		if (Platform.isMac())
-			return;
+        if (GraphicsEnvironment.isHeadless()) {
+            return;
+        }
+        // Forcer not required on OSX
+        if (Platform.isMac()) {
+            return;
+        }
 
-		Frame root = JOptionPane.getRootFrame();
-		final JWindow w = new JWindow(root);
-		w.getContentPane().add(new JLabel(getName()));
-		final Rectangle mask = new Rectangle(0, 0, 10, 10);
-		SwingUtilities.invokeAndWait(new Runnable() {
-			public void run() {
-				w.pack();
-				WindowUtils.setWindowMask(w, mask);
-				w.setVisible(true);
-			}
-		});
-		try {
-			Window[] owned = w.getOwnedWindows();
-			WeakReference<Window> ref = null;
-			for (int i = 0; i < owned.length; i++) {
-				if (owned[i].getClass().getName().indexOf("Heavy") != -1) {
-					ref = new WeakReference<Window>(owned[i]);
-					break;
-				}
-			}
-			owned = null;
-			assertNotNull("Forcer not found", ref);
-			SwingUtilities.invokeAndWait(new Runnable() {
-				public void run() {
-					WindowUtils.setWindowMask(w, WindowUtils.MASK_NONE);
-				}
-			});
-			System.gc();
-			long start = System.currentTimeMillis();
-			while (ref.get() != null) {
-				Thread.sleep(10);
-				System.gc();
-				if (System.currentTimeMillis() - start > 5000)
-					fail("Timed out waiting for forcer to be GC'd");
-			}
-			assertNull("Forcer not GC'd", ref.get());
-		} finally {
-			w.dispose();
-		}
-	}
+        Frame root = JOptionPane.getRootFrame();
+        final JWindow w = new JWindow(root);
+        w.getContentPane().add(new JLabel(getName()));
+        final Rectangle mask = new Rectangle(0, 0, 10, 10);
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                w.pack();
+                WindowUtils.setWindowMask(w, mask);
+                w.setVisible(true);
+            }
+        });
+        try {
+            Window[] owned = w.getOwnedWindows();
+            WeakReference<Window> ref = null;
+            for (int i = 0; i < owned.length; i++) {
+                if (owned[i].getClass().getName().indexOf("Heavy") != -1) {
+                    ref = new WeakReference<Window>(owned[i]);
+                    break;
+                }
+            }
+            owned = null;
+            assertNotNull("Forcer not found", ref);
+            SwingUtilities.invokeAndWait(new Runnable() {
+                public void run() {
+                    WindowUtils.setWindowMask(w, WindowUtils.MASK_NONE);
+                }
+            });
+            System.gc();
+            long start = System.currentTimeMillis();
+            while (ref.get() != null) {
+                Thread.sleep(10);
+                System.gc();
+                if (System.currentTimeMillis() - start > 5000) {
+                    fail("Timed out waiting for forcer to be GC'd");
+                }
+            }
+            assertNull("Forcer not GC'd", ref.get());
+        } finally {
+            w.dispose();
+        }
+    }
 
     // Test for accumulation of windows with repetitive setting of mask
     public void xtestWindowDisposeBug() throws Exception {
@@ -455,7 +461,7 @@ public class WindowUtilsTest extends TestCase {
             });
         }
     }
-	
+
     public static void main(String[] args) {
         junit.textui.TestRunner.run(WindowUtilsTest.class);
     }

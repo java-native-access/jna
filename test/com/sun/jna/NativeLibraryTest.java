@@ -194,49 +194,47 @@ public class NativeLibraryTest extends TestCase {
     }
 
     public void testMatchUnversionedToVersioned() throws Exception {
-    	File lib0 = File.createTempFile("lib", ".so.0");
-    	File dir = lib0.getParentFile();
-    	String name = lib0.getName();
-    	name = name.substring(3, name.indexOf(".so"));
-    	lib0.deleteOnExit();
-    	File lib1 = new File(dir, "lib" + name + ".so.1.0");
+        File lib0 = File.createTempFile("lib", ".so.0");
+        File dir = lib0.getParentFile();
+        String name = lib0.getName();
+        name = name.substring(3, name.indexOf(".so"));
+        lib0.deleteOnExit();
+        File lib1 = new File(dir, "lib" + name + ".so.1.0");
         lib1.createNewFile();
-    	lib1.deleteOnExit();
-    	File lib1_1 = new File(dir, "lib" + name + ".so.1.1");
+        lib1.deleteOnExit();
+        File lib1_1 = new File(dir, "lib" + name + ".so.1.1");
         lib1_1.createNewFile();
-    	lib1_1.deleteOnExit();
-    	assertEquals("Latest versioned library not found when unversioned requested for path=" + dir,
-                     lib1_1.getCanonicalPath(),
-                     NativeLibrary.matchLibrary(name, Collections.singletonList(dir.getCanonicalPath())));
+        lib1_1.deleteOnExit();
+        assertEquals("Latest versioned library not found when unversioned requested for path=" + dir,
+                lib1_1.getCanonicalPath(),
+                NativeLibrary.matchLibrary(name, Collections.singletonList(dir.getCanonicalPath())));
     }
 
     public void testAvoidFalseMatch() throws Exception {
         File lib0 = File.createTempFile("lib", ".so.1");
-    	File dir = lib0.getParentFile();
+        File dir = lib0.getParentFile();
         lib0.deleteOnExit();
-    	String name = lib0.getName();
-    	name = name.substring(3, name.indexOf(".so"));
+        String name = lib0.getName();
+        name = name.substring(3, name.indexOf(".so"));
         File lib1 = new File(dir, "lib" + name + "-client.so.2");
         lib1.createNewFile();
         lib1.deleteOnExit();
-    	assertEquals("Library with similar prefix should be ignored for path=" + dir,
-                     lib0.getCanonicalPath(),
-                     NativeLibrary.matchLibrary(name, Collections.singletonList(dir.getCanonicalPath())));
+        assertEquals("Library with similar prefix should be ignored for path=" + dir,
+                lib0.getCanonicalPath(),
+                NativeLibrary.matchLibrary(name, Collections.singletonList(dir.getCanonicalPath())));
     }
 
     public void testParseVersion() throws Exception {
-    	String[] VERSIONS = {
-    		"1",
-    		"1.2",
-    		"1.2.3",
-    		"1.2.3.4",
-    	};
-    	double[] EXPECTED = {
-    		1, 1.02, 1.0203, 1.020304,
-    	};
-    	for (int i=0;i < VERSIONS.length;i++) {
-    		assertEquals("Badly parsed version", EXPECTED[i], NativeLibrary.parseVersion(VERSIONS[i]), 0.0000001);
-    	}
+        String[] VERSIONS = {
+            "1",
+            "1.2",
+            "1.2.3",
+            "1.2.3.4",};
+        double[] EXPECTED = {
+            1, 1.02, 1.0203, 1.020304,};
+        for (int i = 0; i < VERSIONS.length; i++) {
+            assertEquals("Badly parsed version", EXPECTED[i], NativeLibrary.parseVersion(VERSIONS[i]), 0.0000001);
+        }
     }
 
     // XFAIL on android

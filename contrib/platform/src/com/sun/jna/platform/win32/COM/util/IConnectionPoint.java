@@ -29,24 +29,24 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
 @ComInterface(iid="{B196B284-BAB4-101A-B69C-00AA00341D07}")
 public interface IConnectionPoint {
 
-	/**
-	 * Set up the comEventCallbackListener to receive callback events from the target COM object
-	 * 
-	 * @param comEventCallbackInterface - the COM interface that the listener will receive events from
-	 * @param comEventCallbackListener - and object that will receive the callback events
-	 * @return - a cookie that can be used to detach (unadvise) the event callback listener
-	 * 
-	 * throws COMException if an error occurs trying to set up the listener on the target COM object,
-	 * see exception cause for details.
-	 * 
-	 */
-	IComEventCallbackCookie advise(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) throws COMException;
-	
-	/**
-	 * Stop listening for callback events
-	 * 
-	 * @param comEventCallbackInterface - the interface that is being listened to
-	 * @param cookie - the cookie that was returned when advise was called
-	 */
-	void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException;
+    /**
+     * Set up the comEventCallbackListener to receive callback events from the target COM object
+     *
+     * @param comEventCallbackInterface - the COM interface that the listener will receive events from
+     * @param comEventCallbackListener - and object that will receive the callback events
+     * @return - a cookie that can be used to detach (unadvise) the event callback listener
+     *
+     * throws COMException if an error occurs trying to set up the listener on the target COM object,
+     * see exception cause for details.
+     *
+     */
+    IComEventCallbackCookie advise(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) throws COMException;
+
+    /**
+     * Stop listening for callback events
+     *
+     * @param comEventCallbackInterface - the interface that is being listened to
+     * @param cookie - the cookie that was returned when advise was called
+     */
+    void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException;
 }

@@ -33,111 +33,111 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class Moniker extends Unknown implements IMoniker {
 
-	public static class ByReference extends Moniker implements Structure.ByReference {
-	}
+    public static class ByReference extends Moniker implements Structure.ByReference {
+    }
 
-	public Moniker() {
-	}
+    public Moniker() {
+    }
 
-	public Moniker(Pointer pointer) {
-		super(pointer);
-	}
+    public Moniker(Pointer pointer) {
+        super(pointer);
+    }
 
-	// There are 8 virtual methods in the ancestors of this class/interfaces
-	static final int vTableIdStart = 7;
+    // There are 8 virtual methods in the ancestors of this class/interfaces
+    static final int vTableIdStart = 7;
 
-	@Override
-	public void BindToObject() {
-		final int vTableId = vTableIdStart + 1;
+    @Override
+    public void BindToObject() {
+        final int vTableId = vTableIdStart + 1;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void BindToStorage() {
-		final int vTableId = vTableIdStart + 2;
+    @Override
+    public void BindToStorage() {
+        final int vTableId = vTableIdStart + 2;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Reduce() {
-		final int vTableId = vTableIdStart + 3;
+    @Override
+    public void Reduce() {
+        final int vTableId = vTableIdStart + 3;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void ComposeWith() {
-		final int vTableId = vTableIdStart + 4;
+    @Override
+    public void ComposeWith() {
+        final int vTableId = vTableIdStart + 4;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Enum() {
-		final int vTableId = vTableIdStart + 5;
+    @Override
+    public void Enum() {
+        final int vTableId = vTableIdStart + 5;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void IsEqual() {
-		final int vTableId = vTableIdStart + 6;
+    @Override
+    public void IsEqual() {
+        final int vTableId = vTableIdStart + 6;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Hash() {
-		final int vTableId = vTableIdStart + 7;
+    @Override
+    public void Hash() {
+        final int vTableId = vTableIdStart + 7;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void IsRunning() {
-		final int vTableId = vTableIdStart + 8;
+    @Override
+    public void IsRunning() {
+        final int vTableId = vTableIdStart + 8;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void GetTimeOfLastChange() {
-		final int vTableId = vTableIdStart + 9;
+    @Override
+    public void GetTimeOfLastChange() {
+        final int vTableId = vTableIdStart + 9;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Inverse() {
-		final int vTableId = vTableIdStart + 10;
+    @Override
+    public void Inverse() {
+        final int vTableId = vTableIdStart + 10;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void CommonPrefixWith() {
-		final int vTableId = vTableIdStart + 11;
+    @Override
+    public void CommonPrefixWith() {
+        final int vTableId = vTableIdStart + 11;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void RelativePathTo() {
-		final int vTableId = vTableIdStart + 12;
+    @Override
+    public void RelativePathTo() {
+        final int vTableId = vTableIdStart + 12;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public String GetDisplayName(Pointer pbc, Pointer pmkToLeft) {
-		final int vTableId = vTableIdStart + 13;
+    @Override
+    public String GetDisplayName(Pointer pbc, Pointer pmkToLeft) {
+        final int vTableId = vTableIdStart + 13;
 
                 PointerByReference ppszDisplayNameRef = new PointerByReference();
                 
-		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pbc,
-				pmkToLeft, ppszDisplayNameRef }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pbc,
+                pmkToLeft, ppszDisplayNameRef }, WinNT.HRESULT.class);
 
                 COMUtils.checkRC(hr);
 
@@ -150,47 +150,47 @@ public class Moniker extends Unknown implements IMoniker {
                 String name = oleStr.getValue();
                 Ole32.INSTANCE.CoTaskMemFree(ppszDisplayName);
 
-		return name;
-	}
+        return name;
+    }
 
-	@Override
-	public void ParseDisplayName() {
-		final int vTableId = vTableIdStart + 14;
+    @Override
+    public void ParseDisplayName() {
+        final int vTableId = vTableIdStart + 14;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void IsSystemMoniker() {
-		final int vTableId = vTableIdStart + 15;
+    @Override
+    public void IsSystemMoniker() {
+        final int vTableId = vTableIdStart + 15;
 
-		throw new UnsupportedOperationException();
-	}
+        throw new UnsupportedOperationException();
+    }
 
-	// ------------------------ IPersistStream ----------------------------
-	@Override
-	public boolean IsDirty() {
-		throw new UnsupportedOperationException();
-	}
+    // ------------------------ IPersistStream ----------------------------
+    @Override
+    public boolean IsDirty() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Load(IStream stm) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void Load(IStream stm) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void Save(IStream stm) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void Save(IStream stm) {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public void GetSizeMax() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public void GetSizeMax() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public CLSID GetClassID() {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public CLSID GetClassID() {
+        throw new UnsupportedOperationException();
+    }
 
 }

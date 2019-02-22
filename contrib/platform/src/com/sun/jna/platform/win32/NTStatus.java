@@ -24,7 +24,7 @@
 package com.sun.jna.platform.win32;
 
 public interface NTStatus {
-	
+
     int STATUS_SUCCESS = 0x00000000; // ntsubauth
     int STATUS_BUFFER_TOO_SMALL  = 0xC0000023;
 

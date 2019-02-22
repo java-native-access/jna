@@ -33,16 +33,16 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class RunningObjectTable implements IRunningObjectTable {
 
-	protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, ObjectFactory factory) {
-		this.raw = raw;
-		this.factory = factory;
-	}
+    protected RunningObjectTable(com.sun.jna.platform.win32.COM.RunningObjectTable raw, ObjectFactory factory) {
+        this.raw = raw;
+        this.factory = factory;
+    }
 
-	ObjectFactory factory;
-	com.sun.jna.platform.win32.COM.RunningObjectTable raw;
+    ObjectFactory factory;
+    com.sun.jna.platform.win32.COM.RunningObjectTable raw;
 
-	@Override
-	public Iterable<IDispatch> enumRunning() {
+    @Override
+    public Iterable<IDispatch> enumRunning() {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
                 final PointerByReference ppenumMoniker = new PointerByReference();
@@ -54,24 +54,24 @@ public class RunningObjectTable implements IRunningObjectTable {
                                 ppenumMoniker.getValue());
 
                 return new EnumMoniker(raw, this.raw, this.factory);
-	}
+    }
 
-	@Override
-	public <T> List<T> getActiveObjectsByInterface(Class<T> comInterface) {
+    @Override
+    public <T> List<T> getActiveObjectsByInterface(Class<T> comInterface) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
             
-		List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<T>();
 
-		for (IDispatch obj : this.enumRunning()) {
-			try {
-				T dobj = obj.queryInterface(comInterface);
+        for (IDispatch obj : this.enumRunning()) {
+            try {
+                T dobj = obj.queryInterface(comInterface);
 
-				result.add(dobj);
-			} catch (COMException ex) {
+                result.add(dobj);
+            } catch (COMException ex) {
 
-			}
-		}
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 }

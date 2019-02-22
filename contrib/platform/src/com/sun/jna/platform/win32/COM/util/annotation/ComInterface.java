@@ -33,5 +33,5 @@ import java.lang.annotation.Target;
 @Target({ ElementType.TYPE })
 @Inherited
 public @interface ComInterface {
-	String iid() default "";
+    String iid() default "";
 }

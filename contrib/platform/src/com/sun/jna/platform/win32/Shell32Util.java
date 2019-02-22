@@ -38,38 +38,35 @@ import com.sun.jna.ptr.PointerByReference;
  */
 public abstract class Shell32Util {
 
-	/**
-	 * Get a special folder path.
-	 * @param hwnd
-	 *  Parent window.
-	 * @param nFolder
-	 *  Folder CSLID.
-	 * @param dwFlags
-	 *  Flags.
-	 * @return
-	 *  Special folder.
-	 */
-	public static String getFolderPath(HWND hwnd, int nFolder, DWORD dwFlags) {
-    	char[] pszPath = new char[WinDef.MAX_PATH];
-    	HRESULT hr = Shell32.INSTANCE.SHGetFolderPath(hwnd,
-    			nFolder, null, dwFlags,
-    			pszPath);
-    	if (! hr.equals(W32Errors.S_OK)) {
-    		throw new Win32Exception(hr);
-    	}
-    	return Native.toString(pszPath);
-	}
+    /**
+     * Get a special folder path.
+     *
+     * @param hwnd Parent window.
+     * @param nFolder Folder CSLID.
+     * @param dwFlags Flags.
+     *
+     * @return Special folder.
+     */
+    public static String getFolderPath(HWND hwnd, int nFolder, DWORD dwFlags) {
+        char[] pszPath = new char[WinDef.MAX_PATH];
+        HRESULT hr = Shell32.INSTANCE.SHGetFolderPath(hwnd,
+                nFolder, null, dwFlags, pszPath);
+        if (!hr.equals(W32Errors.S_OK)) {
+            throw new Win32Exception(hr);
+        }
+        return Native.toString(pszPath);
+    }
 
-	/**
-	 * Get a special folder path.
-	 * @param nFolder
-	 *  Folder CSLID.
-	 * @return
-	 *  Special folder path.
-	 */
-	public static String getFolderPath(int nFolder) {
-		return getFolderPath(null, nFolder, ShlObj.SHGFP_TYPE_CURRENT);
-	}
+    /**
+     * Get a special folder path.
+     *
+     * @param nFolder Folder CSLID.
+     *
+     * @return Special folder path.
+     */
+    public static String getFolderPath(int nFolder) {
+        return getFolderPath(null, nFolder, ShlObj.SHGFP_TYPE_CURRENT);
+    }
 
     /**
      * Retrieves the full path of a known folder identified by the folder's KNOWNFOLDERID. This function replaces
@@ -99,7 +96,7 @@ public abstract class Shell32Util {
         return result;
     }
 
-	/**
+    /**
      * Retrieves the path of a special folder, identified by its CSIDL.
      *
      * @param csidl

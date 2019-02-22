@@ -30,8 +30,8 @@ import com.sun.jna.platform.FileUtils;
 
 public class W32FileUtils extends FileUtils {
 
-    public boolean hasTrash() { 
-    	return true; 
+    public boolean hasTrash() {
+        return true;
     }
 
     public void moveToTrash(File[] files) throws IOException {

@@ -1709,73 +1709,73 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         public static final int WinBuiltinTerminalServerLicenseServersSid = 60;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinDCOMUsersSid = 61;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinIUsersSid = 62;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinIUserSid = 63;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinBuiltinCryptoOperatorsSid = 64;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinUntrustedLabelSid = 65;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinLowLabelSid = 66;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinMediumLabelSid = 67;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinHighLabelSid = 68;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinSystemLabelSid = 69;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinWriteRestrictedCodeSid = 70;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinCreatorOwnerRightsSid = 71;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinCacheablePrincipalsGroupSid = 72;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinNonCacheablePrincipalsGroupSid = 73;
 
         /**
-	 *
-	 */
+         *
+         */
         public static final int WinEnterpriseReadonlyControllersSid = 74;
 
         /**
@@ -2287,18 +2287,18 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SE_PRIVILEGE_REMOVED = 0X00000004;
     int SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
-	/** Required to create a process. */
-	int PROCESS_CREATE_PROCESS = 0x0080;
+    /** Required to create a process. */
+    int PROCESS_CREATE_PROCESS = 0x0080;
 
-	/** Required to create a thread. */
-	int PROCESS_CREATE_THREAD = 0x0002;
+    /** Required to create a thread. */
+    int PROCESS_CREATE_THREAD = 0x0002;
 
-	/**
-	 * Required to duplicate a handle using
-	 * {@link Kernel32#DuplicateHandle}
-	 * .
-	 */
-	int PROCESS_DUP_HANDLE = 0x0040;
+    /**
+     * Required to duplicate a handle using
+     * {@link Kernel32#DuplicateHandle}
+     * .
+     */
+    int PROCESS_DUP_HANDLE = 0x0040;
 
     /**
      * All possible access rights for a process object. Windows Server 2003 and
@@ -2336,76 +2336,76 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             | WinNT.WRITE_OWNER
             | WinNT.SYNCHRONIZE;
 
-	/**
-	 * Required to retrieve certain information about a process, such as its
-	 * token, exit code, and priority class (see
-	 * {@link Advapi32#OpenProcessToken}).
-	 */
-	int PROCESS_QUERY_INFORMATION = 0x0400;
-
-	/**
-	 * Required to retrieve certain information about a process (see
-	 * {@link Kernel32#GetExitCodeProcess}
-	 * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
-	 * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
-	 * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
-	 * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
-	 *
-	 * Windows Server 2003 and Windows XP: This access right is not supported.
-	 */
-	int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
-
-	/**
-	 * Required to set certain information about a process, such as its priority
-	 * class (see {@code Kernel32#SetPriorityClass}).
-	 */
-	int PROCESS_SET_INFORMATION = 0x0200;
-
-	/**
-	 * Required to set memory limits using
-	 * {@code Kernel32.SetProcessWorkingSetSize()}.
-	 */
-	int PROCESS_SET_QUOTA = 0x0100;
-
-	/** Required to suspend or resume a process. */
-	int PROCESS_SUSPEND_RESUME = 0x0800;
-
-	/**
-	 * Required to terminate a process using
-	 * {@link Kernel32#TerminateProcess}.
-	 */
-	int PROCESS_TERMINATE = 0x00000001;
+    /**
+     * Required to retrieve certain information about a process, such as its
+     * token, exit code, and priority class (see
+     * {@link Advapi32#OpenProcessToken}).
+     */
+    int PROCESS_QUERY_INFORMATION = 0x0400;
 
     /**
-	 * Required for getting process exe path in native system path format
-	 * {@code Kernel32.QueryFullProcessImageName()}.
-	 */
-	int PROCESS_NAME_NATIVE = 0x00000001;
+     * Required to retrieve certain information about a process (see
+     * {@link Kernel32#GetExitCodeProcess}
+     * , {@code Kernel32#GetPriorityClass}, {@code Kernel32#IsProcessInJob},
+     * {@code Kernel32.QueryFullProcessImageName}). A handle that has the
+     * {@link #PROCESS_QUERY_INFORMATION} access right is automatically granted
+     * {@link #PROCESS_QUERY_LIMITED_INFORMATION}.
+     *
+     * Windows Server 2003 and Windows XP: This access right is not supported.
+     */
+    int PROCESS_QUERY_LIMITED_INFORMATION = 0x1000;
 
-	/**
-	 * Required to perform an operation on the address space of a process (see
-	 * {@code Kernel32.VirtualProtectEx()} and
-	 * {@link Kernel32#WriteProcessMemory}
-	 * ).
-	 */
-	int PROCESS_VM_OPERATION = 0x0008;
+    /**
+     * Required to set certain information about a process, such as its priority
+     * class (see {@code Kernel32#SetPriorityClass}).
+     */
+    int PROCESS_SET_INFORMATION = 0x0200;
 
-	/**
-	 * Required to read memory in a process using
-	 * {@link Kernel32#ReadProcessMemory}
-	 * .
-	 */
-	int PROCESS_VM_READ = 0x0010;
+    /**
+     * Required to set memory limits using
+     * {@code Kernel32.SetProcessWorkingSetSize()}.
+     */
+    int PROCESS_SET_QUOTA = 0x0100;
 
-	/**
-	 * Required to write to memory in a process using
-	 * {@link Kernel32#WriteProcessMemory}
-	 * .
-	 */
-	int PROCESS_VM_WRITE = 0x0020;
+    /** Required to suspend or resume a process. */
+    int PROCESS_SUSPEND_RESUME = 0x0800;
 
-	/** Required to wait for the process to terminate using the wait functions. */
-	int PROCESS_SYNCHRONIZE = 0x00100000;
+    /**
+     * Required to terminate a process using
+     * {@link Kernel32#TerminateProcess}.
+     */
+    int PROCESS_TERMINATE = 0x00000001;
+
+    /**
+     * Required for getting process exe path in native system path format
+     * {@code Kernel32.QueryFullProcessImageName()}.
+     */
+    int PROCESS_NAME_NATIVE = 0x00000001;
+
+    /**
+     * Required to perform an operation on the address space of a process (see
+     * {@code Kernel32.VirtualProtectEx()} and
+     * {@link Kernel32#WriteProcessMemory}
+     * ).
+     */
+    int PROCESS_VM_OPERATION = 0x0008;
+
+    /**
+     * Required to read memory in a process using
+     * {@link Kernel32#ReadProcessMemory}
+     * .
+     */
+    int PROCESS_VM_READ = 0x0010;
+
+    /**
+     * Required to write to memory in a process using
+     * {@link Kernel32#WriteProcessMemory}
+     * .
+     */
+    int PROCESS_VM_WRITE = 0x0020;
+
+    /** Required to wait for the process to terminate using the wait functions. */
+    int PROCESS_SYNCHRONIZE = 0x00100000;
 
     /* Security information types */
     int OWNER_SECURITY_INFORMATION = 0x00000001;
@@ -2603,11 +2603,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public PSID getOwner() {
-        	return OWNER;
+            return OWNER;
         }
 
         public PSID getGroup() {
-        	return GROUP;
+            return GROUP;
         }
 
         public ACL getDiscretionaryACL() {
@@ -2615,7 +2615,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         }
 
         public ACL getSystemACL() {
-        	return SACL;
+            return SACL;
         }
 
         private final void setMembers() {
@@ -2626,12 +2626,12 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             if (Sacl != 0) {
                 SACL = new ACL(getPointer().share(Sacl));
             }
-        	if (Group != 0) {
-        		GROUP =  new PSID(getPointer().share(Group));
-        	}
-        	if (Owner != 0) {
-        		OWNER =  new PSID(getPointer().share(Owner));
-        	}
+            if (Group != 0) {
+                GROUP = new PSID(getPointer().share(Group));
+            }
+            if (Owner != 0) {
+                OWNER = new PSID(getPointer().share(Owner));
+            }
         }
     }
 

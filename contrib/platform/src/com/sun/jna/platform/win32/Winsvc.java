@@ -332,12 +332,12 @@ public interface Winsvc {
     //
     // Service Control Manager object specific access types
     //
-    int SC_MANAGER_CONNECT				= 0x0001;
-    int SC_MANAGER_CREATE_SERVICE		= 0x0002;
-    int SC_MANAGER_ENUMERATE_SERVICE	= 0x0004;
-    int SC_MANAGER_LOCK					= 0x0008;
-    int SC_MANAGER_QUERY_LOCK_STATUS	= 0x0010;
-    int SC_MANAGER_MODIFY_BOOT_CONFIG	= 0x0020;
+    int SC_MANAGER_CONNECT              = 0x0001;
+    int SC_MANAGER_CREATE_SERVICE       = 0x0002;
+    int SC_MANAGER_ENUMERATE_SERVICE    = 0x0004;
+    int SC_MANAGER_LOCK                 = 0x0008;
+    int SC_MANAGER_QUERY_LOCK_STATUS    = 0x0010;
+    int SC_MANAGER_MODIFY_BOOT_CONFIG   = 0x0020;
 
     int SC_MANAGER_ALL_ACCESS =
         WinNT.STANDARD_RIGHTS_REQUIRED | SC_MANAGER_CONNECT
@@ -353,7 +353,7 @@ public interface Winsvc {
      * {@link com.sun.jna.platform.win32.Advapi32#QueryServiceConfig2}
      * functions to query the service configuration.
      */
-    int SERVICE_QUERY_CONFIG			= 0x0001;
+    int SERVICE_QUERY_CONFIG = 0x0001;
     /**
      * Required to call the ChangeServiceConfig or
      * {@link com.sun.jna.platform.win32.Advapi32#ChangeServiceConfig2} function
@@ -361,7 +361,7 @@ public interface Winsvc {
      * right to change the executable file that the system runs, it should be
      * granted only to administrators.
      */
-    int SERVICE_CHANGE_CONFIG			= 0x0002;
+    int SERVICE_CHANGE_CONFIG = 0x0002;
     /**
      * Required to call the QueryServiceStatus or
      * {@link com.sun.jna.platform.win32.Advapi32#QueryServiceStatusEx} function
@@ -371,14 +371,14 @@ public interface Winsvc {
      * Required to call the NotifyServiceStatusChange function to receive
      * notification when a service changes status.</p>
      */
-    int SERVICE_QUERY_STATUS			= 0x0004;
-    int SERVICE_ENUMERATE_DEPENDENTS	= 0x0008;
+    int SERVICE_QUERY_STATUS = 0x0004;
+    int SERVICE_ENUMERATE_DEPENDENTS = 0x0008;
     /**
      * Required to call the
      * {@link com.sun.jna.platform.win32.Advapi32#StartService} function to
      * start the service.
      */
-    int SERVICE_START					= 0x0010;
+    int SERVICE_START = 0x0010;
     /**
      * Required to call the
      * {@link com.sun.jna.platform.win32.Advapi32#ControlService} function to
@@ -402,7 +402,7 @@ public interface Winsvc {
      * {@link com.sun.jna.platform.win32.Advapi32#ControlService} function to
      * ask the service to report its status immediately.
      */
-    int SERVICE_USER_DEFINED_CONTROL	= 0x0100;
+    int SERVICE_USER_DEFINED_CONTROL = 0x0100;
 
     int SERVICE_ALL_ACCESS =
         WinNT.STANDARD_RIGHTS_REQUIRED | SERVICE_QUERY_CONFIG
@@ -491,51 +491,51 @@ public interface Winsvc {
     //
     // Service State -- for CurrentState
     //
-    int SERVICE_STOPPED				= 0x00000001;
-    int SERVICE_START_PENDING		= 0x00000002;
-    int SERVICE_STOP_PENDING		= 0x00000003;
-    int SERVICE_RUNNING				= 0x00000004;
-    int SERVICE_CONTINUE_PENDING	= 0x00000005;
-    int SERVICE_PAUSE_PENDING		= 0x00000006;
-    int SERVICE_PAUSED				= 0x00000007;
+    int SERVICE_STOPPED          = 0x00000001;
+    int SERVICE_START_PENDING    = 0x00000002;
+    int SERVICE_STOP_PENDING     = 0x00000003;
+    int SERVICE_RUNNING          = 0x00000004;
+    int SERVICE_CONTINUE_PENDING = 0x00000005;
+    int SERVICE_PAUSE_PENDING    = 0x00000006;
+    int SERVICE_PAUSED           = 0x00000007;
 
     //
     // Controls Accepted  (Bit Mask)
     //
-    int SERVICE_ACCEPT_STOP						= 0x00000001;
-    int SERVICE_ACCEPT_PAUSE_CONTINUE			= 0x00000002;
-    int SERVICE_ACCEPT_SHUTDOWN					= 0x00000004;
-    int SERVICE_ACCEPT_PARAMCHANGE				= 0x00000008;
-    int SERVICE_ACCEPT_NETBINDCHANGE			= 0x00000010;
-    int SERVICE_ACCEPT_HARDWAREPROFILECHANGE	= 0x00000020;
-    int SERVICE_ACCEPT_POWEREVENT				= 0x00000040;
-    int SERVICE_ACCEPT_SESSIONCHANGE			= 0x00000080;
-    int SERVICE_ACCEPT_PRESHUTDOWN				= 0x00000100;
-    int SERVICE_ACCEPT_TIMECHANGE				= 0x00000200;
-    int SERVICE_ACCEPT_TRIGGEREVENT				= 0x00000400;
+    int SERVICE_ACCEPT_STOP                  = 0x00000001;
+    int SERVICE_ACCEPT_PAUSE_CONTINUE        = 0x00000002;
+    int SERVICE_ACCEPT_SHUTDOWN              = 0x00000004;
+    int SERVICE_ACCEPT_PARAMCHANGE           = 0x00000008;
+    int SERVICE_ACCEPT_NETBINDCHANGE         = 0x00000010;
+    int SERVICE_ACCEPT_HARDWAREPROFILECHANGE = 0x00000020;
+    int SERVICE_ACCEPT_POWEREVENT            = 0x00000040;
+    int SERVICE_ACCEPT_SESSIONCHANGE         = 0x00000080;
+    int SERVICE_ACCEPT_PRESHUTDOWN           = 0x00000100;
+    int SERVICE_ACCEPT_TIMECHANGE            = 0x00000200;
+    int SERVICE_ACCEPT_TRIGGEREVENT          = 0x00000400;
 
     //
     // ChangeServiceConfig2 dwInfoLevel values
     //
-    int SERVICE_CONFIG_DESCRIPTION			= 0x00000001;
-    int SERVICE_CONFIG_FAILURE_ACTIONS			= 0x00000002;
-    int SERVICE_CONFIG_DELAYED_AUTO_START_INFO		= 0x00000003;
-    int SERVICE_CONFIG_FAILURE_ACTIONS_FLAG		= 0x00000004;
-    int SERVICE_CONFIG_SERVICE_SID_INFO		= 0x00000005;
-    int SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO	= 0x00000006;
-    int SERVICE_CONFIG_PRESHUTDOWN_INFO		= 0x00000007;
-    int SERVICE_CONFIG_TRIGGER_INFO			= 0x00000008;
-    int SERVICE_CONFIG_PREFERRED_NODE			= 0x00000009;
-    int SERVICE_CONFIG_LAUNCH_PROTECTED		= 0x0000000c;
+    int SERVICE_CONFIG_DESCRIPTION              = 0x00000001;
+    int SERVICE_CONFIG_FAILURE_ACTIONS          = 0x00000002;
+    int SERVICE_CONFIG_DELAYED_AUTO_START_INFO  = 0x00000003;
+    int SERVICE_CONFIG_FAILURE_ACTIONS_FLAG     = 0x00000004;
+    int SERVICE_CONFIG_SERVICE_SID_INFO         = 0x00000005;
+    int SERVICE_CONFIG_REQUIRED_PRIVILEGES_INFO = 0x00000006;
+    int SERVICE_CONFIG_PRESHUTDOWN_INFO         = 0x00000007;
+    int SERVICE_CONFIG_TRIGGER_INFO             = 0x00000008;
+    int SERVICE_CONFIG_PREFERRED_NODE           = 0x00000009;
+    int SERVICE_CONFIG_LAUNCH_PROTECTED         = 0x0000000c;
 
     //
     // Service failure actions
     //
-    int SC_ACTION_NONE					= 0x00000000;
-    int SC_ACTION_RESTART				= 0x00000001;
-    int SC_ACTION_REBOOT				= 0x00000002;
-    int SC_ACTION_RUN_COMMAND				= 0x00000003;
-	
+    int SC_ACTION_NONE        = 0x00000000;
+    int SC_ACTION_RESTART     = 0x00000001;
+    int SC_ACTION_REBOOT      = 0x00000002;
+    int SC_ACTION_RUN_COMMAND = 0x00000003;
+
     int SC_ENUM_PROCESS_INFO  = 0;
     
     /**

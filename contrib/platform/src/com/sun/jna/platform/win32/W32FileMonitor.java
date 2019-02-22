@@ -76,7 +76,7 @@ public class W32FileMonitor extends FileMonitor {
             File file = new File(finfo.file, fni.getFilename());
             switch(fni.Action) {
             case 0:
-            	break;
+                break;
             case WinNT.FILE_ACTION_MODIFIED:
                 event = new FileEvent(file, FILE_MODIFIED);
                 break;
@@ -111,15 +111,15 @@ public class W32FileMonitor extends FileMonitor {
         }
 
         if (!klib.ReadDirectoryChangesW(finfo.handle, finfo.info,
-        		finfo.info.size(), finfo.recursive, finfo.notifyMask,
-        		finfo.infoLength, finfo.overlapped, null)) {
-        	if (! disposing) {
-        		int err = klib.GetLastError();
-        		throw new IOException("ReadDirectoryChangesW failed on "
-                                  + finfo.file + ": '"
-                                  + Kernel32Util.formatMessageFromLastErrorCode(err)
-                                  + "' (" + err + ")");
-        	}
+                finfo.info.size(), finfo.recursive, finfo.notifyMask,
+                finfo.infoLength, finfo.overlapped, null)) {
+            if (!disposing) {
+                int err = klib.GetLastError();
+                throw new IOException("ReadDirectoryChangesW failed on "
+                        + finfo.file + ": '"
+                        + Kernel32Util.formatMessageFromLastErrorCode(err)
+                        + "' (" + err + ")");
+            }
         }
     }
 
@@ -186,8 +186,8 @@ public class W32FileMonitor extends FileMonitor {
         int flags = WinNT.FILE_FLAG_BACKUP_SEMANTICS
             | WinNT.FILE_FLAG_OVERLAPPED;
         HANDLE handle = klib.CreateFile(file.getAbsolutePath(),
-        		WinNT.FILE_LIST_DIRECTORY,
-        		mask, null, WinNT.OPEN_EXISTING,
+                WinNT.FILE_LIST_DIRECTORY,
+                mask, null, WinNT.OPEN_EXISTING,
                 flags, null);
         if (WinBase.INVALID_HANDLE_VALUE.equals(handle)) {
             throw new IOException("Unable to open " + file + " ("
@@ -260,7 +260,7 @@ public class W32FileMonitor extends FileMonitor {
 
     @Override
     public synchronized void dispose() {
-    	disposing = true;
+        disposing = true;
 
         // unwatch any remaining files in map, allows watcher thread to exit
         int i = 0;

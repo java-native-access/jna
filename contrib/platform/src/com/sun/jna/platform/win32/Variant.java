@@ -788,7 +788,7 @@ public interface Variant {
          * @param pointer base address
          */
         public VariantArg(Pointer pointer) {
-        	super(pointer);
+            super(pointer);
         }
 
         public VariantArg(VARIANT[] variantArg) {
@@ -796,8 +796,8 @@ public interface Variant {
         }
 
         public void setArraySize(int size) {
-        	this.variantArg = new VARIANT[size];
-        	this.read();
+            this.variantArg = new VARIANT[size];
+            this.read();
         }
     }
 }

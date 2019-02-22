@@ -32,35 +32,35 @@ import java.io.File;
 
 public class COMInfoUtil {
 
-	public static void main(String[] args) {
-		FileWriter writer = null;
-		try {
-			String filename = new File(Helper.tempDir, "CLSIDs.txt").getAbsolutePath();
-			ArrayList<COMInfo> comInfos = COMUtils.getAllCOMInfoOnSystem();
-			writer = new FileWriter(filename);
+    public static void main(String[] args) {
+        FileWriter writer = null;
+        try {
+            String filename = new File(Helper.tempDir, "CLSIDs.txt").getAbsolutePath();
+            ArrayList<COMInfo> comInfos = COMUtils.getAllCOMInfoOnSystem();
+            writer = new FileWriter(filename);
 
-			for (COMInfo comInfo : comInfos) {
-				String result = "CLSID: " + comInfo.clsid + "\n";
-				result += "InprocHandler32: " + comInfo.inprocHandler32 + "\n";
-				result += "InprocServer32: " + comInfo.inprocServer32 + "\n";
-				result += "LocalServer32: " + comInfo.localServer32 + "\n";
-				result += "ProgID: " + comInfo.progID + "\n";
-				result += "ProgTypeLibID: " + comInfo.typeLib + "\n";
+            for (COMInfo comInfo : comInfos) {
+                String result = "CLSID: " + comInfo.clsid + "\n";
+                result += "InprocHandler32: " + comInfo.inprocHandler32 + "\n";
+                result += "InprocServer32: " + comInfo.inprocServer32 + "\n";
+                result += "LocalServer32: " + comInfo.localServer32 + "\n";
+                result += "ProgID: " + comInfo.progID + "\n";
+                result += "ProgTypeLibID: " + comInfo.typeLib + "\n";
 
-				writer.write(result + "\n");
-			}
+                writer.write(result + "\n");
+            }
 
-			System.out.println("file written to: " + filename);
-			System.out.println("Found CLSID`s on the system: "
-					+ comInfos.size());
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+            System.out.println("file written to: " + filename);
+            System.out.println("Found CLSID`s on the system: "
+                    + comInfos.size());
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

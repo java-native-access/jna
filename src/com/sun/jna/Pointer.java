@@ -985,8 +985,8 @@ public class Pointer {
      * to the expression
      * <code>*((jbyte *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>byte</code> value to set
      */
     public void setByte(long offset, byte value) {
@@ -998,8 +998,8 @@ public class Pointer {
      * to the expression
      * <code>*((jshort *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>short</code> value to set
      */
     public void setShort(long offset, short value) {
@@ -1024,8 +1024,8 @@ public class Pointer {
      * to the expression
      * <code>*((jint *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>int</code> value to set
      */
     public void setInt(long offset, int value) {
@@ -1108,7 +1108,7 @@ public class Pointer {
      * wide string (<code>wchar_t*</code>).
      *
      * @param offset byte offset from pointer at which characters in
-     * 		     <code>value</code> must be set
+     *               <code>value</code> must be set
      * @param value  <code>java.lang.String</code> value to set
      */
     public void setWideString(long offset, String value) {
@@ -1120,7 +1120,7 @@ public class Pointer {
      * wide string (<code>wchar_t*</code>).
      *
      * @param offset byte offset from pointer at which characters in
-     * 		     <code>value</code> must be set
+     *               <code>value</code> must be set
      * @param value  <code>WString</code> value to set
      */
     public void setString(long offset, WString value) {

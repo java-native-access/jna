@@ -27,14 +27,14 @@ import com.sun.jna.platform.win32.COM.IDispatchCallback;
 
 public abstract class AbstractComEventCallbackListener implements IComEventCallbackListener {
 
-	public AbstractComEventCallbackListener() {
-		this.dispatchCallback = null;
-	}
-	
-	IDispatchCallback dispatchCallback;
-	public void setDispatchCallbackListener(IDispatchCallback dispatchCallback) {
-		this.dispatchCallback = dispatchCallback;
-	}
+    public AbstractComEventCallbackListener() {
+        this.dispatchCallback = null;
+    }
 
+    IDispatchCallback dispatchCallback;
+
+    public void setDispatchCallbackListener(IDispatchCallback dispatchCallback) {
+        this.dispatchCallback = dispatchCallback;
+    }
 
 }

@@ -74,8 +74,8 @@ public class GhostedDragImageDemo {
     }
 
     public static class DragLabel extends JLabel {
-		private static final long serialVersionUID = 1L;
-		private boolean dragging;
+        private static final long serialVersionUID = 1L;
+        private boolean dragging;
         public DragLabel(Icon icon) {
             super(icon);
             new DragHandler(this, DnDConstants.ACTION_COPY_OR_MOVE) {

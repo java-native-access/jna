@@ -940,21 +940,21 @@ public interface Advapi32 extends StdCallLibrary {
      *         defined in Winerror.h.
      */
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, char[] lpData, IntByReference lpcbData);
+            IntByReference lpType, char[] lpData, IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, byte[] lpData, IntByReference lpcbData);
+            IntByReference lpType, byte[] lpData, IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, IntByReference lpData,
-			IntByReference lpcbData);
+            IntByReference lpType, IntByReference lpData,
+            IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, LongByReference lpData,
-			IntByReference lpcbData);
+            IntByReference lpType, LongByReference lpData,
+            IntByReference lpcbData);
 
     int RegQueryValueEx(HKEY hKey, String lpValueName, int lpReserved,
-			IntByReference lpType, Pointer lpData, IntByReference lpcbData);
+            IntByReference lpType, Pointer lpData, IntByReference lpcbData);
 
     /**
      * The RegCloseKey function releases a handle to the specified registry key.
@@ -1212,12 +1212,12 @@ public interface Advapi32 extends StdCallLibrary {
      *         defined in Winerror.h.
      */
     int RegQueryInfoKey(HKEY hKey, char[] lpClass,
-			IntByReference lpcClass, IntByReference lpReserved,
-			IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
-			IntByReference lpcMaxClassLen, IntByReference lpcValues,
-			IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
-			IntByReference lpcbSecurityDescriptor,
-			WinBase.FILETIME lpftLastWriteTime);
+            IntByReference lpcClass, IntByReference lpReserved,
+            IntByReference lpcSubKeys, IntByReference lpcMaxSubKeyLen,
+            IntByReference lpcMaxClassLen, IntByReference lpcValues,
+            IntByReference lpcMaxValueNameLen, IntByReference lpcMaxValueLen,
+            IntByReference lpcbSecurityDescriptor,
+            WinBase.FILETIME lpftLastWriteTime);
 
     /**
      * Retrieves the type and data for the specified registry value.
@@ -1482,8 +1482,8 @@ public interface Advapi32 extends StdCallLibrary {
      *         GetLastError.
      */
     boolean ReportEvent(HANDLE hEventLog, int wType, int wCategory,
-			int dwEventID, PSID lpUserSid, int wNumStrings, int dwDataSize,
-			String[] lpStrings, Pointer lpRawData);
+            int dwEventID, PSID lpUserSid, int wNumStrings, int dwDataSize,
+            String[] lpStrings, Pointer lpRawData);
 
     /**
      * Clears the specified event log, and optionally saves the current copy of
@@ -2450,7 +2450,7 @@ public interface Advapi32 extends StdCallLibrary {
      *            which to set security information. This can be
      *            the name of a local or remote file or directory on an NTFS file
      *            system, network share, registry key, semaphore, event, mutex,
-     *            file mapping, or waitable timer.	 *
+     *            file mapping, or waitable timer. *
      *            For descriptions of the string formats for the different
      *            object types, see SE_OBJECT_TYPE.
      * @param ObjectType [in]

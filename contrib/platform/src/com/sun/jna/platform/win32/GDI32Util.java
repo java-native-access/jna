@@ -51,145 +51,147 @@ import com.sun.jna.platform.win32.WinNT.HANDLE;
  * @author mlfreeman[at]gmail.com
  */
 public class GDI32Util {
-	private static final DirectColorModel SCREENSHOT_COLOR_MODEL = new DirectColorModel(24, 0x00FF0000, 0xFF00, 0xFF);
-	private static final int[] SCREENSHOT_BAND_MASKS = {
-	        SCREENSHOT_COLOR_MODEL.getRedMask(),
-            SCREENSHOT_COLOR_MODEL.getGreenMask(),
-            SCREENSHOT_COLOR_MODEL.getBlueMask()
-	};
 
-	/**
-	 * Takes a screenshot of the given window
-	 * 
-	 * @param target
-	 *            The window to target
-	 * @return the window captured as a screenshot, or null if the BufferedImage doesn't construct properly
-	 * @throws IllegalStateException
-	 *             if the rectangle from GetWindowRect has a width and/or height
-	 *             of 0. <br>
-	 *             if the device context acquired from the original HWND doesn't
-	 *             release properly
-	 */
-	public static BufferedImage getScreenshot(HWND target) {
-		RECT rect = new RECT();
-		if (!User32.INSTANCE.GetWindowRect(target, rect)) {
-			throw new Win32Exception(Native.getLastError());
-		}
-		Rectangle jRectangle = rect.toRectangle();
-		int windowWidth = jRectangle.width;
-		int windowHeight = jRectangle.height;
-		
-		if (windowWidth == 0 || windowHeight == 0) {
-			throw new IllegalStateException("Window width and/or height were 0 even though GetWindowRect did not appear to fail.");
-		}
-		
-		HDC hdcTarget = User32.INSTANCE.GetDC(target);
-		if (hdcTarget == null) {
-			throw new Win32Exception(Native.getLastError());
-		}
+    private static final DirectColorModel SCREENSHOT_COLOR_MODEL = new DirectColorModel(24, 0x00FF0000, 0xFF00, 0xFF);
+    private static final int[] SCREENSHOT_BAND_MASKS = {
+        SCREENSHOT_COLOR_MODEL.getRedMask(),
+        SCREENSHOT_COLOR_MODEL.getGreenMask(),
+        SCREENSHOT_COLOR_MODEL.getBlueMask()
+    };
 
-		Win32Exception we = null;
+    /**
+     * Takes a screenshot of the given window
+     *
+     * @param target The window to target
+     *
+     * @return the window captured as a screenshot, or null if the BufferedImage
+     *         doesn't construct properly
+     *
+     * @throws IllegalStateException if the rectangle from GetWindowRect has a
+     *                               width and/or height of 0. <br>
+     * if the device context acquired from the original HWND doesn't release
+     * properly
+     */
+    public static BufferedImage getScreenshot(HWND target) {
+        RECT rect = new RECT();
+        if (!User32.INSTANCE.GetWindowRect(target, rect)) {
+            throw new Win32Exception(Native.getLastError());
+        }
+        Rectangle jRectangle = rect.toRectangle();
+        int windowWidth = jRectangle.width;
+        int windowHeight = jRectangle.height;
 
-		// device context used for drawing
-		HDC hdcTargetMem = null;
+        if (windowWidth == 0 || windowHeight == 0) {
+            throw new IllegalStateException("Window width and/or height were 0 even though GetWindowRect did not appear to fail.");
+        }
 
-		// handle to the bitmap to be drawn to
-		HBITMAP hBitmap = null;
+        HDC hdcTarget = User32.INSTANCE.GetDC(target);
+        if (hdcTarget == null) {
+            throw new Win32Exception(Native.getLastError());
+        }
 
-		// original display surface associated with the device context
-		HANDLE hOriginal = null;
+        Win32Exception we = null;
 
-		// final java image structure we're returning.
-		BufferedImage image = null;
-		
-		try {
-			hdcTargetMem = GDI32.INSTANCE.CreateCompatibleDC(hdcTarget);
-			if (hdcTargetMem == null) {
-				throw new Win32Exception(Native.getLastError());
-			}
+        // device context used for drawing
+        HDC hdcTargetMem = null;
 
-			hBitmap = GDI32.INSTANCE.CreateCompatibleBitmap(hdcTarget, windowWidth, windowHeight);
-			if (hBitmap == null) {
-				throw new Win32Exception(Native.getLastError());
-			}
+        // handle to the bitmap to be drawn to
+        HBITMAP hBitmap = null;
 
-			hOriginal = GDI32.INSTANCE.SelectObject(hdcTargetMem, hBitmap);
-			if (hOriginal == null) {
-				throw new Win32Exception(Native.getLastError());
-			}
+        // original display surface associated with the device context
+        HANDLE hOriginal = null;
 
-			// draw to the bitmap
-			if (!GDI32.INSTANCE.BitBlt(hdcTargetMem, 0, 0, windowWidth, windowHeight, hdcTarget, 0, 0, GDI32.SRCCOPY)) {
-				throw new Win32Exception(Native.getLastError());
-			}
+        // final java image structure we're returning.
+        BufferedImage image = null;
 
-			BITMAPINFO bmi = new BITMAPINFO();
-			bmi.bmiHeader.biWidth = windowWidth;
-			bmi.bmiHeader.biHeight = -windowHeight;
-			bmi.bmiHeader.biPlanes = 1;
-			bmi.bmiHeader.biBitCount = 32;
-			bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
+        try {
+            hdcTargetMem = GDI32.INSTANCE.CreateCompatibleDC(hdcTarget);
+            if (hdcTargetMem == null) {
+                throw new Win32Exception(Native.getLastError());
+            }
 
-			Memory buffer = new Memory(windowWidth * windowHeight * 4);
-			int resultOfDrawing = GDI32.INSTANCE.GetDIBits(hdcTarget, hBitmap, 0, windowHeight, buffer, bmi,
-					WinGDI.DIB_RGB_COLORS);
-			if (resultOfDrawing == 0 || resultOfDrawing == WinError.ERROR_INVALID_PARAMETER) {
-				throw new Win32Exception(Native.getLastError());
-			}
+            hBitmap = GDI32.INSTANCE.CreateCompatibleBitmap(hdcTarget, windowWidth, windowHeight);
+            if (hBitmap == null) {
+                throw new Win32Exception(Native.getLastError());
+            }
 
-			int bufferSize = windowWidth * windowHeight;
-			DataBuffer dataBuffer = new DataBufferInt(buffer.getIntArray(0, bufferSize), bufferSize);
-			WritableRaster raster = Raster.createPackedRaster(dataBuffer, windowWidth, windowHeight, windowWidth,
-                                                              SCREENSHOT_BAND_MASKS, null);
-			image = new BufferedImage(SCREENSHOT_COLOR_MODEL, raster, false, null);
+            hOriginal = GDI32.INSTANCE.SelectObject(hdcTargetMem, hBitmap);
+            if (hOriginal == null) {
+                throw new Win32Exception(Native.getLastError());
+            }
 
-		} catch (Win32Exception e) {
-			we = e;
-		} finally {
-			if (hOriginal != null) {
-				// per MSDN, set the display surface back when done drawing
-				HANDLE result = GDI32.INSTANCE.SelectObject(hdcTargetMem, hOriginal);
-				// failure modes are null or equal to HGDI_ERROR
-				if (result == null || WinGDI.HGDI_ERROR.equals(result)) {
-					Win32Exception ex = new Win32Exception(Native.getLastError());
-					if (we != null) {
-						ex.addSuppressedReflected(we);
-					}
-					we = ex;
-				}
-			}
+            // draw to the bitmap
+            if (!GDI32.INSTANCE.BitBlt(hdcTargetMem, 0, 0, windowWidth, windowHeight, hdcTarget, 0, 0, GDI32.SRCCOPY)) {
+                throw new Win32Exception(Native.getLastError());
+            }
 
-			if (hBitmap != null) {
-				if (!GDI32.INSTANCE.DeleteObject(hBitmap)) {
-					Win32Exception ex = new Win32Exception(Native.getLastError());
-					if (we != null) {
-						ex.addSuppressedReflected(we);
-					}
-					we = ex;
-				}
-			}
+            BITMAPINFO bmi = new BITMAPINFO();
+            bmi.bmiHeader.biWidth = windowWidth;
+            bmi.bmiHeader.biHeight = -windowHeight;
+            bmi.bmiHeader.biPlanes = 1;
+            bmi.bmiHeader.biBitCount = 32;
+            bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
 
-			if (hdcTargetMem != null) {
-				// get rid of the device context when done
-				if (!GDI32.INSTANCE.DeleteDC(hdcTargetMem)) {
-					Win32Exception ex = new Win32Exception(Native.getLastError());
-					if (we != null) {
-						ex.addSuppressedReflected(we);
-					}
-					we = ex;
-				}
-			}
+            Memory buffer = new Memory(windowWidth * windowHeight * 4);
+            int resultOfDrawing = GDI32.INSTANCE.GetDIBits(hdcTarget, hBitmap, 0, windowHeight, buffer, bmi,
+                    WinGDI.DIB_RGB_COLORS);
+            if (resultOfDrawing == 0 || resultOfDrawing == WinError.ERROR_INVALID_PARAMETER) {
+                throw new Win32Exception(Native.getLastError());
+            }
 
-			if (hdcTarget != null) {
-				if (0 == User32.INSTANCE.ReleaseDC(target, hdcTarget)) {
-					throw new IllegalStateException("Device context did not release properly.");
-				}
-			}
-		}
+            int bufferSize = windowWidth * windowHeight;
+            DataBuffer dataBuffer = new DataBufferInt(buffer.getIntArray(0, bufferSize), bufferSize);
+            WritableRaster raster = Raster.createPackedRaster(dataBuffer, windowWidth, windowHeight, windowWidth,
+                    SCREENSHOT_BAND_MASKS, null);
+            image = new BufferedImage(SCREENSHOT_COLOR_MODEL, raster, false, null);
 
-		if (we != null) {
-			throw we;
-		}
-		return image;
-	}
+        } catch (Win32Exception e) {
+            we = e;
+        } finally {
+            if (hOriginal != null) {
+                // per MSDN, set the display surface back when done drawing
+                HANDLE result = GDI32.INSTANCE.SelectObject(hdcTargetMem, hOriginal);
+                // failure modes are null or equal to HGDI_ERROR
+                if (result == null || WinGDI.HGDI_ERROR.equals(result)) {
+                    Win32Exception ex = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        ex.addSuppressedReflected(we);
+                    }
+                    we = ex;
+                }
+            }
+
+            if (hBitmap != null) {
+                if (!GDI32.INSTANCE.DeleteObject(hBitmap)) {
+                    Win32Exception ex = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        ex.addSuppressedReflected(we);
+                    }
+                    we = ex;
+                }
+            }
+
+            if (hdcTargetMem != null) {
+                // get rid of the device context when done
+                if (!GDI32.INSTANCE.DeleteDC(hdcTargetMem)) {
+                    Win32Exception ex = new Win32Exception(Native.getLastError());
+                    if (we != null) {
+                        ex.addSuppressedReflected(we);
+                    }
+                    we = ex;
+                }
+            }
+
+            if (hdcTarget != null) {
+                if (0 == User32.INSTANCE.ReleaseDC(target, hdcTarget)) {
+                    throw new IllegalStateException("Device context did not release properly.");
+                }
+            }
+        }
+
+        if (we != null) {
+            throw we;
+        }
+        return image;
+    }
 }

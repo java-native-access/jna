@@ -45,10 +45,10 @@ public class Shell32Test extends TestCase {
     }
 
     public void testSHGetFolderPath() {
-    	char[] pszPath = new char[WinDef.MAX_PATH];
-    	assertEquals("Failed to retrieve path", W32Errors.S_OK,
-    	        Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, pszPath));
-    	assertTrue("Empty path", Native.toString(pszPath).length() > 0);
+        char[] pszPath = new char[WinDef.MAX_PATH];
+        assertEquals("Failed to retrieve path", W32Errors.S_OK,
+                Shell32.INSTANCE.SHGetFolderPath(null, ShlObj.CSIDL_PROGRAM_FILES, null, ShlObj.SHGFP_TYPE_CURRENT, pszPath));
+        assertTrue("Empty path", Native.toString(pszPath).length() > 0);
     }
 
     public void testSHGetDesktopFolder() {

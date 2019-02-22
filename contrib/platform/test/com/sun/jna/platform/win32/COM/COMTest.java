@@ -44,11 +44,11 @@ public class COMTest extends TestCase {
     }
 
     @Override
-	protected void setUp() throws Exception {
+    protected void setUp() throws Exception {
     }
 
     @Override
-	protected void tearDown() throws Exception {
+    protected void tearDown() throws Exception {
     }
 
     public void testTYPEATTR() {

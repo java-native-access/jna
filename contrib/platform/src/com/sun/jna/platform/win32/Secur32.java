@@ -43,7 +43,7 @@ import com.sun.jna.win32.W32APIOptions;
  */
 public interface Secur32 extends StdCallLibrary {
     Secur32 INSTANCE = Native.load("Secur32", Secur32.class, W32APIOptions.DEFAULT_OPTIONS);
-	
+
     /**
      * Specifies a format for a directory service object name.
      * http://msdn.microsoft.com/en-us/library/ms724268(VS.85).aspx
@@ -60,7 +60,7 @@ public interface Secur32 extends StdCallLibrary {
         public static final int NameServicePrincipal = 10;
         public static final int NameDnsDomain = 12;
     };
-	
+
     /**
      * Retrieves the name of the user or other security principal associated with 
      * the calling thread. You can specify the format of the returned name.
@@ -112,7 +112,7 @@ public interface Secur32 extends StdCallLibrary {
                                         Pointer pvGetKeyArgument, CredHandle phCredential, 
                                         TimeStamp ptsExpiry);
 
-	
+
     /**
      * The InitializeSecurityContext function initiates the client side, outbound security 
      * context from a credential handle. The function is used to build a security context 
@@ -190,7 +190,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, the return value is SEC_E_INVALID_HANDLE;
      */
     int DeleteSecurityContext(CtxtHandle phContext);
-	
+
     /**
      * The FreeCredentialsHandle function notifies the security system that the 
      * credentials are no longer needed. An application calls this function to free 
@@ -297,7 +297,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, it returns a nonzero error code.
      */
     int EnumerateSecurityPackages(IntByReference pcPackages,  PSecPkgInfo ppPackageInfo);
-	
+
     /**
      * The FreeContextBuffer function enables callers of security package functions to free a memory 
      * buffer that was allocated by the security package as a result of calls to InitializeSecurityContext 
@@ -309,7 +309,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, it returns a nonzero error code.
      */
     int FreeContextBuffer(Pointer buffer);
-	
+
     /**
      * The QuerySecurityContextToken function obtains the access token for a client security context
      * and uses it directly.
@@ -323,7 +323,7 @@ public interface Secur32 extends StdCallLibrary {
      *  SEC_E_INVALID_HANDLE.
      */
     int QuerySecurityContextToken(CtxtHandle phContext, HANDLEByReference phToken);
-	
+
     /**
      * The ImpersonateSecurityContext function allows a server to impersonate a client by using 
      * a token previously obtained by a call to AcceptSecurityContext or QuerySecurityContextToken. 
@@ -338,7 +338,7 @@ public interface Secur32 extends StdCallLibrary {
      *  SEC_E_UNSUPPORTED_FUNCTION error code.
      */
     int ImpersonateSecurityContext(CtxtHandle phContext);
-	
+
     /**
      * Allows a security package to discontinue the impersonation of the caller and restore its 
      * own security context.
@@ -351,7 +351,7 @@ public interface Secur32 extends StdCallLibrary {
      *  If the function fails, the return value can be either SEC_E_INVALID_HANDLE or SEC_E_UNSUPPORTED_FUNCTION.
      */
     int RevertSecurityContext(CtxtHandle phContext);
-	
+
     /**
      * Enables a transport application to query a security package for certain
      * attributes of a security context.

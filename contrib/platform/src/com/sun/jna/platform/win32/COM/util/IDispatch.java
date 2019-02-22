@@ -30,10 +30,10 @@ import com.sun.jna.platform.win32.OaIdl.DISPID;
  *
  */
 public interface IDispatch extends IUnknown {
-	<T> void setProperty(String name, T value);
-	<T> T getProperty(Class<T> returnType, String name, Object... args);
-	<T> T invokeMethod(Class<T> returnType, String name, Object... args);
-	<T> void setProperty(DISPID dispid, T value);
-	<T> T getProperty(Class<T> returnType, DISPID dispid, Object... args);
-	<T> T invokeMethod(Class<T> returnType, DISPID dispid, Object... args);
+    <T> void setProperty(String name, T value);
+    <T> T getProperty(Class<T> returnType, String name, Object... args);
+    <T> T invokeMethod(Class<T> returnType, String name, Object... args);
+    <T> void setProperty(DISPID dispid, T value);
+    <T> T getProperty(Class<T> returnType, DISPID dispid, Object... args);
+    <T> T invokeMethod(Class<T> returnType, DISPID dispid, Object... args);
 }

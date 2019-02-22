@@ -39,7 +39,7 @@ public class VarArgsCheckerTest extends TestCase {
         final boolean res = checker.isVarArgs(method);
         // no matter if JVM 1.4 or 1.5+, the result should always be false
         assertFalse("Method should not be detected as varargs", res);
-	assertEquals("Non-varargs should return fixed args of zero", 0, checker.fixedArgs(method));
+        assertEquals("Non-varargs should return fixed args of zero", 0, checker.fixedArgs(method));
     }
     
     public void testVarArgsExist() throws Exception {
@@ -74,11 +74,11 @@ public class VarArgsCheckerTest extends TestCase {
     }
 
     public void methodWithOneFixedArg(String fmt, Object... args) {
-	// nothing to do
+        // nothing to do
     }
 
     public void methodWithTwoFixedArgs(String fmt, String fmt2, Object... args) {
-	// nothing to do
+        // nothing to do
     }
 
     public static void main(String[] args) {

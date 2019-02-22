@@ -38,25 +38,25 @@ public class NtDllTest extends TestCase {
     }
     
     public void testZwQueryKey() {
-    	// open a key
-    	HKEYByReference phKey = new HKEYByReference();
-    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
-    			WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
-    	// query key info
-    	IntByReference resultLength = new IntByReference();    	
-    	assertEquals(NTStatus.STATUS_BUFFER_TOO_SMALL, NtDll.INSTANCE.ZwQueryKey(
-    			phKey.getValue(), KEY_INFORMATION_CLASS.KeyBasicInformation, 
-    			null, 0, resultLength));
-    	assertTrue(resultLength.getValue() > 0);
-    	KEY_BASIC_INFORMATION keyInformation = new KEY_BASIC_INFORMATION(resultLength.getValue());
-    	assertEquals(NTStatus.STATUS_SUCCESS, NtDll.INSTANCE.ZwQueryKey(
-    			phKey.getValue(), Wdm.KEY_INFORMATION_CLASS.KeyBasicInformation, 
-    			keyInformation, resultLength.getValue(), resultLength));    	
-    	// show
+        // open a key
+        HKEYByReference phKey = new HKEYByReference();
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegOpenKeyEx(
+                WinReg.HKEY_CURRENT_USER, "Software", 0, WinNT.KEY_WRITE | WinNT.KEY_READ, phKey));
+        // query key info
+        IntByReference resultLength = new IntByReference();
+        assertEquals(NTStatus.STATUS_BUFFER_TOO_SMALL, NtDll.INSTANCE.ZwQueryKey(
+                phKey.getValue(), KEY_INFORMATION_CLASS.KeyBasicInformation,
+                null, 0, resultLength));
+        assertTrue(resultLength.getValue() > 0);
+        KEY_BASIC_INFORMATION keyInformation = new KEY_BASIC_INFORMATION(resultLength.getValue());
+        assertEquals(NTStatus.STATUS_SUCCESS, NtDll.INSTANCE.ZwQueryKey(
+                phKey.getValue(), Wdm.KEY_INFORMATION_CLASS.KeyBasicInformation,
+                keyInformation, resultLength.getValue(), resultLength));
+        // show
         // Keys are case insensitive (https://msdn.microsoft.com/de-de/library/windows/desktop/ms724946(v=vs.85).aspx)
-    	assertEquals("software", keyInformation.getName().toLowerCase());
-    	// close key
-    	assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));    	    	    	    	
+        assertEquals("software", keyInformation.getName().toLowerCase());
+        // close key
+        assertEquals(W32Errors.ERROR_SUCCESS, Advapi32.INSTANCE.RegCloseKey(phKey.getValue()));
     }
 
     public void testNtQuerySetSecurityObjectNoSACL() throws Exception {

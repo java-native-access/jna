@@ -128,7 +128,7 @@ public class ITypeInfoTest {
     }
 
     public void testInvoke() {
-    	
+
     }
 
     @Test

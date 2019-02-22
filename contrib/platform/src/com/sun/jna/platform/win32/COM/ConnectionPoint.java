@@ -31,37 +31,37 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 
 public class ConnectionPoint extends Unknown implements IConnectionPoint {
 
-	public ConnectionPoint(Pointer pointer) {
-		super(pointer);
-	}
+    public ConnectionPoint(Pointer pointer) {
+        super(pointer);
+    }
 
-	@Override
-	public HRESULT GetConnectionInterface(IID iid) {
-		final int vTableId = 3;
-		return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), iid }, HRESULT.class);
-	}
+    @Override
+    public HRESULT GetConnectionInterface(IID iid) {
+        final int vTableId = 3;
+        return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), iid }, HRESULT.class);
+    }
 
-	void GetConnectionPointContainer() {
-		final int vTableId = 4;
+    void GetConnectionPointContainer() {
+        final int vTableId = 4;
 
-	}
+    }
 
-	@Override
-	public HRESULT Advise(IUnknownCallback pUnkSink, DWORDByReference pdwCookie) {
-		final int vTableId = 5;
+    @Override
+    public HRESULT Advise(IUnknownCallback pUnkSink, DWORDByReference pdwCookie) {
+        final int vTableId = 5;
 
-		return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pUnkSink.getPointer(),
-				pdwCookie }, HRESULT.class);
-	}
+        return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pUnkSink.getPointer(),
+                pdwCookie }, HRESULT.class);
+    }
 
-	@Override
-	public HRESULT Unadvise(DWORD dwCookie) {
-		final int vTableId = 6;
-		
-		return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), dwCookie }, HRESULT.class);
-	}
+    @Override
+    public HRESULT Unadvise(DWORD dwCookie) {
+        final int vTableId = 6;
 
-	void EnumConnections() {
-		final int vTableId = 7;
-	}
+        return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), dwCookie }, HRESULT.class);
+    }
+
+    void EnumConnections() {
+        final int vTableId = 7;
+    }
 }

@@ -32,51 +32,51 @@ import com.sun.jna.ptr.PointerByReference;
 
 public class EnumMoniker extends Unknown implements IEnumMoniker {
 
-	public EnumMoniker(Pointer pointer) {
-		super(pointer);
-	}
+    public EnumMoniker(Pointer pointer) {
+        super(pointer);
+    }
 
-	// The magic number values for (vTableId) below, are worked out by
-	// counting the number of methods in the full interface (0 indexed), as this
-	// inherits IUnknown, which has 3 methods, we start here at 3.
+    // The magic number values for (vTableId) below, are worked out by
+    // counting the number of methods in the full interface (0 indexed), as this
+    // inherits IUnknown, which has 3 methods, we start here at 3.
 
-	@Override
-	public HRESULT Next(ULONG celt, PointerByReference rgelt, ULONGByReference pceltFetched) {
-		final int vTableId = 3;
+    @Override
+    public HRESULT Next(ULONG celt, PointerByReference rgelt, ULONGByReference pceltFetched) {
+        final int vTableId = 3;
 
-		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), celt,
-				rgelt, pceltFetched }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), celt,
+                rgelt, pceltFetched }, WinNT.HRESULT.class);
 
-		return hr;
-	}
+        return hr;
+    }
 
-	@Override
-	public HRESULT Skip(ULONG celt) {
-		final int vTableId = 4;
+    @Override
+    public HRESULT Skip(ULONG celt) {
+        final int vTableId = 4;
 
-		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), celt },
-				WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), celt },
+                WinNT.HRESULT.class);
 
-		return hr;
-	}
+        return hr;
+    }
 
-	@Override
-	public HRESULT Reset() {
-		final int vTableId = 5;
+    @Override
+    public HRESULT Reset() {
+        final int vTableId = 5;
 
-		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), },
-				WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), },
+                WinNT.HRESULT.class);
 
-		return hr;
-	}
+        return hr;
+    }
 
-	@Override
-	public HRESULT Clone(PointerByReference ppenum) {
-		final int vTableId = 6;
+    @Override
+    public HRESULT Clone(PointerByReference ppenum) {
+        final int vTableId = 6;
 
-		WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId,
-				new Object[] { this.getPointer(), ppenum }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId,
+                new Object[] { this.getPointer(), ppenum }, WinNT.HRESULT.class);
 
-		return hr;
-	}
+        return hr;
+    }
 }

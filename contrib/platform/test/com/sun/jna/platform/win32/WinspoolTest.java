@@ -44,20 +44,20 @@ public class WinspoolTest {
 
     @Test
     public void testEnumPrinters_4() {
-    	IntByReference pcbNeeded = new IntByReference();
-    	IntByReference pcReturned = new IntByReference();
-    	// if there are no printers installed, EnumPrinters will succeed with zero items returned 
-    	Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 4, null, 0, pcbNeeded, pcReturned);
-    	assertTrue(pcReturned.getValue() == 0);
-    	if (pcbNeeded.getValue() > 0) {
-    		PRINTER_INFO_4 pPrinterEnum = new PRINTER_INFO_4(pcbNeeded.getValue());	    	
-    		assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 4, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
-	    	assertTrue(pcReturned.getValue() >= 0);	    	
-	    	PRINTER_INFO_4[] printerInfo = (PRINTER_INFO_4[]) pPrinterEnum.toArray(pcReturned.getValue());
-	    	for(PRINTER_INFO_4 pi : printerInfo) {
-	    		assertTrue(pi.pPrinterName == null || pi.pPrinterName.length() >= 0);
-	    	}
-    	}
+        IntByReference pcbNeeded = new IntByReference();
+        IntByReference pcReturned = new IntByReference();
+        // if there are no printers installed, EnumPrinters will succeed with zero items returned
+        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 4, null, 0, pcbNeeded, pcReturned);
+        assertTrue(pcReturned.getValue() == 0);
+        if (pcbNeeded.getValue() > 0) {
+            PRINTER_INFO_4 pPrinterEnum = new PRINTER_INFO_4(pcbNeeded.getValue());
+            assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 4, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
+            assertTrue(pcReturned.getValue() >= 0);
+            PRINTER_INFO_4[] printerInfo = (PRINTER_INFO_4[]) pPrinterEnum.toArray(pcReturned.getValue());
+            for (PRINTER_INFO_4 pi : printerInfo) {
+                assertTrue(pi.pPrinterName == null || pi.pPrinterName.length() >= 0);
+            }
+        }
     }
 
     @Test
@@ -80,20 +80,20 @@ public class WinspoolTest {
 
     @Test
     public void testEnumPrinters_1() {
-    	IntByReference pcbNeeded = new IntByReference();
-    	IntByReference pcReturned = new IntByReference();
-    	// if there are no printers installed, EnumPrinters will succeed with zero items returned
-    	Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 1, null, 0, pcbNeeded, pcReturned);
-    	assertTrue(pcReturned.getValue() == 0);
-    	if (pcbNeeded.getValue() > 0) {
-	    	PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
-	    	assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
-	    	assertTrue(pcReturned.getValue() >= 0);
-	    	PRINTER_INFO_1[] printerInfo = (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
-	    	for(PRINTER_INFO_1 pi : printerInfo) {
-	    		assertTrue(pi.pName == null || pi.pName.length() >= 0);
-	    	}
-    	}
+        IntByReference pcbNeeded = new IntByReference();
+        IntByReference pcReturned = new IntByReference();
+        // if there are no printers installed, EnumPrinters will succeed with zero items returned
+        Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 1, null, 0, pcbNeeded, pcReturned);
+        assertTrue(pcReturned.getValue() == 0);
+        if (pcbNeeded.getValue() > 0) {
+            PRINTER_INFO_1 pPrinterEnum = new PRINTER_INFO_1(pcbNeeded.getValue());
+            assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 1, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
+            assertTrue(pcReturned.getValue() >= 0);
+            PRINTER_INFO_1[] printerInfo = (PRINTER_INFO_1[]) pPrinterEnum.toArray(pcReturned.getValue());
+            for (PRINTER_INFO_1 pi : printerInfo) {
+                assertTrue(pi.pName == null || pi.pName.length() >= 0);
+            }
+        }
     }
 
     @Test

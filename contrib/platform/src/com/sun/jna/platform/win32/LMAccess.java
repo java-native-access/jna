@@ -410,14 +410,14 @@ public interface LMAccess {
     //  acl_access field of access_list structures.
     //
 
-    int ACCESS_NONE		= 0x00;
-    int ACCESS_READ		= 0x01;
-    int ACCESS_WRITE	= 0x02;
-    int ACCESS_CREATE	= 0x04;
-    int ACCESS_EXEC		= 0x08;
-    int ACCESS_DELETE	= 0x10;
-    int ACCESS_ATRIB	= 0x20;
-    int ACCESS_PERM		= 0x40;
-    int ACCESS_ALL		= ACCESS_READ | ACCESS_WRITE | ACCESS_CREATE | ACCESS_EXEC | ACCESS_DELETE | ACCESS_ATRIB | ACCESS_PERM;
-    int ACCESS_GROUP	= 0x8000;
+    int ACCESS_NONE = 0x00;
+    int ACCESS_READ = 0x01;
+    int ACCESS_WRITE = 0x02;
+    int ACCESS_CREATE = 0x04;
+    int ACCESS_EXEC = 0x08;
+    int ACCESS_DELETE = 0x10;
+    int ACCESS_ATRIB = 0x20;
+    int ACCESS_PERM = 0x40;
+    int ACCESS_ALL = ACCESS_READ | ACCESS_WRITE | ACCESS_CREATE | ACCESS_EXEC | ACCESS_DELETE | ACCESS_ATRIB | ACCESS_PERM;
+    int ACCESS_GROUP = 0x8000;
 }

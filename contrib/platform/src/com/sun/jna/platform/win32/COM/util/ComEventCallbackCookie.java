@@ -27,13 +27,14 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
 
 public class ComEventCallbackCookie implements IComEventCallbackCookie {
 
-	public ComEventCallbackCookie(DWORD value) {
-		this.value = value;
-	}
-	
-	DWORD value;
-	public DWORD getValue() {
-		return this.value;
-	}
+    public ComEventCallbackCookie(DWORD value) {
+        this.value = value;
+    }
+
+    DWORD value;
+
+    public DWORD getValue() {
+        return this.value;
+    }
 
 }

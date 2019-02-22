@@ -130,7 +130,7 @@ public final class Platform {
         C_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "c";
         MATH_LIBRARY_NAME = osType == WINDOWS ? "msvcrt" : osType == WINDOWSCE ? "coredll" : "m";
         HAS_DLL_CALLBACKS = osType == WINDOWS;
-	ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), osType);
+        ARCH = getCanonicalArchitecture(System.getProperty("os.arch"), osType);
         RESOURCE_PREFIX = getNativeLibraryResourcePrefix();
     }
     private Platform() { }
@@ -233,7 +233,7 @@ public final class Platform {
     }
 
     static String getCanonicalArchitecture(String arch, int platform) {
-	arch = arch.toLowerCase().trim();
+        arch = arch.toLowerCase().trim();
         if ("powerpc".equals(arch)) {
             arch = "ppc";
         }
@@ -246,19 +246,19 @@ public final class Platform {
         else if ("x86_64".equals(arch) || "amd64".equals(arch)) {
             arch = "x86-64";
         }
-	// Work around OpenJDK mis-reporting os.arch
-	// https://bugs.openjdk.java.net/browse/JDK-8073139
-	if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {
-	    arch = "ppc64le";
-	}
+        // Work around OpenJDK mis-reporting os.arch
+        // https://bugs.openjdk.java.net/browse/JDK-8073139
+        if ("ppc64".equals(arch) && "little".equals(System.getProperty("sun.cpu.endian"))) {
+            arch = "ppc64le";
+        }
         // Map arm to armel if the binary is running as softfloat build
         if("arm".equals(arch) && platform == Platform.LINUX && isSoftFloat()) {
             arch = "armel";
         }
-        
-	return arch;
+
+        return arch;
     }
-    
+
     static boolean isSoftFloat() {
         try {
             File self = new File("/proc/self/exe");

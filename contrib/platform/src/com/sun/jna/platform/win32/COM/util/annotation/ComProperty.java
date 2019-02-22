@@ -33,6 +33,6 @@ import java.lang.annotation.Target;
 @Target({ ElementType.METHOD })
 @Inherited
 public @interface ComProperty {
-	String name() default "";
-        int dispId() default -1; //default to dispid unknown
+    String name() default "";
+    int dispId() default -1; //default to dispid unknown
 }

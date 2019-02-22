@@ -32,37 +32,37 @@ package com.sun.jna.platform.win32.COM;
  */
 public interface IPersistStream extends IPersist {
 
-	/**
-	 * Determines whether an object has changed since it was last saved to its
-	 * stream.
-	 * 
-	 * (Unimplemented)
-	 * 
-	 */
-	boolean IsDirty();
+    /**
+     * Determines whether an object has changed since it was last saved to its
+     * stream.
+     *
+     * (Unimplemented)
+     *
+     */
+    boolean IsDirty();
 
-	/**
-	 * Initializes an object from the stream where it was saved previously
-	 * 
-	 * (Unimplemented)
-	 * 
-	 */
+    /**
+     * Initializes an object from the stream where it was saved previously
+     *
+     * (Unimplemented)
+     *
+     */
 
-	void Load(IStream stm);
+    void Load(IStream stm);
 
-	/**
-	 * Saves an object to the specified stream.
-	 * 
-	 * (Unimplemented)
-	 * 
-	 */
-	void Save(IStream stm);
+    /**
+     * Saves an object to the specified stream.
+     *
+     * (Unimplemented)
+     *
+     */
+    void Save(IStream stm);
 
-	/**
-	 * Retrieves the size of the stream needed to save the object.
-	 * 
-	 * (Unimplemented)
-	 * 
-	 */
-	void GetSizeMax();
+    /**
+     * Retrieves the size of the stream needed to save the object.
+     *
+     * (Unimplemented)
+     *
+     */
+    void GetSizeMax();
 }

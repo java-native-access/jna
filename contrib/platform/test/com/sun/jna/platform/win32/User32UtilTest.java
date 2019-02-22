@@ -66,7 +66,7 @@ public final class User32UtilTest extends TestCase {
 //        for (RAWINPUTDEVICELIST device : deviceList) {
 //            System.out.append('\t').append("Found device of type: ").println(device.dwType);
 //        }
-	}
+    }
 
     /**
      * Assert we can load a String from the string table of an executable.

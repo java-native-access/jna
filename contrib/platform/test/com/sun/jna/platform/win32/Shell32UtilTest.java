@@ -27,12 +27,12 @@ public class Shell32UtilTest extends TestCase {
         System.out.println("AppData: " + Shell32Util.getFolderPath(ShlObj.CSIDL_APPDATA));
         System.out.println("AppData: " + Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, false));
     }
-    
-	public void testGetFolderPath() {
-		assertTrue(Shell32Util.getFolderPath(ShlObj.CSIDL_WINDOWS).length() > 0);
-	}
 
-	public final void testGetSpecialFolderPath() {
+    public void testGetFolderPath() {
+        assertTrue(Shell32Util.getFolderPath(ShlObj.CSIDL_WINDOWS).length() > 0);
+    }
+
+    public final void testGetSpecialFolderPath() {
         assertFalse(Shell32Util.getSpecialFolderPath(ShlObj.CSIDL_APPDATA, false).isEmpty());
     }
 

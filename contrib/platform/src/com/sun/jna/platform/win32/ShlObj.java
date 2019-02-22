@@ -31,10 +31,10 @@ import com.sun.jna.platform.win32.WinDef.DWORD;
  * @author dblock[at]dblock.org
  */
 public interface ShlObj {
-	
+
     DWORD SHGFP_TYPE_CURRENT = new DWORD(0); // current value for user, verify it exists
     DWORD SHGFP_TYPE_DEFAULT = new DWORD(1); // default value, may not exist
-	
+
     int CSIDL_DESKTOP = 0x0000; // <desktop>
     int CSIDL_INTERNET = 0x0001; // Internet Explorer (icon on desktop)
     int CSIDL_PROGRAMS = 0x0002; // Start Menu\Programs

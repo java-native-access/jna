@@ -33,14 +33,14 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComInterface;
  */
 @ComInterface(iid="{00000000-0000-0000-C000-000000000046}")
 public interface IUnknown {
-	/**
-	 * Returns a proxy object for the given interface. Assuming that the
-	 * interface is annotated with a ComInterface annotation that provides a
-	 * valid iid.
-	 * 
-	 * Will throw COMException if an error occurs trying to retrieve the requested interface,
-	 * see exception cause for details.  
-	 * 
-	 */
-	<T> T queryInterface(Class<T> comInterface) throws COMException;
+    /**
+     * Returns a proxy object for the given interface. Assuming that the
+     * interface is annotated with a ComInterface annotation that provides a
+     * valid iid.
+     * <p>
+     * Will throw COMException if an error occurs trying to retrieve the
+     * requested interface, see exception cause for details.
+     * <p>
+     */
+    <T> T queryInterface(Class<T> comInterface) throws COMException;
 }

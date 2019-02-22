@@ -369,8 +369,8 @@ public class XDesktopDemo extends JFrame {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel3.add(showSubwindows, gbc);
 
-		setContentPane(mainPanel);
-	}
+        setContentPane(mainPanel);
+    }
 
     /**
      * A simple ListModel managing a list of objects.

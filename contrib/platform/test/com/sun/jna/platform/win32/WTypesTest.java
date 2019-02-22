@@ -23,12 +23,12 @@ public class WTypesTest extends TestCase {
     private static final String TEST_STRING = "input";
 
     private static final Pointer TEST_POINTER_WCHAR = new Memory((TEST_STRING.length() + 1L) * Native.WCHAR_SIZE);
-	
-	private static final Pointer TEST_POINTER_CHAR = new Memory(TEST_STRING.length() + 1L);
+
+    private static final Pointer TEST_POINTER_CHAR = new Memory(TEST_STRING.length() + 1L);
 
     static {
         TEST_POINTER_WCHAR.setWideString(0, TEST_STRING);
-		TEST_POINTER_CHAR.setString(0, TEST_STRING);
+        TEST_POINTER_CHAR.setString(0, TEST_STRING);
     }
 
     public void testLPOLESTRConstruction() {
