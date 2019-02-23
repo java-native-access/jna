@@ -1,23 +1,23 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -231,14 +231,14 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     int GetTickCount();
 
     /**
-     * The GetTickCount64 function retrieves the number of milliseconds that 
+     * The GetTickCount64 function retrieves the number of milliseconds that
      * have elapsed since the system was started.
      *
      * @return Number of milliseconds that have elapsed since the system was
      *         started.
      */
     long GetTickCount64();
-  
+
     /**
      * The GetCurrentThreadId function retrieves the thread identifier of the
      * calling thread.
@@ -1321,9 +1321,9 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the caller has enabled the SeDebugPrivilege privilege, the requested
      * access is granted regardless of the contents of the security
      * descriptor.</p>
-     * 
+     *
      * @param fInherit If this value is TRUE, processes created by this process will inherit the handle. Otherwise, the processes do not inherit this handle.
-     * 
+     *
      * @param IDProcess
      *            Specifies the process identifier of the process to open.
      * @return An open handle to the specified process indicates success. NULL
@@ -1418,7 +1418,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Compares a set of operating system version requirements to the
      * corresponding values for the currently running version of the system.
      * This function is subject to manifest-based behavior.
-     * 
+     *
      * @param lpVersionInformation
      *            A pointer to an {@link com.sun.jna.platform.win32.WinNT.OSVERSIONINFOEX} structure
      *            containing the operating system version requirements to
@@ -1456,7 +1456,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * use for a specified operating system version attribute. This function is
      * used to build the {@code dwlConditionMask} parameter of the
      * {@link #VerifyVersionInfoW} function.
-     * 
+     *
      * @param conditionMask
      *            A value to be passed as the {@code dwlConditionMask} parameter
      *            of the {@link #VerifyVersionInfoW} function. The function
@@ -1538,7 +1538,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves information about the relationships of logical processors and
      * related hardware.
-     * 
+     *
      * @param relationshipType
      *            The type of relationship to retrieve. This parameter can be
      *            one of the following values:
@@ -3645,19 +3645,19 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *         not contain module information.
      */
     boolean Module32NextW(HANDLE hSnapshot, Tlhelp32.MODULEENTRY32W lpme);
-    
+
     /**
      * Controls whether the system will handle the specified types of serious
      * errors or whether the process will handle them.
      * @see <a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms680621(v=vs.85).aspx">MSDN</a>
-     * 
+     *
      * @param umode
      *            The process error mode.
      * @return The return value is the previous state of the error-mode bit
      *         flags.
      */
     int SetErrorMode(int umode);
-    
+
     /**
      * Retrieves the address of an exported function or variable from the
      * specified dynamic-link library (DLL).
@@ -3678,7 +3678,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * @return address of the exported function
      */
     Pointer GetProcAddress(HMODULE hmodule, int ordinal) throws LastErrorException;
-    
+
     /**
      * Enables an application to inform the system that it is in use, thereby
      * preventing the system from entering sleep or turning off the display
@@ -3686,7 +3686,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      *
      * @param esFlags The thread's execution requirements. This parameter can be
      *                one or more of the following values (ORed together)
-     * 
+     *
      * <ul>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_AWAYMODE_REQUIRED}</li>
      * <li>{@link com.sun.jna.platform.win32.WinBase#ES_CONTINUOUS}</li>
@@ -3701,18 +3701,18 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * If the function fails, the return value is 0</p>
      */
     int SetThreadExecutionState(int esFlags);
-    
+
     /**
      * Expands environment-variable strings and replaces them with the values
      * defined for the current user.
-     * 
+     *
      * @param lpSrc A buffer that contains one or more environment-variable
      *              strings in the form: %variableName%. For each such
      *              reference, the %variableName% portion is replaced with the
      *              current value of that environment variable.
      *
      *              <p>Case is ignored when looking up the environment-variable
-     *              name. If the name is not found, the %variableName% portion 
+     *              name. If the name is not found, the %variableName% portion
      *              is left unexpanded.</p>
      *
      *              <p>Note that this function does not support all the features
@@ -3743,7 +3743,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
 
     /**
      * Retrieves timing information for the specified process.
-     * 
+     *
      * @param hProcess
      *            A handle to the process whose timing information is sought.
      *            The handle must have the PROCESS_QUERY_INFORMATION or
@@ -3779,7 +3779,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
     /**
      * Retrieves accounting information for all I/O operations performed by the
      * specified process.
-     * 
+     *
      * @param hProcess
      *            A handle to the process. The handle must have the
      *            PROCESS_QUERY_INFORMATION or PROCESS_QUERY_LIMITED_INFORMATION
@@ -3929,7 +3929,7 @@ public interface Kernel32 extends StdCallLibrary, WinNT, Wincon {
      * Ends the calling process (this process) and all its threads.
      *
      * From Java, this will will cause the process to terminate without
-     * execution of any shutdown hooks 
+     * execution of any shutdown hooks
      */
     void ExitProcess(int exitCode);
 }

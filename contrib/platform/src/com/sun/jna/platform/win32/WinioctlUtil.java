@@ -26,7 +26,7 @@ package com.sun.jna.platform.win32;
 /**
  * Winioctl Utility API. Use WinioctlFunction to construct the full control codes for the
  * FSCTL_* functions defined in Winioctl.h
- * 
+ *
  * @author amarcionek[at]gmail.com
  */
 public abstract class WinioctlUtil {

@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -940,7 +940,7 @@ public abstract class Advapi32Util {
             if (s.length() == 0) {
                                 // A sequence of null-terminated strings,
                                 // terminated by an empty string (\0).
-                                // => The first empty string terminates the 
+                                // => The first empty string terminates the
                 break;
             } else {
                 result.add(s);
@@ -1221,14 +1221,14 @@ public abstract class Advapi32Util {
                 // char[] or wchar[] depending on w32.ascii
         Memory byteData = new Memory(lpcbData.getValue() + Native.WCHAR_SIZE);
                 byteData.clear();
-                
+
         rc = Advapi32.INSTANCE.RegGetValue(hkKey, subKey, lpValueName,
                 Advapi32.RRF_RT_ANY, lpType, byteData, lpcbData);
-                
+
                 if(rc != W32Errors.ERROR_SUCCESS) {
                     throw new Win32Exception(rc);
                 }
-                
+
         if (lpType.getValue() == WinNT.REG_DWORD) {
             result = byteData.getInt(0);
         } else if (lpType.getValue() == WinNT.REG_QWORD) {
@@ -1655,9 +1655,9 @@ public abstract class Advapi32Util {
      */
     public static void registrySetStringArray(HKEY hKey, String name,
             String[] arr) {
-            
+
                 int charwidth = W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ? Native.WCHAR_SIZE : 1;
-            
+
         int size = 0;
         for (String s : arr) {
             size += s.length() * charwidth;
@@ -2057,7 +2057,7 @@ public abstract class Advapi32Util {
         }
         TreeMap<String, Object> keyValues = new TreeMap<String, Object>();
         char[] name = new char[lpcMaxValueNameLen.getValue() + 1];
-                // Allocate enough memory to hold largest value and two 
+                // Allocate enough memory to hold largest value and two
                 // terminating WCHARs -- the memory is zeroed so after
                 // value request we should not overread when reading strings
         Memory byteData = new Memory(lpcMaxValueLen.getValue() + 2 * Native.WCHAR_SIZE);
@@ -2143,7 +2143,7 @@ public abstract class Advapi32Util {
                                         if (s.length() == 0) {
                                                 // A sequence of null-terminated strings,
                                                 // terminated by an empty string (\0).
-                                                // => The first empty string terminates the 
+                                                // => The first empty string terminates the
                                                 break;
                                         } else {
                                                 result.add(s);

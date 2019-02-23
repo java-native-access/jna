@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -41,7 +41,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Ported from Winspool.h. Windows SDK 6.0a
- * 
+ *
  * @author dblock[at]dblock.org
  */
 public interface Winspool extends StdCallLibrary {
@@ -154,7 +154,7 @@ public interface Winspool extends StdCallLibrary {
     /**
      * The EnumPrinters function enumerates available printers, print servers,
      * domains, or print providers.
-     * 
+     *
      * @param Flags
      *            The types of print objects that the function should enumerate.
      * @param Name
@@ -219,7 +219,7 @@ public interface Winspool extends StdCallLibrary {
     boolean EnumPrinters(int Flags, String Name, int Level,
             Pointer pPrinterEnum, int cbBuf, IntByReference pcbNeeded,
             IntByReference pcReturned);
-    
+
     /**
      * The GetPrinter function retrieves information about a specified printer.
      *
@@ -508,7 +508,7 @@ public interface Winspool extends StdCallLibrary {
     /**
      * The OpenPrinter function retrieves a handle to the specified printer or
      * print server or other types of handles in the print subsystem.
-     * 
+     *
      * @param pPrinterName
      *            [in] A pointer to a null-terminated string that specifies the
      *            name of the printer or print server, the printer object, the
@@ -528,7 +528,7 @@ public interface Winspool extends StdCallLibrary {
      *            be NULL.
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/dd162751(v=vs.85).aspx">OpenPrinter function</a>
      */
     boolean OpenPrinter(
@@ -578,7 +578,7 @@ public interface Winspool extends StdCallLibrary {
      * FindNextPrinterChangeNotification function to retrieve information about
      * the change, and to reset the change notification object for use in the
      * next wait operation.
-     * 
+     *
      * @param hPrinter
      *            [in] A handle to the printer or print server that you want to
      *            monitor. Use the OpenPrinter or AddPrinter function to
@@ -588,12 +588,12 @@ public interface Winspool extends StdCallLibrary {
      *            to enter a signaled state. A change notification occurs when
      *            one or more of the specified conditions are met. The fdwFilter
      *            parameter can be zero if pPrinterNotifyOptions is non-NULL.
-     * 
+     *
      * @param fdwOptions
-     *            Reserved; must be zero. 
-     * @param pPrinterNotifyOptions 
+     *            Reserved; must be zero.
+     * @param pPrinterNotifyOptions
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
-     *            structure. The pTypes member of this structure is an array of 
+     *            structure. The pTypes member of this structure is an array of
      *            one or more PRINTER_NOTIFY_OPTIONS_TYPE structures, each of which
      *            specifies a printer information field to monitor. A change
      *            notification occurs when one or more of the specified fields
@@ -602,12 +602,12 @@ public interface Winspool extends StdCallLibrary {
      *            new printer information. This parameter can be NULL if
      *            fdwFilter is nonzero. For a list of fields that can be
      *            monitored, see PRINTER_NOTIFY_OPTIONS_TYPE.
-     * 
+     *
      * @return If the function succeeds, the return value is a handle to a
      *         change notification object associated with the specified printer
      *         or print server. If the function fails, the return value is
      *         INVALID_HANDLE_VALUE.
-     * 
+     *
      * @see <a href=
      *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162722(v=vs.85).aspx">
      * FindFirstPrinterChangeNotification function</a>
@@ -630,7 +630,7 @@ public interface Winspool extends StdCallLibrary {
      * changes occurs to the printer or print server. The
      * FindFirstPrinterChangeNotification function creates the change
      * notification object and specifies the set of changes to be monitored.
-     * 
+     *
      * @param hChange
      *            [in] A handle to a change notification object associated with
      *            a printer or print server. You obtain such a handle by calling
@@ -645,7 +645,7 @@ public interface Winspool extends StdCallLibrary {
      *            those specified in the fdwFilter parameter of the
      *            FindFirstPrinterChangeNotification call. The system sets one
      *            or more of the following bit flags.
-     * 
+     *
      * @param pPrinterNotifyOptions
      *            [in, optional] A pointer to a PRINTER_NOTIFY_OPTIONS
      *            structure. Set the Flags member of this structure to
@@ -653,7 +653,7 @@ public interface Winspool extends StdCallLibrary {
      *            return the current data for all monitored printer information
      *            fields. The function ignores all other members of the
      *            structure. This parameter can be NULL.
-     * 
+     *
      * @param ppPrinterNotifyInfo
      *            [out, optional] A pointer to a pointer variable that receives
      *            a pointer to a system-allocated, read-only buffer. Call the
@@ -675,10 +675,10 @@ public interface Winspool extends StdCallLibrary {
      *            no additional notifications will be sent until you make a
      *            second FindNextPrinterChangeNotification call that specifies
      *            PRINTER_NOTIFY_OPTIONS_REFRESH.
-     * 
+     *
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
-     * 
+     *
      * @see <a href=
      *      "http://msdn.microsoft.com/en-us/library/windows/desktop/dd162721(v=vs.85).aspx">
      * FindClosePrinterChangeNotification function</a>
@@ -699,12 +699,12 @@ public interface Winspool extends StdCallLibrary {
      * FindFirstPrinterChangeNotification function. The printer or print server
      * associated with the change notification object will no longer be
      * monitored by that object.
-     * 
+     *
      * @param hChange
      *            [in] A handle to the change notification object to be closed.
      *            This is a handle created by calling the
      *            FindFirstPrinterChangeNotification function.
-     * 
+     *
      * @return If the function succeeds, the return value is a nonzero value. If
      *         the function fails, the return value is zero.
      *

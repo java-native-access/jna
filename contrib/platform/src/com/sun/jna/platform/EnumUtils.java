@@ -1,24 +1,24 @@
 /*
  * Copyright 2014 Martin Steiger
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -59,7 +59,7 @@ public class EnumUtils
 
         throw new IllegalArgumentException();
     }
-    
+
     /**
      * @param idx the enum index
      * @param clazz the enum class
@@ -73,7 +73,7 @@ public class EnumUtils
         E[] vals = clazz.getEnumConstants();
         return vals[idx];
     }
-    
+
     /**
      * @param flags the ORed flags
      * @param clazz the enum class
@@ -83,7 +83,7 @@ public class EnumUtils
     {
         T[] vals = clazz.getEnumConstants();
         Set<T> result = new HashSet<T>();
-        
+
         for (T val : vals)
         {
             if ((flags & val.getFlag()) != 0)
@@ -91,10 +91,10 @@ public class EnumUtils
                 result.add(val);
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * @param set the set to convert
      * @return the flags combined into an integer

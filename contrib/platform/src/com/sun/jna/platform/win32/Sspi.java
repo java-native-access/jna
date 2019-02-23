@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -64,7 +64,6 @@ public interface Sspi {
      */
     int SECURITY_NATIVE_DREP = 0x10;
 
-    
     /**
      * Specifies network data representation.
      */
@@ -296,7 +295,7 @@ public interface Sspi {
      * The pBuffer parameter contains a pointer to a
      * SecPkgContext_ClientSpecifiedTarget structure that represents the service
      * principal name (SPN) of the initial target supplied by the client.
-     * 
+     *
      * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
      * Windows XP:</strong>
      * This value is not supported.</p>
@@ -311,7 +310,7 @@ public interface Sspi {
      *
      * <p>This value is supported only by the Negotiate, Kerberos, and NTLM
      * security packages.</p>
-     * 
+     *
      * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
      * Windows XP:</strong>
      * This value is not supported.</p>
@@ -329,7 +328,7 @@ public interface Sspi {
      * connection.</p>
      *
      * <p>This value is supported only on the CredSSP server.</p>
-     * 
+     *
      * <p><strong>Windows Server 2008, Windows Vista, Windows Server 2003 and
      * Windows XP:</strong>
      * This value is not supported.</p>
@@ -350,8 +349,8 @@ public interface Sspi {
     int SECPKG_NEGOTIATION_IN_PROGRESS = 2;
     int SECPKG_NEGOTIATION_DIRECT = 3;
     int SECPKG_NEGOTIATION_TRY_MULTICRED = 4;
-    
-    
+
+
     // flags for SecPkgInfo fCapabilities
     // (https://msdn.microsoft.com/en-us/library/windows/desktop/aa380104(v=vs.85).aspx)
     /**
@@ -467,7 +466,7 @@ public interface Sspi {
      * only by the Schannel SSP.
      */
     int SECQOP_WRAP_OOB_DATA = 0x40000000;
-    
+
     /**
      * Security handle.
      */
@@ -628,12 +627,12 @@ public interface Sspi {
     /**
      * The SecBufferDesc structure describes an array of SecBuffer structures to
      * pass from a transport application to a security package.
-     * 
+     *
      * <p>SecBufferDesc was introduced because {@link SecBufferDesc} does not
      * correctly cover the case there not exactly one {@link SecBuffer} is
      * passed to the security package.</p>
-     * 
-     * <p>If the SecBufferDesc is managed from the java side, <b>prefer to use 
+     *
+     * <p>If the SecBufferDesc is managed from the java side, <b>prefer to use
      * {@link com.sun.jna.platform.win32.SspiUtil.ManagedSecBufferDesc ManagedSecBufferDesc}.</b></p>
      */
     @FieldOrder({"ulVersion", "cBuffers", "pBuffers"})
@@ -658,7 +657,7 @@ public interface Sspi {
             super();
         }
     }
-    
+
     /**
      * A security integer.
      */
@@ -809,7 +808,7 @@ public interface Sspi {
 
         /**
          * Free native buffer
-         * 
+         *
          * @return {@link WinError#SEC_E_OK} if ok
          */
         public synchronized int free() {
@@ -821,7 +820,7 @@ public interface Sspi {
             return WinError.SEC_E_OK;
         }
     }
-    
+
     /**
      * The SecPkgContext_Sizes structure indicates the sizes of important
      * structures used in the message support functions.
@@ -943,14 +942,14 @@ public interface Sspi {
             }
             return Boolean.getBoolean("w32.ascii") ? sSignatureAlgorithmName.getString(0) : sSignatureAlgorithmName.getWideString(0);
         }
-        
+
         public synchronized String getEncryptAlgorithmName() {
             if(sEncryptAlgorithmName == null) {
                 return null;
             }
             return Boolean.getBoolean("w32.ascii") ? sEncryptAlgorithmName.getString(0) : sEncryptAlgorithmName.getWideString(0);
         }
-        
+
         public synchronized void free() {
             if(sSignatureAlgorithmName != null) {
                 Secur32.INSTANCE.FreeContextBuffer(sSignatureAlgorithmName);
@@ -1032,7 +1031,7 @@ public interface Sspi {
             super(W32APITypeMapper.DEFAULT);
         }
     }
-    
+
     /**
      * Strings in structure {@link SEC_WINNT_AUTH_IDENTITY} are ANSI
      */

@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -55,11 +55,11 @@ import javax.swing.Timer;
 import com.sun.jna.platform.WindowUtils;
 
 /**
- * The BalloonTipManager class handles creation and disposal of balloon style 
+ * The BalloonTipManager class handles creation and disposal of balloon style
  * tips that are typically used to display warning/error information based on
  * results from input validation.  The balloon tip location and direction are
  * computed based on the owner component location on the screen.  The balloon
- * tip is only displayed for a limited amount of time that is configurable.  
+ * tip is only displayed for a limited amount of time that is configurable.
  * The balloon tip is also disposed when the owner component loses focus or the
  * mouse is pressed.
  */
@@ -67,7 +67,7 @@ public class BalloonTipManager {
   public static final Color DEFAULT_BORDER_COLOR = Color.BLACK;
   public static final Color DEFAULT_BACKGROUND_COLOR = new Color(255, 255, 225);
   public static final Color DEFAULT_TEXT_COLOR = Color.BLACK;
-  
+
   private static final Integer VPOS_ABOVE = 0; // Positioned above component.
   private static final Integer VPOS_BELOW = 1; // Positioned below component.
   private static final Integer HPOS_LEFT = 0; // Arrow is on the left side.
@@ -75,11 +75,11 @@ public class BalloonTipManager {
 
   private static Integer vpos = null;
   private static Integer hpos = null;
-  
+
   private static Timer hidePopupTimer = null;
   private static boolean isShowing = false;
-  
-  
+
+
   /*
    * The BalloonTip class defines the look of the BalloonTip object.
    */
@@ -89,15 +89,15 @@ public class BalloonTipManager {
     private static final Integer VMARGIN = 6;
     private static final Integer VSPACER = 4;
     private static final int ARC_D = 16;
-    
+
     private Area mask = null;
     private Dimension maskSize = null;
     private String[] textList = null;
-    
+
     private Color backgroundColor = null;
     private Color borderColor = null;
     private Color textColor = null;
-    
+
     /**
      * Create a BalloonTip object.
      * @param owner the parent window for the components
@@ -122,7 +122,7 @@ public class BalloonTipManager {
       setName("###overrideRedirect###");
       setSize(getPreferredSize());
     }
-    
+
     /*
      * Sets the mask for the Balloon Tip.
      */
@@ -131,7 +131,7 @@ public class BalloonTipManager {
       maskSize = getSize();
       WindowUtils.setWindowMask(BalloonTip.this, mask);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see java.awt.Container#paint(java.awt.Graphics)
@@ -215,7 +215,7 @@ public class BalloonTipManager {
         g.drawString(textList[i], HMARGIN, stringY);
       }
     }
-    
+
     /*
      * Returns the mask for the balloon tip window.
      */
@@ -280,7 +280,7 @@ public class BalloonTipManager {
       }
       return area;
     }
-    
+
     /*
      * Returns the dimension of the window based on the preferred component
      * sizes.
@@ -298,7 +298,7 @@ public class BalloonTipManager {
       int h = Math.max(textHeight + (textList.length - 1) * VSPACER, 8);
       return new Dimension(w, h);
     }
-    
+
     /*
      * (non-Javadoc)
      * @see java.awt.Window#setBounds(int, int, int, int)
@@ -312,7 +312,7 @@ public class BalloonTipManager {
         maskSize = size;
       }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see java.awt.Container#getPreferredSize()
@@ -324,7 +324,7 @@ public class BalloonTipManager {
       return new Dimension(w, h);
     }
   }
-  
+
 
   /**
    * Returns the popup window of the balloon tip.
@@ -345,7 +345,7 @@ public class BalloonTipManager {
     return getBalloonTip(owner, content, x, y, duration, DEFAULT_BORDER_COLOR,
       DEFAULT_BACKGROUND_COLOR, DEFAULT_TEXT_COLOR);
   }
-  
+
   /**
    * Returns whether the popup is showing or not.
    * @return true if the popup is showing, else false
@@ -353,14 +353,14 @@ public class BalloonTipManager {
   public static boolean isShowing () {
     return isShowing;
   }
-  
+
   /**
    * Restarts the popup timer.
    */
   public static void restartTimer () {
     hidePopupTimer.restart();
   }
-  
+
   /**
    * Returns the popup window of the balloon tip.
    * @param owner the owner component for the balloon tip
@@ -398,7 +398,7 @@ public class BalloonTipManager {
       final ComponentEar componentEar = new ComponentEar();
       final MouseEar mouseEar = new MouseEar();
       final FocusEar focusEar = new FocusEar();
-      
+
       /*
        * (non-Javadoc)
        * @see javax.swing.Popup#show()
@@ -420,7 +420,7 @@ public class BalloonTipManager {
         hidePopupTimer.start();
         isShowing = true;
       }
-      
+
       /*
        * (non-Javadoc)
        * @see javax.swing.Popup#hide()
@@ -437,7 +437,7 @@ public class BalloonTipManager {
           bt.dispose();
         }
       }
-      
+
       /*
        * Adjust the location of the balloon popup so that is drawn completely
        * on the screen and specify the orientation.
@@ -451,7 +451,7 @@ public class BalloonTipManager {
         sBounds.y += sInsets.top;
         sBounds.width -= (sInsets.left + sInsets.right);
         sBounds.height -= (sInsets.top + sInsets.bottom);
-        
+
         if (ret.x < sBounds.x) {
           ret.x = sBounds.x;
         }
@@ -479,7 +479,7 @@ public class BalloonTipManager {
         }
         return ret;
       }
-      
+
       /*
        * This class handles actions from the balloon tip timer.
        */
@@ -494,7 +494,7 @@ public class BalloonTipManager {
           hide();
         }
       }
-      
+
       /*
        * This class handles events spawned from moving the component.
        */
@@ -508,7 +508,7 @@ public class BalloonTipManager {
           hide();
         }
       }
-      
+
       /*
        * This class handles events spawned when a mouse button is pressed.
        */

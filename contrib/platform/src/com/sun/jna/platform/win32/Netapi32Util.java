@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -59,7 +59,7 @@ public abstract class Netapi32Util {
      */
     public static class User {
         /**
-         * The name of the user account. 
+         * The name of the user account.
          */
         public String name;
         /**
@@ -67,7 +67,7 @@ public abstract class Netapi32Util {
          */
         public String comment;
     }
-    
+
     public static class UserInfo extends User {
         /**
          * The full name belonging to the user account
@@ -107,12 +107,12 @@ public abstract class Netapi32Util {
 
     /**
      * Returns the name of the primary domain controller (PDC).
-     * @param serverName 
+     * @param serverName
      *     Specifies the DNS or NetBIOS name of the remote server on which the function is
      *     to execute.
      * @param domainName
      *     Specifies the name of the domain.
-     * @return 
+     * @return
      *  Name of the primary domain controller.
      */
     public static String getDCName(String serverName, String domainName) {
@@ -131,7 +131,7 @@ public abstract class Netapi32Util {
     }
 
     /**
-     * Return the domain/workgroup join status for a computer. 
+     * Return the domain/workgroup join status for a computer.
      * @return Join status.
      */
     public static int getJoinStatus() {
@@ -139,7 +139,7 @@ public abstract class Netapi32Util {
     }
 
     /**
-     * Return the domain/workgroup join status for a computer. 
+     * Return the domain/workgroup join status for a computer.
      * @param computerName Computer name.
      * @return Join status.
      */
@@ -214,7 +214,7 @@ public abstract class Netapi32Util {
             LMAccess.LOCALGROUP_INFO_1 group = new LMAccess.LOCALGROUP_INFO_1(bufptr.getValue());
             LMAccess.LOCALGROUP_INFO_1[] groups = (LOCALGROUP_INFO_1[]) group.toArray(entriesRead.getValue());
 
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
+            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>();
             for(LOCALGROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.lgrui1_name != null) {
@@ -254,8 +254,8 @@ public abstract class Netapi32Util {
         IntByReference entriesRead = new IntByReference();
         IntByReference totalEntries = new IntByReference();
         try {
-            int rc = Netapi32.INSTANCE.NetGroupEnum(serverName, 1, bufptr, 
-                                                    LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
+            int rc = Netapi32.INSTANCE.NetGroupEnum(serverName, 1, bufptr,
+                                                    LMCons.MAX_PREFERRED_LENGTH, entriesRead,
                                                     totalEntries, null);
             if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
                 throw new Win32Exception(rc);
@@ -263,7 +263,7 @@ public abstract class Netapi32Util {
             LMAccess.GROUP_INFO_1 group = new LMAccess.GROUP_INFO_1(bufptr.getValue());
             LMAccess.GROUP_INFO_1[] groups = (LMAccess.GROUP_INFO_1[]) group.toArray(entriesRead.getValue());
 
-            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>(); 
+            ArrayList<LocalGroup> result = new ArrayList<LocalGroup>();
             for(LMAccess.GROUP_INFO_1 lgpi : groups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.grpi1_name != null) {
@@ -305,14 +305,14 @@ public abstract class Netapi32Util {
         try {
             int rc = Netapi32.INSTANCE.NetUserEnum(
                     serverName, 1, 0, bufptr,
-                    LMCons.MAX_PREFERRED_LENGTH, entriesRead, 
+                    LMCons.MAX_PREFERRED_LENGTH, entriesRead,
                     totalEntries, null);
             if (LMErr.NERR_Success != rc || bufptr.getValue() == Pointer.NULL) {
                 throw new Win32Exception(rc);
             }
             LMAccess.USER_INFO_1 user = new LMAccess.USER_INFO_1(bufptr.getValue());
             LMAccess.USER_INFO_1[] users = (LMAccess.USER_INFO_1[]) user.toArray(entriesRead.getValue());
-            ArrayList<User> result = new ArrayList<User>(); 
+            ArrayList<User> result = new ArrayList<User>();
             for(LMAccess.USER_INFO_1 lu : users) {
                 User auser = new User();
                 if (lu.usri1_name != null) {
@@ -367,7 +367,7 @@ public abstract class Netapi32Util {
             }
             LOCALGROUP_USERS_INFO_0 lgroup = new LOCALGROUP_USERS_INFO_0(bufptr.getValue());
             LOCALGROUP_USERS_INFO_0[] lgroups = (LOCALGROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
-            ArrayList<Group> result = new ArrayList<Group>(); 
+            ArrayList<Group> result = new ArrayList<Group>();
             for (LOCALGROUP_USERS_INFO_0 lgpi : lgroups) {
                 LocalGroup lgp = new LocalGroup();
                 if (lgpi.lgrui0_name != null) {
@@ -414,7 +414,7 @@ public abstract class Netapi32Util {
             }
             GROUP_USERS_INFO_0 lgroup = new GROUP_USERS_INFO_0(bufptr.getValue());
             GROUP_USERS_INFO_0[] lgroups = (GROUP_USERS_INFO_0[]) lgroup.toArray(entriesread.getValue());
-            ArrayList<Group> result = new ArrayList<Group>(); 
+            ArrayList<Group> result = new ArrayList<Group>();
             for (GROUP_USERS_INFO_0 lgpi : lgroups) {
                 Group lgp = new Group();
                 if (lgpi.grui0_name != null) {
@@ -446,7 +446,7 @@ public abstract class Netapi32Util {
          */
         public String address;
         /**
-         * Indicates the type of string that is contained in the 
+         * Indicates the type of string that is contained in the
          * DomainControllerAddress member.
          */
         public int addressType;
@@ -455,16 +455,16 @@ public abstract class Netapi32Util {
          */
         public GUID domainGuid;
         /**
-         * Pointer to a null-terminated string that specifies the name of the domain. 
+         * Pointer to a null-terminated string that specifies the name of the domain.
          */
         public String domainName;
         /**
-         * Pointer to a null-terminated string that specifies the name of the domain at the root 
+         * Pointer to a null-terminated string that specifies the name of the domain at the root
          * of the DS tree.
          */
         public String dnsForestName;
         /**
-         * Contains a set of flags that describe the domain controller. 
+         * Contains a set of flags that describe the domain controller.
          */
         public int flags;
         /**
@@ -527,7 +527,7 @@ public abstract class Netapi32Util {
          */
         public PSID DomainSid;
         /**
-         * Contains the string representation of the security identifier of the domain 
+         * Contains the string representation of the security identifier of the domain
          * represented by this structure.
          */
         public String DomainSidString;
@@ -536,7 +536,7 @@ public abstract class Netapi32Util {
          */
         public GUID DomainGuid;
         /**
-         * Contains the string representation of the GUID of the domain represented by 
+         * Contains the string representation of the GUID of the domain represented by
          * this structure.
          */
         public String DomainGuidString;
@@ -547,36 +547,36 @@ public abstract class Netapi32Util {
         private int flags;
 
         /**
-         * The domain represented by this structure is a member of the same forest 
-         * as the server specified in the ServerName parameter of the 
+         * The domain represented by this structure is a member of the same forest
+         * as the server specified in the ServerName parameter of the
          * DsEnumerateDomainTrusts function.
          * @return
          *  True or false.
          */
-        public boolean isInForest() { 
-            return (flags & DsGetDC.DS_DOMAIN_IN_FOREST) != 0; 
+        public boolean isInForest() {
+            return (flags & DsGetDC.DS_DOMAIN_IN_FOREST) != 0;
         }
 
         /**
          * The domain represented by this structure is directly trusted by the domain
-         * that the server specified in the ServerName parameter of the 
+         * that the server specified in the ServerName parameter of the
          * DsEnumerateDomainTrusts function is a member of.
          * @return
          *  True or false.
          */
-        public boolean isOutbound() { 
-            return (flags & DsGetDC.DS_DOMAIN_DIRECT_OUTBOUND) != 0; 
+        public boolean isOutbound() {
+            return (flags & DsGetDC.DS_DOMAIN_DIRECT_OUTBOUND) != 0;
         }
 
         /**
-         * The domain represented by this structure is the root of a tree and a member 
+         * The domain represented by this structure is the root of a tree and a member
          * of the same forest as the server specified in the ServerName parameter of the
          * DsEnumerateDomainTrusts function.
          * @return
          *  True or false.
          */
-        public boolean isRoot() { 
-            return (flags & DsGetDC.DS_DOMAIN_TREE_ROOT) != 0; 
+        public boolean isRoot() {
+            return (flags & DsGetDC.DS_DOMAIN_TREE_ROOT) != 0;
         }
 
         /**
@@ -585,8 +585,8 @@ public abstract class Netapi32Util {
          * @return
          *  True or false.
          */
-        public boolean isPrimary() { 
-            return (flags & DsGetDC.DS_DOMAIN_PRIMARY) != 0; 
+        public boolean isPrimary() {
+            return (flags & DsGetDC.DS_DOMAIN_PRIMARY) != 0;
         }
 
         /**
@@ -595,7 +595,7 @@ public abstract class Netapi32Util {
          *  True or false.
          */
         public boolean isNativeMode() {
-            return (flags & DsGetDC.DS_DOMAIN_NATIVE_MODE) != 0; 
+            return (flags & DsGetDC.DS_DOMAIN_NATIVE_MODE) != 0;
         }
 
         /**
@@ -605,8 +605,8 @@ public abstract class Netapi32Util {
          * @return
          *  True or false.
          */
-        public boolean isInbound() { 
-            return (flags & DsGetDC.DS_DOMAIN_DIRECT_INBOUND) != 0; 
+        public boolean isInbound() {
+            return (flags & DsGetDC.DS_DOMAIN_DIRECT_INBOUND) != 0;
         }
     }
 

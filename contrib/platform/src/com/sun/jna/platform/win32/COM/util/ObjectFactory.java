@@ -1,23 +1,23 @@
 /* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -70,7 +70,7 @@ public class ObjectFactory {
          */
         public IRunningObjectTable getRunningObjectTable() {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
                 final PointerByReference rotPtr = new PointerByReference();
 
                 HRESULT hr = Ole32.INSTANCE.GetRunningObjectTable(new WinDef.DWORD(0), rotPtr);
@@ -88,7 +88,7 @@ public class ObjectFactory {
          */
         public <T> T createProxy(Class<T> comInterface, IDispatch dispatch) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
                 ProxyObject jop = new ProxyObject(comInterface, dispatch, this);
                 Object proxy = Proxy.newProxyInstance(comInterface.getClassLoader(), new Class<?>[] { comInterface }, jop);
                 T result = comInterface.cast(proxy);
@@ -101,7 +101,7 @@ public class ObjectFactory {
          */
         public <T> T createObject(Class<T> comInterface) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
                 ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
                 if (null == comObectAnnotation) {
                         throw new COMException(
@@ -128,7 +128,7 @@ public class ObjectFactory {
          */
         public <T> T fetchObject(Class<T> comInterface) throws COMException {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
                 ComObject comObectAnnotation = comInterface.getAnnotation(ComObject.class);
                 if (null == comObectAnnotation) {
                         throw new COMException(
@@ -151,7 +151,7 @@ public class ObjectFactory {
 
         GUID discoverClsId(ComObject annotation) {
                 assert COMUtils.comIsInitialized() : "COM not initialized";
-            
+
                 String clsIdStr = annotation.clsId();
                 final String progIdStr = annotation.progId();
                 if (null != clsIdStr && !clsIdStr.isEmpty()) {
@@ -167,7 +167,7 @@ public class ObjectFactory {
                         throw new COMException("ComObject must define a value for either clsId or progId");
                 }
         }
-        
+
         IDispatchCallback createDispatchCallback(Class<?> comEventCallbackInterface, IComEventCallbackListener comEventCallbackListener) {
             return new CallbackProxy(this, comEventCallbackInterface, comEventCallbackListener);
         }
@@ -211,17 +211,17 @@ public class ObjectFactory {
                 this.registeredObjects.clear();
             }
         }
-        
+
         /**
          * The Constant LOCALE_USER_DEFAULT.
          */
         private final static LCID LOCALE_USER_DEFAULT = Kernel32.INSTANCE.GetUserDefaultLCID();
-    
+
         private LCID LCID;
-        
+
         /**
-         * Retrieve the LCID to be used for COM calls. 
-         * 
+         * Retrieve the LCID to be used for COM calls.
+         *
          * @return If {@code setLCID} is not called retrieves the users default
          *         locale, else the set LCID.
          */
@@ -232,10 +232,10 @@ public class ObjectFactory {
                 return LOCALE_USER_DEFAULT;
             }
         }
-        
+
         /**
          * Set the LCID to use for COM calls.
-         * 
+         *
          * @param value override LCID. NULL resets to default.
          */
         public void setLCID(LCID value) {

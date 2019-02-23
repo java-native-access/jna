@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -63,19 +63,19 @@ public class FilteredTextField extends JTextField {
     'u', 'v', 'w', 'x', 'y', 'z'};
   public static final Character[] NUMERIC_CHARS = {'1', '2', '3', '4', '5',
     '6', '7', '8', '9', '0'};
-  
+
   private static final Integer ENTRY_BALLOON = 0;
   private static final Integer VALID_BALLOON = 1;
   private static final Integer LENGTH_BALLOON = 2;
   private static final Border RED_BORDER =
     BorderFactory.createLineBorder(Color.RED, 2);
-  
+
   private ArrayList<Character> allowable = new ArrayList<Character>();
   private int maximumLength = String.valueOf(Long.MAX_VALUE).length();
-  
+
   private Border defaultBorder = null;
   private boolean isValid = true;
-  
+
   private Popup balloon = null;
   private String entryError = null;
   private String validRegex = null;
@@ -84,9 +84,9 @@ public class FilteredTextField extends JTextField {
   private Color balloonBackgroundColor = null;
   private Color balloonTextColor = null;
   private Integer balloonDuration = null;
-  
+
   private Integer balloonType = null;
-  
+
   /**
    * Create a FilteredTextField.
    */
@@ -94,7 +94,7 @@ public class FilteredTextField extends JTextField {
     super();
     init();
   }
-  
+
   /**
    * Create a FilteredTextField.
    * @param columns the number of columns to use to calculate the preferred
@@ -104,7 +104,7 @@ public class FilteredTextField extends JTextField {
     super(columns);
     init();
   }
-  
+
   /*
    * Initialize the FilteredTextField.
    */
@@ -120,7 +120,7 @@ public class FilteredTextField extends JTextField {
     balloonType = ENTRY_BALLOON;
     addFocusListener(new ValidationEar());
   }
-  
+
   /**
    * Sets the allowable character used for entry validation.
    * @param characters the allowable characters
@@ -131,7 +131,7 @@ public class FilteredTextField extends JTextField {
       addCharacter(characters[i]);
     }
   }
-  
+
   /**
    * Adds the character array to the list used for entry validation.
    * @param characters the character array
@@ -141,7 +141,7 @@ public class FilteredTextField extends JTextField {
       addCharacter(characters[i]);
     }
   }
-  
+
   /**
    * Adds the character to the list used for entry validation.
    * @param characters the character
@@ -151,14 +151,14 @@ public class FilteredTextField extends JTextField {
       allowable.add(character);
     }
   }
-  
+
   /**
    * Clears the list of allowable characters for entry validation.
    */
   public void clearCharacters () {
     allowable.clear();
   }
-  
+
   /**
    * Removes the character array from the list used for entry validation.
    * @param characters the character array
@@ -168,7 +168,7 @@ public class FilteredTextField extends JTextField {
       removeCharacter(characters[i]);
     }
   }
-  
+
   /**
    * Removes the character from the list used for entry validation.
    * @param character the character
@@ -178,7 +178,7 @@ public class FilteredTextField extends JTextField {
       allowable.remove(character);
     }
   }
-  
+
   /**
    * Sets the maximum number of characters for the length of the entry string.
    * @param maximumLength the number of characters
@@ -186,7 +186,7 @@ public class FilteredTextField extends JTextField {
   public void setMaximumLength (int maximumLength) {
     this.maximumLength = maximumLength;
   }
-  
+
   /**
    * Sets the message that is displayed when there is an entry error.
    * @param entryError the entry error message
@@ -194,7 +194,7 @@ public class FilteredTextField extends JTextField {
   public void setEntryError (String entryError) {
     this.entryError = entryError;
   }
-  
+
   /**
    * Sets the regular expression that is used for string validation.  String
    * validation is checked when exiting the text field.
@@ -203,7 +203,7 @@ public class FilteredTextField extends JTextField {
   public void setValidRegex (String validRegex) {
     this.validRegex = validRegex;
   }
-  
+
   /**
    * Sets the message that is displayed when there is a validation error.
    * @param validError the validation error message
@@ -211,7 +211,7 @@ public class FilteredTextField extends JTextField {
   public void setValidError (String validError) {
     this.validError = validError;
   }
-  
+
   /**
    * Sets the color to use for the balloon border.
    * @param borderColor the balloon border color
@@ -219,7 +219,7 @@ public class FilteredTextField extends JTextField {
   public void setBalloonBorderColor (Color borderColor) {
     balloonBorderColor = borderColor;
   }
-  
+
   /**
    * Sets the color to use for the balloon background.
    * @param backgroundColor the balloon background color
@@ -227,7 +227,7 @@ public class FilteredTextField extends JTextField {
   public void setBalloonBackgroundColor (Color backgroundColor) {
     balloonBackgroundColor = backgroundColor;
   }
-  
+
   /**
    * Sets the color to use for the balloon text.
    * @param textColor the balloon text color
@@ -235,7 +235,7 @@ public class FilteredTextField extends JTextField {
   public void setBalloonTextColor (Color textColor) {
     balloonTextColor = textColor;
   }
-  
+
   /**
    * Sets the time in milliseconds that the balloon is visible before
    * disappearing.  This is the maximum time that the balloon will be visible,
@@ -245,7 +245,7 @@ public class FilteredTextField extends JTextField {
   public void setBalloonDuration (Integer duration) {
     balloonDuration = duration;
   }
-  
+
   /*
    * (non-Javadoc)
    * @see javax.swing.JTextField#createDefaultModel()
@@ -253,7 +253,7 @@ public class FilteredTextField extends JTextField {
   protected Document createDefaultModel () {
     return new FilteredTextFieldDocument();
   }
-  
+
   /*
    * This class defines the document used for the FilteredTextField.
    */
@@ -264,7 +264,7 @@ public class FilteredTextField extends JTextField {
     public FilteredTextFieldDocument () {
       addDocumentListener(new FilteredTextFieldEar());
     }
-    
+
     /*
      * (non-Javadoc)
      * @see javax.swing.text.PlainDocument#insertString(
@@ -283,7 +283,7 @@ public class FilteredTextField extends JTextField {
       if (offset >= 0 && offset <= buffer.length()) {
         buffer.insert(offset, str);
         String strBuf = buffer.toString();
-        
+
         if (buffer.length() > maximumLength) {
           if (balloon != null && BalloonTipManager.isShowing()) {
             if (balloonType == LENGTH_BALLOON) {
@@ -302,7 +302,7 @@ public class FilteredTextField extends JTextField {
           balloonType = LENGTH_BALLOON;
           return;
         }
-        
+
         if (strBuf == null || strBuf.equals("")) {
           remove(0, getLength());
           super.insertString(0, "", null);
@@ -336,7 +336,7 @@ public class FilteredTextField extends JTextField {
         }
       }
     }
-    
+
     /*
      * This listener class is needed to catch character removal events.
      */
@@ -347,7 +347,7 @@ public class FilteredTextField extends JTextField {
        * javax.swing.event.DocumentEvent)
        */
       public void insertUpdate (DocumentEvent e) {/* N/A */}
-      
+
       /*
        * (non-Javadoc)
        * @see javax.swing.event.DocumentListener#removeUpdate(
@@ -359,7 +359,7 @@ public class FilteredTextField extends JTextField {
           balloon.hide();
         }
       }
-      
+
       /*
        * (non-Javadoc)
        * @see javax.swing.event.DocumentListener#changedUpdate(
@@ -394,7 +394,7 @@ public class FilteredTextField extends JTextField {
         isValid = true;
       }
     }
-    
+
     /*
      * (non-Javadoc)
      * @see java.awt.event.FocusAdapter#focusGained(java.awt.event.FocusEvent)

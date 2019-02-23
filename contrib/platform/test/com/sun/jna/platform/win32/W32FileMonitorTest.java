@@ -8,7 +8,7 @@
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -34,7 +34,7 @@ public class W32FileMonitorTest extends TestCase {
     private Map<Integer, FileEvent> events;
     private FileMonitor monitor;
     private File tmpdir;
-    
+
     protected void setUp() throws Exception {
         events = new HashMap<Integer, FileEvent>();
         final FileListener listener = new FileListener() {
@@ -46,20 +46,20 @@ public class W32FileMonitorTest extends TestCase {
         monitor.addFileListener(listener);
         tmpdir = new File(Kernel32Util.getTempPath());
     }
-    
+
     protected void tearDown() {
         if (monitor != null) {
             monitor.dispose();
         }
     }
-    
+
     public void testNotifyOnFileCreation() throws Exception {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
         file.deleteOnExit();
         assertFileEventCreated(file);
     }
-    
+
     public void testNotifyOnFileDelete() throws Exception {
         monitor.addWatch(tmpdir);
         File file = File.createTempFile(getName(), ".tmp", tmpdir);
@@ -69,7 +69,7 @@ public class W32FileMonitorTest extends TestCase {
         assertNotNull("No delete event: " + events, event);
         assertEquals("Wrong target file for event", file, event.getFile());
     }
-    
+
     public void testNotifyOnFileDeleteViaAddWatchMask() throws Exception {
         if (!Platform.isWindows()) return;
 
@@ -114,7 +114,7 @@ public class W32FileMonitorTest extends TestCase {
         assertNotNull("No file modified event: " + events, event);
         assertEquals("Wrong target file for event (old)", file, event.getFile());
     }
-    
+
     private void delete(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();

@@ -44,13 +44,13 @@ public class BuildArmSoftFloatDetector {
     /**
      * targetProperty receives the name of the property, that should take the
      * new property
-     * 
-     * @param targetProperty 
+     *
+     * @param targetProperty
      */
     public void setTargetProperty(String targetProperty) {
         this.targetProperty = targetProperty;
     }
-    
+
     public void execute() throws IOException {
         boolean result = false;
         // On linux /proc/self/exe is a symblink to the currently executing

@@ -56,7 +56,7 @@ public class ShellApplicationWindowsTest {
 
         // Finally, did we find our page in the collection?
         assertTrue("No IE page was found", pageFound);
-        
+
         Ole32.INSTANCE.CoUninitialize();
     }
 

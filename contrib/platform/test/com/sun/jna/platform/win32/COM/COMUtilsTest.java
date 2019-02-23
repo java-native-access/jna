@@ -20,7 +20,7 @@ public class COMUtilsTest {
         assertFalse(COMUtils.FAILED(COMUtils.S_FALSE));
         assertTrue(COMUtils.FAILED(COMUtils.E_UNEXPECTED));
     }
-    
+
     @Test(expected = COMException.class)
     public void testCreateCOMExceptionFromCustomHRESULT() {
         // This resulted in a LastErrorException instead of COMException

@@ -16,7 +16,7 @@ public class IShellFolderTest extends TestCase {
     static {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
-        
+
     private IShellFolder psfMyComputer;
 
     public static WinNT.HRESULT BindToCsidl(int csidl, Guid.REFIID riid, PointerByReference ppv) {
@@ -38,7 +38,7 @@ public class IShellFolderTest extends TestCase {
         Ole32.INSTANCE.CoTaskMemFree(pidl.getValue());
         return hr;
     }
-    
+
     public void setUp() throws Exception {
         WinNT.HRESULT hr = Ole32.INSTANCE.CoInitialize(null);
         assertTrue(COMUtils.SUCCEEDED(hr));

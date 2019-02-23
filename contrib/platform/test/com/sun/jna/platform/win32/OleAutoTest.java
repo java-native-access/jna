@@ -77,7 +77,7 @@ public class OleAutoTest extends TestCase {
         assertEquals("Variant-Value", "True", variant2.stringValue());
         OleAuto.INSTANCE.VariantClear(variant2);
     }
-    
+
     public void testVariantConvertBSTR() {
         VARIANT variant = new Variant.VARIANT("42");
         OleAuto.INSTANCE.VariantChangeType(variant, variant, (short) 0, new VARTYPE(Variant.VT_INT));

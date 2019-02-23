@@ -315,7 +315,7 @@ public class ComEventCallbacksObjectFactory_Test {
         Assert.assertNotNull("URL passed to NavigateComplete2 was NULL", listener.navigateComplete2URL);
         Assert.assertThat(listener.navigateComplete2URL, CoreMatchers.startsWith("https://github.com/java-native-access/jna"));
     }
-        
+
     @Test
     public void adviseBeforeNavigate() throws InterruptedException {
         ComInternetExplorer ieApp = factory.createObject(ComInternetExplorer.class);
@@ -341,7 +341,7 @@ public class ComEventCallbacksObjectFactory_Test {
         // NavigateComplete can't be called if access is blocked
         Assert.assertFalse("Navigation to https://github.com/java-native-access/jna should be blocked", listener.navigateComplete2Called);
     }
-        
+
     @Test
     public void testComEventCallback() {
         DWebBrowserEvents2_Listener listener = new DWebBrowserEvents2_Listener();
@@ -379,7 +379,7 @@ public class ComEventCallbacksObjectFactory_Test {
         hr = proxy.QueryInterface(new REFIID(new IID("{00000000-0000-0000-C000-000000000000}")), interfacePointer);
         assertTrue(COMUtils.FAILED(hr));
     }
-        
+
     // This tests, that the IConnectionPoint interface can be queried
     // via queryInterface and does not require the primary interface
     // to extends IConnectionPoint

@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -563,13 +563,13 @@ public interface WinUser extends WinDef {
      * associated with the thread that registered the hot key.
      */
     int WM_HOTKEY = 0x0312;
-    
+
     /**
      * Used to define private messages for use by private window classes,
      * usually of the form WM_USER+x, where x is an integer value.
      */
     int WM_USER = 0x0400;
-    
+
     /**
      * An application sends the WM_COPYDATA message to pass data to another application.
      */
@@ -815,81 +815,81 @@ public interface WinUser extends WinDef {
     int GW_ENABLEDPOPUP = 6;
 
     /**
-     * If the calling thread and the thread that owns the window are attached 
-     * to different input queues, the system posts the request to the thread 
-     * that owns the window. This prevents the calling thread from blocking 
+     * If the calling thread and the thread that owns the window are attached
+     * to different input queues, the system posts the request to the thread
+     * that owns the window. This prevents the calling thread from blocking
      * its execution while other threads process the request.
      */
-    int SWP_ASYNCWINDOWPOS = 0x4000; 
+    int SWP_ASYNCWINDOWPOS = 0x4000;
 
     /**
      * Prevents generation of the WM_SYNCPAINT message.
      */
     int SWP_DEFERERASE = 0x2000;
-    
+
     /**
      * Draws a frame (defined in the window's class description) around the window.
      */
     int SWP_DRAWFRAME = 0x0020;
-    
+
     /**
-     * Applies new frame styles set using the SetWindowLong function. Sends 
-     * a WM_NCCALCSIZE message to the window, even if the window's size is 
-     * not being changed. If this flag is not specified, WM_NCCALCSIZE is 
+     * Applies new frame styles set using the SetWindowLong function. Sends
+     * a WM_NCCALCSIZE message to the window, even if the window's size is
+     * not being changed. If this flag is not specified, WM_NCCALCSIZE is
      * sent only when the window's size is being changed.
      */
     int SWP_FRAMECHANGED = 0x0020;
-    
+
     /**
      * Hides the window.
      */
     int SWP_HIDEWINDOW = 0x0080;
-    
+
     /**
-     * Does not activate the window. If this flag is not set, the window is 
-     * activated and moved to the top of either the topmost or non-topmost 
+     * Does not activate the window. If this flag is not set, the window is
+     * activated and moved to the top of either the topmost or non-topmost
      * group (depending on the setting of the hWndInsertAfter parameter).
      */
     int SWP_NOACTIVATE = 0x0010;
-    
+
     /**
-     * Discards the entire contents of the client area. If this flag is not 
-     * specified, the valid contents of the client area are saved and copied 
+     * Discards the entire contents of the client area. If this flag is not
+     * specified, the valid contents of the client area are saved and copied
      * back into the client area after the window is sized or repositioned.
      */
     int SWP_NOCOPYBITS = 0x0100;
-    
+
     /**
      * Retains the current position (ignores X and Y parameters).
      */
     int SWP_NOMOVE = 0x0002;
-    
+
     /**
      * Does not change the owner window's position in the Z order.
      */
     int SWP_NOOWNERZORDER = 0x0200;
-    
+
     /**
      * Does not redraw changes. If this flag is set, no repainting of any kind
      *  occurs. This applies to the client area, the nonclient area (including
-     *   the title bar and scroll bars), and any part of the parent window 
-     *   uncovered as a result of the window being moved. When this flag is 
+     *   the title bar and scroll bars), and any part of the parent window
+     *   uncovered as a result of the window being moved. When this flag is
      *   set, the application must explicitly invalidate or redraw any parts
      *   of the window and parent window that need redrawing.
      */
     int SWP_NOREDRAW = 0x0008;
-    
+
     /**
      * Same as the SWP_NOOWNERZORDER flag.
      */
     int SWP_NOREPOSITION = 0x0200;
-    
+
     /**
      * Used by User32.SetWindowPos. <br>
      * Prevents the window from receiving the WM_WINDOWPOSCHANGING message.
      */
     int SWP_NOSENDCHANGING = 0x0400;
-    
+
     /**
      * Retains the current size (ignores the cx and cy parameters).
      */
@@ -904,7 +904,7 @@ public interface WinUser extends WinDef {
      * Displays the window.
      */
     int SWP_SHOWWINDOW = 0x0040;
-    
+
     /**
      * Minimizes the window.
      */

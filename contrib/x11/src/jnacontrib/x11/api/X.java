@@ -1,23 +1,23 @@
 /* Copyright (c) 2008 Stefan Endrullis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -1020,7 +1020,7 @@ public class X {
 
             X11.Atom xa_ret_type = xa_ret_type_ref.getValue();
             Pointer ret_prop = ret_prop_ref.getValue();
-            
+
             if (xa_ret_type == null) {
                 //the specified property does not exist for the specified window
                 return null;
@@ -1133,7 +1133,7 @@ public class X {
 
             Window[] retVal = new Window[ childCount.getValue() ];
             //Depending on if we're running on 64-bit or 32-bit systems,
-            //the Window ID size may be different; we need to make sure that 
+            //the Window ID size may be different; we need to make sure that
             //we get the data properly no matter what
             if (X11.XID.SIZE == 4) {
                 int[] windows = children.getValue().getIntArray( 0, childCount.getValue() );

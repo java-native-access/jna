@@ -1,23 +1,23 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -425,7 +425,7 @@ public abstract class Kernel32Util implements WinDef {
         if (lpszEnvironmentBlock == null) {
             return null;
         }
-        
+
         Map<String,String>  vars=new TreeMap<String,String>();
         boolean             asWideChars=isWideCharEnvironmentStringBlock(lpszEnvironmentBlock, offset);
         long                stepFactor=asWideChars ? 2L : 1L;
@@ -681,7 +681,7 @@ public abstract class Kernel32Util implements WinDef {
      * Convenience method to get the processor information. Takes care of
      * auto-growing the array and populating variable-length arrays in
      * structures.
-     * 
+     *
      * @param relationshipType
      *            The type of relationship to retrieve. This parameter can be
      *            one of the following values:
@@ -1127,22 +1127,22 @@ public abstract class Kernel32Util implements WinDef {
             }
         }
     }
-    
+
     /**
      * Expands environment-variable strings and replaces them with the values
      * defined for the current user.
-     * 
+     *
      * @param input A string that contains one or more environment-variable
      *              strings in the form: %variableName%. For each such
      *              reference, the %variableName% portion is replaced with the
      *              current value of that environment variable.
      *
-     *              <p>Case is ignored when looking up the environment-variable 
-     *              name. If the name is not found, the %variableName% portion 
+     *              <p>Case is ignored when looking up the environment-variable
+     *              name. If the name is not found, the %variableName% portion
      *              is left unexpanded.</p>
-     * 
+     *
      *              <p>Note that this function does not support all the features
-     *              that Cmd.exe supports. For example, it does not support 
+     *              that Cmd.exe supports. For example, it does not support
      *              %variableName:str1=str2% or %variableName:~offset,length%.</p>
      *
      * @return the replaced string
@@ -1152,13 +1152,13 @@ public abstract class Kernel32Util implements WinDef {
         if(input == null) {
             return "";
         }
-        
+
         int resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, null, 0);
-        
+
         if(resultChars == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        
+
         Memory resultMemory;
         if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
             resultMemory = new Memory(resultChars * Native.WCHAR_SIZE);
@@ -1169,11 +1169,11 @@ public abstract class Kernel32Util implements WinDef {
             resultMemory = new Memory(resultChars + 1);
         }
         resultChars = Kernel32.INSTANCE.ExpandEnvironmentStrings(input, resultMemory, resultChars);
-        
+
         if(resultChars == 0) {
             throw new Win32Exception(Kernel32.INSTANCE.GetLastError());
         }
-        
+
         if( W32APITypeMapper.DEFAULT == W32APITypeMapper.UNICODE ) {
             return resultMemory.getWideString(0);
         } else {

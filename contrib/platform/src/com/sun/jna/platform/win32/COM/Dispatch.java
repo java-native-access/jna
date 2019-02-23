@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -43,10 +43,10 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: Auto-generated Javadoc
 /**
  * Wrapper class for the IDispatch interface
- * 
+ *
  * IDispatch.GetTypeInfoCount 12 IDispatch.GetTypeInfo 16
  * IDispatch.GetIDsOfNames 20 IDispatch.Invoke 24
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class Dispatch extends Unknown implements IDispatch {
@@ -64,11 +64,11 @@ public class Dispatch extends Unknown implements IDispatch {
 
     /**
      * Gets the type info count.
-     * 
+     *
      * @param pctinfo
      *            the pctinfo
      * @return the hresult
-     * 
+     *
      *         Virtual
      */
     public HRESULT GetTypeInfoCount(UINTByReference pctinfo) {
@@ -78,7 +78,7 @@ public class Dispatch extends Unknown implements IDispatch {
 
     /**
      * Gets the type info.
-     * 
+     *
      * @param iTInfo
      *            the i t info
      * @param lcid
@@ -96,7 +96,7 @@ public class Dispatch extends Unknown implements IDispatch {
 
     /**
      * Gets the ids of names.
-     * 
+     *
      * @param riid
      *            the riid
      * @param rgszNames
@@ -118,7 +118,7 @@ public class Dispatch extends Unknown implements IDispatch {
 
     /**
      * Invoke.
-     * 
+     *
      * @param dispIdMember
      *            the disp id member
      * @param riid

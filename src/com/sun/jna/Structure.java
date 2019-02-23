@@ -1,23 +1,23 @@
 /* Copyright (c) 2007-2013 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -918,11 +918,11 @@ public abstract class Structure {
     }
 
     /** Returns this Structure's field names in their proper order.<br>
-     * 
+     *
      * When defining a new {@link Structure} you shouldn't override this
      * method, but use {@link FieldOrder} annotation to define your field
      * order(this also works with inheritance)<br>
-     * 
+     *
      * If you want to do something non-standard you can override the method
      * and define it as followed
      * <pre><code>
@@ -1066,8 +1066,8 @@ public abstract class Structure {
         if (fieldOrder.size() != flist.size() && flist.size() > 1) {
             if (force) {
                 throw new Error("Structure.getFieldOrder() on " + getClass()
-                                + (fieldOrder.size() < flist.size() 
-                                    ? " does not provide enough" 
+                                + (fieldOrder.size() < flist.size()
+                                    ? " does not provide enough"
                                     : " provides too many")
                                 + " names [" + fieldOrder.size()
                                 + "] ("
@@ -2015,7 +2015,7 @@ public abstract class Structure {
             }
             init(els);
         }
-        
+
         private void init(Pointer[] els) {
             elements = new Memory(Native.POINTER_SIZE * els.length);
             elements.write(0, els, 0, els.length);

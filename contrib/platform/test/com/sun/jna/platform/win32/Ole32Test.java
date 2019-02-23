@@ -1,14 +1,14 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -128,16 +128,16 @@ public class Ole32Test extends TestCase {
 
         Ole32.INSTANCE.CoTaskMemFree(ptr);
     }
-    
+
     public void testOleFunctions() {
         HRESULT initResult = Ole32.INSTANCE.OleInitialize(Pointer.NULL);
-        
+
         assertTrue(W32Errors.SUCCEEDED(initResult));
-        
+
         // For a real test, a test component will be needed
         Ole32.INSTANCE.OleFlushClipboard();
         Ole32.INSTANCE.OleRun(Pointer.NULL);
-        
+
         Ole32.INSTANCE.CoUninitialize();
     }
 }

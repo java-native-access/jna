@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -84,12 +84,12 @@ import java.util.Date;
  * The Interface OaIdl.
  */
 public interface OaIdl {
-    
+
     // The DATE Type is defined in localtime and the java Date type always contains
     // a a timezone offset, so the difference has to be calculated and can't be
     // predetermined
     public static final long DATE_OFFSET = new Date(1899 - 1900, 12 - 1, 30, 0, 0, 0).getTime();
-    
+
     /**
      * The Class EXCEPINFO.
      */
@@ -161,11 +161,11 @@ public interface OaIdl {
         public VARIANT_BOOL(long value) {
             super(2, value);
         }
-        
+
         public VARIANT_BOOL(boolean value) {
             this(value ? 0xFFFF : 0x0000);
         }
-        
+
         public boolean booleanValue() {
             return shortValue() != 0x0000;
         }
@@ -522,9 +522,9 @@ public interface OaIdl {
     }
 
     /**
-     * Implementation of SAFEARRAY. Implements Closable, which in this case 
+     * Implementation of SAFEARRAY. Implements Closable, which in this case
      * delegates to destroy, to free native memory on close.
-     * 
+     *
      * <p>VARTYPE for the SAFEARRAY can be:</p>
      *
      * <ul>
@@ -549,11 +549,11 @@ public interface OaIdl {
      * <li>VT_UNKNOWN</li>
      * <li>VT_VARIANT</li>
      * </ul>
-     * 
+     *
      * <p>General comment: All indices in the helper methods use java int.</p>
-     * 
+     *
      * <p>The native type for the indices is LONG, which is defined as:</p>
-     * 
+     *
      * <blockquote>A 32-bit signed integer. The range is �2147483648 through 2147483647 decimal.</blockquote>
      */
     @FieldOrder({"cDims", "fFeatures", "cbElements", "cLocks", "pvData", "rgsabound"})
@@ -606,7 +606,7 @@ public interface OaIdl {
         public static SAFEARRAY.ByReference createSafeArray(int... size) {
             return createSafeArray(new WTypes.VARTYPE(Variant.VT_VARIANT), size);
         }
- 
+
         /**
          * Create a SAFEARRAY with supplied element type.
          *
@@ -628,7 +628,7 @@ public interface OaIdl {
             SAFEARRAY.ByReference data = OleAuto.INSTANCE.SafeArrayCreate(vartype, new WinDef.UINT(size.length), rgsabound);
             return data;
         }
-        
+
         /**
          * Set value at {@code indices} in {@code array} to arg.
          *
@@ -644,7 +644,7 @@ public interface OaIdl {
             for (int i = 0; i < indices.length; i++) {
                 paramIndices[i] = new WinDef.LONG(indices[indices.length - i - 1]);
             }
-            
+
             WinNT.HRESULT hr;
             Memory mem;
             switch (getVarType().intValue()) {
@@ -756,7 +756,7 @@ public interface OaIdl {
             for (int i = 0; i < indices.length; i++) {
                 paramIndices[i] = new WinDef.LONG(indices[indices.length - i - 1]);
             }
-            
+
             Object result;
             WinNT.HRESULT hr;
             Memory mem;
@@ -857,7 +857,7 @@ public interface OaIdl {
                 default:
                     throw new IllegalStateException("Can't parse array content - type not supported: " + getVarType().intValue());
             }
-            
+
             return result;
         }
 
@@ -898,13 +898,13 @@ public interface OaIdl {
         public void close() {
             destroy();
         }
-        
+
         /**
          * Retrieve lower bound for the selected dimension.
          *
          * <p>As in the all the accessor functions, that index is converted to
          * java conventions.</p>
-         * 
+         *
          * @param dimension zerobased index
          * @return lower bound for the selected dimension
          */
@@ -921,7 +921,7 @@ public interface OaIdl {
          *
          * <p>As in the all the accessor functions, that index is converted to
          * java conventions.</p>
-         * 
+         *
          * @param dimension zerobased index
          * @return upper bound for the selected dimension
          */
@@ -1003,10 +1003,10 @@ public interface OaIdl {
             COMUtils.checkRC(res);
             return resultHolder.getValue();
         }
-        
+
         /**
          * Get size of one element in bytes
-         * 
+         *
          * @return element size in bytes
          */
         public long getElemsize() {

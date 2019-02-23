@@ -1,23 +1,23 @@
 /* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -89,21 +89,21 @@ import com.sun.jna.ptr.PointerByReference;
 
 // TODO: put this into a reasonable API; right now this is pretty much
 // just hard-coded blitting of an image into a window
-// Thanks to Rui Lopes for the C# example on which this is based: 
-// rui@ruilopes.com 
+// Thanks to Rui Lopes for the C# example on which this is based:
+// rui@ruilopes.com
 // http://www.codeproject.com/cs/media/perpxalpha_sharp.asp?df=100&forumid=3270&exp=0&select=773155
 public class AlphaMaskDemo implements Runnable {
-    
-    private static final DataFlavor URL_FLAVOR = 
+
+    private static final DataFlavor URL_FLAVOR =
         new DataFlavor("application/x-java-url; class=java.net.URL", "URL");
-    private static final DataFlavor URI_LIST_FLAVOR = 
+    private static final DataFlavor URI_LIST_FLAVOR =
         new DataFlavor("text/uri-list; class=java.lang.String", "URI list");
-    
+
     private JFrame frame;
     private JWindow alphaWindow;
     private float alpha = 1f;
     private Image image;
-    
+
     private void update() {
         update(false, true);
     }
@@ -112,7 +112,7 @@ public class AlphaMaskDemo implements Runnable {
         String os = System.getProperty("os.name");
         if (os.startsWith("Windows"))
             updateW32(a, i);
-        else if (os.startsWith("Linux")) 
+        else if (os.startsWith("Linux"))
             updateX11(a, i);
         else if (os.startsWith("Mac"))
             updateMac(a, i);
@@ -161,7 +161,7 @@ public class AlphaMaskDemo implements Runnable {
             else {
                 win = new X11.Window((int)Native.getWindowID(alphaWindow));
             }
-            
+
             if (i) {
                 int w = image.getWidth(null);
                 int h = image.getHeight(null);
@@ -174,7 +174,7 @@ public class AlphaMaskDemo implements Runnable {
                 BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
                 Graphics g = buf.getGraphics();
                 g.drawImage(image, 0, 0, w, h, null);
-                
+
                 long start = System.currentTimeMillis();
                 long blitTime, putImageTime, write;
                 GC gc = x11.XCreateGC(dpy, win, new NativeLong(0), null);
@@ -222,7 +222,7 @@ public class AlphaMaskDemo implements Runnable {
         }
         if (a)
             WindowUtils.setWindowAlpha(alphaWindow, alpha);
-        
+
         if (!alphaWindow.isVisible()) {
             alphaWindow.setVisible(true);
             // hack for initial refresh (X11)
@@ -235,7 +235,7 @@ public class AlphaMaskDemo implements Runnable {
         hwnd.setPointer(Native.getWindowPointer(w));
         return hwnd;
     }
-    
+
     private void updateW32(boolean a, boolean i) {
         User32 user = User32.INSTANCE;
         GDI32 gdi = GDI32.INSTANCE;
@@ -255,7 +255,7 @@ public class AlphaMaskDemo implements Runnable {
         else {
             hWnd = getHwnd(alphaWindow);
         }
-    
+
         if (i) {
             int w = image.getWidth(null);
             int h = image.getHeight(null);
@@ -263,12 +263,12 @@ public class AlphaMaskDemo implements Runnable {
             HDC memDC = gdi.CreateCompatibleDC(screenDC);
             HBITMAP hBitmap = null;
             HANDLE oldBitmap = null;
-            
+
             try {
                 BufferedImage buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB_PRE);
                 Graphics g = buf.getGraphics();
                 g.drawImage(image, 0, 0, w, h, null);
-                
+
                 BITMAPINFO bmi = new BITMAPINFO();
                 bmi.bmiHeader.biWidth = w;
                 bmi.bmiHeader.biHeight = h;
@@ -276,13 +276,13 @@ public class AlphaMaskDemo implements Runnable {
                 bmi.bmiHeader.biBitCount = 32;
                 bmi.bmiHeader.biCompression = WinGDI.BI_RGB;
                 bmi.bmiHeader.biSizeImage = w * h * 4;
-                
+
                 PointerByReference ppbits = new PointerByReference();
                 hBitmap = gdi.CreateDIBSection(memDC, bmi, WinGDI.DIB_RGB_COLORS,
                                                ppbits, null, 0);
                 oldBitmap = gdi.SelectObject(memDC, hBitmap);
                 Pointer pbits = ppbits.getValue();
-                
+
                 Raster raster = buf.getData();
                 int[] pixel = new int[4];
                 int[] bits = new int[w*h];
@@ -292,12 +292,12 @@ public class AlphaMaskDemo implements Runnable {
                         int alpha = (pixel[3]&0xFF)<<24;
                         int red = (pixel[2]&0xFF);
                         int green = (pixel[1]&0xFF)<<8;
-                        int blue = (pixel[0]&0xFF)<<16; 
+                        int blue = (pixel[0]&0xFF)<<16;
                         bits[x + y * w] = alpha|red|green|blue;
                     }
                 }
                 pbits.write(0, bits, 0, bits.length);
-                
+
                 SIZE size = new SIZE();
                 size.cx = w;
                 size.cy = h;
@@ -308,7 +308,7 @@ public class AlphaMaskDemo implements Runnable {
                 BLENDFUNCTION blend = new BLENDFUNCTION();
                 blend.SourceConstantAlpha = (byte)(alpha * 255);
                 blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
-                user.UpdateLayeredWindow(hWnd, screenDC, loc, size, memDC, srcLoc, 
+                user.UpdateLayeredWindow(hWnd, screenDC, loc, size, memDC, srcLoc,
                                          0, blend, WinUser.ULW_ALPHA);
             }
             finally {
@@ -324,15 +324,15 @@ public class AlphaMaskDemo implements Runnable {
             BLENDFUNCTION blend = new BLENDFUNCTION();
             blend.SourceConstantAlpha = (byte)(alpha * 255);
             blend.AlphaFormat = WinUser.AC_SRC_ALPHA;
-            user.UpdateLayeredWindow(hWnd, null, null, null, null, null, 
+            user.UpdateLayeredWindow(hWnd, null, null, null, null, null,
                                      0, blend, WinUser.ULW_ALPHA);
         }
-        
+
         if (!alphaWindow.isVisible()) {
             alphaWindow.setVisible(true);
         }
     }
-    
+
     private ImageObserver observer = new ImageObserver() {
         public boolean imageUpdate(final Image img, int infoflags, int x, int y, int width, int height) {
             if ((infoflags & (ImageObserver.ALLBITS|ImageObserver.FRAMEBITS)) != 0) {
@@ -349,7 +349,7 @@ public class AlphaMaskDemo implements Runnable {
             }
             return true;
         }
-        
+
     };
     private void setImage(final Image image) {
         int w = image.getWidth(observer);
@@ -360,12 +360,12 @@ public class AlphaMaskDemo implements Runnable {
             update(false, true);
         }
     }
-    
+
     private void setAlpha(float alpha) {
         this.alpha = alpha = Math.min(1f, Math.max(0f, alpha));
         update(true, false);
     }
-    
+
     public void run() {
         // Must find a graphics configuration with a depth of 32 bits
         GraphicsConfiguration gconfig = WindowUtils.getAlphaCompatibleGraphicsConfiguration();
@@ -453,7 +453,7 @@ public class AlphaMaskDemo implements Runnable {
                         StringBuilder b = new StringBuilder();
                         int count;
                         // excise excess NUL characters (bug in firefox, java
-                        // or my code, not sure which).  someone got the 
+                        // or my code, not sure which).  someone got the
                         // encoding wrong
                         while ((count = reader.read(buf)) > 0) {
                             for (int i=0;i < count;i++) {
@@ -475,7 +475,7 @@ public class AlphaMaskDemo implements Runnable {
                         System.out.println("Can't parse text: " + html);
                         return false;
                     }
-                    System.out.println("No flavor available: " 
+                    System.out.println("No flavor available: "
                                        + Arrays.asList(t.getTransferDataFlavors()));
                 }
                 catch (UnsupportedFlavorException e) {
@@ -490,7 +490,7 @@ public class AlphaMaskDemo implements Runnable {
                 return false;
             }
         });
-        p.add(new JLabel("<html><center>Drop an image with an alpha channel onto this window<br>" 
+        p.add(new JLabel("<html><center>Drop an image with an alpha channel onto this window<br>"
                          + "You may also adjust the overall transparency with the slider</center></html>"),
                          BorderLayout.NORTH);
         final JSlider slider = new JSlider(0, 255, 255);
@@ -501,7 +501,7 @@ public class AlphaMaskDemo implements Runnable {
             }
         });
         p.add(slider, BorderLayout.SOUTH);
-        
+
         frame.getContentPane().add(p);
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -521,7 +521,7 @@ public class AlphaMaskDemo implements Runnable {
         }
         catch(Exception e) { }
     }
-    
+
     /** Center the given {@link Window} on the default screen. */
     private static void centerOnScreen(Window window) {
         Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();

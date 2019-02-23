@@ -1,23 +1,23 @@
 /* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -51,7 +51,7 @@ import com.sun.jna.ptr.PointerByReference;
 // TODO: Auto-generated Javadoc
 /**
  * The Class ITypeInfoUtil.
- * 
+ *
  * @author wolf.tobias@gmx.net The Class ITypeInfoUtil.
  */
 public class TypeInfoUtil {
@@ -64,7 +64,7 @@ public class TypeInfoUtil {
 
     /**
      * Instantiates a new i type info util.
-     * 
+     *
      * @param typeInfo
      *            the type info
      */
@@ -74,7 +74,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the type attr.
-     * 
+     *
      * @return the type attr
      */
     public TYPEATTR getTypeAttr() {
@@ -87,7 +87,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the type comp.
-     * 
+     *
      * @return the type comp
      */
     public TypeComp getTypeComp() {
@@ -100,7 +100,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the func desc.
-     * 
+     *
      * @param index
      *            the index
      * @return the func desc
@@ -115,7 +115,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the var desc.
-     * 
+     *
      * @param index
      *            the index
      * @return the var desc
@@ -130,7 +130,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the names.
-     * 
+     *
      * @param memid
      *            the memid
      * @param maxNames
@@ -157,7 +157,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the ref type of impl type.
-     * 
+     *
      * @param index
      *            the index
      * @return the ref type of impl type
@@ -173,7 +173,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the impl type flags.
-     * 
+     *
      * @param index
      *            the index
      * @return the impl type flags
@@ -189,7 +189,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the i ds of names.
-     * 
+     *
      * @param rgszNames
      *            the rgsz names
      * @param cNames
@@ -207,7 +207,7 @@ public class TypeInfoUtil {
 
     /**
      * Invoke.
-     * 
+     *
      * @param pvInstance
      *            the pv instance
      * @param memid
@@ -235,7 +235,7 @@ public class TypeInfoUtil {
 
     /**
      * The Class Invoke.
-     * 
+     *
      * @author wolf.tobias@gmx.net The Class Invoke.
      */
     public static class Invoke {
@@ -251,7 +251,7 @@ public class TypeInfoUtil {
 
         /**
          * Instantiates a new invoke.
-         * 
+         *
          * @param pVarResult
          *            the var result
          * @param pExcepInfo
@@ -268,7 +268,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the p var result.
-         * 
+         *
          * @return the p var result
          */
         public VARIANT.ByReference getpVarResult() {
@@ -277,7 +277,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the p excep info.
-         * 
+         *
          * @return the p excep info
          */
         public EXCEPINFO.ByReference getpExcepInfo() {
@@ -286,7 +286,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the pu arg err.
-         * 
+         *
          * @return the pu arg err
          */
         public int getPuArgErr() {
@@ -296,7 +296,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the documentation.
-     * 
+     *
      * @param memid
      *            the memid
      * @return the documentation
@@ -324,7 +324,7 @@ public class TypeInfoUtil {
 
     /**
      * The Class TypeInfoDoc.
-     * 
+     *
      * @author wolf.tobias@gmx.net The Class TypeInfoDoc.
      */
     public static class TypeInfoDoc {
@@ -343,7 +343,7 @@ public class TypeInfoUtil {
 
         /**
          * Instantiates a new type info doc.
-         * 
+         *
          * @param name
          *            the name
          * @param docString
@@ -363,7 +363,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the name.
-         * 
+         *
          * @return the name
          */
         public String getName() {
@@ -372,7 +372,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the doc string.
-         * 
+         *
          * @return the doc string
          */
         public String getDocString() {
@@ -381,7 +381,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the help context.
-         * 
+         *
          * @return the help context
          */
         public int getHelpContext() {
@@ -390,7 +390,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the help file.
-         * 
+         *
          * @return the help file
          */
         public String getHelpFile() {
@@ -400,7 +400,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the dll entry.
-     * 
+     *
      * @param memid
      *            the memid
      * @param invKind
@@ -425,7 +425,7 @@ public class TypeInfoUtil {
 
     /**
      * The Class DllEntry.
-     * 
+     *
      * @author wolf.tobias@gmx.net The Class DllEntry.
      */
     public static class DllEntry {
@@ -441,7 +441,7 @@ public class TypeInfoUtil {
 
         /**
          * Instantiates a new dll entry.
-         * 
+         *
          * @param dllName
          *            the dll name
          * @param name
@@ -457,7 +457,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the dll name.
-         * 
+         *
          * @return the dll name
          */
         public String getDllName() {
@@ -466,7 +466,7 @@ public class TypeInfoUtil {
 
         /**
          * Sets the dll name.
-         * 
+         *
          * @param dllName
          *            the new dll name
          */
@@ -476,7 +476,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the name.
-         * 
+         *
          * @return the name
          */
         public String getName() {
@@ -485,7 +485,7 @@ public class TypeInfoUtil {
 
         /**
          * Sets the name.
-         * 
+         *
          * @param name
          *            the new name
          */
@@ -495,7 +495,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the ordinal.
-         * 
+         *
          * @return the ordinal
          */
         public int getOrdinal() {
@@ -504,7 +504,7 @@ public class TypeInfoUtil {
 
         /**
          * Sets the ordinal.
-         * 
+         *
          * @param ordinal
          *            the new ordinal
          */
@@ -515,7 +515,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the ref type info.
-     * 
+     *
      * @param hreftype
      *            the hreftype
      * @return the ref type info
@@ -530,7 +530,7 @@ public class TypeInfoUtil {
 
     /**
      * Address of member.
-     * 
+     *
      * @param memid
      *            the memid
      * @param invKind
@@ -547,7 +547,7 @@ public class TypeInfoUtil {
 
     /**
      * Creates the instance.
-     * 
+     *
      * @param pUnkOuter
      *            the unk outer
      * @param riid
@@ -564,7 +564,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the mops.
-     * 
+     *
      * @param memid
      *            the memid
      * @return the string
@@ -580,7 +580,7 @@ public class TypeInfoUtil {
 
     /**
      * Gets the containing type lib.
-     * 
+     *
      * @return the containing type lib
      */
     public ContainingTypeLib GetContainingTypeLib() {
@@ -597,7 +597,7 @@ public class TypeInfoUtil {
 
     /**
      * The Class ContainingTypeLib.
-     * 
+     *
      * @author wolf.tobias@gmx.net The Class ContainingTypeLib.
      */
     public static class ContainingTypeLib {
@@ -610,7 +610,7 @@ public class TypeInfoUtil {
 
         /**
          * Instantiates a new containing type lib.
-         * 
+         *
          * @param typeLib
          *            the type lib
          * @param index
@@ -623,7 +623,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the type lib.
-         * 
+         *
          * @return the type lib
          */
         public ITypeLib getTypeLib() {
@@ -632,7 +632,7 @@ public class TypeInfoUtil {
 
         /**
          * Sets the type lib.
-         * 
+         *
          * @param typeLib
          *            the new type lib
          */
@@ -642,7 +642,7 @@ public class TypeInfoUtil {
 
         /**
          * Gets the index.
-         * 
+         *
          * @return the index
          */
         public int getIndex() {
@@ -651,7 +651,7 @@ public class TypeInfoUtil {
 
         /**
          * Sets the index.
-         * 
+         *
          * @param index
          *            the new index
          */
@@ -662,7 +662,7 @@ public class TypeInfoUtil {
 
     /**
      * Release type attr.
-     * 
+     *
      * @param pTypeAttr
      *            the type attr
      */
@@ -672,7 +672,7 @@ public class TypeInfoUtil {
 
     /**
      * Release func desc.
-     * 
+     *
      * @param pFuncDesc
      *            the func desc
      */
@@ -682,7 +682,7 @@ public class TypeInfoUtil {
 
     /**
      * Release var desc.
-     * 
+     *
      * @param pVarDesc
      *            the var desc
      */

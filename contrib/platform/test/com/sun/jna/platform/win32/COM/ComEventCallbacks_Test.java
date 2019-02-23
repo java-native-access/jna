@@ -52,7 +52,7 @@ public class ComEventCallbacks_Test {
     static {
         ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
-    
+
     private final CLSID CLSID_InternetExplorer = new CLSID("{0002DF01-0000-0000-C000-000000000046}");
     private final IID IID_IConnectionPointContainer = new IID("{B196B284-BAB4-101A-B69C-00AA00341D07}");
     private final IID IID_DWebBrowserEvents2 = new IID("{34A715A0-6587-11D0-924A-0020AFC7AC4D}");
@@ -60,23 +60,23 @@ public class ComEventCallbacks_Test {
     private final LCID lcid = new LCID(0x0409); // LCID for english locale
     private final WinDef.WORD methodFlags = new WinDef.WORD(OleAuto.DISPATCH_METHOD);
     private final WinDef.WORD propertyPutFlags = new WinDef.WORD(OleAuto.DISPATCH_PROPERTYPUT);
-    
+
     private final DISPIDByReference dispIdVisible = new DISPIDByReference();
     private final DISPIDByReference dispIdQuit = new DISPIDByReference();
     private final DISPIDByReference dispIdNavigate = new DISPIDByReference();
-    
+
     private PointerByReference ieApp;
     private Dispatch ieDispatch;
 
-    
-    
+
+
     @Before
     public void before() {
         AbstractWin32TestSupport.killProcessByName("iexplore.exe");
         try {
             Thread.sleep(5 * 1000);
         } catch (InterruptedException ex) {}
-        
+
         HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, Ole32.COINIT_MULTITHREADED);
         COMUtils.checkRC(hr);
 
@@ -102,8 +102,8 @@ public class ComEventCallbacks_Test {
         DISPPARAMS.ByReference pDispParams = new DISPPARAMS.ByReference();
         VARIANT.ByReference pVarResult = new VARIANT.ByReference();
         IntByReference puArgErr = new IntByReference();
-        EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();        
-        
+        EXCEPINFO.ByReference pExcepInfo = new EXCEPINFO.ByReference();
+
         HRESULT hr = ieDispatch.Invoke(dispIdQuit.getValue(), niid, lcid, methodFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
         COMUtils.checkRC(hr, pExcepInfo, puArgErr);
 

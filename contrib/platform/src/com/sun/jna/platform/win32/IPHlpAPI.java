@@ -1,23 +1,23 @@
 /* Copyright (c) 2018 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -34,7 +34,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Windows IP Helper API
- * 
+ *
  * @see <A HREF=
  *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa373083(v=vs.85).aspx">IP
  *      Helper Reference</A>
@@ -53,7 +53,7 @@ public interface IPHlpAPI extends Library {
 
     /**
      * The MIB_IFROW structure stores information about a particular interface.
-     * 
+     *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/previous-versions/windows/desktop/api/ifmib/ns-ifmib-_mib_ifrow">MIB_IFROW</A>
      */
@@ -91,7 +91,7 @@ public interface IPHlpAPI extends Library {
     /**
      * The MIB_IF_ROW2 structure stores information about a particular
      * interface.
-     * 
+     *
      * @see <A HREF=
      *      "https://msdn.microsoft.com/library/windows/hardware/ff559214">MIB_IF_ROW2</A>
      */
@@ -153,7 +153,7 @@ public interface IPHlpAPI extends Library {
      * The IP_ADDRESS_STRING structure stores an IPv4 address in dotted decimal
      * notation. The IP_ADDRESS_STRING structure definition is also the type
      * definition for the IP_MASK_STRING structure.
-     * 
+     *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/windows/desktop/api/iptypes/ns-iptypes-ip_address_string">IP_ADDRESS_STRING</A>
      */
@@ -168,7 +168,7 @@ public interface IPHlpAPI extends Library {
     /**
      * The IP_ADDR_STRING structure represents a node in a linked-list of IPv4
      * addresses.
-     * 
+     *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/windows/desktop/api/iptypes/ns-iptypes-_ip_addr_string">IP_ADDR_STRING</A>
      */
@@ -186,7 +186,7 @@ public interface IPHlpAPI extends Library {
     /**
      * The FIXED_INFO structure contains information that is the same across all
      * the interfaces on a computer.
-     * 
+     *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/windows/desktop/api/iptypes/ns-iptypes-fixed_info_w2ksp1">FIXED_INFO</A>
      */

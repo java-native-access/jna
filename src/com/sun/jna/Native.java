@@ -1,23 +1,23 @@
 /* Copyright (c) 2007-2015 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -157,13 +157,13 @@ public final class Native implements Version {
 
     static final int MAX_ALIGNMENT;
     static final int MAX_PADDING;
-    
+
     /**
      * Version string must have the structure <major>.<minor>.<revision>
      * a bugfix change in the native code increments revision, the minor is
      * incremented for backwards compatible changes and the major version
      * is changed for backwards incompatbile changes.
-     * 
+     *
      * @param expectedVersion
      * @param nativeVersion
      * @return true if nativeVersion describes a version compatible to expectedVersion
@@ -174,20 +174,20 @@ public final class Native implements Version {
         if(expectedVersionParts.length < 3 || nativeVersionParts.length < 3) {
             return false;
         }
-        
+
         int expectedMajor = Integer.parseInt(expectedVersionParts[0]);
         int nativeMajor = Integer.parseInt(nativeVersionParts[0]);
         int expectedMinor = Integer.parseInt(expectedVersionParts[1]);
         int nativeMinor = Integer.parseInt(nativeVersionParts[1]);
-        
+
         if(expectedMajor != nativeMajor) {
             return false;
         }
-        
+
         if(expectedMinor > nativeMinor) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -209,14 +209,14 @@ public final class Native implements Version {
                             + " - set jna.boot.library.path to include the path to the version of the " + LS
                             + "   jnidispatch library included with the JNA jar file you are using" + LS);
         }
-        
+
         POINTER_SIZE = sizeof(TYPE_VOIDP);
         LONG_SIZE = sizeof(TYPE_LONG);
         WCHAR_SIZE = sizeof(TYPE_WCHAR_T);
         SIZE_T_SIZE = sizeof(TYPE_SIZE_T);
         BOOL_SIZE = sizeof(TYPE_BOOL);
         LONG_DOUBLE_SIZE = sizeof(TYPE_LONG_DOUBLE);
-        
+
         // Perform initialization of other JNA classes until *after*
         // initializing the above final fields
         initIDs();
@@ -407,7 +407,7 @@ public final class Native implements Version {
      * <p><strong>Usage note</strong>: This function assumes, that {@code buf}
      * holds a {@code char} array. This means only single-byte encodings are
      * supported.</p>
-     * 
+     *
      * @param buf The buffer containing the encoded bytes.  Must not be {@code null}.
      * @param encoding The encoding name - if {@code null} then the platform
      * default encoding will be used
@@ -424,7 +424,7 @@ public final class Native implements Version {
      * <p><strong>Usage note</strong>: This function assumes, that {@code buf}
      * holds a {@code char} array. This means only single-byte encodings are
      * supported.</p>
-     * 
+     *
      * @param buf The buffer containing the encoded bytes. Must not be {@code null}.
      * @param charset The charset to decode {@code buf}. Must not be {@code null}.
      */
@@ -623,7 +623,7 @@ public final class Native implements Version {
     /**
      * Provided for improved compatibility between JNA 4.X and 5.X
      *
-     * @see Native#load(java.lang.String, java.lang.Class) 
+     * @see Native#load(java.lang.String, java.lang.Class)
      */
     @Deprecated
     public static <T> T loadLibrary(String name, Class<T> interfaceClass) {
@@ -2073,7 +2073,7 @@ public final class Native implements Version {
 
     /**
      * Call the native function, returning a struct by value.
-     * 
+     *
      * @param function  Present to prevent the GC to collect the Function object
      *                  prematurely
      * @param fp        function pointer
@@ -2088,13 +2088,13 @@ public final class Native implements Version {
 
     /**
      * Call the native function, returning a struct by value.
-     * 
+     *
      * @param function  Present to prevent the GC to collect the Function object
      *                  prematurely
      * @param fp        function pointer
      * @param callFlags calling convention to be used
      * @param args      Arguments to pass to the native function
-     * 
+     *
      * @return the passed-in Structure
      */
     static Structure invokeStructure(Function function, long fp, int callFlags, Object[] args,
@@ -2106,7 +2106,7 @@ public final class Native implements Version {
 
     /**
      * Call the native function, returning a Java <code>Object</code>.
-     * 
+     *
      * @param function  Present to prevent the GC to collect the Function object
      *                  prematurely
      * @param fp        function pointer
@@ -2134,34 +2134,34 @@ public final class Native implements Version {
 
     /*
     ============================================================================
-    
+
     The first argument of the following read, write, get<Type> and set<Type>
     function is present to protect it from the GC.
-    
+
     Although on the native side only the baseaddr and offset are used to access
     the memory, the Pointer argument must not be removed. This is the usecase:
-    
+
     --------------------------------------
     Memory pointer = <init>;
     <do something and work on Memory>
     String result = pointer.getWideString(0)
     <do nothing more with Memory>
     --------------------------------------
-    
+
     In getWideString the pointer address is resolved and is passed to native. If
     the Memory object itself is not passed to native, the GC can collect the
     object at that point as it is not used anymore and the finalizers could run.
-    
+
     The would introduce a race between the native call and the GC running the
     finalizers. The finalizers free the allocated memory, which results in
     a SEGFAULT.
-    
+
     Passing only the Pointer object and loading the peer value via JNI was not
     implemented, as in microbenchmarks it showed large impact. Passing the
     Pointer object instead of the peer and offset value to getInt resulted in
     a performance of 70% of the unmodified source.
-    
-    ============================================================================     
+
+    ============================================================================
      */
     static native long indexOf(Pointer pointer, long baseaddr, long offset, byte value);
 
@@ -2253,9 +2253,9 @@ public final class Native implements Version {
     static native void setPointer(Pointer pointer, long baseaddr, long offset, long value);
 
     static native void setWideString(Pointer pointer, long baseaddr, long offset, String value);
-    
+
     static native ByteBuffer getDirectByteBuffer(Pointer pointer, long addr, long offset, long length);
-    
+
     /**
      * Call the real native malloc
      * @param size size of the memory to be allocated

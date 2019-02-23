@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -85,7 +85,7 @@ public class COMBindingBaseObject extends COMInvoker {
     public COMBindingBaseObject(CLSID clsid, boolean useActiveInstance,
             int dwClsContext) {
         assert COMUtils.comIsInitialized() : "COM not initialized";
-        
+
         init(useActiveInstance, clsid, dwClsContext);
     }
 
@@ -97,7 +97,7 @@ public class COMBindingBaseObject extends COMInvoker {
         HRESULT hr = Ole32.INSTANCE.CLSIDFromProgID(progId, clsid);
 
         COMUtils.checkRC(hr);
-        
+
         init(useActiveInstance, clsid, dwClsContext);
     }
 
@@ -123,12 +123,12 @@ public class COMBindingBaseObject extends COMInvoker {
             hr = Ole32.INSTANCE.CoCreateInstance(clsid, null, dwClsContext,
                     IDispatch.IID_IDISPATCH, this.pDispatch);
         }
-        
+
         COMUtils.checkRC(hr);
-        
+
         this.iDispatch = new Dispatch(this.pDispatch.getValue());
     }
-    
+
     /**
      * Gets the i dispatch.
      *
@@ -395,12 +395,12 @@ public class COMBindingBaseObject extends COMInvoker {
         // need to be compatible with VisualBasic which does not distingish methods
         // and property getters and will set both flags always.
         //
-        // The MSDN article advises this behaviour: "[...] Some languages cannot 
-        // distinguish between retrieving a property and calling a method. In this 
+        // The MSDN article advises this behaviour: "[...] Some languages cannot
+        // distinguish between retrieving a property and calling a method. In this
         //case, you should set the flags DISPATCH_PROPERTYGET and DISPATCH_METHOD.
         // [...]"))
         //
-        // This was found when trying to bind InchesToPoints from the _Application 
+        // This was found when trying to bind InchesToPoints from the _Application
         // dispatch interface of the MS Word 15 type library
         //
         // The signature according the ITypeLib Viewer (OLE/COM Object Viewer):

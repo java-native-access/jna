@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -37,7 +37,7 @@ import com.sun.jna.platform.win32.WinNT.HRESULT;
 // TODO: Auto-generated Javadoc
 /**
  * Wrapper class for the IRecordInfo interface.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class RecordInfo extends Unknown implements IRecordInfo {
@@ -54,7 +54,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Instantiates a new i record info.
-     * 
+     *
      * @param pvInstance
      *            the pv instance
      */
@@ -64,7 +64,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record init.
-     * 
+     *
      * @param pvNew
      *            the pv new
      * @return the hresult
@@ -75,7 +75,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record clear.
-     * 
+     *
      * @param pvExisting
      *            the pv existing
      * @return the hresult
@@ -87,7 +87,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record copy.
-     * 
+     *
      * @param pvExisting
      *            the pv existing
      * @param pvNew
@@ -102,7 +102,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the guid.
-     * 
+     *
      * @param pguid
      *            the pguid
      * @return the hresult
@@ -114,7 +114,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the name.
-     * 
+     *
      * @param pbstrName
      *            the pbstr name
      * @return the hresult
@@ -126,7 +126,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the size.
-     * 
+     *
      * @param pcbSize
      *            the pcb size
      * @return the hresult
@@ -138,7 +138,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the type info.
-     * 
+     *
      * @param ppTypeInfo
      *            the pp type info
      * @return the hresult
@@ -150,7 +150,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the field.
-     * 
+     *
      * @param pvData
      *            the pv data
      * @param szFieldName
@@ -168,7 +168,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the field no copy.
-     * 
+     *
      * @param pvData
      *            the pv data
      * @param szFieldName
@@ -189,7 +189,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Put field.
-     * 
+     *
      * @param wFlags
      *            the w flags
      * @param pvData
@@ -210,7 +210,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Put field no copy.
-     * 
+     *
      * @param wFlags
      *            the w flags
      * @param pvData
@@ -231,7 +231,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Gets the field names.
-     * 
+     *
      * @param pcNames
      *            the pc names
      * @param rgBstrNames
@@ -246,7 +246,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Checks if is matching type.
-     * 
+     *
      * @param pRecordInfo
      *            the record info
      * @return the bool
@@ -258,7 +258,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record create.
-     * 
+     *
      * @return the pvoid
      */
     public PVOID RecordCreate() {
@@ -267,7 +267,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record create copy.
-     * 
+     *
      * @param pvSource
      *            the pv source
      * @param ppvDest
@@ -282,7 +282,7 @@ public class RecordInfo extends Unknown implements IRecordInfo {
 
     /**
      * Record destroy.
-     * 
+     *
      * @param pvRecord
      *            the pv record
      * @return the hresult

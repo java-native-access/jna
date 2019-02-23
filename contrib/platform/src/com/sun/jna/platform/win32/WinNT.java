@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -2229,7 +2229,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_INTERACTIVE_PROCESS = 0x00000100;
     int SERVICE_TYPE_ALL = SERVICE_WIN32 | SERVICE_ADAPTER | SERVICE_DRIVER
             | SERVICE_INTERACTIVE_PROCESS;
-    
+
     //
     // Start Type
     //
@@ -2247,7 +2247,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
     int SERVICE_ERROR_NORMAL   = 0x00000001;
     int SERVICE_ERROR_SEVERE   = 0x00000002;
     int SERVICE_ERROR_CRITICAL = 0x00000003;
-    
+
     int STATUS_PENDING = 0x00000103;
 
     // Privilege Constants
@@ -2508,11 +2508,11 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract the contained ACEs from the ACL.
-         * 
+         *
          * <p>ACE types as decoded to their native JNA counterparts. ACE types,
-         * that are currently unsupported by JNA are returned as 
+         * that are currently unsupported by JNA are returned as
          * {@link WinNT.ACE_HEADER} objects.</p>
-         * 
+         *
          * @return array holding the contained ACEs
          */
         public ACE_HEADER[] getACEs() {
@@ -2943,7 +2943,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * This constructor should only be called by a subclass to ensure memory
          * is properly allocated to the subclass fields.
-         * 
+         *
          * @param memory
          *            A pointer to the allocated native memory.
          */
@@ -2958,7 +2958,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
          * {@link #SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX(Pointer)} to properly
          * cast the Pointer to the appropriate subclass and populate variable
          * length arrays.
-         * 
+         *
          * @param memory
          *            A pointer to allocated memory to be cast to this class.
          * @return An instance of the appropriate subclass depending on the
@@ -3756,8 +3756,8 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
         /**
          * Specifies whether the server may enable or disable privileges and
          * groups that the client's security context may include.
-         * 
-         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and 
+         *
+         * <p>This is a boolean value. See {@link WinNT#BOOLEAN_TRUE} and
          * {@link WinNT#BOOLEAN_FALSE}.</p>
          */
         public byte EffectiveOnly;
@@ -3996,7 +3996,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      *       +-----------------------+-------------------------+
      *        15                   10 9                       0   bit
      *  </pre>
-     * 
+     *
      *  <p>WARNING:  This pattern isn't always follows, Serbina, Bosnian &amp; Croation for example.</p>
      *
      *  <p>It is recommended that applications test for locale names or actual LCIDs.</p>
@@ -4016,9 +4016,9 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
      *   +-------------+---------+-------------------------+
      *    31         20 19     16 15                      0   bit
      * </pre>
-     * 
+     *
      * <p>WARNING: This pattern isn't always followed (es-ES_tradnl vs es-ES for example)</p>
-     * 
+     *
      * <p>It is recommended that applications test for locale names or actual LCIDs.</p>
      */
     public static final class LocaleMacros {
@@ -4028,7 +4028,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * construct the locale id from a language id and a sort id.
-         * 
+         *
          * @param lgid language id
          * @param srtid sort id
          * @return locale id derived from ldig and srtid
@@ -4039,7 +4039,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * construct the locale id from a language id, sort id, and sort version.
-         * 
+         *
          * @param lgid locale id
          * @param srtid sort id
          * @param ver sort version
@@ -4051,7 +4051,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the language id from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted language id
          */
@@ -4061,7 +4061,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the sort id from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted sort id
          */
@@ -4071,7 +4071,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * extract the sort version from a locale id.
-         * 
+         *
          * @param lcid locale id
          * @return extracted sort version
          */
@@ -4081,7 +4081,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Construct language id from a primary language id and a sublanguage id.
-         * 
+         *
          * @param p primary language ID
          * @param s sublanguage ID
          * @return constructed language id
@@ -4092,7 +4092,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract primary language id from a language id.
-         * 
+         *
          * @param lgid language ID
          * @return extracted primary language id
          */
@@ -4102,7 +4102,7 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
 
         /**
          * Extract sublanguage id from a language id.
-         * 
+         *
          * @param lgid language ID
          * @return extracted sublanguage id
          */

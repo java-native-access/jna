@@ -347,7 +347,7 @@ public class Secur32Test extends TestCase {
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
                 phClientCredential));
     }
-    
+
     public void testCreateEmptyToken() {
         ManagedSecBufferDesc token = new ManagedSecBufferDesc(Sspi.SECBUFFER_TOKEN, Sspi.MAX_TOKEN_SIZE);
         assertEquals(1, token.cBuffers);
@@ -421,13 +421,13 @@ public class Secur32Test extends TestCase {
         assertEquals(W32Errors.SEC_E_OK,
                 Secur32.INSTANCE.QueryContextAttributes(phServerContext, Sspi.SECPKG_ATTR_PACKAGE_INFO, packageinfo));
         ByReference info = packageinfo.PackageInfo;
-        
+
         assertNotNull(info.Name);
         assertNotNull(info.Comment);
-        
+
         assertTrue(!info.Name.isEmpty());
         assertTrue(!info.Comment.isEmpty());
-        
+
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeContextBuffer(info.getPointer()));
 
         // release server context
@@ -437,7 +437,7 @@ public class Secur32Test extends TestCase {
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.DeleteSecurityContext(phClientContext));
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(phClientCredential));
     }
-    
+
     public void testQuerySecurityPackageInfo() {
         PSecPkgInfo pkgInfo = new PSecPkgInfo();
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.QuerySecurityPackageInfo("NTLM", pkgInfo));
@@ -445,25 +445,25 @@ public class Secur32Test extends TestCase {
         assertEquals(pkgInfo.pPkgInfo.fCapabilities & Sspi.SECPKG_FLAG_PRIVACY, Sspi.SECPKG_FLAG_PRIVACY);
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeContextBuffer(pkgInfo.getPointer()));
     }
-    
+
     public void testQueryCredentialAttribute() {
         // acquire sample credential handle
         CredHandle phClientCredential = new CredHandle();
         TimeStamp ptsClientExpiry = new TimeStamp();
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.AcquireCredentialsHandle(null, "Negotiate",
                 Sspi.SECPKG_CRED_OUTBOUND, null, null, null, null, phClientCredential, ptsClientExpiry));
-        
+
         SecPkgCredentials_Names names = new SecPkgCredentials_Names();
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.QueryCredentialsAttributes(phClientCredential, Sspi.SECPKG_CRED_ATTR_NAMES, names));
-        
+
         String accountName = names.getUserName();
-        
+
         assertNotNull(accountName);
         assertTrue(accountName.length() > 0);
-        
+
         assertEquals(W32Errors.SEC_E_OK, names.free());
     }
-    
+
     public void testEncryptDecryptMessage() {
         // client ----------- acquire outbound credential handle
         CredHandle phClientCredential = new CredHandle();
@@ -528,49 +528,49 @@ public class Secur32Test extends TestCase {
 
         assertTrue((pfServerContextAttr.getValue() & Sspi.ISC_REQ_CONFIDENTIALITY) == Sspi.ISC_REQ_CONFIDENTIALITY);
         assertTrue((pfClientContextAttr.getValue() & Sspi.ISC_REQ_CONFIDENTIALITY) == Sspi.ISC_REQ_CONFIDENTIALITY);
-        
+
         // Fetch size limits for crypto functions
         SecPkgContext_Sizes sizes = new SecPkgContext_Sizes();
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.QueryContextAttributes(phClientContext, Sspi.SECPKG_ATTR_SIZES, sizes));
-        
+
         // Create sample input data
         byte[] inputData = "Hallo Welt".getBytes(Charset.forName("ASCII"));
-        
+
         // Do encryption, buffer 0 holds meta data, buffer 1 holds the
         // clear text data on input and the encrypted data on output.
         // Uses the phClientContext
         ManagedSecBufferDesc encryptBuffers = new ManagedSecBufferDesc(2);
-        
+
         Memory tokenMemory = new Memory(sizes.cbSecurityTrailer);
         Memory dataMemory = new Memory(inputData.length);
         dataMemory.write(0, inputData, 0, inputData.length);
-        
+
         encryptBuffers.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         encryptBuffers.getBuffer(0).cbBuffer = (int) tokenMemory.size();
         encryptBuffers.getBuffer(0).pvBuffer = tokenMemory;
         encryptBuffers.getBuffer(1).BufferType = Sspi.SECBUFFER_DATA;
         encryptBuffers.getBuffer(1).cbBuffer = (int) dataMemory.size();
         encryptBuffers.getBuffer(1).pvBuffer = dataMemory;
-        
+
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.EncryptMessage(phClientContext, 0, encryptBuffers, 0));
-        
+
         byte[] encryptedTokenData = encryptBuffers.getBuffer(0).getBytes();
         byte[] encryptedData = encryptBuffers.getBuffer(1).getBytes();
-        
+
         assertNotNull(encryptedTokenData);
         assertNotNull(encryptedData);
         assertTrue(encryptedTokenData.length > 0);
         assertTrue(encryptedData.length > 0);
         assertFalse(Arrays.equals(inputData, encryptedData));
-        
+
         // Do decryption of data with the pfServerContextAttr
         ManagedSecBufferDesc decryptBuffers = new ManagedSecBufferDesc(2);
-        
+
         Memory decryptTokenMemory = new Memory(encryptedTokenData.length);
         decryptTokenMemory.write(0, encryptedTokenData, 0, encryptedTokenData.length);
         Memory decryptDataMemory = new Memory(encryptedData.length);
         decryptDataMemory.write(0, encryptedData, 0, encryptedData.length);
-        
+
         decryptBuffers.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         decryptBuffers.getBuffer(0).cbBuffer = (int) decryptTokenMemory.size();
         decryptBuffers.getBuffer(0).pvBuffer = decryptTokenMemory;
@@ -583,19 +583,19 @@ public class Secur32Test extends TestCase {
 
         byte[] decryptMessageResult = decryptBuffers.getBuffer(1).getBytes();
         assertTrue(Arrays.equals(inputData, decryptMessageResult));
-        
+
         // Modify message and retry decryption. Decryption is expected to be
         // refused and the buffers should be untouched.
         // Modification is done by injecting a NULL byte into the beginning of
         // the message
-        
+
         ManagedSecBufferDesc decryptBuffers2 = new ManagedSecBufferDesc(2);
-        
+
         Memory decryptTokenMemory2 = new Memory(encryptedTokenData.length);
         decryptTokenMemory2.write(0, encryptedTokenData, 0, encryptedTokenData.length);
         Memory decryptDataMemory2 = new Memory(encryptedData.length + 1);
         decryptDataMemory2.write(1, encryptedData, 0, encryptedData.length);
-        
+
         decryptBuffers2.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         decryptBuffers2.getBuffer(0).cbBuffer = (int) decryptTokenMemory2.size();
         decryptBuffers2.getBuffer(0).pvBuffer = decryptTokenMemory2;
@@ -616,7 +616,7 @@ public class Secur32Test extends TestCase {
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.FreeCredentialsHandle(
                 phClientCredential));
     }
-    
+
     public void testMakeVerifySignature() {
         // client ----------- acquire outbound credential handle
         CredHandle phClientCredential = new CredHandle();
@@ -678,51 +678,51 @@ public class Secur32Test extends TestCase {
                 assertTrue(serverRc == W32Errors.SEC_I_CONTINUE_NEEDED || serverRc == W32Errors.SEC_E_OK);
             }
         } while(serverRc != W32Errors.SEC_E_OK || clientRc != W32Errors.SEC_E_OK);
-        
+
         assertTrue((pfServerContextAttr.getValue() & Sspi.ISC_REQ_CONFIDENTIALITY) == Sspi.ISC_REQ_CONFIDENTIALITY);
         assertTrue((pfClientContextAttr.getValue() & Sspi.ISC_REQ_CONFIDENTIALITY) == Sspi.ISC_REQ_CONFIDENTIALITY);
-        
+
         // Fetch size limits for crypto functions
         SecPkgContext_Sizes sizes = new SecPkgContext_Sizes();
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.QueryContextAttributes(phClientContext, Sspi.SECPKG_ATTR_SIZES, sizes));
-        
+
         // Create sample input data
         byte[] inputData = "Hallo Welt".getBytes(Charset.forName("ASCII"));
-        
+
         // Make signature, buffer 0 holds signature data, buffer 1 holds the
         // clear text data
         ManagedSecBufferDesc signingBuffers = new ManagedSecBufferDesc(2);
-        
+
         Memory tokenMemory = new Memory(sizes.cbMaxSignature);
         Memory dataMemory = new Memory(inputData.length);
         dataMemory.write(0, inputData, 0, inputData.length);
-        
+
         signingBuffers.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         signingBuffers.getBuffer(0).cbBuffer = (int) tokenMemory.size();
         signingBuffers.getBuffer(0).pvBuffer = tokenMemory;
         signingBuffers.getBuffer(1).BufferType = Sspi.SECBUFFER_DATA;
         signingBuffers.getBuffer(1).cbBuffer = (int) dataMemory.size();
         signingBuffers.getBuffer(1).pvBuffer = dataMemory;
-        
+
         assertEquals(W32Errors.SEC_E_OK, Secur32.INSTANCE.MakeSignature(phClientContext, 0, signingBuffers, 0));
-        
+
         byte[] signingData = signingBuffers.getBuffer(0).getBytes();
         byte[] signedData = signingBuffers.getBuffer(1).getBytes();
-        
+
         assertNotNull(signingData);
         assertNotNull(signedData);
         assertTrue(signingData.length > 0);
         assertTrue(signedData.length > 0);
         assertTrue(Arrays.equals(inputData, signedData));
-        
+
         // Do verification of data with the pfServerContextAttr
         ManagedSecBufferDesc verificationBuffers = new ManagedSecBufferDesc(2);
-        
+
         Memory verificationSigningMemory = new Memory(signingData.length);
         verificationSigningMemory.write(0, signingData, 0, signingData.length);
         Memory verificiationSignedMemory = new Memory(signedData.length);
         verificiationSignedMemory.write(0, signedData, 0, signedData.length);
-        
+
         verificationBuffers.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         verificationBuffers.getBuffer(0).cbBuffer = (int) verificationSigningMemory.size();
         verificationBuffers.getBuffer(0).pvBuffer = verificationSigningMemory;
@@ -735,19 +735,19 @@ public class Secur32Test extends TestCase {
 
         byte[] decryptMessageResult = verificationBuffers.getBuffer(1).getBytes();
         assertTrue(Arrays.equals(inputData, decryptMessageResult));
-        
+
         // Modify message and retry decryption. Decryption is expected to be
         // refused and the buffers should be untouched.
         // Modification is done by injecting a NULL byte into the beginning of
         // the message
-        
+
         ManagedSecBufferDesc verificationBuffers2 = new ManagedSecBufferDesc(2);
-        
+
         Memory verificationSigingMemory2 = new Memory(signingData.length);
         verificationSigingMemory2.write(0, signingData, 0, signingData.length);
         Memory verificationSignedMemory2 = new Memory(signedData.length + 1);
         verificationSignedMemory2.write(1, signedData, 0, signedData.length);
-        
+
         verificationBuffers2.getBuffer(0).BufferType = Sspi.SECBUFFER_TOKEN;
         verificationBuffers2.getBuffer(0).cbBuffer = (int) verificationSigingMemory2.size();
         verificationBuffers2.getBuffer(0).pvBuffer = verificationSigingMemory2;

@@ -1,23 +1,23 @@
 /* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -62,17 +62,17 @@ import com.sun.jna.ptr.PointerByReference;
  * This object acts as the invocation handler for interfaces annotated with
  * ComInterface. It wraps all (necessary) low level COM calls and dispatches
  * them through the COM runtime.
- * 
+ *
  * <p>The caller of the methods is responsible for correct initialization of the
  * COM runtime and appropriate thread-handling - depending on the choosen
  * handling model.</p>
- * 
+ *
  * @see <a href="https://msdn.microsoft.com/de-de/library/windows/desktop/ms693344%28v=vs.85%29.aspx">MSDN - Processes, Threads, and Apartments</a>
  * @see <a href="https://msdn.microsoft.com/en-us/library/ms809971.aspx">MSDN - Understanding and Using COM Threading Models</a>
  */
 public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win32.COM.util.IDispatch,
         IRawDispatchHandle, IConnectionPoint {
-        
+
     // cached value of the IUnknown interface pointer
     // Rules of COM state that querying for the IUnknown interface must return
     // an identical pointer value
@@ -96,7 +96,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
     private long getUnknownId() {
         assert COMUtils.comIsInitialized() : "COM not initialized";
-  
+
         if (-1 == this.unknownId) {
             try {
                 final PointerByReference ppvObject = new PointerByReference();
@@ -361,7 +361,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         Convert.free(v, value); // Free value allocated by Convert#toVariant
         COMUtils.checkRC(hr);
     }
-     
+
     @Override
     public <T> T getProperty(Class<T> returnType, String name, Object... args) {
         DISPID dispID = resolveDispId(this.getRawDispatch(), name);
@@ -391,13 +391,13 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
 
         return (T) Convert.toJavaObject(result, returnType, factory, false, true);
     }
-      
+
     @Override
     public <T> T invokeMethod(Class<T> returnType, String name, Object... args) {
         DISPID dispID = resolveDispId(this.getRawDispatch(), name);
         return invokeMethod(returnType, dispID, args);
     }
-        
+
     @Override
     public <T> T invokeMethod(Class<T> returnType, DISPID dispID, Object... args) {
         assert COMUtils.comIsInitialized() : "COM not initialized";

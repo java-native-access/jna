@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -118,7 +118,7 @@ public interface Wtsapi32 extends StdCallLibrary {
      * Session Host (RD Session Host) server. This structure is returned by the
      * WTSEnumerateProcessesEx function when you set the pLevel parameter to
      * one.
-     * 
+     *
      * @see <A HREF=
      *      "https://docs.microsoft.com/en-us/windows/desktop/api/wtsapi32/ns-wtsapi32-_wts_process_info_exa">WTS_PROCESS_INFO_EXA</A>
      * @see <A HREF=
@@ -183,7 +183,7 @@ public interface Wtsapi32 extends StdCallLibrary {
      * Retrieves information about the active processes on the specified Remote
      * Desktop Session Host (RD Session Host) server or Remote Desktop
      * Virtualization Host (RD Virtualization Host) server.
-     * 
+     *
      * @param hServer
      *            A handle to an RD Session Host server. Specify a handle opened
      *            by the WTSOpenServer function, or specify
@@ -224,7 +224,7 @@ public interface Wtsapi32 extends StdCallLibrary {
     /**
      * Frees memory that contains WTS_PROCESS_INFO_EX or WTS_SESSION_INFO_1
      * structures allocated by a Remote Desktop Services function.
-     * 
+     *
      * @param WTSTypeClass
      *            A value of the WTS_TYPE_CLASS enumeration type that specifies
      *            the type of structures contained in the buffer referenced by

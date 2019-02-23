@@ -56,9 +56,9 @@ public class Crypt32Test extends TestCase {
         CERT_CONTEXT.ByReference pc = Crypt32.INSTANCE.CertFindCertificateInStore(
                 hCertStore,
                 (WinCrypt.PKCS_7_ASN_ENCODING | WinCrypt.X509_ASN_ENCODING),
-                0, 
+                0,
                 WinCrypt.CERT_FIND_SUBJECT_STR,
-                new WTypes.LPWSTR(TESTCERT_CN).getPointer(), 
+                new WTypes.LPWSTR(TESTCERT_CN).getPointer(),
                 null);
 
         if (pc == null) {
@@ -233,13 +233,13 @@ public class Crypt32Test extends TestCase {
 
         assertTrue("Verification failed", result);
         assertEquals(message1String, resultBuffer2.getWideString(0));
-        
+
         assertNotNull(certContextPointer.getValue());
         CERT_CONTEXT resCertContext = Structure.newInstance(CERT_CONTEXT.class, certContextPointer.getValue());
 
         Crypt32.INSTANCE.CertFreeCertificateContext(signCertContext);
         Crypt32.INSTANCE.CertFreeCertificateContext(resCertContext);
-        
+
         assertTrue("CERT_CONTEXT or CERT_CHAIN_CONTEXT were not correctly freed.",
                 Crypt32.INSTANCE.CertCloseStore(hCertStore, WinCrypt.CERT_CLOSE_STORE_CHECK_FLAG));
     }
@@ -304,16 +304,16 @@ public class Crypt32Test extends TestCase {
         assertNotNull(usagesArray);
         assertEquals(6, usagesArray.length);
         List<String> usages = Arrays.asList(usagesArray);
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.1")); // Indicates that a certificate can be used as an SSL server certificate. 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.2")); // Indicates that a certificate can be used as an SSL client certificate. 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.4")); // Indicates that a certificate can be used for protecting email (signing, encryption, key agreement). 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.8")); // Indicates that a certificate can be used to bind the hash of an object to a time from a trusted time source. 
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.1")); // Indicates that a certificate can be used as an SSL server certificate.
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.2")); // Indicates that a certificate can be used as an SSL client certificate.
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.4")); // Indicates that a certificate can be used for protecting email (signing, encryption, key agreement).
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.8")); // Indicates that a certificate can be used to bind the hash of an object to a time from a trusted time source.
         assertTrue(usages.contains("1.3.6.1.4.1.311.10.3.4")); // Can use encrypted file systems (EFS) - szOID_EFS_CRYPTO
         assertTrue(usages.contains("1.3.6.1.4.1.311.10.3.12")); // Signer of documents - szOID_KP_DOCUMENT_SIGNING
 
         Crypt32.INSTANCE.CertFreeCertificateChain(pChainContext);
         Crypt32.INSTANCE.CertFreeCertificateContext(pc);
-        
+
         assertTrue("CERT_CONTEXT or CERT_CHAIN_CONTEXT were not correctly freed.",
                 Crypt32.INSTANCE.CertCloseStore(hCertStore, WinCrypt.CERT_CLOSE_STORE_CHECK_FLAG));
     }

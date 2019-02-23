@@ -117,7 +117,7 @@ public class Advapi32UtilTest extends TestCase {
             System.err.println("testGetAccountSidFromName Test can only be run on english locale");
         }
     }
-    
+
     public void testGetAccountNameRoundtrip() {
         // This test ensures getAccountBySid and getAccountByName are at least
         // symmetrical. The names of the accounts are locale dependend so this is
@@ -129,7 +129,7 @@ public class Advapi32UtilTest extends TestCase {
         assertTrue(! accountNameResolved.isEmpty());
         assertEquals(worldSID, roundTripSid);
     }
-    
+
     public void testConvertSid() {
         String sidString = "S-1-1-0"; // Everyone
         byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);

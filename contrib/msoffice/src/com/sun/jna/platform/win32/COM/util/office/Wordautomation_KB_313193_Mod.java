@@ -1,22 +1,22 @@
 /*
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -54,11 +54,11 @@ import java.io.IOException;
 
 /**
  * Based on VB sample: https://support.microsoft.com/de-de/kb/313193
- * 
+ *
  * <p>This version of the sample runs without a visible word instance and in the
  * end shuts down word. The process creates a PDF document, that is written to a
  * temporary file, which name is printed.</p>
- * 
+ *
  * <p>Please note: The contained type-bindings are far from complete and only
  * included as sample - please use one of the generators to generate complete
  * bindings or enhance the coverage yourself.</p>
@@ -69,10 +69,10 @@ public class Wordautomation_KB_313193_Mod {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
         // Initialize Factory for COM object creation
         Factory fact = new Factory();
-        
+
         try {
             // oEndOfDoc is a predefined bookmark
-            final String oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */ 
+            final String oEndOfDoc = "\\endofdoc"; /* \endofdoc is a predefined bookmark */
 
             // Start word application
             ComWord_Application word = fact.createObject(ComWord_Application.class);
@@ -80,12 +80,12 @@ public class Wordautomation_KB_313193_Mod {
 
             // Make word visible/invisible (invisible is default)
             wordApp.setVisible(true);
-            
+
             // Create an empty document (signiture of depends on bindings)
             ComIDocument doc = wordApp.getDocuments().Add();
 
             Helper.sleep(5);
-            
+
             //Insert a paragraph at the beginning of the document.
             Paragraph para1 = doc.getContent().getParagraphs().Add(VARIANT_MISSING);
             para1.getRange().setText("Heading 1");
@@ -180,7 +180,7 @@ public class Wordautomation_KB_313193_Mod {
             oChartApp.invokeMethod(Void.class, "Update");
             oChartApp.invokeMethod(Void.class, "Quit");
 
-            //... If desired, you can proceed from here using the Microsoft Graph 
+            //... If desired, you can proceed from here using the Microsoft Graph
             //Object model on the oChart and oChartApp objects to make additional
             //changes to the chart.
 
@@ -198,29 +198,29 @@ public class Wordautomation_KB_313193_Mod {
             doc.ExportAsFixedFormat(
                     tempFile.getAbsolutePath(),
                     WdExportFormat.wdExportFormatPDF,
-                    Boolean.FALSE, 
-                    WdExportOptimizeFor.wdExportOptimizeForOnScreen, 
-                    WdExportRange.wdExportAllDocument, 
-                    null, 
-                    null, 
+                    Boolean.FALSE,
+                    WdExportOptimizeFor.wdExportOptimizeForOnScreen,
+                    WdExportRange.wdExportAllDocument,
+                    null,
+                    null,
                     WdExportItem.wdExportDocumentContent,
                     Boolean.FALSE,
-                    Boolean.TRUE, 
+                    Boolean.TRUE,
                     WdExportCreateBookmarks.wdExportCreateNoBookmarks,
                     Boolean.TRUE,
-                    Boolean.FALSE, 
+                    Boolean.FALSE,
                     Boolean.TRUE,
                     VARIANT_MISSING);
 
             System.out.println("Output written to: " + tempFile.getAbsolutePath());
 
             doc.Close(WdSaveOptions.wdDoNotSaveChanges, VARIANT_MISSING, VARIANT_MISSING);
-            
+
             wordApp.Quit();
         } finally {
             fact.disposeAll();
             Ole32.INSTANCE.CoUninitialize();
         }
     }
-    
+
 }

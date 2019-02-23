@@ -121,9 +121,9 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
 
         return handle;
     }
-    
+
     public static final LCID systemLCID = Kernel32.INSTANCE.GetSystemDefaultLCID();
-    public static final boolean isEnglishLocale = 
+    public static final boolean isEnglishLocale =
             systemLCID.intValue() == 0x409 // en_US
             || systemLCID.intValue() == 0x809 // en_GB
             ;
@@ -145,10 +145,10 @@ public abstract class AbstractWin32TestSupport extends AbstractPlatformTestSuppo
         }
         Kernel32.INSTANCE.CloseHandle(hSnapShot);
     }
-    
+
     /**
      * Return true if the supplied uuid can be found in the registry.
-     * 
+     *
      * @param uuid Format: {&lt;UID&gt;}
      */
     public static boolean checkCOMRegistered(String uuid) {

@@ -1,14 +1,14 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
- * 
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.  
+ * Lesser General Public License for more details.
  */
 package com.sun.jna.platform.win32;
 
@@ -64,13 +64,13 @@ public class WinspoolTest {
     public void testEnumPrinters_2() {
         IntByReference pcbNeeded = new IntByReference();
         IntByReference pcReturned = new IntByReference();
-        // if there are no printers installed, EnumPrinters will succeed with zero items returned 
+        // if there are no printers installed, EnumPrinters will succeed with zero items returned
         Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 2, null, 0, pcbNeeded, pcReturned);
         assertTrue(pcReturned.getValue() == 0);
         if (pcbNeeded.getValue() > 0) {
-            PRINTER_INFO_2 pPrinterEnum = new PRINTER_INFO_2(pcbNeeded.getValue());         
+            PRINTER_INFO_2 pPrinterEnum = new PRINTER_INFO_2(pcbNeeded.getValue());
             assertTrue(Winspool.INSTANCE.EnumPrinters(Winspool.PRINTER_ENUM_LOCAL, null, 2, pPrinterEnum.getPointer(), pcbNeeded.getValue(), pcbNeeded, pcReturned));
-            assertTrue(pcReturned.getValue() >= 0);         
+            assertTrue(pcReturned.getValue() >= 0);
             PRINTER_INFO_2[] printerInfo = (PRINTER_INFO_2[]) pPrinterEnum.toArray(pcReturned.getValue());
             for(PRINTER_INFO_2 pi : printerInfo) {
                 assertTrue(pi.pPrinterName == null || pi.pPrinterName.length() >= 0);
