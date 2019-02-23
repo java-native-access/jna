@@ -1,6 +1,5 @@
-/*
- * Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
- * Parts Copyright (c) 2007 Olivier Chafik
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+ * Copyright (c) 2007 Olivier Chafik
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and

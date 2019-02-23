@@ -1,4 +1,4 @@
-/* copyright (c) 2007 Timothy Wall, All Rights Reserved
+/* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
