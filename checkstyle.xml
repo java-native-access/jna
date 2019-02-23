@@ -4,6 +4,9 @@
           "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
 <module name="Checker">
+    <module name="SuppressionFilter">
+        <property name="file" value="checkstyle_suppressions.xml"/>
+    </module>
     <module name="FileTabCharacter"/>
     <module name="RegexpSingleline">
         <property name="format" value="\s+$"/>
@@ -15,5 +18,10 @@
     </module>
     <module name="TreeWalker">
         <module name="Indentation"/>
+    </module>
+    <module name="RegexpHeader">
+        <property name="id" value="header-check" />
+        <property name="headerFile" value="checkstyle_header.txt"/>
+        <property name="multiLines" value="2"/>
     </module>
 </module>

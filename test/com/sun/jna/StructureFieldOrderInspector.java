@@ -1,4 +1,4 @@
-/**
+/*
  * The contents of this file is dual-licensed under 2
  * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
