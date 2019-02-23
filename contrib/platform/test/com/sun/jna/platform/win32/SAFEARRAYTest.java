@@ -68,7 +68,7 @@ import org.junit.Assume;
 
 public class SAFEARRAYTest {
     static {
-            ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
 
     @Before

@@ -77,12 +77,12 @@ public abstract class TlbBase {
     protected String name = "DefaultName";
 
     /** The iunknown methods. */
-    public static String[] IUNKNOWN_METHODS = { "QueryInterface", "AddRef",
-            "Release" };
+    public static String[] IUNKNOWN_METHODS = {"QueryInterface", "AddRef",
+        "Release"};
 
     /** The idispatch methods. */
-    public static String[] IDISPATCH_METHODS = { "GetTypeInfoCount",
-            "GetTypeInfo", "GetIDsOfNames", "Invoke" };
+    public static String[] IDISPATCH_METHODS = {"GetTypeInfoCount",
+        "GetTypeInfo", "GetIDsOfNames", "Invoke"};
 
     protected String bindingMode = TlbConst.BINDING_MODE_DISPID;
 

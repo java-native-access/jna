@@ -43,17 +43,17 @@ public class RunningObjectTable implements IRunningObjectTable {
 
     @Override
     public Iterable<IDispatch> enumRunning() {
-                assert COMUtils.comIsInitialized() : "COM not initialized";
+        assert COMUtils.comIsInitialized() : "COM not initialized";
 
-                final PointerByReference ppenumMoniker = new PointerByReference();
+        final PointerByReference ppenumMoniker = new PointerByReference();
 
-                WinNT.HRESULT hr = this.raw.EnumRunning(ppenumMoniker);
+        WinNT.HRESULT hr = this.raw.EnumRunning(ppenumMoniker);
 
-                COMUtils.checkRC(hr);
-                com.sun.jna.platform.win32.COM.EnumMoniker raw = new com.sun.jna.platform.win32.COM.EnumMoniker(
-                                ppenumMoniker.getValue());
+        COMUtils.checkRC(hr);
+        com.sun.jna.platform.win32.COM.EnumMoniker raw = new com.sun.jna.platform.win32.COM.EnumMoniker(
+            ppenumMoniker.getValue());
 
-                return new EnumMoniker(raw, this.raw, this.factory);
+        return new EnumMoniker(raw, this.raw, this.factory);
     }
 
     @Override

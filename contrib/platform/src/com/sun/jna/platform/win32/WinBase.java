@@ -1005,8 +1005,8 @@ public interface WinBase extends WinDef, BaseTSD {
         public String toString() {
             // if not initialized, return the default representation
             if ((wYear == 0) && (wMonth == 0) && (wDay == 0)
-             && (wHour == 0) && (wMinute == 0) && (wSecond == 0)
-             && (wMilliseconds == 0)) {
+                && (wHour == 0) && (wMinute == 0) && (wSecond == 0)
+                && (wMilliseconds == 0)) {
                 return super.toString();
             }
 
@@ -1124,7 +1124,7 @@ public interface WinBase extends WinDef, BaseTSD {
         public HANDLE hEvent;
     }
 
-   int INFINITE = 0xFFFFFFFF;
+    int INFINITE = 0xFFFFFFFF;
 
     /**
      * Contains information about the current computer system. This includes the architecture and

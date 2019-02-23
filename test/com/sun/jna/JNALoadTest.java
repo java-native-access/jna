@@ -41,11 +41,11 @@ public class JNALoadTest extends TestCase implements Paths {
 
     private class TestLoader extends URLClassLoader {
         public TestLoader(boolean fromJar) throws MalformedURLException {
-            super(new URL[] {
-                    Platform.isWindowsCE()
-                    ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
-                    : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL(),
-                  }, new CloverLoader());
+            super(new URL[]{
+                Platform.isWindowsCE()
+                ? new File("/Storage Card/" + (fromJar ? "jna.jar" : "test.jar")).toURI().toURL()
+                    : new File(BUILDDIR + (fromJar ? "/jna.jar" : "/classes")).toURI().toURL()},
+                new CloverLoader());
             if (fromJar) {
                 assertJarExists();
             }

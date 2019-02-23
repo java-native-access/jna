@@ -125,25 +125,25 @@ public class Win32WindowDemo implements WindowProc {
      */
     public LRESULT callback(HWND hwnd, int uMsg, WPARAM wParam, LPARAM lParam) {
         switch (uMsg) {
-        case WinUser.WM_CREATE: {
-            onCreate(wParam, lParam);
-            return new LRESULT(0);
-        }
-        case WinUser.WM_DESTROY: {
-            User32.INSTANCE.PostQuitMessage(0);
-            return new LRESULT(0);
-        }
-        case WinUser.WM_SESSION_CHANGE: {
-            this.onSessionChange(wParam, lParam);
-            return new LRESULT(0);
-        }
-        case WinUser.WM_DEVICECHANGE: {
-            LRESULT lResult = this.onDeviceChange(wParam, lParam);
-            return lResult != null ? lResult :
-                User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
-        }
-        default:
-            return User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
+            case WinUser.WM_CREATE: {
+                onCreate(wParam, lParam);
+                return new LRESULT(0);
+            }
+            case WinUser.WM_DESTROY: {
+                User32.INSTANCE.PostQuitMessage(0);
+                return new LRESULT(0);
+            }
+            case WinUser.WM_SESSION_CHANGE: {
+                this.onSessionChange(wParam, lParam);
+                return new LRESULT(0);
+            }
+            case WinUser.WM_DEVICECHANGE: {
+                LRESULT lResult = this.onDeviceChange(wParam, lParam);
+                return lResult != null ? lResult :
+                    User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
+            }
+            default:
+                return User32.INSTANCE.DefWindowProc(hwnd, uMsg, wParam, lParam);
         }
     }
 
@@ -171,30 +171,30 @@ public class Win32WindowDemo implements WindowProc {
      */
     protected void onSessionChange(WPARAM wParam, LPARAM lParam) {
         switch (wParam.intValue()) {
-        case Wtsapi32.WTS_CONSOLE_CONNECT: {
-            this.onConsoleConnect(lParam.intValue());
-            break;
-        }
-        case Wtsapi32.WTS_CONSOLE_DISCONNECT: {
-            this.onConsoleDisconnect(lParam.intValue());
-            break;
-        }
-        case Wtsapi32.WTS_SESSION_LOGON: {
-            this.onMachineLogon(lParam.intValue());
-            break;
-        }
-        case Wtsapi32.WTS_SESSION_LOGOFF: {
-            this.onMachineLogoff(lParam.intValue());
-            break;
-        }
-        case Wtsapi32.WTS_SESSION_LOCK: {
-            this.onMachineLocked(lParam.intValue());
-            break;
-        }
-        case Wtsapi32.WTS_SESSION_UNLOCK: {
-            this.onMachineUnlocked(lParam.intValue());
-            break;
-        }
+            case Wtsapi32.WTS_CONSOLE_CONNECT: {
+                this.onConsoleConnect(lParam.intValue());
+                break;
+            }
+            case Wtsapi32.WTS_CONSOLE_DISCONNECT: {
+                this.onConsoleDisconnect(lParam.intValue());
+                break;
+            }
+            case Wtsapi32.WTS_SESSION_LOGON: {
+                this.onMachineLogon(lParam.intValue());
+                break;
+            }
+            case Wtsapi32.WTS_SESSION_LOGOFF: {
+                this.onMachineLogoff(lParam.intValue());
+                break;
+            }
+            case Wtsapi32.WTS_SESSION_LOCK: {
+                this.onMachineLocked(lParam.intValue());
+                break;
+            }
+            case Wtsapi32.WTS_SESSION_UNLOCK: {
+                this.onMachineUnlocked(lParam.intValue());
+                break;
+            }
         }
     }
 
@@ -269,19 +269,19 @@ public class Win32WindowDemo implements WindowProc {
      */
     protected LRESULT onDeviceChange(WPARAM wParam, LPARAM lParam) {
         switch (wParam.intValue()) {
-        case DBT.DBT_DEVICEARRIVAL: {
-            return onDeviceChangeArrival(lParam);
-        }
-        case DBT.DBT_DEVICEREMOVECOMPLETE: {
-            return onDeviceChangeRemoveComplete(lParam);
-        }
-        case DBT.DBT_DEVNODES_CHANGED: {
-            //lParam is 0 for this wParam
-            return onDeviceChangeNodesChanged();
-        }
-        default:
-            System.out
-                    .println("Message WM_DEVICECHANGE message received, value unhandled.");
+            case DBT.DBT_DEVICEARRIVAL: {
+                return onDeviceChangeArrival(lParam);
+            }
+            case DBT.DBT_DEVICEREMOVECOMPLETE: {
+                return onDeviceChangeRemoveComplete(lParam);
+            }
+            case DBT.DBT_DEVNODES_CHANGED: {
+                //lParam is 0 for this wParam
+                return onDeviceChangeNodesChanged();
+            }
+            default:
+                System.out.println(
+                    "Message WM_DEVICECHANGE message received, value unhandled.");
         }
         return null;
     }
@@ -289,57 +289,57 @@ public class Win32WindowDemo implements WindowProc {
     protected LRESULT onDeviceChangeArrivalOrRemoveComplete(LPARAM lParam, String action) {
         DEV_BROADCAST_HDR bhdr = new DEV_BROADCAST_HDR(lParam.longValue());
         switch (bhdr.dbch_devicetype) {
-        case DBT.DBT_DEVTYP_DEVICEINTERFACE: {
-            // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244.aspx
-            DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(bhdr.getPointer());
-            System.out.println("BROADCAST_DEVICEINTERFACE: " + action);
-            System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
-            System.out.println("dbcc_name: " + bdif.getDbcc_name());
-            System.out.println("dbcc_classguid: "
-                    + bdif.dbcc_classguid.toGuidString());
-            break;
-        }
-        case DBT.DBT_DEVTYP_HANDLE: {
-            // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363245.aspx
-            DEV_BROADCAST_HANDLE bhd = new DEV_BROADCAST_HANDLE(bhdr.getPointer());
-            System.out.println("BROADCAST_HANDLE: " + action);
-            break;
-        }
-        case DBT.DBT_DEVTYP_OEM: {
-            // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363247.aspx
-            DEV_BROADCAST_OEM boem = new DEV_BROADCAST_OEM(bhdr.getPointer());
-            System.out.println("BROADCAST_OEM: " + action);
-            break;
-        }
-        case DBT.DBT_DEVTYP_PORT: {
-            // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363248.aspx
-            DEV_BROADCAST_PORT bpt = new DEV_BROADCAST_PORT(bhdr.getPointer());
-            System.out.println("BROADCAST_PORT: " + action);
-            break;
-        }
-        case DBT.DBT_DEVTYP_VOLUME: {
-            // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363249.aspx
-            DEV_BROADCAST_VOLUME bvl = new DEV_BROADCAST_VOLUME(bhdr.getPointer());
-            int logicalDriveAffected = bvl.dbcv_unitmask;
-            short flag = bvl.dbcv_flags;
-            boolean isMediaNotPhysical = 0 != (flag & DBT.DBTF_MEDIA/*value is 1*/);
-            boolean isNet = 0 != (flag & DBT.DBTF_NET/*value is 2*/);
-            System.out.println(action);
-            int driveLetterIndex = 0;
-            while (logicalDriveAffected != 0) {
-                if (0 != (logicalDriveAffected & 1)) {
-                    System.out.println("Logical Drive Letter: " +
-                        ((char) ('A' + driveLetterIndex)));
-                }
-                logicalDriveAffected >>>= 1;
-                driveLetterIndex++;
+            case DBT.DBT_DEVTYP_DEVICEINTERFACE: {
+                // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363244.aspx
+                DEV_BROADCAST_DEVICEINTERFACE bdif = new DEV_BROADCAST_DEVICEINTERFACE(bhdr.getPointer());
+                System.out.println("BROADCAST_DEVICEINTERFACE: " + action);
+                System.out.println("dbcc_devicetype: " + bdif.dbcc_devicetype);
+                System.out.println("dbcc_name: " + bdif.getDbcc_name());
+                System.out.println("dbcc_classguid: "
+                        + bdif.dbcc_classguid.toGuidString());
+                break;
             }
-            System.out.println("isMediaNotPhysical:"+isMediaNotPhysical);
-            System.out.println("isNet:"+isNet);
-            break;
-        }
-        default:
-            return null;
+            case DBT.DBT_DEVTYP_HANDLE: {
+                // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363245.aspx
+                DEV_BROADCAST_HANDLE bhd = new DEV_BROADCAST_HANDLE(bhdr.getPointer());
+                System.out.println("BROADCAST_HANDLE: " + action);
+                break;
+            }
+            case DBT.DBT_DEVTYP_OEM: {
+                // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363247.aspx
+                DEV_BROADCAST_OEM boem = new DEV_BROADCAST_OEM(bhdr.getPointer());
+                System.out.println("BROADCAST_OEM: " + action);
+                break;
+            }
+            case DBT.DBT_DEVTYP_PORT: {
+                // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363248.aspx
+                DEV_BROADCAST_PORT bpt = new DEV_BROADCAST_PORT(bhdr.getPointer());
+                System.out.println("BROADCAST_PORT: " + action);
+                break;
+            }
+            case DBT.DBT_DEVTYP_VOLUME: {
+                // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363249.aspx
+                DEV_BROADCAST_VOLUME bvl = new DEV_BROADCAST_VOLUME(bhdr.getPointer());
+                int logicalDriveAffected = bvl.dbcv_unitmask;
+                short flag = bvl.dbcv_flags;
+                boolean isMediaNotPhysical = 0 != (flag & DBT.DBTF_MEDIA/*value is 1*/);
+                boolean isNet = 0 != (flag & DBT.DBTF_NET/*value is 2*/);
+                System.out.println(action);
+                int driveLetterIndex = 0;
+                while (logicalDriveAffected != 0) {
+                    if (0 != (logicalDriveAffected & 1)) {
+                        System.out.println("Logical Drive Letter: " +
+                            ((char) ('A' + driveLetterIndex)));
+                    }
+                    logicalDriveAffected >>>= 1;
+                    driveLetterIndex++;
+                }
+                System.out.println("isMediaNotPhysical:"+isMediaNotPhysical);
+                System.out.println("isNet:"+isNet);
+                break;
+            }
+            default:
+                return null;
         }
         // return TRUE means processed message for this wParam.
         // see http://msdn.microsoft.com/en-us/library/windows/desktop/aa363205.aspx

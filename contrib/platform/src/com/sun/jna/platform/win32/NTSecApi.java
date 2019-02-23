@@ -167,16 +167,16 @@ public interface NTSecApi {
             super.read();
 
             switch(ForestTrustType) {
-            case NTSecApi.ForestTrustTopLevelName:
-            case NTSecApi.ForestTrustTopLevelNameEx:
-                u.setType(LSA_UNICODE_STRING.class);
-                break;
-            case NTSecApi.ForestTrustDomainInfo:
-                u.setType(LSA_FOREST_TRUST_DOMAIN_INFO.class);
-                break;
-            default:
-                u.setType(LSA_FOREST_TRUST_BINARY_DATA.class);
-                break;
+                case NTSecApi.ForestTrustTopLevelName:
+                case NTSecApi.ForestTrustTopLevelNameEx:
+                    u.setType(LSA_UNICODE_STRING.class);
+                    break;
+                case NTSecApi.ForestTrustDomainInfo:
+                    u.setType(LSA_FOREST_TRUST_DOMAIN_INFO.class);
+                    break;
+                default:
+                    u.setType(LSA_FOREST_TRUST_BINARY_DATA.class);
+                    break;
             }
 
             u.read();

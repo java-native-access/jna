@@ -116,27 +116,27 @@ public class LibKstatTest extends TestCase {
         }
         KstatNamed data = new KstatNamed(p);
         switch (data.data_type) {
-        case LibKstat.KSTAT_DATA_CHAR:
-            return new String(data.value.charc).trim();
-        case LibKstat.KSTAT_DATA_INT32:
-            return Integer.toString(data.value.i32);
-        case LibKstat.KSTAT_DATA_UINT32:
-            if (data.value.ui32 > 0) {
-                return Integer.toString(data.value.ui32);
-            }
-            return Long.toString(data.value.ui32 & 0x00000000ffffffffL);
-        case LibKstat.KSTAT_DATA_INT64:
-            return Long.toString(data.value.i64);
-        case LibKstat.KSTAT_DATA_UINT64:
-            if (data.value.ui64 > 0) {
-                return Long.toString(data.value.ui64);
-            }
-            return BigInteger.valueOf(data.value.ui64).add(BigInteger.ONE.shiftLeft(64)).toString();
-        case LibKstat.KSTAT_DATA_STRING:
-            return data.value.str.addr.getString(0);
-        default:
-            fail(String.format("Unimplemented kstat data type %d", data.data_type));
-            return "";
+            case LibKstat.KSTAT_DATA_CHAR:
+                return new String(data.value.charc).trim();
+            case LibKstat.KSTAT_DATA_INT32:
+                return Integer.toString(data.value.i32);
+            case LibKstat.KSTAT_DATA_UINT32:
+                if (data.value.ui32 > 0) {
+                    return Integer.toString(data.value.ui32);
+                }
+                return Long.toString(data.value.ui32 & 0x00000000ffffffffL);
+            case LibKstat.KSTAT_DATA_INT64:
+                return Long.toString(data.value.i64);
+            case LibKstat.KSTAT_DATA_UINT64:
+                if (data.value.ui64 > 0) {
+                    return Long.toString(data.value.ui64);
+                }
+                return BigInteger.valueOf(data.value.ui64).add(BigInteger.ONE.shiftLeft(64)).toString();
+            case LibKstat.KSTAT_DATA_STRING:
+                return data.value.str.addr.getString(0);
+            default:
+                fail(String.format("Unimplemented kstat data type %d", data.data_type));
+                return "";
         }
     }
 
@@ -167,18 +167,18 @@ public class LibKstatTest extends TestCase {
         }
         KstatNamed data = new KstatNamed(p);
         switch (data.data_type) {
-        case LibKstat.KSTAT_DATA_INT32:
-            return (long) data.value.i32;
-        case LibKstat.KSTAT_DATA_UINT32:
-            return data.value.ui32 & 0x00000000ffffffffL;
-        case LibKstat.KSTAT_DATA_INT64:
-            return data.value.i64;
-        case LibKstat.KSTAT_DATA_UINT64:
-            // Doesn't actually return unsigned; caller must interpret
-            return data.value.ui64;
-        default:
-            fail(String.format("Unimplemented or non-numeric kstat data type %d", data.data_type));
-            return 0L;
+            case LibKstat.KSTAT_DATA_INT32:
+                return (long) data.value.i32;
+            case LibKstat.KSTAT_DATA_UINT32:
+                return data.value.ui32 & 0x00000000ffffffffL;
+            case LibKstat.KSTAT_DATA_INT64:
+                return data.value.i64;
+            case LibKstat.KSTAT_DATA_UINT64:
+                // Doesn't actually return unsigned; caller must interpret
+                return data.value.ui64;
+            default:
+                fail(String.format("Unimplemented or non-numeric kstat data type %d", data.data_type));
+                return 0L;
         }
     }
 

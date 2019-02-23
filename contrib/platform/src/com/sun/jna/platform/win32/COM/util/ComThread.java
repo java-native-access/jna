@@ -62,7 +62,7 @@ public class ComThread {
                     // [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5529/Understanding-COM-Apartments-Part-I.htm]
                     // [http://www.codeguru.com/cpp/com-tech/activex/apts/article.php/c5533/Understanding-COM-Apartments-Part-II.htm]
                     WinNT.HRESULT hr = Ole32.INSTANCE.CoInitializeEx(null, coinitialiseExFlag);
-                                        isCOMThread.set(true);
+                    isCOMThread.set(true);
                     COMUtils.checkRC(hr);
                     ComThread.this.requiresInitialisation = false;
                 } catch (Throwable t) {

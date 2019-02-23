@@ -123,12 +123,12 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT GetTypeInfoOfGuid(
-    /* [in] */GUID guid,
-    /* [out] */PointerByReference pTinfo) {
+        /* [in] */GUID guid,
+        /* [out] */ PointerByReference pTinfo) {
 
         return (HRESULT) this
-                ._invokeNativeObject(6, new Object[] { this.getPointer(), guid,
-                        pTinfo }, HRESULT.class);
+            ._invokeNativeObject(6, new Object[]{this.getPointer(), guid,
+                pTinfo}, HRESULT.class);
     }
 
     /**
@@ -175,16 +175,16 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT GetDocumentation(
-    /* [in] */int index,
-    /* [out] */BSTRByReference pBstrName,
-    /* [out] */BSTRByReference pBstrDocString,
-    /* [out] */DWORDByReference pdwHelpContext,
-    /* [out] */BSTRByReference pBstrHelpFile) {
+        /* [in] */int index,
+        /* [out] */ BSTRByReference pBstrName,
+        /* [out] */ BSTRByReference pBstrDocString,
+        /* [out] */ DWORDByReference pdwHelpContext,
+        /* [out] */ BSTRByReference pBstrHelpFile) {
 
         return (HRESULT) this._invokeNativeObject(9,
-                new Object[] { this.getPointer(), index, pBstrName,
-                        pBstrDocString, pdwHelpContext, pBstrHelpFile },
-                HRESULT.class);
+            new Object[]{this.getPointer(), index, pBstrName,
+                pBstrDocString, pdwHelpContext, pBstrHelpFile},
+            HRESULT.class);
     }
 
     /**
@@ -199,13 +199,13 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT IsName(
-    /* [annotation][out][in] */ LPOLESTR szNameBuf,
-    /* [in] */ULONG lHashVal,
-    /* [out] */BOOLByReference pfName) {
+        /* [annotation][out][in] */LPOLESTR szNameBuf,
+        /* [in] */ ULONG lHashVal,
+        /* [out] */ BOOLByReference pfName) {
 
         return (HRESULT) this
-                ._invokeNativeObject(10, new Object[] { this.getPointer(),
-                        szNameBuf, lHashVal, pfName }, HRESULT.class);
+            ._invokeNativeObject(10, new Object[]{this.getPointer(),
+                szNameBuf, lHashVal, pfName}, HRESULT.class);
     }
 
     /**
@@ -224,15 +224,15 @@ public class TypeLib extends Unknown implements ITypeLib {
      * @return the hresult
      */
     public HRESULT FindName(
-    /* [annotation][out][in] */ LPOLESTR szNameBuf,
-    /* [in] */ULONG lHashVal,
-    /* [length_is][size_is][out] */Pointer[] ppTInfo,
-    /* [length_is][size_is][out] */MEMBERID[] rgMemId,
-    /* [out][in] */USHORTByReference pcFound) {
+        /* [annotation][out][in] */LPOLESTR szNameBuf,
+        /* [in] */ ULONG lHashVal,
+        /* [length_is][size_is][out] */ Pointer[] ppTInfo,
+        /* [length_is][size_is][out] */ MEMBERID[] rgMemId,
+        /* [out][in] */ USHORTByReference pcFound) {
 
         return (HRESULT) this._invokeNativeObject(11,
-                new Object[] { this.getPointer(), szNameBuf, lHashVal, ppTInfo,
-                        rgMemId, pcFound }, HRESULT.class);
+            new Object[]{this.getPointer(), szNameBuf, lHashVal, ppTInfo,
+                rgMemId, pcFound}, HRESULT.class);
     }
 
     /**

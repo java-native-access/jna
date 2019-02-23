@@ -2982,21 +2982,21 @@ public interface WinNT extends WinError, WinDef, WinBase, BaseTSD {
             int relationship = memory.getInt(0);
             SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX result;
             switch (relationship) {
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
-                result = new PROCESSOR_RELATIONSHIP(memory);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
-                result = new NUMA_NODE_RELATIONSHIP(memory);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
-                result = new CACHE_RELATIONSHIP(memory);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
-                result = new GROUP_RELATIONSHIP(memory);
-                break;
-            default:
-                throw new IllegalStateException("Unmapped relationship: " + relationship);
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                    result = new PROCESSOR_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                    result = new NUMA_NODE_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                    result = new CACHE_RELATIONSHIP(memory);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                    result = new GROUP_RELATIONSHIP(memory);
+                    break;
+                default:
+                    throw new IllegalStateException("Unmapped relationship: " + relationship);
             }
             result.read();
             return result;

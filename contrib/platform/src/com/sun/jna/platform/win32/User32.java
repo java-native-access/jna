@@ -2037,8 +2037,8 @@ public interface User32 extends StdCallLibrary, WinUser, WinNT {
      *         Windows 2000: If {@link Kernel32#GetLastError()} returns 0, then
      *         the function timed out.
      */
-        LRESULT SendMessageTimeout(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam,
-            int fuFlags, int uTimeout, DWORDByReference lpdwResult);
+    LRESULT SendMessageTimeout(HWND hWnd, int msg, WPARAM wParam, LPARAM lParam,
+        int fuFlags, int uTimeout, DWORDByReference lpdwResult);
 
     /**
      * Retrieves the specified value from the WNDCLASSEX structure associated

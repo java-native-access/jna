@@ -509,8 +509,8 @@ public class X {
          * @return array of modifier lists
          */
         public ArrayList<Byte>[] getAllModifiers() {
-            return new ArrayList[] {
-                    shift, lock, control, mod1, mod2, mod3, mod4, mod5
+            return new ArrayList[]{
+                shift, lock, control, mod1, mod2, mod3, mod4, mod5
             };
         }
     }

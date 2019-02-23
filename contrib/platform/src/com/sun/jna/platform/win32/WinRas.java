@@ -592,20 +592,20 @@ public interface WinRas {
          */
         public UNION u;
 
-    @Override
+        @Override
         public void read() {
             super.read();
 
-            switch(dwType) {
-            case RASTUNNELENDPOINT_IPv4:
-                u.setType(RASIPV4ADDR.class);
-                break;
-            case RASTUNNELENDPOINT_IPv6:
-                u.setType(RASIPV6ADDR.class);
-                break;
-            default:
-                u.setType(RASIPV4ADDR.class);
-                break;
+            switch (dwType) {
+                case RASTUNNELENDPOINT_IPv4:
+                    u.setType(RASIPV4ADDR.class);
+                    break;
+                case RASTUNNELENDPOINT_IPv6:
+                    u.setType(RASIPV6ADDR.class);
+                    break;
+                default:
+                    u.setType(RASIPV4ADDR.class);
+                    break;
             }
 
             u.read();

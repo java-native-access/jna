@@ -94,10 +94,10 @@ public class Kernel32Test extends TestCase {
     public void testNoDuplicateMethodsNames() {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Kernel32.class);
         if (dupSet.size() > 0) {
-            for (String name : new String[] {
-                    // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
-                    "GetVersionEx"
-                }) {
+            for (String name : new String[]{
+                // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
+                "GetVersionEx"
+            }) {
                 dupSet.remove(name);
             }
         }
@@ -507,19 +507,19 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testGetSystemTimes() {
-      Kernel32 kernel = Kernel32.INSTANCE;
-      FILETIME lpIdleTime = new FILETIME();
-      FILETIME lpKernelTime = new FILETIME();
-      FILETIME lpUserTime = new FILETIME();
-      boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
-      assertTrue(succ);
-      long idleTime = lpIdleTime.toDWordLong().longValue();
-      long kernelTime = lpKernelTime.toDWordLong().longValue();
-      long userTime = lpUserTime.toDWordLong().longValue();
-      // All should be >= 0.  kernel includes idle.
-      assertTrue(idleTime >= 0);
-      assertTrue(kernelTime >= idleTime);
-      assertTrue(userTime >= 0);
+        Kernel32 kernel = Kernel32.INSTANCE;
+        FILETIME lpIdleTime = new FILETIME();
+        FILETIME lpKernelTime = new FILETIME();
+        FILETIME lpUserTime = new FILETIME();
+        boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
+        assertTrue(succ);
+        long idleTime = lpIdleTime.toDWordLong().longValue();
+        long kernelTime = lpKernelTime.toDWordLong().longValue();
+        long userTime = lpUserTime.toDWordLong().longValue();
+        // All should be >= 0.  kernel includes idle.
+        assertTrue(idleTime >= 0);
+        assertTrue(kernelTime >= idleTime);
+        assertTrue(userTime >= 0);
     }
 
     public void testIsWow64Process() {
@@ -1374,7 +1374,7 @@ public class Kernel32Test extends TestCase {
                     case WinBase.CBR_56000:
                     case WinBase.CBR_600:
                     case WinBase.CBR_9600:
-                    break;
+                        break;
                     default:
                         fail("Received value of WinBase.DCB.BaudRate is not valid");
                 }
@@ -1715,7 +1715,7 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testMutex() throws InterruptedException {
-       HANDLE mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, "JNA-Test-Mutex");
+        HANDLE mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, "JNA-Test-Mutex");
 
         assertNotNull(mutexHandle);
 

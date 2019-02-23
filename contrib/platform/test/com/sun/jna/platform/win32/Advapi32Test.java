@@ -99,13 +99,13 @@ public class Advapi32Test extends TestCase {
     public void testNoDuplicateMethodsNames() {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Advapi32.class);
         if (dupSet.size() > 0) {
-            for (String name : new String[] {
-                    // these have several overloads by design since the input/output values can be several types of data
-                    "RegQueryValueEx",
-                    "RegSetValueEx",
-                    "RegGetValue",
-                    "RegEnumValue"
-                }) {
+            for (String name : new String[]{
+                // these have several overloads by design since the input/output values can be several types of data
+                "RegQueryValueEx",
+                "RegSetValueEx",
+                "RegGetValue",
+                "RegEnumValue"
+            }) {
                 dupSet.remove(name);
             }
         }
@@ -1757,44 +1757,44 @@ public class Advapi32Test extends TestCase {
 
         // Get a SD in self relative form
         int infoType = OWNER_SECURITY_INFORMATION
-                | GROUP_SECURITY_INFORMATION
-                | DACL_SECURITY_INFORMATION;
+            | GROUP_SECURITY_INFORMATION
+            | DACL_SECURITY_INFORMATION;
 
-         PointerByReference relativeByReference = new PointerByReference();
-         File file = createTempFile();
-         try {
-             try {
-                 assertEquals("GetNamedSecurityInfo(" + file + ")",
-                         Advapi32.INSTANCE.GetNamedSecurityInfo(
-                               file.getAbsolutePath(),
-                               AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
-                               infoType,
-                               null,
-                               null,
-                               null,
-                               null,
-                               relativeByReference), 0);
+        PointerByReference relativeByReference = new PointerByReference();
+        File file = createTempFile();
+        try {
+            try {
+                assertEquals("GetNamedSecurityInfo(" + file + ")",
+                    Advapi32.INSTANCE.GetNamedSecurityInfo(
+                        file.getAbsolutePath(),
+                        AccCtrl.SE_OBJECT_TYPE.SE_FILE_OBJECT,
+                        infoType,
+                        null,
+                        null,
+                        null,
+                        null,
+                        relativeByReference), 0);
 
-                 SECURITY_DESCRIPTOR_RELATIVE relative = new SECURITY_DESCRIPTOR_RELATIVE(relativeByReference.getValue());
+                SECURITY_DESCRIPTOR_RELATIVE relative = new SECURITY_DESCRIPTOR_RELATIVE(relativeByReference.getValue());
 
-                 PSID pOwner = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
-                 PSID pGroup = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
-                 ACL pDacl = new ACL(ACL.MAX_ACL_SIZE);
-                 ACL pSacl = new ACL(ACL.MAX_ACL_SIZE);
+                PSID pOwner = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+                PSID pGroup = new PSID(WinNT.SECURITY_MAX_SID_SIZE);
+                ACL pDacl = new ACL(ACL.MAX_ACL_SIZE);
+                ACL pSacl = new ACL(ACL.MAX_ACL_SIZE);
 
-                 IntByReference lpdwBufferLength = new IntByReference(absolute.size());
-                 IntByReference lpdwDaclSize = new IntByReference(ACL.MAX_ACL_SIZE);
-                 IntByReference lpdwSaclSize= new IntByReference(ACL.MAX_ACL_SIZE);
-                 IntByReference lpdwOwnerSize= new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
-                 IntByReference lpdwPrimaryGroupSize = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+                IntByReference lpdwBufferLength = new IntByReference(absolute.size());
+                IntByReference lpdwDaclSize = new IntByReference(ACL.MAX_ACL_SIZE);
+                IntByReference lpdwSaclSize = new IntByReference(ACL.MAX_ACL_SIZE);
+                IntByReference lpdwOwnerSize = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
+                IntByReference lpdwPrimaryGroupSize = new IntByReference(WinNT.SECURITY_MAX_SID_SIZE);
 
-                 assertTrue(Advapi32.INSTANCE.MakeAbsoluteSD(relative, absolute, lpdwBufferLength, pDacl, lpdwDaclSize, pSacl, lpdwSaclSize, pOwner, lpdwOwnerSize, pGroup, lpdwPrimaryGroupSize));
-             } finally {
-                 file.delete();
-             }
-         } finally {
-             Kernel32Util.freeLocalMemory(relativeByReference.getValue());
-         }
+                assertTrue(Advapi32.INSTANCE.MakeAbsoluteSD(relative, absolute, lpdwBufferLength, pDacl, lpdwDaclSize, pSacl, lpdwSaclSize, pOwner, lpdwOwnerSize, pGroup, lpdwPrimaryGroupSize));
+            } finally {
+                file.delete();
+            }
+        } finally {
+            Kernel32Util.freeLocalMemory(relativeByReference.getValue());
+        }
     }
 
     public void testMapGenericReadMask() {

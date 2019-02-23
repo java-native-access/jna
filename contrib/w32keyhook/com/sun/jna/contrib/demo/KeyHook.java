@@ -50,14 +50,14 @@ public class KeyHook {
             public LRESULT callback(int nCode, WPARAM wParam, KBDLLHOOKSTRUCT info) {
                 if (nCode >= 0) {
                     switch(wParam.intValue()) {
-                    case WinUser.WM_KEYUP:
-                    case WinUser.WM_KEYDOWN:
-                    case WinUser.WM_SYSKEYUP:
-                    case WinUser.WM_SYSKEYDOWN:
-                        System.err.println("in callback, key=" + info.vkCode);
-                        if (info.vkCode == 81) {
-                            quit = true;
-                        }
+                        case WinUser.WM_KEYUP:
+                        case WinUser.WM_KEYDOWN:
+                        case WinUser.WM_SYSKEYUP:
+                        case WinUser.WM_SYSKEYDOWN:
+                            System.err.println("in callback, key=" + info.vkCode);
+                            if (info.vkCode == 81) {
+                                quit = true;
+                            }
                     }
                 }
 

@@ -92,12 +92,12 @@ public class User32Test extends AbstractWin32TestSupport {
         // see https://github.com/twall/jna/issues/482
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(User32.class);
         if (dupSet.size() > 0) {
-            for (String name : new String[] {
-                    // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
-                    "GetMonitorInfo"
-                    // has 2 overloads since there was a broken binding for MonitorFromPoint
-                    ,"MonitorFromPoint"
-                }) {
+            for (String name : new String[]{
+                // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
+                "GetMonitorInfo" // has 2 overloads since there was a broken binding for MonitorFromPoint
+                ,
+                "MonitorFromPoint"
+            }) {
                 dupSet.remove(name);
             }
         }

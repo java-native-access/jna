@@ -108,32 +108,32 @@ public class ITypeLibTest {
 
     @Test
     public void testGetTypeInfoOfGuid() {
-         ITypeLib shellTypeLib = loadShellTypeLib();
+        ITypeLib shellTypeLib = loadShellTypeLib();
 
-         // GUID for dispinterface IFolderViewOC
-         GUID iFolderViewOC = new GUID("{9BA05970-F6A8-11CF-A442-00A0C90A8F39}");
-         PointerByReference pbr = new PointerByReference();
-         HRESULT hr = shellTypeLib.GetTypeInfoOfGuid(iFolderViewOC, pbr);
+        // GUID for dispinterface IFolderViewOC
+        GUID iFolderViewOC = new GUID("{9BA05970-F6A8-11CF-A442-00A0C90A8F39}");
+        PointerByReference pbr = new PointerByReference();
+        HRESULT hr = shellTypeLib.GetTypeInfoOfGuid(iFolderViewOC, pbr);
 
-         assertTrue(COMUtils.SUCCEEDED(hr));
+        assertTrue(COMUtils.SUCCEEDED(hr));
     }
 
     @Test
     public void testLibAttr() {
-         ITypeLib shellTypeLib = loadShellTypeLib();
+        ITypeLib shellTypeLib = loadShellTypeLib();
 
-         PointerByReference pbr = new PointerByReference();
-         HRESULT hr = shellTypeLib.GetLibAttr(pbr);
+        PointerByReference pbr = new PointerByReference();
+        HRESULT hr = shellTypeLib.GetLibAttr(pbr);
 
-         assertTrue(COMUtils.SUCCEEDED(hr));
+        assertTrue(COMUtils.SUCCEEDED(hr));
 
-         OaIdl.TLIBATTR tlibAttr = new OaIdl.TLIBATTR(pbr.getValue());
+        OaIdl.TLIBATTR tlibAttr = new OaIdl.TLIBATTR(pbr.getValue());
 
-         assertEquals(SHELL_CLSID, tlibAttr.guid.toGuidString());
-         assertEquals(SHELL_MAJOR, tlibAttr.wMajorVerNum.intValue());
-         assertEquals(SHELL_MINOR, tlibAttr.wMinorVerNum.intValue());
+        assertEquals(SHELL_CLSID, tlibAttr.guid.toGuidString());
+        assertEquals(SHELL_MAJOR, tlibAttr.wMajorVerNum.intValue());
+        assertEquals(SHELL_MINOR, tlibAttr.wMinorVerNum.intValue());
 
-         shellTypeLib.ReleaseTLibAttr(tlibAttr);
+        shellTypeLib.ReleaseTLibAttr(tlibAttr);
     }
 
     @Test

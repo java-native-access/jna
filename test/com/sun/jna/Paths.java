@@ -35,10 +35,10 @@ public interface Paths {
         public CloverLoader() throws MalformedURLException{
             this(null);
         }
-        public CloverLoader(ClassLoader parent) throws MalformedURLException{
-            super(new URL[] {
-                    new File(USING_CLOVER ? "lib/clover.jar" : "/dev/null").toURI().toURL()
-                  }, parent);
+        public CloverLoader(ClassLoader parent) throws MalformedURLException {
+            super(new URL[]{
+                new File(USING_CLOVER ? "lib/clover.jar" : "/dev/null").toURI().toURL()
+            }, parent);
         }
     }
     String BUILDDIR = Platform.isWindowsCE()

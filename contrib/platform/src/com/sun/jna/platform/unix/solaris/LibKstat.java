@@ -200,22 +200,22 @@ public interface LibKstat extends Library {
         public void read() {
             super.read();
             switch (data_type) {
-            case KSTAT_DATA_CHAR:
-                value.setType(byte[].class);
-                break;
-            case KSTAT_DATA_STRING:
-                value.setType(UNION.STR.class);
-                break;
-            case KSTAT_DATA_INT32:
-            case KSTAT_DATA_UINT32:
-                value.setType(int.class);
-                break;
-            case KSTAT_DATA_INT64:
-            case KSTAT_DATA_UINT64:
-                value.setType(long.class);
-                break;
-            default:
-                break;
+                case KSTAT_DATA_CHAR:
+                    value.setType(byte[].class);
+                    break;
+                case KSTAT_DATA_STRING:
+                    value.setType(UNION.STR.class);
+                    break;
+                case KSTAT_DATA_INT32:
+                case KSTAT_DATA_UINT32:
+                    value.setType(int.class);
+                    break;
+                case KSTAT_DATA_INT64:
+                case KSTAT_DATA_UINT64:
+                    value.setType(long.class);
+                    break;
+                default:
+                    break;
             }
             value.read();
         }

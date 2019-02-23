@@ -316,7 +316,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         }
     }
 
-        @Override
+    @Override
     public void unadvise(Class<?> comEventCallbackInterface, final IComEventCallbackCookie cookie) throws COMException {
         assert COMUtils.comIsInitialized() : "COM not initialized";
 
@@ -352,7 +352,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         setProperty(dispID, value);
     }
 
-     @Override
+    @Override
     public <T> void setProperty(DISPID dispId, T value) {
         assert COMUtils.comIsInitialized() : "COM not initialized";
 
@@ -556,7 +556,7 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         return this.oleMethod(nType, pvResult, resolveDispId(name), pArgs);
     }
 
-        @SuppressWarnings("deprecation")
+    @SuppressWarnings("deprecation")
     protected HRESULT oleMethod(final int nType, final VARIANT.ByReference pvResult,
             final DISPID dispId, VARIANT[] pArgs) throws COMException {
         return oleMethod(nType, pvResult, getRawDispatch(), dispId, pArgs);

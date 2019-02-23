@@ -308,7 +308,7 @@ public class WebStartTest extends TestCase implements Paths {
                 FolderInfo info = Native.load("shell32", FolderInfo.class);
                 char[] buf = new char[FolderInfo.MAX_PATH];
                 //int result =
-                        info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
+                info.SHGetFolderPathW(null, FolderInfo.CSIDL_WINDOWS, null, 0, buf);
                 String path = Native.toString(buf);
                 if (Platform.is64Bit()) {
                     javaws = new File(path, "SysWOW64/javaws.exe");

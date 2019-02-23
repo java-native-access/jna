@@ -245,15 +245,17 @@ public class WindowUtilsTest extends TestCase {
         transparent.addMouseListener(handler);
         transparent.addMouseMotionListener(handler);
 
-        SwingUtilities.invokeAndWait(new Runnable() { public void run() {
-            background.pack();
-            background.setSize(new Dimension(W, H));
-            background.setVisible(true);
-            transparent.pack();
-            transparent.setSize(new Dimension(W, H));
-            transparent.setVisible(true);
-            transparent.toFront();
-        }});
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                background.pack();
+                background.setSize(new Dimension(W, H));
+                background.setVisible(true);
+                transparent.pack();
+                transparent.setSize(new Dimension(W, H));
+                transparent.setVisible(true);
+                transparent.toFront();
+            }
+        });
 
         WindowUtils.setWindowTransparent(transparent, true);
 
@@ -285,14 +287,16 @@ public class WindowUtilsTest extends TestCase {
         transparent.addMouseListener(handler);
         transparent.addMouseMotionListener(handler);
 
-        SwingUtilities.invokeAndWait(new Runnable() { public void run() {
-            background.pack();
-            background.setSize(new Dimension(W, H));
-            background.setVisible(true);
-            transparent.pack();
-            transparent.setSize(new Dimension(W, H));
-            transparent.setVisible(true);
-        }});
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                background.pack();
+                background.setSize(new Dimension(W, H));
+                background.setVisible(true);
+                transparent.pack();
+                transparent.setSize(new Dimension(W, H));
+                transparent.setVisible(true);
+            }
+        });
 
         //robot.delay(60000);
 
@@ -302,23 +306,27 @@ public class WindowUtilsTest extends TestCase {
         // NOTE: w32 won't sample non-opaque windows
         if (System.getProperty("os.name").startsWith("Windows")) {
             assertFalse("Sample not transparent (w32)",
-                        sample.equals(transparent.getBackground()));
+                    sample.equals(transparent.getBackground()));
         }
         else {
             assertEquals("Sample should be 50% fg/bg",
-                         new Color(128, 128, 128), sample);
+                    new Color(128, 128, 128), sample);
         }
 
-        SwingUtilities.invokeAndWait(new Runnable() {public void run() {
-            WindowUtils.setWindowAlpha(transparent, 1f);
-        }});
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                WindowUtils.setWindowAlpha(transparent, 1f);
+            }
+        });
         sample = robot.getPixelColor(where.x, where.y);
         assertEquals("Window should be opaque with alpha=1f",
                      transparent.getBackground(), sample);
 
-        SwingUtilities.invokeAndWait(new Runnable() {public void run() {
-            WindowUtils.setWindowAlpha(transparent, 0f);
-        }});
+        SwingUtilities.invokeAndWait(new Runnable() {
+            public void run() {
+                WindowUtils.setWindowAlpha(transparent, 0f);
+            }
+        });
         sample = robot.getPixelColor(where.x, where.y);
         assertEquals("Window should be transparent with alpha=0f",
                      transparent.getBackground(), sample);

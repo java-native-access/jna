@@ -50,8 +50,8 @@ public class ConnectionPoint extends Unknown implements IConnectionPoint {
     public HRESULT Advise(IUnknownCallback pUnkSink, DWORDByReference pdwCookie) {
         final int vTableId = 5;
 
-        return (HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), pUnkSink.getPointer(),
-                pdwCookie }, HRESULT.class);
+        return (HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(), pUnkSink.getPointer(),
+            pdwCookie}, HRESULT.class);
     }
 
     @Override

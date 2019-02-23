@@ -82,7 +82,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
             } else {
                 int hr = Kernel32.INSTANCE.GetLastError();
                 if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., hidden volumes
-                 || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
+                    || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
 //                    System.out.append('\t').append('[').append(lpszVolumeMountPoint).append(']').append(" - skipped: reason=").println(hr);
                     continue;
                 }
@@ -114,7 +114,7 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
                         lpFileSystemNameBuffer, lpFileSystemNameBuffer.length)) {
                 int hr = Kernel32.INSTANCE.GetLastError();
                 if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., network or hidden volumes
-                 || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
+                    || (hr == WinError.ERROR_NOT_READY)) {     // e.g., DVD drive
 //                    System.out.append('\t').append('[').append(lpRootPathName).append(']').append(" - skipped: reason=").println(hr);
                     continue;
                 }
@@ -167,9 +167,9 @@ public class Kernel32VolumeManagementFunctionsTest extends AbstractWin32TestSupp
         if (WinNT.INVALID_HANDLE_VALUE.equals(hFindVolumeMountPoint)) {
             int hr = Kernel32.INSTANCE.GetLastError();
             if ((hr == WinError.ERROR_ACCESS_DENIED)    // e.g., network or hidden volumes
-             || (hr == WinError.ERROR_NOT_READY)        // e.g., DVD drive
-             || (hr == WinError.ERROR_NO_MORE_FILES)    // No folders found
-             || (hr == WinError.ERROR_PATH_NOT_FOUND)) {
+                || (hr == WinError.ERROR_NOT_READY)        // e.g., DVD drive
+                || (hr == WinError.ERROR_NO_MORE_FILES)    // No folders found
+                || (hr == WinError.ERROR_PATH_NOT_FOUND)) {
 //                System.out.append('\t').append('[').append(volumeGUID).append(']').append(" - skipped: reason=").println(hr);
                 return;
             }

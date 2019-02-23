@@ -13,4 +13,7 @@
         <property name="format" value="\r"/>
         <property name="message" value="Contains carriage return \r"/>
     </module>
+    <module name="TreeWalker">
+        <module name="Indentation"/>
+    </module>
 </module>

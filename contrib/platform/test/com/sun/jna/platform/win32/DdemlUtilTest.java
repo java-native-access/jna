@@ -335,9 +335,9 @@ public class DdemlUtilTest {
 
             server = new StandaloneDdeClient() {
                 private final ConnectHandler connectHandler = new ConnectHandler() {
-                     public boolean onConnect(int transactionType, HSZ topic, HSZ service, Ddeml.CONVCONTEXT convcontext, boolean sameInstance) {
+                    public boolean onConnect(int transactionType, HSZ topic, HSZ service, Ddeml.CONVCONTEXT convcontext, boolean sameInstance) {
                         return topicName.equals(queryString(topic));
-                     }
+                    }
                 };
 
                 private final PokeHandler pokeHandler = new PokeHandler() {

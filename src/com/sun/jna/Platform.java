@@ -298,47 +298,47 @@ public final class Platform {
         String osPrefix;
         arch = getCanonicalArchitecture(arch, osType);
         switch(osType) {
-        case Platform.ANDROID:
-            if (arch.startsWith("arm")) {
-                arch = "arm";
-            }
-            osPrefix = "android-" + arch;
-            break;
-        case Platform.WINDOWS:
-            osPrefix = "win32-" + arch;
-            break;
-        case Platform.WINDOWSCE:
-            osPrefix = "w32ce-" + arch;
-            break;
-        case Platform.MAC:
-            osPrefix = "darwin";
-            break;
-        case Platform.LINUX:
-            osPrefix = "linux-" + arch;
-            break;
-        case Platform.SOLARIS:
-            osPrefix = "sunos-" + arch;
-            break;
-        case Platform.FREEBSD:
-            osPrefix = "freebsd-" + arch;
-            break;
-        case Platform.OPENBSD:
-            osPrefix = "openbsd-" + arch;
-            break;
-        case Platform.NETBSD:
-            osPrefix = "netbsd-" + arch;
-            break;
-        case Platform.KFREEBSD:
-            osPrefix = "kfreebsd-" + arch;
-            break;
-        default:
-            osPrefix = name.toLowerCase();
-            int space = osPrefix.indexOf(" ");
-            if (space != -1) {
-                osPrefix = osPrefix.substring(0, space);
-            }
-            osPrefix += "-" + arch;
-            break;
+            case Platform.ANDROID:
+                if (arch.startsWith("arm")) {
+                    arch = "arm";
+                }
+                osPrefix = "android-" + arch;
+                break;
+            case Platform.WINDOWS:
+                osPrefix = "win32-" + arch;
+                break;
+            case Platform.WINDOWSCE:
+                osPrefix = "w32ce-" + arch;
+                break;
+            case Platform.MAC:
+                osPrefix = "darwin";
+                break;
+            case Platform.LINUX:
+                osPrefix = "linux-" + arch;
+                break;
+            case Platform.SOLARIS:
+                osPrefix = "sunos-" + arch;
+                break;
+            case Platform.FREEBSD:
+                osPrefix = "freebsd-" + arch;
+                break;
+            case Platform.OPENBSD:
+                osPrefix = "openbsd-" + arch;
+                break;
+            case Platform.NETBSD:
+                osPrefix = "netbsd-" + arch;
+                break;
+            case Platform.KFREEBSD:
+                osPrefix = "kfreebsd-" + arch;
+                break;
+            default:
+                osPrefix = name.toLowerCase();
+                int space = osPrefix.indexOf(" ");
+                if (space != -1) {
+                    osPrefix = osPrefix.substring(0, space);
+                }
+                osPrefix += "-" + arch;
+                break;
         }
         return osPrefix;
     }

@@ -761,27 +761,27 @@ public interface OleAuto extends StdCallLibrary {
     @FieldOrder({"rgvarg", "rgdispidNamedArgs", "cArgs", "cNamedArgs"})
     public class DISPPARAMS extends Structure {
 
-            /**
-             * The Class ByReference.
-             */
-            public static class ByReference extends DISPPARAMS implements
-                    Structure.ByReference {
-            }
+        /**
+         * The Class ByReference.
+         */
+        public static class ByReference extends DISPPARAMS implements
+            Structure.ByReference {
+        }
 
-            /**
-             * The rgvarg.
-             */
-            public VariantArg.ByReference rgvarg;
+        /**
+         * The rgvarg.
+         */
+        public VariantArg.ByReference rgvarg;
 
-            /**
-             * The rgdispid named args.
-             */
-            public Pointer rgdispidNamedArgs = Pointer.NULL;
+        /**
+         * The rgdispid named args.
+         */
+        public Pointer rgdispidNamedArgs = Pointer.NULL;
 
-            /**
-             * The c args. - use setArgs to update arguments
-             */
-            public UINT cArgs = new UINT(0);
+        /**
+         * The c args. - use setArgs to update arguments
+         */
+        public UINT cArgs = new UINT(0);
 
         /**
          * The c named args. - use setRgdispidNamedArgs to update named

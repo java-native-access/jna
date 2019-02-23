@@ -329,10 +329,8 @@ public abstract class Kernel32Util implements WinDef {
                         default:
                             throw new Win32Exception(rc);
                     }
-                // fall-thru
-
-            default:
-                return type;
+                default:
+                    return type;
             }
         } catch(Win32Exception e) {
             err = e;
@@ -845,9 +843,9 @@ public abstract class Kernel32Util implements WinDef {
      */
     public static final String extractVolumeGUID(String volumeGUIDPath) {
         if ((volumeGUIDPath == null)
-         || (volumeGUIDPath.length() <= (VOLUME_GUID_PATH_PREFIX.length() + VOLUME_GUID_PATH_SUFFIX.length()))
-         || (!volumeGUIDPath.startsWith(VOLUME_GUID_PATH_PREFIX))
-         || (!volumeGUIDPath.endsWith(VOLUME_GUID_PATH_SUFFIX))) {
+            || (volumeGUIDPath.length() <= (VOLUME_GUID_PATH_PREFIX.length() + VOLUME_GUID_PATH_SUFFIX.length()))
+            || (!volumeGUIDPath.startsWith(VOLUME_GUID_PATH_PREFIX))
+            || (!volumeGUIDPath.endsWith(VOLUME_GUID_PATH_SUFFIX))) {
             throw new IllegalArgumentException("Bad volume GUID path format: " + volumeGUIDPath);
         }
 

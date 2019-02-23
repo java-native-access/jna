@@ -75,26 +75,26 @@ public class W32FileMonitor extends FileMonitor {
             FileEvent event = null;
             File file = new File(finfo.file, fni.getFilename());
             switch(fni.Action) {
-            case 0:
-                break;
-            case WinNT.FILE_ACTION_MODIFIED:
-                event = new FileEvent(file, FILE_MODIFIED);
-                break;
-            case WinNT.FILE_ACTION_ADDED:
-                event = new FileEvent(file, FILE_CREATED);
-                break;
-            case WinNT.FILE_ACTION_REMOVED:
-                event = new FileEvent(file, FILE_DELETED);
-                break;
-            case WinNT.FILE_ACTION_RENAMED_OLD_NAME:
-                event = new FileEvent(file, FILE_NAME_CHANGED_OLD);
-                break;
-            case WinNT.FILE_ACTION_RENAMED_NEW_NAME:
-                event = new FileEvent(file, FILE_NAME_CHANGED_NEW);
-                break;
-            default:
-                // TODO: other actions...
-                LOG.log(Level.WARNING, "Unrecognized file action ''{0}''", fni.Action);
+                case 0:
+                    break;
+                case WinNT.FILE_ACTION_MODIFIED:
+                    event = new FileEvent(file, FILE_MODIFIED);
+                    break;
+                case WinNT.FILE_ACTION_ADDED:
+                    event = new FileEvent(file, FILE_CREATED);
+                    break;
+                case WinNT.FILE_ACTION_REMOVED:
+                    event = new FileEvent(file, FILE_DELETED);
+                    break;
+                case WinNT.FILE_ACTION_RENAMED_OLD_NAME:
+                    event = new FileEvent(file, FILE_NAME_CHANGED_OLD);
+                    break;
+                case WinNT.FILE_ACTION_RENAMED_NEW_NAME:
+                    event = new FileEvent(file, FILE_NAME_CHANGED_NEW);
+                    break;
+                default:
+                    // TODO: other actions...
+                    LOG.log(Level.WARNING, "Unrecognized file action ''{0}''", fni.Action);
             }
 
             if (event != null) {
@@ -221,21 +221,20 @@ public class W32FileMonitor extends FileMonitor {
                 public void run() {
                     FileInfo finfo;
                     while (true) {
-                       finfo = waitForChange();
-                       if (finfo == null) {
-                          synchronized(W32FileMonitor.this) {
-                             if (fileMap.isEmpty()) {
-                                watcher = null;
-                                break;
-                             }
-                          }
-                          continue;
+                        finfo = waitForChange();
+                        if (finfo == null) {
+                            synchronized (W32FileMonitor.this) {
+                                if (fileMap.isEmpty()) {
+                                    watcher = null;
+                                    break;
+                                }
+                            }
+                            continue;
                         }
 
                         try {
                             handleChanges(finfo);
-                        }
-                        catch(IOException e) {
+                        } catch (IOException e) {
                             // TODO: how is this best handled?
                             e.printStackTrace();
                         }

@@ -28,57 +28,60 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 
 public interface ComIDocument {
 
-        @ComMethod
-        void SaveAs(String string, WdSaveFormat wdFormatDocument);
+    @ComMethod
+    void SaveAs(String string, WdSaveFormat wdFormatDocument);
 
-        @ComMethod
-        void Close(boolean saveChanges);
+    @ComMethod
+    void Close(boolean saveChanges);
 
-        /**
-         * <p>id(0x451)</p>
-         */
-        @ComMethod(name = "Close", dispId = 0x451)
-        void Close(Object SaveChanges,
-                Object OriginalFormat,
-                Object RouteDocument);
+    /**
+     * <p>
+     * id(0x451)</p>
+     */
+    @ComMethod(name = "Close", dispId = 0x451)
+    void Close(Object SaveChanges,
+        Object OriginalFormat,
+        Object RouteDocument);
 
-        /**
-         * <p>
-         * id(0x29)</p>
-         */
-        @ComProperty(name = "Content", dispId = 0x29)
-        Range getContent();
+    /**
+     * <p>
+     * id(0x29)</p>
+     */
+    @ComProperty(name = "Content", dispId = 0x29)
+    Range getContent();
 
-        /**
-         * <p>id(0x4)</p>
-         */
-        @ComProperty(name = "Bookmarks", dispId = 0x4)
-        Bookmarks getBookmarks();
+    /**
+     * <p>
+     * id(0x4)</p>
+     */
+    @ComProperty(name = "Bookmarks", dispId = 0x4)
+    Bookmarks getBookmarks();
 
-        /**
-         * <p>
-         * id(0x6)</p>
-         */
-        @ComProperty(name = "Tables", dispId = 0x6)
-        Tables getTables();
+    /**
+     * <p>
+     * id(0x6)</p>
+     */
+    @ComProperty(name = "Tables", dispId = 0x6)
+    Tables getTables();
 
-        /**
-         * <p>id(0x228)</p>
-         */
-        @ComMethod(name = "ExportAsFixedFormat", dispId = 0x228)
-        void ExportAsFixedFormat(String OutputFileName,
-                WdExportFormat ExportFormat,
-                Boolean OpenAfterExport,
-                WdExportOptimizeFor OptimizeFor,
-                WdExportRange Range,
-                Integer From,
-                Integer To,
-                WdExportItem Item,
-                Boolean IncludeDocProps,
-                Boolean KeepIRM,
-                WdExportCreateBookmarks CreateBookmarks,
-                Boolean DocStructureTags,
-                Boolean BitmapMissingFonts,
-                Boolean UseISO19005_1,
-                Object FixedFormatExtClassPtr);
+    /**
+     * <p>
+     * id(0x228)</p>
+     */
+    @ComMethod(name = "ExportAsFixedFormat", dispId = 0x228)
+    void ExportAsFixedFormat(String OutputFileName,
+        WdExportFormat ExportFormat,
+        Boolean OpenAfterExport,
+        WdExportOptimizeFor OptimizeFor,
+        WdExportRange Range,
+        Integer From,
+        Integer To,
+        WdExportItem Item,
+        Boolean IncludeDocProps,
+        Boolean KeepIRM,
+        WdExportCreateBookmarks CreateBookmarks,
+        Boolean DocStructureTags,
+        Boolean BitmapMissingFonts,
+        Boolean UseISO19005_1,
+        Object FixedFormatExtClassPtr);
 }

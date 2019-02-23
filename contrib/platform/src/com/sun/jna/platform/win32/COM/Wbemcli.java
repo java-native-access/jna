@@ -168,10 +168,10 @@ public interface Wbemcli {
         }
 
         public HRESULT ConnectServer(BSTR strNetworkResource, BSTR strUser, BSTR strPassword, BSTR strLocale,
-                int lSecurityFlags, BSTR strAuthority, IWbemContext pCtx, PointerByReference ppNamespace) {
+            int lSecurityFlags, BSTR strAuthority, IWbemContext pCtx, PointerByReference ppNamespace) {
             // ConnectServier is 4th method of IWbemLocatorVtbl in WbemCli.h
-            return (HRESULT) _invokeNativeObject(3, new Object[] { getPointer(), strNetworkResource, strUser,
-                    strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace }, HRESULT.class);
+            return (HRESULT) _invokeNativeObject(3, new Object[]{getPointer(), strNetworkResource, strUser,
+                strPassword, strLocale, lSecurityFlags, strAuthority, pCtx, ppNamespace}, HRESULT.class);
         }
 
         public IWbemServices ConnectServer(String strNetworkResource, String strUser, String strPassword,

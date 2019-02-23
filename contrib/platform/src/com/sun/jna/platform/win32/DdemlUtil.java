@@ -1936,20 +1936,20 @@ public abstract class DdemlUtil {
         private static final Map<Integer,String> ERROR_CODE_MAP;
 
         static {
-             Map<Integer,String> errorCodeMapBuilder = new HashMap<Integer,String>();
-             for(Field f: Ddeml.class.getFields()) {
-                 String name = f.getName();
-                 if(name.startsWith("DMLERR_") && (! name.equals("DMLERR_FIRST")) && (! name.equals("DMLERR_LAST"))) {
-                     try {
-                         errorCodeMapBuilder.put(f.getInt(null), name);
-                     } catch (IllegalArgumentException ex) {
-                         throw new RuntimeException(ex);
-                     } catch (IllegalAccessException ex) {
-                         throw new RuntimeException(ex);
-                     }
-                 }
-             }
-             ERROR_CODE_MAP = Collections.unmodifiableMap(errorCodeMapBuilder);
+            Map<Integer, String> errorCodeMapBuilder = new HashMap<Integer, String>();
+            for (Field f : Ddeml.class.getFields()) {
+                String name = f.getName();
+                if (name.startsWith("DMLERR_") && (!name.equals("DMLERR_FIRST")) && (!name.equals("DMLERR_LAST"))) {
+                    try {
+                        errorCodeMapBuilder.put(f.getInt(null), name);
+                    } catch (IllegalArgumentException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IllegalAccessException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+            ERROR_CODE_MAP = Collections.unmodifiableMap(errorCodeMapBuilder);
         }
 
         private final int errorCode;

@@ -52,8 +52,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT Register(DWORD grfFlags, Pointer punkObject, Pointer pmkObjectName, DWORDByReference pdwRegister) {
         final int vTableId = 3;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                grfFlags, punkObject, pmkObjectName, pdwRegister }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            grfFlags, punkObject, pmkObjectName, pdwRegister}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -62,8 +62,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT Revoke(DWORD dwRegister) {
         final int vTableId = 4;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                dwRegister }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            dwRegister}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -72,8 +72,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT IsRunning(Pointer pmkObjectName) {
         final int vTableId = 5;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                pmkObjectName }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            pmkObjectName}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -82,8 +82,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT GetObject(Pointer pmkObjectName, PointerByReference ppunkObject) {
         final int vTableId = 6;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                pmkObjectName, ppunkObject }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            pmkObjectName, ppunkObject}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -92,8 +92,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT NoteChangeTime(DWORD dwRegister, FILETIME pfiletime) {
         final int vTableId = 7;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                dwRegister, pfiletime }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            dwRegister, pfiletime}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -102,8 +102,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT GetTimeOfLastChange(Pointer pmkObjectName, FILETIME.ByReference pfiletime) {
         final int vTableId = 8;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                pmkObjectName, pfiletime }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            pmkObjectName, pfiletime}, WinNT.HRESULT.class);
 
         return hr;
     }
@@ -112,8 +112,8 @@ public class RunningObjectTable extends Unknown implements IRunningObjectTable {
     public HRESULT EnumRunning(PointerByReference ppenumMoniker) {
         final int vTableId = 9;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(),
-                ppenumMoniker }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(),
+            ppenumMoniker}, WinNT.HRESULT.class);
 
         return hr;
     }

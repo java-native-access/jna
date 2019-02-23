@@ -76,31 +76,37 @@ public abstract class IntegerType extends Number implements NativeMapped {
         long truncated = value;
         this.value = value;
         switch (size) {
-        case 1:
-            if (unsigned) this.value = value & 0xFFL;
-            truncated = (byte) value;
-            this.number = Byte.valueOf((byte) value);
-            break;
-        case 2:
-            if (unsigned) this.value = value & 0xFFFFL;
-            truncated = (short) value;
-            this.number = Short.valueOf((short) value);
-            break;
-        case 4:
-            if (unsigned) this.value = value & 0xFFFFFFFFL;
-            truncated = (int) value;
-            this.number = Integer.valueOf((int) value);
-            break;
-        case 8:
-            this.number = Long.valueOf(value);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported size: " + size);
+            case 1:
+                if (unsigned) {
+                    this.value = value & 0xFFL;
+                }
+                truncated = (byte) value;
+                this.number = Byte.valueOf((byte) value);
+                break;
+            case 2:
+                if (unsigned) {
+                    this.value = value & 0xFFFFL;
+                }
+                truncated = (short) value;
+                this.number = Short.valueOf((short) value);
+                break;
+            case 4:
+                if (unsigned) {
+                    this.value = value & 0xFFFFFFFFL;
+                }
+                truncated = (int) value;
+                this.number = Integer.valueOf((int) value);
+                break;
+            case 8:
+                this.number = Long.valueOf(value);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported size: " + size);
         }
         if (size < 8) {
-            long mask = ~((1L << (size*8)) - 1);
+            long mask = ~((1L << (size * 8)) - 1);
             if ((value < 0 && truncated != value)
-                || (value >= 0 && (mask & value) != 0)) {
+                    || (value >= 0 && (mask & value) != 0)) {
                 throw new IllegalArgumentException("Argument value 0x"
                         + Long.toHexString(value) + " exceeds native capacity ("
                         + size + " bytes) mask=0x" + Long.toHexString(mask));

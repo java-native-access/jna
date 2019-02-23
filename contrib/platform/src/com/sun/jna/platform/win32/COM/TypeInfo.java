@@ -154,15 +154,15 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pc names
      * @return the hresult
      */
-    public/* [local] */HRESULT GetNames(
-    /* [in] */MEMBERID memid,
-    /* [length_is][size_is][out] */BSTR[] rgBstrNames,
-    /* [in] */UINT cMaxNames,
-    /* [out] */UINTByReference pcNames) {
+    public/* [local] */ HRESULT GetNames(
+            /* [in] */MEMBERID memid,
+            /* [length_is][size_is][out] */ BSTR[] rgBstrNames,
+            /* [in] */ UINT cMaxNames,
+            /* [out] */ UINTByReference pcNames) {
 
         return (HRESULT) this._invokeNativeObject(7,
-                new Object[] { this.getPointer(), memid, rgBstrNames,
-                        cMaxNames, pcNames }, HRESULT.class);
+            new Object[]{this.getPointer(), memid, rgBstrNames,
+                cMaxNames, pcNames}, HRESULT.class);
     }
 
     /**
@@ -241,19 +241,19 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pu arg err
      * @return the hresult
      */
-    public/* [local] */HRESULT Invoke(
-    /* [in] */PVOID pvInstance,
-    /* [in] */MEMBERID memid,
-    /* [in] */WORD wFlags,
-    /* [out][in] */DISPPARAMS.ByReference pDispParams,
-    /* [out] */VARIANT.ByReference pVarResult,
-    /* [out] */EXCEPINFO.ByReference pExcepInfo,
-    /* [out] */UINTByReference puArgErr) {
+    public/* [local] */ HRESULT Invoke(
+            /* [in] */PVOID pvInstance,
+            /* [in] */ MEMBERID memid,
+            /* [in] */ WORD wFlags,
+            /* [out][in] */ DISPPARAMS.ByReference pDispParams,
+            /* [out] */ VARIANT.ByReference pVarResult,
+            /* [out] */ EXCEPINFO.ByReference pExcepInfo,
+            /* [out] */ UINTByReference puArgErr) {
 
         return (HRESULT) this._invokeNativeObject(11,
-                new Object[] { this.getPointer(), pvInstance, memid, wFlags,
-                        pDispParams, pVarResult, pExcepInfo, puArgErr },
-                HRESULT.class);
+            new Object[]{this.getPointer(), pvInstance, memid, wFlags,
+                pDispParams, pVarResult, pExcepInfo, puArgErr},
+            HRESULT.class);
     }
 
     /**
@@ -271,17 +271,17 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the bstr help file
      * @return the hresult
      */
-    public/* [local] */HRESULT GetDocumentation(
-    /* [in] */MEMBERID memid,
-    /* [out] */BSTRByReference pBstrName,
-    /* [out] */BSTRByReference pBstrDocString,
-    /* [out] */DWORDByReference pdwHelpContext,
-    /* [out] */BSTRByReference pBstrHelpFile) {
+    public/* [local] */ HRESULT GetDocumentation(
+            /* [in] */MEMBERID memid,
+            /* [out] */ BSTRByReference pBstrName,
+            /* [out] */ BSTRByReference pBstrDocString,
+            /* [out] */ DWORDByReference pdwHelpContext,
+            /* [out] */ BSTRByReference pBstrHelpFile) {
 
         return (HRESULT) this._invokeNativeObject(12,
-                new Object[] { this.getPointer(), memid, pBstrName,
-                        pBstrDocString, pdwHelpContext, pBstrHelpFile },
-                HRESULT.class);
+            new Object[]{this.getPointer(), memid, pBstrName,
+                pBstrDocString, pdwHelpContext, pBstrHelpFile},
+            HRESULT.class);
     }
 
     /**
@@ -299,16 +299,16 @@ public class TypeInfo extends Unknown implements ITypeInfo {
      *            the pw ordinal
      * @return the hresult
      */
-    public/* [local] */HRESULT GetDllEntry(
-    /* [in] */MEMBERID memid,
-    /* [in] */INVOKEKIND invKind,
-    /* [out] */BSTRByReference pBstrDllName,
-    /* [out] */BSTRByReference pBstrName,
-    /* [out] */WORDByReference pwOrdinal) {
+    public/* [local] */ HRESULT GetDllEntry(
+            /* [in] */MEMBERID memid,
+            /* [in] */ INVOKEKIND invKind,
+            /* [out] */ BSTRByReference pBstrDllName,
+            /* [out] */ BSTRByReference pBstrName,
+            /* [out] */ WORDByReference pwOrdinal) {
 
         return (HRESULT) this._invokeNativeObject(13,
-                new Object[] { this.getPointer(), memid, invKind, pBstrDllName,
-                        pBstrName, pwOrdinal }, HRESULT.class);
+            new Object[]{this.getPointer(), memid, invKind, pBstrDllName,
+                pBstrName, pwOrdinal}, HRESULT.class);
     }
 
     /**

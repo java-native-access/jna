@@ -232,8 +232,7 @@ public class XDesktopDemo extends JFrame {
         int activeWindowNumber = -1;
         X.Window[] windows = display.getWindows();
         String[] head = new String[]{
-                "ID", "Desktop", "Title",
-                "X", "Y", "Width", "Height"
+            "ID", "Desktop", "Title", "X", "Y", "Width", "Height"
         };
         String[][] data = new String[windows.length][head.length];
         for (int i = 0; i < windows.length; i++) {

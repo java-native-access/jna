@@ -412,14 +412,14 @@ public abstract class DragHandler
 
     protected Cursor getCursorForAction(int actualAction) {
         switch(actualAction) {
-        case MOVE:
-            return DragSource.DefaultMoveDrop;
-        case COPY:
-            return DragSource.DefaultCopyDrop;
-        case LINK:
-            return DragSource.DefaultLinkDrop;
-        default:
-            return DragSource.DefaultMoveNoDrop;
+            case MOVE:
+                return DragSource.DefaultMoveDrop;
+            case COPY:
+                return DragSource.DefaultCopyDrop;
+            case LINK:
+                return DragSource.DefaultLinkDrop;
+            default:
+                return DragSource.DefaultMoveNoDrop;
         }
     }
 
@@ -478,14 +478,14 @@ public abstract class DragHandler
 
     static String actionString(int action) {
         switch(action) {
-        case MOVE: return "MOVE";
-        case MOVE|COPY: return "MOVE|COPY";
-        case MOVE|LINK: return "MOVE|LINK";
-        case MOVE|COPY|LINK: return "MOVE|COPY|LINK";
-        case COPY: return "COPY";
-        case COPY|LINK: return "COPY|LINK";
-        case LINK: return "LINK";
-        default: return "NONE";
+            case MOVE: return "MOVE";
+            case MOVE|COPY: return "MOVE|COPY";
+            case MOVE|LINK: return "MOVE|LINK";
+            case MOVE|COPY|LINK: return "MOVE|COPY|LINK";
+            case COPY: return "COPY";
+            case COPY|LINK: return "COPY|LINK";
+            case LINK: return "LINK";
+            default: return "NONE";
         }
     }
     private String lastAction;

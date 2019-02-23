@@ -30,87 +30,87 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 @ComInterface(iid = "{00020846-0000-0000-C000-000000000046}")
 public interface ComIRange {
 
-        @ComProperty
-        ComIApplication getApplication();
+    @ComProperty
+    ComIApplication getApplication();
 
-        @ComProperty
-        String getText();
+    @ComProperty
+    String getText();
 
-        @ComMethod
-        void Select();
+    @ComMethod
+    void Select();
 
-        @ComProperty
-        void setValue(String value);
+    @ComProperty
+    void setValue(String value);
 
-        @ComMethod
-        void Activate();
+    @ComMethod
+    void Activate();
 
-        @ComProperty
-        ComIRange getItem(Object rowIndex, Object columnIndex);
+    @ComProperty
+    ComIRange getItem(Object rowIndex, Object columnIndex);
 
-        @ComProperty
-        void setValue(Object data);
+    @ComProperty
+    void setValue(Object data);
 
-        @ComProperty
-        Object getValue();
+    @ComProperty
+    Object getValue();
 
-        @ComProperty
-        void setFormula(String data);
+    @ComProperty
+    void setFormula(String data);
 
-        @ComProperty
-        String getFormula();
+    @ComProperty
+    String getFormula();
 
-        @ComProperty
-        void setNumberFormat(String data);
+    @ComProperty
+    void setNumberFormat(String data);
 
-        @ComProperty
-        String getNumberFormat();
+    @ComProperty
+    String getNumberFormat();
 
-        @ComProperty
-        ComIRange getEntireColumn();
+    @ComProperty
+    ComIRange getEntireColumn();
 
-        @ComMethod
-        void AutoFit();
+    @ComMethod
+    void AutoFit();
 
-        @ComProperty
-        public ComIRange getResize(Object rowSize, Object columnSize);
+    @ComProperty
+    public ComIRange getResize(Object rowSize, Object columnSize);
 
-        @ComProperty
-        void setOrientation(int degree);
+    @ComProperty
+    void setOrientation(int degree);
 
-        @ComProperty
-        int getOrientation();
+    @ComProperty
+    int getOrientation();
 
-        @ComProperty
-        void setWrapText(boolean wrap);
+    @ComProperty
+    void setWrapText(boolean wrap);
 
-        @ComProperty
-        boolean getWrapText();
+    @ComProperty
+    boolean getWrapText();
 
-        @ComProperty
-        Interior getInterior();
+    @ComProperty
+    Interior getInterior();
 
-        @ComProperty
-        Borders getBorders();
+    @ComProperty
+    Borders getBorders();
 
-        @ComProperty
-        int getTop();
+    @ComProperty
+    int getTop();
 
-        @ComProperty
-        void setTop(int value);
+    @ComProperty
+    void setTop(int value);
 
-        @ComProperty
-        int getLeft();
+    @ComProperty
+    int getLeft();
 
-        @ComProperty
-        void setLeft(int value);
+    @ComProperty
+    void setLeft(int value);
 
-        @ComProperty
-        String getName();
+    @ComProperty
+    String getName();
 
-        @ComProperty
-        void setName(String name);
+    @ComProperty
+    void setName(String name);
 
-        @ComProperty
-        void setAddress(String name);
+    @ComProperty
+    void setAddress(String name);
 }

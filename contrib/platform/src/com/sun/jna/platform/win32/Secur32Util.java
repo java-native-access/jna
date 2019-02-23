@@ -67,11 +67,11 @@ public abstract class Secur32Util {
             int rc = Kernel32.INSTANCE.GetLastError();
 
             switch(rc) {
-            case W32Errors.ERROR_MORE_DATA:
-                buffer = new char[len.getValue() + 1];
-                break;
-            default:
-                throw new Win32Exception(Native.getLastError());
+                case W32Errors.ERROR_MORE_DATA:
+                    buffer = new char[len.getValue() + 1];
+                    break;
+                default:
+                    throw new Win32Exception(Native.getLastError());
             }
 
             result = Secur32.INSTANCE.GetUserNameEx(format, buffer, len);

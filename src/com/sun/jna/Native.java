@@ -1668,15 +1668,15 @@ public final class Native implements Version {
         }
         if (type.isArray()) {
             switch(type.getName().charAt(1)) {
-            case 'Z': return CVT_ARRAY_BOOLEAN;
-            case 'B': return CVT_ARRAY_BYTE;
-            case 'S': return CVT_ARRAY_SHORT;
-            case 'C': return CVT_ARRAY_CHAR;
-            case 'I': return CVT_ARRAY_INT;
-            case 'J': return CVT_ARRAY_LONG;
-            case 'F': return CVT_ARRAY_FLOAT;
-            case 'D': return CVT_ARRAY_DOUBLE;
-            default: break;
+                case 'Z': return CVT_ARRAY_BOOLEAN;
+                case 'B': return CVT_ARRAY_BYTE;
+                case 'S': return CVT_ARRAY_SHORT;
+                case 'C': return CVT_ARRAY_CHAR;
+                case 'I': return CVT_ARRAY_INT;
+                case 'J': return CVT_ARRAY_LONG;
+                case 'F': return CVT_ARRAY_FLOAT;
+                case 'D': return CVT_ARRAY_DOUBLE;
+                default: break;
             }
         }
         if (type.isPrimitive()) {
@@ -1802,9 +1802,9 @@ public final class Native implements Version {
                     throw new IllegalArgumentException(type + " is not a supported argument type (in method " + method.getName() + " in " + cls + ")");
                 }
                 if ((conversionType == CVT_NATIVE_MAPPED)
-                 || (conversionType == CVT_NATIVE_MAPPED_STRING)
-                 || (conversionType == CVT_NATIVE_MAPPED_WSTRING)
-                 || (conversionType == CVT_INTEGER_TYPE)) {
+                    || (conversionType == CVT_NATIVE_MAPPED_STRING)
+                    || (conversionType == CVT_NATIVE_MAPPED_WSTRING)
+                    || (conversionType == CVT_INTEGER_TYPE)) {
                     type = NativeMappedConverter.getInstance(type).nativeType();
                 } else if ((conversionType == CVT_TYPE_MAPPER)
                         || (conversionType == CVT_TYPE_MAPPER_STRING)

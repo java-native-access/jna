@@ -28,30 +28,31 @@ import com.sun.jna.platform.win32.COM.util.annotation.ComProperty;
 
 @ComInterface(iid="{000208D8-0000-0000-C000-000000000046}")
 public interface ComIWorksheet {
-        @ComProperty
-        ComIWorkbook getParent();
 
-        @ComProperty
-        String getName();
+    @ComProperty
+    ComIWorkbook getParent();
 
-        @ComProperty
-        ComIRange getRange(String cell1);
+    @ComProperty
+    String getName();
 
-        @ComProperty
-        ComIRange getRange(String cell1, String cell2);
+    @ComProperty
+    ComIRange getRange(String cell1);
 
-        @ComProperty
-        ComIApplication getApplication();
+    @ComProperty
+    ComIRange getRange(String cell1, String cell2);
 
-        @ComProperty
-        ComIRange getCells();
+    @ComProperty
+    ComIApplication getApplication();
 
-        @ComProperty
-        Shapes getShapes();
+    @ComProperty
+    ComIRange getCells();
 
-        @ComProperty
-        ComIRange getRows(Object identifier);
+    @ComProperty
+    Shapes getShapes();
 
-        @ComProperty
-        ComIRange getColumns(Object identifier);
+    @ComProperty
+    ComIRange getRows(Object identifier);
+
+    @ComProperty
+    ComIRange getColumns(Object identifier);
 }

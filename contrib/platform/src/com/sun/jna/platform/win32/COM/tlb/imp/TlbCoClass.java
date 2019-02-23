@@ -109,11 +109,11 @@ public class TlbCoClass extends TlbBase {
 
             TlbAbstractMethod method = null;
             if (funcDesc.invkind.value == INVOKEKIND.INVOKE_FUNC.value) {
-                if(this.isVTableMode()) {
+                if (this.isVTableMode()) {
                     method = new TlbFunctionVTable(i, index, typeLibUtil, funcDesc, typeInfoUtil);
                 } else {
                     method = new TlbFunctionDispId(i, index, typeLibUtil, funcDesc, typeInfoUtil);
-            }
+                }
             } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYGET.value) {
                 method = new TlbPropertyGet(i, index, typeLibUtil, funcDesc, typeInfoUtil);
             } else if (funcDesc.invkind.value == INVOKEKIND.INVOKE_PROPERTYPUT.value) {

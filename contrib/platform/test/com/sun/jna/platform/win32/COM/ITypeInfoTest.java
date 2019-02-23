@@ -140,7 +140,7 @@ public class ITypeInfoTest {
         DWORDByReference pdwHelpContext = new DWORDByReference();
         BSTRByReference pBstrHelpFile = new BSTRByReference();
         for (ITypeInfo typeInfo : typeInfos) {
-        HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
+            HRESULT hr = typeInfo.GetDocumentation(memid, pBstrName,
                 pBstrDocString, pdwHelpContext, pBstrHelpFile);
             if (COMUtils.SUCCEEDED(hr)) {
                 //System.out.println("memid: " + memid.intValue());

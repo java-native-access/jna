@@ -294,9 +294,9 @@ public interface ShellAPI extends StdCallLibrary {
      * <em>example:</em>, and <em>"quoted text"</em>.
      * </p>
      */
-        @FieldOrder({"cbSize", "fMask", "hwnd", "lpVerb", "lpFile", "lpParameters",
-                "lpDirectory", "nShow", "hInstApp", "lpIDList", "lpClass", "hKeyClass", "dwHotKey", "hMonitor",
-                "hProcess"})
+    @FieldOrder({"cbSize", "fMask", "hwnd", "lpVerb", "lpFile", "lpParameters",
+        "lpDirectory", "nShow", "hInstApp", "lpIDList", "lpClass", "hKeyClass",
+        "dwHotKey", "hMonitor", "hProcess"})
     public class SHELLEXECUTEINFO extends Structure {
         /**
          * <p>

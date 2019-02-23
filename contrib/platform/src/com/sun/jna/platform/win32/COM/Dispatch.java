@@ -110,10 +110,10 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT GetIDsOfNames(REFIID riid, WString[] rgszNames, int cNames,
-            LCID lcid, DISPIDByReference rgDispId) {
+        LCID lcid, DISPIDByReference rgDispId) {
         return (HRESULT) this._invokeNativeObject(5,
-                new Object[] { this.getPointer(), riid, rgszNames, cNames,
-                        lcid, rgDispId }, HRESULT.class);
+            new Object[]{this.getPointer(), riid, rgszNames, cNames,
+                lcid, rgDispId}, HRESULT.class);
     }
 
     /**
@@ -138,12 +138,12 @@ public class Dispatch extends Unknown implements IDispatch {
      * @return the hresult
      */
     public HRESULT Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
-            WORD wFlags, DISPPARAMS.ByReference pDispParams,
-            VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-            IntByReference puArgErr) {
+        WORD wFlags, DISPPARAMS.ByReference pDispParams,
+        VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+        IntByReference puArgErr) {
         return (HRESULT) this
-                ._invokeNativeObject(6, new Object[] { this.getPointer(),
-                        dispIdMember, riid, lcid, wFlags, pDispParams,
-                        pVarResult, pExcepInfo, puArgErr }, HRESULT.class);
+            ._invokeNativeObject(6, new Object[]{this.getPointer(),
+                dispIdMember, riid, lcid, wFlags, pDispParams,
+                pVarResult, pExcepInfo, puArgErr}, HRESULT.class);
     }
 }

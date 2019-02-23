@@ -259,12 +259,11 @@ public class AlphaMaskDemo2 implements Runnable {
                 return false;
             }
         });
-        p
-         .add(
-              new JLabel(
-                         "<html><center>Drop an image with an alpha channel onto this window<br>"
-                             + "You may also adjust the overall transparency with the slider</center></html>"),
-              BorderLayout.NORTH);
+        p.add(
+            new JLabel(
+                "<html><center>Drop an image with an alpha channel onto this window<br>"
+                + "You may also adjust the overall transparency with the slider</center></html>"),
+            BorderLayout.NORTH);
         p.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         final JSlider slider = new JSlider(0, 255, 255);
         slider.addChangeListener(new ChangeListener() {

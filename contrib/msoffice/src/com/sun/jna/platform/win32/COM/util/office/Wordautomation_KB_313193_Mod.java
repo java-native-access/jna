@@ -112,11 +112,11 @@ public class Wordautomation_KB_313193_Mod {
             Table table = doc.getTables().Add(doc.getBookmarks().Item(oEndOfDoc).getRange(),
                     3, 5, VARIANT_MISSING, VARIANT_MISSING);
             table.getRange().getParagraphFormat().setSpaceAfter(6F);
-            for(int r = 1; r <= 3; r++) {
-                    for(int c = 1; c <= 5; c++) {
-                            String strText = "r" + r + "c" + c;
-                            table.Cell(r, c).getRange().setText(strText);
-                    }
+            for (int r = 1; r <= 3; r++) {
+                for (int c = 1; c <= 5; c++) {
+                    String strText = "r" + r + "c" + c;
+                    table.Cell(r, c).getRange().setText(strText);
+                }
             }
             table.getRows().Item(1).getRange().getFont().setBold(1);
             table.getRows().Item(1).getRange().getFont().setItalic(1);
@@ -132,11 +132,11 @@ public class Wordautomation_KB_313193_Mod {
             table = doc.getTables().Add(doc.getBookmarks().Item(oEndOfDoc).getRange(), 5, 2, VARIANT_MISSING, VARIANT_MISSING);
             table.getRange().getParagraphFormat().setSpaceAfter(6F);
 
-            for(int r = 1; r <= 5; r++) {
-                    for(int c = 1; c <= 2; c++) {
-                            String strText = "r" + r + "c" + c;
-                            table.Cell(r, c).getRange().setText(strText);
-                    }
+            for (int r = 1; r <= 5; r++) {
+                for (int c = 1; c <= 2; c++) {
+                    String strText = "r" + r + "c" + c;
+                    table.Cell(r, c).getRange().setText(strText);
+                }
             }
 
             //Change width of columns 1 & 2
@@ -149,10 +149,10 @@ public class Wordautomation_KB_313193_Mod {
             float dPos = wordApp.InchesToPoints(7F);
             doc.getBookmarks().Item(oEndOfDoc).getRange().InsertParagraphAfter();
             do {
-                    wrdRng = doc.getBookmarks().Item(oEndOfDoc).getRange();
-                    wrdRng.getParagraphFormat().setSpaceAfter(6F);
-                    wrdRng.InsertAfter("A line of text");
-                    wrdRng.InsertParagraphAfter();
+                wrdRng = doc.getBookmarks().Item(oEndOfDoc).getRange();
+                wrdRng.getParagraphFormat().setSpaceAfter(6F);
+                wrdRng.InsertAfter("A line of text");
+                wrdRng.InsertParagraphAfter();
             } while(dPos >= (Float) wrdRng.getInformation(WdInformation.wdVerticalPositionRelativeToPage));
 
             wrdRng.Collapse(WdCollapseDirection.wdCollapseEnd);

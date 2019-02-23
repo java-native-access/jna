@@ -226,9 +226,12 @@ public class TypeMapperTest extends TestCase {
         public int getCode() { return code; }
         public static Enumeration fromCode(int code) {
             switch(code) {
-            case 0: return STATUS_0;
-            case 1: return STATUS_1;
-            default: return STATUS_ERROR;
+                case 0:
+                    return STATUS_0;
+                case 1:
+                    return STATUS_1;
+                default:
+                    return STATUS_ERROR;
             }
         }
     }

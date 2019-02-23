@@ -1551,40 +1551,41 @@ public abstract class Structure {
         String contents = LS;
         if (!showContents) {
             contents = "...}";
-        }
-        else for (Iterator<StructField> i = fields().values().iterator(); i.hasNext();) {
-            StructField sf = i.next();
-            Object value = getFieldValue(sf.field);
-            String type = format(sf.type);
-            String index = "";
-            contents += prefix;
-            if (sf.type.isArray() && value != null) {
-                type = format(sf.type.getComponentType());
-                index = "[" + Array.getLength(value) + "]";
+        } else {
+            for (Iterator<StructField> i = fields().values().iterator(); i.hasNext();) {
+                StructField sf = i.next();
+                Object value = getFieldValue(sf.field);
+                String type = format(sf.type);
+                String index = "";
+                contents += prefix;
+                if (sf.type.isArray() && value != null) {
+                    type = format(sf.type.getComponentType());
+                    index = "[" + Array.getLength(value) + "]";
+                }
+                contents += String.format("  %s %s%s@0x%X", type, sf.name, index, sf.offset);
+                if (value instanceof Structure) {
+                    value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference), dumpMemory);
+                }
+                contents += "=";
+                if (value instanceof Long) {
+                    contents += String.format("0x%08X", (Long) value);
+                }
+                else if (value instanceof Integer) {
+                    contents += String.format("0x%04X", (Integer) value);
+                }
+                else if (value instanceof Short) {
+                    contents += String.format("0x%02X", (Short) value);
+                }
+                else if (value instanceof Byte) {
+                    contents += String.format("0x%01X", (Byte) value);
+                }
+                else {
+                    contents += String.valueOf(value).trim();
+                }
+                contents += LS;
+                if (!i.hasNext())
+                    contents += prefix + "}";
             }
-            contents += String.format("  %s %s%s@0x%X", type, sf.name, index, sf.offset);
-            if (value instanceof Structure) {
-                value = ((Structure)value).toString(indent + 1, !(value instanceof Structure.ByReference), dumpMemory);
-            }
-            contents += "=";
-            if (value instanceof Long) {
-                contents += String.format("0x%08X", (Long) value);
-            }
-            else if (value instanceof Integer) {
-                contents += String.format("0x%04X", (Integer) value);
-            }
-            else if (value instanceof Short) {
-                contents += String.format("0x%02X", (Short) value);
-            }
-            else if (value instanceof Byte) {
-                contents += String.format("0x%01X", (Byte) value);
-            }
-            else {
-                contents += String.valueOf(value).trim();
-            }
-            contents += LS;
-            if (!i.hasNext())
-                contents += prefix + "}";
         }
         if (indent == 0 && dumpMemory) {
             final int BYTES_PER_ROW = 4;

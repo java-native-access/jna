@@ -44,8 +44,8 @@ public class EnumMoniker extends Unknown implements IEnumMoniker {
     public HRESULT Next(ULONG celt, PointerByReference rgelt, ULONGByReference pceltFetched) {
         final int vTableId = 3;
 
-        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[] { this.getPointer(), celt,
-                rgelt, pceltFetched }, WinNT.HRESULT.class);
+        WinNT.HRESULT hr = (WinNT.HRESULT) this._invokeNativeObject(vTableId, new Object[]{this.getPointer(), celt,
+            rgelt, pceltFetched}, WinNT.HRESULT.class);
 
         return hr;
     }

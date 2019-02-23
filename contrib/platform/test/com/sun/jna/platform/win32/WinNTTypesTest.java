@@ -20,22 +20,22 @@ public class WinNTTypesTest extends AbstractWin32TestSupport {
 
     @Test
     public void testLargeIntegerLowHighLongValue() {
-        for (long expected : new long[] {
-                Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
-                0L,
-                Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE
-            }) {
+        for (long expected : new long[]{
+            Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
+            0L,
+            Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE
+        }) {
             assertEquals("Mismatched value", expected, new LARGE_INTEGER.LowHigh(expected).longValue());
         }
     }
 
     @Test
     public void testLargeIntegerUnionLongValue() {
-        for (long expected : new long[] {
-                Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
-                0L,
-                Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE
-            }) {
+        for (long expected : new long[]{
+            Long.MIN_VALUE, Integer.MIN_VALUE, Short.MIN_VALUE, Byte.MIN_VALUE,
+            0L,
+            Long.MAX_VALUE, Integer.MAX_VALUE, Short.MAX_VALUE, Byte.MAX_VALUE
+        }) {
             LARGE_INTEGER large = new LARGE_INTEGER(expected);
             assertEquals("Mismatched large value", expected, large.getValue());
 
