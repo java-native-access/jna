@@ -12,6 +12,7 @@ install:
 script:
   - ant test
   - ant test-platform
+  - ant checkstyle
   - ant dist
 
 os:
