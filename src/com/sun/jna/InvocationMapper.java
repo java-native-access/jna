@@ -1,22 +1,22 @@
-/**
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -26,12 +26,12 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
 /** Provide a method for overriding how a given function is invoked.
- * An instance of this interface may be provided to 
+ * An instance of this interface may be provided to
  * {@link Native#load(String, Class, java.util.Map)} as an entry in
  * the options map with key {@link Library#OPTION_INVOCATION_MAPPER}.<p>
  * This is useful for implementing inlined functions, or functions which
  * are actually C preprocessor macros.  Given a native library and JNA
- * interface method, the mapper may provide a handler which implements the 
+ * interface method, the mapper may provide a handler which implements the
  * desired functionality (which may or may not actually make use of a
  * native method).
  * <p>
@@ -54,18 +54,18 @@ import java.lang.reflect.Method;
  *             };
  *         }
  *         return null;
- *     } 
- * } 
+ *     }
+ * }
  * </code></pre>
  * </blockquote>
  * Another situation is where a header provides a function-like macro or
- * inline function definition.  
+ * inline function definition.
  * <blockquote>
  * <pre><code>
  * // Original C code (macro and inline variations)
  * #define allocblock(x) malloc(x * 1024)
  * static inline void* allocblock(size_t x) { return malloc(x * 1024); }
- * 
+ *
  * // Invocation mapping
  * new InvocationMapper() {
  *     public InvocationHandler getInvocationHandler(NativeLibrary lib, Method m) {
@@ -79,8 +79,8 @@ import java.lang.reflect.Method;
  *             };
  *         }
  *         return null;
- *     } 
- * } 
+ *     }
+ * }
  * </code></pre>
  * </blockquote>
  * @author twall

@@ -1,14 +1,25 @@
 /* Copyright (c) 2013 Tobias Wolf, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -68,25 +79,25 @@ import org.junit.Assume;
 
 public class SAFEARRAYTest {
     static {
-            ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
+        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);
     }
-    
+
     @Before
     public void setup() {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
     }
-    
+
     @After
     public void teardown() {
         Ole32.INSTANCE.CoUninitialize();
     }
-    
+
     @Test
     public void testCreateVarArray() {
         SAFEARRAY varArray = SAFEARRAY.createSafeArray(1);
         Assert.assertTrue(varArray != null);
     }
-    
+
     @Test
     public void testCreateEmpty() throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
         Field f = Structure.class.getDeclaredField("PLACEHOLDER_MEMORY");
@@ -100,14 +111,14 @@ public class SAFEARRAYTest {
     public void testSafeArrayPutGetElement() throws Exception {
         int rowCount = 2;
         int colCount = 10;
-        
+
         SAFEARRAY varArray = SAFEARRAY.createSafeArray(rowCount, colCount);
-        
+
         assertThat(varArray.getDimensionCount(), is(2));
-        
+
         assertThat(varArray.getUBound(0), equalTo(rowCount - 1));
         assertThat(varArray.getUBound(1), equalTo(colCount - 1));
-        
+
         for (int rowIdx = 0; rowIdx < rowCount; rowIdx++) {
             for (int colIdx = 0; colIdx < colCount; colIdx++) {
                 VARIANT variant = new VARIANT(rowIdx + "#" + colIdx);
@@ -128,7 +139,7 @@ public class SAFEARRAYTest {
     @Test
     public void testPerformance() {
         ObjectFactory fact = new ObjectFactory();
-        
+
         // Open a record set with a sample search (basicly get the first five
         // entries from the search index
         Connection conn = fact.createObject(Connection.class);
@@ -138,16 +149,16 @@ public class SAFEARRAYTest {
         recordset.Open("SELECT TOP 500 System.ItemPathDisplay, System.ItemName, System.ItemUrl, System.DateCreated FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);
 
         SAFEARRAY wrap = recordset.GetRows();
-        
+
         assertThat(wrap.getDimensionCount(), is(2));
-        
+
         long timeDirect = 0;
         long timeGetElement = 0;
         long timePointer = 0;
         long timeHelper = 0;
-        
+
         long start, end;
-        
+
         for (int i = 0; i < 4 * 10; i++) {
             if (i % 4 == 0) {
                 start = System.currentTimeMillis();
@@ -171,18 +182,18 @@ public class SAFEARRAYTest {
                 timeHelper += (end - start);
             }
         }
-        
+
         System.out.println("Direct: " + timeDirect + " ms");
         System.out.println("GetElement: " + timeGetElement + " ms");
         System.out.println("Pointer: " + timePointer + " ms");
         System.out.println("Helper: " + timeHelper + " ms");
-        
+
         recordset.Close();
         conn.Close();
-        
+
         fact.disposeAll();
     }
-    
+
     private Object[] toArrayGetElement(SAFEARRAY wrap) {
         wrap.lock();
         int rowMax = wrap.getUBound(2);
@@ -198,7 +209,7 @@ public class SAFEARRAYTest {
         wrap.unlock();
         return result;
     }
-    
+
     private Object[] toArrayPtrToElement(SAFEARRAY wrap) {
         wrap.lock();
         int rowMax = wrap.getUBound(2);
@@ -213,7 +224,7 @@ public class SAFEARRAYTest {
         wrap.unlock();
         return result;
     }
-    
+
     private Object[] toArrayDirect(SAFEARRAY wrap) {
         Pointer dataPointer = wrap.accessData();
         long rowMax = wrap.getUBound(2);
@@ -230,7 +241,7 @@ public class SAFEARRAYTest {
         wrap.unaccessData();
         return result;
     }
-    
+
     @Test
     public void testMultidimensionalNotNullBased() {
         // create a basic SAFEARRAY
@@ -239,7 +250,7 @@ public class SAFEARRAYTest {
         sa.putElement(2, 0, 1);
         sa.putElement(3, 1, 0);
         sa.putElement(4, 1, 1);
-        
+
         // query the plain SAFEARRAY
         Object[][] basic = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, false);
 
@@ -247,27 +258,27 @@ public class SAFEARRAYTest {
         sa.rgsabound[0].lLbound = new LONG(2);
         sa.rgsabound[1].lLbound = new LONG(5);
         sa.write();
-        
+
         // Validate new bounds
         Assert.assertEquals(2, sa.getLBound(0));
         Assert.assertEquals(3, sa.getUBound(0));
         Assert.assertEquals(5, sa.getLBound(1));
         Assert.assertEquals(6, sa.getUBound(1));
-        
+
         // requery the moved array and compare with basic array
         Object[][] relocated = (Object[][]) OaIdlUtil.toPrimitiveArray(sa, false);
         Assert.assertArrayEquals( basic, relocated);
     }
-    
+
     @Test
     public void testDataTypes() {
         int idx = 1;
         Pointer dataPointer;
         SAFEARRAY sa;
         long elementSize;
-        
+
         Object[] objectResult;
-        
+
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_BOOL), 2);
         elementSize = sa.getElemsize();
         assertThat(elementSize, equalTo(2L));
@@ -281,7 +292,7 @@ public class SAFEARRAYTest {
         assertThat((Boolean) objectResult[idx], equalTo(true));
         sa.unaccessData();
         sa.destroy();
-        
+
         byte testByte = 67;
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_UI1), 2);
         elementSize = sa.getElemsize();
@@ -296,7 +307,7 @@ public class SAFEARRAYTest {
         assertThat((Byte) objectResult[idx], equalTo(testByte));
         sa.unaccessData();
         sa.destroy();
-        
+
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_I1), 2);
         elementSize = sa.getElemsize();
         assertThat(elementSize, equalTo(1L));
@@ -310,7 +321,7 @@ public class SAFEARRAYTest {
         assertThat((Byte) objectResult[idx], equalTo(testByte));
         sa.unaccessData();
         sa.destroy();
-        
+
         short testShort = Short.MAX_VALUE - 1;
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_UI2), 2);
         elementSize = sa.getElemsize();
@@ -339,7 +350,7 @@ public class SAFEARRAYTest {
         assertThat((Short) objectResult[idx], equalTo(testShort));
         sa.unaccessData();
         sa.destroy();
-        
+
         int testInt = Integer.MAX_VALUE - 1;
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_UI4), 2);
         elementSize = sa.getElemsize();
@@ -368,7 +379,7 @@ public class SAFEARRAYTest {
         assertThat((Integer) objectResult[idx], equalTo(testInt));
         sa.unaccessData();
         sa.destroy();
-        
+
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_UINT), 2);
         elementSize = sa.getElemsize();
         assertThat(elementSize, equalTo(4L));
@@ -396,7 +407,7 @@ public class SAFEARRAYTest {
         assertThat((Integer) objectResult[idx], equalTo(testInt));
         sa.unaccessData();
         sa.destroy();
-        
+
         SCODE testSCODE = new SCODE(47);
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_ERROR), 2);
         elementSize = sa.getElemsize();
@@ -411,7 +422,7 @@ public class SAFEARRAYTest {
         assertThat((SCODE) objectResult[idx], equalTo(testSCODE));
         sa.unaccessData();
         sa.destroy();
-        
+
         float testFloat = 42.23f;
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_R4), 2);
         elementSize = sa.getElemsize();
@@ -426,7 +437,7 @@ public class SAFEARRAYTest {
         assertThat((Float) objectResult[idx], equalTo(testFloat));
         sa.unaccessData();
         sa.destroy();
-        
+
         double testDouble = 42.23d;
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_R8), 2);
         elementSize = sa.getElemsize();
@@ -441,7 +452,7 @@ public class SAFEARRAYTest {
         assertThat((Double) objectResult[idx], equalTo(testDouble));
         sa.unaccessData();
         sa.destroy();
-        
+
         Date testDate = new Date(1923, 1, 1, 5, 0, 0);
         DATE testDATE = new DATE(testDate);
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_DATE), 2);
@@ -458,7 +469,7 @@ public class SAFEARRAYTest {
         assertThat((Date) objectResult[idx], equalTo(testDate));
         sa.unaccessData();
         sa.destroy();
-        
+
         String testString = "äöüßAE!";
         sa = SAFEARRAY.createSafeArray(new WTypes.VARTYPE(VT_BSTR), 2);
         elementSize = sa.getElemsize();
@@ -472,17 +483,17 @@ public class SAFEARRAYTest {
         assertThat((String) objectResult[idx], equalTo(testString));
         sa.unaccessData();
         sa.destroy();
-        
+
         // VT_VARIANT is tested in testADODB
-        
+
         // untested: VT_UNKNOWN
         // untested: VT_DISPATCH
         // untested: VT_CY
         // untested: VT_DECIMAL
         // unsupported: VT_RECORD
     }
-    
-    
+
+
     /**
      * Test assumption: The windows search provider is present and holds at least
      * five entries. If this assumption is not met, this test fails.
@@ -490,7 +501,7 @@ public class SAFEARRAYTest {
     @Test
     public void testADODB() {
         ObjectFactory fact = new ObjectFactory();
-        
+
         // Open a record set with a sample search (basicly get the first five
         // entries from the search index
         Connection conn = fact.createObject(Connection.class);
@@ -506,15 +517,15 @@ public class SAFEARRAYTest {
         // Save complete list for comparison with subscript list
         List<String> urls = new ArrayList<String>(5);
         List<String> names = new ArrayList<String>(5);
-        
+
         while (!recordset.getEOF()) {
             WinNT.HRESULT hr;
-            
+
              // Fetch (all) five rows and extract SAFEARRAY
             SAFEARRAY sa = recordset.GetRows(5);
-            
+
             assertThat(sa.getDimensionCount(), is(2));
-            
+
             // Test getting bounds via automation functions SafeArrayGetLBound
             // and SafeArrayGetUBound
 
@@ -522,11 +533,11 @@ public class SAFEARRAYTest {
             // returned, the indices are zero-based, the lower bounds are
             // always zero
             //
-            // Dimensions are inverted between SafeArray and java, so 
+            // Dimensions are inverted between SafeArray and java, so
             // in this case row dimension 2 retrieves row count,
             // dimension 1 retrieves column count
             WinDef.LONGByReference res = new WinDef.LONGByReference();
-            
+
             hr = OleAuto.INSTANCE.SafeArrayGetLBound(sa, new UINT(2), res);
             assert COMUtils.SUCCEEDED(hr);
             assertThat(res.getValue().intValue(), is(0));
@@ -554,7 +565,7 @@ public class SAFEARRAYTest {
             assertThat(row_count, is(5));
             assertThat(column_lower, is(0));
             assertThat(column_count, is(4));
-            
+
             // Use Wrapper methods
             assertThat(sa.getLBound(0), is(0));
             assertThat(sa.getUBound(0), is(4));
@@ -608,7 +619,7 @@ public class SAFEARRAYTest {
             } finally {
                 sa.unlock();
             }
-            
+
             // Access SafeArray directly - Variant 2
             Pointer data = sa.accessData();
             try {
@@ -635,7 +646,7 @@ public class SAFEARRAYTest {
             } finally {
                 sa.unaccessData();
             }
-            
+
             sa.destroy();
         }
 
@@ -645,10 +656,10 @@ public class SAFEARRAYTest {
         recordset = fact.createObject(Recordset.class);
         recordset.Open("SELECT TOP 5 System.ItemPathDisplay, System.ItemName, System.ItemUrl FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);
 
-        
+
         // Create SAFEARRAY and wrap it into a VARIANT
         // Array is initialized to one element and then redimmed. This is done
-        // to test SafeArrayRedim, in normal usage it is more efficient to 
+        // to test SafeArrayRedim, in normal usage it is more efficient to
         // intitialize directly to the correct size
         SAFEARRAY arr = SAFEARRAY.createSafeArray(1);
         arr.putElement(new VARIANT("System.ItemUrl"), 0);
@@ -661,33 +672,33 @@ public class SAFEARRAYTest {
         assertTrue("Array is initialized to a size of one - it can't hold a second item.", exceptionCaught);
         arr.redim(2, 0);
         arr.putElement(new VARIANT("System.ItemName"), 1);
-        
+
         assertThat(arr.getDimensionCount(), is(1));
-        
+
         VARIANT columnList = new VARIANT();
         columnList.setValue(Variant.VT_ARRAY | Variant.VT_VARIANT, arr);
-        
+
         assert !(recordset.getEOF());
-        
+
         while (!recordset.getEOF()) {
             SAFEARRAY sa = recordset.GetRows(5, VARIANT.VARIANT_MISSING, columnList);
-            
+
             assertThat(sa.getDimensionCount(), is(2));
-            
+
             assertThat(sa.getVarType().intValue(), is(Variant.VT_VARIANT));
             LONGByReference longRef = new LONGByReference();
-            
+
             OleAuto.INSTANCE.SafeArrayGetLBound(sa, new UINT(2), longRef);
             int lowerBound = longRef.getValue().intValue();
             assertThat(sa.getLBound(0), equalTo(lowerBound));
-            
+
             OleAuto.INSTANCE.SafeArrayGetUBound(sa, new UINT(2), longRef);
             int upperBound = longRef.getValue().intValue();
             assertThat(sa.getUBound(0), equalTo(upperBound));
-            
+
             // 5 rows are expected
             assertThat(upperBound - lowerBound + 1, is(5));
-            
+
             for (int rowIdx = lowerBound; rowIdx <= upperBound; rowIdx++) {
                 VARIANT variantItemUrl = (VARIANT) sa.getElement(rowIdx, 0);
                 VARIANT variantItemName = (VARIANT) sa.getElement(rowIdx, 1);
@@ -696,21 +707,21 @@ public class SAFEARRAYTest {
                 OleAuto.INSTANCE.VariantClear(variantItemUrl);
                 OleAuto.INSTANCE.VariantClear(variantItemName);
             }
-            
+
             sa.destroy();
         }
 
         recordset.Close();
-        
+
         // Requery and fetch only columns "System.ItemUrl", "System.ItemName" and "System.ItemUrl"
         recordset = fact.createObject(Recordset.class);
         recordset.Open("SELECT TOP 5 System.ItemPathDisplay, System.ItemName, System.ItemUrl FROM SYSTEMINDEX ORDER BY System.ItemUrl", conn, CursorTypeEnum.adOpenUnspecified, LockTypeEnum.adLockUnspecified, -1);
 
         assert !(recordset.getEOF());
-        
+
         while (!recordset.getEOF()) {
             Object[][] data = (Object[][]) OaIdlUtil.toPrimitiveArray(recordset.GetRows(5, VARIANT.VARIANT_MISSING, columnList), true);
-            
+
             assertThat(data.length, is(5));
             assertThat(data[0].length, is(2));
 
@@ -721,14 +732,14 @@ public class SAFEARRAYTest {
         }
 
         recordset.Close();
-        
+
         conn.Close();
-        
+
         fact.disposeAll();
     }
 
     // -------------  Helper classes / interfaces
-    
+
     /**
      * <p>
      * guid({00000514-0000-0010-8000-00AA006D2EA4})</p>

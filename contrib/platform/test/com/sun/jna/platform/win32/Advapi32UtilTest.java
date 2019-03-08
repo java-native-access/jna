@@ -1,14 +1,25 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -117,7 +128,7 @@ public class Advapi32UtilTest extends TestCase {
             System.err.println("testGetAccountSidFromName Test can only be run on english locale");
         }
     }
-    
+
     public void testGetAccountNameRoundtrip() {
         // This test ensures getAccountBySid and getAccountByName are at least
         // symmetrical. The names of the accounts are locale dependend so this is
@@ -129,13 +140,13 @@ public class Advapi32UtilTest extends TestCase {
         assertTrue(! accountNameResolved.isEmpty());
         assertEquals(worldSID, roundTripSid);
     }
-    
+
     public void testConvertSid() {
-    	String sidString = "S-1-1-0"; // Everyone
-    	byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);
-    	assertTrue(sidBytes.length > 0);
-    	String convertedSidString = Advapi32Util.convertSidToStringSid(new PSID(sidBytes));
-    	assertEquals(convertedSidString, sidString);
+        String sidString = "S-1-1-0"; // Everyone
+        byte[] sidBytes = Advapi32Util.convertStringSidToSid(sidString);
+        assertTrue(sidBytes.length > 0);
+        String convertedSidString = Advapi32Util.convertSidToStringSid(new PSID(sidBytes));
+        assertEquals(convertedSidString, sidString);
     }
 
     public void testGetCurrentUserGroups() {
@@ -149,10 +160,10 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testGetUserGroups() {
-    	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = "JNANetapi32TestUser";
-    	userInfo.usri1_password = "!JNAP$$Wrd0";
-    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        USER_INFO_1 userInfo = new USER_INFO_1();
+        userInfo.usri1_name = "JNANetapi32TestUser";
+        userInfo.usri1_password = "!JNAP$$Wrd0";
+        userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
             return;
@@ -184,10 +195,10 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testGetUserAccount() {
-    	USER_INFO_1 userInfo = new USER_INFO_1();
-    	userInfo.usri1_name = "JNANetapi32TestUser";
-    	userInfo.usri1_password = "!JNAP$$Wrd0";
-    	userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
+        USER_INFO_1 userInfo = new USER_INFO_1();
+        userInfo.usri1_name = "JNANetapi32TestUser";
+        userInfo.usri1_password = "!JNAP$$Wrd0";
+        userInfo.usri1_priv = LMAccess.USER_PRIV_USER;
         // ignore test if not able to add user (need to be administrator to do this).
         if (LMErr.NERR_Success != Netapi32.INSTANCE.NetUserAdd(null, 1, userInfo, null)) {
             return;
@@ -249,20 +260,22 @@ public class Advapi32UtilTest extends TestCase {
     }
 
     public void testRegistryValueExistsSamExtra() {
-        if (!is64bitWindows()) return;
+        if (!is64bitWindows()) {
+            return;
+        }
 
         Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryCreateKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
         Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", 64, WinNT.KEY_WOW64_32KEY);
         assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
-		assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        assertTrue(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
         Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryDeleteValue(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY);
         assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_64KEY));
-		assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
+        assertFalse(Advapi32Util.registryValueExists(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID\\JNA", "IntValue", WinNT.KEY_WOW64_32KEY));
         Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_64KEY);
-		Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
+        Advapi32Util.registryDeleteKey(WinReg.HKEY_CURRENT_USER, "Software\\Classes\\CLSID", "JNA", WinNT.KEY_WOW64_32KEY);
     }
 
     public void testRegistryCreateDeleteKey() {

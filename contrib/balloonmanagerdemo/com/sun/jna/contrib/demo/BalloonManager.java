@@ -1,24 +1,24 @@
 /*
- * Copyright (c) 2007 Timothy Wall, All Rights Reserved 
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * Copyright (c) 2007 Timothy Wall, All Rights Reserved
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -54,9 +54,9 @@ import com.sun.jna.platform.WindowUtils;
 /**
  * Provides a popup balloon containing an arbitrary component.  This provides
  * a form of content-specific decoration less transient than a tooltip, and less
- * heavyweight and more adaptable to changing content than a dedicated window. 
+ * heavyweight and more adaptable to changing content than a dedicated window.
  * Clients are responsible for invoking show and hide on the provided popup.
- */ 
+ */
 // TODO: anchor balloon point
 // TODO: connect drop shadow and parent masks
 // TODO: proper preferred size for html
@@ -67,9 +67,9 @@ public class BalloonManager {
     private static boolean useDropShadow() {
         return WindowUtils.isWindowAlphaSupported();
     }
-    
+
     private static class DropShadow extends JWindow {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         private static final float SHADOW_ALPHA = .25f;
         private static final float YSCALE = .80f;
         private static final double ANGLE = 2*Math.PI/24;
@@ -125,7 +125,7 @@ public class BalloonManager {
                 setVisible(true);
             }
         }
-        
+
         public void paint(Graphics graphics) {
             Graphics2D g = (Graphics2D)graphics.create();
             // Workaround for OSX since we only get automatic clipping
@@ -142,7 +142,7 @@ public class BalloonManager {
             size.height += 100;
             return size;
         }
-        
+
         private Shape getMask() {
             Area area = new Area(parentMask);
             Area clip = new Area(parentMask);
@@ -160,9 +160,9 @@ public class BalloonManager {
             return area;
         }
     }
-    
+
     private static final class BubbleWindow extends JWindow {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         private static final int Y_OFFSET = 50;
         private static final int ARC = 25;
 
@@ -171,15 +171,15 @@ public class BalloonManager {
         private Dimension maskSize;
         private ComponentListener moveTracker = new ComponentAdapter() {
             public void componentMoved(ComponentEvent e) {
-                Point where = 
-                    e.getComponent().isShowing() 
+                Point where =
+                    e.getComponent().isShowing()
                     ? e.getComponent().getLocationOnScreen()
                     : e.getComponent().getLocation();
                 setLocation(where.x - offset.x, where.y - offset.y);
                 // TODO preserve stacking order (linux)
             }
         };
-        
+
         public BubbleWindow(Window owner, Component content) {
             super(owner);
             setFocusableWindowState(false);
@@ -196,7 +196,7 @@ public class BalloonManager {
                 new DropShadow(this, mask);
             }
         }
-        
+
         public void setBounds(int x, int y, int w, int h) {
             super.setBounds(x, y, w, h);
             Dimension size = new Dimension(w, h);
@@ -206,7 +206,7 @@ public class BalloonManager {
                 maskSize = size;
             }
         }
-        
+
         public void setAnchorLocation(int x, int y) {
             super.setLocation(x, y);
             Window owner = getOwner();
@@ -216,14 +216,14 @@ public class BalloonManager {
                 offset = new Point(ref.x - x, ref.y - y);
             }
         }
-        
+
         public void dispose() {
             super.dispose();
             getOwner().removeComponentListener(moveTracker);
         }
 
         private Shape getMask(int w, int h) {
-            Shape shape = new RoundRectangle2D.Float(0, 0, w, h-Y_OFFSET, 
+            Shape shape = new RoundRectangle2D.Float(0, 0, w, h-Y_OFFSET,
                                                      ARC, ARC);
             Area area = new Area(shape);
             GeneralPath path = new GeneralPath();
@@ -234,7 +234,7 @@ public class BalloonManager {
             area.add(new Area(path));
             return area;
         }
-        
+
         public Dimension getPreferredSize() {
             Dimension size = super.getPreferredSize();
             size.height += Y_OFFSET;
@@ -242,18 +242,18 @@ public class BalloonManager {
         }
     }
 
-    /** Get a balloon pointing to the given location.  The coordinates are 
+    /** Get a balloon pointing to the given location.  The coordinates are
      * relative to <code>owner</code>, which if null, indicates the coordinates
      * are absolute.
      */
     public static Popup getBalloon(final Component owner, final Component content, int x, int y) {
 
         // Simulate PopupFactory, ensuring we get a heavyweight "popup"
-        final Point origin = 
+        final Point origin =
             owner == null ? new Point(0, 0)
                 : (owner.isShowing()
                    ? owner.getLocationOnScreen() : owner.getLocation());
-        final Window parent = owner != null 
+        final Window parent = owner != null
             ? SwingUtilities.getWindowAncestor(owner) : null;
         origin.translate(x, y);
         return new Popup() {
@@ -271,5 +271,5 @@ public class BalloonManager {
                 w.dispose();
             }
         };
-    }  
+    }
 }

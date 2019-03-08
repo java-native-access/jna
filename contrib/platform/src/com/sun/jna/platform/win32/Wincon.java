@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -48,7 +48,7 @@ public interface Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/ms683150(v=vs.85).aspx">FreeConsole documentation</a>
      */
     boolean FreeConsole();
-    
+
     int ATTACH_PARENT_PROCESS=(-1);
     /**
      * Attaches the calling process to the console of the specified process
@@ -172,7 +172,7 @@ public interface Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/ms683164(v=vs.85).aspx">GetConsoleDisplayMode documentation</a>
      */
     boolean GetConsoleDisplayMode(IntByReference lpModeFlags);
-    
+
     /* console modes used by Get/SetConsoleMode */
     int ENABLE_PROCESSED_INPUT=0x0001;
     int ENABLE_LINE_INPUT=0x0002;
@@ -209,7 +209,7 @@ public interface Wincon {
      * @see <a href="https://msdn.microsoft.com/en-us/library/ms686033.aspx">SetConsoleMode documentation</a>
      */
     boolean SetConsoleMode(HANDLE hConsoleHandle, int dwMode);
-    
+
     int MAX_CONSOLE_TITLE_LENGTH=64 * 1024;
 
     /**

@@ -1,25 +1,24 @@
-/*
- * Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
- * Parts Copyright (c) 2007 Olivier Chafik
+/* Copyright (c) 2007-2008 Timothy Wall, All Rights Reserved
+ * Copyright (c) 2007 Olivier Chafik
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -186,7 +185,7 @@ public class WindowUtils {
      * </code></pre>
      */
     private static class HeavyweightForcer extends Window {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         private final boolean packed;
 
         public HeavyweightForcer(Window parent) {
@@ -214,7 +213,7 @@ public class WindowUtils {
      * invoked whenever any part of the ancestor window is repainted.
      */
     protected static class RepaintTrigger extends JComponent {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
         protected class Listener
             extends WindowAdapter
@@ -315,7 +314,7 @@ public class WindowUtils {
     public static abstract class NativeWindowUtils {
         protected abstract class TransparentContentPane
             extends JPanel implements AWTEventListener {
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
             private boolean transparent;
             public TransparentContentPane(Container oldContent) {
                 super(new BorderLayout());
@@ -821,7 +820,7 @@ public class WindowUtils {
                         flags |= WinUser.WS_EX_LAYERED;
                         user.SetWindowLong(hWnd, WinUser.GWL_EXSTYLE, flags);
                         user.SetLayeredWindowAttributes(hWnd, 0, level,
-                        		WinUser.LWA_ALPHA);
+                                WinUser.LWA_ALPHA);
                     }
                     setForceHeavyweightPopups(w, alpha != 1f);
                     storeAlpha(w, level);
@@ -834,7 +833,7 @@ public class WindowUtils {
          * when the window is transparent.
          */
         private class W32TransparentContentPane extends TransparentContentPane {
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
             private HDC memDC;
             private HBITMAP hBitmap;
             private Pointer pbits;
@@ -898,8 +897,8 @@ public class WindowUtils {
                         bmi.bmiHeader.biSizeImage = ww * wh * 4;
                         PointerByReference ppbits = new PointerByReference();
                         hBitmap = gdi.CreateDIBSection(memDC, bmi,
-                        		WinGDI.DIB_RGB_COLORS,
-                        		ppbits, null, 0);
+                                WinGDI.DIB_RGB_COLORS,
+                                ppbits, null, 0);
                         pbits = ppbits.getValue();
                         bitmapSize = new Dimension(ww, wh);
                     }
@@ -1405,7 +1404,7 @@ public class WindowUtils {
                 fixWindowDragging(w, "setWindowAlpha");
             }
             whenDisplayable(w, new Runnable() {
-				@Override
+                @Override
                 public void run() {
                     try {
                         // This will work with old Apple AWT implementations and
@@ -1449,7 +1448,7 @@ public class WindowUtils {
          * @author Olivier Chafik
          */
         private static class OSXMaskingContentPane extends JPanel {
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
             private Shape shape;
 
             public OSXMaskingContentPane(Component oldContent) {
@@ -1741,7 +1740,7 @@ public class WindowUtils {
         }
 
         private class X11TransparentContentPane extends TransparentContentPane {
-    		private static final long serialVersionUID = 1L;
+            private static final long serialVersionUID = 1L;
 
             public X11TransparentContentPane(Container oldContent) {
                 super(oldContent);
@@ -1753,7 +1752,7 @@ public class WindowUtils {
             // Painting directly to the original Graphics
             // fails to properly composite unless the destination
             // is pure black.  Too bad.
-			@Override
+            @Override
             protected void paintDirect(BufferedImage buf, Rectangle bounds) {
                 Window window = SwingUtilities.getWindowAncestor(this);
                 X11 x11 = X11.INSTANCE;
@@ -1957,85 +1956,85 @@ public class WindowUtils {
         getInstance().setWindowTransparent(w, transparent);
     }
 
-	/**
-	 * Obtains the set icon for the window associated with the specified
-	 * window handle.
-	 *
-	 * @param hwnd
-	 *            The concerning window handle.
-	 * @return Either the window's icon or {@code null} if an error
-	 *         occurred.
-	 */
-	public  static BufferedImage getWindowIcon(final HWND hwnd) {
-		return getInstance().getWindowIcon(hwnd);
-	}
+    /**
+     * Obtains the set icon for the window associated with the specified
+     * window handle.
+     *
+     * @param hwnd
+     *            The concerning window handle.
+     * @return Either the window's icon or {@code null} if an error
+     *         occurred.
+     */
+    public  static BufferedImage getWindowIcon(final HWND hwnd) {
+        return getInstance().getWindowIcon(hwnd);
+    }
 
-	/**
-	 * Detects the size of an icon.
-	 *
-	 * @param hIcon
-	 *            The icon handle type.
-	 * @return Either the requested icon's dimension or an {@link Dimension}
-	 *         instance of {@code (0, 0)}.
-	 */
-	public static Dimension getIconSize(final HICON hIcon) {
-		return getInstance().getIconSize(hIcon);
-	}
+    /**
+     * Detects the size of an icon.
+     *
+     * @param hIcon
+     *            The icon handle type.
+     * @return Either the requested icon's dimension or an {@link Dimension}
+     *         instance of {@code (0, 0)}.
+     */
+    public static Dimension getIconSize(final HICON hIcon) {
+        return getInstance().getIconSize(hIcon);
+    }
 
-	/**
-	 * Requests a list of all currently available Desktop windows.
-	 *
-	 * @param onlyVisibleWindows
-	 *            Specifies whether only currently visible windows will be
-	 *            considered ({@code true}). That are windows which are not
-	 *            minimized. The {@code WS_VISIBLE} flag will be checked (see:
-	 *            <a href=
-	 *            "https://msdn.microsoft.com/de-de/library/windows/desktop/ms633530%28v=vs.85%29.aspx"
-	 *            >User32.IsWindowVisible(HWND)</a>).
-	 *
-	 * @return A list with all windows and some detailed information.
-	 */
-	public static List<DesktopWindow> getAllWindows(
-			final boolean onlyVisibleWindows) {
-		return getInstance().getAllWindows(onlyVisibleWindows);
-	}
+    /**
+     * Requests a list of all currently available Desktop windows.
+     *
+     * @param onlyVisibleWindows
+     *            Specifies whether only currently visible windows will be
+     *            considered ({@code true}). That are windows which are not
+     *            minimized. The {@code WS_VISIBLE} flag will be checked (see:
+     *            <a href=
+     *            "https://msdn.microsoft.com/de-de/library/windows/desktop/ms633530%28v=vs.85%29.aspx"
+     *            >User32.IsWindowVisible(HWND)</a>).
+     *
+     * @return A list with all windows and some detailed information.
+     */
+    public static List<DesktopWindow> getAllWindows(
+            final boolean onlyVisibleWindows) {
+        return getInstance().getAllWindows(onlyVisibleWindows);
+    }
 
-	/**
-	 * Tries to obtain the Window's title which belongs to the specified window
-	 * handle.
-	 *
-	 * @param hwnd
-	 *            The concerning window handle.
-	 * @return Either the title or an empty string of no title was found or an
-	 *         error occurred.
-	 */
-	public static String getWindowTitle(final HWND hwnd) {
-		return getInstance().getWindowTitle(hwnd);
-	}
+    /**
+     * Tries to obtain the Window's title which belongs to the specified window
+     * handle.
+     *
+     * @param hwnd
+     *            The concerning window handle.
+     * @return Either the title or an empty string of no title was found or an
+     *         error occurred.
+     */
+    public static String getWindowTitle(final HWND hwnd) {
+        return getInstance().getWindowTitle(hwnd);
+    }
 
-	/**
-	 * Detects the full file path of the process associated with the specified
-	 * window handle.
-	 *
-	 * @param hwnd
-	 *            The concerning window handle for which the PE file path is
-	 *            required.
-	 * @return The full file path of the PE file that is associated with the
-	 *         specified window handle.
-	 */
-	public static String getProcessFilePath(final HWND hwnd) {
-		return getInstance().getProcessFilePath(hwnd);
-	}
+    /**
+     * Detects the full file path of the process associated with the specified
+     * window handle.
+     *
+     * @param hwnd
+     *            The concerning window handle for which the PE file path is
+     *            required.
+     * @return The full file path of the PE file that is associated with the
+     *         specified window handle.
+     */
+    public static String getProcessFilePath(final HWND hwnd) {
+        return getInstance().getProcessFilePath(hwnd);
+    }
 
-	/**
-	 * Requests the location and size of the window associated with the
-	 * specified window handle.
-	 *
-	 * @param hwnd
-	 *            The concerning window handle.
-	 * @return The location and size of the window.
-	 */
-	public static Rectangle getWindowLocationAndSize(final HWND hwnd) {
-		return getInstance().getWindowLocationAndSize(hwnd);
-	}
+    /**
+     * Requests the location and size of the window associated with the
+     * specified window handle.
+     *
+     * @param hwnd
+     *            The concerning window handle.
+     * @return The location and size of the window.
+     */
+    public static Rectangle getWindowLocationAndSize(final HWND hwnd) {
+        return getInstance().getWindowLocationAndSize(hwnd);
+    }
 }

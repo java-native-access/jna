@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -410,14 +410,14 @@ public interface LMAccess {
     //  acl_access field of access_list structures.
     //
 
-    int ACCESS_NONE		= 0x00;
-    int ACCESS_READ		= 0x01;
-    int ACCESS_WRITE	= 0x02;
-    int ACCESS_CREATE	= 0x04;
-    int ACCESS_EXEC		= 0x08;
-    int ACCESS_DELETE	= 0x10;
-    int ACCESS_ATRIB	= 0x20;
-    int ACCESS_PERM		= 0x40;
-    int ACCESS_ALL		= ACCESS_READ | ACCESS_WRITE | ACCESS_CREATE | ACCESS_EXEC | ACCESS_DELETE | ACCESS_ATRIB | ACCESS_PERM;
-    int ACCESS_GROUP	= 0x8000;
+    int ACCESS_NONE = 0x00;
+    int ACCESS_READ = 0x01;
+    int ACCESS_WRITE = 0x02;
+    int ACCESS_CREATE = 0x04;
+    int ACCESS_EXEC = 0x08;
+    int ACCESS_DELETE = 0x10;
+    int ACCESS_ATRIB = 0x20;
+    int ACCESS_PERM = 0x40;
+    int ACCESS_ALL = ACCESS_READ | ACCESS_WRITE | ACCESS_CREATE | ACCESS_EXEC | ACCESS_DELETE | ACCESS_ATRIB | ACCESS_PERM;
+    int ACCESS_GROUP = 0x8000;
 }

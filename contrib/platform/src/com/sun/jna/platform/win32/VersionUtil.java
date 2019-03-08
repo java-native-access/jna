@@ -1,23 +1,23 @@
 /* Copyright (c) 2015 Michael Freeman, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -35,14 +35,14 @@ import com.sun.jna.ptr.PointerByReference;
 /**
  * Reads Windows Version info from files (the version details you can see by
  * right-clicking and choosing properties)
- * 
+ *
  * @author mlfreeman[at]gmail.com
  */
 public class VersionUtil {
 
     /**
      * Gets the file's version number info
-     * 
+     *
      * @param filePath
      *            The path to the file
      * @return The VS_FIXEDFILEINFO structure read from the file.<br>

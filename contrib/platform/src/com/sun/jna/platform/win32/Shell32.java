@@ -1,23 +1,23 @@
 /* Copyright (c) 2007, 2013 Timothy Wall, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -37,7 +37,7 @@ import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
 import com.sun.jna.win32.W32APIOptions;
 
-/** 
+/**
  * Shell32.dll Interface.
  */
 public interface Shell32 extends ShellAPI, StdCallLibrary {
@@ -73,17 +73,17 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * </p>
      */
     int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
-    
+
     /**
      * Do not display an error message box if an error occurs.
      */
     int SEE_MASK_FLAG_NO_UI = 0x00000400;
-    
+
     /**
      * This function can be used to copy, move, rename, or delete a file system object.
      * @param fileop
-     *  Address of an SHFILEOPSTRUCT structure that contains information this function 
-     *  needs to carry out the specified operation. 
+     *  Address of an SHFILEOPSTRUCT structure that contains information this function
+     *  needs to carry out the specified operation.
      * @return
      *  Returns zero if successful, or nonzero otherwise.
      */
@@ -92,21 +92,21 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
     /**
      * Takes the CSIDL of a folder and returns the path.
      * @param hwndOwner
-     *  Handle to an owner window. This parameter is typically set to NULL. If it is not NULL, 
-     *  and a dial-up connection needs to be made to access the folder, a user interface (UI) 
-     *  prompt will appear in this window. 
+     *  Handle to an owner window. This parameter is typically set to NULL. If it is not NULL,
+     *  and a dial-up connection needs to be made to access the folder, a user interface (UI)
+     *  prompt will appear in this window.
      * @param nFolder
-     *  A CSIDL value that identifies the folder whose path is to be retrieved. Only real 
-     *  folders are valid. If a virtual folder is specified, this function will fail. You can 
-     *  force creation of a folder with SHGetFolderPath by combining the folder's CSIDL with 
-     *  CSIDL_FLAG_CREATE. 
+     *  A CSIDL value that identifies the folder whose path is to be retrieved. Only real
+     *  folders are valid. If a virtual folder is specified, this function will fail. You can
+     *  force creation of a folder with SHGetFolderPath by combining the folder's CSIDL with
+     *  CSIDL_FLAG_CREATE.
      * @param hToken
-     *  An access token that can be used to represent a particular user. 
+     *  An access token that can be used to represent a particular user.
      * @param dwFlags
      *   Flags to specify which path is to be returned.
      * @param pszPath
-     *  Pointer to a null-terminated string of length MAX_PATH which will receive the path. 
-     *  If an error occurs or S_FALSE is returned, this string will be empty. 
+     *  Pointer to a null-terminated string of length MAX_PATH which will receive the path.
+     *  If an error occurs or S_FALSE is returned, this string will be empty.
      * @return
      *  Returns standard HRESULT codes.
      */
@@ -133,11 +133,11 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *        Unicode string that specifies the path of the known folder. The calling process is responsible for freeing this
      *        resource once it is no longer needed by calling {@link Ole32#CoTaskMemFree}. The returned path does not include a trailing
      *        backslash. For example, "C:\Users" is returned rather than "C:\Users\".
-     * @return Returns S_OK if successful, or an error value otherwise, including the following: 
-     *        <ul><li>E_FAIL Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID which 
-     *        does not have a path (such as a folder marked as KF_CATEGORY_VIRTUAL).</li> 
-     *        <li>E_INVALIDARG Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID 
-     *        that is not present on the system. Not all KNOWNFOLDERID values are present on all systems. Use 
+     * @return Returns S_OK if successful, or an error value otherwise, including the following:
+     *        <ul><li>E_FAIL Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID which
+     *        does not have a path (such as a folder marked as KF_CATEGORY_VIRTUAL).</li>
+     *        <li>E_INVALIDARG Among other things, this value can indicate that the rfid parameter references a KNOWNFOLDERID
+     *        that is not present on the system. Not all KNOWNFOLDERID values are present on all systems. Use
      *        IKnownFolderManager::GetFolderIds to retrieve the set of KNOWNFOLDERID values for the current system.</li></ul>
      */
     HRESULT SHGetKnownFolderPath(GUID rfid, int dwFlags, HANDLE hToken, PointerByReference ppszPath);
@@ -153,7 +153,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
 
     /**
      * Performs an operation on a specified file.
-     * 
+     *
      * @param hwnd
      *   A handle to the owner window used for displaying a UI or error messages. This value can be NULL if the
      *   operation is not associated with a window.
@@ -179,7 +179,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *     not, the "open" verb is used.
      *     In Windows 2000 and later, the default verb is used if available. If not, the "open" verb is used. If neither
      *     verb is available, the system uses the first verb listed in the registry.
-     * 
+     *
      * @param lpFile
      *   A pointer to a null-terminated string that specifies the file or object on which to execute the specified verb.
      *   To specify a Shell namespace object, pass the fully qualified parse name. Note that not all verbs are supported
@@ -206,7 +206,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *   that indicates the cause of the failure. The return value is cast as an HINSTANCE for backward compatibility
      *   with 16-bit Windows applications. It is not a true HINSTANCE, however. It can be cast only to an int and
      *   compared to either 32 or the following error codes below.
-     * 
+     *
      * NOTE: {@link WinDef.INT_PTR} is used instead of HINSTANCE here, since
      *   the former fits the reutrn type's actual usage more closely.
      *
@@ -245,11 +245,11 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @return {@code true} if successful; otherwise, {@code false}.
      */
     boolean SHGetSpecialFolderPath(HWND owner, char[] path, int csidl, boolean create);
-    
+
     /**
      * SHAppBarMessage function
-     * 
-     * @param dwMessage 
+     *
+     * @param dwMessage
      *   Appbar message value to send. This parameter can be one of the following values.
      *    {@link ShellAPI#ABM_NEW} Registers a new appbar and specifies the message identifier that the system should use to send notification messages to the appbar.
      *    {@link ShellAPI#ABM_REMOVE} Unregisters an appbar, removing the bar from the system's internal list.
@@ -262,7 +262,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *    {@link ShellAPI#ABM_SETAUTOHIDEBAR} Registers or unregisters an autohide appbar for an edge of the screen.
      *    {@link ShellAPI#ABM_WINDOWPOSCHANGED} Notifies the system when an appbar's position has changed.
      *    {@link ShellAPI#ABM_SETSTATE} Windows XP and later: Sets the state of the appbar's autohide and always-on-top attributes.
-     * 
+     *
      * @param pData
      *   A pointer to an APPBARDATA structure. The content of the structure on entry and on exit depends on the value set in the dwMessage parameter. See the individual message pages for specifics.
      *
@@ -279,13 +279,13 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787957(v=vs.85).aspx">ABM_SETAUTOHIDEBAR</a>
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787963(v=vs.85).aspx">ABM_WINDOWPOSCHANGED</a>
      * @see <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb787961(v=vs.85).aspx">ABM_SETSTATE</a>
-     * 
+     *
      */
     UINT_PTR SHAppBarMessage(DWORD dwMessage, APPBARDATA pData);
 
     /**
      * Empties the Recycle Bin on the specified drive.
-     * 
+     *
      * @param hwnd
      *            A handle to the parent window of any dialog boxes that might
      *            be displayed during the operation.<br>
@@ -306,7 +306,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *         otherwise.<br>
      */
     int SHEmptyRecycleBin(HANDLE hwnd, String pszRootPath, int dwFlags);
-    
+
     /**
      * @param lpExecInfo
      *            <p>
@@ -344,7 +344,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
      *
      */
     HRESULT SHGetSpecialFolderLocation(WinDef.HWND hwndOwner, int nFolder, PointerByReference ppidl);
-    
+
     /**
      * @param lpszFile
      *            Type: LPCTSTR<br>
@@ -391,7 +391,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
 
     /**
      * Retrieves the application-defined, explicit Application User Model ID (AppUserModelID) for the current process.
-     * 
+     *
      * @param ppszAppID
      *            A pointer that receives the address of the AppUserModelID assigned to the process. The caller is responsible for freeing this string with {@link Ole32#CoTaskMemFree} when it is no longer needed.
      * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.
@@ -401,7 +401,7 @@ public interface Shell32 extends ShellAPI, StdCallLibrary {
 
     /**
      * Specifies a unique application-defined Application User Model ID (AppUserModelID) that identifies the current process to the taskbar. This identifier allows an application to group its associated processes and windows under a single taskbar button.
-     * 
+     *
      * @param appID
      *            The AppUserModelID to assign to the current process.
      * @return If this function succeeds, it returns S_OK. Otherwise, it returns an HRESULT error code.

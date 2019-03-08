@@ -1,23 +1,23 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -167,16 +167,16 @@ public interface NTSecApi {
             super.read();
 
             switch(ForestTrustType) {
-            case NTSecApi.ForestTrustTopLevelName:
-            case NTSecApi.ForestTrustTopLevelNameEx:
-                u.setType(LSA_UNICODE_STRING.class);
-                break;
-            case NTSecApi.ForestTrustDomainInfo:
-                u.setType(LSA_FOREST_TRUST_DOMAIN_INFO.class);
-                break;
-            default:
-                u.setType(LSA_FOREST_TRUST_BINARY_DATA.class);
-                break;
+                case NTSecApi.ForestTrustTopLevelName:
+                case NTSecApi.ForestTrustTopLevelNameEx:
+                    u.setType(LSA_UNICODE_STRING.class);
+                    break;
+                case NTSecApi.ForestTrustDomainInfo:
+                    u.setType(LSA_FOREST_TRUST_DOMAIN_INFO.class);
+                    break;
+                default:
+                    u.setType(LSA_FOREST_TRUST_BINARY_DATA.class);
+                    break;
             }
 
             u.read();

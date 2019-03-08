@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -62,16 +62,16 @@ import javax.swing.event.MouseInputAdapter;
 
 import com.sun.jna.platform.WindowUtils;
 
-/** Example which uses the {@link WindowUtils} class.  Demonstrates the 
+/** Example which uses the {@link WindowUtils} class.  Demonstrates the
  * definition of a cross-platform library with several platform-specific
  * implementations based on JNA native library definitions.
  */
 public class ShapedWindowDemo {
-    
+
     public static final int ICON_SIZE = 64;
 
     private static class ClockFace extends JComponent {
-		private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
         private Stroke border;
         private Stroke secondHand;
         private Stroke minuteHand;
@@ -98,25 +98,26 @@ public class ShapedWindowDemo {
         }
         private String getRomanNumeral(int number) {
             switch(number) {
-            case 1: return "I";
-            case 2: return "II";
-            case 3: return "III";
-            case 4: return "IV";
-            case 5: return "V";
-            case 6: return "VI";
-            case 7: return "VII";
-            case 8: return "VIII";
-            case 9: return "IX";
-            case 10: return "X";
-            case 11: return "XI";
-            case 12:
-            default: return "XII";
+                case 1: return "I";
+                case 2: return "II";
+                case 3: return "III";
+                case 4: return "IV";
+                case 5: return "V";
+                case 6: return "VI";
+                case 7: return "VII";
+                case 8: return "VIII";
+                case 9: return "IX";
+                case 10: return "X";
+                case 11: return "XI";
+                case 12:
+                default:
+                    return "XII";
             }
         }
         protected void paintComponent(Graphics graphics) {
             paintFace(graphics, Math.min(getWidth(), getHeight()));
         }
-        
+
         protected void paintFace(Graphics graphics, int size) {
             Point center = new Point(size/2, size/2);
             int radius = center.x;
@@ -130,9 +131,9 @@ public class ShapedWindowDemo {
             ticks = new BasicStroke(1f);
 
             Graphics2D g = (Graphics2D)graphics.create();
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, 
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                                RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, 
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
                                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING,
                                RenderingHints.VALUE_RENDER_QUALITY);
@@ -156,7 +157,7 @@ public class ShapedWindowDemo {
             int numbers = radius * 3 / 4;
             for (int i=0;i < 12;i++) {
                 double theta = Math.PI*2*i/12;
-                String str = getRomanNumeral((i+2)%12+1); 
+                String str = getRomanNumeral((i+2)%12+1);
                 Rectangle2D rect = g.getFontMetrics().getStringBounds(str, g);
                 g.drawString(str, Math.round(numbers*Math.cos(theta)-rect.getWidth()/2),
                              Math.round(numbers*Math.sin(theta)+margin*2));
@@ -185,7 +186,7 @@ public class ShapedWindowDemo {
             }
             g.dispose();
         }
-        
+
         public Image getIconImage() {
             BufferedImage image = new BufferedImage(ICON_SIZE, ICON_SIZE,
                                                     BufferedImage.TYPE_INT_ARGB);
@@ -200,7 +201,7 @@ public class ShapedWindowDemo {
             return image;
         }
     }
-    
+
     public static void main(String[] args) {
         try {
             System.setProperty("sun.java2d.noddraw", "true");
@@ -217,13 +218,13 @@ public class ShapedWindowDemo {
                     public void actionPerformed(ActionEvent e) {
                         frame.setState(JFrame.ICONIFIED);
                     }
-            		private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
                 });
                 m.add(new AbstractAction("Close") {
                     public void actionPerformed(ActionEvent e) {
                         System.exit(0);
                     }
-            		private static final long serialVersionUID = 1L;
+                    private static final long serialVersionUID = 1L;
                 });
                 m.pack();
                 m.show(e.getComponent(), e.getX(), e.getY());
@@ -271,7 +272,7 @@ public class ShapedWindowDemo {
         }
         catch(UnsatisfiedLinkError e) {
             e.printStackTrace();
-            String msg = e.getMessage() 
+            String msg = e.getMessage()
                 + "\nError loading the JNA library";
             JTextArea area = new JTextArea(msg);
             area.setOpaque(false);
@@ -281,7 +282,7 @@ public class ShapedWindowDemo {
             area.setRows(8);
             area.setWrapStyleWord(true);
             area.setLineWrap(true);
-            JOptionPane.showMessageDialog(frame, new JScrollPane(area), 
+            JOptionPane.showMessageDialog(frame, new JScrollPane(area),
                                           "Library Load Error: "
                                           + System.getProperty("os.name")
                                           + "/" + System.getProperty("os.arch"),

@@ -1,3 +1,25 @@
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ *
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
+ */
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
@@ -22,12 +44,11 @@ public class ShellApplicationWindowsTest {
     }
 
     @Before
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
         Ole32.INSTANCE.CoInitializeEx(Pointer.NULL, Ole32.COINIT_MULTITHREADED);
-        
+
         // Launch IE in a manner that should ensure it opens even if the system default browser is Chrome, Firefox, or something else.
-    	Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
+        Runtime.getRuntime().exec("cmd /c start iexplore.exe -nohome \"about:blank\"");
 
         // Even when going to "about:blank", IE still needs a few seconds to start up and add itself to Shell.Application.Windows
         // Removing this delay will cause the test to fail even on the fastest boxes I can find.
@@ -47,8 +68,8 @@ public class ShellApplicationWindowsTest {
         boolean pageFound = false;
         for (InternetExplorer ie : sa.Windows())
         {
-        	// For reasons unknown, Shell.Application.Windows can have null members inside it.
-        	// All I care about is whether or not the collection contains the window I opened.
+            // For reasons unknown, Shell.Application.Windows can have null members inside it.
+            // All I care about is whether or not the collection contains the window I opened.
             if (ie != null && "about:blank".equals(ie.getURL()))
             {
                 pageFound = true;
@@ -57,7 +78,7 @@ public class ShellApplicationWindowsTest {
 
         // Finally, did we find our page in the collection?
         assertTrue("No IE page was found", pageFound);
-        
+
         Ole32.INSTANCE.CoUninitialize();
     }
 

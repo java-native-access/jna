@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -31,7 +31,7 @@ package com.sun.jna.platform.win32;
 public interface LMErr {
     int NERR_Success =  0;
     int NERR_BASE =  2100;
-    
+
     int NERR_NetNotStarted = NERR_BASE + 2;   /* The workstation driver is not installed. */
     int NERR_UnknownServer = NERR_BASE + 3;   /* The server could not be located. */
     int NERR_ShareMem = NERR_BASE + 4;   /* An internal error occurred.  The network cannot access a shared memory segment. */
@@ -558,7 +558,7 @@ public interface LMErr {
     int NERR_PasswordMustChange = NERR_BASE + 601;   /* Password must change at next logon */
     int NERR_AccountLockedOut = NERR_BASE + 602;   /* Account is locked out */
     int NERR_PasswordTooLong = NERR_BASE + 603;   /* Password is too long */
-    int NERR_PasswordNotComplexEnough = NERR_BASE + 604;   /* Password doesn't meet the complexity policy */ 
+    int NERR_PasswordNotComplexEnough = NERR_BASE + 604;   /* Password doesn't meet the complexity policy */
     int NERR_PasswordFilterError = NERR_BASE + 605;   /* Password doesn't meet the requirements of the filter dll's */
 
     /***********WARNING ****************
@@ -571,6 +571,6 @@ public interface LMErr {
      *reserved for Microsoft OEMs      *
      ***********************************/
 
-    int MAX_NERR = NERR_BASE + 899; /* This is the last error in NERR range. */    
+    int MAX_NERR = NERR_BASE + 899; /* This is the last error in NERR range. */
 }
 

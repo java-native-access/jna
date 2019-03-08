@@ -1,24 +1,24 @@
 /*
  * Copyright (c) 2015 Daniel Widdis
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -551,7 +551,7 @@ public interface SystemB extends Library {
      * populate the timezone struct in tzp. If tp is non-NULL and tzp is NULL,
      * then only the timeval struct in tp is populated. If both tp and tzp are
      * NULL, nothing is returned.
-     * 
+     *
      * @param tp
      *            Timeval structure
      * @param tzp
@@ -570,11 +570,11 @@ public interface SystemB extends Library {
      * @return the host's name port
      */
     int mach_host_self();
-    
+
     /**
      * The mach_task_self system call returns the calling thread's task_self
      * port. It has an effect equivalent to receiving a send right for the task's
-     * kernel port.  
+     * kernel port.
      *
      * @return the task's kernel port
      */
@@ -744,7 +744,7 @@ public interface SystemB extends Library {
      */
     int host_processor_info(int machPort, int flavor, IntByReference procCount,
         PointerByReference procInfo, IntByReference procInfoCount);
-    
+
     /**
      * The getloadavg() function returns the number of processes in the system
      * run queue averaged over various periods of time.  Up to nelem samples are
@@ -755,7 +755,7 @@ public interface SystemB extends Library {
      *            An array of doubles which will be filled with the results
      * @param nelem
      *            Number of samples to return
-     * @return If the load average was unobtainable, -1 is returned; otherwise, 
+     * @return If the load average was unobtainable, -1 is returned; otherwise,
      * the number of samples actually retrieved is returned.
      * @see <A HREF="https://www.freebsd.org/cgi/man.cgi?query=getloadavg&sektion=3">getloadavg(3)</A>
      */

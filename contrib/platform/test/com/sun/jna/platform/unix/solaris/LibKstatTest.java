@@ -1,23 +1,23 @@
 /* Copyright (c) 2017 Daniel Widdis, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -116,27 +116,27 @@ public class LibKstatTest extends TestCase {
         }
         KstatNamed data = new KstatNamed(p);
         switch (data.data_type) {
-        case LibKstat.KSTAT_DATA_CHAR:
-            return new String(data.value.charc).trim();
-        case LibKstat.KSTAT_DATA_INT32:
-            return Integer.toString(data.value.i32);
-        case LibKstat.KSTAT_DATA_UINT32:
-            if (data.value.ui32 > 0) {
-                return Integer.toString(data.value.ui32);
-            }
-            return Long.toString(data.value.ui32 & 0x00000000ffffffffL);
-        case LibKstat.KSTAT_DATA_INT64:
-            return Long.toString(data.value.i64);
-        case LibKstat.KSTAT_DATA_UINT64:
-            if (data.value.ui64 > 0) {
-                return Long.toString(data.value.ui64);
-            }
-            return BigInteger.valueOf(data.value.ui64).add(BigInteger.ONE.shiftLeft(64)).toString();
-        case LibKstat.KSTAT_DATA_STRING:
-            return data.value.str.addr.getString(0);
-        default:
-            fail(String.format("Unimplemented kstat data type %d", data.data_type));
-            return "";
+            case LibKstat.KSTAT_DATA_CHAR:
+                return new String(data.value.charc).trim();
+            case LibKstat.KSTAT_DATA_INT32:
+                return Integer.toString(data.value.i32);
+            case LibKstat.KSTAT_DATA_UINT32:
+                if (data.value.ui32 > 0) {
+                    return Integer.toString(data.value.ui32);
+                }
+                return Long.toString(data.value.ui32 & 0x00000000ffffffffL);
+            case LibKstat.KSTAT_DATA_INT64:
+                return Long.toString(data.value.i64);
+            case LibKstat.KSTAT_DATA_UINT64:
+                if (data.value.ui64 > 0) {
+                    return Long.toString(data.value.ui64);
+                }
+                return BigInteger.valueOf(data.value.ui64).add(BigInteger.ONE.shiftLeft(64)).toString();
+            case LibKstat.KSTAT_DATA_STRING:
+                return data.value.str.addr.getString(0);
+            default:
+                fail(String.format("Unimplemented kstat data type %d", data.data_type));
+                return "";
         }
     }
 
@@ -167,18 +167,18 @@ public class LibKstatTest extends TestCase {
         }
         KstatNamed data = new KstatNamed(p);
         switch (data.data_type) {
-        case LibKstat.KSTAT_DATA_INT32:
-            return (long) data.value.i32;
-        case LibKstat.KSTAT_DATA_UINT32:
-            return data.value.ui32 & 0x00000000ffffffffL;
-        case LibKstat.KSTAT_DATA_INT64:
-            return data.value.i64;
-        case LibKstat.KSTAT_DATA_UINT64:
-            // Doesn't actually return unsigned; caller must interpret
-            return data.value.ui64;
-        default:
-            fail(String.format("Unimplemented or non-numeric kstat data type %d", data.data_type));
-            return 0L;
+            case LibKstat.KSTAT_DATA_INT32:
+                return (long) data.value.i32;
+            case LibKstat.KSTAT_DATA_UINT32:
+                return data.value.ui32 & 0x00000000ffffffffL;
+            case LibKstat.KSTAT_DATA_INT64:
+                return data.value.i64;
+            case LibKstat.KSTAT_DATA_UINT64:
+                // Doesn't actually return unsigned; caller must interpret
+                return data.value.ui64;
+            default:
+                fail(String.format("Unimplemented or non-numeric kstat data type %d", data.data_type));
+                return 0L;
         }
     }
 

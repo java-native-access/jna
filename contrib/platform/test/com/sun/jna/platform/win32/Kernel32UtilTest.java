@@ -1,14 +1,25 @@
 /* Copyright (c) 2010, 2013 Daniel Doubrovkine, Markus Karg, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -350,7 +361,7 @@ public class Kernel32UtilTest extends TestCase {
         // so assert total count is at least two
         assertTrue("This is supposed to return all the modules in a process, so there should be an EXE and at least 1 Windows API DLL.", results.size() > 2);
     }
-    
+
     public void testExpandEnvironmentStrings() {
         Kernel32.INSTANCE.SetEnvironmentVariable("DemoVariable", "DemoValue");
         assertEquals("DemoValue", Kernel32Util.expandEnvironmentStrings("%DemoVariable%"));
@@ -368,23 +379,23 @@ public class Kernel32UtilTest extends TestCase {
         for (int i = 0; i < procInfo.length; i++) {
             // Build list from relationship
             switch (procInfo[i].relationship) {
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
-                groups.add((GROUP_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
-                packages.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
-                numaNodes.add((NUMA_NODE_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
-                caches.add((CACHE_RELATIONSHIP) procInfo[i]);
-                break;
-            case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
-                cores.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
-                break;
-            default:
-                throw new IllegalStateException("Unmapped relationship.");
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationGroup:
+                    groups.add((GROUP_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorPackage:
+                    packages.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationNumaNode:
+                    numaNodes.add((NUMA_NODE_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationCache:
+                    caches.add((CACHE_RELATIONSHIP) procInfo[i]);
+                    break;
+                case LOGICAL_PROCESSOR_RELATIONSHIP.RelationProcessorCore:
+                    cores.add((PROCESSOR_RELATIONSHIP) procInfo[i]);
+                    break;
+                default:
+                    throw new IllegalStateException("Unmapped relationship.");
             }
             // Test that native provided size matches JNA structure size
             assertEquals(procInfo[i].size, procInfo[i].size());

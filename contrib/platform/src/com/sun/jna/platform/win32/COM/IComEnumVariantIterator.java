@@ -1,23 +1,23 @@
 /* Copyright (c) 2017 Matthias Bläsing, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -32,7 +32,7 @@ import java.util.Iterator;
 
 /**
  * Wrapper for an EnumVariant Iteration. The usecase is a for-loop in the style:
- * 
+ *
  * <pre>{@code
  * // Aquire an IDispatch, that has a new NewEnum Property (DISPID_NEWENUM)
  * for(VARIANT v: IComEnumVariantIterator.wrap(dispatch)) {
@@ -42,19 +42,19 @@ import java.util.Iterator;
  *      OleAuto.INSTANCE.VariantClear(v);
  * }
  * }</pre>
- * 
+ *
  * <p>The {@code IComEnumVariantIterator} iterator closes the enumeration it
- * wraps after the enumeration is exhausted or when the iterator is GCed, 
+ * wraps after the enumeration is exhausted or when the iterator is GCed,
  * whatever happens earlier.</p>
  */
 public class IComEnumVariantIterator implements Iterable<Variant.VARIANT>, Iterator<Variant.VARIANT>, Closeable {
 
     /**
      * Helper to get new enumeration from an {@link com.sun.jna.platform.win32.COM.util.IDispatch}.
-     * 
+     *
      * <p>This expects, that the supplied IDispatch has a property identified by
      * a {@link com.sun.jna.platform.win32.OaIdl.DISPID} of {@link com.sun.jna.platform.win32.OaIdl#DISPID_NEWENUM}</p>
-     * 
+     *
      * @param dispatch IDispatch to be analysed
      * @return IComEnumVariantIterator wrapping the enumeration queried from the supplied object
      */
@@ -67,18 +67,18 @@ public class IComEnumVariantIterator implements Iterable<Variant.VARIANT>, Itera
         EnumVariant variant = new EnumVariant(pbr.getValue());
         return new IComEnumVariantIterator(variant);
     }
-    
+
     private Variant.VARIANT nextValue;
     private EnumVariant backingIteration;
 
     /**
      * IComEnumVariantIterator wraps the supplied EnumVariant and exposes that
      * as an {@code Iterable<Variant.VARIANT>}/{@code Iterator<Variant.VARIANT>}.
-     * 
+     *
      * The class takes possion of the supplied EnumVariant. So the EnumVariant
      * is Released when the enumeration is exhausted or the Iterator is GCed.
-     * 
-     * @param backingIteration 
+     *
+     * @param backingIteration
      */
     public IComEnumVariantIterator(EnumVariant backingIteration) {
         this.backingIteration = backingIteration;
@@ -123,7 +123,7 @@ public class IComEnumVariantIterator implements Iterable<Variant.VARIANT>, Itera
         close();
         super.finalize();
     }
-    
+
     @Override
     public Iterator<Variant.VARIANT> iterator() {
         return this;

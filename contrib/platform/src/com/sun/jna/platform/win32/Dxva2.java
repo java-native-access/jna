@@ -1,24 +1,24 @@
 /*
  * Copyright 2014 Martin Steiger
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -47,21 +47,21 @@ import com.sun.jna.win32.StdCallLibrary;
  * @author Martin Steiger
  */
 public interface Dxva2 extends StdCallLibrary, PhysicalMonitorEnumerationAPI, HighLevelMonitorConfigurationAPI, LowLevelMonitorConfigurationAPI {
-	Map<String, Object> DXVA_OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
-		private static final long serialVersionUID = -1987971664975780480L;
 
-		{
-			put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper()
-			{
-				{
-					addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
-					addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
-					addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
-					addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
-				}
-			});
-		}
-	});
+    Map<String, Object> DXVA_OPTIONS = Collections.unmodifiableMap(new HashMap<String, Object>() {
+        private static final long serialVersionUID = -1987971664975780480L;
+
+        {
+            put(Library.OPTION_TYPE_MAPPER, new DefaultTypeMapper() {
+                {
+                    addTypeConverter(MC_POSITION_TYPE.class, new EnumConverter<MC_POSITION_TYPE>(MC_POSITION_TYPE.class));
+                    addTypeConverter(MC_SIZE_TYPE.class, new EnumConverter<MC_SIZE_TYPE>(MC_SIZE_TYPE.class));
+                    addTypeConverter(MC_GAIN_TYPE.class, new EnumConverter<MC_GAIN_TYPE>(MC_GAIN_TYPE.class));
+                    addTypeConverter(MC_DRIVE_TYPE.class, new EnumConverter<MC_DRIVE_TYPE>(MC_DRIVE_TYPE.class));
+                }
+            });
+        }
+    });
 
     /**
      * The only instance of the library

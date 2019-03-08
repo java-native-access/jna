@@ -1,23 +1,23 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
- * 
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ *
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -69,9 +69,9 @@ public class BalloonManagerDemo {
             final int SW = Math.max(getIconWidth()/10, 4);
             g.setStroke(new BasicStroke(SW));
             g.drawArc(SW/2, SW/2, getIconWidth()-SW-1, getIconHeight()-SW-1, 0, 360);
-            Rectangle2D bounds = 
+            Rectangle2D bounds =
                 font.getStringBounds("i", g.getFontRenderContext());
-            g.drawString("i", Math.round((getIconWidth() - bounds.getWidth())/2 - getIconWidth()/12), 
+            g.drawString("i", Math.round((getIconWidth() - bounds.getWidth())/2 - getIconWidth()/12),
                          SW/2 + Math.round((getIconHeight()-bounds.getHeight())/2 - bounds.getY() + getIconHeight()/8));
             g.dispose();
         }
@@ -100,7 +100,7 @@ public class BalloonManagerDemo {
                 public void mousePressed(MouseEvent e) {
                     hidePopup(e);
                 }
-            }; 
+            };
             private Popup popup;
             private void hidePopup(MouseEvent e) {
                 e.getComponent().removeMouseListener(listener);
@@ -126,7 +126,7 @@ public class BalloonManagerDemo {
         }
         catch(UnsatisfiedLinkError e) {
             e.printStackTrace();
-            String msg = e.getMessage() 
+            String msg = e.getMessage()
                 + "\nError loading the JNA library";
             JTextArea area = new JTextArea(msg);
             area.setOpaque(false);
@@ -136,12 +136,12 @@ public class BalloonManagerDemo {
             area.setRows(8);
             area.setWrapStyleWord(true);
             area.setLineWrap(true);
-            JOptionPane.showMessageDialog(null, new JScrollPane(area), 
+            JOptionPane.showMessageDialog(null, new JScrollPane(area),
                                           "Library Load Error: "
                                           + System.getProperty("os.name")
                                           + "/" + System.getProperty("os.arch"),
                                           JOptionPane.ERROR_MESSAGE);
             System.exit(1);
         }
-    }    
+    }
 }

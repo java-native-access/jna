@@ -1,17 +1,25 @@
-/*
- * Copyright 2014 Martin Steiger
+/* Copyright 2014 Martin Steiger
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * You can freely decide which license you want to apply to
+ * the project.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 
 package com.sun.jna.platform.win32;
@@ -43,12 +51,11 @@ import com.sun.jna.platform.win32.WinUser.HMONITOR;
  */
 public class Dxva2Test {
 
-	private int monitorCount;
-	private PHYSICAL_MONITOR[] physMons;
+    private int monitorCount;
+    private PHYSICAL_MONITOR[] physMons;
 
     @Before
-	public void setUp()
-    {
+    public void setUp() {
         HMONITOR hMonitor = User32.INSTANCE.MonitorFromWindow(User32.INSTANCE.GetDesktopWindow(), WinUser.MONITOR_DEFAULTTOPRIMARY);
 
         DWORDByReference pdwNumberOfPhysicalMonitors = new DWORDByReference();
@@ -56,13 +63,12 @@ public class Dxva2Test {
 
         monitorCount = pdwNumberOfPhysicalMonitors.getValue().intValue();
         physMons = new PHYSICAL_MONITOR[monitorCount];
-        
+
         assumeTrue(Dxva2.INSTANCE.GetPhysicalMonitorsFromHMONITOR(hMonitor, monitorCount, physMons).booleanValue());
     }
 
     @After
-	public void tearDown()
-    {
+    public void tearDown() {
         Dxva2.INSTANCE.DestroyPhysicalMonitors(monitorCount, physMons);
     }
 

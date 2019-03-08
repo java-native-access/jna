@@ -87,7 +87,7 @@ public interface Ntifs extends WinDef, BaseTSD {
         /**
          * Used to indicate if the given symbolic link is an absolute or relative symbolic link.
          * If Flags contains SYMLINK_FLAG_RELATIVE, the symbolic link contained in the PathBuffer
-         * array (at offset SubstitueNameOffset) is processed as a relative symbolic link; otherwise, 
+         * array (at offset SubstitueNameOffset) is processed as a relative symbolic link; otherwise,
          * it is processed as an absolute symbolic link.
          */
         public int Flags = 0;

@@ -72,13 +72,13 @@ public final class Win32VKTest extends TestCase {
     public void testVersion() {
         for (Win32VK vk : Win32VK.values()) {
             switch (vk.introducedVersion) {
-            case 0:
-            case 0x0400:
-            case 0x0500:
-            case 0x0604:
-                break;
-            default:
-                fail("Unexpected version 0x" + Integer.toHexString(vk.introducedVersion));
+                case 0:
+                case 0x0400:
+                case 0x0500:
+                case 0x0604:
+                    break;
+                default:
+                    fail("Unexpected version 0x" + Integer.toHexString(vk.introducedVersion));
             }
         }
     }

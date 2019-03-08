@@ -1,21 +1,22 @@
-/* The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -985,8 +986,8 @@ public class Pointer {
      * to the expression
      * <code>*((jbyte *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>byte</code> value to set
      */
     public void setByte(long offset, byte value) {
@@ -998,8 +999,8 @@ public class Pointer {
      * to the expression
      * <code>*((jshort *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>short</code> value to set
      */
     public void setShort(long offset, short value) {
@@ -1024,8 +1025,8 @@ public class Pointer {
      * to the expression
      * <code>*((jint *)((char *)Pointer + offset)) = value</code>.
      *
-     * @param offset byte offset from pointer at which <code>value</code>
-     *		     must be set
+     * @param offset byte offset from pointer at which <code>value</code> must
+     *               be set
      * @param value <code>int</code> value to set
      */
     public void setInt(long offset, int value) {
@@ -1108,7 +1109,7 @@ public class Pointer {
      * wide string (<code>wchar_t*</code>).
      *
      * @param offset byte offset from pointer at which characters in
-     * 		     <code>value</code> must be set
+     *               <code>value</code> must be set
      * @param value  <code>java.lang.String</code> value to set
      */
     public void setWideString(long offset, String value) {
@@ -1120,7 +1121,7 @@ public class Pointer {
      * wide string (<code>wchar_t*</code>).
      *
      * @param offset byte offset from pointer at which characters in
-     * 		     <code>value</code> must be set
+     *               <code>value</code> must be set
      * @param value  <code>WString</code> value to set
      */
     public void setString(long offset, WString value) {
@@ -1361,7 +1362,7 @@ public class Pointer {
         }
         @Override
         public void setMemory(long offset, long size, byte value) {
-            throw new UnsupportedOperationException(MSG); 
+            throw new UnsupportedOperationException(MSG);
         }
         @Override
         public String dump(long offset, int size) {

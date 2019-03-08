@@ -1,14 +1,25 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -92,12 +103,12 @@ public class User32Test extends AbstractWin32TestSupport {
         // see https://github.com/twall/jna/issues/482
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(User32.class);
         if (dupSet.size() > 0) {
-            for (String name : new String[] {
-                    // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
-                    "GetMonitorInfo"
-                    // has 2 overloads since there was a broken binding for MonitorFromPoint
-                    ,"MonitorFromPoint"
-                }) {
+            for (String name : new String[]{
+                // has 2 overloads since the original API accepts both MONITORINFO and MONITORINFOEX
+                "GetMonitorInfo" // has 2 overloads since there was a broken binding for MonitorFromPoint
+                ,
+                "MonitorFromPoint"
+            }) {
                 dupSet.remove(name);
             }
         }
@@ -327,43 +338,43 @@ public class User32Test extends AbstractWin32TestSupport {
         HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
         assertNotNull("Failed to get desktop window HWND", desktopWindow);
     }
-    
+
     @Test
     public void testPrintWindow() {
         boolean pwResult = User32.INSTANCE.PrintWindow(null, null, 0);
         assertFalse("PrintWindow result should be false", pwResult);
         assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.",  WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
     }
-    
+
     @Test
     public void testIsWindowEnabled() {
         boolean iweResult = User32.INSTANCE.IsWindowEnabled(null);
         assertFalse("IsWindowEnabled result should be false", iweResult);
         assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.", WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
     }
-    
+
     @Test
     public void testIsWindow() {
         boolean iwResult = User32.INSTANCE.IsWindow(null);
         assertFalse("IsWindow result should be false", iwResult);
     }
-    
+
     @Test
     public void testFindWindowEx() {
         HWND result = User32.INSTANCE.FindWindowEx(null, null, null, null);
         assertNotNull("FindWindowEx result should not be null", result);
         assertEquals("GetLastError should be ERROR_SUCCESS.", WinError.ERROR_SUCCESS, Native.getLastError());
     }
-    
+
     @Test
     public void testGetAncestor() {
         HWND desktopWindow = User32.INSTANCE.GetDesktopWindow();
         assertNotNull("Failed to get desktop window HWND", desktopWindow);
-        
+
         HWND result = User32.INSTANCE.GetAncestor(desktopWindow, WinUser.GA_PARENT);
         assertNull("GetAncestor result should be null", result);
     }
-    
+
     @Test
     public void testGetCursorPos() {
         POINT cursorPos = new POINT();
@@ -372,17 +383,17 @@ public class User32Test extends AbstractWin32TestSupport {
         assertTrue("X coordinate in POINT should be >= 0", cursorPos.x >= 0);
         assertTrue("Y coordinate in POINT should be >= 0", cursorPos.y >= 0);
     }
-    
+
     @Test
     public void testSetCursorPos() {
         POINT cursorPos = new POINT();
         boolean result = User32.INSTANCE.GetCursorPos(cursorPos);
         assertTrue("GetCursorPos should return true", result);
         assertTrue("X coordinate in POINT should be >= 0", cursorPos.x >= 0);
-        
+
         boolean scpResult = User32.INSTANCE.SetCursorPos(cursorPos.x + 20, cursorPos.y);
         assertTrue("SetCursorPos should return true", scpResult);
-        
+
         POINT cursorPos2 = new POINT();
         boolean result2 = User32.INSTANCE.GetCursorPos(cursorPos2);
         assertTrue("GetCursorPos should return true", result2);
@@ -393,55 +404,55 @@ public class User32Test extends AbstractWin32TestSupport {
                 cursorPos2.x == cursorPos.x + 20
         );
     }
-    
+
     @Test
     public void testSetWinEventHook() {
         HANDLE result = User32.INSTANCE.SetWinEventHook(0, 0, null, null, 0, 0, 0);
         assertNull("SetWinEventHook result should be null", result);
         assertEquals("GetLastError should be ERROR_INVALID_FILTER_PROC.", WinError.ERROR_INVALID_FILTER_PROC, Native.getLastError());
     }
-    
+
     @Test
     public void testUnhookWinEvent() {
         boolean iwResult = User32.INSTANCE.UnhookWinEvent(null);
         assertFalse("UnhookWinEvent result should be false", iwResult);
         assertEquals("GetLastError should be ERROR_INVALID_HANDLE.", WinError.ERROR_INVALID_HANDLE, Native.getLastError());
     }
-    
+
     @Test
     public void testCopyIcon() {
         HICON result = User32.INSTANCE.CopyIcon(null);
         assertNull("CopyIcon result should be false", result);
         assertEquals("GetLastError should be ERROR_INVALID_CURSOR_HANDLE.", WinError.ERROR_INVALID_CURSOR_HANDLE, Native.getLastError());
     }
-    
+
     @Test
     public void testGetClassLong() {
         int result = User32.INSTANCE.GetClassLong(null, 0);
         assertEquals("GetClassLong result should be 0", 0, result);
         assertEquals("GetLastError should be ERROR_INVALID_WINDOW_HANDLE.", WinError.ERROR_INVALID_WINDOW_HANDLE, Native.getLastError());
     }
-    
+
     @Test
     public void testGetActiveWindow() {
         HWND result = User32.INSTANCE.GetActiveWindow();
         assertNull("GetActiveWindow result should be null (there is no active window)", result);
     }
-    
+
     @Test
     public void testSendMessage() {
-    	 DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
+        DesktopWindow explorerProc = getWindowByProcessPath("explorer.exe");
 
-         assertNotNull(explorerProc);
+        assertNotNull(explorerProc);
 
-         LRESULT result = User32.INSTANCE
-                     .SendMessage(explorerProc.getHWND(),
-                                         WinUser.WM_USER,
-                                         new WPARAM(124),
-                                         new LPARAM(12345));
+        LRESULT result = User32.INSTANCE
+                .SendMessage(explorerProc.getHWND(),
+                        WinUser.WM_USER,
+                        new WPARAM(124),
+                        new LPARAM(12345));
 
-         assertNotEquals(0, result);
-    	
+        assertNotEquals(0, result);
+
     }
 
     /**

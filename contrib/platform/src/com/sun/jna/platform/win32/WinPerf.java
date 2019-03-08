@@ -1,23 +1,23 @@
 /* Copyright (c) 2015 Goldstein Lyor, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -411,7 +411,7 @@ public interface WinPerf {
     int PERF_QUERY_OBJECTS = 0x80000000;
     int PERF_QUERY_GLOBAL  = 0x80000001;
     int PERF_QUERY_COSTLY  = 0x80000002;
-    
+
     /**
      * Describes the performance data block that you queried
      * @see <A HREF="https://msdn.microsoft.com/en-us/library/windows/desktop/aa373157(v=vs.85).aspx">PERF_DATA_BLOCK</A>
@@ -475,7 +475,7 @@ public interface WinPerf {
      * Describes object-specific performance information, for example, the
      * number of instances of the object and the number of counters that the
      * object defines.
-     * 
+     *
      * @see <A HREF=
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa373160(v=vs.85).aspx">
      *      PERF_OBJECT_TYPE</A>
@@ -511,7 +511,7 @@ public interface WinPerf {
 
     /**
      * Describes a performance counter.
-     * 
+     *
      * @see <A HREF=
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa373150(v=vs.85).aspx">
      *      PERF_COUNTER_DEFINITION</A>
@@ -543,7 +543,7 @@ public interface WinPerf {
     /**
      * Describes the block of memory that contains the raw performance counter
      * data for an object's counters.
-     * 
+     *
      * @see <A HREF=
      *      "https://msdn.microsoft.com/en-us/library/windows/desktop/aa373147(v=vs.85).aspx">
      *      PERF_COUNTER_BLOCK</A>

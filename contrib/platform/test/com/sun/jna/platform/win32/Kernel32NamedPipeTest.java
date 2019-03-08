@@ -1,14 +1,25 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -48,21 +59,21 @@ public class Kernel32NamedPipeTest extends AbstractWin32TestSupport {
 
         // NOTE: we don't really care what the returned values are only that the call succeeds
         try {
-            IntByReference    lpFlags=new IntByReference(0);
-            IntByReference    lpOutBuffferSize=new IntByReference(0);
-            IntByReference    lpInBufferSize=new IntByReference(0);
-                IntByReference    lpMaxInstances=new IntByReference(0);
-                assertCallSucceeded("GetNamedPipeInfo",
-                                    Kernel32.INSTANCE.GetNamedPipeInfo(hNamedPipe, lpFlags,
-                                            lpOutBuffferSize, lpInBufferSize, lpMaxInstances));
+            IntByReference lpFlags = new IntByReference(0);
+            IntByReference lpOutBuffferSize = new IntByReference(0);
+            IntByReference lpInBufferSize = new IntByReference(0);
+            IntByReference lpMaxInstances = new IntByReference(0);
+            assertCallSucceeded("GetNamedPipeInfo",
+                Kernel32.INSTANCE.GetNamedPipeInfo(hNamedPipe, lpFlags,
+                    lpOutBuffferSize, lpInBufferSize, lpMaxInstances));
 
-                ULONGByReference    ServerProcessId=new ULONGByReference();
-                assertCallSucceeded("GetNamedPipeServerProcessId", Kernel32.INSTANCE.GetNamedPipeServerProcessId(hNamedPipe, ServerProcessId));
+            ULONGByReference ServerProcessId = new ULONGByReference();
+            assertCallSucceeded("GetNamedPipeServerProcessId", Kernel32.INSTANCE.GetNamedPipeServerProcessId(hNamedPipe, ServerProcessId));
 
-                ULONGByReference ServerSessionId=new ULONGByReference();
-                assertCallSucceeded("GetNamedPipeServerSessionId", Kernel32.INSTANCE.GetNamedPipeServerSessionId(hNamedPipe, ServerSessionId));
+            ULONGByReference ServerSessionId = new ULONGByReference();
+            assertCallSucceeded("GetNamedPipeServerSessionId", Kernel32.INSTANCE.GetNamedPipeServerSessionId(hNamedPipe, ServerSessionId));
 
-                assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
+            assertCallSucceeded("DisconnectNamedPipe", Kernel32.INSTANCE.DisconnectNamedPipe(hNamedPipe));
         } finally {    // clean up
             assertCallSucceeded("Named pipe handle close", Kernel32.INSTANCE.CloseHandle(hNamedPipe));
         }

@@ -1,23 +1,23 @@
 /* Copyright (c) 2015 Adam Marcionek, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -35,7 +35,7 @@ import com.sun.jna.win32.W32APIOptions;
 
 /**
  * Ported from Winnetwk.h. Microsoft Windows SDK 8.1
- * 
+ *
  * @author amarcionek[at]gmail.com
  */
 
@@ -47,7 +47,7 @@ public interface Mpr extends StdCallLibrary {
      * The WNetOpenEnum function starts an enumeration of network resources or
      * existing connections. You can continue the enumeration by calling the
      * WNetEnumResource function.
-     * 
+     *
      * @param dwScope
      *            Scope of the enumeration. This parameter can be one of the
      *            following values from NETRESOURCEScope: RESOURCE_CONNECTED,
@@ -95,7 +95,7 @@ public interface Mpr extends StdCallLibrary {
     /**
      * The WNetEnumResource function continues an enumeration of network
      * resources that was started by a call to the WNetOpenEnum function.
-     * 
+     *
      * @param hEnum
      *            [in] Handle that identifies an enumeration instance. This
      *            handle must be returned by the WNetOpenEnum function.
@@ -136,7 +136,7 @@ public interface Mpr extends StdCallLibrary {
     /**
      * The WNetCloseEnum function ends a network resource enumeration started by
      * a call to the WNetOpenEnum function.
-     * 
+     *
      * @param hEnum
      *            [in] Handle that identifies an enumeration instance. This
      *            handle must be returned by the WNetOpenEnum function.
@@ -152,7 +152,7 @@ public interface Mpr extends StdCallLibrary {
      * The WNetGetUniversalName function takes a drive-based path for a network
      * resource and returns an information structure that contains a more
      * universal form of the name.
-     * 
+     *
      * @param lpLocalPath
      *            [in] A pointer to a constant null-terminated string that is a
      *            drive-based path for a network resource. For example, if drive
@@ -194,11 +194,11 @@ public interface Mpr extends StdCallLibrary {
     /**
      * The WNetUseConnection function makes a connection to a network resource.
      * The function can redirect a local device to a network resource.
-     * 
+     *
      * The WNetUseConnection function is similar to the WNetAddConnection3
      * function. The main difference is that WNetUseConnection can automatically
      * select an unused local device to redirect to the network resource.
-     * 
+     *
      * @param hwndOwner
      *            [in] Handle to a window that the provider of network resources
      *            can use as an owner window for dialog boxes. Use this
@@ -209,19 +209,19 @@ public interface Mpr extends StdCallLibrary {
      *            of the proposed connection. The structure contains information
      *            about the network resource, the local device, and the network
      *            resource provider.
-     * 
+     *
      *            You must specify the following members of the NETRESOURCE
      *            structure. The WNetUseConnection function ignores the other
      *            members of the NETRESOURCE structure. For more information,
      *            see the descriptions following for the dwFlags parameter.
-     * 
+     *
      *            dwType Specifies the type of resource to connect to. It is
      *            most efficient to specify a resource type in this member, such
      *            as RESOURCETYPE_DISK or RESOURCETYPE_PRINT. However, if the
      *            lpLocalName member is NULL, or if it points to an empty string
      *            and CONNECT_REDIRECT is not set, dwType can be
      *            RESOURCETYPE_ANY.
-     * 
+     *
      *            This method works only if the function does not automatically
      *            choose a device to redirect to the network resource. Although
      *            this member is required, its information may be ignored by the
@@ -295,7 +295,7 @@ public interface Mpr extends StdCallLibrary {
      *            [out] Pointer to a variable that receives additional
      *            information about the connection. This parameter can be the
      *            following value:
-     * 
+     *
      *            ConnectFlag.CONNECT_LOCALDRIVE - If this flag is set, the
      *            connection was made using a local device redirection. If the
      *            lpAccessName parameter points to a buffer, the local device
@@ -312,7 +312,7 @@ public interface Mpr extends StdCallLibrary {
     /**
      * The WNetAddConnection3 function makes a connection to a network resource.
      * The function can redirect a local device to the network resource.
-     * 
+     *
      * @param hwndOwner
      *            [in] Handle to a window that the provider of network resources
      *            can use as an owner window for dialog boxes. Use this
@@ -323,19 +323,19 @@ public interface Mpr extends StdCallLibrary {
      *            of the proposed connection. The structure contains information
      *            about the network resource, the local device, and the network
      *            resource provider.
-     * 
+     *
      *            You must specify the following members of the NETRESOURCE
      *            structure. The WNetUseConnection function ignores the other
      *            members of the NETRESOURCE structure. For more information,
      *            see the descriptions following for the dwFlags parameter.
-     * 
+     *
      *            dwType Specifies the type of resource to connect to. It is
      *            most efficient to specify a resource type in this member, such
      *            as RESOURCETYPE_DISK or RESOURCETYPE_PRINT. However, if the
      *            lpLocalName member is NULL, or if it points to an empty string
      *            and CONNECT_REDIRECT is not set, dwType can be
      *            RESOURCETYPE_ANY.
-     * 
+     *
      *            This method works only if the function does not automatically
      *            choose a device to redirect to the network resource. Although
      *            this member is required, its information may be ignored by the
@@ -393,7 +393,7 @@ public interface Mpr extends StdCallLibrary {
      * The WNetCancelConnection2 function cancels an existing network
      * connection. You can also call the function to remove remembered network
      * connections that are not currently connected.
-     * 
+     *
      * @param lpName
      *            [in] Pointer to a constant null-terminated string that
      *            specifies the name of either the redirected local device or

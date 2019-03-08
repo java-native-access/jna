@@ -1,23 +1,23 @@
 /* Copyright (c) 2014 Dr David H. Akehurst (itemis), All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -45,66 +45,66 @@ import com.sun.jna.ptr.PointerByReference;
 
 @FieldOrder({"vtbl"})
 public class DispatchListener extends Structure {
-	public DispatchListener(IDispatchCallback callback) {
-		this.vtbl = this.constructVTable();
-		this.initVTable(callback);
-		super.write();
-	}
-        
-	public DispatchVTable.ByReference vtbl;
+    public DispatchListener(IDispatchCallback callback) {
+        this.vtbl = this.constructVTable();
+        this.initVTable(callback);
+        super.write();
+    }
 
-	protected DispatchVTable.ByReference constructVTable() {
-		return new DispatchVTable.ByReference();
-	}
+    public DispatchVTable.ByReference vtbl;
 
-	protected void initVTable(final IDispatchCallback callback) {
-		this.vtbl.QueryInterfaceCallback = new DispatchVTable.QueryInterfaceCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
-				return callback.QueryInterface(refid, ppvObject);
-			}
-		};
-		this.vtbl.AddRefCallback = new DispatchVTable.AddRefCallback() {
-			@Override
-			public int invoke(Pointer thisPointer) {
-				return callback.AddRef();
-			}
-		};
-		this.vtbl.ReleaseCallback = new DispatchVTable.ReleaseCallback() {
-			@Override
-			public int invoke(Pointer thisPointer) {
-				return callback.Release();
-			}
-		};
-		this.vtbl.GetTypeInfoCountCallback = new DispatchVTable.GetTypeInfoCountCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo) {
-				return callback.GetTypeInfoCount(pctinfo);
-			}
-		};
-		this.vtbl.GetTypeInfoCallback = new DispatchVTable.GetTypeInfoCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, UINT iTInfo, LCID lcid, PointerByReference ppTInfo) {
-				return callback.GetTypeInfo(iTInfo, lcid, ppTInfo);
-			}
-		};
-		this.vtbl.GetIDsOfNamesCallback = new DispatchVTable.GetIDsOfNamesCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
-					DISPIDByReference rgDispId) {
-				return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
-			}
-		};
-		this.vtbl.InvokeCallback = new DispatchVTable.InvokeCallback() {
-			@Override
-			public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
-					DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
-		            IntByReference puArgErr) {
+    protected DispatchVTable.ByReference constructVTable() {
+        return new DispatchVTable.ByReference();
+    }
 
-				return callback.Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
-			}
-		};
+    protected void initVTable(final IDispatchCallback callback) {
+        this.vtbl.QueryInterfaceCallback = new DispatchVTable.QueryInterfaceCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, REFIID refid, PointerByReference ppvObject) {
+                return callback.QueryInterface(refid, ppvObject);
+            }
+        };
+        this.vtbl.AddRefCallback = new DispatchVTable.AddRefCallback() {
+            @Override
+            public int invoke(Pointer thisPointer) {
+                return callback.AddRef();
+            }
+        };
+        this.vtbl.ReleaseCallback = new DispatchVTable.ReleaseCallback() {
+            @Override
+            public int invoke(Pointer thisPointer) {
+                return callback.Release();
+            }
+        };
+        this.vtbl.GetTypeInfoCountCallback = new DispatchVTable.GetTypeInfoCountCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, UINTByReference pctinfo) {
+                return callback.GetTypeInfoCount(pctinfo);
+            }
+        };
+        this.vtbl.GetTypeInfoCallback = new DispatchVTable.GetTypeInfoCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, UINT iTInfo, LCID lcid, PointerByReference ppTInfo) {
+                return callback.GetTypeInfo(iTInfo, lcid, ppTInfo);
+            }
+        };
+        this.vtbl.GetIDsOfNamesCallback = new DispatchVTable.GetIDsOfNamesCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, REFIID riid, WString[] rgszNames, int cNames, LCID lcid,
+                    DISPIDByReference rgDispId) {
+                return callback.GetIDsOfNames(riid, rgszNames, cNames, lcid, rgDispId);
+            }
+        };
+        this.vtbl.InvokeCallback = new DispatchVTable.InvokeCallback() {
+            @Override
+            public HRESULT invoke(Pointer thisPointer, DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags,
+                    DISPPARAMS.ByReference pDispParams, VARIANT.ByReference pVarResult, EXCEPINFO.ByReference pExcepInfo,
+                    IntByReference puArgErr) {
 
-	}
+                return callback.Invoke(dispIdMember, riid, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, puArgErr);
+            }
+        };
+
+    }
 
 }

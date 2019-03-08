@@ -1,23 +1,23 @@
 /* Copyright (c) 2012 Tobias Wolf, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -32,14 +32,14 @@ import com.sun.jna.platform.win32.Variant.VARIANT;
 // TODO: Auto-generated Javadoc
 /**
  * Helper class to provide basic COM support.
- * 
+ *
  * @author Tobias Wolf, wolf.tobias@gmx.net
  */
 public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Instantiates a new cOM object.
-     * 
+     *
      * @param iDispatch
      *            the i dispatch
      */
@@ -49,7 +49,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Instantiates a new cOM object.
-     * 
+     *
      * @param clsid
      *            the clsid
      * @param useActiveInstance
@@ -61,7 +61,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Instantiates a new cOM object.
-     * 
+     *
      * @param progId
      *            the prog id
      * @param useActiveInstance
@@ -76,7 +76,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the automation property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the automation property
@@ -106,7 +106,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the automation property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param comObject
@@ -125,7 +125,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the automation property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param comObject
@@ -146,7 +146,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the automation property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param iDispatch
@@ -165,7 +165,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the boolean property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the boolean property
@@ -179,7 +179,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the date property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the date property
@@ -193,7 +193,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the int property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the int property
@@ -207,7 +207,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the short property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the short property
@@ -221,7 +221,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Gets the string property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @return the string property
@@ -239,7 +239,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @return the variant
@@ -253,7 +253,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg
@@ -269,7 +269,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param args
@@ -285,7 +285,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -300,7 +300,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -318,7 +318,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -355,7 +355,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg
@@ -416,7 +416,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      */
@@ -427,7 +427,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param args
@@ -440,7 +440,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -454,7 +454,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -471,7 +471,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Invoke no reply.
-     * 
+     *
      * @param methodName
      *            the method name
      * @param arg1
@@ -490,7 +490,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -502,7 +502,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -514,7 +514,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -534,7 +534,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -546,7 +546,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -558,7 +558,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -570,7 +570,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * Sets the property.
-     * 
+     *
      * @param propertyName
      *            the property name
      * @param value
@@ -602,7 +602,7 @@ public class COMLateBindingObject extends COMBindingBaseObject {
 
     /**
      * To variant.
-     * 
+     *
      * @return the variant
      */
     public VARIANT toVariant() {

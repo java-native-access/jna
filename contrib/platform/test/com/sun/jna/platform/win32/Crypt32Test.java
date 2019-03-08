@@ -1,14 +1,25 @@
 /* Copyright (c) 2010 Daniel Doubrovkine, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 import java.security.*;
@@ -48,7 +59,7 @@ public class Crypt32Test extends TestCase {
     public static void main(String[] args) {
         junit.textui.TestRunner.run(Crypt32Test.class);
     }
-	
+
     @Override
     protected void setUp() {
         HCERTSTORE hCertStore = Crypt32.INSTANCE.CertOpenSystemStore(Pointer.NULL, "MY");
@@ -56,9 +67,9 @@ public class Crypt32Test extends TestCase {
         CERT_CONTEXT.ByReference pc = Crypt32.INSTANCE.CertFindCertificateInStore(
                 hCertStore,
                 (WinCrypt.PKCS_7_ASN_ENCODING | WinCrypt.X509_ASN_ENCODING),
-                0, 
+                0,
                 WinCrypt.CERT_FIND_SUBJECT_STR,
-                new WTypes.LPWSTR(TESTCERT_CN).getPointer(), 
+                new WTypes.LPWSTR(TESTCERT_CN).getPointer(),
                 null);
 
         if (pc == null) {
@@ -68,69 +79,69 @@ public class Crypt32Test extends TestCase {
 
     @Override
     protected void tearDown() {
-    	if(createdCertificate) {
-    		removeTestCertificate();
-    	}
+        if(createdCertificate) {
+            removeTestCertificate();
+        }
     }
 
     public void testCryptProtectUnprotectData() {
-    	DATA_BLOB pDataIn = new DATA_BLOB("hello world");
-    	DATA_BLOB pDataEncrypted = new DATA_BLOB();
-    	try {
-        	assertTrue("CryptProtectData(Initial)",
-        	        Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
-        	                null, null, null, 0, pDataEncrypted));
-        	PointerByReference pDescription = new PointerByReference();
-        	try {
+        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        DATA_BLOB pDataEncrypted = new DATA_BLOB();
+        try {
+            assertTrue("CryptProtectData(Initial)",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                            null, null, null, 0, pDataEncrypted));
+            PointerByReference pDescription = new PointerByReference();
+            try {
                 DATA_BLOB pDataDecrypted = new DATA_BLOB();
                 try {
-                	assertTrue("CryptProtectData(Crypt)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                null, null, null, 0, pDataDecrypted));
-                	assertEquals("description", pDescription.getValue().getWideString(0));
-                	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                    assertTrue("CryptProtectData(Crypt)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    null, null, null, 0, pDataDecrypted));
+                    assertEquals("description", pDescription.getValue().getWideString(0));
+                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
                 } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
                 }
-        	} finally {
+            } finally {
                 Kernel32Util.freeLocalMemory(pDescription.getValue());
-        	}
-    	} finally {
-    	    Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
-    	}
+            }
+        } finally {
+            Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
+        }
     }
 
     public void testCryptProtectUnprotectDataWithEntropy() {
-    	DATA_BLOB pDataIn = new DATA_BLOB("hello world");
+        DATA_BLOB pDataIn = new DATA_BLOB("hello world");
         DATA_BLOB pEntropy = new DATA_BLOB("entropy");
-    	DATA_BLOB pDataEncrypted = new DATA_BLOB();
-    	try {
-        	assertTrue("CryptProtectData(Initial)",
-        	        Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
-        	                pEntropy, null, null, 0, pDataEncrypted));
-        	PointerByReference pDescription = new PointerByReference();
-        	try {
-            	DATA_BLOB pDataDecrypted = new DATA_BLOB();
-            	try {
-                	// can't decrypt without entropy
-                	assertFalse("CryptUnprotectData(NoEntropy)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                null, null, null, 0, pDataDecrypted));
-                	// decrypt with entropy
-                	assertTrue("CryptUnprotectData(WithEntropy)",
-                	        Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
-                	                pEntropy, null, null, 0, pDataDecrypted));
-                	assertEquals("description", pDescription.getValue().getWideString(0));
-                	assertEquals("hello world", pDataDecrypted.pbData.getString(0));
-            	} finally {
+        DATA_BLOB pDataEncrypted = new DATA_BLOB();
+        try {
+            assertTrue("CryptProtectData(Initial)",
+                    Crypt32.INSTANCE.CryptProtectData(pDataIn, "description",
+                            pEntropy, null, null, 0, pDataEncrypted));
+            PointerByReference pDescription = new PointerByReference();
+            try {
+                DATA_BLOB pDataDecrypted = new DATA_BLOB();
+                try {
+                    // can't decrypt without entropy
+                    assertFalse("CryptUnprotectData(NoEntropy)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    null, null, null, 0, pDataDecrypted));
+                    // decrypt with entropy
+                    assertTrue("CryptUnprotectData(WithEntropy)",
+                            Crypt32.INSTANCE.CryptUnprotectData(pDataEncrypted, pDescription,
+                                    pEntropy, null, null, 0, pDataDecrypted));
+                    assertEquals("description", pDescription.getValue().getWideString(0));
+                    assertEquals("hello world", pDataDecrypted.pbData.getString(0));
+                } finally {
                     Kernel32Util.freeLocalMemory(pDataDecrypted.pbData);
-            	}
-        	} finally {
+                }
+            } finally {
                 Kernel32Util.freeLocalMemory(pDescription.getValue());
-        	}
-    	} finally {
+            }
+        } finally {
             Kernel32Util.freeLocalMemory(pDataEncrypted.pbData);
-    	}
+        }
     }
 
     public void testCertAddEncodedCertificateToSystemStore() {
@@ -233,13 +244,13 @@ public class Crypt32Test extends TestCase {
 
         assertTrue("Verification failed", result);
         assertEquals(message1String, resultBuffer2.getWideString(0));
-        
+
         assertNotNull(certContextPointer.getValue());
         CERT_CONTEXT resCertContext = Structure.newInstance(CERT_CONTEXT.class, certContextPointer.getValue());
 
         Crypt32.INSTANCE.CertFreeCertificateContext(signCertContext);
         Crypt32.INSTANCE.CertFreeCertificateContext(resCertContext);
-        
+
         assertTrue("CERT_CONTEXT or CERT_CHAIN_CONTEXT were not correctly freed.",
                 Crypt32.INSTANCE.CertCloseStore(hCertStore, WinCrypt.CERT_CLOSE_STORE_CHECK_FLAG));
     }
@@ -304,16 +315,16 @@ public class Crypt32Test extends TestCase {
         assertNotNull(usagesArray);
         assertEquals(6, usagesArray.length);
         List<String> usages = Arrays.asList(usagesArray);
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.1")); // Indicates that a certificate can be used as an SSL server certificate. 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.2")); // Indicates that a certificate can be used as an SSL client certificate. 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.4")); // Indicates that a certificate can be used for protecting email (signing, encryption, key agreement). 
-        assertTrue(usages.contains("1.3.6.1.5.5.7.3.8")); // Indicates that a certificate can be used to bind the hash of an object to a time from a trusted time source. 
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.1")); // Indicates that a certificate can be used as an SSL server certificate.
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.2")); // Indicates that a certificate can be used as an SSL client certificate.
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.4")); // Indicates that a certificate can be used for protecting email (signing, encryption, key agreement).
+        assertTrue(usages.contains("1.3.6.1.5.5.7.3.8")); // Indicates that a certificate can be used to bind the hash of an object to a time from a trusted time source.
         assertTrue(usages.contains("1.3.6.1.4.1.311.10.3.4")); // Can use encrypted file systems (EFS) - szOID_EFS_CRYPTO
         assertTrue(usages.contains("1.3.6.1.4.1.311.10.3.12")); // Signer of documents - szOID_KP_DOCUMENT_SIGNING
 
         Crypt32.INSTANCE.CertFreeCertificateChain(pChainContext);
         Crypt32.INSTANCE.CertFreeCertificateContext(pc);
-        
+
         assertTrue("CERT_CONTEXT or CERT_CHAIN_CONTEXT were not correctly freed.",
                 Crypt32.INSTANCE.CertCloseStore(hCertStore, WinCrypt.CERT_CLOSE_STORE_CHECK_FLAG));
     }

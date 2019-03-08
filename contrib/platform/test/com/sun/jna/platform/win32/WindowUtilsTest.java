@@ -1,3 +1,25 @@
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ *
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
+ */
 package com.sun.jna.platform.win32;
 
 import static org.junit.Assert.assertNotEquals;
@@ -106,7 +128,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowLocationAndSize() {
 
         final JFrame w = new JFrame();
@@ -129,7 +151,7 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetWindowTitle() {
 
         final JFrame w = new JFrame("A super unique title by PAX! "
@@ -145,9 +167,9 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetIconSize() throws Exception {
-        
+
         final JFrame w = new JFrame();
         try {
             final BufferedImage expectedIcon = ImageIO
@@ -157,16 +179,16 @@ public class WindowUtilsTest extends TestCase {
             Pointer p = Native.getComponentPointer(w);
             assertNotNull("Could not obtain native HANDLE for JFrame", p);
             HWND hwnd = new HWND(p);
-            
+
             final DWORDByReference hIconNumber = new DWORDByReference();
             LRESULT result = User32.INSTANCE
                 .SendMessageTimeout(hwnd, WinUser.WM_GETICON,
                                     new WPARAM(WinUser.ICON_BIG),
                                     new LPARAM(0),
                                     WinUser.SMTO_ABORTIFHUNG, 500, hIconNumber);
-            
+
             assertNotEquals(0, result.intValue());
-            
+
             final HICON hIcon = new HICON(new Pointer(hIconNumber.getValue()
                                                       .longValue()));
             assertTrue(WindowUtils.getIconSize(hIcon).width >= 32);
@@ -177,19 +199,19 @@ public class WindowUtilsTest extends TestCase {
             w.dispose();
         }
     }
-	
+
     public void testGetProcessFilePath() {
         if (!Platform.isWindows()) {
             return;
         }
-        
+
         final JFrame w = new JFrame();
         try {
             w.setVisible(true);
-            
+
             final String searchSubStr = "\\bin\\java";
             final HWND hwnd = new HWND(Native.getComponentPointer(w));
-            
+
             assertTrue("Path didn't contain '" + searchSubStr + "': "
                        + WindowUtils.getProcessFilePath(hwnd),
                        WindowUtils.getProcessFilePath(hwnd).toLowerCase()

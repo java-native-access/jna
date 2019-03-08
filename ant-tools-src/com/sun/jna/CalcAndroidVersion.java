@@ -63,7 +63,7 @@ public class CalcAndroidVersion {
      * targetProperty receives the name of the property, that should take the
      * new property
      *
-     * @param targetProperty 
+     * @param targetProperty
      */
     public void setTargetProperty(String targetProperty) {
         this.targetProperty = targetProperty;

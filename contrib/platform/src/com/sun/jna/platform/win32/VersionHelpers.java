@@ -1,23 +1,23 @@
 /* Copyright (c) 2019 Daniel Widdis, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -45,7 +45,7 @@ public class VersionHelpers {
      * doesn't share a version number with a client release. You should only use
      * this function if the other provided version helper functions do not fit
      * your scenario.
-     * 
+     *
      * @param wMajorVersion
      *            The major version to test
      * @param wMinorVersion
@@ -198,7 +198,7 @@ public class VersionHelpers {
     /**
      * Applications that need to distinguish between server and client versions
      * of Windows should call this function.
-     * 
+     *
      * @return true if the current OS is a Windows Server release.
      */
     public static boolean IsWindowsServer() {

@@ -1,24 +1,24 @@
 /*
  * Copyright (c) 2013 Ralf Hamberger, Markus Karg, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -111,18 +111,18 @@ public final class User32Util {
 
         return Arrays.asList(records);
     }
-    
+
     /**
      * Helper class, that runs a windows message loop as a seperate thread.
-     * 
+     *
      * This is intended to be used in conjunction with APIs, that need a
      * spinning message loop. One example for this are the DDE functions, that
      * can only be used if a message loop is present.
-     * 
+     *
      * To enable interaction with the mainloop the MessageLoopThread allows to
      * dispatch callables into the mainloop and let these Callables be invoked
      * on the message thread.
-     * 
+     *
      * This implies, that the Callables should block the loop as short as possible.
      */
     public static class MessageLoopThread extends Thread {
@@ -172,12 +172,12 @@ public final class User32Util {
         @Override
         public void run() {
             MSG msg = new WinUser.MSG();
-            
+
             // Make sure message loop is prepared
             User32.INSTANCE.PeekMessage(msg, null, 0, 0, 0);
             javaThreadId = Thread.currentThread().getId();
             nativeThreadId = Kernel32.INSTANCE.GetCurrentThreadId();
-            
+
             int getMessageReturn;
             while ((getMessageReturn = User32.INSTANCE.GetMessage(msg, null, 0, 0)) != 0) {
                 if (getMessageReturn != -1) {
@@ -199,12 +199,12 @@ public final class User32Util {
                     }
                 }
             }
-            
+
             while (!workQueue.isEmpty()) {
                 workQueue.remove(0).cancel(false);
             }
         }
-        
+
         public <V> Future<V> runAsync(Callable<V> command) {
             while(nativeThreadId == 0) {
                 try {
@@ -218,7 +218,7 @@ public final class User32Util {
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_USER, null, null);
             return futureTask;
         }
-        
+
         public <V> V runOnThread(Callable<V> callable) throws Exception {
             while (javaThreadId == 0) {
                 try {
@@ -227,7 +227,7 @@ public final class User32Util {
                     Logger.getLogger(MessageLoopThread.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
             if(javaThreadId == Thread.currentThread().getId()) {
                 return callable.call();
             } else {
@@ -247,31 +247,31 @@ public final class User32Util {
                 }
             }
         }
-        
+
         public void exit() {
             User32.INSTANCE.PostThreadMessage(nativeThreadId, WinUser.WM_QUIT, null, null);
         }
-        
+
         /**
          * The method is called from the thread, that run the message dispatcher,
          * when the call to {@link com.sun.jna.platform.win32.User32#GetMessage}
          * fails (returns {@code -1}).
-         * 
-         * <p>If the method returns {@code true}, the MainLoop is exitted, if it 
+         *
+         * <p>If the method returns {@code true}, the MainLoop is exitted, if it
          * returns {@code false} the mainloop is resumed.</p>
-         * 
-         * <p>Default behavior: The error code is logged to the 
+         *
+         * <p>Default behavior: The error code is logged to the
          * com.sun.jna.platform.win32.User32Util.MessageLoopThread logger and
          * the main loop exists.
          * </p>
-         * 
+         *
          * @return true if MainLoop should exit, false it it should resume
          */
         protected boolean getMessageFailed() {
             int lastError = Kernel32.INSTANCE.GetLastError();
             Logger.getLogger("com.sun.jna.platform.win32.User32Util.MessageLoopThread")
-                    .log(Level.WARNING, 
-                            "Message loop was interrupted by an error. [lastError: {0}]", 
+                    .log(Level.WARNING,
+                            "Message loop was interrupted by an error. [lastError: {0}]",
                             lastError);
             return true;
         }

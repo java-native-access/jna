@@ -1,23 +1,23 @@
 /* Copyright (c) 2017 Matthias Bläsing, All Rights Reserved
  *
- * The contents of this file is dual-licensed under 2 
- * alternative Open Source/Free licenses: LGPL 2.1 or later and 
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
  * Apache License 2.0. (starting with JNA version 4.0.0).
- * 
- * You can freely decide which license you want to apply to 
+ *
+ * You can freely decide which license you want to apply to
  * the project.
- * 
+ *
  * You may obtain a copy of the LGPL License at:
- * 
+ *
  * http://www.gnu.org/licenses/licenses.html
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "LGPL2.1".
- * 
+ *
  * You may obtain a copy of the Apache License at:
- * 
+ *
  * http://www.apache.org/licenses/
- * 
+ *
  * A copy is also included in the downloadable source code package
  * containing JNA, in file "AL2.0".
  */
@@ -37,7 +37,7 @@ public class COMInvokeException extends COMException {
     private final String description;
     private final String helpFile;
     private final Integer helpContext;
-    private final Integer scode; 
+    private final Integer scode;
     private final Integer errorArg;
 
     /**
@@ -89,7 +89,7 @@ public class COMInvokeException extends COMException {
 
     /**
      * Instantiates a new automation exception.
-     * 
+     *
      * @param message exception message
      * @param hresult hresult of the invoke call
      * @param errorArg the position of the argument that caused the error

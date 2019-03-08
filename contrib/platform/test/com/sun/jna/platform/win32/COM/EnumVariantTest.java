@@ -1,3 +1,25 @@
+/*
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
+ *
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
+ */
 package com.sun.jna.platform.win32.COM;
 
 import com.sun.jna.Pointer;
@@ -24,12 +46,12 @@ public class EnumVariantTest {
 
     private static ObjectFactory fact;
     private static ISWbemPropertySet propertySet;
-    
+
     @BeforeClass
     public static void before() {
         /**
          * Test assumption:
-         * 
+         *
          * - One of the Instances of Win32_CurrentTime is queried from WMI
          * - it is expected, that this instance does not change its shape
          * - stays available for the duration of this test
@@ -50,7 +72,7 @@ public class EnumVariantTest {
         fact.disposeAll();
         Ole32.INSTANCE.CoUninitialize();
     }
-    
+
     @Test
     public void testSingleIteration() {
         // Test reading the Enumeration one-by-one
@@ -65,14 +87,14 @@ public class EnumVariantTest {
                             && property.getValue() != null) {
                         elementsRead++;
                     }
-                }              
+                }
             }
         } finally {
             ev.Release();
         }
         assertTrue("No Property read", elementsRead > 0);
     }
-    
+
     @Test
     public void testBlockIteration() {
         // Test reading the Enumeration in blocks of ten elements
@@ -91,7 +113,7 @@ public class EnumVariantTest {
                             && property.getValue() != null) {
                         elementsRead++;
                     }
-                }              
+                }
             }
         } finally {
             ev.Release();
@@ -99,7 +121,7 @@ public class EnumVariantTest {
         assertTrue("No Property read", elementsRead > 0);
         assertTrue("Batch fetching failed", readMoreThanOneItem);
     }
-    
+
     @Test
     public void testReset() {
         // Test resetting the Enumeration. The enum is iterated twice with
@@ -117,7 +139,7 @@ public class EnumVariantTest {
                             && property.getValue() != null) {
                         elementsRead++;
                     }
-                }              
+                }
             }
             ev.Reset();
             for (VARIANT[] variants = ev.Next(10); variants.length > 0; variants = ev.Next(10)) {
@@ -135,7 +157,7 @@ public class EnumVariantTest {
         }
         assertTrue("Reset failed", elementsRead == elementsRead2);
     }
-    
+
     @Test
     public void testClone() {
         // Test cloning the Enumeration. The enum is cloned and both are iterated
@@ -149,7 +171,7 @@ public class EnumVariantTest {
                 for (VARIANT v : variants) {
                     OleAuto.INSTANCE.VariantClear(v);
                     elementsRead++;
-                }              
+                }
             }
             for (VARIANT[] variants = ev2.Next(10); variants.length > 0; variants = ev2.Next(10)) {
                 for (VARIANT v : variants) {
@@ -163,12 +185,12 @@ public class EnumVariantTest {
         }
         assertEquals("Reset failed", elementsRead, elementsRead2);
     }
-    
+
     @Test
     public void testSkip() {
         // Test skipping in the Enumeration. The enum is cloned and the first
         // iteration is skipped 5 elements. Both are iterated
-        // It is expected, that the property count for the second enum is 
+        // It is expected, that the property count for the second enum is
         // 5 elements larger than the first
         int elementsRead = 5;
         int elementsRead2 = 0;
@@ -180,7 +202,7 @@ public class EnumVariantTest {
                 for (VARIANT v : variants) {
                     OleAuto.INSTANCE.VariantClear(v);
                     elementsRead++;
-                }              
+                }
             }
             for (VARIANT[] variants = ev2.Next(10); variants.length > 0; variants = ev2.Next(10)) {
                 for (VARIANT v : variants) {
@@ -194,7 +216,7 @@ public class EnumVariantTest {
         }
         assertEquals("Skip failed", elementsRead, elementsRead2);
     }
-    
+
     @Test
     public void testForLoopIteration() {
         // Test iteration with an enhanced for loop
@@ -225,7 +247,7 @@ public class EnumVariantTest {
     //
     // The following codes were generated from the type library
     //
-    
+
     /**
      * Used to obtain Namespace connections
      *
@@ -740,7 +762,7 @@ public class EnumVariantTest {
         @ComProperty(name = "Derivation_", dispId = 0x17)
         Object getDerivation_();
 
-        
+
         /**
          * The path of this Object
          *
@@ -1322,7 +1344,7 @@ public class EnumVariantTest {
                 Object objWbemAsyncContext);
 
     }
-  
+
     /**
      * An Object path
      *

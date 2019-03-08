@@ -1,14 +1,25 @@
 /* Copyright (c) 2007 Timothy Wall, All Rights Reserved
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * The contents of this file is dual-licensed under 2
+ * alternative Open Source/Free licenses: LGPL 2.1 or later and
+ * Apache License 2.0. (starting with JNA version 4.0.0).
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
+ * You can freely decide which license you want to apply to
+ * the project.
+ *
+ * You may obtain a copy of the LGPL License at:
+ *
+ * http://www.gnu.org/licenses/licenses.html
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "LGPL2.1".
+ *
+ * You may obtain a copy of the Apache License at:
+ *
+ * http://www.apache.org/licenses/
+ *
+ * A copy is also included in the downloadable source code package
+ * containing JNA, in file "AL2.0".
  */
 package com.sun.jna.platform.win32;
 
@@ -94,10 +105,10 @@ public class Kernel32Test extends TestCase {
     public void testNoDuplicateMethodsNames() {
         Collection<String> dupSet = AbstractWin32TestSupport.detectDuplicateMethods(Kernel32.class);
         if (dupSet.size() > 0) {
-            for (String name : new String[] {
-                    // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
-                    "GetVersionEx"
-                }) {
+            for (String name : new String[]{
+                // has 2 overloads by design since the API accepts both OSVERSIONINFO and OSVERSIONINFOEX
+                "GetVersionEx"
+            }) {
                 dupSet.remove(name);
             }
         }
@@ -507,19 +518,19 @@ public class Kernel32Test extends TestCase {
     }
 
     public void testGetSystemTimes() {
-      Kernel32 kernel = Kernel32.INSTANCE;
-      FILETIME lpIdleTime = new FILETIME();
-      FILETIME lpKernelTime = new FILETIME();
-      FILETIME lpUserTime = new FILETIME();
-      boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
-      assertTrue(succ);
-      long idleTime = lpIdleTime.toDWordLong().longValue();
-      long kernelTime = lpKernelTime.toDWordLong().longValue();
-      long userTime = lpUserTime.toDWordLong().longValue();
-      // All should be >= 0.  kernel includes idle.
-      assertTrue(idleTime >= 0);
-      assertTrue(kernelTime >= idleTime);
-      assertTrue(userTime >= 0);
+        Kernel32 kernel = Kernel32.INSTANCE;
+        FILETIME lpIdleTime = new FILETIME();
+        FILETIME lpKernelTime = new FILETIME();
+        FILETIME lpUserTime = new FILETIME();
+        boolean succ = kernel.GetSystemTimes(lpIdleTime, lpKernelTime, lpUserTime);
+        assertTrue(succ);
+        long idleTime = lpIdleTime.toDWordLong().longValue();
+        long kernelTime = lpKernelTime.toDWordLong().longValue();
+        long userTime = lpUserTime.toDWordLong().longValue();
+        // All should be >= 0.  kernel includes idle.
+        assertTrue(idleTime >= 0);
+        assertTrue(kernelTime >= idleTime);
+        assertTrue(userTime >= 0);
     }
 
     public void testIsWow64Process() {
@@ -1374,7 +1385,7 @@ public class Kernel32Test extends TestCase {
                     case WinBase.CBR_56000:
                     case WinBase.CBR_600:
                     case WinBase.CBR_9600:
-                    break;
+                        break;
                     default:
                         fail("Received value of WinBase.DCB.BaudRate is not valid");
                 }
@@ -1658,7 +1669,7 @@ public class Kernel32Test extends TestCase {
             }
         }
     }
-    
+
     public void testSetErrorMode() {
         // Set bit flags to 0x0001
         int previousMode = Kernel32.INSTANCE.SetErrorMode(0x0001);
@@ -1672,50 +1683,50 @@ public class Kernel32Test extends TestCase {
 //    /**
 //     * Test that a named function on win32 can be equally resolved by its ordinal
 //     * value.
-//     * 
+//     *
 //     * From link.exe /dump /exports c:\\Windows\\System32\\kernel32.dll
-//     * 
+//     *
 //     *  746  2E9 0004FA20 GetTapeStatus
 //     *  747  2EA 0002DB20 GetTempFileNameA
 //     *  748  2EB 0002DB30 GetTempFileNameW
 //     *  749  2EC 0002DB40 GetTempPathA
 //     *  750  2ED 0002DB50 GetTempPathW
 //     *  751  2EE 00026780 GetThreadContext
-//     * 
+//     *
 //     * The tested function is GetTempPathW which is mapped to the ordinal 750.
 //     */
 //    public void testGetProcAddress() {
 //        NativeLibrary kernel32Library = NativeLibrary.getInstance("kernel32");
 //        // get module handle needed to resolve function pointer via GetProcAddress
 //        HMODULE kernel32Module = Kernel32.INSTANCE.GetModuleHandle("kernel32");
-//        
+//
 //        Function namedFunction = kernel32Library.getFunction("GetTempPathW");
 //        long namedFunctionPointerValue = Pointer.nativeValue(namedFunction);
-//        
+//
 //        Pointer ordinalFunction = Kernel32.INSTANCE.GetProcAddress(kernel32Module, 750);
 //        long ordinalFunctionPointerValue = Pointer.nativeValue(ordinalFunction);
-//        
+//
 //        assertEquals(namedFunctionPointerValue, ordinalFunctionPointerValue);
 //    }
-    
+
     public void testSetThreadExecutionState() {
         int originalExecutionState = Kernel32.INSTANCE.SetThreadExecutionState(
                 WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_AWAYMODE_REQUIRED
         );
-        
+
         assert originalExecutionState > 0;
-        
+
         int intermediateExecutionState = Kernel32.INSTANCE.SetThreadExecutionState(
                 WinBase.ES_CONTINUOUS
         );
-        
+
         assertEquals(WinBase.ES_CONTINUOUS | WinBase.ES_SYSTEM_REQUIRED | WinBase.ES_AWAYMODE_REQUIRED, intermediateExecutionState);
-        
+
         Kernel32.INSTANCE.SetThreadExecutionState(originalExecutionState);
     }
 
     public void testMutex() throws InterruptedException {
-       HANDLE mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, "JNA-Test-Mutex");
+        HANDLE mutexHandle = Kernel32.INSTANCE.CreateMutex(null, true, "JNA-Test-Mutex");
 
         assertNotNull(mutexHandle);
 
