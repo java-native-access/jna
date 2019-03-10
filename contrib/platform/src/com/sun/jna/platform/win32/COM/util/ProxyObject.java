@@ -29,6 +29,7 @@ import java.lang.reflect.Proxy;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
+import com.sun.jna.internal.ReflectionUtils;
 import com.sun.jna.platform.win32.Guid;
 import com.sun.jna.platform.win32.Guid.IID;
 import com.sun.jna.platform.win32.Guid.REFIID;
@@ -214,6 +215,11 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
             } catch (InvocationTargetException ex) {
                 throw ex.getCause();
             }
+        }
+
+        if((!declaredAsInterface) && ReflectionUtils.isDefault(method)) {
+            Object methodHandle = ReflectionUtils.getMethodHandle(method);
+            return ReflectionUtils.invokeDefaultMethod(proxy, methodHandle, args);
         }
 
         Class<?> returnType = method.getReturnType();

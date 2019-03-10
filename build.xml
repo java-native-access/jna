@@ -99,8 +99,8 @@
     <equals arg1="${compatibility}" arg2="1.4"/>
   </condition>
   <!-- Test default compatibility, 1.5+ -->
-  <condition property="test.compatibility" value="1.5" else="${compatibility}">
-    <equals arg1="${compatibility}" arg2="1.4"/>
+  <condition property="test.compatibility" value="1.8" else="${compatibility}">
+    <equals arg1="${compatibility}" arg2="1.6"/>
   </condition>
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java,**/WebStartTest.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>

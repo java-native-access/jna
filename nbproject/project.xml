@@ -85,22 +85,22 @@ auxiliary.show.customizer.message=<message>
             </view>
             <subprojects/>
         </general-data>
-        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/2">
+        <java-data xmlns="http://www.netbeans.org/ns/freeform-project-java/4">
             <compilation-unit>
                 <package-root>src</package-root>
                 <classpath mode="compile">src</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.6</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>test</package-root>
                 <unit-tests/>
                 <classpath mode="compile">lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-11.0.2.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.8.jar:lib/test/slf4j-api-1.6.1.jar:src</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.8</source-level>
             </compilation-unit>
             <compilation-unit>
                 <package-root>ant-tools-src</package-root>
                 <classpath mode="compile">src:lib/ant.jar</classpath>
-                <source-level>1.5</source-level>
+                <source-level>1.6</source-level>
             </compilation-unit>
         </java-data>
     </configuration>

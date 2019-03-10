@@ -23,6 +23,7 @@
  */
 package com.sun.jna.platform.win32.COM.util;
 
+import com.sun.jna.platform.win32.AbstractWin32TestSupport;
 import static com.sun.jna.platform.win32.AbstractWin32TestSupport.checkCOMRegistered;
 import com.sun.jna.platform.win32.COM.COMException;
 import com.sun.jna.platform.win32.COM.COMInvokeException;
@@ -121,6 +122,10 @@ public class ProxyObjectFactory_Test {
     public void before() {
         // Check Existence of Word Application
         Assume.assumeTrue("Could not find registration", checkCOMRegistered("{00020970-0000-0000-C000-000000000046}"));
+        // Check Existence of Internet Explorer Application
+        Assume.assumeTrue("Could not find registration", checkCOMRegistered("{0002DF01-0000-0000-C000-000000000046}"));
+
+        AbstractWin32TestSupport.killProcessByName("iexplore.exe");
 
         this.factory = new Factory();
         //ensure there are no word applications running.
@@ -264,4 +269,92 @@ public class ProxyObjectFactory_Test {
         assertTrue("hresult was not matched", invokeException.matchesErrorCode(WinError.DISP_E_EXCEPTION));
         assertEquals("Wrong scode", (long) 0x800a1436, (long) invokeException.getScode());
     }
+
+//    Deactived, as project setup does not allow different source versions for
+//    code and tests. It is intended, that the code stays with version 6.
+//
+//    @ComObject(progId = "Internet.Explorer.1", clsId = "{0002DF01-0000-0000-C000-000000000046}")
+//    interface ComInternetExplorerMethodnameWithDefault {
+//        @ComProperty
+//        String getLocationURL();
+//
+//        @ComMethod
+//        void Navigate2(String url);
+//
+//        @ComProperty
+//        Boolean getVisible();
+//
+//        @ComProperty
+//        void setVisible(Boolean visible);
+//
+//        @ComMethod
+//        void Quit();
+//
+//        default void NavigateLicense() {
+//            Navigate2("https://github.com/java-native-access/jna/blob/master/LICENSE");
+//        }
+//    }
+//
+//    @Test
+//    public void testProxyObjectWithDefaultMethod() throws InterruptedException {
+//        ComInternetExplorerMethodnameWithDefault ieApp = factory.createObject(ComInternetExplorerMethodnameWithDefault.class);
+//
+//        // Test getting property
+//        assertFalse(ieApp.getVisible());
+//
+//        // Test setting property
+//        ieApp.setVisible(Boolean.TRUE);
+//        assertTrue(ieApp.getVisible());
+//
+//        // Check navigate function and with that the method invocation
+//        assertTrue(ieApp.getLocationURL().isEmpty());
+//
+//        ieApp.Navigate2("https://github.com/java-native-access/");
+//
+//        // Check max. 2s if Navigation happend
+//        boolean navigationHappend = false;
+//        for (int i = 0; i < 10; i++) {
+//            String url = ieApp.getLocationURL();
+//            if (!url.isEmpty()) {
+//                navigationHappend = true;
+//                break;
+//            } else {
+//                Thread.sleep(200);
+//            }
+//        }
+//
+//        ieApp.Quit();
+//
+//        assertTrue(navigationHappend);
+//
+//        ieApp = factory.createObject(ComInternetExplorerMethodnameWithDefault.class);
+//
+//        // Test getting property
+//        assertFalse(ieApp.getVisible());
+//
+//        // Test setting property
+//        ieApp.setVisible(Boolean.TRUE);
+//        assertTrue(ieApp.getVisible());
+//
+//        // Check navigate function and with that the method invocation
+//        assertTrue(ieApp.getLocationURL().isEmpty());
+//
+//        ieApp.NavigateLicense();
+//
+//        // Check max. 2s if Navigation happend
+//        navigationHappend = false;
+//        for (int i = 0; i < 10; i++) {
+//            String url = ieApp.getLocationURL();
+//            if (!url.isEmpty()) {
+//                navigationHappend = true;
+//                break;
+//            } else {
+//                Thread.sleep(200);
+//            }
+//        }
+//
+//        ieApp.Quit();
+//
+//        assertTrue(navigationHappend);
+//    }
 }
