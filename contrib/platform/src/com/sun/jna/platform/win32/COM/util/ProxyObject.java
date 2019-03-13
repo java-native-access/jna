@@ -228,13 +228,14 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         ComProperty prop = method.getAnnotation(ComProperty.class);
         if (null != prop) {
             int dispId = prop.dispId();
+            Object[] fullLengthArgs = unfoldWhenVarargs(method, args);
             if (isVoid) {
                 if (dispId != -1) {
-                    this.setProperty(new DISPID(dispId), args[0]);
+                    this.setProperty(new DISPID(dispId), fullLengthArgs);
                     return null;
                 } else {
                     String propName = this.getMutatorName(method, prop);
-                    this.setProperty(propName, args[0]);
+                    this.setProperty(propName, fullLengthArgs);
                     return null;
                 }
             } else {
@@ -365,6 +366,35 @@ public class ProxyObject implements InvocationHandler, com.sun.jna.platform.win3
         VARIANT v = Convert.toVariant(value);
         WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), dispId, v);
         Convert.free(v, value); // Free value allocated by Convert#toVariant
+        COMUtils.checkRC(hr);
+    }
+
+    private void setProperty(String name, Object... args) {
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+        DISPID dispID = resolveDispId(this.getRawDispatch(), name);
+        setProperty(dispID, args);
+    }
+
+    private void setProperty(DISPID dispID, Object... args) {
+        assert COMUtils.comIsInitialized() : "COM not initialized";
+
+        VARIANT[] vargs;
+        if (null == args) {
+            vargs = new VARIANT[0];
+        } else {
+            vargs = new VARIANT[args.length];
+        }
+        for (int i = 0; i < vargs.length; ++i) {
+            vargs[i] = Convert.toVariant(args[i]);
+        }
+        Variant.VARIANT.ByReference result = new Variant.VARIANT.ByReference();
+        WinNT.HRESULT hr = this.oleMethod(OleAuto.DISPATCH_PROPERTYPUT, null, this.getRawDispatch(), dispID, vargs);
+
+        for (int i = 0; i < vargs.length; i++) {
+            // Free value allocated by Convert#toVariant
+            Convert.free(vargs[i], args[i]);
+        }
+
         COMUtils.checkRC(hr);
     }
 
