@@ -4,6 +4,6 @@
 	<classpathentry kind="src" output="build.eclipse/test-classes" path="test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
-	<classpathentry kind="lib" path="lib/test/reflections-0.9.8.jar"/>
+	<classpathentry kind="lib" path="lib/test/reflections-0.9.11.jar"/>
 	<classpathentry kind="output" path="build.eclipse/classes"/>
 </classpath>

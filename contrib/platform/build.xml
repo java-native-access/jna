@@ -152,18 +152,27 @@ com.sun.jna.platform.wince;version=${osgi.version}
         </manifest>
     </target>
 
-    <target name="test" depends="init,compile,compile-test,-pre-test-run" description="Run platform unit tests.">
+    <condition property="compatibility-check" value="true">
+        <equals arg1="${javac.target}" arg2="1.6" />
+    </condition>
 
+    <target name="-check-java6-compatibility" depends="init,compile,compile-test,-pre-test-run" if="compatibility-check">
       <echo>Checking JDK compatibility 1.6</echo>
 
       <echo></echo>
 
-      <as:check-signature signature="../../lib/java16-1.1.signature" classpath="${javac.classpath}">
-          <path path="${build.classes.dir}"/>
+      <as:check-signature signature="../../lib/java16-1.1.signature">
+          <path path="${classes}"/>
       </as:check-signature>
 
       <echo></echo>
+    </target>
 
+    <target name="-warn-java6-compatiblity" depends="init,compile,compile-test,-pre-test-run" unless="compatibility-check">
+      <echo level="warn">Build is not Java 6 compatible and NOT A PRODUCTION BUILD</echo>
+    </target>
+
+    <target name="test" depends="init,compile,compile-test,-pre-test-run,-check-java6-compatibility,-warn-java6-compatiblity" description="Run platform unit tests.">
       <echo>Running platform tests: ${test.src.dir}</echo>
       <property name="test.fork" value="yes"/>
       <property name="reports.junit" location="${build}/reports/junit/${os.prefix}"/>

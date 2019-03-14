@@ -90,17 +90,33 @@
   <condition property="test.compatibility" value="1.4">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
   </condition>
-  <!-- Default compatibility, 1.6, or whatever version is running -->
-  <condition property="compatibility" value="${ant.java.version}" else="1.6">
-    <matches pattern="^1.[345]$" string="${ant.java.version}"/>
+
+  <!--
+    Default compatibility, 1.6, or whatever version is running
+
+    Release builds of JNA target 1.6 and should be build on JDK 8, as JDK 9
+    introduced changes in the ByteBuffer class, which result in classes, that
+    can't be loaded on Java 6.
+
+    JDK 11 is the last JDK, that supports creation of Java 6 compatible class
+    files.
+  -->
+  <condition property="compatibility" value="1.6" else="9">
+    <matches pattern="^1\.\d+$" string="${ant.java.version}"/>
   </condition>
-  <!-- Platform default compatibility, 1.5+ -->
-  <condition property="platform.compatibility" value="1.5" else="${compatibility}">
-    <equals arg1="${compatibility}" arg2="1.4"/>
+
+  <condition property="compatibility-check" value="true">
+    <equals arg1="${compatility}" arg2="1.6" />
   </condition>
-  <!-- Test default compatibility, 1.5+ -->
+
+  <property name="platform.compatibility" value="${compatibility}" />
+
+  <!-- JNA tests require at least 1.8 compatiblity -->
   <condition property="test.compatibility" value="1.8" else="${compatibility}">
-    <equals arg1="${compatibility}" arg2="1.6"/>
+    <or>
+        <equals arg1="${compatibility}" arg2="1.6"/>
+        <equals arg1="${compatibility}" arg2="1.7"/>
+    </or>
   </condition>
   <condition property="tests.exclude-patterns" value="**/VarArgsTest.java,**/AnnotatedLibraryTest.java,**/WebStartTest.java,**/PointerBufferTest.java,**/HeadlessLoadLibraryTest.java,**/StructureBufferFieldTest.java,**/PerformanceTest.java,**/*BufferArgumentsMarshalTest.java" else="**/wince/*.java,**/WebStartTest.java">
     <equals arg1="${os.prefix}" arg2="w32ce-arm"/>
@@ -1136,11 +1152,7 @@ cd ..
     <property name="build-native" value="true"/>
   </target>
 
-  <!-- When running tests from an IDE, be sure to set jna.library.path -->
-  <!-- to where the test library (testlib) is found.                   -->
-  <target name="test" depends="-enable-native,jar,compile-tests" unless="cross-compile"
-          description="Run all unit tests">
-
+  <target name="-check-java6-compatibility" depends="-enable-native,jar,compile-tests" if="compatibility-check">
     <echo>Checking JDK compatibility 1.6</echo>
 
     <echo></echo>
@@ -1150,10 +1162,20 @@ cd ..
     </as:check-signature>
 
     <echo></echo>
+  </target>
+
+  <target name="-warn-java6-compatiblity" depends="-enable-native,jar,compile-tests" unless="compatibility-check">
+    <echo level="warn">Build is not Java 6 compatible and NOT A PRODUCTION BUILD</echo>
+  </target>
+
+  <!-- When running tests from an IDE, be sure to set jna.library.path -->
+  <!-- to where the test library (testlib) is found.                   -->
+  <target name="test" depends="-enable-native,jar,compile-tests,-check-java6-compatibility,-warn-java6-compatiblity" unless="cross-compile"
+          description="Run all unit tests">
 
     <property name="test.fork" value="yes"/>
     <property name="test.forkmode" value="perTest"/>
-    
+
     <condition property="test.jdwp" value="-Xrunjdwp:transport=dt_socket,address=${test.debugport},server=y,suspend=y">
         <isset property="test.debugport" />
     </condition>
