@@ -156,8 +156,6 @@
       <javac classpath="lib/ant.jar"
              destdir="${build}/ant-tools"
              includeantruntime="false"
-             source="1.6"
-             target="1.6"
              encoding="UTF-8"
       >
           <src path="src" />
@@ -415,7 +413,7 @@
         <attribute name="Bundle-Description" value="JNA Library"/>
         <attribute name="Bundle-SymbolicName" value="com.sun.jna"/>
         <attribute name="Bundle-Version" value="${jna.major}.${jna.minor}.${jna.revision}"/>
-        <attribute name="Bundle-RequiredExecutionEnvironment" value="J2SE-1.4"/>
+        <attribute name="Bundle-RequiredExecutionEnvironment" value="JavaSE-1.6"/>
         <attribute name="Bundle-Vendor" value="${vendor}"/>
         <attribute name="Bundle-ActivationPolicy" value="lazy"/>
         <attribute name="Export-Package" value="com.sun.jna;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.ptr;version=${jna.major}.${jna.minor}.${jna.revision}, com.sun.jna.win32;version=${jna.major}.${jna.minor}.${jna.revision}"/>
