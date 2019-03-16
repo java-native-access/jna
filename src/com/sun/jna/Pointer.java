@@ -830,10 +830,9 @@ public class Pointer {
             }
         } else {
             while ((p = getPointer(offset + addOffset)) != null) {
-                String s = p == null
-                    ? null
-                    : (NativeString.WIDE_STRING.equals(encoding)
-                       ? p.getWideString(0) : p.getString(0, encoding));
+                String s = NativeString.WIDE_STRING.equals(encoding)
+                        ? p.getWideString(0)
+                        : p.getString(0, encoding);
                 strings.add(s);
                 addOffset += Native.POINTER_SIZE;
             }
