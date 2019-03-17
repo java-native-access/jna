@@ -25,8 +25,6 @@ package com.sun.jna.platform.win32;
 import java.security.*;
 import java.security.cert.X509Certificate;
 
-import sun.security.tools.keytool.*;
-import sun.security.x509.X500Name;
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.WinCrypt.DATA_BLOB;
 import com.sun.jna.ptr.PointerByReference;
@@ -40,15 +38,29 @@ import com.sun.jna.platform.win32.WinCryptUtil.MANAGED_CRYPT_SIGN_MESSAGE_PARA;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import junit.framework.TestCase;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.operator.ContentSigner;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 /**
  * @author dblock[at]dblock[dot]org
  */
 public class Crypt32Test extends TestCase {
+
+    private static final Logger LOG = Logger.getLogger(Crypt32Test.class.getName());
+
     private static final String TESTCERT_CN = "cryptsigntest";
 
     /**
@@ -391,14 +403,30 @@ public class Crypt32Test extends TestCase {
             KeyStore keyStore = KeyStore.getInstance("Windows-MY", "SunMSCAPI");
             keyStore.load(null, null);
 
-            CertAndKeyGen certAndKeyGen = new CertAndKeyGen("RSA", "SHA256WithRSA", null);
-            certAndKeyGen.generate(1024);
+            X500Name xx500Name = new X500Name("CN=cryptsigntest");
 
-            X509Certificate certificate = certAndKeyGen.getSelfCertificate(new X500Name("CN=cryptsigntest"), 24 * 60 * 60);
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
+            keyGen.initialize(2048);
+            KeyPair key = keyGen.generateKeyPair();
+            PrivateKey privKey = key.getPrivate();
+            PublicKey pubKey = key.getPublic();
 
-            keyStore.setKeyEntry(TESTCERT_CN, certAndKeyGen.getPrivateKey(), null, new X509Certificate[]{certificate});
+            ContentSigner sigGen = new JcaContentSignerBuilder("SHA256withRSA").build(privKey);
+            X509v3CertificateBuilder certGen = new JcaX509v3CertificateBuilder(
+                xx500Name,
+                BigInteger.valueOf(1),
+                new Date(System.currentTimeMillis() - 5 * 60 * 1000),
+                new Date((long) (System.currentTimeMillis() + 24L * 60L * 60L * 1000L)),
+                xx500Name, //Subject
+                pubKey //Publickey to be associated with the certificate
+            );
+
+            Provider BC = new BouncyCastleProvider();
+            X509Certificate certificate = new JcaX509CertificateConverter().setProvider(BC).getCertificate(certGen.build(sigGen));
+
+            keyStore.setKeyEntry(TESTCERT_CN, privKey, null, new X509Certificate[]{certificate});
         } catch (Exception e) {
-            System.out.println("Unable to complete test. Certificate creation failed.");
+            LOG.log(Level.SEVERE, "Unable to complete test. Certificate creation failed.", e);
             return false;
         }
 

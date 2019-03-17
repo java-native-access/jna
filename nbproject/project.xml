@@ -94,7 +94,7 @@ auxiliary.show.customizer.message=<message>
             <compilation-unit>
                 <package-root>test</package-root>
                 <unit-tests/>
-                <classpath mode="compile">lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-11.0.2.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.8.jar:lib/test/slf4j-api-1.6.1.jar:src</classpath>
+                <classpath mode="compile">lib/hamcrest-core-1.3.jar:lib/junit.jar:lib/test/dom4j-1.6.1.jar:lib/test/guava-11.0.2.jar:lib/test/javassist-3.12.1.GA.jar:lib/test/reflections-0.9.11.jar:lib/test/slf4j-api-1.6.1.jar:src</classpath>
                 <source-level>1.8</source-level>
             </compilation-unit>
             <compilation-unit>
