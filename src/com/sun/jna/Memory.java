@@ -87,7 +87,7 @@ public class Memory extends Pointer {
         }
         /** No need to free memory. */
         @Override
-        protected void dispose() {
+        protected synchronized void dispose() {
             this.peer = 0;
         }
         /** Pass bounds check to parent. */
