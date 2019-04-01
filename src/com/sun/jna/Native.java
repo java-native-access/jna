@@ -226,7 +226,7 @@ public final class Native implements Version {
         MAX_ALIGNMENT = Platform.isSPARC() || Platform.isWindows()
             || (Platform.isLinux() && (Platform.isARM() || Platform.isPPC() || Platform.isMIPS()))
             || Platform.isAIX()
-            || Platform.isAndroid()
+            || (Platform.isAndroid() && !Platform.isIntel())
             ? 8 : LONG_SIZE;
         MAX_PADDING = (Platform.isMac() && Platform.isPPC()) ? 8 : MAX_ALIGNMENT;
         System.setProperty("jna.loaded", "true");
