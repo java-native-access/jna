@@ -150,6 +150,11 @@ com.sun.jna.platform.win32.COM.tlb.imp;version=${osgi.version},
 com.sun.jna.platform.wince;version=${osgi.version}
 "/>
         </manifest>
+        <delete dir="${build.classes.dir}/META-INF" />
+        <mkdir dir="${build.classes.dir}/META-INF"/>
+        <copy todir="${build.classes.dir}/META-INF">
+            <fileset dir="../../" includes="LICENSE,AL2.0,LGPL2.1"/>
+        </copy>
     </target>
 
     <condition property="compatibility-check" value="true">
