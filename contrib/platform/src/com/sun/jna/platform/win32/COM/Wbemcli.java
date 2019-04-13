@@ -27,6 +27,8 @@ import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid.CLSID;
 import com.sun.jna.platform.win32.Guid.GUID;
+import com.sun.jna.platform.win32.OaIdl.SAFEARRAY;
+import com.sun.jna.platform.win32.OaIdlUtil;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.platform.win32.Variant.VARIANT;
@@ -81,6 +83,24 @@ public interface Wbemcli {
     public static final int CIM_OBJECT = 13;
     public static final int CIM_FLAG_ARRAY = 0x2000;
 
+    public interface WBEM_CONDITION_FLAG_TYPE {
+        public static final int WBEM_FLAG_ALWAYS = 0;
+        public static final int WBEM_FLAG_ONLY_IF_TRUE = 0x1;
+        public static final int WBEM_FLAG_ONLY_IF_FALSE = 0x2;
+        public static final int WBEM_FLAG_ONLY_IF_IDENTICAL = 0x3;
+        public static final int WBEM_MASK_PRIMARY_CONDITION = 0x3;
+        public static final int WBEM_FLAG_KEYS_ONLY = 0x4;
+        public static final int WBEM_FLAG_REFS_ONLY = 0x8;
+        public static final int WBEM_FLAG_LOCAL_ONLY = 0x10;
+        public static final int WBEM_FLAG_PROPAGATED_ONLY = 0x20;
+        public static final int WBEM_FLAG_SYSTEM_ONLY = 0x30;
+        public static final int WBEM_FLAG_NONSYSTEM_ONLY = 0x40;
+        public static final int WBEM_MASK_CONDITION_ORIGIN = 0x70;
+        public static final int WBEM_FLAG_CLASS_OVERRIDES_ONLY = 0x100;
+        public static final int WBEM_FLAG_CLASS_LOCAL_AND_OVERRIDES = 0x200;
+        public static final int WBEM_MASK_CLASS_CONDITION = 0x300;
+    }
+
     /**
      * Contains and manipulates both WMI class definitions and class object
      * instances.
@@ -104,6 +124,27 @@ public interface Wbemcli {
         public HRESULT Get(String wszName, int lFlags, VARIANT.ByReference pVal, IntByReference pType,
                 IntByReference plFlavor) {
             return Get(wszName == null ? null : new WString(wszName), lFlags, pVal, pType, plFlavor);
+        }
+
+        public HRESULT GetNames(String wszQualifierName, int lFlags, VARIANT.ByReference pQualifierVal, PointerByReference pNames) {
+            return GetNames(wszQualifierName == null ? null : new WString(wszQualifierName), lFlags, pQualifierVal, pNames);
+        }
+
+        public HRESULT GetNames(WString wszQualifierName, int lFlags, VARIANT.ByReference pQualifierVal, PointerByReference pNames) {
+            // 8th method in IWbemClassObjectVtbl
+            return (HRESULT) _invokeNativeObject(7,
+                new Object[]{ getPointer(), wszQualifierName, lFlags, pQualifierVal, pNames}, HRESULT.class);
+        }
+
+        public String[] GetNames(String wszQualifierName, int lFlags, VARIANT.ByReference pQualifierVal) {
+            PointerByReference pbr = new PointerByReference();
+            COMUtils.checkRC(GetNames(wszQualifierName, lFlags, pQualifierVal, pbr));
+            Object[] nameObjects = (Object[]) OaIdlUtil.toPrimitiveArray(new SAFEARRAY(pbr.getValue()), true);
+            String[] names = new String[nameObjects.length];
+            for(int i = 0; i < nameObjects.length; i++) {
+                names[i] = (String) nameObjects[i];
+            }
+            return names;
         }
     }
 

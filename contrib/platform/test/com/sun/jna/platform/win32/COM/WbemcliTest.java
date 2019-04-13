@@ -44,6 +44,9 @@ import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiQuery;
 import com.sun.jna.platform.win32.COM.WbemcliUtil.WmiResult;
 import com.sun.jna.platform.win32.OleAuto;
 import com.sun.jna.ptr.IntByReference;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Test class for Wbemcli and WbemcliUti methods and classes used to query WMI.
@@ -189,6 +192,12 @@ public class WbemcliTest {
 
                 for(IWbemClassObject iwco: results) {
                     resultCount++;
+                    Set<String> names = new HashSet<String>(Arrays.asList(iwco.GetNames(null, 0, null)));
+                    assertTrue(names.contains("CommandLine"));
+                    assertTrue(names.contains("ProcessId"));
+                    assertTrue(names.contains("WorkingSetSize"));
+                    assertTrue(names.contains("ExecutionState"));
+                    assertTrue(names.contains("CreationDate"));
                     try {
                         // COMMANDLINE is STRING = VT_BSTR
                         iwco.Get("COMMANDLINE", 0, pVal, pType, plFlavor);
